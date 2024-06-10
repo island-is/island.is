@@ -41,6 +41,7 @@ import {
   isCompletedCase,
   isIndictmentCase,
   isRestrictionCase,
+  isTrafficViolationCase,
   NotificationType,
   prosecutorCanSelectDefenderForInvestigationCase,
   UserRole,
@@ -55,7 +56,7 @@ import { AwsS3Service } from '../aws-s3'
 import { CourtService } from '../court'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
-import { EventLog } from '../event-log'
+import { EventLog, EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount } from '../indictment-count'
 import { Institution } from '../institution'
@@ -104,7 +105,6 @@ export interface UpdateCase
     | 'caseFilesComments'
     | 'prosecutorId'
     | 'sharedWithProsecutorsOfficeId'
-    | 'courtCaseNumber'
     | 'sessionArrangements'
     | 'courtLocation'
     | 'courtStartDate'
@@ -153,8 +153,6 @@ export interface UpdateCase
     | 'appealValidToDate'
     | 'isAppealCustodyIsolation'
     | 'appealIsolationToDate'
-    | 'indictmentDeniedExplanation'
-    | 'indictmentReturnedExplanation'
     | 'indictmentRulingDecision'
     | 'indictmentReviewerId'
   > {
@@ -164,6 +162,7 @@ export interface UpdateCase
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
   rulingSignatureDate?: Date | null
+  courtCaseNumber?: string | null
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
   parentCaseId?: string | null
@@ -171,6 +170,9 @@ export interface UpdateCase
   courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
   judgeId?: string | null
+  indictmentReturnedExplanation?: string | null
+  indictmentDeniedExplanation?: string | null
+  indictmentHash?: string | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -244,6 +246,11 @@ export const include: Includeable[] = [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: Case,
     as: 'parentCase',
     include: [
@@ -271,6 +278,7 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
+    order: [['created', 'ASC']],
     separate: true,
   },
   {
@@ -286,11 +294,6 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
-  {
-    model: User,
-    as: 'indictmentReviewer',
-    include: [{ model: Institution, as: 'institution' }],
-  },
 ]
 
 export const order: OrderItem[] = [
@@ -364,6 +367,7 @@ export class CaseService {
     private readonly signingService: SigningService,
     private readonly intlService: IntlService,
     private readonly eventService: EventService,
+    private readonly eventLogService: EventLogService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -388,7 +392,7 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putObject(`generated/${theCase.id}/ruling.pdf`, pdf)
+      .putGeneratedObject(theCase.type, `${theCase.id}/ruling.pdf`, pdf)
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -405,7 +409,7 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putObject(`generated/${theCase.id}/courtRecord.pdf`, pdf)
+      .putGeneratedObject(theCase.type, `${theCase.id}/courtRecord.pdf`, pdf)
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -465,7 +469,11 @@ export class CaseService {
         ) {
           for (const caseFile of theCase.caseFiles) {
             if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-              await this.fileService.deleteCaseFile(caseFile, transaction)
+              await this.fileService.deleteCaseFile(
+                theCase,
+                caseFile,
+                transaction,
+              )
             }
           }
 
@@ -642,6 +650,19 @@ export class CaseService {
         elementId: policeCaseNumber,
       }))
 
+    const caseFilesCategories = isTrafficViolationCase(theCase)
+      ? [
+          CaseFileCategory.COVER_LETTER,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+        ]
+      : [
+          CaseFileCategory.COVER_LETTER,
+          CaseFileCategory.INDICTMENT,
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+        ]
+
     const deliverCaseFileToCourtMessages =
       theCase.caseFiles
         ?.filter(
@@ -649,12 +670,7 @@ export class CaseService {
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
             ((caseFile.category &&
-              [
-                CaseFileCategory.COVER_LETTER,
-                CaseFileCategory.INDICTMENT,
-                CaseFileCategory.CRIMINAL_RECORD,
-                CaseFileCategory.COST_BREAKDOWN,
-              ].includes(caseFile.category)) ||
+              caseFilesCategories.includes(caseFile.category)) ||
               (caseFile.category === CaseFileCategory.CASE_FILE &&
                 !caseFile.policeCaseNumber)),
         )
@@ -665,12 +681,20 @@ export class CaseService {
           elementId: caseFile.id,
         })) ?? []
 
-    return this.messageService.sendMessagesToQueue(
-      this.getDeliverProsecutorToCourtMessages(theCase, user)
-        .concat(this.getDeliverDefendantToCourtMessages(theCase, user))
-        .concat(deliverCaseFilesRecordToCourtMessages)
-        .concat(deliverCaseFileToCourtMessages),
-    )
+    const messages = this.getDeliverProsecutorToCourtMessages(theCase, user)
+      .concat(this.getDeliverDefendantToCourtMessages(theCase, user))
+      .concat(deliverCaseFilesRecordToCourtMessages)
+      .concat(deliverCaseFileToCourtMessages)
+
+    if (isTrafficViolationCase(theCase)) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForDefenderEmailChangeToQueue(
@@ -1343,6 +1367,29 @@ export class CaseService {
     }
   }
 
+  handleEventLogs(
+    theCase: Case,
+    update: UpdateCase,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    if (
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.SUBMITTED &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      return this.eventLogService.create(
+        {
+          eventType: EventType.INDICTMENT_CONFIRMED,
+          caseId: theCase.id,
+          nationalId: user.nationalId,
+          userRole: user.role,
+        },
+        transaction,
+      )
+    }
+  }
+
   async update(
     theCase: Case,
     update: UpdateCase,
@@ -1351,6 +1398,8 @@ export class CaseService {
   ): Promise<Case | undefined> {
     const receivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
+    const returningIndictmentCase =
+      update.state === CaseState.DRAFT && theCase.state === CaseState.RECEIVED
 
     return this.sequelize
       .transaction(async (transaction) => {
@@ -1365,6 +1414,7 @@ export class CaseService {
 
         await this.handleDateUpdates(theCase, update, transaction)
         await this.handleCommentUpdates(theCase, update, transaction)
+        await this.handleEventLogs(theCase, update, user, transaction)
 
         if (Object.keys(update).length === 0) {
           return
@@ -1400,6 +1450,13 @@ export class CaseService {
           update.courtCaseNumber !== theCase.courtCaseNumber
         ) {
           await this.fileService.resetCaseFileStates(theCase.id, transaction)
+        }
+
+        if (returningIndictmentCase) {
+          await this.fileService.resetIndictmentCaseFileHashes(
+            theCase.id,
+            transaction,
+          )
         }
       })
       .then(async () => {

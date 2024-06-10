@@ -158,6 +158,8 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                       caseType={column.type}
                       isValidToDateInThePast={column.isValidToDateInThePast}
                       courtDate={column.courtDate}
+                      indictmentDecision={column.indictmentDecision}
+                      indictmentRulingDecision={column.indictmentRulingDecision}
                     />
                   </Box>
                   {column.appealState && (

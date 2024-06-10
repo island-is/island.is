@@ -8,10 +8,9 @@ import {
   Input,
   InputFileUpload,
   RadioButton,
-  toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   CourtArrangements,
@@ -29,9 +28,12 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseTransition,
+  DateLog,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useS3Upload,
   useUploadFiles,
@@ -39,14 +41,21 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-type Actions = 'POSTPONE' | 'REDISTRIBUTE' | 'COMPLETE'
 type Decision =
-  | CaseIndictmentRulingDecision.FINE
   | CaseIndictmentRulingDecision.RULING
+  | CaseIndictmentRulingDecision.FINE
+  | CaseIndictmentRulingDecision.DISMISSAL
+  | CaseIndictmentRulingDecision.CANCELLATION
 
 interface Postponement {
   postponedIndefinitely?: boolean
+  isSettingVerdictDate?: boolean
   reason?: string
+}
+
+interface PostponeUntilVerdictUpdates {
+  indictmentDecision?: IndictmentDecision
+  courtDate?: DateLog | null
 }
 
 const Conclusion: React.FC = () => {
@@ -54,18 +63,14 @@ const Conclusion: React.FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const [selectedAction, setSelectedAction] = useState<Actions>()
+  const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [selectedDecision, setSelectedDecision] = useState<Decision>()
   const [postponement, setPostponement] = useState<Postponement>()
-  const {
-    courtDate,
-    handleCourtDateChange,
-    handleCourtRoomChange,
-    sendCourtDateToServer,
-  } = useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
 
-  const { updateCase, isUpdatingCase, transitionCase, setAndSendCaseToServer } =
-    useCase()
+  const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
+    useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
+
+  const { isUpdatingCase, transitionCase, setAndSendCaseToServer } = useCase()
 
   const {
     uploadFiles,
@@ -78,76 +83,225 @@ const Conclusion: React.FC = () => {
     workingCase.id,
   )
 
-  const handleRedistribution = useCallback(async () => {
-    const transitionSuccessful = await transitionCase(
-      workingCase.id,
-      CaseTransition.REDISTRIBUTE,
-    )
+  const handleRedistribution = useCallback(
+    async (destination: string) => {
+      const success = await setAndSendCaseToServer(
+        [
+          {
+            indictmentDecision: IndictmentDecision.REDISTRIBUTING,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
 
-    if (transitionSuccessful) {
-      router.push(constants.CASES_ROUTE)
-    } else {
-      toast.error(formatMessage(errors.transitionCase))
-    }
-  }, [transitionCase, workingCase.id, formatMessage])
+      if (!success) {
+        return
+      }
 
-  const handleCompletion = useCallback(async () => {
-    await setAndSendCaseToServer(
-      [
-        {
-          indictmentRulingDecision: selectedDecision,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
-  }, [selectedDecision, setAndSendCaseToServer, setWorkingCase, workingCase])
+      const transitionSuccessful = await transitionCase(
+        workingCase.id,
+        CaseTransition.REDISTRIBUTE,
+      )
 
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      if (selectedAction === 'REDISTRIBUTE') {
-        handleRedistribution()
-      } else if (selectedAction === 'COMPLETE') {
-        handleCompletion()
-      } else if (postponement?.postponedIndefinitely) {
-        const updateSuccess = await updateCase(workingCase.id, {
-          courtDate: null,
-          postponedIndefinitelyExplanation: postponement.reason,
-        })
+      if (!transitionSuccessful) {
+        return
+      }
 
-        if (!updateSuccess) {
-          return
+      router.push(destination)
+    },
+    [setAndSendCaseToServer, setWorkingCase, transitionCase, workingCase],
+  )
+
+  const handleCompletion = useCallback(
+    async (destination: string) => {
+      const success = await setAndSendCaseToServer(
+        [
+          {
+            indictmentRulingDecision: selectedDecision,
+            indictmentDecision: IndictmentDecision.COMPLETING,
+            force: true,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!success) {
+        return
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [selectedDecision, setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
+
+  const handlePostponementUntilVerdict = useCallback(
+    async (destination: string) => {
+      const prepareUpdates = () => {
+        const updates: PostponeUntilVerdictUpdates = {}
+
+        if (
+          workingCase.indictmentDecision !==
+          IndictmentDecision.POSTPONING_UNTIL_VERDICT
+        ) {
+          updates.indictmentDecision =
+            IndictmentDecision.POSTPONING_UNTIL_VERDICT
         }
-      } else {
-        await sendCourtDateToServer([
-          { postponedIndefinitelyExplanation: null, force: true },
-        ])
+
+        if (postponement?.isSettingVerdictDate || workingCase.courtDate) {
+          updates.courtDate =
+            postponement?.isSettingVerdictDate && courtDate?.date
+              ? {
+                  date: formatDateForServer(new Date(courtDate.date)),
+                  location: courtDate.location,
+                }
+              : null
+        }
+
+        return updates
+      }
+
+      const updates = prepareUpdates()
+
+      const success =
+        Object.keys(updates).length > 0
+          ? await setAndSendCaseToServer(
+              [
+                {
+                  ...updates,
+                  force: true,
+                },
+              ],
+              workingCase,
+              setWorkingCase,
+            )
+          : true
+
+      if (!success) {
+        return
       }
 
       router.push(`${destination}/${workingCase.id}`)
     },
     [
+      courtDate?.date,
+      courtDate?.location,
+      postponement?.isSettingVerdictDate,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
+    ],
+  )
+
+  const handlePostponementIndefinitely = useCallback(
+    async (destination: string) => {
+      const updateSuccess = await setAndSendCaseToServer(
+        [
+          {
+            courtDate: null,
+            postponedIndefinitelyExplanation: postponement?.reason,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!updateSuccess) {
+        return
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [postponement?.reason, setAndSendCaseToServer, setWorkingCase, workingCase],
+  )
+
+  const handlePostponement = useCallback(
+    async (destination: string) => {
+      const updateSuccess = await setAndSendCaseToServer(
+        [
+          {
+            indictmentDecision: IndictmentDecision.POSTPONING,
+            courtDate: courtDate?.date
+              ? {
+                  date: formatDateForServer(new Date(courtDate.date)),
+                  location: courtDate.location,
+                }
+              : undefined,
+            postponedIndefinitelyExplanation: null,
+          },
+        ],
+        workingCase,
+        setWorkingCase,
+      )
+
+      if (!updateSuccess) {
+        return
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [
+      courtDate?.date,
+      courtDate?.location,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
+    ],
+  )
+
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      switch (selectedAction) {
+        case IndictmentDecision.REDISTRIBUTING:
+          handleRedistribution(destination)
+          break
+        case IndictmentDecision.COMPLETING:
+          handleCompletion(destination)
+          break
+        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+          handlePostponementUntilVerdict(destination)
+          break
+        case IndictmentDecision.POSTPONING:
+          postponement?.postponedIndefinitely
+            ? handlePostponementIndefinitely(destination)
+            : handlePostponement(destination)
+          break
+        default:
+          break
+      }
+    },
+    [
       selectedAction,
       postponement?.postponedIndefinitely,
-      postponement?.reason,
-      workingCase.id,
       handleRedistribution,
       handleCompletion,
-      updateCase,
-      sendCourtDateToServer,
+      handlePostponementUntilVerdict,
+      handlePostponementIndefinitely,
+      handlePostponement,
     ],
   )
 
   useEffect(() => {
+    if (
+      workingCase.indictmentDecision ===
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT
+    ) {
+      setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+
+      return
+    }
     if (workingCase.indictmentRulingDecision) {
       setSelectedDecision(workingCase.indictmentRulingDecision)
-      setSelectedAction('COMPLETE')
+      setSelectedAction(IndictmentDecision.COMPLETING)
+
+      return
     } else if (
       workingCase.courtDate?.date ||
       workingCase.postponedIndefinitelyExplanation
     ) {
-      setSelectedAction('POSTPONE')
+      setSelectedAction(IndictmentDecision.POSTPONING)
 
       if (workingCase.postponedIndefinitelyExplanation) {
         setPostponement({
@@ -162,27 +316,68 @@ const Conclusion: React.FC = () => {
     workingCase.courtDate?.date,
     workingCase.postponedIndefinitelyExplanation,
     workingCase.indictmentRulingDecision,
+    workingCase.indictmentDecision,
+    courtDate,
+    postponement?.isSettingVerdictDate,
   ])
 
-  const stepIsValid = () => {
-    if (!selectedAction) {
-      return false
-    }
+  useEffect(() => {
+    setPostponement((prev) => ({
+      ...prev,
+      isSettingVerdictDate: Boolean(workingCase.courtDate?.date),
+    }))
+  }, [workingCase.courtDate?.date])
 
-    if (selectedAction === 'REDISTRIBUTE') {
-      return uploadFiles.find(
-        (file) => file.category === CaseFileCategory.COURT_RECORD,
-      )
-    } else if (selectedAction === 'POSTPONE') {
-      return (
-        Boolean(
-          postponement?.postponedIndefinitely
-            ? postponement.reason
-            : courtDate?.date,
-        ) && allFilesDoneOrError
-      )
-    } else if (selectedAction === 'COMPLETE') {
-      return selectedDecision !== undefined && allFilesDoneOrError
+  const stepIsValid = () => {
+    if (selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
+      return postponement?.isSettingVerdictDate
+        ? Boolean(courtDate?.date)
+        : true
+    } else if (!allFilesDoneOrError) {
+      return false
+    } else {
+      switch (selectedAction) {
+        case IndictmentDecision.POSTPONING:
+          return Boolean(
+            postponement?.postponedIndefinitely
+              ? postponement.reason
+              : courtDate?.date,
+          )
+        case IndictmentDecision.REDISTRIBUTING:
+          return uploadFiles.some(
+            (file) =>
+              file.category === CaseFileCategory.COURT_RECORD &&
+              file.status === 'done',
+          )
+        case IndictmentDecision.COMPLETING:
+          switch (selectedDecision) {
+            case CaseIndictmentRulingDecision.RULING:
+            case CaseIndictmentRulingDecision.DISMISSAL:
+              return (
+                uploadFiles.some(
+                  (file) =>
+                    file.category === CaseFileCategory.COURT_RECORD &&
+                    file.status === 'done',
+                ) &&
+                uploadFiles.some(
+                  (file) =>
+                    file.category === CaseFileCategory.RULING &&
+                    file.status === 'done',
+                )
+              )
+            case CaseIndictmentRulingDecision.FINE:
+            case CaseIndictmentRulingDecision.CANCELLATION:
+              return uploadFiles.some(
+                (file) =>
+                  file.category === CaseFileCategory.COURT_RECORD &&
+                  file.status === 'done',
+              )
+            default:
+              return false
+          }
+        default:
+          return false
+      }
     }
   }
 
@@ -191,7 +386,7 @@ const Conclusion: React.FC = () => {
       workingCase={workingCase}
       isLoading={isLoadingWorkingCase}
       notFound={caseNotFound}
-      isValid={allFilesDoneOrError}
+      isValid={stepIsValid()}
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(titles.court.indictments.conclusion)} />
@@ -208,9 +403,14 @@ const Conclusion: React.FC = () => {
               <RadioButton
                 id="conclusion-postpone"
                 name="conclusion-decision"
-                checked={selectedAction === 'POSTPONE'}
+                checked={
+                  selectedAction === IndictmentDecision.POSTPONING ||
+                  (!selectedAction &&
+                    workingCase.indictmentDecision ===
+                      IndictmentDecision.POSTPONING)
+                }
                 onChange={() => {
-                  setSelectedAction('POSTPONE')
+                  setSelectedAction(IndictmentDecision.POSTPONING)
                 }}
                 large
                 backgroundColor="white"
@@ -219,11 +419,35 @@ const Conclusion: React.FC = () => {
             </Box>
             <Box marginBottom={2}>
               <RadioButton
+                id="conclusion-postpone-until-verdict"
+                name="conclusion-decision"
+                checked={
+                  selectedAction ===
+                    IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
+                  (!selectedAction &&
+                    workingCase.indictmentDecision ===
+                      IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+                }
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.postponedUntilVerdict)}
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
                 id="conclusion-complete"
                 name="conclusion-decision"
-                checked={selectedAction === 'COMPLETE'}
+                checked={
+                  selectedAction === IndictmentDecision.COMPLETING ||
+                  (!selectedAction &&
+                    workingCase.indictmentDecision ===
+                      IndictmentDecision.COMPLETING)
+                }
                 onChange={() => {
-                  setSelectedAction('COMPLETE')
+                  setSelectedAction(IndictmentDecision.COMPLETING)
                 }}
                 large
                 backgroundColor="white"
@@ -233,9 +457,14 @@ const Conclusion: React.FC = () => {
             <RadioButton
               id="conclusion-redistribute"
               name="conclusion-redistribute"
-              checked={selectedAction === 'REDISTRIBUTE'}
+              checked={
+                selectedAction === IndictmentDecision.REDISTRIBUTING ||
+                (!selectedAction &&
+                  workingCase.indictmentDecision ===
+                    IndictmentDecision.REDISTRIBUTING)
+              }
               onChange={() => {
-                setSelectedAction('REDISTRIBUTE')
+                setSelectedAction(IndictmentDecision.REDISTRIBUTING)
               }}
               large
               backgroundColor="white"
@@ -243,7 +472,7 @@ const Conclusion: React.FC = () => {
             />
           </BlueBox>
         </Box>
-        {selectedAction === 'POSTPONE' && (
+        {selectedAction === IndictmentDecision.POSTPONING && (
           <>
             <SectionHeading
               title={formatMessage(strings.arrangeAnotherHearing)}
@@ -298,7 +527,43 @@ const Conclusion: React.FC = () => {
             </Box>
           </>
         )}
-        {selectedAction === 'COMPLETE' && (
+        {selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT && (
+          <Box component="section" marginBottom={5}>
+            <SectionHeading
+              title={formatMessage(strings.arrangeVerdictTitle)}
+            />
+            <BlueBox>
+              <Box marginBottom={2}>
+                <Checkbox
+                  id="arrange-verdict"
+                  name="arrange-verdict"
+                  checked={Boolean(postponement?.isSettingVerdictDate)}
+                  onChange={() => {
+                    setPostponement((prev) => ({
+                      ...prev,
+                      isSettingVerdictDate: !prev?.isSettingVerdictDate,
+                    }))
+                    handleCourtDateChange(null)
+                    handleCourtRoomChange(null)
+                  }}
+                  backgroundColor="white"
+                  label={formatMessage(strings.arrangeVerdict)}
+                  large
+                  filled
+                />
+              </Box>
+              <CourtArrangements
+                handleCourtDateChange={handleCourtDateChange}
+                handleCourtRoomChange={handleCourtRoomChange}
+                blueBox={false}
+                dateTimeDisabled={!postponement?.isSettingVerdictDate}
+                courtRoomDisabled={!postponement?.isSettingVerdictDate}
+                courtDate={courtDate}
+              />
+            </BlueBox>
+          </Box>
+        )}
+        {selectedAction === IndictmentDecision.COMPLETING && (
           <Box marginBottom={5}>
             <SectionHeading title={formatMessage(strings.decision)} required />
             <BlueBox>
@@ -317,25 +582,60 @@ const Conclusion: React.FC = () => {
                   label={formatMessage(strings.ruling)}
                 />
               </Box>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-fine"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.FINE
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.fine)}
+                />
+              </Box>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-dismissal"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.DISMISSAL
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.DISMISSAL)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.dismissal)}
+                />
+              </Box>
               <RadioButton
-                id="decision-fine"
+                id="decision-cancellation"
                 name="decision"
-                checked={selectedDecision === CaseIndictmentRulingDecision.FINE}
+                checked={
+                  selectedDecision === CaseIndictmentRulingDecision.CANCELLATION
+                }
                 onChange={() => {
-                  setSelectedDecision(CaseIndictmentRulingDecision.FINE)
+                  setSelectedDecision(CaseIndictmentRulingDecision.CANCELLATION)
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.fine)}
+                label={formatMessage(strings.cancellation)}
               />
             </BlueBox>
           </Box>
         )}
         {selectedAction && (
-          <Box component="section" marginBottom={5}>
+          <Box
+            component="section"
+            marginBottom={selectedDecision === 'RULING' ? 5 : 10}
+          >
             <SectionHeading
               title={formatMessage(strings.courtRecordTitle)}
-              required={selectedAction === 'REDISTRIBUTE'}
+              required={selectedAction === IndictmentDecision.REDISTRIBUTING}
             />
             <InputFileUpload
               fileList={uploadFiles.filter(
@@ -358,30 +658,39 @@ const Conclusion: React.FC = () => {
             />
           </Box>
         )}
-        {selectedDecision === 'RULING' && (
-          <Box component="section" marginBottom={10}>
-            <SectionHeading title={formatMessage(strings.rulingUploadTitle)} />
-            <InputFileUpload
-              fileList={uploadFiles.filter(
-                (file) => file.category === CaseFileCategory.RULING,
-              )}
-              accept="application/pdf"
-              header={formatMessage(strings.inputFieldLabel)}
-              description={formatMessage(core.uploadBoxDescription, {
-                fileEndings: '.pdf',
-              })}
-              buttonLabel={formatMessage(strings.uploadButtonText)}
-              onChange={(files) => {
-                handleUpload(
-                  addUploadFiles(files, CaseFileCategory.RULING),
-                  updateUploadFile,
-                )
-              }}
-              onRemove={(file) => handleRemove(file, removeUploadFile)}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
-          </Box>
-        )}
+        {selectedAction === IndictmentDecision.COMPLETING &&
+          (selectedDecision === CaseIndictmentRulingDecision.RULING ||
+            selectedDecision === CaseIndictmentRulingDecision.DISMISSAL) && (
+            <Box component="section" marginBottom={10}>
+              <SectionHeading
+                title={formatMessage(
+                  selectedDecision === CaseIndictmentRulingDecision.RULING
+                    ? strings.rulingUploadTitle
+                    : strings.dismissalUploadTitle,
+                )}
+                required
+              />
+              <InputFileUpload
+                fileList={uploadFiles.filter(
+                  (file) => file.category === CaseFileCategory.RULING,
+                )}
+                accept="application/pdf"
+                header={formatMessage(strings.inputFieldLabel)}
+                description={formatMessage(core.uploadBoxDescription, {
+                  fileEndings: '.pdf',
+                })}
+                buttonLabel={formatMessage(strings.uploadButtonText)}
+                onChange={(files) => {
+                  handleUpload(
+                    addUploadFiles(files, CaseFileCategory.RULING),
+                    updateUploadFile,
+                  )
+                }}
+                onRemove={(file) => handleRemove(file, removeUploadFile)}
+                onRetry={(file) => handleRetry(file, updateUploadFile)}
+              />
+            </Box>
+          )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
@@ -389,10 +698,17 @@ const Conclusion: React.FC = () => {
           previousUrl={`${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
-              selectedAction === 'COMPLETE'
+              selectedAction === IndictmentDecision.COMPLETING
                 ? constants.INDICTMENTS_SUMMARY_ROUTE
+                : selectedAction === IndictmentDecision.REDISTRIBUTING
+                ? constants.CASES_ROUTE
                 : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
+          }
+          nextButtonText={
+            selectedAction === IndictmentDecision.COMPLETING
+              ? undefined
+              : formatMessage(strings.nextButtonTextConfirm)
           }
           nextIsDisabled={!stepIsValid()}
           nextIsLoading={isUpdatingCase}
