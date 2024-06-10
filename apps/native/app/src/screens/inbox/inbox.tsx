@@ -51,6 +51,8 @@ type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
   | (Document & { type: undefined })
 
+const DEFAULT_PAGE_SIZE = 50
+
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
@@ -94,8 +96,10 @@ const PressableListItem = React.memo(
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const [starred, setStarred] = useState<boolean>(!!item.bookmarked)
     useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked])
+    const theme = useTheme()
     return (
       <PressableHighlight
+        highlightColor={theme.shade.shade400}
         onPress={() =>
           navigateTo(`/inbox/${item.id}`, {
             title: item.senderName,
@@ -113,13 +117,7 @@ const PressableListItem = React.memo(
             toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id)
             setStarred(!item.bookmarked)
           }}
-          icon={
-            <Image
-              source={getOrganizationLogoUrl(item.senderName, 75)}
-              resizeMode="contain"
-              style={{ width: 25, height: 25 }}
-            />
-          }
+          icon={getOrganizationLogoUrl(item.senderName, 75)}
         />
       </PressableHighlight>
     )
@@ -178,7 +176,7 @@ function useInboxQuery(incomingFilters?: Filters) {
   const [refetching, setRefetching] = useState(true)
   const [loading, setLoading] = useState(false)
   const [refetcher, setRefetcher] = useState(0)
-  const pageSize = 50
+  const pageSize = DEFAULT_PAGE_SIZE
 
   const [getListDocument] = useListDocumentsLazyQuery({
     query: ListDocumentsDocument,
@@ -285,14 +283,12 @@ export const InboxScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
-  const keyboardRef = useRef(false)
   const [query, setQuery] = useState('')
   const queryString = useThrottleState(query)
   const theme = useTheme()
   const unreadCount = useUnreadCount()
   const [visible, setVisible] = useState(false)
   const [refetching, setRefetching] = useState(false)
-  const dynamicColor = useDynamicColor()
 
   const res = useInboxQuery({
     opened,
