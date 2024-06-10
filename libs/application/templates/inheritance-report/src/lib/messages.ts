@@ -1660,9 +1660,19 @@ export const m = defineMessages({
     defaultMessage: 'Erfðafjárskýrsla móttekin',
     description: '',
   },
+  doneMultiFieldTitleEFS: {
+    id: 'ir.application:doneMultiFieldTitleEFS',
+    defaultMessage: 'Erfðafjárskýrsla móttekin',
+    description: '',
+  },
+  doneAlertTitleEFS: {
+    id: 'ir.application:doneAlertTitleEFS',
+    defaultMessage: 'Sýslumaður hefur móttekið erfðafjárskýrslu',
+    description: '',
+  },
   doneTitlePrepaidEFS: {
     id: 'ir.application:doneTitlePrepaidEFS',
-    defaultMessage: 'Umsókn um fyrirframgreiddan arf móttekin',
+    defaultMessage: 'Erfðafjárskýrsla um fyrirframgreiddan arf móttekin',
     description: '',
   },
   doneDescriptionEFS: {
