@@ -72,9 +72,7 @@ describe('PasskeyCoreService', () => {
 
       assert(opts)
       expect(typeof opts.challenge).toBe('string')
-      assert(opts.pubKeyCredParams)
-      assert(opts.rp)
-      assert(opts.user)
+      assert(opts.rpId)
     })
   })
 
