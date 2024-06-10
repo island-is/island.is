@@ -22,7 +22,7 @@ import {
 import { keyStorage } from './_key_storage.mjs'
 
 // When testing this is good to manipulate
-const HASH_VERSION = `newcache-${2}`
+const HASH_VERSION = `newcache-${3}`
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
