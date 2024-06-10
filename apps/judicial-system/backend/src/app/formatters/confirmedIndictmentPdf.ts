@@ -5,8 +5,8 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   calculatePt,
   drawTextWithEllipsisPDFKit,
-  smallFontSize,
   IndictmentConfirmation,
+  smallFontSize,
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
