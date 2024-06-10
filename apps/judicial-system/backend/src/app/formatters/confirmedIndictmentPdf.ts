@@ -3,8 +3,10 @@ import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import { IndictmentConfirmation } from './indictmentPdf'
-import { drawTextWithEllipsisPDFKit } from './pdfHelpers'
+import {
+  drawTextWithEllipsisPDFKit,
+  IndictmentConfirmation,
+} from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
 export const createConfirmedIndictment = async (
