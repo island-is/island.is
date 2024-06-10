@@ -100,7 +100,7 @@ const unselectedTabUnderline = {
   height: '1px',
   width: '90%',
   bottom: -1,
-  background: theme.color.blue600,
+  background: theme.color.blue400,
   zIndex: 5,
 } as const
 
