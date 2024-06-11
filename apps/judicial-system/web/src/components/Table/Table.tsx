@@ -124,7 +124,7 @@ const Table: React.FC<TableProps> = (props) => {
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
             onClick={() => {
-              if (!(onClick && onClick(theCase))) {
+              if (!onClick?.(theCase)) {
                 handleOpenCase(theCase.id)
               }
             }}
@@ -190,7 +190,7 @@ const Table: React.FC<TableProps> = (props) => {
             aria-disabled={isOpeningCaseId === row.id || isTransitioningCase}
             className={styles.tableRowContainer}
             onClick={() => {
-              if (!(onClick && onClick(row))) {
+              if (!onClick?.(row)) {
                 handleOpenCase(row.id)
               }
             }}
