@@ -27,6 +27,7 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  EventType,
   isIndictmentCase,
   isProsecutionUser,
   isRestrictionCase,
@@ -48,6 +49,7 @@ import {
 import { courtUpload } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { EventLogService } from '../event-log'
@@ -742,6 +744,51 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Failed to update appeal case ${theCase.id} with conclusion`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
+  async deliverIndictmentInfoToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const subtypeList = theCase.indictmentSubtypes
+      ? Object.values(theCase.indictmentSubtypes).flat()
+      : []
+
+    const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
+
+    return this.courtService
+      .updateIndictmentCaseWithIndictmentInfo(
+        user,
+        theCase.id,
+        theCase.courtCaseNumber,
+        theCase.eventLogs?.find(
+          (eventLog) => eventLog.eventType === EventType.CASE_RECEIVED_BY_COURT,
+        )?.created,
+        theCase.eventLogs?.find(
+          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+        )?.created,
+        theCase.policeCaseNumbers[0],
+        mappedSubtypes,
+        theCase.defendants?.map((defendant) => ({
+          name: defendant.name,
+          nationalId: defendant.nationalId,
+        })),
+        theCase.prosecutor
+          ? {
+              name: theCase.prosecutor.name,
+              nationalId: theCase.prosecutor.nationalId,
+            }
+          : undefined,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with indictment info`,
           { reason },
         )
 

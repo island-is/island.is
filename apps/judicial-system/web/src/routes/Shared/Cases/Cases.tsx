@@ -38,6 +38,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAssignmentTable/CasesAwaitingAssignmentTable'
+import CasesInProgressTable from '../../Court/components/CasesInProgressTable/CasesInProgressTable'
 import CasesAwaitingConfirmationTable from '../../Prosecutor/components/CasesAwaitingConfirmationTable/CasesAwaitingConfirmationTable'
 import CasesAwaitingReview from '../../PublicProsecutor/Tables/CasesAwaitingReview'
 import ActiveCases from './ActiveCases'
@@ -101,14 +102,12 @@ const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
 
 export const Cases: React.FC = () => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
+  const { transitionCase, isTransitioningCase, isSendingNotification } =
+    useCase()
 
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
   const [modalVisible, setVisibleModal] = useState<string>()
-
-  const { user } = useContext(UserContext)
-
-  const { transitionCase, isTransitioningCase, isSendingNotification } =
-    useCase()
 
   const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
@@ -292,34 +291,47 @@ export const Cases: React.FC = () => {
                     cases={casesAwaitingReview}
                   />
                 )}
+                <SectionHeading title={formatMessage(m.activeRequests.title)} />
+                <TableWrapper loading={loading || isFiltering}>
+                  {activeCases.length > 0 ? (
+                    <ActiveCases
+                      cases={activeCases}
+                      isDeletingCase={
+                        isTransitioningCase || isSendingNotification
+                      }
+                      onDeleteCase={deleteCase}
+                    />
+                  ) : (
+                    <div className={styles.infoContainer}>
+                      <AlertMessage
+                        type="info"
+                        title={formatMessage(
+                          m.activeRequests.infoContainerTitle,
+                        )}
+                        message={formatMessage(
+                          m.activeRequests.infoContainerText,
+                        )}
+                      />
+                    </div>
+                  )}
+                </TableWrapper>
               </>
             )}
-
             {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
-              <CasesAwaitingAssignmentTable
-                cases={casesAwaitingAssignment}
-                loading={loading || isFiltering}
-                isFiltering={isFiltering}
-              />
-            )}
-            <SectionHeading title={formatMessage(m.activeRequests.title)} />
-            <TableWrapper loading={loading || isFiltering}>
-              {activeCases.length > 0 ? (
-                <ActiveCases
-                  cases={activeCases}
-                  isDeletingCase={isTransitioningCase || isSendingNotification}
-                  onDeleteCase={deleteCase}
+              <>
+                <CasesAwaitingAssignmentTable
+                  cases={casesAwaitingAssignment}
+                  loading={loading || isFiltering}
+                  isFiltering={isFiltering}
                 />
-              ) : (
-                <div className={styles.infoContainer}>
-                  <AlertMessage
-                    type="info"
-                    title={formatMessage(m.activeRequests.infoContainerTitle)}
-                    message={formatMessage(m.activeRequests.infoContainerText)}
-                  />
-                </div>
-              )}
-            </TableWrapper>
+                <CasesInProgressTable
+                  loading={loading}
+                  isFiltering={isFiltering}
+                  cases={activeCases}
+                  refetch={refetch}
+                />
+              </>
+            )}
             <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
               <PastCasesTable

@@ -39,7 +39,7 @@ const WORK_ENDING_HOUR = 23 // 11 PM
 type HandleNotification = {
   profile: {
     nationalId: string
-    email?: string
+    email?: string | null
     documentNotifications: boolean
     emailNotifications: boolean
     locale?: string

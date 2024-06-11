@@ -13,7 +13,7 @@ import { NationalRegistryUser, TeacherV4 } from '../../types/schema'
 import { m } from '../../lib/messages'
 import { format as formatKennitala } from 'kennitala'
 import { StudentAssessment } from '@island.is/api/schema'
-import { B_TEMP, YES } from '../../lib/constants'
+import { B_TEMP, BE, YES } from '../../lib/constants'
 import {
   hasNoDrivingLicenseInOtherCountry,
   isApplicationForCondition,
@@ -50,6 +50,8 @@ export const subSectionSummary = buildSubSection({
           value: ({ answers: { applicationFor } }) =>
             applicationFor === B_TEMP
               ? m.applicationForTempLicenseTitle
+              : applicationFor === BE
+              ? m.applicationForBELicenseTitle
               : m.applicationForFullLicenseTitle,
         }),
         buildDividerField({}),
@@ -151,7 +153,11 @@ export const subSectionSummary = buildSubSection({
               chargeItemCode: string
             }[]
             const targetCode =
-              answers.applicationFor === B_TEMP ? 'AY114' : 'AY110'
+              answers.applicationFor === B_TEMP
+                ? 'AY114'
+                : answers.applicationFor === BE
+                ? 'AY115'
+                : 'AY110'
 
             const item = items.find(
               ({ chargeItemCode }) => chargeItemCode === targetCode,
