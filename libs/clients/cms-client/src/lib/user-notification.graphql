@@ -31,8 +31,8 @@ query GetTemplates($locale: String!){
     }
 }
 
-query GetOrganizationByKennitala($kennitala: String!, $locale: String!){
-    organizationCollection(where: {kennitala: $kennitala}, locale: $locale) {
+query GetOrganizationByNationalId($nationalId: String!, $locale: String!){
+	organizationCollection(where: {kennitala: $nationalId}, locale: $locale) {
         items {
             title
         }
