@@ -17,7 +17,7 @@ import {
   UnreadNotificationsCountDto,
   UnseenNotificationsCountDto,
 } from '../dto/notification.dto'
-import { ContentfulGraphQLClientService } from '@island.is/clients/contentful-graphql'
+import { CmsClientService } from '@island.is/clients/cms-client'
 
 const user: User = {
   nationalId: '1234567890',
@@ -65,7 +65,7 @@ describe('NotificationsService', () => {
           useClass: jest.fn(() => ({})),
         },
         {
-          provide: ContentfulGraphQLClientService,
+          provide: CmsClientService,
           useValue: {
             fetchData: jest.fn(),
           },

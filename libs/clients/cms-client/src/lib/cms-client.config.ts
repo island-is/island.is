@@ -10,8 +10,8 @@ const schema = z.object({
   }),
 })
 
-export const ContentfulGraphQLClientConfig = defineConfig({
-  name: 'ContentfulGraphQLClientConfig',
+export const CmsClientConfig = defineConfig({
+  name: 'CmsClientConfig',
   schema,
   load: (env) => ({
     gqlBasePath: env.required(

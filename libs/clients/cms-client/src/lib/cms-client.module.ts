@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
-import { ContentfulGraphQLClientService } from './cms-client.service'
-import { ContentfulGraphQLFetchProvider } from './cms-client-fetch-provider'
+import { CmsClientService } from './cms-client.service'
+import { CmsClientFetchProvider } from './cms-client-fetch-provider'
 
 @Module({
-  providers: [ContentfulGraphQLFetchProvider, ContentfulGraphQLClientService],
-  exports: [ContentfulGraphQLClientService],
+  providers: [CmsClientFetchProvider, CmsClientService],
+  exports: [CmsClientService],
 })
-export class ContentfulGraphQLClientModule {}
+export class CmsClientModule {}

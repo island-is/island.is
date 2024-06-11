@@ -3,15 +3,15 @@ schema:
       headers:
         Authorization: Bearer ${CONTENTFUL_ACCESS_TOKEN}
 generates:
-  libs/clients/contentful-graphql/gen/schema.ts:
+  libs/clients/cms-client/gen/schema.ts:
     plugins:
       - typescript
     config:
       namingConvention:
         enumValues: keep
-  libs/clients/contentful-graphql/:
+  libs/clients/cms-client/:
     documents:
-      - libs/clients/contentful-graphql/src/**/*.graphql
+      - libs/clients/cms-client/src/**/*.graphql
     preset: 'near-operation-file'
     presetConfig:
       baseTypesPath: './gen/schema'

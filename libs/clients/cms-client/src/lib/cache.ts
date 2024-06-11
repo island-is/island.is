@@ -6,7 +6,7 @@ import {
   Request,
 } from '@island.is/clients/middlewares'
 
-import { ContentfulGraphQLClientConfig } from './cms-client.config'
+import { CmsClientConfig } from './cms-client.config'
 
 
 function overrideCacheControl(request: Request) {
@@ -18,14 +18,14 @@ function overrideCacheControl(request: Request) {
 
 
 export const getCache = async (
-  config: ConfigType<typeof ContentfulGraphQLClientConfig>,
+  config: ConfigType<typeof CmsClientConfig>,
 ): Promise<CacheConfig | undefined> => {
   if (config.redis.nodes.length === 0) {
     console.warn('No redis nodes defined, cache will not be used')
     return undefined
   }
   const cacheManager = await createRedisCacheManager({
-    name: 'clients-contentful-graphql',
+    name: 'clients-cms-client',
     nodes: config.redis.nodes,
     ssl: config.redis.ssl,
     noPrefix: true,

@@ -24,7 +24,7 @@ import {
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
-import { ContentfulGraphQLClientService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/contentful-graphql'
+import { CmsClientService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/cms-client'
 
 /**
  * These are the properties that can be replaced in the template
@@ -49,7 +49,7 @@ export class NotificationsService {
     private readonly logger: Logger,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
-    private readonly contentfulGraphQLClientService: ContentfulGraphQLClientService,
+    private readonly CmsClientService: CmsClientService,
     
   ) {}
 
@@ -67,7 +67,7 @@ export class NotificationsService {
       kennitala: senderId,
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.contentfulGraphQLClientService.fetchData(
+    const res = await this.CmsClientService.fetchData(
       GetOrganizationByKennitala, 
       queryVariables
     );
@@ -148,7 +148,7 @@ export class NotificationsService {
     const queryVariables = {
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.contentfulGraphQLClientService.fetchData(GetTemplates, queryVariables);
+    const res = await this.CmsClientService.fetchData(GetTemplates, queryVariables);
     return res.hnippTemplateCollection.items
 
   }
@@ -162,7 +162,7 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.contentfulGraphQLClientService.fetchData(GetTemplateByTemplateId, queryVariables);
+    const res = await this.CmsClientService.fetchData(GetTemplateByTemplateId, queryVariables);
     const items = res.hnippTemplateCollection.items;
     if(items.length > 0){
       return items[0]

@@ -16,7 +16,7 @@ import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegatio
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments/environment'
 import { UserNotificationsConfig } from '../config'
-import { ContentfulGraphQLClientConfig } from '@island.is/clients/contentful-graphql'
+import { CmsClientConfig } from '@island.is/clients/cms-client'
 
 @Module({
   imports: [
@@ -37,7 +37,7 @@ import { ContentfulGraphQLClientConfig } from '@island.is/clients/contentful-gra
         UserProfileClientConfig,
         IdsClientConfig,
         AuthDelegationApiClientConfig,
-        ContentfulGraphQLClientConfig
+        CmsClientConfig
       ],
     }),
     NotificationsModule

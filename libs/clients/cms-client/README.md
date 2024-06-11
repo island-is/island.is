@@ -1,4 +1,4 @@
-# CMS Client - Contentful GraphQL Client
+# CMS Client - Contentful GraphQL Client Library
 
 ## About
 

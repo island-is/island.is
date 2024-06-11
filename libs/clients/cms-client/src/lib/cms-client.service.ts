@@ -1,20 +1,20 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares';
 import type { ConfigType } from '@island.is/nest/config';
-import { ContentfulGraphQLClientConfig } from './cms-client.config';
-import { ContentfulGraphQLFetchProviderKey } from './cms-client-fetch-provider';
+import { CmsClientConfig } from './cms-client.config';
+import { CmsClientFetchProviderKey } from './cms-client-fetch-provider';
 import { GraphQLClient } from 'graphql-request';
 import { DocumentNode } from 'graphql';
 
 
 
 @Injectable()
-export class ContentfulGraphQLClientService {
+export class CmsClientService {
   private readonly client: GraphQLClient;
   constructor(
-    @Inject(ContentfulGraphQLClientConfig.KEY)
-    private readonly config: ConfigType<typeof ContentfulGraphQLClientConfig>,
-    @Inject(ContentfulGraphQLFetchProviderKey)
+    @Inject(CmsClientConfig.KEY)
+    private readonly config: ConfigType<typeof CmsClientConfig>,
+    @Inject(CmsClientFetchProviderKey)
     private readonly fetch: EnhancedFetchAPI,
   ) {
     this.client = new GraphQLClient(this.config.gqlBasePath, {

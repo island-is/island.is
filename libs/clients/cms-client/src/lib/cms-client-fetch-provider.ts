@@ -8,20 +8,20 @@ import {
   LazyDuringDevScope,
 } from '@island.is/nest/config'
 import { getCache } from './cache'
-import { ContentfulGraphQLClientConfig } from './cms-client.config'
+import { CmsClientConfig } from './cms-client.config'
 
 
-export const ContentfulGraphQLFetchProviderKey = 'ContentfulGraphQLFetchProviderKey'
+export const CmsClientFetchProviderKey = 'CmsClientFetchProviderKey'
 
-export const ContentfulGraphQLFetchProvider: Provider<EnhancedFetchAPI> = {
-  provide: ContentfulGraphQLFetchProviderKey,
+export const CmsClientFetchProvider: Provider<EnhancedFetchAPI> = {
+  provide: CmsClientFetchProviderKey,
   scope: LazyDuringDevScope,
   useFactory: async (
-    config: ConfigType<typeof ContentfulGraphQLClientConfig>,
+    config: ConfigType<typeof CmsClientConfig>,
   ) =>
     createEnhancedFetch({
-      name: 'clients-contentful-graphql',
+      name: 'clients-cms-client',
       cache: await getCache(config),
     }),
-  inject: [ContentfulGraphQLClientConfig.KEY],
+  inject: [CmsClientConfig.KEY],
 }
