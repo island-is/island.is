@@ -944,4 +944,29 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
     defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
+  organDonation: {
+    id: 'sp.health:organ-donation',
+    defaultMessage: 'Líffæragjöf',
+  },
+  organDonationDescription: {
+    id: 'sp.health:organ-donation-description',
+    defaultMessage:
+      'Íslendingar byggja löggjöf sína um líffæragjafir á ætluðu samþykki og  erum við því öll sjálfkrafa líffæragjafar. Við getum bjargað lífi annarra með því að gefa þeim líffæri. ',
+  },
+  readAboutOrganDonation: {
+    id: 'sp.health:read-about-organ-donation',
+    defaultMessage: 'Lesa um líffæragjöf',
+  },
+  takeOnOrganDonation: {
+    id: 'sp.health:take-on-organ-donation',
+    defaultMessage: 'Afstaða til líffæragjafar',
+  },
+  changeTake: {
+    id: 'sp.health:change-take',
+    defaultMessage: 'Breyta afstöðu',
+  },
+  organDonationLink: {
+    id: 'sp.health:organ-donation-link',
+    defaultMessage: 'https://island.is/liffaeragjof',
+  },
 })
