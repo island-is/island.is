@@ -10,8 +10,8 @@ import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
 interface Then {
-  result: DeliverResponse
-  error: Error
+  result?: DeliverResponse
+  error?: Error
 }
 
 type GivenWhenThen = (
@@ -47,23 +47,21 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
     ],
   } as Case
 
-  let mockCourtService: CourtService
+  let mockCourtService: jest.Mocked<CourtService>
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
     const { courtService, internalCaseController } =
       await createTestingCaseModule()
 
-    mockCourtService = courtService
-    const mockUpdateIndictmentCaseWithIndictmentInfo =
-      mockCourtService.updateIndictmentWithDefenderInfo as jest.Mock
-    mockUpdateIndictmentCaseWithIndictmentInfo.mockResolvedValue(uuid())
+    mockCourtService = courtService as jest.Mocked<CourtService>
+    mockCourtService.updateIndictmentWithDefenderInfo.mockResolvedValue(uuid())
 
-    givenWhenThen = async (caseId: string, theCase: Case) => {
+    givenWhenThen = async (caseId: string, theCase: Case, body: DeliverDto) => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverIndictmentDefenderInfoToCourt(caseId, theCase, { user })
+        .deliverIndictmentDefenderInfoToCourt(caseId, theCase, body)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -71,24 +69,30 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
     }
   })
 
-  describe('deliver indictment defender to court', () => {
-    let then: Then
+  it('should deliver the defender information to court', async () => {
+    const then = await givenWhenThen(caseId, theCase, { user })
 
-    beforeEach(async () => {
-      then = await givenWhenThen(caseId, theCase, { user })
-    })
+    expect(
+      mockCourtService.updateIndictmentWithDefenderInfo,
+    ).toHaveBeenCalledWith(
+      user,
+      theCase.id,
+      theCase.courtCaseNumber,
+      theCase.defendants,
+    )
 
-    it('should deliver the defender information to court', () => {
-      expect(
-        mockCourtService.updateIndictmentWithDefenderInfo,
-      ).toHaveBeenCalledWith(
-        user,
-        theCase.id,
-        theCase.courtCaseNumber,
-        theCase.defendants,
-      )
+    expect(then.result).toEqual({ delivered: true })
+    expect(then.error).toBeUndefined()
+  })
 
-      expect(then.result).toEqual({ delivered: true })
-    })
+  it('should handle not deliver if error occurs', async () => {
+    const error = new Error('Service error')
+    mockCourtService.updateIndictmentWithDefenderInfo.mockRejectedValueOnce(
+      error,
+    )
+
+    const then = await givenWhenThen(caseId, theCase, { user })
+
+    expect(then.result).toEqual({ delivered: false })
   })
 })
