@@ -127,7 +127,6 @@ export const form: Form = buildForm({
                 ) as string
                 return addMonths(new Date(dateFrom), 3)
               },
-
               excludeDates: getExcludedDates(),
             }),
             buildDescriptionField({
