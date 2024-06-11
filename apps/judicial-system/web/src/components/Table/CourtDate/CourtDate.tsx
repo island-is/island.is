@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import localeIS from 'date-fns/locale/is'
@@ -12,7 +13,7 @@ interface Props {
   postponedIndefinitelyExplanation?: string | null
 }
 
-const CourtDate: React.FC<Props> = (props: Props) => {
+const CourtDate: FC<Props> = (props) => {
   const { courtDate, postponedIndefinitelyExplanation } = props
   const { formatMessage } = useIntl()
 
