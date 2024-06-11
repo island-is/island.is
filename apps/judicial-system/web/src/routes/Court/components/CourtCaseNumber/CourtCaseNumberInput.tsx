@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, PropsWithChildren, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Input } from '@island.is/island-ui/core'
@@ -24,9 +24,7 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const CourtCaseNumberInput: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const CourtCaseNumberInput: FC<PropsWithChildren<Props>> = (props) => {
   const { workingCase, setWorkingCase } = props
 
   const { formatMessage } = useIntl()

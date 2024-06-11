@@ -1,4 +1,11 @@
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -191,9 +198,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
           <Box marginBottom={8}>
             <CourtCaseNumberInput
               workingCase={caseToCancel}
-              setWorkingCase={
-                setCaseToCancel as React.Dispatch<React.SetStateAction<Case>>
-              }
+              setWorkingCase={setCaseToCancel as Dispatch<SetStateAction<Case>>}
             />
           </Box>
         </Modal>
