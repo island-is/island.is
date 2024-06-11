@@ -53,20 +53,25 @@ const FormStepper = ({
       childrenToParse.push(child)
     })
 
-    return childrenToParse.map((child, i) => {
-      const isChildActive =
-        isParentActive && currentScreen.subSectionIndex === i
+    return childrenToParse
+      .map((child, i) => {
+        const isChildActive =
+          isParentActive && currentScreen.subSectionIndex === i
+        const childText = formatText(child.title, application, formatMessage)
 
-      return (
-        <Text
-          variant="medium"
-          fontWeight={isChildActive ? 'semiBold' : 'regular'}
-          key={`formStepperChild-${i}`}
-        >
-          {formatText(child.title, application, formatMessage)}
-        </Text>
-      )
-    })
+        if (!childText) return null
+
+        return (
+          <Text
+            variant="medium"
+            fontWeight={isChildActive ? 'semiBold' : 'regular'}
+            key={`formStepperChild-${i}`}
+          >
+            {childText}
+          </Text>
+        )
+      })
+      .filter(Boolean as unknown as ExcludesFalse)
   }
 
   const stepperTitle = isMobile ? null : (
@@ -85,23 +90,33 @@ const FormStepper = ({
         sections &&
         [
           stepperTitle,
-          ...sections.map((section, i) => (
-            <Section
-              key={`formStepper-${i}`}
-              isActive={currentScreen.sectionIndex === i}
-              section={formatText(section.title, application, formatMessage)}
-              sectionIndex={i}
-              subSections={
-                section.children.length > 1
-                  ? parseSubsections(
-                      section.children,
-                      currentScreen.sectionIndex === i,
-                    )
-                  : undefined
-              }
-              isComplete={currentScreen.sectionIndex > i}
-            />
-          )),
+          ...sections.map((section, i) => {
+            const sectionTitle = formatText(
+              section.title,
+              application,
+              formatMessage,
+            )
+
+            if (!sectionTitle) return null
+
+            return (
+              <Section
+                key={`formStepper-${i}`}
+                isActive={currentScreen.sectionIndex === i}
+                section={sectionTitle}
+                sectionIndex={i}
+                subSections={
+                  section.children.length > 1
+                    ? parseSubsections(
+                        section.children,
+                        currentScreen.sectionIndex === i,
+                      )
+                    : undefined
+                }
+                isComplete={currentScreen.sectionIndex > i}
+              />
+            )
+          }),
         ].filter(Boolean as unknown as ExcludesFalse)
       }
     />
