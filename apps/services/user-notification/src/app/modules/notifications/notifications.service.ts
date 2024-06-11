@@ -49,7 +49,7 @@ export class NotificationsService {
     private readonly logger: Logger,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
-    private readonly CmsClientService: CmsClientService,
+    private readonly cmsClientService: CmsClientService,
     
   ) {}
 
@@ -67,15 +67,15 @@ export class NotificationsService {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
     };
-
-    const res = await this.CmsClientService.fetchData(
+    const res = await this.cmsClientService.fetchData(
       GetOrganizationByNationalId, 
       queryVariables
     );
     const items = res.organizationCollection.items;
     if(items.length > 0){
-      items[0].title = this.cleanStringAdvanced(items[0].title)
-      return items[0]
+      const [item] = items;
+      item.title = this.cleanStringAdvanced(item.title);
+      return item;
     } else {
       this.logger.warn(`No org found for senderid: ${senderId}`)
     }
@@ -149,7 +149,7 @@ export class NotificationsService {
     const queryVariables = {
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.CmsClientService.fetchData(GetTemplates, queryVariables);
+    const res = await this.cmsClientService.fetchData(GetTemplates, queryVariables);
     return res.hnippTemplateCollection.items
 
   }
@@ -163,7 +163,7 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.CmsClientService.fetchData(GetTemplateByTemplateId, queryVariables);
+    const res = await this.cmsClientService.fetchData(GetTemplateByTemplateId, queryVariables);
     const items = res.hnippTemplateCollection.items;
     if(items.length > 0){
       return items[0]
