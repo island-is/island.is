@@ -306,7 +306,7 @@ const ApplicationProfile = ({
           homeCircumstances={application.homeCircumstances}
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
-          applicationCreated={application.created}
+          applicationCreated={application.appliedDate}
           applicationMunicipality={applicationMunicipality}
           hasApplicantChildren={
             !application?.children || application?.children.length > 0

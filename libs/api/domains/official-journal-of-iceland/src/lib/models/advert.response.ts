@@ -10,6 +10,12 @@ import { AdvertPaging } from './advert-paging.model'
 
 @ObjectType('OfficialJournalOfIcelandAdvertsTypeResponse')
 export class AdvertTypeResponse {
+  @Field(() => AdvertType)
+  type!: AdvertType
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertsTypesResponse')
+export class AdvertTypesResponse {
   @Field(() => [AdvertType])
   types!: AdvertType[]
 
@@ -37,6 +43,12 @@ export class AdvertCategoryResponse {
 
 @ObjectType('OfficialJournalOfIcelandAdvertsDepartmentResponse')
 export class AdvertDepartmentResponse {
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertsDepartmentsResponse')
+export class AdvertDepartmentsResponse {
   @Field(() => [AdvertEntity])
   departments!: AdvertEntity[]
 

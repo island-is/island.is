@@ -126,6 +126,7 @@ enum RobotEmailType {
   APPEAL_CASE_ASSIGNED_ROLES = 'APPEAL_CASE_ASSIGNED_ROLES',
   APPEAL_CASE_CONCLUSION = 'APPEAL_CASE_CONCLUSION',
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
+  NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
 }
 
 @Injectable()
@@ -555,6 +556,53 @@ export class CourtService {
     }
   }
 
+  async updateIndictmentCaseWithIndictmentInfo(
+    user: User,
+    caseId: string,
+    courtCaseNumber?: string,
+    receivedByCourtDate?: Date,
+    indictmentDate?: Date,
+    policeCaseNumber?: string,
+    subtypes?: string[],
+    defendants?: { name?: string; nationalId?: string }[],
+    prosecutor?: { name?: string; nationalId?: string },
+  ): Promise<unknown> {
+    try {
+      const subject = `Ákæra - ${courtCaseNumber} - upplýsingar`
+      const content = JSON.stringify({
+        receivedByCourtDate,
+        indictmentDate,
+        policeCaseNumber,
+        subtypes,
+        defendants,
+        prosecutor,
+      })
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.NEW_INDICTMENT_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with indictment info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+          receivedByCourtDate,
+          indictmentDate,
+          policeCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
   async updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
@@ -697,7 +745,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - skjal`
-      const content = JSON.stringify({ category, name, url, dateSent })
+      const content = JSON.stringify({ category, name, dateSent, url })
 
       return this.sendToRobot(
         subject,

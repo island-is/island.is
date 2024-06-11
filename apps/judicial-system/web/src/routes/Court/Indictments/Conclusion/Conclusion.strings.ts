@@ -17,16 +17,34 @@ export const strings = defineMessages({
     defaultMessage: 'Frestun',
     description: 'Notaður sem texti fyrir frestun valkost á Niðurstaða skrefi.',
   },
+  postponedUntilVerdict: {
+    id: 'judicial.system.core:court.indictments.conclusion.postponed_until_verdict',
+    defaultMessage: 'Dómtekið',
+    description:
+      'Notaður sem texti fyrir dómtekið valkost á Niðurstaða skrefi.',
+  },
   complete: {
     id: 'judicial.system.core:court.indictments.conclusion.complete',
     defaultMessage: 'Lokið',
     description: 'Notaður sem texti fyrir lokið valkost á Niðurstaða skrefi.',
+  },
+  arrangeVerdictTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.arrange_verdict',
+    defaultMessage: 'Dómsuppkvaðning',
+    description:
+      'Notaður sem texti fyrir Dómsuppkvaðning valkost á Niðurstaða skrefi.',
   },
   arrangeAnotherHearing: {
     id: 'judicial.system.core:court.indictments.conclusion.arrange_another_hearing',
     defaultMessage: 'Bóka annað þinghald',
     description:
       'Notaður sem texti fyrir bóka annað þinghald valkost á Niðurstaða skrefi.',
+  },
+  arrangeVerdict: {
+    id: 'judicial.system.core:court.indictments.conclusion.postpone_until_verdict',
+    defaultMessage: 'Boða til dómsuppkvaðningar',
+    description:
+      'Notaður sem texti fyrir boða til dómsuppkvaðningar valkost á Niðurstaða skrefi.',
   },
   postponedIndefinitely: {
     id: 'judicial.system.core:court.indictments.conclusion.postponed_indefinitely',
@@ -64,10 +82,10 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á hlaða upp takka á Niðurstaða skrefi.',
   },
   redistribute: {
-    id: 'judicial.system.core:court.indictments.conclusion.redistribute',
-    defaultMessage: 'Fer í útlutun til dómara',
+    id: 'judicial.system.core:court.indictments.conclusion.redistribute_v1',
+    defaultMessage: 'Fer í úthlutun til dómara',
     description:
-      'Notaður sem texti fyrir Fer í útlutun til dómara á Niðurstaða skrefi.',
+      'Notaður sem texti fyrir Fer í úthlutun til dómara á Niðurstaða skrefi.',
   },
   decision: {
     id: 'judicial.system.core:court.indictments.conclusion.decision',
@@ -96,6 +114,11 @@ export const strings = defineMessages({
     defaultMessage: 'Viðurlagaákvörðun',
     description:
       'Notaður sem texti í viðurlagaákvörðun valmöguleika á Niðurstaða skrefi.',
+  },
+  nextButtonTextConfirm: {
+    id: 'judicial.system.core:court.indictments.conclusion.next_button_text_confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Notaður sem texti á halda áfram takka.',
   },
   dismissal: {
     id: 'judicial.system.core:court.indictments.conclusion.dismissal',
