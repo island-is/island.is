@@ -22,7 +22,6 @@ import { hasYes } from '@island.is/application/core'
 import { Fragment, useEffect, useMemo } from 'react'
 import { EstateMember } from '../../types'
 import {
-  ESTATE_INHERITANCE,
   ErrorValue,
   PREPAID_INHERITANCE,
   RelationSpouse,

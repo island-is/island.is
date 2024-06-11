@@ -210,7 +210,6 @@ export default OverviewAssets
 const Row = ({ row }: RowProps) => {
   const { formatMessage } = useLocale()
   const { title, value, items } = row
-
   const hasItems = items && items?.length > 0
 
   return (

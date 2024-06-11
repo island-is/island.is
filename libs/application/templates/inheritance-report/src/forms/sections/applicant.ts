@@ -21,15 +21,6 @@ export const applicant = buildSection({
       description: m.applicantsInfoSubtitle,
       children: [
         buildTextField({
-          id: 'applicant.name',
-          title: m.name,
-          readOnly: true,
-          width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.fullName
-          },
-        }),
-        buildTextField({
           id: 'applicant.nationalId',
           title: m.nationalId,
           readOnly: true,
@@ -38,6 +29,15 @@ export const applicant = buildSection({
             return formatNationalId(
               externalData.nationalRegistry?.data.nationalId,
             )
+          },
+        }),
+        buildTextField({
+          id: 'applicant.name',
+          title: m.name,
+          readOnly: true,
+          width: 'half',
+          defaultValue: ({ externalData }: Application) => {
+            return externalData.nationalRegistry?.data.fullName
           },
         }),
         buildTextField({

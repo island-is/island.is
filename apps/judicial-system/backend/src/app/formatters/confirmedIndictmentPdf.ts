@@ -1,11 +1,12 @@
-import { applyCase } from 'beygla'
 import { PDFDocument, rgb, StandardFonts } from 'pdf-lib'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import {
+  calculatePt,
   drawTextWithEllipsisPDFKit,
   IndictmentConfirmation,
+  smallFontSize,
 } from './pdfHelpers'
 import { PDFKitCoatOfArms } from './PDFKitCoatOfArms'
 
@@ -21,32 +22,34 @@ export const createConfirmedIndictment = async (
   const darkGray = rgb(0.7961, 0.7961, 0.7961)
   const gold = rgb(0.6784, 0.6392, 0.451)
   const white = rgb(1, 1, 1)
-  const pageMargin = 24
-  // The shaddow and content heights are the same
-  const shaddowHeight = 88
-  const coatOfArmsDimensions = 88
-  const coatOfArmsX = pageMargin + 8
-  const titleWidth = doc.getWidth() - 142
-  const titleHeight = 32
-  const titleX = coatOfArmsX + coatOfArmsDimensions + 8
-  const confirmedByWidth = 160
-  const institutionWidth = confirmedByWidth + 62
-
   const { width, height } = doc.getSize()
+  const pageMargin = calculatePt(18)
+  const shaddowHeight = calculatePt(90)
+  const coatOfArmsWidth = calculatePt(105)
+  const coatOfArmsHeight = calculatePt(90)
+  const coatOfArmsX = pageMargin + calculatePt(8)
+  const titleWidth = width - coatOfArmsWidth - 2 * coatOfArmsX
+  const titleHeight = calculatePt(32)
+  const titleX = coatOfArmsX + coatOfArmsWidth + calculatePt(8)
+  const confirmedByWidth = calculatePt(258)
+  const confirmedByHeight = calculatePt(50)
+  const institutionWidth = confirmedByWidth + calculatePt(48)
 
+  // Draw the shaddow
   doc.drawRectangle({
     x: pageMargin,
-    y: height - shaddowHeight - 32,
-    width: doc.getWidth() - 2 * pageMargin - 8,
+    y: height - shaddowHeight - pageMargin,
+    width: doc.getWidth() - 2 * pageMargin - calculatePt(16),
     height: shaddowHeight,
     color: lightGray,
   })
 
+  // Draw the box around the coat of arms
   doc.drawRectangle({
     x: coatOfArmsX,
-    y: height - coatOfArmsDimensions - pageMargin,
-    width: coatOfArmsDimensions,
-    height: coatOfArmsDimensions,
+    y: height - shaddowHeight - pageMargin + calculatePt(8),
+    width: coatOfArmsWidth,
+    height: coatOfArmsHeight,
     color: rgb(1, 1, 1),
     borderColor: darkGray,
     borderWidth: 1,
@@ -55,8 +58,8 @@ export const createConfirmedIndictment = async (
   PDFKitCoatOfArms(doc, height)
 
   doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsDimensions,
-    y: height - pageMargin - titleHeight,
+    x: coatOfArmsX + coatOfArmsWidth,
+    y: height - pageMargin - titleHeight + calculatePt(8),
     width: titleWidth,
     height: titleHeight,
     color: lightGray,
@@ -70,27 +73,31 @@ export const createConfirmedIndictment = async (
   )
   doc.drawText('Réttarvörslugátt', {
     x: titleX,
-    y: height - 44,
-    size: 12,
+    y: height - pageMargin - titleHeight + calculatePt(20),
+    size: calculatePt(smallFontSize),
     font: timesRomanBoldFont,
   })
 
   doc.drawText('Skjal samþykkt rafrænt', {
-    x: 220,
-    y: height - 44,
-    size: 12,
+    x: 158,
+    y: height - pageMargin - titleHeight + calculatePt(20),
+    size: calculatePt(smallFontSize),
     font: timesRomanFont,
   })
 
   doc.drawSvgPath(
     'M0.763563 11.8047H7.57201C7.85402 11.8047 8.08264 11.5761 8.08264 11.2941V5.50692C8.08264 5.22492 7.85402 4.99629 7.57201 4.99629H7.06138V3.46439C7.06138 1.86887 5.76331 0.570801 4.16779 0.570801C2.57226 0.570801 1.2742 1.86887 1.2742 3.46439V4.99629H0.763563C0.481557 4.99629 0.25293 5.22492 0.25293 5.50692V11.2941C0.25293 11.5761 0.481557 11.8047 0.763563 11.8047ZM5.61394 8.03817L4.16714 9.48496C4.06743 9.58467 3.93674 9.63455 3.80609 9.63455C3.67543 9.63455 3.54471 9.58467 3.44504 9.48496L2.72164 8.76157C2.52222 8.56215 2.52222 8.23888 2.72164 8.03943C2.92102 7.84001 3.24436 7.84001 3.44378 8.03943L3.80612 8.40174L4.89187 7.31603C5.09125 7.11661 5.41458 7.11661 5.614 7.31603C5.81339 7.51549 5.81339 7.83875 5.61394 8.03817ZM2.29546 3.46439C2.29546 2.43199 3.13539 1.59207 4.16779 1.59207C5.20019 1.59207 6.04011 2.43199 6.04011 3.46439V4.99629H2.29546V3.46439Z',
-    { color: gold, x: width - 38, y: height - 34 },
+    {
+      color: gold,
+      x: width - 38,
+      y: height - pageMargin - titleHeight + calculatePt(33),
+    },
   )
 
   // Draw the "Confirmed by" box
   doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsDimensions,
-    y: height - pageMargin - titleHeight - 56,
+    x: coatOfArmsX + coatOfArmsWidth,
+    y: height - pageMargin - titleHeight - confirmedByHeight,
     width: confirmedByWidth,
     height: shaddowHeight - titleHeight,
     color: white,
@@ -98,29 +105,36 @@ export const createConfirmedIndictment = async (
     borderWidth: 1,
   })
 
-  doc.drawText('Staðfest af', {
-    x: coatOfArmsX + coatOfArmsDimensions + 8,
-    y: height - pageMargin - titleHeight - 24,
-    size: 12,
+  doc.drawText('Staðfestingaraðili', {
+    x: titleX,
+    y: height - pageMargin - titleHeight - calculatePt(15),
+    size: calculatePt(smallFontSize),
     font: timesRomanBoldFont,
   })
 
   if (confirmation?.actor) {
-    timesRomanFont.widthOfTextAtSize(applyCase('þgf', confirmation.actor), 12)
+    timesRomanFont.widthOfTextAtSize(
+      `${confirmation.actor}${
+        confirmation.title ? `, ${confirmation.title}` : ''
+      }`,
+      calculatePt(smallFontSize),
+    )
     drawTextWithEllipsisPDFKit(
       doc,
-      applyCase('þgf', confirmation.actor),
-      { type: timesRomanFont, size: 12 },
-      coatOfArmsX + coatOfArmsDimensions + 8,
-      height - pageMargin - titleHeight - 40,
+      `${confirmation.actor}${
+        confirmation.title ? `, ${confirmation.title}` : ''
+      }`,
+      { type: timesRomanFont, size: calculatePt(smallFontSize) },
+      titleX,
+      height - pageMargin - titleHeight - calculatePt(29),
       confirmedByWidth - 16,
     )
   }
 
   // Draw the "Institution" box
   doc.drawRectangle({
-    x: coatOfArmsX + coatOfArmsDimensions + confirmedByWidth,
-    y: height - pageMargin - titleHeight - 56,
+    x: coatOfArmsX + coatOfArmsWidth + confirmedByWidth,
+    y: height - pageMargin - titleHeight - confirmedByHeight,
     width: institutionWidth,
     height: shaddowHeight - titleHeight,
     color: white,
@@ -129,26 +143,26 @@ export const createConfirmedIndictment = async (
   })
 
   doc.drawText('Embætti', {
-    x: coatOfArmsX + coatOfArmsDimensions + confirmedByWidth + 8,
-    y: height - pageMargin - titleHeight - 24,
-    size: 12,
+    x: titleX + confirmedByWidth,
+    y: height - pageMargin - titleHeight - calculatePt(15),
+    size: calculatePt(smallFontSize),
     font: timesRomanBoldFont,
   })
 
   if (confirmation?.institution) {
     doc.drawText(confirmation.institution, {
-      x: coatOfArmsX + coatOfArmsDimensions + confirmedByWidth + 8,
-      y: height - pageMargin - titleHeight - 40,
+      x: titleX + confirmedByWidth,
+      y: height - pageMargin - titleHeight - calculatePt(29),
       font: timesRomanFont,
-      size: 12,
+      size: calculatePt(smallFontSize),
     })
   }
 
   // Draw the "Indictment date" box
   doc.drawRectangle({
-    x: width - 88 - 22,
-    y: height - pageMargin - titleHeight - 56,
-    width: 88,
+    x: width - 90,
+    y: height - pageMargin - titleHeight - confirmedByHeight,
+    width: 70,
     height: shaddowHeight - titleHeight,
     color: white,
     borderColor: darkGray,
@@ -156,9 +170,9 @@ export const createConfirmedIndictment = async (
   })
 
   doc.drawText('Útgáfa ákæru', {
-    x: width - 88 - 16,
-    y: height - pageMargin - titleHeight - 24,
-    size: 12,
+    x: width - 72,
+    y: height - pageMargin - titleHeight - calculatePt(15),
+    size: calculatePt(smallFontSize),
     font: timesRomanBoldFont,
   })
 
@@ -167,10 +181,10 @@ export const createConfirmedIndictment = async (
 
     if (dateFormattedDate) {
       doc.drawText(dateFormattedDate, {
-        x: width - 88 - 16,
-        y: height - pageMargin - titleHeight - 40,
+        x: width - 62,
+        y: height - pageMargin - titleHeight - calculatePt(29),
         font: timesRomanFont,
-        size: 12,
+        size: calculatePt(smallFontSize),
       })
     }
   }
