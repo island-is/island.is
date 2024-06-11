@@ -9,9 +9,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
-interface ButtonProps extends TouchableHighlightProps {
-  title?: string
-  icon?: React.ReactNode
+interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
   isOutlined?: boolean
   isUtilityButton?: boolean
@@ -19,6 +17,18 @@ interface ButtonProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
 }
+
+interface IconButtonProps extends ButtonBaseProps {
+  title?: never
+  icon: React.ReactNode
+}
+
+interface TextButtonProps extends ButtonBaseProps {
+  title: string
+  icon?: React.ReactNode
+}
+
+type ButtonProps = IconButtonProps | TextButtonProps
 
 type HostProps = Omit<ButtonProps, 'title'>
 
