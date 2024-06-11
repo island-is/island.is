@@ -144,24 +144,6 @@ jobs:
         if: steps.cypress-check.outcome != 'success'
         run: npx cypress install
 
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-          # force-cache-save: ${{ env.SKIP_GENERATED_CACHE }}
-
-      - name: Check generated files cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
-
       # - name: Security audit Node modules
       #   run: ./scripts/ci/20_security-audit.sh
 
@@ -193,6 +175,8 @@ jobs:
         id: nx-cloud
         run: |
           yarn nx-cloud start-ci-run --stop-agents-after=build
+          yarn nx run-many -t codegen/backend-client
+          yarn nx run-many -t codegen/frontend-client
           yarn nx affected -t lint format test build --with-env-vars="auto"
 
   run-shellcheck:
