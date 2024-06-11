@@ -5,6 +5,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { IGenericList, IGenericListFields } from '../generated/contentfulTypes'
 import { GenericListItemResponse } from './genericListItemResponse.model'
 import { GetGenericListItemsInput } from '../dto/getGenericListItems.input'
+import { GenericTag, mapGenericTag } from './genericTag.model'
 
 enum GenericListItemType {
   NonClickable = 'NonClickable',
@@ -28,6 +29,9 @@ export class GenericList {
 
   @CacheField(() => GenericListItemType, { nullable: true })
   itemType?: GenericListItemType
+
+  @CacheField(() => [GenericTag], { nullable: true })
+  filterTags?: GenericTag[]
 }
 
 const mapItemType = (itemType?: IGenericListFields['itemType']) =>
@@ -49,4 +53,5 @@ export const mapGenericList = ({
   },
   searchInputPlaceholder: fields.searchInputPlaceholder,
   itemType: mapItemType(fields.itemType),
+  filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
 })

@@ -38,7 +38,11 @@ export class GenericListItemSyncService
             2,
           )
 
-          const tags: MappedData['tags'] = []
+          const tags: MappedData['tags'] =
+            mapped.filterTags?.map((tag) => ({
+              type: 'genericTag',
+              key: tag.id,
+            })) ?? []
 
           if (mapped.genericList) {
             tags.push({
