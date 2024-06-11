@@ -36,7 +36,7 @@ import {
 } from './dto/authenticationOptions.dto'
 import { AuthenticationResponse } from './dto/authenticationResponse.dto'
 
-const namespace = '@island.is/auth-public-api/passkeys'
+const namespace = '@island.is/auth/public-api/passkeys'
 
 @ApiTags('passkeys')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
