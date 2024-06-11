@@ -106,11 +106,13 @@ export class AdminPatchScopeDto {
   removedDelegationTypes?: string[]
 }
 
-export const superUserScopeFields = [
-  'grantToAuthenticatedUser',
-  'grantToLegalGuardians',
-  'grantToProcuringHolders',
-  'allowExplicitDelegationGrant',
-  'isAccessControlled',
-  'grantToPersonalRepresentatives',
-]
+/**
+ * Here we can define properties that should only be editable by a super user
+ *
+ * For example:
+ * export const superUserScopeFields = [
+ *   'isAccessControlled',
+ *   'grantToAuthenticatedUser',
+ * ]
+ */
+export const superUserScopeFields = []

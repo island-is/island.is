@@ -20,8 +20,8 @@ export const EditPermission = () => {
       <Box display="flex" flexDirection="column" rowGap={5}>
         <PermissionBasicInfo />
         <PermissionContent />
+        <PermissionDelegations />
         {isSuperAdmin && <PermissionAccessControl />}
-        {isSuperAdmin && <PermissionDelegations />}
         <PublishPermission />
       </Box>
     </EnvironmentProvider>
