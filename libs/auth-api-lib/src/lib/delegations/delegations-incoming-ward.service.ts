@@ -66,7 +66,7 @@ export class DelegationsIncomingWardService {
 
       // delegations for legal guardians of children under 16
       const legalGuardianMinorDelegations = legalGuardianDelegations
-        .filter((delegation) => !!isUnderXAge(16, delegation.fromNationalId))
+        .filter((delegation) => isUnderXAge(16, delegation.fromNationalId))
         .map((delegation) => ({
           ...delegation,
           type: AuthDelegationType.LegalGuardianMinor,
