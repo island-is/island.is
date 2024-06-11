@@ -15,7 +15,11 @@ import {
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { incomePlanFormMessage } from '../lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { SocialInsuranceAdministrationCategorizedIncomeTypes } from '../dataProviders'
+import {
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationWithholdingTaxApi,
+} from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
@@ -62,7 +66,15 @@ export const PrerequisitesForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre.contactInfoDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCategorizedIncomeTypes,
+              provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationWithholdingTaxApi,
               title: '',
             }),
             buildDataProviderItem({

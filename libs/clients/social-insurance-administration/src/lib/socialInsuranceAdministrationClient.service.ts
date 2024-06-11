@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
   ApplicantApi,
   ApplicationApi,
@@ -13,6 +14,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
   TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '../../gen/fetch'
@@ -127,5 +129,16 @@ export class SocialInsuranceAdministrationClientService {
     return this.incomePlanApiWithAuth(
       user,
     ).apiProtectedV1IncomePlanCategorizedIncomeTypesGet()
+  }
+
+  async getWithholdingTax(
+    user: User,
+    year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  ): Promise<
+    TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto
+  > {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanWithholdingTaxGet(year)
   }
 }

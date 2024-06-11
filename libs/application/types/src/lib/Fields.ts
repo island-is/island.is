@@ -94,6 +94,7 @@ export type TableRepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
+      suffix?: string
     }
   | {
       component: 'date'

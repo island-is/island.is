@@ -11,8 +11,14 @@ export const getApplicationExternalData = (
     [],
   ) as categorizedIncomeTypes[]
 
+  const currencies = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationCurrencies.data',
+  ) as Array<string>
+
   return {
     categorizedIncomeTypes,
+    currencies
   }
 }
 

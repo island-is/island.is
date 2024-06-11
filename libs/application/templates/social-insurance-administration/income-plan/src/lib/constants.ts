@@ -2,6 +2,8 @@ import { DefaultEvents } from '@island.is/application/types'
 
 export const YES = 'yes'
 export const NO = 'no'
+export const FOREIGN_BASIC_PENSION = '40ERL'
+export const ISK = 'IKR'
 
 export type Events =
   | { type: DefaultEvents.SUBMIT }

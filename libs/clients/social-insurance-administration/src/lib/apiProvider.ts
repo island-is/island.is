@@ -45,7 +45,7 @@ const apiCollection: Array<{ api: Api; scopes: Array<Scope> }> = [
   },
   {
     api: IncomePlanApi,
-    scopes: ['@tr.is/tekjuaetlun:read'],
+    scopes: ['@tr.is/stadgreidsla:read', '@tr.is/tekjuaetlun:read'],
   },
   {
     api: PaymentPlanApi,

@@ -21,6 +21,7 @@ import {
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
+  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
@@ -35,6 +36,7 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { yearsToMonths } from 'date-fns/esm'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -512,5 +514,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getCategorizedIncomeTypes({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCategorizedIncomeTypes(auth)
+  }
+
+  async getWithholdingTax(
+    { auth }: TemplateApiModuleActionProps,
+    year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest = {},
+  ) {
+    return await this.siaClientService.getWithholdingTax(auth, year)
   }
 }

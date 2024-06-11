@@ -19,7 +19,11 @@ import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { incomePlanFormMessage } from './messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { SocialInsuranceAdministrationCategorizedIncomeTypes } from '../dataProviders'
+import {
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationWithholdingTaxApi,
+} from '../dataProviders'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -61,7 +65,9 @@ const IncomePlanTemplate: ApplicationTemplate<
                     validateEmail: true,
                   },
                 }),
-                SocialInsuranceAdministrationCategorizedIncomeTypes,
+                SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+                SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationWithholdingTaxApi,
               ],
               delete: true,
             },
