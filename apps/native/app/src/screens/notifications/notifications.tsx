@@ -2,8 +2,8 @@ import {
   Button,
   NavigationBarSheet,
   NotificationCard,
-  Skeleton,
   Problem,
+  ListItemSkeleton,
 } from '@ui'
 import { useApolloClient } from '@apollo/client'
 
@@ -182,21 +182,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
 
   const renderNotificationItem = ({ item }: { item: ListItem }) => {
     if (item.__typename === 'Skeleton') {
-      return (
-        <Skeleton
-          active
-          overlayColor={{
-            dark: theme.shades.dark.shade200,
-            light: theme.color.blue200,
-          }}
-          overlayOpacity={1}
-          height={103}
-          style={{
-            borderBottomWidth: 1,
-            borderBottomColor: theme.color.blue200,
-          }}
-        />
-      )
+      return <ListItemSkeleton multilineMessage />
     }
 
     return (
