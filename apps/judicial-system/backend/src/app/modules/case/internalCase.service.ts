@@ -759,7 +759,7 @@ export class InternalCaseService {
       ? Object.values(theCase.indictmentSubtypes).flat()
       : []
 
-    const mappedSubtypes = subtypeList.map((key) => courtSubtypes[key]).flat()
+    const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(

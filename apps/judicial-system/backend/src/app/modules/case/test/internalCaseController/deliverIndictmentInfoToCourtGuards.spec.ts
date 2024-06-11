@@ -2,7 +2,6 @@ import { CanActivate } from '@nestjs/common'
 
 import { indictmentCases } from '@island.is/judicial-system/types'
 
-import { CaseCompletedGuard } from '../../guards/caseCompleted.guard'
 import { CaseExistsGuard } from '../../guards/caseExists.guard'
 import { CaseTypeGuard } from '../../guards/caseType.guard'
 import { InternalCaseController } from '../../internalCase.controller'
