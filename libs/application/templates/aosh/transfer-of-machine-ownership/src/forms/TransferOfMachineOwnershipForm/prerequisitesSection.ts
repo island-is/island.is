@@ -52,10 +52,10 @@ export const prerequisitesSection = buildSection({
           title: externalData.myMachines.title,
           subTitle: externalData.myMachines.subTitle,
         }),
-        buildDataProviderItem({
-          provider: VinnueftirlitidPaymentCatalogApi,
-          title: '',
-        }),
+        // buildDataProviderItem({
+        //   provider: VinnueftirlitidPaymentCatalogApi,
+        //   title: '',
+        // }),
       ],
     }),
   ],

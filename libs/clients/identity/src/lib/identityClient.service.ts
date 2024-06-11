@@ -86,22 +86,33 @@ export class IdentityClientService {
       await this.nationalRegistryV3ClientService.getAllDataIndividual(
         nationalId,
       )
+
     console.log('personv3', personv3)
-    if (!person) {
+    if (!person || !personv3) {
       return null
     }
-
+    console.log('person', person)
     return {
-      nationalId: person.nationalId,
-      givenName: person.givenName,
-      familyName: person.familyName,
-      name: person.name,
-      address: person.legalDomicile && {
-        streetAddress: person.legalDomicile.streetAddress,
-        postalCode: person.legalDomicile.postalCode,
-        city: person.legalDomicile.locality,
+      nationalId: personv3.kennitala,
+      name: personv3.nafn,
+      address: personv3.heimilisfang && {
+        streetAddress: personv3.heimilisfang.ibud,
+        postalCode: personv3.heimilisfang.postnumer,
+        city: personv3.heimilisfang.sveitarfelag,
       },
       type: IdentityType.Person,
     } as Identity
+    // return {
+    //   nationalId: person.nationalId,
+    //   givenName: person.givenName,
+    //   familyName: person.familyName,
+    //   name: person.name,
+    //   address: person.legalDomicile && {
+    //     streetAddress: person.legalDomicile.streetAddress,
+    //     postalCode: person.legalDomicile.postalCode,
+    //     city: person.legalDomicile.locality,
+    //   },
+    //   type: IdentityType.Person,
+    // } as Identity
   }
 }

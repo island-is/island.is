@@ -15,12 +15,11 @@ import { ConfigModule } from '@nestjs/config'
   imports: [
     NationalRegistryClientModule,
     CompanyRegistryClientModule,
-
+    NationalRegistryV3ClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [NationalRegistryV3ClientConfig, IdsClientConfig, XRoadConfig],
     }),
-    NationalRegistryV3ClientModule,
   ],
   providers: [IdentityClientService],
   exports: [IdentityClientService],
