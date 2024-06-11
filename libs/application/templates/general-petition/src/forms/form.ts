@@ -11,6 +11,7 @@ import {
   buildDividerField,
   buildDescriptionField,
   buildPhoneField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   DefaultEvents,
@@ -27,6 +28,8 @@ import { UserProfile } from '@island.is/api/schema'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { parse } from 'libphonenumber-js'
 import { getExcludedDates } from '../lib/generalPetitionUtils'
+import { GeneralPetition } from '../lib/dataSchema'
+import { addMonths } from 'date-fns'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
@@ -103,6 +106,13 @@ export const form: Form = buildForm({
               minDate: new Date(),
               excludeDates: getExcludedDates(),
             }),
+            //fake field to trigger rerender on category switch
+            buildDescriptionField({
+              id: 'fake_helper_field',
+              title: '',
+              condition: (answers) =>
+                !!(answers as GeneralPetition)?.dates?.dateFrom,
+            }),
             buildDateField({
               id: 'dates.dateTil',
               title: m.dateTitle,
@@ -110,9 +120,14 @@ export const form: Form = buildForm({
               width: 'half',
               backgroundColor: 'white',
               minDate: new Date(),
-              maxDate: new Date(
-                new Date().setFullYear(new Date().getFullYear() + 1),
-              ),
+              maxDate: ({ answers }) => {
+                const dateFrom = getValueViaPath(
+                  answers,
+                  'dates.dateFrom',
+                ) as string
+                return addMonths(new Date(dateFrom), 3)
+              },
+
               excludeDates: getExcludedDates(),
             }),
             buildDescriptionField({
