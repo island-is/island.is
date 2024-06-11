@@ -58,7 +58,12 @@ const NonClickableItem = ({ item }: ItemProps) => {
   const { format } = useDateUtils()
 
   return (
-    <Box padding={[2, 2, 3]} border="standard" borderRadius="large">
+    <Box
+      padding={[2, 2, 3]}
+      border="standard"
+      borderRadius="large"
+      height="full"
+    >
       <Stack space={0}>
         <Stack space={0}>
           <Text variant="eyebrow" color="purple400">
