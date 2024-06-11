@@ -462,7 +462,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IProjectPageFields>(lang, params)
+      .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
     return result.items.length
