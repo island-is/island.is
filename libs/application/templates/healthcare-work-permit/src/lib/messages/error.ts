@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const error = defineMessages({
   errorDataProvider: {
     id: 'hwp.application:error.dataProvider',
-    defaultMessage: 'Reyndu aftur síðar',
+    defaultMessage: 'Ekki tókst að sækja gögn, vinsamlegast reyndu aftur síðar',
     description: 'Unhandled error in data provider',
   },
   emptyCareerResponseTitle: {
@@ -28,21 +28,21 @@ export const error = defineMessages({
   noResponseEducationInfoMessage: {
     id: 'hwp.application:error.noResponseEducationInfoMessage',
     defaultMessage:
-      'Ekki tókst að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
+      'Ekki tókst að sækja gögn frá Embætti Landlæknis, vinsamlegast prufaðu aftur seinna',
     description:
       'No response or faulty response when fetching info on education paths',
   },
   healthcareLicenseErrorTitle: {
     id: 'hwp.application:error.healthcareLicenseErrorTitle',
     defaultMessage:
-      'Ekki tókst að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
+      'Ekki tókst að sækja gögn frá Embætti Landlæknis, vinsamlegast prufaðu aftur seinna',
     description:
       'No response or faulty response when fetching info on healthcare licenses',
   },
   healthcareLicenseErrorMessage: {
     id: 'hwp.application:error.healthcareLicenseErrorMessage',
     defaultMessage:
-      'Ekki tóks að sækja gögn frá Landlækni, vinsamlegast prufaðu aftur seinna',
+      'Ekki tókst að sækja gögn frá Embætti Landlæknis, vinsamlegast prufaðu aftur seinna',
     description:
       'No response or faulty response when fetching healthcare licenses',
   },
@@ -65,7 +65,8 @@ export const error = defineMessages({
   },
   nationalRegistryFetchErrorMessage: {
     id: 'hwp.application:error.nationalRegistryFetchErrorMessage',
-    defaultMessage: 'Lorem ipsum',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá Þjóðskrá, vinsamlegast reyndu aftur síðar',
     description:
       'No response or faulty response when fetching info on current user from nation registry',
   },
