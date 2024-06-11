@@ -503,8 +503,9 @@ export const InboxScreen: NavigationFunctionComponent<{
                 style={{
                   paddingTop: 0,
                   paddingBottom: 0,
-                  paddingHorizontal: 12,
-                  width: 40,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  minWidth: 40,
                 }}
                 onPress={onPressMarkAllAsRead}
               />
