@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Button, Input } from '@island.is/island-ui/core'
@@ -21,12 +21,10 @@ import * as styles from './CourtCaseNumber.css'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
 }
 
-const CourtCaseNumberInput: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const CourtCaseNumberInput: FC<Props> = (props) => {
   const { workingCase, setWorkingCase } = props
 
   const { formatMessage } = useIntl()

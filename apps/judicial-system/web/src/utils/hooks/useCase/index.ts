@@ -251,9 +251,7 @@ const useCase = () => {
 
         const res = data as UpdateCaseMutation & LimitedAccessUpdateCaseMutation
 
-        return (
-          res && res[limitedAccess ? 'limitedAccessUpdateCase' : 'updateCase']
-        )
+        return res?.[limitedAccess ? 'limitedAccessUpdateCase' : 'updateCase']
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
@@ -294,8 +292,8 @@ const useCase = () => {
           const res = data as TransitionCaseMutation &
             LimitedAccessTransitionCaseMutation
 
-          const state = res && res[resultType]?.state
-          const appealState = res && res[resultType]?.appealState
+          const state = res?.[resultType]?.state
+          const appealState = res?.[resultType]?.appealState
 
           if (!state && !appealState) {
             return false

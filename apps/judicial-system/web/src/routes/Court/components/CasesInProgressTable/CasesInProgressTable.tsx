@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -42,7 +49,7 @@ interface CasesInProgressTableProps {
   refetch: () => Promise<unknown>
 }
 
-const CasesInProgressTable: React.FC<CasesInProgressTableProps> = (props) => {
+const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
   const { loading, isFiltering, cases, refetch } = props
 
   const { formatMessage } = useIntl()
@@ -161,9 +168,9 @@ const CasesInProgressTable: React.FC<CasesInProgressTableProps> = (props) => {
                 if (row.state === CaseState.WAITING_FOR_CANCELLATION) {
                   setCaseToCancelId(row.id)
                   return true
-                } else {
-                  return false
                 }
+
+                return false
               }}
             />
           ) : (
@@ -191,9 +198,7 @@ const CasesInProgressTable: React.FC<CasesInProgressTableProps> = (props) => {
           <Box marginBottom={8}>
             <CourtCaseNumberInput
               workingCase={caseToCancel}
-              setWorkingCase={
-                setCaseToCancel as React.Dispatch<React.SetStateAction<Case>>
-              }
+              setWorkingCase={setCaseToCancel as Dispatch<SetStateAction<Case>>}
             />
           </Box>
         </Modal>

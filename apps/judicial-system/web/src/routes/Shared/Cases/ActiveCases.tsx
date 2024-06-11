@@ -71,7 +71,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const [displayCases, setDisplayCases] = useState<CaseListEntry[]>([])
   const [modalVisible, setVisibleModal] = useState<'DELETE_CASE'>()
   // The id of the case that's about to be removed
-  const [caseToRemove, setCaseToRemove] = useState<CaseListEntry | undefined>()
+  const [caseToRemove, setCaseToRemove] = useState<CaseListEntry>()
 
   useEffect(() => {
     setDisplayCases(cases)
