@@ -185,8 +185,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           unset(application.answers, 'photography')
           unset(application.answers, 'allergiesAndIntolerances')
         } else {
-          // Clear country if "Moving abroad" is not selected as reason for application
-          unset(application.answers, 'reasonForApplication.country')
+          // Clear movingAbroad if "Moving abroad" is not selected as reason for application
+          unset(application.answers, 'reasonForApplication.movingAbroad')
+        }
+
+        // Clear transferOfLegalDomicile if "Transfer of legal domicile" is not selected as reason for application
+        if (
+          reasonForApplication !==
+          ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        ) {
+          unset(
+            application.answers,
+            'reasonForApplication.transferOfLegalDomicile',
+          )
         }
 
         // Clear siblings if "Siblings in the same primary school" is not selected as reason for application

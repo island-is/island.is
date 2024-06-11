@@ -447,7 +447,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   options: getReasonForApplicationOptions(),
                 }),
                 buildSelectField({
-                  id: 'reasonForApplication.country',
+                  id: 'reasonForApplication.movingAbroad.country',
                   dataTestId: 'reason-for-application-country',
                   title: newPrimarySchoolMessages.primarySchool.country,
                   placeholder:
@@ -468,6 +468,37 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     return (
                       reasonForApplication ===
                       ReasonForApplicationOptions.MOVING_ABROAD
+                    )
+                  },
+                }),
+                buildTextField({
+                  id: 'reasonForApplication.transferOfLegalDomicile.streetAddress',
+                  title: newPrimarySchoolMessages.shared.address,
+                  width: 'half',
+                  required: true,
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+                    )
+                  },
+                }),
+                buildTextField({
+                  id: 'reasonForApplication.transferOfLegalDomicile.postalCode',
+                  title: newPrimarySchoolMessages.shared.postalcode,
+                  width: 'half',
+                  required: true,
+                  format: '###',
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
                     )
                   },
                 }),

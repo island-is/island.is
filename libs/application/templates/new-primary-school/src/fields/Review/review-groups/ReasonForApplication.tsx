@@ -16,8 +16,12 @@ export const ReasonForApplication = ({
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage, lang } = useLocale()
-  const { reasonForApplication, reasonForApplicationCountry } =
-    getApplicationAnswers(application.answers)
+  const {
+    reasonForApplication,
+    reasonForApplicationCountry,
+    reasonForApplicationStreetAddress,
+    reasonForApplicationPostalCode,
+  } = getApplicationAnswers(application.answers)
 
   return (
     <ReviewGroup
@@ -51,6 +55,25 @@ export const ReasonForApplication = ({
                     ? getCountryByCode(reasonForApplicationCountry)?.name_is
                     : getCountryByCode(reasonForApplicationCountry)?.name
                 }
+              />
+            </GridColumn>
+          </GridRow>
+        )}
+        {reasonForApplication ===
+          ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE && (
+          <GridRow rowGap={2}>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(newPrimarySchoolMessages.shared.address)}
+                value={reasonForApplicationStreetAddress}
+              />
+            </GridColumn>
+            <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+              <DataValue
+                label={formatMessage(
+                  newPrimarySchoolMessages.shared.postalcode,
+                )}
+                value={reasonForApplicationPostalCode}
               />
             </GridColumn>
           </GridRow>

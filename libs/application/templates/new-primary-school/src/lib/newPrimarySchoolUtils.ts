@@ -31,7 +31,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const reasonForApplicationCountry = getValueViaPath(
     answers,
-    'reasonForApplication.country',
+    'reasonForApplication.movingAbroad.country',
+  ) as string
+
+  const reasonForApplicationStreetAddress = getValueViaPath(
+    answers,
+    'reasonForApplication.transferOfLegalDomicile.streetAddress',
+  ) as string
+
+  const reasonForApplicationPostalCode = getValueViaPath(
+    answers,
+    'reasonForApplication.transferOfLegalDomicile.postalCode',
   ) as string
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
@@ -118,6 +128,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     relatives,
     reasonForApplication,
     reasonForApplicationCountry,
+    reasonForApplicationStreetAddress,
+    reasonForApplicationPostalCode,
     siblings,
     nativeLanguage,
     otherLanguagesSpokenDaily,

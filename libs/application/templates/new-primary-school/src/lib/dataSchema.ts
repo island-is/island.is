@@ -99,13 +99,45 @@ export const dataSchema = z.object({
         ReasonForApplicationOptions.MOVING_ABROAD,
         ReasonForApplicationOptions.OTHER_REASONS,
       ]),
-      country: z.string().optional(),
+      movingAbroad: z
+        .object({
+          country: z.string().optional(),
+        })
+        .optional(),
+      transferOfLegalDomicile: z
+        .object({
+          streetAddress: z.string(),
+          postalCode: z.string(),
+        })
+        .optional(),
     })
     .refine(
-      ({ reason, country }) =>
-        reason === ReasonForApplicationOptions.MOVING_ABROAD ? !!country : true,
+      ({ reason, movingAbroad }) =>
+        reason === ReasonForApplicationOptions.MOVING_ABROAD
+          ? movingAbroad && !!movingAbroad.country
+          : true,
       {
-        path: ['country'],
+        path: ['movingAbroad', 'country'],
+      },
+    )
+    .refine(
+      ({ reason, transferOfLegalDomicile }) =>
+        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ? transferOfLegalDomicile &&
+            transferOfLegalDomicile.streetAddress.length > 0
+          : true,
+      {
+        path: ['transferOfLegalDomicile', 'streetAddress'],
+      },
+    )
+    .refine(
+      ({ reason, transferOfLegalDomicile }) =>
+        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ? transferOfLegalDomicile &&
+            transferOfLegalDomicile.postalCode.length > 0
+          : true,
+      {
+        path: ['transferOfLegalDomicile', 'postalCode'],
       },
     ),
   siblings: z
