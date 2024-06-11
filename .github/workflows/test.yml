@@ -174,11 +174,13 @@ jobs:
       - name: NX Cloud
         id: nx-cloud
         run: |
-          yarn nx-cloud start-ci-run --stop-agents-after=build
-          yarn nx run-many -t codegen/backend-client
-          yarn nx run-many -t codegen/frontend-client
-          yarn nx affected -t lint format test build --with-env-vars="auto"
-
+          yarn nx-cloud start-ci-run --distribute-on="8 linux-medium-js" --stop-agents-after=build --with-env-vars="auto"
+          yarn nx run-many -t codegen/backend-client --agents
+          yarn nx run-many -t codegen/frontend-client --agents
+          yarn nx affected -t lint
+          yarn nx affected -t format
+          yarn nx affected -t test
+          yarn nx affected -t build
   run-shellcheck:
     needs:
       - prepare
