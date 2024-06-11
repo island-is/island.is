@@ -6,7 +6,7 @@ import {
   Request,
 } from '@island.is/clients/middlewares'
 
-import { ContentfulGraphQLClientConfig } from './contentful-graphql.config'
+import { ContentfulGraphQLClientConfig } from './cms-client.config'
 
 
 function overrideCacheControl(request: Request) {

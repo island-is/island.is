@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-contentful-graphql',
+  displayName: 'clients-cms-client',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
@@ -12,5 +12,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/contentful-graphql',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/cms-client',
 }

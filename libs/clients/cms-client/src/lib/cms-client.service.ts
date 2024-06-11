@@ -1,8 +1,8 @@
 import { HttpException, Inject, Injectable } from '@nestjs/common';
 import type { EnhancedFetchAPI } from '@island.is/clients/middlewares';
 import type { ConfigType } from '@island.is/nest/config';
-import { ContentfulGraphQLClientConfig } from './contentful-graphql.config';
-import { ContentfulGraphQLFetchProviderKey } from './contentful-graphql-fetch-provider';
+import { ContentfulGraphQLClientConfig } from './cms-client.config';
+import { ContentfulGraphQLFetchProviderKey } from './cms-client-fetch-provider';
 import { GraphQLClient } from 'graphql-request';
 import { DocumentNode } from 'graphql';
 

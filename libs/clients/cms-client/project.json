@@ -1,7 +1,7 @@
 {
-  "name": "clients-contentful-graphql",
+  "name": "clients-cms-client",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/contentful-graphql/src",
+  "sourceRoot": "libs/clients/cms-client/src",
   "projectType": "library",
   "generators": {},
   "targets": {
@@ -9,22 +9,22 @@
       "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "libs/clients/contentful-graphql/**/*.{ts,tsx,js,jsx}"
+          "libs/clients/cms-client/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/contentful-graphql"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/cms-client"],
       "options": {
-        "jestConfig": "libs/clients/contentful-graphql/jest.config.ts",
+        "jestConfig": "libs/clients/cms-client/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cross-env INIT_SCHEMA=false graphql-codegen --config libs/clients/contentful-graphql/codegen.yaml"
+        "command": "cross-env INIT_SCHEMA=false graphql-codegen --config libs/clients/cms-client/codegen.yaml"
       },
       "inputs": ["{projectRoot}/codegen.yaml"],
       "outputs": ["{projectRoot}/gen", "{projectRoot}/**/*.generated.ts"]

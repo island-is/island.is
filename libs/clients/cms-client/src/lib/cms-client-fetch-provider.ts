@@ -8,7 +8,7 @@ import {
   LazyDuringDevScope,
 } from '@island.is/nest/config'
 import { getCache } from './cache'
-import { ContentfulGraphQLClientConfig } from './contentful-graphql.config'
+import { ContentfulGraphQLClientConfig } from './cms-client.config'
 
 
 export const ContentfulGraphQLFetchProviderKey = 'ContentfulGraphQLFetchProviderKey'
