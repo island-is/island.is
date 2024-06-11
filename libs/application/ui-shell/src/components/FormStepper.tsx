@@ -57,14 +57,13 @@ const FormStepper = ({
       const isChildActive =
         isParentActive && currentScreen.subSectionIndex === i
 
-      const message = formatText(child.title, application, formatMessage)
       return (
         <Text
           variant="medium"
           fontWeight={isChildActive ? 'semiBold' : 'regular'}
           key={`formStepperChild-${i}`}
         >
-          {message}
+          {formatText(child.title, application, formatMessage)}
         </Text>
       )
     })
