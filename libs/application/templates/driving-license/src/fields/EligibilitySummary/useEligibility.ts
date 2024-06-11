@@ -129,7 +129,8 @@ export const useEligibility = (
           ? undefined
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
             !hasGlasses &&
-            hasQualityPhoto,
+            hasQualityPhoto &&
+            !hasOtherLicenseCategories(currentLicense),
         requirements: [
           ...eligibility,
           {

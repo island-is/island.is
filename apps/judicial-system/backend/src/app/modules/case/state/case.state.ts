@@ -98,7 +98,10 @@ const indictmentCaseStateMachine: Map<
   [
     IndictmentCaseTransition.COMPLETE,
     {
-      fromStates: [IndictmentCaseState.RECEIVED],
+      fromStates: [
+        IndictmentCaseState.WAITING_FOR_CANCELLATION,
+        IndictmentCaseState.RECEIVED,
+      ],
       to: { state: IndictmentCaseState.COMPLETED },
     },
   ],
