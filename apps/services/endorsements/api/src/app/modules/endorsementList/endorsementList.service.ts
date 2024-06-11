@@ -70,7 +70,7 @@ export class EndorsementListService {
   // generic reusable query with pagination defaults
   async findListsGenericQuery(query: any, where: any = {}) {
     this.logger.info(`Finding endorsement lists`)
-    const results = await paginate({
+    return await paginate({
       Model: this.endorsementListModel,
       limit: query.limit || 10,
       after: query.after,
@@ -99,8 +99,6 @@ export class EndorsementListService {
       ],
       group: ['EndorsementList.id'],
     })
-
-    return results
   }
 
   async findListsByTags(tags: string[], query: any, user: User) {
