@@ -40,6 +40,7 @@ import {
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   canApply,
+  formatGender,
   getApplicationAnswers,
   getApplicationExternalData,
   getFoodAllergiesOptions,
@@ -137,29 +138,32 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     getSelectedChild(application)?.nationalId,
                 }),
                 buildTextField({
-                  id: 'childInfo.streetAddress',
+                  id: 'childInfo.address.streetAddress',
                   title: newPrimarySchoolMessages.shared.address,
                   width: 'half',
                   disabled: true,
                   // TODO: Nota gögn frá Júní?
+                  // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
                   defaultValue: (application: Application) =>
                     getSelectedChild(application)?.domicileInIceland,
                 }),
                 buildTextField({
-                  id: 'childInfo.postalcode',
-                  title: newPrimarySchoolMessages.shared.postalcode,
+                  id: 'childInfo.address.postalCode',
+                  title: newPrimarySchoolMessages.shared.postalCode,
                   width: 'half',
                   disabled: true,
                   // TODO: Nota gögn frá Júní?
+                  // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
                   defaultValue: (application: Application) =>
                     getSelectedChild(application)?.domicileInIceland,
                 }),
                 buildTextField({
-                  id: 'childInfo.city',
+                  id: 'childInfo.address.city',
                   title: newPrimarySchoolMessages.shared.municipality,
                   width: 'half',
                   disabled: true,
                   // TODO: Nota gögn frá Júní?
+                  // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
                   defaultValue: (application: Application) =>
                     getSelectedChild(application)?.domicileInIceland,
                 }),
@@ -169,15 +173,65 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.childrenNParents
                       .childInfoChosenName,
                   width: 'half',
-                  defaultValue: (application: Application) =>
-                    getSelectedChild(application)?.fullName,
                 }),
                 buildSelectField({
                   id: 'childInfo.gender',
                   title:
                     newPrimarySchoolMessages.childrenNParents.childInfoGender,
+                  placeholder:
+                    newPrimarySchoolMessages.childrenNParents
+                      .childInfoGenderPlaceholder,
                   width: 'half',
+                  // TODO: Nota gögn fá Júní
                   options: getGenderOptions(),
+                  defaultValue: (application: Application) =>
+                    formatGender(getSelectedChild(application)?.genderCode),
+                }),
+                buildRadioField({
+                  id: 'childInfo.differentPlaceOfResidence',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents
+                      .differentPlaceOfResidence,
+                  width: 'half',
+                  required: true,
+                  space: 4,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildTextField({
+                  id: 'childInfo.placeOfResidence.streetAddress',
+                  title:
+                    newPrimarySchoolMessages.childrenNParents
+                      .childInfoPlaceOfResidence,
+                  width: 'half',
+                  required: true,
+                  condition: (answers) => {
+                    const { differentPlaceOfResidence } =
+                      getApplicationAnswers(answers)
+
+                    return differentPlaceOfResidence === YES
+                  },
+                }),
+                buildTextField({
+                  id: 'childInfo.placeOfResidence.postalCode',
+                  title: newPrimarySchoolMessages.shared.postalCode,
+                  width: 'half',
+                  format: '###',
+                  required: true,
+                  condition: (answers) => {
+                    const { differentPlaceOfResidence } =
+                      getApplicationAnswers(answers)
+
+                    return differentPlaceOfResidence === YES
+                  },
                 }),
               ],
             }),
@@ -205,7 +259,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   id: 'parents.parent1.fullName',
                   title: newPrimarySchoolMessages.shared.fullName,
                   dataTestId: 'fullName1',
-                  readOnly: true,
+                  disabled: true,
                   defaultValue: (application: Application) =>
                     (
                       application.externalData.nationalRegistry?.data as {
@@ -219,7 +273,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   width: 'half',
                   dataTestId: 'nationalId1',
                   format: '######-####',
-                  readOnly: true,
+                  disabled: true,
                   defaultValue: (application: Application) =>
                     (
                       application.externalData.nationalRegistry?.data as {
@@ -232,18 +286,18 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: newPrimarySchoolMessages.shared.address,
                   width: 'half',
                   dataTestId: 'address1',
-                  readOnly: true,
+                  disabled: true,
                   defaultValue: (application: Application) => {
                     return getApplicationExternalData(application.externalData)
                       .applicantAddress
                   },
                 }),
                 buildTextField({
-                  id: 'parents.parent1.address.postalcode',
-                  title: newPrimarySchoolMessages.shared.postalcode,
+                  id: 'parents.parent1.address.postalCode',
+                  title: newPrimarySchoolMessages.shared.postalCode,
                   width: 'half',
-                  dataTestId: 'postalcode1',
-                  readOnly: true,
+                  dataTestId: 'postalCode1',
+                  disabled: true,
                   defaultValue: (application: Application) => {
                     return getApplicationExternalData(application.externalData)
                       .applicantPostalCode
@@ -254,7 +308,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: newPrimarySchoolMessages.shared.municipality,
                   width: 'half',
                   dataTestId: 'city1',
-                  readOnly: true,
+                  disabled: true,
                   defaultValue: (application: Application) => {
                     return getApplicationExternalData(application.externalData)
                       .applicantCity
@@ -306,7 +360,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   id: 'parents.parent2.fullName',
                   title: newPrimarySchoolMessages.shared.fullName,
                   dataTestId: 'fullName2',
-                  readOnly: true,
+                  disabled: true,
                   condition: (answers, externalData) =>
                     hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
@@ -318,7 +372,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   width: 'half',
                   dataTestId: 'nationalId2',
                   format: '######-####',
-                  readOnly: true,
+                  disabled: true,
                   condition: (answers, externalData) =>
                     hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
@@ -329,18 +383,18 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: newPrimarySchoolMessages.shared.address,
                   width: 'half',
                   dataTestId: 'address2',
-                  readOnly: true,
+                  disabled: true,
                   condition: (answers, externalData) =>
                     hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
                     getOtherParent(application)?.address.streetAddress,
                 }),
                 buildTextField({
-                  id: 'parents.parent2.address.postalcode',
-                  title: newPrimarySchoolMessages.shared.postalcode,
+                  id: 'parents.parent2.address.postalCode',
+                  title: newPrimarySchoolMessages.shared.postalCode,
                   width: 'half',
-                  dataTestId: 'postalcode2',
-                  readOnly: true,
+                  dataTestId: 'postalCode2',
+                  disabled: true,
                   condition: (answers, externalData) =>
                     hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>
@@ -351,7 +405,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: newPrimarySchoolMessages.shared.municipality,
                   width: 'half',
                   dataTestId: 'city2',
-                  readOnly: true,
+                  disabled: true,
                   condition: (answers, externalData) =>
                     hasOtherParent(answers, externalData),
                   defaultValue: (application: Application) =>

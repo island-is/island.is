@@ -47,7 +47,7 @@ export enum ReasonForApplicationOptions {
 }
 
 export enum SiblingRelationOptions {
-  SIBLING = 'Sibling',
+  SIBLING = 'sibling',
   HALF_SIBLING = 'halfSibling',
   STEP_SIBLING = 'stepSibling',
 }

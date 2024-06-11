@@ -107,18 +107,18 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     male: {
       id: 'dess.nps.application:gender.male',
-      defaultMessage: 'Karl',
-      description: 'Notað fyrir orðið Karl í öllum flæðum.',
+      defaultMessage: 'Karlkyns',
+      description: 'Male',
     },
     female: {
       id: 'dess.nps.application:gender.female',
-      defaultMessage: 'Kona',
-      description: 'Notað fyrir orðið Kona í öllum flæðum.',
+      defaultMessage: 'Kvenkyns',
+      description: 'Female',
     },
     otherGender: {
       id: 'dess.nps.application:gender.other',
       defaultMessage: 'Kynsegin/Annað',
-      description: 'Notað fyrir orðið Kynsegin/Annað í öllum flæðum.',
+      description: 'non-binary/Other',
     },
   }),
 
@@ -260,6 +260,22 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.child.info.gender',
       defaultMessage: 'Kyn',
       description: 'Gender',
+    },
+    childInfoGenderPlaceholder: {
+      id: 'dess.nps.application:childrenNParents.child.info.gender.placeholder',
+      defaultMessage: 'Veldu kyn',
+      description: 'Select gender',
+    },
+    differentPlaceOfResidence: {
+      id: 'dess.nps.application:childrenNParents.child.info.different.place.of.residence',
+      defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
+      description:
+        "Is the child's place of residence different from the registered legal domicile?",
+    },
+    childInfoPlaceOfResidence: {
+      id: 'dess.nps.application:childrenNParents.child.info.place.of.residence',
+      defaultMessage: 'Dvalarstaður barns',
+      description: "Child's place of residence",
     },
 
     // Parents/guardians

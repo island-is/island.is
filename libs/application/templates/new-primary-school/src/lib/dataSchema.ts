@@ -15,6 +15,31 @@ import { errorMessages } from './messages'
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
+  childInfo: z
+    .object({
+      gender: z.enum([Gender.MALE, Gender.FEMALE, Gender.OTHER]).optional(),
+      differentPlaceOfResidence: z.enum([YES, NO]),
+      placeOfResidence: z
+        .object({
+          streetAddress: z.string(),
+          postalCode: z.string(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ differentPlaceOfResidence, placeOfResidence }) =>
+        differentPlaceOfResidence === YES
+          ? placeOfResidence && placeOfResidence.streetAddress.length > 0
+          : true,
+      { path: ['placeOfResidence', 'streetAddress'] },
+    )
+    .refine(
+      ({ differentPlaceOfResidence, placeOfResidence }) =>
+        differentPlaceOfResidence === YES
+          ? placeOfResidence && placeOfResidence.postalCode.length > 0
+          : true,
+      { path: ['placeOfResidence', 'postalCode'] },
+    ),
   parents: z.object({
     parent1: z.object({
       email: z.string().email(),
@@ -52,9 +77,6 @@ export const dataSchema = z.object({
         ),
       })
       .optional(),
-  }),
-  childInfo: z.object({
-    gender: z.enum([Gender.MALE, Gender.FEMALE, Gender.OTHER]),
   }),
   relatives: z
     .array(

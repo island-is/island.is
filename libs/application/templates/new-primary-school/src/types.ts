@@ -1,4 +1,8 @@
-import { RelationOptions, SiblingRelationOptions } from './lib/constants'
+import {
+  Gender,
+  RelationOptions,
+  SiblingRelationOptions,
+} from './lib/constants'
 
 export interface RelativesRow {
   fullName: string
@@ -21,6 +25,24 @@ export type Child = {
   livesWithApplicant: boolean
   domicileInIceland: boolean
   livesWithBothParents: boolean
+  genderCode: string
+}
+
+export type ChildInformation = {
+  name: string
+  nationalId: string
+  address: {
+    streetAddress: string
+    postalCode: string
+    city: string
+  }
+  gender: Gender
+  chosenName: string
+  differentPlaceOfResidence: string
+  placeOfResidence?: {
+    streetAddress: string
+    postalCode: string
+  }
 }
 
 export type Person = {

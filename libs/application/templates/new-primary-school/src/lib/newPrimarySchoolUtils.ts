@@ -7,7 +7,14 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import { Child, Parents, Person, RelativesRow, SiblingsRow } from '../types'
+import {
+  Child,
+  ChildInformation,
+  Parents,
+  Person,
+  RelativesRow,
+  SiblingsRow,
+} from '../types'
 import {
   FoodAllergiesOptions,
   FoodIntolerancesOptions,
@@ -21,6 +28,13 @@ import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
+
+  const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
+
+  const differentPlaceOfResidence = getValueViaPath(
+    answers,
+    'childInfo.differentPlaceOfResidence',
+  ) as YesOrNo
 
   const parents = getValueViaPath(answers, 'parents') as Parents
 
@@ -138,6 +152,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   return {
     childNationalId,
+    childInfo,
+    differentPlaceOfResidence,
     parents,
     relatives,
     reasonForApplication,
@@ -380,6 +396,42 @@ export const getSiblingRelationOptionLabel = (
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
+export const getGenderOptions = () => [
+  {
+    value: Gender.MALE,
+    label: newPrimarySchoolMessages.shared.male,
+  },
+  {
+    value: Gender.FEMALE,
+    label: newPrimarySchoolMessages.shared.female,
+  },
+  {
+    value: Gender.OTHER,
+    label: newPrimarySchoolMessages.shared.otherGender,
+  },
+]
+
+export const formatGender = (genderCode?: string): Gender | undefined => {
+  switch (genderCode) {
+    case '1':
+    case '3':
+      return Gender.MALE
+    case '2':
+    case '4':
+      return Gender.FEMALE
+    case '7':
+    case '8':
+      return Gender.OTHER
+    default:
+      return undefined
+  }
+}
+
+export const getGenderOptionLabel = (value: Gender) => {
+  const genderOptions = getGenderOptions()
+  return genderOptions.find((option) => option.value === value)?.label ?? ''
+}
+
 export const getLanguageCodes = () => {
   return languageCodes.map((x) => ({
     label: x.name,
@@ -453,9 +505,3 @@ export const getFoodIntolerancesOptionsLabel = (
     ''
   )
 }
-
-export const getGenderOptions = () => [
-  { label: newPrimarySchoolMessages.shared.male, value: Gender.MALE },
-  { label: newPrimarySchoolMessages.shared.female, value: Gender.FEMALE },
-  { label: newPrimarySchoolMessages.shared.otherGender, value: Gender.OTHER },
-]
