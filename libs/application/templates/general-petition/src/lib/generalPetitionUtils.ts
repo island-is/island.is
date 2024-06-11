@@ -1,5 +1,4 @@
-import addDays from 'date-fns/addDays'
-import addYears from 'date-fns/addYears'
+import { addDays, addYears } from 'date-fns'
 import { getHolidays } from 'fridagar'
 
 const isWeekday = (date: Date) => {
