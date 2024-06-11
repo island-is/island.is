@@ -100,8 +100,6 @@ export class EndorsementListService {
       group: ['EndorsementList.id'],
     })
 
-    console.log('HAVE RESULTS', results)
-
     return results
   }
 
