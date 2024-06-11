@@ -2,6 +2,7 @@ import { Box, FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import {
   Section as TSection,
   SectionChildren,
+  Application,
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -9,6 +10,7 @@ import { MessageDescriptor } from 'react-intl'
 import { FormScreen } from '../types'
 import useIsMobile from '../hooks/useIsMobile'
 import { ExcludesFalse } from '@island.is/application/utils'
+import { formatText } from '@island.is/application/core'
 
 type Props = {
   form: {
@@ -18,9 +20,16 @@ type Props = {
   sections: TSection[]
   screens: FormScreen[]
   currentScreen: FormScreen
+  application: Application
 }
 
-const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
+const FormStepper = ({
+  form,
+  sections,
+  screens,
+  currentScreen,
+  application,
+}: Props) => {
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
 
@@ -47,13 +56,14 @@ const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
     return childrenToParse.map((child, i) => {
       const isChildActive =
         isParentActive && currentScreen.subSectionIndex === i
+
       return (
         <Text
           variant="medium"
           fontWeight={isChildActive ? 'semiBold' : 'regular'}
           key={`formStepperChild-${i}`}
         >
-          {formatMessage(child.title as MessageDescriptor)}
+          {formatText(child.title, application, formatMessage)}
         </Text>
       )
     })
@@ -79,7 +89,7 @@ const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
             <Section
               key={`formStepper-${i}`}
               isActive={currentScreen.sectionIndex === i}
-              section={formatMessage(section.title as MessageDescriptor)}
+              section={formatText(section.title, application, formatMessage)}
               sectionIndex={i}
               subSections={
                 section.children.length > 1
