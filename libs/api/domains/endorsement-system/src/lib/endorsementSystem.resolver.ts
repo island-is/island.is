@@ -107,12 +107,9 @@ export class EndorsementSystemResolver {
   async endorsementSystemGetGeneralPetitionLists(
     @Args('input') input: EndorsementPaginationInput,
   ): Promise<PaginatedEndorsementListResponse> {
-    const result =
-      await this.endorsementSystemService.endorsementListControllerGetGeneralPetitionLists(
-        input,
-      )
-    console.log('endorsementSystemGetGeneralPetitionLists', result)
-    return result
+    return await this.endorsementSystemService.endorsementListControllerGetGeneralPetitionLists(
+      input,
+    )
   }
 
   // GET /endorsement-list/general-petition-list/{listId}
