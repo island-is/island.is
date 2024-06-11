@@ -249,7 +249,7 @@ export const m = defineMessages({
   validationDateTooFarInFuture: {
     id: 'gpl.application:validationDateTooFarInFuture',
     defaultMessage:
-      'Lokadagsetning má ekki vera lengra en 3 mánuði fram í tímann',
+      'Gildistími má ekki vera lengri en 3 mánuðum frá upphafsdagsetningu',
     description: '',
   },
   validationPhone: {

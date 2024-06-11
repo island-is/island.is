@@ -26,6 +26,7 @@ import { Application } from '@island.is/application/types'
 import { UserProfile } from '@island.is/api/schema'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { parse } from 'libphonenumber-js'
+import { getExcludedDates } from '../lib/generalPetitionUtils'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
@@ -100,6 +101,7 @@ export const form: Form = buildForm({
               width: 'half',
               backgroundColor: 'white',
               minDate: new Date(),
+              excludeDates: getExcludedDates(),
             }),
             buildDateField({
               id: 'dates.dateTil',
@@ -111,6 +113,7 @@ export const form: Form = buildForm({
               maxDate: new Date(
                 new Date().setFullYear(new Date().getFullYear() + 1),
               ),
+              excludeDates: getExcludedDates(),
             }),
             buildDescriptionField({
               id: 'space',
