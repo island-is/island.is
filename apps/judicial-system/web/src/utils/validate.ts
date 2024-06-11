@@ -414,10 +414,12 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
 export const isSubpoenaStepValid = (
   workingCase: Case,
   courtDate?: string | null,
-  subpoenaType?: SubpoenaType
+  courtRoom?: string | null,
+  subpoenaType?: SubpoenaType,
 ): boolean => {
   return validate([
     [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
+    [courtRoom ?? workingCase.arraignmentDate?.location, ['empty']],
     [subpoenaType ?? workingCase.subpoenaType, ['empty']],
   ]).isValid
 }
