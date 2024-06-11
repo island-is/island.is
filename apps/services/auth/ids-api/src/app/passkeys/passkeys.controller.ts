@@ -22,7 +22,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 
-const namespace = '@island.is/auth-ids-api/passkeys'
+const namespace = '@island.is/auth/ids-api/passkeys'
 
 @ApiTags('passkeys')
 @Controller({
