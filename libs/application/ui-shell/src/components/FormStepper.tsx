@@ -2,6 +2,7 @@ import { Box, FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import {
   Section as TSection,
   SectionChildren,
+  Application,
 } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
@@ -9,6 +10,7 @@ import { MessageDescriptor } from 'react-intl'
 import { FormScreen } from '../types'
 import useIsMobile from '../hooks/useIsMobile'
 import { ExcludesFalse } from '@island.is/application/utils'
+import { formatText } from '@island.is/application/core'
 
 type Props = {
   form: {
@@ -18,9 +20,16 @@ type Props = {
   sections: TSection[]
   screens: FormScreen[]
   currentScreen: FormScreen
+  application: Application
 }
 
-const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
+const FormStepper = ({
+  form,
+  sections,
+  screens,
+  currentScreen,
+  application,
+}: Props) => {
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
 
@@ -44,19 +53,25 @@ const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
       childrenToParse.push(child)
     })
 
-    return childrenToParse.map((child, i) => {
-      const isChildActive =
-        isParentActive && currentScreen.subSectionIndex === i
-      return (
-        <Text
-          variant="medium"
-          fontWeight={isChildActive ? 'semiBold' : 'regular'}
-          key={`formStepperChild-${i}`}
-        >
-          {formatMessage(child.title as MessageDescriptor)}
-        </Text>
-      )
-    })
+    return childrenToParse
+      .map((child, i) => {
+        const isChildActive =
+          isParentActive && currentScreen.subSectionIndex === i
+        const childText = formatText(child.title, application, formatMessage)
+
+        if (!childText) return null
+
+        return (
+          <Text
+            variant="medium"
+            fontWeight={isChildActive ? 'semiBold' : 'regular'}
+            key={`formStepperChild-${i}`}
+          >
+            {childText}
+          </Text>
+        )
+      })
+      .filter(Boolean as unknown as ExcludesFalse)
   }
 
   const stepperTitle = isMobile ? null : (
@@ -75,23 +90,33 @@ const FormStepper = ({ form, sections, screens, currentScreen }: Props) => {
         sections &&
         [
           stepperTitle,
-          ...sections.map((section, i) => (
-            <Section
-              key={`formStepper-${i}`}
-              isActive={currentScreen.sectionIndex === i}
-              section={formatMessage(section.title as MessageDescriptor)}
-              sectionIndex={i}
-              subSections={
-                section.children.length > 1
-                  ? parseSubsections(
-                      section.children,
-                      currentScreen.sectionIndex === i,
-                    )
-                  : undefined
-              }
-              isComplete={currentScreen.sectionIndex > i}
-            />
-          )),
+          ...sections.map((section, i) => {
+            const sectionTitle = formatText(
+              section.title,
+              application,
+              formatMessage,
+            )
+
+            if (!sectionTitle) return null
+
+            return (
+              <Section
+                key={`formStepper-${i}`}
+                isActive={currentScreen.sectionIndex === i}
+                section={sectionTitle}
+                sectionIndex={i}
+                subSections={
+                  section.children.length > 1
+                    ? parseSubsections(
+                        section.children,
+                        currentScreen.sectionIndex === i,
+                      )
+                    : undefined
+                }
+                isComplete={currentScreen.sectionIndex > i}
+              />
+            )
+          }),
         ].filter(Boolean as unknown as ExcludesFalse)
       }
     />
