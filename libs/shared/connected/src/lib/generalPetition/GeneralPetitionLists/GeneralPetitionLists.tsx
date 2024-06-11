@@ -1,4 +1,4 @@
-import { Box, Text, Stack, ActionCard } from '@island.is/island-ui/core'
+import { Box, Text, Stack, ActionCard, Button } from '@island.is/island-ui/core'
 import { useRouter } from 'next/router'
 import { useGetPetitionLists } from './useGetPetitionLists'
 import format from 'date-fns/format'
@@ -31,7 +31,14 @@ export const GeneralPetitionLists: FC<
   React.PropsWithChildren<GeneralPetitionProps>
 > = ({ slice }) => {
   const router = useRouter()
-  const petitionLists = useGetPetitionLists()
+  const {
+    data: petitionLists,
+    loading: petitionLoading,
+    error: petitionError,
+    loadNextPage,
+    loadPreviousPage,
+    pageInfo: petitionPageInfo,
+  } = useGetPetitionLists()
   const t = useLocalization(slice.json)
 
   return (
@@ -50,36 +57,53 @@ export const GeneralPetitionLists: FC<
           }}
         />
       </Box>
-      {petitionLists?.data?.length > 0 && (
+      {petitionLists?.length > 0 && (
         <Box marginTop={10} marginBottom={3}>
           <Text variant="h4">{t('title', 'Virkir listar')}</Text>
         </Box>
       )}
       <Stack space={4}>
-        {petitionLists?.data?.map((petition: EndorsementList) => {
-          return (
-            <ActionCard
-              key={petition.title}
-              backgroundColor="white"
-              heading={petition.title}
-              text={
-                t('openTil', 'Virkur til:') +
-                ' ' +
-                formatDate(petition.closedDate) +
-                ` | ${petition?.endorsementCounter} undirskriftir`
-              }
-              cta={{
-                label: t('viewList', 'Skoða lista'),
-                variant: 'text',
-                icon: 'arrowForward',
-                onClick: () => {
-                  router.push('/undirskriftalistar/' + petition.id)
-                },
-              }}
-            />
-          )
-        })}
+        {!petitionLoading &&
+          !petitionError &&
+          petitionLists?.map((petition: EndorsementList) => {
+            return (
+              <ActionCard
+                key={petition.title}
+                backgroundColor="white"
+                heading={petition.title}
+                text={
+                  t('openTil', 'Virkur til:') +
+                  ' ' +
+                  formatDate(petition.closedDate)
+                }
+                cta={{
+                  label: t('viewList', 'Skoða lista'),
+                  variant: 'text',
+                  icon: 'arrowForward',
+                  onClick: () => {
+                    router.push('/undirskriftalistar/' + petition.id)
+                  },
+                }}
+              />
+            )
+          })}
       </Stack>
+      <Box display="flex" justifyContent="center" marginTop={5}>
+        {petitionPageInfo?.hasPreviousPage ? (
+          <Box marginRight={2}>
+            <Button variant="ghost" size="small" onClick={loadPreviousPage}>
+              {t('previous', 'Fyrri síða')}
+            </Button>
+          </Box>
+        ) : undefined}
+        {petitionPageInfo?.hasNextPage ? (
+          <Box marginLeft={2}>
+            <Button variant="ghost" size="small" onClick={loadNextPage}>
+              {t('next', 'Næsta síða')}
+            </Button>
+          </Box>
+        ) : undefined}
+      </Box>
     </>
   )
 }

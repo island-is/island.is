@@ -10,5 +10,9 @@ query UserInfoOverview($useFakeData: Boolean) {
       nationalId
       fullName
     }
+    biologicalChildren {
+      nationalId
+      fullName
+    }
   }
 }

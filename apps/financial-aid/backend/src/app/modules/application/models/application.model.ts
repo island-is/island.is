@@ -50,6 +50,13 @@ export class ApplicationModel extends Model {
   modified: Date
 
   @Column({
+    type: DataType.DATE,
+    allowNull: false,
+  })
+  @ApiProperty()
+  appliedDate: Date
+
+  @Column({
     type: DataType.STRING,
     allowNull: false,
   })

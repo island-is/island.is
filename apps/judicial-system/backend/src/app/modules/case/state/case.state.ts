@@ -68,6 +68,13 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.ASK_FOR_CANCELLATION,
+    {
+      fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
+      to: { state: IndictmentCaseState.WAITING_FOR_CANCELLATION },
+    },
+  ],
+  [
     IndictmentCaseTransition.RECEIVE,
     {
       fromStates: [IndictmentCaseState.SUBMITTED],
@@ -101,8 +108,6 @@ const indictmentCaseStateMachine: Map<
       fromStates: [
         IndictmentCaseState.DRAFT,
         IndictmentCaseState.WAITING_FOR_CONFIRMATION,
-        IndictmentCaseState.SUBMITTED,
-        IndictmentCaseState.RECEIVED,
       ],
       to: { state: IndictmentCaseState.DELETED },
     },

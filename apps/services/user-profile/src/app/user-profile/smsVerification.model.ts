@@ -7,6 +7,11 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
+import type {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
 
 @Table({
   tableName: 'sms_verification',
@@ -17,7 +22,10 @@ import { ApiProperty } from '@nestjs/swagger'
     },
   ],
 })
-export class SmsVerification extends Model<SmsVerification> {
+export class SmsVerification extends Model<
+  InferAttributes<SmsVerification>,
+  InferCreationAttributes<SmsVerification>
+> {
   @Column({
     type: DataType.UUID,
     primaryKey: true,
@@ -25,15 +33,15 @@ export class SmsVerification extends Model<SmsVerification> {
     defaultValue: DataType.UUIDV4,
   })
   @ApiProperty()
-  id!: string
+  id!: CreationOptional<string>
 
   @CreatedAt
   @ApiProperty()
-  created!: Date
+  created!: CreationOptional<Date>
 
   @UpdatedAt
   @ApiProperty()
-  modified!: Date
+  modified!: CreationOptional<Date>
 
   @Column({
     type: DataType.STRING,
@@ -53,7 +61,7 @@ export class SmsVerification extends Model<SmsVerification> {
     type: DataType.BOOLEAN,
   })
   @ApiProperty()
-  confirmed!: boolean
+  confirmed!: CreationOptional<boolean>
 
   @Column({
     type: DataType.STRING,
