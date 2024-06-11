@@ -9,6 +9,7 @@ import {
   PageHeader,
   SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import DefenderCasesTable from './components/DefenderCasesTable'
 import FilterCheckboxes from './components/FilterCheckboxes'
@@ -44,7 +45,14 @@ export const Cases: FC<unknown> = () => {
       return [[], []]
     }
 
-    return partition(cases, (c) => !isCompletedCase(c.state))
+    return partition(
+      cases,
+      (c) =>
+        !(
+          isCompletedCase(c.state) ||
+          c.state === CaseState.WAITING_FOR_CANCELLATION
+        ),
+    )
   }, [cases])
 
   const {

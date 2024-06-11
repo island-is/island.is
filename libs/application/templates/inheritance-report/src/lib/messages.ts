@@ -217,6 +217,11 @@ export const m = defineMessages({
     defaultMessage: 'Nafn',
     description: '',
   },
+  dateOfBirth: {
+    id: 'ir.application:dateOfBirth',
+    defaultMessage: 'Fæðingardagur',
+    description: '',
+  },
   nationalId: {
     id: 'ir.application:nationalId',
     defaultMessage: 'Kennitala',
@@ -308,74 +313,85 @@ export const m = defineMessages({
     defaultMessage: 'Innlendar og erlendar eignir á dánardegi hins látna',
     description: '',
   },
-  propertiesDescriptionPrePaid: {
-    id: 'ir.application:propertiesDescriptionPrePaid',
+  propertiesDescriptionAssets: {
+    id: 'ir.application:propertiesDescriptionAssets#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki fasteign vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionInventory: {
+    id: 'ir.application:propertiesDescriptionInventory#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki innbú vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionVehicles: {
+    id: 'ir.application:propertiesDescriptionVehicles#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki farartæki vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionGuns: {
+    id: 'ir.application:propertiesDescriptionGuns#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki skotvopn vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionBankAccounts: {
+    id: 'ir.application:propertiesDescriptionBankAccounts#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki innstæður í bönkum vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionClaims: {
+    id: 'ir.application:propertiesDescriptionClaims#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki verðbréf eða kröfur vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionStocks: {
+    id: 'ir.application:propertiesDescriptionStocks#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki hlutabréf vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionMoney: {
+    id: 'ir.application:propertiesDescriptionMoney#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki peninga sem varðveittir eru utan fjármálastofnana vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+  propertiesDescriptionOtherAssets: {
+    id: 'ir.application:propertiesDescriptionOtherAssets#markdown',
+    defaultMessage:
+      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna. Ef hinn látni átti ekki aðrar eignir vinsamlegast haltu áfram í ferlinu.',
+    description: '',
+  },
+
+  // Estate Properties - Prepaid
+  propertiesDescriptionPrePaidAssets: {
+    id: 'ir.application:propertiesDescriptionPrePaidAssets#markdown',
     defaultMessage: 'Lorem ipsum lorem ipsum',
     description: '',
   },
-  propertiesDescription: {
-    id: 'ir.application:propertiesDescription',
-    defaultMessage:
-      'Vinsamlegast tilgreindu allar hjúskapareignir beggja hjóna utan einstaklingsatvinnurekstrar á dánardegi hins látna. Einnig séreign hins látna.',
+  propertiesDescriptionPrePaidStocks: {
+    id: 'ir.application:propertiesDescriptionPrePaidStocks#markdown',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
     description: '',
   },
-  continueWithoutAssets: {
-    id: 'ir.application:continueWithoutAssets',
-    defaultMessage:
-      'Ef hinn látni átti ekki fasteign vinsamlegast haltu áfram í ferlinu.',
+  propertiesDescriptionPrePaidMoney: {
+    id: 'ir.application:propertiesDescriptionPrePaidMoney#markdown',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
     description: '',
   },
-  continueWithoutVehicles: {
-    id: 'ir.application:continueWithoutVehicles',
-    defaultMessage:
-      'Ef hinn látni átti ekki farartæki vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
-  continueWithoutGuns: {
-    id: 'ir.application:continueWithoutGuns',
-    defaultMessage:
-      'Ef hinn látni átti ekki skotvopn vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
-  continueWithoutInventory: {
-    id: 'ir.application:continueWithoutInventory',
-    defaultMessage:
-      'Ef hinn látni átti ekki innbú vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
-  continueWithoutBankAccounts: {
-    id: 'ir.application:continueWithoutBankAccounts',
-    defaultMessage:
-      'Ef hinn látni átti ekki innstæður í bönkum vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
-  continueWithoutClaims: {
-    id: 'ir.application:continueWithoutClaims',
-    defaultMessage:
-      'Ef hinn látni átti ekki verðbréf eða kröfur vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
-  continueWithoutStocks: {
-    id: 'ir.application:continueWithoutStocks',
-    defaultMessage:
-      'Ef hinn látni átti ekki hlutabréf vinsamlegast haltu áfram í ferlinu.',
-    description: '',
-  },
-  continueWithoutMoney: {
-    id: 'ir.application:continueWithoutMoney',
-    defaultMessage:
-      'Ef hinn látni átti ekki peninga sem varðveittir eru utan fjármálastofnana vinsamlegast haltu áfram í ferlinu.',
+  propertiesDescriptionPrePaidOtherAssets: {
+    id: 'ir.application:propertiesDescriptionPrePaidOtherAssets#markdown',
+    defaultMessage: 'Lorem ipsum lorem ipsum',
     description: '',
   },
   otherAssetRepeaterButton: {
     id: 'ir.application:otherAssetRepeaterButton',
     defaultMessage: 'Bæta við eign',
-    description: '',
-  },
-  continueWithoutOtherAssets: {
-    id: 'ir.application:continueWithoutOtherAssets',
-    defaultMessage:
-      'Ef hinn látni átti ekki aðrar eignir vinsamlegast haltu áfram í ferlinu.',
     description: '',
   },
   realEstate: {
@@ -390,6 +406,11 @@ export const m = defineMessages({
   },
   realEstateDescription: {
     id: 'ir.application:realEstateDescription',
+    defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
+    description: '',
+  },
+  realEstateDescriptionPrePaid: {
+    id: 'ir.application:realEstateDescriptionPrePaid',
     defaultMessage: 'Til dæmis íbúðarhús, sumarhús, lóðir og jarðir.',
     description: '',
   },
@@ -732,6 +753,11 @@ export const m = defineMessages({
     defaultMessage: 'Til dæmis verkfæri, hugverkaréttindi, búseturéttur o.fl.',
     description: '',
   },
+  otherAssetsDescriptionPrePaid: {
+    id: 'ir.application:otherAssetsDescriptionPrePaid',
+    defaultMessage: 'Til dæmis verkfæri, hugverkaréttindi, búseturéttur o.fl.',
+    description: '',
+  },
   otherAssetsText: {
     id: 'ir.application:otherAssetsText',
     defaultMessage: 'Hvaða eign',
@@ -969,31 +995,6 @@ export const m = defineMessages({
     id: 'ir.application:debtsType',
     defaultMessage: 'Tegund skuldar',
     description: '',
-  },
-  debtOverDraft: {
-    id: 'ir.application:debtOverDraft',
-    defaultMessage: 'Yfirdráttur',
-    description: 'Selection for debts: Overdraft',
-  },
-  debtCreditCard: {
-    id: 'ir.application:debtCreditCard',
-    defaultMessage: 'Kreditkort',
-    description: 'Selection for debts: Credit card',
-  },
-  debtLoan: {
-    id: 'ir.application:debtLoan',
-    defaultMessage: 'Lán',
-    description: 'Selection for debts: Loan',
-  },
-  debtInsuranceCompany: {
-    id: 'ir.application:debtInsuranceCompany',
-    defaultMessage: 'Tryggingastofnun',
-    description: 'Selection for debts: Insurance company',
-  },
-  debtPropertyFees: {
-    id: 'ir.application:debtPropertyFees',
-    defaultMessage: 'Fasteignagjöld',
-    description: 'Selection for debts: Property fees',
   },
   creditorsNationalId: {
     id: 'ir.application:creditorsNationalId',
@@ -1549,16 +1550,40 @@ export const m = defineMessages({
     defaultMessage: 'Fylgigögn',
     description: '',
   },
+  fileUploadOtherDocumentsPrePaidDescription: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidDescription',
+    defaultMessage:
+      'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  fileUploadOtherDocumentsPrePaidUserGuidelines: {
+    id: 'ir.application:fileUploadOtherDocumentsPrePaidUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri en eitt skjal.',
+    description: '',
+  },
   uploadPrivateTransferDescription: {
     id: 'ir.application:uploadPrivateTransferDescription',
     defaultMessage:
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
     description: '',
   },
+  uploadPrivateTransferUserGuidelines: {
+    id: 'ir.application:uploadPrivateTransferUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp einkaskiptagerð. Aðeins er hægt að hlaða inn 1 skjal.',
+    description: '',
+  },
   uploadOtherDocumentsDescription: {
     id: 'ir.application:uploadOtherDocumentsDescription',
     defaultMessage:
       'Samþykktar skráargerðir eru .pdf, .doc, .docx, .jpg, .jpeg, .png, .xls og .xlsx',
+    description: '',
+  },
+  uploadOtherDocumentsUserGuidelines: {
+    id: 'ir.application:uploadOtherDocumentsUserGuidelines#markdown',
+    defaultMessage:
+      'Vinsamlegast hlaðið upp önnur fylgigögn. Hægt að hlaða inn fleiri 1 skjal.',
     description: '',
   },
   heirShare: {
@@ -1656,9 +1681,19 @@ export const m = defineMessages({
     defaultMessage: 'Erfðafjárskýrsla móttekin',
     description: '',
   },
+  doneMultiFieldTitleEFS: {
+    id: 'ir.application:doneMultiFieldTitleEFS',
+    defaultMessage: 'Erfðafjárskýrsla móttekin',
+    description: '',
+  },
+  doneAlertTitleEFS: {
+    id: 'ir.application:doneAlertTitleEFS',
+    defaultMessage: 'Sýslumaður hefur móttekið erfðafjárskýrslu',
+    description: '',
+  },
   doneTitlePrepaidEFS: {
     id: 'ir.application:doneTitlePrepaidEFS',
-    defaultMessage: 'Umsókn um fyrirframgreiddan arf móttekin',
+    defaultMessage: 'Erfðafjárskýrsla um fyrirframgreiddan arf móttekin',
     description: '',
   },
   doneDescriptionEFS: {

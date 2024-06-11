@@ -125,4 +125,8 @@ export class Defendant extends Model {
   })
   @ApiProperty()
   verdictViewDate?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  acceptCompensationClaim?: boolean
 }

@@ -115,3 +115,9 @@ export interface SchoolType {
   schoolTypeCode: string
   licenseCategory: string
 }
+
+export interface TeacherRights {
+  active: boolean
+  hasRegisteredDrivingLessons: boolean
+  rights: string[]
+}

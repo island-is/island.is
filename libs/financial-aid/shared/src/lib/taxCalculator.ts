@@ -111,8 +111,9 @@ export const calculatePersonalTaxAllowanceFromAmount = (
 export const calculateAcceptedAidFinalAmount = (
   amount: number,
   finalTaxAmount: number,
+  childrenAid: number,
 ): number => {
-  return amount - finalTaxAmount
+  return amount - finalTaxAmount + childrenAid
 }
 
 export const calculateFinalTaxAmount = (
