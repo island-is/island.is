@@ -41,8 +41,8 @@ const Heading = styled.View`
 const Icon = styled.View<{ unread?: boolean }>`
   background-color: ${({ theme, unread }) =>
     unread ? theme.color.white : theme.color.blue100};
-  height: 40px;
-  width: 40px;
+  height: 42px;
+  width: 42px;
   align-items: center;
   justify-content: center;
   border-radius: ${({ theme }) => theme.border.radius.circle};
@@ -95,7 +95,7 @@ export function NotificationCard({
             <Icon unread={unread}>
               <Image
                 source={icon as ImageSourcePropType}
-                style={{ width: 16, height: 16 }}
+                style={{ width: 24, height: 24 }}
               />
             </Icon>
           ) : null}
