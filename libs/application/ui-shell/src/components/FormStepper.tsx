@@ -67,7 +67,7 @@ const FormStepper = ({
             fontWeight={isChildActive ? 'semiBold' : 'regular'}
             key={`formStepperChild-${i}`}
           >
-            {formatText(child.title, application, formatMessage)}
+            {childText}
           </Text>
         )
       })
