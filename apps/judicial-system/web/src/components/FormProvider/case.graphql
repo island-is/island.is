@@ -264,6 +264,5 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadline
     indictmentDecision
-    subpoenaType
   }
 }

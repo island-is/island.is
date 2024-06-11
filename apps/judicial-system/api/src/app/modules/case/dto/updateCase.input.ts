@@ -28,7 +28,6 @@ import {
   IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
-  SubpoenaType,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -496,9 +495,4 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
-
-  @Allow()
-  @IsOptional()
-  @Field(() => SubpoenaType, { nullable: true })
-  readonly subpoenaType?: SubpoenaType
 }
