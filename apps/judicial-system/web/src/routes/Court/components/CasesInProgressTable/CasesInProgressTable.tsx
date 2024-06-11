@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import React, { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -42,7 +42,7 @@ interface CasesInProgressTableProps {
   refetch: () => Promise<unknown>
 }
 
-const CasesInProgressTable: React.FC<CasesInProgressTableProps> = (props) => {
+const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
   const { loading, isFiltering, cases, refetch } = props
 
   const { formatMessage } = useIntl()
