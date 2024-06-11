@@ -246,12 +246,6 @@ export const m = defineMessages({
       'Lokadagsetning má ekki vera á undan eða sú sama og upphafsdagsetning',
     description: '',
   },
-  validationDateTooFarInFuture: {
-    id: 'gpl.application:validationDateTooFarInFuture',
-    defaultMessage:
-      'Gildistími má ekki vera lengri en 3 mánuðum frá upphafsdagsetningu',
-    description: '',
-  },
   validationPhone: {
     id: 'gpl.application:validationPhone',
     defaultMessage: 'Vinsamlegast sláðu inn gilt símanúmer',
