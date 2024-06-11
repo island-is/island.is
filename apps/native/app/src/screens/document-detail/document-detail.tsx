@@ -21,7 +21,6 @@ import styled from 'styled-components/native'
 import {
   DocumentV2,
   ListDocumentFragmentDoc,
-  useGetDocumentContentLazyQuery,
   useGetDocumentLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -196,27 +195,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     },
   })
 
-  const [getDocumentContent, docContent] = useGetDocumentContentLazyQuery({
-    variables: {
-      input: {
-        id: docId,
-      },
-    },
-  })
-
   const Document = {
     ...(doc?.data || {}),
     ...(docRes.data?.documentV2 || {}),
-    ...(docContent.data?.documentV2 || {}),
   }
 
   useEffect(() => {
-    if (doc.missing) {
-      // If we don't have the document in the cache, fetch it
+    if (doc.missing || !doc.data?.content) {
+      console.log('fetching')
+      // If we don't have the document in the cache or content is missing, fetch it
       void getDocument()
-    } else if (doc.data?.content === null) {
-      // Content is missing, fetch it
-      void getDocumentContent()
     }
   }, [doc.missing, doc.data?.content, docId])
 
@@ -226,9 +214,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [touched, setTouched] = useState(false)
 
   const loading = docRes.loading || !accessToken
-  const fileTypeLoaded =
-    !docContent.loading && !docContent.error && !docRes.loading && !docRes.error
-  const hasError = error || docContent.error || docRes.error
+  const fileTypeLoaded = !!Document?.content?.type
+  const hasError = error || docRes.error
 
   const hasPdf = Document?.content?.type.toLocaleLowerCase() === 'pdf'
   const isHtml =
@@ -342,7 +329,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             ) : undefined
           }
           message={Document.subject}
-          isLoading={loading}
+          isLoading={loading && !Document.subject}
           hasBorder={false}
           logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
         />

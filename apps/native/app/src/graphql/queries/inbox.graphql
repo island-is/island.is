@@ -28,15 +28,6 @@ query GetDocument($input: DocumentInput!) {
   }
 }
 
-query GetDocumentContent($input: DocumentInput!) {
-  documentV2(input: $input) {
-    content {
-      type
-      value
-    }
-  }
-}
-
 mutation PostMailActionMutation($input: DocumentsV2MailActionInput!) {
   postMailActionV2(input: $input) {
     success
