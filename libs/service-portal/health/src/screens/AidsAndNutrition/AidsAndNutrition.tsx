@@ -11,6 +11,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import Aids from './Aids'
 import Nutrition from './Nutrition'
 import { isDefined } from '@island.is/shared/utils'
+import { CONTENT_GAP_SM } from '../Medicine/constants'
 
 const AidsAndNutrition = () => {
   useNamespaces('sp.health')
@@ -56,7 +57,9 @@ const AidsAndNutrition = () => {
 
       {error && <Problem error={error} noBorder={false} />}
 
-      {loading && !error && <SkeletonLoader space={1} height={30} repeat={4} />}
+      {loading && !error && (
+        <SkeletonLoader space={CONTENT_GAP_SM} height={30} repeat={4} />
+      )}
 
       {!loading && !error && !aids?.length && !nutrition?.length && (
         <Problem

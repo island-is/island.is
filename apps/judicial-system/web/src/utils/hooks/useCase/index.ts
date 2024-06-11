@@ -209,9 +209,6 @@ const useCase = () => {
       async (
         workingCase: Case,
         setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-        setCourtCaseNumberErrorMessage: React.Dispatch<
-          React.SetStateAction<string>
-        >,
       ): Promise<string> => {
         try {
           if (isCreatingCourtCase === false) {
@@ -225,16 +222,11 @@ const useCase = () => {
                 courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
               }))
 
-              setCourtCaseNumberErrorMessage('')
-
               return data.createCourtCase.courtCaseNumber
             }
           }
         } catch (error) {
-          // Catch all so we can set an eror message
-          setCourtCaseNumberErrorMessage(
-            'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-          )
+          // Catch all so we can return the empty string
         }
 
         return ''
@@ -248,10 +240,6 @@ const useCase = () => {
         ? limitedAccessUpdateCaseMutation
         : updateCaseMutation
 
-      const resultType = limitedAccess
-        ? 'limitedAccessUpdateCase'
-        : 'updateCase'
-
       try {
         if (!id || Object.keys(updateCase).length === 0) {
           return
@@ -263,7 +251,7 @@ const useCase = () => {
 
         const res = data as UpdateCaseMutation & LimitedAccessUpdateCaseMutation
 
-        return res && res[resultType]
+        return res?.[limitedAccess ? 'limitedAccessUpdateCase' : 'updateCase']
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
@@ -304,8 +292,8 @@ const useCase = () => {
           const res = data as TransitionCaseMutation &
             LimitedAccessTransitionCaseMutation
 
-          const state = res && res[resultType]?.state
-          const appealState = res && res[resultType]?.appealState
+          const state = res?.[resultType]?.state
+          const appealState = res?.[resultType]?.appealState
 
           if (!state && !appealState) {
             return false
