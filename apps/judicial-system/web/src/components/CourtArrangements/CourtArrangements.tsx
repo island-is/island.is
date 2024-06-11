@@ -125,18 +125,6 @@ export const CourtArrangements: FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
 
-  const [courtRoomValue, setCourtRoomValue] = useState<string>('')
-
-  useEffect(() => {
-    if (courtDate?.location === null) {
-      setCourtRoomValue('')
-    }
-
-    if (courtDate?.location) {
-      setCourtRoomValue(courtDate.location)
-    }
-  }, [courtDate?.location])
-
   const renderCourtArrangements = () => (
     <>
       <Box marginBottom={2}>
@@ -155,12 +143,9 @@ export const CourtArrangements: FC<Props> = (props) => {
         name="courtroom"
         label={formatMessage(strings.courtRoomLabel)}
         autoComplete="off"
-        value={courtRoomValue}
+        value={courtDate?.location || ''}
         placeholder="Skráðu inn dómsal"
         onChange={(evt) => {
-          setCourtRoomValue(evt.target.value)
-        }}
-        onBlur={(evt) => {
           handleCourtRoomChange(evt.target.value)
         }}
         disabled={courtRoomDisabled}
