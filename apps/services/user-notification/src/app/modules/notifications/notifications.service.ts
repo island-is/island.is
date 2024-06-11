@@ -24,7 +24,7 @@ import {
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
-import { CmsClientService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByKennitala } from '@island.is/clients/cms-client'
+import { CmsClientService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByNationalId } from '@island.is/clients/cms-client'
 
 /**
  * These are the properties that can be replaced in the template
@@ -64,11 +64,12 @@ export class NotificationsService {
   ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
     const queryVariables = {
-      kennitala: senderId,
+      nationalId: senderId,
       locale: mapToContentfulLocale(locale),
     };
+
     const res = await this.CmsClientService.fetchData(
-      GetOrganizationByKennitala, 
+      GetOrganizationByNationalId, 
       queryVariables
     );
     const items = res.organizationCollection.items;
