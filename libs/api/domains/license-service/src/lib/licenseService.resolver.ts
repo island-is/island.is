@@ -26,11 +26,11 @@ import { GenericPkPassVerification } from './dto/GenericPkPassVerification.dto'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { GetGenericLicenseInput } from './dto/GetGenericLicense.input'
 import { GetGenericLicensesInput } from './dto/GetGenericLicenses.input'
-import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
 import { VerifyLicenseBarcodeInput } from './dto/VerifyLicenseBarcodeInput'
 import { VerifyLicenseBarcodeResult } from './dto/VerifyLicenseBarcodeResult.dto'
 import { VerifyPkPassInput } from './dto/VerifyPkPass.input'
 import { LicenseServiceService } from './licenseService.service'
+import { LicenseCollection } from './dto/GenericLicenseCollection.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
@@ -38,6 +38,24 @@ import { LicenseServiceService } from './licenseService.service'
 @Audit({ namespace: '@island.is/api/license-service' })
 export class LicenseServiceResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
+
+  @Query(() => LicenseCollection)
+  @Audit()
+  async genericLicenseCollection(
+    @CurrentUser() user: User,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('input') input: GetGenericLicensesInput,
+  ) {
+    const licenses = await this.licenseServiceService.getUserLicenses(
+      user,
+      locale,
+      {
+        ...input,
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
+      },
+    )
+  }
 
   @Query(() => [GenericUserLicense], {
     deprecationReason: 'Use genericUserLicenses instead',
@@ -85,20 +103,6 @@ export class LicenseServiceResolver {
     }
 
     return this.licenseServiceService.createBarcode(user, genericUserLicense)
-  }
-
-  @Query(() => UserLicensesResponse)
-  @Audit()
-  async genericUserLicenses(
-    @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @Args('input') input: GetGenericLicensesInput,
-  ) {
-    return this.licenseServiceService.getUserLicenses(user, locale, {
-      ...input,
-      includedTypes: input?.includedTypes ?? ['DriversLicense'],
-    })
   }
 
   @Mutation(() => GenericPkPass)

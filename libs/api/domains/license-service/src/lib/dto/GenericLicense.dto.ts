@@ -42,12 +42,6 @@ export class GenericLicense {
   @Field({ description: 'Does the license support verification of pkpass?' })
   pkpassVerify!: boolean
 
-  @Field({
-    description:
-      'How long the data about the license should be treated as fresh',
-  })
-  timeout!: number
-
   @Field(() => GenericUserLicenseStatus, { description: 'Status of license' })
   status!: GenericUserLicenseStatus
 

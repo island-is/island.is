@@ -69,6 +69,12 @@ export enum GenericUserLicensePkPassStatus {
   Unknown = 'Unknown',
 }
 
+export enum GenericUserLicenseValidity {
+  Unknown = 'Unknown',
+  Expired = 'Expired',
+  Valid = 'Valid',
+}
+
 export enum GenericUserLicenseMetaLinksType {
   External = 'External',
   Download = 'Download',

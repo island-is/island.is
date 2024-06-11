@@ -1,10 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GenericUserLicense } from './GenericUserLicense.dto'
 
-@ObjectType()
+@ObjectType('GenericUserLicenseResponse')
 export class UserLicensesResponse {
-  @Field({ description: 'National ID of licenses owner' })
-  nationalId!: string
+  @Field({
+    nullable: true,
+    description: 'National ID of licenses owner',
+    deprecationReason: 'Unnecessary',
+  })
+  nationalId?: string
 
   @Field(() => [GenericUserLicense], {
     description: 'All of the users licenses',
