@@ -94,16 +94,18 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
-      "dependsOn": ["^build"],
+      "dependsOn": ["^build", "codegen/frontend-client", "codegen/backend-client", "codegen/backend-schema"],
       "inputs": ["production", "^production"]
     },
     "e2e": {
       "inputs": ["default", "^production"]
     },
     "lint": {
+      "dependsOn": ["codegen/frontend-client", "codegen/backend-client", "codegen/backend-schema"],
       "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
     },
     "test": {
+      "dependsOn": ["^build", "codegen/frontend-client", "codegen/backend-client", "codegen/backend-schema"],
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
     "codegen/backend-client": {
