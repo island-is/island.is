@@ -115,4 +115,4 @@ export class AdminPatchScopeDto {
  *   'grantToAuthenticatedUser',
  * ]
  */
-export const superUserScopeFields = []
+export const superUserScopeFields: string[] = []
