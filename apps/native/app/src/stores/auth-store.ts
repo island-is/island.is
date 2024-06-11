@@ -251,8 +251,6 @@ export async function checkIsAuthenticated() {
     return true
   } catch (e) {
     const err = e as Error & { code?: string }
-    console.warn('checkIsAuthenticated: ', err)
-
     const shouldLogout =
       err.code === INVALID_REFRESH_TOKEN_ERROR ||
       err.message === UNAUTHORIZED_USER_INFO
