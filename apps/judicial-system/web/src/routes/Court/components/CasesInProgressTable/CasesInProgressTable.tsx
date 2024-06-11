@@ -161,9 +161,9 @@ const CasesInProgressTable: React.FC<CasesInProgressTableProps> = (props) => {
                 if (row.state === CaseState.WAITING_FOR_CANCELLATION) {
                   setCaseToCancelId(row.id)
                   return true
-                } else {
-                  return false
                 }
+
+                return false
               }}
             />
           ) : (
