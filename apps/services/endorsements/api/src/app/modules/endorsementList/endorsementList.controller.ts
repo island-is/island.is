@@ -95,12 +95,9 @@ export class EndorsementListController {
   async getGeneralPetitionLists(
     @Query() query: PaginationDto,
   ): Promise<PaginatedEndorsementListDto> {
-    const results =
-      await this.endorsementListService.findOpenListsTaggedGeneralPetition(
-        query,
-      )
-    console.log('getGeneralPetitionListsResults', results)
-    return results
+    return await this.endorsementListService.findOpenListsTaggedGeneralPetition(
+      query,
+    )
   }
 
   @ApiOperation({ summary: 'Gets a General Petition List by Id' })
