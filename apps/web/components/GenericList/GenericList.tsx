@@ -1,7 +1,8 @@
-import { useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Locale } from 'locale'
 import { useRouter } from 'next/router'
+import { parseAsInteger, useQueryState } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
@@ -17,6 +18,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { stringHash } from '@island.is/shared/utils'
 import {
   GenericListItem,
   GenericListItemResponse,
@@ -125,8 +127,15 @@ export const GenericList = ({
   searchInputPlaceholder,
   itemType,
 }: GenericListProps) => {
-  const [searchValue, setSearchValue] = useState('')
-  const [page, setPage] = useState(1)
+  const hashedId = useMemo(() => {
+    return stringHash(id).toString().slice(0, 4)
+  }, [id])
+
+  const searchQueryId = `${hashedId}q`
+  const pageQueryId = `${hashedId}page`
+
+  const [searchValue, setSearchValue] = useQueryState(searchQueryId)
+  const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
   const pageRef = useRef(page)
   const searchValueRef = useRef(searchValue)
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
@@ -171,8 +180,8 @@ export const GenericList = ({
             genericListId: id,
             size: ITEMS_PER_PAGE,
             lang: activeLocale,
-            page,
-            queryString: searchValue,
+            page: page ?? 1,
+            queryString: searchValue || '',
           },
         },
       })
@@ -201,12 +210,12 @@ export const GenericList = ({
             <FilterInput
               name="list-search"
               onChange={(value) => {
-                setSearchValue(value)
+                setSearchValue(value || null)
                 searchValueRef.current = value
-                setPage(1)
+                setPage(null)
                 pageRef.current = 1
               }}
-              value={searchValue}
+              value={searchValue ?? ''}
               loading={loading}
               placeholder={searchInputPlaceholder ?? undefined}
               backgroundColor="white"
@@ -232,7 +241,7 @@ export const GenericList = ({
                 </Text>
                 {totalPages > 1 && (
                   <Text>
-                    {activeLocale === 'is' ? 'Síða' : 'Page'} {page}{' '}
+                    {activeLocale === 'is' ? 'Síða' : 'Page'} {page ?? 1}{' '}
                     {activeLocale === 'is' ? 'af' : 'of'} {totalPages}
                   </Text>
                 )}
@@ -264,13 +273,13 @@ export const GenericList = ({
 
           {totalItems > ITEMS_PER_PAGE && (
             <Pagination
-              page={page}
+              page={page ?? 1}
               itemsPerPage={ITEMS_PER_PAGE}
               totalItems={totalItems}
               renderLink={(page, className, children) => (
                 <button
                   onClick={() => {
-                    setPage(page)
+                    setPage(page === 1 ? null : page)
                     pageRef.current = page
 
                     // Scroll to top of the list on page change
