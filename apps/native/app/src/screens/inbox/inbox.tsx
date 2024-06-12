@@ -300,13 +300,14 @@ export const InboxScreen: NavigationFunctionComponent<{
     subjectContains: queryString,
   })
 
-  const [markAllAsRead] = useMarkAllDocumentsAsReadMutation({
-    onCompleted: (data) => {
-      if (data.documentsV2MarkAllAsRead?.success) {
-        res.refetch()
-      }
-    },
-  })
+  const [markAllAsRead, { loading: markAllAsReadLoading }] =
+    useMarkAllDocumentsAsReadMutation({
+      onCompleted: (data) => {
+        if (data.documentsV2MarkAllAsRead?.success) {
+          res.refetch()
+        }
+      },
+    })
 
   useConnectivityIndicator({
     componentId,
@@ -393,7 +394,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   )
 
   const data = useMemo(() => {
-    if (res.refetching) {
+    if (res.refetching || markAllAsReadLoading) {
       return Array.from({ length: 20 }).map((_, id) => ({
         id: String(id),
         type: 'skeleton',
@@ -403,7 +404,7 @@ export const InboxScreen: NavigationFunctionComponent<{
       return [{ id: '0', type: 'empty' }]
     }
     return items
-  }, [res.refetching, items]) as ListItem[]
+  }, [res.refetching, items, markAllAsReadLoading]) as ListItem[]
 
   useNavigationComponentDidAppear(() => {
     setVisible(true)
