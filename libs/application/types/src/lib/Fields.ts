@@ -279,6 +279,7 @@ export interface SelectField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   required?: boolean
+  isMulti?: boolean
 }
 
 export interface CompanySearchField extends BaseField {
@@ -301,6 +302,7 @@ export interface AsyncSelectField extends BaseField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
+  isMulti?: boolean
 }
 
 export interface TextField extends BaseField {
