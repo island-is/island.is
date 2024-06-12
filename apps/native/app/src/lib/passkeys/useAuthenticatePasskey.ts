@@ -5,13 +5,16 @@ import {
   formatAuthenticationOptions,
 } from './helpers'
 import { useGetPasskeyAuthenticationOptionsLazyQuery } from '../../graphql/types/schema'
-import { preferencesStore } from '../../stores/preferences-store'
+import {
+  preferencesStore,
+  usePreferencesStore,
+} from '../../stores/preferences-store'
 
 const ONE_HOUR = 60 * 60 * 1000
 
 export const useAuthenticatePasskey = () => {
   const isSupported: boolean = Passkey.isSupported()
-  const { lastUsedPasskey } = preferencesStore.getState()
+  const { lastUsedPasskey } = usePreferencesStore()
 
   const [getPasskeyAuthenticationOptions] =
     useGetPasskeyAuthenticationOptionsLazyQuery()
