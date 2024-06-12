@@ -39,7 +39,7 @@ const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
-  const { updateDefendantState } = useDefendants()
+  const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -62,9 +62,23 @@ const Subpoena: FC = () => {
         return
       }
 
-      const courtDateSentToServer = await sendCourtDateToServer()
+      const promises: Promise<boolean | undefined>[] = [sendCourtDateToServer()]
 
-      if (!courtDateSentToServer) {
+      if (workingCase.defendants) {
+        workingCase.defendants.forEach((defendant) => {
+          promises.push(
+            updateDefendant({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              subpoenaType: defendant.subpoenaType,
+            }),
+          )
+        })
+      }
+
+      const allDataSentToServer = await Promise.all(promises)
+
+      if (!allDataSentToServer) {
         return
       }
 
