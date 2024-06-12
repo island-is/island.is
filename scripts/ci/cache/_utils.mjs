@@ -221,12 +221,11 @@ export function arrayIncludesOneOf(array, values) {
   return values.some((value) => array.includes(value))
 }
 
-
 export function retry(fn, retries = 3, delay = 100) {
   return new Promise((resolve, reject) => {
     const attempt = async (n) => {
       try {
-        const value = await fn();
+        const value = await fn()
         resolve(value)
       } catch (error) {
         if (n <= 0) {
@@ -234,7 +233,6 @@ export function retry(fn, retries = 3, delay = 100) {
           return
         }
         setTimeout(() => attempt(n - 1), delay)
-
       }
     }
     attempt(retries)

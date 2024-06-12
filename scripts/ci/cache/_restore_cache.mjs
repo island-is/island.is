@@ -15,7 +15,7 @@ export async function restoreCache({ key, path }) {
     resolve(ROOT, e),
   )
   try {
-    cache = await retry(() => _restoreCache(paths, key, [], {}, true));
+    cache = await retry(() => _restoreCache(paths, key, [], {}, true))
   } catch (e) {
     return false
   }
