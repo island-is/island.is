@@ -2,15 +2,12 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import {
-  capitalize,
-  formatDate,
-  formatDOB,
-} from '@island.is/judicial-system/formatters'
+import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
   DateType,
   DistrictCourtLocation,
   DistrictCourts,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { subpoena as strings } from '../messages'
@@ -19,7 +16,6 @@ import {
   addEmptyLines,
   addFooter,
   addHugeHeading,
-  addLargeHeading,
   addMediumText,
   addNormalRightAlignedText,
   addNormalText,
@@ -30,7 +26,6 @@ export const createSubpoenaPDF = (
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> => {
-  console.log(theCase.dateLogs)
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -145,14 +140,17 @@ export const createSubpoenaPDF = (
   addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(strings.intro), 'Times-Bold')
-  addNormalText(
-    doc,
-    'intro',
-    // theCase.subpoenaType === SubpoenaType.ABSENCE
-    //   ? strings.absenceIntro
-    //   : strings.arrestIntro,
-    'Times-Bold',
-  )
+  if (theCase.defendants) {
+    addNormalText(
+      doc,
+      formatMessage(
+        theCase.defendants[0].subpoenaType === SubpoenaType.ABSENCE
+          ? strings.absenceIntro
+          : strings.arrestIntro,
+      ),
+      'Times-Bold',
+    )
+  }
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
 
