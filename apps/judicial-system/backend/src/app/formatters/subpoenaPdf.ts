@@ -12,6 +12,7 @@ import {
 
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
+import { Defendant } from '../modules/defendant'
 import {
   addEmptyLines,
   addFooter,
@@ -25,7 +26,7 @@ import {
 export const createSubpoenaPDF = (
   theCase: Case,
   formatMessage: FormatMessage,
-  subpoenaType: SubpoenaType,
+  defendant?: Defendant,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -37,6 +38,10 @@ export const createSubpoenaPDF = (
     },
     bufferPages: true,
   })
+
+  if (!defendant) {
+    return Promise.reject('Defendant is missing')
+  }
 
   const sinc: Buffer[] = []
   const arraignmentDate = theCase.dateLogs?.find(
@@ -67,27 +72,18 @@ export const createSubpoenaPDF = (
   addEmptyLines(doc)
   addNormalText(
     doc,
-    theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].name
-      ? `${theCase.defendants[0].name}, ${formatDOB(
-          theCase.defendants[0].nationalId,
-          theCase.defendants[0].noNationalId,
+    defendant.name
+      ? `${defendant.name}, ${formatDOB(
+          defendant.nationalId,
+          defendant.noNationalId,
         )}`
       : 'Nafn ekki skráð',
   )
-  addNormalText(
-    doc,
-    theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].address
-      ? theCase.defendants[0].address
-      : 'Heimili ekki skráð',
-  )
+  addNormalText(doc, defendant.address || 'Heimili ekki skráð')
   addEmptyLines(doc)
   addHugeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
   addEmptyLines(doc)
-  addMediumText(doc, 'Mál nr. S-2322/2021', 'Times-Bold')
+  addMediumText(doc, `Mál nr. ${theCase.courtCaseNumber}`, 'Times-Bold')
   addEmptyLines(doc)
   addNormalText(doc, 'Ákærandi: ', 'Times-Bold', true)
   addNormalText(
@@ -106,15 +102,7 @@ export const createSubpoenaPDF = (
   )
   addEmptyLines(doc)
   addNormalText(doc, 'Ákærði: ', 'Times-Bold', true)
-  addNormalText(
-    doc,
-    theCase.defendants &&
-      theCase.defendants.length > 0 &&
-      theCase.defendants[0].name
-      ? theCase.defendants[0].name
-      : 'Nafn ekki skráð',
-    'Times-Roman',
-  )
+  addNormalText(doc, defendant.name || 'Nafn ekki skráð', 'Times-Roman')
   addEmptyLines(doc, 2)
 
   if (arraignmentDate?.date) {
@@ -144,7 +132,7 @@ export const createSubpoenaPDF = (
   addNormalText(
     doc,
     formatMessage(
-      subpoenaType === SubpoenaType.ABSENCE
+      defendant.subpoenaType === SubpoenaType.ABSENCE
         ? strings.absenceIntro
         : strings.arrestIntro,
     ),

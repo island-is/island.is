@@ -248,7 +248,7 @@ export class PDFService {
     const generatedPdf = await createSubpoenaPDF(
       theCase,
       this.formatMessage,
-      SubpoenaType.ABSENCE,
+      theCase.defendants?.[0],
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
