@@ -5,7 +5,6 @@ import { CaseType, User, UserRole } from '@island.is/judicial-system/types'
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { CourtService } from '../../../court'
-import { DeliverDto } from '../../dto/deliver.dto'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -36,7 +35,7 @@ describe('InternalCaseController - Deliver assigned roles for indictment case to
   let mockCourtService: CourtService
   let givenWhenThen: GivenWhenThen
 
-  beforeEach(async () => {
+  beforeAll(async () => {
     const { courtService, internalCaseController } =
       await createTestingCaseModule()
 
@@ -69,7 +68,7 @@ describe('InternalCaseController - Deliver assigned roles for indictment case to
   describe('deliver assigned roles in indictment case to court', () => {
     let then: Then
 
-    beforeEach(async () => {
+    beforeAll(async () => {
       then = await givenWhenThen(caseId, theCase, '0101010101')
     })
 
@@ -84,6 +83,4 @@ describe('InternalCaseController - Deliver assigned roles for indictment case to
       expect(then.result).toEqual({ delivered: true })
     })
   })
-
-  
 })
