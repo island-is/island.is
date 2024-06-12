@@ -44,12 +44,14 @@ interface Props {
   application: Application
   studentNationalId: string
   setShowStudentOverview: React.Dispatch<React.SetStateAction<boolean>>
+  licenseCategory: 'B' | 'BE'
 }
 
 const ViewStudent = ({
   application,
   studentNationalId,
   setShowStudentOverview,
+  licenseCategory,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -62,8 +64,10 @@ const ViewStudent = ({
     variables: {
       input: {
         nationalId: studentNationalId,
+        licenseCategory: licenseCategory,
       },
     },
+    fetchPolicy: 'no-cache',
     notifyOnNetworkStatusChange: true,
   })
 
