@@ -96,7 +96,7 @@ export const form: Form = buildForm({
               maxLength: 1000,
               defaultValue: () => '',
             }),
-            //fake field to trigger rerender on category switch
+            //fake field to trigger rerender on date switch
             buildDescriptionField({
               id: 'fake_helper_field',
               title: '',
