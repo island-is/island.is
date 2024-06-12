@@ -62,6 +62,7 @@ export class DocumentServiceV2 {
       publicationDate: document.date,
       id: documentId,
       name: document.fileName,
+      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
       sender: {
         id: document.senderNationalId,
         name: document.senderName,

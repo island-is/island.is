@@ -7,6 +7,7 @@ import {
   DefenderChoice,
   Gender,
   ServiceRequirement,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 export class UpdateDefendantDto {
@@ -84,4 +85,9 @@ export class UpdateDefendantDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean })
   readonly acceptCompensationClaim?: boolean
+
+  @IsOptional()
+  @IsEnum(SubpoenaType)
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  readonly subpoenaType?: SubpoenaType
 }
