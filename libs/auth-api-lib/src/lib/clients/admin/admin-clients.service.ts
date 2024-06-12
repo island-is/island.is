@@ -414,17 +414,19 @@ export class AdminClientsService {
       supportsProcuringHolders,
       supportsPersonalRepresentatives,
       supportsLegalGuardians,
-      ...rest
+      ...clientAttributes
     } = data.clientAttributes
 
-    if (Object.keys(data.clientAttributes as object).length > 0) {
+    if (Object.keys(clientAttributes as object).length > 0) {
       // Update includes client base attributes
+      const refreshTokenExpiration = data.refreshTokenExpiration
+        ? translateRefreshTokenExpiration(data.refreshTokenExpiration)
+        : undefined
+
       await this.clientModel.update(
         {
-          ...rest,
-          refreshTokenExpiration: translateRefreshTokenExpiration(
-            data.refreshTokenExpiration,
-          ),
+          ...clientAttributes,
+          refreshTokenExpiration,
         },
         {
           where: {
