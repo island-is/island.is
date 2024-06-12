@@ -127,12 +127,8 @@ export const GenericList = ({
   searchInputPlaceholder,
   itemType,
 }: GenericListProps) => {
-  const hashedId = useMemo(() => {
-    return stringHash(id).toString().slice(0, 4)
-  }, [id])
-
-  const searchQueryId = `${hashedId}q`
-  const pageQueryId = `${hashedId}page`
+  const searchQueryId = `${id}q`
+  const pageQueryId = `${id}page`
 
   // TODO: add query params for filter tag search
   // TODO: ignore initial response if there are query params set and fetch according to the query params

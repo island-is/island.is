@@ -27,4 +27,6 @@ export class GetGenericListItemsInput {
   @IsString()
   @IsOptional()
   queryString?: string
+
+  // TODO: add tags and tagGroups
 }

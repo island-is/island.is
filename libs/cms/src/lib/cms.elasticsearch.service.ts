@@ -479,6 +479,7 @@ export class CmsElasticsearchService {
                   },
                 },
               ],
+              // TODO: implement .concat(generateGenericTagGroupQueries()),
             },
           },
         },
