@@ -38,6 +38,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { FriggClientConfig } from '@island.is/clients/directorate-of-education-and-school-services/frigg'
 
 @Module({
   imports: [
@@ -79,6 +80,7 @@ import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clie
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        FriggClientConfig,
       ],
     }),
   ],
