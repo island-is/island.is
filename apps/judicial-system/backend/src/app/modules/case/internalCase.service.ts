@@ -544,6 +544,46 @@ export class InternalCaseService {
       })
   }
 
+  async deliverIndictmentAssignedRolesToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    const assignedRoles = [
+      ...(theCase.judge
+        ? [
+            {
+              name: theCase.judge.name,
+              role: UserRole.DISTRICT_COURT_JUDGE,
+            },
+          ]
+        : []),
+      ...(theCase.registrar
+        ? [
+            {
+              name: theCase.registrar.name,
+              role: UserRole.DISTRICT_COURT_REGISTRAR,
+            },
+          ]
+        : []),
+    ]
+
+    return this.courtService
+      .updateIndictmentCaseWithAssignedRoles(
+        user,
+        theCase.id,
+        theCase.courtCaseNumber,
+        assignedRoles,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with assigned roles`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,

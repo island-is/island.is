@@ -172,6 +172,31 @@ export class InternalCaseController {
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post(
     `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers assigned roles in indictment case to court',
+  })
+  deliverIndictmentAssignedRolesToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the assigned roles of indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentAssignedRolesToCourt(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD]
     }/:policeCaseNumber`,
   )

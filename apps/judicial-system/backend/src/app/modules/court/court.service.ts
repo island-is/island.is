@@ -12,7 +12,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import type { User, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
@@ -127,6 +127,7 @@ enum RobotEmailType {
   APPEAL_CASE_CONCLUSION = 'APPEAL_CASE_CONCLUSION',
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
   NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
+  INDICTMENT_CASE_ASSIGNED_ROLES = 'INDICTMENT_CASE_ASSIGNED_ROLES',
 }
 
 @Injectable()
@@ -603,6 +604,36 @@ export class CourtService {
     }
   }
 
+  async updateIndictmentCaseWithAssignedRoles(
+    user: User,
+    caseId: string,
+    courtCaseNumber?: string,
+    assignedRole?: { name?: string; role?: UserRole }[],
+  ): Promise<unknown> {
+    try {
+      const subject = `Ákæra - ${courtCaseNumber} - úthlutun`
+      const content = JSON.stringify({ assignedRole })
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with assigned roles',
+        {
+          caseId,
+          actor: user.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
   async updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
