@@ -18,6 +18,7 @@ import {
   ListRenderItemInfo,
   RefreshControl,
   View,
+  Alert,
 } from 'react-native'
 import {
   Navigation,
@@ -25,7 +26,8 @@ import {
 } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import { useTheme } from 'styled-components/native'
-import FilterIcon from '../../assets/icons/filter-icon.png'
+import filterIcon from '../../assets/icons/filter-icon.png'
+import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
@@ -35,6 +37,7 @@ import {
   ListDocumentsQuery,
   useListDocumentsQuery,
   useListDocumentsLazyQuery,
+  useMarkAllDocumentsAsReadMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
@@ -297,6 +300,15 @@ export const InboxScreen: NavigationFunctionComponent<{
     subjectContains: queryString,
   })
 
+  const [markAllAsRead, { loading: markAllAsReadLoading }] =
+    useMarkAllDocumentsAsReadMutation({
+      onCompleted: (data) => {
+        if (data.documentsV2MarkAllAsRead?.success) {
+          res.refetch()
+        }
+      },
+    })
+
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons(),
@@ -382,7 +394,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   )
 
   const data = useMemo(() => {
-    if (res.refetching) {
+    if (res.refetching || markAllAsReadLoading) {
       return Array.from({ length: 20 }).map((_, id) => ({
         id: String(id),
         type: 'skeleton',
@@ -392,11 +404,39 @@ export const InboxScreen: NavigationFunctionComponent<{
       return [{ id: '0', type: 'empty' }]
     }
     return items
-  }, [res.refetching, items]) as ListItem[]
+  }, [res.refetching, items, markAllAsReadLoading]) as ListItem[]
 
   useNavigationComponentDidAppear(() => {
     setVisible(true)
   }, componentId)
+
+  const onPressMarkAllAsRead = () => {
+    Alert.alert(
+      intl.formatMessage({
+        id: 'inbox.markAllAsReadPromptTitle',
+      }),
+      intl.formatMessage({
+        id: 'inbox.markAllAsReadPromptDescription',
+      }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'inbox.markAllAsReadPromptCancel',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'inbox.markAllAsReadPromptConfirm',
+          }),
+          style: 'destructive',
+          onPress: async () => {
+            await markAllAsRead()
+          },
+        },
+      ],
+    )
+  }
 
   if (!visible) {
     return null
@@ -426,7 +466,7 @@ export const InboxScreen: NavigationFunctionComponent<{
               style={{
                 padding: 16,
                 flexDirection: 'row',
-                gap: 15,
+                gap: 8,
               }}
             >
               <SearchBar
@@ -443,10 +483,11 @@ export const InboxScreen: NavigationFunctionComponent<{
                 isOutlined
                 isUtilityButton
                 style={{
+                  marginLeft: 8,
                   paddingTop: 0,
                   paddingBottom: 0,
                 }}
-                icon={FilterIcon}
+                icon={filterIcon}
                 iconStyle={{ tintColor: theme.color.blue400 }}
                 onPress={() => {
                   navigateTo('/inbox-filter', {
@@ -455,6 +496,19 @@ export const InboxScreen: NavigationFunctionComponent<{
                     bookmarked,
                   })
                 }}
+              />
+              <Button
+                icon={inboxReadIcon}
+                isUtilityButton
+                isOutlined
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  minWidth: 40,
+                }}
+                onPress={onPressMarkAllAsRead}
               />
             </View>
             {opened || archived || bookmarked ? (
