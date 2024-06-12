@@ -74,11 +74,11 @@ export {
   isIndictmentCaseTransition,
   isRequestCaseTransition,
   DistrictCourtLocation,
-  DistrictCourts,
 } from './lib/case'
 export type {
   CrimeScene,
   CrimeSceneMap,
+  DistrictCourts,
   IndictmentSubtypeMap,
 } from './lib/case'
 
