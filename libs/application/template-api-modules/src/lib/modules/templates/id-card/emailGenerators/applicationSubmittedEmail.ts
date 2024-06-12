@@ -1,8 +1,8 @@
 import { Message } from '@island.is/email-service'
 import { EmailRecipient } from '../types'
 import { ApplicationConfigurations } from '@island.is/application/types'
-import { pathToAsset } from './assignParentBEmail'
 import { EmailTemplateGeneratorProps } from '../../../../types'
+import { pathToAsset } from '../utils'
 
 export type ApplicationSubmittedEmail = (
   props: EmailTemplateGeneratorProps,

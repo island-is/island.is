@@ -230,7 +230,6 @@ export const OverviewSection = buildSection({
               answers,
               `${Routes.PRICELIST}.priceChoice`,
             ) as string
-            console.log(priceChoice)
             // TODO: Add priceAmount when we have all chargeItemCodes!
             // And change the priceList messages
             return priceChoice === Services.EXPRESS

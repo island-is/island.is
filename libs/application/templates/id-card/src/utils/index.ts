@@ -7,7 +7,7 @@ export * from './hasReviewer'
 export * from './getChargeItemCodes'
 export * from './updateAnswers'
 export * from './isChild'
-export * from './isWithinExpirationDate'
+export * from './isAvailableForApplication'
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

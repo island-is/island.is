@@ -11,7 +11,7 @@ import {
   Routes,
 } from '../../../lib/constants'
 import { idInformation } from '../../../lib/messages/idInformation'
-import { isWithinExpirationDate } from '../../../utils'
+import { isAvailableForApplication } from '../../../utils'
 import { formatDate } from '../../../utils/formatDate'
 
 export const ChosenApplicantsSubSection = buildSubSection({
@@ -52,8 +52,18 @@ export const ChosenApplicantsSubSection = buildSubSection({
               [],
             ) as Array<IdentityDocumentChild>
 
+            const idTypeChosen = getValueViaPath(
+              application.answers,
+              'typeOfId',
+              '',
+            ) as string
+
             const applicantIsDisabled = applicantPassport
-              ? !isWithinExpirationDate(applicantPassport.expirationDate)
+              ? !isAvailableForApplication(
+                  applicantPassport.expirationDate,
+                  idTypeChosen,
+                  `${applicantPassport.type}${applicantPassport.subType}`,
+                )
               : false
 
             const passportList: Array<any> = [
@@ -83,7 +93,11 @@ export const ChosenApplicantsSubSection = buildSubSection({
                   ? (item.passports[0] as IdentityDocument)
                   : undefined
               const isDisabled = idDocument
-                ? isWithinExpirationDate(idDocument.expirationDate)
+                ? !isAvailableForApplication(
+                    idDocument.expirationDate,
+                    idTypeChosen,
+                    `${idDocument.type}${idDocument.subType}`,
+                  )
                 : false
               return passportList.push({
                 label: item.childName,

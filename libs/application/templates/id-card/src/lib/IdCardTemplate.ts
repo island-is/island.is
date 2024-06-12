@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -47,6 +48,7 @@ const IdCardTemplate: ApplicationTemplate<
   name: applicationMessage.name,
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
+  translationNamespaces: [ApplicationConfigurations.IdCard.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -106,9 +108,6 @@ const IdCardTemplate: ApplicationTemplate<
           status: 'draft',
           progress: 0.25,
           lifecycle: pruneAfterDays(2),
-          //   onExit: defineTemplateApi({
-          //     action: ApiActions.checkForDiscount,
-          //   }),
           actionCard: {
             historyLogs: [
               {
@@ -162,7 +161,6 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Review').then((val) =>
                   Promise.resolve(val.Review),
                 ),
-              delete: true, // TODO: Remove before production
               write: 'all',
             },
             {
@@ -175,14 +173,6 @@ const IdCardTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
-              api: [
-                // NationalRegistryUserParentB,
-                UserInfoApi,
-                // SyslumadurPaymentCatalogApi,
-                PassportsApi,
-                DistrictsApi,
-                DeliveryAddressApi,
-              ],
             },
           ],
           actionCard: {
@@ -192,16 +182,10 @@ const IdCardTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
-            /* pendingAction: {
-                title: m.waitingForConfirmationFromParentBTitle,
-                content: m.waitingForConfirmationFromParentBDescription,
-                displayStatus: 'warning',
-              }, */
           },
         },
         on: {
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
-          // What happens during reject?
           [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
       },
@@ -210,9 +194,9 @@ const IdCardTemplate: ApplicationTemplate<
           name: 'Rejected',
           status: 'rejected',
           lifecycle: pruneAfterDays(3 * 30), // TODO HOW MANY DAYS SHOULD THIS BE?
-          //   onEntry: defineTemplateApi({
-          //     action: ApiActions.submitPassportApplication,
-          //   }),
+          onEntry: defineTemplateApi({
+            action: ApiActions.rejectApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -220,15 +204,6 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Rejected').then((val) =>
                   Promise.resolve(val.Rejected),
                 ),
-              // read: {
-              //   externalData: ['submitPassportApplication'],
-              //   answers: [
-              //     'submitPassportApplication',
-              //     'childsPersonalInfo',
-              //     'personalInfo',
-              //     'passport',
-              //   ],
-              // },
             },
             {
               id: Roles.ASSIGNEE,
@@ -236,10 +211,6 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Rejected').then((val) =>
                   Promise.resolve(val.Rejected),
                 ),
-              // read: {
-              //   externalData: ['submitPassportApplication'],
-              //   answers: ['passport', 'childsPersonalInfo'],
-              // },
             },
           ],
         },
@@ -259,15 +230,6 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
-              // read: {
-              //   externalData: ['submitPassportApplication'],
-              //   answers: [
-              //     'submitPassportApplication',
-              //     'childsPersonalInfo',
-              //     'personalInfo',
-              //     'passport',
-              //   ],
-              // },
             },
             {
               id: Roles.ASSIGNEE,
@@ -275,10 +237,6 @@ const IdCardTemplate: ApplicationTemplate<
                 import('../forms/Approved').then((val) =>
                   Promise.resolve(val.Approved),
                 ),
-              // read: {
-              //   externalData: ['submitPassportApplication'],
-              //   answers: ['passport', 'childsPersonalInfo'],
-              // },
             },
           ],
           actionCard: {

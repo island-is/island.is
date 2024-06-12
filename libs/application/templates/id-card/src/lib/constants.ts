@@ -44,6 +44,7 @@ export enum ApiActions {
   createCharge = 'createCharge',
   submitPassportApplication = 'submitPassportApplication',
   checkForDiscount = 'checkForDiscount',
+  rejectApplication = 'rejectApplication',
 }
 
 export const EXPIRATION_LIMIT_MONTHS = 9

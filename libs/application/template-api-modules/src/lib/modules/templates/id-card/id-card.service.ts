@@ -23,7 +23,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import {
   IdCardAnswers,
   Services,
-  isWithinExpirationDate,
+  isAvailableForApplication,
 } from '@island.is/application/templates/id-card'
 import { generateApplicationRejectEmail } from './emailGenerators/rejectApplicationEmail'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
@@ -61,7 +61,7 @@ export class IdCardService extends BaseTemplateApiService {
     // if applicant has valid id that is not withinExpirationDate, then not available for application,
     // otherwise available, either with no id or id within expiration limit
     const applicantIdentityWithinLimits = expDate
-      ? isWithinExpirationDate(expDate)
+      ? isAvailableForApplication(expDate, '', '') //TODO FIX
       : true
 
     let childIdentityWithinLimits = false
@@ -69,7 +69,7 @@ export class IdCardService extends BaseTemplateApiService {
       if (child.passports && child.passports.length > 0) {
         child.passports.map((id) => {
           const withinLimits = id.expirationDate
-            ? isWithinExpirationDate(id.expirationDate.toString())
+            ? isAvailableForApplication(id.expirationDate.toString(), '', '')
             : true
 
           if (withinLimits) {

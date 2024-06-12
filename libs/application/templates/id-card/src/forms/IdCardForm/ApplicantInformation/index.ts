@@ -18,6 +18,7 @@ import {
   getChosenApplicant,
   hasSecondGuardian,
   getChildPassport,
+  isChild,
 } from '../../../utils'
 import {} from '../../../utils/hasSecondGuardian'
 
@@ -65,20 +66,8 @@ export const ApplicanInformationSubSection = buildSection({
           id: `${Routes.APPLICANTSINFORMATION}.email`,
           title: applicantInformation.labels.applicantEmail,
           width: 'half',
-          condition: (formValue, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              formValue,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return applicantIdentity?.nationalId === chosenApplicantNationalId
+          condition: (answers, externalData) => {
+            return !isChild(answers, externalData)
           },
           defaultValue: (application: Application) => {
             const applicantUserProfile = getValueViaPath(
@@ -94,20 +83,8 @@ export const ApplicanInformationSubSection = buildSection({
           id: `${Routes.APPLICANTSINFORMATION}.phoneNumber`,
           title: applicantInformation.labels.applicantPhoneNumber,
           width: 'half',
-          condition: (formValue, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              formValue,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return applicantIdentity?.nationalId === chosenApplicantNationalId
+          condition: (answers, externalData) => {
+            return !isChild(answers, externalData)
           },
           defaultValue: (application: Application) => {
             const applicantUserProfile = getValueViaPath(
@@ -127,20 +104,8 @@ export const ApplicanInformationSubSection = buildSection({
           titleVariant: 'h5',
           marginTop: 5,
           marginBottom: 0,
-          condition: (formValue, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              formValue,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return applicantIdentity?.nationalId !== chosenApplicantNationalId
+          condition: (answers, externalData) => {
+            return isChild(answers, externalData)
           },
         }),
         buildTextField({
@@ -157,20 +122,8 @@ export const ApplicanInformationSubSection = buildSection({
 
             return applicantIdentity?.fullName
           },
-          condition: (formValue, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              formValue,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return applicantIdentity?.nationalId !== chosenApplicantNationalId
+          condition: (answers, externalData) => {
+            return isChild(answers, externalData)
           },
         }),
         buildTextField({
@@ -188,20 +141,8 @@ export const ApplicanInformationSubSection = buildSection({
 
             return applicantIdentity?.nationalId
           },
-          condition: (formValue, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              formValue,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return applicantIdentity?.nationalId !== chosenApplicantNationalId
+          condition: (answers, externalData) => {
+            return isChild(answers, externalData)
           },
         }),
         buildTextField({
@@ -218,20 +159,8 @@ export const ApplicanInformationSubSection = buildSection({
 
             return applicantUserProfile?.email
           },
-          condition: (formValue, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              formValue,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return applicantIdentity?.nationalId !== chosenApplicantNationalId
+          condition: (answers, externalData) => {
+            return isChild(answers, externalData)
           },
         }),
         buildPhoneField({
@@ -248,20 +177,8 @@ export const ApplicanInformationSubSection = buildSection({
 
             return applicantUserProfile?.mobilePhoneNumber
           },
-          condition: (formValue, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              formValue,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
-            return applicantIdentity?.nationalId !== chosenApplicantNationalId
+          condition: (answers, externalData) => {
+            return isChild(answers, externalData)
           },
         }),
 
@@ -273,20 +190,8 @@ export const ApplicanInformationSubSection = buildSection({
           marginTop: 5,
           marginBottom: 0,
           condition: (answers, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              answers,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
             return (
-              applicantIdentity?.nationalId !== chosenApplicantNationalId &&
+              isChild(answers, externalData) &&
               hasSecondGuardian(answers, externalData)
             )
           },
@@ -297,20 +202,8 @@ export const ApplicanInformationSubSection = buildSection({
           readOnly: true,
           width: 'half',
           condition: (answers, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              answers,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
             return (
-              applicantIdentity?.nationalId !== chosenApplicantNationalId &&
+              isChild(answers, externalData) &&
               hasSecondGuardian(answers, externalData)
             )
           },
@@ -326,20 +219,8 @@ export const ApplicanInformationSubSection = buildSection({
           readOnly: true,
           format: '######-####',
           condition: (answers, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              answers,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
             return (
-              applicantIdentity?.nationalId !== chosenApplicantNationalId &&
+              isChild(answers, externalData) &&
               hasSecondGuardian(answers, externalData)
             )
           },
@@ -353,20 +234,8 @@ export const ApplicanInformationSubSection = buildSection({
           component: 'SecondGuardianEmailAndPhone',
           title: '',
           condition: (answers, externalData) => {
-            const applicantIdentity = getValueViaPath(
-              externalData,
-              'nationalRegistry.data',
-              undefined,
-            ) as NationalRegistryIndividual | undefined
-
-            const chosenApplicantNationalId = getValueViaPath(
-              answers,
-              Routes.CHOSENAPPLICANTS,
-              '',
-            ) as string
-
             return (
-              applicantIdentity?.nationalId !== chosenApplicantNationalId &&
+              isChild(answers, externalData) &&
               hasSecondGuardian(answers, externalData)
             )
           },
