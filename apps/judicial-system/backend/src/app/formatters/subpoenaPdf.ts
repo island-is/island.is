@@ -109,7 +109,6 @@ export const createSubpoenaPDF = (
     addNormalText(
       doc,
       formatMessage(strings.arraignmentDate, {
-        // TODO: Display correct date
         arraignmentDate: formatDate(new Date(arraignmentDate.date), 'PPP'),
       }),
       'Times-Bold',
