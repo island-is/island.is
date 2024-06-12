@@ -2,6 +2,7 @@ import { Passkey, PasskeyRegistrationResult } from 'react-native-passkey'
 import {
   convertBase64UrlToBase64String,
   convertRegisterResultsToBase64Url,
+  formatRegisterOptions,
   padChallenge,
 } from './helpers'
 import {
@@ -24,44 +25,18 @@ export const useRegisterPasskey = () => {
         // Get registration options from server
         const options = await getPasskeyRegistrationOptions()
 
+        const { data } = options
+
         if (
-          !options.data?.authPasskeyRegistrationOptions ||
-          !options.data?.authPasskeyRegistrationOptions?.rp.id
+          !data?.authPasskeyRegistrationOptions ||
+          !data?.authPasskeyRegistrationOptions?.rp.id
         ) {
           return false
         }
 
-        const { authPasskeyRegistrationOptions } = options.data
-
-        const formattedRegistrationOptions = {
-          ...options.data.authPasskeyRegistrationOptions,
-          challenge: padChallenge(
-            convertBase64UrlToBase64String(
-              authPasskeyRegistrationOptions.challenge,
-            ),
-          ),
-          rp: {
-            id: options.data?.authPasskeyRegistrationOptions?.rp.id,
-            name: authPasskeyRegistrationOptions.rp.name,
-          },
-          attestation: authPasskeyRegistrationOptions.attestation || undefined,
-          timeout: authPasskeyRegistrationOptions.timeout || undefined,
-          extensions: authPasskeyRegistrationOptions.extensions || undefined,
-          authenticatorSelection:
-            authPasskeyRegistrationOptions.authenticatorSelection
-              ? {
-                  residentKey:
-                    authPasskeyRegistrationOptions.authenticatorSelection
-                      .residentKey || undefined,
-                  requireResidentKey:
-                    authPasskeyRegistrationOptions.authenticatorSelection
-                      .requireResidentKey || undefined,
-                  userVerification:
-                    authPasskeyRegistrationOptions.authenticatorSelection
-                      .userVerification || undefined,
-                }
-              : undefined,
-        }
+        const formattedRegistrationOptions = formatRegisterOptions(
+          data?.authPasskeyRegistrationOptions,
+        )
 
         // Register Passkey on device
         const result: PasskeyRegistrationResult = await Passkey.register(
@@ -88,7 +63,7 @@ export const useRegisterPasskey = () => {
           'Passkey registration not verified',
           verifyRegisterResponse,
         )
-        throw new Error('Error registering passkey')
+        throw new Error('Register: Error registering passkey')
       } catch (error: any) {
         // User cancelled the register flow, swallow the error
         if (

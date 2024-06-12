@@ -2,13 +2,12 @@ import { Passkey, PasskeyAuthenticationResult } from 'react-native-passkey'
 import { btoa } from 'react-native-quick-base64'
 import {
   convertAuthenticationResultsToBase64Url,
-  convertBase64UrlToBase64String,
-  padChallenge,
+  formatAuthenticationOptions,
 } from './helpers'
 import { useGetPasskeyAuthenticationOptionsLazyQuery } from '../../graphql/types/schema'
 import { preferencesStore } from '../../stores/preferences-store'
 
-const ONE_HOUR = 3600000
+const ONE_HOUR = 60 * 60 * 1000
 
 export const useAuthenticatePasskey = () => {
   const isSupported: boolean = Passkey.isSupported()
@@ -28,21 +27,9 @@ export const useAuthenticatePasskey = () => {
           return false
         }
 
-        const formattedAuthenticateOptions = {
-          ...options.data.authPasskeyAuthenticationOptions,
-          allowCredentials:
-            options.data.authPasskeyAuthenticationOptions.allowCredentials.map(
-              (cred) => ({
-                ...cred,
-                id: padChallenge(convertBase64UrlToBase64String(cred.id)),
-              }),
-            ),
-          challenge: padChallenge(
-            convertBase64UrlToBase64String(
-              options.data.authPasskeyAuthenticationOptions.challenge,
-            ),
-          ),
-        }
+        const formattedAuthenticateOptions = formatAuthenticationOptions(
+          options.data?.authPasskeyAuthenticationOptions,
+        )
 
         // Authenticate Passkey on device
         const result: PasskeyAuthenticationResult = await Passkey.authenticate(

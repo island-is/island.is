@@ -2,12 +2,10 @@ import {
   PasskeyRegistrationResult,
   PasskeyAuthenticationResult,
 } from 'react-native-passkey'
-
-export interface ClientDataJSON {
-  challenge: string
-  origin: string
-  type: string
-}
+import {
+  AuthPasskeyAuthenticationOptions,
+  AuthPasskeyRegistrationOptions,
+} from '../../graphql/types/schema'
 
 /**
  * Pad with '=' until it's a multiple of four
@@ -62,6 +60,45 @@ export const convertAuthenticationResultsToBase64Url = (
         result.response.clientDataJSON,
       ),
     },
+  }
+}
+
+export const formatAuthenticationOptions = (
+  options: AuthPasskeyAuthenticationOptions,
+) => {
+  return {
+    ...options,
+    allowCredentials: options.allowCredentials.map((cred) => ({
+      ...cred,
+      id: padChallenge(convertBase64UrlToBase64String(cred.id)),
+    })),
+    challenge: padChallenge(convertBase64UrlToBase64String(options.challenge)),
+  }
+}
+
+export const formatRegisterOptions = (
+  options: AuthPasskeyRegistrationOptions,
+) => {
+  return {
+    ...options,
+    challenge: padChallenge(convertBase64UrlToBase64String(options.challenge)),
+    rp: {
+      id: options.rp.id!, // Already validated before entering this function
+      name: options.rp.name,
+    },
+    attestation: options.attestation || undefined,
+    timeout: options.timeout || undefined,
+    extensions: options.extensions || undefined,
+    excludeCredentials: options.excludeCredentials || undefined,
+    authenticatorSelection: options.authenticatorSelection
+      ? {
+          residentKey: options.authenticatorSelection.residentKey || undefined,
+          requireResidentKey:
+            options.authenticatorSelection.requireResidentKey || undefined,
+          userVerification:
+            options.authenticatorSelection.userVerification || undefined,
+        }
+      : undefined,
   }
 }
 
