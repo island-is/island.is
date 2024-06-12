@@ -49,8 +49,8 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
-      - name: NX Cloud Codegen
-        id: nx-cloud
+      - name: Format
+        id: format
         run: |
           npx nx-cloud start-ci-run --distribute-on="8 linux-medium-js" --stop-agents-after=format --with-env-vars="auto"
           yarn nx affected -t format
