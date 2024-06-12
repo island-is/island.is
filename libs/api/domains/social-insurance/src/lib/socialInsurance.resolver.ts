@@ -50,8 +50,12 @@ export class SocialInsuranceResolver {
   }
 
   @Query(() => PensionCalculationResponse)
-  @BypassAuth()
-  async getPensionCalculation(@Args('input') input: PensionCalculationInput) {
-    return this.service.getPensionCalculation(input)
+  @Scopes(ApiScope.internal)
+  @Audit()
+  async getPensionCalculation(
+    @CurrentUser() user: User,
+    @Args('input') input: PensionCalculationInput,
+  ) {
+    return this.service.getPensionCalculation(user, input)
   }
 }

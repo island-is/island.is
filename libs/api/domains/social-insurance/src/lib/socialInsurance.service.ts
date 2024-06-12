@@ -122,6 +122,7 @@ export class SocialInsuranceService {
   }
 
   async getPensionCalculation(
+    user: User,
     input: PensionCalculationInput,
   ): Promise<PensionCalculationResponse> {
     const pageData = await this.cmsElasticService.getCustomPage({
@@ -131,6 +132,7 @@ export class SocialInsuranceService {
 
     const mappedInput = mapPensionCalculationInput(input, pageData)
     const calculation = await this.socialInsuranceApi.getPensionCalculation(
+      user,
       mappedInput,
     )
 
