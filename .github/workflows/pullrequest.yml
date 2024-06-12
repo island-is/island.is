@@ -37,9 +37,7 @@ jobs:
       E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
       E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
       LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
       CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
     steps:
       - uses: actions/checkout@v4

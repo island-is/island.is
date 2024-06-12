@@ -37,6 +37,7 @@ env:
   NX_AFFECTED_ALL: ${{ contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
   CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
   CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+  
 
 jobs:
   pre-checks:
@@ -164,6 +165,7 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
+      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.NODE_MODULES_HASH }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -334,6 +336,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
+      - name: Get node-moduels hash
+        id: calculate_node_modules_hash
+        run: |
+            # Run JQ on get-cache and get the output of key node_modules
+            NODE_MODULE_HASH=$(echo "${{ steps.get-cache.outputs.keys }}" | jq -r '.node_modules')
+            echo "NODE_MODULE_HASH=${NODE_MODULE_HASH}" >> $GITHUB_OUTPUT
+            echo "NODE_MODULE_HASH=${NODE_MODULE_HASH}" >> $GITHUB_ENV
+          
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         continue-on-error: true
