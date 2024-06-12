@@ -21,7 +21,7 @@ import styled from 'styled-components/native'
 import {
   DocumentV2,
   ListDocumentFragmentDoc,
-  useGetDocumentLazyQuery,
+  useGetDocumentQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -187,7 +187,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     returnPartialData: true,
   })
 
-  const [getDocument, docRes] = useGetDocumentLazyQuery({
+  // Fetch the document to get the content information
+  const docRes = useGetDocumentQuery({
     variables: {
       input: {
         id: docId,
@@ -200,11 +201,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     ...(doc?.data || {}),
     ...(docRes.data?.documentV2 || {}),
   }
-
-  useEffect(() => {
-    // Fetch the document on mount to get content information
-    void getDocument()
-  }, [])
 
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
