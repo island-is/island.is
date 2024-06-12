@@ -9,7 +9,7 @@ import { useEligibility } from './useEligibility'
 export const EligibilitySummary: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
-  const { eligibility, loading, error } = useEligibility(application.answers)
+  const { eligibility, loading, error } = useEligibility(application)
 
   const { setValue } = useFormContext()
 
