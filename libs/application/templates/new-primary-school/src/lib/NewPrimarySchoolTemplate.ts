@@ -26,6 +26,7 @@ import {
   getApplicationAnswers,
   hasChildrenThatCanApply,
 } from './newPrimarySchoolUtils'
+import { GetTypesApi } from '../dataProviders'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -73,6 +74,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
+                GetTypesApi,
               ],
             },
           ],

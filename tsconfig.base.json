@@ -595,6 +595,9 @@
       "@island.is/clients/data-protection-complaint": [
         "libs/clients/data-protection-complaint/src/index.ts"
       ],
+      "@island.is/clients/directorate-of-education-and-school-services/frigg": [
+        "libs/clients/directorate-of-education-and-school-services/frigg/src/index.ts"
+      ],
       "@island.is/clients/directorate-of-immigration": [
         "libs/clients/directorate-of-immigration/src/index.ts"
       ],
