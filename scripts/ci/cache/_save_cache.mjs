@@ -10,9 +10,7 @@ export async function saveCache({ key, path }) {
     // For testing
     return false
   }
-  const paths = (Array.isArray(path) ? path : [path]).map((e) =>
-    resolve(ROOT, e),
-  )
+  const paths = Array.isArray(path) ? path : [path];
   try {
     cache = await _saveCache(paths, key, {}, true)
   } catch (e) {
