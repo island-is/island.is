@@ -10,8 +10,9 @@ export async function restoreCache({ key, path }) {
     // For testing
     return false
   }
-  const paths = (Array.isArray(path) ? path : [path]);
-  
+  const paths = (Array.isArray(path) ? path : [path]).map((e) =>
+    resolve(ROOT, e),
+  )
   try {
     cache = await _restoreCache(paths, key, [], {}, true)
   } catch (e) {
