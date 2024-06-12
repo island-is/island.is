@@ -23,6 +23,7 @@ import { ClientsModule as ClientsV2Module } from './v2/clients/clients.module'
 import { ClientSecretsModule } from './v2/secrets/client-secrets.module'
 import { TenantsModule } from './v2/tenants/tenants.module'
 import { ScopesModule } from './v2/scopes/scopes.module'
+import { ProvidersModule } from './v2/providers/providers.module'
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { ScopesModule } from './v2/scopes/scopes.module'
     ClientsV2Module,
     ClientSecretsModule,
     ProblemModule,
+    ProvidersModule,
     ScopesModule,
     ConfigModule.forRoot({
       isGlobal: true,

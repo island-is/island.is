@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { OverviewApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
@@ -29,12 +29,9 @@ export class OverviewService {
     }
 
     if (!data.fileName || !data.contentType || !data.data) {
-      this.logger.warn(
-        'Missing data for getInsuranceConfirmation from external service',
-        {
-          category: LOG_CATEGORY,
-        },
-      )
+      this.logger.warn('Missing data from external service', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -45,14 +42,16 @@ export class OverviewService {
     }
   }
 
-  async getInsuranceOverview(user: User): Promise<InsuranceOverview | null> {
+  async getInsuranceOverview(user: User): Promise<InsuranceOverview> {
     const data = await this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
       .getInsuranceOverview()
       .catch(handle404)
 
     if (!data) {
-      return null
+      return {
+        isInsured: false,
+      }
     }
 
     const codeEnum: InsuranceStatusType | undefined =
@@ -65,7 +64,7 @@ export class OverviewService {
     return {
       isInsured: !!data.isInsured,
       explanation: data.explanation ?? '',
-      from: data.from,
+      from: data.from ?? undefined,
       maximumPayment: data.maximumPayment,
       ehicCardExpiryDate: data.ehicCardExpiryDate ?? undefined,
       status: {

@@ -10,7 +10,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import { CONTENT_GAP_LG, SECTION_GAP } from './constants'
+import {
+  CONTENT_GAP,
+  CONTENT_GAP_LG,
+  CONTENT_GAP_SM,
+  SECTION_GAP,
+} from './constants'
 import { amountFormat, m } from '@island.is/service-portal/core'
 import { useEffect, useRef, useState } from 'react'
 import { useDebounce, useWindowSize } from 'react-use'
@@ -161,7 +166,7 @@ export const MedicineCalulator = () => {
   return (
     <MedicineWrapper pathname={HealthPaths.HealthMedicineCalculator}>
       <Box marginBottom={SECTION_GAP}>
-        <Text variant="h5" marginBottom={1}>
+        <Text variant="h5" marginBottom={CONTENT_GAP_SM}>
           {formatMessage(messages.medicineCalculatorIntroTitle)}
         </Text>
         <Text>{formatMessage(messages.medicineCalculatorIntroText)}</Text>
@@ -178,9 +183,9 @@ export const MedicineCalulator = () => {
             <Box
               display="flex"
               flexDirection="column"
-              rowGap={1}
+              rowGap={CONTENT_GAP_SM}
               alignItems="flexStart"
-              marginBottom={SECTION_GAP}
+              marginBottom={CONTENT_GAP_LG}
             >
               <Text color="blue400" variant="eyebrow">
                 {formatMessage(messages.medicineFindDrug)}
@@ -189,9 +194,9 @@ export const MedicineCalulator = () => {
                 display="flex"
                 alignItems="center"
                 width="full"
-                columnGap={2}
+                columnGap={CONTENT_GAP}
               >
-                <Box width="half">
+                <Box width={isMobile ? 'full' : 'half'}>
                   <FilterInput
                     name="drugs"
                     backgroundColor="blue"
@@ -206,7 +211,7 @@ export const MedicineCalulator = () => {
             <Box
               display="flex"
               flexDirection="column"
-              rowGap={2}
+              rowGap={CONTENT_GAP}
               marginBottom={SECTION_GAP}
               ref={ref}
             >
@@ -234,6 +239,13 @@ export const MedicineCalulator = () => {
                 {SHOW_TABLE && (
                   <T.Body>
                     {drugs?.rightsPortalDrugs.data?.map((drug, i) => {
+                      const disableButton =
+                        !drug?.name ||
+                        !drug?.price ||
+                        selectedDrugList.find(
+                          (d) => d.nordicCode === drug.nordicCode,
+                        ) !== undefined
+
                       return (
                         <tr
                           onMouseLeave={() => setHoveredDrug(-1)}
@@ -265,12 +277,16 @@ export const MedicineCalulator = () => {
                                 size="small"
                                 variant="text"
                                 icon="add"
-                                disabled={
-                                  !drug?.name ||
-                                  !drug?.price ||
-                                  selectedDrugList.find(
-                                    (d) => d.nordicCode === drug.nordicCode,
-                                  ) !== undefined
+                                disabled={disableButton}
+                                aria-label={
+                                  disableButton
+                                    ? undefined
+                                    : formatMessage(
+                                        messages.medicineCalculatorAddToPurchaseLabel,
+                                        {
+                                          arg: drug.name,
+                                        },
+                                      )
                                 }
                                 onClick={() => handleAddDrug(drug)}
                               >
@@ -320,7 +336,7 @@ export const MedicineCalulator = () => {
             {selectedDrugList.length && calculatorResults ? (
               <Box
                 display="flex"
-                flexDirection={['column', 'row', 'row']}
+                flexDirection={'row'}
                 paddingRight={2}
                 marginBottom={CONTENT_GAP_LG}
                 justifyContent="flexStart"
@@ -337,7 +353,7 @@ export const MedicineCalulator = () => {
                 >
                   {formatMessage(m.print)}
                 </Button>
-                <Box marginRight={[0, 2, 2]} marginBottom={[1, 0, 0]} />
+                <Box marginRight={CONTENT_GAP} />
                 <Button
                   colorScheme="default"
                   icon="download"

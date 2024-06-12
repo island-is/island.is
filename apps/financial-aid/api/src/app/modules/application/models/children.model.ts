@@ -24,4 +24,10 @@ export class ChildrenModel implements ApplicationChildren {
 
   @Field()
   readonly name!: string
+
+  @Field()
+  readonly livesWithApplicant!: boolean
+
+  @Field()
+  readonly livesWithBothParents!: boolean
 }

@@ -18,6 +18,7 @@ import {
   ListRenderItemInfo,
   RefreshControl,
   View,
+  Alert,
 } from 'react-native'
 import {
   Navigation,
@@ -25,7 +26,8 @@ import {
 } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import { useTheme } from 'styled-components/native'
-import FilterIcon from '../../assets/icons/filter-icon.png'
+import filterIcon from '../../assets/icons/filter-icon.png'
+import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
@@ -35,6 +37,7 @@ import {
   ListDocumentsQuery,
   useListDocumentsQuery,
   useListDocumentsLazyQuery,
+  useMarkAllDocumentsAsReadMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
@@ -50,6 +53,8 @@ import { testIDs } from '../../utils/test-ids'
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
   | (Document & { type: undefined })
+
+const DEFAULT_PAGE_SIZE = 50
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -94,8 +99,10 @@ const PressableListItem = React.memo(
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const [starred, setStarred] = useState<boolean>(!!item.bookmarked)
     useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked])
+    const theme = useTheme()
     return (
       <PressableHighlight
+        highlightColor={theme.shade.shade400}
         onPress={() =>
           navigateTo(`/inbox/${item.id}`, {
             title: item.senderName,
@@ -113,13 +120,7 @@ const PressableListItem = React.memo(
             toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id)
             setStarred(!item.bookmarked)
           }}
-          icon={
-            <Image
-              source={getOrganizationLogoUrl(item.senderName, 75)}
-              resizeMode="contain"
-              style={{ width: 25, height: 25 }}
-            />
-          }
+          icon={getOrganizationLogoUrl(item.senderName, 75)}
         />
       </PressableHighlight>
     )
@@ -178,7 +179,7 @@ function useInboxQuery(incomingFilters?: Filters) {
   const [refetching, setRefetching] = useState(true)
   const [loading, setLoading] = useState(false)
   const [refetcher, setRefetcher] = useState(0)
-  const pageSize = 50
+  const pageSize = DEFAULT_PAGE_SIZE
 
   const [getListDocument] = useListDocumentsLazyQuery({
     query: ListDocumentsDocument,
@@ -285,14 +286,12 @@ export const InboxScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
-  const keyboardRef = useRef(false)
   const [query, setQuery] = useState('')
   const queryString = useThrottleState(query)
   const theme = useTheme()
   const unreadCount = useUnreadCount()
   const [visible, setVisible] = useState(false)
   const [refetching, setRefetching] = useState(false)
-  const dynamicColor = useDynamicColor()
 
   const res = useInboxQuery({
     opened,
@@ -300,6 +299,15 @@ export const InboxScreen: NavigationFunctionComponent<{
     bookmarked,
     subjectContains: queryString,
   })
+
+  const [markAllAsRead, { loading: markAllAsReadLoading }] =
+    useMarkAllDocumentsAsReadMutation({
+      onCompleted: (data) => {
+        if (data.documentsV2MarkAllAsRead?.success) {
+          res.refetch()
+        }
+      },
+    })
 
   useConnectivityIndicator({
     componentId,
@@ -386,7 +394,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   )
 
   const data = useMemo(() => {
-    if (res.refetching) {
+    if (res.refetching || markAllAsReadLoading) {
       return Array.from({ length: 20 }).map((_, id) => ({
         id: String(id),
         type: 'skeleton',
@@ -396,11 +404,39 @@ export const InboxScreen: NavigationFunctionComponent<{
       return [{ id: '0', type: 'empty' }]
     }
     return items
-  }, [res.refetching, items]) as ListItem[]
+  }, [res.refetching, items, markAllAsReadLoading]) as ListItem[]
 
   useNavigationComponentDidAppear(() => {
     setVisible(true)
   }, componentId)
+
+  const onPressMarkAllAsRead = () => {
+    Alert.alert(
+      intl.formatMessage({
+        id: 'inbox.markAllAsReadPromptTitle',
+      }),
+      intl.formatMessage({
+        id: 'inbox.markAllAsReadPromptDescription',
+      }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'inbox.markAllAsReadPromptCancel',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'inbox.markAllAsReadPromptConfirm',
+          }),
+          style: 'destructive',
+          onPress: async () => {
+            await markAllAsRead()
+          },
+        },
+      ],
+    )
+  }
 
   if (!visible) {
     return null
@@ -430,7 +466,7 @@ export const InboxScreen: NavigationFunctionComponent<{
               style={{
                 padding: 16,
                 flexDirection: 'row',
-                gap: 15,
+                gap: 8,
               }}
             >
               <SearchBar
@@ -445,25 +481,14 @@ export const InboxScreen: NavigationFunctionComponent<{
                   id: 'inbox.filterButtonTitle',
                 })}
                 isOutlined
+                isUtilityButton
                 style={{
-                  minWidth: 0,
+                  marginLeft: 8,
                   paddingTop: 0,
                   paddingBottom: 0,
-                  minHeight: 0,
-                  borderColor: dynamicColor({
-                    light: '#CCDFFF',
-                    dark: '#CCDFFF55',
-                  }),
                 }}
-                icon={FilterIcon}
+                icon={filterIcon}
                 iconStyle={{ tintColor: theme.color.blue400 }}
-                textStyle={{
-                  fontSize: 12,
-                  color: dynamicColor({
-                    light: '#00003C',
-                    dark: '#fff',
-                  }),
-                }}
                 onPress={() => {
                   navigateTo('/inbox-filter', {
                     opened,
@@ -471,6 +496,19 @@ export const InboxScreen: NavigationFunctionComponent<{
                     bookmarked,
                   })
                 }}
+              />
+              <Button
+                icon={inboxReadIcon}
+                isUtilityButton
+                isOutlined
+                style={{
+                  paddingTop: 0,
+                  paddingBottom: 0,
+                  paddingLeft: 12,
+                  paddingRight: 12,
+                  minWidth: 40,
+                }}
+                onPress={onPressMarkAllAsRead}
               />
             </View>
             {opened || archived || bookmarked ? (

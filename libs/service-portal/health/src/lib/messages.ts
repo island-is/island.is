@@ -206,6 +206,10 @@ export const messages = defineMessages({
     id: 'sp.health:no-health-insurance',
     defaultMessage: 'Þú ert ekki með sjúkratryggingu',
   },
+  noHealthInsuranceMessage: {
+    id: 'sp.health:no-health-insurance-message',
+    defaultMessage: 'Síðasta trygging: {arg}',
+  },
   paymentTarget: {
     id: 'sp.health:payment-target',
     defaultMessage: 'Greiðslumark',
@@ -667,7 +671,7 @@ export const messages = defineMessages({
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
-      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
+      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjálfstætt starfandi heimilislækni.',
   },
   healthTooltip: {
     id: 'sp.health:health-tooltip',
@@ -935,5 +939,9 @@ export const messages = defineMessages({
   medicineNameOfDoctor: {
     id: 'sp.health:medicine-name-of-doctor',
     defaultMessage: 'Heiti læknis',
+  },
+  medicineCalculatorAddToPurchaseLabel: {
+    id: 'sp.health:medicine-calculator-add-to-purchase-label',
+    defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
 })

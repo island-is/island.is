@@ -14,8 +14,8 @@ export const DistrictCommissionersLicensesClientConfig = defineConfig<
   schema,
   load: (env) => ({
     xRoadServicePath: env.required(
-      'XROAD_DISTRICT_COMMISSIONERS_LICENSES_PATH',
-      'IS-DEV/GOV/10016/Syslumenn-Protected/RettindiIslandis',
+      'XROAD_DISTRICT_COMMISSIONERS_P_CARD_PATH',
+      'IS-DEV/GOV/10016/Syslumenn-Protected/IslandMinarSidur',
     ),
     scope: [DistrictCommissionersScope.dcLicensesScope],
   }),

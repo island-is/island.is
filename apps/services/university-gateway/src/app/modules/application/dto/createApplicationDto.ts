@@ -106,10 +106,17 @@ class CreateApplicationFileDto {
 
   @IsString()
   @ApiProperty({
-    description: 'Base 64 for file',
+    description: 'File type',
+    example: 'profskirteini',
+  })
+  fileType!: string
+
+  @IsString()
+  @ApiProperty({
+    description: 'Blob for file',
     example: '',
   })
-  base64!: string
+  blob!: Blob
 }
 
 class CreateApplicationEducationDto {

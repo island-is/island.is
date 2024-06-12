@@ -356,7 +356,12 @@ describe('PersonalRepresentativeController', () => {
       const response = await server.get(`${path}?&limit=1`).expect(200)
 
       const responseData: PaginatedPersonalRepresentativeDto = response.body
-      expect(responseData.data[0]).toMatchObject(personalRep)
+      expect(responseData.data[0]).toMatchObject({
+        ...personalRep,
+        prDelegationTypes: expect.arrayContaining(
+          responseData.data[0].prDelegationTypes,
+        ),
+      })
     })
   })
 

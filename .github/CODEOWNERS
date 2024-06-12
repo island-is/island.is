@@ -151,6 +151,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/occupational-licenses-v2/                                                              @island-is/hugsmidjan
 /libs/api/domains/intellectual-properties/                                                               @island-is/hugsmidjan
 /libs/api/domains/official-journal-of-iceland/                                                           @island-is/hugsmidjan
+/libs/api/domains/official-journal-of-iceland-application/                                               @island-is/hugsmidjan
 /libs/api/domains/document-provider/                                                                     @island-is/hugsmidjan @island-is/core
 /libs/api/domains/housing-benefits/                                                                      @island-is/hugsmidjan
 /libs/clients/documents/                                                                                 @island-is/hugsmidjan
@@ -257,6 +258,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/ship-registry/                                                                         @island-is/stefna
 /libs/clients/administration-of-occupational-safety-and-health/                                          @island-is/stefna
 /libs/api/domains/administration-of-occupational-safety-and-health/                                      @island-is/stefna
+/libs/clients/ultraviolet-radiation/                                                                     @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
@@ -272,7 +274,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/directorate-of-labour/                                                                 @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/social-insurance-administration         @island-is/deloitte
 /libs/application/templates/social-insurance-administration/                                             @island-is/deloitte
-/libs/clients/social-insurance-administration/                                                           @island-is/deloitte @island-is/stefna
+/libs/clients/social-insurance-administration/                                                           @island-is/deloitte @island-is/stefna @island-is/hugsmidjan
 /libs/application/templates/car-recycling/                                                               @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                          @island-is/deloitte
 /libs/clients/car-recycling/                                                                             @island-is/deloitte

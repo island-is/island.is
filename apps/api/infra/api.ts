@@ -46,6 +46,7 @@ import {
   Inna,
   UniversityCareers,
   OfficialJournalOfIceland,
+  OfficialJournalOfIcelandApplication,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -369,6 +370,7 @@ export const serviceSetup = (services: {
         '/k8s/api/WATSON_ASSISTANT_CHAT_FEEDBACK_API_KEY',
       LICENSE_SERVICE_BARCODE_SECRET_KEY:
         '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
+      ULTRAVIOLET_RADIATION_API_KEY: '/k8s/api/ULTRAVIOLET_RADIATION_API_KEY',
     })
     .xroad(
       AdrAndMachine,
@@ -417,6 +419,7 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      OfficialJournalOfIcelandApplication,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
