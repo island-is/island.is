@@ -25,8 +25,9 @@ const exhaustiveCheck = (param: never) => {
   resolveType(delegation: Delegation) {
     switch (delegation.type) {
       case AuthDelegationType.LegalGuardian:
-      case AuthDelegationType.LegalGuardianMinor:
         return LegalGuardianDelegation
+      case AuthDelegationType.LegalGuardianMinor:
+        return LegalGuardianMinorDelegation
       case AuthDelegationType.ProcurationHolder:
         return ProcuringHolderDelegation
       case AuthDelegationType.PersonalRepresentative:
@@ -59,6 +60,11 @@ export abstract class Delegation {
   implements: Delegation,
 })
 export class LegalGuardianDelegation extends Delegation {}
+
+@ObjectType('AuthLegalGuardianMinorDelegation', {
+  implements: Delegation,
+})
+export class LegalGuardianMinorDelegation extends Delegation {}
 
 @ObjectType('AuthProcuringHolderDelegation', {
   implements: Delegation,
