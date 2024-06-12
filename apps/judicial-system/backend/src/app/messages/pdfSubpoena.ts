@@ -36,7 +36,7 @@ export const subpoena = {
   absenceIntro: defineMessage({
     id: 'judicial.system.backend:pdf.subpoena.absence_intro',
     defaultMessage:
-      'Sæki ákærði ekki þing má hann búast við því að fjarvist hans  verði metin til jafns við það að hann viðurkenni að hafa framið brot það sem hann er ákærður fyrir og dómur verði lagður á málið að honum fjarstöddum.',
+      'Sæki ákærði ekki þing má hann búast við því að fjarvist hans verði metin til jafns við það að hann viðurkenni að hafa framið brot það sem hann er ákærður fyrir og dómur verði lagður á málið að honum fjarstöddum.',
     description: 'Notaður sem inngangur fyrir útivistarfyrirkall.',
   }),
   deadline: defineMessage({

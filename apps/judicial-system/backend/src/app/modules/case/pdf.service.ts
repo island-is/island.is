@@ -17,6 +17,7 @@ import {
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isTrafficViolationCase,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -244,7 +245,11 @@ export class PDFService {
     //   confirmation,
     // )
 
-    const generatedPdf = await createSubpoenaPDF(theCase, this.formatMessage)
+    const generatedPdf = await createSubpoenaPDF(
+      theCase,
+      this.formatMessage,
+      SubpoenaType.ABSENCE,
+    )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
       const indictmentHash = CryptoJS.MD5(

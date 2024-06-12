@@ -25,6 +25,7 @@ import {
 export const createSubpoenaPDF = (
   theCase: Case,
   formatMessage: FormatMessage,
+  subpoenaType: SubpoenaType,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -140,17 +141,16 @@ export const createSubpoenaPDF = (
   addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(strings.intro), 'Times-Bold')
-  if (theCase.defendants) {
-    addNormalText(
-      doc,
-      formatMessage(
-        theCase.defendants[0].subpoenaType === SubpoenaType.ABSENCE
-          ? strings.absenceIntro
-          : strings.arrestIntro,
-      ),
-      'Times-Bold',
-    )
-  }
+  addNormalText(
+    doc,
+    formatMessage(
+      subpoenaType === SubpoenaType.ABSENCE
+        ? strings.absenceIntro
+        : strings.arrestIntro,
+    ),
+    'Times-Bold',
+  )
+
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
 
