@@ -134,6 +134,10 @@ export const GenericList = ({
   const searchQueryId = `${hashedId}q`
   const pageQueryId = `${hashedId}page`
 
+  // TODO: add query params for filter tag search
+  // TODO: ignore initial response if there are query params set and fetch according to the query params
+  // TODO: perhaps add referrer decorator to graphql resolver so we can read query params
+
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
   const pageRef = useRef(page)
