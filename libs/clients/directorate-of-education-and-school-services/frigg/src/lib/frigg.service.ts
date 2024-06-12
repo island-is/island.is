@@ -15,7 +15,10 @@ export class FriggClientService {
     )
 
   async getAllKeyOptions(user: User): Promise<KeyOption[]> {
-    console.log('======> (FriggClientService) keyOptionsManagementApi: ', this.keyOptionsManagementApi)
+    console.log(
+      '======> (FriggClientService) keyOptionsManagementApi: ',
+      this.keyOptionsManagementApi,
+    )
     console.log(`CLIENT-----getTypesn ${this.keyOptionsManagementApi}`, {
       foo: this.keyOptionsManagementApi,
     })
