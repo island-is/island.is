@@ -31,12 +31,12 @@ const CommonApiResponses = applyDecorators(
   ApiResponse({ status: 500, description: 'Internal Server Error' }),
 )
 
-const ApiLangQuery = applyDecorators(
+const ApiLocaleQuery = applyDecorators(
   ApiQuery({
-    name: 'lang',
+    name: 'locale',
     required: false,
-    description:
-      'The requested language of the response. Defaults to Icelandic.',
+    description: 'The requested locale of the response. Defaults to Icelandic.',
+    schema: { type: 'string', enum: ['is', 'en'] },
   }),
 )
 
@@ -57,14 +57,14 @@ export class CaseController {
       'Returns a list of accessible indictment cases for authenticated user. If user has no cases it returns an empty list.',
   })
   @CommonApiResponses
-  @ApiLangQuery
+  @ApiLocaleQuery
   async getAllCases(
     @CurrentUser() user: User,
-    @Query() query?: { lang: string },
+    @Query() query?: { locale: string },
   ): Promise<CasesResponse[]> {
     this.logger.debug('Getting all cases')
 
-    return this.caseService.getCases(user.nationalId, query?.lang)
+    return this.caseService.getCases(user.nationalId, query?.locale)
   }
 
   @Get('case/:caseId')
@@ -77,15 +77,15 @@ export class CaseController {
     status: 404,
     description: 'Case for given case id and authenticated user not found',
   })
-  @ApiLangQuery
+  @ApiLocaleQuery
   async getCase(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
-    @Query() query?: { lang: string },
+    @Query() query?: { locale: string },
   ): Promise<CaseResponse> {
     this.logger.debug('Getting case by id')
 
-    return this.caseService.getCase(caseId, user.nationalId, query?.lang)
+    return this.caseService.getCase(caseId, user.nationalId, query?.locale)
   }
 
   @Get('case/:caseId/subpoena')
@@ -98,15 +98,15 @@ export class CaseController {
     status: 404,
     description: 'Subpoena for given case id and authenticated user not found',
   })
-  @ApiLangQuery
+  @ApiLocaleQuery
   async getSubpoena(
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @CurrentUser() user: User,
-    @Query() query?: { lang: string },
+    @Query() query?: { locale: string },
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Getting subpoena by case id ${caseId}`)
 
-    return this.caseService.getSubpoena(caseId, user.nationalId, query?.lang)
+    return this.caseService.getSubpoena(caseId, user.nationalId, query?.locale)
   }
 
   @Patch('case/:caseId/subpoena')
@@ -123,12 +123,12 @@ export class CaseController {
     status: 403,
     description: 'User is not allowed to update subpoena',
   })
-  @ApiLangQuery
+  @ApiLocaleQuery
   async updateSubpoena(
     @CurrentUser() user: User,
     @Param('caseId', new ParseUUIDPipe()) caseId: string,
     @Body() defenderAssignment: UpdateSubpoenaDto,
-    @Query() query?: { lang: string },
+    @Query() query?: { locale: string },
   ): Promise<SubpoenaResponse> {
     this.logger.debug(`Assigning defender to subpoena ${caseId}`)
 
@@ -136,7 +136,7 @@ export class CaseController {
       user.nationalId,
       caseId,
       defenderAssignment,
-      query?.lang,
+      query?.locale,
     )
   }
 }
