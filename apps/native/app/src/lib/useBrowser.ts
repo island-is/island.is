@@ -28,9 +28,12 @@ export const useBrowser = () => {
           noLockScreenUntilNextAppStateActive: true,
         })
         // Open passkey flow to authenticate
-        const passkey = await authenticatePasskey()
-        if (passkey) {
-          const urlWithLoginHint = addPasskeyAsLoginHint(url, passkey)
+        const authenticationResponse = await authenticatePasskey()
+        if (authenticationResponse) {
+          const urlWithLoginHint = addPasskeyAsLoginHint(
+            url,
+            authenticationResponse,
+          )
           if (urlWithLoginHint) {
             openNativeBrowser(urlWithLoginHint, componentId)
             return

@@ -167,13 +167,18 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                     noLockScreenUntilNextAppStateActive: true,
                   }))
 
-                  const passkey = await authenticatePasskey()
+                  const authenticationResponse = await authenticatePasskey()
 
-                  if (passkey) {
+                  if (authenticationResponse) {
                     setIsLoading(false)
                     Navigation.dismissModal(componentId)
-                    const urlWithLoginHint = addPasskeyAsLoginHint(url, passkey)
-                    urlWithLoginHint && openNativeBrowser(urlWithLoginHint)
+                    const urlWithLoginHint = addPasskeyAsLoginHint(
+                      url,
+                      authenticationResponse,
+                    )
+                    if (urlWithLoginHint) {
+                      openNativeBrowser(urlWithLoginHint)
+                    }
                   }
                   setIsLoading(false)
                 }

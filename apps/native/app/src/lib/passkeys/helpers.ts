@@ -73,19 +73,22 @@ export const convertBase64UrlToBase64String = (base64Url: string) => {
   return base64Url.replace(/-/g, '+').replace(/_/g, '/')
 }
 
-export const addPasskeyAsLoginHint = (url: string, passkey: string) => {
+export const addPasskeyAsLoginHint = (
+  url: string,
+  authenticationResponse: string,
+) => {
   if (!doesUrlSupportPasskey(url)) {
     return
   }
 
   if (url.includes('/minarsidur')) {
-    return `https://island.is/minarsidur/login?login_hint=${passkey}&target_link_uri=${encodeURIComponent(
+    return `https://island.is/minarsidur/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
 
   if (url.includes('/umsoknir')) {
-    return `https://island.is/umsoknir/login?login_hint=${passkey}&target_link_uri=${encodeURIComponent(
+    return `https://island.is/umsoknir/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
