@@ -405,6 +405,18 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:are-you-sure',
     defaultMessage: 'Ertu viss?',
   },
+  confirm: {
+    id: 'portals-admin.form-system:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  cancel: {
+    id: 'portals-admin.form-system:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  delete: {
+    id: 'portals-admin.form-system:delete',
+    defaultMessage: 'Eyða',
+  },
   // Error messages
   invalidEmail: {
     id: 'portals-admin.form-system:invalid-email',

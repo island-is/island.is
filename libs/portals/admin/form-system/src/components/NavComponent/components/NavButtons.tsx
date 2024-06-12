@@ -1,4 +1,4 @@
-import { Box, Icon, Tooltip } from '@island.is/island-ui/core'
+import { Box, DialogPrompt, Icon, Tooltip } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
 import {
@@ -123,16 +123,6 @@ export const NavButtons = () => {
     }
   }
 
-  const handleRemove = () => {
-    if (!containsGroupOrInput()) {
-      remove()
-    } else {
-      if (confirm(formatMessage(m.areYouSure))) {
-        remove()
-      }
-    }
-  }
-
   return (
     <Box display="flex" flexDirection="row">
       {activeItem.type !== 'Input' && (
@@ -143,7 +133,7 @@ export const NavButtons = () => {
         >
           <Tooltip
             text={hoverText}
-            color='white'
+            color='yellow200'
           >
             <span>
               <Icon icon="add" color="blue400" size="medium" />
@@ -151,13 +141,33 @@ export const NavButtons = () => {
           </Tooltip>
         </Box>
       )}
-      <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={handleRemove}>
-        <Tooltip text="Eyða">
-          <span>
-            <Icon icon="trash" size="medium" />
-          </span>
-        </Tooltip>
-      </Box>
+      {containsGroupOrInput() ? (
+        <DialogPrompt
+          baseId="remove"
+          title={formatMessage(m.areYouSure)}
+          description="Alveg viss?"
+          ariaLabel='Remove item'
+          buttonTextConfirm={formatMessage(m.confirm)}
+          buttonTextCancel={formatMessage(m.cancel)}
+          onConfirm={remove}
+          disclosureElement={
+            <Box style={{ paddingTop: '5px', cursor: 'pointer' }} >
+              <Tooltip text={formatMessage(m.delete)}>
+                <span>
+                  <Icon icon="trash" size="medium" />
+                </span>
+              </Tooltip>
+            </Box>
+          }
+        />
+      ) : (
+        <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove} >
+          <Tooltip text={formatMessage(m.delete)}>
+            <span>
+              <Icon icon="trash" size="medium" />
+            </span>
+          </Tooltip>
+        </Box>)}
     </Box>
   )
 }
