@@ -14,6 +14,31 @@ import { CreateListInput } from './signature-collection.types'
 import { User } from '@island.is/auth-nest-tools'
 import { LoggingModule } from '@island.is/logging'
 
+const user: User = {
+  nationalId: '0101302399',
+  authorization: '',
+  scope: [],
+  client: '',
+}
+const sofnun: MedmaelasofnunExtendedDTO[] = [
+  {
+    id: 123,
+    sofnunStart: new Date('01.01.1900'),
+    sofnunEnd: new Date('01.01.2199'),
+    svaedi: [{ id: 123 }],
+    frambodList: [{ id: 123, kennitala: '0101010119' }],
+    kosning: { id: 123, erMedmaelakosning: true },
+    kosningTegund: 'Forsetakosning',
+  },
+]
+const sofnunUser: EinstaklingurKosningInfoDTO = {
+  svaedi: { id: 123 },
+  kennitala: '0101302399',
+  maFrambod: true,
+  maFrambodInfo: { aldur: true, rikisfang: true },
+  frambod: { id: 123, kennitala: '0101302399' },
+}
+
 describe('MyService', () => {
   let service: SignatureCollectionClientService
   let listarApi: MedmaelalistarApi
@@ -49,7 +74,6 @@ describe('MyService', () => {
     // They are marked as invalid but count as participation
 
     // Arrange
-
     // Act
     const success = await service.canSign({
       activeSignature: undefined,
@@ -187,22 +211,6 @@ describe('MyService', () => {
       },
       areas: [{ areaId: '123' }, { areaId: '321' }],
     }
-    const user: User = {
-      nationalId: '0101302399',
-      authorization: '',
-      scope: [],
-      client: '',
-    }
-    const sofnun: MedmaelasofnunExtendedDTO[] = [
-      {
-        id: 123,
-        sofnunStart: new Date('01.01.1900'),
-        sofnunEnd: new Date('01.01.2199'),
-        svaedi: [{ id: 123 }],
-        frambodList: [{ id: 123, kennitala: '0101010119' }],
-        kosning: { id: 123, erMedmaelakosning: true },
-      },
-    ]
     const lists: MedmaelalistiDTO[] = [
       {
         id: 123,
@@ -217,11 +225,6 @@ describe('MyService', () => {
         listaLokad: false,
       },
     ]
-    const sofnunUser: EinstaklingurKosningInfoDTO = {
-      svaedi: { id: 123 },
-      maFrambod: true,
-      maFrambodInfo: { aldur: true, rikisfang: true },
-    }
 
     jest
       .spyOn(sofnunApi, 'medmaelasofnunGet')
@@ -246,15 +249,122 @@ describe('MyService', () => {
     })
   })
 
-  it('', async () => {
+  it('removeLists', async () => {
     // Arrange
+    jest
+      .spyOn(sofnunApi, 'medmaelasofnunGet')
+      .mockReturnValue(Promise.resolve(sofnun))
+    jest
+      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .mockReturnValue(Promise.resolve(sofnunUser))
+    jest
+      .spyOn(service, 'getApiWithAuth')
+      .mockImplementation((api, _) =>
+        api instanceof MedmaelasofnunApi ? sofnunApi : frambodApi,
+      )
+    jest
+      .spyOn(frambodApi, 'frambodIDRemoveFrambodUserPost')
+      .mockReturnValueOnce(Promise.resolve({}))
     // Act
+    const notOwner = await service.removeLists(
+      { collectionId: '', listIds: [''] },
+      { ...user, nationalId: '1234567910' },
+    )
+    const notOpen = await service.removeLists(
+      { collectionId: '', listIds: [''] },
+      user,
+    )
+    const presidentialResult = await service.removeLists(
+      { collectionId: '123' },
+      user,
+    )
     // Assert
+    expect(notOwner).toEqual({
+      success: false,
+      reasons: ['notOwner'],
+    })
+    expect(notOpen).toEqual({
+      success: false,
+      reasons: ['collectionNotOpen'],
+    })
+    expect(presidentialResult).toEqual({ success: true })
   })
 
-  it('', async () => {
+  it('signList', async () => {
     // Arrange
+    jest
+      .spyOn(sofnunApi, 'medmaelasofnunGet')
+      .mockReturnValue(Promise.resolve(sofnun))
+    jest
+      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .mockReturnValueOnce(
+        Promise.resolve({
+          ...sofnunUser,
+          medmaeli: [{ id: 111, medmaeliTegundNr: 1 }],
+        }),
+      )
+      .mockReturnValue(Promise.resolve(sofnunUser))
+    jest
+      .spyOn(service, 'getApiWithAuth')
+      .mockImplementation((api, _) =>
+        api instanceof MedmaelasofnunApi
+          ? sofnunApi
+          : api instanceof FrambodApi
+          ? frambodApi
+          : listarApi,
+      )
+    jest.spyOn(listarApi, 'medmaelalistarIDAddMedmaeliPost').mockReturnValue(
+      Promise.resolve({
+        kennitala: '0101302399',
+        medmaeliTegundNr: 1,
+        id: 999,
+        medmaelalistiID: 888,
+      }),
+    )
     // Act
+    const alreadySigned = service.signList('123123', user)
+    const success = await service.signList('123123', user)
     // Assert
+    expect(alreadySigned).rejects.toThrow('User has already signed a list')
+    expect(success).toMatchObject({
+      id: '999',
+      isDigital: true,
+      listId: '888',
+      valid: true,
+    })
+  })
+
+  it('unsignList', async () => {
+    // Arrange
+    jest
+      .spyOn(service, 'getApiWithAuth')
+      .mockImplementation((api, _) =>
+        api instanceof MedmaeliApi ? medmaeliApi : sofnunApi,
+      )
+    jest
+      .spyOn(sofnunApi, 'medmaelasofnunGet')
+      .mockReturnValue(Promise.resolve(sofnun))
+    jest
+      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+      .mockReturnValue(
+        Promise.resolve({
+          ...sofnunUser,
+          medmaeli: [{ id: 111, medmaeliTegundNr: 1, medmaelalistiID: 999 }],
+        }),
+      )
+    jest
+      .spyOn(medmaeliApi, 'medmaeliIDRemoveMedmaeliUserPost')
+      .mockReturnValue(Promise.resolve({}))
+    // Act
+    const noSignature = await service.unsignList('', user)
+    const success = await service.unsignList('999', user)
+    // Assert
+    expect(noSignature).toEqual({
+      success: false,
+      reasons: ['signatureNotFound'],
+    })
+    expect(success).toEqual({
+      success: true,
+    })
   })
 })
