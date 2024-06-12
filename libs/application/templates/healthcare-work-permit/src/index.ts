@@ -14,5 +14,3 @@ export * from './lib/messages/information'
 export * from './lib/types'
 
 export default template
-
-export { EES } from './utils/EES'

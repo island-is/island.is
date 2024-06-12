@@ -19,6 +19,7 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import { handle404 } from '@island.is/clients/middlewares'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class HealthDirectorateClientService {
@@ -189,13 +190,21 @@ export class HealthDirectorateClientService {
     })
 
     if (!items || !Array.isArray(items) || items.length === 0) {
-      throw new Error('No items returned')
+      logger.error(
+        'Health directorate did not respond with a pdf license to practice',
+      )
+      throw new Error(
+        'Health directorate did not respond with a pdf license to practice',
+      )
     }
 
-    for (const item of items) {
-      if (!item.base64String) {
-        throw new Error('Empty file in one of the items')
-      }
+    if (items.some((item) => !item.base64String)) {
+      logger.error(
+        'Either the license to practice and/or license number pdf is missing from response',
+      )
+      throw new Error(
+        'Either the license to practice and/or license number pdf is missing from response',
+      )
     }
 
     return items

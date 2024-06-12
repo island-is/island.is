@@ -2,9 +2,11 @@ import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ApplicationTypes } from '@island.is/application/types'
 import {
-  EES,
+  ApplicationTypes,
+  NationalRegistryIndividual,
+} from '@island.is/application/types'
+import {
   HealthcareWorkPermitAnswers,
   PermitProgram,
   Message,
@@ -29,12 +31,7 @@ import {
   EinstaklingurDTOHeimili,
   EinstaklingurDTONafnAllt,
   EinstaklingurDTORikisfang,
-  NationalRegistryV3ClientService,
 } from '@island.is/clients/national-registry-v3'
-
-const isCitizenOfEES = (alpha2Code: string) => {
-  return EES.some((country) => country.alpha2Code === alpha2Code)
-}
 
 export interface EinstaklingurDTO {
   kennitala?: string | null
@@ -69,53 +66,8 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly healthDirectorateClientService: HealthDirectorateClientService,
     private readonly universityCareersClientService: UniversityCareersClientService,
-    private readonly nationalRegistryService: NationalRegistryV3ClientService,
   ) {
     super(ApplicationTypes.HEALTHCARE_WORK_PERMIT)
-  }
-
-  /* Fetching national registry information and validating that user is from within EES */
-  async getNationalRegistryWithEESValidation({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<EinstaklingurDTO> {
-    const result = await this.nationalRegistryService.getAllDataIndividual(
-      auth.nationalId,
-    )
-
-    if (!result) {
-      throw new TemplateApiError(
-        {
-          title: errorMsg.nationalRegistryFetchErrorTitle,
-          summary: errorMsg.nationalRegistryFetchErrorMessage,
-        },
-        400,
-      )
-    }
-
-    const hasEESCitizenship = isCitizenOfEES(
-      result?.rikisfang?.rikisfangKodi || '',
-    )
-
-    if (!hasEESCitizenship) {
-      throw new TemplateApiError(
-        {
-          title: errorMsg.nationalRegistryOutsideEESErrorTitle,
-          summary: errorMsg.nationalRegistryOutsideEESErrorMessage,
-        },
-
-        400,
-      )
-    }
-
-    const { fulltNafn, heimilisfang, rikisfang, kennitala, faedingarstadur } =
-      result
-    return {
-      fulltNafn,
-      heimilisfang,
-      rikisfang,
-      kennitala,
-      faedingarstadur,
-    }
   }
 
   /* Fetching this users healthcare licenses */
@@ -132,29 +84,6 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         {
           title: errorMsg.healthcareLicenseErrorTitle,
           summary: errorMsg.healthcareLicenseErrorMessage,
-        },
-        400,
-      )
-    }
-
-    return result
-  }
-
-  /* The academic career of the logged in user. Used to find which programmes are valid for work permit */
-  async getMyAcademicCareer({
-    auth,
-  }: TemplateApiModuleActionProps): Promise<StudentTrackDto[]> {
-    const result =
-      await this.universityCareersClientService.getStudentTrackHistory(
-        auth,
-        UniversityId.UNIVERSITY_OF_ICELAND,
-      )
-
-    if (!result) {
-      throw new TemplateApiError(
-        {
-          title: errorMsg.emptyCareerResponseTitle,
-          summary: errorMsg.emptyCareerResponseMessage,
         },
         400,
       )
@@ -415,7 +344,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     const answers = application.answers as HealthcareWorkPermitAnswers
 
     const nationalRegistryData = application.externalData.nationalRegistry
-      ?.data as EinstaklingurDTO
+      ?.data as NationalRegistryIndividual
     if (!nationalRegistryData) {
       throw new Error('National registry data is missing.')
     }
@@ -433,12 +362,8 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       throw new Error('Chosen program not found.')
     }
 
-    const { fulltNafn, faedingarstadur, rikisfang } = nationalRegistryData
-    if (
-      !fulltNafn?.fulltNafn ||
-      !faedingarstadur?.faedingarDagur ||
-      !rikisfang?.rikisfangKodi
-    ) {
+    const { fullName, citizenship, birthDate } = nationalRegistryData
+    if (!fullName || !birthDate || !citizenship?.code) {
       throw new Error('Incomplete national registry data.')
     }
 
@@ -466,12 +391,12 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
     return await this.healthDirectorateClientService.submitApplicationHealthcareWorkPermit(
       auth,
       {
-        name: fulltNafn.fulltNafn,
-        dateOfBirth: faedingarstadur.faedingarDagur,
+        name: fullName,
+        dateOfBirth: birthDate,
         email: email,
         phone: phone,
         idProfession: chosenProgram.professionId,
-        citizenship: rikisfang.rikisfangKodi,
+        citizenship: citizenship.code,
         education: educations,
       },
     )

@@ -3,6 +3,5 @@ export enum ApiActions {
   getMyHealthcareLicenses = 'getMyHealthcareLicenses',
   getMyAcademicCareer = 'getMyAcademicCareer',
   getEducationInfo = 'getEducationInfo',
-  getNationalRegistryWithEESValidation = 'getNationalRegistryWithEESValidation',
   processPermits = 'processPermits',
 }

@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import {
   EphemeralStateLifeCycle,
@@ -24,8 +25,6 @@ import {
   UserProfileApi,
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
-  UniversityCareersApi,
-  NationalRegistryUserApi,
   ProcessPermitsApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
@@ -82,10 +81,13 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    citizenshipWithinEES: true,
+                  },
+                }),
                 UserProfileApi,
                 EmbaettiLandlaeknisPaymentCatalogApi,
-                UniversityCareersApi,
                 HealtcareLicenesApi,
                 ProcessPermitsApi,
               ],

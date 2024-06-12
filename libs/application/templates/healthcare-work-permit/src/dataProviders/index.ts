@@ -21,17 +21,7 @@ export const HealtcareLicenesApi = defineTemplateApi({
   externalDataId: 'healthcareLicenses',
 })
 
-export const UniversityCareersApi = defineTemplateApi({
-  action: ApiActions.getMyAcademicCareer,
-  externalDataId: 'universityCareer',
-})
-
 export const ProcessPermitsApi = defineTemplateApi({
   action: ApiActions.processPermits,
   externalDataId: 'permitOptions',
-})
-
-export const NationalRegistryUserApi = defineTemplateApi({
-  action: ApiActions.getNationalRegistryWithEESValidation,
-  externalDataId: 'nationalRegistry',
 })

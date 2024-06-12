@@ -6,7 +6,12 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import {
+  DefaultEvents,
+  Form,
+  FormModes,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'
 import {
   confirmation,
   externalData,
@@ -18,7 +23,6 @@ import {
   EmbaettiLandlaeknisPaymentCatalogApi,
   HealtcareLicenesApi,
   UserProfileApi,
-  NationalRegistryUserApi,
   ProcessPermitsApi,
 } from '../../dataProviders'
 
@@ -53,7 +57,11 @@ export const Prerequisites: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
+              provider: NationalRegistryUserApi.configure({
+                params: {
+                  citizenshipWithinEES: true,
+                },
+              }),
               title: externalData.nationalRegistry.title,
               subTitle: externalData.nationalRegistry.subTitle,
             }),

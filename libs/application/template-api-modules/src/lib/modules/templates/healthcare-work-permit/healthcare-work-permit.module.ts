@@ -8,10 +8,6 @@ import {
   HealthDirectorateClientConfig,
 } from '@island.is/clients/health-directorate'
 import {
-  NationalRegistryV3ClientConfig,
-  NationalRegistryV3ClientModule,
-} from '@island.is/clients/national-registry-v3'
-import {
   AgriculturalUniversityOfIcelandCareerClientConfig,
   BifrostUniversityCareerClientConfig,
   HolarUniversityCareerClientConfig,
@@ -28,13 +24,11 @@ export class HealthcareWorkPermitModule {
       imports: [
         SharedTemplateAPIModule.register(baseConfig),
         HealthDirectorateClientModule,
-        NationalRegistryV3ClientModule,
         UniversityCareersClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
             HealthDirectorateClientConfig,
-            NationalRegistryV3ClientConfig,
             AgriculturalUniversityOfIcelandCareerClientConfig,
             BifrostUniversityCareerClientConfig,
             UniversityOfAkureyriCareerClientConfig,
