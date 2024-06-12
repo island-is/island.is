@@ -80,9 +80,9 @@ export const parseCacheStatusHeader = (
 }
 
 export const serializeCacheStatusHeader = (
-  cacheStatus: CacheStatus[],
+  cacheStatuses: CacheStatus[],
 ): string => {
-  return cacheStatus
+  return cacheStatuses
     .map((cacheStatus) => {
       const parts = [cacheStatus.cacheName]
       if (cacheStatus.hit !== undefined) {

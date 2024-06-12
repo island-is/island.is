@@ -38,7 +38,6 @@ export function withCache({
     typeof overrideCacheControl === 'function'
       ? overrideCacheControl
       : () => overrideCacheControl
-  const debug = DEBUG_NAMES.includes('*') || DEBUG_NAMES.includes(name)
 
   const fetchWithCache: MiddlewareAPI = async (request) => {
     const isShared = sharedFor(request)
@@ -255,7 +254,7 @@ export function withCache({
   }
 
   function debugLog(message: string, cacheResponse: CacheResponse) {
-    if (debug) {
+    if (logger.level === 'debug') {
       const { policy } = cacheResponse
       logger.info(`Fetch cache (${name}): ${message} - ${policy._url}`, {
         url: policy._url,

@@ -29,14 +29,18 @@ export function withErrorLog({
           : undefined
 
       logger.log(logLevel, {
-        ...error,
-        stack: error.stack,
-        url: request.url,
+        error: {
+          ...error,
+        },
+        http: {
+          url: request.url,
+          // Do not log large response objects.
+          response: undefined,
+        },
         message: `Fetch failure (${name}): ${error.message}`,
+        client: name,
         body,
-        cacheStatus,
-        // Do not log large response objects.
-        response: undefined,
+        cache_status: cacheStatus,
       })
       throw error
     })
