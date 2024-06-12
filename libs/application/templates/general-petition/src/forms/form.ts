@@ -28,7 +28,6 @@ import { UserProfile } from '@island.is/api/schema'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { parse } from 'libphonenumber-js'
 import { getExcludedDates } from '../lib/generalPetitionUtils'
-import { GeneralPetition } from '../lib/dataSchema'
 import { addMonths } from 'date-fns'
 
 export const form: Form = buildForm({
@@ -97,6 +96,13 @@ export const form: Form = buildForm({
               maxLength: 1000,
               defaultValue: () => '',
             }),
+            //fake field to trigger rerender on category switch
+            buildDescriptionField({
+              id: 'fake_helper_field',
+              title: '',
+              condition: (answers) =>
+                !!getValueViaPath(answers, 'dates.dateFrom'),
+            }),
             buildDateField({
               id: 'dates.dateFrom',
               title: m.dateTitle,
@@ -105,13 +111,6 @@ export const form: Form = buildForm({
               backgroundColor: 'white',
               minDate: new Date(),
               excludeDates: getExcludedDates(),
-            }),
-            //fake field to trigger rerender on category switch
-            buildDescriptionField({
-              id: 'fake_helper_field',
-              title: '',
-              condition: (answers) =>
-                !!(answers as GeneralPetition)?.dates?.dateFrom,
             }),
             buildDateField({
               id: 'dates.dateTil',
@@ -127,7 +126,6 @@ export const form: Form = buildForm({
                 ) as string
                 return addMonths(new Date(dateFrom), 3)
               },
-
               excludeDates: getExcludedDates(),
             }),
             buildDescriptionField({
