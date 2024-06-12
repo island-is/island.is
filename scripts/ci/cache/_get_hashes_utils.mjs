@@ -1,5 +1,5 @@
 // @ts-check
-import { appendFile, readFile } from 'node:fs/promises'
+import {exportVariable, setOutput, summary} from '@actions/core'
 import { ENV_KEYS } from './_const.mjs'
 
 const SUMMARY_TITLE = `Cache keys`
@@ -7,21 +7,15 @@ const SUMMARY_TITLE = `Cache keys`
 export async function writeToSummary(
   hashes,
   enabled = !!process.env.GITHUB_STEP_SUMMARY,
-  file = process.env.GITHUB_STEP_SUMMARY ?? '',
 ) {
   if (!enabled) {
     return
   }
-  const rows = [
-    '|  Key | Hash |',
-    '| --- | --- |',
-    ...Object.entries(hashes).map(
-      ([key, value]) => `| **${key}** | ${value} |`,
-    ),
-  ].join('\n')
-  const title = `### ${SUMMARY_TITLE}`
-  const summary = ['', title, '', rows, ''].join('\n')
-  await appendFile(file, summary, 'utf-8')
+  summary.addHeading(SUMMARY_TITLE)
+  summary.addTable([
+    [{ data: "Key", header: true }, { data: "Hash", header: true }],
+    ...Object.entries(hashes).map(([key, value]) => [key, value])
+  ])
 }
 
 export async function writeToOutput(
@@ -32,7 +26,6 @@ export async function writeToOutput(
   if (!enabled) {
     return
   }
-  await appendFile(file, `${ENV_KEYS}=${JSON.stringify(hashes)}\n`, 'utf-8')
-  const content = await readFile(file, 'utf-8')
-  console.log(`Output content: ${content}`)
+  exportVariable(ENV_KEYS, JSON.stringify(hashes))
+  setOutput(ENV_KEYS, JSON.stringify(hashes))
 }
