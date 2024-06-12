@@ -8,6 +8,7 @@ import {
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import {
+  DateType,
   DistrictCourtLocation,
   DistrictCourts,
 } from '@island.is/judicial-system/types'
@@ -29,6 +30,7 @@ export const createSubpoenaPDF = (
   theCase: Case,
   formatMessage: FormatMessage,
 ): Promise<Buffer> => {
+  console.log(theCase.dateLogs)
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -41,17 +43,22 @@ export const createSubpoenaPDF = (
   })
 
   const sinc: Buffer[] = []
+  const arraignmentDate = theCase.dateLogs?.find(
+    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
+  )
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
   addNormalText(doc, `${theCase.court?.name}`, 'Helvetica-Bold', true)
-  // TODO: Display correct date
-  addNormalRightAlignedText(
-    doc,
-    `${formatDate(new Date(), 'PPP')}`,
-    'Helvetica',
-  )
+
+  if (arraignmentDate) {
+    addNormalRightAlignedText(
+      doc,
+      `${formatDate(new Date(arraignmentDate.created), 'PPP')}`,
+      'Helvetica',
+    )
+  }
 
   if (theCase.court?.name) {
     addNormalText(
@@ -67,13 +74,7 @@ export const createSubpoenaPDF = (
     theCase.defendants &&
       theCase.defendants.length > 0 &&
       theCase.defendants[0].name
-      ? `${
-          theCase.defendants &&
-          theCase.defendants.length > 0 &&
-          theCase.defendants[0].name
-            ? theCase.defendants[0].name
-            : 'Nafn ekki skráð'
-        }, ${formatDOB(
+      ? `${theCase.defendants[0].name}, ${formatDOB(
           theCase.defendants[0].nationalId,
           theCase.defendants[0].noNationalId,
         )}`
@@ -123,22 +124,28 @@ export const createSubpoenaPDF = (
     'Helvetica',
   )
   addEmptyLines(doc, 2)
-  addNormalText(
-    doc,
-    formatMessage(strings.arraignmentDate, {
-      // TODO: Display correct date
-      arraignmentDate: formatDate(new Date(), 'PPP'),
-    }),
-    'Helvetica-Bold',
-  )
-  addNormalText(
-    doc,
-    formatMessage(strings.courtRoom, {
-      // TODO: Display correct courtroom
-      courtRoom: `191`,
-    }),
-    'Helvetica',
-  )
+
+  if (arraignmentDate?.date) {
+    addNormalText(
+      doc,
+      formatMessage(strings.arraignmentDate, {
+        // TODO: Display correct date
+        arraignmentDate: formatDate(new Date(arraignmentDate.date), 'PPP'),
+      }),
+      'Helvetica-Bold',
+    )
+  }
+
+  if (arraignmentDate?.location) {
+    addNormalText(
+      doc,
+      formatMessage(strings.courtRoom, {
+        courtRoom: arraignmentDate.location,
+      }),
+      'Helvetica',
+    )
+  }
+
   addNormalText(doc, formatMessage(strings.type), 'Helvetica')
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(strings.intro), 'Helvetica-Bold')
