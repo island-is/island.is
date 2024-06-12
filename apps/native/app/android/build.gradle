@@ -2,13 +2,14 @@
 
 buildscript {
     ext {
-        buildToolsVersion = "33.0.0"
-        minSdkVersion = 21
+        buildToolsVersion = "34.0.0"
+        minSdkVersion = 23
         compileSdkVersion = 34
-        targetSdkVersion = 33
+        targetSdkVersion = 34
+        ndkVersion = "26.1.10909125"
         // Issues with kotlinVersion >= 1.7.10:
         // https://github.com/expo/expo/issues/20821
-        kotlinVersion = "1.7.10"
+        kotlinVersion = "1.9.22"
 
         // React Native Navigation
         RNNKotlinVersion = kotlinVersion
@@ -21,12 +22,15 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath("com.android.tools.build:gradle:7.3.1")
+        classpath("com.android.tools.build:gradle")
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion")
         classpath("com.facebook.react:react-native-gradle-plugin")
         classpath("com.google.gms:google-services:4.3.15")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin")
     }
 }
+
+apply plugin: "com.facebook.react.rootproject"
 
 allprojects {
     repositories {
