@@ -358,7 +358,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               <PdfWrapper>
                 {visible && accessToken && (
                   <PdfViewer
-                    url={Document.downloadUrl ?? ''}
+                    url={`data:application/pdf;base64,${Document.content?.value}`}
                     body={`documentId=${Document.id}&__accessToken=${accessToken}`}
                     onLoaded={(filePath: any) => {
                       setPdfUrl(filePath)
