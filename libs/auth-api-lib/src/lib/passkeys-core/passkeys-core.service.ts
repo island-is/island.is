@@ -165,12 +165,17 @@ export class PasskeysCoreService {
   }
 
   async verifyAuthenticationString(responseAsString: string) {
-    const decodedJson = Buffer.from(responseAsString, 'base64').toString(
-      'utf-8',
-    )
-    const parsedJson = JSON.parse(decodedJson) as AuthenticationResponseJSON
+    try {
+      const decodedJson = Buffer.from(responseAsString, 'base64').toString(
+        'utf-8',
+      )
+      const parsedJson = JSON.parse(decodedJson) as AuthenticationResponseJSON
 
-    return this.verifyAuthentication(parsedJson)
+      return this.verifyAuthentication(parsedJson)
+    } catch (e) {
+      this.logger.error('Invalid passkey format', e)
+      throw new BadRequestException('Invalid passkey format')
+    }
   }
 
   async verifyAuthentication(response: AuthenticationResponseJSON) {
