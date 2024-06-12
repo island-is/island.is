@@ -50,13 +50,13 @@ export const createSubpoenaPDF = (
   doc.on('data', (chunk) => sinc.push(chunk))
 
   setTitle(doc, formatMessage(strings.title))
-  addNormalText(doc, `${theCase.court?.name}`, 'Helvetica-Bold', true)
+  addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
 
   if (arraignmentDate) {
     addNormalRightAlignedText(
       doc,
       `${formatDate(new Date(arraignmentDate.created), 'PPP')}`,
-      'Helvetica',
+      'Times-Roman',
     )
   }
 
@@ -64,7 +64,7 @@ export const createSubpoenaPDF = (
     addNormalText(
       doc,
       DistrictCourtLocation[theCase.court.name as DistrictCourts],
-      'Helvetica',
+      'Times-Roman',
     )
   }
 
@@ -89,31 +89,27 @@ export const createSubpoenaPDF = (
       : 'Heimili ekki skráð',
   )
   addEmptyLines(doc)
-  addHugeHeading(
-    doc,
-    formatMessage(strings.title).toUpperCase(),
-    'Helvetica-Bold',
-  )
+  addHugeHeading(doc, formatMessage(strings.title).toUpperCase(), 'Times-Bold')
   addEmptyLines(doc)
-  addMediumText(doc, 'Mál nr. S-2322/2021', 'Helvetica-Bold')
+  addMediumText(doc, 'Mál nr. S-2322/2021', 'Times-Bold')
   addEmptyLines(doc)
-  addNormalText(doc, 'Ákærandi: ', 'Helvetica-Bold', true)
+  addNormalText(doc, 'Ákærandi: ', 'Times-Bold', true)
   addNormalText(
     doc,
     theCase.prosecutor && theCase.prosecutor.institution
       ? theCase.prosecutor.institution.name
       : 'Ekki skráður',
-    'Helvetica',
+    'Times-Roman',
   )
   addNormalText(
     doc,
     theCase.prosecutor
       ? `                     (${theCase.prosecutor.name} ${theCase.prosecutor.title})`
       : 'Ekki skráður',
-    'Helvetica',
+    'Times-Roman',
   )
   addEmptyLines(doc)
-  addNormalText(doc, 'Ákærði: ', 'Helvetica-Bold', true)
+  addNormalText(doc, 'Ákærði: ', 'Times-Bold', true)
   addNormalText(
     doc,
     theCase.defendants &&
@@ -121,7 +117,7 @@ export const createSubpoenaPDF = (
       theCase.defendants[0].name
       ? theCase.defendants[0].name
       : 'Nafn ekki skráð',
-    'Helvetica',
+    'Times-Roman',
   )
   addEmptyLines(doc, 2)
 
@@ -132,7 +128,7 @@ export const createSubpoenaPDF = (
         // TODO: Display correct date
         arraignmentDate: formatDate(new Date(arraignmentDate.date), 'PPP'),
       }),
-      'Helvetica-Bold',
+      'Times-Bold',
     )
   }
 
@@ -142,23 +138,23 @@ export const createSubpoenaPDF = (
       formatMessage(strings.courtRoom, {
         courtRoom: arraignmentDate.location,
       }),
-      'Helvetica',
+      'Times-Roman',
     )
   }
 
-  addNormalText(doc, formatMessage(strings.type), 'Helvetica')
+  addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.intro), 'Helvetica-Bold')
+  addNormalText(doc, formatMessage(strings.intro), 'Times-Bold')
   addNormalText(
     doc,
     'intro',
     // theCase.subpoenaType === SubpoenaType.ABSENCE
     //   ? strings.absenceIntro
     //   : strings.arrestIntro,
-    'Helvetica-Bold',
+    'Times-Bold',
   )
   addEmptyLines(doc)
-  addNormalText(doc, formatMessage(strings.deadline), 'Helvetica')
+  addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')
 
   addFooter(doc)
 
