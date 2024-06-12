@@ -128,7 +128,7 @@ enum RobotEmailType {
   APPEAL_CASE_CONCLUSION = 'APPEAL_CASE_CONCLUSION',
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
   NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
-  UPDATE_INDICTMENT_DEFENDER_INFO = 'UPDATE_INDICTMENT_DEFENDER_INFO',
+  INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
 }
 
 @Injectable()
@@ -624,7 +624,7 @@ export class CourtService {
       return this.sendToRobot(
         subject,
         content,
-        RobotEmailType.UPDATE_INDICTMENT_DEFENDER_INFO,
+        RobotEmailType.INDICTMENT_CASE_DEFENDER_INFO,
         caseId,
       )
     } catch (error) {
