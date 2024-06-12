@@ -28,7 +28,7 @@ import { UserProfile } from '@island.is/api/schema'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { parse } from 'libphonenumber-js'
 import { getExcludedDates } from '../lib/generalPetitionUtils'
-import { addMonths } from 'date-fns'
+import addMonths from 'date-fns/addMonths'
 
 export const form: Form = buildForm({
   id: 'GeneralPetitionForm',
