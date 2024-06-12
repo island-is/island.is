@@ -4,11 +4,11 @@ export const m = defineMessages({
   // General
   applicationSystem: {
     id: 'admin-portal.application-system:name',
-    defaultMessage: 'Umsóknarkerfi Ísland.is',
+    defaultMessage: 'Umsóknarkerfi',
   },
   applicationSystemDescription: {
     id: 'admin-portal.application-system:description',
-    defaultMessage: 'Tölfræðigögn og umsjá um umsóknarkerfi Ísland.is',
+    defaultMessage: 'Tölfræðigögn og umsjá umsóknarkerfis',
   },
   overview: {
     id: 'admin-portal.application-system:overview',
