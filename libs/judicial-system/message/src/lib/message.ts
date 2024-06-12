@@ -32,8 +32,9 @@ export const messageEndpoint: { [key in MessageType]: string } = {
   DELIVERY_TO_COURT_PROSECUTOR: 'deliverProsecutorToCourt',
   DELIVERY_TO_COURT_DEFENDANT: 'deliverDefendantToCourt',
   DELIVERY_TO_COURT_INDICTMENT: 'deliverIndictmentToCourt',
+  DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES:
+    'deliverIndictmentCourtRolesToCourt',
   DELIVERY_TO_COURT_INDICTMENT_INFO: 'deliverIndictmentInfoToCourt',
-  DELIVERY_TO_COURT_INDICTMENT_DEFENDER: 'deliverIndictmentDefenderToCourt',
   DELIVERY_TO_COURT_CASE_FILE: 'deliverCaseFileToCourt',
   DELIVERY_TO_COURT_CASE_FILES_RECORD: 'deliverCaseFilesRecordToCourt',
   DELIVERY_TO_COURT_REQUEST: 'deliverRequestToCourt',
