@@ -17,7 +17,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: true,
     pkpassVerify: true,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
   },
   {
@@ -27,7 +26,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: true,
     pkpassVerify: true,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.DriversLicense,
   },
   {
@@ -37,7 +35,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: true,
     pkpassVerify: true,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.AdrLicense,
   },
   {
@@ -47,7 +44,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: true,
     pkpassVerify: true,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
   {
@@ -57,7 +53,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: true,
     pkpassVerify: true,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
   },
   {
@@ -67,7 +62,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: true,
     pkpassVerify: true,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.HuntingLicense,
   },
   {
@@ -77,7 +71,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: false,
     pkpassVerify: false,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.PCard,
   },
   {
@@ -87,7 +80,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: false,
     pkpassVerify: false,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.EHIC,
   },
   {
@@ -97,7 +89,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     },
     pkpass: false,
     pkpassVerify: false,
-    timeout: 100,
     orgSlug: GenericLicenseOrganizationSlug.Passport,
   },
 ]

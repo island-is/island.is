@@ -89,7 +89,6 @@ export type GenericLicenseMetadata = {
   provider: GenericLicenseProvider
   pkpass: boolean
   pkpassVerify: boolean
-  timeout: number
   orgSlug?: GenericLicenseOrganizationSlug
 }
 

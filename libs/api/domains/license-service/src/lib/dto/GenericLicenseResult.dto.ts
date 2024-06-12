@@ -1,13 +1,13 @@
 import { createUnionType } from '@nestjs/graphql'
-import { GenericLicense } from './GenericLicense.dto'
 import { LicenseError } from './GenericLicenseError.dto'
+import { GenericUserLicense } from './GenericUserLicense.dto'
 
 export const GenericLicenseResult = createUnionType({
   name: 'GenericLicenseResult',
-  types: () => [GenericLicense, LicenseError] as const,
+  types: () => [GenericUserLicense, LicenseError] as const,
   resolveType(value) {
     if (value.status) {
-      return GenericLicense
+      return GenericUserLicense
     }
 
     if (value.type) {

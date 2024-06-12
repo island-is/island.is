@@ -34,7 +34,7 @@ import { LicenseCollection } from './dto/GenericLicenseCollection.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
-@Resolver(() => GenericUserLicense)
+@Resolver(() => LicenseCollection)
 @Audit({ namespace: '@island.is/api/license-service' })
 export class LicenseServiceResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
@@ -47,18 +47,14 @@ export class LicenseServiceResolver {
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicensesInput,
   ) {
-    const licenses = await this.licenseServiceService.getUserLicenses(
-      user,
-      locale,
-      {
-        ...input,
-        includedTypes: input?.includedTypes ?? ['DriversLicense'],
-      },
-    )
+    return this.licenseServiceService.getUserLicenses(user, locale, {
+      ...input,
+      includedTypes: input?.includedTypes ?? ['DriversLicense'],
+    })
   }
 
   @Query(() => [GenericUserLicense], {
-    deprecationReason: 'Use genericUserLicenses instead',
+    deprecationReason: 'Use genericLicenseCollection instead',
   })
   @Audit()
   async genericLicenses(
@@ -83,7 +79,7 @@ export class LicenseServiceResolver {
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicenseInput,
   ) {
-    return this.licenseServiceService.getLicense(
+    return this.licenseServiceService.getLicenseDeprecated(
       user,
       locale,
       input.licenseType,

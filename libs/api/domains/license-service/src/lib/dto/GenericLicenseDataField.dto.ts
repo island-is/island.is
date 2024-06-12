@@ -1,19 +1,11 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
-import {
-  GenericLicenseDataFieldType,
-  GenericUserLicenseValidity,
-} from '../licenceService.type'
+import { GenericLicenseDataFieldType } from '../licenceService.type'
 import { GenericUserLicenseMetaLinks } from './GenericUserLicenseMetaLinks.dto'
-import { String } from 'aws-sdk/clients/location'
 import { GenericUserLicenseMetaTag } from './GenericUserLicenseMetaTag.dto'
 
 registerEnumType(GenericLicenseDataFieldType, {
   name: 'GenericLicenseDataFieldType',
   description: 'Possible types of data fields',
-})
-
-registerEnumType(GenericUserLicenseMetaTag, {
-  name: 'GenericUserLicenseMetaTag',
 })
 
 @ObjectType()

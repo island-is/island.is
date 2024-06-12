@@ -7,15 +7,18 @@ import { Payload } from './Payload.dto'
 export class GenericUserLicense {
   @Field({
     description: 'National ID of license owner',
-    deprecationReason: 'Moved one level up',
   })
   nationalId!: string
 
   @Field(() => GenericLicense, { description: 'License info' })
   license!: GenericLicense
 
-  @Field(() => GenericLicenseFetch, { description: 'Info about license fetch' })
-  fetch!: GenericLicenseFetch
+  @Field(() => GenericLicenseFetch, {
+    deprecationReason: 'Unnecessary',
+    nullable: true,
+    description: 'Info about license fetch',
+  })
+  fetch?: GenericLicenseFetch
 
   @Field(() => Payload, {
     nullable: true,
