@@ -145,6 +145,9 @@ for (const cache of checkCache) {
       console.log(`Failed init and check for ${cache.name}`)
       failedJobs.push(cache)
     } else {
+      if (cache.post) {
+        await tryRun(cache.post, cache.name, [fileName])
+      }
       const saveSuccess = await saveCache({
         key: cache.key,
         path: cache.path,
