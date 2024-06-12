@@ -17,7 +17,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  body: DeliverDto,
+  nationalId: string,
 ) => Promise<Then>
 
 describe('InternalCaseController - Deliver assigned roles for indictment case to court', () => {
@@ -28,7 +28,6 @@ describe('InternalCaseController - Deliver assigned roles for indictment case to
   const theCase = {
     id: caseId,
     type: CaseType.INDICTMENT,
-
     courtCaseNumber,
     judge: { name: 'Test Dómari', nationalId: '0101010101' },
     registrar: { name: 'Test Ritari', nationalId: '0202020202' },
@@ -46,11 +45,20 @@ describe('InternalCaseController - Deliver assigned roles for indictment case to
       mockCourtService.updateIndictmentCaseWithAssignedRoles as jest.Mock
     mockUpdateIndictmentCaseWithAssignedRoles.mockResolvedValue(uuid())
 
-    givenWhenThen = async (caseId: string, theCase: Case) => {
+    givenWhenThen = async (
+      caseId: string,
+      theCase: Case,
+      nationalId: string,
+    ) => {
       const then = {} as Then
 
       await internalCaseController
-        .deliverIndictmentAssignedRolesToCourt(caseId, theCase, { user })
+        .deliverIndictmentAssignedRoleToCourt(
+          caseId,
+          theCase,
+          { user },
+          nationalId,
+        )
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -62,24 +70,20 @@ describe('InternalCaseController - Deliver assigned roles for indictment case to
     let then: Then
 
     beforeEach(async () => {
-      then = await givenWhenThen(caseId, theCase, { user })
+      then = await givenWhenThen(caseId, theCase, '0101010101')
     })
 
     it('should deliver the assigned roles to the court', () => {
       expect(
         mockCourtService.updateIndictmentCaseWithAssignedRoles,
-      ).toHaveBeenCalledWith(user, theCase.id, theCase.courtCaseNumber, [
-        {
-          name: theCase.judge?.name,
-          role: UserRole.DISTRICT_COURT_JUDGE,
-        },
-        {
-          name: theCase.registrar?.name,
-          role: UserRole.DISTRICT_COURT_REGISTRAR,
-        },
-      ])
+      ).toHaveBeenCalledWith(user, theCase.id, theCase.courtCaseNumber, {
+        name: theCase.judge?.name,
+        role: UserRole.DISTRICT_COURT_JUDGE,
+      })
 
       expect(then.result).toEqual({ delivered: true })
     })
   })
+
+  
 })

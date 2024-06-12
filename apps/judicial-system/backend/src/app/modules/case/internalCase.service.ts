@@ -547,32 +547,27 @@ export class InternalCaseService {
   async deliverIndictmentAssignedRolesToCourt(
     theCase: Case,
     user: TUser,
+    nationalId?: string,
   ): Promise<DeliverResponse> {
-    const assignedRoles = [
-      ...(theCase.judge
-        ? [
-            {
-              name: theCase.judge.name,
-              role: UserRole.DISTRICT_COURT_JUDGE,
-            },
-          ]
-        : []),
-      ...(theCase.registrar
-        ? [
-            {
-              name: theCase.registrar.name,
-              role: UserRole.DISTRICT_COURT_REGISTRAR,
-            },
-          ]
-        : []),
-    ]
+    const assignedRole =
+      theCase.judge?.nationalId === nationalId
+        ? {
+            name: theCase.judge?.name,
+            role: UserRole.DISTRICT_COURT_JUDGE,
+          }
+        : theCase.registrar?.nationalId === nationalId
+        ? {
+            name: theCase.registrar?.name,
+            role: UserRole.DISTRICT_COURT_REGISTRAR,
+          }
+        : {}
 
     return this.courtService
       .updateIndictmentCaseWithAssignedRoles(
         user,
         theCase.id,
         theCase.courtCaseNumber,
-        assignedRoles,
+        assignedRole,
       )
       .then(() => ({ delivered: true }))
       .catch((reason) => {

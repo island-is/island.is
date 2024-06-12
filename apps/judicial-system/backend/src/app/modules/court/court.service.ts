@@ -608,11 +608,11 @@ export class CourtService {
     user: User,
     caseId: string,
     courtCaseNumber?: string,
-    assignedRole?: { name?: string; role?: UserRole }[],
+    assignedRole?: { name?: string; role?: UserRole },
   ): Promise<unknown> {
     try {
       const subject = `Ákæra - ${courtCaseNumber} - úthlutun`
-      const content = JSON.stringify({ assignedRole })
+      const content = JSON.stringify(assignedRole)
 
       return this.sendToRobot(
         subject,

@@ -173,16 +173,17 @@ export class InternalCaseController {
   @Post(
     `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES]
-    }`,
+    }/:nationalId`,
   )
   @ApiOkResponse({
     type: DeliverResponse,
     description: 'Delivers assigned roles in indictment case to court',
   })
-  deliverIndictmentAssignedRolesToCourt(
+  deliverIndictmentAssignedRoleToCourt(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
     @Body() deliverDto: DeliverDto,
+    @Param('nationalId') nationalId: string,
   ): Promise<DeliverResponse> {
     this.logger.debug(
       `Delivering the assigned roles of indictment case ${caseId} to court`,
@@ -191,6 +192,7 @@ export class InternalCaseController {
     return this.internalCaseService.deliverIndictmentAssignedRolesToCourt(
       theCase,
       deliverDto.user,
+      nationalId,
     )
   }
 

@@ -13,7 +13,7 @@ describe('InternalCaseController - Deliver assigned roles in indictment case to 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalCaseController.prototype.deliverIndictmentAssignedRolesToCourt,
+      InternalCaseController.prototype.deliverIndictmentAssignedRoleToCourt,
     )
   })
 
