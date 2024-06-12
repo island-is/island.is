@@ -25,7 +25,10 @@ import {
   SubpoenaType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -36,7 +39,7 @@ const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
-  const [subpoenaType, setSubpoenaType] = useState<SubpoenaType[]>()
+  const { updateDefendantState } = useDefendants()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -80,23 +83,10 @@ const Subpoena: FC = () => {
     [isPostponed, sendCourtDateToServer, workingCase, courtDateHasChanged],
   )
 
-  useEffect(() => {
-    if (workingCase && workingCase.defendants) {
-      const a = workingCase.defendants.map((defendant) => {
-        if (defendant.subpoenaType) {
-          return defendant.subpoenaType
-        }
-        return null
-      })
-      setSubpoenaType(a.filter((x) => x !== null) as SubpoenaType[])
-    }
-  }, [workingCase])
-
   const stepIsValid = isSubpoenaStepValid(
     workingCase,
     courtDate?.date,
     courtDate?.location,
-    subpoenaType,
   )
 
   return (
@@ -116,9 +106,12 @@ const Subpoena: FC = () => {
             title={formatMessage(strings.subpoenaTypeTitle)}
             required
           />
-          {subpoenaType &&
-            workingCase.defendants?.map((defendant, index) => (
-              <BlueBox key={defendant.id}>
+          {workingCase.defendants?.map((defendant, index) => (
+            <Box
+              key={defendant.id}
+              marginBottom={index === workingCase.defendants?.length ? 0 : 3}
+            >
+              <BlueBox>
                 <Text as="h4" variant="h4" marginBottom={2}>
                   {defendant.name}
                 </Text>
@@ -126,42 +119,45 @@ const Subpoena: FC = () => {
                   <RadioButton
                     large
                     name="subpoenaType"
-                    id="subpoenaTypeAbsence"
+                    id={`subpoenaTypeAbsence${defendant.id}`}
                     backgroundColor="white"
                     label={formatMessage(strings.subpoenaTypeAbsence)}
-                    checked={subpoenaType[index] === SubpoenaType.ABSENCE}
+                    checked={defendant.subpoenaType === SubpoenaType.ABSENCE}
                     onChange={() => {
-                      setSubpoenaType((prev) => {
-                        prev?.splice(index, 1, SubpoenaType.ABSENCE)
-
-                        return prev && prev.length > 0
-                          ? prev
-                          : [SubpoenaType.ABSENCE]
-                      })
+                      updateDefendantState(
+                        {
+                          caseId: workingCase.id,
+                          defendantId: defendant.id,
+                          subpoenaType: SubpoenaType.ABSENCE,
+                        },
+                        setWorkingCase,
+                      )
                     }}
                     disabled={isPostponed}
                   />
                   <RadioButton
                     large
                     name="subpoenaType"
-                    id="subpoenaTypeArrest"
+                    id={`subpoenaTypeArrest${defendant.id}`}
                     backgroundColor="white"
                     label={formatMessage(strings.subpoenaTypeArrest)}
-                    checked={subpoenaType[index] === SubpoenaType.ARREST}
+                    checked={defendant.subpoenaType === SubpoenaType.ARREST}
                     onChange={() => {
-                      setSubpoenaType((prev) => {
-                        prev?.splice(index, 1, SubpoenaType.ARREST)
-
-                        return prev && prev.length > 0
-                          ? prev
-                          : [SubpoenaType.ARREST]
-                      })
+                      updateDefendantState(
+                        {
+                          caseId: workingCase.id,
+                          defendantId: defendant.id,
+                          subpoenaType: SubpoenaType.ARREST,
+                        },
+                        setWorkingCase,
+                      )
                     }}
                     disabled={isPostponed}
                   />
                 </Box>
               </BlueBox>
-            ))}
+            </Box>
+          ))}
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
