@@ -7,6 +7,18 @@ import { navigateTo } from './deep-linking'
 import { useAuthenticatePasskey } from './passkeys/useAuthenticatePasskey'
 import { addPasskeyAsLoginHint } from './passkeys/helpers'
 
+const doesUrlSupportPasskey = (url: string): boolean => {
+  // Check if domain is correct and url includes /minarsidur or /umsoknir
+  if (
+    (url.startsWith('https://beta.dev01.devland.is') ||
+      url.startsWith('https://island.is')) &&
+    (url.includes('/minarsidur') || url.includes('/umsoknir'))
+  ) {
+    return true
+  }
+  return false
+}
+
 export const useBrowser = () => {
   const { authenticatePasskey } = useAuthenticatePasskey()
   const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
@@ -18,11 +30,7 @@ export const useBrowser = () => {
       preferencesStore.getState()
 
     // If url includes minarsidur or umsoknir we need authentication so we check for passkeys
-    if (
-      passkeysSupported &&
-      isPasskeyEnabled &&
-      (url.includes('/minarsidur') || url.includes('/umsoknir'))
-    ) {
+    if (passkeysSupported && isPasskeyEnabled && doesUrlSupportPasskey(url)) {
       if (hasCreatedPasskey) {
         // Don't show lockscreen behind native passkey modals
         authStore.setState({
@@ -32,7 +40,10 @@ export const useBrowser = () => {
         const passkey = await authenticatePasskey()
         if (passkey) {
           const urlWithLoginHint = addPasskeyAsLoginHint(url, passkey)
-          urlWithLoginHint && openNativeBrowser(urlWithLoginHint, componentId)
+          if (urlWithLoginHint) {
+            openNativeBrowser(urlWithLoginHint, componentId)
+            return
+          }
         }
         // If something goes wrong we fail silently and open the browser normally
         openNativeBrowser(url, componentId)
