@@ -2,7 +2,7 @@ import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, RadioButton } from '@island.is/island-ui/core'
+import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -36,7 +36,7 @@ const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
-  const [subpoenaType, setSubpoenaType] = useState<SubpoenaType>()
+  const [subpoenaType, setSubpoenaType] = useState<SubpoenaType[]>()
   const { formatMessage } = useIntl()
   const {
     courtDate,
@@ -45,13 +45,7 @@ const Subpoena: FC = () => {
     handleCourtRoomChange,
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
-  const { sendNotification, setAndSendCaseToServer } = useCase()
-
-  useEffect(() => {
-    if (workingCase.subpoenaType) {
-      setSubpoenaType(workingCase.subpoenaType)
-    }
-  }, [workingCase.subpoenaType])
+  const { sendNotification } = useCase()
 
   const isPostponed =
     workingCase.indictmentDecision ===
@@ -66,13 +60,8 @@ const Subpoena: FC = () => {
       }
 
       const courtDateSentToServer = await sendCourtDateToServer()
-      const subpoenaTypeSentToServer = await setAndSendCaseToServer(
-        [{ subpoenaType, force: true }],
-        workingCase,
-        setWorkingCase,
-      )
 
-      if (!courtDateSentToServer || !subpoenaTypeSentToServer) {
+      if (!courtDateSentToServer) {
         return
       }
 
@@ -88,16 +77,20 @@ const Subpoena: FC = () => {
         setNavigateTo(destination)
       }
     },
-    [
-      isPostponed,
-      sendCourtDateToServer,
-      setAndSendCaseToServer,
-      subpoenaType,
-      workingCase,
-      setWorkingCase,
-      courtDateHasChanged,
-    ],
+    [isPostponed, sendCourtDateToServer, workingCase, courtDateHasChanged],
   )
+
+  useEffect(() => {
+    if (workingCase && workingCase.defendants) {
+      const a = workingCase.defendants.map((defendant) => {
+        if (defendant.subpoenaType) {
+          return defendant.subpoenaType
+        }
+        return null
+      })
+      setSubpoenaType(a.filter((x) => x !== null) as SubpoenaType[])
+    }
+  }, [workingCase])
 
   const stepIsValid = isSubpoenaStepValid(
     workingCase,
@@ -123,30 +116,52 @@ const Subpoena: FC = () => {
             title={formatMessage(strings.subpoenaTypeTitle)}
             required
           />
-          <BlueBox>
-            <Box className={styles.subpoenaTypeGrid}>
-              <RadioButton
-                large
-                name="subpoenaType"
-                id="subpoenaTypeAbsence"
-                backgroundColor="white"
-                label={formatMessage(strings.subpoenaTypeAbsence)}
-                checked={subpoenaType === SubpoenaType.ABSENCE}
-                onChange={() => setSubpoenaType(SubpoenaType.ABSENCE)}
-                disabled={isPostponed}
-              />
-              <RadioButton
-                large
-                name="subpoenaType"
-                id="subpoenaTypeArrest"
-                backgroundColor="white"
-                label={formatMessage(strings.subpoenaTypeArrest)}
-                checked={subpoenaType === SubpoenaType.ARREST}
-                onChange={() => setSubpoenaType(SubpoenaType.ARREST)}
-                disabled={isPostponed}
-              />
-            </Box>
-          </BlueBox>
+          {subpoenaType &&
+            workingCase.defendants?.map((defendant, index) => (
+              <BlueBox key={defendant.id}>
+                <Text as="h4" variant="h4" marginBottom={2}>
+                  {defendant.name}
+                </Text>
+                <Box className={styles.subpoenaTypeGrid}>
+                  <RadioButton
+                    large
+                    name="subpoenaType"
+                    id="subpoenaTypeAbsence"
+                    backgroundColor="white"
+                    label={formatMessage(strings.subpoenaTypeAbsence)}
+                    checked={subpoenaType[index] === SubpoenaType.ABSENCE}
+                    onChange={() => {
+                      setSubpoenaType((prev) => {
+                        prev?.splice(index, 1, SubpoenaType.ABSENCE)
+
+                        return prev && prev.length > 0
+                          ? prev
+                          : [SubpoenaType.ABSENCE]
+                      })
+                    }}
+                    disabled={isPostponed}
+                  />
+                  <RadioButton
+                    large
+                    name="subpoenaType"
+                    id="subpoenaTypeArrest"
+                    backgroundColor="white"
+                    label={formatMessage(strings.subpoenaTypeArrest)}
+                    checked={subpoenaType[index] === SubpoenaType.ARREST}
+                    onChange={() => {
+                      setSubpoenaType((prev) => {
+                        prev?.splice(index, 1, SubpoenaType.ARREST)
+
+                        return prev && prev.length > 0
+                          ? prev
+                          : [SubpoenaType.ARREST]
+                      })
+                    }}
+                    disabled={isPostponed}
+                  />
+                </Box>
+              </BlueBox>
+            ))}
         </Box>
         <Box component="section" marginBottom={10}>
           <SectionHeading
