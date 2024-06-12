@@ -24,7 +24,7 @@ export const useAuthenticatePasskey = () => {
         const options = await getPasskeyAuthenticationOptions()
 
         if (!options.data?.authPasskeyAuthenticationOptions) {
-          return false
+          return
         }
 
         const formattedAuthenticateOptions = formatAuthenticationOptions(
@@ -48,7 +48,7 @@ export const useAuthenticatePasskey = () => {
       } catch (error: any) {
         // User cancelled the authentication flow, swallow the error
         if (error?.error === 'UserCancelled') {
-          return false
+          return
         }
         console.error('Error authenticating with passkey', error)
       }
