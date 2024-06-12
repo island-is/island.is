@@ -22,7 +22,7 @@ import {
 import { keyStorage } from './_key_storage.mjs'
 
 // When testing this is good to manipulate
-const HASH_VERSION = `newcache-${4}`
+const HASH_VERSION = `newcache-${5}`
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
@@ -102,7 +102,7 @@ export const caches = [
     init: async (path) => {
       console.log(`Generating files to ${path} - THIS WILL TAKE A LOT OF TIME`)
       const script = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
-      await runCommand(`bash ${script}`, ROOT)
+      await runCommand(`${script}`, ROOT)
     },
   },
   {
