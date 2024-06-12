@@ -1,5 +1,5 @@
 // @ts-check
-import {exportVariable, setOutput, summary} from '@actions/core'
+import { exportVariable, setOutput, summary } from '@actions/core'
 import { ENV_KEYS } from './_const.mjs'
 
 const SUMMARY_TITLE = `Cache keys`
@@ -13,8 +13,11 @@ export async function writeToSummary(
   }
   summary.addHeading(SUMMARY_TITLE)
   summary.addTable([
-    [{ data: "Key", header: true }, { data: "Hash", header: true }],
-    ...Object.entries(hashes).map(([key, value]) => [key, value])
+    [
+      { data: 'Key', header: true },
+      { data: 'Hash', header: true },
+    ],
+    ...Object.entries(hashes).map(([key, value]) => [key, value]),
   ])
 }
 
