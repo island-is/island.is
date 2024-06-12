@@ -2,7 +2,7 @@ import { Alert } from 'react-native'
 import {
   authorize,
   AuthorizeResult,
-  refresh,
+  refresh as authRefresh,
   RefreshResult,
   revoke,
 } from 'react-native-app-auth'
@@ -15,11 +15,14 @@ import { getIntl } from '../contexts/i18n-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
+import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
+const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
+const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 // Optional scopes (not required for all users so we do not want to force a logout)
 const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
@@ -40,8 +43,8 @@ interface AuthStore extends State {
   cognitoDismissCount: number
   cognitoAuthUrl?: string
   cookies: string
-  fetchUserInfo(_refresh?: boolean): Promise<UserInfo>
-  refresh(): Promise<boolean>
+  fetchUserInfo(skipRefresh?: boolean): Promise<UserInfo>
+  refresh(): Promise<void>
   login(): Promise<boolean>
   logout(): Promise<boolean>
 }
@@ -49,6 +52,7 @@ interface AuthStore extends State {
 const getAppAuthConfig = () => {
   const config = getConfig()
   const android = isAndroid && !config.isTestingApp ? '.auth' : ''
+
   return {
     issuer: config.idsIssuer,
     clientId: config.idsClientId,
@@ -67,55 +71,62 @@ export const authStore = create<AuthStore>((set, get) => ({
   cognitoDismissCount: 0,
   cognitoAuthUrl: undefined,
   cookies: '',
-  async fetchUserInfo(_refresh = false) {
+  async fetchUserInfo(skipRefresh = false) {
     const appAuthConfig = getAppAuthConfig()
     // Detect expired token
     const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
-    if (new Date(expiresAt) < new Date()) {
+
+    if (!skipRefresh && new Date(expiresAt) < new Date()) {
       await get().refresh()
     }
-    return fetch(
+
+    const res = await fetch(
       `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
       {
         headers: {
           Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
         },
       },
-    ).then(async (res) => {
-      if (res.status === 401) {
-        // Attempt to refresh the access token
-        if (!_refresh && (await get().refresh())) {
-          // Retry the userInfo call
-          return get().fetchUserInfo(true)
-        }
-        throw new Error('Unauthorized')
-      } else if (res.status === 200) {
-        const userInfo = await res.json()
-        set({ userInfo })
-        return userInfo
+    )
+
+    if (res.status === 401) {
+      // Attempt to refresh the access token
+      if (!skipRefresh) {
+        await get().refresh()
+        // Retry the userInfo call
+        return get().fetchUserInfo(true)
       }
-      return undefined
-    })
+      throw new Error(UNAUTHORIZED_USER_INFO)
+    } else if (res.status === 200) {
+      const userInfo = await res.json()
+      set({ userInfo })
+
+      return userInfo
+    }
   },
   async refresh() {
     const appAuthConfig = getAppAuthConfig()
+    const refreshToken = get().authorizeResult?.refreshToken
+
+    if (!refreshToken) {
+      return
+    }
+
+    const newAuthorizeResult = await authRefresh(appAuthConfig, {
+      refreshToken,
+    })
+
     const authorizeResult = {
       ...get().authorizeResult,
-      ...(await refresh(appAuthConfig, {
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        refreshToken: get().authorizeResult!.refreshToken!,
-      })),
+      ...newAuthorizeResult,
     }
-    if (authorizeResult) {
-      await Keychain.setGenericPassword(
-        KEYCHAIN_AUTH_KEY,
-        JSON.stringify(authorizeResult),
-        { service: KEYCHAIN_AUTH_KEY },
-      )
-      set({ authorizeResult })
-      return true
-    }
-    return false
+
+    await Keychain.setGenericPassword(
+      KEYCHAIN_AUTH_KEY,
+      JSON.stringify(authorizeResult),
+      { service: KEYCHAIN_AUTH_KEY },
+    )
+    set({ authorizeResult })
   },
   async login() {
     const appAuthConfig = getAppAuthConfig()
@@ -181,27 +192,25 @@ export const authStore = create<AuthStore>((set, get) => ({
 
 export const useAuthStore = createUse(authStore)
 
-export async function readAuthorizeResult(): Promise<AuthorizeResult | null> {
+export async function readAuthorizeResult(): Promise<void> {
   const { authorizeResult } = authStore.getState()
 
   if (authorizeResult) {
-    return authorizeResult as AuthorizeResult
+    return
   }
 
   try {
     const res = await Keychain.getGenericPassword({
       service: KEYCHAIN_AUTH_KEY,
     })
+
     if (res) {
       const authRes = JSON.parse(res.password)
       authStore.setState({ authorizeResult: authRes })
-      return authRes
     }
   } catch (err) {
     console.log('Unable to read from keystore: ', err)
   }
-
-  return null
 }
 
 export async function checkIsAuthenticated() {
@@ -225,23 +234,37 @@ export async function checkIsAuthenticated() {
         intl.formatMessage({ id: 'login.expiredTitle' }),
         intl.formatMessage({ id: 'login.expiredScopesMessage' }),
       )
+
       await logout()
+
       return false
     }
   }
 
-  fetchUserInfo().catch(async (err) => {
+  if (!offlineStore.getState().isConnected) {
+    return true
+  }
+
+  try {
+    await fetchUserInfo()
+
+    return true
+  } catch (e) {
+    const err = e as Error & { code?: string }
+    const shouldLogout =
+      err.code === INVALID_REFRESH_TOKEN_ERROR ||
+      err.message === UNAUTHORIZED_USER_INFO
+
+    if (!shouldLogout) {
+      return true
+    }
+
     Alert.alert(
       intl.formatMessage({ id: 'login.expiredTitle' }),
       intl.formatMessage({ id: 'login.expiredMissingUserMessage' }),
     )
     await logout()
-    await Navigation.dismissAllModals()
-    await Navigation.dismissAllOverlays()
-    await Navigation.setRoot({
-      root: await getAppRoot(),
-    })
-  })
 
-  return true
+    return false
+  }
 }
