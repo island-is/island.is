@@ -10776,7 +10776,7 @@ __metadata:
     react-dom: 18.2.0
     react-intl: 5.20.12
     react-native: 0.71.1
-    react-native-app-auth: 6.4.3
+    react-native-app-auth: 7.2.0
     react-native-blob-util: 0.16.4
     react-native-code-push: 7.1.0
     react-native-device-info: 10.3.0
@@ -44420,15 +44420,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-app-auth@npm:6.4.3":
-  version: 6.4.3
-  resolution: "react-native-app-auth@npm:6.4.3"
+"react-native-app-auth@npm:7.2.0":
+  version: 7.2.0
+  resolution: "react-native-app-auth@npm:7.2.0"
   dependencies:
     invariant: 2.2.4
     react-native-base64: 0.0.2
   peerDependencies:
     react-native: ">=0.63.0"
-  checksum: 5edf1e3b390d4feafa7d1f7c2488564c130ef9625283e83e803d896832494da121e032d61b2be062ed1be8bb0506e7176c8b3fdd30c0dd3152aa6ae1b97e3a32
+  checksum: 68f6a5343210041ec8bf0018b12007c8c3700473d6a46f2a543b935190141b002d6beb0b451531cf35d0c51fd920f73d7a02ec99868b912ca1a5bd618cf987d7
   languageName: node
   linkType: hard
 
