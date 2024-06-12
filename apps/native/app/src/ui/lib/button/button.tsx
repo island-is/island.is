@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  ImageSourcePropType,
   ImageStyle,
   TextProps,
   TextStyle,
@@ -20,12 +21,12 @@ interface ButtonBaseProps extends TouchableHighlightProps {
 
 interface IconButtonProps extends ButtonBaseProps {
   title?: never
-  icon: React.ReactNode
+  icon: ImageSourcePropType
 }
 
 interface TextButtonProps extends ButtonBaseProps {
   title: string
-  icon?: React.ReactNode
+  icon?: ImageSourcePropType
 }
 
 type ButtonProps = IconButtonProps | TextButtonProps
@@ -144,7 +145,7 @@ export function Button({
         )}
         {icon && (
           <Icon
-            source={icon as any}
+            source={icon}
             resizeMode="center"
             {...iconStyle}
             noMargin={!title}
