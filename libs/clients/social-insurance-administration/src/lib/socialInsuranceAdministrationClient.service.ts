@@ -43,6 +43,9 @@ export class SocialInsuranceAdministrationClientService {
   private paymentPlanApiWithAuth = (user: User) =>
     this.paymentPlanApi.withMiddleware(new AuthMiddleware(user as Auth))
 
+  private pensionCalculatorApiWithAuth = (user: User) =>
+    this.pensionCalculatorApi.withMiddleware(new AuthMiddleware(user as Auth))
+
   getPaymentPlan(
     user: User,
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
@@ -105,9 +108,12 @@ export class SocialInsuranceAdministrationClientService {
   }
 
   async getPensionCalculation(
+    user: User,
     parameters: ApiProtectedV1PensionCalculatorPostRequest['trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput'],
   ) {
-    return this.pensionCalculatorApi.apiProtectedV1PensionCalculatorPost({
+    return this.pensionCalculatorApiWithAuth(
+      user,
+    ).apiProtectedV1PensionCalculatorPost({
       trWebCommonsExternalPortalsApiModelsPensionCalculatorPensionCalculatorInput:
         parameters,
     })
