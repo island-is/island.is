@@ -335,14 +335,14 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
 
-      - name: Get node-moduels hash
+      - name: Get node HASH
         id: calculate_node_modules_hash
         run: |
-          # Run JQ on get-cache and get the output of key node_modules
-          NODE_MODULE_HASH=$(echo "${{ steps.get-cache.outputs.keys }}" | jq -r '.node_modules')
-          echo "NODE_MODULE_HASH=${NODE_MODULE_HASH}" >> $GITHUB_OUTPUT
-          echo "NODE_MODULE_HASH=${NODE_MODULE_HASH}" >> $GITHUB_ENV
-
+            # Run JQ on get-cache and get the output of key node_modules
+            NODE_MODULE_HASH=$(printf '%s\n' "${{ steps.get-cache.outputs.keys }}" |  jq -r '.node_modules')
+            echo "NODE_MODULE_HASH=${NODE_MODULE_HASH}" >> $GITHUB_OUTPUT
+            echo "NODE_MODULE_HASH=${NODE_MODULE_HASH}" >> $GITHUB_ENV
+          
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         continue-on-error: true
