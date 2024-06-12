@@ -40,7 +40,7 @@ jobs:
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
       BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
-      CACHE_KEYS: ${{ steps.get-cache-key.outputs.keys }}
+      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
     steps:
       - uses: actions/checkout@v4
         with:
