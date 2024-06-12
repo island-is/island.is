@@ -199,56 +199,50 @@ export class PDFService {
   }
 
   async getIndictmentPdf(theCase: Case): Promise<Buffer> {
-    // if (!isTrafficViolationCase(theCase)) {
-    //   throw new BadRequestException(
-    //     `Case ${theCase.id} is not a traffic violation case`,
-    //   )
-    // }
+    if (!isTrafficViolationCase(theCase)) {
+      throw new BadRequestException(
+        `Case ${theCase.id} is not a traffic violation case`,
+      )
+    }
 
-    const confirmation: IndictmentConfirmation | undefined = undefined
+    let confirmation: IndictmentConfirmation | undefined = undefined
 
-    // if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
-    //   if (theCase.indictmentHash) {
-    //     const existingPdf = await this.tryGetPdfFromS3(
-    //       theCase,
-    //       `${theCase.id}/indictment.pdf`,
-    //     )
+    if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state)) {
+      if (theCase.indictmentHash) {
+        const existingPdf = await this.tryGetPdfFromS3(
+          theCase,
+          `${theCase.id}/indictment.pdf`,
+        )
 
-    //     if (existingPdf) {
-    //       return existingPdf
-    //     }
-    //   }
+        if (existingPdf) {
+          return existingPdf
+        }
+      }
 
-    //   const confirmationEvent = theCase.eventLogs?.find(
-    //     (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
-    //   )
+      const confirmationEvent = theCase.eventLogs?.find(
+        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+      )
 
-    //   if (confirmationEvent && confirmationEvent.nationalId) {
-    //     const actor = await this.userService.findByNationalId(
-    //       confirmationEvent.nationalId,
-    //     )
+      if (confirmationEvent && confirmationEvent.nationalId) {
+        const actor = await this.userService.findByNationalId(
+          confirmationEvent.nationalId,
+        )
 
-    //     confirmation = {
-    //       actor: actor.name,
-    //       title: actor.title,
-    //       institution: actor.institution?.name ?? '',
-    //       date: confirmationEvent.created,
-    //     }
-    //   }
-    // }
+        confirmation = {
+          actor: actor.name,
+          title: actor.title,
+          institution: actor.institution?.name ?? '',
+          date: confirmationEvent.created,
+        }
+      }
+    }
 
     await this.refreshFormatMessage()
 
-    // const generatedPdf = await createIndictment(
-    //   theCase,
-    //   this.formatMessage,
-    //   confirmation,
-    // )
-
-    const generatedPdf = await createSubpoenaPDF(
+    const generatedPdf = await createIndictment(
       theCase,
       this.formatMessage,
-      theCase.defendants?.[0],
+      confirmation,
     )
 
     if (hasIndictmentCaseBeenSubmittedToCourt(theCase.state) && confirmation) {
