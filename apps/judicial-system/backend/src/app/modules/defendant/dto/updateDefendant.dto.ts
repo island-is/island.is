@@ -6,6 +6,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  SubpoenaType,
   ServiceRequirement,
   SubpoenaType,
 } from '@island.is/judicial-system/types'

@@ -221,6 +221,5 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     indictmentDeniedExplanation
     indictmentReturnedExplanation
     indictmentDecision
-    subpoenaType
   }
 }
