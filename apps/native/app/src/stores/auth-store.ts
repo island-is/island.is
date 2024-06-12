@@ -65,6 +65,34 @@ const getAppAuthConfig = () => {
   }
 }
 
+const clearPasskey = async (userNationalId?: string) => {
+  // Clear passkey if exists
+  const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
+    'isPasskeyEnabled',
+    false,
+    userNationalId ? { identifier: userNationalId } : undefined,
+  )
+  if (isPasskeyEnabled) {
+    preferencesStore.setState({
+      hasCreatedPasskey: false,
+      hasOnboardedPasskeys: false,
+      lastUsedPasskey: 0,
+    })
+
+    const client = await getApolloClientAsync()
+    try {
+      await client.mutate<
+        DeletePasskeyMutation,
+        DeletePasskeyMutationVariables
+      >({
+        mutation: DeletePasskeyDocument,
+      })
+    } catch (e) {
+      console.error('Failed to delete passkey', e)
+    }
+  }
+}
+
 export const authStore = create<AuthStore>((set, get) => ({
   authorizeResult: undefined,
   userInfo: undefined,
@@ -168,30 +196,7 @@ export const authStore = create<AuthStore>((set, get) => ({
 
     // Clear passkey if exists
     const userNationalId = get().userInfo?.nationalId
-    const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
-      'isPasskeyEnabled',
-      false,
-      userNationalId ? { identifier: userNationalId } : undefined,
-    )
-    if (isPasskeyEnabled) {
-      preferencesStore.setState({
-        hasCreatedPasskey: false,
-        hasOnboardedPasskeys: false,
-        lastUsedPasskey: 0,
-      })
-
-      const client = await getApolloClientAsync()
-      try {
-        await client.mutate<
-          DeletePasskeyMutation,
-          DeletePasskeyMutationVariables
-        >({
-          mutation: DeletePasskeyDocument,
-        })
-      } catch (e) {
-        // NOOP
-      }
-    }
+    await clearPasskey(userNationalId)
 
     const appAuthConfig = getAppAuthConfig()
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
