@@ -88,7 +88,7 @@ export const createSubpoenaPDF = (
   addNormalText(doc, 'Ákærandi: ', 'Times-Bold', true)
   addNormalText(
     doc,
-    theCase.prosecutor && theCase.prosecutor.institution
+    theCase.prosecutor?.institution
       ? theCase.prosecutor.institution.name
       : 'Ekki skráður',
     'Times-Roman',
