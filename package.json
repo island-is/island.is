@@ -91,7 +91,7 @@
     "@formatjs/intl-locale": "2.4.33",
     "@formatjs/intl-numberformat": "7.1.5",
     "@hookform/error-message": "2.0.1",
-    "@island.is/regulations-tools": "0.8.1",
+    "@island.is/regulations-tools": "0.9.0",
     "@keyv/redis": "2.6.1",
     "@livechat/widget-core": "1.3.2",
     "@nestjs/apollo": "10.1.0",

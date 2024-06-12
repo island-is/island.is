@@ -10802,9 +10802,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.8.1":
-  version: 0.8.1
-  resolution: "@island.is/regulations-tools@npm:0.8.1"
+"@island.is/regulations-tools@npm:0.9.0":
+  version: 0.9.0
+  resolution: "@island.is/regulations-tools@npm:0.9.0"
   dependencies:
     "@hugsmidjan/htmldiff-js": ^1.3.0
     "@hugsmidjan/qj": ^4.10.2
@@ -10818,7 +10818,7 @@ __metadata:
   peerDependencies:
     react: ">=16.8 <20"
     react-dom: ">=16.8 <20"
-  checksum: bdf33c19b3b69e1661c08befb5ab1d578b4aa3923da22bef6665a8f1890ba3b46895d0a919b6f110ef25d8f84757050187ccd014c8bfefc0c2866cbc7764608e
+  checksum: 9d4950e590721f78c60644ee7f2c16dfb132960c9383e71cce3dbe9037b8e734c6e8609eb44a623e843ec13187759efd45245078ba4e9c60d456068378a28e62
   languageName: node
   linkType: hard
 
@@ -34178,7 +34178,7 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
-    "@island.is/regulations-tools": 0.8.1
+    "@island.is/regulations-tools": 0.9.0
     "@keyv/redis": 2.6.1
     "@livechat/widget-core": 1.3.2
     "@nestjs/apollo": 10.1.0
