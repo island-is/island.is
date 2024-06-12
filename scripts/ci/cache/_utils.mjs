@@ -160,7 +160,11 @@ export async function folderSizeIsEqualOrGreaterThan(
 export async function runCommand(cmd, cwd = undefined, env = {}) {
   return new Promise((resolve, reject) => {
     const options = cwd ? { cwd, encoding: 'utf-8' } : {}
-    options.env = { ...process.env, ...env, NODE_OPTIONS: '--max-old-space-size=4096'}
+    options.env = {
+      ...process.env,
+      ...env,
+      NODE_OPTIONS: '--max-old-space-size=4096',
+    }
     options.encoding = 'utf-8'
 
     const [command, ...args] = Array.isArray(cmd) ? cmd : cmd.split(' ')
