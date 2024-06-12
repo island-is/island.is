@@ -16,6 +16,7 @@ import {
   Organization,
   SchoolType,
   DrivingLicenseBookStudentOverview,
+  TeacherRights,
 } from './drivingLicenceBook.type'
 import { CreateDrivingSchoolTestResultInput } from './dto/createDrivingSchoolTestResult.input'
 
@@ -84,21 +85,26 @@ export class DrivingLicenseBookService {
 
   async getStudent({
     nationalId,
+    licenseCategory,
   }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
     this.logger.debug(`driving-license-book: Get student with id ${nationalId}`)
+
     return await this.drivingLicenseBookClientApiFactory.getStudent({
       nationalId,
+      licenseCategory,
     })
   }
 
   async getStudentsForTeacher(
     user: User,
+    licenseCategory: 'B' | 'BE',
   ): Promise<DrivingLicenseBookStudentForTeacher[]> {
     this.logger.debug(
       `driving-license-book: Getting student for teacher ${user}`,
     )
     return await this.drivingLicenseBookClientApiFactory.getStudentsForTeacher(
       user,
+      licenseCategory,
     )
   }
 
@@ -154,5 +160,12 @@ export class DrivingLicenseBookService {
       teacherNationalId: user.nationalId,
       studentNationalId: student.nationalId,
     })
+  }
+
+  async getTeacher(nationalId: string): Promise<TeacherRights> {
+    this.logger.debug(
+      `driving-license-book: Get Teacher with id: ${nationalId}`,
+    )
+    return await this.drivingLicenseBookClientApiFactory.getTeacher(nationalId)
   }
 }
