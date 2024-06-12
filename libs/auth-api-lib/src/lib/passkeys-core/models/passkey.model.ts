@@ -5,13 +5,13 @@ import {
   Table,
   UpdatedAt,
   PrimaryKey,
+  Model,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
-  Model,
 } from 'sequelize'
 
 @Table({

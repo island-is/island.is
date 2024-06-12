@@ -93,7 +93,7 @@ describe('PasskeyCoreService', () => {
       await passkeyModel.create({
         user_sub: USER_SUB,
         passkey_id: '123',
-        public_key: 'public_key',
+        public_key: new TextEncoder().encode('public_key'),
         audkenni_sim_number: '123',
         name: 'Tester',
         type: 'IslandisApp',
