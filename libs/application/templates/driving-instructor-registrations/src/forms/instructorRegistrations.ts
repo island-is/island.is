@@ -42,7 +42,7 @@ export const getInstructorRegistrations = (allowBELicense = false): Form => {
                 subTitle: '',
               }),
               buildDataProviderItem({
-                provider: GetTeacherRightsApi,
+                provider: allowBELicense ? GetTeacherRightsApi : undefined,
                 title: '',
                 subTitle: '',
               }),
