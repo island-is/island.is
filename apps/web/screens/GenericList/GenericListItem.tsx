@@ -29,7 +29,7 @@ const GenericListItemPage: Screen<GenericListItemPageProps> = ({
     <GridContainer className="rs_read">
       <Box paddingBottom={2}>
         {ogTitle && <HeadWithSocialSharing title={ogTitle} />}
-        <Stack space={0}>
+        <Stack space={1}>
           {item.date && (
             <Text variant="eyebrow">
               {format(new Date(item.date), 'dd.MM.yyyy')}

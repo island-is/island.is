@@ -1,3 +1,9 @@
+mutation MarkAllDocumentsAsRead {
+  documentsV2MarkAllAsRead {
+    success
+  }
+}
+
 query ListOrganizations {
   getOrganizations(input: { lang: "is-IS", perPage: 200 }) {
     items {

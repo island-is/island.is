@@ -554,7 +554,10 @@ describe('Transition Case', () => {
   )
 
   describe.each(indictmentCases)('complete %s', (type) => {
-    const allowedFromStates = [CaseState.RECEIVED]
+    const allowedFromStates = [
+      CaseState.WAITING_FOR_CANCELLATION,
+      CaseState.RECEIVED,
+    ]
 
     describe.each(allowedFromStates)(
       'state %s - should complete',
