@@ -2,19 +2,17 @@ import { FormSystemInput } from "@island.is/api/schema"
 import {
   GridRow as Row,
   GridColumn as Column,
-  Input,
   Select,
   Box,
 } from '@island.is/island-ui/core'
-import { ChangeEvent, useState } from "react"
+import { ChangeEvent } from "react"
 
 
 interface Props {
   currentItem: FormSystemInput
 }
 
-const TimeInput = ({ currentItem }: Props) => {
-  const [timeInput, setTimeInput] = useState('')
+export const TimeInput = ({ currentItem }: Props) => {
 
   // 0: Minute
   // 1: Hourly
@@ -58,23 +56,10 @@ const TimeInput = ({ currentItem }: Props) => {
     }
   }
 
-  const handleTimeInput = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const inputValue = e.target.value
-
-    const isValidTime =
-      /^(?:[01]?[0-9]|2[0-3]):[0-5]?[0-9](?::[0-5]?[0-9])?$/.test(inputValue)
-    setTimeInput(inputValue)
-    if (isValidTime || inputValue === '') {
-      setTimeInput(inputValue)
-    }
-  }
-
   return (
     <>
       <Row marginTop={2}>
-        <Column span="3/12">
+        <Column span="2/10">
           <Select
             label="Klukkustund"
             name="timeSelectHour"
@@ -89,7 +74,7 @@ const TimeInput = ({ currentItem }: Props) => {
           />
         </Column>
         <Box style={{ lineHeight: '90px' }}>:</Box>
-        <Column span="3/12">
+        <Column span="2/10">
           <Select
             label="Mínútur"
             name="timeSelectMinute"
@@ -101,16 +86,11 @@ const TimeInput = ({ currentItem }: Props) => {
           />
         </Column>
       </Row>
-      <Input
-        name="timeInput"
-        value={timeInput}
-        onChange={(e) => handleTimeInput(e)}
-      />
     </>
   )
 }
 
-export default TimeInput
+
 
 const hourList = [
   '00',

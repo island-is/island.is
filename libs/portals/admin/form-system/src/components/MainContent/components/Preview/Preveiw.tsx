@@ -11,7 +11,7 @@ import { Radio } from './components/Radio'
 import { Currency } from './components/Currency'
 import { CheckboxPreview } from './components/CheckboxPreview'
 import { PhoneNumber } from './components/PhoneNumber'
-import TimeInput from './components/TimeInput'
+import { TimeInput } from './components/TimeInput'
 import { PropertyNumber } from './components/PropertyNumber'
 
 interface Props {

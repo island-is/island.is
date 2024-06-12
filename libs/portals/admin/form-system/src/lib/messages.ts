@@ -395,11 +395,15 @@ export const m = defineMessages({
   },
   addGroupHover: {
     id: 'portals-admin.form-system:add-step-hover',
-    defaultMessage: 'Bæta við skrefi',
+    defaultMessage: 'Bæta við hópi',
   },
   addInputHover: {
     id: 'portals-admin.form-system:add-input-hover',
     defaultMessage: 'Bæta við innslætti',
+  },
+  areYouSure: {
+    id: 'portals-admin.form-system:are-you-sure',
+    defaultMessage: 'Ertu viss?',
   },
   // Error messages
   invalidEmail: {

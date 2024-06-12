@@ -28,6 +28,17 @@ export const NavButtons = () => {
   const [removeGroup, removeGroupStatus] = useFormSystemDeleteGroupMutation()
   const [removeInput, removeInputStatus] = useFormSystemDeleteInputMutation()
 
+  const containsGroupOrInput = (): boolean | undefined => {
+    const { type } = activeItem
+    if (type === 'Step') {
+      return groups?.some((group) => group?.stepGuid === activeItem?.data?.guid)
+    } else if (type === 'Group') {
+      return inputs?.some((input) => input?.groupGuid === activeItem?.data?.guid)
+    } else {
+      return false
+    }
+  }
+
   const addItem = async () => {
     if (activeItem.type === 'Step') {
       const newGroup = await addGroup({
@@ -112,6 +123,16 @@ export const NavButtons = () => {
     }
   }
 
+  const handleRemove = () => {
+    if (!containsGroupOrInput()) {
+      remove()
+    } else {
+      if (confirm(formatMessage(m.areYouSure))) {
+        remove()
+      }
+    }
+  }
+
   return (
     <Box display="flex" flexDirection="row">
       {activeItem.type !== 'Input' && (
@@ -130,7 +151,7 @@ export const NavButtons = () => {
           </Tooltip>
         </Box>
       )}
-      <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove}>
+      <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={handleRemove}>
         <Tooltip text="Eyða">
           <span>
             <Icon icon="trash" size="medium" />
