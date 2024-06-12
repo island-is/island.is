@@ -31,6 +31,7 @@ if [[ $(git diff --stat "$abs_path") != '' ]]; then
   fi
   git commit -m "chore: $action update dirty files"
   git push
+  exit 1
 else
   echo "found no unstaged files from $action, nothing to commit"
 fi

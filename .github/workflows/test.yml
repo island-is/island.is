@@ -49,11 +49,12 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
-      - name: Format
-        id: format
+      - name: NX format:write
+        if: ${{ github.event_name == 'pull_request' }}
         run: |
           npx nx-cloud start-ci-run --distribute-on="8 linux-medium-js" --stop-agents-after=format --with-env-vars="auto"
-          yarn nx affected -t format
+          npx nx affected -t format:write
+          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
   run-shellcheck:
     needs:
       - prepare
