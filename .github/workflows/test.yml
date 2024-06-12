@@ -49,6 +49,27 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
+      - name: Calculate cache key for node modules
+        id: calculate_node_modules_hash
+        run: |
+          HASH="$(./scripts/ci/get-node-modules-hash.mjs)"
+          echo "node-modules-hash: ${HASH}"
+          echo "node-modules-hash=${HASH}" >> $GITHUB_OUTPUT
+      - name: Cache for NodeJS dependencies - host OS
+        id: node-modules
+        continue-on-error: true
+        uses: ./.github/actions/cache
+        with:
+          path: node_modules
+          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+
+      - name: Check node-modules cache success
+        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+
+      - name: Building NodeJS dependencies
+        if: steps.node-modules.outputs.cache-hit != 'true'
+        run: ./scripts/ci/10_prepare-host-deps.sh
+
       - name: NX format:write
         if: ${{ github.event_name == 'pull_request' }}
         run: |
