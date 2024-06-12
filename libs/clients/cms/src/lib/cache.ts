@@ -6,26 +6,26 @@ import {
   Request,
 } from '@island.is/clients/middlewares'
 
-import { CmsClientConfig } from './cms.config'
+import { CmsConfig } from './cms.config'
 
 
 function overrideCacheControl(request: Request) {
   return buildCacheControl({ 
     maxAge: 10 * 60, // 10 minutes
-    public: true // required to enable caching for this contentful gql
+    public: true // required to enable caching for contentful gql
   })
 }
 
 
 export const getCache = async (
-  config: ConfigType<typeof CmsClientConfig>,
+  config: ConfigType<typeof CmsConfig>,
 ): Promise<CacheConfig | undefined> => {
   if (config.redis.nodes.length === 0) {
     console.warn('No redis nodes defined, cache will not be used')
     return undefined
   }
   const cacheManager = await createRedisCacheManager({
-    name: 'clients-cms',
+    name: 'cms',
     nodes: config.redis.nodes,
     ssl: config.redis.ssl,
     noPrefix: true,
