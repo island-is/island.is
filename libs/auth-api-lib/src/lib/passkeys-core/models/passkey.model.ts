@@ -2,17 +2,25 @@ import {
   Column,
   CreatedAt,
   DataType,
-  Model,
   Table,
   UpdatedAt,
   PrimaryKey,
 } from 'sequelize-typescript'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+  Model,
+} from 'sequelize'
 
 @Table({
   tableName: 'passkey',
 })
-export class PasskeyModel extends Model {
+export class PasskeyModel extends Model<
+  InferAttributes<PasskeyModel>,
+  InferCreationAttributes<PasskeyModel>
+> {
   @PrimaryKey
   @Column({
     type: DataType.STRING,
@@ -66,9 +74,9 @@ export class PasskeyModel extends Model {
 
   @CreatedAt
   @ApiProperty()
-  readonly created!: Date
+  readonly created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty()
+  @ApiPropertyOptional()
   readonly modified?: Date
 }

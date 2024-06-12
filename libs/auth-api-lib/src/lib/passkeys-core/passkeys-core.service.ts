@@ -1,7 +1,7 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Cache as CacheManager } from 'cache-manager'
-import { Op } from 'sequelize'
+import { InferAttributes, InferCreationAttributes, Op } from 'sequelize'
 import addDays from 'date-fns/addDays'
 
 import {
@@ -214,7 +214,7 @@ export class PasskeysCoreService {
         expectedOrigin: this.config.passkey.allowedOrigins,
         expectedRPID: this.config.passkey.rpId,
         authenticator: {
-          credentialID: passkey.id,
+          credentialID: passkey.passkey_id,
           credentialPublicKey: passkey.public_key,
           counter: 0, // TODO: Store in db and increment on authentication
           transports: ['internal'],

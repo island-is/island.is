@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import type {
   AuthenticatorAttachment,
@@ -12,27 +12,26 @@ import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
 class ClientExtensionResultsCredProps {
   @IsBoolean()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   rk?: boolean
 }
 
 class RegistrationResponseClientExtensionResults {
   @IsBoolean()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   appid?: boolean
 
   @IsObject()
   @IsOptional()
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: ClientExtensionResultsCredProps,
-    required: false,
   })
   credProps?: ClientExtensionResultsCredProps
 
   @IsBoolean()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   hmacCreateSecret?: boolean
 }
 
@@ -47,25 +46,24 @@ class RegistrationResponseResponse {
 
   @IsString({ each: true })
   @IsOptional()
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [String],
-    required: false,
   })
   transports?: AuthenticatorTransportFuture[]
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   publicKeyAlgorithm?: COSEAlgorithmIdentifier
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   publicKey?: string
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   authenticatorData?: string
 }
 
@@ -86,7 +84,7 @@ export class RegistrationResponse {
 
   @IsString()
   @IsOptional()
-  @ApiProperty({ required: false })
+  @ApiPropertyOptional()
   authenticatorAttachment?: AuthenticatorAttachment
 
   @IsObject()

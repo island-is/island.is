@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
   IsArray,
@@ -27,12 +27,12 @@ export class AuthenticationOptionsPublicKeyCredentialDescriptor {
 export class AuthenticationOptionsExtensions {
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   appid?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiProperty()
+  @ApiPropertyOptional()
   credProps?: boolean
 
   @IsOptional()
@@ -48,30 +48,30 @@ export class AuthenticationOptions {
 
   @IsOptional()
   @IsNumber()
-  @ApiProperty()
+  @ApiPropertyOptional()
   timeout?: number
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   rpId?: string
 
   @IsOptional()
   @IsArray()
   @Type(() => AuthenticationOptionsPublicKeyCredentialDescriptor)
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: [AuthenticationOptionsPublicKeyCredentialDescriptor],
   })
   allowCredentials?: AuthenticationOptionsPublicKeyCredentialDescriptor[]
 
   @IsOptional()
   @IsString()
-  @ApiProperty()
+  @ApiPropertyOptional()
   userVerification?: string
 
   @IsOptional()
   @IsObject()
-  @ApiProperty({
+  @ApiPropertyOptional({
     type: AuthenticationOptionsExtensions,
   })
   extensions?: AuthenticationOptionsExtensions

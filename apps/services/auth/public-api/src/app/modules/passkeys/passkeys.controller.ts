@@ -116,7 +116,7 @@ export class PasskeysController {
     const response =
       await this.passkeysCoreService.generateAuthenticationOptions(actor)
 
-    return response as RegistrationOptions
+    return response as AuthenticationOptions
   }
 
   // TODO remove before merging into main
