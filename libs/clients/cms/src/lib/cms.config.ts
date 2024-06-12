@@ -10,8 +10,8 @@ const schema = z.object({
   }),
 })
 
-export const CmsClientConfig = defineConfig({
-  name: 'CmsClientConfig',
+export const CmsConfig = defineConfig({
+  name: 'CmsConfig',
   schema,
   load: (env) => ({
     gqlBasePath: env.required(

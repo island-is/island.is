@@ -8,20 +8,20 @@ import {
   LazyDuringDevScope,
 } from '@island.is/nest/config'
 import { getCache } from './cache'
-import { CmsClientConfig } from './cms-client.config'
+import { CmsConfig } from './cms.config'
 
 
-export const CmsClientFetchProviderKey = 'CmsClientFetchProviderKey'
+export const CmsFetchProviderKey = 'CmsFetchProviderKey'
 
-export const CmsClientFetchProvider: Provider<EnhancedFetchAPI> = {
-  provide: CmsClientFetchProviderKey,
+export const CmsFetchProvider: Provider<EnhancedFetchAPI> = {
+  provide: CmsFetchProviderKey,
   scope: LazyDuringDevScope,
   useFactory: async (
-    config: ConfigType<typeof CmsClientConfig>,
+    config: ConfigType<typeof CmsConfig>,
   ) =>
     createEnhancedFetch({
-      name: 'clients-cms-client',
+      name: 'clients-cms',
       cache: await getCache(config),
     }),
-  inject: [CmsClientConfig.KEY],
+  inject: [CmsConfig.KEY],
 }

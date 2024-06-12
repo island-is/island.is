@@ -6,7 +6,7 @@ import {
   Request,
 } from '@island.is/clients/middlewares'
 
-import { CmsClientConfig } from './cms-client.config'
+import { CmsClientConfig } from './cms.config'
 
 
 function overrideCacheControl(request: Request) {
@@ -25,7 +25,7 @@ export const getCache = async (
     return undefined
   }
   const cacheManager = await createRedisCacheManager({
-    name: 'clients-cms-client',
+    name: 'clients-cms',
     nodes: config.redis.nodes,
     ssl: config.redis.ssl,
     noPrefix: true,

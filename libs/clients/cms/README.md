@@ -10,7 +10,7 @@ The `GRAPHQL_API_ENDPOINT` config needs to be configured.
 
 ## Running unit tests
 
-Run `nx test cms-client` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test cms` to execute the unit tests via [Jest](https://jestjs.io).
 
 ## Code owners and maintainers
 

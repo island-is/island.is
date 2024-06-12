@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-cms-client',
+  displayName: 'clients-cms',
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
@@ -12,5 +12,5 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/clients/cms-client',
+  coverageDirectory: '<rootDir>/coverage/libs/clients/cms',
 }

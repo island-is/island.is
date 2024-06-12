@@ -36,7 +36,7 @@ import {
   userWithNoDelegations,
   userProfiles,
 } from './mocks'
-import { CmsClientService } from '@island.is/clients/cms-client'
+import { CmsService } from '@island.is/clients/cms'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -93,7 +93,7 @@ describe('NotificationsWorkerService', () => {
           .useValue(MockUserNotificationsConfig)
           .overrideProvider(FIREBASE_PROVIDER)
           .useValue({})
-          .overrideProvider(CmsClientService)
+          .overrideProvider(CmsService)
           .useValue(mockContentfulGraphQLClientService),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),

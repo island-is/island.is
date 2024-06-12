@@ -8,7 +8,7 @@ import { CacheModule } from '@nestjs/cache-manager'
 import { NotificationsService } from '../notifications.service'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
-import { CmsClientService } from '@island.is/clients/cms-client'
+import { CmsService } from '@island.is/clients/cms'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
@@ -52,7 +52,7 @@ describe('MessageProcessorService', () => {
           useClass: jest.fn(() => ({})),
         },
         {
-          provide: CmsClientService,
+          provide: CmsService,
           useValue: {
             fetchData: jest.fn(),
           },

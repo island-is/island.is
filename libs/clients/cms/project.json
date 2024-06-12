@@ -1,7 +1,7 @@
 {
-  "name": "clients-cms-client",
+  "name": "clients-cms",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/cms-client/src",
+  "sourceRoot": "libs/clients/cms/src",
   "projectType": "library",
   "generators": {},
   "targets": {
@@ -9,22 +9,22 @@
       "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "libs/clients/cms-client/**/*.{ts,tsx,js,jsx}"
+          "libs/clients/cms/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/clients/cms-client"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/cms"],
       "options": {
-        "jestConfig": "libs/clients/cms-client/jest.config.ts",
+        "jestConfig": "libs/clients/cms/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "graphql-codegen --config libs/clients/cms-client/codegen.yaml"
+        "command": "graphql-codegen --config libs/clients/cms/codegen.yaml"
       },
       "inputs": ["{projectRoot}/codegen.yaml"],
       "outputs": ["{projectRoot}/gen", "{projectRoot}/**/*.generated.ts"]

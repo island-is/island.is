@@ -24,7 +24,7 @@ import {
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
-import { CmsClientService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByNationalId } from '@island.is/clients/cms-client'
+import { CmsService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByNationalId } from '@island.is/clients/cms'
 
 /**
  * These are the properties that can be replaced in the template
@@ -49,7 +49,7 @@ export class NotificationsService {
     private readonly logger: Logger,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
-    private readonly cmsClientService: CmsClientService,
+    private readonly cmsService: CmsService,
     
   ) {}
 
@@ -67,7 +67,7 @@ export class NotificationsService {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.cmsClientService.fetchData(
+    const res = await this.cmsService.fetchData(
       GetOrganizationByNationalId, 
       queryVariables
     );
@@ -149,7 +149,7 @@ export class NotificationsService {
     const queryVariables = {
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.cmsClientService.fetchData(GetTemplates, queryVariables);
+    const res = await this.cmsService.fetchData(GetTemplates, queryVariables);
     return res.hnippTemplateCollection.items
 
   }
@@ -163,7 +163,7 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     };
-    const res = await this.cmsClientService.fetchData(GetTemplateByTemplateId, queryVariables);
+    const res = await this.cmsService.fetchData(GetTemplateByTemplateId, queryVariables);
     const items = res.hnippTemplateCollection.items;
     if(items.length > 0){
       return items[0]

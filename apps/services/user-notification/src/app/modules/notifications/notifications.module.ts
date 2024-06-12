@@ -20,7 +20,7 @@ import { Notification } from './notification.model'
 import { NotificationDispatchService } from './notificationDispatch.service'
 import { NotificationsWorkerService } from './notificationsWorker/notificationsWorker.service'
 import { MessageProcessorService } from './messageProcessor.service'
-import { CmsClientModule } from '@island.is/clients/cms-client'
+import { CmsModule } from '@island.is/clients/cms'
 
 @Module({
   exports: [NotificationsService],
@@ -43,7 +43,7 @@ import { CmsClientModule } from '@island.is/clients/cms-client'
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
-    CmsClientModule
+    CmsModule
   ],
   controllers: [NotificationsController, MeNotificationsController],
   providers: [
