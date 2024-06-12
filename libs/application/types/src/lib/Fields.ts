@@ -19,7 +19,6 @@ import React from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
-import { MultiValue } from 'react-select'
 
 type Space = keyof typeof theme.spacing
 
