@@ -5,19 +5,10 @@ import { preferencesStore } from '../stores/preferences-store'
 import { openNativeBrowser } from './rn-island'
 import { navigateTo } from './deep-linking'
 import { useAuthenticatePasskey } from './passkeys/useAuthenticatePasskey'
-import { addPasskeyAsLoginHint } from './passkeys/helpers'
-
-const doesUrlSupportPasskey = (url: string): boolean => {
-  // Check if domain is correct and url includes /minarsidur or /umsoknir
-  if (
-    (url.startsWith('https://beta.dev01.devland.is') ||
-      url.startsWith('https://island.is')) &&
-    (url.includes('/minarsidur') || url.includes('/umsoknir'))
-  ) {
-    return true
-  }
-  return false
-}
+import {
+  addPasskeyAsLoginHint,
+  doesUrlSupportPasskey,
+} from './passkeys/helpers'
 
 export const useBrowser = () => {
   const { authenticatePasskey } = useAuthenticatePasskey()

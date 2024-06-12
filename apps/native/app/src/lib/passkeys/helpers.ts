@@ -74,14 +74,31 @@ export const convertBase64UrlToBase64String = (base64Url: string) => {
 }
 
 export const addPasskeyAsLoginHint = (url: string, passkey: string) => {
+  if (!doesUrlSupportPasskey(url)) {
+    return
+  }
+
   if (url.includes('/minarsidur')) {
     return `https://island.is/minarsidur/login?login_hint=${passkey}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
+
   if (url.includes('/umsoknir')) {
     return `https://island.is/umsoknir/login?login_hint=${passkey}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
+}
+
+export const doesUrlSupportPasskey = (url: string): boolean => {
+  // Check if domain is correct and url includes /minarsidur or /umsoknir
+  if (
+    (url.startsWith('https://beta.dev01.devland.is') ||
+      url.startsWith('https://island.is')) &&
+    (url.includes('/minarsidur') || url.includes('/umsoknir'))
+  ) {
+    return true
+  }
+  return false
 }
