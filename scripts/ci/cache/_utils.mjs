@@ -24,7 +24,10 @@ export async function getGeneratedFileHash(
         reject(`Stderr: ${stderr}`)
         return
       }
+<<<<<<< HEAD
       console.log(stdout)
+=======
+>>>>>>> d654a775f6 (ci: cache refactor (#15103))
       resolve(stdout)
     })
   })
@@ -222,7 +225,11 @@ export function arrayIncludesOneOf(array, values) {
   return values.some((value) => array.includes(value))
 }
 
+<<<<<<< HEAD
 export function retry(fn, retries = 5, delay = 2000) {
+=======
+export function retry(fn, retries = 3, delay = 100) {
+>>>>>>> d654a775f6 (ci: cache refactor (#15103))
   return new Promise((resolve, reject) => {
     const attempt = async (n) => {
       try {
