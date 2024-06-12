@@ -7,7 +7,10 @@ import {
   formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import { SessionArrangements } from '@island.is/judicial-system/types'
+import {
+  DistrictCourtLocation,
+  DistrictCourts,
+} from '@island.is/judicial-system/types'
 
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
@@ -49,7 +52,15 @@ export const createSubpoenaPDF = (
     `${formatDate(new Date(), 'PPP')}`,
     'Helvetica',
   )
-  addNormalText(doc, `TODO: SETJA INN HEIMILISFANG DOMS`, 'Helvetica')
+
+  if (theCase.court?.name) {
+    addNormalText(
+      doc,
+      DistrictCourtLocation[theCase.court.name as DistrictCourts],
+      'Helvetica',
+    )
+  }
+
   addEmptyLines(doc)
   addNormalText(
     doc,
