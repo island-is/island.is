@@ -847,6 +847,7 @@ export const slices = gql`
     displayChangeYearOverYear
     numberBoxDate
     reduceAndRoundValue
+    displayTimestamp
   }
 
   fragment GenericListFields on GenericList {

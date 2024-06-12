@@ -191,6 +191,7 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
             id={InputFields.publishing.date}
             label={f(publishing.inputs.datepicker.label)}
             placeholder={f(publishing.inputs.datepicker.placeholder)}
+            key={defaultDate}
             backgroundColor="blue"
             size="sm"
             locale="is"

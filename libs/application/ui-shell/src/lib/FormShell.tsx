@@ -9,11 +9,9 @@ import {
 } from '@island.is/application/types'
 import {
   Box,
-  FormStepperV2,
   GridColumn,
   GridContainer,
   GridRow,
-  Section,
   Text,
 } from '@island.is/island-ui/core'
 
@@ -210,6 +208,7 @@ export const FormShell: FC<
                   sections={sections}
                   screens={screens}
                   currentScreen={currentScreen}
+                  application={application}
                 />
                 {FormLogo && (
                   <Box
