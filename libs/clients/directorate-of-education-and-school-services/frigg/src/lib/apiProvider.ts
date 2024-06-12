@@ -37,7 +37,6 @@ export const apiProvider = apiCollection.map((apiRecord) => ({
 
 export const KeyOptionsManagementApiProvider: Provider<KeyOptionsManagementApi> =
   {
-    // provide: 'KeyOptionsManagementApi',
     provide: KeyOptionsManagementApi,
     scope: LazyDuringDevScope,
     useFactory: (
@@ -70,5 +69,5 @@ export const KeyOptionsManagementApiProvider: Provider<KeyOptionsManagementApi> 
           },
         }),
       ),
-    inject: [XRoadConfig.KEY, IdsClientConfig.KEY, FriggClientConfig.KEY],
+    inject: [XRoadConfig.KEY, FriggClientConfig.KEY, IdsClientConfig.KEY],
   }
