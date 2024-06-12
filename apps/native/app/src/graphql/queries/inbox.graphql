@@ -25,6 +25,10 @@ query ListDocuments($input: DocumentsV2DocumentsInput!) {
 query GetDocument($input: DocumentInput!) {
   documentV2(input: $input) {
     ...ListDocument
+    content {
+      type
+      value
+    }
   }
 }
 

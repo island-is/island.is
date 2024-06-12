@@ -12,9 +12,5 @@ fragment ListDocument on DocumentV2 {
     id
     name
   }
-  content {
-    type
-    value
-  }
   archived @client
 }

@@ -193,6 +193,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         id: docId,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const Document = {
@@ -201,12 +202,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   }
 
   useEffect(() => {
-    if (doc.missing || !doc.data?.content) {
-      console.log('fetching')
-      // If we don't have the document in the cache or content is missing, fetch it
-      void getDocument()
-    }
-  }, [doc.missing, doc.data?.content, docId])
+    // Fetch the document on mount to get content information
+    void getDocument()
+  }, [])
 
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
