@@ -6,7 +6,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, '13.0'
+platform :ios, '13.4'
 prepare_react_native_project!
 
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
@@ -39,6 +39,9 @@ target 'IslandApp' do
   pod 'FirebaseCore', :modular_headers => true
   pod 'FirebaseCoreInternal', :modular_headers => true
   pod 'GoogleUtilities', :modular_headers => true
+  pod 'FirebaseABTesting', :modular_headers => true
+  pod 'FirebaseInstallations', :modular_headers => true
+
 
   use_react_native!(
     :path => config[:reactNativePath],
@@ -54,22 +57,11 @@ target 'IslandApp' do
       # :ccache_enabled => true
     )
     installer.pods_project.targets.each do |target|
-      if target.name == 'Flipper'
-        file_path = 'Pods/Flipper/xplat/Flipper/FlipperTransportTypes.h'
-        contents = File.read(file_path)
-        unless contents.include?('#include <functional>')
-          File.chmod(0755, file_path)
-          File.open(file_path, 'w') do |file|
-            file.puts('#include <functional>')
-            file.puts(contents)
-          end
-        end
-      end
       target.build_configurations.each do |config|
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION']
 
         if target.to_s === 'React-Codegen' or target.to_s === 'FBReactNativeSpec'
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
         end
       end
     end
@@ -77,7 +69,7 @@ target 'IslandApp' do
     installer.pods_project.targets.each do |target|
       target.build_configurations.each do |config|
         if target.to_s === 'React-Codegen' or target.to_s === 'FBReactNativeSpec'
-          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.0'
+          config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
         end
      end
     end
