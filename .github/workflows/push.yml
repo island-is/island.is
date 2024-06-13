@@ -156,6 +156,7 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
+      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_TAG: ${{ steps.nodejs_image.outputs.NODE_IMAGE_TAG }}
@@ -164,7 +165,6 @@ jobs:
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v3
         with:
@@ -284,35 +284,12 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Calculate cache key for node modules
-        id: calculate_node_modules_hash
-        run: |
-          HASH="$(./scripts/ci/get-node-modules-hash.mjs)"
-          echo "node-modules-hash: ${HASH}"
-          echo "node-modules-hash=${HASH}" >> $GITHUB_OUTPUT
-
-      - name: Calculate cache keys for generated files
-        id: calculate_generated_files_cache_key
-        run: |
-          export HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
-          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
 
       - name: Set Test Everything true
         run: |
@@ -357,7 +334,15 @@ jobs:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-
+      - name: Get node hash
+        uses: actions/github-script@v7
+        id: calculate_node_modules_hash
+        env:
+          _CACHE_KEY: ${{ steps.get-cache.outputs.keys }}
+        with:
+          script: |
+            const CACHE_KEYS = JSON.parse(process.env._CACHE_KEY)
+            core.setOutput('node-modules-hash', CACHE_KEYS["node_modules"])
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         continue-on-error: true
@@ -380,30 +365,8 @@ jobs:
       - name: Check cache success
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
-      - name: Building NodeJS dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: |
-          ./scripts/ci/10_prepare-docker-deps.sh
-
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
       - name: Prepare test targets
         id: test_projects
@@ -472,30 +435,13 @@ jobs:
       - name: Setup yarn
         run: npm install -g yarn
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
 
       - uses: ./.github/actions/unit-test
         with:
@@ -544,21 +490,13 @@ jobs:
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
 
-      - name: Cache for generated files
-        id: generated-files-cache
-        if: steps.gather.outcome == 'success'
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        if: steps.gather.outcome == 'success'
-        run: tar zxvf generated_files.tar.gz
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
 
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
@@ -583,18 +521,6 @@ jobs:
 
       - name: Check cache success
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
-
-      # needed to run `nx show project` in scripts/ci/_docker.sh - should be refactored.
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
 
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'

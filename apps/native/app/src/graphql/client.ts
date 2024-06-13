@@ -161,7 +161,7 @@ const cache = new InMemoryCache({
         },
       },
     },
-    Document: {
+    DocumentV2: {
       fields: {
         archived: {
           read(_value, { readField, variables }) {
