@@ -16,6 +16,12 @@ import {
 
 @Table({
   tableName: 'passkey',
+  indexes: [
+    {
+      unique: true,
+      fields: ['user_sub', 'type'],
+    },
+  ],
 })
 export class PasskeyModel extends Model<
   InferAttributes<PasskeyModel>,
