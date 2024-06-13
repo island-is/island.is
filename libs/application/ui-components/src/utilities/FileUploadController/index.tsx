@@ -1,4 +1,4 @@
-import React, { FC, useState, useReducer, useEffect } from 'react'
+import { useState, useReducer, useEffect } from 'react'
 import { useFormContext, Controller } from 'react-hook-form'
 import { useMutation } from '@apollo/client'
 import { FileRejection } from 'react-dropzone'
@@ -76,9 +76,7 @@ interface FileUploadControllerProps {
   readonly forImageUpload?: boolean
 }
 
-export const FileUploadController: FC<
-  React.PropsWithChildren<FileUploadControllerProps>
-> = ({
+export const FileUploadController = ({
   id,
   error,
   application,
@@ -91,7 +89,7 @@ export const FileUploadController: FC<
   maxSizeErrorText,
   totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
   forImageUpload,
-}) => {
+}: FileUploadControllerProps) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(error)

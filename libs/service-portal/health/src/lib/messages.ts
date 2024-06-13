@@ -671,7 +671,7 @@ export const messages = defineMessages({
   healthCenterRegistrationModalInfo: {
     id: 'sp.health:health-center-registration-modal-info',
     defaultMessage:
-      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjáfstætt starfandi heimilislækni.',
+      'Við flutning á heilsugæslustöð verða sjúkraskráningar mínar aðgengilegar á valinni heilsugæslustöð / sjálfstætt starfandi heimilislækni.',
   },
   healthTooltip: {
     id: 'sp.health:health-tooltip',
