@@ -1,7 +1,7 @@
 import { Alert, Button, Input, InputRow, NavigationBarSheet } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View, Alert as RNAlert } from 'react-native'
+import { ScrollView, View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
