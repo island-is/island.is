@@ -31,7 +31,6 @@ const mockHnippTemplate: HnippTemplate = {
   notificationBody: 'Demo body {{arg1}}',
   notificationDataCopy: 'Demo data copy',
   clickAction: 'Demo click action {{arg2}}',
-  // category: 'Demo category',
   args: ['arg1', 'arg2'],
 }
 

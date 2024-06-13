@@ -15,7 +15,6 @@ const mockHnippTemplate: HnippTemplate = {
   notificationBody: 'Demo body {{arg1}}',
   notificationDataCopy: 'Demo data copy',
   clickAction: '//demo/{{arg2}}',
-  // category: 'DEMO',
   args: ['arg1', 'arg2'],
 }
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
@@ -76,7 +75,6 @@ describe('MessageProcessorService', () => {
     )
     expect(notification.title).toMatch('Demo title')
     expect(notification.body).toMatch('Demo body hello')
-    // expect(notification.category).toMatch('DEMO')
     expect(notification.appURI).toMatch('//demo/world')
   })
 
@@ -106,13 +104,11 @@ describe('MessageProcessorService', () => {
 
     expect(notification1.title).toMatch('Demo title')
     expect(notification1.body).toMatch('Demo body hello')
-    // expect(notification1.category).toMatch('DEMO')
     expect(notification1.appURI).toMatch('//demo/world')
 
     expect(notification2).toMatchObject({
       title: 'Demo title',
       body: 'Demo body hello2',
-      // category: 'DEMO',
       dataCopy: 'Demo data copy',
       appURI: '//demo/world2',
     })

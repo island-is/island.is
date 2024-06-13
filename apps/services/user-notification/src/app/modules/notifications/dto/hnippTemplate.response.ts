@@ -24,9 +24,6 @@ export class HnippTemplate {
   @ApiProperty({ example: 'https://island.is/minarsidur/postholf' })
   clickActionUrl?: string
 
-  @ApiProperty({ example: 'NEW_DOCUMENT' })
-  category?: string
-
   @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]
 }

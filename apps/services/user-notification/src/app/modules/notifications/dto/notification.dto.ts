@@ -95,12 +95,12 @@ export class RenderedNotificationDto {
 
   @ApiProperty({ example: 'Compelling nofication body' })
   @IsString()
-  body!: string
+  externalBody!: string
 
   @ApiPropertyOptional({ example: 'Extra body text for further viewing' })
   @IsString()
   @IsOptional()
-  dataCopy?: string
+  internalBody?: string
 
   @ApiPropertyOptional({ example: '//inbox/document-uuid' })
   @IsString()

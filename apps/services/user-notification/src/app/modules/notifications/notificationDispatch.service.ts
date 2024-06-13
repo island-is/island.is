@@ -88,15 +88,6 @@ export class NotificationDispatchService {
         title: notification.title,
         body: notification.body,
       },
-      // ...(notification.category && {
-      //   apns: {
-      //     payload: {
-      //       aps: {
-      //         category: notification.category,
-      //       },
-      //     },
-      //   },
-      // }),
       data: {
         createdAt: new Date().toISOString(),
         messageId,

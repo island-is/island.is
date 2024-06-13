@@ -174,9 +174,8 @@ export class NotificationsService {
         messageId: notification.messageId,
         senderId: notification.senderId || '',
         title: formattedTemplate.notificationTitle,
-        body: formattedTemplate.notificationBody,
-        dataCopy: formattedTemplate.notificationDataCopy,
-        clickAction: formattedTemplate.clickAction,
+        externalBody: formattedTemplate.notificationBody,
+        internalBody: formattedTemplate.notificationDataCopy,
         clickActionUrl: formattedTemplate.clickActionUrl,
         created: notification.created,
         updated: notification.updated,
@@ -213,7 +212,6 @@ export class NotificationsService {
           clickAction
           clickActionWeb
           clickActionUrl
-          // category
           args
         }
       }
@@ -264,7 +262,6 @@ export class NotificationsService {
           clickAction
           clickActionWeb
           clickActionUrl
-          // category
           args
         }
       }
