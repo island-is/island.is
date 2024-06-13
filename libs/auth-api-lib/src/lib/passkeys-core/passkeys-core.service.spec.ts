@@ -6,18 +6,10 @@ import {
 } from '@nestjs/sequelize'
 import assert from 'assert'
 import { Sequelize } from 'sequelize-typescript'
-
-import {
-  verifyRegistrationResponse,
-  verifyAuthenticationResponse,
+import type {
+  VerifyAuthenticationResponseOpts,
+  VerifyRegistrationResponseOpts,
 } from '@simplewebauthn/server'
-
-jest.mock('@simplewebauthn/server', () => ({
-  __esModule: true,
-  ...jest.requireActual('@simplewebauthn/server'),
-  verifyRegistrationResponse: jest.fn(),
-  verifyAuthenticationResponse: jest.fn(),
-}))
 
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
 
@@ -27,10 +19,18 @@ import { PasskeysCoreModule } from './passkeys-core.module'
 import { PasskeysCoreService } from './passkeys-core.service'
 import { ConfigModule } from '@nestjs/config'
 import { PasskeysCoreConfig } from './passkeys-core.config'
-import {
-  VerifyAuthenticationResponseOpts,
-  VerifyRegistrationResponseOpts,
-} from '@simplewebauthn/server'
+
+const {
+  verifyRegistrationResponse,
+  verifyAuthenticationResponse,
+} = require('@simplewebauthn/server') // eslint-disable-line  @typescript-eslint/no-var-requires
+
+jest.mock('@simplewebauthn/server', () => ({
+  __esModule: true,
+  ...jest.requireActual('@simplewebauthn/server'),
+  verifyRegistrationResponse: jest.fn(),
+  verifyAuthenticationResponse: jest.fn(),
+}))
 
 const TEST_AUTHORIZATION_TOKEN =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiR2VydmltYWR1ciB0ZXN0IiwiaWRwIjoiZ2VydmltYWR1ciJ9.nwPzZbpXWWBh2WFoHdCY0q9EwRBKBWwANVqF_c0cIPs'
