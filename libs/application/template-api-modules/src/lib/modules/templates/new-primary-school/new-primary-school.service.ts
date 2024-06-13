@@ -14,8 +14,15 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     super(ApplicationTypes.NEW_PRIMARY_SCHOOL)
   }
 
-  async getTypesX({ auth }: TemplateApiModuleActionProps) {
-    console.log('TEMPLATE API-----getTypesX')
+  async getTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.friggClientService.getTypes(auth)
+  }
+
+  async getAllKeyOptions({ auth }: TemplateApiModuleActionProps) {
     return await this.friggClientService.getAllKeyOptions(auth)
+  }
+
+  async getHealth({ auth }: TemplateApiModuleActionProps) {
+    return await this.friggClientService.getHealth(auth)
   }
 }

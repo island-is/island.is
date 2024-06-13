@@ -4,14 +4,12 @@ import {
   IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { FriggClientConfig } from './frigg.config'
-import { Scope } from './frigg.type'
+import { FriggClientConfig } from './friggClient.config'
 
 export const ConfigFactory = (
   xroadConfig: ConfigType<typeof XRoadConfig>,
   config: ConfigType<typeof FriggClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  scopes: Array<Scope>,
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-mms-frigg',
@@ -22,7 +20,8 @@ export const ConfigFactory = (
           issuer: idsClientConfig.issuer,
           clientId: idsClientConfig.clientId,
           clientSecret: idsClientConfig.clientSecret,
-          scope: scopes,
+          scope: config.scope,
+          audience: config.audience,
         }
       : undefined,
   }),

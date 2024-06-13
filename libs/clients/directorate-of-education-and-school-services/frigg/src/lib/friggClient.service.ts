@@ -1,4 +1,3 @@
-import fetch, { Response } from 'node-fetch'
 import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { KeyOption, KeyOptionsManagementApi, DefaultApi } from '../../gen/fetch'
@@ -7,6 +6,7 @@ import { KeyOption, KeyOptionsManagementApi, DefaultApi } from '../../gen/fetch'
 export class FriggClientService {
   constructor(
     private readonly keyOptionsManagementApi: KeyOptionsManagementApi,
+    private readonly defaultApi: DefaultApi,
   ) {}
 
   private keyOptionsManagementApiWithAuth = (user: User) =>
@@ -14,18 +14,21 @@ export class FriggClientService {
       new AuthMiddleware(user as Auth),
     )
 
-  async getAllKeyOptions(user: User): Promise<KeyOption[]> {
-    console.log(
-      '======> (FriggClientService) keyOptionsManagementApi: ',
-      this.keyOptionsManagementApi,
-    )
-    console.log(`CLIENT-----getTypesn ${this.keyOptionsManagementApi}`, {
-      foo: this.keyOptionsManagementApi,
-    })
+  private defaultApiWithAuth = (user: User) =>
+    this.defaultApi.withMiddleware(new AuthMiddleware(user as Auth))
 
+  async getHealth(user: User): Promise<void> {
+    return this.defaultApiWithAuth(user).health()
+  }
+
+  async getAllKeyOptions(user: User): Promise<KeyOption[]> {
+    console.log('FriggClientService getAllKeyOptions')
     return this.keyOptionsManagementApiWithAuth(user).getAllKeyOptions({
-      // type: '',
       type: undefined,
     })
+  }
+
+  async getTypes(user: User): Promise<void> {
+    return this.keyOptionsManagementApiWithAuth(user).getTypes()
   }
 }

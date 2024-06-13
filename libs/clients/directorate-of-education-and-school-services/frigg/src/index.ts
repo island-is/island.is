@@ -1,6 +1,5 @@
-export { FriggClientService } from './lib/frigg.service'
-export { Api, Scope } from './lib/frigg.type'
-export { FriggClientModule } from './lib/frigg.module'
-export { FriggClientConfig } from './lib/frigg.config'
+export { FriggClientService } from './lib/friggClient.service'
+export { FriggClientModule } from './lib/friggClient.module'
+export { FriggClientConfig } from './lib/friggClient.config'
 
 export * from '../gen/fetch'

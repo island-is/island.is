@@ -4,7 +4,19 @@ import {
 } from '@island.is/application/types'
 
 export const GetTypesApi = defineTemplateApi({
-  action: 'getTypesX',
-  externalDataId: 'typesX',
+  action: 'getTypes',
+  externalDataId: 'types',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})
+
+export const GetHealthApi = defineTemplateApi({
+  action: 'getHealth',
+  externalDataId: 'health',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})
+
+export const GetAllKeyOptionsApi = defineTemplateApi({
+  action: 'getAllKeyOptions',
+  externalDataId: 'keyOptions',
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })

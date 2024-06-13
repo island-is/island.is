@@ -17,7 +17,11 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import { GetTypesApi } from '../dataProviders'
+import {
+  GetAllKeyOptionsApi,
+  GetHealthApi,
+  GetTypesApi,
+} from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'newPrimarySchoolPrerequisites',
@@ -68,9 +72,19 @@ export const Prerequisites: Form = buildForm({
               subTitle:
                 newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
             }),
-            buildDataProviderItem({
+            /* buildDataProviderItem({
               provider: GetTypesApi,
               title: 'Types',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: GetAllKeyOptionsApi,
+              title: 'KeyOptions',
+              subTitle: '',
+            }),*/
+            buildDataProviderItem({
+              provider: GetHealthApi,
+              title: 'Health',
               subTitle: '',
             }),
           ],
