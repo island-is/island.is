@@ -25,6 +25,7 @@ export interface DefaultHeaderProps {
   logo?: string
   logoHref?: string
   titleColor?: TextProps['color']
+  customTitleColor?: string
   imagePadding?: string
   imageIsFullHeight?: boolean
   imageObjectFit?: 'contain' | 'cover'
@@ -45,6 +46,7 @@ export const DefaultHeader: React.FC<
   logo,
   logoHref,
   titleColor = 'dark400',
+  customTitleColor,
   imagePadding = '20px',
   imageIsFullHeight = true,
   imageObjectFit = 'contain',
@@ -131,12 +133,21 @@ export const DefaultHeader: React.FC<
                 className={styles.title}
                 paddingLeft={!isMobile ? titleSectionPaddingLeft : 0}
               >
-                <Text variant="h1" as="h1" color={titleColor}>
-                  {title}
+                <Text
+                  variant="h1"
+                  as="h1"
+                  color={!customTitleColor ? titleColor : undefined}
+                >
+                  <span style={{ color: customTitleColor }}>{title}</span>
                 </Text>
                 {underTitle && (
-                  <Text fontWeight="regular" color={titleColor}>
-                    {underTitle}
+                  <Text
+                    fontWeight="regular"
+                    color={!customTitleColor ? titleColor : undefined}
+                  >
+                    <span style={{ color: customTitleColor }}>
+                      {underTitle}
+                    </span>
                   </Text>
                 )}
               </Box>
