@@ -15,13 +15,14 @@ import { strings } from './InfoCardIndictment.strings'
 
 export interface Props {
   defendantInfoActionButton?: DefendantInfoActionButton
+  displayAppealExpirationInfo?: boolean
 }
 
 const InfoCardClosedIndictment: React.FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
-  const { defendantInfoActionButton } = props
+  const { defendantInfoActionButton, displayAppealExpirationInfo } = props
 
   return (
     <InfoCard
@@ -84,7 +85,7 @@ const InfoCardClosedIndictment: React.FC<Props> = (props) => {
               ),
               items: workingCase.defendants,
               defendantInfoActionButton: defendantInfoActionButton,
-              displayAppealExpirationInfo: true,
+              displayAppealExpirationInfo,
             }
           : undefined
       }
