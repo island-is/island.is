@@ -10622,6 +10622,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hexagon/base64@npm:^1.1.27":
+  version: 1.1.28
+  resolution: "@hexagon/base64@npm:1.1.28"
+  checksum: b2c99863ec1401c61cf127603928c4194ecc434728b1522c3a892ff2adacb4aca853f5770628e5305d7f360a518f68740073a289706220ad7711c3b4b0a19f66
+  languageName: node
+  linkType: hard
+
 "@hookform/error-message@npm:2.0.1":
   version: 2.0.1
   resolution: "@hookform/error-message@npm:2.0.1"
@@ -11533,6 +11540,13 @@ __metadata:
   version: 2.0.4
   resolution: "@leichtgewicht/ip-codec@npm:2.0.4"
   checksum: 468de1f04d33de6d300892683d7c8aecbf96d1e2c5fe084f95f816e50a054d45b7c1ebfb141a1447d844b86a948733f6eebd92234da8581c84a1ad4de2946a2d
+  languageName: node
+  linkType: hard
+
+"@levischuck/tiny-cbor@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "@levischuck/tiny-cbor@npm:0.2.2"
+  checksum: e8011eeaa317e280c3dd543e63c1c92a8f0db6fb9635dd47fce2b0128bef5bdb001c5ba0e99edbd0fd1c1ecbc4e5f360d6351c3beb85dec1e55ff51b7afd186c
   languageName: node
   linkType: hard
 
@@ -13218,6 +13232,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@peculiar/asn1-android@npm:^2.3.10":
+  version: 2.3.10
+  resolution: "@peculiar/asn1-android@npm:2.3.10"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    asn1js: ^3.0.5
+    tslib: ^2.6.2
+  checksum: 882a1b5129c9ad99abf7e8bc1b4373c454af1f8921e571a638e0ec27e77327703db0cb669cd13bc71f4c8e2e7f39e344d6c6741405184148ea1e3bd4b9d5fb59
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-ecc@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-ecc@npm:2.3.8"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    "@peculiar/asn1-x509": ^2.3.8
+    asn1js: ^3.0.5
+    tslib: ^2.6.2
+  checksum: c7db2004a03f88c35fcd21957c8c15bfbf29c137a636bbc35d51dcebbc287ec253762e127d50197f0b5910600e3641a738c8ca756a15741fc09272272b0303f4
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-rsa@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-rsa@npm:2.3.8"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    "@peculiar/asn1-x509": ^2.3.8
+    asn1js: ^3.0.5
+    tslib: ^2.6.2
+  checksum: d9bf0f143686b475d3cc9f9b7d948826dc8c8764bc865697705351278541f0bf31a8f788ec8ff8bf6e4150b04aa65b20853bda45d77e4abbac717d7019e6fd56
+  languageName: node
+  linkType: hard
+
 "@peculiar/asn1-schema@npm:^2.1.6":
   version: 2.3.0
   resolution: "@peculiar/asn1-schema@npm:2.3.0"
@@ -13226,6 +13275,30 @@ __metadata:
     pvtsutils: ^1.3.2
     tslib: ^2.4.0
   checksum: aa510c68de83be94a8d0e96ca1f7c92d2bd790867eed887c0db32d6b2fc49c5dd9d8269648e9665686ba9b2fd8469324c61e04fed50f7aad3f68a0ca0e1cde4b
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-schema@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-schema@npm:2.3.8"
+  dependencies:
+    asn1js: ^3.0.5
+    pvtsutils: ^1.3.5
+    tslib: ^2.6.2
+  checksum: 1f4dd421f1411df8bc52bca12b1cef710434c13ff0a8b5746ede42b10d62b5ad06a3925c4a6db53102aaf1e589947539a6955fa8554a9b8ebb1ffa38b0155a24
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-x509@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-x509@npm:2.3.8"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    asn1js: ^3.0.5
+    ipaddr.js: ^2.1.0
+    pvtsutils: ^1.3.5
+    tslib: ^2.6.2
+  checksum: 23856e5d024298447afca55bd68d19a7440c0ae076437aee5ced26a0fa2e4efa3e0e4a354fa6ee9968d62ac21ee1c2186fc427942bacfc824d3a3a4d2e80d14b
   languageName: node
   linkType: hard
 
@@ -14800,6 +14873,30 @@ __metadata:
   version: 2.0.0
   resolution: "@sideway/pinpoint@npm:2.0.0"
   checksum: 0f4491e5897fcf5bf02c46f5c359c56a314e90ba243f42f0c100437935daa2488f20482f0f77186bd6bf43345095a95d8143ecf8b1f4d876a7bc0806aba9c3d2
+  languageName: node
+  linkType: hard
+
+"@simplewebauthn/server@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@simplewebauthn/server@npm:10.0.0"
+  dependencies:
+    "@hexagon/base64": ^1.1.27
+    "@levischuck/tiny-cbor": ^0.2.2
+    "@peculiar/asn1-android": ^2.3.10
+    "@peculiar/asn1-ecc": ^2.3.8
+    "@peculiar/asn1-rsa": ^2.3.8
+    "@peculiar/asn1-schema": ^2.3.8
+    "@peculiar/asn1-x509": ^2.3.8
+    "@simplewebauthn/types": ^10.0.0
+    cross-fetch: ^4.0.0
+  checksum: 259d4b9548c4e86e80bf1d7bbda3a070adc42f78e82e147dfd96edfb01605863c7f1f4d20fb1aec61ce82359cbe2ff4b85c925464bc976706da96a21aa0a2a04
+  languageName: node
+  linkType: hard
+
+"@simplewebauthn/types@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@simplewebauthn/types@npm:10.0.0"
+  checksum: 77dfae2d90a4a6e64aa60e8d1e4f7bcf09e583adb6590a8d1e4fe1aefae0e4fac7db32907e76ee934bf8df665400143dabe39133cab3961dbbf5b10677183174
   languageName: node
   linkType: hard
 
@@ -25462,6 +25559,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-fetch@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "cross-fetch@npm:4.0.0"
+  dependencies:
+    node-fetch: ^2.6.12
+  checksum: ecca4f37ffa0e8283e7a8a590926b66713a7ef7892757aa36c2d20ffa27b0ac5c60dcf453119c809abe5923fc0bae3702a4d896bfb406ef1077b0d0018213e24
+  languageName: node
+  linkType: hard
+
 "cross-inspect@npm:1.0.0":
   version: 1.0.0
   resolution: "cross-inspect@npm:1.0.0"
@@ -34215,6 +34321,7 @@ __metadata:
     "@playwright/test": 1.29
     "@react-pdf/renderer": ^3.1.9
     "@rehooks/component-size": 1.0.3
+    "@simplewebauthn/server": 10.0.0
     "@sindresorhus/slugify": 1.0.0
     "@statoscope/webpack-plugin": 5.20.1
     "@storybook/addon-a11y": 7.4.1
@@ -43693,6 +43800,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pvtsutils@npm:^1.3.5":
+  version: 1.3.5
+  resolution: "pvtsutils@npm:1.3.5"
+  dependencies:
+    tslib: ^2.6.1
+  checksum: e734516b3cb26086c18bd9c012fefe818928a5073178842ab7e62885a090f1dd7bda9c7bb8cd317167502cb8ec86c0b1b0ccd71dac7ab469382a4518157b0d12
+  languageName: node
+  linkType: hard
+
 "pvutils@npm:^1.1.3":
   version: 1.1.3
   resolution: "pvutils@npm:1.1.3"
@@ -50497,7 +50613,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.6.2":
+"tslib@npm:2.6.2, tslib@npm:^2.6.1, tslib@npm:^2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad
