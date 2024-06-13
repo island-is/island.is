@@ -1,6 +1,6 @@
 export { Feature } from './lib/feature'
 
-export { Gender, DefenderChoice } from './lib/defendant'
+export { Gender, DefenderChoice, SubpoenaType } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
 export type { Institution } from './lib/institution'
@@ -55,6 +55,7 @@ export {
   restrictionCases,
   investigationCases,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
   isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
