@@ -3,10 +3,16 @@ import {
   buildCustomField,
   buildSubSection,
   buildAlertMessageField,
+  buildDescriptionField,
+  YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { hasNoDrivingLicenseInOtherCountry } from '../../lib/utils'
-import { hasHealthRemarks } from '../../lib/utils/formUtils'
+import {
+  hasHealthRemarks,
+  needsHealthCertificateCondition,
+} from '../../lib/utils/formUtils'
+import { BE } from '../../lib/constants'
 
 export const subSectionHealthDeclaration = buildSubSection({
   id: 'healthDeclaration',
@@ -131,7 +137,21 @@ export const subSectionHealthDeclaration = buildSubSection({
           message: m.alertHealthDeclarationGlassesMismatch,
           alertType: 'warning',
           condition: (answers) =>
+            answers.applicationFor !== BE &&
             (answers.healthDeclaration as any)?.contactGlassesMismatch,
+        }),
+        //TODO: Remove when RLS/SGS supports health certificate in BE license
+        buildDescriptionField({
+          id: 'healthDeclarationValidForBELicense',
+          title: '',
+        }),
+        buildAlertMessageField({
+          id: 'healthDeclaration.BE',
+          title: '',
+          message: m.beLicenseHealthDeclarationRequiresHealthCertificate,
+          alertType: 'warning',
+          condition: (answers, externalData) =>
+            needsHealthCertificateCondition(YES)(answers, externalData),
         }),
       ],
     }),

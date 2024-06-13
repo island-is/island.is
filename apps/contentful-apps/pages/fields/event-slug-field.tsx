@@ -5,14 +5,7 @@ import { TextInput } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import slugify from '@sindresorhus/slugify'
 
-const slugifyDate = (value: string) => {
-  try {
-    const date = new Date(value)
-    return `${date.getDate()}-${date.getMonth() + 1}-${date.getFullYear()}`
-  } catch {
-    return ''
-  }
-}
+import { slugifyDate } from '../../utils'
 
 const EventSlugField = () => {
   const sdk = useSDK<FieldExtensionSDK>()

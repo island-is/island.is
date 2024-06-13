@@ -174,13 +174,15 @@ export class UserProfileService {
       auth,
     ).meUserProfileControllerFindUserProfile()
     return {
-      email: userProfile.isRestricted ? undefined : userProfile.email,
+      email: userProfile.isRestricted
+        ? undefined
+        : userProfile.email ?? undefined,
       emailVerified: userProfile.isRestricted
         ? undefined
         : userProfile.emailVerified,
       phoneNumber: userProfile.isRestricted
         ? undefined
-        : userProfile.mobilePhoneNumber,
+        : userProfile.mobilePhoneNumber ?? undefined,
       phoneNumberVerified: userProfile.isRestricted
         ? undefined
         : userProfile.mobilePhoneNumberVerified,

@@ -4,7 +4,7 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { OfficialJournalOfIcelandService } from './officialJournalOfIceland.service'
 import {
-  AdvertQueryParams,
+  AdvertSingleParams,
   AdvertsInput,
   QueryParams,
   TypeQueryParams,
@@ -12,11 +12,13 @@ import {
 import {
   AdvertCategoryResponse,
   AdvertDepartmentResponse,
+  AdvertDepartmentsResponse,
   AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
   AdvertsResponse,
   AdvertTypeResponse,
+  AdvertTypesResponse,
 } from './models/advert.response'
 import { Features } from '@island.is/feature-flags'
 import { FeatureFlag } from '@island.is/nest/feature-flags'
@@ -30,7 +32,7 @@ export class OfficialJournalOfIcelandResolver {
   @Query(() => AdvertResponse, {
     name: 'officialJournalOfIcelandAdvert',
   })
-  advert(@Args('params') params: AdvertQueryParams) {
+  advert(@Args('params') params: AdvertSingleParams) {
     return this.ojoiService.advert(params)
   }
 
@@ -42,6 +44,13 @@ export class OfficialJournalOfIcelandResolver {
   }
 
   @Query(() => AdvertDepartmentResponse, {
+    name: 'officialJournalOfIcelandDepartment',
+  })
+  department(@Args('params') params: AdvertSingleParams) {
+    return this.ojoiService.department(params)
+  }
+
+  @Query(() => AdvertDepartmentsResponse, {
     name: 'officialJournalOfIcelandDepartments',
   })
   departments(@Args('params') params: QueryParams) {
@@ -49,6 +58,13 @@ export class OfficialJournalOfIcelandResolver {
   }
 
   @Query(() => AdvertTypeResponse, {
+    name: 'officialJournalOfIcelandType',
+  })
+  type(@Args('params') params: AdvertSingleParams) {
+    return this.ojoiService.type(params)
+  }
+
+  @Query(() => AdvertTypesResponse, {
     name: 'officialJournalOfIcelandTypes',
   })
   types(@Args('params') params: TypeQueryParams) {

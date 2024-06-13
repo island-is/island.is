@@ -31,6 +31,13 @@ function get-secrets {
   fi
 }
 
+function aws-check {
+  if ! aws sts get-caller-identity &>/dev/null; then
+    echo "You must be logged in to AWS to fetch secrets" >&2
+    return 1
+  fi
+}
+
 function is-reset() {
   for arg in "$@"; do
     case $arg in '-r' | '--reset')
@@ -71,6 +78,7 @@ if [ -z "${1-}" ]; then
   show-help
   exit 1
 else
+  aws-check || exit 1
   touch "$env_secret_file"
   main "$@"
 fi

@@ -34,7 +34,7 @@ export class SignatureCollectionClientService {
     private sharedService: SignatureCollectionSharedClientService,
   ) {}
 
-  private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
+  getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
@@ -270,7 +270,6 @@ export class SignatureCollectionClientService {
   async getSignee(auth: User, nationalId?: string): Promise<Signee> {
     const collection = await this.currentCollection()
     const { id, isPresidential, isActive, areas } = collection
-
     const user = await this.getApiWithAuth(
       this.collectionsApi,
       auth,
