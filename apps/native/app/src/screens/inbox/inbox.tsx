@@ -452,6 +452,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 padding: 16,
                 flexDirection: 'row',
                 gap: 8,
+                minHeight: 76,
               }}
             >
               <SearchBar
