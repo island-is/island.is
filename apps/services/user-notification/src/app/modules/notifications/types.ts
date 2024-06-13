@@ -3,7 +3,7 @@ export enum MessageTypes {
 }
 export interface Notification {
   title: string
-  body: string
-  dataCopy?: string
+  externalBody: string
+  internalBody?: string
   appURI?: string
 }

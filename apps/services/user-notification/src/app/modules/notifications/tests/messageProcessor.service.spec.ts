@@ -12,8 +12,8 @@ import { Notification } from '../notification.model'
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
   notificationTitle: 'Demo title',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
+  notificationExternalBody: 'Demo body {{arg1}}',
+  notificationInternalBody: 'Demo data copy',
   clickAction: '//demo/{{arg2}}',
   args: ['arg1', 'arg2'],
 }
@@ -108,8 +108,8 @@ describe('MessageProcessorService', () => {
 
     expect(notification2).toMatchObject({
       title: 'Demo title',
-      body: 'Demo body hello2',
-      dataCopy: 'Demo data copy',
+      externalBody: 'Demo body hello2',
+      internalBody: 'Demo data copy',
       appURI: '//demo/world2',
     })
   })

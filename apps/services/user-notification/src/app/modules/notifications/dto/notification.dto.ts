@@ -136,12 +136,12 @@ export class Message {
 
   @ApiProperty({ example: 'Notification body text' })
   @IsString()
-  body!: string
+  externalBody!: string
 
   @ApiPropertyOptional({ example: 'Some data copy' })
   @IsOptional()
   @IsString()
-  dataCopy?: string
+  internalBody?: string
 
   @ApiPropertyOptional({ example: 'click/action' })
   @IsOptional()

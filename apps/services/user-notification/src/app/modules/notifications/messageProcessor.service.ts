@@ -29,10 +29,9 @@ export class MessageProcessorService {
     )
 
     return {
-      title: notification.notificationTitle,
-      body: notification.notificationBody,
-      dataCopy: notification.notificationDataCopy,
-      // category: notification.category,
+      title: notification.title,
+      externalBody: notification.externalBody,
+      internalBody: notification.internalBody,
       appURI: notification.clickAction,
     }
   }

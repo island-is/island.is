@@ -57,7 +57,7 @@ describe('NotificationsController', () => {
         {
           templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
           notificationTitle: 'New document',
-          notificationBody: 'New document from {{organization}}',
+          notificationExternalBody: 'New document from {{organization}}',
           args: ['arg1', 'arg2'],
         },
       ]
@@ -79,7 +79,7 @@ describe('NotificationsController', () => {
       const template: HnippTemplate = {
         templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
         notificationTitle: 'Title',
-        notificationBody: 'Body',
+        notificationExternalBody: 'Body',
         args: ['arg1'],
       }
 

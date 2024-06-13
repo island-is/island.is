@@ -5,13 +5,13 @@ export class HnippTemplate {
   templateId!: string
 
   @ApiProperty({ example: 'New document' })
-  notificationTitle!: string
+  title!: string
 
   @ApiProperty({ example: 'New document from {{organization}}' })
-  notificationBody!: string
+  externalBody!: string
 
   @ApiProperty({ example: 'Some extra text ...' })
-  notificationDataCopy?: string
+  internalBody?: string
 
   // DEPRECATED - LEGACY SUPPORT
   @ApiProperty({ example: '//inbox/{{documentId}}' })

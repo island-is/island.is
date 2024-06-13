@@ -38,9 +38,9 @@ const CONTENTFUL_GQL_ENDPOINT =
  * These are the properties that can be replaced in the template
  */
 const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
-  'notificationTitle',
-  'notificationBody',
-  'notificationDataCopy',
+  'title',
+  'externalBody',
+  'internalBody',
   'clickAction',
   'clickActionWeb',
   'clickActionUrl',
@@ -173,9 +173,9 @@ export class NotificationsService {
         id: notification.id,
         messageId: notification.messageId,
         senderId: notification.senderId || '',
-        title: formattedTemplate.notificationTitle,
-        externalBody: formattedTemplate.notificationBody,
-        internalBody: formattedTemplate.notificationDataCopy,
+        title: formattedTemplate.title,
+        externalBody: formattedTemplate.externalBody,
+        internalBody: formattedTemplate.internalBody,
         clickActionUrl: formattedTemplate.clickActionUrl,
         created: notification.created,
         updated: notification.updated,
@@ -206,9 +206,9 @@ export class NotificationsService {
       hnippTemplateCollection(locale: "${mapToContentfulLocale(locale)}") {
         items {
           templateId
-          notificationTitle
-          notificationBody
-          notificationDataCopy
+          title: notificationTitle
+          externalBody: notificationBody
+          internalBody: notificationDataCopy
           clickAction
           clickActionWeb
           clickActionUrl
@@ -256,9 +256,9 @@ export class NotificationsService {
     )}") {
         items {
           templateId
-          notificationTitle
-          notificationBody
-          notificationDataCopy
+          title: notificationTitle
+          externalBody: notificationBody
+          internalBody: notificationDataCopy
           clickAction
           clickActionWeb
           clickActionUrl

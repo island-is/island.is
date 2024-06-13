@@ -86,16 +86,15 @@ export class NotificationDispatchService {
       token,
       notification: {
         title: notification.title,
-        body: notification.body,
+        body: notification.externalBody,
       },
       data: {
         createdAt: new Date().toISOString(),
         messageId,
         ...(notification.appURI && {
           url: notification.appURI,
-          islandIsUrl: notification.appURI,
-        }),
-        ...(notification.dataCopy && { copy: notification.dataCopy }),
+          islandIsUrl: notification.appURI,// CLEANUP ?????
+        })
       },
     }
 
