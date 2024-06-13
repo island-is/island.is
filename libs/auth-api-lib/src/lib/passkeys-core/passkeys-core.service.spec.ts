@@ -61,8 +61,6 @@ describe('PasskeyCoreService', () => {
     app = await testServer({
       appModule: TestModule,
       hooks: [
-        // SQLite doesn't support two transactions at a time, so we use postgres here
-        // to be able to test parallel requests. Starting postgres is done in ../test/globalSetup.ts.
         useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
       ],
     })
