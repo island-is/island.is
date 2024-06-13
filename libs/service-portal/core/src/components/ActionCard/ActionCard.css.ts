@@ -30,9 +30,11 @@ export const avatar = style({
 })
 
 export const circleImg = style({
-  width: '28px',
   height: 'auto',
+  width: 'auto',
   display: 'flex',
+  maxHeight: 38,
+  maxWidth: 38,
 })
 
 export const button = style({
