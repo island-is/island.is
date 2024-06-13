@@ -153,28 +153,33 @@ export class HealthDirectorateClientService {
 
   async getHealthCareLicensesForWorkPermit(
     auth: Auth,
-  ): Promise<StarfsleyfiUmsoknStarfsleyfi[]> {
-    const licenses = await this.umsoknStarfsleyfiApiWith(
-      auth,
-    ).umsoknStarfsleyfiStarfsleyfiGet()
+  ): Promise<StarfsleyfiUmsoknStarfsleyfi[] | null> {
+    const licenses = await this.umsoknStarfsleyfiApiWith(auth)
+      .umsoknStarfsleyfiStarfsleyfiGet()
+      .catch(handle404)
+
+    if (!licenses) {
+      logger.warn(
+        'Failed to fetch users healthcare licenses from Health Directorate. Unable to process application without this data with risk of giving out duplicate licenses',
+      )
+      return null
+    }
 
     return licenses
   }
 
   async getHealthCareWorkPermitEducationInfo(
     auth: Auth,
-  ): Promise<NamsUpplysingar[]> {
+  ): Promise<NamsUpplysingar[] | null> {
     const educationInfo = await this.umsoknStarfsleyfiApiWith(auth)
       .umsoknStarfsleyfiNamsUpplysGet()
       .catch(handle404)
 
-    if (!educationInfo) {
-      logger.error(
-        'Health directorate not responding with education info, which is required to process potential permits',
+    if (educationInfo) {
+      logger.warn(
+        'Health directorate did not provide the required education information needed to process permits. Unable to process potential permits without this data.',
       )
-      throw new Error(
-        'Health directorate not responding with education info, which is required to process potential permits',
-      )
+      return null
     }
 
     return educationInfo
@@ -183,7 +188,7 @@ export class HealthDirectorateClientService {
   async submitApplicationHealthcareWorkPermit(
     auth: User,
     request: HealthcareWorkPermitRequest,
-  ): Promise<UtbuaStarfsleyfiSkjalResponse[]> {
+  ): Promise<UtbuaStarfsleyfiSkjalResponse[] | null> {
     const items = await this.umsoknStarfsleyfiApiWith(
       auth,
     ).umsoknStarfsleyfiUtbuaSkjalPost({
@@ -199,21 +204,17 @@ export class HealthDirectorateClientService {
     })
 
     if (!items || !Array.isArray(items) || items.length === 0) {
-      logger.error(
-        'Health directorate did not respond with a pdf license to practice',
+      logger.warn(
+        'Health directorate response is missing the PDF license to practice. User has already been through payment process. Attention required.',
       )
-      throw new Error(
-        'Health directorate did not respond with a pdf license to practice',
-      )
+      return null
     }
 
     if (items.some((item) => !item.base64String)) {
-      logger.error(
-        'Either the license to practice and/or license number pdf is missing from response',
+      logger.warn(
+        'Health directorate response is missing the PDF license to practice or the license number. User has already been through payment process. Attention required.',
       )
-      throw new Error(
-        'Either the license to practice and/or license number pdf is missing from response',
-      )
+      return null
     }
 
     return items

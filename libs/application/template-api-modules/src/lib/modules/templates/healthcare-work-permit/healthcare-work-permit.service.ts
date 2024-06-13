@@ -108,7 +108,7 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
         400,
       )
     }
-    if (licenses === undefined) {
+    if (licenses === undefined || licenses === null) {
       throw new TemplateApiError(
         {
           title: errorMsg.healthcareLicenseErrorTitle,
@@ -371,17 +371,26 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
       educations.push(chosenProgram.foundationProgram)
     }
 
-    return await this.healthDirectorateClientService.submitApplicationHealthcareWorkPermit(
-      auth,
-      {
-        name: fullName,
-        dateOfBirth: birthDate,
-        email: email,
-        phone: phone,
-        idProfession: chosenProgram.professionId,
-        citizenship: citizenship.code,
-        education: educations,
-      },
-    )
+    const response =
+      await this.healthDirectorateClientService.submitApplicationHealthcareWorkPermit(
+        auth,
+        {
+          name: fullName,
+          dateOfBirth: birthDate,
+          email: email,
+          phone: phone,
+          idProfession: chosenProgram.professionId,
+          citizenship: citizenship.code,
+          education: educations,
+        },
+      )
+
+    if (!response) {
+      throw Error(
+        'Health Directorate did not respond with a PDF license and/or PDF license number',
+      )
+    }
+
+    return response
   }
 }
