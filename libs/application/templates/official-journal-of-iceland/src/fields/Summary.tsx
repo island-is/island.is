@@ -3,87 +3,65 @@ import { Stack } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertEntity } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { Property } from '../components/property/Property'
-import { TYPES_QUERY, DEPARTMENTS_QUERY } from '../graphql/queries'
-import { summary, general } from '../lib/messages'
+import { DEPARTMENT_QUERY, TYPE_QUERY } from '../graphql/queries'
+import { summary } from '../lib/messages'
 import {
   OJOIFieldBaseProps,
   OfficialJournalOfIcelandGraphqlResponse,
 } from '../lib/types'
 import { useLocale } from '@island.is/localization'
-import { AnswerOption } from '../lib/constants'
+import { MINIMUM_WEEKDAYS } from '../lib/constants'
+import { addWeekdays } from '../lib/utils'
 
 export const Summary = ({ application }: OJOIFieldBaseProps) => {
-  const { formatMessage: f } = useLocale()
+  const { formatMessage: f, formatDate } = useLocale()
 
   const user = useUserInfo()
 
   const { answers } = application
 
-  const { data: types } = useQuery<
-    OfficialJournalOfIcelandGraphqlResponse<'types'>
-  >(TYPES_QUERY, {
+  const { data, loading } = useQuery(TYPE_QUERY, {
     variables: {
       params: {
-        department: answers?.advert?.department,
-        search: answers?.advert?.type,
+        id: application?.answers?.advert?.type,
       },
     },
   })
 
-  const { data: departments } = useQuery<
-    OfficialJournalOfIcelandGraphqlResponse<'departments'>
-  >(DEPARTMENTS_QUERY, {
+  const type = data?.officialJournalOfIcelandType?.type?.title
+
+  const { data: department } = useQuery(DEPARTMENT_QUERY, {
     variables: {
       params: {
-        search: answers?.advert?.department,
+        id: answers?.advert?.department,
       },
     },
   })
 
-  const extract = (arr?: OfficialJournalOfIcelandAdvertEntity[]) => {
-    if (!arr) {
-      return ''
-    }
-
-    if (arr.length === 0) {
-      return ''
-    }
-
-    return arr[0].title
-  }
+  const today = new Date()
+  const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
 
   return (
     <Stack space={0} dividers>
       <Property name={f(summary.properties.sender)} value={user.profile.name} />
-      <Property
-        name={f(summary.properties.type)}
-        value={extract(types?.officialJournalOfIcelandTypes.types)}
-      />
+      <Property name={f(summary.properties.type)} value={type} />
       <Property
         name={f(summary.properties.title)}
         value={answers?.advert?.title}
       />
       <Property
         name={f(summary.properties.department)}
-        value={extract(
-          departments?.officialJournalOfIcelandDepartments.departments,
-        )}
+        value={department?.officialJournalOfIcelandDepartment.department.title}
       />
       <Property
         name={f(summary.properties.submissionDate)}
         value={new Date().toLocaleDateString()}
       />
       <Property
-        name={f(summary.properties.fastTrack)}
-        value={f(
-          answers?.publishing?.fastTrack === AnswerOption.YES
-            ? general.yes
-            : general.no,
-        )}
-      />
-      <Property
         name={f(summary.properties.estimatedDate)}
-        value={'01.02.2024'}
+        value={formatDate(estimatedDate, {
+          format: 'dd.mm.yyyy',
+        })}
       />
       <Property name={f(summary.properties.estimatedPrice)} value={'23.000'} />
       <Property
