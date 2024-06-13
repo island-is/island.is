@@ -1,3 +1,1 @@
 # icelandic-names-registry-types
-
-
