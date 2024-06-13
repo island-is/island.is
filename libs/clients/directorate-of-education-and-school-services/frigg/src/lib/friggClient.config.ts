@@ -4,7 +4,6 @@ import { z } from 'zod'
 const schema = z.object({
   xRoadServicePath: z.string(),
   scope: z.array(z.string()),
-  audience: z.string(),
 })
 
 export const FriggClientConfig = defineConfig<z.infer<typeof schema>>({
@@ -15,7 +14,6 @@ export const FriggClientConfig = defineConfig<z.infer<typeof schema>>({
       'XROAD_MMS_FRIGG_PATH',
       'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
     ),
-    scope: [],
-    audience: '@mms.is/frigg',
+    scope: [], // @mms.is/frigg
   }),
 })

@@ -21,7 +21,6 @@ export const ConfigFactory = (
           clientId: idsClientConfig.clientId,
           clientSecret: idsClientConfig.clientSecret,
           scope: config.scope,
-          audience: config.audience,
         }
       : undefined,
   }),

@@ -72,7 +72,7 @@ export const Prerequisites: Form = buildForm({
               subTitle:
                 newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
             }),
-            /* buildDataProviderItem({
+            buildDataProviderItem({
               provider: GetTypesApi,
               title: 'Types',
               subTitle: '',
@@ -81,7 +81,7 @@ export const Prerequisites: Form = buildForm({
               provider: GetAllKeyOptionsApi,
               title: 'KeyOptions',
               subTitle: '',
-            }),*/
+            }),
             buildDataProviderItem({
               provider: GetHealthApi,
               title: 'Health',
