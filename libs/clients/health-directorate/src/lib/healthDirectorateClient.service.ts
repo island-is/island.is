@@ -1,5 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Inject, Injectable, NotFoundException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   NamsUpplysingar,
   StarfsleyfiAMinumSidumApi,
@@ -164,10 +164,18 @@ export class HealthDirectorateClientService {
   async getHealthCareWorkPermitEducationInfo(
     auth: Auth,
   ): Promise<NamsUpplysingar[]> {
-    const educationInfo = await this.umsoknStarfsleyfiApiWith(
-      auth,
-    ).umsoknStarfsleyfiNamsUpplysGet()
-    // .catch(handle404)
+    const educationInfo = await this.umsoknStarfsleyfiApiWith(auth)
+      .umsoknStarfsleyfiNamsUpplysGet()
+      .catch(handle404)
+
+    if (!educationInfo) {
+      logger.error(
+        'Health directorate not responding with education info, which is required to process potential permits',
+      )
+      throw new Error(
+        'Health directorate not responding with education info, which is required to process potential permits',
+      )
+    }
 
     return educationInfo
   }
