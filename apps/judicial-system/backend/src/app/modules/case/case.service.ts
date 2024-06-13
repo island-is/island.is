@@ -864,13 +864,15 @@ export class CaseService {
     )
   }
 
-  private addMessagesForDeletedIndictmentCaseToQueue(
+  private async addMessagesForDeletedIndictmentCaseToQueue(
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getIndictmentArchiveMessages(theCase, user, false),
-    )
+    const messages = this.getIndictmentArchiveMessages(theCase, user, false)
+
+    if (messages.length > 0) {
+      return this.messageService.sendMessagesToQueue(messages)
+    }
   }
 
   private addMessagesForRevokedIndictmentCaseToQueue(
