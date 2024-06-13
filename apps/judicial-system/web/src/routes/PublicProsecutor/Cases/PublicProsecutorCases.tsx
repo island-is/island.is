@@ -12,7 +12,6 @@ import {
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,
-  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCasesQuery } from '../../Shared/Cases/cases.generated'
