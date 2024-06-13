@@ -44,6 +44,12 @@ export class DelegationProviderModel extends Model<
   })
   description!: string
 
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  order?: number
+
   @HasMany(() => DelegationTypeModel)
   delegationTypes!: CreationOptional<DelegationTypeModel[]>
 

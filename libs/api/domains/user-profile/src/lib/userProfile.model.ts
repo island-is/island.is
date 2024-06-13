@@ -6,13 +6,13 @@ export class UserProfile {
   nationalId?: string
 
   @Field(() => String, { nullable: true })
-  mobilePhoneNumber?: string
+  mobilePhoneNumber?: string | null
 
   @Field(() => String, { nullable: true })
   locale?: string
 
   @Field(() => String, { nullable: true })
-  email?: string
+  email?: string | null
 
   @Field(() => Boolean)
   emailVerified!: boolean
@@ -24,7 +24,7 @@ export class UserProfile {
   documentNotifications!: boolean
 
   @Field(() => Boolean, { nullable: true })
-  needsNudge?: boolean
+  needsNudge?: boolean | null
 
   @Field(() => String, { nullable: true })
   emailStatus?: string

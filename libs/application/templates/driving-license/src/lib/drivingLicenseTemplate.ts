@@ -43,13 +43,18 @@ import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
-  const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+  const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
     application.answers,
     'applicationFor',
     'B-full',
   )
 
-  const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+  const chargeItemCode =
+    applicationFor === 'B-full'
+      ? 'AY110'
+      : applicationFor === BE
+      ? 'AY115'
+      : 'AY114'
 
   if (!chargeItemCode) {
     throw new Error('No selected charge item code')

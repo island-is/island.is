@@ -16,6 +16,7 @@ import {
   DefenderChoice,
   Gender,
   ServiceRequirement,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
@@ -129,4 +130,12 @@ export class Defendant extends Model {
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   acceptCompensationClaim?: boolean
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(SubpoenaType),
+  })
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  subpoenaType?: SubpoenaType
 }
