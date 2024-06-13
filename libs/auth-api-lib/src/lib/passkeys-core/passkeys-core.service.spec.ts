@@ -7,10 +7,10 @@ import {
 import assert from 'assert'
 import { Sequelize } from 'sequelize-typescript'
 
-const {
+import {
   verifyRegistrationResponse,
   verifyAuthenticationResponse,
-} = require('@simplewebauthn/server')
+} from '@simplewebauthn/server'
 
 jest.mock('@simplewebauthn/server', () => ({
   __esModule: true,
