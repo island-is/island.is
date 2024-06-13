@@ -1,6 +1,5 @@
 #import "AppDelegate.h"
 
-#import "RCTAppSetupUtils.h"
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTConvert.h>
@@ -15,17 +14,10 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  BOOL enableTM = NO;
-#if RCT_NEW_ARCH_ENABLED
-  enableTM = self.turboModuleEnabled;
-#endif
-
-  RCTAppSetupPrepareApp(application, enableTM);
-
   [FIRApp configure];
 
   UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  if (@available(iOS 13.0, *)) {
+  if (@available(iOS 13.4, *)) {
       window.backgroundColor = [UIColor systemBackgroundColor];
   } else {
       window.backgroundColor = [UIColor whiteColor];
