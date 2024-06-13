@@ -12,6 +12,7 @@ import {
 import {
   CaseIndictmentRulingDecision,
   CaseListEntry,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCasesQuery } from '../../Shared/Cases/cases.generated'
@@ -33,11 +34,14 @@ export const PublicProsecutorCases: React.FC = () => {
     return (resCases || []).reduce(
       (acc, c) => {
         if (
-          (c.state &&
-            isCompletedCase(c.state) &&
-            !c.indictmentReviewDecision &&
-            c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE) ||
-          c.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+          c.state &&
+          isCompletedCase(c.state) &&
+          !c.indictmentReviewDecision &&
+          c.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.RULING,
+            CaseIndictmentRulingDecision.FINE,
+          ].includes(c.indictmentRulingDecision)
         ) {
           acc.casesForReview.push(c)
         } else if (c.indictmentReviewDecision) {
