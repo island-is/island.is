@@ -167,6 +167,7 @@ export class HealthDirectorateClientService {
     const educationInfo = await this.umsoknStarfsleyfiApiWith(
       auth,
     ).umsoknStarfsleyfiNamsUpplysGet()
+    // .catch(handle404)
 
     return educationInfo
   }
