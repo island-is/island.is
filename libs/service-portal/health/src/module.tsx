@@ -58,6 +58,10 @@ const OrganDonation = lazy(() =>
   import('./screens/OrganDonation/OrganDonation'),
 )
 
+const OrganDonationRegistration = lazy(() =>
+  import('./screens/OrganDonationRegistration/OrganDonationRegistration'),
+)
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
@@ -203,7 +207,7 @@ export const healthModule: PortalModule = {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
       enabled: true, //userInfo.scopes.includes(), // TODO: Change to correct scope!
-      element: <OrganDonation />,
+      element: <OrganDonationRegistration />,
     },
   ],
 }

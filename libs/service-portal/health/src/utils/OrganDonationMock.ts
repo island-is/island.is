@@ -10,8 +10,8 @@ interface OrganDonor {
   data: Data
 }
 
-interface OptionsOptions {
-  id: number
+export interface OptionsOptions {
+  id: string
   title: string
   limitations?: string[]
 }
@@ -51,28 +51,18 @@ export const getOptions = (locale: Locale) => {
     data: {
       options: [
         {
-          id: 1,
+          id: '1',
           title:
             'Við andlát mitt er heimilt að nota líffærin mín til ígræðslu.',
         },
         {
-          id: 2,
+          id: '2',
           title:
             'Ég heimila líffæragjöf, en heimildin nær ekki til eftirtalinna líffæra:',
-          limitations: [
-            'Bris',
-            'Lifur',
-            'Hjarta',
-            'Lungu',
-            'Hornhimna',
-            'Nýru',
-            'Húð',
-            'Þarmar',
-            'Annað',
-          ],
+          limitations: ['Annað'],
         },
         {
-          id: 3,
+          id: '3',
           title: 'Ég heimila ekki líffæragjöf.',
         },
       ],
@@ -82,27 +72,17 @@ export const getOptions = (locale: Locale) => {
     data: {
       options: [
         {
-          id: 1,
+          id: '1',
           title: 'Upon my death, my organs may be used for transplantation.',
         },
         {
-          id: 2,
+          id: '2',
           title:
             'I authorize organ donation, but the authorization does not cover the following organs:',
-          limitations: [
-            'Pancreas',
-            'Liver',
-            'Heart',
-            'Lungs',
-            'Cornea',
-            'Kidney',
-            'Skin',
-            'Intestines',
-            'Other',
-          ],
+          limitations: ['Other'],
         },
         {
-          id: 3,
+          id: '3',
           title: 'I do not authorize organ donation.',
         },
       ],

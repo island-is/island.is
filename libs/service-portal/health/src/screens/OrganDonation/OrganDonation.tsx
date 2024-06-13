@@ -8,6 +8,7 @@ import {
 import { messages as m } from '../../lib/messages'
 import { Button, Box, Text } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
+import { Problem } from '@island.is/react-spa/shared'
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
@@ -20,35 +21,48 @@ const OrganDonation = () => {
         title={formatMessage(m.organDonation)}
         intro={formatMessage(m.organDonationDescription)}
       />
-      <Box>
-        <LinkResolver
-          href={formatMessage(m.organDonationLink)}
-          key="organ-donation"
-        >
-          <Button variant="utility" size="small" icon="open" iconType="outline">
-            {formatMessage(m.readAboutOrganDonation)}
-          </Button>
-        </LinkResolver>
-      </Box>
-      <Box>
-        <Text
-          variant="eyebrow"
-          color="purple400"
-          marginTop={5}
-          marginBottom={1}
-        >
-          {formatMessage(m.takeOnOrganDonation)}
-        </Text>
-        <ActionCard
-          heading={data.data.title}
-          text={data.data.description}
-          cta={{
-            url: HealthPaths.HealthOrganDonationRegistration,
-            label: formatMessage(m.changeTake),
-            centered: true,
-          }}
-        />
-      </Box>
+      {!error && !loading && data.data !== null && (
+        <>
+          <Box>
+            <LinkResolver
+              href={formatMessage(m.organDonationLink)}
+              key="organ-donation"
+            >
+              <Button
+                variant="utility"
+                size="small"
+                icon="open"
+                iconType="outline"
+              >
+                {formatMessage(m.readAboutOrganDonation)}
+              </Button>
+            </LinkResolver>
+          </Box>
+          <Box>
+            <Text
+              variant="eyebrow"
+              color="purple400"
+              marginTop={5}
+              marginBottom={1}
+            >
+              {formatMessage(m.takeOnOrganDonation)}
+            </Text>
+            <ActionCard
+              heading={data.data.title}
+              text={data.data.description}
+              cta={{
+                url: HealthPaths.HealthOrganDonationRegistration,
+                label: formatMessage(m.changeTake),
+                centered: true,
+              }}
+            />
+          </Box>
+        </>
+      )}
+      {error && !loading && <Problem error={undefined} noBorder={false} />}
+      {!error && !loading && data === null && (
+        <Problem type="no_data" noBorder={false} />
+      )}
     </Box>
   )
 }

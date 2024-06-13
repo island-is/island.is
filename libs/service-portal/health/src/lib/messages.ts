@@ -969,4 +969,12 @@ export const messages = defineMessages({
     id: 'sp.health:organ-donation-link',
     defaultMessage: 'https://island.is/liffaeragjof',
   },
+  organRegistrationOtherLabel: {
+    id: 'sp.health:organ-registration-other-label',
+    defaultMessage: 'Skrifaðu hér',
+  },
+  organRegistrationOtherText: {
+    id: 'sp.health:organ-registration-other-text',
+    defaultMessage: 'Vinsamlegast skráðu hvaða líffæri hér',
+  },
 })
