@@ -59,7 +59,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const otherLanguages = getValueViaPath(
     answers,
     'languages.otherLanguages',
-  ) as string
+  ) as string[]
 
   const icelandicNotSpokenAroundChild = getValueViaPath(
     answers,

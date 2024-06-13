@@ -5,6 +5,7 @@ import {
   buildDateField,
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
   buildRadioField,
@@ -712,7 +713,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   ],
                 }),
                 buildSelectField({
-                  // TODO: Multi select
                   id: 'languages.otherLanguages',
                   dataTestId: 'languages-other-languages',
                   title:
@@ -721,6 +721,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   placeholder:
                     newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
                   options: getLanguageCodes(),
+                  isMulti: true,
                   condition: (answers) => {
                     const { otherLanguagesSpokenDaily } =
                       getApplicationAnswers(answers)
@@ -731,20 +732,39 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 buildCheckboxField({
                   id: 'languages.icelandicNotSpokenAroundChild',
                   title: '',
-                  // TODO: Disable ef Íslenska valin?
-                  options: [
-                    {
-                      label:
-                        newPrimarySchoolMessages.differentNeeds
-                          .icelandicNotSpokenAroundChild,
-                      value: YES,
-                    },
-                  ],
+                  options: (application) => {
+                    const { nativeLanguage, otherLanguages } =
+                      getApplicationAnswers(application.answers)
+
+                    return [
+                      {
+                        label:
+                          newPrimarySchoolMessages.differentNeeds
+                            .icelandicNotSpokenAroundChild,
+                        value: YES,
+                        disabled:
+                          nativeLanguage === 'is' ||
+                          otherLanguages?.includes('is'),
+                      },
+                    ]
+                  },
                   condition: (answers) => {
                     const { otherLanguagesSpokenDaily } =
                       getApplicationAnswers(answers)
 
                     return otherLanguagesSpokenDaily === YES
+                  },
+                }),
+                buildHiddenInput({
+                  // Needed to trigger an update on options in the checkbox above
+                  id: 'languages.icelandicSelectedHiddenInput',
+                  condition: (answers) => {
+                    const { nativeLanguage, otherLanguages } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      nativeLanguage === 'is' || otherLanguages?.includes('is')
+                    )
                   },
                 }),
               ],
