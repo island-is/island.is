@@ -221,7 +221,7 @@ export function arrayIncludesOneOf(array, values) {
   return values.some((value) => array.includes(value))
 }
 
-export function retry(fn, retries = 3, delay = 100) {
+export function retry(fn, retries = 5, delay = 2000) {
   return new Promise((resolve, reject) => {
     const attempt = async (n) => {
       try {
