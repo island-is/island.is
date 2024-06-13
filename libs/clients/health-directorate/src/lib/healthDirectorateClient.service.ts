@@ -175,7 +175,7 @@ export class HealthDirectorateClientService {
       .umsoknStarfsleyfiNamsUpplysGet()
       .catch(handle404)
 
-    if (educationInfo) {
+    if (!educationInfo) {
       logger.warn(
         'Health directorate did not provide the required education information needed to process permits. Unable to process potential permits without this data.',
       )
