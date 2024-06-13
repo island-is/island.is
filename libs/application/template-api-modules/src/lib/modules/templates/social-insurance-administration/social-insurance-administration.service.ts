@@ -522,4 +522,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   ) {
     return await this.siaClientService.getWithholdingTax(auth, year)
   }
+
+  async getLatestIncomePlan({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLatestIncomePlan(auth)
+  }
 }

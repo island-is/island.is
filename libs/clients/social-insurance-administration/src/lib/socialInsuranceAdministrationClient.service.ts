@@ -14,6 +14,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
   TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
@@ -134,11 +135,17 @@ export class SocialInsuranceAdministrationClientService {
   async getWithholdingTax(
     user: User,
     year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
-  ): Promise<
-    TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto
-  > {
+  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto> {
     return this.incomePlanApiWithAuth(
       user,
     ).apiProtectedV1IncomePlanWithholdingTaxGet(year)
+  }
+
+  async getLatestIncomePlan(
+    user: User,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto> {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanLatestIncomePlanGet()
   }
 }

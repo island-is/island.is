@@ -18,6 +18,7 @@ import Logo from '@island.is/application/templates/social-insurance-administrati
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 
@@ -66,6 +67,15 @@ export const PrerequisitesForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre.contactInfoDescription,
             }),
             buildDataProviderItem({
+              id: 'sia.data',
+              title:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationInformationTitle,
+              subTitle:
+                socialInsuranceAdministrationMessage.pre
+                  .socialInsuranceAdministrationDataDescription,
+            }),
+            buildDataProviderItem({
               provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
               title: '',
             }),
@@ -77,15 +87,10 @@ export const PrerequisitesForm: Form = buildForm({
               provider: SocialInsuranceAdministrationWithholdingTaxApi,
               title: '',
             }),
-            buildDataProviderItem({
-              id: 'sia.data',
-              title:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationInformationTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationDataDescription,
-            }),
+            // buildDataProviderItem({
+            //   provider: SocialInsuranceAdministrationLatestIncomePlan,
+            //   title: '',
+            // }),
             buildDataProviderItem({
               id: 'sia.privacy',
               title:

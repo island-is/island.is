@@ -25,3 +25,9 @@ export const SocialInsuranceAdministrationWithholdingTaxApi = defineTemplateApi(
     namespace: 'SocialInsuranceAdministration',
   },
 )
+
+export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
+  action: 'getLatestIncomePlan',
+  externalDataId: 'socialInsuranceAdministrationLatestIncomePlan',
+  namespace: 'SocialInsuranceAdministration',
+})

@@ -22,6 +22,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 
@@ -68,6 +69,7 @@ const IncomePlanTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationWithholdingTaxApi,
+                //SocialInsuranceAdministrationLatestIncomePlan,
               ],
               delete: true,
             },
