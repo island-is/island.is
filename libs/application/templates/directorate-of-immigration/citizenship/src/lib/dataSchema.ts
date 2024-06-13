@@ -294,7 +294,7 @@ export const CitizenshipSchema = z.object({
   passport: PassportSchema,
   childrenPassport: z.array(ChildrenPassportSchema).optional(),
   maritalStatus: MaritalStatusSchema,
-  formerIcelander: z.enum([YES, NO]).refine((v) => v === YES),
+  formerIcelander: z.enum([YES, NO]), //.refine((v) => v === YES) // TODO REVERT WHEN UTL FIXED SERVICES
   supportingDocuments: SupportingDocumentsSchema,
   childrenSupportingDocuments: z
     .array(ChildrenSupportingDocumentsSchema)
