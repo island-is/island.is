@@ -110,6 +110,7 @@
     "@nestjs/terminus": "10.2.0",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
+    "@simplewebauthn/server": "10.0.0",
     "@sindresorhus/slugify": "1.0.0",
     "@statoscope/webpack-plugin": "5.20.1",
     "@storybook/core-server": "7.4.1",
@@ -485,7 +486,7 @@
     "dd-trace@5.14.1": "patch:dd-trace@npm%3A5.14.1#./.yarn/patches/dd-trace-npm-5.14.1-8d45ad14d6.patch"
   },
   "volta": {
-    "node": "18.16.0",
+    "node": "20.14.0",
     "yarn": "3.2.3"
   },
   "packageManager": "yarn@3.2.3"
