@@ -135,15 +135,13 @@ export class HealthcareWorkPermitService extends BaseTemplateApiService {
 
     const careerPrograms = careerProgramsHI?.concat(careerProgramsUNAK ?? [])
     if (!careerPrograms || careerPrograms?.length < 1) {
-      {
-        throw new TemplateApiError(
-          {
-            title: errorMsg.emptyCareerResponseTitle,
-            summary: errorMsg.emptyCareerResponseMessage,
-          },
-          400,
-        )
-      }
+      throw new TemplateApiError(
+        {
+          title: errorMsg.emptyCareerResponseTitle,
+          summary: errorMsg.emptyCareerResponseMessage,
+        },
+        400,
+      )
     }
 
     // Programs that give licenses to practice (permits)
