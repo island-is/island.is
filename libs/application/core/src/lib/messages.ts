@@ -856,7 +856,7 @@ export const coreErrorScreenMessages = defineMessages({
   },
   prunedDescription: {
     id: 'application.system:core.errorScreen.prunedDescription#markdown',
-    defaultMessage: `* Öllum persónugögnum var eytt þegar umsóknin rann út\n* Ef klára á umsókn af þessu tagi þarf að stofna nýja.`,
+    defaultMessage: `* Öllum persónugögnum var eytt þegar umsóknin rann út\n* Ef klára á umsókn af þessu tagi þarf að stofna nýja`,
     description:
       'Error screen description when user has a bad subject error after checking delegations',
   },
