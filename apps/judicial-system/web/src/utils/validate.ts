@@ -3,7 +3,6 @@ import {
   isIndictmentCase,
   isTrafficViolationCase,
   prosecutorCanSelectDefenderForInvestigationCase,
-  SubpoenaType,
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,

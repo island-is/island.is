@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -94,7 +94,13 @@ const Subpoena: FC = () => {
         setNavigateTo(destination)
       }
     },
-    [isPostponed, sendCourtDateToServer, workingCase, courtDateHasChanged],
+    [
+      isPostponed,
+      sendCourtDateToServer,
+      workingCase,
+      courtDateHasChanged,
+      updateDefendant,
+    ],
   )
 
   const stepIsValid = isSubpoenaStepValid(
