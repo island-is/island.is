@@ -120,11 +120,14 @@ export class NotificationDispatchService {
     token: string,
     messageId: string,
   ): Promise<void> {
-    this.logger.error('Push notification error', { error, messageId })
     switch (error.code) {
       case 'messaging/invalid-argument':
       case 'messaging/registration-token-not-registered':
       case 'messaging/invalid-recipient':
+        this.logger.warn('Error calls for removing devicetoken', {
+          error,
+          messageId,
+        })
         await this.removeInvalidToken(nationalId, token, messageId)
         break
       case 'messaging/invalid-payload':
@@ -161,6 +164,7 @@ export class NotificationDispatchService {
       case 'internal-error':
       case 'messaging/unknown-error':
       default:
+        this.logger.error('Push notification error', { error, messageId })
         throw new InternalServerErrorException(error.code)
     }
   }
