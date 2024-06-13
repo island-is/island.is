@@ -61,7 +61,7 @@ describe('PasskeyCoreService', () => {
     app = await testServer({
       appModule: TestModule,
       hooks: [
-        useDatabase({ type: 'sqlite', provider: SequelizeConfigService }),
+        useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
     })
 
