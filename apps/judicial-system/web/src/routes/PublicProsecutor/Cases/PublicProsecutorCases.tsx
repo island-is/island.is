@@ -9,7 +9,10 @@ import {
   PageHeader,
   SharedPageLayout,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseIndictmentRulingDecision,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useCasesQuery } from '../../Shared/Cases/cases.generated'
 import CasesForReview from '../Tables/CasesForReview'
@@ -30,9 +33,11 @@ export const PublicProsecutorCases: React.FC = () => {
     return (resCases || []).reduce(
       (acc, c) => {
         if (
-          c.state &&
-          isCompletedCase(c.state) &&
-          !c.indictmentReviewDecision
+          (c.state &&
+            isCompletedCase(c.state) &&
+            !c.indictmentReviewDecision &&
+            c.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE) ||
+          c.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
         ) {
           acc.casesForReview.push(c)
         } else if (c.indictmentReviewDecision) {
