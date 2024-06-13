@@ -24,6 +24,7 @@ export async function getGeneratedFileHash(
         reject(`Stderr: ${stderr}`)
         return
       }
+      console.log(stdout)
       resolve(stdout)
     })
   })
