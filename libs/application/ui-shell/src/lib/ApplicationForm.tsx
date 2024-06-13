@@ -64,7 +64,6 @@ const ApplicationLoader = ({
     notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
-  console.log('Data: ', data)
 
   const application = data?.applicationApplication
 
@@ -75,6 +74,10 @@ const ApplicationLoader = ({
   const currentTypeId: ApplicationTypes = application?.typeId
   if (ApplicationConfigurations[currentTypeId]?.slug !== slug) {
     return <ErrorShell errorType="idNotFound" />
+  }
+
+  if (application.pruned) {
+    return <ErrorShell errorType="pruned" />
   }
 
   if (!applicationId || error) {
