@@ -1,7 +1,7 @@
 import { Alert, Button, Input, InputRow, NavigationBarSheet } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { ScrollView, View } from 'react-native'
+import { ScrollView, View, Alert as RNAlert } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -28,7 +28,7 @@ export const PersonalInfoScreen: NavigationFunctionComponent = ({
   const { dismiss, dismissed } = usePreferencesStore()
   const natRegRes = useNationalRegistryUserQuery()
   const natRegData = natRegRes?.data?.nationalRegistryUser
-  const errorNatReg = !!natRegRes.error
+  const errorNatReg = !!natRegRes.error && !natRegData
   const loadingNatReg = natRegRes.loading && !natRegData
 
   return (
