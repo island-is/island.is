@@ -844,7 +844,7 @@ export const coreErrorScreenMessages = defineMessages({
   },
   prunedTitle: {
     id: 'application.system:core.errorScreen.prunedTitle',
-    defaultMessage: 'Umsókn er runnin út',
+    defaultMessage: 'Umsóknin er runnin út',
     description:
       'Error screen title when the application has been pruned and is not editable',
   },
