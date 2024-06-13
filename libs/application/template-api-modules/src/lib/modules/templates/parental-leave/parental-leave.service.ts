@@ -126,16 +126,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       return e.message
     }
 
-    if (e.errors) {
-      return {
-        message: Object.entries(e.errors).map(([, values]) =>
-          values.join(', '),
-        ),
-      }
-    }
-
     return {
-      message: e.status,
+      mesage: e.errors
+        ? Object.entries(e.errors).map(([, values]) => values.join(', '))
+        : e.status,
     }
   }
 
