@@ -1,5 +1,6 @@
 #import "AppDelegate.h"
 
+#import "RCTAppSetupUtils.h"
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTConvert.h>
@@ -14,12 +15,28 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-   self.moduleName = @"RnDiffApp";
-   // You can add your custom initial props in the dictionary below.
-   // They will be passed down to the ViewController used by React Native.
-   self.initialProps = @{};
+  BOOL enableTM = NO;
+#if RCT_NEW_ARCH_ENABLED
+  enableTM = self.turboModuleEnabled;
+#endif
 
-   return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  RCTAppSetupPrepareApp(application, enableTM);
+
+  [FIRApp configure];
+
+  UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
+  if (@available(iOS 13.0, *)) {
+      window.backgroundColor = [UIColor systemBackgroundColor];
+  } else {
+      window.backgroundColor = [UIColor whiteColor];
+  }
+  [window makeKeyWindow];
+
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
+
+  [ReactNativeNavigation bootstrapWithBridge:bridge];
+
+  return YES;
 }
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge {
@@ -72,4 +89,10 @@
                    continueUserActivity:userActivity
                      restorationHandler:restorationHandler];
 }
+
+- (BOOL)bridgelessEnabled
+{
+ return NO;
+}
+
 @end

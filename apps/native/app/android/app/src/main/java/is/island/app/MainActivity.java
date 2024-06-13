@@ -20,4 +20,11 @@ public class MainActivity extends NavigationActivity {
    * DefaultReactActivityDelegate} which allows you to easily enable Fabric and Concurrent React
    * (aka React 18) with two boolean flags.
    */
+
+  @Override
+  protected ReactActivityDelegate createReactActivityDelegate() {
+    return new ReactActivityDelegateWrapper(this, BuildConfig.IS_NEW_ARCHITECTURE_ENABLED,
+      new ReactActivityDelegate(this, getMainComponentName())
+    );
+  }
 }
