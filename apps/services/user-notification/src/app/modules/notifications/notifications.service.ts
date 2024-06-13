@@ -213,7 +213,7 @@ export class NotificationsService {
           clickAction
           clickActionWeb
           clickActionUrl
-          category
+          // category
           args
         }
       }
@@ -264,7 +264,7 @@ export class NotificationsService {
           clickAction
           clickActionWeb
           clickActionUrl
-          category
+          // category
           args
         }
       }

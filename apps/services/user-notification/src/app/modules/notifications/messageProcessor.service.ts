@@ -32,7 +32,7 @@ export class MessageProcessorService {
       title: notification.notificationTitle,
       body: notification.notificationBody,
       dataCopy: notification.notificationDataCopy,
-      category: notification.category,
+      // category: notification.category,
       appURI: notification.clickAction,
     }
   }

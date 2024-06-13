@@ -109,7 +109,7 @@ export const getMockHnippTemplate = ({
   notificationBody = 'Demo body {{arg1}}',
   notificationDataCopy = 'Demo data copy',
   clickActionUrl = 'https://island.is/minarsidur/postholf',
-  category = 'Demo category',
+  // category = 'Demo category',
   args = ['arg1', 'arg2'],
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
@@ -117,7 +117,7 @@ export const getMockHnippTemplate = ({
   notificationBody,
   notificationDataCopy,
   clickActionUrl,
-  category,
+  // category,
   args,
 })
 
