@@ -169,10 +169,14 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-  'inbox.filterButtonTitle': 'Open filter',
+  'inbox.filterButtonTitle': 'Filter',
   'inbox.filterOpenedTagTitle': 'Unread',
   'inbox.filterArchivedTagTitle': 'Archived',
   'inbox.filterStarredTagTitle': 'Starred',
+  'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
+  'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
+  'inbox.markAllAsReadPromptCancel': 'Cancel',
+  'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',

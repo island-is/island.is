@@ -246,6 +246,11 @@ export const include: Includeable[] = [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: Case,
     as: 'parentCase',
     include: [
@@ -289,11 +294,6 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
-  {
-    model: User,
-    as: 'indictmentReviewer',
-    include: [{ model: Institution, as: 'institution' }],
-  },
 ]
 
 export const order: OrderItem[] = [
@@ -430,7 +430,7 @@ export class CaseService {
         ...caseToCreate,
         state: isIndictmentCase(caseToCreate.type)
           ? CaseState.DRAFT
-          : undefined,
+          : CaseState.NEW,
       },
       { transaction },
     )
@@ -602,20 +602,28 @@ export class CaseService {
       },
     ]
 
-    if (isIndictmentCase(theCase.type) && theCase.origin === CaseOrigin.LOKE) {
+    if (isIndictmentCase(theCase.type)) {
       messages.push({
-        type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
         user,
         caseId: theCase.id,
       })
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+
+      if (theCase.origin === CaseOrigin.LOKE) {
         messages.push({
-          type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
+          type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
           user,
           caseId: theCase.id,
-          elementId: policeCaseNumber,
-        }),
-      )
+        })
+        theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+          messages.push({
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
+            user,
+            caseId: theCase.id,
+            elementId: policeCaseNumber,
+          }),
+        )
+      }
     }
 
     return this.messageService.sendMessagesToQueue(messages)
@@ -1373,6 +1381,20 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ) {
+    if (
+      update.state === CaseState.RECEIVED &&
+      theCase.state === CaseState.SUBMITTED
+    ) {
+      return this.eventLogService.create(
+        {
+          eventType: EventType.CASE_RECEIVED_BY_COURT,
+          caseId: theCase.id,
+          nationalId: user.nationalId,
+          userRole: user.role,
+        },
+        transaction,
+      )
+    }
     if (
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.SUBMITTED &&
