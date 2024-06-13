@@ -1,3 +1,4 @@
+import CryptoJS from 'crypto-js'
 import { Op, Sequelize } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
@@ -20,15 +21,16 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseFileCategory,
   CaseFileState,
-  CaseState,
-  completedCaseStates,
+  EventType,
+  hasIndictmentCaseBeenSubmittedToCourt,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 
-import { formatConfirmedIndictmentKey } from '../../formatters/formatters'
+import { createConfirmedIndictment } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Case } from '../case'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { UserService } from '../user'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
 import { UpdateFileDto } from './dto/updateFile.dto'
@@ -40,13 +42,10 @@ import { SignedUrl } from './models/signedUrl.model'
 import { UploadFileToCourtResponse } from './models/uploadFileToCourt.response'
 import { fileModuleConfig } from './file.config'
 
-// Files are stored in AWS S3 under a key which has the following formats:
-// uploads/<uuid>/<uuid>/<filename> for restriction and investigation cases
+// File keys have the following format:
+// <uuid>/<uuid>/<filename>
 // As uuid-s have length 36, the filename starts at position 82 in the key.
-const NAME_BEGINS_INDEX = 82
-// indictments/<uuid>/<uuid>/<filename> for indictment cases
-// As uuid-s have length 36, the filename starts at position 82 in the key.
-const INDICTMENT_NAME_BEGINS_INDEX = 86
+const NAME_BEGINS_INDEX = 74
 
 @Injectable()
 export class FileService {
@@ -55,6 +54,7 @@ export class FileService {
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(CaseFile) private readonly fileModel: typeof CaseFile,
+    private readonly userService: UserService,
     private readonly courtService: CourtService,
     private readonly awsS3Service: AwsS3Service,
     private readonly messageService: MessageService,
@@ -91,22 +91,27 @@ export class FileService {
     return numberOfAffectedRows > 0
   }
 
-  private async tryDeleteFileFromS3(file: CaseFile): Promise<boolean> {
+  private async tryDeleteFileFromS3(
+    theCase: Case,
+    file: CaseFile,
+  ): Promise<boolean> {
     this.logger.debug(`Attempting to delete file ${file.key} from AWS S3`)
 
     if (!file.key) {
       return true
     }
 
-    return this.awsS3Service.deleteObject(file.key).catch((reason) => {
-      // Tolerate failure, but log what happened
-      this.logger.error(
-        `Could not delete file ${file.id} of case ${file.caseId} from AWS S3`,
-        { reason },
-      )
+    return this.awsS3Service
+      .deleteObject(theCase.type, theCase.state, file.key)
+      .catch((reason) => {
+        // Tolerate failure, but log what happened
+        this.logger.error(
+          `Could not delete file ${file.id} of case ${file.caseId} from AWS S3`,
+          { reason },
+        )
 
-      return false
-    })
+        return false
+      })
   }
 
   private getCourtDocumentFolder(file: CaseFile) {
@@ -144,6 +149,70 @@ export class FileService {
     return courtDocumentFolder
   }
 
+  private async confirmIndictmentCaseFile(
+    theCase: Case,
+    file: CaseFile,
+    pdf: Buffer,
+  ): Promise<string | undefined> {
+    const confirmationEvent = theCase.eventLogs?.find(
+      (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+    )
+
+    if (!confirmationEvent || !confirmationEvent.nationalId) {
+      return undefined
+    }
+
+    return this.userService
+      .findByNationalId(confirmationEvent.nationalId)
+      .then((user) =>
+        createConfirmedIndictment(
+          {
+            actor: user.name,
+            title: user.title,
+            institution: user.institution?.name ?? '',
+            date: confirmationEvent.created,
+          },
+          pdf,
+        ),
+      )
+      .then((confirmedPdf) => {
+        const binaryPdf = confirmedPdf.toString('binary')
+        const hash = CryptoJS.MD5(binaryPdf).toString(CryptoJS.enc.Hex)
+
+        // No need to wait for the update to finish
+        this.fileModel.update({ hash }, { where: { id: file.id } })
+
+        return binaryPdf
+      })
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to create confirmed indictment for case ${theCase.id}`,
+          { reason },
+        )
+
+        return undefined
+      })
+  }
+
+  async getCaseFileFromS3(theCase: Case, file: CaseFile): Promise<Buffer> {
+    if (
+      isIndictmentCase(theCase.type) &&
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
+      file.category === CaseFileCategory.INDICTMENT
+    ) {
+      return this.awsS3Service.getConfirmedObject(
+        theCase.type,
+        theCase.state,
+        file.key,
+        !file.hash,
+        (content: Buffer) =>
+          this.confirmIndictmentCaseFile(theCase, file, content),
+      )
+    }
+
+    return this.awsS3Service.getObject(theCase.type, theCase.state, file.key)
+  }
+
   private async throttleUpload(
     file: CaseFile,
     theCase: Case,
@@ -154,7 +223,7 @@ export class FileService {
       this.logger.info('Previous upload failed', { reason })
     })
 
-    const content = await this.awsS3Service.getObject(file.key ?? '')
+    const content = await this.getCaseFileFromS3(theCase, file)
 
     const courtDocumentFolder = this.getCourtDocumentFolder(file)
 
@@ -191,12 +260,14 @@ export class FileService {
   ): Promise<PresignedPost> {
     const { fileName, type } = createPresignedPost
 
-    return this.awsS3Service.createPresignedPost(
-      `${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
-        theCase.id
-      }/${uuid()}/${fileName}`,
-      type,
-    )
+    const key = `${theCase.id}/${uuid()}/${fileName}`
+
+    return this.awsS3Service
+      .createPresignedPost(theCase.type, theCase.state, key, type)
+      .then((presignedPost) => ({
+        ...presignedPost,
+        key,
+      }))
   }
 
   async createCaseFile(
@@ -206,11 +277,7 @@ export class FileService {
   ): Promise<CaseFile> {
     const { key } = createFile
 
-    const regExp = new RegExp(
-      `^${isIndictmentCase(theCase.type) ? 'indictments' : 'uploads'}/${
-        theCase.id
-      }/.{36}/(.*)$`,
-    )
+    const regExp = new RegExp(`^${theCase.id}/.{36}/(.*)$`)
 
     if (!regExp.test(key)) {
       throw new BadRequestException(
@@ -218,11 +285,7 @@ export class FileService {
       )
     }
 
-    const fileName = createFile.key.slice(
-      isIndictmentCase(theCase.type)
-        ? INDICTMENT_NAME_BEGINS_INDEX
-        : NAME_BEGINS_INDEX,
-    )
+    const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
 
     const file = await this.fileModel.create({
       ...createFile,
@@ -233,6 +296,7 @@ export class FileService {
     })
 
     if (
+      theCase.appealCaseNumber &&
       file.category &&
       [
         CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
@@ -255,28 +319,16 @@ export class FileService {
     return file
   }
 
-  async getCaseFileSignedUrl(
-    theCase: Case,
-    file: CaseFile,
-  ): Promise<SignedUrl> {
+  private async verifyCaseFile(file: CaseFile, theCase: Case) {
     if (!file.key) {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    let key = file.key
-
-    if (
-      file.category === CaseFileCategory.INDICTMENT &&
-      [
-        CaseState.SUBMITTED,
-        CaseState.RECEIVED,
-        ...completedCaseStates,
-      ].includes(theCase.state)
-    ) {
-      key = formatConfirmedIndictmentKey(key)
-    }
-
-    const exists = await this.awsS3Service.objectExists(key)
+    const exists = await this.awsS3Service.objectExists(
+      theCase.type,
+      theCase.state,
+      file.key,
+    )
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
@@ -284,11 +336,50 @@ export class FileService {
 
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
+  }
 
-    return this.awsS3Service.getSignedUrl(key).then((url) => ({ url }))
+  private async getCaseFileSignedUrlFromS3(
+    theCase: Case,
+    file: CaseFile,
+    timeToLive?: number,
+  ): Promise<string> {
+    if (
+      isIndictmentCase(theCase.type) &&
+      hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
+      file.category === CaseFileCategory.INDICTMENT
+    ) {
+      return this.awsS3Service.getConfirmedSignedUrl(
+        theCase.type,
+        theCase.state,
+        file.key,
+        !file.hash,
+        (content: Buffer) =>
+          this.confirmIndictmentCaseFile(theCase, file, content),
+        timeToLive,
+      )
+    }
+
+    return this.awsS3Service.getSignedUrl(
+      theCase.type,
+      theCase.state,
+      file.key,
+      timeToLive,
+    )
+  }
+
+  async getCaseFileSignedUrl(
+    theCase: Case,
+    file: CaseFile,
+  ): Promise<SignedUrl> {
+    await this.verifyCaseFile(file, theCase)
+
+    return this.getCaseFileSignedUrlFromS3(theCase, file).then((url) => ({
+      url,
+    }))
   }
 
   async deleteCaseFile(
+    theCase: Case,
     file: CaseFile,
     transaction?: Transaction,
   ): Promise<DeleteFileResponse> {
@@ -296,33 +387,22 @@ export class FileService {
 
     if (success) {
       // Fire and forget, no need to wait for the result
-      this.tryDeleteFileFromS3(file)
+      this.tryDeleteFileFromS3(theCase, file)
     }
 
     return { success }
   }
 
   async uploadCaseFileToCourt(
-    file: CaseFile,
     theCase: Case,
+    file: CaseFile,
     user: User,
   ): Promise<UploadFileToCourtResponse> {
     if (file.state === CaseFileState.STORED_IN_COURT) {
       return { success: true }
     }
 
-    if (!file.key) {
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
-
-    const exists = await this.awsS3Service.objectExists(file.key)
-
-    if (!exists) {
-      // Fire and forget, no need to wait for the result
-      this.fileModel.update({ key: null }, { where: { id: file.id } })
-
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
+    await this.verifyCaseFile(file, theCase)
 
     this.throttle = this.throttleUpload(file, theCase, user)
 
@@ -402,46 +482,13 @@ export class FileService {
   }
 
   async archive(theCase: Case, file: CaseFile): Promise<boolean> {
-    if (
-      !file.key ||
-      !file.key.startsWith('indictments/') ||
-      file.key.startsWith('indictments/completed/')
-    ) {
+    if (!file.key) {
       return true
     }
 
     return this.awsS3Service
-      .copyObject(
-        file.key,
-        file.key.replace('indictments/', 'indictments/completed/'),
-      )
-      .then((newKey) =>
-        this.fileModel.update({ key: newKey }, { where: { id: file.id } }),
-      )
-      .then(async () => {
-        if (
-          file.category === CaseFileCategory.INDICTMENT &&
-          [
-            CaseState.SUBMITTED,
-            CaseState.RECEIVED,
-            ...completedCaseStates,
-          ].includes(theCase.state)
-        ) {
-          return this.awsS3Service.copyObject(
-            formatConfirmedIndictmentKey(file.key),
-            formatConfirmedIndictmentKey(file.key).replace(
-              'indictments/',
-              'indictments/completed/',
-            ) ?? '',
-          )
-        }
-      })
-      .then(() => {
-        // Fire and forget, no need to wait for the result
-        this.tryDeleteFileFromS3(file)
-
-        return true
-      })
+      .archiveObject(theCase.type, theCase.state, file.key)
+      .then(() => true)
       .catch((reason) => {
         this.logger.error(
           `Failed to archive file ${file.id} of case ${file.caseId}`,
@@ -452,33 +499,30 @@ export class FileService {
       })
   }
 
-  async resetCaseFileStates(caseId: string, transaction: Transaction) {
-    await this.fileModel.update(
+  resetCaseFileStates(caseId: string, transaction: Transaction) {
+    return this.fileModel.update(
       { state: CaseFileState.STORED_IN_RVG },
       { where: { caseId, state: CaseFileState.STORED_IN_COURT }, transaction },
     )
   }
 
+  resetIndictmentCaseFileHashes(caseId: string, transaction: Transaction) {
+    return this.fileModel.update(
+      { hash: null },
+      { where: { caseId, category: CaseFileCategory.INDICTMENT }, transaction },
+    )
+  }
+
   async deliverCaseFileToCourtOfAppeals(
-    file: CaseFile,
     theCase: Case,
+    file: CaseFile,
     user: User,
   ): Promise<DeliverResponse> {
-    if (!file.key) {
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
+    await this.verifyCaseFile(file, theCase)
 
-    const exists = await this.awsS3Service.objectExists(file.key)
-
-    if (!exists) {
-      // Fire and forget, no need to wait for the result
-      this.fileModel.update({ key: null }, { where: { id: file.id } })
-
-      throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
-    }
-
-    const url = await this.awsS3Service.getSignedUrl(
-      file.key ?? '',
+    const url = await this.getCaseFileSignedUrlFromS3(
+      theCase,
+      file,
       this.config.robotS3TimeToLiveGet,
     )
 

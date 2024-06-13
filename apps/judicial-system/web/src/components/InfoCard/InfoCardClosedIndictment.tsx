@@ -4,30 +4,25 @@ import { useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
-  formatCaseType,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
+import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
 import InfoCard, { NameAndEmail } from './InfoCard'
-import { infoCardActiveIndictment as m } from './InfoCard.strings'
+import { strings } from './InfoCardIndictment.strings'
 
-const InfoCardClosedIndictment: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export interface Props {
+  defendantInfoActionButton?: DefendantInfoActionButton
+  displayAppealExpirationInfo?: boolean
+}
+
+const InfoCardClosedIndictment: React.FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-  const defenders = workingCase.defendants?.map((defendant) => {
-    return {
-      name: defendant.defenderName || '',
-      defenderNationalId: defendant.defenderNationalId || '',
-      sessionArrangement: undefined,
-      email: defendant.defenderEmail || '',
-      phoneNumber: defendant.defenderPhoneNumber || '',
-    }
-  })
+
+  const { defendantInfoActionButton, displayAppealExpirationInfo } = props
 
   return (
     <InfoCard
@@ -51,7 +46,7 @@ const InfoCardClosedIndictment: React.FC<
           value: workingCase.court?.name,
         },
         {
-          title: formatMessage(m.prosecutor),
+          title: formatMessage(strings.prosecutor),
           value: NameAndEmail(
             workingCase.prosecutor?.name,
             workingCase.prosecutor?.email,
@@ -65,8 +60,8 @@ const InfoCardClosedIndictment: React.FC<
           ),
         },
         {
-          title: formatMessage(m.offence),
-          value: isIndictmentCase(workingCase.type) ? (
+          title: formatMessage(strings.offence),
+          value: (
             <>
               {readableIndictmentSubtypes(
                 workingCase.policeCaseNumbers,
@@ -75,8 +70,6 @@ const InfoCardClosedIndictment: React.FC<
                 <Text key={subtype}>{capitalize(subtype)}</Text>
               ))}
             </>
-          ) : (
-            formatCaseType(workingCase.type)
           ),
         },
       ]}
@@ -85,16 +78,31 @@ const InfoCardClosedIndictment: React.FC<
           ? {
               title: capitalize(
                 workingCase.defendants.length > 1
-                  ? formatMessage(core.indictmentDefendants)
-                  : formatMessage(core.indictmentDefendant, {
+                  ? formatMessage(strings.indictmentDefendants)
+                  : formatMessage(strings.indictmentDefendant, {
                       gender: workingCase.defendants[0].gender,
                     }),
               ),
               items: workingCase.defendants,
+              defendantInfoActionButton: defendantInfoActionButton,
+              displayAppealExpirationInfo,
             }
           : undefined
       }
-      defenders={defenders}
+      additionalDataSections={[
+        ...(workingCase.indictmentReviewer?.name
+          ? [
+              {
+                data: [
+                  {
+                    title: formatMessage(strings.indictmentReviewer),
+                    value: workingCase.indictmentReviewer?.name,
+                  },
+                ],
+              },
+            ]
+          : []),
+      ]}
     />
   )
 }

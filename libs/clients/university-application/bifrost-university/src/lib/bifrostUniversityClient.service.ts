@@ -17,12 +17,7 @@ export class BifrostUniversityApplicationClient {
   async getPrograms(): Promise<IProgram[]> {
     const res = await this.programsApi.activeProgramsGet()
 
-    return mapUglaPrograms(res, (programExternalId: string, e: Error) => {
-      logger.error(
-        `Failed to map program with externalId ${programExternalId} (bifrost-university), reason:`,
-        e,
-      )
-    })
+    return mapUglaPrograms(res, 'bifrost-university')
   }
 
   async getCourses(programExternalId: string): Promise<ICourse[]> {

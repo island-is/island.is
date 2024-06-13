@@ -138,6 +138,12 @@ export const getEventData = (
         text: 'tók að sér málið',
         prefix: event.staffName ?? 'Starfsmaður',
       }
+    case ApplicationEventType.DATECHANGED:
+      return {
+        header: 'Tímabil umsóknar uppfærð',
+        text: 'uppfærði',
+        prefix: event.staffName ?? 'Starfsmaður',
+      }
   }
 }
 

@@ -44,7 +44,6 @@
       "options": {
         "commands": [
           "kubectl port-forward svc/socat-xroad 8081:80 -n socat &",
-          "kubectl port-forward svc/socat-soffia 8443:443 -n socat &",
           "yarn start api &",
           "yarn start services-user-profile &",
           "yarn start service-portal &"

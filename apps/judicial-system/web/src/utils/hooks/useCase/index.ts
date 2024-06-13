@@ -47,6 +47,7 @@ type ChildKeys = Pick<
   | 'appealJudge1Id'
   | 'appealJudge2Id'
   | 'appealJudge3Id'
+  | 'indictmentReviewerId'
 >
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
@@ -64,6 +65,7 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'appealJudge1Id',
     'appealJudge2Id',
     'appealJudge3Id',
+    'indictmentReviewerId',
   ].includes(key)
 }
 
@@ -77,6 +79,7 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   appealJudge1Id: 'appealJudge1',
   appealJudge2Id: 'appealJudge2',
   appealJudge3Id: 'appealJudge3',
+  indictmentReviewerId: 'indictmentReviewer',
 }
 
 const overwrite = (update: UpdateCase): UpdateCase => {
@@ -87,7 +90,7 @@ const overwrite = (update: UpdateCase): UpdateCase => {
 
 export const fieldHasValue =
   (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof Omit<UpdateCaseInput, 'courtDate'> // loadash types are not better than this
+    const theKey = key as keyof UpdateCaseInput
 
     if (
       isChildKey(theKey) // check if key is f.example `judgeId`
@@ -106,14 +109,12 @@ export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
   return validUpdates
 }
 
-export const formatUpdates = (
-  updates: Array<UpdateCase>,
-  workingCase: Case,
-) => {
+export const formatUpdates = (updates: UpdateCase[], workingCase: Case) => {
   const changes: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry)
     }
+
     return update(entry, workingCase)
   })
 
@@ -208,9 +209,6 @@ const useCase = () => {
       async (
         workingCase: Case,
         setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-        setCourtCaseNumberErrorMessage: React.Dispatch<
-          React.SetStateAction<string>
-        >,
       ): Promise<string> => {
         try {
           if (isCreatingCourtCase === false) {
@@ -224,16 +222,11 @@ const useCase = () => {
                 courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
               }))
 
-              setCourtCaseNumberErrorMessage('')
-
               return data.createCourtCase.courtCaseNumber
             }
           }
         } catch (error) {
-          // Catch all so we can set an eror message
-          setCourtCaseNumberErrorMessage(
-            'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-          )
+          // Catch all so we can return the empty string
         }
 
         return ''
@@ -247,10 +240,6 @@ const useCase = () => {
         ? limitedAccessUpdateCaseMutation
         : updateCaseMutation
 
-      const resultType = limitedAccess
-        ? 'limitedAccessUpdateCase'
-        : 'updateCase'
-
       try {
         if (!id || Object.keys(updateCase).length === 0) {
           return
@@ -262,7 +251,7 @@ const useCase = () => {
 
         const res = data as UpdateCaseMutation & LimitedAccessUpdateCaseMutation
 
-        return res && res[resultType]
+        return res?.[limitedAccess ? 'limitedAccessUpdateCase' : 'updateCase']
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
@@ -303,8 +292,8 @@ const useCase = () => {
           const res = data as TransitionCaseMutation &
             LimitedAccessTransitionCaseMutation
 
-          const state = res && res[resultType]?.state
-          const appealState = res && res[resultType]?.appealState
+          const state = res?.[resultType]?.state
+          const appealState = res?.[resultType]?.appealState
 
           if (!state && !appealState) {
             return false
@@ -381,7 +370,7 @@ const useCase = () => {
       delete updatesToCase.force
 
       if (Object.keys(updatesToCase).length === 0) {
-        return
+        return false
       }
 
       setWorkingCase((prevWorkingCase) => ({
@@ -390,16 +379,19 @@ const useCase = () => {
       }))
 
       if (!workingCase.id) {
-        return
+        return false
       }
 
       const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
 
       if (!newWorkingCase) {
-        throw new Error()
+        return false
       }
+
+      return true
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
+      return false
     }
   }
 

@@ -27,11 +27,14 @@ import {
   Stack,
   Tag,
   Text,
-  toast,
-  ToastContainer,
   VisuallyHidden,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
+import {
+  haskolanamCardClicked,
+  haskolanamFilterClicked,
+  haskolanamTrackSearchQuery,
+} from '@island.is/plausible'
 import {
   ActionCategoryCard,
   CTAProps,
@@ -69,14 +72,12 @@ import {
   GET_UNIVERSITY_GATEWAY_PROGRAM_LIST,
   GET_UNIVERSITY_GATEWAY_UNIVERSITIES,
 } from '../queries/UniversityGateway'
-import { Comparison } from './ComparisonComponent'
 import { TranslationDefaults } from './TranslationDefaults'
 import * as organizationStyles from '../../components/Organization/Wrapper/OrganizationWrapper.css'
 import * as styles from './UniversitySearch.css'
 
 const ITEMS_PER_PAGE = 18
 const NUMBER_OF_FILTERS = 6
-const MAX_SELECTED_COMPARISON = 3
 
 interface UniversitySearchProps {
   namespace: Record<string, string>
@@ -112,12 +113,6 @@ const stripHtml = (html: string) => {
   return tmp.textContent || tmp.innerText || ''
 }
 
-export interface ComparisonProps {
-  id: string
-  nameIs: string
-  iconSrc: string
-}
-
 interface UniversityProgramsQuery {
   universityGatewayPrograms: {
     data: Array<UniversityGatewayProgram>
@@ -125,22 +120,6 @@ interface UniversityProgramsQuery {
 }
 interface UniversityGatewayProgramWithStatus extends UniversityGatewayProgram {
   applicationStatus: string
-}
-
-const getActiveNavigationItemTitle = (
-  navigationItems: NavigationItem[],
-  clientUrl: string,
-) => {
-  for (const item of navigationItems) {
-    if (clientUrl === item.href) {
-      return item.title
-    }
-    for (const childItem of item.items ?? []) {
-      if (clientUrl === childItem.href) {
-        return childItem.title
-      }
-    }
-  }
 }
 
 const UniversitySearch: Screen<UniversitySearchProps> = ({
@@ -164,9 +143,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const isTabletScreenWidth = width < theme.breakpoints.xl
 
   const [selectedPage, setSelectedPage] = useState(1)
-  const [selectedComparison, setSelectedComparison] = useState<
-    Array<ComparisonProps>
-  >([])
   const [query, setQuery] = useState(searchQuery || '')
   const searchTermHasBeenInitialized = useRef(false)
   const [originalSortedResults, setOriginalSortedList] = useState<
@@ -180,6 +156,8 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   const [totalPages, setTotalPages] = useState<number>(0)
   const [filters, setFilters] = useState<FilterProps>(filtersFromQuery)
   const titleRef = useRef<HTMLDivElement>(null)
+  const [searchTimeoutId, setSearchTimeoutId] =
+    useState<ReturnType<typeof setTimeout>>()
 
   useEffect(() => {
     if (!loading) {
@@ -232,26 +210,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     }
   }, [filterOptions, universities, locale])
 
-  const getApplicationStatus = (item: UniversityGatewayProgram) => {
-    const now = new Date()
-    return new Date(item.applicationStartDate) <= now &&
-      new Date(item.applicationEndDate) >= now
-      ? 'OPEN'
-      : 'CLOSED'
-  }
-
   useEffect(() => {
     setTotalPages(Math.ceil(filteredResults.length / ITEMS_PER_PAGE))
   }, [filteredResults])
 
   useEffect(() => {
-    const comp = localStorage.getItem('comparison')
     const viewChoice = localStorage.getItem('viewChoice')
-
-    if (comp) {
-      const comparison = JSON.parse(comp)
-      setSelectedComparison(comparison)
-    }
 
     if (viewChoice) {
       setGridView(viewChoice === 'true' ? true : false)
@@ -259,9 +223,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
   }, [])
 
   const fuseOptions = {
-    threshold: 0.3,
-    findAllMatches: true,
+    threshold: 0.1,
     includeScore: true,
+    ignoreLocation: true,
+    minMatchCharLength: 3,
     keys: [
       {
         name: `name${locale === 'is' ? 'Is' : 'En'}`,
@@ -269,6 +234,10 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       },
       {
         name: `specializationName${locale === 'is' ? 'Is' : 'En'}`,
+        weight: 0.75,
+      },
+      {
+        name: `description${locale === 'is' ? 'Is' : 'En'}`,
         weight: 0.75,
       },
       'degreeType',
@@ -311,7 +280,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     } else {
       const results = SearchProducts({
         fuseInstance,
-        query,
+        query: query.trim(),
         activeFilters: activeFiltersFound,
         locale,
       })
@@ -356,6 +325,30 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       href: applicationUrlParser(item.universityId),
     }
     return CTA
+  }
+
+  const handleFilterType = (filterKey: string, filterValues: string[]) => {
+    setSelectedPage(1)
+    setFilters({ ...filters, [filterKey]: filterValues })
+
+    // Update query params
+    const currentQueryParams = router.query
+    const { [filterKey]: prevFilterKeyValues, ...restParams } =
+      currentQueryParams
+
+    router.push(
+      {
+        pathname: router.pathname,
+        query: {
+          ...restParams,
+          [filterKey]: filterValues,
+        },
+      },
+      undefined,
+      {
+        shallow: true,
+      },
+    )
   }
 
   const handleFilters = (
@@ -442,37 +435,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     )
   }
 
-  const handleComparisonChange = (dataItem: ComparisonProps) => {
-    const found = selectedComparison.some((x) => x.id === dataItem.id)
-
-    if (!found) {
-      if (selectedComparison.length === MAX_SELECTED_COMPARISON) {
-        //comparison can only include 3 items so display error message if trying to add the fourth
-        toast.error(
-          n(
-            'maxComparisonError',
-            `Aðeins er hægt að hafa ${MAX_SELECTED_COMPARISON} nám í samanburði`,
-          ),
-        )
-      } else {
-        setSelectedComparison([...selectedComparison, dataItem])
-      }
-    } else {
-      setSelectedComparison(
-        selectedComparison.filter((item) => {
-          if (item.id !== dataItem.id) {
-            return true
-          }
-          return false
-        }),
-      )
-    }
-  }
-
-  useEffect(() => {
-    localStorage.setItem('comparison', JSON.stringify(selectedComparison))
-  }, [selectedComparison])
-
   useEffect(() => {
     localStorage.setItem('viewChoice', gridView ? 'true' : 'false')
   }, [gridView])
@@ -503,14 +465,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
       return false
     })
     setIsOpen(newIsOpen)
-  }
-
-  const routeToComparison = () => {
-    router.push(
-      `${
-        linkResolver('universitysearchcomparison').href
-      }?comparison=${JSON.stringify(selectedComparison.map((i) => i.id))}`,
-    )
   }
 
   const navList: NavigationItem[] =
@@ -656,6 +610,21 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
     )
   }
 
+  const countOccurrencesInResults = (): Map<string, number> => {
+    const occurrenceMap = new Map<string, number>()
+
+    filteredResults.forEach((result) => {
+      const count = occurrenceMap.get(result.item.universityId) || 0
+      occurrenceMap.set(result.item.universityId, count + 1)
+    })
+
+    return occurrenceMap
+  }
+
+  const getLocalizedStringValue = (isValue: string, enValue: string) => {
+    return locale === 'is' ? isValue || '' : enValue || ''
+  }
+
   return (
     <Box>
       {organizationPage && (
@@ -770,13 +739,19 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       filters[str].filter((x) => x === option)
                                         .length > 0
                                     }
-                                    onChange={(e) =>
+                                    onChange={(e) => {
                                       handleFilters(
                                         filter.field,
                                         e.target.value,
                                         e.target.checked,
                                       )
-                                    }
+                                      if (e.target.checked) {
+                                        haskolanamFilterClicked(
+                                          filter.field,
+                                          formatFilterStrings(option, str),
+                                        )
+                                      }
+                                    }}
                                   />
                                 )
                               })}
@@ -866,6 +841,12 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               backgroundColor="blue"
               onChange={(e) => {
                 handleUserInput(e.target.value)
+                clearTimeout(searchTimeoutId)
+                const timeoutId = setTimeout(() => {
+                  if (!e.target.value) return null
+                  haskolanamTrackSearchQuery(e.target.value)
+                }, 750)
+                setSearchTimeoutId(timeoutId)
               }}
             />
             <Box
@@ -971,19 +952,17 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                   labelResult={n('showResults', 'Skoða niðurstöður')}
                   labelTitle={n('filterResults', 'Sía niðurstöður')}
                   onFilterClear={() => {
-                    setSelectedPage(1)
-                    setFilters(JSON.parse(JSON.stringify(initialFilters)))
+                    clearFilterParams()
                   }}
                 >
                   <FilterMultiChoice
                     labelClear={n('clearFilter', 'Hreinsa val')}
                     onChange={({ categoryId, selected }) => {
-                      setSelectedPage(1)
-                      setFilters({ ...filters, [categoryId]: selected })
+                      handleFilterType(categoryId, selected)
                     }}
                     onClear={(categoryId) => {
                       setSelectedPage(1)
-                      setFilters({ ...filters, [categoryId]: [] })
+                      clearFilterType(categoryId)
                     }}
                     categories={
                       filterOptions
@@ -1013,60 +992,115 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
               </Box>
             </Hidden>
             <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
+              display={'flex'}
+              flexDirection={'column'}
+              style={{ gap: '0.5rem' }}
               marginTop={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
               marginBottom={isTabletScreenWidth || isMobileScreenWidth ? 2 : 5}
             >
-              <Box>
+              <Box
+                display="flex"
+                flexDirection="row"
+                width="full"
+                justifyContent="spaceBetween"
+              >
                 {data && (
-                  <Box display="flex">
-                    <Text variant="intro" fontWeight="semiBold" as="h2">
-                      {`${filteredResults.length}`}{' '}
-                    </Text>
-                    <Box paddingLeft={1}>
-                      {' '}
-                      <Text variant="intro" as="h2">{`${n(
-                        'visiblePrograms',
-                        'námsleiðir sýnilegar',
-                      )}`}</Text>
+                  <Box
+                    width="full"
+                    display={'flex'}
+                    justifyContent={'spaceBetween'}
+                  >
+                    <Box display={'flex'} flexWrap={'wrap'}>
+                      <Box display={'flex'}>
+                        <Text variant="intro" fontWeight="semiBold" as="h2">
+                          {`${filteredResults.length}`}
+                        </Text>
+                        <Box paddingLeft={1}>
+                          {' '}
+                          <Text variant="intro" as="h2">{`${n(
+                            'visiblePrograms',
+                            'námsleiðir',
+                          )}:`}</Text>
+                        </Box>
+                      </Box>
+                    </Box>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      justifyContent="flexEnd"
+                    >
+                      <Hidden below="md">
+                        <Box>
+                          <button
+                            onClick={() => setGridView(true)}
+                            className={styles.iconButton}
+                          >
+                            <VisuallyHidden>
+                              {n('changeToTable', 'Breyta niðurstöðum í töflu')}
+                            </VisuallyHidden>
+                            <Icon
+                              icon={'gridView'}
+                              type="outline"
+                              color={gridView ? 'blue400' : 'dark200'}
+                            />
+                          </button>
+                          <button
+                            onClick={() => setGridView(false)}
+                            className={styles.iconButton}
+                          >
+                            <VisuallyHidden>
+                              {n('changeToList', 'Breyta niðurstöðum í lista')}
+                            </VisuallyHidden>
+                            <Icon
+                              icon={'listView'}
+                              type="outline"
+                              color={gridView ? 'dark200' : 'blue400'}
+                              useStroke
+                            />
+                          </button>
+                        </Box>
+                      </Hidden>
                     </Box>
                   </Box>
                 )}
               </Box>
-              <Hidden below="md">
-                <Box>
-                  <button
-                    onClick={() => setGridView(true)}
-                    className={styles.iconButton}
-                  >
-                    <VisuallyHidden>
-                      {n('changeToTable', 'Breyta niðurstöðum í töflu')}
-                    </VisuallyHidden>
-                    <Icon
-                      icon={'gridView'}
-                      type="outline"
-                      color={gridView ? 'blue400' : 'dark200'}
-                    />
-                  </button>
-                  <button
-                    onClick={() => setGridView(false)}
-                    className={styles.iconButton}
-                  >
-                    <VisuallyHidden>
-                      {n('changeToList', 'Breyta niðurstöðum í lista')}
-                    </VisuallyHidden>
-                    <Icon
-                      icon={'listView'}
-                      type="outline"
-                      color={gridView ? 'dark200' : 'blue400'}
-                      useStroke
-                    />
-                  </button>
-                </Box>
-              </Hidden>
+              <Box
+                display="flex"
+                justifyContent="flexStart"
+                alignItems={'center'}
+                style={{ gap: '1rem' }}
+                marginBottom={2}
+              >
+                {Array.from(countOccurrencesInResults())
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([universityId, count]) => {
+                    const uni = universities.filter(
+                      (x) => x.id === universityId,
+                    )[0]
+                    return (
+                      <Box
+                        key={universityId}
+                        display="flex"
+                        alignItems="center"
+                        style={{ gap: '4px' }}
+                        flexWrap={'wrap'}
+                      >
+                        <img
+                          className={styles.searchResultIcon}
+                          src={uni?.contentfulLogoUrl || ''}
+                          alt={`${
+                            locale === 'en'
+                              ? uni.contentfulTitleEn
+                              : uni.contentfulTitle
+                          } logo`}
+                        />
+                        <Text variant="small">{`(${count})`}</Text>
+                      </Box>
+                    )
+                  })}
+              </Box>
             </Box>
+
             {loading ? (
               <>{loadSkeletons()}</>
             ) : (
@@ -1082,6 +1116,9 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                         .map((item, index) => {
                           const dataItem =
                             item.item as UniversityGatewayProgramWithStatus
+                          const university = universities.filter(
+                            (x) => x.id === dataItem.universityId,
+                          )[0]
                           const specializedName =
                             locale === 'en'
                               ? dataItem.specializationNameEn ?? undefined
@@ -1125,6 +1162,19 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                         : dataItem.nameIs
                                     } logo`}
                                   />
+                                }
+                                onCardClick={() =>
+                                  haskolanamCardClicked(
+                                    getLocalizedStringValue(
+                                      university.contentfulTitle || '',
+                                      university.contentfulTitleEn || '',
+                                    ),
+                                    getLocalizedStringValue(
+                                      dataItem.nameIs,
+                                      dataItem.nameEn,
+                                    ),
+                                    dataItem.id,
+                                  )
                                 }
                                 sidePanelConfig={{
                                   cta: createPrimaryCTA(dataItem),
@@ -1289,6 +1339,19 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                                       dataItem.id,
                                     ]).href
                                   }
+                                  onCardClick={() =>
+                                    haskolanamCardClicked(
+                                      getLocalizedStringValue(
+                                        contentfulUni.contentfulTitle || '',
+                                        contentfulUni.contentfulTitleEn || '',
+                                      ),
+                                      getLocalizedStringValue(
+                                        dataItem.nameIs,
+                                        dataItem.nameEn,
+                                      ),
+                                      dataItem.id,
+                                    )
+                                  }
                                   infoItems={[
                                     {
                                       icon: (
@@ -1381,11 +1444,7 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
                 )}
               </>
             )}
-
-            <Box
-              marginTop={2}
-              marginBottom={selectedComparison.length > 0 ? 4 : 0}
-            >
+            <Box marginTop={2} marginBottom={0}>
               <Pagination
                 variant="purple"
                 page={selectedPage}
@@ -1417,147 +1476,6 @@ const UniversitySearch: Screen<UniversitySearchProps> = ({
           columnGap={15}
           paddingBottom={8}
         ></Box>
-        {selectedComparison.length > 0 &&
-          !isTabletScreenWidth &&
-          !isMobileScreenWidth && (
-            <Box display="flex" flexDirection="column">
-              <Box paddingLeft={2} paddingBottom={2}>
-                <Text variant="h3">
-                  {n('programsInCompare', 'Nám í samanburði')}
-                </Text>
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-              >
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  flexWrap="wrap"
-                  rowGap={1}
-                  width="full"
-                >
-                  {selectedComparison.map((item) => {
-                    return (
-                      <GridColumn span="1/3" key={item.id}>
-                        <Comparison>
-                          <Box
-                            display="flex"
-                            flexDirection="row"
-                            justifyContent="spaceBetween"
-                            alignItems="center"
-                            width="full"
-                          >
-                            <Box
-                              display="flex"
-                              flexDirection="row"
-                              alignItems="center"
-                              paddingRight={3}
-                              style={{ maxWidth: '90%' }}
-                            >
-                              <img
-                                src={item.iconSrc}
-                                className={styles.icon}
-                                alt={`Logo fyrir ${item.nameIs}`}
-                                style={{ paddingRight: 10 }}
-                              />
-                              <Text variant="h5" truncate>
-                                {item.nameIs}
-                              </Text>
-                            </Box>
-                            <Box
-                              display="flex"
-                              flexDirection="row"
-                              alignItems="center"
-                            >
-                              <button
-                                onClick={() =>
-                                  handleComparisonChange({
-                                    id: item.id,
-                                    nameIs: item.nameIs,
-                                    iconSrc: item.iconSrc,
-                                  })
-                                }
-                                className={styles.removeButton}
-                              >
-                                <Icon
-                                  className={styles.closeIcon}
-                                  icon={'close'}
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              </button>
-                            </Box>
-                          </Box>
-                        </Comparison>
-                      </GridColumn>
-                    )
-                  })}
-                </Box>
-                <Button onClick={() => routeToComparison()}>
-                  <Text variant="h5" whiteSpace="nowrap" color="white">
-                    {n('seeCompare', 'Skoða samanburð')}
-                  </Text>
-                </Button>
-              </Box>
-            </Box>
-          )}
-        {selectedComparison.length > 0 &&
-          (isTabletScreenWidth || isMobileScreenWidth) && (
-            <Box
-              display="flex"
-              flexDirection="column"
-              width="full"
-              background="white"
-              padding={3}
-              position="fixed"
-              bottom={0}
-              right={0}
-              left={0}
-              zIndex={10}
-              borderTopWidth="standard"
-              borderColor="blue300"
-              boxShadow="strong"
-            >
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-                width="full"
-                alignItems="flexStart"
-                paddingBottom={2}
-              >
-                <Text variant="h3">{n('comparison', 'Samanburður')}</Text>
-                <Button
-                  variant="text"
-                  icon="close"
-                  size="small"
-                  onClick={() => setSelectedComparison([])}
-                >
-                  <Text variant="eyebrow" color="blue400" as="span">
-                    {n('clearFilter', 'Hreinsa val')}
-                  </Text>
-                </Button>
-              </Box>
-              <Box
-                display="flex"
-                flexDirection="row"
-                justifyContent="spaceBetween"
-                width="full"
-                alignItems="center"
-              >
-                <Button variant="primary" onClick={() => routeToComparison()}>
-                  {n('seeCompare', 'Skoða samanburð')}
-                </Button>
-                <Text
-                  variant="h5"
-                  as="span"
-                >{`${selectedComparison.length} / ${MAX_SELECTED_COMPARISON}`}</Text>
-              </Box>
-            </Box>
-          )}
-        <ToastContainer></ToastContainer>
       </GridContainer>
       <Box className="rs_read">
         <OrganizationFooter

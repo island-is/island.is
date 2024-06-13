@@ -15,13 +15,13 @@ import {
   UserProfile,
 } from '../../types/schema'
 import { m } from '../../lib/messages'
-import { B_TEMP } from '../../shared/constants'
-import { isApplicationForCondition } from '../../lib/utils'
+import { B_TEMP, BE } from '../../lib/constants'
 
 export const subSectionTempInfo = buildSubSection({
   id: 'infoStep',
   title: m.informationApplicant,
-  condition: isApplicationForCondition(B_TEMP),
+  condition: (answers) =>
+    answers.applicationFor === B_TEMP || answers.applicationFor === BE,
   children: [
     buildMultiField({
       id: 'info',
@@ -31,6 +31,12 @@ export const subSectionTempInfo = buildSubSection({
         buildKeyValueField({
           label: m.drivingLicenseTypeRequested,
           value: m.applicationForTempLicenseTitle,
+          condition: (answers) => answers.applicationFor === B_TEMP,
+        }),
+        buildKeyValueField({
+          label: m.drivingLicenseTypeRequested,
+          value: m.applicationForBELicenseTitle,
+          condition: (answers) => answers.applicationFor === BE,
         }),
         buildDividerField({
           title: '',

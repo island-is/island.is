@@ -53,21 +53,24 @@ export class AdminPatchScopeDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional({
-    example: false,
+    deprecated: true,
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   grantToLegalGuardians?: boolean
 
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional({
-    example: false,
+    deprecated: true,
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   grantToProcuringHolders?: boolean
 
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional({
-    example: false,
+    deprecated: true,
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   allowExplicitDelegationGrant?: boolean
 
@@ -81,9 +84,26 @@ export class AdminPatchScopeDto {
   @IsBoolean()
   @IsOptional()
   @ApiPropertyOptional({
-    example: false,
+    deprecated: true,
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   grantToPersonalRepresentatives?: boolean
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['Custom'],
+  })
+  addedDelegationTypes?: string[]
+
+  @IsArray()
+  @IsOptional()
+  @ApiPropertyOptional({
+    type: [String],
+    example: ['Custom'],
+  })
+  removedDelegationTypes?: string[]
 }
 
 export const superUserScopeFields = [

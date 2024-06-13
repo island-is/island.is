@@ -4,6 +4,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { isCompany } from 'kennitala'
 
 import { User } from '@island.is/auth-nest-tools'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import {
   UserProfileDto,
@@ -20,20 +21,17 @@ import {
   QueueService,
   WorkerService,
 } from '@island.is/message-queue'
+import { type ConfigType } from '@island.is/nest/config'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
-import { DocumentsScope } from '@island.is/auth/scopes'
+import type { Locale } from '@island.is/shared/types'
 
+import { UserNotificationsConfig } from '../../../../config'
 import { MessageProcessorService } from '../messageProcessor.service'
 import { NotificationDispatchService } from '../notificationDispatch.service'
 import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { NotificationsService } from '../notifications.service'
 import { HnippTemplate } from '../dto/hnippTemplate.response'
 import { Notification } from '../notification.model'
-import type { Locale } from '@island.is/shared/types'
-export const IS_RUNNING_AS_WORKER = Symbol('IS_NOTIFICATION_WORKER')
-export const SERVICE_PORTAL_CLICK_ACTION_URL = Symbol(
-  'SERVICE_PORTAL_CLICK_ACTION_URL',
-)
 
 const WORK_STARTING_HOUR = 8 // 8 AM
 const WORK_ENDING_HOUR = 23 // 11 PM
@@ -41,7 +39,7 @@ const WORK_ENDING_HOUR = 23 // 11 PM
 type HandleNotification = {
   profile: {
     nationalId: string
-    email?: string
+    email?: string | null
     documentNotifications: boolean
     emailNotifications: boolean
     locale?: string
@@ -60,23 +58,26 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     private readonly delegationsApi: DelegationsApi,
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
     private readonly featureFlagService: FeatureFlagService,
+    private readonly emailService: EmailService,
+
     @InjectWorker('notifications')
     private readonly worker: WorkerService,
+
+    @InjectQueue('notifications')
+    private readonly queue: QueueService,
+
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    @Inject(IS_RUNNING_AS_WORKER)
-    private readonly isRunningAsWorker: boolean,
-    @Inject(SERVICE_PORTAL_CLICK_ACTION_URL)
-    private readonly servicePortalClickActionUrl: string,
-    @Inject(EmailService)
-    private readonly emailService: EmailService,
+
+    @Inject(UserNotificationsConfig.KEY)
+    private readonly config: ConfigType<typeof UserNotificationsConfig>,
+
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
-    @InjectQueue('notifications') private readonly queue: QueueService,
   ) {}
 
   onApplicationBootstrap() {
-    if (this.isRunningAsWorker) {
+    if (this.config.isWorker) {
       void this.run()
     }
   }
@@ -134,7 +135,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     subjectId?: string
   }): Message {
     if (!recipientEmail) {
-      throw new Error('User does not have email notifications enabled')
+      throw new Error('Missing recipient email address')
     }
 
     const generateBody = (): Body[] => {
@@ -199,7 +200,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     return {
       from: {
         name: 'Ísland.is',
-        address: 'noreply@island.is',
+        address: this.config.emailFromAddress,
       },
       to: {
         name: fullName,
@@ -464,12 +465,12 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
     }
 
     const shouldUseThirdPartyLogin = formattedTemplate.clickActionUrl.includes(
-      this.servicePortalClickActionUrl,
+      this.config.servicePortalClickActionUrl,
     )
 
     return shouldUseThirdPartyLogin
       ? `${
-          this.servicePortalClickActionUrl
+          this.config.servicePortalClickActionUrl
         }/login?login_hint=${subjectId}&target_link_uri=${encodeURI(
           formattedTemplate.clickActionUrl,
         )}`

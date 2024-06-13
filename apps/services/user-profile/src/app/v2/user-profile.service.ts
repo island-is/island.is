@@ -1,12 +1,14 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
+import { Op } from 'sequelize'
 import { InjectModel } from '@nestjs/sequelize'
 import { isEmail } from 'class-validator'
 import addMonths from 'date-fns/addMonths'
 import { Sequelize } from 'sequelize-typescript'
 
-import { isDefined } from '@island.is/shared/utils'
+import { isDefined, isSearchTermValid } from '@island.is/shared/utils'
 import { AttemptFailed, NoContentException } from '@island.is/nest/problem'
 import type { User } from '@island.is/auth-nest-tools'
+import type { ConfigType } from '@island.is/nest/config'
 import {
   DelegationsApi,
   DelegationsControllerGetDelegationRecordsDirectionEnum,
@@ -20,9 +22,9 @@ import { UserProfileDto } from './dto/user-profile.dto'
 import { IslykillService } from './islykill.service'
 import { DataStatus } from '../user-profile/types/dataStatusTypes'
 import { NudgeType } from '../types/nudge-type'
+import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { ClientType } from '../types/ClientType'
 import { UserProfileConfig } from '../../config'
-import type { ConfigType } from '@island.is/nest/config'
 import { ActorProfile } from './models/actor-profile.model'
 import {
   ActorProfileDto,
@@ -49,6 +51,44 @@ export class UserProfileService {
     private config: ConfigType<typeof UserProfileConfig>,
     private readonly delegationsApi: DelegationsApi,
   ) {}
+
+  async findAllBySearchTerm(search: string): Promise<PaginatedUserProfileDto> {
+    // Validate search term
+    if (!isSearchTermValid(search)) {
+      throw new BadRequestException('Invalid search term')
+    }
+
+    const userProfiles = await this.userProfileModel.findAll({
+      where: {
+        [Op.or]: [
+          { nationalId: search },
+          { email: search },
+          { mobilePhoneNumber: search },
+        ],
+      },
+    })
+
+    const userProfileDtos = userProfiles.map((userProfile) => ({
+      nationalId: userProfile.nationalId,
+      email: userProfile.email,
+      mobilePhoneNumber: userProfile.mobilePhoneNumber,
+      locale: userProfile.locale,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
+      emailVerified: userProfile.emailVerified ?? false,
+      documentNotifications: userProfile.documentNotifications,
+      emailNotifications: userProfile.emailNotifications,
+      lastNudge: userProfile.lastNudge,
+      nextNudge: userProfile.nextNudge,
+    }))
+
+    return {
+      data: userProfileDtos,
+      totalCount: userProfileDtos.length,
+      pageInfo: {
+        hasNextPage: false,
+      },
+    }
+  }
 
   async findById(
     nationalId: string,
@@ -118,15 +158,15 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmEmail(
             {
-              email: userProfile.email,
-              hash: userProfile.emailVerificationCode,
+              email: userProfile.email!,
+              hash: userProfile.emailVerificationCode!,
             },
             ...commonArgs,
           )
 
         if (!confirmed) {
           // Check if we should throw a BadRequest or an AttemptFailed error
-          if (remainingAttempts >= 0) {
+          if (remainingAttempts && remainingAttempts >= 0) {
             throw new AttemptFailed(remainingAttempts, {
               emailVerificationCode: 'Verification code does not match.',
             })
@@ -140,15 +180,15 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmSms(
             {
-              mobilePhoneNumber: userProfile.mobilePhoneNumber,
-              code: userProfile.mobilePhoneNumberVerificationCode,
+              mobilePhoneNumber: userProfile.mobilePhoneNumber!,
+              code: userProfile.mobilePhoneNumberVerificationCode!,
             },
             ...commonArgs,
           )
 
         if (confirmed === false) {
           // Check if we should throw a BadRequest or an AttemptFailed error
-          if (remainingAttempts >= 0) {
+          if (remainingAttempts && remainingAttempts >= 0) {
             throw new AttemptFailed(remainingAttempts, {
               smsVerificationCode: 'Verification code does not match.',
             })
@@ -177,7 +217,7 @@ export class UserProfileService {
           emailVerified: userProfile.email !== '',
           emailStatus: userProfile.email
             ? DataStatus.VERIFIED
-            : currentUserProfile.emailStatus === DataStatus.NOT_VERIFIED
+            : currentUserProfile?.emailStatus === DataStatus.NOT_VERIFIED
             ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
@@ -186,7 +226,7 @@ export class UserProfileService {
           mobilePhoneNumberVerified: formattedPhoneNumber !== '',
           mobileStatus: formattedPhoneNumber
             ? DataStatus.VERIFIED
-            : currentUserProfile.mobileStatus === DataStatus.NOT_VERIFIED
+            : currentUserProfile?.mobileStatus === DataStatus.NOT_VERIFIED
             ? DataStatus.NOT_DEFINED
             : DataStatus.EMPTY,
         }),
@@ -460,10 +500,10 @@ export class UserProfileService {
     mobileStatus,
     emailStatus,
   }: {
-    email: string
-    mobilePhoneNumber: string
-    emailVerified: boolean
-    mobilePhoneNumberVerified: boolean
+    email?: string | null
+    mobilePhoneNumber?: string | null
+    emailVerified?: boolean
+    mobilePhoneNumberVerified?: boolean
     mobileStatus: DataStatus
     emailStatus: DataStatus
   }): boolean {
@@ -485,8 +525,8 @@ export class UserProfileService {
    * @param mobilePhoneNumber
    */
   private checkAudkenniSameAsMobilePhoneNumber(
-    audkenniSimNumber: string,
-    mobilePhoneNumber: string,
+    audkenniSimNumber?: string,
+    mobilePhoneNumber?: string,
   ): boolean {
     if (!audkenniSimNumber || !mobilePhoneNumber) {
       return false
@@ -512,23 +552,32 @@ export class UserProfileService {
       email: userProfile.email,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
+      emailVerified: userProfile.emailVerified ?? false,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
       emailNotifications: userProfile.emailNotifications,
+      lastNudge: userProfile.lastNudge,
+      nextNudge: userProfile.nextNudge,
       isRestricted: false,
     }
 
-    if ((this.config.migrationDate ?? new Date()) > userProfile.lastNudge) {
+    if (
+      !userProfile.lastNudge ||
+      (this.config.migrationDate ?? new Date()) > userProfile.lastNudge
+    ) {
       filteredUserProfile = {
         ...filteredUserProfile,
         email: isFirstParty ? userProfile.email : null,
         mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
-        emailVerified: isFirstParty ? userProfile.emailVerified : false,
-        mobilePhoneNumberVerified: isFirstParty
-          ? userProfile.mobilePhoneNumberVerified
-          : false,
+        emailVerified:
+          isFirstParty && userProfile.emailVerified
+            ? userProfile.emailVerified
+            : false,
+        mobilePhoneNumberVerified:
+          isFirstParty && userProfile.mobilePhoneNumberVerified
+            ? userProfile.mobilePhoneNumberVerified
+            : false,
         isRestricted: true,
       }
     }

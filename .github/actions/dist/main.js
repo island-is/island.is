@@ -26107,34 +26107,41 @@ var import_debug2 = __toESM(require_src());
 var app2 = (0, import_debug2.default)("change-detection");
 function findBestGoodRefBranch(commitScore, git, githubApi, headBranch, baseBranch, workflowId) {
   return __async(this, null, function* () {
-    const log = app2.extend("findBestGoodRefBranch");
-    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-    const commits = yield getCommits(git, headBranch, baseBranch, "HEAD~1");
-    const builds = yield githubApi.getLastGoodBranchBuildRun(
-      headBranch,
-      workflowId,
-      commits
-    );
-    if (builds)
-      return {
-        sha: builds.head_commit,
-        run_number: builds.run_nr,
-        branch: headBranch,
-        ref: builds.head_commit
-      };
-    const baseCommits = yield githubApi.getLastGoodBranchBuildRun(
-      baseBranch,
-      workflowId,
-      commits
-    );
-    if (baseCommits)
-      return {
-        ref: baseCommits.head_commit,
-        sha: baseCommits.head_commit,
-        run_number: baseCommits.run_nr,
-        branch: baseBranch
-      };
-    return "rebuild";
+    return new Promise((resolve) => __async(this, null, function* () {
+      const log = app2.extend("findBestGoodRefBranch");
+      log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
+      const commits = yield getCommits(git, headBranch, baseBranch, "HEAD~1");
+      const builds = yield githubApi.getLastGoodBranchBuildRun(
+        headBranch,
+        workflowId,
+        commits
+      );
+      if (builds) {
+        resolve({
+          sha: builds.head_commit,
+          run_number: builds.run_nr,
+          branch: headBranch,
+          ref: builds.head_commit
+        });
+        return;
+      }
+      const baseCommits = yield githubApi.getLastGoodBranchBuildRun(
+        baseBranch,
+        workflowId,
+        commits
+      );
+      if (baseCommits) {
+        resolve({
+          ref: baseCommits.head_commit,
+          sha: baseCommits.head_commit,
+          run_number: baseCommits.run_nr,
+          branch: baseBranch
+        });
+        return;
+      }
+      resolve("rebuild");
+      return;
+    }));
   });
 }
 function getCommits(git, headBranch, baseBranch, head, maxCount = 300) {
@@ -26152,75 +26159,82 @@ function getCommits(git, headBranch, baseBranch, head, maxCount = 300) {
 }
 function findBestGoodRefPR(diffWeight, git, githubApi, headBranch, baseBranch, prBranch, workflowId) {
   return __async(this, null, function* () {
-    const log = app2.extend("findBestGoodRefPR");
-    log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
-    const lastCommitSha = yield git.lastCommit();
-    const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
-    const prRun = yield githubApi.getLastGoodPRRun(
-      headBranch,
-      workflowId,
-      prCommits
-    );
-    const prBuilds = [];
-    if (prRun) {
-      log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
-      try {
-        const tempBranch = `${headBranch}-${Math.round(Math.random() * 1e6)}`;
-        yield git.checkoutBranch(tempBranch, prRun.base_commit);
-        log(`Branch checked out`);
-        const mergeCommitSha = yield git.merge(prRun.head_commit);
-        log(`Simulated previous PR merge commit`);
-        const distance = yield githubApi.getChangedComponents(
+    return new Promise((resolve) => __async(this, null, function* () {
+      const log = app2.extend("findBestGoodRefPR");
+      log(`Starting with head branch ${headBranch} and base branch ${baseBranch}`);
+      const lastCommitSha = yield git.lastCommit();
+      const prCommits = yield getCommits(git, headBranch, baseBranch, "HEAD");
+      const prRun = yield githubApi.getLastGoodPRRun(
+        headBranch,
+        workflowId,
+        prCommits
+      );
+      const prBuilds = [];
+      if (prRun) {
+        log(`Found a PR run candidate: ${JSON.stringify(prRun)}`);
+        try {
+          const tempBranch = `${headBranch}-${Math.round(
+            Math.random() * 1e6
+          )}`;
+          yield git.checkoutBranch(tempBranch, prRun.base_commit);
+          log(`Branch checked out`);
+          const mergeCommitSha = yield git.merge(prRun.head_commit);
+          log(`Simulated previous PR merge commit`);
+          const distance = yield githubApi.getChangedComponents(
+            git,
+            lastCommitSha,
+            mergeCommitSha
+          );
+          log(`Affected components since candidate PR run are ${distance}`);
+          prBuilds.push({
+            distance: diffWeight(distance),
+            hash: prRun.head_commit,
+            run_nr: prRun.run_nr,
+            branch: headBranch,
+            ref: mergeCommitSha
+          });
+        } catch (e) {
+          log(
+            `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
+            e
+          );
+        } finally {
+          yield git.checkout(prBranch);
+        }
+      }
+      const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
+      const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
+        baseBranch,
+        "push",
+        baseCommits
+      );
+      if (baseGoodBuilds) {
+        let affectedComponents = yield githubApi.getChangedComponents(
           git,
           lastCommitSha,
-          mergeCommitSha
+          baseGoodBuilds.head_commit
         );
-        log(`Affected components since candidate PR run are ${distance}`);
         prBuilds.push({
-          distance: diffWeight(distance),
-          hash: prRun.head_commit,
-          run_nr: prRun.run_nr,
-          branch: headBranch,
-          ref: mergeCommitSha
+          distance: diffWeight(affectedComponents),
+          hash: baseGoodBuilds.head_commit,
+          run_nr: baseGoodBuilds.run_nr,
+          branch: baseBranch,
+          ref: baseGoodBuilds.head_commit
         });
-      } catch (e) {
-        log(
-          `Error processing PR candidate(${prRun.run_nr}) but continuing: %O`,
-          e
-        );
-      } finally {
-        yield git.checkout(prBranch);
       }
-    }
-    const baseCommits = yield getCommits(git, prBranch, baseBranch, "HEAD~1");
-    const baseGoodBuilds = yield githubApi.getLastGoodBranchBuildRun(
-      baseBranch,
-      "push",
-      baseCommits
-    );
-    if (baseGoodBuilds) {
-      let affectedComponents = yield githubApi.getChangedComponents(
-        git,
-        lastCommitSha,
-        baseGoodBuilds.head_commit
-      );
-      prBuilds.push({
-        distance: diffWeight(affectedComponents),
-        hash: baseGoodBuilds.head_commit,
-        run_nr: baseGoodBuilds.run_nr,
-        branch: baseBranch,
-        ref: baseGoodBuilds.head_commit
-      });
-    }
-    prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
-    if (prBuilds.length > 0)
-      return {
-        sha: prBuilds[0].hash,
-        run_number: prBuilds[0].run_nr,
-        branch: prBuilds[0].branch.replace("origin/", ""),
-        ref: prBuilds[0].ref
-      };
-    return "rebuild";
+      prBuilds.sort((a, b) => a.distance > b.distance ? 1 : -1);
+      if (prBuilds.length > 0) {
+        resolve({
+          sha: prBuilds[0].hash,
+          run_number: prBuilds[0].run_nr,
+          branch: prBuilds[0].branch.replace("origin/", ""),
+          ref: prBuilds[0].ref
+        });
+        return;
+      }
+      resolve("rebuild");
+      return;
+    }));
   });
 }
 
@@ -26318,7 +26332,12 @@ var SimpleGit = class {
 };
 
 // main.ts
+var FULL_REBUILD_NEEDED = "full_rebuild_needed";
 (() => __async(exports, null, function* () {
+  if (process.env.NX_AFFECTED_ALL === "true" || process.env.TEST_EVERYTHING === "true") {
+    console.log(FULL_REBUILD_NEEDED);
+    return;
+  }
   const runner = new LocalRunner(new import_action.Octokit());
   let git = new SimpleGit(process.env.REPO_ROOT, process.env.SHELL);
   const diffWeight = (s) => s.length;
@@ -26339,12 +26358,13 @@ var SimpleGit = class {
     process.env.WORKFLOW_ID
   );
   if (rev === "rebuild") {
-    console.log(`Full rebuild needed`);
-  } else {
-    rev.branch = rev.branch.replace(/'/g, "");
-    rev.ref = rev.ref.replace(/'/g, "");
-    console.log(JSON.stringify(rev));
+    console.log(FULL_REBUILD_NEEDED);
+    process.exit(0);
   }
+  rev.branch = rev.branch.replace(/'/g, "");
+  rev.ref = rev.ref.replace(/'/g, "");
+  console.log(JSON.stringify(rev));
+  process.exit(0);
 }))();
 /*!
  * is-plain-object <https://github.com/jonschlinkert/is-plain-object>

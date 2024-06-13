@@ -345,6 +345,25 @@ export class CmsContentfulService {
     )
   }
 
+  async getOrganizationByReferenceId(
+    referenceId: string,
+    lang: string,
+  ): Promise<Organization> {
+    const params = {
+      ['content_type']: 'organization',
+      include: 10,
+      'fields.referenceIdentifier': referenceId,
+    }
+
+    const result = await this.contentfulRepository
+      .getLocalizedEntries<types.IOrganizationFields>(lang, params)
+      .catch(errorHandler('getOrganization'))
+
+    return (
+      (result.items as types.IOrganization[]).map(mapOrganization)[0] ?? null
+    )
+  }
+
   async getOrganizationPage(
     slug: string,
     lang: string,
@@ -443,7 +462,7 @@ export class CmsContentfulService {
     }
 
     const result = await this.contentfulRepository
-      .getLocalizedEntries<types.IProjectPageFields>(lang, params)
+      .getLocalizedEntries<types.IProjectPageFields>(lang, params, 5)
       .catch(errorHandler('getProjectPage'))
 
     return result.items.length
