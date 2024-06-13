@@ -25,6 +25,7 @@ import {
   StudentTrackDto,
   UniversityCareersClientService,
   UniversityId,
+  UniversityIdShort,
 } from '@island.is/clients/university-careers'
 import {
   EinstaklingurDTOFaeding,

@@ -30,7 +30,7 @@ export const PersonalSection = buildSection({
           readOnly: true,
           format: '######-####',
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.kennitala,
+            application.externalData?.nationalRegistry?.data?.nationalId,
         }),
         buildTextField({
           id: 'userInformation.name',
@@ -39,8 +39,7 @@ export const PersonalSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.fulltNafn
-              ?.fulltNafn,
+            application.externalData?.nationalRegistry?.data?.fullName,
         }),
         buildTextField({
           id: 'userInformation.birthDate',
@@ -50,8 +49,7 @@ export const PersonalSection = buildSection({
           readOnly: true,
           defaultValue: (application: Application) =>
             formatDate(
-              application.externalData?.nationalRegistry?.data?.faedingarstadur
-                ?.faedingarDagur,
+              application.externalData?.nationalRegistry?.data?.birthDate,
             ),
         }),
         buildTextField({
@@ -61,8 +59,7 @@ export const PersonalSection = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: (application: Application) =>
-            application.externalData?.nationalRegistry?.data?.rikisfang
-              ?.rikisfangLand,
+            application.externalData?.nationalRegistry?.data?.citizenship.name,
         }),
         buildTextField({
           id: 'userInformation.email',
