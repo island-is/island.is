@@ -3,6 +3,7 @@ export enum AuthDelegationType {
   LegalGuardian = 'LegalGuardian',
   Custom = 'Custom',
   PersonalRepresentative = 'PersonalRepresentative',
+  LegalGuardianMinor = 'LegalGuardianMinor',
 }
 
 export enum AuthDelegationProvider {

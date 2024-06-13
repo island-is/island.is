@@ -14,7 +14,7 @@ const person2 = createNationalId('person')
 const person3 = createNationalId('person')
 
 const Parent1 = createNationalId('person')
-const child1 = createNationalId('person')
+const child1 = createNationalId('residentChild')
 
 const company1 = createNationalId('company')
 

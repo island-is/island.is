@@ -1257,11 +1257,11 @@ describe('DelegationsController', () => {
 
         it('should return a single merged delegation', async () => {
           expect(body.length).toEqual(1)
-          expect(body[0].types.sort()).toEqual(
-            [
+          expect(body[0].types).toEqual(
+            expect.arrayContaining([
               AuthDelegationType.Custom,
               AuthDelegationType.LegalGuardian,
-            ].sort(),
+            ]),
           )
         })
       })

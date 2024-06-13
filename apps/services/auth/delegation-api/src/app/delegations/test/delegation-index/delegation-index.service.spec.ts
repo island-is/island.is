@@ -24,11 +24,13 @@ import {
   AuthDelegationType,
 } from '@island.is/shared/types'
 
-import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
+import {
+  indexingTestCases,
+  prRight1,
+  testDate,
+} from './delegation-index-test-cases'
 import { domainName, TestCase, user } from './delegations-index-types'
 import { setupWithAuth } from '../../../../../test/setup'
-
-const testDate = new Date(2024, 2, 1)
 
 describe('DelegationsIndexService', () => {
   let app: TestApp
@@ -206,8 +208,12 @@ describe('DelegationsIndexService', () => {
 
           expect(delegations.length).toBe(testCase.expectedFrom.length)
           delegations.forEach((delegation) => {
-            expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
-            expect(delegation.toNationalId).toBe(user.nationalId)
+            const delegationRecord = testCase.expectedFrom.find(
+              (record) =>
+                record.nationalId === delegation.fromNationalId &&
+                record.type === delegation.type,
+            )
+            expect(delegationRecord).toBeDefined()
           })
         })
       },
@@ -222,11 +228,10 @@ describe('DelegationsIndexService', () => {
         // Act
         await delegationIndexService.indexDelegations(user)
 
-        try {
-          await delegationIndexService.indexDelegations(user)
-        } catch (error) {
-          console.log(error)
-        }
+        // delete delegation index meta to force reindex
+        await delegationIndexMetaModel.destroy({ where: {} })
+
+        await delegationIndexService.indexDelegations(user)
 
         // Assert
         const delegations = await delegationIndexModel.findAll({
@@ -423,7 +428,7 @@ describe('DelegationsIndexService', () => {
   describe('indexCustomDelegations', () => {
     const testCase = indexingTestCases.custom
 
-    beforeAll(async () => setup(testCase))
+    beforeEach(async () => setup(testCase))
 
     it('should index custom delegations', async () => {
       // Arrange
@@ -441,8 +446,41 @@ describe('DelegationsIndexService', () => {
 
       expect(delegations.length).toEqual(testCase.expectedFrom.length)
       delegations.forEach((delegation) => {
-        expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
-        expect(delegation.toNationalId).toBe(user.nationalId)
+        const delegationRecord = testCase.expectedFrom.find(
+          (record) =>
+            record.nationalId === delegation.fromNationalId &&
+            record.type === delegation.type,
+        )
+        expect(delegationRecord).toBeDefined()
+      })
+    })
+
+    it('should not fail when re-indexing', async () => {
+      // Arrange
+      const nationalId = user.nationalId
+
+      // Act
+      await delegationIndexService.indexCustomDelegations(nationalId)
+
+      await delegationIndexMetaModel.destroy({ where: {} })
+
+      await delegationIndexService.indexCustomDelegations(nationalId)
+
+      // Assert
+      const delegations = await delegationIndexModel.findAll({
+        where: {
+          toNationalId: nationalId,
+        },
+      })
+
+      expect(delegations.length).toEqual(testCase.expectedFrom.length)
+      delegations.forEach((delegation) => {
+        const delegationRecord = testCase.expectedFrom.find(
+          (record) =>
+            record.nationalId === delegation.fromNationalId &&
+            record.type === delegation.type,
+        )
+        expect(delegationRecord).toBeDefined()
       })
     })
   })
@@ -450,7 +488,7 @@ describe('DelegationsIndexService', () => {
   describe('indexRepresentativeDelegations', () => {
     const testCase = indexingTestCases.personalRepresentative
 
-    beforeAll(async () => setup(testCase))
+    beforeEach(async () => setup(testCase))
 
     afterEach(async () => {
       // remove all data
@@ -474,11 +512,13 @@ describe('DelegationsIndexService', () => {
 
       expect(delegations.length).toEqual(testCase.expectedFrom.length)
       delegations.forEach((delegation) => {
-        expect(testCase.expectedFrom).toContain(delegation.fromNationalId)
-        expect(delegation.toNationalId).toBe(user.nationalId)
-        expect(delegation.type).toBe(
-          `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
+        const delegationRecord = testCase.expectedFrom.find(
+          (record) =>
+            record.nationalId === delegation.fromNationalId &&
+            record.type ===
+              `${AuthDelegationType.PersonalRepresentative}:${prRight1}`,
         )
+        expect(delegationRecord).toBeDefined()
       })
     })
   })
