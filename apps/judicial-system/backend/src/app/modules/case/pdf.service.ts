@@ -17,6 +17,7 @@ import {
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isTrafficViolationCase,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -29,6 +30,7 @@ import {
   getRulingPdfAsBuffer,
   IndictmentConfirmation,
 } from '../../formatters'
+import { createSubpoenaPDF } from '../../formatters/subpoenaPdf'
 import { AwsS3Service } from '../aws-s3'
 import { UserService } from '../user'
 import { Case } from './models/case.model'

@@ -79,7 +79,7 @@ interface ListItemAction {
 
 interface ListItemProps {
   title: string
-  date: Date | string
+  date?: Date | string
   subtitle: string
   unread?: boolean
   actions?: ListItemAction[]
@@ -122,9 +122,11 @@ export function ListItem({
                 {title}
               </Typography>
             </Title>
-            <Typography variant="body3">
-              <FormattedDate value={date} />
-            </Typography>
+            {date && (
+              <Typography variant="body3">
+                <FormattedDate value={date} />
+              </Typography>
+            )}
           </Row>
           <Row style={{ alignItems: 'center', paddingBottom: 0 }}>
             <Typography
