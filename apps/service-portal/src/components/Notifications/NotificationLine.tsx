@@ -51,7 +51,7 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
             <AvatarImage
               img={data.sender.logoUrl}
               background={!isRead ? 'white' : 'blue100'}
-              ariaLabel="Sender"
+              as="div"
               imageClass={styles.img}
             />
           ) : undefined}
