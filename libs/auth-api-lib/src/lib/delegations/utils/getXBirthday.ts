@@ -15,7 +15,7 @@ export const getXBirthday = (age: number, nationalId: string) => {
     ),
   )
 
-  // If person has already turned X age, return null
+  // If a person hasn't already turned X age
   if (isBefore(new Date(), xBirthday)) {
     return xBirthday
   }
