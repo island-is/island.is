@@ -16,7 +16,7 @@ export const isAvailableForApplication = (
   // Check if the input date is within the expiration limit
   const withinExpirationDate = inputDate >= today && inputDate <= xMonthsLater
 
-  if (idTypeChosen !== oldIdType) {
+  if (idTypeChosen === 'II ' && oldIdType === 'ID') {
     // if types are not the same, then expiration date does not matter since you can apply for an id card type that you don't have regardless of old one
     return true
   }

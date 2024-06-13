@@ -60,8 +60,13 @@ export class IdCardService extends BaseTemplateApiService {
     const expDate = identityDocument.userPassport?.expirationDate?.toString()
     // if applicant has valid id that is not withinExpirationDate, then not available for application,
     // otherwise available, either with no id or id within expiration limit
+    // applicant can have a valid ID and apply for II
     const applicantIdentityWithinLimits = expDate
-      ? isAvailableForApplication(expDate, '', '') //TODO FIX
+      ? isAvailableForApplication(
+          expDate,
+          'II',
+          `${identityDocument.userPassport?.type}${identityDocument.userPassport?.subType}`,
+        )
       : true
 
     let childIdentityWithinLimits = false
@@ -69,7 +74,11 @@ export class IdCardService extends BaseTemplateApiService {
       if (child.passports && child.passports.length > 0) {
         child.passports.map((id) => {
           const withinLimits = id.expirationDate
-            ? isAvailableForApplication(id.expirationDate.toString(), '', '')
+            ? isAvailableForApplication(
+                id.expirationDate.toString(),
+                'II',
+                `${id.type}${id.subType}`,
+              )
             : true
 
           if (withinLimits) {
