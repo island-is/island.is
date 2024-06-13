@@ -323,7 +323,7 @@ export class DelegationsIndexService {
       currRecords,
     })
 
-    await Promise.all([
+    const indexingPromises = await Promise.allSettled([
       this.delegationIndexModel.bulkCreate(created),
       updated.map((d) =>
         this.delegationIndexModel.update(d, {
@@ -346,6 +346,13 @@ export class DelegationsIndexService {
         }),
       ),
     ])
+
+    // log any errors
+    indexingPromises.forEach((p) => {
+      if (p.status === 'rejected') {
+        console.error(p.reason)
+      }
+    })
   }
 
   private sortDelegation({
@@ -359,6 +366,7 @@ export class DelegationsIndexService {
       (acc, curr) => {
         const existing = currRecords.find(
           (d) =>
+            d.toNationalId === curr.toNationalId &&
             d.fromNationalId === curr.fromNationalId &&
             d.type === curr.type &&
             d.provider === curr.provider,
