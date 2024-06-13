@@ -25,23 +25,7 @@ import {
   StudentTrackDto,
   UniversityCareersClientService,
   UniversityId,
-  UniversityIdShort,
 } from '@island.is/clients/university-careers'
-import {
-  EinstaklingurDTOFaeding,
-  EinstaklingurDTOHeimili,
-  EinstaklingurDTONafnAllt,
-  EinstaklingurDTORikisfang,
-} from '@island.is/clients/national-registry-v3'
-
-export interface EinstaklingurDTO {
-  kennitala?: string | null
-  nafn?: string | null
-  heimilisfang?: EinstaklingurDTOHeimili
-  rikisfang?: EinstaklingurDTORikisfang
-  faedingarstadur?: EinstaklingurDTOFaeding
-  fulltNafn?: EinstaklingurDTONafnAllt
-}
 
 const getFoundationProgram = (
   professionId: string,
