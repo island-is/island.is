@@ -414,17 +414,19 @@ export class AdminClientsService {
       supportsProcuringHolders,
       supportsPersonalRepresentatives,
       supportsLegalGuardians,
-      ...rest
+      ...clientAttributes
     } = data.clientAttributes
 
-    if (Object.keys(data.clientAttributes as object).length > 0) {
+    if (Object.keys(clientAttributes as object).length > 0) {
       // Update includes client base attributes
+      const refreshTokenExpiration = data.refreshTokenExpiration
+        ? translateRefreshTokenExpiration(data.refreshTokenExpiration)
+        : undefined
+
       await this.clientModel.update(
         {
-          ...rest,
-          refreshTokenExpiration: translateRefreshTokenExpiration(
-            data.refreshTokenExpiration,
-          ),
+          ...clientAttributes,
+          refreshTokenExpiration,
         },
         {
           where: {
@@ -499,33 +501,25 @@ export class AdminClientsService {
       })
     }
 
-    await this.clientsService.addClientDelegationTypes({
-      clientId: data.clientId,
-      delegationTypes: addedDelegationTypes,
-      delegationBooleanTypes: {
-        supportsPersonalRepresentatives,
-        supportsLegalGuardians,
-        supportsProcuringHolders,
-        supportsCustomDelegation,
-      },
-      options: {
-        transaction,
-      },
-    })
+    if (addedDelegationTypes && addedDelegationTypes.length > 0) {
+      await this.clientsService.addClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: addedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
 
-    await this.clientsService.removeClientDelegationTypes({
-      clientId: data.clientId,
-      delegationTypes: removedDelegationTypes,
-      delegationBooleanTypes: {
-        supportsPersonalRepresentatives,
-        supportsLegalGuardians,
-        supportsProcuringHolders,
-        supportsCustomDelegation,
-      },
-      options: {
-        transaction,
-      },
-    })
+    if (removedDelegationTypes && removedDelegationTypes.length > 0) {
+      await this.clientsService.removeClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: removedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
   }
 
   private defaultClientAttributes(clientType: ClientType) {

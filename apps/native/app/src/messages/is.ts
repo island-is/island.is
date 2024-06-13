@@ -168,10 +168,14 @@ export const is = {
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
     'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
-  'inbox.filterButtonTitle': 'Opna síu',
+  'inbox.filterButtonTitle': 'Sía',
   'inbox.filterOpenedTagTitle': 'Ólesið',
   'inbox.filterArchivedTagTitle': 'Geymsla',
   'inbox.filterStarredTagTitle': 'Stjörnumerkt',
+  'inbox.markAllAsReadPromptTitle': 'Viltu merkja öll skjöl sem lesin?',
+  'inbox.markAllAsReadPromptDescription': 'Þessi aðgerð er ekki afturkræf',
+  'inbox.markAllAsReadPromptCancel': 'Hætta við',
+  'inbox.markAllAsReadPromptConfirm': 'Merkja lesið',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Sía skjöl',

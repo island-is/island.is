@@ -9,7 +9,10 @@ import {
   Box,
   FilterInput,
   FocusableBox,
+  GridColumn,
   GridContainer,
+  GridRow,
+  Inline,
   Pagination,
   Stack,
   Text,
@@ -56,10 +59,10 @@ const NonClickableItem = ({ item }: ItemProps) => {
 
   return (
     <Box
-      key={item.id}
       padding={[2, 2, 3]}
       border="standard"
       borderRadius="large"
+      height="full"
     >
       <Stack space={0}>
         <Stack space={0}>
@@ -86,11 +89,11 @@ const ClickableItem = ({ item }: ItemProps) => {
 
   return (
     <FocusableBox
-      key={item.id}
       padding={[2, 2, 3]}
       border="standard"
       borderRadius="large"
       href={item.slug ? `${pathname}/${item.slug}` : undefined}
+      height="full"
     >
       <Stack space={0}>
         <Stack space={0}>
@@ -129,6 +132,7 @@ export const GenericList = ({
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
   const firstRender = useRef(true)
   const [errorOccurred, setErrorOccurred] = useState(false)
+  const ref = useRef<HTMLElement | null>(null)
 
   const { activeLocale } = useI18n()
 
@@ -187,23 +191,27 @@ export const GenericList = ({
 
   const itemsAreClickable = itemType === 'Clickable'
 
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={5}>
-          <FilterInput
-            name="list-search"
-            onChange={(value) => {
-              setSearchValue(value)
-              searchValueRef.current = value
-              setPage(1)
-              pageRef.current = 1
-            }}
-            value={searchValue}
-            loading={loading}
-            placeholder={searchInputPlaceholder ?? undefined}
-            backgroundColor="white"
-          />
+          <Box ref={ref}>
+            <FilterInput
+              name="list-search"
+              onChange={(value) => {
+                setSearchValue(value)
+                searchValueRef.current = value
+                setPage(1)
+                pageRef.current = 1
+              }}
+              value={searchValue}
+              loading={loading}
+              placeholder={searchInputPlaceholder ?? undefined}
+              backgroundColor="white"
+            />
+          </Box>
           {errorOccurred && (
             <AlertMessage
               type="warning"
@@ -218,17 +226,39 @@ export const GenericList = ({
           {items.length === 0 && <Text>{noResultsFoundText}</Text>}
           {items.length > 0 && (
             <Stack space={3}>
-              <Text>
-                {totalItems} {resultsFoundText}
-              </Text>
-              {!itemsAreClickable &&
-                items.map((item) => (
-                  <NonClickableItem key={item.id} item={item} />
-                ))}
-              {itemsAreClickable &&
-                items.map((item) => (
-                  <ClickableItem key={item.id} item={item} />
-                ))}
+              <Inline space={2} justifyContent="spaceBetween" alignY="center">
+                <Text>
+                  {totalItems} {resultsFoundText}
+                </Text>
+                {totalPages > 1 && (
+                  <Text>
+                    {activeLocale === 'is' ? 'Síða' : 'Page'} {page}{' '}
+                    {activeLocale === 'is' ? 'af' : 'of'} {totalPages}
+                  </Text>
+                )}
+              </Inline>
+              <GridContainer>
+                <GridRow rowGap={3}>
+                  {!itemsAreClickable &&
+                    items.map((item) => (
+                      <GridColumn
+                        key={item.id}
+                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+                      >
+                        <NonClickableItem item={item} />
+                      </GridColumn>
+                    ))}
+                  {itemsAreClickable &&
+                    items.map((item) => (
+                      <GridColumn
+                        key={item.id}
+                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+                      >
+                        <ClickableItem item={item} />
+                      </GridColumn>
+                    ))}
+                </GridRow>
+              </GridContainer>
             </Stack>
           )}
 
@@ -242,6 +272,16 @@ export const GenericList = ({
                   onClick={() => {
                     setPage(page)
                     pageRef.current = page
+
+                    // Scroll to top of the list on page change
+                    const position = ref.current?.getBoundingClientRect()
+                    if (position) {
+                      window.scroll({
+                        behavior: 'smooth',
+                        left: position.left,
+                        top: position.top + window.scrollY - 20,
+                      })
+                    }
                   }}
                 >
                   <span className={className}>{children}</span>
