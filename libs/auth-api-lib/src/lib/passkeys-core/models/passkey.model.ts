@@ -8,7 +8,7 @@ import {
   Model,
 } from 'sequelize-typescript'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import {
+import type {
   CreationOptional,
   InferAttributes,
   InferCreationAttributes,
