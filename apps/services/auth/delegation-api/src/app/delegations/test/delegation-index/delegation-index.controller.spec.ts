@@ -14,7 +14,6 @@ import {
 } from '@island.is/shared/types'
 
 import { setupWithAuth } from '../../../../../test/setup'
-import { child2 } from './delegation-index-test-cases'
 
 const path = '/v1/delegation-index/.id'
 const testNationalId = createNationalId('person')
