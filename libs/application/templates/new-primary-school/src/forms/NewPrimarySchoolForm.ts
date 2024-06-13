@@ -28,8 +28,13 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
-import { RelationOptions, SiblingRelationOptions } from '../lib/constants'
+import {
+  ReasonForApplicationOptions,
+  RelationOptions,
+  SiblingRelationOptions,
+} from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   canApply,
@@ -39,6 +44,7 @@ import {
   getFoodIntolerancesOptions,
   getLanguageCodes,
   getOtherParent,
+  getReasonForApplicationOptions,
   getRelationOptionLabel,
   getRelationOptions,
   getSiblingRelationOptionLabel,
@@ -415,24 +421,124 @@ export const NewPrimarySchoolForm: Form = buildForm({
       title: newPrimarySchoolMessages.primarySchool.sectionTitle,
       children: [
         buildSubSection({
-          id: 'newSchoolSubSection',
-          title:
-            newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
-          children: [],
-        }),
-        buildSubSection({
-          id: 'reasonForTransferSubSection',
+          id: 'reasonForApplicationSubSection',
           title:
             newPrimarySchoolMessages.primarySchool
-              .reasonForTransferSubSectionTitle,
-          children: [],
+              .reasonForApplicationSubSectionTitle,
+          children: [
+            buildMultiField({
+              id: 'reasonForApplication',
+              title:
+                newPrimarySchoolMessages.primarySchool
+                  .reasonForApplicationSubSectionTitle,
+              description:
+                newPrimarySchoolMessages.primarySchool
+                  .reasonForApplicationDescription,
+              children: [
+                buildSelectField({
+                  id: 'reasonForApplication.reason',
+                  dataTestId: 'reason-for-application',
+                  title:
+                    newPrimarySchoolMessages.primarySchool
+                      .reasonForApplicationSubSectionTitle,
+                  placeholder:
+                    newPrimarySchoolMessages.primarySchool
+                      .reasonForApplicationPlaceholder,
+                  options: getReasonForApplicationOptions(),
+                }),
+                buildSelectField({
+                  id: 'reasonForApplication.movingAbroad.country',
+                  dataTestId: 'reason-for-application-country',
+                  title: newPrimarySchoolMessages.primarySchool.country,
+                  placeholder:
+                    newPrimarySchoolMessages.primarySchool.countryPlaceholder,
+                  options: () => {
+                    const countries = getAllCountryCodes()
+                    return countries.map((country) => {
+                      return {
+                        label: country.name_is || country.name,
+                        value: country.code,
+                      }
+                    })
+                  },
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.MOVING_ABROAD
+                    )
+                  },
+                }),
+                buildTextField({
+                  id: 'reasonForApplication.transferOfLegalDomicile.streetAddress',
+                  title: newPrimarySchoolMessages.shared.address,
+                  width: 'half',
+                  required: true,
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+                    )
+                  },
+                }),
+                buildTextField({
+                  id: 'reasonForApplication.transferOfLegalDomicile.postalCode',
+                  title: newPrimarySchoolMessages.shared.postalcode,
+                  width: 'half',
+                  required: true,
+                  format: '###',
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+                    )
+                  },
+                }),
+                buildAlertMessageField({
+                  id: 'reasonForApplication.info',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.primarySchool
+                      .registerNewDomicileAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (answers) => {
+                    const {
+                      reasonForApplication,
+                      reasonForApplicationCountry,
+                    } = getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                        ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE ||
+                      (reasonForApplication ===
+                        ReasonForApplicationOptions.MOVING_ABROAD &&
+                        reasonForApplicationCountry !== undefined)
+                    )
+                  },
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'siblingsSubSection',
           title: newPrimarySchoolMessages.primarySchool.siblingsSubSectionTitle,
-          condition: (answers, externalData) => {
-            // TODO: Only display section if "Siblings" selected as Reason for transfer
-            return true
+          condition: (answers) => {
+            // Only display section if "Siblings in the same primary school" selected as reason for application
+            const { reasonForApplication } = getApplicationAnswers(answers)
+            return (
+              reasonForApplication ===
+              ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+            )
           },
           children: [
             buildMultiField({
@@ -501,10 +607,30 @@ export const NewPrimarySchoolForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'newSchoolSubSection',
+          title:
+            newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+          condition: (answers) => {
+            // Only display section if "Moving abroad" is not selected as reason for application
+            const { reasonForApplication } = getApplicationAnswers(answers)
+            return (
+              reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+            )
+          },
+          children: [],
+        }),
+        buildSubSection({
           id: 'startingSchoolSubSection',
           title:
             newPrimarySchoolMessages.primarySchool
               .startingSchoolSubSectionTitle,
+          condition: (answers) => {
+            // Only display section if "Moving abroad" is not selected as reason for application
+            const { reasonForApplication } = getApplicationAnswers(answers)
+            return (
+              reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+            )
+          },
           children: [
             buildMultiField({
               id: 'startingSchoolMultiField',
@@ -529,6 +655,13 @@ export const NewPrimarySchoolForm: Form = buildForm({
     buildSection({
       id: 'differentNeedsSection',
       title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
+      condition: (answers) => {
+        // Only display section if "Moving abroad" is not selected as reason for application
+        const { reasonForApplication } = getApplicationAnswers(answers)
+        return (
+          reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+        )
+      },
       children: [
         buildSubSection({
           id: 'languageSubSection',
