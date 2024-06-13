@@ -41,8 +41,6 @@ export class ApplicationResolver {
     @Args('input') input: ApplicationApplicationInput,
     @CurrentUser() user: User,
   ): Promise<Application> {
-    console.log('hér')
-
     return this.applicationService.findOne(input.id, user, locale)
   }
 
