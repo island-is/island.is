@@ -33,13 +33,17 @@ import {
 } from '@island.is/shared/problem'
 import { DelegationsScreen } from '../components/DelegationsScreen'
 
-const ApplicationLoader: FC<
-  React.PropsWithChildren<{
-    applicationId: string
-    nationalRegistryId: string
-    slug: string
-  }>
-> = ({ applicationId, nationalRegistryId, slug }) => {
+type Props = {
+  applicationId: string
+  nationalRegistryId: string
+  slug: string
+}
+
+const ApplicationLoader = ({
+  applicationId,
+  nationalRegistryId,
+  slug,
+}: Props) => {
   const type = getTypeFromSlug(slug)
   const [delegationsChecked, setDelegationsChecked] = useState(
     type ? false : true,
@@ -60,6 +64,7 @@ const ApplicationLoader: FC<
     notifyOnNetworkStatusChange: true,
     skip: !applicationId,
   })
+  console.log('Data: ', data)
 
   const application = data?.applicationApplication
 
@@ -184,13 +189,11 @@ const ShellWrapper: FC<
   )
 }
 
-export const ApplicationForm: FC<
-  React.PropsWithChildren<{
-    applicationId: string
-    nationalRegistryId: string
-    slug: string
-  }>
-> = ({ applicationId, nationalRegistryId, slug }) => {
+export const ApplicationForm = ({
+  applicationId,
+  nationalRegistryId,
+  slug,
+}: Props) => {
   return (
     <FieldProvider>
       <ApplicationLoader
