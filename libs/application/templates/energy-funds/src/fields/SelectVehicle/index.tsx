@@ -10,7 +10,10 @@ import { VehicleSelectField } from './VehicleSelectField'
 import { VehicleCheckboxField } from './VehicleCheckboxField'
 import { useLazyVehicleDetailsWithGrantByPermno } from '../../hooks/useLazyVehicleQuery'
 import { ApolloQueryResult } from '@apollo/client'
-import { FindVehicleFormField } from '@island.is/application/ui-fields'
+import {
+  FindVehicleFormField,
+  SelectVehicleFormField,
+} from '@island.is/application/ui-fields'
 import { information } from '../../lib/messages/information'
 import { error } from '../../lib/messages'
 
@@ -62,12 +65,34 @@ export const SelectVehicle: FC<React.PropsWithChildren<FieldBaseProps>> = (
             energyFundsMessages: information.labels.pickVehicle,
           }}
         />
-      ) : currentVehicleList.totalRecords > 5 ? (
-        <VehicleSelectField
-          currentVehicleList={currentVehicleList.vehicles}
-          {...props}
+      ) : currentVehicleList.totalRecords > 0 ? (
+        <SelectVehicleFormField
+          application={application}
+          field={{
+            id: 'vehicle',
+            title: information.labels.pickVehicle.title,
+            description: information.labels.pickVehicle.description,
+            type: FieldTypes.SELECT_VEHICLE,
+            component: FieldComponents.SELECT_VEHICLE,
+            children: undefined,
+            options: currentVehicleList.vehicles.map((vehicle, index) => {
+              return {
+                value: vehicle?.permno || '',
+                label: `${vehicle?.make} - ${vehicle?.permno}` || '',
+              }
+            }),
+            getDetails: createGetVehicleDetailsWrapper(getVehicleDetails),
+            selectLabel: information.labels.pickVehicle.vehicle,
+            selectPlaceholder: information.labels.pickVehicle.placeholder,
+            isMachine: true,
+          }}
         />
       ) : (
+        //
+        //   <VehicleSelectField
+        //     currentVehicleList={currentVehicleList.vehicles}
+        //     {...props}
+        //   />
         <VehicleCheckboxField
           currentVehicleList={currentVehicleList.vehicles}
           {...props}
