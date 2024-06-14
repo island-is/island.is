@@ -4,22 +4,20 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'forms',
+        'inputs',
         {
           id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allowNull: false,
-          },
-          guid: {
             type: Sequelize.UUID,
-            primaryKey: false,
+            primaryKey: true,
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
           name: {
-            type: Sequelize.STRING,
+            type: Sequelize.JSON,
+            allowNull: false,
+          },
+          description: {
+            type: Sequelize.JSON,
             allowNull: false,
           },
           created: {
@@ -32,32 +30,35 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          invalidation_date: {
-            type: Sequelize.DATE,
-            allowNull: true,
+          display_order: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
           },
-          is_translated: {
+          is_hidden: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
           },
-          application_days_to_remove: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-            defaultValue: 60,
-          },
-          derived_from: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-          },
-          stop_progress_on_validating_step: {
+          is_part_of_multiset: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
-            defaultValue: true,
+            defaultValue: false,
           },
-          completed_message: {
+          group_id: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            references: {
+              model: 'groups',
+              key: 'id',
+            },
+          },
+          input_type: {
             type: Sequelize.STRING,
-            allowNull: true,
+            allowNull: false,
+            references: {
+              model: 'input_types',
+              key: 'type',
+            },
           },
         },
         { transaction: t },
@@ -67,7 +68,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('forms', { transaction: t }),
+      queryInterface.dropTable('inputs', { transaction: t }),
     )
   },
 }

@@ -4,22 +4,16 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'steps',
+        'form_applicants',
         {
           id: {
-            type: Sequelize.INTEGER,
-            primaryKey: true,
-            autoIncrement: true,
-            allowNull: false,
-          },
-          guid: {
             type: Sequelize.UUID,
-            primaryKey: false,
+            primaryKey: true,
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
           },
           name: {
-            type: Sequelize.STRING,
+            type: Sequelize.JSON,
             allowNull: false,
           },
           created: {
@@ -32,35 +26,20 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          type: {
-            type: Sequelize.STRING,
+          applicant_type: {
+            type: Sequelize.ENUM(
+              'individual',
+              'individualWithMandateFromIndividual',
+              'individualWithMandateFromLegalEntity',
+              'individualWithProcuration',
+              'individualGivingMandate',
+              'legalEntity',
+            ),
             allowNull: false,
-          },
-          display_order: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-          },
-          waiting_text: {
-            type: Sequelize.STRING,
-            allowNull: true,
-          },
-          is_hidden: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
-          call_ruleset: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
-          is_completed: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
+            defaultValue: 'individual',
           },
           form_id: {
-            type: Sequelize.INTEGER,
+            type: Sequelize.UUID,
             allowNull: false,
             references: {
               model: 'forms',
@@ -75,7 +54,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('steps', { transaction: t }),
+      queryInterface.dropTable('form_applicants', { transaction: t }),
     )
   },
 }

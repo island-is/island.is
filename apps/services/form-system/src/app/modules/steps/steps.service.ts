@@ -1,7 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Step } from './step.model'
-import { CreateStepDto } from './dto/create-step.dto'
+import { Step } from './models/step.model'
+import { CreateStepDto } from './models/dto/createStep.dto'
+import { Group } from '../groups/models/group.model'
+import { Input } from '../inputs/models/input.model'
 
 @Injectable()
 export class StepsService {
@@ -9,6 +11,24 @@ export class StepsService {
     @InjectModel(Step)
     private readonly stepModel: typeof Step,
   ) {}
+
+  async findAll(): Promise<Step[]> {
+    return await this.stepModel.findAll()
+  }
+
+  async findOne(id: string): Promise<Step | null> {
+    const step = await this.stepModel.findByPk(id, {
+      include: [
+        {
+          model: Group,
+          as: 'groups',
+          include: [{ model: Input, as: 'inputs' }],
+        },
+      ],
+    })
+
+    return step
+  }
 
   async create(createStepDto: CreateStepDto): Promise<Step> {
     const step = createStepDto as Step

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CreateStepDto {
+export class CreateGroupDto {
   @ApiProperty()
-  formId!: number
+  stepId!: string
 }

@@ -72,6 +72,20 @@
         "command": "sequelize-cli migration:generate",
         "cwd": "apps/services/form-system"
       }
+    },
+    "seed/generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli seed:generate",
+        "cwd": "apps/services/form-system"
+      }
+    },
+    "seed": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:seed:all",
+        "cwd": "apps/services/form-system"
+      }
     }
   },
   "tags": []

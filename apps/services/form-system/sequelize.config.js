@@ -6,6 +6,7 @@ module.exports = {
     database: 'form-system',
     host: 'localhost',
     dialect: 'postgres',
+    seederStorage: 'sequelize',
   },
   test: {
     username: 'test_db',
