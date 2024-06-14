@@ -6,8 +6,10 @@ import {
   GridContainer,
   GridRow,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import {
+  ConfirmationModal,
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
   m,
@@ -20,11 +22,12 @@ import { useParams } from 'react-router-dom'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import DefenderChoices from '../../components/DefenderChoices/DefenderChoices'
 import { useEffect, useState } from 'react'
-import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
 import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
 import CourtCaseDetail from '../CourtCaseDetail/CourtCaseDetail'
 import { useGetSubpoenaQuery } from './Subpoena.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { usePostSubpoenaAcknowledgedMutation } from '../CourtCaseDetail/CourtCaseDetail.generated'
+import { LawAndOrderPaths } from '../../lib/paths'
 
 type UseParams = {
   id: string
@@ -51,6 +54,7 @@ const Subpoena = () => {
     setSubpoenaAcknowledged,
     defenseChoice,
     lawyerSelected,
+    subpoenaModalVisible,
     setSubpoenaModalVisible,
   } = useLawAndOrderContext()
 
@@ -61,9 +65,64 @@ const Subpoena = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const [postAction, { loading: postActionLoading, data: updateData }] =
+    usePostSubpoenaAcknowledgedMutation({
+      onError: () => {
+        toast.error(formatMessage(messages.registrationError))
+      },
+      onCompleted: () => {
+        //TODO: What to do if user closes or cancel the pop up?
+
+        subpoenaAcknowledged &&
+          toast.success(formatMessage(messages.registrationCompleted))
+        setSubpoenaModalVisible(false)
+      },
+    })
+
+  const toggleModal = () => {
+    setSubpoenaModalVisible(!subpoenaModalVisible)
+  }
+
+  const handleSubmit = () => {
+    // TODO: What to do if error ?
+    setSubpoenaAcknowledged(true)
+    postAction({
+      variables: {
+        input: {
+          caseId: id,
+          acknowledged: true,
+        },
+      },
+    })
+  }
+
+  const handleCancel = () => {
+    // TODO: What to do if error ?
+    setSubpoenaAcknowledged(false)
+    postAction({
+      variables: {
+        input: {
+          caseId: id,
+          acknowledged: false,
+        },
+      },
+    })
+  }
+
   if (subpoena?.data && subpoenaAcknowledged === undefined) {
     setSubpoenaModalVisible(true)
-    return <ConfirmationModal id={subpoena?.data?.id} />
+    return (
+      <ConfirmationModal
+        onSubmit={handleSubmit}
+        onCancel={handleCancel}
+        onClose={toggleModal}
+        loading={postActionLoading}
+        redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
+        modalText={formatMessage(m.acknowledgeText, {
+          arg: formatMessage(messages.modalFromPolice),
+        })}
+      />
+    )
   }
 
   if (subpoenaAcknowledged === false) {

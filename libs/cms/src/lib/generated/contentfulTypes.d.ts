@@ -664,6 +664,9 @@ export interface IChartNumberBoxFields {
 
   /** Reduce and round value */
   reduceAndRoundValue?: boolean | undefined
+
+  /** Display Timestamp */
+  displayTimestamp?: boolean | undefined
 }
 
 /** A standalone component to display a value for a data key and optionally how it has evolved over a period of time. */

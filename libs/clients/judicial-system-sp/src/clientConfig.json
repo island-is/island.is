@@ -40,11 +40,11 @@
         "operationId": "CaseController_getAllCases",
         "parameters": [
           {
-            "name": "lang",
+            "name": "locale",
             "required": false,
             "in": "query",
-            "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": { "type": "string" }
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
           }
         ],
         "responses": {
@@ -79,11 +79,11 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "lang",
+            "name": "locale",
             "required": false,
             "in": "query",
-            "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": { "type": "string" }
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
           }
         ],
         "responses": {
@@ -118,11 +118,11 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "lang",
+            "name": "locale",
             "required": false,
             "in": "query",
-            "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": { "type": "string" }
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
           }
         ],
         "responses": {
@@ -155,11 +155,11 @@
             "schema": { "type": "string" }
           },
           {
-            "name": "lang",
+            "name": "locale",
             "required": false,
             "in": "query",
-            "description": "The requested language of the response. Defaults to Icelandic.",
-            "schema": { "type": "string" }
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
           }
         ],
         "requestBody": {

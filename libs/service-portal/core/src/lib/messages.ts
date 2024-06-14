@@ -1573,6 +1573,10 @@ export const m = defineMessages({
     id: 'service-portal:urgent',
     defaultMessage: 'Áríðandi',
   },
+  openErrand: {
+    id: 'sp.law-and-order:open-errand',
+    defaultMessage: 'Opna erindi',
+  },
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',

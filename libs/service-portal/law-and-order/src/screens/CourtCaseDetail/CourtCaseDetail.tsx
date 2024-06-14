@@ -1,11 +1,11 @@
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, toast } from '@island.is/island-ui/core'
 import {
   DOMSMALARADUNEYTID_SLUG,
-  ErrorScreen,
   IntroHeader,
   LinkResolver,
   m,
   NotFound,
+  ConfirmationModal,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -13,9 +13,11 @@ import { useParams } from 'react-router-dom'
 import { LawAndOrderPaths } from '../../lib/paths'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import { useEffect } from 'react'
-import ConfirmationModal from '../../components/ConfirmationModal/ConfirmationModal'
 import { useLawAndOrderContext } from '../../helpers/LawAndOrderContext'
-import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
+import {
+  useGetCourtCaseQuery,
+  usePostSubpoenaAcknowledgedMutation,
+} from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
@@ -59,6 +61,45 @@ const CourtCaseDetail = () => {
 
   const toggleModal = () => {
     setSubpoenaModalVisible(!subpoenaModalVisible)
+  }
+
+  const [postAction, { loading: postActionLoading, data: updateData }] =
+    usePostSubpoenaAcknowledgedMutation({
+      onError: () => {
+        toast.error(formatMessage(messages.registrationError))
+      },
+      onCompleted: () => {
+        //TODO: What to do if user closes or cancel the pop up?
+
+        subpoenaAcknowledged &&
+          toast.success(formatMessage(messages.registrationCompleted))
+        setSubpoenaModalVisible(false)
+      },
+    })
+
+  const handleSubmit = () => {
+    // TODO: What to do if error ?
+    setSubpoenaAcknowledged(true)
+    postAction({
+      variables: {
+        input: {
+          caseId: id,
+          acknowledged: true,
+        },
+      },
+    })
+  }
+  const handleCancel = () => {
+    // TODO: What to do if error ?
+    setSubpoenaAcknowledged(false)
+    postAction({
+      variables: {
+        input: {
+          caseId: id,
+          acknowledged: false,
+        },
+      },
+    })
   }
 
   //TODO: Samræma við þjónustu
@@ -148,7 +189,16 @@ const CourtCaseDetail = () => {
             <InfoLines groups={courtCase?.data?.groups} loading={loading} />
           )}
           {courtCase?.data && subpoenaModalVisible && !subpoenaAcknowledged && (
-            <ConfirmationModal id={courtCase.data.id} />
+            <ConfirmationModal
+              onSubmit={handleSubmit}
+              onCancel={handleCancel}
+              onClose={toggleModal}
+              loading={postActionLoading}
+              redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
+              modalText={formatMessage(m.acknowledgeText, {
+                arg: formatMessage(messages.modalFromPolice),
+              })}
+            />
           )}
         </>
       )}
