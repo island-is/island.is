@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Locale } from 'locale'
 import { useRouter } from 'next/router'
-import { parseAsInteger, useQueryState } from 'next-usequerystate'
+import { parseAsInteger, parseAsJson, useQueryState } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
 
 import {
@@ -136,6 +136,7 @@ export const GenericList = ({
 }: GenericListProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
+  const tagQueryId = `${id}tag`
 
   // TODO: add query params for filter tag search
   // TODO: ignore initial response if there are query params set and fetch according to the query params
@@ -143,6 +144,7 @@ export const GenericList = ({
 
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
+  const [parameters, setParameters] = useQueryState(tagQueryId, parseAsJson())
 
   const initialFilterCategories = getFilterCategories(filterTags ?? [])
 
@@ -274,7 +276,7 @@ export const GenericList = ({
                     //   [categoryId]: [],
                     // }))
                   }}
-                  categories={initialFilterCategories}
+                  categories={initialFilterCategories} // TODO: dont use same thing as published material, do things differently and more efficiently here
                 />
               </Filter>
             )}
