@@ -295,14 +295,14 @@ describe('CaseController - Transition', () => {
       ${CaseTransition.ASK_FOR_CONFIRMATION} | ${CaseState.DRAFT}                    | ${CaseState.WAITING_FOR_CONFIRMATION}
       ${CaseTransition.DENY_INDICTMENT}      | ${CaseState.WAITING_FOR_CONFIRMATION} | ${CaseState.DRAFT}
       ${CaseTransition.SUBMIT}               | ${CaseState.WAITING_FOR_CONFIRMATION} | ${CaseState.SUBMITTED}
+      ${CaseTransition.ASK_FOR_CANCELLATION} | ${CaseState.SUBMITTED}                | ${CaseState.WAITING_FOR_CANCELLATION}
+      ${CaseTransition.ASK_FOR_CANCELLATION} | ${CaseState.RECEIVED}                 | ${CaseState.WAITING_FOR_CANCELLATION}
       ${CaseTransition.RECEIVE}              | ${CaseState.SUBMITTED}                | ${CaseState.RECEIVED}
       ${CaseTransition.RETURN_INDICTMENT}    | ${CaseState.RECEIVED}                 | ${CaseState.DRAFT}
       ${CaseTransition.REDISTRIBUTE}         | ${CaseState.RECEIVED}                 | ${CaseState.MAIN_HEARING}
       ${CaseTransition.COMPLETE}             | ${CaseState.RECEIVED}                 | ${CaseState.COMPLETED}
       ${CaseTransition.DELETE}               | ${CaseState.DRAFT}                    | ${CaseState.DELETED}
       ${CaseTransition.DELETE}               | ${CaseState.WAITING_FOR_CONFIRMATION} | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}               | ${CaseState.SUBMITTED}                | ${CaseState.DELETED}
-      ${CaseTransition.DELETE}               | ${CaseState.RECEIVED}                 | ${CaseState.DELETED}
     `.describe(
     '$transition $oldState case transitioning to $newState case',
     ({ transition, oldState, newState }) => {
@@ -359,12 +359,22 @@ describe('CaseController - Transition', () => {
                 transition === CaseTransition.DELETE ? null : undefined,
               courtCaseNumber:
                 transition === CaseTransition.RETURN_INDICTMENT
-                  ? ''
+                  ? null
+                  : undefined,
+              indictmentHash:
+                transition === CaseTransition.RETURN_INDICTMENT
+                  ? null
                   : undefined,
               rulingDate:
                 transition === CaseTransition.COMPLETE ? date : undefined,
               judgeId:
                 transition === CaseTransition.REDISTRIBUTE ? null : undefined,
+              indictmentDeniedExplanation:
+                transition === CaseTransition.SUBMIT ? null : undefined,
+              indictmentReturnedExplanation:
+                transition === CaseTransition.ASK_FOR_CONFIRMATION
+                  ? null
+                  : undefined,
             },
             { where: { id: caseId }, transaction },
           )
@@ -491,6 +501,14 @@ describe('CaseController - Transition', () => {
                   },
                   caseId,
                   body: { type: NotificationType.RECEIVED_BY_COURT },
+                },
+                {
+                  type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
                 },
                 {
                   type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,

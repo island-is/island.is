@@ -54,7 +54,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       'B-full',
     )
 
-    const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+    const chargeItemCode =
+      applicationFor === 'B-full'
+        ? 'AY110'
+        : applicationFor === 'BE'
+        ? 'AY115'
+        : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
@@ -165,7 +170,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         })
     }
 
-    if (applicationFor === 'B-full' || applicationFor === 'BE') {
+    if (applicationFor === 'B-full') {
       return this.drivingLicenseService.newDrivingLicense(nationalId, {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
@@ -190,6 +195,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           email: email,
           phone: phone,
         },
+      )
+    } else if (applicationFor === 'BE') {
+      return this.drivingLicenseService.applyForBELicense(
+        nationalId,
+        auth.authorization,
+        jurisdictionId as number,
       )
     }
 

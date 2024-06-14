@@ -1,4 +1,12 @@
-import { NavigationBarSheet, NotificationCard, Skeleton } from '@ui'
+import {
+  Button,
+  NavigationBarSheet,
+  NotificationCard,
+  Problem,
+  ListItemSkeleton,
+} from '@ui'
+import { useApolloClient } from '@apollo/client'
+
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -13,12 +21,13 @@ import {
   GetUserNotificationsQuery,
   Notification,
   useGetUserNotificationsQuery,
+  useMarkAllNotificationsAsReadMutation,
   useMarkAllNotificationsAsSeenMutation,
   useMarkUserNotificationAsReadMutation,
 } from '../../graphql/types/schema'
 
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { navigateToNotification } from '../../lib/deep-linking'
+import { navigateTo, navigateToNotification } from '../../lib/deep-linking'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import {
   createSkeletonArr,
@@ -26,11 +35,18 @@ import {
 } from '../../utils/create-skeleton-arr'
 import { isAndroid } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
-import { Problem } from '@ui/lib/problem/problem'
+import settings from '../../assets/icons/settings.png'
+import inboxRead from '../../assets/icons/inbox-read.png'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
   ${({ theme }) => isAndroid && `padding-bottom: ${theme.spacing[6]}px;`}
+`
+
+const ButtonWrapper = styled.View`
+  flex-direction: row;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const DEFAULT_PAGE_SIZE = 50
@@ -54,6 +70,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   useNavigationOptions(componentId)
   const intl = useIntl()
   const theme = useTheme()
+  const client = useApolloClient()
   const [loadingMore, setLoadingMore] = useState(false)
   const updateNavigationUnseenCount = useNotificationsStore(
     ({ updateNavigationUnseenCount }) => updateNavigationUnseenCount,
@@ -62,10 +79,33 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const { data, loading, error, fetchMore } = useGetUserNotificationsQuery({
     variables: { input: { limit: DEFAULT_PAGE_SIZE } },
   })
+  const showError = error && !data
 
   const [markUserNotificationAsRead] = useMarkUserNotificationAsReadMutation()
   const [markAllUserNotificationsAsSeen] =
     useMarkAllNotificationsAsSeenMutation()
+
+  const [markAllUserNotificationsAsRead] =
+    useMarkAllNotificationsAsReadMutation({
+      onCompleted: (d) => {
+        if (d.markAllNotificationsRead?.success) {
+          // If all notifications are marked as read, update cache to reflect that
+          for (const notification of data?.userNotifications?.data || []) {
+            client.cache.modify({
+              id: client.cache.identify(notification),
+              fields: {
+                metadata(existingMetadata) {
+                  return {
+                    ...existingMetadata,
+                    read: true,
+                  }
+                },
+              },
+            })
+          }
+        }
+      },
+    })
 
   // On mount, mark all notifications as seen and update all screens navigation badge to 0
   useEffect(() => {
@@ -97,7 +137,12 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   }, [])
 
   const handleEndReached = async () => {
-    if (loadingMore || loading) return
+    if (
+      loadingMore ||
+      loading ||
+      (data && !data?.userNotifications?.pageInfo.hasNextPage)
+    )
+      return
 
     setLoadingMore(true)
 
@@ -137,21 +182,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
 
   const renderNotificationItem = ({ item }: { item: ListItem }) => {
     if (item.__typename === 'Skeleton') {
-      return (
-        <Skeleton
-          active
-          overlayColor={{
-            dark: theme.shades.dark.shade200,
-            light: theme.color.blue200,
-          }}
-          overlayOpacity={1}
-          height={103}
-          style={{
-            borderBottomWidth: 1,
-            borderBottomColor: theme.color.blue200,
-          }}
-        />
-      )
+      return <ListItemSkeleton multilineMessage />
     }
 
     return (
@@ -163,7 +194,7 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         date={new Date(item.metadata.sent)}
         icon={
           item.sender?.logoUrl && {
-            uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&bg=white&fm=png`,
+            uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&fm=png`,
           }
         }
         unread={!item.metadata.read}
@@ -185,13 +216,48 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'notifications.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={loading && !!data}
       />
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
-        {error ? (
+        <ButtonWrapper>
+          <Button
+            isOutlined
+            isUtilityButton
+            title={intl.formatMessage({
+              id: 'notifications.markAllAsRead',
+              defaultMessage: 'Merkja allt lesið',
+            })}
+            style={{
+              marginRight: theme.spacing[2],
+              maxWidth: 145,
+            }}
+            icon={inboxRead}
+            iconStyle={{ tintColor: theme.color.blue400 }}
+            onPress={() => markAllUserNotificationsAsRead()}
+          />
+          <Button
+            isOutlined
+            isUtilityButton
+            title={intl.formatMessage({
+              id: 'notifications.settings',
+              defaultMessage: 'Mínar stillingar',
+            })}
+            onPress={() => navigateTo('/settings', componentId)}
+            icon={settings}
+            style={{
+              maxWidth: 145,
+            }}
+            iconStyle={{
+              tintColor: theme.color.blue400,
+              resizeMode: 'contain',
+            }}
+          />
+        </ButtonWrapper>
+        {showError ? (
           <Problem type="error" withContainer />
         ) : (
           <FlatList
-            style={{ flex: 1, paddingTop: 16 }}
+            style={{ flex: 1, marginTop: theme.spacing[2] }}
             data={memoizedData}
             keyExtractor={keyExtractor}
             renderItem={renderNotificationItem}

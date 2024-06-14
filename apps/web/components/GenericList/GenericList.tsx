@@ -1,18 +1,24 @@
 import { useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Locale } from 'locale'
+import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
 
 import {
   AlertMessage,
   Box,
   FilterInput,
+  FocusableBox,
+  GridColumn,
   GridContainer,
+  GridRow,
+  Inline,
   Pagination,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
 import {
+  GenericListItem,
   GenericListItemResponse,
   GetGenericListItemsQueryVariables,
   Query,
@@ -44,16 +50,80 @@ const getResultsFoundText = (totalItems: number, locale: Locale) => {
   return plural
 }
 
+interface ItemProps {
+  item: GenericListItem
+}
+
+const NonClickableItem = ({ item }: ItemProps) => {
+  const { format } = useDateUtils()
+
+  return (
+    <Box
+      padding={[2, 2, 3]}
+      border="standard"
+      borderRadius="large"
+      height="full"
+    >
+      <Stack space={0}>
+        <Stack space={0}>
+          <Text variant="eyebrow" color="purple400">
+            {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+          </Text>
+          <Text variant="h3" as="span" color="dark400">
+            {item.title}
+          </Text>
+        </Stack>
+        {item.cardIntro?.length > 0 && (
+          <Box>{webRichText(item.cardIntro ?? [])}</Box>
+        )}
+      </Stack>
+    </Box>
+  )
+}
+
+const ClickableItem = ({ item }: ItemProps) => {
+  const { format } = useDateUtils()
+  const router = useRouter()
+
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
+
+  return (
+    <FocusableBox
+      padding={[2, 2, 3]}
+      border="standard"
+      borderRadius="large"
+      href={item.slug ? `${pathname}/${item.slug}` : undefined}
+      height="full"
+    >
+      <Stack space={0}>
+        <Stack space={0}>
+          <Text variant="eyebrow" color="purple400">
+            {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+          </Text>
+          <Text variant="h3" as="span" color="blue400">
+            {item.title}
+          </Text>
+        </Stack>
+        {item.cardIntro?.length > 0 && (
+          <Box>{webRichText(item.cardIntro ?? [])}</Box>
+        )}
+      </Stack>
+    </FocusableBox>
+  )
+}
+
 interface GenericListProps {
   id: string
   firstPageItemResponse?: GenericListItemResponse
   searchInputPlaceholder?: string | null
+  itemType?: string | null
 }
 
 export const GenericList = ({
   id,
   firstPageItemResponse,
   searchInputPlaceholder,
+  itemType,
 }: GenericListProps) => {
   const [searchValue, setSearchValue] = useState('')
   const [page, setPage] = useState(1)
@@ -61,8 +131,8 @@ export const GenericList = ({
   const searchValueRef = useRef(searchValue)
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
   const firstRender = useRef(true)
-  const { format } = useDateUtils()
   const [errorOccurred, setErrorOccurred] = useState(false)
+  const ref = useRef<HTMLElement | null>(null)
 
   const { activeLocale } = useI18n()
 
@@ -119,23 +189,29 @@ export const GenericList = ({
 
   const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
 
+  const itemsAreClickable = itemType === 'Clickable'
+
+  const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={5}>
-          <FilterInput
-            name="list-search"
-            onChange={(value) => {
-              setSearchValue(value)
-              searchValueRef.current = value
-              setPage(1)
-              pageRef.current = 1
-            }}
-            value={searchValue}
-            loading={loading}
-            placeholder={searchInputPlaceholder ?? undefined}
-            backgroundColor="white"
-          />
+          <Box ref={ref}>
+            <FilterInput
+              name="list-search"
+              onChange={(value) => {
+                setSearchValue(value)
+                searchValueRef.current = value
+                setPage(1)
+                pageRef.current = 1
+              }}
+              value={searchValue}
+              loading={loading}
+              placeholder={searchInputPlaceholder ?? undefined}
+              backgroundColor="white"
+            />
+          </Box>
           {errorOccurred && (
             <AlertMessage
               type="warning"
@@ -150,31 +226,39 @@ export const GenericList = ({
           {items.length === 0 && <Text>{noResultsFoundText}</Text>}
           {items.length > 0 && (
             <Stack space={3}>
-              <Text>
-                {totalItems} {resultsFoundText}
-              </Text>
-              {items.map((item) => (
-                <Box
-                  key={item.id}
-                  padding={[2, 2, 3]}
-                  border="standard"
-                  borderRadius="large"
-                >
-                  <Stack space={0}>
-                    <Stack space={0}>
-                      <Text variant="eyebrow" color="purple400">
-                        {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
-                      </Text>
-                      <Text variant="h3" as="span" color="dark400">
-                        {item.title}
-                      </Text>
-                    </Stack>
-                    {item.cardIntro?.length > 0 && (
-                      <Box>{webRichText(item.cardIntro ?? [])}</Box>
-                    )}
-                  </Stack>
-                </Box>
-              ))}
+              <Inline space={2} justifyContent="spaceBetween" alignY="center">
+                <Text>
+                  {totalItems} {resultsFoundText}
+                </Text>
+                {totalPages > 1 && (
+                  <Text>
+                    {activeLocale === 'is' ? 'Síða' : 'Page'} {page}{' '}
+                    {activeLocale === 'is' ? 'af' : 'of'} {totalPages}
+                  </Text>
+                )}
+              </Inline>
+              <GridContainer>
+                <GridRow rowGap={3}>
+                  {!itemsAreClickable &&
+                    items.map((item) => (
+                      <GridColumn
+                        key={item.id}
+                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+                      >
+                        <NonClickableItem item={item} />
+                      </GridColumn>
+                    ))}
+                  {itemsAreClickable &&
+                    items.map((item) => (
+                      <GridColumn
+                        key={item.id}
+                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+                      >
+                        <ClickableItem item={item} />
+                      </GridColumn>
+                    ))}
+                </GridRow>
+              </GridContainer>
             </Stack>
           )}
 
@@ -188,6 +272,16 @@ export const GenericList = ({
                   onClick={() => {
                     setPage(page)
                     pageRef.current = page
+
+                    // Scroll to top of the list on page change
+                    const position = ref.current?.getBoundingClientRect()
+                    if (position) {
+                      window.scroll({
+                        behavior: 'smooth',
+                        left: position.left,
+                        top: position.top + window.scrollY - 20,
+                      })
+                    }
                   }}
                 >
                   <span className={className}>{children}</span>

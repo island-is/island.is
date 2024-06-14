@@ -313,7 +313,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HOME_SUPPORT]: {
     slug: 'heimastudningur',
-    translation: 'hst.application',
+    translation: ['hst.application', 'uiForms.application'],
   },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekis',

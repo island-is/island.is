@@ -31,52 +31,33 @@ export const childrenForm = {
       defaultMessage: 'Fæðingardagur {birthday}',
       description: 'Text before birthday',
     },
+    commentTitle: {
+      id: 'fa.application:section.personalInterest.childrenForm.page.commentTitle',
+      defaultMessage: 'Önnur útgjöld',
+      description: 'Heading for input, with comment about children',
+    },
+    commentText: {
+      id: 'fa.application:section.personalInterest.childrenForm.page.commentText',
+      defaultMessage: 'Hér getur þú skráð kostnað við frístund eða skólamat.',
+      description: 'Text under heading about comment about children',
+    },
   }),
   inputs: defineMessages({
-    kindergardenLabel: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.kindergardenLabel',
-      defaultMessage: 'Leikskóli',
-      description: 'Label for kindergarden input',
+    schoolLabel: {
+      id: 'fa.application:section.personalInterest.childrenForm.inputs.schoolLabel',
+      defaultMessage: 'Skóli',
+      description: 'Label for school input',
     },
-    kindergardenPlaceholder: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.kindergardenPlaceholder',
-      defaultMessage: 'Í hvaða leikskóla er barnið?',
+    schoolPlaceholder: {
+      id: 'fa.application:section.personalInterest.childrenForm.inputs.schoollPlaceholder',
+      defaultMessage: 'Í hvaða skóla er barnið?',
       description:
-        'Placeholder in input where asking about the childs kindergarden name',
+        'Placeholder in input where asking about the childs school name',
     },
-    elementarySchoolLabel: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.elementarySchoolLabel',
-      defaultMessage: 'Grunnskóli',
-      description: 'Label for elementary school input',
-    },
-    elementarySchoolPlaceholder: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.elementarySchoolPlaceholder',
-      defaultMessage: 'Í hvaða grunnskóla er barnið?',
-      description:
-        'Placeholder in input where asking about the childs elementary school name',
-    },
-    elementarySchoolFoodCheck: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.elementarySchoolFoodCheck',
-      defaultMessage: 'Barnið er skráð í skólamat',
-      description:
-        'Checkmark to check wheter a child is signed up for food in elementary school',
-    },
-    elementarySchoolAfterSchoolCheck: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.elementarySchoolAfterSchoolCheck',
-      defaultMessage: 'Barnið er í frístund',
-      description:
-        'Checkmark to check wheter a child is signed up for after school activities in elementary school',
-    },
-    highSchoolPlaceholder: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.highSchoolPlaceholder',
-      defaultMessage: 'Í hvaða framhaldsskóla er barnið?',
-      description:
-        'Placeholder in input where asking about the childs high school name',
-    },
-    highSchoolLabel: {
-      id: 'fa.application:section.personalInterest.childrenForm.inputs.highSchoolLabel',
-      defaultMessage: 'Framhaldsskóli',
-      description: 'Label for high school input',
+    commentLabel: {
+      id: 'fa.application:section.personalInterest.childrenForm.inputs.commentLabel',
+      defaultMessage: 'Önnur útgjöld',
+      description: 'Label for comment about children',
     },
   }),
 }

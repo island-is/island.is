@@ -20,10 +20,12 @@ query Case($input: CaseQueryInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
       defendantPlea
       serviceRequirement
       verdictViewDate
+      verdictAppealDeadline
+      subpoenaType
     }
     defenderName
     defenderNationalId
@@ -260,5 +262,8 @@ query Case($input: CaseQueryInput!) {
       name
     }
     indictmentAppealDeadline
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadline
+    indictmentDecision
   }
 }

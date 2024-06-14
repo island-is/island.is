@@ -58,6 +58,9 @@ export const TableRepeaterFormField: FC<Props> = ({
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
+    editButtonTooltipText = coreMessages.editFieldText,
+    editField = false,
+    maxRows,
   } = data
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -80,6 +83,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const staticData = getStaticTableData?.(application)
+  const canAddItem = maxRows ? savedFields.length < maxRows : true
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -101,6 +105,10 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (activeIndex === index) setActiveIndex(-1)
     if (activeIndex > index) setActiveIndex(activeIndex - 1)
     remove(index)
+  }
+
+  const handleEditItem = (index: number) => {
+    setActiveIndex(index)
   }
 
   const getFieldError = (id: string) => {
@@ -182,6 +190,28 @@ export const TableRepeaterFormField: FC<Props> = ({
                             />
                           </button>
                         </Tooltip>
+                        {editField && (
+                          <Tooltip
+                            placement="left"
+                            text={formatText(
+                              editButtonTooltipText,
+                              application,
+                              formatMessage,
+                            )}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleEditItem(index)}
+                            >
+                              <Icon
+                                icon="pencil"
+                                color="dark200"
+                                type="outline"
+                                size="small"
+                              />
+                            </button>
+                          </Tooltip>
+                        )}
                       </Box>
                     </T.Data>
                     {tableRows.map((item, idx) => (
@@ -308,6 +338,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                 type="button"
                 onClick={handleNewItem}
                 icon="add"
+                disabled={!canAddItem}
               >
                 {formatText(addItemButtonText, application, formatMessage)}
               </Button>

@@ -712,149 +712,16 @@ const ClientCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                     <section className="client_section">
                       <h3>{localization.sections['delegations'].title}</h3>
 
-                      <div className="client__container__checkbox__field">
-                        <label
-                          className="client__label"
-                          htmlFor="supportsCustomDelegation"
+                      <p className="client__label">
+                        You can manage these settings in the new IDS Admin on{' '}
+                        <a
+                          href="https://island.is/stjornbord/innskraningarkerfi"
+                          target="_blank"
+                          rel="noreferrer"
                         >
-                          {
-                            localization.fields['supportsCustomDelegation']
-                              .label
-                          }
-                        </label>
-                        <input
-                          id="supportsCustomDelegation"
-                          type="checkbox"
-                          {...register('client.supportsCustomDelegation')}
-                          defaultChecked={client.supportsCustomDelegation}
-                          className="client__input"
-                          title={
-                            localization.fields['supportsCustomDelegation']
-                              .helpText
-                          }
-                        />
-                        <HelpBox
-                          helpText={
-                            localization.fields['supportsCustomDelegation']
-                              .helpText
-                          }
-                        />
-                      </div>
-
-                      <div className="client__container__checkbox__field">
-                        <label
-                          className="client__label"
-                          htmlFor="supportsLegalGuardians"
-                        >
-                          {localization.fields['supportsLegalGuardians'].label}
-                        </label>
-                        <input
-                          id="supportsLegalGuardians"
-                          type="checkbox"
-                          {...register('client.supportsLegalGuardians')}
-                          defaultChecked={client.supportsLegalGuardians}
-                          className="client__input"
-                          title={
-                            localization.fields['supportsLegalGuardians']
-                              .helpText
-                          }
-                        />
-                        <HelpBox
-                          helpText={
-                            localization.fields['supportsLegalGuardians']
-                              .helpText
-                          }
-                        />
-                      </div>
-
-                      <div className="client__container__checkbox__field">
-                        <label
-                          className="client__label"
-                          htmlFor="supportsPersonalRepresentatives"
-                        >
-                          {
-                            localization.fields[
-                              'supportsPersonalRepresentatives'
-                            ].label
-                          }
-                        </label>
-                        <input
-                          id="supportsPersonalRepresentatives"
-                          type="checkbox"
-                          {...register(
-                            'client.supportsPersonalRepresentatives',
-                          )}
-                          defaultChecked={
-                            client.supportsPersonalRepresentatives
-                          }
-                          className="client__input"
-                          title={
-                            localization.fields[
-                              'supportsPersonalRepresentatives'
-                            ].helpText
-                          }
-                        />
-                        <HelpBox
-                          helpText={
-                            localization.fields[
-                              'supportsPersonalRepresentatives'
-                            ].helpText
-                          }
-                        />
-                      </div>
-
-                      <div className="client__container__checkbox__field">
-                        <label
-                          className="client__label"
-                          htmlFor="supportsProcuringHolders"
-                        >
-                          {
-                            localization.fields['supportsProcuringHolders']
-                              .label
-                          }
-                        </label>
-                        <input
-                          id="supportsProcuringHolders"
-                          type="checkbox"
-                          {...register('client.supportsProcuringHolders')}
-                          defaultChecked={client.supportsProcuringHolders}
-                          className="client__input"
-                          title={
-                            localization.fields['supportsProcuringHolders']
-                              .helpText
-                          }
-                        />
-                        <HelpBox
-                          helpText={
-                            localization.fields['supportsProcuringHolders']
-                              .helpText
-                          }
-                        />
-                      </div>
-
-                      <div className="client__container__checkbox__field">
-                        <label
-                          className="client__label"
-                          htmlFor="promptDelegations"
-                        >
-                          {localization.fields['promptDelegations'].label}
-                        </label>
-                        <input
-                          id="promptDelegations"
-                          type="checkbox"
-                          {...register('client.promptDelegations')}
-                          defaultChecked={client.promptDelegations}
-                          className="client__input"
-                          title={
-                            localization.fields['promptDelegations'].helpText
-                          }
-                        />
-                        <HelpBox
-                          helpText={
-                            localization.fields['promptDelegations'].helpText
-                          }
-                        />
-                      </div>
+                          https://island.is/stjornbord/innskraningarkerfi
+                        </a>
+                      </p>
                     </section>
 
                     <div className="client__container__field">

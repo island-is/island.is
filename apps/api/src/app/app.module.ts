@@ -51,6 +51,7 @@ import {
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
+import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
 import { MunicipalitiesFinancialAidModule } from '@island.is/api/domains/municipalities-financial-aid'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
@@ -105,6 +106,10 @@ import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
+import {
+  OfficialJournalOfIcelandApplicationClientConfig,
+  OfficialJournalOfIcelandApplicationClientModule,
+} from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
@@ -175,9 +180,14 @@ import {
   UniversityOfAkureyriCareerClientConfig,
   HolarUniversityCareerClientConfig,
   BifrostUniversityCareerClientConfig,
+  IcelandUniversityOfTheArtsCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
+import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { VmstClientConfig } from '@island.is/clients/vmst'
 
 const environment = getConfig
 
@@ -216,7 +226,7 @@ const environment = getConfig
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     LicenseServiceModule,
-    DirectorateOfLabourModule.register(),
+    DirectorateOfLabourModule,
     FileUploadModule,
     DocumentModule,
     DocumentProviderModule.register({
@@ -239,15 +249,7 @@ const environment = getConfig
     }),
     CmsTranslationsModule,
     TerminusModule,
-    HealthInsuranceModule.register({
-      clientV2Config: {
-        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
-        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
-        xRoadClientId: environment.healthInsuranceV2.xRoadClientId!,
-        username: environment.healthInsuranceV2.username!,
-        password: environment.healthInsuranceV2.password!,
-      },
-    }),
+    HealthInsuranceModule,
     UserProfileModule.register({
       islykill: {
         cert: environment.islykill.cert!,
@@ -278,6 +280,7 @@ const environment = getConfig
     StatisticsModule,
     UniversityCareersModule,
     OfficialJournalOfIcelandModule,
+    OfficialJournalOfIcelandApplicationModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
       backendUrl: environment.icelandicNamesRegistry.backendUrl!,
@@ -301,13 +304,7 @@ const environment = getConfig
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
-    CriminalRecordModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        xroadPath: environment.criminalRecord.xroadPath!,
-      },
-    }),
+    CriminalRecordModule,
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
@@ -381,6 +378,7 @@ const environment = getConfig
         CommunicationsConfig,
         HealthDirectorateClientConfig,
         OfficialJournalOfIcelandClientConfig,
+        OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         AuthAdminApiClientConfig,
@@ -398,11 +396,16 @@ const environment = getConfig
         UniversityOfAkureyriCareerClientConfig,
         HolarUniversityCareerClientConfig,
         BifrostUniversityCareerClientConfig,
+        IcelandUniversityOfTheArtsCareerClientConfig,
         StatisticsClientConfig,
         SignatureCollectionClientConfig,
         UniversityGatewayApiClientConfig,
         LicenseConfig,
         UserProfileClientConfig,
+        UltravioletRadiationClientConfig,
+        VmstClientConfig,
+        HealthInsuranceV2ClientConfig,
+        CriminalRecordClientConfig,
       ],
     }),
   ],

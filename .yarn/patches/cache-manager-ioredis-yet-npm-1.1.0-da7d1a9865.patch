@@ -1,0 +1,26 @@
+diff --git a/dist/index.js b/dist/index.js
+index 21d1ae2f70d7c5b38e17d053a9bf68454edfe98a..6045a01e347041e0cb0b7025dc5734d9f44a9bfb 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -90,7 +90,7 @@ function builder(redisCache, reset, keys, options) {
+                 yield redisCache.del(key);
+             });
+         },
+-        ttl: (key) => __awaiter(this, void 0, void 0, function* () { return redisCache.ttl(key); }),
++        ttl: (key) => __awaiter(this, void 0, void 0, function* () { return redisCache.pttl(key); }),
+         keys: (pattern = '*') => keys(pattern),
+         reset,
+         isCacheable,
+diff --git a/src/index.ts b/src/index.ts
+index 267bdf152027f4bc6f0321c186542ce2dc5f3bb1..a295c85899f6206de13d202967e7676247925a53 100644
+--- a/src/index.ts
++++ b/src/index.ts
+@@ -87,7 +87,7 @@ function builder(
+     async del(key) {
+       await redisCache.del(key);
+     },
+-    ttl: async (key) => redisCache.ttl(key),
++    ttl: async (key) => redisCache.pttl(key),
+     keys: (pattern = '*') => keys(pattern),
+     reset,
+     isCacheable,
