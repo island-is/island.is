@@ -36,6 +36,7 @@ const NotificationButton = ({
       input: {
         limit: 5,
       },
+      locale: lang,
     },
   })
 

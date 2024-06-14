@@ -17,7 +17,7 @@ import {
 } from '@island.is/service-portal/core'
 
 import {
-  useGetUserNotificationsQuery,
+  useGetUserNotificationsListQuery,
   useMarkAllNotificationsAsReadMutation,
   useMarkUserNotificationAsReadMutation,
 } from './Notifications.generated'
@@ -47,7 +47,7 @@ const UserNotifications = () => {
   })
 
   const { data, loading, error, refetch, fetchMore } =
-    useGetUserNotificationsQuery({
+    useGetUserNotificationsListQuery({
       variables: {
         input: {
           limit: DEFAULT_PAGE_SIZE,
