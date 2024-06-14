@@ -60,6 +60,9 @@ const ButtonWrapper = styled.View`
 
 const DEFAULT_PAGE_SIZE = 50
 
+const FALLBACK_ICON_URL =
+  'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -230,11 +233,11 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         title={item.message.title}
         message={item.message.displayBody}
         date={new Date(item.metadata.sent)}
-        icon={
-          item.sender?.logoUrl && {
-            uri: `${item.sender.logoUrl}?w=64&h=64&fit=pad&fm=png`,
-          }
-        }
+        icon={{
+          uri: `${
+            item.sender.logoUrl ?? FALLBACK_ICON_URL
+          }?w=64&h=64&fit=pad&fm=png`,
+        }}
         unread={!item.metadata.read}
         onPress={() => onNotificationPress(item)}
         testID={testIDs.NOTIFICATION_CARD_BUTTON}
