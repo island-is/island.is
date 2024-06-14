@@ -25,23 +25,8 @@ jobs:
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 35
-
-    env:scripts/ci/nx/nx.mjs
-      AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
-      CHUNK_SIZE: 7
-      SERVERSIDE_FEATURES_ON: ''
+    env:
       NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-
-    outputs:
-      TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
-      E2E_CHUNKS: ${{ steps.e2e_projects.outputs.CHUNKS }}
-      E2E_BUILD_ID: ${{ steps.e2e_projects.outputs.BUILD_ID }}
-      LINT_CHUNKS: ${{ steps.lint_projects.outputs.CHUNKS }}
-      UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
-      BUILD_CHUNKS: ${{ steps.build_projects.outputs.CHUNKS }}
-      BUILD_MAP: ${{ steps.build_map.outputs.BUILD_MAP }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -49,34 +34,20 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
-      - name: Calculate cache key for node modules
-        id: calculate_node_modules_hash
-        run: |
-          HASH="$(./scripts/ci/get-node-modules-hash.mjs)"
-          echo "node-modules-hash: ${HASH}"
-          echo "node-modules-hash=${HASH}" >> $GITHUB_OUTPUT
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Setup yarn
+        run: corepack enable
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
-
-      - name: Check node-modules cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules'
       - name: Derive appropriate SHAs for base and head for `nx affected` commands
         uses: nrwl/nx-set-shas@v4
-      - name: NX format:write
+      - name: NX
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          npx nx-cloud start-ci-run --distribute-on="8 linux-medium-js" --stop-agents-after=format --with-env-vars="auto"
-          npx nx affected -t format:write
-          ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+          node scripts/ci/nx/nx.mjs
   run-shellcheck:
     needs:
       - prepare
