@@ -1,6 +1,6 @@
+// @ts-check
 import { runCommand } from './_utils.mjs'
 
-// @ts-check
 export async function gitPushChanges({ message, branch }) {
   await runCommand("git config user.name 'andes-it'")
   await runCommand("git config user.email 'builders@andes.is'")
