@@ -6,4 +6,5 @@ export {
   Passport,
   IdentityDocument,
   IdentityDocumentChild,
+  IdentityDocumentTypes,
 } from './lib/passportsApi.types'

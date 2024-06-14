@@ -82,6 +82,8 @@ export type Gender = 'F' | 'M' | 'X'
 
 export type ExpiryStatus = 'EXPIRED' | 'LOST'
 
+export type IdentityDocumentTypes = 'I'
+
 export interface PreregisterResponse {
   success: boolean
 }

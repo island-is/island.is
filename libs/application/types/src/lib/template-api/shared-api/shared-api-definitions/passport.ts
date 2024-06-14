@@ -1,7 +1,8 @@
 import { defineTemplateApi } from '../../TemplateApi'
+import { IdentityDocumentTypes } from '@island.is/clients/passports'
 
 export interface PassportsParameters {
-  type?: string
+  type?: IdentityDocumentTypes
 }
 
 export const PassportsApi = defineTemplateApi<PassportsParameters>({
