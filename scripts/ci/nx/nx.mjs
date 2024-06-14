@@ -1,8 +1,10 @@
 import { IS_PULLREQUEST } from "./_const.mjs";
-import { startNxAgents } from "./_nx_agent.mjs";
+import { NxAgents } from "./_nx_agent.mjs";
 import { hasGitChanges, runNxAffected } from "./_utils.mjs";
 
-await startNxAgents();
+console.log(IS_PULLREQUEST ? 'Running in pull request mode' : 'Running in push mode');
+console.log('Starting agents');
+await NxAgents.start();
 
 if (IS_PULLREQUEST) {
     // If this is a pull request we want to start by formatting
