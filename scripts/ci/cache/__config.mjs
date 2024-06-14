@@ -22,11 +22,7 @@ import {
 import { keyStorage } from './_key_storage.mjs'
 
 // When testing this is good to manipulate
-<<<<<<< HEAD
 const HASH_VERSION = `newcache-${6}`
-=======
-const HASH_VERSION = `newcache-${5}`
->>>>>>> d654a775f6 (ci: cache refactor (#15103))
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
