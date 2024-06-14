@@ -1,4 +1,5 @@
 import {
+  buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
   buildMultiField,
@@ -7,12 +8,17 @@ import {
   buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
-import { IdentityDocumentChild, Routes } from '../../../lib/constants'
+import {
+  IdentityDocumentChild,
+  PersonalInfo,
+  Routes,
+} from '../../../lib/constants'
 import { applicantInformation } from '../../../lib/messages'
 import {
   Application,
   NationalRegistryIndividual,
   UserProfile,
+  YES,
 } from '@island.is/application/types'
 import {
   getChosenApplicant,
@@ -238,6 +244,38 @@ export const ApplicanInformationSubSection = buildSection({
               isChild(answers, externalData) &&
               hasSecondGuardian(answers, externalData)
             )
+          },
+        }),
+        buildDescriptionField({
+          id: `${Routes.APPLICANTSINFORMATION}.space`,
+          title: '',
+          space: 'containerGutter',
+        }),
+        buildCheckboxField({
+          id: `${Routes.APPLICANTSINFORMATION}.disabilityCheckbox`,
+          title: '',
+          large: false,
+          backgroundColor: 'white',
+          defaultValue: [],
+          options: [
+            {
+              value: YES,
+              label: applicantInformation.labels.hasDisabilityDiscount,
+            },
+          ],
+        }),
+        buildCustomField({
+          id: `${Routes.APPLICANTSINFORMATION}.disabilityAlertMessage`,
+          title: '',
+          component: 'HasDisabilityLicenseMessage',
+          doesNotRequireAnswer: true,
+          condition: (answers) => {
+            const applicantDisabilityCheckboxAnswer = getValueViaPath(
+              answers,
+              `${Routes.APPLICANTSINFORMATION}.disabilityCheckbox`,
+              [],
+            ) as Array<string>
+            return applicantDisabilityCheckboxAnswer[0] === YES
           },
         }),
       ],
