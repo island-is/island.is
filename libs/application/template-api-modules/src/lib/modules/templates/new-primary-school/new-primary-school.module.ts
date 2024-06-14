@@ -3,7 +3,7 @@ import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { NationalRegistryXRoadModule } from '@island.is/api/domains/national-registry-x-road'
 import { NewPrimarySchoolService } from './new-primary-school.service'
-import { FriggClientModule } from '@island.is/clients/directorate-of-education-and-school-services/frigg'
+import { FriggClientModule } from '@island.is/clients/mms/frigg'
 
 export class NewPrimarySchoolModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {

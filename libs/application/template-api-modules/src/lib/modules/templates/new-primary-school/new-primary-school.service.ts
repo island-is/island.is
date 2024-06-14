@@ -1,7 +1,7 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { FriggClientService } from '@island.is/clients/directorate-of-education-and-school-services/frigg'
+import { FriggClientService } from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiModuleActionProps } from '../../../types'
 

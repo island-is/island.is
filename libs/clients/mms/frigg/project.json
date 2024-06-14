@@ -1,22 +1,20 @@
 {
-  "name": "clients-directorate-of-education-and-school-services",
+  "name": "clients-mms-frigg",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/directorate-of-education-and-school-services/frigg/src",
+  "sourceRoot": "libs/clients/mms/frigg/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "libs/clients/directorate-of-education-and-school-services/frigg/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["libs/clients/mms/frigg/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/mms"],
       "options": {
-        "jestConfig": "libs/clients/directorate-of-education-and-school-services/frigg/jest.config.ts",
+        "jestConfig": "libs/clients/mms/frigg/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -28,13 +26,13 @@
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/directorate-of-education-and-school-services/frigg"
+        "cwd": "libs/clients/mms/frigg"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/directorate-of-education-and-school-services/frigg/gen/fetch -i libs/clients/directorate-of-education-and-school-services/frigg/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/mms/frigg/gen/fetch -i libs/clients/mms/frigg/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
