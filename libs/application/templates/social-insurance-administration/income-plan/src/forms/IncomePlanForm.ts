@@ -12,12 +12,19 @@ import Logo from '@island.is/application/templates/social-insurance-administrati
 import { incomePlanFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getCurrencies } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { FOREIGN_BASIC_PENSION, ISK, RatioType, YES } from '../lib/constants'
+import {
+  FOREIGN_BASIC_PENSION,
+  INCOME,
+  ISK,
+  RatioType,
+  YES,
+} from '../lib/constants'
 import {
   getApplicationExternalData,
   getCategoriesOptions,
   getTypesOptions,
 } from '../lib/incomePlanUtils'
+import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -57,7 +64,7 @@ export const IncomePlanForm: Form = buildForm({
           title: incomePlanFormMessage.info.section,
           children: [
             buildTableRepeaterField({
-              id: 'incomePlan.table',
+              id: 'incomePlanTable',
               title: incomePlanFormMessage.info.section,
               description: incomePlanFormMessage.incomePlan.description,
               formTitle: incomePlanFormMessage.incomePlan.registerIncome,
@@ -120,9 +127,9 @@ export const IncomePlanForm: Form = buildForm({
                     return activeField?.income === RatioType.YEARLY
                   },
                 },
-                equalIncomePerYear: {
+                equalIncomePerMonth: {
                   component: 'input',
-                  label: incomePlanFormMessage.incomePlan.equalIncomePerYear,
+                  label: incomePlanFormMessage.incomePlan.equalIncomePerMonth,
                   width: 'half',
                   type: 'number',
                   displayInTable: false,
@@ -178,15 +185,19 @@ export const IncomePlanForm: Form = buildForm({
                     {
                       value: YES,
                       label:
-                        incomePlanFormMessage.incomePlan.unevenIncomePerYear,
+                        incomePlanFormMessage.incomePlan
+                          .monthlyDistributionOfIncome,
                     },
                   ],
                   backgroundColor: 'white',
                   displayInTable: false,
+                  tooltip:
+                    incomePlanFormMessage.incomePlan
+                      .monthlyDistributionOfIncomeTooltip,
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
-                      activeField?.incomeCategories === '1'
+                      activeField?.incomeCategories === INCOME
                     )
                   },
                 },
@@ -381,6 +392,12 @@ export const IncomePlanForm: Form = buildForm({
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
+                },
+              },
+              table: {
+                format: {
+                  incomePerYear: (value) =>
+                    value && formatCurrencyWithoutSuffix(value),
                 },
               },
             }),

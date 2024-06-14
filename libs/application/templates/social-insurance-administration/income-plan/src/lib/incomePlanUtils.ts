@@ -18,45 +18,45 @@ export const getApplicationExternalData = (
 
   return {
     categorizedIncomeTypes,
-    currencies
+    currencies,
   }
+}
+
+const getOneInstanceOfCategory = (categories: categorizedIncomeTypes[]) => {
+  return [
+    ...new Map(
+      categories.map((category) => [category.categoryName, category]),
+    ).values(),
+  ]
 }
 
 export const getCategoriesOptions = (externalData: ExternalData) => {
   const { categorizedIncomeTypes } = getApplicationExternalData(externalData)
-  const categories = [
-    ...new Map(
-      categorizedIncomeTypes.map((category) => [
-        category.categoryName,
-        category,
-      ]),
-    ).values(),
-  ]
+  const categories = getOneInstanceOfCategory(categorizedIncomeTypes)
 
   return (
-    (categories &&
-      categories.map((item) => {
-        return {
-          value: item.categoryCode!, // taka af ! ?
-          label: item.categoryName!,
-        }
-      })) ||
-    []
+    categories &&
+    categories.map((item) => {
+      return {
+        value: item.categoryName || '',
+        label: item.categoryName || '',
+      }
+    })
   )
 }
 
 export const getTypesOptions = (
   externalData: ExternalData,
-  categoryCode: string,
-): { value: string; label: string }[] => {
+  categoryName: string,
+) => {
   const { categorizedIncomeTypes } = getApplicationExternalData(externalData)
 
   return categorizedIncomeTypes
-    .filter((item) => item.categoryCode === categoryCode)
+    .filter((item) => item.categoryName === categoryName)
     .map((item) => {
       return {
-        value: item.incomeTypeCode!, // taka af ! ?
-        label: item.incomeTypeName!,
+        value: item.incomeTypeName || '',
+        label: item.incomeTypeName || '',
       }
     })
 }

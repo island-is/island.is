@@ -84,6 +84,7 @@ export type TableRepeaterItem = {
   ) => boolean
   dataTestId?: string
   readonly?: boolean
+  tooltip?: FormText
 } & (
   | {
       component: 'input'

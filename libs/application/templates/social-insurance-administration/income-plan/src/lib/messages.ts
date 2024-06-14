@@ -52,7 +52,7 @@ export const incomePlanFormMessage: MessageDir = {
     description: {
       id: 'ip.application:income.plan.description',
       defaultMessage:
-        'Hér er tillaga að tekjuáætlun. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
+        'Hér er tillaga að tekjuáætlun. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í nýjasta skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
       description: 'english translation',
     },
     registerIncome: {
@@ -110,15 +110,20 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Tekjur á ári',
       description: 'Income per year',
     },
-    equalIncomePerYear: {
-      id: 'pp.application:equal.income.per.year',
-      defaultMessage: 'Jafnar tekjur á ári',
-      description: 'Equal income per year',
+    equalIncomePerMonth: {
+      id: 'pp.application:equal.income.per.month',
+      defaultMessage: 'Jafnar tekjur á mánuði',
+      description: 'Equal income per month',
     },
-    unevenIncomePerYear: {
-      id: 'pp.application:uneven.income.per.year',
+    monthlyDistributionOfIncome: {
+      id: 'pp.application:monthly.distribution.of.income',
       defaultMessage: 'Óska eftir mánaðarskiptingu atvinnutekna',
       description: 'Request a monthly distribution of employment income',
+    },
+    monthlyDistributionOfIncomeTooltip: {
+      id: 'pp.application:monthly.distribution.of.income.tooltip',
+      defaultMessage: 'Atvinnutekjur hafa einungis áhrif á lífeyrisgreiðslur þess mánaðar sem atvinnutekna er aflað.',
+      description: 'Income only affects the pension payments for the month in which income is earned.',
     },
     currency: {
       id: 'pp.application:currency',
