@@ -18,8 +18,7 @@ export async function createGeneratedFiles() {
       await runNxCommand(`run-many --target=${target} --all`)
     } catch (err) {
       console.log(err);
-      console.error(`Error running command: ${err.message}`)
-      process.exit(err.code || 1)
+      process.exit(1)
     }
   }
 }
