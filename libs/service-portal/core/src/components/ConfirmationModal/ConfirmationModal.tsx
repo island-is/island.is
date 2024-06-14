@@ -17,7 +17,7 @@ interface Props {
   onClose: () => void
   loading: boolean
   modalText: string
-  redirectPath: string
+  redirectPath?: string
 }
 
 export const ConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
@@ -58,7 +58,20 @@ export const ConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
                 </Button>
               </Box>
               <Box marginLeft={2}>
-                <LinkResolver href={redirectPath}>
+                {redirectPath ? (
+                  <LinkResolver href={redirectPath}>
+                    <Button
+                      colorScheme="default"
+                      size="small"
+                      type="text"
+                      as="span"
+                      loading={loading}
+                      onClick={onSubmit}
+                    >
+                      {formatMessage(m.openErrand)}
+                    </Button>
+                  </LinkResolver>
+                ) : (
                   <Button
                     colorScheme="default"
                     size="small"
@@ -69,7 +82,7 @@ export const ConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
                   >
                     {formatMessage(m.openErrand)}
                   </Button>
-                </LinkResolver>
+                )}
               </Box>
             </Box>
           </Box>
