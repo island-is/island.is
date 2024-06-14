@@ -65,6 +65,7 @@ import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
+import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { caseModuleConfig } from './case.config'
 import { PDFService } from './pdf.service'
 
@@ -94,6 +95,9 @@ const caseEncryptionProperties: (keyof Case)[] = [
   'crimeScenes',
   'indictmentIntroduction',
   'appealConclusion',
+  'appealRulingModifiedHistory',
+  'indictmentDeniedExplanation',
+  'indictmentReturnedExplanation',
 ]
 
 const defendantEncryptionProperties: (keyof Defendant)[] = [
@@ -112,6 +116,10 @@ const indictmentCountEncryptionProperties: (keyof IndictmentCount)[] = [
   'vehicleRegistrationNumber',
   'incidentDescription',
   'legalArguments',
+]
+
+const explanatoryCommentEncryptionProperties: (keyof ExplanatoryComment)[] = [
+  'comment',
 ]
 
 const collectEncryptionProperties = (
@@ -139,6 +147,8 @@ export class InternalCaseService {
 
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
+    @InjectModel(ExplanatoryComment)
+    private readonly explanatoryCommentModel: typeof ExplanatoryComment,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(CaseArchive)
     private readonly caseArchiveModel: typeof CaseArchive,
@@ -290,7 +300,7 @@ export class InternalCaseService {
   }
 
   private getSignedRulingPdf(theCase: Case) {
-    return this.awsS3Service.getGeneratedObject(
+    return this.awsS3Service.getGeneratedRequestCaseObject(
       theCase.type,
       `${theCase.id}/ruling.pdf`,
     )
@@ -381,16 +391,19 @@ export class InternalCaseService {
         { model: Defendant, as: 'defendants' },
         { model: IndictmentCount, as: 'indictmentCounts' },
         { model: CaseFile, as: 'caseFiles' },
+        { model: ExplanatoryComment, as: 'explanatoryComments' },
       ],
       order: [
         [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
         [{ model: IndictmentCount, as: 'indictmentCounts' }, 'created', 'ASC'],
         [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
+        [
+          { model: ExplanatoryComment, as: 'explanatoryComments' },
+          'created',
+          'ASC',
+        ],
       ],
-      where: {
-        isArchived: false,
-        [Op.or]: [{ state: CaseState.DELETED }, archiveFilter],
-      },
+      where: { isArchived: false, archiveFilter },
     })
 
     if (!theCase) {
@@ -448,6 +461,21 @@ export class InternalCaseService {
         )
       }
 
+      const explanatoryCommentsArchive = []
+      for (const comment of theCase.explanatoryComments ?? []) {
+        const [clearedExplanatoryCommentProperties, explanatoryCommentArchive] =
+          collectEncryptionProperties(
+            explanatoryCommentEncryptionProperties,
+            comment,
+          )
+        explanatoryCommentsArchive.push(explanatoryCommentArchive)
+
+        await this.explanatoryCommentModel.update(
+          clearedExplanatoryCommentProperties,
+          { where: { id: comment.id, caseId: theCase.id }, transaction },
+        )
+      }
+
       await this.caseArchiveModel.create(
         {
           caseId: theCase.id,
@@ -457,6 +485,7 @@ export class InternalCaseService {
               defendants: defendantsArchive,
               caseFiles: caseFilesArchive,
               indictmentCounts: indictmentCountsArchive,
+              explanatoryComments: explanatoryCommentsArchive,
             }),
             this.config.archiveEncryptionKey,
             { iv: CryptoJS.enc.Hex.parse(uuidFactory()) },
@@ -642,27 +671,6 @@ export class InternalCaseService {
         // Tolerate failure, but log reason
         this.logger.warn(
           `Failed to upload case files record pdf to court for case ${theCase.id}`,
-          { reason },
-        )
-
-        return { delivered: false }
-      })
-  }
-
-  async archiveCaseFilesRecord(
-    theCase: Case,
-    policeCaseNumber: string,
-  ): Promise<DeliverResponse> {
-    return this.awsS3Service
-      .archiveObject(
-        theCase.type,
-        theCase.state,
-        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
-      .then(() => ({ delivered: true }))
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to archive case files record for case ${theCase.id} and police case ${policeCaseNumber}`,
           { reason },
         )
 
@@ -923,7 +931,6 @@ export class InternalCaseService {
           // TODO: Tolerate failure, but log error
           const file = await this.awsS3Service.getObject(
             theCase.type,
-            theCase.state,
             caseFile.key,
           )
 
@@ -1073,7 +1080,6 @@ export class InternalCaseService {
           // TODO: Tolerate failure, but log error
           const file = await this.awsS3Service.getObject(
             theCase.type,
-            theCase.state,
             caseFile.key,
           )
 

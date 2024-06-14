@@ -22,8 +22,6 @@ export enum MessageType {
   DELIVERY_TO_POLICE_CASE_FILES_RECORD = 'DELIVERY_TO_POLICE_CASE_FILES_RECORD',
   DELIVERY_TO_POLICE_SIGNED_RULING = 'DELIVERY_TO_POLICE_SIGNED_RULING',
   DELIVERY_TO_POLICE_APPEAL = 'DELIVERY_TO_POLICE_APPEAL',
-  ARCHIVING_CASE_FILE = 'ARCHIVING_CASE_FILE',
-  ARCHIVING_CASE_FILES_RECORD = 'ARCHIVING_CASE_FILES_RECORD',
   // TODO: Archive confirmted generated indictments
   NOTIFICATION = 'NOTIFICATION',
 }
@@ -52,8 +50,6 @@ export const messageEndpoint: { [key in MessageType]: string } = {
   DELIVERY_TO_POLICE_CASE_FILES_RECORD: 'deliverCaseFilesRecordToPolice',
   DELIVERY_TO_POLICE_SIGNED_RULING: 'deliverSignedRulingToPolice',
   DELIVERY_TO_POLICE_APPEAL: 'deliverAppealToPolice',
-  ARCHIVING_CASE_FILE: 'archiveCaseFile',
-  ARCHIVING_CASE_FILES_RECORD: 'archiveCaseFilesRecord',
   NOTIFICATION: 'notification',
 }
 
