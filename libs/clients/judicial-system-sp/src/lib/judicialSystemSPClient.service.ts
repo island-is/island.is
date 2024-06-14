@@ -2,6 +2,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  CaseControllerGetAllCasesLocaleEnum,
+  CaseControllerGetCaseLocaleEnum,
+  CaseControllerGetSubpoenaLocaleEnum,
   CaseControllerUpdateSubpoenaRequest,
   CasesApi,
   DefendersApi,
@@ -27,7 +30,7 @@ export class JudicialSystemSPClientService {
     let cases
     try {
       cases = await this.casesApiWithAuth(user).caseControllerGetAllCases({
-        lang: locale,
+        locale: locale as CaseControllerGetAllCasesLocaleEnum,
       })
     } catch (error) {
       this.logger.error('Failed getting cases for user', error)
@@ -40,6 +43,7 @@ export class JudicialSystemSPClientService {
     try {
       singleCase = await this.casesApiWithAuth(user).caseControllerGetCase({
         caseId: id,
+        locale: locale as CaseControllerGetCaseLocaleEnum,
       })
     } catch (error) {
       this.logger.error('Failed getting single case for user', error)
@@ -65,6 +69,7 @@ export class JudicialSystemSPClientService {
     try {
       subpoena = await this.casesApiWithAuth(user).caseControllerGetSubpoena({
         caseId: id,
+        locale: locale as CaseControllerGetSubpoenaLocaleEnum,
       })
     } catch (error) {
       this.logger.warn('Failed getting subpoena for user', error)

@@ -30,3 +30,12 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
     }
   }
 }
+
+mutation PostSubpoenaAcknowledged(
+  $input: LawAndOrderSubpoenaAcknowledgedInput!
+) {
+  lawAndOrderSubpoenaAcknowledged(input: $input) {
+    caseId
+    acknowledged
+  }
+}

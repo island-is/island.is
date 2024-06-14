@@ -1569,6 +1569,10 @@ export const m = defineMessages({
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
   },
+  openErrand: {
+    id: 'sp.law-and-order:open-errand',
+    defaultMessage: 'Opna erindi',
+  },
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
