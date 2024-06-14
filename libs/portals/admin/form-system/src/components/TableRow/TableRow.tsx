@@ -144,10 +144,20 @@ export const TableRow = ({
                   },
                 },
                 {
-                  title: formatMessage(m.copy),
+                  title: formatMessage(m.preview),
+                  onClick: () => {
+                    navigate(
+                      FormSystemPaths.FormPreview.replace(':formId', String(id)),
+                      {
+                        state: {
+                          formId: id,
+                        },
+                      },
+                    )
+                  }
                 },
                 {
-                  title: formatMessage(m.translateToEnglish),
+                  title: formatMessage(m.copy),
                 },
                 {
                   title: formatMessage(m.translateToEnglish),

@@ -5,6 +5,7 @@ import { PortalModule } from '@island.is/portals/core'
 import { FormSystemPaths } from './lib/paths'
 import { formsLoader } from './screens/Forms/Forms.loader'
 import { formLoader } from './screens/Form/Form.loader'
+import { FormPreview } from './screens/FormPreview/FormPreview'
 
 const Forms = lazy(() => import('./screens/Forms/Forms'))
 
@@ -34,6 +35,12 @@ export const formSystemModule: PortalModule = {
         element: <Form />,
         loader: formLoader(props),
       },
+      {
+        name: m.rootName,
+        path: FormSystemPaths.FormPreview,
+        element: <FormPreview />,
+        loader: formLoader(props)
+      }
     ]
   },
 }
