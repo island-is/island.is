@@ -1,3 +1,4 @@
+import sanitizeHtml from 'sanitize-html'
 import { DocumentDTO } from '../..'
 
 export type FileType = 'pdf' | 'html' | 'url'
@@ -25,7 +26,19 @@ export const mapToDocument = (document: DocumentDTO): DocumentDto | null => {
     content = document.url
   } else if (document.htmlContent) {
     fileType = 'html'
-    content = document.htmlContent
+
+    const html = sanitizeHtml(document.htmlContent, {
+      allowedTags: sanitizeHtml.defaults.allowedTags.concat(['img']),
+      allowedAttributes: {
+        ...sanitizeHtml.defaults.allowedAttributes,
+        '*': ['style'],
+      },
+      allowedSchemes: sanitizeHtml.defaults.allowedSchemes.concat([
+        'data',
+        'https',
+      ]),
+    })
+    content = html
   } else {
     return null
   }

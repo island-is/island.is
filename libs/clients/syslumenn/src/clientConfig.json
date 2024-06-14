@@ -2347,26 +2347,10 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs/{Kennitala}/{Locale}": {
+    "/RettindiFyrirIslandIs/RettindiFyrirIslandIs": {
       "get": {
         "tags": ["Syslumenn"],
         "operationId": "RettindiFyrirIslandIs_Get",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "Kennitala",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "Locale",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          }
-        ],
         "responses": {
           "200": {
             "x-nullable": false,
@@ -2404,48 +2388,7 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs": {
-      "get": {
-        "tags": ["Syslumenn"],
-        "operationId": "RettindiFyrirIslandIs_Get2",
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          },
-          "404": {
-            "x-nullable": false,
-            "description": "Not found",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          },
-          "400": {
-            "x-nullable": false,
-            "description": "Bad request",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          },
-          "401": {
-            "x-nullable": false,
-            "description": "Unauthorized",
-            "schema": {
-              "$ref": "#/definitions/LeyfiListi"
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT Token": []
-          }
-        ]
-      }
-    },
-    "/api/RettindiFyrirIslandIs/{audkenni}": {
+    "/RettindiFyrirIslandIs/RettindiFyrirIslandIs/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
         "operationId": "RettindiFyrirIslandIs_GetStakt",
@@ -3011,70 +2954,6 @@
           "default": {
             "x-nullable": false,
             "description": "",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT Token": []
-          }
-        ]
-      }
-    },
-    "/api/Verdskra/{audkenni}/{tbr}/{audkennilykill}": {
-      "get": {
-        "tags": ["Syslumenn"],
-        "operationId": "Verdskra_Get",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "audkenni",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "tbr",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          },
-          {
-            "type": "string",
-            "name": "audkennilykill",
-            "in": "path",
-            "required": true,
-            "x-nullable": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "Success",
-            "schema": {
-              "$ref": "#/definitions/VerdskraSkeyti"
-            }
-          },
-          "404": {
-            "x-nullable": false,
-            "description": "Not found",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          },
-          "400": {
-            "x-nullable": false,
-            "description": "Bad request",
-            "schema": {
-              "$ref": "#/definitions/ProblemDetails"
-            }
-          },
-          "401": {
-            "x-nullable": false,
-            "description": "Unauthorized",
             "schema": {
               "$ref": "#/definitions/ProblemDetails"
             }
@@ -4488,7 +4367,7 @@
     },
     "TegundAndlags": {
       "type": "integer",
-      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar\n5 = Oskrad\n6 = AdrarEignir\n7 = Hlutabref\n8 = InnistaedaIBanka\n9 = PeningarOgBankaholf\n10 = Skotvopn\n11 = VerdbrefOgKrofur\n12 = Utfarakostnadur\n13 = OpinberGjold\n14 = AdrarSkuldir\n15 = EignirIAtvinnurekstri\n16 = SkuldirIAtvinnurekstri",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar\n5 = Oskrad\n6 = AdrarEignir\n7 = Hlutabref\n8 = InnistaedaIBanka\n9 = PeningarOgBankaholf\n10 = Skotvopn\n11 = VerdbrefOgKrofur\n12 = Utfarakostnadur\n13 = OpinberGjold\n14 = AdrarSkuldir\n15 = EignirIAtvinnurekstri\n16 = SkuldirIAtvinnurekstri\n17 = Fasteignagjold\n18 = Tryggingastofnun\n19 = Lan\n20 = Kreditkort\n21 = Yfirdrattur",
       "x-enumNames": [
         "Fasteign",
         "Okutaeki",
@@ -4506,9 +4385,17 @@
         "OpinberGjold",
         "AdrarSkuldir",
         "EignirIAtvinnurekstri",
-        "SkuldirIAtvinnurekstri"
+        "SkuldirIAtvinnurekstri",
+        "Fasteignagjold",
+        "Tryggingastofnun",
+        "Lan",
+        "Kreditkort",
+        "Yfirdrattur"
       ],
-      "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+      "enum": [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        20, 21
+      ]
     },
     "UpplysingarUrDanarbuiRadstofunSkeyti": {
       "type": "object",
@@ -5766,20 +5653,6 @@
         },
         "kennitala": {
           "type": "string"
-        }
-      }
-    },
-    "VerdskraSkeyti": {
-      "type": "object",
-      "required": ["upphaeð", "gildirFra"],
-      "properties": {
-        "upphaeð": {
-          "type": "number",
-          "format": "decimal"
-        },
-        "gildirFra": {
-          "type": "string",
-          "format": "date-time"
         }
       }
     }

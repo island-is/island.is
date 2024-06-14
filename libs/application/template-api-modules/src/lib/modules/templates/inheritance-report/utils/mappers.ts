@@ -222,21 +222,22 @@ export const expandAnswers = (
     caseNumber: answers.estateInfoSelection,
     confirmAction: answers.confirmAction,
     debts: {
-      debtsTotal: answers.debts.debtsTotal ?? 0,
+      debtsTotal: answers?.debts?.debtsTotal ?? 0,
       domesticAndForeignDebts: {
-        data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
+        data: (answers.debts?.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
               assetNumber: debt.assetNumber ?? '',
               propertyValuation: debt.propertyValuation ?? 0,
               description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
+              debtType: debt.debtType ?? '',
             }
           },
         ),
-        total: answers.debts.domesticAndForeignDebts?.total ?? 0,
+        total: answers.debts?.domesticAndForeignDebts?.total ?? 0,
       },
-      publicCharges: (answers.debts.publicCharges ?? 0).toString(),
+      publicCharges: (answers.debts?.publicCharges ?? 0).toString(),
     },
     estateInfoSelection: answers.estateInfoSelection,
     funeralCost: {

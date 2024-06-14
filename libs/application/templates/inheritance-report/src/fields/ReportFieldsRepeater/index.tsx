@@ -53,6 +53,7 @@ type RepeaterProps = {
       hideDeceasedShare?: boolean
       skipPushRight?: boolean
       assetKey?: string
+      selections?: Array<{ value: string; label: string }>
     }
   }
 }
@@ -124,8 +125,7 @@ export const ReportFieldsRepeater: FC<
     calculateTotal()
   }, [fields, calculateTotal])
 
-  //TODO: connect to API
-  const debtTypes = [] as any
+  const debtTypes = props.selections ?? []
 
   const handleAddRepeaterFields = () => {
     //reset stocks
@@ -408,26 +408,12 @@ export const ReportFieldsRepeater: FC<
                           ) ?? ''
                         }
                         placeholder={field.placeholder}
-                        options={debtTypes}
+                        options={debtTypes.map((type) => ({
+                          label: formatMessage(type.label),
+                          value: type.value,
+                        }))}
                         backgroundColor="blue"
-                      /> /* Commenting out for testing purposes of this field
-                    
-                    : field.id === 'exchangeRateOrInterest' ? (
-                      <NumberInput
-                        name={`${fieldIndex}.${field.id}`}
-                        placeholder={field.placeholder}
-                        onAfterChange={() => {
-                          updateValue(fieldIndex)
-                          calculateTotal()
-                          setIndex(fieldIndex)
-                        }}
-                        label={
-                          formatMessage(
-                            parseLabel(field.title, application.answers),
-                          ) ?? ''
-                        }
                       />
-                    )*/
                     ) : (
                       <InputController
                         id={`${fieldIndex}.${field.id}`}
