@@ -20,7 +20,7 @@ import {
   useGetUserNotificationsListQuery,
   useMarkAllNotificationsAsReadMutation,
   useMarkUserNotificationAsReadMutation,
-} from './Notifications.generated'
+} from './NotificationInfo.generated'
 
 import { mInformationNotifications } from '../../lib/messages'
 import { ActionCard, CardLoader } from '@island.is/service-portal/core'
