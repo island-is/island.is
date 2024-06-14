@@ -29,6 +29,7 @@
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
+        "parallel": false,
         "output": "libs/service-portal/information/src/**/*.generated.ts",
         "command": "graphql-codegen --config libs/service-portal/information/codegen.yml"
       }
