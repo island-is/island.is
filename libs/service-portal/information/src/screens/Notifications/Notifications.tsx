@@ -54,6 +54,7 @@ const UserNotifications = () => {
           before: '',
           after: '',
         },
+        locale: lang,
       },
     })
 
@@ -71,6 +72,7 @@ const UserNotifications = () => {
           before: '',
           after: cursor,
         },
+        locale: lang,
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
         if (
