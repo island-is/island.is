@@ -54,7 +54,7 @@ query GetUserNotifications($input: NotificationsInput!, $locale: String) {
 
 query GetUserNotificationsOverview(
   $input: NotificationsInput!
-  $locale: String!
+  $locale: String
 ) {
   userNotificationsOverview: userNotifications(input: $input, locale: $locale) {
     data {
