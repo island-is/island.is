@@ -862,6 +862,8 @@ export const slices = gql`
         page
         queryString
         size
+        tags
+        tagGroups
       }
       items {
         id

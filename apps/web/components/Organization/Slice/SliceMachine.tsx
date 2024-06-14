@@ -192,6 +192,7 @@ const renderSlice = (
             (slice as GenericListSchema).searchInputPlaceholder
           }
           itemType={(slice as GenericListSchema).itemType}
+          filterTags={(slice as GenericListSchema).filterTags}
         />
       )
     default:

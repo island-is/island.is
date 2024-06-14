@@ -1,6 +1,7 @@
-import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 import { Field, InputType, Int, ObjectType } from '@nestjs/graphql'
 import { IsInt, IsOptional, IsString } from 'class-validator'
+import GraphQLJSON from 'graphql-type-json'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
 
 @InputType()
 @ObjectType('GenericListItemResponseInput')
@@ -28,5 +29,9 @@ export class GetGenericListItemsInput {
   @IsOptional()
   queryString?: string
 
-  // TODO: add tags and tagGroups
+  @Field(() => [String], { nullable: true })
+  tags?: string[]
+
+  @Field(() => GraphQLJSON, { nullable: true })
+  tagGroups?: Record<string, string[]>
 }

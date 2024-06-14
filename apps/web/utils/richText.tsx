@@ -194,6 +194,7 @@ const defaultRenderComponent = {
       firstPageItemResponse={slice.firstPageListItemResponse}
       searchInputPlaceholder={slice.searchInputPlaceholder}
       itemType={slice.itemType}
+      filterTags={slice.filterTags}
     />
   ),
 }
