@@ -47,6 +47,7 @@ const ButtonWrapper = styled.View`
   flex-direction: row;
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const DEFAULT_PAGE_SIZE = 50
@@ -219,40 +220,6 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
         showLoading={loading && !!data}
       />
       <SafeAreaView style={{ flex: 1 }} testID={testIDs.SCREEN_NOTIFICATIONS}>
-        <ButtonWrapper>
-          <Button
-            isOutlined
-            isUtilityButton
-            title={intl.formatMessage({
-              id: 'notifications.markAllAsRead',
-              defaultMessage: 'Merkja allt lesið',
-            })}
-            style={{
-              marginRight: theme.spacing[2],
-              maxWidth: 145,
-            }}
-            icon={inboxRead}
-            iconStyle={{ tintColor: theme.color.blue400 }}
-            onPress={() => markAllUserNotificationsAsRead()}
-          />
-          <Button
-            isOutlined
-            isUtilityButton
-            title={intl.formatMessage({
-              id: 'notifications.settings',
-              defaultMessage: 'Mínar stillingar',
-            })}
-            onPress={() => navigateTo('/settings', componentId)}
-            icon={settings}
-            style={{
-              maxWidth: 145,
-            }}
-            iconStyle={{
-              tintColor: theme.color.blue400,
-              resizeMode: 'contain',
-            }}
-          />
-        </ButtonWrapper>
         {showError ? (
           <Problem type="error" withContainer />
         ) : (
@@ -265,6 +232,42 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
             onEndReached={handleEndReached}
             scrollEventThrottle={16}
             scrollToOverflowEnabled
+            ListHeaderComponent={
+              <ButtonWrapper>
+                <Button
+                  isOutlined
+                  isUtilityButton
+                  title={intl.formatMessage({
+                    id: 'notifications.markAllAsRead',
+                    defaultMessage: 'Merkja allt lesið',
+                  })}
+                  style={{
+                    marginRight: theme.spacing[2],
+                    maxWidth: 145,
+                  }}
+                  icon={inboxRead}
+                  iconStyle={{ tintColor: theme.color.blue400 }}
+                  onPress={() => markAllUserNotificationsAsRead()}
+                />
+                <Button
+                  isOutlined
+                  isUtilityButton
+                  title={intl.formatMessage({
+                    id: 'notifications.settings',
+                    defaultMessage: 'Mínar stillingar',
+                  })}
+                  onPress={() => navigateTo('/settings', componentId)}
+                  icon={settings}
+                  style={{
+                    maxWidth: 145,
+                  }}
+                  iconStyle={{
+                    tintColor: theme.color.blue400,
+                    resizeMode: 'contain',
+                  }}
+                />
+              </ButtonWrapper>
+            }
             ListFooterComponent={
               loadingMore && !error ? (
                 <LoadingWrapper>
