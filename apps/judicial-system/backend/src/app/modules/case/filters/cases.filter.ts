@@ -33,6 +33,7 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         CaseState.DRAFT,
         CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
+        CaseState.WAITING_FOR_CANCELLATION,
         CaseState.RECEIVED,
         CaseState.MAIN_HEARING,
         CaseState.ACCEPTED,
@@ -100,6 +101,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
       {
         state: [
           CaseState.SUBMITTED,
+          CaseState.WAITING_FOR_CANCELLATION,
           CaseState.RECEIVED,
           CaseState.MAIN_HEARING,
           CaseState.COMPLETED,
@@ -130,6 +132,7 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
             {
               state: [
                 CaseState.SUBMITTED,
+                CaseState.WAITING_FOR_CANCELLATION,
                 CaseState.RECEIVED,
                 CaseState.MAIN_HEARING,
                 CaseState.COMPLETED,
@@ -249,6 +252,7 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
             { type: indictmentCases },
             {
               state: [
+                CaseState.WAITING_FOR_CANCELLATION,
                 CaseState.RECEIVED,
                 CaseState.MAIN_HEARING,
                 CaseState.COMPLETED,

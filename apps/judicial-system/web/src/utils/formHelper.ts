@@ -137,6 +137,7 @@ export const hasDateChanged = (
 }
 
 export type stepValidationsType = {
+  [constants.CASES_ROUTE]: () => boolean
   [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
@@ -202,6 +203,7 @@ export type stepValidationsType = {
 
 export const stepValidations = (): stepValidationsType => {
   return {
+    [constants.CASES_ROUTE]: () => true,
     [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
     [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>

@@ -28,7 +28,6 @@ export const Siblings = ({
   })
 
   return (
-    // TODO: Only display section if "Siblings" selected as Reason for transfer
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('siblings')}

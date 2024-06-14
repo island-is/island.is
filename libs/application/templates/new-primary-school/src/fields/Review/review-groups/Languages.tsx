@@ -26,8 +26,10 @@ export const Languages = ({
     icelandicNotSpokenAroundChild,
   } = getApplicationAnswers(application.answers)
 
+  const icelandicSelected =
+    nativeLanguage === 'is' || otherLanguages?.includes('is')
+
   return (
-    // TODO: Skoða betur þegar multiSelect er tilbúið
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('languages')}
@@ -62,23 +64,28 @@ export const Languages = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.differentNeeds.languageTitle,
                   )}
-                  value={getLanguageLabel(otherLanguages)}
+                  value={otherLanguages
+                    .map((language) => {
+                      return getLanguageLabel(language)
+                    })
+                    .join(', ')}
                 />
               </GridColumn>
             </GridRow>
-            {icelandicNotSpokenAroundChild?.includes(YES) && (
-              <GridRow>
-                <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-                  <DataValue
-                    label={formatMessage(
-                      newPrimarySchoolMessages.overview
-                        .icelandicSpokenAroundChild,
-                    )}
-                    value={formatMessage(newPrimarySchoolMessages.shared.no)}
-                  />
-                </GridColumn>
-              </GridRow>
-            )}
+            {!icelandicSelected &&
+              icelandicNotSpokenAroundChild?.includes(YES) && (
+                <GridRow>
+                  <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.overview
+                          .icelandicSpokenAroundChild,
+                      )}
+                      value={formatMessage(newPrimarySchoolMessages.shared.no)}
+                    />
+                  </GridColumn>
+                </GridRow>
+              )}
           </>
         )}
       </Stack>

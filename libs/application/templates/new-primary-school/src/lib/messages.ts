@@ -317,28 +317,94 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Primary school',
     },
 
-    // Apply to a new school
-    newSchoolSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.new.school.sub.section.title',
-      defaultMessage: 'Nýr skóli',
-      description: 'New school',
+    // Reason for application
+    reasonForApplicationSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.reason.for.application.sub.section.title',
+      defaultMessage: 'Ástæða umsóknar',
+      description: 'Reason for application',
     },
-
-    // Reason for transfer
-    reasonForTransferSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.reason.for.transfer.sub.section.title',
-      defaultMessage: 'Ástæða flutnings',
-      description: 'Reason for transfer',
+    reasonForApplicationDescription: {
+      id: 'dess.nps.application:primary.school.reason.for.application.description',
+      defaultMessage:
+        'Barn á alltaf rétt á skólavist í sínum hverfisskóla. Séu ástæður umsóknar aðrar en flutningur lögheimilis getur verið að skólinn sjái sér ekki fært að taka á móti barninu. Það fer eftir aðstæðum í skólanum hverju sinni, svo sem rými.',
+      description:
+        'A child always has the right to attend school in his neighborhood school. If the reasons for the application are other than a change of legal residence, the school may not be able to accept the child. It depends on the situation in the school each time, such as space.',
+    },
+    reasonForApplicationPlaceholder: {
+      id: 'dess.nps.application:primary.school.reason.for.application.placeholder',
+      defaultMessage: 'Veldu ástæðu',
+      description: 'Select reason',
+    },
+    transferOfLegalDomicile: {
+      id: 'dess.nps.application:primary.school.transfer.of.legal.domicile',
+      defaultMessage: 'Flutningur lögheimilis',
+      description: 'Transfer of legal domicile',
+    },
+    studyStayForParents: {
+      id: 'dess.nps.application:primary.school.study.stay.for.parents',
+      defaultMessage: 'Námsdvöl foreldra',
+      description: 'Study stay for parents',
+    },
+    parentsParliamentaryMembership: {
+      id: 'dess.nps.application:primary.school.parents.parliamentary.membership',
+      defaultMessage: 'Þingmennska foreldris',
+      description: "Parent's parliamentary membership",
+    },
+    temporaryFoster: {
+      id: 'dess.nps.application:primary.school.temporary.foster',
+      defaultMessage: 'Tímabundið fóstur',
+      description: 'Temporary foster',
+    },
+    expertService: {
+      id: 'dess.nps.application:primary.school.expert.service',
+      defaultMessage: 'Sérfræðiþjónusta',
+      description: 'Expert service',
+    },
+    sickly: {
+      id: 'dess.nps.application:primary.school.sickly',
+      defaultMessage: 'Sjúkralega',
+      description: 'Sickly',
+    },
+    livesInTwoHomes: {
+      id: 'dess.nps.application:primary.school.lives.in.two.homes',
+      defaultMessage: 'Býr á tveimur heimilum',
+      description: 'Lives in two homes',
+    },
+    movingAbroad: {
+      id: 'dess.nps.application:primary.school.moving.abroad',
+      defaultMessage: 'Flutningur erlendis',
+      description: 'Moving abroad',
+    },
+    otherReasons: {
+      id: 'dess.nps.application:primary.school.other.reasons',
+      defaultMessage: 'Aðrar ástæður',
+      description: 'Other reasons',
+    },
+    registerNewDomicileAlertMessage: {
+      id: 'dess.nps.application:primary.school.register.new.domicile.alert.message',
+      defaultMessage: 'Minnum þig á að skrá nýtt lögheimili í Þjóðskrá.',
+      description:
+        'We remind you to register your new domicile in the National Registry.',
+    },
+    country: {
+      id: 'dess.nps.application:primary.school.country',
+      defaultMessage: 'Til hvaða lands er verið að flytja?',
+      description: 'What country are you moving to?',
+    },
+    countryPlaceholder: {
+      id: 'dess.nps.application:primary.school.country.placeholder',
+      defaultMessage: 'Veldu land',
+      description: 'Select a country',
     },
 
     // Siblings
     siblingsSubSectionTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.siblings.sub.section.title',
+      id: 'dess.nps.application:primary.school.siblings.sub.section.title',
       defaultMessage: 'Systkini',
       description: 'Siblings',
     },
     siblingsTitle: {
-      id: 'dess.nps.application:primary.school.starting.school.siblings.title',
+      id: 'dess.nps.application:primary.school.siblings.title',
       defaultMessage: 'Systkini í sama grunnskóla',
       description: 'Siblings in the same primary school',
     },
@@ -376,6 +442,13 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:primary.school.siblings.relation.step.sibling',
       defaultMessage: 'Stjúpsystkini',
       description: 'Step sibling',
+    },
+
+    // Apply to a new school
+    newSchoolSubSectionTitle: {
+      id: 'dess.nps.application:primary.school.new.school.sub.section.title',
+      defaultMessage: 'Nýr skóli',
+      description: 'New school',
     },
 
     // Starting school
@@ -430,8 +503,10 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     otherLanguagesSpokenDaily: {
       id: 'dess.nps.application:different.needs.other.languages.spoken.daily',
-      defaultMessage: 'Eru daglega töluð önnur tungumál á heimili barnsins?',
-      description: "Are other languages ​​spoken daily in the child's home?",
+      defaultMessage:
+        'Eru önnur tungumál en móðurmál töluð daglega á heimili barnsins?',
+      description:
+        "Are languages ​​other than the native language spoken daily in the child's home?",
     },
     languagePlaceholder: {
       id: 'dess.nps.application:different.needs.language.placeholder',
@@ -640,9 +715,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     photographyInfo: {
       id: 'dess.nps.application:different.needs.photography.info',
       defaultMessage:
-        'Ekki er heimilt að nota myndefni í öðrum tilgangi en samþykki nær til.\n\nEf myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, verða foreldrar upplýstir sérstaklega og sérstaks samþykkis aflað.\n\nForeldri getur afturkallað samþykki sitt með því að hafa samband við skóla. Afturköllun hefur þó ekki áhrif á lögmæti þeirrar myndatöku og myndbirtingar sem fram hefur farið fram að þeim tíma.\n\nHver og einn skóli er ábyrgðaraðili vegna persónuupplýsinga sem þar eru unnar. Frekari leiðbeiningar og fræðsla um mynda- og myndbandstökur sem og myndbirtingar má finna á vef viðkomandi sveitarfélags.',
+        'Ekki er heimilt að nota myndefni í öðrum tilgangi en samþykki nær til.\n\nEf myndefni er notað í öðrum tilgangi, eða myndataka er fyrirhuguð í öðrum tilgangi en samþykki nær til, verða foreldrar upplýstir sérstaklega og sérstaks samþykkis aflað, af viðkomandi skóla.\n\nForeldri getur afturkallað samþykki sitt með því að hafa samband við skóla. Afturköllun hefur þó ekki áhrif á lögmæti þeirrar myndatöku og myndbirtingar sem fram hefur farið fram að þeim tíma.\n\nHver og einn skóli er ábyrgðaraðili vegna persónuupplýsinga sem þar eru unnar. Frekari leiðbeiningar og fræðsla um mynda- og myndbandstökur sem og myndbirtingar má finna á vef viðkomandi sveitarfélags.',
       description:
-        'It is not allowed to use visual material for any purpose other than what has been approved.\n\nIf visual material is used for a purpose other than what has been approved, or if photography is intended for a purpose other than what has been approved, parents will be informed specifically and a separate consent will be obtained.\n\nA parent can revoke their consent by contacting the school. However, revocation does not affect the legality of any photography or publication that has already taken place up to that time.\n\nEach school is responsible for the personal information processed there. Further guidance and education on photography and publication, as well as image processing, can be found on the website of the relevant municipality.',
+        'It is not allowed to use visual material for any purpose other than what has been approved.\n\nIf visual material is used for a purpose other than what has been approved, or if photography is intended for a purpose other than what has been approved, parents will be informed specifically and a separate consent will be obtained from the relevant school.\n\nA parent can revoke their consent by contacting the school. However, revocation does not affect the legality of any photography or publication that has already taken place up to that time.\n\nEach school is responsible for the personal information processed there. Further guidance and education on photography and publication, as well as image processing, can be found on the website of the relevant municipality.',
     },
   }),
 
@@ -714,9 +789,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     expandableDescription: {
       id: 'dess.nps.application:conclusion.expandable.description#markdown',
       defaultMessage:
-        'Skólastjóri mun taka afstöðu til umsóknarinnar eftir aðstæðum í skólanum hverju sinni og svara þér eins fljótt og auðið er.\n\nÁður en afstaða er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa um aðstæður barns og /eða forsjáraðila. Mun þá skólastjóri setja sig í samband við þig.\n\nEf umsókn um nýjan skóla er samþykkt, boðar skólinn þig í kjölfarið til móttökuviðtals.',
+        'Sveitarfélagið og skólinn munu taka afstöðu til umsóknarinnar og svara þér eins fljótt og auðið er.\n\nÁður en afstaða er tekin kann að vera þörf á því að afla frekari gagna í þeim tilgangi að upplýsa betur um aðstæður barns og/eða forsjáraðila. Mun þá sveitarfélagið eða skólinn setja sig í samband við þig.\n\nEf umsókn um nýjan skóla er samþykkt, verður forsjáraðili og barn boðað til móttökuviðtals.',
       description:
-        'The school principal will make a decision on the application based on the circumstances in the school and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information for the purpose of informing about the childs circumstances and/or custody authorities. The school principal will then contact you.\n\nIf the application for a new school is approved, the school will invite you to an admission interview.',
+        "The municipality and the school will make a decision on the application and will respond to you as quickly and easily as possible.\n\nBefore a decision is made, there may be a need to gather further information in order to provide better information about the child's and/or guardian's circumstances. The municipality or the school will then contact you.\n\nIf the application for a new school is approved, the guardian and child will be invited to an admission interview.",
     },
   }),
 }

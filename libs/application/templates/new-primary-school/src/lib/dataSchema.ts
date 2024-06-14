@@ -5,6 +5,7 @@ import { z } from 'zod'
 import {
   FoodAllergiesOptions,
   FoodIntolerancesOptions,
+  ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
 } from './constants'
@@ -84,6 +85,61 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
     }),
+  reasonForApplication: z
+    .object({
+      reason: z.enum([
+        ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
+        ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
+        ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
+        ReasonForApplicationOptions.TEMPORARY_FROSTER,
+        ReasonForApplicationOptions.EXPERT_SERVICE,
+        ReasonForApplicationOptions.SICKLY,
+        ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
+        ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
+        ReasonForApplicationOptions.MOVING_ABROAD,
+        ReasonForApplicationOptions.OTHER_REASONS,
+      ]),
+      movingAbroad: z
+        .object({
+          country: z.string().optional(),
+        })
+        .optional(),
+      transferOfLegalDomicile: z
+        .object({
+          streetAddress: z.string(),
+          postalCode: z.string(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ reason, movingAbroad }) =>
+        reason === ReasonForApplicationOptions.MOVING_ABROAD
+          ? movingAbroad && !!movingAbroad.country
+          : true,
+      {
+        path: ['movingAbroad', 'country'],
+      },
+    )
+    .refine(
+      ({ reason, transferOfLegalDomicile }) =>
+        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ? transferOfLegalDomicile &&
+            transferOfLegalDomicile.streetAddress.length > 0
+          : true,
+      {
+        path: ['transferOfLegalDomicile', 'streetAddress'],
+      },
+    )
+    .refine(
+      ({ reason, transferOfLegalDomicile }) =>
+        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ? transferOfLegalDomicile &&
+            transferOfLegalDomicile.postalCode.length > 0
+          : true,
+      {
+        path: ['transferOfLegalDomicile', 'postalCode'],
+      },
+    ),
   siblings: z
     .array(
       z.object({
@@ -98,21 +154,21 @@ export const dataSchema = z.object({
         ]),
       }),
     )
-    // TODO: Skoða betur þegar Reason for transfer er komið inn?
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
   languages: z
     .object({
-      // TODO: Skoða betur þegar multiSelect er tilbúið
       nativeLanguage: z.string(),
       otherLanguagesSpokenDaily: z.enum([YES, NO]),
-      otherLanguages: z.string().optional(),
+      otherLanguages: z.array(z.string()).optional(),
     })
     .refine(
       ({ otherLanguagesSpokenDaily, otherLanguages }) =>
-        otherLanguagesSpokenDaily === YES ? !!otherLanguages : true,
+        otherLanguagesSpokenDaily === YES
+          ? !!otherLanguages && otherLanguages.length > 0
+          : true,
       {
         path: ['otherLanguages'],
         params: errorMessages.languagesRequired,

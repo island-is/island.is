@@ -28,18 +28,10 @@ export const dataSchema = z.object({
     }),
   advert: z
     .object({
-      department: z.string().refine((v) => v && v.length, {
-        params: error.emptyFieldError,
-      }),
-      type: z.string().refine((v) => v && v.length, {
-        params: error.emptyFieldError,
-      }),
-      title: z.string().refine((v) => v && v.length, {
-        params: error.emptyFieldError,
-      }),
-      document: z.string().refine((v) => v && v.length, {
-        params: error.emptyFieldError,
-      }),
+      department: z.string().optional(),
+      type: z.string().optional(),
+      title: z.string().optional(),
+      document: z.string().optional(),
       template: z.string().optional(),
       subType: z.string().optional(),
     })
@@ -185,20 +177,13 @@ export const dataSchema = z.object({
     fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]),
   }),
   publishing: z.object({
-    date: z.string().refine((v) => v && v.length, {
-      params: error.emptyFieldError,
-    }),
-    fastTrack: z.string(),
-    contentCategories: z
-      .array(
-        z.object({
-          label: z.string(),
-          value: z.string(),
-        }),
-      )
-      .refine((v) => v.length, {
-        params: error.emptyFieldError,
+    date: z.string().optional(),
+    contentCategories: z.array(
+      z.object({
+        label: z.string(),
+        value: z.string(),
       }),
+    ),
     communicationChannels: z.array(
       z.object({
         email: z.string(),
