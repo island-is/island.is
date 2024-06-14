@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Locale } from 'locale'
 import { useRouter } from 'next/router'
@@ -8,7 +8,9 @@ import { useLazyQuery } from '@apollo/client'
 import {
   AlertMessage,
   Box,
+  Filter,
   FilterInput,
+  FilterMultiChoice,
   FocusableBox,
   GridColumn,
   GridContainer,
@@ -18,15 +20,18 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { stringHash } from '@island.is/shared/utils'
+import { theme } from '@island.is/island-ui/theme'
 import {
   GenericListItem,
   GenericListItemResponse,
+  GenericTag,
   GetGenericListItemsQueryVariables,
   Query,
 } from '@island.is/web/graphql/schema'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { getFilterCategories } from '@island.is/web/screens/Organization/PublishedMaterial/utils'
 import { GET_GENERIC_LIST_ITEMS_QUERY } from '@island.is/web/screens/queries/GenericList'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -119,6 +124,7 @@ interface GenericListProps {
   firstPageItemResponse?: GenericListItemResponse
   searchInputPlaceholder?: string | null
   itemType?: string | null
+  filterTags?: GenericTag[] | null
 }
 
 export const GenericList = ({
@@ -126,6 +132,7 @@ export const GenericList = ({
   firstPageItemResponse,
   searchInputPlaceholder,
   itemType,
+  filterTags,
 }: GenericListProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -136,6 +143,9 @@ export const GenericList = ({
 
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
+
+  const initialFilterCategories = getFilterCategories(filterTags ?? [])
+
   const pageRef = useRef(page)
   const searchValueRef = useRef(searchValue)
   const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
@@ -182,6 +192,8 @@ export const GenericList = ({
             lang: activeLocale,
             page: page ?? 1,
             queryString: searchValue || '',
+            tags: [],
+            tagGroups: {},
           },
         },
       })
@@ -189,6 +201,14 @@ export const GenericList = ({
     DEBOUNCE_TIME_IN_MS,
     [searchValue, page],
   )
+
+  const { width } = useWindowSize()
+
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.md)
+  }, [width])
 
   const totalItems = itemsResponse?.total ?? 0
   const items = itemsResponse?.items ?? []
@@ -202,24 +222,63 @@ export const GenericList = ({
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
 
+  const filterInputComponent = (
+    <FilterInput
+      name="list-search"
+      onChange={(value) => {
+        setSearchValue(value || null)
+        searchValueRef.current = value
+        setPage(null)
+        pageRef.current = 1
+      }}
+      value={searchValue ?? ''}
+      loading={loading}
+      placeholder={searchInputPlaceholder ?? undefined}
+      backgroundColor="white"
+    />
+  )
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={5}>
           <Box ref={ref}>
-            <FilterInput
-              name="list-search"
-              onChange={(value) => {
-                setSearchValue(value || null)
-                searchValueRef.current = value
-                setPage(null)
-                pageRef.current = 1
-              }}
-              value={searchValue ?? ''}
-              loading={loading}
-              placeholder={searchInputPlaceholder ?? undefined}
-              backgroundColor="white"
-            />
+            {initialFilterCategories.length > 0 && (
+              <Filter
+                resultCount={totalItems}
+                labelClear={'Hreinsa síu'}
+                labelClearAll={'Hreinsa allar síur'}
+                labelOpen={'Opna síu'}
+                labelClose={'Loka síu'}
+                labelResult={'Skoða niðurstöður'}
+                labelTitle={'Sía niðurstöður'}
+                variant={isMobile ? 'dialog' : 'popover'}
+                onFilterClear={() => {
+                  //
+                }}
+                filterInput={filterInputComponent}
+              >
+                <FilterMultiChoice
+                  labelClear={'Hreinsa val'}
+                  onChange={({ categoryId, selected }) => {
+                    // setIsTyping(true)
+                    // setParameters((prevParameters) => ({
+                    //   ...prevParameters,
+                    //   [categoryId]: selected,
+                    // }))
+                  }}
+                  onClear={(categoryId) => {
+                    // setIsTyping(true)
+                    // setParameters((prevParameters) => ({
+                    //   ...prevParameters,
+                    //   [categoryId]: [],
+                    // }))
+                  }}
+                  categories={initialFilterCategories}
+                />
+              </Filter>
+            )}
+            {initialFilterCategories.length === 0 && filterInputComponent}
           </Box>
           {errorOccurred && (
             <AlertMessage

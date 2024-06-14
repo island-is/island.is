@@ -855,6 +855,16 @@ export const slices = gql`
     id
     searchInputPlaceholder
     itemType
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
     firstPageListItemResponse {
       input {
         genericListId

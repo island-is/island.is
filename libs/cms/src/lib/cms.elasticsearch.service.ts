@@ -467,7 +467,7 @@ export class CmsElasticsearchService {
       },
     ]
 
-    if (input.tags && input.tagGroups) {
+    if (input.tags && input.tags.length > 0 && input.tagGroups) {
       tagsMust.push(generateGenericTagGroupQueries(input.tags, input.tagGroups))
     }
 

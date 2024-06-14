@@ -33,7 +33,9 @@ export class GenericListItemSyncService
           const mapped = mapGenericListItem(entry)
 
           const content = extractStringsFromObject(
-            mapped.cardIntro.map(pruneNonSearchableSliceUnionFields),
+            mapped.cardIntro
+              .concat(mapped.content ?? []) // TODO: should the content be searchable?
+              .map(pruneNonSearchableSliceUnionFields),
             100,
             2,
           )
