@@ -2,7 +2,8 @@ import { exec } from 'child_process';
 
 export function runCommand(command) {
     return new Promise((resolve, reject) => {
-        exec(command, (error) => {
+        exec(command, (error, stdout) => {
+            console.log({ stdout });
             if (error) {
                 reject(`Error: ${error.message}`);
                 return;
