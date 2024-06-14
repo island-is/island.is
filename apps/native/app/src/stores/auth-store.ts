@@ -7,14 +7,12 @@ import {
   revoke,
 } from 'react-native-app-auth'
 import Keychain from 'react-native-keychain'
-import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../contexts/i18n-provider'
 import { getApolloClientAsync } from '../graphql/client'
 import { isAndroid } from '../utils/devices'
-import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { clearAllStorages } from '../stores/mmkv'
@@ -36,7 +34,7 @@ interface UserInfo {
 interface AuthStore extends State {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
-  lockScreenActivatedAt: number | undefined
+  lockScreenActivatedAt?: number | null
   lockScreenComponentId: string | undefined
   noLockScreenUntilNextAppStateActive: boolean
   isCogitoAuth: boolean
