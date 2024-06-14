@@ -41,8 +41,6 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
   'title',
   'externalBody',
   'internalBody',
-  'clickAction',
-  'clickActionWeb',
   'clickActionUrl',
 ]
 
@@ -209,8 +207,6 @@ export class NotificationsService {
           title: notificationTitle
           externalBody: notificationBody
           internalBody: notificationDataCopy
-          clickAction
-          clickActionWeb
           clickActionUrl
           args
         }
@@ -259,8 +255,6 @@ export class NotificationsService {
           title: notificationTitle
           externalBody: notificationBody
           internalBody: notificationDataCopy
-          clickAction
-          clickActionWeb
           clickActionUrl
           args
         }

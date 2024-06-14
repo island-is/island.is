@@ -102,10 +102,10 @@ export class RenderedNotificationDto {
   @IsOptional()
   internalBody?: string
 
-  @ApiPropertyOptional({ example: '//inbox/document-uuid' })
-  @IsString()
-  @IsOptional()
-  clickAction?: string
+  // @ApiPropertyOptional({ example: '//inbox/document-uuid' })
+  // @IsString()
+  // @IsOptional()
+  // clickAction?: string
 
   @ApiPropertyOptional({ example: 'https://island.is/minarsidur/postholf' })
   @IsString()
@@ -143,10 +143,10 @@ export class Message {
   @IsString()
   internalBody?: string
 
-  @ApiPropertyOptional({ example: 'click/action' })
-  @IsOptional()
-  @IsString()
-  clickAction?: string
+  // @ApiPropertyOptional({ example: 'click/action' })
+  // @IsOptional()
+  // @IsString()
+  // clickAction?: string
 }
 
 export class PaginatedNotificationDto {
