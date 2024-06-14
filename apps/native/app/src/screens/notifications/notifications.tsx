@@ -4,13 +4,20 @@ import {
   NotificationCard,
   Problem,
   ListItemSkeleton,
+  EmptyList,
 } from '@ui'
 import { useApolloClient } from '@apollo/client'
 
 import { dismissAllNotificationsAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { ActivityIndicator, FlatList, SafeAreaView } from 'react-native'
+import {
+  ActivityIndicator,
+  FlatList,
+  SafeAreaView,
+  View,
+  Image,
+} from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -37,6 +44,7 @@ import { isAndroid } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
 import settings from '../../assets/icons/settings.png'
 import inboxRead from '../../assets/icons/inbox-read.png'
+import emptyIllustrationSrc from '../../assets/illustrations/le-company-s3.png'
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
@@ -63,7 +71,12 @@ type NotificationItem = NonNullable<
   NonNullable<GetUserNotificationsQuery['userNotifications']>['data']
 >[0]
 
-type ListItem = SkeletonItem | NotificationItem
+export type EmptyItem = {
+  id: string
+  __typename: 'Empty'
+}
+
+type ListItem = SkeletonItem | NotificationItem | EmptyItem
 
 export const NotificationsScreen: NavigationFunctionComponent = ({
   componentId,
@@ -122,6 +135,10 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const memoizedData = useMemo<ListItem[]>(() => {
     if (loading && !data) {
       return createSkeletonArr(9)
+    }
+
+    if (data?.userNotifications?.data?.length === 0) {
+      return [{ id: '0', __typename: 'Empty' }]
     }
 
     return data?.userNotifications?.data || []
@@ -184,6 +201,26 @@ export const NotificationsScreen: NavigationFunctionComponent = ({
   const renderNotificationItem = ({ item }: { item: ListItem }) => {
     if (item.__typename === 'Skeleton') {
       return <ListItemSkeleton multilineMessage />
+    }
+
+    if (item.__typename === 'Empty') {
+      return (
+        <View style={{ marginTop: 80 }}>
+          <EmptyList
+            title={intl.formatMessage({ id: 'notifications.emptyListTitle' })}
+            description={intl.formatMessage({
+              id: 'notifications.emptyListDescription',
+            })}
+            image={
+              <Image
+                source={emptyIllustrationSrc}
+                style={{ width: 134, height: 176 }}
+                resizeMode="contain"
+              />
+            }
+          />
+        </View>
+      )
     }
 
     return (
