@@ -93,8 +93,8 @@ export class NotificationDispatchService {
         messageId,
         ...(notification.appURI && {
           url: notification.appURI,
-          islandIsUrl: notification.appURI,// CLEANUP ?????
-        })
+          islandIsUrl: notification.appURI, // CLEANUP ?????
+        }),
       },
     }
 
