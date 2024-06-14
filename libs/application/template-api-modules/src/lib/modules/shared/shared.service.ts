@@ -1,7 +1,11 @@
-import {Inject, Injectable} from '@nestjs/common'
-import {ConfigService} from '@nestjs/config'
-import {EmailService} from '@island.is/email-service'
-import {Application, ApplicationWithAttachments, GraphqlGatewayResponse,} from '@island.is/application/types'
+import { Inject, Injectable } from '@nestjs/common'
+import { ConfigService } from '@nestjs/config'
+import { EmailService } from '@island.is/email-service'
+import {
+  Application,
+  ApplicationWithAttachments,
+  GraphqlGatewayResponse,
+} from '@island.is/application/types'
 import {
   AssignmentEmailTemplateGenerator,
   AssignmentSmsTemplateGenerator,
@@ -11,15 +15,15 @@ import {
   EmailTemplateGenerator,
   SmsTemplateGenerator,
 } from '../../types'
-import {getConfigValue} from './shared.utils'
-import type {Logger} from '@island.is/logging'
-import {LOGGER_PROVIDER} from '@island.is/logging'
-import {SmsService} from '@island.is/nova-sms'
-import {S3} from 'aws-sdk'
+import { getConfigValue } from './shared.utils'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SmsService } from '@island.is/nova-sms'
+import { S3 } from 'aws-sdk'
 import AmazonS3URI from 'amazon-s3-uri'
-import {PaymentService} from '@island.is/application/api/payment'
-import {User} from '@island.is/auth-nest-tools'
-import {ExtraData} from '@island.is/clients/charge-fjs-v2'
+import { PaymentService } from '@island.is/application/api/payment'
+import { User } from '@island.is/auth-nest-tools'
+import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -261,7 +265,8 @@ export class SharedTemplateApiService {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<string> {
-    const fileContent = (await this.getS3File(application, attachmentKey))?.Body as Buffer
+    const fileContent = (await this.getS3File(application, attachmentKey))
+      ?.Body as Buffer
     return fileContent?.toString('base64') || ''
   }
 
@@ -270,6 +275,6 @@ export class SharedTemplateApiService {
     attachmentKey: string,
   ): Promise<Blob> {
     const file = await this.getS3File(application, attachmentKey)
-    return new Blob([file.Body], {type: file.ContentType})
+    return new Blob([file.Body], { type: file.ContentType })
   }
 }
