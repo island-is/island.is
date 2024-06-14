@@ -23,6 +23,7 @@ import { keyStorage } from './_key_storage.mjs'
 
 // When testing this is good to manipulate
 const HASH_VERSION = `newcache-${6}`
+const GENERATED_FILES_VERSION = '2024061401-notifications-locale-cleanstring';
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
@@ -85,7 +86,7 @@ export const caches = [
     enabled: ENABLED_MODULES['generated-files'],
     hash: async () =>
       keyStorage.getKey('generated-files') ??
-      `generated-files-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getGeneratedFileHash()}`,
+      `generated-files-${GENERATED_FILES_VERSION}-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getGeneratedFileHash()}`,
     name: 'Cache Generated Files',
     id: 'generated-files',
     path: 'generated_files.tar.gz',
