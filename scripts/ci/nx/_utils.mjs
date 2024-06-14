@@ -45,6 +45,5 @@ export function hasGitChanges() {
 }
 
 export async function fileExists(path) {
-    return !!(await stat(path).catch((_) => false))
+  return !!(await stat(path).catch((_) => false))
 }
-    

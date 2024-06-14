@@ -18,5 +18,4 @@ if (IS_PULLREQUEST) {
 }
 
 // Generated files
-await createGeneratedFiles();
-
+await createGeneratedFiles()
