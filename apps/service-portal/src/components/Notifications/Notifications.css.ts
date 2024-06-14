@@ -9,6 +9,14 @@ export const link = style({
   overflow: 'hidden',
 })
 
+export const img = style({
+  height: 'auto',
+  width: 'auto',
+  display: 'flex',
+  maxHeight: 28,
+  maxWidth: 28,
+})
+
 globalStyle(`${link} > span`, {
   boxShadow: 'none',
 })

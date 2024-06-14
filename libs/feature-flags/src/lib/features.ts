@@ -90,6 +90,10 @@ export enum Features {
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
+
+  // Single sign on passkeys
+  isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
+  isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
 }
 
 export enum ServerSideFeature {
