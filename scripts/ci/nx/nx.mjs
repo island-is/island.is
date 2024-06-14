@@ -9,7 +9,9 @@ await NxAgents.start();
 if (IS_PULLREQUEST) {
     // If this is a pull request we want to start by formatting
     // and exiting early on changes
+    console.log(`Running format:write`);
     await runNxAffected('format:write');
+    console.log(`Done format:write`);
     if (await hasGitChanges()) {
         console.log('Changes detected after formatting, exiting');
         process.exit(1);
