@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/types'
 import { Box, Button, Text, PdfViewer } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useState } from 'react'
+import { useState } from 'react'
 import {
   AlertMessageFormField,
   MessageWithLinkButtonFormField,
@@ -18,19 +18,16 @@ import { conclusionMessages } from '@island.is/application/ui-forms'
 import { PermitProgram } from '../../lib'
 import { HealthcareWorkPermitAnswers } from '../..'
 
-export const CustomFormConclusionSectionField: FC<
-  React.PropsWithChildren<FieldBaseProps>
-> = (props) => {
+interface PdfFile {
+  base64: string
+  filename: string
+}
+
+export const CustomFormConclusionSectionField = (props: FieldBaseProps) => {
   const { application } = props
   const { formatMessage } = useLocale()
 
-  const [fileToView, setFileToView] = useState<
-    | {
-        base64: string
-        filename: string
-      }
-    | undefined
-  >(undefined)
+  const [fileToView, setFileToView] = useState<PdfFile | undefined>(undefined)
 
   if (fileToView) {
     return (
@@ -127,7 +124,7 @@ export const CustomFormConclusionSectionField: FC<
               filename: index === 0 ? `starfsleyfi_.pdf` : `leyfisnumer_.pdf`,
             }))
           },
-          setViewPdfFile: (file: { base64: string; filename: string }) => {
+          setViewPdfFile: (file: PdfFile) => {
             setFileToView(file)
           },
         }}
