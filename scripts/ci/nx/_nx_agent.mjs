@@ -12,7 +12,7 @@ async function stopNxAgents() {
     return runNxCloudCommand(command);
 }
 
-class NxAgentsConstructor {
+class _NxAgents {
     async start() {
         await startNxAgents();
     }
@@ -22,4 +22,4 @@ class NxAgentsConstructor {
     }
 }
 
-export const NxAgents = new NxAgentsConstructor();
+export const NxAgents = new _NxAgents();

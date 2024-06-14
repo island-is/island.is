@@ -1,14 +1,15 @@
+// @ts-check
+
 import { exec } from 'child_process';
 
 export function runCommand(command) {
     return new Promise((resolve, reject) => {
         exec(command, (error, stdout) => {
-            console.log({ stdout });
             if (error) {
                 reject(`Error: ${error.message}`);
                 return;
             }
-            resolve();
+            resolve(void 0);
         });
     });
 }
