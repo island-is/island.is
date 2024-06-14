@@ -1,6 +1,6 @@
 // @ts-check
 
-import { PR_BRANCH } from './_const.mjs'
+import { PR_BRANCH } from './_env.mjs'
 import { gitPushChanges } from './_git_push.mjs'
 import { hasGitChanges, runNxCommand } from './_utils.mjs'
 

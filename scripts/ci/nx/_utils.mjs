@@ -1,6 +1,7 @@
 // @ts-check
 
 import { exec } from 'child_process'
+import { stat } from 'fs/promises'
 
 export function runCommand(command) {
   return new Promise((resolve, reject) => {
@@ -42,3 +43,8 @@ export function hasGitChanges() {
     })
   })
 }
+
+export async function fileExists(path) {
+    return !!(await stat(path).catch((_) => false))
+}
+    

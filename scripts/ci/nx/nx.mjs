@@ -1,5 +1,6 @@
 // @ts-check
-import { IS_PULLREQUEST } from './_const.mjs'
+import { IS_PULLREQUEST } from './_env.mjs'
+import { createGeneratedFiles } from './_generated_files.mjs'
 import { NxAgents } from './_nx_agent.mjs'
 import { formatWriteHasChanges } from './_pull_request_forrmat_write.mjs'
 
@@ -15,3 +16,7 @@ if (IS_PULLREQUEST) {
     process.exit(1)
   }
 }
+
+// Generated files
+await createGeneratedFiles();
+
