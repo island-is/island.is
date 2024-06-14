@@ -270,6 +270,6 @@ export class SharedTemplateApiService {
     attachmentKey: string,
   ): Promise<Blob> {
     const file = await this.getS3File(application, attachmentKey)
-    return new Blob([file.Body], {type: file.ContentType})
+    return new Blob([file.Body as ArrayBuffer], {type: file.ContentType})
   }
 }
