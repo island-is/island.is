@@ -22,7 +22,10 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
@@ -89,7 +92,9 @@ const IndictmentOverview = () => {
         )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
-            <InfoCardClosedIndictment />
+            <InfoCardClosedIndictment
+              displayAppealExpirationInfo={user?.role === UserRole.DEFENDER}
+            />
           ) : (
             <InfoCardActiveIndictment />
           )}

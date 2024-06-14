@@ -28,15 +28,16 @@ const setFont = (doc: PDFKit.PDFDocument, font?: string) => {
   }
 }
 
-const addCenteredText = (
+const addAlignedText = (
   doc: PDFKit.PDFDocument,
   fontSize: number,
   heading: string,
+  alignment: 'center' | 'left' | 'right' | 'justify',
   font?: string,
 ) => {
   setFont(doc, font)
 
-  doc.fontSize(fontSize).text(heading, { align: 'center', paragraphGap: 1 })
+  doc.fontSize(fontSize).text(heading, { align: alignment, paragraphGap: 1 })
 }
 
 const addText = (
@@ -49,17 +50,6 @@ const addText = (
   setFont(doc, font)
 
   doc.fontSize(fontSize).text(text, { continued, paragraphGap: 1 })
-}
-
-const addJustifiedText = (
-  doc: PDFKit.PDFDocument,
-  fontSize: number,
-  text: string,
-  font?: string,
-) => {
-  setFont(doc, font)
-
-  doc.fontSize(fontSize).text(text, { align: 'justify', paragraphGap: 1 })
 }
 
 export const setTitle = (doc: PDFKit.PDFDocument, title: string) => {
@@ -333,7 +323,7 @@ export const addGiganticHeading = (
   heading: string,
   font?: string,
 ) => {
-  addCenteredText(doc, giganticFontSize, heading, font)
+  addAlignedText(doc, giganticFontSize, heading, 'center', font)
 }
 
 export const addHugeHeading = (
@@ -341,7 +331,7 @@ export const addHugeHeading = (
   heading: string,
   font?: string,
 ) => {
-  addCenteredText(doc, hugeFontSize, heading, font)
+  addAlignedText(doc, hugeFontSize, heading, 'center', font)
 }
 
 export const addLargeHeading = (
@@ -349,7 +339,7 @@ export const addLargeHeading = (
   heading: string,
   font?: string,
 ) => {
-  addCenteredText(doc, largeFontSize, heading, font)
+  addAlignedText(doc, largeFontSize, heading, 'center', font)
 }
 
 export const addMediumPlusHeading = (
@@ -357,7 +347,7 @@ export const addMediumPlusHeading = (
   heading: string,
   font?: string,
 ) => {
-  addCenteredText(doc, mediumPlusFontSize, heading, font)
+  addAlignedText(doc, mediumPlusFontSize, heading, 'center', font)
 }
 
 export const addMediumHeading = (
@@ -365,7 +355,7 @@ export const addMediumHeading = (
   heading: string,
   font?: string,
 ) => {
-  addCenteredText(doc, mediumFontSize, heading, font)
+  addAlignedText(doc, mediumFontSize, heading, 'center', font)
 }
 
 export const addLargeText = (
@@ -398,7 +388,7 @@ export const addNormalPlusCenteredText = (
   text: string,
   font?: string,
 ) => {
-  addCenteredText(doc, basePlusFontSize, text, font)
+  addAlignedText(doc, basePlusFontSize, text, 'center', font)
 }
 
 export const addNormalText = (
@@ -415,7 +405,7 @@ export const addNormalJustifiedText = (
   text: string,
   font?: string,
 ) => {
-  addJustifiedText(doc, baseFontSize, text, font)
+  addAlignedText(doc, baseFontSize, text, 'justify', font)
 }
 
 export const addNormalPlusJustifiedText = (
@@ -423,7 +413,7 @@ export const addNormalPlusJustifiedText = (
   text: string,
   font?: string,
 ) => {
-  addJustifiedText(doc, basePlusFontSize, text, font)
+  addAlignedText(doc, basePlusFontSize, text, 'justify', font)
 }
 
 export const addNormalCenteredText = (
@@ -431,7 +421,15 @@ export const addNormalCenteredText = (
   text: string,
   font?: string,
 ) => {
-  addCenteredText(doc, baseFontSize, text, font)
+  addAlignedText(doc, baseFontSize, text, 'center', font)
+}
+
+export const addNormalRightAlignedText = (
+  doc: PDFKit.PDFDocument,
+  text: string,
+  font?: string,
+) => {
+  addAlignedText(doc, baseFontSize, text, 'right', font)
 }
 
 export const addNumberedList = (

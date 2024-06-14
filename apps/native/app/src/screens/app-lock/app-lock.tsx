@@ -89,15 +89,18 @@ export const AppLockScreen: NavigationFunctionComponent<{
       lockScreenComponentId: undefined,
     }))
   }, [])
-
   const unlockApp = useCallback(() => {
     Animated.spring(av, {
       toValue: 0,
       useNativeDriver: true,
       delay: 100,
     }).start(() => {
-      resetLockScreen()
-      void Navigation.dismissAllOverlays()
+      // We want to reset lockScreenActivatedAt to null here to trigger offline banner if offline
+      authStore.setState(() => ({
+        lockScreenActivatedAt: null,
+        lockScreenComponentId: undefined,
+      }))
+      void Navigation.dismissOverlay(componentId)
       av.setValue(1)
     })
   }, [componentId])
