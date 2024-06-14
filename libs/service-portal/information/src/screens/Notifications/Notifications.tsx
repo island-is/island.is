@@ -76,12 +76,12 @@ const UserNotifications = () => {
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
         if (
-          fetchMoreResult?.userNotifications?.data.length &&
-          prevResult?.userNotifications?.data.length
+          fetchMoreResult?.userNotificationsList?.data.length &&
+          prevResult?.userNotificationsList?.data.length
         ) {
-          fetchMoreResult.userNotifications.data = [
-            ...prevResult.userNotifications.data,
-            ...fetchMoreResult.userNotifications.data,
+          fetchMoreResult.userNotificationsList.data = [
+            ...prevResult.userNotificationsList.data,
+            ...fetchMoreResult.userNotificationsList.data,
           ]
           return fetchMoreResult
         }
@@ -90,7 +90,8 @@ const UserNotifications = () => {
     }).finally(() => setLoadingMore(false))
   }
 
-  const noData = !data?.userNotifications?.data?.length && !loading && !error
+  const noData =
+    !data?.userNotificationsList?.data?.length && !loading && !error
   return (
     <>
       <IntroHeader
@@ -144,7 +145,7 @@ const UserNotifications = () => {
         )}
 
         {!loading &&
-          data?.userNotifications?.data.map((item) => (
+          data?.userNotificationsList?.data.map((item) => (
             <ActionCard
               heading={item.message.title}
               text={item.message.displayBody}
@@ -174,7 +175,7 @@ const UserNotifications = () => {
             />
           ))}
         {loadingMore && <CardLoader />}
-        {data?.userNotifications?.pageInfo.hasNextPage ? (
+        {data?.userNotificationsList?.pageInfo.hasNextPage ? (
           <Box
             display="flex"
             alignItems="center"
@@ -183,14 +184,14 @@ const UserNotifications = () => {
           >
             <Button
               onClick={() =>
-                loadMore(data?.userNotifications?.pageInfo.endCursor ?? '')
+                loadMore(data?.userNotificationsList?.pageInfo.endCursor ?? '')
               }
               variant="ghost"
               size="small"
             >
               {`${formatMessage(m.fetchMore)} ${
-                data?.userNotifications?.data?.length ?? 0
-              }/${data?.userNotifications?.totalCount ?? 1}`}
+                data?.userNotificationsList?.data?.length ?? 0
+              }/${data?.userNotificationsList?.totalCount ?? 1}`}
             </Button>
           </Box>
         ) : undefined}
