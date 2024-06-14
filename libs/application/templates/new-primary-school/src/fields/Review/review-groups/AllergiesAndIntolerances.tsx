@@ -25,7 +25,6 @@ export const AllergiesAndIntolerances = ({
   } = getApplicationAnswers(application.answers)
 
   return (
-    // TODO: Skoða betur þegar multiSelect er tilbúið
     <ReviewGroup
       isEditable={editable}
       editAction={() => goToScreen?.('allergiesAndIntolerances')}
@@ -33,14 +32,18 @@ export const AllergiesAndIntolerances = ({
       <Stack space={2}>
         {hasFoodAllergies.includes(YES) && (
           <GridRow>
-            <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+            <GridColumn span="9/12">
               <DataValue
                 label={formatMessage(
                   newPrimarySchoolMessages.overview.foodAllergies,
                 )}
-                value={formatMessage(
-                  getFoodAllergiesOptionsLabel(foodAllergies),
-                )}
+                value={foodAllergies
+                  .map((allergies) => {
+                    return formatMessage(
+                      getFoodAllergiesOptionsLabel(allergies),
+                    )
+                  })
+                  .join(', ')}
               />
             </GridColumn>
           </GridRow>
@@ -52,9 +55,13 @@ export const AllergiesAndIntolerances = ({
                 label={formatMessage(
                   newPrimarySchoolMessages.overview.foodIntolerances,
                 )}
-                value={formatMessage(
-                  getFoodIntolerancesOptionsLabel(foodIntolerances),
-                )}
+                value={foodIntolerances
+                  .map((intolerances) => {
+                    return formatMessage(
+                      getFoodIntolerancesOptionsLabel(intolerances),
+                    )
+                  })
+                  .join(', ')}
               />
             </GridColumn>
           </GridRow>

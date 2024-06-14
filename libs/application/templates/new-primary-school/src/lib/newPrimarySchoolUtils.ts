@@ -74,7 +74,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const foodAllergies = getValueViaPath(
     answers,
     'allergiesAndIntolerances.foodAllergies',
-  ) as FoodAllergiesOptions
+  ) as FoodAllergiesOptions[]
 
   const hasFoodIntolerances = getValueViaPath(
     answers,
@@ -84,7 +84,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const foodIntolerances = getValueViaPath(
     answers,
     'allergiesAndIntolerances.foodIntolerances',
-  ) as FoodIntolerancesOptions
+  ) as FoodIntolerancesOptions[]
 
   const isUsingEpiPen = getValueViaPath(
     answers,
