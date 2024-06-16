@@ -279,17 +279,21 @@ export const Cases: React.FC = () => {
           <>
             {isProsecutionUser(user) && (
               <>
-                <CasesAwaitingConfirmationTable
-                  loading={loading}
-                  isFiltering={isFiltering}
-                  cases={casesAwaitingConfirmation}
-                  onContextMenuDeleteClick={setVisibleModal}
-                />
-                {isPublicProsecutor(user) && (
-                  <CasesAwaitingReview
-                    loading={loading}
-                    cases={casesAwaitingReview}
-                  />
+                {filter.value !== 'INVESTIGATION' && (
+                  <>
+                    <CasesAwaitingConfirmationTable
+                      loading={loading}
+                      isFiltering={isFiltering}
+                      cases={casesAwaitingConfirmation}
+                      onContextMenuDeleteClick={setVisibleModal}
+                    />
+                    {isPublicProsecutor(user) && (
+                      <CasesAwaitingReview
+                        loading={loading}
+                        cases={casesAwaitingReview}
+                      />
+                    )}
+                  </>
                 )}
                 <SectionHeading title={formatMessage(m.activeRequests.title)} />
                 <TableWrapper loading={loading || isFiltering}>
@@ -319,11 +323,13 @@ export const Cases: React.FC = () => {
             )}
             {isDistrictCourtUser(user) && (
               <>
-                <CasesAwaitingAssignmentTable
-                  cases={casesAwaitingAssignment}
-                  loading={loading || isFiltering}
-                  isFiltering={isFiltering}
-                />
+                {filter.value !== 'INVESTIGATION' && (
+                  <CasesAwaitingAssignmentTable
+                    cases={casesAwaitingAssignment}
+                    loading={loading || isFiltering}
+                    isFiltering={isFiltering}
+                  />
+                )}
                 <CasesInProgressTable
                   loading={loading}
                   isFiltering={isFiltering}
