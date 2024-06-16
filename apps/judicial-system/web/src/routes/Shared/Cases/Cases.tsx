@@ -277,7 +277,7 @@ export const Cases: React.FC = () => {
           </div>
         ) : (
           <>
-            {isProsecutionUser(user) && filter.value !== 'INVESTIGATION' && (
+            {isProsecutionUser(user) && (
               <>
                 <CasesAwaitingConfirmationTable
                   loading={loading}
@@ -317,7 +317,7 @@ export const Cases: React.FC = () => {
                 </TableWrapper>
               </>
             )}
-            {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
+            {isDistrictCourtUser(user) && (
               <>
                 <CasesAwaitingAssignmentTable
                   cases={casesAwaitingAssignment}
