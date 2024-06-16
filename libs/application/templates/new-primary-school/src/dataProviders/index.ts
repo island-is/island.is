@@ -14,9 +14,3 @@ export const GetHealthApi = defineTemplateApi({
   externalDataId: 'health',
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })
-
-export const GetAllKeyOptionsApi = defineTemplateApi({
-  action: 'getAllKeyOptions',
-  externalDataId: 'keyOptions',
-  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-})

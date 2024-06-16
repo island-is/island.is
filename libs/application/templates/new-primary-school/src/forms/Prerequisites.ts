@@ -12,16 +12,11 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  IdentityApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../lib/messages'
-import {
-  GetAllKeyOptionsApi,
-  GetHealthApi,
-  GetTypesApi,
-} from '../dataProviders'
+import { GetHealthApi, GetTypesApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'newPrimarySchoolPrerequisites',
@@ -75,11 +70,6 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: GetTypesApi,
               title: 'Types',
-              subTitle: '',
-            }),
-            buildDataProviderItem({
-              provider: GetAllKeyOptionsApi,
-              title: 'KeyOptions',
               subTitle: '',
             }),
             buildDataProviderItem({
