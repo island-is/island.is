@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildAsyncSelectField,
   buildCheckboxField,
   buildCustomField,
   buildDateField,
@@ -44,8 +45,8 @@ import {
   getFoodAllergiesOptions,
   getFoodIntolerancesOptions,
   getLanguageCodes,
+  getOptionsListByName,
   getOtherParent,
-  getReasonForApplicationOptions,
   getRelationOptionLabel,
   getRelationOptions,
   getSiblingRelationOptionLabel,
@@ -436,7 +437,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 newPrimarySchoolMessages.primarySchool
                   .reasonForApplicationDescription,
               children: [
-                buildSelectField({
+                buildAsyncSelectField({
                   id: 'reasonForApplication.reason',
                   dataTestId: 'reason-for-application',
                   title:
@@ -445,7 +446,13 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   placeholder:
                     newPrimarySchoolMessages.primarySchool
                       .reasonForApplicationPlaceholder,
-                  options: getReasonForApplicationOptions(),
+                  //options: getReasonForApplicationOptions(),
+                  loadOptions: async ({ apolloClient }): Promise<any[]> => {
+                    return await getOptionsListByName(
+                      apolloClient,
+                      'rejectionReason',
+                    )
+                  },
                 }),
                 buildSelectField({
                   id: 'reasonForApplication.movingAbroad.country',
@@ -799,7 +806,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   // TODO: Multi select
                   id: 'allergiesAndIntolerances.foodAllergies',
                   title:
@@ -809,7 +816,10 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfAllergiesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  options: getFoodAllergiesOptions(),
+                  // options: getFoodAllergiesOptions(),
+                  loadOptions: async ({ apolloClient }): Promise<any[]> => {
+                    return await getOptionsListByName(apolloClient, 'allergy')
+                  },
                   condition: (answers) => {
                     const { hasFoodAllergies } = getApplicationAnswers(answers)
 
@@ -844,7 +854,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   // TODO: Multi select
                   id: 'allergiesAndIntolerances.foodIntolerances',
                   title:
@@ -854,7 +864,13 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfIntolerancesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  options: getFoodIntolerancesOptions(),
+                  // options: getFoodIntolerancesOptions(),
+                  loadOptions: async ({ apolloClient }): Promise<any[]> => {
+                    return await getOptionsListByName(
+                      apolloClient,
+                      'intolerence',
+                    )
+                  },
                   condition: (answers) => {
                     const { hasFoodIntolerances } =
                       getApplicationAnswers(answers)

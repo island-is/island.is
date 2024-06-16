@@ -21,10 +21,9 @@ export class FriggClientService {
     return this.defaultApiWithAuth(user).health()
   }
 
-  async getAllKeyOptions(user: User): Promise<KeyOption[]> {
-    console.log('FriggClientService getAllKeyOptions')
+  async getAllKeyOptions(user: User, type: string): Promise<KeyOption[]> {
     return this.keyOptionsManagementApiWithAuth(user).getAllKeyOptions({
-      type: undefined,
+      type,
     })
   }
 

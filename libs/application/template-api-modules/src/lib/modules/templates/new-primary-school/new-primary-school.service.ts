@@ -19,7 +19,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }
 
   async getAllKeyOptions({ auth }: TemplateApiModuleActionProps) {
-    return await this.friggClientService.getAllKeyOptions(auth)
+    return await this.friggClientService.getAllKeyOptions(auth, '')
   }
 
   async getHealth({ auth }: TemplateApiModuleActionProps) {
