@@ -18,7 +18,7 @@ export class UmsCostOfLivingCalculatorResolver {
   })
   @CacheControl(defaultCache)
   async getCalculatorData(): Promise<CostOfLivingCalculatorResponse> {
-    const calcutor = await this.service.getCalculatorData()
-    return { items: calcutor }
+    const calculator = await this.service.getCalculatorData()
+    return { items: calculator }
   }
 }
