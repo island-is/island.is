@@ -33,7 +33,7 @@ fragment NotificationDataFields on Notification {
 }
 
 query GetUserNotificationsList($input: NotificationsInput!, $locale: String) {
-  userNotificationsList: userNotifications(input: $input, locale: $locale) {
+  userNotifications(input: $input, locale: $locale) {
     data {
       ...NotificationDataFields
       recipient {

@@ -4,7 +4,7 @@ export * from './module'
 export * from './lib/navigation'
 export * from './lib/paths'
 export * from './components/FamilyMemberCard/FamilyMemberCard'
-export * from './screens/Notifications/NotificationInfo.generated'
+export * from './screens/Notifications/Notifications.generated'
 export * from './utils/notificationLinkResolver'
 
 /**
