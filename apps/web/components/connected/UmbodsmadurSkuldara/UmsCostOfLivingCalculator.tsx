@@ -29,6 +29,8 @@ interface InputControllerFieldWrapperProps {
   label: string
 }
 
+const numberFormatter = new Intl.NumberFormat('de-DE')
+
 const InputControllerFieldWrapper = ({
   control,
   nameAndId,
@@ -81,8 +83,6 @@ interface CostOfLivingCalculatorProps {
 }
 
 type DataState = 'loading' | 'loaded' | 'error'
-
-const numberFormatter = new Intl.NumberFormat('de-DE')
 
 const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
   const n = useNamespace(slice.json ?? {})
@@ -308,8 +308,6 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
         }
       }
       return undefined
-    } else {
-      return undefined
     }
   }
 
@@ -319,9 +317,10 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
   const propertyInsurances = methods.watch('propertyInsurances')
   const schoolAndDayCare = methods.watch('schoolAndDayCare')
   const otherExpenses = methods.watch('otherExpenses')
+  const familySizeData = getSelectedValues(familySize)
 
   const getTotal = () => {
-    let total = getSelectedValues(familySize)?.total ?? 0
+    let total = familySizeData?.total ?? 0
     const expenses = [
       houseRent,
       propertyTaxes,
@@ -393,7 +392,7 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
               <Controller
                 control={control}
                 name="familySize"
-                defaultValue={'1+0'}
+                defaultValue="1+0"
                 render={({ field: { onChange, value } }) => (
                   <Select
                     label={n(
@@ -428,14 +427,14 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                     ? 'Matur, hreinlætisvörur og heimilisbúnaður'
                     : 'Food, hygiene products and household equipment',
                 )}
-                value={getSelectedValues(familySize)?.food}
+                value={familySizeData?.food}
               />
               <CalculatedFieldWrapper
                 title={n(
                   'clothesLabel',
                   activeLocale === 'is' ? 'Föt og skór' : 'Clothes and shoes',
                 )}
-                value={getSelectedValues(familySize)?.clothes}
+                value={familySizeData?.clothes}
               />
               <CalculatedFieldWrapper
                 title={n(
@@ -444,14 +443,14 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                     ? 'Læknis- og lyfjakostnaður'
                     : 'Medical and pharmaceutical costs',
                 )}
-                value={getSelectedValues(familySize)?.medicalCost}
+                value={familySizeData?.medicalCost}
               />
               <CalculatedFieldWrapper
                 title={n(
                   'hobbyLabel',
                   activeLocale === 'is' ? 'Tómstundir' : 'Hobby',
                 )}
-                value={getSelectedValues(familySize)?.hobby}
+                value={familySizeData?.hobby}
               />
               <CalculatedFieldWrapper
                 title={n(
@@ -460,14 +459,14 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                     ? 'Samskiptakostnaður'
                     : 'Communication expenses',
                 )}
-                value={getSelectedValues(familySize)?.communication}
+                value={familySizeData?.communication}
               />
               <CalculatedFieldWrapper
                 title={n(
                   'transportLabel',
                   activeLocale === 'is' ? 'Samgöngur' : 'Transport',
                 )}
-                value={getSelectedValues(familySize)?.transport}
+                value={familySizeData?.transport}
               />
               <CalculatedFieldWrapper
                 title={n(
@@ -476,7 +475,7 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                     ? 'Önnur þjónusta fyrir heimili'
                     : 'Other household expenses',
                 )}
-                value={getSelectedValues(familySize)?.otherServices}
+                value={familySizeData?.otherServices}
               />
             </Stack>
             <Stack space={3}>
