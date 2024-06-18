@@ -65,7 +65,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       },
     })
     .replicaCount({
-      scalingMagicNumber: 10,
       default: 2,
       min: 2,
       max: 10,
