@@ -19,7 +19,7 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
 import {
-  NumberInput,
+  PercentageInput,
   SelectedMunicipality,
 } from '@island.is/financial-aid-web/veita/src/components'
 import useCurrentMunicipalityState from '@island.is/financial-aid-web/veita/src/utils/useCurrentMunicipalityState'
@@ -268,19 +268,17 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     },
     {
       headline: 'Desember uppbót',
-      smallText:
-        'Hlutfallið sem er tekið af grunnupphæð og bætt við einungis í umsóknum í nóvember',
+      smallText: 'Prósenta af grunnupphæð',
       component: (
-        <NumberInput
+        <PercentageInput
           id={`input-desember`}
           name={`decemberCompensation`}
-          label="Desemberstyrkur"
-          maximumInputLength={3}
+          label="Desember uppbót"
           value={state.decemberCompensation.toString()}
           hasError={
             hasDecemberCompensationError && state.decemberCompensation === 0
           }
-          errorMessage={'Grunnupphæð þarf að vera hærri en 0'}
+          errorMessage={'Desember uppbót þarf að vera hærri en 0'}
           onUpdate={(value) =>
             setState({
               ...state,
