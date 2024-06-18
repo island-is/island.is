@@ -93,7 +93,7 @@ export function Header({
                 </Typography>
               )}
             </Wrapper>
-            <Typography variant="body3">{date}</Typography>
+            {date && <Typography variant="body3">{date}</Typography>}
           </>
         )}
       </Row>
