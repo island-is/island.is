@@ -93,7 +93,10 @@ const IndictmentOverview = () => {
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment
-              displayAppealExpirationInfo={user?.role === UserRole.DEFENDER}
+              displayAppealExpirationInfo={
+                user?.role === UserRole.DEFENDER ||
+                workingCase.indictmentReviewer?.id === user?.id
+              }
             />
           ) : (
             <InfoCardActiveIndictment />
