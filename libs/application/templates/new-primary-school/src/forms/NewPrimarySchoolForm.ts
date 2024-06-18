@@ -6,6 +6,7 @@ import {
   buildDateField,
   buildDescriptionField,
   buildForm,
+  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
   buildRadioField,
@@ -30,14 +31,23 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
-import { RelationOptions, SiblingRelationOptions } from '../lib/constants'
+import {
+  ReasonForApplicationOptions,
+  RelationOptions,
+  SiblingRelationOptions,
+} from '../lib/constants'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   canApply,
   getApplicationAnswers,
   getApplicationExternalData,
+  getFoodAllergiesOptions,
+  getFoodIntolerancesOptions,
+  getLanguageCodes,
   getOtherParent,
+  getReasonForApplicationOptions,
   getRelationOptionLabel,
   getRelationOptions,
   getSiblingRelationOptionLabel,
@@ -414,79 +424,124 @@ export const NewPrimarySchoolForm: Form = buildForm({
       title: newPrimarySchoolMessages.primarySchool.sectionTitle,
       children: [
         buildSubSection({
-          id: 'newSchoolSubSection',
+          id: 'reasonForApplicationSubSection',
           title:
-            newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+            newPrimarySchoolMessages.primarySchool
+              .reasonForApplicationSubSectionTitle,
           children: [
             buildMultiField({
-              id: 'school',
+              id: 'reasonForApplication',
               title:
-                newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+                newPrimarySchoolMessages.primarySchool
+                  .reasonForApplicationSubSectionTitle,
+              description:
+                newPrimarySchoolMessages.primarySchool
+                  .reasonForApplicationDescription,
               children: [
                 buildSelectField({
-                  id: 'schools.newSchool.municipality',
-                  title: newPrimarySchoolMessages.shared.municipality,
-
-                  options: (application) => {
-                    const { municipalities } = getApplicationExternalData(
-                      application.externalData,
-                    )
-
-                    return municipalities.map(
-                      (municipality: NationalRegistryMunicipality) => ({
-                        value: municipality?.code || '',
-                        label: municipality.name || '',
-                      }),
-                    )
-                  },
-
+                  id: 'reasonForApplication.reason',
+                  dataTestId: 'reason-for-application',
+                  title:
+                    newPrimarySchoolMessages.primarySchool
+                      .reasonForApplicationSubSectionTitle,
                   placeholder:
-                    newPrimarySchoolMessages.shared.municipalityPlaceholder,
-                  dataTestId: 'new-school-municipality',
+                    newPrimarySchoolMessages.primarySchool
+                      .reasonForApplicationPlaceholder,
+                  options: getReasonForApplicationOptions(),
                 }),
-
-                buildAsyncSelectField({
-                  id: 'schools.newSchool.school',
-                  title: newPrimarySchoolMessages.shared.school,
-                  condition: (answers) => {
-                    const { schoolMunicipality } =
-                      getApplicationAnswers(answers)
-                    return !!schoolMunicipality
-                  }, //Todo: get data from Juni
-                  loadOptions: async ({ apolloClient }) => {
-                    return [
-                      {
-                        value: 'Ártúnsskóli',
-                        label: 'Ártúnsskóli',
-                      },
-                      {
-                        value: 'Árbæjarskóli',
-                        label: 'Árbæjarskóli',
-                      },
-                    ]
-                  },
+                buildSelectField({
+                  id: 'reasonForApplication.movingAbroad.country',
+                  dataTestId: 'reason-for-application-country',
+                  title: newPrimarySchoolMessages.primarySchool.country,
                   placeholder:
-                    newPrimarySchoolMessages.shared.schoolPlaceholder,
-                  dataTestId: 'new-school-school',
+                    newPrimarySchoolMessages.primarySchool.countryPlaceholder,
+                  options: () => {
+                    const countries = getAllCountryCodes()
+                    return countries.map((country) => {
+                      return {
+                        label: country.name_is || country.name,
+                        value: country.code,
+                      }
+                    })
+                  },
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.MOVING_ABROAD
+                    )
+                  },
+                }),
+                buildTextField({
+                  id: 'reasonForApplication.transferOfLegalDomicile.streetAddress',
+                  title: newPrimarySchoolMessages.shared.address,
+                  width: 'half',
+                  required: true,
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+                    )
+                  },
+                }),
+                buildTextField({
+                  id: 'reasonForApplication.transferOfLegalDomicile.postalCode',
+                  title: newPrimarySchoolMessages.shared.postalcode,
+                  width: 'half',
+                  required: true,
+                  format: '###',
+                  condition: (answers) => {
+                    const { reasonForApplication } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                      ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+                    )
+                  },
+                }),
+                buildAlertMessageField({
+                  id: 'reasonForApplication.info',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.primarySchool
+                      .registerNewDomicileAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  condition: (answers) => {
+                    const {
+                      reasonForApplication,
+                      reasonForApplicationCountry,
+                    } = getApplicationAnswers(answers)
+
+                    return (
+                      reasonForApplication ===
+                        ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE ||
+                      (reasonForApplication ===
+                        ReasonForApplicationOptions.MOVING_ABROAD &&
+                        reasonForApplicationCountry !== undefined)
+                    )
+                  },
                 }),
               ],
             }),
           ],
         }),
         buildSubSection({
-          id: 'reasonForTransferSubSection',
-          title:
-            newPrimarySchoolMessages.primarySchool
-              .reasonForTransferSubSectionTitle,
-          children: [],
-        }),
-        buildSubSection({
           id: 'siblingsSubSection',
           title: newPrimarySchoolMessages.primarySchool.siblingsSubSectionTitle,
-
-          condition: (answers, externalData) => {
-            // TODO: Only display section if "Siblings" selected as Reason for transfer
-            return true
+          condition: (answers) => {
+            // Only display section if "Siblings in the same primary school" selected as reason for application
+            const { reasonForApplication } = getApplicationAnswers(answers)
+            return (
+              reasonForApplication ===
+              ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+            )
           },
           children: [
             buildMultiField({
@@ -555,10 +610,30 @@ export const NewPrimarySchoolForm: Form = buildForm({
           ],
         }),
         buildSubSection({
+          id: 'newSchoolSubSection',
+          title:
+            newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+          condition: (answers) => {
+            // Only display section if "Moving abroad" is not selected as reason for application
+            const { reasonForApplication } = getApplicationAnswers(answers)
+            return (
+              reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+            )
+          },
+          children: [],
+        }),
+        buildSubSection({
           id: 'startingSchoolSubSection',
           title:
             newPrimarySchoolMessages.primarySchool
               .startingSchoolSubSectionTitle,
+          condition: (answers) => {
+            // Only display section if "Moving abroad" is not selected as reason for application
+            const { reasonForApplication } = getApplicationAnswers(answers)
+            return (
+              reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+            )
+          },
           children: [
             buildMultiField({
               id: 'startingSchoolMultiField',
@@ -583,18 +658,240 @@ export const NewPrimarySchoolForm: Form = buildForm({
     buildSection({
       id: 'differentNeedsSection',
       title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
+      condition: (answers) => {
+        // Only display section if "Moving abroad" is not selected as reason for application
+        const { reasonForApplication } = getApplicationAnswers(answers)
+        return (
+          reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
+        )
+      },
       children: [
         buildSubSection({
           id: 'languageSubSection',
           title:
             newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'languages',
+              title: newPrimarySchoolMessages.differentNeeds.languageTitle,
+              description:
+                newPrimarySchoolMessages.differentNeeds.languageDescription,
+              children: [
+                buildDescriptionField({
+                  id: 'languages.nativeLanguage.title',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.childNativeLanguage,
+                  titleVariant: 'h4',
+                }),
+                buildSelectField({
+                  id: 'languages.nativeLanguage',
+                  dataTestId: 'languages-native-language',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .languageSubSectionTitle,
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
+                  options: getLanguageCodes(),
+                }),
+                buildRadioField({
+                  id: 'languages.otherLanguagesSpokenDaily',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .otherLanguagesSpokenDaily,
+                  width: 'half',
+                  required: true,
+                  space: 4,
+                  options: [
+                    {
+                      label: newPrimarySchoolMessages.shared.yes,
+                      dataTestId: 'other-languages',
+                      value: YES,
+                    },
+                    {
+                      label: newPrimarySchoolMessages.shared.no,
+                      dataTestId: 'no-other-languages',
+                      value: NO,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  id: 'languages.otherLanguages',
+                  dataTestId: 'languages-other-languages',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds
+                      .languageSubSectionTitle,
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
+                  options: getLanguageCodes(),
+                  isMulti: true,
+                  condition: (answers) => {
+                    const { otherLanguagesSpokenDaily } =
+                      getApplicationAnswers(answers)
+
+                    return otherLanguagesSpokenDaily === YES
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'languages.icelandicNotSpokenAroundChild',
+                  title: '',
+                  options: (application) => {
+                    const { nativeLanguage, otherLanguages } =
+                      getApplicationAnswers(application.answers)
+
+                    return [
+                      {
+                        label:
+                          newPrimarySchoolMessages.differentNeeds
+                            .icelandicNotSpokenAroundChild,
+                        value: YES,
+                        disabled:
+                          nativeLanguage === 'is' ||
+                          otherLanguages?.includes('is'),
+                      },
+                    ]
+                  },
+                  condition: (answers) => {
+                    const { otherLanguagesSpokenDaily } =
+                      getApplicationAnswers(answers)
+
+                    return otherLanguagesSpokenDaily === YES
+                  },
+                }),
+                buildHiddenInput({
+                  // Needed to trigger an update on options in the checkbox above
+                  id: 'languages.icelandicSelectedHiddenInput',
+                  condition: (answers) => {
+                    const { nativeLanguage, otherLanguages } =
+                      getApplicationAnswers(answers)
+
+                    return (
+                      nativeLanguage === 'is' || otherLanguages?.includes('is')
+                    )
+                  },
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
-          id: 'schoolMealSubSection',
+          id: 'allergiesAndIntolerancesSubSection',
           title:
-            newPrimarySchoolMessages.differentNeeds.schoolMealSubSectionTitle,
-          children: [],
+            newPrimarySchoolMessages.differentNeeds
+              .allergiesAndIntolerancesSubSectionTitle,
+          children: [
+            buildMultiField({
+              id: 'allergiesAndIntolerances',
+              title:
+                newPrimarySchoolMessages.differentNeeds
+                  .foodAllergiesAndIntolerancesTitle,
+              description:
+                newPrimarySchoolMessages.differentNeeds
+                  .foodAllergiesAndIntolerancesDescription,
+              children: [
+                buildCheckboxField({
+                  id: 'allergiesAndIntolerances.hasFoodAllergies',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .childHasFoodAllergies,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  id: 'allergiesAndIntolerances.foodAllergies',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
+                  dataTestId: 'food-allergies',
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds
+                      .typeOfAllergiesPlaceholder,
+                  // TODO: Nota gögn fá Júní?
+                  options: getFoodAllergiesOptions(),
+                  isMulti: true,
+                  condition: (answers) => {
+                    const { hasFoodAllergies } = getApplicationAnswers(answers)
+
+                    return hasFoodAllergies?.includes(YES)
+                  },
+                }),
+                buildAlertMessageField({
+                  id: 'allergiesAndIntolerances.info',
+                  title: newPrimarySchoolMessages.shared.alertTitle,
+                  message:
+                    newPrimarySchoolMessages.differentNeeds
+                      .confirmFoodAllergiesAlertMessage,
+                  doesNotRequireAnswer: true,
+                  alertType: 'info',
+                  marginBottom: 4,
+                  condition: (answers) => {
+                    const { hasFoodAllergies } = getApplicationAnswers(answers)
+
+                    return hasFoodAllergies?.includes(YES)
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'allergiesAndIntolerances.hasFoodIntolerances',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .childHasFoodIntolerances,
+                    },
+                  ],
+                }),
+                buildSelectField({
+                  id: 'allergiesAndIntolerances.foodIntolerances',
+                  title:
+                    newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
+                  dataTestId: 'food-intolerances',
+                  placeholder:
+                    newPrimarySchoolMessages.differentNeeds
+                      .typeOfIntolerancesPlaceholder,
+                  // TODO: Nota gögn fá Júní?
+                  options: getFoodIntolerancesOptions(),
+                  isMulti: true,
+                  condition: (answers) => {
+                    const { hasFoodIntolerances } =
+                      getApplicationAnswers(answers)
+
+                    return hasFoodIntolerances?.includes(YES)
+                  },
+                }),
+                buildDescriptionField({
+                  // Needed to add space
+                  id: 'allergiesAndIntolerances.divider',
+                  title: '',
+                  marginBottom: 4,
+                  condition: (answers) => {
+                    const { hasFoodIntolerances } =
+                      getApplicationAnswers(answers)
+
+                    return hasFoodIntolerances?.includes(YES)
+                  },
+                }),
+                buildCheckboxField({
+                  id: 'allergiesAndIntolerances.isUsingEpiPen',
+                  title: '',
+                  spacing: 0,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        newPrimarySchoolMessages.differentNeeds
+                          .usesEpinephrinePen,
+                    },
+                  ],
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'supportSubSection',
@@ -649,7 +946,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   title: '',
                   description:
                     newPrimarySchoolMessages.differentNeeds.requestMeeting,
-                  options: () => [
+                  options: [
                     {
                       value: YES,
                       label:
@@ -755,18 +1052,18 @@ export const NewPrimarySchoolForm: Form = buildForm({
       ],
     }),
     buildSection({
-      id: 'confirmationSection',
-      title: newPrimarySchoolMessages.confirm.sectionTitle,
+      id: 'overviewSection',
+      title: newPrimarySchoolMessages.overview.sectionTitle,
       children: [
         buildMultiField({
-          id: 'confirmation',
+          id: 'overview',
           title: '',
           description: '',
           children: [
             buildCustomField(
               {
-                id: 'confirmationScreen',
-                title: newPrimarySchoolMessages.confirm.overviewTitle,
+                id: 'overviewScreen',
+                title: newPrimarySchoolMessages.overview.overviewTitle,
                 component: 'Review',
               },
               {
@@ -776,11 +1073,11 @@ export const NewPrimarySchoolForm: Form = buildForm({
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
-              title: newPrimarySchoolMessages.confirm.submitButton,
+              title: newPrimarySchoolMessages.overview.submitButton,
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: newPrimarySchoolMessages.confirm.submitButton,
+                  name: newPrimarySchoolMessages.overview.submitButton,
                   type: 'primary',
                 },
               ],

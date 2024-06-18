@@ -1,22 +1,30 @@
 import { useMutation } from '@apollo/client'
 import { SUBMIT_APPLICATION } from '@island.is/application/graphql'
-import { Application, Field, RecordObject } from '@island.is/application/types'
+import {
+  Application,
+  DefaultEvents,
+  Field,
+  RecordObject,
+} from '@island.is/application/types'
 import { handleServerError } from '@island.is/application/ui-components'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
-import { States } from '../../lib/constants'
+import { ReasonForApplicationOptions, States } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
+import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
+import { Languages } from './review-groups/Languages'
 import { Parents } from './review-groups/Parents'
-import { Support } from './review-groups/Support'
 import { Photography } from './review-groups/Photography'
+import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { Relatives } from './review-groups/Relatives'
 import { Siblings } from './review-groups/Siblings'
+import { Support } from './review-groups/Support'
 import { School } from './review-groups/School'
 
 interface ReviewScreenProps {
@@ -39,6 +47,8 @@ export const Review: FC<ReviewScreenProps> = ({
   const editable = field.props?.editable ?? false
   const hasError = (id: string) => get(errors, id) as string
 
+  const { reasonForApplication } = getApplicationAnswers(application.answers)
+
   const groupHasNoErrors = (ids: string[]) =>
     ids.every((id) => !has(errors, id))
 
@@ -60,14 +70,12 @@ export const Review: FC<ReviewScreenProps> = ({
   )
 
   const handleSubmit = async (event: string) => {
-    const TBD = getApplicationAnswers(application.answers)
-
     const res = await submitApplication({
       variables: {
         input: {
           id: application.id,
           event,
-          answers: {},
+          answers: application.answers,
         },
       },
     })
@@ -85,13 +93,13 @@ export const Review: FC<ReviewScreenProps> = ({
           <Box>
             <Box marginBottom={2}>
               <Text variant="h2">
-                {formatMessage(newPrimarySchoolMessages.confirm.sectionTitle)}
+                {formatMessage(newPrimarySchoolMessages.overview.sectionTitle)}
               </Text>
             </Box>
             <Box marginBottom={10}>
               <Text variant="default">
                 {formatMessage(
-                  newPrimarySchoolMessages.confirm.overviewDescription,
+                  newPrimarySchoolMessages.overview.overviewDescription,
                 )}
               </Text>
             </Box>
@@ -117,7 +125,7 @@ export const Review: FC<ReviewScreenProps> = ({
         >
           <Box>
             <Text variant="h2">
-              {formatMessage(newPrimarySchoolMessages.confirm.overviewTitle)}
+              {formatMessage(newPrimarySchoolMessages.overview.sectionTitle)}
             </Text>
           </Box>
           <Box display="flex" columnGap={2} alignItems="center">
@@ -131,9 +139,9 @@ export const Review: FC<ReviewScreenProps> = ({
                 icon="pencil"
                 loading={loadingSubmit}
                 disabled={loadingSubmit}
-                onClick={() => handleSubmit('EDIT')}
+                onClick={() => handleSubmit(DefaultEvents.EDIT)}
               >
-                {formatMessage(newPrimarySchoolMessages.confirm.editButton)}
+                {formatMessage(newPrimarySchoolMessages.overview.editButton)}
               </Button>
             )}
             <Button
@@ -150,10 +158,19 @@ export const Review: FC<ReviewScreenProps> = ({
       <Child {...childProps} />
       <Parents {...childProps} />
       <Relatives {...childProps} />
-      <School {...childProps}></School>
-      <Siblings {...childProps} />
-      <Support {...childProps} />
-      <Photography {...childProps} />
+      <ReasonForApplication {...childProps} />
+      {reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD && (
+        <>
+          {reasonForApplication ===
+            ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL && (
+            <Siblings {...childProps} />
+          )}
+          <Languages {...childProps} />
+          <AllergiesAndIntolerances {...childProps} />
+          <Support {...childProps} />
+          <Photography {...childProps} />
+        </>
+      )}
     </>
   )
 }

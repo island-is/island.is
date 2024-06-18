@@ -9,7 +9,14 @@ import {
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { Child, Parents, Person, RelativesRow, SiblingsRow } from '../types'
-import { RelationOptions, SiblingRelationOptions } from './constants'
+import {
+  FoodAllergiesOptions,
+  FoodIntolerancesOptions,
+  ReasonForApplicationOptions,
+  RelationOptions,
+  SiblingRelationOptions,
+  languageCodes,
+} from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -19,7 +26,72 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
+  const reasonForApplication = getValueViaPath(
+    answers,
+    'reasonForApplication.reason',
+  ) as ReasonForApplicationOptions
+
+  const reasonForApplicationCountry = getValueViaPath(
+    answers,
+    'reasonForApplication.movingAbroad.country',
+  ) as string
+
+  const reasonForApplicationStreetAddress = getValueViaPath(
+    answers,
+    'reasonForApplication.transferOfLegalDomicile.streetAddress',
+  ) as string
+
+  const reasonForApplicationPostalCode = getValueViaPath(
+    answers,
+    'reasonForApplication.transferOfLegalDomicile.postalCode',
+  ) as string
+
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
+
+  const nativeLanguage = getValueViaPath(
+    answers,
+    'languages.nativeLanguage',
+  ) as string
+
+  const otherLanguagesSpokenDaily = getValueViaPath(
+    answers,
+    'languages.otherLanguagesSpokenDaily',
+  ) as YesOrNo
+
+  const otherLanguages = getValueViaPath(
+    answers,
+    'languages.otherLanguages',
+  ) as string[]
+
+  const icelandicNotSpokenAroundChild = getValueViaPath(
+    answers,
+    'languages.icelandicNotSpokenAroundChild',
+  ) as string[]
+
+  const hasFoodAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasFoodAllergies',
+  ) as string[]
+
+  const foodAllergies = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.foodAllergies',
+  ) as FoodAllergiesOptions[]
+
+  const hasFoodIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.hasFoodIntolerances',
+  ) as string[]
+
+  const foodIntolerances = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.foodIntolerances',
+  ) as FoodIntolerancesOptions[]
+
+  const isUsingEpiPen = getValueViaPath(
+    answers,
+    'allergiesAndIntolerances.isUsingEpiPen',
+  ) as YesOrNo
 
   const developmentalAssessment = getValueViaPath(
     answers,
@@ -68,7 +140,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childNationalId,
     parents,
     relatives,
+    reasonForApplication,
+    reasonForApplicationCountry,
+    reasonForApplicationStreetAddress,
+    reasonForApplicationPostalCode,
     siblings,
+    nativeLanguage,
+    otherLanguagesSpokenDaily,
+    otherLanguages,
+    icelandicNotSpokenAroundChild,
+    hasFoodAllergies,
+    foodAllergies,
+    hasFoodIntolerances,
+    foodIntolerances,
+    isUsingEpiPen,
     developmentalAssessment,
     specialSupport,
     requestMeeting,
@@ -220,6 +305,60 @@ export const getRelationOptionLabel = (value: RelationOptions) => {
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
+export const getReasonForApplicationOptions = () => [
+  {
+    value: ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
+    label: newPrimarySchoolMessages.primarySchool.transferOfLegalDomicile,
+  },
+  {
+    value: ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
+    label: newPrimarySchoolMessages.primarySchool.studyStayForParents,
+  },
+  {
+    value: ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
+    label:
+      newPrimarySchoolMessages.primarySchool.parentsParliamentaryMembership,
+  },
+  {
+    value: ReasonForApplicationOptions.TEMPORARY_FROSTER,
+    label: newPrimarySchoolMessages.primarySchool.temporaryFoster,
+  },
+  {
+    value: ReasonForApplicationOptions.EXPERT_SERVICE,
+    label: newPrimarySchoolMessages.primarySchool.expertService,
+  },
+  {
+    value: ReasonForApplicationOptions.SICKLY,
+    label: newPrimarySchoolMessages.primarySchool.sickly,
+  },
+  {
+    value: ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
+    label: newPrimarySchoolMessages.primarySchool.livesInTwoHomes,
+  },
+  {
+    value: ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
+    label: newPrimarySchoolMessages.primarySchool.siblingsTitle,
+  },
+  {
+    value: ReasonForApplicationOptions.MOVING_ABROAD,
+    label: newPrimarySchoolMessages.primarySchool.movingAbroad,
+  },
+  {
+    value: ReasonForApplicationOptions.OTHER_REASONS,
+    label: newPrimarySchoolMessages.primarySchool.otherReasons,
+  },
+]
+
+export const getReasonForApplicationOptionLabel = (
+  value: ReasonForApplicationOptions,
+) => {
+  const reasonForApplicationOptions = getReasonForApplicationOptions()
+  return (
+    reasonForApplicationOptions.find((option) => option.value === value)
+      ?.label ?? ''
+  )
+}
+
 export const getSiblingRelationOptions = () => [
   {
     value: SiblingRelationOptions.SIBLING,
@@ -240,4 +379,78 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const getLanguageCodes = () => {
+  return languageCodes.map((x) => ({
+    label: x.name,
+    value: x.code,
+  }))
+}
+
+export const getLanguageLabel = (code: string) => {
+  return languageCodes.find((language) => language.code === code)?.name ?? ''
+}
+
+export const getFoodAllergiesOptions = () => [
+  {
+    value: FoodAllergiesOptions.EGG_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.eggAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.FISH_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.fishAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.PENUT_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.nutAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.WHEAT_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.wheatAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.MILK_ALLERGY,
+    label: newPrimarySchoolMessages.differentNeeds.milkAllergy,
+  },
+  {
+    value: FoodAllergiesOptions.OTHER,
+    label: newPrimarySchoolMessages.differentNeeds.other,
+  },
+]
+
+export const getFoodAllergiesOptionsLabel = (value: FoodAllergiesOptions) => {
+  const foodAllergiesOptions = getFoodAllergiesOptions()
+  return (
+    foodAllergiesOptions.find((option) => option.value === value)?.label ?? ''
+  )
+}
+
+export const getFoodIntolerancesOptions = () => [
+  {
+    value: FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
+    label: newPrimarySchoolMessages.differentNeeds.lactoseIntolerance,
+  },
+  {
+    value: FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
+    label: newPrimarySchoolMessages.differentNeeds.glutenIntolerance,
+  },
+  {
+    value: FoodIntolerancesOptions.MSG_INTOLERANCE,
+    label: newPrimarySchoolMessages.differentNeeds.msgIntolerance,
+  },
+  {
+    value: FoodIntolerancesOptions.OTHER,
+    label: newPrimarySchoolMessages.differentNeeds.other,
+  },
+]
+
+export const getFoodIntolerancesOptionsLabel = (
+  value: FoodIntolerancesOptions,
+) => {
+  const foodIntolerancesOptions = getFoodIntolerancesOptions()
+  return (
+    foodIntolerancesOptions.find((option) => option.value === value)?.label ??
+    ''
+  )
 }

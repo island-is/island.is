@@ -1,5 +1,4 @@
 import { RadioValue, ReviewGroup } from '@island.is/application/ui-components'
-
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { newPrimarySchoolMessages } from '../../../lib/messages'

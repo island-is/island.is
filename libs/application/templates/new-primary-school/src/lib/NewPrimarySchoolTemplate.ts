@@ -18,14 +18,14 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from './constants'
+import unset from 'lodash/unset'
+import { assign } from 'xstate'
+import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import { assign } from 'xstate'
-import unset from 'lodash/unset'
 import {
-  hasChildrenThatCanApply,
   getApplicationAnswers,
+  hasChildrenThatCanApply,
 } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
@@ -93,7 +93,12 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
-        exit: ['clearPublication'],
+        exit: [
+          'clearApplicationIfReasonForApplication',
+          'clearLanguages',
+          'clearAllergiesAndIntolerances',
+          'clearPublication',
+        ],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -162,6 +167,82 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      /**
+       * Clear answers depending on what is selected as reason for application
+       */
+      clearApplicationIfReasonForApplication: assign((context) => {
+        const { application } = context
+        const { reasonForApplication } = getApplicationAnswers(
+          application.answers,
+        )
+
+        // Clear answers if "Moving abroad" is selected as reason for application
+        if (
+          reasonForApplication === ReasonForApplicationOptions.MOVING_ABROAD
+        ) {
+          unset(application.answers, 'support')
+          unset(application.answers, 'siblings')
+          unset(application.answers, 'languages')
+          unset(application.answers, 'startDate')
+          unset(application.answers, 'photography')
+          unset(application.answers, 'allergiesAndIntolerances')
+        } else {
+          // Clear movingAbroad if "Moving abroad" is not selected as reason for application
+          unset(application.answers, 'reasonForApplication.movingAbroad')
+        }
+
+        // Clear transferOfLegalDomicile if "Transfer of legal domicile" is not selected as reason for application
+        if (
+          reasonForApplication !==
+          ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+        ) {
+          unset(
+            application.answers,
+            'reasonForApplication.transferOfLegalDomicile',
+          )
+        }
+
+        // Clear siblings if "Siblings in the same primary school" is not selected as reason for application
+        if (
+          reasonForApplication !==
+          ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
+        ) {
+          unset(application.answers, 'siblings')
+        }
+        return context
+      }),
+      clearLanguages: assign((context) => {
+        const { application } = context
+        const { otherLanguagesSpokenDaily } = getApplicationAnswers(
+          application.answers,
+        )
+        if (otherLanguagesSpokenDaily === NO) {
+          unset(application.answers, 'languages.otherLanguages')
+          unset(application.answers, 'languages.icelandicNotSpokenAroundChild')
+        }
+        return context
+      }),
+      /**
+       * If the user changes his answers,
+       * clear selected food allergies and intolerances.
+       */
+      clearAllergiesAndIntolerances: assign((context) => {
+        const { application } = context
+        const { hasFoodAllergies, hasFoodIntolerances } = getApplicationAnswers(
+          application.answers,
+        )
+
+        if (hasFoodAllergies?.length === 0) {
+          unset(application.answers, 'allergiesAndIntolerances.foodAllergies')
+        }
+        if (hasFoodIntolerances?.length === 0) {
+          unset(
+            application.answers,
+            'allergiesAndIntolerances.foodIntolerances',
+          )
+        }
+        return context
+      }),
       clearPublication: assign((context) => {
         const { application } = context
         const { photographyConsent } = getApplicationAnswers(

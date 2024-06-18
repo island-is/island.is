@@ -31,7 +31,9 @@ export const Child = ({
     >
       <GridRow>
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          <Label>{formatMessage(newPrimarySchoolMessages.confirm.child)}</Label>
+          <Label>
+            {formatMessage(newPrimarySchoolMessages.overview.child)}
+          </Label>
         </GridColumn>
       </GridRow>
 

@@ -2,7 +2,13 @@ import { NO, YES } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { RelationOptions, SiblingRelationOptions } from './constants'
+import {
+  FoodAllergiesOptions,
+  FoodIntolerancesOptions,
+  ReasonForApplicationOptions,
+  RelationOptions,
+  SiblingRelationOptions,
+} from './constants'
 import { errorMessages } from './messages'
 
 export const dataSchema = z.object({
@@ -79,6 +85,61 @@ export const dataSchema = z.object({
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.relativesRequired,
     }),
+  reasonForApplication: z
+    .object({
+      reason: z.enum([
+        ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
+        ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
+        ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
+        ReasonForApplicationOptions.TEMPORARY_FROSTER,
+        ReasonForApplicationOptions.EXPERT_SERVICE,
+        ReasonForApplicationOptions.SICKLY,
+        ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
+        ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
+        ReasonForApplicationOptions.MOVING_ABROAD,
+        ReasonForApplicationOptions.OTHER_REASONS,
+      ]),
+      movingAbroad: z
+        .object({
+          country: z.string().optional(),
+        })
+        .optional(),
+      transferOfLegalDomicile: z
+        .object({
+          streetAddress: z.string(),
+          postalCode: z.string(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ reason, movingAbroad }) =>
+        reason === ReasonForApplicationOptions.MOVING_ABROAD
+          ? movingAbroad && !!movingAbroad.country
+          : true,
+      {
+        path: ['movingAbroad', 'country'],
+      },
+    )
+    .refine(
+      ({ reason, transferOfLegalDomicile }) =>
+        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ? transferOfLegalDomicile &&
+            transferOfLegalDomicile.streetAddress.length > 0
+          : true,
+      {
+        path: ['transferOfLegalDomicile', 'streetAddress'],
+      },
+    )
+    .refine(
+      ({ reason, transferOfLegalDomicile }) =>
+        reason === ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE
+          ? transferOfLegalDomicile &&
+            transferOfLegalDomicile.postalCode.length > 0
+          : true,
+      {
+        path: ['transferOfLegalDomicile', 'postalCode'],
+      },
+    ),
   schools: z.object({
     newSchool: z.object({
       school: z.string(),
@@ -98,11 +159,74 @@ export const dataSchema = z.object({
         ]),
       }),
     )
-    // TODO: Skoða betur þegar Reason for transfer er komið inn?
     .refine((r) => r === undefined || r.length > 0, {
       params: errorMessages.siblingsRequired,
     }),
   startDate: z.string(),
+  languages: z
+    .object({
+      nativeLanguage: z.string(),
+      otherLanguagesSpokenDaily: z.enum([YES, NO]),
+      otherLanguages: z.array(z.string()).optional(),
+    })
+    .refine(
+      ({ otherLanguagesSpokenDaily, otherLanguages }) =>
+        otherLanguagesSpokenDaily === YES
+          ? !!otherLanguages && otherLanguages.length > 0
+          : true,
+      {
+        path: ['otherLanguages'],
+        params: errorMessages.languagesRequired,
+      },
+    ),
+  allergiesAndIntolerances: z
+    .object({
+      hasFoodAllergies: z.array(z.string()),
+      hasFoodIntolerances: z.array(z.string()),
+      foodAllergies: z
+        .array(
+          z.enum([
+            FoodAllergiesOptions.EGG_ALLERGY,
+            FoodAllergiesOptions.FISH_ALLERGY,
+            FoodAllergiesOptions.PENUT_ALLERGY,
+            FoodAllergiesOptions.WHEAT_ALLERGY,
+            FoodAllergiesOptions.MILK_ALLERGY,
+            FoodAllergiesOptions.OTHER,
+          ]),
+        )
+        .optional(),
+      foodIntolerances: z
+        .array(
+          z.enum([
+            FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
+            FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
+            FoodIntolerancesOptions.MSG_INTOLERANCE,
+            FoodIntolerancesOptions.OTHER,
+          ]),
+        )
+        .optional(),
+      isUsingEpiPen: z.array(z.string()),
+    })
+    .refine(
+      ({ hasFoodAllergies, foodAllergies }) =>
+        hasFoodAllergies.includes(YES)
+          ? !!foodAllergies && foodAllergies.length > 0
+          : true,
+      {
+        path: ['foodAllergies'],
+        params: errorMessages.foodAllergyRequired,
+      },
+    )
+    .refine(
+      ({ hasFoodIntolerances, foodIntolerances }) =>
+        hasFoodIntolerances.includes(YES)
+          ? !!foodIntolerances && foodIntolerances.length > 0
+          : true,
+      {
+        path: ['foodIntolerances'],
+        params: errorMessages.foodIntoleranceRequired,
+      },
+    ),
   support: z.object({
     developmentalAssessment: z.enum([YES, NO]),
     specialSupport: z.enum([YES, NO]),

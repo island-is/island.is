@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  ImageSourcePropType,
   ImageStyle,
   TextProps,
   TextStyle,
@@ -9,9 +10,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { font } from '../../utils/font'
 
-interface ButtonProps extends TouchableHighlightProps {
-  title: string
-  icon?: React.ReactNode
+interface ButtonBaseProps extends TouchableHighlightProps {
   isTransparent?: boolean
   isOutlined?: boolean
   isUtilityButton?: boolean
@@ -19,6 +18,18 @@ interface ButtonProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
 }
+
+interface IconButtonProps extends ButtonBaseProps {
+  title?: never
+  icon: ImageSourcePropType
+}
+
+interface TextButtonProps extends ButtonBaseProps {
+  title: string
+  icon?: ImageSourcePropType
+}
+
+type ButtonProps = IconButtonProps | TextButtonProps
 
 type HostProps = Omit<ButtonProps, 'title'>
 
@@ -89,10 +100,10 @@ const Text = styled.Text<{
   text-align: ${(props) => (props.isUtilityButton ? 'left' : 'center')};
 `
 
-const Icon = styled.Image`
+const Icon = styled.Image<{ noMargin?: boolean }>`
   width: 16px;
   height: 16px;
-  margin-left: 8px;
+  margin-left: ${(props) => (props.noMargin ? '0' : '8px')};
 `
 
 export function Button({
@@ -120,18 +131,25 @@ export function Button({
       {...rest}
     >
       <>
-        <Text
-          {...textProps}
-          isTransparent={isTransparent}
-          isOutlined={isOutlined}
-          isUtilityButton={isUtilityButton}
-          disabled={rest.disabled}
-          style={textStyle}
-        >
-          {title}
-        </Text>
+        {title && (
+          <Text
+            {...textProps}
+            isTransparent={isTransparent}
+            isOutlined={isOutlined}
+            isUtilityButton={isUtilityButton}
+            disabled={rest.disabled}
+            style={textStyle}
+          >
+            {title}
+          </Text>
+        )}
         {icon && (
-          <Icon source={icon as any} resizeMode="center" {...iconStyle} />
+          <Icon
+            source={icon}
+            resizeMode="center"
+            {...iconStyle}
+            noMargin={!title}
+          />
         )}
       </>
     </Host>
