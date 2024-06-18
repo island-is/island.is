@@ -160,7 +160,6 @@ export const GenericList = ({
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
   const tagQueryId = `${id}tag`
-  const router = useRouter()
 
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
@@ -283,63 +282,66 @@ export const GenericList = ({
           <Box ref={ref}>
             {filterCategories.length > 0 && (
               <Stack space={4}>
-                <Filter
-                  resultCount={totalItems}
-                  labelClear={'Hreinsa síu'}
-                  labelClearAll={'Hreinsa allar síur'}
-                  labelOpen={'Opna síu'}
-                  labelClose={'Loka síu'}
-                  labelResult={'Skoða niðurstöður'}
-                  labelTitle={'Sía niðurstöður'}
-                  variant={isMobile ? 'dialog' : 'popover'}
-                  onFilterClear={() => {
-                    setParameters(null)
-                  }}
-                  filterInput={filterInputComponent}
-                >
-                  <FilterMultiChoice
-                    labelClear={'Hreinsa val'}
-                    onChange={({ categoryId, selected }) => {
-                      setParameters((prevParameters) => {
-                        // Make sure we clear out the query params from the url when there is nothing selected
-                        if (
-                          selected.length === 0 &&
-                          prevParameters !== null &&
-                          Object.values(prevParameters).every(
-                            (s) => !s || s.length === 0,
-                          )
-                        ) {
-                          return null
-                        }
-
-                        return {
-                          ...prevParameters,
-                          [categoryId]: selected,
-                        }
-                      })
+                <Stack space={3}>
+                  {isMobile && filterInputComponent}
+                  <Filter
+                    resultCount={totalItems}
+                    labelClear={'Hreinsa síu'}
+                    labelClearAll={'Hreinsa allar síur'}
+                    labelOpen={'Opna síu'}
+                    labelClose={'Loka síu'}
+                    labelResult={'Skoða niðurstöður'}
+                    labelTitle={'Sía niðurstöður'}
+                    variant={isMobile ? 'dialog' : 'popover'}
+                    onFilterClear={() => {
+                      setParameters(null)
                     }}
-                    onClear={(categoryId) => {
-                      setParameters((prevParameters) => {
-                        const updatedParameters = {
-                          ...prevParameters,
-                          [categoryId]: [],
-                        }
+                    filterInput={filterInputComponent}
+                  >
+                    <FilterMultiChoice
+                      labelClear={'Hreinsa val'}
+                      onChange={({ categoryId, selected }) => {
+                        setParameters((prevParameters) => {
+                          // Make sure we clear out the query params from the url when there is nothing selected
+                          if (
+                            selected.length === 0 &&
+                            prevParameters !== null &&
+                            Object.values(prevParameters).every(
+                              (s) => !s || s.length === 0,
+                            )
+                          ) {
+                            return null
+                          }
 
-                        // Make sure we clear out the query params from the url when there is nothing selected
-                        if (
-                          Object.values(updatedParameters).every(
-                            (s) => !s || s.length === 0,
-                          )
-                        ) {
-                          return null
-                        }
+                          return {
+                            ...prevParameters,
+                            [categoryId]: selected,
+                          }
+                        })
+                      }}
+                      onClear={(categoryId) => {
+                        setParameters((prevParameters) => {
+                          const updatedParameters = {
+                            ...prevParameters,
+                            [categoryId]: [],
+                          }
 
-                        return updatedParameters
-                      })
-                    }}
-                    categories={filterCategories}
-                  />
-                </Filter>
+                          // Make sure we clear out the query params from the url when there is nothing selected
+                          if (
+                            Object.values(updatedParameters).every(
+                              (s) => !s || s.length === 0,
+                            )
+                          ) {
+                            return null
+                          }
+
+                          return updatedParameters
+                        })
+                      }}
+                      categories={filterCategories}
+                    />
+                  </Filter>
+                </Stack>
 
                 <Inline space={1}>
                   {selectedFilters.map(({ value, label, category }) => (
