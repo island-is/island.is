@@ -33,7 +33,7 @@ patterns=(
 	'apps/**/*.union.ts'
 	'libs/**/*.union.ts'
 	'apps/**/*.graphql.ts'
-	'apps/judicial-system/**/*.graphql'
+	'apps/**/*.graphql'
 	'libs/**/*.graphql.ts'
 	'libs/**/*.graphql'
 	'libs/**/clientConfig.yaml'
