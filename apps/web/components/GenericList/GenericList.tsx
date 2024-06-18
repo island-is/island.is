@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Locale } from 'locale'
+import flatten from 'lodash/flatten'
 import { useRouter } from 'next/router'
 import { parseAsInteger, parseAsJson, useQueryState } from 'next-usequerystate'
 import { useLazyQuery } from '@apollo/client'
@@ -183,8 +184,6 @@ export const GenericList = ({
     return categories
   }, [filterTags, parameters])
 
-  const pageRef = useRef(page ?? 1)
-  const searchValueRef = useRef(searchValue ?? '')
   const [itemsResponse, setItemsResponse] =
     useState<GenericListItemResponse | null>(null)
   const [errorOccurred, setErrorOccurred] = useState(false)
@@ -197,11 +196,21 @@ export const GenericList = ({
     GetGenericListItemsQueryVariables
   >(GET_GENERIC_LIST_ITEMS_QUERY, {
     onCompleted(data) {
+      const searchParams = new URLSearchParams(window.location.search)
+
+      const queryString = searchParams.get(searchQueryId) || ''
+      const pageQuery = searchParams.get(pageQueryId) || '1'
+      const tagQuery = searchParams.get(tagQueryId) || '{}'
+
+      const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
+
       if (
         // Make sure the response matches the request input
-        searchValueRef.current ===
-          data?.getGenericListItems?.input?.queryString &&
-        pageRef.current === data?.getGenericListItems?.input?.page
+        queryString === data?.getGenericListItems?.input?.queryString &&
+        pageQuery === data?.getGenericListItems?.input?.page?.toString() &&
+        tags.every((tag) =>
+          (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
+        )
       ) {
         setItemsResponse(data.getGenericListItems)
         setErrorOccurred(false)
@@ -262,9 +271,7 @@ export const GenericList = ({
       name="list-search"
       onChange={(value) => {
         setSearchValue(value || null)
-        searchValueRef.current = value
         setPage(null)
-        pageRef.current = 1
       }}
       value={searchValue ?? ''}
       loading={loading}
@@ -438,7 +445,6 @@ export const GenericList = ({
                 <button
                   onClick={() => {
                     setPage(page === 1 ? null : page)
-                    pageRef.current = page
 
                     // Scroll to top of the list on page change
                     const position = ref.current?.getBoundingClientRect()
