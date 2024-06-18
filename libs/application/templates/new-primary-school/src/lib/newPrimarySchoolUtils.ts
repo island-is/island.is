@@ -456,9 +456,9 @@ export const getOptionsListByType = async (
 
   return (
     data?.getFriggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value }) => {
+      options.flatMap(({ value, id }) => {
         const content = value.find(({ language }) => language === 'is')?.content
-        return { value: content ?? '', label: content ?? '' }
+        return { value: id ?? '', label: content ?? '' }
       }),
     ) ?? []
   )
