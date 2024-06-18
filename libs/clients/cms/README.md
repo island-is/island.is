@@ -6,7 +6,7 @@ This library implements a GraphQL client code to use Contentful GraphQL APIs.
 
 ## GraphQL API endpoint
 
-The `GRAPHQL_API_ENDPOINT` config needs to be configured.
+The `GRAPHQL_API_ENDPOINT` and `CONTENTFUL_ACCESS_TOKEN` env variables need to be configured.
 
 ## Running unit tests
 
