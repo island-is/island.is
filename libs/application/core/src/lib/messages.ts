@@ -842,6 +842,24 @@ export const coreErrorScreenMessages = defineMessages({
     description:
       'Error screen description when user has a bad subject error after checking delegations',
   },
+  prunedTitle: {
+    id: 'application.system:core.errorScreen.prunedTitle',
+    defaultMessage: 'Umsóknin er runnin út',
+    description:
+      'Error screen title when the application has been pruned and is not editable',
+  },
+  prunedSubTitle: {
+    id: 'application.system:core.errorScreen.prunedSubTitle',
+    defaultMessage: 'Umsóknin hefur runnið út og er ekki lengur aðgengileg',
+    description:
+      'Error screen subtitle when the application has been pruned and is not editable',
+  },
+  prunedDescription: {
+    id: 'application.system:core.errorScreen.prunedDescription#markdown',
+    defaultMessage: `* Öllum persónugögnum var eytt þegar umsóknin rann út\n* Ef klára á umsókn af þessu tagi þarf að stofna nýja`,
+    description:
+      'Error screen description when user has a bad subject error after checking delegations',
+  },
   lostTitle: {
     id: 'application.system:core.errorScreen.lostTitle',
     defaultMessage: 'Umsókn týnd - Ekki til',
