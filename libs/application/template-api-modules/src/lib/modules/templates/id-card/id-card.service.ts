@@ -143,7 +143,6 @@ export class IdCardService extends BaseTemplateApiService {
     // 1. Validate payment
 
     // 1a. Make sure a paymentUrl was created
-    // TODO: Make sure this is correct according to our external data answers
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }
@@ -163,12 +162,12 @@ export class IdCardService extends BaseTemplateApiService {
     }
 
     // 2. Notify parent B that they need to review
-
-    // TODO: Write in error log email of parentB
     await this.sharedTemplateAPIService
       .sendEmail(generateAssignParentBApplicationEmail, application)
-      .catch(() => {
-        this.logger.error(`Error sending email about initReview`)
+      .catch((e) => {
+        this.logger.error(
+          `Error sending email about initReview for parentB, applicationID: ${application.id}. Error: ${e}`,
+        )
       })
   }
 
@@ -203,8 +202,10 @@ export class IdCardService extends BaseTemplateApiService {
         (props) => generateApplicationRejectEmail(props, parentA),
         application,
       )
-      .catch(() => {
-        this.logger.error(`Error sending email about initReview`)
+      .catch((e) => {
+        this.logger.error(
+          `Error sending email about rejection for parentA, applicationID: ${application.id}. Error: ${e}`,
+        )
       })
     if (parentB) {
       // Email to parent B
@@ -213,8 +214,10 @@ export class IdCardService extends BaseTemplateApiService {
           (props) => generateApplicationRejectEmail(props, parentB),
           application,
         )
-        .catch(() => {
-          this.logger.error(`Error sending email about initReview`)
+        .catch((e) => {
+          this.logger.error(
+            `Error sending email about rejection for parentB, applicationID: ${application.id}. Error: ${e}`,
+          )
         })
     }
   }
@@ -337,8 +340,10 @@ export class IdCardService extends BaseTemplateApiService {
         (props) => generateApplicationSubmittedEmail(props, parentA),
         application,
       )
-      .catch(() => {
-        this.logger.error(`Error sending email about submit application`)
+      .catch((e) => {
+        this.logger.error(
+          `Error sending email about submission for parentA, applicationID: ${application.id}. Error: ${e}`,
+        )
       })
     if (parentB) {
       // Email to parent B
@@ -347,8 +352,10 @@ export class IdCardService extends BaseTemplateApiService {
           (props) => generateApplicationSubmittedEmail(props, parentB),
           application,
         )
-        .catch(() => {
-          this.logger.error(`Error sending email about submit application`)
+        .catch((e) => {
+          this.logger.error(
+            `Error sending email about submission for parentB, applicationID: ${application.id}. Error: ${e}`,
+          )
         })
     }
   }

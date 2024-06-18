@@ -33,17 +33,17 @@ export const error = defineMessages({
     description: 'Failed to submit application',
   },
   invalidValue: {
-    id: 'pp.application:error.invalidValue',
+    id: 'id.application:error.invalidValue',
     defaultMessage: 'Ógilt gildi.',
     description: 'Error message when a value is invalid.',
   },
   invalidAgeTitle: {
-    id: 'pp.application:error.invalidAgeTitle',
+    id: 'id.application:error.invalidAgeTitle',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
     description: 'Error message when a value is invalid.',
   },
   invalidAgeDescription: {
-    id: 'pp.application:error.invalidAgeDescription',
+    id: 'id.application:error.invalidAgeDescription',
     defaultMessage: 'Tilskyldur aldur fyrir þessa umsókn er 13 ára.',
     description: 'Error message when a value is invalid.',
   },
