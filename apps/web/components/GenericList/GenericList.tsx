@@ -92,7 +92,7 @@ const NonClickableItem = ({ item }: ItemProps) => {
             <Box>{webRichText(item.cardIntro ?? [])}</Box>
           )}
         </Stack>
-        <Inline space={0}>
+        <Inline space={1}>
           {item.filterTags?.map((tag) => (
             <Tag disabled={true} variant="purple" outlined={true} key={tag.id}>
               {tag.title}
@@ -132,7 +132,7 @@ const ClickableItem = ({ item }: ItemProps) => {
             <Box>{webRichText(item.cardIntro ?? [])}</Box>
           )}
         </Stack>
-        <Inline space={0}>
+        <Inline space={1}>
           {item.filterTags?.map((tag) => (
             <Tag disabled={true} variant="purple" outlined={true} key={tag.id}>
               {tag.title}
