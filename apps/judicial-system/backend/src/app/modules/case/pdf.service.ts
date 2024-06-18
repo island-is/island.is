@@ -17,7 +17,6 @@ import {
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isTrafficViolationCase,
-  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -30,7 +29,6 @@ import {
   getRulingPdfAsBuffer,
   IndictmentConfirmation,
 } from '../../formatters'
-import { createSubpoenaPDF } from '../../formatters/subpoenaPdf'
 import { AwsS3Service } from '../aws-s3'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
@@ -91,7 +89,7 @@ export class PDFService {
       )
       ?.map((caseFile) => async () => {
         const buffer = await this.awsS3Service
-          .getObject(theCase.type, theCase.state, caseFile.key)
+          .getObject(theCase.type, caseFile.key)
           .catch((reason) => {
             // Tolerate failure, but log error
             this.logger.error(
@@ -132,7 +130,7 @@ export class PDFService {
   async getCourtRecordPdf(theCase: Case, user: TUser): Promise<Buffer> {
     if (theCase.courtRecordSignatureDate) {
       try {
-        return await this.awsS3Service.getGeneratedObject(
+        return await this.awsS3Service.getGeneratedRequestCaseObject(
           theCase.type,
           `${theCase.id}/courtRecord.pdf`,
         )
@@ -158,7 +156,7 @@ export class PDFService {
   async getRulingPdf(theCase: Case): Promise<Buffer> {
     if (theCase.rulingSignatureDate) {
       try {
-        return await this.awsS3Service.getGeneratedObject(
+        return await this.awsS3Service.getGeneratedRequestCaseObject(
           theCase.type,
           `${theCase.id}/ruling.pdf`,
         )
@@ -186,13 +184,13 @@ export class PDFService {
     key: string,
   ): Promise<Buffer | undefined> {
     return await this.awsS3Service
-      .getObject(theCase.type, theCase.state, key)
+      .getObject(theCase.type, key)
       .catch(() => undefined) // Ignore errors and return undefined
   }
 
   private tryUploadPdfToS3(theCase: Case, key: string, pdf: Buffer) {
     this.awsS3Service
-      .putObject(theCase.type, theCase.state, key, pdf.toString('binary'))
+      .putObject(theCase.type, key, pdf.toString('binary'))
       .catch((reason) => {
         this.logger.error(`Failed to upload pdf ${key} to AWS S3`, { reason })
       })
