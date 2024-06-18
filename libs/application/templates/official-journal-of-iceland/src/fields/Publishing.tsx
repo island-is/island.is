@@ -136,11 +136,19 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
     })
   }
 
-  const onAddChannel = (channel: Channel) => {
+  const onAddChannel = () => {
+    if (!channelState.email) return
     setState({
       ...state,
-      communicationChannels: [...state.communicationChannels, channel],
+      communicationChannels: [
+        ...state.communicationChannels,
+        {
+          email: channelState.email,
+          phone: channelState.phone,
+        },
+      ],
     })
+    setChannelState({ email: '', phone: '' })
   }
 
   const updateHandler = useCallback(async () => {
