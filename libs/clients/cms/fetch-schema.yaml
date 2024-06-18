@@ -1,0 +1,8 @@
+schema:
+  - https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master:
+      headers:
+        Authorization: Bearer ${CONTENTFUL_ACCESS_TOKEN}
+generates:
+  libs/clients/cms/schema.graphql:
+    plugins:
+      - schema-ast
