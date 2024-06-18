@@ -24,7 +24,7 @@ export const School = ({
         <GridRow>
           <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
             <Text variant="h3" as="h3">
-              {formatMessage(newPrimarySchoolMessages.confirm.schoolTitle)}
+              {formatMessage(newPrimarySchoolMessages.overview.schoolTitle)}
             </Text>
           </GridColumn>
         </GridRow>
@@ -32,7 +32,7 @@ export const School = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                newPrimarySchoolMessages.confirm.currentSchool,
+                newPrimarySchoolMessages.overview.currentSchool,
               )}
               value={'- TBA -'}
             />
@@ -40,7 +40,7 @@ export const School = ({
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
               label={formatMessage(
-                newPrimarySchoolMessages.confirm.selectedSchool,
+                newPrimarySchoolMessages.overview.selectedSchool,
               )}
               value={selectedSchool}
             />
@@ -49,7 +49,7 @@ export const School = ({
         <GridRow rowGap={2}>
           <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
             <DataValue
-              label={formatMessage(newPrimarySchoolMessages.confirm.class)}
+              label={formatMessage(newPrimarySchoolMessages.overview.class)}
               value={'- TBA -'}
             />
           </GridColumn>

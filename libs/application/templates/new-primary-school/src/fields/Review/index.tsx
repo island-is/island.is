@@ -165,6 +165,7 @@ export const Review: FC<ReviewScreenProps> = ({
             ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL && (
             <Siblings {...childProps} />
           )}
+          <School {...childProps} />
           <Languages {...childProps} />
           <AllergiesAndIntolerances {...childProps} />
           <Support {...childProps} />
