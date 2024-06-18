@@ -1,0 +1,51 @@
+query GenericLicenseCollection(
+  $input: GetGenericLicensesInput!
+  $locale: String!
+) {
+  genericLicenseCollection(input: $input, locale: $locale) {
+    licenses {
+      ... on GenericUserLicense {
+        __typename
+        nationalId
+        license {
+          type
+          provider {
+            id
+            providerName
+            providerLogo
+          }
+          name
+          pkpass
+          pkpassVerify
+          status
+          pkpassStatus
+        }
+        isOwnerChildOfUser
+        payload {
+          data {
+            type
+          }
+          metadata {
+            licenseId
+            licenseNumberDisplay
+            displayTag {
+              text
+              color
+            }
+          }
+        }
+      }
+      ... on GenericUserLicenseError {
+        __typename
+        type
+        provider {
+          id
+          providerName
+        }
+        errorCode
+        errorMessage
+        extraData
+      }
+    }
+  }
+}

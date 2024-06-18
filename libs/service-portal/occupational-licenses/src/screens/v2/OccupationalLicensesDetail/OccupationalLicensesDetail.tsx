@@ -1,5 +1,12 @@
 import { useParams } from 'react-router-dom'
-import { Box, Button, Icon, Inline, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Icon,
+  Inline,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   FootNote,
   IntroHeader,
@@ -15,7 +22,10 @@ import { useGetOccupationalLicenseByIdQuery } from './OccupationalLicensesDetail
 import { Problem } from '@island.is/react-spa/shared'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { useOrganization } from '@island.is/service-portal/graphql'
-import { OccupationalLicensesV2LinkType } from '@island.is/api/schema'
+import {
+  OccupationalLicenseV2LicenseType,
+  OccupationalLicensesV2LinkType,
+} from '@island.is/api/schema'
 
 type UseParams = {
   id: string
@@ -39,6 +49,10 @@ const OccupationalLicenseDetail = () => {
   const res = data?.occupationalLicenseV2
   const license = res?.license
 
+  const isOldEducationLicense =
+    license?.type === OccupationalLicenseV2LicenseType.EDUCATION &&
+    license?.validFrom < new Date('01.01.2020')
+
   return (
     <>
       <IntroHeader
@@ -47,7 +61,7 @@ const OccupationalLicenseDetail = () => {
         intro={res?.headerText ?? ''}
         serviceProviderSlug={license?.issuer as OrganizationSlugType}
       >
-        {res?.actions && (
+        {res?.actions && !isOldEducationLicense && (
           <Box paddingTop={3}>
             {
               <Inline space={1} collapseBelow="sm">
@@ -55,6 +69,7 @@ const OccupationalLicenseDetail = () => {
                   if (!a) {
                     return null
                   }
+                  //TEMP FIX
 
                   if (a.type === OccupationalLicensesV2LinkType.FILE) {
                     return (
@@ -101,6 +116,13 @@ const OccupationalLicenseDetail = () => {
         )}
       </IntroHeader>
       {error && !loading && <Problem noBorder={false} error={error} />}
+      {!error && !loading && isOldEducationLicense && (
+        <AlertMessage
+          type="warning"
+          title={'blingbolng'}
+          message={'parrappa'}
+        />
+      )}
       {!error && (loading || data?.occupationalLicenseV2) && (
         <StackWithBottomDivider space={2} box={{ marginTop: [2, 3, 6] }}>
           <UserInfoLine
