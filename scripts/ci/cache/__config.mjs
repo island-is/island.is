@@ -23,7 +23,6 @@ import { getGeneratedFilesHash } from './_generated_files.mjs'
 
 // When testing this is good to manipulate
 const HASH_VERSION = `newcache-${6}`
-const GENERATED_FILES_VERSION = '2024061401-notifications-locale-cleanstring'
 
 export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
   .split(',')
