@@ -127,7 +127,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     return {
-      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+      message: e.errors
+        ? Object.entries(e.errors).map(([, values]) => values.join(', '))
+        : e.status,
     }
   }
 
@@ -1527,7 +1529,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return
     } catch (e) {
-      this.logger.error('Failed to validate the parental leave application', e)
+      this.logger.warn('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)
     }
   }
