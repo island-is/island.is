@@ -145,7 +145,7 @@ describe('ApplicationController - Create', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         nationalId: user.nationalId,
         ...application,
-        applied: date,
+        appliedDate: date,
       })
     })
 
@@ -160,7 +160,7 @@ describe('ApplicationController - Create', () => {
               spouseNationalId: user.nationalId,
             },
           ],
-          applied: { [Op.gte]: firstDateOfMonth() },
+          appliedDate: { [Op.gte]: firstDateOfMonth() },
         },
       })
     })
@@ -232,7 +232,7 @@ describe('ApplicationController - Create', () => {
       id,
       state: application.state,
       created: new Date(),
-      applied: new Date(),
+      appliedDate: new Date(),
       email: application.email,
     }
 
@@ -358,7 +358,7 @@ describe('ApplicationController - Create', () => {
       id,
       state: application.state,
       created: new Date(),
-      applied: new Date(),
+      appliedDate: new Date(),
       email: application.email,
       spouseEmail: application.spouseEmail,
       spouseName: application.spouseName,
@@ -463,7 +463,7 @@ describe('ApplicationController - Create', () => {
       id,
       state: application.state,
       created: new Date(),
-      applied: new Date(),
+      appliedDate: new Date(),
       email: application.email,
     }
 
@@ -565,7 +565,7 @@ describe('ApplicationController - Create', () => {
       id,
       state: application.state,
       created: new Date(),
-      applied: new Date(),
+      appliedDate: new Date(),
       email: application.email,
     }
 
@@ -599,7 +599,7 @@ describe('ApplicationController - Create', () => {
     })
   })
 
-  describe('applicant has applied for period', () => {
+  describe('applicant has appliedDate for period', () => {
     let then: Then
 
     const id = uuid()

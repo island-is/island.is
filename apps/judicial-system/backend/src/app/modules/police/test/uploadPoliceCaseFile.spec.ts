@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 
 import { BadGatewayException, NotFoundException } from '@nestjs/common'
 
-import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
+import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingPoliceModule } from './createTestingPoliceModule'
 
@@ -23,7 +23,6 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   caseType: CaseType,
-  caseSate: CaseState,
   user: User,
   uploadPoliceCaseFile: UploadPoliceCaseFileDto,
 ) => Promise<Then>
@@ -43,7 +42,6 @@ describe('PoliceController - Upload police case file', () => {
     givenWhenThen = async (
       caseId: string,
       caseType: CaseType,
-      caseSate: CaseState,
       user: User,
       uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     ): Promise<Then> => {
@@ -53,7 +51,6 @@ describe('PoliceController - Upload police case file', () => {
         .uploadPoliceCaseFile(caseId, user, uploadPoliceCaseFile, {
           id: caseId,
           type: caseType,
-          state: caseSate,
         } as Case)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
@@ -86,7 +83,6 @@ describe('PoliceController - Upload police case file', () => {
       then = await givenWhenThen(
         caseId,
         CaseType.CUSTODY,
-        CaseState.DRAFT,
         user,
         uploadPoliceCaseFile,
       )
@@ -101,7 +97,6 @@ describe('PoliceController - Upload police case file', () => {
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
         CaseType.CUSTODY,
-        CaseState.DRAFT,
         expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
         'Test content',
       )
@@ -136,7 +131,6 @@ describe('PoliceController - Upload police case file', () => {
       then = await givenWhenThen(
         caseId,
         CaseType.INDICTMENT,
-        CaseState.DRAFT,
         user,
         uploadPoliceCaseFile,
       )
@@ -151,7 +145,6 @@ describe('PoliceController - Upload police case file', () => {
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
         CaseType.INDICTMENT,
-        CaseState.DRAFT,
         expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
         'Test content',
       )
@@ -175,7 +168,6 @@ describe('PoliceController - Upload police case file', () => {
       then = await givenWhenThen(
         caseId,
         CaseType.BANKING_SECRECY_WAIVER,
-        CaseState.NEW,
         user,
         uploadPoliceCaseFile,
       )
@@ -205,7 +197,6 @@ describe('PoliceController - Upload police case file', () => {
       then = await givenWhenThen(
         caseId,
         CaseType.SEARCH_WARRANT,
-        CaseState.NEW,
         user,
         policeCaseFile,
       )
@@ -238,7 +229,6 @@ describe('PoliceController - Upload police case file', () => {
       then = await givenWhenThen(
         caseId,
         CaseType.TELECOMMUNICATIONS,
-        CaseState.NEW,
         user,
         uploadPoliceCaseFile,
       )

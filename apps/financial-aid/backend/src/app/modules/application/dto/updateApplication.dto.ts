@@ -29,7 +29,7 @@ export class UpdateApplicationDto {
   @IsOptional()
   @IsString()
   @ApiProperty()
-  readonly applied?: string
+  readonly appliedDate?: string
 
   @IsOptional()
   @IsString()

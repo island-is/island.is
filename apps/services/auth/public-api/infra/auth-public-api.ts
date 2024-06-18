@@ -2,6 +2,18 @@ import { service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
 import { json } from '../../../../../infra/src/dsl/dsl'
 import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
 
+const REDIS_NODE_CONFIG = {
+  dev: json([
+    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+  ]),
+  staging: json([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
+  prod: json([
+    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+  ]),
+}
+
 export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
   return service('services-auth-public-api')
     .namespace('identity-server-admin')
@@ -27,39 +39,25 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
         prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       },
-      XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
-      XROAD_RSK_PROCURING_REDIS_NODES: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
+      XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
       XROAD_TJODSKRA_MEMBER_CODE: {
         prod: '6503760649',
         dev: '10001',
         staging: '6503760649',
       },
+      PASSKEY_CORE_RP_ID: 'island.is',
+      PASSKEY_CORE_RP_NAME: 'Island.is',
+      PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
+      REDIS_NODES: REDIS_NODE_CONFIG,
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      PASSKEY_CORE_ALLOWED_ORIGINS:
+        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS',
     })
     .xroad(Base, Client, RskProcuring)
     .ingress({

@@ -1,11 +1,10 @@
 import CryptoJS from 'crypto-js'
-import { Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
 import { ConfigType } from '@island.is/nest/config'
 
-import { CaseState, UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -21,6 +20,7 @@ import { archiveFilter } from '../../filters/case.archiveFilter'
 import { ArchiveResponse } from '../../models/archive.response'
 import { Case } from '../../models/case.model'
 import { CaseArchive } from '../../models/caseArchive.model'
+import { ExplanatoryComment } from '../../models/explanatoryComment.model'
 
 jest.mock('crypto-js')
 jest.mock('../../../../factories')
@@ -36,6 +36,7 @@ describe('InternalCaseController - Archive', () => {
   let mockFileService: FileService
   let mockDefendantService: DefendantService
   let mockIndictmentCountService: IndictmentCountService
+  let mockExplanatoryCommentModel: typeof ExplanatoryComment
   let mockCaseModel: typeof Case
   let mockCaseArchiveModel: typeof CaseArchive
   let mockCaseConfig: ConfigType<typeof caseModuleConfig>
@@ -48,6 +49,7 @@ describe('InternalCaseController - Archive', () => {
       defendantService,
       indictmentCountService,
       sequelize,
+      explanatoryCommentModel,
       caseModel,
       caseArchiveModel,
       caseConfig,
@@ -57,6 +59,7 @@ describe('InternalCaseController - Archive', () => {
     mockFileService = fileService
     mockDefendantService = defendantService
     mockIndictmentCountService = indictmentCountService
+    mockExplanatoryCommentModel = explanatoryCommentModel
     mockCaseModel = caseModel
     mockCaseArchiveModel = caseArchiveModel
     mockCaseConfig = caseConfig
@@ -79,36 +82,7 @@ describe('InternalCaseController - Archive', () => {
     }
   })
 
-  describe('case lookup', () => {
-    beforeEach(async () => {
-      await givenWhenThen()
-    })
-
-    it('should lookup a case', () => {
-      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
-        include: [
-          { model: Defendant, as: 'defendants' },
-          { model: IndictmentCount, as: 'indictmentCounts' },
-          { model: CaseFile, as: 'caseFiles' },
-        ],
-        order: [
-          [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
-          [
-            { model: IndictmentCount, as: 'indictmentCounts' },
-            'created',
-            'ASC',
-          ],
-          [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
-        ],
-        where: {
-          isArchived: false,
-          [Op.or]: [{ state: CaseState.DELETED }, archiveFilter],
-        },
-      })
-    })
-  })
-
-  describe('encrypt case', () => {
+  describe('case archived', () => {
     const caseId = uuid()
     const defendantId1 = uuid()
     const defendantId2 = uuid()
@@ -116,6 +90,8 @@ describe('InternalCaseController - Archive', () => {
     const caseFileId2 = uuid()
     const indictmentCountId1 = uuid()
     const indictmentCountId2 = uuid()
+    const explanatoryCommentId1 = uuid()
+    const explanatoryCommentId2 = uuid()
     const theCase = {
       id: caseId,
       description: 'original_description',
@@ -188,7 +164,14 @@ describe('InternalCaseController - Archive', () => {
         },
       ],
       appealConclusion: 'original_appeal_conclusion',
+      appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
+      indictmentDeniedExplanation: 'original_indictment_denied_explanation',
+      indictmentReturnedExplanation: 'original_indictment_returned_explanation',
       isArchived: false,
+      explanatoryComments: [
+        { id: explanatoryCommentId1, comment: 'original_comment1' },
+        { id: explanatoryCommentId2, comment: 'original_comment2' },
+      ],
     }
     const archive = JSON.stringify({
       description: 'original_description',
@@ -202,10 +185,7 @@ describe('InternalCaseController - Archive', () => {
       courtAttendees: 'original_courtAttendees',
       prosecutorDemands: 'original_prosecutorDemands',
       courtDocuments: [
-        {
-          name: 'original_courtDocument1',
-          submittedBy: UserRole.PROSECUTOR,
-        },
+        { name: 'original_courtDocument1', submittedBy: UserRole.PROSECUTOR },
         { name: 'original_courtDocument2', submittedBy: UserRole.DEFENDER },
       ],
       sessionBookings: 'original_sessionBookings',
@@ -221,6 +201,9 @@ describe('InternalCaseController - Archive', () => {
       caseResentExplanation: 'original_caseResentExplanation',
       indictmentIntroduction: 'original_indictment_introduction',
       appealConclusion: 'original_appeal_conclusion',
+      appealRulingModifiedHistory: 'original_appeal_ruling_modified_history',
+      indictmentDeniedExplanation: 'original_indictment_denied_explanation',
+      indictmentReturnedExplanation: 'original_indictment_returned_explanation',
       defendants: [
         {
           nationalId: 'original_nationalId1',
@@ -257,6 +240,10 @@ describe('InternalCaseController - Archive', () => {
           legalArguments: 'original_legal_arguments2',
         },
       ],
+      explanatoryComments: [
+        { comment: 'original_comment1' },
+        { comment: 'original_comment2' },
+      ],
     })
     const iv = uuid()
     const parsedIv = 'parsed_iv'
@@ -264,6 +251,9 @@ describe('InternalCaseController - Archive', () => {
     let then: Then
 
     beforeEach(async () => {
+      const mockUpdateExplanatoryComment =
+        mockExplanatoryCommentModel.update as jest.Mock
+      mockUpdateExplanatoryComment.mockResolvedValueOnce([1])
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(theCase)
       const mockUpdate = mockCaseModel.update as jest.Mock
@@ -278,43 +268,54 @@ describe('InternalCaseController - Archive', () => {
       then = await givenWhenThen()
     })
 
-    it('should clear encrypted defendant one properties', () => {
+    it('should lookup a case', () => {
+      expect(mockCaseModel.findOne).toHaveBeenCalledWith({
+        include: [
+          { model: Defendant, as: 'defendants' },
+          { model: IndictmentCount, as: 'indictmentCounts' },
+          { model: CaseFile, as: 'caseFiles' },
+          { model: ExplanatoryComment, as: 'explanatoryComments' },
+        ],
+        order: [
+          [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+          [
+            { model: IndictmentCount, as: 'indictmentCounts' },
+            'created',
+            'ASC',
+          ],
+          [{ model: CaseFile, as: 'caseFiles' }, 'created', 'ASC'],
+          [
+            { model: ExplanatoryComment, as: 'explanatoryComments' },
+            'created',
+            'ASC',
+          ],
+        ],
+        where: { isArchived: false, archiveFilter },
+      })
       expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
         caseId,
         defendantId1,
         { nationalId: '', name: '', address: '' },
         transaction,
       )
-    })
-
-    it('should clear encrypted defendant two properties', () => {
       expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
         caseId,
         defendantId2,
         { nationalId: '', name: '', address: '' },
         transaction,
       )
-    })
-
-    it('should clear encrypted case file one properties', () => {
       expect(mockFileService.updateCaseFile).toHaveBeenCalledWith(
         caseId,
         caseFileId1,
         { name: '', key: '', userGeneratedFilename: '' },
         transaction,
       )
-    })
-
-    it('should clear encrypted case file two properties', () => {
       expect(mockFileService.updateCaseFile).toHaveBeenCalledWith(
         caseId,
         caseFileId2,
         { name: '', key: '', userGeneratedFilename: '' },
         transaction,
       )
-    })
-
-    it('should clear encrypted indictment count one properties', () => {
       expect(mockIndictmentCountService.update).toHaveBeenCalledWith(
         caseId,
         indictmentCountId1,
@@ -325,9 +326,6 @@ describe('InternalCaseController - Archive', () => {
         },
         transaction,
       )
-    })
-
-    it('should clear encrypted indictment count two properties', () => {
       expect(mockIndictmentCountService.update).toHaveBeenCalledWith(
         caseId,
         indictmentCountId2,
@@ -338,21 +336,20 @@ describe('InternalCaseController - Archive', () => {
         },
         transaction,
       )
-    })
-
-    it('should parse the iv', () => {
+      expect(mockExplanatoryCommentModel.update).toHaveBeenCalledWith(
+        { comment: '' },
+        { where: { id: explanatoryCommentId1, caseId }, transaction },
+      )
+      expect(mockExplanatoryCommentModel.update).toHaveBeenCalledWith(
+        { comment: '' },
+        { where: { id: explanatoryCommentId2, caseId }, transaction },
+      )
       expect(CryptoJS.enc.Hex.parse).toHaveBeenCalledWith(iv)
-    })
-
-    it('should encrypt properties', () => {
       expect(CryptoJS.AES.encrypt).toHaveBeenCalledWith(
         archive,
         mockCaseConfig.archiveEncryptionKey,
         { iv: parsedIv },
       )
-    })
-
-    it('should create an archive', () => {
       expect(mockCaseArchiveModel.create).toHaveBeenCalledWith(
         {
           caseId,
@@ -360,9 +357,6 @@ describe('InternalCaseController - Archive', () => {
         },
         { transaction },
       )
-    })
-
-    it('should clear encrypted case properties', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         {
           description: '',
@@ -390,13 +384,13 @@ describe('InternalCaseController - Archive', () => {
           crimeScenes: null,
           indictmentIntroduction: '',
           appealConclusion: '',
+          appealRulingModifiedHistory: '',
+          indictmentDeniedExplanation: '',
+          indictmentReturnedExplanation: '',
           isArchived: true,
         },
         { where: { id: caseId }, transaction },
       )
-    })
-
-    it('should succeed', () => {
       expect(then.result).toEqual({ caseArchived: true })
     })
   })

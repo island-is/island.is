@@ -91,6 +91,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'indictmentReturnedExplanation',
   'postponedIndefinitelyExplanation',
   'indictmentRulingDecision',
+  'indictmentDecision',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -188,6 +189,7 @@ export const prosecutorTransitionRule: RolesRule = {
     CaseTransition.OPEN,
     CaseTransition.ASK_FOR_CONFIRMATION,
     CaseTransition.SUBMIT,
+    CaseTransition.ASK_FOR_CANCELLATION,
     CaseTransition.DELETE,
     CaseTransition.APPEAL,
     CaseTransition.WITHDRAW_APPEAL,

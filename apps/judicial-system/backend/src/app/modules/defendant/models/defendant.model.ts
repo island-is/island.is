@@ -13,8 +13,10 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   DefendantPlea,
+  DefenderChoice,
   Gender,
   ServiceRequirement,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
@@ -94,9 +96,13 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   defenderPhoneNumber?: string
 
-  @Column({ type: DataType.BOOLEAN, allowNull: false, defaultValue: false })
-  @ApiProperty({ type: Boolean })
-  defendantWaivesRightToCounsel!: boolean
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(DefenderChoice),
+  })
+  @ApiPropertyOptional({ enum: DefenderChoice })
+  defenderChoice?: DefenderChoice
 
   @Column({
     type: DataType.ENUM,
@@ -114,10 +120,19 @@ export class Defendant extends Model {
   @ApiProperty({ enum: ServiceRequirement })
   serviceRequirement?: ServiceRequirement
 
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  verdictViewDate?: Date
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  acceptCompensationClaim?: boolean
+
   @Column({
-    type: DataType.STRING,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(SubpoenaType),
   })
-  @ApiProperty()
-  verdictViewDate?: string
+  @ApiPropertyOptional({ enum: SubpoenaType })
+  subpoenaType?: SubpoenaType
 }

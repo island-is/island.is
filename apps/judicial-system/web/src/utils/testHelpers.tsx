@@ -40,6 +40,7 @@ export const FormContextWrapper = ({
         caseNotFound: false,
         isCaseUpToDate: true,
         refreshCase: jest.fn(),
+        getCase: jest.fn(),
       }}
     >
       {children}

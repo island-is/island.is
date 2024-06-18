@@ -30,10 +30,12 @@ import {
   isValidRealEstate,
   valueToNumber,
   getDeceasedWasMarriedAndHadAssets,
+  parseLabel,
 } from '../../lib/utils/helpers'
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import ShareInput from '../../components/ShareInput'
 import DeceasedShare from '../../components/DeceasedShare'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 type RepeaterProps = {
   field: {
@@ -99,7 +101,7 @@ export const AssetsRepeater: FC<
 
   useEffect(() => {
     calculateTotal()
-  }, [fields])
+  }, [fields, calculateTotal])
 
   const handleAddRepeaterFields = () => {
     const values = props.fields.map((field: object) => {
@@ -124,7 +126,9 @@ export const AssetsRepeater: FC<
 
   useEffect(() => {
     const estData =
-      getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
+      application.answers.applicationFor === PREPAID_INHERITANCE
+        ? {}
+        : getEstateDataFromApplication(application)?.inheritanceReportInfo ?? {}
 
     const extData =
       getValueViaPath<InheritanceReportAsset[]>(estData, assetKey) ?? []
@@ -192,6 +196,7 @@ export const AssetsRepeater: FC<
                     field={field}
                     fieldName={fieldName}
                     error={error}
+                    answers={application.answers}
                     readOnly={repeaterField.initial}
                   />
                 )
@@ -253,6 +258,7 @@ interface FieldComponentProps {
   fieldIndex: string
   fieldName: string
   error?: string
+  answers?: Answers
   readOnly?: boolean
 }
 
@@ -266,6 +272,7 @@ const FieldComponent = ({
   fieldIndex,
   fieldName,
   error,
+  answers,
   readOnly,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
@@ -277,7 +284,7 @@ const FieldComponent = ({
     id: fieldName,
     name: fieldName,
     format: field.format,
-    label: formatMessage(field.title),
+    label: formatMessage(parseLabel(field.title, answers)),
     defaultValue: '',
     type: field.type,
     placeholder: field.placeholder,
@@ -406,29 +413,31 @@ const RealEstateNumberField = ({
   }, [queryLoading])
 
   useEffect(() => {
-    const propertyNumber = propertyNumberInput
-      .trim()
-      .toUpperCase()
-      .replace('-', '')
+    if (!props.readOnly) {
+      const propertyNumber = propertyNumberInput
+        .trim()
+        .toUpperCase()
+        .replace('-', '')
 
-    setValue(descriptionFieldName, '')
+      setValue(descriptionFieldName, '')
 
-    if (isValidRealEstate(propertyNumber)) {
-      clearErrors(fieldName)
+      if (isValidRealEstate(propertyNumber)) {
+        clearErrors(fieldName)
 
-      getProperty({
-        variables: {
-          input: {
-            propertyNumber,
+        getProperty({
+          variables: {
+            input: {
+              propertyNumber,
+            },
           },
-        },
-      })
-    } else {
-      if (propertyNumber.length !== 0) {
-        setError(fieldName, {
-          message: formatMessage(m.errorPropertyNumber),
-          type: 'validate',
         })
+      } else {
+        if (propertyNumber.length !== 0) {
+          setError(fieldName, {
+            message: formatMessage(m.errorPropertyNumber),
+            type: 'validate',
+          })
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

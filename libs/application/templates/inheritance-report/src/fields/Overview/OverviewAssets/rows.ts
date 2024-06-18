@@ -12,6 +12,7 @@ import {
 import { EstateAssets } from '../../../types'
 import { RowType, RowItemsType } from './types'
 import { format as formatNationalId } from 'kennitala'
+import { PREPAID_INHERITANCE } from '../../../lib/constants'
 
 export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.realEstate?.data
@@ -31,7 +32,7 @@ export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
       },
     ]
 
-    const deceasedShare = valueToNumber(item.deceasedShare)
+    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
 
     if (hasYes(item.deceasedShareEnabled)) {
       items.push({
@@ -63,7 +64,7 @@ export const getVehiclesDataRow = (answers: FormValue): RowType[] => {
       },
     ]
 
-    const deceasedShare = valueToNumber(item.deceasedShare)
+    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
 
     if (hasYes(item.deceasedShareEnabled)) {
       items.push({
@@ -95,7 +96,7 @@ export const getGunsDataRow = (answers: FormValue): RowType[] => {
       },
     ]
 
-    const deceasedShare = valueToNumber(item.deceasedShare)
+    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
 
     if (hasYes(item.deceasedShareEnabled)) {
       items.push({
@@ -119,7 +120,7 @@ export const getInventoryDataRow = (answers: FormValue): RowType[] => {
 
   const items: RowItemsType = []
 
-  const deceasedShare = valueToNumber(values.deceasedShare)
+  const deceasedShare = valueToNumber(values?.deceasedShare ?? '0')
 
   if (values?.info) {
     items.push({
@@ -129,7 +130,7 @@ export const getInventoryDataRow = (answers: FormValue): RowType[] => {
     })
   }
 
-  if (hasYes(values.deceasedShareEnabled)) {
+  if (hasYes(values?.deceasedShareEnabled)) {
     items.push({
       title: m.deceasedShare,
       value: `${String(deceasedShare)}%`,
@@ -156,7 +157,7 @@ export const getClaimsDataRow = (answers: FormValue): RowType[] => {
       },
     ]
 
-    const deceasedShare = valueToNumber(item.deceasedShare)
+    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
 
     if (hasYes(item.deceasedShareEnabled)) {
       items.push({
@@ -194,7 +195,7 @@ export const getStocksDataRow = (answers: FormValue): RowType[] => {
       },
     ]
 
-    const deceasedShare = valueToNumber(item.deceasedShare)
+    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
 
     if (hasYes(item.deceasedShareEnabled)) {
       items.push({
@@ -230,7 +231,7 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
       },
     ]
 
-    const deceasedShare = valueToNumber(item.deceasedShare)
+    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
 
     if (hasYes(item.deceasedShareEnabled)) {
       items.push({
@@ -253,6 +254,7 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
 
 export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.otherAssets?.data
+  const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
 
   const data = (values ?? []).map((item) => {
     const value = roundedValueToNumber(item.value)
@@ -263,7 +265,7 @@ export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
       },
     ]
 
-    const deceasedShare = valueToNumber(item.deceasedShare)
+    const deceasedShare = valueToNumber(item.deceasedShare ?? '0')
 
     if (hasYes(item.deceasedShareEnabled)) {
       items.push({
@@ -273,7 +275,7 @@ export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
     }
 
     return {
-      title: item.info,
+      title: isPrePaid ? undefined : item.info,
       value: formatCurrency(String(value)),
       items,
     }
@@ -287,7 +289,7 @@ export const getMoneyDataRow = (answers: FormValue): RowType[] => {
 
   const items: RowItemsType = []
 
-  const deceasedShare = valueToNumber(values.deceasedShare)
+  const deceasedShare = valueToNumber(values?.deceasedShare ?? '0')
 
   if (values?.info) {
     items.push({
@@ -297,7 +299,7 @@ export const getMoneyDataRow = (answers: FormValue): RowType[] => {
     })
   }
 
-  if (hasYes(values.deceasedShareEnabled)) {
+  if (hasYes(values?.deceasedShareEnabled)) {
     items.push({
       title: m.deceasedShare,
       value: `${String(deceasedShare)}%`,
@@ -306,7 +308,10 @@ export const getMoneyDataRow = (answers: FormValue): RowType[] => {
 
   return [
     {
-      title: m.totalValue,
+      title:
+        answers.applicationFor === PREPAID_INHERITANCE
+          ? m.totalValuePrePaid
+          : m.totalValue,
       value: formatCurrency(String(values?.value)),
       items,
     },

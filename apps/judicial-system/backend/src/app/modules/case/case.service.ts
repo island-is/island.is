@@ -246,6 +246,11 @@ export const include: Includeable[] = [
     include: [{ model: Institution, as: 'institution' }],
   },
   {
+    model: User,
+    as: 'indictmentReviewer',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
     model: Case,
     as: 'parentCase',
     include: [
@@ -289,11 +294,6 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
-  {
-    model: User,
-    as: 'indictmentReviewer',
-    include: [{ model: Institution, as: 'institution' }],
-  },
 ]
 
 export const order: OrderItem[] = [
@@ -392,7 +392,11 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putGeneratedObject(theCase.type, `${theCase.id}/ruling.pdf`, pdf)
+      .putGeneratedRequestCaseObject(
+        theCase.type,
+        `${theCase.id}/ruling.pdf`,
+        pdf,
+      )
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -409,7 +413,11 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putGeneratedObject(theCase.type, `${theCase.id}/courtRecord.pdf`, pdf)
+      .putGeneratedRequestCaseObject(
+        theCase.type,
+        `${theCase.id}/courtRecord.pdf`,
+        pdf,
+      )
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -430,7 +438,7 @@ export class CaseService {
         ...caseToCreate,
         state: isIndictmentCase(caseToCreate.type)
           ? CaseState.DRAFT
-          : undefined,
+          : CaseState.NEW,
       },
       { transaction },
     )
@@ -532,36 +540,6 @@ export class CaseService {
     return messages
   }
 
-  private getIndictmentArchiveMessages(
-    theCase: Case,
-    user: TUser,
-    archiveCaseFilesRecords: boolean,
-  ): CaseMessage[] {
-    const messages: CaseMessage[] =
-      theCase.caseFiles
-        ?.filter((caseFile) => caseFile.key)
-        .map((caseFile) => ({
-          type: MessageType.ARCHIVING_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: caseFile.id,
-        })) ?? []
-
-    if (archiveCaseFilesRecords) {
-      const caseFilesRecordMessages =
-        theCase.policeCaseNumbers?.map((policeCaseNumber) => ({
-          type: MessageType.ARCHIVING_CASE_FILES_RECORD,
-          user,
-          caseId: theCase.id,
-          elementId: policeCaseNumber,
-        })) ?? []
-
-      messages.push(...caseFilesRecordMessages)
-    }
-
-    return messages
-  }
-
   private getDeliverAssignedRolesToCourtOfAppealsMessages(
     user: TUser,
     theCase: Case,
@@ -602,23 +580,46 @@ export class CaseService {
       },
     ]
 
-    if (isIndictmentCase(theCase.type) && theCase.origin === CaseOrigin.LOKE) {
+    if (isIndictmentCase(theCase.type)) {
       messages.push({
-        type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO,
         user,
         caseId: theCase.id,
       })
-      theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+
+      if (theCase.origin === CaseOrigin.LOKE) {
         messages.push({
-          type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
+          type: MessageType.DELIVERY_TO_POLICE_INDICTMENT,
           user,
           caseId: theCase.id,
-          elementId: policeCaseNumber,
-        }),
-      )
+        })
+        theCase.policeCaseNumbers.forEach((policeCaseNumber) =>
+          messages.push({
+            type: MessageType.DELIVERY_TO_POLICE_CASE_FILES_RECORD,
+            user,
+            caseId: theCase.id,
+            elementId: policeCaseNumber,
+          }),
+        )
+      }
     }
 
     return this.messageService.sendMessagesToQueue(messages)
+  }
+
+  private addMessagesForIndictmentCourtRoleAssigned(
+    theCase: Case,
+    user: TUser,
+    assignedNationalId: string,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+        user,
+        caseId: theCase.id,
+        elementId: assignedNationalId,
+      },
+    ])
   }
 
   private addMessagesForCourtCaseConnectionToQueue(
@@ -795,21 +796,19 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getIndictmentArchiveMessages(theCase, user, true).concat([
-        {
-          type: MessageType.NOTIFICATION,
-          user,
-          caseId: theCase.id,
-          body: { type: NotificationType.RULING },
-        },
-        {
-          type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
-          user,
-          caseId: theCase.id,
-        },
-      ]),
-    )
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.RULING },
+      },
+      {
+        type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
+        user,
+        caseId: theCase.id,
+      },
+    ])
   }
 
   private addMessagesForModifiedCaseToQueue(
@@ -839,7 +838,6 @@ export class CaseService {
   private addMessagesForDeletedCaseToQueue(
     theCase: Case,
     user: TUser,
-    previousState: CaseState,
   ): Promise<void> {
     const messages: CaseMessage[] = [
       {
@@ -849,17 +847,6 @@ export class CaseService {
         body: { type: NotificationType.REVOKED },
       },
     ]
-
-    // Indictment cases need some case file cleanup
-    if (isIndictmentCase(theCase.type)) {
-      messages.push(
-        ...this.getIndictmentArchiveMessages(
-          theCase,
-          user,
-          previousState === CaseState.RECEIVED,
-        ),
-      )
-    }
 
     return this.messageService.sendMessagesToQueue(messages)
   }
@@ -1099,11 +1086,7 @@ export class CaseService {
         // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         await this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
-        await this.addMessagesForDeletedCaseToQueue(
-          updatedCase,
-          user,
-          theCase.state,
-        )
+        await this.addMessagesForDeletedCaseToQueue(updatedCase, user)
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
           await this.addMessagesForCompletedIndictmentCaseToQueue(
@@ -1192,6 +1175,30 @@ export class CaseService {
           // New defender email
           await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
+      }
+    }
+
+    if (
+      isIndictmentCase(updatedCase.type) &&
+      ![
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.WAITING_FOR_CONFIRMATION,
+      ].includes(updatedCase.state)
+    ) {
+      const updatedRole =
+        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+          ? updatedCase.judge
+          : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+          ? updatedCase.registrar
+          : null
+
+      if (updatedRole?.nationalId) {
+        await this.addMessagesForIndictmentCourtRoleAssigned(
+          updatedCase,
+          user,
+          updatedRole.nationalId,
+        )
       }
     }
 
@@ -1373,6 +1380,20 @@ export class CaseService {
     user: TUser,
     transaction: Transaction,
   ) {
+    if (
+      update.state === CaseState.RECEIVED &&
+      theCase.state === CaseState.SUBMITTED
+    ) {
+      return this.eventLogService.create(
+        {
+          eventType: EventType.CASE_RECEIVED_BY_COURT,
+          caseId: theCase.id,
+          nationalId: user.nationalId,
+          userRole: user.role,
+        },
+        transaction,
+      )
+    }
     if (
       isIndictmentCase(theCase.type) &&
       update.state === CaseState.SUBMITTED &&

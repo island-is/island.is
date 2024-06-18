@@ -846,12 +846,15 @@ export const slices = gql`
     displayChangeMonthOverMonth
     displayChangeYearOverYear
     numberBoxDate
+    reduceAndRoundValue
+    displayTimestamp
   }
 
   fragment GenericListFields on GenericList {
     __typename
     id
     searchInputPlaceholder
+    itemType
     firstPageListItemResponse {
       input {
         genericListId
@@ -864,6 +867,7 @@ export const slices = gql`
         id
         date
         title
+        slug
         cardIntro {
           ...HtmlFields
         }
