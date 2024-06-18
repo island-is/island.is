@@ -45,9 +45,7 @@ const ApplicationLoader = ({
   slug,
 }: Props) => {
   const type = getTypeFromSlug(slug)
-  const [delegationsChecked, setDelegationsChecked] = useState(
-const [delegationsChecked, setDelegationsChecked] = useState(!type)
-  )
+  const [delegationsChecked, setDelegationsChecked] = useState(!type)
 
   const { lang: locale } = useLocale()
   const { data, error, loading, refetch } = useQuery(APPLICATION_APPLICATION, {
