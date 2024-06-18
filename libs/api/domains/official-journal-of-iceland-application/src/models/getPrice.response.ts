@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('OfficialJournalOfIcelandApplicationGetPriceResponse')
 export class CaseGetPriceResponse {
-  @Field(() => Number)
+  @Field(() => Int)
   price!: number
 }
