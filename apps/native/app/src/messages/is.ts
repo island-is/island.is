@@ -415,6 +415,9 @@ export const is = {
   'notifications.markAllAsRead': 'Merkja allt lesið',
   'notifications.settings': 'Mínar stillingar',
   'notifications.errorUnknown': 'Villa kom upp við að sækja tilkynningar',
+  'notifications.emptyListTitle': 'Engar tilkynningar',
+  'notifications.emptyListDescription':
+    'Þegar þú færð sendar tilkynningar þá birtast þær hér.',
 
   // applications screen
   'applications.title': 'Umsóknir',
