@@ -383,33 +383,6 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.ARCHIVING_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: caseFileId1,
-                },
-                {
-                  type: MessageType.ARCHIVING_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: caseFileId2,
-                },
-                {
-                  type: MessageType.ARCHIVING_CASE_FILES_RECORD,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: policeCaseNumber,
-                },
-                {
                   type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
@@ -440,37 +413,6 @@ describe('CaseController - Transition', () => {
                   caseId,
                   body: { type: NotificationType.REVOKED },
                 },
-                {
-                  type: MessageType.ARCHIVING_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: caseFileId1,
-                },
-                {
-                  type: MessageType.ARCHIVING_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: caseFileId2,
-                },
-                ...(oldState === CaseState.RECEIVED
-                  ? [
-                      {
-                        type: MessageType.ARCHIVING_CASE_FILES_RECORD,
-                        user: {
-                          ...defaultUser,
-                          canConfirmIndictment: isIndictmentCase(theCase.type),
-                        },
-                        caseId,
-                        elementId: policeCaseNumber,
-                      },
-                    ]
-                  : []),
               ],
             )
           } else if (newState === CaseState.SUBMITTED) {
