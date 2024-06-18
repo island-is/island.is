@@ -6,6 +6,7 @@ import { FormSystemPaths } from './lib/paths'
 import { formsLoader } from './screens/Forms/Forms.loader'
 import { formLoader } from './screens/Form/Form.loader'
 import { FormPreview } from './screens/FormPreview/FormPreview'
+import { formPreviewLoader } from './screens/FormPreview/FormPreview.loader'
 
 const Forms = lazy(() => import('./screens/Forms/Forms'))
 
@@ -39,7 +40,7 @@ export const formSystemModule: PortalModule = {
         name: m.rootName,
         path: FormSystemPaths.FormPreview,
         element: <FormPreview />,
-        loader: formLoader(props)
+        loader: formPreviewLoader(props),
       }
     ]
   },
