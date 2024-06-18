@@ -12,6 +12,8 @@ export const CmsFetchProviderKey = 'CmsFetchProviderKey'
 export const CmsFetchProvider: Provider<EnhancedFetchAPI> = {
   provide: CmsFetchProviderKey,
   scope: LazyDuringDevScope,
+  // Necessary because of cache-manager.
+  // eslint-disable-next-line local-rules/no-async-module-init
   useFactory: async (config: ConfigType<typeof CmsConfig>) =>
     createEnhancedFetch({
       name: 'clients-cms',
