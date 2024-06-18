@@ -22,6 +22,7 @@ import {
 import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { OfficialJournalOfIcelandAdvert } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
+import * as styles from './Advert.css'
 
 type LocalState = typeof INITIAL_ANSWERS['advert']
 type TypeResonse = OfficialJournalOfIcelandGraphqlResponse<'types'>
@@ -41,12 +42,15 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
 
   const inputHeight = 64
 
-  const departments = externalData.departments.data.departments.map((d) => {
-    return {
-      label: d.title,
-      value: d.id,
-    }
-  })
+  const departments = externalData.departments.data.departments
+    .map((d) => {
+      return {
+        slug: d.slug,
+        label: d.title,
+        value: d.id,
+      }
+    })
+    .filter((d) => d.slug !== 'tolublod')
 
   const { setValue } = useFormContext()
 
@@ -99,17 +103,17 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
       await lazyTypesQuery({
         variables: {
           params: {
-            search: '',
             department: state.department,
           },
         },
-        onCompleted: (data) =>
-          setTypes(
+        onCompleted: (data) => {
+          return setTypes(
             data.officialJournalOfIcelandTypes.types.map((t) => ({
               label: t.title,
               value: t.id,
             })),
-          ),
+          )
+        },
       })
     }
 
@@ -166,7 +170,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
   return (
     <>
       <FormGroup>
-        <Box width="half">
+        <Box className={styles.inputWrapper}>
           <SelectController
             key={state.department}
             id={InputFields.advert.department}
@@ -177,16 +181,20 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             defaultValue={state.department}
             size="sm"
             backgroundColor="blue"
-            onSelect={(opt) =>
-              setState((prev) => ({ ...prev, department: opt.value, type: '' }))
-            }
+            onSelect={(opt) => {
+              return setState((prev) => ({
+                ...prev,
+                department: opt.value,
+                type: '',
+              }))
+            }}
             error={
               errors && getErrorViaPath(errors, InputFields.advert.department)
             }
           />
         </Box>
         {loadingTypes ? (
-          <Box width="half">
+          <Box className={styles.inputWrapper}>
             <SkeletonLoader
               borderRadius="standard"
               display="block"
@@ -194,7 +202,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             />
           </Box>
         ) : (
-          <Box width="half">
+          <Box className={styles.inputWrapper}>
             <SelectController
               id={InputFields.advert.type}
               name={InputFields.advert.type}
@@ -211,7 +219,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             />
           </Box>
         )}
-        <Box width="full">
+        <Box>
           <InputController
             id={InputFields.advert.title}
             name={InputFields.advert.title}
@@ -230,7 +238,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
         </Box>
       </FormGroup>
       <FormGroup title={f(advert.headings.materialForPublication)}>
-        <Box width="half">
+        <Box className={styles.inputWrapper}>
           <InputController
             id={InputFields.advert.template}
             name={InputFields.advert.template}
@@ -250,7 +258,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             }
           />
         </Box>
-        <Box width="full">
+        <Box>
           <HTMLEditor
             name={InputFields.advert.document}
             value={state.document as HTMLText}

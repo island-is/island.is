@@ -298,6 +298,7 @@ export class ClientBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: true,
+    deprecated: true,
   })
   readonly supportsCustomDelegation!: boolean
 
@@ -305,6 +306,7 @@ export class ClientBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: true,
+    deprecated: true,
   })
   readonly supportsLegalGuardians!: boolean
 
@@ -312,6 +314,7 @@ export class ClientBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: true,
+    deprecated: true,
   })
   readonly supportsProcuringHolders!: boolean
 
@@ -319,6 +322,7 @@ export class ClientBaseDTO {
   @IsNotEmpty()
   @ApiProperty({
     example: true,
+    deprecated: true,
   })
   readonly supportsPersonalRepresentatives!: boolean
 

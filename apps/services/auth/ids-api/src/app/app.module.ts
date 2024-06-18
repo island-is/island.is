@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
   DelegationConfig,
+  PasskeysCoreConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
@@ -31,6 +32,7 @@ import { ResourcesModule } from './resources/resources.module'
 import { TranslationModule } from './translation/translation.module'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UsersModule } from './users/users.module'
+import { PasskeysModule } from './passkeys/passkeys.module'
 
 @Module({
   imports: [
@@ -50,6 +52,7 @@ import { UsersModule } from './users/users.module'
     UserProfileModule,
     NotificationsModule,
     LoginRestrictionsModule,
+    PasskeysModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -61,6 +64,7 @@ import { UsersModule } from './users/users.module'
         RskRelationshipsClientConfig,
         UserProfileClientConfig,
         XRoadConfig,
+        PasskeysCoreConfig,
         NationalRegistryV3ClientConfig,
       ],
     }),

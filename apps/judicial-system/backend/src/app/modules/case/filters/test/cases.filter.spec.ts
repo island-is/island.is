@@ -47,6 +47,7 @@ describe('getCasesQueryFilter', () => {
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
             CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
@@ -106,6 +107,7 @@ describe('getCasesQueryFilter', () => {
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
             CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
@@ -181,6 +183,7 @@ describe('getCasesQueryFilter', () => {
                   {
                     state: [
                       CaseState.SUBMITTED,
+                      CaseState.WAITING_FOR_CANCELLATION,
                       CaseState.RECEIVED,
                       CaseState.MAIN_HEARING,
                       CaseState.COMPLETED,
@@ -228,6 +231,7 @@ describe('getCasesQueryFilter', () => {
           {
             state: [
               CaseState.SUBMITTED,
+              CaseState.WAITING_FOR_CANCELLATION,
               CaseState.RECEIVED,
               CaseState.MAIN_HEARING,
               CaseState.COMPLETED,
@@ -431,6 +435,7 @@ describe('getCasesQueryFilter', () => {
                 { type: indictmentCases },
                 {
                   state: [
+                    CaseState.WAITING_FOR_CANCELLATION,
                     CaseState.RECEIVED,
                     CaseState.MAIN_HEARING,
                     ...completedIndictmentCaseStates,
