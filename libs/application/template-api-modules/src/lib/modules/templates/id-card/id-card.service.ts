@@ -166,7 +166,8 @@ export class IdCardService extends BaseTemplateApiService {
       .sendEmail(generateAssignParentBApplicationEmail, application)
       .catch((e) => {
         this.logger.error(
-          `Error sending email about initReview for parentB, applicationID: ${application.id}. Error: ${e}`,
+          `Error sending email about initReview for parentB, applicationID: ${application.id}`,
+          e,
         )
       })
   }
@@ -204,7 +205,8 @@ export class IdCardService extends BaseTemplateApiService {
       )
       .catch((e) => {
         this.logger.error(
-          `Error sending email about rejection for parentA, applicationID: ${application.id}. Error: ${e}`,
+          `Error sending email about rejection for parentA, applicationID: ${application.id}`,
+          e,
         )
       })
     if (parentB) {
@@ -216,7 +218,8 @@ export class IdCardService extends BaseTemplateApiService {
         )
         .catch((e) => {
           this.logger.error(
-            `Error sending email about rejection for parentB, applicationID: ${application.id}. Error: ${e}`,
+            `Error sending email about rejection for parentB, applicationID: ${application.id}`,
+            e,
           )
         })
     }
@@ -342,7 +345,8 @@ export class IdCardService extends BaseTemplateApiService {
       )
       .catch((e) => {
         this.logger.error(
-          `Error sending email about submission for parentA, applicationID: ${application.id}. Error: ${e}`,
+          `Error sending email about submission for parentA, applicationID: ${application.id}`,
+          e,
         )
       })
     if (parentB) {
@@ -354,7 +358,8 @@ export class IdCardService extends BaseTemplateApiService {
         )
         .catch((e) => {
           this.logger.error(
-            `Error sending email about submission for parentB, applicationID: ${application.id}. Error: ${e}`,
+            `Error sending email about submission for parentB, applicationID: ${application.id}`,
+            e,
           )
         })
     }
