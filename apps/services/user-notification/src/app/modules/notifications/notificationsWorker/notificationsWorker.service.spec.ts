@@ -65,7 +65,7 @@ export const MockV2UsersApi = {
 }
 const mockContentfulGraphQLClientService = {
   fetchData: jest.fn(),
-};
+}
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
   let sequelize: Sequelize

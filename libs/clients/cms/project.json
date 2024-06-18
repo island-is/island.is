@@ -8,9 +8,7 @@
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": [
-          "libs/clients/cms/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["libs/clients/cms/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {

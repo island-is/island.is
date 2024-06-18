@@ -47,7 +47,6 @@ const mockCreateHnippNotificationDto: CreateHnippNotificationDto = {
   ],
 }
 
-
 describe('NotificationsService', () => {
   let service: NotificationsService
 
