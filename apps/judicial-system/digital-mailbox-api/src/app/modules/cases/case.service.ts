@@ -57,11 +57,12 @@ export class CaseService {
   async getSubpoena(
     caseId: string,
     nationalId: string,
+    lang?: string,
   ): Promise<SubpoenaResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_SUBPOENA,
-      this.getSubpoenaInfo(caseId, nationalId),
+      this.getSubpoenaInfo(caseId, nationalId, lang),
       nationalId,
     )
   }
@@ -70,11 +71,12 @@ export class CaseService {
     nationalId: string,
     caseId: string,
     updateSubpoena: UpdateSubpoenaDto,
+    lang?: string,
   ): Promise<SubpoenaResponse> {
     return await this.auditTrailService.audit(
       'digital-mailbox-api',
-      AuditedAction.ASSIGN_DEFENDER_TO_SUBPOENA,
-      this.updateSubpoenaDefender(nationalId, caseId, updateSubpoena),
+      AuditedAction.UPDATE_SUBPOENA,
+      this.updateSubpoenaInfo(nationalId, caseId, updateSubpoena, lang),
       nationalId,
     )
   }
@@ -99,31 +101,39 @@ export class CaseService {
   private async getSubpoenaInfo(
     caseId: string,
     defendantNationalId: string,
+    lang?: string,
   ): Promise<SubpoenaResponse> {
     const caseData = await this.fetchCase(caseId, defendantNationalId)
     return SubpoenaResponse.fromInternalCaseResponse(
       caseData,
       defendantNationalId,
+      lang,
     )
   }
 
-  private async updateSubpoenaDefender(
+  private async updateSubpoenaInfo(
     defendantNationalId: string,
     caseId: string,
     defenderAssignment: UpdateSubpoenaDto,
+    lang?: string,
   ): Promise<SubpoenaResponse> {
     let defenderChoice = { ...defenderAssignment }
 
-    if (
-      defenderAssignment.defenderNationalId &&
-      defenderAssignment.defenderChoice === DefenderChoice.CHOOSE
-    ) {
-      const lawyers = await this.lawyersService.getLawyers()
-      const chosenLawyer = lawyers.find(
-        (l) => l.SSN === defenderAssignment.defenderNationalId,
+    if (defenderAssignment.defenderChoice === DefenderChoice.CHOOSE) {
+      if (!defenderAssignment.defenderNationalId) {
+        throw new NotFoundException(
+          'Defender national id is required for choice',
+        )
+      }
+
+      const chosenLawyer = await this.lawyersService.getLawyer(
+        defenderAssignment.defenderNationalId,
       )
+
       if (!chosenLawyer) {
-        throw new NotFoundException('Lawyer not found')
+        throw new NotFoundException(
+          'Selected lawyer was not found in the lawyer registry',
+        )
       }
 
       defenderChoice = {
@@ -136,17 +146,13 @@ export class CaseService {
       }
     }
 
-    await this.patchSubpoenaDefender(
-      defendantNationalId,
-      caseId,
-      defenderChoice,
-    )
+    await this.patchSubpoenaInfo(defendantNationalId, caseId, defenderChoice)
 
     const updatedCase = await this.fetchCase(caseId, defendantNationalId)
-
     return SubpoenaResponse.fromInternalCaseResponse(
       updatedCase,
       defendantNationalId,
+      lang,
     )
   }
 
@@ -207,7 +213,9 @@ export class CaseService {
         )
       }
 
-      return await res.json()
+      const caseData = await res.json()
+
+      return caseData
     } catch (reason) {
       if (
         reason instanceof BadGatewayException ||
@@ -222,7 +230,7 @@ export class CaseService {
     }
   }
 
-  private async patchSubpoenaDefender(
+  private async patchSubpoenaInfo(
     defendantNationalId: string,
     caseId: string,
     defenderChoice: UpdateSubpoenaDto,

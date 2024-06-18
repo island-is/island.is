@@ -22,7 +22,7 @@ export const prepaidOverview = buildSubSection({
   title: m.overview,
   children: [
     buildMultiField({
-      id: 'heirsOverview',
+      id: 'prepaidOverview',
       title: m.overviewHeirsTitle,
       description: m.overviewHeirsDescription,
       children: [
@@ -35,7 +35,7 @@ export const prepaidOverview = buildSubSection({
           marginBottom: 'gutter',
         }),
         buildKeyValueField({
-          label: m.netProperty,
+          label: m.netPropertyForExchange,
           display: 'flex',
           value: ({ answers }) =>
             formatCurrency(

@@ -12,19 +12,21 @@ export const ConfigFactory = (
   config: ConfigType<typeof SocialInsuranceAdministrationClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
   scopes: Array<Scope>,
+  autoAuth: boolean,
 ) => ({
   fetchApi: createEnhancedFetch({
     name: 'clients-tr',
     organizationSlug: 'tryggingastofnun',
-    autoAuth: idsClientConfig.isConfigured
-      ? {
-          mode: 'tokenExchange',
-          issuer: idsClientConfig.issuer,
-          clientId: idsClientConfig.clientId,
-          clientSecret: idsClientConfig.clientSecret,
-          scope: scopes,
-        }
-      : undefined,
+    autoAuth:
+      autoAuth && idsClientConfig.isConfigured
+        ? {
+            mode: 'tokenExchange',
+            issuer: idsClientConfig.issuer,
+            clientId: idsClientConfig.clientId,
+            clientSecret: idsClientConfig.clientSecret,
+            scope: scopes,
+          }
+        : undefined,
   }),
   basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
   headers: {

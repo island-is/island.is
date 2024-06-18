@@ -69,24 +69,22 @@ export const debtsAndFuneralCost = buildSection({
                 sumField: 'propertyValuation',
                 selections: [
                   {
-                    label: m.debtOverDraft,
-                    value: DebtTypes.Overdraft,
+                    label: DebtTypes.Overdraft,
                   },
                   {
-                    label: m.debtCreditCard,
-                    value: DebtTypes.CreditCard,
+                    label: DebtTypes.CreditCard,
                   },
                   {
-                    label: m.debtLoan,
-                    value: DebtTypes.Loan,
+                    label: DebtTypes.Loan,
                   },
                   {
-                    label: m.debtInsuranceCompany,
-                    value: DebtTypes.InsuranceCompany,
+                    label: DebtTypes.InsuranceCompany,
                   },
                   {
-                    label: m.debtPropertyFees,
-                    value: DebtTypes.PropertyFees,
+                    label: DebtTypes.PropertyFees,
+                  },
+                  {
+                    label: DebtTypes.PropertyFees,
                   },
                 ],
               },
