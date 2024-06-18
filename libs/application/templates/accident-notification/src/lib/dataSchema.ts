@@ -167,14 +167,11 @@ export const AccidentNotificationSchema = z.object({
     accidentSymptoms: z.string().refine((x) => x.trim().length > 0, {
       params: error.invalidValue,
     }),
-    dateOfDoctorVisit: z.string().refine((x) => x.trim().length > 0, {
-      params: error.invalidValue,
-    }),
+    dateOfDoctorVisit: z.string().optional(),
     timeOfDoctorVisit: z
       .string()
-      .refine((x) => (x ? isValid24HFormatTime(x) : false), {
-        params: error.invalidValue,
-      }),
+      .optional()
+      .refine((x) => (x ? isValid24HFormatTime(x) : true)),
   }),
   isRepresentativeOfCompanyOrInstitue: z.array(z.string()).optional(),
   fishingShipInfo: z.object({
