@@ -75,7 +75,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules'
 
-
       - name: Run unit tests
         run: ./infra/scripts/ci/test-unit.sh
 
@@ -109,8 +108,8 @@ jobs:
         id: get-cache
         uses: ./.github/actions/get-cache
         with:
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            enable-cache: 'node_modules'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules'
       - name: Select role
         env:
           prod: arn:aws:iam::251502586493:role/list-ssm-parameters

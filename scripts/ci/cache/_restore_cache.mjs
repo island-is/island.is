@@ -21,6 +21,10 @@ export async function restoreCache({ key, path }) {
     console.log(`Failed to restore cache for ${key}: ${e.message}`)
     return false
   }
-  console.log(cache !== undefined ? `Restored cache for ${key}` : `Cache not found for ${key}`)
+  console.log(
+    cache !== undefined
+      ? `Restored cache for ${key}`
+      : `Cache not found for ${key}`,
+  )
   return cache != undefined
 }
