@@ -20,22 +20,14 @@ const commonProps: Pick<CheckboxProps, 'backgroundColor' | 'large' | 'value'> =
 export const PermissionAccessControl = () => {
   const { formatMessage } = useLocale()
   const { selectedPermission, permission } = usePermission()
-  const {
-    isAccessControlled,
-    grantToAuthenticatedUser,
-    grantToProcuringHolders,
-    grantToLegalGuardians,
-    allowExplicitDelegationGrant,
-    grantToPersonalRepresentatives,
-  } = selectedPermission
+  const { isAccessControlled, grantToAuthenticatedUser } = selectedPermission
 
-  const [inputValues, setInputValues] = useEnvironmentState({
+  const [inputValues, setInputValues] = useEnvironmentState<{
+    isAccessControlled: boolean
+    grantToAuthenticatedUser: boolean
+  }>({
     isAccessControlled,
     grantToAuthenticatedUser,
-    grantToProcuringHolders,
-    grantToLegalGuardians,
-    allowExplicitDelegationGrant,
-    grantToPersonalRepresentatives,
   })
 
   return (
@@ -45,13 +37,9 @@ export const PermissionAccessControl = () => {
       inSync={checkEnvironmentsSync(permission.environments, [
         'isAccessControlled',
         'grantToAuthenticatedUser',
-        'grantToProcuringHolders',
-        'grantToLegalGuardians',
-        'allowExplicitDelegationGrant',
-        'grantToPersonalRepresentatives',
       ])}
     >
-      <Stack space={2}>
+      <Stack space={3}>
         <Checkbox
           label={formatMessage(m.isAccessControlled)}
           subLabel={formatMessage(m.isAccessControlledDescription)}
@@ -74,58 +62,6 @@ export const PermissionAccessControl = () => {
             setInputValues({
               ...inputValues,
               grantToAuthenticatedUser: e.target.checked,
-            })
-          }}
-          {...commonProps}
-        />
-        <Checkbox
-          label={formatMessage(m.grantToProcuringHolders)}
-          subLabel={formatMessage(m.grantToProcuringHoldersDescription)}
-          name="grantToProcuringHolders"
-          checked={inputValues.grantToProcuringHolders}
-          onChange={(e) => {
-            setInputValues({
-              ...inputValues,
-              grantToProcuringHolders: e.target.checked,
-            })
-          }}
-          {...commonProps}
-        />
-        <Checkbox
-          label={formatMessage(m.grantToLegalGuardians)}
-          subLabel={formatMessage(m.grantToLegalGuardiansDescription)}
-          name="grantToLegalGuardians"
-          checked={inputValues.grantToLegalGuardians}
-          onChange={(e) => {
-            setInputValues({
-              ...inputValues,
-              grantToLegalGuardians: e.target.checked,
-            })
-          }}
-          {...commonProps}
-        />
-        <Checkbox
-          label={formatMessage(m.allowExplicitDelegationGrant)}
-          subLabel={formatMessage(m.allowExplicitDelegationGrantDescription)}
-          name="allowExplicitDelegationGrant"
-          checked={inputValues.allowExplicitDelegationGrant}
-          onChange={(e) => {
-            setInputValues({
-              ...inputValues,
-              allowExplicitDelegationGrant: e.target.checked,
-            })
-          }}
-          {...commonProps}
-        />
-        <Checkbox
-          label={formatMessage(m.grantToPersonalRepresentatives)}
-          subLabel={formatMessage(m.grantToPersonalRepresentativesDescription)}
-          name="grantToPersonalRepresentatives"
-          checked={inputValues.grantToPersonalRepresentatives}
-          onChange={(e) => {
-            setInputValues({
-              ...inputValues,
-              grantToPersonalRepresentatives: e.target.checked,
             })
           }}
           {...commonProps}

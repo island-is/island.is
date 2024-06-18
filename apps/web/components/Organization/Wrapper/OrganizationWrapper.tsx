@@ -217,6 +217,35 @@ export const OrganizationHeader: React.FC<
     ? organizationLogoAltText
     : organizationLogoAltTextFallback
 
+  const defaultProps: DefaultHeaderProps = {
+    fullWidth: organizationPage.themeProperties.fullWidth ?? false,
+    image: organizationPage.defaultHeaderImage?.url,
+    background: getBackgroundStyle(organizationPage.themeProperties),
+    title: organizationPage.title,
+    logo: organizationPage.organization?.logo?.url,
+    logoHref: linkResolver('organizationpage', [organizationPage.slug]).href,
+    titleColor:
+      (organizationPage.themeProperties
+        .textColor as DefaultHeaderProps['titleColor']) || 'dark400',
+    imagePadding: organizationPage.themeProperties.imagePadding || '20px',
+    imageIsFullHeight:
+      organizationPage.themeProperties.imageIsFullHeight ?? true,
+    imageObjectFit:
+      organizationPage.themeProperties.imageObjectFit === 'cover'
+        ? 'cover'
+        : 'contain',
+    imageObjectPosition:
+      organizationPage.themeProperties.imageObjectPosition === 'left'
+        ? 'left'
+        : organizationPage.themeProperties.imageObjectPosition === 'right'
+        ? 'right'
+        : 'center',
+    logoAltText: logoAltText,
+    titleSectionPaddingLeft: organizationPage.themeProperties
+      .titleSectionPaddingLeft as ResponsiveSpace,
+    mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
+  }
+
   switch (organizationPage.theme) {
     case 'syslumenn':
       return (
@@ -396,47 +425,15 @@ export const OrganizationHeader: React.FC<
           logoAltText={logoAltText}
         />
       )
-    default:
+    case 'tryggingastofnun':
       return (
         <DefaultHeader
-          fullWidth={organizationPage.themeProperties.fullWidth ?? false}
-          image={organizationPage.defaultHeaderImage?.url}
-          background={getBackgroundStyle(organizationPage.themeProperties)}
-          title={organizationPage.title}
-          logo={organizationPage.organization?.logo?.url}
-          logoHref={
-            linkResolver('organizationpage', [organizationPage.slug]).href
-          }
-          titleColor={
-            (organizationPage.themeProperties
-              .textColor as DefaultHeaderProps['titleColor']) ?? 'dark400'
-          }
-          imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
-          imageIsFullHeight={
-            organizationPage.themeProperties.imageIsFullHeight ?? true
-          }
-          imageObjectFit={
-            organizationPage.themeProperties.imageObjectFit === 'cover'
-              ? 'cover'
-              : 'contain'
-          }
-          imageObjectPosition={
-            organizationPage.themeProperties.imageObjectPosition === 'left'
-              ? 'left'
-              : organizationPage.themeProperties.imageObjectPosition === 'right'
-              ? 'right'
-              : 'center'
-          }
-          logoAltText={logoAltText}
-          titleSectionPaddingLeft={
-            organizationPage.themeProperties
-              .titleSectionPaddingLeft as ResponsiveSpace
-          }
-          mobileBackground={
-            organizationPage.themeProperties.mobileBackgroundColor
-          }
+          {...defaultProps}
+          customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
         />
       )
+    default:
+      return <DefaultHeader {...defaultProps} />
   }
 }
 
