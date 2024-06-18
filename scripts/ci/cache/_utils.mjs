@@ -202,6 +202,7 @@ export function arrayIncludesOneOf(array, values) {
 export function retry(fn, retries = 5, delay = 2000) {
   return new Promise((resolve, reject) => {
     const attempt = async (n) => {
+      console.log(`Retrying ${fn.name} - ${n} attempts left`)
       try {
         const value = await fn()
         resolve(value)
