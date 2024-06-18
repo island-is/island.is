@@ -621,7 +621,62 @@ export const NewPrimarySchoolForm: Form = buildForm({
               reasonForApplication !== ReasonForApplicationOptions.MOVING_ABROAD
             )
           },
-          children: [],
+          children: [
+            buildMultiField({
+              id: 'school',
+              title:
+                newPrimarySchoolMessages.primarySchool.newSchoolSubSectionTitle,
+              children: [
+                buildAsyncSelectField({
+                  id: 'schools.newSchool.municipality',
+                  title: newPrimarySchoolMessages.shared.municipality,
+
+                  loadOptions: async ({ apolloClient }) => {
+                    return [{ value: 'Reykjavík', label: 'Reykjavík' }]
+                    /*const { municipalities } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
+                    return municipalities.map(
+                      (municipality: NationalRegistryMunicipality) => ({
+                        value: municipality?.code || '',
+                        label: municipality.name || '',
+                      }),
+                    )*/
+                  },
+
+                  placeholder:
+                    newPrimarySchoolMessages.shared.municipalityPlaceholder,
+                  dataTestId: 'new-school-municipality',
+                }),
+
+                buildAsyncSelectField({
+                  id: 'schools.newSchool.school',
+                  title: newPrimarySchoolMessages.shared.school,
+                  condition: (answers) => {
+                    const { schoolMunicipality } =
+                      getApplicationAnswers(answers)
+                    return !!schoolMunicipality
+                  }, //Todo: get data from Juni
+                  loadOptions: async ({ apolloClient }) => {
+                    return [
+                      {
+                        value: 'Ártúnsskóli',
+                        label: 'Ártúnsskóli',
+                      },
+                      {
+                        value: 'Árbæjarskóli',
+                        label: 'Árbæjarskóli',
+                      },
+                    ]
+                  },
+                  placeholder:
+                    newPrimarySchoolMessages.shared.schoolPlaceholder,
+                  dataTestId: 'new-school-school',
+                }),
+              ],
+            }),
+          ],
         }),
         buildSubSection({
           id: 'startingSchoolSubSection',

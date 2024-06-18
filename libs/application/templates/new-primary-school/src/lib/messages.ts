@@ -65,6 +65,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Sveitarfélag',
       description: 'Municipality',
     },
+    municipalityPlaceholder: {
+      id: 'dess.nps.application:municipality.placeholder',
+      defaultMessage: 'Veldu sveitarfélag',
+      description: 'Select municipality',
+    },
     postalcode: {
       id: 'dess.nps.application:postalcode',
       defaultMessage: 'Póstnúmer',
@@ -89,6 +94,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:relation.placeholder',
       defaultMessage: 'Veldu tengsl',
       description: 'Select relation',
+    },
+    school: {
+      id: 'dess.nps.application:school',
+      defaultMessage: 'Skóli',
+      description: 'School',
+    },
+    schoolPlaceholder: {
+      id: 'dess.nps.application:school.placeholder',
+      defaultMessage: 'Veldu skóla',
+      description: 'Select school',
     },
   }),
 
@@ -727,6 +742,11 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Yfirlit',
       description: 'Overview',
     },
+    overviewTitle: {
+      id: 'dess.nps.application:confirmation.overview.title',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
+    },
     overviewDescription: {
       id: 'dess.nps.application:overview.description',
       defaultMessage:
@@ -777,6 +797,26 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:overview.uses.epinephrine.pen',
       defaultMessage: 'Notar adrenalínpenna',
       description: 'Uses an epinephrine pen',
+    },
+    schoolTitle: {
+      id: 'dess.nps.application:review.school.title',
+      defaultMessage: 'Upplýsingar um skóla',
+      description: 'Information about school',
+    },
+    currentSchool: {
+      id: 'dess.nps.application:confirm.current.school',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
+    },
+    selectedSchool: {
+      id: 'dess.nps.application:confirm.selected.school',
+      defaultMessage: 'Valinn skóli',
+      description: 'Selected school',
+    },
+    class: {
+      id: 'dess.nps.application:confirm.class',
+      defaultMessage: 'Bekkur',
+      description: 'Class',
     },
   }),
 

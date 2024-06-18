@@ -25,6 +25,7 @@ import { ReasonForApplication } from './review-groups/ReasonForApplication'
 import { Relatives } from './review-groups/Relatives'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
+import { School } from './review-groups/School'
 
 interface ReviewScreenProps {
   application: Application
@@ -164,6 +165,7 @@ export const Review: FC<ReviewScreenProps> = ({
             ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL && (
             <Siblings {...childProps} />
           )}
+          <School {...childProps} />
           <Languages {...childProps} />
           <AllergiesAndIntolerances {...childProps} />
           <Support {...childProps} />

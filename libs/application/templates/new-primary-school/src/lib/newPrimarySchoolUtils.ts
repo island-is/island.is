@@ -3,6 +3,7 @@ import {
   Application,
   ExternalData,
   FormValue,
+  YES,
   YesOrNo,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
@@ -114,6 +115,18 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     NO,
   ) as YesOrNo
 
+  const startDate = getValueViaPath(answers, 'startDate') as string
+
+  const schoolMunicipality = getValueViaPath(
+    answers,
+    'schools.newSchool.municipality',
+  ) as string
+
+  const selectedSchool = getValueViaPath(
+    answers,
+    'schools.newSchool.school',
+  ) as string
+
   const photographyConsent = getValueViaPath(
     answers,
     'photography.photographyConsent',
@@ -153,6 +166,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     photographyConsent,
     photoSchoolPublication,
     photoMediaPublication,
+
+    startDate,
+    schoolMunicipality,
+    selectedSchool,
   }
 }
 
