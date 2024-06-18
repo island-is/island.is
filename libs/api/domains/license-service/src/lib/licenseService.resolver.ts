@@ -12,6 +12,7 @@ import type { Locale } from '@island.is/shared/types'
 import { ForbiddenException, UseGuards } from '@nestjs/common'
 import {
   Args,
+  Directive,
   Mutation,
   Parent,
   Query,
@@ -31,6 +32,15 @@ import { VerifyLicenseBarcodeResult } from './dto/VerifyLicenseBarcodeResult.dto
 import { VerifyPkPassInput } from './dto/VerifyPkPass.input'
 import { LicenseServiceService } from './licenseService.service'
 import { LicenseCollection } from './dto/GenericLicenseCollection.dto'
+import { LicenseError } from './dto/GenericLicenseError.dto'
+import { GenericLicense } from './dto/GenericLicense.dto'
+import {
+  OrganizationLogoByReferenceIdDataLoader,
+  OrganizationLogoByReferenceIdLoader,
+  OrganizationTitleByReferenceIdDataLoader,
+  OrganizationTitleByReferenceIdLoader,
+} from '@island.is/cms'
+import { Loader } from '@island.is/nest/dataloader'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
@@ -47,15 +57,57 @@ export class LicenseServiceResolver {
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicensesInput,
   ) {
-    return this.licenseServiceService.getUserLicenses(user, locale, {
-      ...input,
-      includedTypes: input?.includedTypes ?? ['DriversLicense'],
-    })
+    const licenses = await this.licenseServiceService.getLicenseCollection(
+      user,
+      locale,
+      {
+        ...input,
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
+        excludedTypes: input?.excludedTypes,
+        force: input?.force,
+        onlyList: input?.onlyList,
+      },
+    )
+
+    return {
+      licenses,
+    }
+  }
+
+  @ResolveField('providerName', () => String, {
+    nullable: true,
+  })
+  async resolveProviderName(
+    @Parent() license: GenericLicense,
+    @Loader(OrganizationTitleByReferenceIdLoader)
+    organizationTitleLoader: OrganizationTitleByReferenceIdDataLoader,
+  ): Promise<string | null> {
+    if (!license.provider.referenceId) {
+      return null
+    }
+    return organizationTitleLoader.load(license.provider.referenceId)
+  }
+
+  @ResolveField('providerLogo', () => String, {
+    nullable: true,
+  })
+  async resolveProviderLogo(
+    @Parent() license: GenericLicense,
+    @Loader(OrganizationLogoByReferenceIdLoader)
+    organizationLogoLoader: OrganizationLogoByReferenceIdDataLoader,
+  ): Promise<string | null> {
+    if (!license.provider.referenceId) {
+      return null
+    }
+    return organizationLogoLoader.load(license.provider.referenceId)
   }
 
   @Query(() => [GenericUserLicense], {
     deprecationReason: 'Use genericLicenseCollection instead',
   })
+  @Directive(
+    '@deprecated(reason: "Deprecated in favor of genericLicenseCollection")',
+  )
   @Audit()
   async genericLicenses(
     @CurrentUser() user: User,
@@ -63,12 +115,17 @@ export class LicenseServiceResolver {
     locale: Locale = 'is',
     @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
   ) {
-    return this.licenseServiceService.getAllLicenses(user, locale, {
-      includedTypes: input?.includedTypes ?? ['DriversLicense'],
-      excludedTypes: input?.excludedTypes,
-      force: input?.force,
-      onlyList: input?.onlyList,
-    })
+    const licenseCollection =
+      await this.licenseServiceService.getLicenseCollection(user, locale, {
+        includedTypes: input?.includedTypes ?? ['DriversLicense'],
+        excludedTypes: input?.excludedTypes,
+        force: input?.force,
+        onlyList: input?.onlyList,
+      })
+
+    return licenseCollection.filter(
+      (licenseResult) => licenseResult instanceof GenericUserLicense,
+    )
   }
 
   @Query(() => GenericUserLicense, { nullable: true })
@@ -79,12 +136,18 @@ export class LicenseServiceResolver {
     locale: Locale = 'is',
     @Args('input') input: GetGenericLicenseInput,
   ) {
-    return this.licenseServiceService.getLicenseDeprecated(
+    const license = await this.licenseServiceService.getLicense(
       user,
       locale,
       input.licenseType,
       input.licenseId,
     )
+
+    if (license instanceof LicenseError) {
+      return null
+    }
+
+    return license
   }
 
   @ResolveField('barcode', () => CreateBarcodeResult, { nullable: true })
@@ -138,6 +201,9 @@ export class LicenseServiceResolver {
     deprecationReason:
       'Should use verifyLicenseBarcode instead of verifyPkPass',
   })
+  @Directive(
+    '@deprecated(reason: "Should use verifyLicenseBarcode instead of verifyPkPass")',
+  )
   @Audit()
   async verifyPkPass(
     @Args('input')

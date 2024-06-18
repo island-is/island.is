@@ -44,7 +44,7 @@ export class GenericLicense {
 
   @Field({
     nullable: true,
-    deprecationReason: 'Unused',
+    deprecationReason: 'Unclear if this is used',
     description:
       'How long the data about the license should be treated as fresh',
   })

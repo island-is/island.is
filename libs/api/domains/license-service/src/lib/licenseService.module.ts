@@ -1,4 +1,5 @@
 import { LicenseClientModule } from '@island.is/clients/license-client'
+import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { CmsModule } from '@island.is/cms'
 import { LicenseModule } from '@island.is/services/license'
 import { Module } from '@nestjs/common'
@@ -15,6 +16,7 @@ import { LicenseMapperProvider, LoggerProvider } from './providers'
     LicenseClientModule,
     LicenseMapperModule,
     CmsModule,
+    CmsTranslationsModule,
     LicenseModule,
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes

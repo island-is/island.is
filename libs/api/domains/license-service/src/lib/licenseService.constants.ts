@@ -14,6 +14,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.FirearmLicense,
     provider: {
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
+      referenceId: '06303',
     },
     pkpass: true,
     pkpassVerify: true,
@@ -23,6 +24,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.DriversLicense,
     provider: {
       id: GenericLicenseProviderId.NationalPoliceCommissioner,
+      referenceId: '06303',
     },
     pkpass: true,
     pkpassVerify: true,
@@ -32,6 +34,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.AdrLicense,
     provider: {
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
+      referenceId: '07331',
     },
     pkpass: true,
     pkpassVerify: true,
@@ -40,6 +43,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.MachineLicense,
     provider: {
+      referenceId: '07331',
       id: GenericLicenseProviderId.AdministrationOfOccupationalSafetyAndHealth,
     },
     pkpass: true,
@@ -50,6 +54,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.DisabilityLicense,
     provider: {
       id: GenericLicenseProviderId.SocialInsuranceAdministration,
+      referenceId: '07821',
     },
     pkpass: true,
     pkpassVerify: true,
@@ -59,6 +64,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.HuntingLicense,
     provider: {
       id: GenericLicenseProviderId.EnvironmentAgency,
+      referenceId: '14211',
     },
     pkpass: true,
     pkpassVerify: true,
@@ -68,6 +74,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.PCard,
     provider: {
       id: GenericLicenseProviderId.DistrictCommissioners,
+      referenceId: '',
     },
     pkpass: false,
     pkpassVerify: false,
@@ -77,6 +84,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.Ehic,
     provider: {
       id: GenericLicenseProviderId.IcelandicHealthInsurance,
+      referenceId: '08202',
     },
     pkpass: false,
     pkpassVerify: false,
@@ -86,6 +94,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.Passport,
     provider: {
       id: GenericLicenseProviderId.RegistersIceland,
+      referenceId: '10601',
     },
     pkpass: false,
     pkpassVerify: false,

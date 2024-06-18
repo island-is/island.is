@@ -3,6 +3,6 @@ import { GenericLicenseType } from '../licenceService.type'
 
 @InputType()
 export class GeneratePkPassInput {
-  @Field(() => String)
+  @Field(() => GenericLicenseType)
   licenseType!: GenericLicenseType
 }

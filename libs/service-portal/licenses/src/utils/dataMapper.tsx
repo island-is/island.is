@@ -473,6 +473,7 @@ enum LicenseProviderPath {
   sjukratryggingar = 'sjukratryggingar',
 }
 
+//remove this
 export const getLicenseDetailHeading = (
   type: string,
   formatMessage: FormatMessage,
@@ -546,6 +547,8 @@ export const getLicenseDetailHeading = (
       }
   }
 }
+
+//remove this
 export const getTitleAndLogo = (type: string) => {
   switch (type) {
     case LicenseType.DriversLicense:

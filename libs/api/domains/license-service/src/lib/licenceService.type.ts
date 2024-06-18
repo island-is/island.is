@@ -1,5 +1,21 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
+import { LicenseError } from './dto/GenericLicenseError.dto'
+import { GenericUserLicense as GenericUserLicenseModel } from './dto/GenericUserLicense.dto'
+
+export interface GenericLicenseMappedPayloadResponse {
+  payload: GenericUserLicensePayload
+  type: 'user' | 'child'
+}
+export type LicenseTypeFetchResponse =
+  | {
+      fetchResponseType: 'error'
+      data: LicenseError
+    }
+  | {
+      fetchResponseType: 'licenses'
+      data: Array<GenericUserLicenseModel>
+    }
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
@@ -82,6 +98,7 @@ export enum GenericUserLicenseMetaLinksType {
 
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
+  referenceId: string
 }
 
 export type GenericLicenseMetadata = {
@@ -257,5 +274,5 @@ export interface GenericLicenseMapper {
     payload: Array<unknown>,
     locale?: Locale,
     labels?: GenericLicenseLabels,
-  ) => Array<GenericUserLicensePayload>
+  ) => Array<GenericLicenseMappedPayloadResponse>
 }

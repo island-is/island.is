@@ -2,8 +2,8 @@ import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
@@ -18,7 +18,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<DriversLicense>
@@ -28,8 +28,8 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
     // Parse license data into the fields as they're displayed on the physical drivers license
     // see: https://www.reglugerd.is/reglugerdir/eftir-raduneytum/srn/nr/18033
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         const expired = t.dateValidTo
           ? !isAfter(new Date(t.dateValidTo), new Date())
           : null
@@ -92,25 +92,26 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             })),
           },
         ]
-
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.id?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired,
-            expireDate: t.dateValidTo?.toISOString() ?? undefined,
-            links: [
-              {
-                label: getLabel('renewDrivingLicense', locale, label),
-                value: 'https://island.is/endurnyjun-okuskirteina',
-              },
-            ],
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.id?.toString() ?? '',
+              licenseId: DEFAULT_LICENSE_ID,
+              expired,
+              expireDate: t.dateValidTo?.toISOString() ?? undefined,
+              links: [
+                {
+                  label: getLabel('renewDrivingLicense', locale, label),
+                  value: 'https://island.is/endurnyjun-okuskirteina',
+                },
+              ],
+            },
           },
         }
-      },
-    )
+      })
     return mappedPayload
   }
 }

@@ -7,10 +7,10 @@ import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseLabels,
-  GenericUserLicensePayload,
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMapper,
+  GenericLicenseMappedPayloadResponse,
 } from '../licenceService.type'
 import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import { getLabel } from '../utils/translations'
@@ -35,14 +35,14 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<VinnuvelaDto>
     const label = labels?.labels
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         const expired: boolean | null = this.checkLicenseExpirationDate(t)
 
         const data: Array<GenericLicenseDataField> = [
@@ -93,16 +93,18 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
         ]
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.skirteinisNumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: expired,
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.skirteinisNumer?.toString() ?? '',
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: expired,
+            },
           },
         }
-      },
-    )
+      })
     return mappedPayload
   }
 

@@ -3,8 +3,8 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
 import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { getLabel } from '../utils/translations'
@@ -23,15 +23,15 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<HuntingLicenseDto>
 
     const label = labels?.labels
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         let address = t.holderAddress
         if (t.holderCity) {
           address += `, ${t.holderCity}`
@@ -91,25 +91,27 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
         ].filter(isDefined)
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.number?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: !t.isValid,
-            expireDate: t.validTo ? t.validTo.toISOString() : undefined,
-            links: [
-              {
-                label: getLabel('renewHuntingLicense', locale, label),
-                value:
-                  t.renewalUrl ??
-                  'https://innskraning.island.is/?id=gogn.ust.is',
-              },
-            ],
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.number?.toString() ?? '',
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: !t.isValid,
+              expireDate: t.validTo ? t.validTo.toISOString() : undefined,
+              links: [
+                {
+                  label: getLabel('renewHuntingLicense', locale, label),
+                  value:
+                    t.renewalUrl ??
+                    'https://innskraning.island.is/?id=gogn.ust.is',
+                },
+              ],
+            },
           },
         }
-      },
-    )
+      })
 
     return mappedPayload
   }

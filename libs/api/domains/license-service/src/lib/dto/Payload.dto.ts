@@ -1,8 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { IsObject } from 'class-validator'
-import graphqlTypeJson from 'graphql-type-json'
 import { GenericLicenseDataField } from './GenericLicenseDataField.dto'
 import { GenericUserLicenseMetadata } from './GenericUserLicenseMetadata.dto'
+import GraphQLJSON from 'graphql-type-json'
 
 @ObjectType()
 export class Payload {
@@ -11,12 +10,10 @@ export class Payload {
   })
   data!: GenericLicenseDataField[]
 
-  @Field(() => graphqlTypeJson, {
+  @Field(() => GraphQLJSON, {
     nullable: true,
     description: 'Raw JSON data',
   })
-  @IsObject()
-  // eslint-disable-next-line @typescript-eslint/ban-types
   rawData?: object
 
   @Field(() => GenericUserLicenseMetadata)

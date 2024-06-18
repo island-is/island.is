@@ -4,8 +4,8 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
 import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import { getLabel } from '../utils/translations'
@@ -20,14 +20,14 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<Staediskortamal>
     const label = labels?.labels
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         const expired = t.gildistimi
           ? !isAfter(new Date(t.gildistimi.toISOString()), new Date())
           : null
@@ -78,17 +78,19 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
         ].filter(isDefined)
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.malsnumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired,
-            expireDate: t.gildistimi?.toISOString(),
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.malsnumer?.toString() ?? '',
+              licenseId: DEFAULT_LICENSE_ID,
+              expired,
+              expireDate: t.gildistimi?.toISOString(),
+            },
           },
         }
-      },
-    )
+      })
     return mappedPayload
   }
 }

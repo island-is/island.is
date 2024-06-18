@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { GenericLicense } from './GenericLicense.dto'
 import { GenericLicenseFetch } from './GenericLicenseFetch.dto'
 import { Payload } from './Payload.dto'
+import { CreateBarcodeResult } from './CreateBarcodeResult.dto'
 
 @ObjectType()
 export class GenericUserLicense {
@@ -9,6 +10,13 @@ export class GenericUserLicense {
     description: 'National ID of license owner',
   })
   nationalId!: string
+
+  @Field({
+    defaultValue: false,
+    nullable: true,
+    description: 'Is license owner child of user',
+  })
+  isOwnerChildOfUser?: boolean
 
   @Field(() => GenericLicense, { description: 'License info' })
   license!: GenericLicense
@@ -25,4 +33,9 @@ export class GenericUserLicense {
     description: 'Potential payload of license, both parsed and raw',
   })
   payload?: Payload
+
+  @Field(() => CreateBarcodeResult, {
+    nullable: true,
+  })
+  barcode?: CreateBarcodeResult
 }

@@ -1,29 +1,39 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GenericUserLicenseMetaLinks } from './GenericUserLicenseMetaLinks.dto'
+import { GenericUserLicenseMetaTag } from './GenericUserLicenseMetaTag.dto'
 
 @ObjectType()
 export class GenericUserLicenseMetadata {
   @Field(() => [GenericUserLicenseMetaLinks], { nullable: true })
   links?: Array<GenericUserLicenseMetaLinks>
 
-  @Field(() => String)
+  @Field({ nullable: true })
   licenseNumber?: string
 
-  @Field(() => String, {
+  @Field({ nullable: true })
+  licenseNumberDisplay?: string
+
+  @Field({
     nullable: true,
     description: 'Unique license identifier',
   })
   licenseId?: string
 
-  @Field(() => Boolean, { nullable: true })
-  expired?: boolean | null
+  @Field({ nullable: true })
+  expired?: boolean
 
-  @Field(() => String, { nullable: true })
-  expireDate?: string | null
+  @Field({ nullable: true })
+  expireDate?: string
 
-  @Field(() => String)
+  @Field(() => GenericUserLicenseMetaTag, { nullable: true })
+  displayTag?: GenericUserLicenseMetaTag
+
+  @Field({
+    nullable: true,
+    description: 'Display title for detail view',
+  })
   title?: string
 
-  @Field(() => String)
-  logo?: string
+  @Field({ nullable: true, description: 'Display description for detail view' })
+  description?: string
 }

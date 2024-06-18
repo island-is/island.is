@@ -9,8 +9,8 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
@@ -21,15 +21,15 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<FlattenedAdrDto>
 
     const label = labels?.labels
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         const data: Array<GenericLicenseDataField> = [
           {
             name: getLabel('basicInfoLicense', locale, label),
@@ -69,19 +69,21 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
         if (grunn) data.push(grunn)
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.skirteinisNumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: t.gildirTil
-              ? !isAfter(new Date(t.gildirTil), new Date())
-              : null,
-            expireDate: t.gildirTil ?? undefined,
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.skirteinisNumer?.toString() ?? '',
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: t.gildirTil
+                ? !isAfter(new Date(t.gildirTil), new Date())
+                : null,
+              expireDate: t.gildirTil ?? undefined,
+            },
           },
         }
-      },
-    )
+      })
 
     return mappedPayload
   }

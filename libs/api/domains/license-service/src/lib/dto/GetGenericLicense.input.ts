@@ -3,9 +3,9 @@ import { GenericLicenseType } from '../licenceService.type'
 
 @InputType()
 export class GetGenericLicenseInput {
-  @Field(() => String)
+  @Field(() => GenericLicenseType)
   licenseType!: GenericLicenseType
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   licenseId?: string
 }

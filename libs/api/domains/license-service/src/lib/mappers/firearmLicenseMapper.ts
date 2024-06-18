@@ -9,8 +9,8 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
   LicenseLabelsObject,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
@@ -23,116 +23,120 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<FirearmLicenseDto>
     const label = labels?.labels
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload
-      .map((t) => {
-        const { licenseInfo, properties, categories } = t
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload
+        .map((t) => {
+          const { licenseInfo, properties, categories } = t
 
-        const expired = licenseInfo?.expirationDate
-          ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
-          : null
-        if (!licenseInfo) return null
+          const expired = licenseInfo?.expirationDate
+            ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
+            : null
+          if (!licenseInfo) return null
 
-        const data: Array<GenericLicenseDataField> = [
-          licenseInfo.licenseNumber
-            ? {
-                name: getLabel('basicInfoLicense', locale, label),
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('licenseNumber', locale, label),
-                value: licenseInfo.licenseNumber,
-              }
-            : null,
-          licenseInfo.name
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('fullName', locale, label),
-                value: licenseInfo.name,
-              }
-            : null,
-          licenseInfo.issueDate
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('publishedDate', locale, label),
-                value: licenseInfo.issueDate ?? '',
-              }
-            : null,
-          licenseInfo.expirationDate
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('validTo', locale, label),
-                value: licenseInfo.expirationDate ?? '',
-              }
-            : null,
-          licenseInfo.collectorLicenseExpirationDate
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('collectorLicenseValidTo', locale, label),
-                value: licenseInfo.collectorLicenseExpirationDate ?? '',
-              }
-            : null,
+          const data: Array<GenericLicenseDataField> = [
+            licenseInfo.licenseNumber
+              ? {
+                  name: getLabel('basicInfoLicense', locale, label),
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('licenseNumber', locale, label),
+                  value: licenseInfo.licenseNumber,
+                }
+              : null,
+            licenseInfo.name
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('fullName', locale, label),
+                  value: licenseInfo.name,
+                }
+              : null,
+            licenseInfo.issueDate
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('publishedDate', locale, label),
+                  value: licenseInfo.issueDate ?? '',
+                }
+              : null,
+            licenseInfo.expirationDate
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('validTo', locale, label),
+                  value: licenseInfo.expirationDate ?? '',
+                }
+              : null,
+            licenseInfo.collectorLicenseExpirationDate
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('collectorLicenseValidTo', locale, label),
+                  value: licenseInfo.collectorLicenseExpirationDate ?? '',
+                }
+              : null,
 
-          licenseInfo.qualifications
-            ? this.parseQualifications(
-                licenseInfo.qualifications,
-                locale,
-                categories ?? undefined,
-                label,
-              )
-            : null,
-          properties
-            ? {
-                type: GenericLicenseDataFieldType.Group,
-                hideFromServicePortal: true,
-                label: getLabel('firearmProperties', locale, label),
-                fields: (properties.properties ?? []).map((property) => ({
-                  type: GenericLicenseDataFieldType.Category,
-                  fields: this.parseProperties(
-                    labels,
-                    property,
-                    locale,
-                  )?.filter(isDefined),
-                })),
-              }
-            : null,
-          properties
-            ? {
-                type: GenericLicenseDataFieldType.Table,
-                label: getLabel('firearmProperties', locale, label),
-                fields: (properties.properties ?? []).map((property) => ({
-                  type: GenericLicenseDataFieldType.Category,
-                  fields: this.parseProperties(
-                    labels,
-                    property,
-                    locale,
-                  )?.filter(isDefined),
-                })),
-              }
-            : null,
-        ].filter(isDefined)
+            licenseInfo.qualifications
+              ? this.parseQualifications(
+                  licenseInfo.qualifications,
+                  locale,
+                  categories ?? undefined,
+                  label,
+                )
+              : null,
+            properties
+              ? {
+                  type: GenericLicenseDataFieldType.Group,
+                  hideFromServicePortal: true,
+                  label: getLabel('firearmProperties', locale, label),
+                  fields: (properties.properties ?? []).map((property) => ({
+                    type: GenericLicenseDataFieldType.Category,
+                    fields: this.parseProperties(
+                      labels,
+                      property,
+                      locale,
+                    )?.filter(isDefined),
+                  })),
+                }
+              : null,
+            properties
+              ? {
+                  type: GenericLicenseDataFieldType.Table,
+                  label: getLabel('firearmProperties', locale, label),
+                  fields: (properties.properties ?? []).map((property) => ({
+                    type: GenericLicenseDataFieldType.Category,
+                    fields: this.parseProperties(
+                      labels,
+                      property,
+                      locale,
+                    )?.filter(isDefined),
+                  })),
+                }
+              : null,
+          ].filter(isDefined)
 
-        return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.licenseInfo?.licenseNumber?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired,
-            expireDate: t.licenseInfo?.expirationDate ?? undefined,
-            links: [
-              {
-                label: getLabel('renewFirearmLicense', locale, label),
-                value: 'https://island.is/skotvopnaleyfi',
+          return {
+            type: 'user' as const,
+            payload: {
+              data,
+              rawData: JSON.stringify(t),
+              metadata: {
+                licenseNumber: t.licenseInfo?.licenseNumber?.toString() ?? '',
+                licenseId: DEFAULT_LICENSE_ID,
+                expired,
+                expireDate: t.licenseInfo?.expirationDate ?? undefined,
+                links: [
+                  {
+                    label: getLabel('renewFirearmLicense', locale, label),
+                    value: 'https://island.is/skotvopnaleyfi',
+                  },
+                ],
               },
-            ],
-          },
-        }
-      })
-      .filter(isDefined)
+            },
+          }
+        })
+        .filter(isDefined)
     return mappedPayload
   }
 

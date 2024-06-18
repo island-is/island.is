@@ -6,8 +6,8 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
 import { i18n } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
@@ -18,14 +18,14 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<OrorkuSkirteini>
 
     const label = labels?.labels
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         const data: Array<GenericLicenseDataField> = [
           {
             type: GenericLicenseDataFieldType.Value,
@@ -46,18 +46,20 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
         ]
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.kennitala?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: t.gildirtil
-              ? !isAfter(new Date(t.gildirtil), new Date())
-              : null,
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.kennitala?.toString() ?? '',
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: t.gildirtil
+                ? !isAfter(new Date(t.gildirtil), new Date())
+                : null,
+            },
           },
         }
-      },
-    )
+      })
 
     return mappedPayload
   }

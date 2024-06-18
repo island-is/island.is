@@ -4,9 +4,9 @@ import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
   GenericUserLicenseMetaLinksType,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
 import { getLabel } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
@@ -20,91 +20,97 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
 
     const typedPayload = payload as Array<EhicCardResponse>
     const label = labels?.labels
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload
-      .map((t) => {
-        if (!t || !t.expiryDate) return null
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload
+        .map((t) => {
+          if (!t || !t.expiryDate) return null
 
-        const expired = t.expiryDate
-          ? !isAfter(new Date(t.expiryDate?.toISOString()), new Date())
-          : null
+          const expired = t.expiryDate
+            ? !isAfter(new Date(t.expiryDate?.toISOString()), new Date())
+            : null
 
-        const data: Array<GenericLicenseDataField> = [
-          t.cardHolderName
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('fullName', locale, label),
-                value: t.cardHolderName ?? '',
-              }
-            : null,
-          t.cardHolderNationalId
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('nationalId', locale, label),
-                value: t.cardHolderNationalId
-                  ? format(t.cardHolderNationalId)
-                  : '',
-              }
-            : null,
-          t.cardNumber
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('cardNumber', locale, label),
-                value: t.cardNumber,
-              }
-            : null,
-          t.issued
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('publishedDate', locale, label),
-                value: t.issued.toISOString(),
-              }
-            : null,
-          t.expiryDate
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('validTo', locale, label),
-                value: t.expiryDate.toISOString(),
-              }
-            : null,
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publisher', locale, label),
-            value: 'Sjúkratryggingar',
-          },
-        ].filter(isDefined)
+          const data: Array<GenericLicenseDataField> = [
+            t.cardHolderName
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('fullName', locale, label),
+                  value: t.cardHolderName ?? '',
+                }
+              : null,
+            t.cardHolderNationalId
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('nationalId', locale, label),
+                  value: t.cardHolderNationalId
+                    ? format(t.cardHolderNationalId)
+                    : '',
+                }
+              : null,
+            t.cardNumber
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('cardNumber', locale, label),
+                  value: t.cardNumber,
+                }
+              : null,
+            t.issued
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('publishedDate', locale, label),
+                  value: t.issued.toISOString(),
+                }
+              : null,
+            t.expiryDate
+              ? {
+                  type: GenericLicenseDataFieldType.Value,
+                  label: getLabel('validTo', locale, label),
+                  value: t.expiryDate.toISOString(),
+                }
+              : null,
+            {
+              type: GenericLicenseDataFieldType.Value,
+              label: getLabel('publisher', locale, label),
+              value: 'Sjúkratryggingar',
+            },
+          ].filter(isDefined)
 
-        return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.cardNumber?.toString() ?? '',
-            licenseId: t.cardNumber?.toString() ?? 'default',
-            expired,
-            expireDate: t.expiryDate.toISOString(),
-            links: [
-              t.hasTempCard && t.tempCardPdf
-                ? {
-                    label: getLabel('downloadCard', locale, label),
-                    value: getDocument(t.tempCardPdf, 'pdf'),
-                    type: GenericUserLicenseMetaLinksType.Download,
-                    name: `EHIC_${new Date().toISOString().split('T')[0]}.pdf`,
-                  }
-                : undefined,
-              {
-                label: getLabel('applyForNewCard', locale, label),
-                value: '/umsoknir/evropska-sjukratryggingakortid',
+          return {
+            type: 'user' as const,
+            payload: {
+              data,
+              rawData: JSON.stringify(t),
+              metadata: {
+                licenseNumber: t.cardNumber?.toString() ?? '',
+                licenseId: t.cardNumber?.toString() ?? 'default',
+                expired,
+                expireDate: t.expiryDate.toISOString(),
+                links: [
+                  t.hasTempCard && t.tempCardPdf
+                    ? {
+                        label: getLabel('downloadCard', locale, label),
+                        value: getDocument(t.tempCardPdf, 'pdf'),
+                        type: GenericUserLicenseMetaLinksType.Download,
+                        name: `EHIC_${
+                          new Date().toISOString().split('T')[0]
+                        }.pdf`,
+                      }
+                    : undefined,
+                  {
+                    label: getLabel('applyForNewCard', locale, label),
+                    value: '/umsoknir/evropska-sjukratryggingakortid',
+                  },
+                ].filter(isDefined),
               },
-            ].filter(isDefined),
-          },
-        }
-      })
-      .filter(isDefined)
+            },
+          }
+        })
+        .filter(isDefined)
 
     return mappedPayload
   }

@@ -1,25 +1,34 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { LicenseClient, LicenseType, Result } from '../../licenseClient.type'
 import { FetchError } from '@island.is/clients/middlewares'
-import { PassportsService, Passport } from '@island.is/clients/passports'
+import {
+  PassportsService,
+  IdentityDocumentChild,
+  IdentityDocument,
+} from '@island.is/clients/passports'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class PassportsClient implements LicenseClient<LicenseType.Passport> {
-  constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private passportService: PassportsService,
-  ) {}
+  constructor(private passportService: PassportsService) {}
 
   clientSupportsPkPass = false
   type = LicenseType.Passport
 
-  async getLicenses(user: User): Promise<Result<Array<Passport>>> {
+  async getLicenses(
+    user: User,
+  ): Promise<Result<Array<IdentityDocument | IdentityDocumentChild>>> {
     try {
-      const licenseInfo = await this.passportService.getCurrentPassport(user)
-      return { ok: true, data: [licenseInfo] }
+      const { userPassport, childPassports } =
+        await this.passportService.getCurrentPassport(user)
+
+      const data: Array<IdentityDocument | IdentityDocumentChild> = [
+        userPassport ?? undefined,
+        ...(childPassports ?? []),
+      ].filter(isDefined)
+
+      return { ok: true, data }
     } catch (e) {
       let error
       if (e instanceof FetchError) {
