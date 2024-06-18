@@ -71,6 +71,7 @@ const LicenseCardWrapper = styled(SafeAreaView)`
   left: 0;
   right: 0;
   z-index: 100;
+  elevation: 100;
 `
 
 const ButtonWrapper = styled(SafeAreaView)<{ floating?: boolean }>`
