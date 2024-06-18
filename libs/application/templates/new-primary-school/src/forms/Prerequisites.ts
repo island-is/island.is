@@ -12,7 +12,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  IdentityApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -106,6 +105,7 @@ export const Prerequisites: Form = buildForm({
               id: 'noChildrenMMSInfo',
               title: '',
               marginTop: 3,
+              marginBottom: 6,
               description: newPrimarySchoolMessages.pre.noChildrenFoundMMSInfo,
             }),
           ],
