@@ -157,12 +157,6 @@ export const serviceSetup = (services: {
     })
     .healthPort(5010)
     .targetPort(5000)
-    .replicaCount({
-      scalingMagicNumber: 10,
-      default: 2,
-      min: 2,
-      max: 10,
-    })
     .serviceAccount('identity-server')
     .readiness('/readiness')
     .liveness('/liveness')
