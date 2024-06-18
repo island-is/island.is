@@ -32,7 +32,8 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
     variables: { id: application.id },
   })
 
-  const price = priceData.officialJournalOfIcelandApplicationGetPrice.price
+  const price =
+    priceData?.officialJournalOfIcelandApplicationGetPrice?.price ?? 0
 
   const type = data?.officialJournalOfIcelandType?.type?.title
 
