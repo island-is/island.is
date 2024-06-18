@@ -8,6 +8,13 @@ This library implements a GraphQL client code to use Contentful GraphQL APIs.
 
 The `GRAPHQL_API_ENDPOINT` and `CONTENTFUL_ACCESS_TOKEN` env variables need to be configured.
 
+## Fetch GraphQL Schema
+```sh
+yarn graphql-codegen --config libs/clients/cms/fetch-schema.yaml
+```
+
+
+
 ## Running unit tests
 
 Run `nx test cms` to execute the unit tests via [Jest](https://jestjs.io).
