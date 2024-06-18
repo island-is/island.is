@@ -94,17 +94,16 @@ const FinanceTransactions = () => {
     setToDate(new Date())
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  function getAllChargeTypes() {
+  const getAllChargeTypes = () => {
     const allChargeTypeValues = chargeTypeData?.chargeType?.map((ct) => ct.id)
     return allChargeTypeValues ?? []
   }
 
-  function setEmptyChargeTypes() {
+  const setEmptyChargeTypes = () => {
     setDropdownSelect([])
   }
 
-  function clearAllFilters() {
+  const clearAllFilters = () => {
     setEmptyChargeTypes()
     setFromDate(backInTheDay)
     setToDate(new Date())
