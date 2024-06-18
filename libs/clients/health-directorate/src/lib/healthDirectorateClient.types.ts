@@ -1,3 +1,5 @@
+import { Nam } from '../../gen/fetch'
+
 export interface HealthcareLicense {
   professionId: string
   professionNameIs: string
@@ -43,4 +45,13 @@ export interface HealthDirectorateLicenseToPractice {
   validFrom: Date
   validTo?: Date
   status: HealthDirectorateLicenseStatus
+}
+export interface HealthcareWorkPermitRequest {
+  name: string
+  dateOfBirth: Date
+  email: string
+  phone: string
+  idProfession: string
+  citizenship: string
+  education: Nam[]
 }
