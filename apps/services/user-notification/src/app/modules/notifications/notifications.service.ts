@@ -57,11 +57,8 @@ export class NotificationsService {
     private readonly cmsService: CmsService,
   ) {}
 
-  private cleanStringAdvanced(str: string) {
-    return str
-      .trim() // Remove leading and trailing whitespace
-      .replace(/\t/g, '') // Remove tabs
-      .replace(/\n/g, '') // Remove newlines
+  private cleanString(str: string) {
+    return str.replace(/\s+/g, ' ').trim()
   }
   async getSenderOrganizationTitle(
     senderId: string,
@@ -79,7 +76,7 @@ export class NotificationsService {
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
-      item.title = this.cleanStringAdvanced(item.title)
+      item.title = this.cleanString(item.title)
       return item
     } else {
       this.logger.warn(`No org found for senderid: ${senderId}`)
