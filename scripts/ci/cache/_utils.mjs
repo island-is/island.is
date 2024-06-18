@@ -55,7 +55,7 @@ export async function getFileHash(file) {
 
 export async function getFilesHash(files = []) {
   const contents = await Promise.all(
-    files.map((file) => readFile(file, 'utf-8')),
+    files.sort().map((file) => readFile(file, 'utf-8')),
   )
   const combinedContent = contents.join('')
   return crypto.createHash('sha256').update(combinedContent).digest('hex')
