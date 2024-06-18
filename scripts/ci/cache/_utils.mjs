@@ -6,7 +6,6 @@ import { spawn } from 'node:child_process'
 import { resolve, join } from 'node:path'
 import { readFile, readdir, stat } from 'node:fs/promises'
 
-
 export async function getNodeVersionString() {
   const content = await getPackageJSON()
   const nodeVersion = content?.engines?.node
