@@ -67,7 +67,7 @@ export const Prerequisites: Form = buildForm({
               subTitle:
                 newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
             }),
-            buildDataProviderItem({
+            /*  buildDataProviderItem({
               provider: GetTypesApi,
               title: 'Types',
               subTitle: '',
@@ -76,7 +76,7 @@ export const Prerequisites: Form = buildForm({
               provider: GetHealthApi,
               title: 'Health',
               subTitle: '',
-            }),
+            }),*/
           ],
         }),
         buildMultiField({
