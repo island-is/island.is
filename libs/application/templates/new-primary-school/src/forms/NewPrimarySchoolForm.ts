@@ -33,6 +33,7 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import {
+  OptionsType,
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
@@ -47,6 +48,7 @@ import {
   getLanguageCodes,
   getOptionsListByName,
   getOtherParent,
+  getReasonForApplicationOptions,
   getRelationOptionLabel,
   getRelationOptions,
   getSiblingRelationOptionLabel,
@@ -437,7 +439,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 newPrimarySchoolMessages.primarySchool
                   .reasonForApplicationDescription,
               children: [
-                buildAsyncSelectField({
+                buildSelectField({
                   id: 'reasonForApplication.reason',
                   dataTestId: 'reason-for-application',
                   title:
@@ -446,13 +448,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   placeholder:
                     newPrimarySchoolMessages.primarySchool
                       .reasonForApplicationPlaceholder,
-                  //options: getReasonForApplicationOptions(),
-                  loadOptions: async ({ apolloClient }): Promise<any[]> => {
-                    return await getOptionsListByName(
-                      apolloClient,
-                      'rejectionReason',
-                    )
-                  },
+                  options: getReasonForApplicationOptions(),
                 }),
                 buildSelectField({
                   id: 'reasonForApplication.movingAbroad.country',
@@ -816,9 +812,13 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfAllergiesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  // options: getFoodAllergiesOptions(),
                   loadOptions: async ({ apolloClient }): Promise<any[]> => {
-                    return await getOptionsListByName(apolloClient, 'allergy')
+                    /*  return await getOptionsListByName(
+                      apolloClient,
+                      OptionsType.ALLERGRY,
+                    )
+*/
+                    return getFoodAllergiesOptions()
                   },
                   condition: (answers) => {
                     const { hasFoodAllergies } = getApplicationAnswers(answers)
@@ -864,12 +864,13 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfIntolerancesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  // options: getFoodIntolerancesOptions(),
                   loadOptions: async ({ apolloClient }): Promise<any[]> => {
-                    return await getOptionsListByName(
+                    /*return await getOptionsListByName(
                       apolloClient,
-                      'intolerence',
-                    )
+                      OptionsType.INTELERENCE,
+                    )*/
+
+                    return getFoodIntolerancesOptions()
                   },
                   condition: (answers) => {
                     const { hasFoodIntolerances } =

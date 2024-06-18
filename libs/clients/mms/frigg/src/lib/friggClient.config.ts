@@ -1,4 +1,5 @@
 import { defineConfig } from '@island.is/nest/config'
+import { MmsScope } from '@island.is/auth/scopes'
 import { z } from 'zod'
 
 const schema = z.object({
@@ -14,6 +15,6 @@ export const FriggClientConfig = defineConfig<z.infer<typeof schema>>({
       'XROAD_MMS_FRIGG_PATH',
       'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
     ),
-    scope: ['@mms.is/frigg'],
+    scope: [MmsScope.frigg],
   }),
 })

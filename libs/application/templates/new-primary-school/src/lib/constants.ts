@@ -211,3 +211,9 @@ export const languageCodes: Language[] = [
   { code: 'yo', name: 'Yoruba - Èdè Yorùbá' },
   { code: 'zu', name: 'Zulu - isiZulu' },
 ]
+
+export enum OptionsType {
+  ALLERGRY = 'allergy',
+  INTELERENCE = 'intolerence',
+  REASON = 'rejectionReason',
+}

@@ -27,6 +27,7 @@ import {
   hasChildrenThatCanApply,
 } from './newPrimarySchoolUtils'
 import { GetHealthApi, GetTypesApi } from '../dataProviders'
+import { Features } from '@island.is/feature-flags'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,6 +40,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: true,
+  featureFlag: Features.newPrimarySchool,
   // requiredScopes: [ApiScope.carRecycling], ?? do we need scope for the Primary school application ??
   stateMachineConfig: {
     initial: States.PREREQUISITES,
