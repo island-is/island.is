@@ -24,7 +24,12 @@ import {
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
-import { CmsService,GetTemplateByTemplateId,GetTemplates,GetOrganizationByNationalId } from '@island.is/clients/cms'
+import {
+  CmsService,
+  GetTemplateByTemplateId,
+  GetTemplates,
+  GetOrganizationByNationalId,
+} from '@island.is/clients/cms'
 
 /**
  * These are the properties that can be replaced in the template
@@ -50,13 +55,13 @@ export class NotificationsService {
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
     private readonly cmsService: CmsService,
-    
   ) {}
 
-  private cleanStringAdvanced(str:string) {
-    return str.trim() // Remove leading and trailing whitespace
-              .replace(/\t/g, '') // Remove tabs
-              .replace(/\n/g, '') // Remove newlines
+  private cleanStringAdvanced(str: string) {
+    return str
+      .trim() // Remove leading and trailing whitespace
+      .replace(/\t/g, '') // Remove tabs
+      .replace(/\n/g, '') // Remove newlines
   }
   async getSenderOrganizationTitle(
     senderId: string,
@@ -66,16 +71,16 @@ export class NotificationsService {
     const queryVariables = {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
-    };
+    }
     const res = await this.cmsService.fetchData(
-      GetOrganizationByNationalId, 
-      queryVariables
-    );
-    const items = res.organizationCollection.items;
-    if(items.length > 0){
-      const [item] = items;
-      item.title = this.cleanStringAdvanced(item.title);
-      return item;
+      GetOrganizationByNationalId,
+      queryVariables,
+    )
+    const items = res.organizationCollection.items
+    if (items.length > 0) {
+      const [item] = items
+      item.title = this.cleanStringAdvanced(item.title)
+      return item
     } else {
       this.logger.warn(`No org found for senderid: ${senderId}`)
     }
@@ -108,7 +113,7 @@ export class NotificationsService {
           )
           if (sender?.title) {
             organizationArg.value = sender.title
-          } 
+          }
         } catch (error) {
           this.logger.error(error.message, {
             senderId: notification.senderId,
@@ -148,10 +153,9 @@ export class NotificationsService {
     locale = mapToLocale(locale as Locale)
     const queryVariables = {
       locale: mapToContentfulLocale(locale),
-    };
-    const res = await this.cmsService.fetchData(GetTemplates, queryVariables);
+    }
+    const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
     return res.hnippTemplateCollection.items
-
   }
 
   async getTemplate(
@@ -162,10 +166,13 @@ export class NotificationsService {
     const queryVariables = {
       templateId,
       locale: mapToContentfulLocale(locale),
-    };
-    const res = await this.cmsService.fetchData(GetTemplateByTemplateId, queryVariables);
-    const items = res.hnippTemplateCollection.items;
-    if(items.length > 0){
+    }
+    const res = await this.cmsService.fetchData(
+      GetTemplateByTemplateId,
+      queryVariables,
+    )
+    const items = res.hnippTemplateCollection.items
+    if (items.length > 0) {
       return items[0]
     } else {
       throw new NotFoundException(`Template not found for ID: ${templateId}`)

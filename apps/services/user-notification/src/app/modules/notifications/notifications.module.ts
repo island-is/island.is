@@ -43,7 +43,7 @@ import { CmsModule } from '@island.is/clients/cms'
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,
-    CmsModule
+    CmsModule,
   ],
   controllers: [NotificationsController, MeNotificationsController],
   providers: [

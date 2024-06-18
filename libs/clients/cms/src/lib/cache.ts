@@ -8,14 +8,12 @@ import {
 
 import { CmsConfig } from './cms.config'
 
-
 function overrideCacheControl(request: Request) {
-  return buildCacheControl({ 
+  return buildCacheControl({
     maxAge: 10 * 60, // 10 minutes
-    public: true // required to enable caching for contentful gql
+    public: true, // required to enable caching for contentful gql
   })
 }
-
 
 export const getCache = async (
   config: ConfigType<typeof CmsConfig>,
@@ -29,7 +27,7 @@ export const getCache = async (
     nodes: config.redis.nodes,
     ssl: config.redis.ssl,
     noPrefix: true,
-    ttl: 0
+    ttl: 0,
   })
 
   return {

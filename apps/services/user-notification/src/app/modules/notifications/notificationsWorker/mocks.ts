@@ -202,7 +202,7 @@ export const MockUserNotificationsConfig: ConfigType<
   isConfigured: true,
   servicePortalClickActionUrl: 'https://island.is/minarsidur',
   redis: {
-    nodes: ["node"],
-    ssl: false
+    nodes: ['node'],
+    ssl: false,
   },
 }

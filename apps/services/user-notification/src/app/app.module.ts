@@ -37,10 +37,10 @@ import { CmsConfig } from '@island.is/clients/cms'
         UserProfileClientConfig,
         IdsClientConfig,
         AuthDelegationApiClientConfig,
-        CmsConfig
+        CmsConfig,
       ],
     }),
-    NotificationsModule
+    NotificationsModule,
   ],
 })
 export class AppModule {}
