@@ -1,14 +1,14 @@
 import { useUserInfo } from '@island.is/auth/react'
 import { Stack } from '@island.is/island-ui/core'
-import { OfficialJournalOfIcelandAdvertEntity } from '@island.is/api/schema'
 import { useQuery } from '@apollo/client'
 import { Property } from '../components/property/Property'
-import { DEPARTMENT_QUERY, TYPE_QUERY } from '../graphql/queries'
-import { summary } from '../lib/messages'
 import {
-  OJOIFieldBaseProps,
-  OfficialJournalOfIcelandGraphqlResponse,
-} from '../lib/types'
+  DEPARTMENT_QUERY,
+  GET_PRICE_QUERY,
+  TYPE_QUERY,
+} from '../graphql/queries'
+import { summary } from '../lib/messages'
+import { OJOIFieldBaseProps } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { MINIMUM_WEEKDAYS } from '../lib/constants'
 import { addWeekdays } from '../lib/utils'
@@ -27,6 +27,12 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       },
     },
   })
+
+  const { data: priceData } = useQuery(GET_PRICE_QUERY, {
+    variables: { id: application.id },
+  })
+
+  const price = priceData.officialJournalOfIcelandApplicationGetPrice.price
 
   const type = data?.officialJournalOfIcelandType?.type?.title
 
@@ -59,11 +65,9 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
       />
       <Property
         name={f(summary.properties.estimatedDate)}
-        value={formatDate(estimatedDate, {
-          format: 'dd.mm.yyyy',
-        })}
+        value={formatDate(estimatedDate)}
       />
-      <Property name={f(summary.properties.estimatedPrice)} value={'23.000'} />
+      <Property name={f(summary.properties.estimatedPrice)} value={price} />
       <Property
         name={f(summary.properties.classification)}
         value={answers?.publishing?.contentCategories

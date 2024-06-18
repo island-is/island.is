@@ -5,6 +5,8 @@ import {
   PostCommentRequest,
   PostApplicationRequest,
   GetCaseCommentsResponse,
+  GetPriceRequest,
+  CasePriceResponse,
 } from '../../gen/fetch'
 
 @Injectable()
@@ -29,6 +31,16 @@ export class OfficialJournalOfIcelandApplicationClientService {
       return Promise.resolve(true)
     } catch (error) {
       return Promise.reject(false)
+    }
+  }
+
+  async getPrice(params: GetPriceRequest): Promise<CasePriceResponse> {
+    try {
+      return await this.ojoiApplicationApi.getPrice(params)
+    } catch (error) {
+      return {
+        price: 0,
+      }
     }
   }
 }
