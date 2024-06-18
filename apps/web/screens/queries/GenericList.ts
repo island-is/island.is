@@ -16,6 +16,11 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
         cardIntro {
           ...HtmlFields
         }
+        filterTags {
+          id
+          title
+          slug
+        }
         slug
       }
       total

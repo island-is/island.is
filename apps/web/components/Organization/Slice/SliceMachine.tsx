@@ -185,9 +185,6 @@ const renderSlice = (
       return (
         <GenericList
           id={slice.id}
-          firstPageItemResponse={
-            (slice as GenericListSchema).firstPageListItemResponse
-          }
           searchInputPlaceholder={
             (slice as GenericListSchema).searchInputPlaceholder
           }

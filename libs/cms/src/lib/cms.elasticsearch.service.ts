@@ -454,7 +454,7 @@ export class CmsElasticsearchService {
   async getGenericListItems(
     input: GetGenericListItemsInput,
   ): Promise<GenericListItemResponse> {
-    const tagsMust: unknown[] = [
+    let tagsMust: unknown[] = [
       {
         term: {
           'tags.key': input.genericListId,
@@ -468,7 +468,9 @@ export class CmsElasticsearchService {
     ]
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
-      tagsMust.push(generateGenericTagGroupQueries(input.tags, input.tagGroups))
+      tagsMust = tagsMust.concat(
+        generateGenericTagGroupQueries(input.tags, input.tagGroups),
+      )
     }
 
     const must: Record<string, unknown>[] = [

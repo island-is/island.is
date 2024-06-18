@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import { Locale } from 'locale'
 import { useRouter } from 'next/router'
@@ -18,6 +18,7 @@ import {
   Inline,
   Pagination,
   Stack,
+  Tag,
   Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -31,9 +32,15 @@ import {
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { useI18n } from '@island.is/web/i18n'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { getFilterCategories } from '@island.is/web/screens/Organization/PublishedMaterial/utils'
+import {
+  extractFilterTags,
+  getFilterCategories,
+  getGenericTagGroupHierarchy,
+} from '@island.is/web/screens/Organization/PublishedMaterial/utils'
 import { GET_GENERIC_LIST_ITEMS_QUERY } from '@island.is/web/screens/queries/GenericList'
 import { webRichText } from '@island.is/web/utils/richText'
+
+import { FilterTag } from '../FilterTag'
 
 const DEBOUNCE_TIME_IN_MS = 300
 const ITEMS_PER_PAGE = 10
@@ -71,18 +78,27 @@ const NonClickableItem = ({ item }: ItemProps) => {
       borderRadius="large"
       height="full"
     >
-      <Stack space={0}>
+      <Stack space={3}>
         <Stack space={0}>
-          <Text variant="eyebrow" color="purple400">
-            {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
-          </Text>
-          <Text variant="h3" as="span" color="dark400">
-            {item.title}
-          </Text>
+          <Stack space={0}>
+            <Text variant="eyebrow" color="purple400">
+              {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+            </Text>
+            <Text variant="h3" as="span" color="dark400">
+              {item.title}
+            </Text>
+          </Stack>
+          {item.cardIntro?.length > 0 && (
+            <Box>{webRichText(item.cardIntro ?? [])}</Box>
+          )}
         </Stack>
-        {item.cardIntro?.length > 0 && (
-          <Box>{webRichText(item.cardIntro ?? [])}</Box>
-        )}
+        <Inline space={0}>
+          {item.filterTags?.map((tag) => (
+            <Tag disabled={true} variant="purple" outlined={true} key={tag.id}>
+              {tag.title}
+            </Tag>
+          ))}
+        </Inline>
       </Stack>
     </Box>
   )
@@ -102,18 +118,27 @@ const ClickableItem = ({ item }: ItemProps) => {
       href={item.slug ? `${pathname}/${item.slug}` : undefined}
       height="full"
     >
-      <Stack space={0}>
+      <Stack space={3}>
         <Stack space={0}>
-          <Text variant="eyebrow" color="purple400">
-            {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
-          </Text>
-          <Text variant="h3" as="span" color="blue400">
-            {item.title}
-          </Text>
+          <Stack space={0}>
+            <Text variant="eyebrow" color="purple400">
+              {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+            </Text>
+            <Text variant="h3" as="span" color="blue400">
+              {item.title}
+            </Text>
+          </Stack>
+          {item.cardIntro?.length > 0 && (
+            <Box>{webRichText(item.cardIntro ?? [])}</Box>
+          )}
         </Stack>
-        {item.cardIntro?.length > 0 && (
-          <Box>{webRichText(item.cardIntro ?? [])}</Box>
-        )}
+        <Inline space={0}>
+          {item.filterTags?.map((tag) => (
+            <Tag disabled={true} variant="purple" outlined={true} key={tag.id}>
+              {tag.title}
+            </Tag>
+          ))}
+        </Inline>
       </Stack>
     </FocusableBox>
   )
@@ -121,7 +146,6 @@ const ClickableItem = ({ item }: ItemProps) => {
 
 interface GenericListProps {
   id: string
-  firstPageItemResponse?: GenericListItemResponse
   searchInputPlaceholder?: string | null
   itemType?: string | null
   filterTags?: GenericTag[] | null
@@ -129,7 +153,6 @@ interface GenericListProps {
 
 export const GenericList = ({
   id,
-  firstPageItemResponse,
   searchInputPlaceholder,
   itemType,
   filterTags,
@@ -137,21 +160,34 @@ export const GenericList = ({
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
   const tagQueryId = `${id}tag`
-
-  // TODO: add query params for filter tag search
-  // TODO: ignore initial response if there are query params set and fetch according to the query params
-  // TODO: perhaps add referrer decorator to graphql resolver so we can read query params
+  const router = useRouter()
 
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
-  const [parameters, setParameters] = useQueryState(tagQueryId, parseAsJson())
+  const [parameters, setParameters] = useQueryState<Record<string, string[]>>(
+    tagQueryId,
+    parseAsJson(),
+  )
 
-  const initialFilterCategories = getFilterCategories(filterTags ?? [])
+  const filterCategories = useMemo(() => {
+    const categories = getFilterCategories(filterTags ?? [])
+    if (parameters !== null) {
+      for (const category of categories) {
+        if (category.id in parameters) {
+          category.selected = parameters[category.id]
+          if (!Array.isArray(category.selected)) {
+            category.selected = []
+          }
+        }
+      }
+    }
+    return categories
+  }, [filterTags, parameters])
 
-  const pageRef = useRef(page)
-  const searchValueRef = useRef(searchValue)
-  const [itemsResponse, setItemsResponse] = useState(firstPageItemResponse)
-  const firstRender = useRef(true)
+  const pageRef = useRef(page ?? 1)
+  const searchValueRef = useRef(searchValue ?? '')
+  const [itemsResponse, setItemsResponse] =
+    useState<GenericListItemResponse | null>(null)
   const [errorOccurred, setErrorOccurred] = useState(false)
   const ref = useRef<HTMLElement | null>(null)
 
@@ -179,13 +215,11 @@ export const GenericList = ({
 
   useDebounce(
     () => {
-      // Only fetch initial items in case we don't have them
-      if (firstRender.current) {
-        firstRender.current = false
-        if (firstPageItemResponse) {
-          return
-        }
-      }
+      const selectedCategories: string[] = []
+      filterCategories.forEach((c) =>
+        c.selected.forEach((t) => selectedCategories.push(t)),
+      )
+
       fetchListItems({
         variables: {
           input: {
@@ -194,14 +228,14 @@ export const GenericList = ({
             lang: activeLocale,
             page: page ?? 1,
             queryString: searchValue || '',
-            tags: [],
-            tagGroups: {},
+            tags: selectedCategories,
+            tagGroups: getGenericTagGroupHierarchy(filterCategories),
           },
         },
       })
     },
     DEBOUNCE_TIME_IN_MS,
-    [searchValue, page],
+    [searchValue, page, filterCategories],
   )
 
   const { width } = useWindowSize()
@@ -240,47 +274,106 @@ export const GenericList = ({
     />
   )
 
+  const selectedFilters = extractFilterTags(filterCategories)
+
   return (
     <Box paddingBottom={3}>
       <GridContainer>
         <Stack space={5}>
           <Box ref={ref}>
-            {initialFilterCategories.length > 0 && (
-              <Filter
-                resultCount={totalItems}
-                labelClear={'Hreinsa síu'}
-                labelClearAll={'Hreinsa allar síur'}
-                labelOpen={'Opna síu'}
-                labelClose={'Loka síu'}
-                labelResult={'Skoða niðurstöður'}
-                labelTitle={'Sía niðurstöður'}
-                variant={isMobile ? 'dialog' : 'popover'}
-                onFilterClear={() => {
-                  //
-                }}
-                filterInput={filterInputComponent}
-              >
-                <FilterMultiChoice
-                  labelClear={'Hreinsa val'}
-                  onChange={({ categoryId, selected }) => {
-                    // setIsTyping(true)
-                    // setParameters((prevParameters) => ({
-                    //   ...prevParameters,
-                    //   [categoryId]: selected,
-                    // }))
+            {filterCategories.length > 0 && (
+              <Stack space={4}>
+                <Filter
+                  resultCount={totalItems}
+                  labelClear={'Hreinsa síu'}
+                  labelClearAll={'Hreinsa allar síur'}
+                  labelOpen={'Opna síu'}
+                  labelClose={'Loka síu'}
+                  labelResult={'Skoða niðurstöður'}
+                  labelTitle={'Sía niðurstöður'}
+                  variant={isMobile ? 'dialog' : 'popover'}
+                  onFilterClear={() => {
+                    setParameters(null)
                   }}
-                  onClear={(categoryId) => {
-                    // setIsTyping(true)
-                    // setParameters((prevParameters) => ({
-                    //   ...prevParameters,
-                    //   [categoryId]: [],
-                    // }))
-                  }}
-                  categories={initialFilterCategories} // TODO: dont use same thing as published material, do things differently and more efficiently here
-                />
-              </Filter>
+                  filterInput={filterInputComponent}
+                >
+                  <FilterMultiChoice
+                    labelClear={'Hreinsa val'}
+                    onChange={({ categoryId, selected }) => {
+                      setParameters((prevParameters) => {
+                        // Make sure we clear out the query params from the url when there is nothing selected
+                        if (
+                          selected.length === 0 &&
+                          prevParameters !== null &&
+                          Object.values(prevParameters).every(
+                            (s) => !s || s.length === 0,
+                          )
+                        ) {
+                          return null
+                        }
+
+                        return {
+                          ...prevParameters,
+                          [categoryId]: selected,
+                        }
+                      })
+                    }}
+                    onClear={(categoryId) => {
+                      setParameters((prevParameters) => {
+                        const updatedParameters = {
+                          ...prevParameters,
+                          [categoryId]: [],
+                        }
+
+                        // Make sure we clear out the query params from the url when there is nothing selected
+                        if (
+                          Object.values(updatedParameters).every(
+                            (s) => !s || s.length === 0,
+                          )
+                        ) {
+                          return null
+                        }
+
+                        return updatedParameters
+                      })
+                    }}
+                    categories={filterCategories}
+                  />
+                </Filter>
+
+                <Inline space={1}>
+                  {selectedFilters.map(({ value, label, category }) => (
+                    <FilterTag
+                      key={value}
+                      onClick={() => {
+                        setParameters((prevParameters) => {
+                          const updatedParameters = {
+                            ...prevParameters,
+                            [category]: (
+                              prevParameters?.[category] ?? []
+                            ).filter((prevValue) => prevValue !== value),
+                          }
+
+                          // Make sure we clear out the query params from the url when there is nothing selected
+                          if (
+                            Object.values(updatedParameters).every(
+                              (s) => !s || s.length === 0,
+                            )
+                          ) {
+                            return null
+                          }
+
+                          return updatedParameters
+                        })
+                      }}
+                    >
+                      {label}
+                    </FilterTag>
+                  ))}
+                </Inline>
+              </Stack>
             )}
-            {initialFilterCategories.length === 0 && filterInputComponent}
+            {filterCategories.length === 0 && filterInputComponent}
           </Box>
           {errorOccurred && (
             <AlertMessage
@@ -293,7 +386,9 @@ export const GenericList = ({
               }
             />
           )}
-          {items.length === 0 && <Text>{noResultsFoundText}</Text>}
+          {itemsResponse && items.length === 0 && (
+            <Text>{noResultsFoundText}</Text>
+          )}
           {items.length > 0 && (
             <Stack space={3}>
               <Inline space={2} justifyContent="spaceBetween" alignY="center">

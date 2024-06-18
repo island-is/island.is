@@ -865,27 +865,6 @@ export const slices = gql`
         slug
       }
     }
-    firstPageListItemResponse {
-      input {
-        genericListId
-        lang
-        page
-        queryString
-        size
-        tags
-        tagGroups
-      }
-      items {
-        id
-        date
-        title
-        slug
-        cardIntro {
-          ...HtmlFields
-        }
-      }
-      total
-    }
   }
 
   fragment BaseSlices on Slice {
