@@ -147,7 +147,7 @@ export const FilterMultiChoice: FC<
             key={`${category.id}-${index}}`}
             id={category.id}
             label={category.label}
-            labelUse="h5"
+            labelUse="h2"
             labelVariant="h5"
             labelColor={
               category.selected.length > 0 ? 'blue400' : 'currentColor'
