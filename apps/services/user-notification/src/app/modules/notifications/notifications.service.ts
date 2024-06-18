@@ -8,15 +8,10 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
-import { Cache } from 'cache-manager'
-
 import { paginate } from '@island.is/nest/pagination'
 import type { User } from '@island.is/auth-nest-tools'
 import { NoContentException } from '@island.is/nest/problem'
-
 import { Notification } from './notification.model'
-import axios from 'axios'
 import { ArgumentDto } from './dto/createHnippNotification.dto'
 import { HnippTemplate } from './dto/hnippTemplate.response'
 import {
@@ -29,10 +24,12 @@ import {
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
 import { mapToContentfulLocale, mapToLocale } from './utils'
-
-const ACCESS_TOKEN = process.env.CONTENTFUL_ACCESS_TOKEN
-const CONTENTFUL_GQL_ENDPOINT =
-  'https://graphql.contentful.com/content/v1/spaces/8k0h54kbe6bj/environments/master'
+import {
+  CmsService,
+  GetTemplateByTemplateId,
+  GetTemplates,
+  GetOrganizationByNationalId,
+} from '@island.is/clients/cms'
 
 /**
  * These are the properties that can be replaced in the template
@@ -53,69 +50,35 @@ export class NotificationsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
-    @Inject(CACHE_MANAGER) private cacheManager: Cache,
     @InjectModel(Notification)
     private readonly notificationModel: typeof Notification,
+    private readonly cmsService: CmsService,
   ) {}
 
-  async performGraphQLRequest(query: string) {
-    try {
-      const response = await axios.post(
-        CONTENTFUL_GQL_ENDPOINT,
-        { query },
-        {
-          headers: {
-            'content-type': 'application/json',
-            authorization: `Bearer ${ACCESS_TOKEN}`,
-          },
-        },
-      )
-      return response.data
-    } catch (error) {
-      if (error.response) {
-        throw new BadRequestException(error.response.data)
-      } else {
-        this.logger.error('GraphQL Request Failed', { error })
-        throw new InternalServerErrorException('Internal Server Error')
-      }
-    }
+  private cleanString(str: string) {
+    return str.replace(/\s+/g, ' ').trim()
   }
-
-  async getSenderOrganization(
+  async getSenderOrganizationTitle(
     senderId: string,
     locale?: Locale,
-  ): Promise<SenderOrganization> {
+  ): Promise<SenderOrganization | undefined> {
     locale = mapToLocale(locale as Locale)
-    const cacheKey = `org-${senderId}-${locale}`
-    const cachedOrganization = await this.cacheManager.get<SenderOrganization>(
-      cacheKey,
+    const queryVariables = {
+      nationalId: senderId,
+      locale: mapToContentfulLocale(locale),
+    }
+    const res = await this.cmsService.fetchData(
+      GetOrganizationByNationalId,
+      queryVariables,
     )
-    if (cachedOrganization) {
-      this.logger.info(`Cache HIT for: ${cacheKey}`, cachedOrganization)
-      return cachedOrganization
+    const items = res.organizationCollection.items
+    if (items.length > 0) {
+      const [item] = items
+      item.title = this.cleanString(item.title)
+      return item
     } else {
-      this.logger.warn(`Cache MISS for: ${cacheKey}`)
+      this.logger.warn(`No org found for senderid: ${senderId}`)
     }
-    const contentfulOrganizationQuery = `{
-      organizationCollection(where: {kennitala: "${senderId}"}, locale: "${mapToContentfulLocale(
-      locale,
-    )}") {
-        items {
-          title
-        }
-      }
-    }`
-    const res = await this.performGraphQLRequest(contentfulOrganizationQuery)
-    const organizationTitle =
-      res.data.organizationCollection.items?.[0]?.title ?? undefined
-    const result: SenderOrganization = { title: organizationTitle }
-
-    if (!organizationTitle) {
-      this.logger.warn(`Organization title not found for senderId: ${senderId}`)
-    }
-    // always store the result in cache wether it is found or not to avoid multiple requests
-    await this.cacheManager.set(cacheKey, result)
-    return result
   }
 
   async formatAndMapNotification(
@@ -139,21 +102,15 @@ export class NotificationsService {
       // if senderId is set and args contains organization, fetch organizationtitle from senderId
       if (notification.senderId && organizationArg) {
         try {
-          const sender = await this.getSenderOrganization(
+          const sender = await this.getSenderOrganizationTitle(
             notification.senderId,
             locale,
           )
-
-          if (sender.title) {
+          if (sender?.title) {
             organizationArg.value = sender.title
-          } else {
-            this.logger.warn('title not found ', {
-              senderId: notification.senderId,
-              locale,
-            })
           }
         } catch (error) {
-          this.logger.error('error trying to get org title', {
+          this.logger.error(error.message, {
             senderId: notification.senderId,
             locale,
           })
@@ -188,47 +145,11 @@ export class NotificationsService {
 
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
-    const cacheKey = `templates-${locale}`
-
-    // Try to retrieve the templates from cache first
-    const cachedTemplates = await this.cacheManager.get<HnippTemplate[]>(
-      cacheKey,
-    )
-    if (cachedTemplates) {
-      this.logger.info(`Cache hit for templates: ${cacheKey}`)
-      return cachedTemplates
+    const queryVariables = {
+      locale: mapToContentfulLocale(locale),
     }
-
-    // GraphQL query to fetch all templates for the specified locale
-    const contentfulTemplatesQuery = `{
-      hnippTemplateCollection(locale: "${mapToContentfulLocale(locale)}") {
-        items {
-          templateId
-          title: notificationTitle
-          externalBody: notificationBody
-          internalBody: notificationDataCopy
-          clickActionUrl
-          args
-        }
-      }
-    }`
-
-    try {
-      const res = await this.performGraphQLRequest(contentfulTemplatesQuery)
-      const templates = res.data.hnippTemplateCollection.items
-
-      if (templates.length === 0) {
-        this.logger.warn(`No templates found for locale: ${locale}`)
-        return []
-      }
-
-      // Cache the fetched templates before returning
-      await this.cacheManager.set(cacheKey, templates)
-      return templates
-    } catch (error) {
-      this.logger.error('Error fetching templates:', { locale, error })
-      throw error // Rethrow the caught error
-    }
+    const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
+    return res.hnippTemplateCollection.items
   }
 
   async getTemplate(
@@ -236,51 +157,21 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<HnippTemplate> {
     locale = mapToLocale(locale as Locale)
-    const cacheKey = `template-${templateId}-${locale}`
-
-    // Try to retrieve the template from cache first
-    const cachedTemplate = await this.cacheManager.get<HnippTemplate>(cacheKey)
-    if (cachedTemplate) {
-      this.logger.info(`Cache hit for template: ${cacheKey}`)
-      return cachedTemplate
+    const queryVariables = {
+      templateId,
+      locale: mapToContentfulLocale(locale),
     }
-
-    // Query to fetch a specific template by templateId
-    const contentfulTemplateQuery = `{
-      hnippTemplateCollection(where: {templateId: "${templateId}"}, locale: "${mapToContentfulLocale(
-      locale,
-    )}") {
-        items {
-          templateId
-          title: notificationTitle
-          externalBody: notificationBody
-          internalBody: notificationDataCopy
-          clickActionUrl
-          args
-        }
-      }
-    }`
-
-    try {
-      const res = await this.performGraphQLRequest(contentfulTemplateQuery)
-      const template =
-        res.data.hnippTemplateCollection.items.length > 0
-          ? res.data.hnippTemplateCollection.items[0]
-          : null
-
-      if (!template) {
-        throw new NotFoundException(`Template not found for ID: ${templateId}`)
-      }
-
-      // Cache the fetched template before returning
-      await this.cacheManager.set(cacheKey, template)
-      return template
-    } catch (error) {
-      this.logger.error('Error fetching template:', { templateId, error })
-      throw error // Rethrow the caught error
+    const res = await this.cmsService.fetchData(
+      GetTemplateByTemplateId,
+      queryVariables,
+    )
+    const items = res.hnippTemplateCollection.items
+    if (items.length > 0) {
+      return items[0]
+    } else {
+      throw new NotFoundException(`Template not found for ID: ${templateId}`)
     }
   }
-
   /**
    * Checks if the arguments provided in the request body are valid for the template and checks if the number of arguments match
    */

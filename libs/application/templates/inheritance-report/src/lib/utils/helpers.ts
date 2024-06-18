@@ -21,8 +21,9 @@ export const currencyStringToNumber = (str: string) => {
   return parseInt(cleanString, 10)
 }
 
-export const isValidString = (string: string | undefined) =>
-  string && /\S/.test(string)
+export const isValidString = (string: string | undefined) => {
+  return string && /\S/.test(string)
+}
 
 export const getEstateDataFromApplication = (
   application: Application<FormValue>,

@@ -199,4 +199,8 @@ export const MockUserNotificationsConfig: ConfigType<
   emailFromAddress: 'development@island.is',
   isConfigured: true,
   servicePortalClickActionUrl: 'https://island.is/minarsidur',
+  redis: {
+    nodes: ['node'],
+    ssl: false,
+  },
 }

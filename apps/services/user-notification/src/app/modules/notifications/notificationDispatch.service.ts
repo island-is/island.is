@@ -10,6 +10,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Notification } from './types'
 import { FIREBASE_PROVIDER } from '../../../constants'
 import { V2UsersApi } from '@island.is/clients/user-profile'
+import type { FirebaseError } from 'firebase-admin/lib/utils/error'
 
 @Injectable()
 export class NotificationDispatchService {
@@ -105,7 +106,7 @@ export class NotificationDispatchService {
   }
 
   private async handleSendError(
-    error: any,
+    error: FirebaseError,
     nationalId: string,
     token: string,
     messageId: string,
