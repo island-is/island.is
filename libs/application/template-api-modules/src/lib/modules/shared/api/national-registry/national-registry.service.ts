@@ -11,7 +11,6 @@ import {
   NationalRegistryParent,
   NationalRegistryMaritalTitle,
   BirthplaceParameters,
-  NationalRegistryMunicipality,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
@@ -542,22 +541,5 @@ export class NationalRegistryService extends BaseTemplateApiService {
     )
 
     return cohabitantsDetails
-  }
-
-  async getMunicipalities(): Promise<NationalRegistryMunicipality[] | null> {
-    const municipalities: NationalRegistryMunicipality[] | null =
-      await this.nationalRegistryApi.getMunicipalityCodes()
-
-    if (!municipalities) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.nationalRegistryMunicipalitiesMissing,
-          summary: coreErrorMessages.nationalRegistryMunicipalitiesMissing,
-        },
-        404,
-      )
-    }
-
-    return municipalities
   }
 }

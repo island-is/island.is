@@ -19,10 +19,6 @@ import { FamilyDto, formatFamilyDto } from './types/family.dto'
 import { BirthplaceDto, formatBirthplaceDto } from './types/birthplace.dto'
 import { CitizenshipDto, formatCitizenshipDto } from './types/citizenship.dto'
 import { formatReligionDto, ReligionDto } from './types/religion.dto'
-import {
-  formatMunicipalityDto,
-  MunicipalityDto,
-} from './types/municipality.dto'
 
 const MODERN_IGNORED_STATUS = 204
 
@@ -182,11 +178,6 @@ export class NationalRegistryClientService {
   ): Promise<CohabitionCodesDto | null> {
     const codes = await this.keysApi.lyklarGetHjuskapar({ id: id, kyn: gender })
     return formatCohabitionCodesDto(codes)
-  }
-
-  async getMunicipalityCodes(): Promise<MunicipalityDto[] | null> {
-    const municipalities = await this.keysApi.lyklarGetSveitarfelog()
-    return formatMunicipalityDto(municipalities)
   }
 
   private async handleLegacyMissingData<T>(

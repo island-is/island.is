@@ -23,7 +23,6 @@ import {
   Form,
   FormModes,
   NO,
-  NationalRegistryMunicipality,
   YES,
 } from '@island.is/application/types'
 import {
