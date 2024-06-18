@@ -179,6 +179,7 @@ const FinanceTransactions = () => {
                   {
                     id: 'flokkur',
                     label: formatMessage(messages.transactionsLabel),
+                    labelAs: 'h2',
                     selected: dropdownSelect ? [...dropdownSelect] : [],
                     filters: chargeTypeSelect,
                     inline: false,
