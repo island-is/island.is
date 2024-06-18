@@ -6,7 +6,6 @@ import {
   getYarnLockHash,
   getPackageHash,
   getNodeVersionString,
-  getGeneratedFileHash,
   folderSizeIsEqualOrGreaterThan,
   runCommand,
   fileSizeIsEqualOrGreaterThan,
@@ -20,6 +19,7 @@ import {
   ENV_CACHE_SUCCESS,
 } from './_const.mjs'
 import { keyStorage } from './_key_storage.mjs'
+import { getGeneratedFilesHash } from './_generated_files.mjs'
 
 // When testing this is good to manipulate
 const HASH_VERSION = `newcache-${6}`
@@ -85,7 +85,7 @@ export const caches = [
     enabled: ENABLED_MODULES['generated-files'],
     hash: async () =>
       keyStorage.getKey('generated-files') ??
-      `generated-files-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getGeneratedFileHash()}`,
+      `generated-files-${HASH_VERSION}-${getPlatformString()}-${await getYarnLockHash()}-${await getPackageHash()}-${await getGeneratedFilesHash()}`,
     name: 'Cache Generated Files',
     id: 'generated-files',
     path: 'generated_files.tar.gz',
