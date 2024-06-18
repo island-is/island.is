@@ -581,11 +581,6 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Náði ekki að sækja samíbúa',
     description: 'Not able to fetch cohabitants',
   },
-  nationalRegistryMunicipalitiesMissing: {
-    id: 'application.system:core.fetch.data.nationalRegistryMunicipalitiesMissing',
-    defaultMessage: 'Náði ekki að sækja sveitarfélög',
-    description: 'Not able to fetch municipalities',
-  },
   applicationIsPrunedAndReadOnly: {
     id: 'application.system:core.fetch.data.applicationIsPrunedAndReadOnly',
     defaultMessage: 'Umsókn hefur runnið út á tíma og hefur verið gerð óvirk.',
