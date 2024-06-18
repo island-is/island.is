@@ -81,8 +81,8 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
             navRoot.path && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                span={['12/12', '6/12', '6/12', '6/12', '6/12']}
-                paddingBottom={[1, 2, 3, 3]}
+                span={['12/12', '6/12']}
+                paddingBottom={[1, 2, 3]}
                 hiddenAbove={
                   navRoot.path === DocumentsPaths.ElectronicDocumentsRoot
                     ? 'md'
@@ -120,6 +120,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                         component={Link}
                         to={navRoot.path}
                         headingVariant="h4"
+                        headingAs="h2"
                         icon={
                           isMobile && navRoot.icon ? (
                             <Icon
@@ -196,7 +197,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                         )
                       )}
                     </Box>
-                    <Text as="h3" variant="h4" color="blue400" truncate>
+                    <Text as="h2" variant="h4" color="blue400" truncate>
                       {formatMessage(m.documents)}
                     </Text>
 
