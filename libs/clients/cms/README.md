@@ -10,7 +10,7 @@ The `GRAPHQL_API_ENDPOINT` and `CONTENTFUL_ACCESS_TOKEN` env variables need to b
 
 ## Fetch GraphQL Schema
 ```sh
-yarn graphql-codegen --config libs/clients/cms/fetch-schema.yaml
+yarn nx run clients-cms:fetch-schema
 ```
 
 
