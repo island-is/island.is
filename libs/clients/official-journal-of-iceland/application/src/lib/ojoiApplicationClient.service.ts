@@ -44,7 +44,7 @@ export class OfficialJournalOfIcelandApplicationClientService {
     try {
       return await this.ojoiApplicationApi.getPrice(params)
     } catch (error) {
-      this.logger.error('Failed to get price', {
+      this.logger.warn('Failed to get price', {
         error,
         category: LOG_CATEGORY,
       })
