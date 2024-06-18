@@ -53,5 +53,3 @@ export async function getGeneratedFilesHash() {
   const finalHash = hash.digest('hex')
   return finalHash
 }
-
-getGeneratedFilesHash()
