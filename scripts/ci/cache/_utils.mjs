@@ -2,33 +2,10 @@
 import { arch, platform } from 'node:os'
 import crypto from 'node:crypto'
 import { ROOT } from './_common.mjs'
-import { spawn, exec } from 'node:child_process'
+import { spawn } from 'node:child_process'
 import { resolve, join } from 'node:path'
 import { readFile, readdir, stat } from 'node:fs/promises'
-import { HASH_GENERATE_FILES_SCRIPT } from './_const.mjs'
 
-const GENERATE_HASH_GENERATED_FILES_SCRIPT = resolve(
-  ROOT,
-  ...HASH_GENERATE_FILES_SCRIPT.split('/'),
-)
-export async function getGeneratedFileHash(
-  scriptPath = GENERATE_HASH_GENERATED_FILES_SCRIPT,
-) {
-  return new Promise((resolve, reject) => {
-    exec(`bash "${scriptPath}"`, (error, stdout, stderr) => {
-      if (error) {
-        reject(`Error: ${error.message}`)
-        return
-      }
-      if (stderr) {
-        reject(`Stderr: ${stderr}`)
-        return
-      }
-      console.log(stdout)
-      resolve(stdout)
-    })
-  })
-}
 export async function getNodeVersionString() {
   const content = await getPackageJSON()
   const nodeVersion = content?.engines?.node
