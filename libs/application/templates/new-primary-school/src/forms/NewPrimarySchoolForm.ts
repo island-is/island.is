@@ -46,7 +46,7 @@ import {
   getFoodAllergiesOptions,
   getFoodIntolerancesOptions,
   getLanguageCodes,
-  getOptionsListByName,
+  getOptionsListByType,
   getOtherParent,
   getReasonForApplicationOptions,
   getRelationOptionLabel,
@@ -812,7 +812,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                       .typeOfAllergiesPlaceholder,
                   // TODO: Nota gögn fá Júní?
                   loadOptions: async ({ apolloClient }): Promise<any[]> => {
-                    /*  return await getOptionsListByName(
+                    /*  return await getOptionsListByType(
                       apolloClient,
                       OptionsType.ALLERGRY,
                     )
@@ -864,7 +864,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                       .typeOfIntolerancesPlaceholder,
                   // TODO: Nota gögn fá Júní?
                   loadOptions: async ({ apolloClient }): Promise<any[]> => {
-                    /*return await getOptionsListByName(
+                    /*return await getOptionsListByType(
                       apolloClient,
                       OptionsType.INTELERENCE,
                     )*/

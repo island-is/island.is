@@ -438,7 +438,7 @@ export const getFoodIntolerancesOptionsLabel = (
   )
 }
 
-export const getOptionsListByName = async (
+export const getOptionsListByType = async (
   apolloClient: ApolloClient<object>,
   type: string,
 ) => {
