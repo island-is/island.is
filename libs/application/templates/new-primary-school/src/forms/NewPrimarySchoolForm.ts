@@ -803,7 +803,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   ],
                 }),
                 buildAsyncSelectField({
-                  // TODO: Multi select
                   id: 'allergiesAndIntolerances.foodAllergies',
                   title:
                     newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
@@ -820,6 +819,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
 */
                     return getFoodAllergiesOptions()
                   },
+                  isMulti: true,
                   condition: (answers) => {
                     const { hasFoodAllergies } = getApplicationAnswers(answers)
 
@@ -855,7 +855,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   ],
                 }),
                 buildAsyncSelectField({
-                  // TODO: Multi select
                   id: 'allergiesAndIntolerances.foodIntolerances',
                   title:
                     newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
@@ -872,6 +871,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
 
                     return getFoodIntolerancesOptions()
                   },
+                  isMulti: true,
                   condition: (answers) => {
                     const { hasFoodIntolerances } =
                       getApplicationAnswers(answers)
