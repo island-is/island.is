@@ -121,8 +121,8 @@ const OccupationalLicenseDetail = () => {
       {!error && !loading && isOldEducationLicense && (
         <AlertMessage
           type="warning"
-          title={'blingy blang'}
-          message={'parappa'}
+          title={'Skírteini gefin út fyrir 1. janúar 2020 etc...'}
+          message={'Meiri upplýsingar hér'}
         />
       )}
       {!error && (loading || data?.occupationalLicenseV2) && (
