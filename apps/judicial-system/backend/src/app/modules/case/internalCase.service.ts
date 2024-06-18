@@ -174,6 +174,7 @@ export class InternalCaseService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => EventLogService))
     private readonly eventLogService: EventLogService,
+    @Inject(forwardRef(() => PDFService))
     private readonly pdfService: PDFService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -640,6 +641,41 @@ export class InternalCaseService {
       })
   }
 
+  async deliverIndictmentAssignedRolesToCourt(
+    theCase: Case,
+    user: TUser,
+    nationalId?: string,
+  ): Promise<DeliverResponse> {
+    const assignedRole =
+      theCase.judge?.nationalId === nationalId
+        ? {
+            name: theCase.judge?.name,
+            role: UserRole.DISTRICT_COURT_JUDGE,
+          }
+        : theCase.registrar?.nationalId === nationalId
+        ? {
+            name: theCase.registrar?.name,
+            role: UserRole.DISTRICT_COURT_REGISTRAR,
+          }
+        : {}
+
+    return this.courtService
+      .updateIndictmentCaseWithAssignedRoles(
+        user,
+        theCase.id,
+        theCase.courtCaseNumber,
+        assignedRole,
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with assigned roles`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,

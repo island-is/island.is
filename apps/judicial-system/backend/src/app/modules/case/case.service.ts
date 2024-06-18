@@ -607,6 +607,21 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  private addMessagesForIndictmentCourtRoleAssigned(
+    theCase: Case,
+    user: TUser,
+    assignedNationalId: string,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+        user,
+        caseId: theCase.id,
+        elementId: assignedNationalId,
+      },
+    ])
+  }
+
   private addMessagesForCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
@@ -1160,6 +1175,30 @@ export class CaseService {
           // New defender email
           await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
+      }
+    }
+
+    if (
+      isIndictmentCase(updatedCase.type) &&
+      ![
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.WAITING_FOR_CONFIRMATION,
+      ].includes(updatedCase.state)
+    ) {
+      const updatedRole =
+        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+          ? updatedCase.judge
+          : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+          ? updatedCase.registrar
+          : null
+
+      if (updatedRole?.nationalId) {
+        await this.addMessagesForIndictmentCourtRoleAssigned(
+          updatedCase,
+          user,
+          updatedRole.nationalId,
+        )
       }
     }
 
