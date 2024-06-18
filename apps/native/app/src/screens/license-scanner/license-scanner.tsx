@@ -1,6 +1,6 @@
 import { Bubble, Button, theme } from '@ui'
 import { BarCodeEvent, Constants } from 'expo-barcode-scanner'
-import { Camera, FlashMode } from 'expo-camera'
+// import { Camera, FlashMode } from 'expo-camera'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -95,7 +95,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   const [invalid, setInvalid] = useState<boolean>(false)
   const [torch, setTorch] = useState<boolean>(false)
 
-  const camera = useRef<Camera>()
+  // const camera = useRef<Camera>()
   const [layout, setLayout] = useState<LayoutRectangle>()
   const [ratio, setRatio] = useState<string>()
   const [padding, setPadding] = useState(0)
@@ -107,9 +107,9 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
     useVerifyLicenseBarcodeMutation()
 
   useEffect(() => {
-    Camera.requestCameraPermissionsAsync().then(({ status }) => {
-      setHasPermission(status === 'granted')
-    })
+    // Camera.requestCameraPermissionsAsync().then(({ status }) => {
+    //   setHasPermission(status === 'granted')
+    // })
   }, [])
 
   useEffect(() => {
@@ -265,23 +265,23 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
       style={{ flex: 1, backgroundColor: '#000' }}
       onLayout={(e) => setLayout(e.nativeEvent.layout)}
     >
-      {hasPermission === true && active && (
-        <Camera
-          onBarCodeScanned={active ? onBarCodeScanned : undefined}
-          onMountError={() => {
-            Alert.alert('Camera error', 'Could not start camera preview')
-          }}
-          flashMode={torch ? FlashMode.torch : FlashMode.off}
-          ref={(ref) => {
-            if (ref) {
-              camera.current = ref
-            }
-          }}
-          ratio={ratio}
-          onCameraReady={onCameraReady}
-          style={[StyleSheet.absoluteFillObject, { marginHorizontal: padding }]}
-        />
-      )}
+      {/*{hasPermission === true && active && (*/}
+      {/*  <Camera*/}
+      {/*    onBarCodeScanned={active ? onBarCodeScanned : undefined}*/}
+      {/*    onMountError={() => {*/}
+      {/*      Alert.alert('Camera error', 'Could not start camera preview')*/}
+      {/*    }}*/}
+      {/*    flashMode={torch ? FlashMode.torch : FlashMode.off}*/}
+      {/*    ref={(ref) => {*/}
+      {/*      if (ref) {*/}
+      {/*        camera.current = ref*/}
+      {/*      }*/}
+      {/*    }}*/}
+      {/*    ratio={ratio}*/}
+      {/*    onCameraReady={onCameraReady}*/}
+      {/*    style={[StyleSheet.absoluteFillObject, { marginHorizontal: padding }]}*/}
+      {/*  />*/}
+      {/*)}*/}
       {renderBubble()}
       <BottomRight>
         <TouchableOpacity onPress={onFlashlightPress}>
