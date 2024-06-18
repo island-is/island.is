@@ -16,6 +16,8 @@ interface Props {
     | 'request'
     | 'custodyNotice'
     | 'indictment'
+    | 'subpoena'
+
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void

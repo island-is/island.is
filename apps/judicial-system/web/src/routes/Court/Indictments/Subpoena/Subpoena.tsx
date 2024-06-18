@@ -16,6 +16,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
@@ -179,7 +180,7 @@ const Subpoena: FC = () => {
             </Box>
           ))}
         </Box>
-        <Box component="section" marginBottom={10}>
+        <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.courtArrangementsHeading)}
           />
@@ -191,6 +192,26 @@ const Subpoena: FC = () => {
             courtRoomDisabled={isPostponed}
             courtRoomRequired
           />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          {workingCase.defendants?.map((defendant, index) => (
+            <Box
+              marginBottom={
+                index + 1 === workingCase.defendants?.length ? 0 : 2
+              }
+            >
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Fyrirkall - ${defendant.name} - PDF`}
+                pdfType="subpoena"
+                disabled={
+                  !courtDate?.date ||
+                  !courtDate?.location ||
+                  !defendant.subpoenaType
+                }
+              />
+            </Box>
+          ))}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
