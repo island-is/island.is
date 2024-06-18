@@ -40,7 +40,7 @@ export const useErrorInSettings = (aidNames: string[]) => {
     return true
   }
 
-  const errorCheckDesemberAid = (decemberCompensation: number) => {
+  const errorCheckDecemberCompensation = (decemberCompensation: number) => {
     if (decemberCompensation === 0) {
       setHasDecemberCompensationError(true)
       scrollToId('input-desember')
@@ -66,7 +66,7 @@ export const useErrorInSettings = (aidNames: string[]) => {
     hasDecemberCompensationError,
     errorCheckNav,
     errorCheckAid,
-    errorCheckDesemberAid,
+    errorCheckDecemberCompensation,
     aidChangeHandler,
     navChangeHandler,
   }

@@ -69,9 +69,9 @@ export const PercentageInput = ({
       hasError={hasError}
       maxLength={4}
       onChange={(e) => {
-        const number = isNaN(parseInt(e.target.value.slice(0, -1)))
-          ? 0
-          : parseInt(e.target.value.slice(0, -1))
+        const parseIntTarget = parseInt(e.target.value.slice(0, -1))
+        const number = isNaN(parseIntTarget) ? 0 : parseIntTarget
+
         onUpdate(number)
       }}
       errorMessage={errorMessage}
