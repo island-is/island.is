@@ -231,6 +231,7 @@ export interface Municipality {
   navUsername?: string
   navPassword?: string
   apiKeyInfo?: ApiKeysForMunicipality
+  decemberCompensation: number
 }
 
 export interface UpdateMunicipalityActivity {

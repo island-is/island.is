@@ -383,33 +383,6 @@ describe('CaseController - Transition', () => {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
-                  type: MessageType.ARCHIVING_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: caseFileId1,
-                },
-                {
-                  type: MessageType.ARCHIVING_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: caseFileId2,
-                },
-                {
-                  type: MessageType.ARCHIVING_CASE_FILES_RECORD,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: policeCaseNumber,
-                },
-                {
                   type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
@@ -431,36 +404,14 @@ describe('CaseController - Transition', () => {
           } else if (newState === CaseState.DELETED) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
-                ...(!isIndictmentCase(theCase.type)
-                  ? [
-                      {
-                        type: MessageType.NOTIFICATION,
-                        user: {
-                          ...defaultUser,
-                          canConfirmIndictment: isIndictmentCase(theCase.type),
-                        },
-                        caseId,
-                        body: { type: NotificationType.REVOKED },
-                      },
-                    ]
-                  : []),
                 {
-                  type: MessageType.ARCHIVING_CASE_FILE,
+                  type: MessageType.NOTIFICATION,
                   user: {
                     ...defaultUser,
                     canConfirmIndictment: isIndictmentCase(theCase.type),
                   },
                   caseId,
-                  elementId: caseFileId1,
-                },
-                {
-                  type: MessageType.ARCHIVING_CASE_FILE,
-                  user: {
-                    ...defaultUser,
-                    canConfirmIndictment: isIndictmentCase(theCase.type),
-                  },
-                  caseId,
-                  elementId: caseFileId2,
+                  body: { type: NotificationType.REVOKED },
                 },
               ],
             )
