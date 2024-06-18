@@ -293,12 +293,32 @@ export const GenericList = ({
                   {isMobile && filterInputComponent}
                   <Filter
                     resultCount={totalItems}
-                    labelClear={'Hreinsa síu'}
-                    labelClearAll={'Hreinsa allar síur'}
-                    labelOpen={'Opna síu'}
-                    labelClose={'Loka síu'}
-                    labelResult={'Skoða niðurstöður'}
-                    labelTitle={'Sía niðurstöður'}
+                    labelClear={
+                      activeLocale === 'is' ? 'Hreinsa síu' : 'Clear filter'
+                    }
+                    labelClearAll={
+                      activeLocale === 'is'
+                        ? 'Hreinsa allar síur'
+                        : 'Clear all filters'
+                    }
+                    labelOpen={
+                      activeLocale === 'is'
+                        ? 'Sía niðurstöður'
+                        : 'Filter results'
+                    }
+                    labelClose={
+                      activeLocale === 'is' ? 'Loka síu' : 'Close filter menu'
+                    }
+                    labelResult={
+                      activeLocale === 'is'
+                        ? 'Skoða niðurstöður'
+                        : 'See results'
+                    }
+                    labelTitle={
+                      activeLocale === 'is'
+                        ? 'Sía niðurstöður'
+                        : 'Filter results'
+                    }
                     variant={isMobile ? 'dialog' : 'popover'}
                     onFilterClear={() => {
                       setParameters(null)
@@ -306,7 +326,11 @@ export const GenericList = ({
                     filterInput={filterInputComponent}
                   >
                     <FilterMultiChoice
-                      labelClear={'Hreinsa val'}
+                      labelClear={
+                        activeLocale === 'is'
+                          ? 'Hreinsa val'
+                          : 'Clear selection'
+                      }
                       onChange={({ categoryId, selected }) => {
                         setParameters((prevParameters) => {
                           // Make sure we clear out the query params from the url when there is nothing selected
