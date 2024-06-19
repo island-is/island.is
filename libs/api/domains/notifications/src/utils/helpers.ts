@@ -32,7 +32,9 @@ export const notificationMapper = (
     dataCopy: notification.internalBody
       ? cleanString(notification.internalBody)
       : undefined,
-    displayBody: cleanString(notification.internalBody ?? notification.externalBody),
+    displayBody: cleanString(
+      notification.internalBody ?? notification.externalBody,
+    ),
     link: {
       url: notification.clickActionUrl,
     },
