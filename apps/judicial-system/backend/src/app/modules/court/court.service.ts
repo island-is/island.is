@@ -12,7 +12,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import type { User, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
@@ -24,6 +24,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { Defendant } from '../defendant'
 import { EventService } from '../event'
 import { RobotLog } from './models/robotLog.model'
 import { courtModuleConfig } from './court.config'
@@ -127,6 +128,8 @@ enum RobotEmailType {
   APPEAL_CASE_CONCLUSION = 'APPEAL_CASE_CONCLUSION',
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
   NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
+  INDICTMENT_CASE_ASSIGNED_ROLES = 'INDICTMENT_CASE_ASSIGNED_ROLES',
+  INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
 }
 
 @Injectable()
@@ -603,6 +606,75 @@ export class CourtService {
     }
   }
 
+  async updateIndictmentWithDefenderInfo(
+    user: User,
+    caseId: string,
+    courtCaseNumber?: string,
+    defendants?: Defendant[],
+  ): Promise<unknown> {
+    try {
+      const defendantInfo = defendants?.map((defendant) => ({
+        nationalId: defendant.nationalId,
+        defenderName: defendant.defenderName,
+        defenderEmail: defendant.defenderEmail,
+      }))
+
+      const subject = `Ákæra - ${courtCaseNumber} - verjanda upplýsingar`
+      const content = JSON.stringify(defendantInfo)
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_DEFENDER_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment with defender info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateIndictmentCaseWithAssignedRoles(
+    user: User,
+    caseId: string,
+    courtCaseNumber?: string,
+    assignedRole?: { name?: string; role?: UserRole },
+  ): Promise<unknown> {
+    try {
+      const subject = `Ákæra - ${courtCaseNumber} - úthlutun`
+      const content = JSON.stringify(assignedRole)
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with assigned roles',
+        {
+          caseId,
+          actor: user.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
   async updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
@@ -784,7 +856,7 @@ export class CourtService {
       .then((log) => [log.id, log.seqNumber])
   }
 
-  private async sendToRobot(
+  async sendToRobot(
     subject: string,
     content: string,
     type: RobotEmailType,

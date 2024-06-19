@@ -9,6 +9,7 @@ import { HealthDirectorateClientConfig } from './healthDirectorateClient.config'
 import {
   Configuration,
   StarfsleyfiAMinumSidumApi,
+  UmsoknStarfsleyfiApi,
   VottordApi,
 } from '../../gen/fetch'
 
@@ -39,23 +40,25 @@ const configFactory = (
   },
 })
 
-export const exportedApis = [StarfsleyfiAMinumSidumApi, VottordApi].map(
-  (Api) => ({
-    provide: Api,
-    scope: LazyDuringDevScope,
-    useFactory: (
-      xRoadConfig: ConfigType<typeof XRoadConfig>,
-      config: ConfigType<typeof HealthDirectorateClientConfig>,
-      idsClientConfig: ConfigType<typeof IdsClientConfig>,
-    ) => {
-      return new Api(
-        new Configuration(configFactory(xRoadConfig, config, idsClientConfig)),
-      )
-    },
-    inject: [
-      XRoadConfig.KEY,
-      HealthDirectorateClientConfig.KEY,
-      IdsClientConfig.KEY,
-    ],
-  }),
-)
+export const exportedApis = [
+  StarfsleyfiAMinumSidumApi,
+  VottordApi,
+  UmsoknStarfsleyfiApi,
+].map((Api) => ({
+  provide: Api,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xRoadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof HealthDirectorateClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) => {
+    return new Api(
+      new Configuration(configFactory(xRoadConfig, config, idsClientConfig)),
+    )
+  },
+  inject: [
+    XRoadConfig.KEY,
+    HealthDirectorateClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
+}))
