@@ -117,6 +117,7 @@ export const createTestingCaseModule = async () => {
         useValue: {
           create: jest.fn(),
           findOne: jest.fn(),
+          update: jest.fn(),
         },
       },
       CaseService,

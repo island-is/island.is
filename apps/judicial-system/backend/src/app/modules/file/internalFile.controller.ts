@@ -16,15 +16,8 @@ import {
   messageEndpoint,
   MessageType,
 } from '@island.is/judicial-system/message'
-import { indictmentCases } from '@island.is/judicial-system/types'
 
-import {
-  Case,
-  CaseExistsGuard,
-  CaseHasExistedGuard,
-  CaseTypeGuard,
-  CurrentCase,
-} from '../case'
+import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { DeliverDto } from './dto/deliver.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
@@ -61,29 +54,6 @@ export class InternalFileController {
       caseFile,
       deliverDto.user,
     )
-
-    return { delivered: success }
-  }
-
-  @UseGuards(
-    CaseHasExistedGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseFileExistsGuard,
-  )
-  @Post(`${messageEndpoint[MessageType.ARCHIVING_CASE_FILE]}/:fileId`)
-  @ApiCreatedResponse({
-    type: DeliverResponse,
-    description: 'Archives a case file',
-  })
-  async archiveCaseFile(
-    @Param('caseId') caseId: string,
-    @CurrentCase() theCase: Case,
-    @Param('fileId') fileId: string,
-    @CurrentCaseFile() caseFile: CaseFile,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(`Archiving file ${fileId} of case ${caseId}`)
-
-    const success = await this.fileService.archive(theCase, caseFile)
 
     return { delivered: success }
   }
