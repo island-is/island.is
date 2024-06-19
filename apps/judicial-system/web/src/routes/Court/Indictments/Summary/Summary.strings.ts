@@ -17,8 +17,8 @@ export const strings = defineMessages({
     description: 'Notaður sem titill fyrir skjöl málsins',
   },
   caseFilesSubtitleRuling: {
-    id: 'judicial.system.core:indictments.summary.case_files_subtitle_ruling',
-    defaultMessage: 'Dómur',
+    id: 'judicial.system.core:indictments.summary.case_files_subtitle_rulings',
+    defaultMessage: 'Dómar, úrskurðir og þingbók',
     description:
       'Notaður sem undirtitill fyrir skjöl málsins ef um dóm er að ræða',
   },

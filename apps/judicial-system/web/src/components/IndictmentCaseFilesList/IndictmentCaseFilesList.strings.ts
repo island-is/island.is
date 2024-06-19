@@ -24,8 +24,8 @@ export const strings = defineMessages({
       'Notaður sem titill á þingbókar hluta á dómskjalaskjá í ákærum.',
   },
   rulingTitle: {
-    id: 'judicial.system.core:court.indictment_case_files_list.ruling_title',
-    defaultMessage: 'Dómur',
+    id: 'judicial.system.core:court.indictment_case_files_list.ruling_titles',
+    defaultMessage: 'Dómar, úrskurður og þingbók',
     description: 'Notaður sem titill á dómur hluta á dómskjalaskjá í ákærum.',
   },
 })
