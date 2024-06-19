@@ -20,7 +20,10 @@ export const NavButtons = () => {
   const { activeItem, form } = control
   const { groupsList: groups, inputsList: inputs } = form
   const { formatMessage } = useIntl()
-  const hoverText = activeItem.type === 'Step' ? formatMessage(m.addGroupHover) : formatMessage(m.addInputHover)
+  const hoverText =
+    activeItem.type === 'Step'
+      ? formatMessage(m.addGroupHover)
+      : formatMessage(m.addInputHover)
 
   const [addGroup] = useFormSystemCreateGroupMutation()
   const [addInput] = useFormSystemCreateInputMutation()
@@ -33,7 +36,9 @@ export const NavButtons = () => {
     if (type === 'Step') {
       return groups?.some((group) => group?.stepGuid === activeItem?.data?.guid)
     } else if (type === 'Group') {
-      return inputs?.some((input) => input?.groupGuid === activeItem?.data?.guid)
+      return inputs?.some(
+        (input) => input?.groupGuid === activeItem?.data?.guid,
+      )
     } else {
       return false
     }
@@ -131,10 +136,7 @@ export const NavButtons = () => {
           marginRight={1}
           onClick={addItem}
         >
-          <Tooltip
-            text={hoverText}
-            color='yellow200'
-          >
+          <Tooltip text={hoverText} color="yellow200">
             <span>
               <Icon icon="add" color="blue400" size="medium" />
             </span>
@@ -146,12 +148,12 @@ export const NavButtons = () => {
           baseId="remove"
           title={formatMessage(m.areYouSure)}
           description={formatMessage(m.completelySure)}
-          ariaLabel='Remove item'
+          ariaLabel="Remove item"
           buttonTextConfirm={formatMessage(m.confirm)}
           buttonTextCancel={formatMessage(m.cancel)}
           onConfirm={remove}
           disclosureElement={
-            <Box style={{ paddingTop: '5px', cursor: 'pointer' }} >
+            <Box style={{ paddingTop: '5px', cursor: 'pointer' }}>
               <Tooltip text={formatMessage(m.delete)}>
                 <span>
                   <Icon icon="trash" size="medium" />
@@ -161,13 +163,14 @@ export const NavButtons = () => {
           }
         />
       ) : (
-        <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove} >
+        <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove}>
           <Tooltip text={formatMessage(m.delete)}>
             <span>
               <Icon icon="trash" size="medium" />
             </span>
           </Tooltip>
-        </Box>)}
+        </Box>
+      )}
     </Box>
   )
 }

@@ -26,7 +26,7 @@ export class InputsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: InputsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

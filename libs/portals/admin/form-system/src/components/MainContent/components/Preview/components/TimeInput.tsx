@@ -1,24 +1,22 @@
-import { FormSystemInput } from "@island.is/api/schema"
+import { FormSystemInput } from '@island.is/api/schema'
 import {
   GridRow as Row,
   GridColumn as Column,
   Select,
   Box,
 } from '@island.is/island-ui/core'
-import { ChangeEvent } from "react"
-
+import { ChangeEvent } from 'react'
 
 interface Props {
   currentItem: FormSystemInput
 }
 
 export const TimeInput = ({ currentItem }: Props) => {
-
   // 0: Minute
   // 1: Hourly
   // 2: Half hour
   // 3: Quarter
-  const chosenMinuteList = (): { label: string, value: string }[] => {
+  const chosenMinuteList = (): { label: string; value: string }[] => {
     const min = minuteList.map((t) => {
       return {
         label: t,
@@ -90,8 +88,6 @@ export const TimeInput = ({ currentItem }: Props) => {
   )
 }
 
-
-
 const hourList = [
   '00',
   '01',
@@ -118,7 +114,6 @@ const hourList = [
   '22',
   '23',
 ]
-
 
 const minuteList = [
   '00',

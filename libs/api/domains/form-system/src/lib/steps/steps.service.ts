@@ -24,7 +24,7 @@ export class StepsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: StepsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

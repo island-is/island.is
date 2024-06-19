@@ -23,5 +23,3 @@ export const PhoneNumber = ({ currentItem }: Props) => {
     </Row>
   )
 }
-
-

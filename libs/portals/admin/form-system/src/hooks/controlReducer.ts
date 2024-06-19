@@ -14,9 +14,9 @@ import { ActiveItem, InputSettings } from '../lib/utils/interfaces'
 type ActiveItemActions =
   | { type: 'SET_ACTIVE_ITEM'; payload: { activeItem: ActiveItem } }
   | {
-    type: 'SET_ACTIVE_LIST_ITEM'
-    payload: { listItem: FormSystemListItem | null }
-  }
+      type: 'SET_ACTIVE_LIST_ITEM'
+      payload: { listItem: FormSystemListItem | null }
+    }
 
 type GroupActions =
   | { type: 'ADD_GROUP'; payload: { group: FormSystemGroup } }
@@ -26,21 +26,21 @@ type InputActions =
   | { type: 'ADD_INPUT'; payload: { input: FormSystemInput } }
   | { type: 'REMOVE_INPUT'; payload: { inputId: number } }
   | {
-    type: 'CHANGE_INPUT_TYPE'
-    payload: {
-      newValue: string
-      inputSettings: InputSettings
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'CHANGE_INPUT_TYPE'
+      payload: {
+        newValue: string
+        inputSettings: InputSettings
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'CHANGE_DESCRIPTION'
-    payload: { lang: 'en' | 'is'; newValue: string }
-  }
+      type: 'CHANGE_DESCRIPTION'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | {
-    type: 'CHANGE_IS_REQUIRED'
-    payload: { update: (updatedActiveItem?: ActiveItem) => void }
-  }
+      type: 'CHANGE_IS_REQUIRED'
+      payload: { update: (updatedActiveItem?: ActiveItem) => void }
+    }
 
 type StepActions =
   | { type: 'ADD_STEP'; payload: { step: FormSystemStep } }
@@ -48,119 +48,119 @@ type StepActions =
 
 type DndActions =
   | {
-    type: 'STEP_OVER_STEP'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'STEP_OVER_STEP'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'GROUP_OVER_STEP'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'GROUP_OVER_STEP'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'GROUP_OVER_GROUP'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'GROUP_OVER_GROUP'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'INPUT_OVER_GROUP'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'INPUT_OVER_GROUP'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'INPUT_OVER_INPUT'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'INPUT_OVER_INPUT'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
   | {
-    type: 'LIST_ITEM_OVER_LIST_ITEM'
-    payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
-  }
+      type: 'LIST_ITEM_OVER_LIST_ITEM'
+      payload: { activeId: UniqueIdentifier; overId: UniqueIdentifier }
+    }
 
 type ChangeActions =
   | { type: 'CHANGE_NAME'; payload: { lang: 'en' | 'is'; newValue: string } }
   | {
-    type: 'CHANGE_FORM_NAME'
-    payload: { lang: 'en' | 'is'; newValue: string }
-  }
+      type: 'CHANGE_FORM_NAME'
+      payload: { lang: 'en' | 'is'; newValue: string }
+    }
   | { type: 'CHANGE_APPLICATION_DAYS_TO_REMOVE'; payload: { value: number } }
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
-    type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP'
-    payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
-  }
+      type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP'
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
+    }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
   | {
-    type: 'TOGGLE_DEPENDENCY'
-    payload: {
-      activeId: string
-      itemId: string
-      update: (updatedForm: FormSystemForm) => void
+      type: 'TOGGLE_DEPENDENCY'
+      payload: {
+        activeId: string
+        itemId: string
+        update: (updatedForm: FormSystemForm) => void
+      }
     }
-  }
   | {
-    type: 'TOGGLE_MULTI_SET'
-    payload: {
-      checked: boolean
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'TOGGLE_MULTI_SET'
+      payload: {
+        checked: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
 
 type InputSettingsActions =
   | {
-    type: 'SET_MESSAGE_WITH_LINK_SETTINGS'
-    payload: {
-      property: 'buttonText' | 'url' | 'hasLink'
-      value?: string
-      checked?: boolean
-      lang?: 'is' | 'en'
-      update?: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_MESSAGE_WITH_LINK_SETTINGS'
+      payload: {
+        property: 'buttonText' | 'url' | 'hasLink'
+        value?: string
+        checked?: boolean
+        lang?: 'is' | 'en'
+        update?: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_FILE_UPLOAD_SETTINGS'
-    payload: {
-      property: 'isMulti' | 'maxSize' | 'amount' | 'types'
-      checked?: boolean
-      value?: string | number
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_FILE_UPLOAD_SETTINGS'
+      payload: {
+        property: 'isMulti' | 'maxSize' | 'amount' | 'types'
+        checked?: boolean
+        value?: string | number
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_INPUT_SETTINGS'
-    payload: {
-      property: 'isLarge'
-      value: boolean
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_INPUT_SETTINGS'
+      payload: {
+        property: 'isLarge'
+        value: boolean
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'SET_LIST_ITEM_SELECTED'
-    payload: {
-      guid: UniqueIdentifier
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_LIST_ITEM_SELECTED'
+      payload: {
+        guid: UniqueIdentifier
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'REMOVE_LIST_ITEM'
-    payload: {
-      guid: UniqueIdentifier
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'REMOVE_LIST_ITEM'
+      payload: {
+        guid: UniqueIdentifier
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | {
-    type: 'CHANGE_LIST_ITEM'
-    payload: {
-      property: 'label' | 'description'
-      lang: 'is' | 'en'
-      value: string
-      guid: UniqueIdentifier
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'CHANGE_LIST_ITEM'
+      payload: {
+        property: 'label' | 'description'
+        lang: 'is' | 'en'
+        value: string
+        guid: UniqueIdentifier
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
   | { type: 'ADD_LIST_ITEM' }
   | {
-    type: 'SET_LIST_TYPE'
-    payload: {
-      listType: string
-      update: (updatedActiveItem?: ActiveItem) => void
+      type: 'SET_LIST_TYPE'
+      payload: {
+        listType: string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
     }
-  }
 
 export type ControlAction =
   | ActiveItemActions
@@ -514,11 +514,11 @@ export const controlReducer = (
           [property]: property === 'hasLink' ? checked : value,
           ...(property === 'buttonText'
             ? {
-              buttonText: {
-                ...input.inputSettings?.buttonText,
-                [lang]: value,
-              },
-            }
+                buttonText: {
+                  ...input.inputSettings?.buttonText,
+                  [lang]: value,
+                },
+              }
             : {}),
         },
       }
@@ -559,8 +559,8 @@ export const controlReducer = (
             property === 'types'
               ? updateFileTypesArray()
               : property === 'isMulti'
-                ? checked
-                : value,
+              ? checked
+              : value,
         },
       }
       update({ type: 'Input', data: newInput })

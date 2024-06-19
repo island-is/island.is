@@ -16,7 +16,7 @@ export class FormSystemService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private servicesApi: ServicesApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -129,7 +129,7 @@ export class FormSystemService {
         targetLanguageCode: 'en',
         model: '',
         domain: '',
-      })
+      }),
     })
     if (!response.ok) {
       throw new Error('Failed to get translation')

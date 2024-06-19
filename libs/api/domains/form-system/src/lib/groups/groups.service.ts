@@ -26,7 +26,7 @@ export class GroupsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: GroupsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

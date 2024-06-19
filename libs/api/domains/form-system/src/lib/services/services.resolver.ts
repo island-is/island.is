@@ -14,7 +14,7 @@ import { UseGuards } from '@nestjs/common'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormSystemServicesResolver {
-  constructor(private readonly formSystemServices: FormSystemService) { }
+  constructor(private readonly formSystemServices: FormSystemService) {}
 
   @Query(() => List, {
     name: 'formSystemGetCountries',
