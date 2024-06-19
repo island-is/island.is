@@ -145,7 +145,7 @@ export const NavButtons = () => {
         <DialogPrompt
           baseId="remove"
           title={formatMessage(m.areYouSure)}
-          description="Alveg viss?"
+          description={formatMessage(m.completelySure)}
           ariaLabel='Remove item'
           buttonTextConfirm={formatMessage(m.confirm)}
           buttonTextCancel={formatMessage(m.cancel)}

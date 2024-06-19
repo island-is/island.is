@@ -405,6 +405,10 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:are-you-sure',
     defaultMessage: 'Ertu viss?',
   },
+  completelySure: {
+    id: 'portals-admin.form-system:completely-sure',
+    defaultMessage: 'Alveg viss?',
+  },
   confirm: {
     id: 'portals-admin.form-system:confirm',
     defaultMessage: 'Staðfesta',
