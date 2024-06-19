@@ -340,6 +340,10 @@ codemagic.yaml                                                                  
 /libs/application/templates/healthcare-license-certificate/                                              @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/         @island-is/origo
 
+
+/libs/application/templates/healthcare-work-permit/                                                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/healthcare-work-permit/                 @island-is/origo
+
 /libs/application/templates/energy-funds/                                                                @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                           @island-is/origo
 /libs/api/domains/energy-funds/                                                                          @island-is/origo
