@@ -1,10 +1,17 @@
-import React, { FC, useState } from 'react'
+import React, { useState } from 'react'
 import {
+  Accordion,
+  AccordionItem,
   Box,
   GridColumn,
   GridRow,
+  Inline,
   ProfileCard,
+  Stack,
+  Text,
 } from '@island.is/island-ui/core'
+
+import * as styles from './TeamList.css'
 
 const imagePostfix = '?w=400'
 
@@ -15,11 +22,12 @@ export interface TeamListProps {
     image: { url: string }
     imageOnSelect: { url: string }
   }[]
+  variant?: 'card' | 'accordion'
 }
 
-export const TeamList: FC<React.PropsWithChildren<TeamListProps>> = ({
+export const TeamMemberCardList = ({
   teamMembers,
-}) => {
+}: Omit<TeamListProps, 'variant'>) => {
   const [selectedIndex, setSelectedIndex] = useState(-1)
 
   const [loadedImageUrls, setLoadedImageUrls] = useState<
@@ -95,6 +103,97 @@ export const TeamList: FC<React.PropsWithChildren<TeamListProps>> = ({
       })}
     </GridRow>
   )
+}
+
+const TeamMemberAccordionList = ({
+  teamMembers,
+}: Omit<TeamListProps, 'variant'>) => {
+  const [selectedIndex, setSelectedIndex] = useState(-1)
+  const [loadedImageUrls, setLoadedImageUrls] = useState<
+    Record<string, boolean>
+  >({})
+
+  const updateSelectedIndex = (index: number) => {
+    setSelectedIndex(index)
+
+    let selectedImageUrl = teamMembers[index]?.imageOnSelect?.url
+
+    if (!selectedImageUrl) {
+      return
+    }
+
+    selectedImageUrl += imagePostfix
+
+    if (loadedImageUrls[selectedImageUrl] === true) return
+
+    const selectedImage = new Image()
+
+    selectedImage.onload = () => {
+      setLoadedImageUrls((prevState) => ({
+        ...prevState,
+        [selectedImageUrl]: true,
+      }))
+    }
+
+    selectedImage.src = selectedImageUrl
+  }
+
+  return (
+    <Accordion>
+      {teamMembers.map((member, index) => {
+        let image = `${member.image.url}${imagePostfix}`
+
+        if (selectedIndex === index && member.imageOnSelect?.url) {
+          const selectedImageUrl = `${member.imageOnSelect.url}${imagePostfix}`
+          const selectedImageHasLoaded = loadedImageUrls[selectedImageUrl]
+
+          if (selectedImageHasLoaded) {
+            image = selectedImageUrl
+          }
+        }
+
+        const id = `${member.name}-${member.title}`
+
+        return (
+          <AccordionItem
+            key={id}
+            id={id}
+            label={
+              <Stack space={0}>
+                <Text variant="h4">{member.name}</Text>
+                <Text>{member.title}</Text>
+              </Stack>
+            }
+            labelUse="div"
+          >
+            <Inline space={1}>
+              <Box
+                paddingBottom={2}
+                onClick={() => updateSelectedIndex(index)}
+                onMouseOver={() => updateSelectedIndex(index)}
+                onMouseLeave={() => {
+                  // When the mouse leaves then we set the selected index to -1 if no other index got selected
+                  setSelectedIndex((prevIndex) => {
+                    if (prevIndex !== index) return prevIndex
+                    return -1
+                  })
+                }}
+              >
+                <img src={image} alt="" className={styles.teamMemberImage} />
+              </Box>
+            </Inline>
+          </AccordionItem>
+        )
+      })}
+    </Accordion>
+  )
+}
+
+export const TeamList = ({ teamMembers, variant = 'card' }: TeamListProps) => {
+  if (variant === 'card') {
+    return <TeamMemberCardList teamMembers={teamMembers} />
+  }
+  return <TeamMemberAccordionList teamMembers={teamMembers} />
 }
 
 export default TeamList
