@@ -1083,7 +1083,7 @@ export class InternalCaseService {
     theCase: Case,
     user: TUser,
   ): Promise<DeliverResponse> {
-    const delivered = await await this.getSignedRulingPdf(theCase)
+    const delivered = await this.getSignedRulingPdf(theCase)
       .then((pdf) =>
         this.deliverCaseToPoliceWithFiles(theCase, user, [
           {

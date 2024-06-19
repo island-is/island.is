@@ -26,4 +26,10 @@ export class OfficialJournalOfIcelandApplicationService {
   async postApplication(input: PostApplicationInput): Promise<boolean> {
     return this.ojoiApplicationService.postApplication(input)
   }
+
+  async getPrice(id: string) {
+    return this.ojoiApplicationService.getPrice({
+      id,
+    })
+  }
 }
