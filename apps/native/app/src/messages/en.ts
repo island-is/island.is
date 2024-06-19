@@ -281,6 +281,9 @@ export const en: TranslatedMessages = {
   'notifications.markAllAsRead': 'Mark all as read',
   'notifications.settings': 'My settings',
   'notifications.errorUnknown': 'Error occurred while loading notifications',
+  'notifications.emptyListTitle': 'No notifications',
+  'notifications.emptyListDescription':
+    'When you receive notifications, they will appear here.',
 
   // profile
   'profile.screenTitle': 'More',
