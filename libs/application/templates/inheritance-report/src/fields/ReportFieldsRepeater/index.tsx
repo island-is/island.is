@@ -25,7 +25,7 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { PREPAID_INHERITANCE, PrePaidHeirsRelations } from '../../lib/constants'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
   getDeceasedWasMarriedAndHadAssets,
@@ -197,7 +197,7 @@ export const ReportFieldsRepeater: FC<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [faceValue, index, rateOfExchange, setValue])
 
-  /* ------ Set fields from external data (realEstate, vehicles) ------ */
+  /* ------ Set fields from external data ------ */
   useEffect(() => {
     const estateData =
       answers.applicationFor === PREPAID_INHERITANCE
