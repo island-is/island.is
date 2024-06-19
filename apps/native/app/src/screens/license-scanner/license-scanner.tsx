@@ -181,28 +181,28 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   }, [data, error, loading])
 
   const prepareRatio = async () => {
-    if (isAndroid) {
-      const screenRatio = layout!.height / layout!.width
-      const ratios = await camera.current!.getSupportedRatiosAsync()
-      // find ratio closest to screen ratio
-      const closest = ratios
-        .map((aspect) => {
-          const [h, w] = aspect.split(':').map(parseFloat)
-          return { ratio: h / w, aspect }
-        })
-        .sort((a, b) => {
-          return Math.abs(a.ratio - screenRatio) >
-            Math.abs(b.ratio - screenRatio)
-            ? 1
-            : -1
-        })
-        .shift()
-      const cameraRatio = closest!.ratio
-      const overlap =
-        layout!.width - (screenRatio / cameraRatio) * layout!.width
-      setPadding(overlap / 2)
-      setRatio(closest!.aspect)
-    }
+    // if (isAndroid) {
+    //   const screenRatio = layout!.height / layout!.width
+    //   const ratios = await camera.current!.getSupportedRatiosAsync()
+    //   // find ratio closest to screen ratio
+    //   const closest = ratios
+    //     .map((aspect) => {
+    //       const [h, w] = aspect.split(':').map(parseFloat)
+    //       return { ratio: h / w, aspect }
+    //     })
+    //     .sort((a, b) => {
+    //       return Math.abs(a.ratio - screenRatio) >
+    //         Math.abs(b.ratio - screenRatio)
+    //         ? 1
+    //         : -1
+    //     })
+    //     .shift()
+    //   const cameraRatio = closest!.ratio
+    //   const overlap =
+    //     layout!.width - (screenRatio / cameraRatio) * layout!.width
+    //   setPadding(overlap / 2)
+    //   setRatio(closest!.aspect)
+    // }
   }
 
   const onCameraReady = () => {

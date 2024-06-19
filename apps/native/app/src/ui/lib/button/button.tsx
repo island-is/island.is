@@ -131,7 +131,7 @@ export function Button({
           {title}
         </Text>
         {icon && (
-          <Icon source={icon as any} resizeMode="center" {...iconStyle} />
+          <Icon source={icon as any} resizeMode="center" style={iconStyle} />
         )}
       </>
     </Host>
