@@ -1,6 +1,7 @@
 import {
   CurrentActor,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import {
@@ -23,6 +24,7 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { AuthScope } from '@island.is/auth/scopes'
 
 import {
   RegistrationOptions,
@@ -40,6 +42,7 @@ const namespace = '@island.is/auth/public-api/passkeys'
 
 @ApiTags('passkeys')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Scopes(AuthScope.passkeys)
 @Controller({
   path: 'passkeys',
   version: ['1', VERSION_NEUTRAL],
