@@ -9,6 +9,7 @@ interface Props {
   value?: string
   hasError?: boolean
   errorMessage?: string
+  placeholder?: string
 }
 
 export const PercentageInput = ({
@@ -19,6 +20,7 @@ export const PercentageInput = ({
   value,
   hasError = false,
   errorMessage,
+  placeholder,
 }: Props) => {
   const liabilityPercentageRef = useRef<HTMLInputElement>(null)
 
@@ -62,6 +64,7 @@ export const PercentageInput = ({
       ref={liabilityPercentageRef}
       id={id}
       label={label}
+      placeholder={placeholder}
       name={name}
       value={`${value}%`}
       type="text"
