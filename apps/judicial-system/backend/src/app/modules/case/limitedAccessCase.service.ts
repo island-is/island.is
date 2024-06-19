@@ -13,6 +13,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
@@ -354,10 +355,14 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
+    const formattedNationalId = formatNationalId(nationalId)
     return this.caseModel
       .findOne({
         where: {
-          defenderNationalId: nationalId,
+          [Op.or]: [
+            { defenderNationalId: formattedNationalId },
+            { defenderNationalId: nationalId },
+          ],
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -436,7 +441,7 @@ export class LimitedAccessCaseService {
     // TODO: speed this up by fetching all files in parallel
     for (const file of caseFilesByCategory) {
       await this.awsS3Service
-        .getObject(theCase.type, theCase.state, file.key)
+        .getObject(theCase.type, file.key)
         .then((content) => filesToZip.push({ data: content, name: file.name }))
         .catch((reason) =>
           // Tolerate failure, but log what happened

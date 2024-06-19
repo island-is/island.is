@@ -404,6 +404,12 @@ export class CaseController {
       case CaseTransition.REDISTRIBUTE:
         update.judgeId = null
         break
+      case CaseTransition.ASK_FOR_CANCELLATION:
+        if (theCase.indictmentDecision) {
+          throw new ForbiddenException(
+            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(

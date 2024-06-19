@@ -67,17 +67,29 @@ export class AdminClientDto {
   })
   supportedDelegationTypes!: string[]
 
-  @ApiProperty()
-  supportsCustomDelegation!: boolean
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsCustomDelegation?: boolean
 
-  @ApiProperty()
-  supportsLegalGuardians!: boolean
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsLegalGuardians?: boolean
 
-  @ApiProperty()
-  supportsProcuringHolders!: boolean
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsProcuringHolders?: boolean
 
-  @ApiProperty()
-  supportsPersonalRepresentatives!: boolean
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsPersonalRepresentatives?: boolean
 
   @ApiProperty()
   promptDelegations!: boolean

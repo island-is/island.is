@@ -1,5 +1,3 @@
-import React, { FC } from 'react'
-
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps, FileUploadField } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
@@ -11,11 +9,7 @@ interface Props extends FieldBaseProps {
   field: FileUploadField
 }
 
-export const FileUploadFormField: FC<React.PropsWithChildren<Props>> = ({
-  application,
-  field,
-  error,
-}) => {
+export const FileUploadFormField = ({ application, field, error }: Props) => {
   const {
     id,
     introduction,

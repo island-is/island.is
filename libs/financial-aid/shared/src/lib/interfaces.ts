@@ -231,6 +231,7 @@ export interface Municipality {
   navUsername?: string
   navPassword?: string
   apiKeyInfo?: ApiKeysForMunicipality
+  decemberCompensation: number
 }
 
 export interface UpdateMunicipalityActivity {
@@ -334,7 +335,7 @@ export interface Application {
   id: string
   created: string
   modified: string
-  applied: string
+  appliedDate: string
   nationalId: string
   name: string
   phoneNumber?: string

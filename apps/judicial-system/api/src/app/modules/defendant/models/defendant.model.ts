@@ -5,12 +5,14 @@ import {
   DefenderChoice,
   Gender,
   ServiceRequirement,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
 registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
 registerEnumType(DefenderChoice, { name: 'DefenderChoice' })
+registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 
 @ObjectType()
 export class Defendant {
@@ -70,4 +72,10 @@ export class Defendant {
 
   @Field(() => DefenderChoice, { nullable: true })
   readonly defenderChoice?: DefenderChoice
+
+  @Field(() => Boolean, { nullable: true })
+  readonly acceptCompensationClaim?: boolean
+
+  @Field(() => SubpoenaType, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
 }
