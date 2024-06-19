@@ -39,7 +39,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
 
     mockAwsS3Service = awsS3Service
     const mockGetGeneratedObject =
-      mockAwsS3Service.getGeneratedObject as jest.Mock
+      mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
     mockGetGeneratedObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
@@ -77,7 +77,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
       const mockNowFactory = nowFactory as jest.Mock
       mockNowFactory.mockReturnValue(now)
       const mockGetGeneratedObject =
-        mockAwsS3Service.getGeneratedObject as jest.Mock
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
       mockGetGeneratedObject.mockResolvedValueOnce(pdf)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValueOnce(uuid())
@@ -86,10 +86,9 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     })
 
     it('should deliver the signed ruling to court', async () => {
-      expect(mockAwsS3Service.getGeneratedObject).toHaveBeenCalledWith(
-        caseType,
-        `${caseId}/ruling.pdf`,
-      )
+      expect(
+        mockAwsS3Service.getGeneratedRequestCaseObject,
+      ).toHaveBeenCalledWith(caseType, `${caseId}/ruling.pdf`)
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
         caseId,
@@ -115,7 +114,7 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
 
     beforeEach(async () => {
       const mockGetGeneratedObject =
-        mockAwsS3Service.getGeneratedObject as jest.Mock
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
       mockGetGeneratedObject.mockResolvedValueOnce(pdf)
 
       then = await givenWhenThen(caseId, theCase)
