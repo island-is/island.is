@@ -19,7 +19,6 @@ import {
   DirectTaxPaymentBackendModel,
   StaffBackendModel,
 } from './index'
-import { ChildrenBackendModel } from './children.model'
 
 @Table({
   tableName: 'applications',
