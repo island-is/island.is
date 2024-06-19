@@ -76,6 +76,26 @@ export const Application: Form = buildForm({
           ],
         }),
         buildSubSection({
+          condition: (_, externalData) => {
+            const childWithInfo = getValueViaPath(
+              externalData,
+              'childrenCustodyInformation.data',
+              [],
+            ) as ApplicantChildCustodyInformation[]
+
+            return childWithInfo ? childWithInfo.length > 0 : false
+          },
+          id: Routes.CHILDRENFILES,
+          title: m.incomeFilesForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: Routes.CHILDRENFILES,
+              title: m.childrenFilesForm.general.pageTitle,
+              component: 'ChildrenFilesForm',
+            }),
+          ],
+        }),
+        buildSubSection({
           id: Routes.HOMECIRCUMSTANCES,
           title: m.homeCircumstancesForm.general.sectionTitle,
           children: [
