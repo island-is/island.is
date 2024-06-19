@@ -70,10 +70,10 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu sveitarfélag',
       description: 'Select municipality',
     },
-    postalcode: {
-      id: 'dess.nps.application:postalcode',
+    postalCode: {
+      id: 'dess.nps.application:postalCode',
       defaultMessage: 'Póstnúmer',
-      description: 'Postalcode',
+      description: 'Postal code',
     },
     address: {
       id: 'dess.nps.application:address',

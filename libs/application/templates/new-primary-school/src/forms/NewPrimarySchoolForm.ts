@@ -145,7 +145,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   // TODO: Nota gögn frá Júní?
                   // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
                   defaultValue: (application: Application) =>
-                    getSelectedChild(application)?.domicileInIceland,
+                    getApplicationExternalData(application.externalData)
+                      .applicantAddress,
                 }),
                 buildTextField({
                   id: 'childInfo.address.postalCode',
@@ -155,7 +156,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   // TODO: Nota gögn frá Júní?
                   // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
                   defaultValue: (application: Application) =>
-                    getSelectedChild(application)?.domicileInIceland,
+                    getApplicationExternalData(application.externalData)
+                      .applicantPostalCode,
                 }),
                 buildTextField({
                   id: 'childInfo.address.city',
@@ -165,7 +167,8 @@ export const NewPrimarySchoolForm: Form = buildForm({
                   // TODO: Nota gögn frá Júní?
                   // TODO: Hægt að nota heimilisfang innskráðs foreldris? (foreldri getur ekki sótt um nema barn sé með sama lögheimili)
                   defaultValue: (application: Application) =>
-                    getSelectedChild(application)?.domicileInIceland,
+                    getApplicationExternalData(application.externalData)
+                      .applicantCity,
                 }),
                 buildTextField({
                   id: 'childInfo.chosenName',
@@ -621,7 +624,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                 }),
                 buildTextField({
                   id: 'reasonForApplication.transferOfLegalDomicile.postalCode',
-                  title: newPrimarySchoolMessages.shared.postalcode,
+                  title: newPrimarySchoolMessages.shared.postalCode,
                   width: 'half',
                   required: true,
                   format: '###',
