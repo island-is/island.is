@@ -238,13 +238,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     return differentPlaceOfResidence === YES
                   },
                 }),
-                buildCustomField({
-                  id: 'childInfo.currentSchool',
-                  title:
-                    newPrimarySchoolMessages.childrenNParents
-                      .childInfoCurrentSchool,
-                  component: 'CurrentSchool',
-                }),
               ],
             }),
           ],
