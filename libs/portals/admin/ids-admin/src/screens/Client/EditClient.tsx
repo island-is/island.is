@@ -126,7 +126,7 @@ export const EditClient = () => {
           <Permissions
             allowedScopes={selectedEnvironment?.allowedScopes ?? []}
           />
-          {isSuperAdmin && !isMachineApplication && (
+          {!isMachineApplication && (
             <Delegation
               promptDelegations={selectedEnvironment.promptDelegations}
               requireApiScopes={selectedEnvironment.requireApiScopes}
