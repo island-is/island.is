@@ -86,7 +86,7 @@ export const Application: Form = buildForm({
             return childWithInfo ? childWithInfo.length > 0 : false
           },
           id: Routes.CHILDRENFILES,
-          title: m.incomeFilesForm.general.sectionTitle,
+          title: m.childrenFilesForm.general.sectionTitle,
           children: [
             buildCustomField({
               id: Routes.CHILDRENFILES,
