@@ -217,3 +217,9 @@ export enum Gender {
   MALE = 'MALE',
   OTHER = 'OTHER',
 }
+
+export enum OptionsType {
+  ALLERGRY = 'allergy',
+  INTOLERANCE = 'intolerence',
+  REASON = 'rejectionReason',
+}

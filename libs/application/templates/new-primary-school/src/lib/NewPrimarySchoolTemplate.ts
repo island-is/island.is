@@ -17,6 +17,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
@@ -38,7 +39,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   translationNamespaces: ApplicationConfigurations.NewPrimarySchool.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: true,
-  // requiredScopes: [ApiScope.carRecycling], ?? do we need scope for the Primary school application ??
+  featureFlag: Features.newPrimarySchool,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

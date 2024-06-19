@@ -32,6 +32,7 @@ export enum Features {
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
+  newPrimarySchool = 'isNewPrimarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

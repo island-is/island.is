@@ -364,6 +364,7 @@ api:
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1'
     XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI/'
+    XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'

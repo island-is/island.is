@@ -26,6 +26,13 @@ import {
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
+import { ApolloClient } from '@apollo/client'
+import {
+  GetFriggOptionsQuery,
+  GetFriggOptionsQueryVariables,
+} from '../types/schema'
+import { GetFriggOptions } from '../graphql/queries'
+
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
 
@@ -503,5 +510,31 @@ export const getFoodIntolerancesOptionsLabel = (
   return (
     foodIntolerancesOptions.find((option) => option.value === value)?.label ??
     ''
+  )
+}
+
+export const getOptionsListByType = async (
+  apolloClient: ApolloClient<object>,
+  type: string,
+) => {
+  const { data } = await apolloClient.query<
+    GetFriggOptionsQuery,
+    GetFriggOptionsQueryVariables
+  >({
+    query: GetFriggOptions,
+    variables: {
+      type: {
+        type,
+      },
+    },
+  })
+
+  return (
+    data?.getFriggOptions?.flatMap(({ options }) =>
+      options.flatMap(({ value, id }) => {
+        const content = value.find(({ language }) => language === 'is')?.content
+        return { value: id ?? '', label: content ?? '' }
+      }),
+    ) ?? []
   )
 }

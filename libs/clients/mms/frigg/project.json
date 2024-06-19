@@ -1,20 +1,20 @@
 {
-  "name": "clients-mms",
-  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/clients/mms/src",
+  "name": "clients-mms-frigg",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/mms/frigg/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
-        "lintFilePatterns": ["libs/clients/mms/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/clients/mms/frigg/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/mms"],
       "options": {
-        "jestConfig": "libs/clients/mms/jest.config.ts",
+        "jestConfig": "libs/clients/mms/frigg/jest.config.ts",
         "passWithNoTests": true
       }
     },
@@ -22,17 +22,17 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10066/MMS-Protected/getOpenAPI?serviceCode=license-api-v1 > src/clientConfig.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10066/MMS-Protected/getOpenAPI?serviceCode=frigg-api > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/mms"
+        "cwd": "libs/clients/mms/frigg"
       }
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/mms/gen/fetch -i libs/clients/mms/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/mms/frigg/gen/fetch -i libs/clients/mms/frigg/src/clientConfig.json"
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }

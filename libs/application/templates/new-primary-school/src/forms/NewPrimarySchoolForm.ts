@@ -33,6 +33,7 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import {
+  OptionsType,
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
@@ -47,6 +48,7 @@ import {
   getFoodIntolerancesOptions,
   getLanguageCodes,
   getGenderOptions,
+  getOptionsListByType,
   getOtherParent,
   getReasonForApplicationOptions,
   getRelationOptionLabel,
@@ -989,7 +991,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   id: 'allergiesAndIntolerances.foodAllergies',
                   title:
                     newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
@@ -998,7 +1000,14 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfAllergiesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  options: getFoodAllergiesOptions(),
+                  loadOptions: async ({ apolloClient }) => {
+                    /*  return await getOptionsListByType(
+                      apolloClient,
+                      OptionsType.ALLERGRY,
+                    )
+*/
+                    return getFoodAllergiesOptions()
+                  },
                   isMulti: true,
                   condition: (answers) => {
                     const { hasFoodAllergies } = getApplicationAnswers(answers)
@@ -1034,7 +1043,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     },
                   ],
                 }),
-                buildSelectField({
+                buildAsyncSelectField({
                   id: 'allergiesAndIntolerances.foodIntolerances',
                   title:
                     newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
@@ -1043,7 +1052,14 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfIntolerancesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  options: getFoodIntolerancesOptions(),
+                  loadOptions: async ({ apolloClient }) => {
+                    /*return await getOptionsListByType(
+                      apolloClient,
+                      OptionsType.INTELERENCE,
+                    )*/
+
+                    return getFoodIntolerancesOptions()
+                  },
                   isMulti: true,
                   condition: (answers) => {
                     const { hasFoodIntolerances } =
