@@ -117,7 +117,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/NewPrimarySchoolForm').then((val) =>
+                import('../forms/NewPrimarySchoolForm/index').then((val) =>
                   Promise.resolve(val.NewPrimarySchoolForm),
                 ),
               actions: [
