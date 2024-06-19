@@ -17,6 +17,7 @@ import {
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isTrafficViolationCase,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
