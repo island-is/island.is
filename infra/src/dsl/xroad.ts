@@ -885,7 +885,7 @@ export const Frigg = new XroadConf({
     XROAD_MMS_FRIGG_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
       staging: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
-      prod: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
     },
   },
 })
