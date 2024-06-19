@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react'
 import {
   InputModal,
   NumberInput,
+  PercentageInput,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useRouter } from 'next/router'
 import {
@@ -306,50 +307,50 @@ const AcceptModal = ({
       </Box>
 
       <Box marginBottom={3}>
-        <Input
-          label="Persónuafsláttur"
-          placeholder="Sláðu inn prósentuhlutfall"
+        <PercentageInput
           id="personalTaxCredit"
           name="personalTaxCredit"
-          value={Number(state.personalTaxCreditPercentage).toString()}
-          type="number"
-          onChange={(e) => {
-            const value = Number(e.target.value)
-            if (e.target.value.length <= 3 && value <= 100) {
-              setState({
-                ...state,
-                hasError: false,
-                personalTaxCreditPercentage: value,
-              })
-            }
-          }}
-          backgroundColor="blue"
+          label="Persónuafsláttur"
+          value={
+            state.personalTaxCreditPercentage
+              ? state.personalTaxCreditPercentage.toString()
+              : ''
+          }
           hasError={
             state.hasError && state.personalTaxCreditPercentage === undefined
+          }
+          onUpdate={(value: number) =>
+            setState({
+              ...state,
+              hasError: false,
+              personalTaxCreditPercentage: value,
+            })
           }
         />
       </Box>
 
       {state.showSecondPersonalTaxCredit && (
         <Box marginBottom={3}>
-          <Input
-            label="Persónuafsláttur"
-            placeholder="Sláðu inn prósentuhlutfall"
+          <PercentageInput
             id="secondPersonalTaxCredit"
             name="secondPersonalTaxCredit"
-            value={Number(state.secondPersonalTaxCredit).toString()}
-            type="number"
-            onChange={(e) => {
-              const value = Number(e.target.value)
-              if (e.target.value.length <= 3 && value <= 100) {
-                setState({
-                  ...state,
-                  hasError: false,
-                  secondPersonalTaxCredit: value,
-                })
-              }
-            }}
-            backgroundColor="blue"
+            placeholder="Sláðu inn prósentuhlutfall"
+            label="Persónuafsláttur"
+            value={
+              state.secondPersonalTaxCredit
+                ? state.secondPersonalTaxCredit.toString()
+                : ''
+            }
+            hasError={
+              state.hasError && state.secondPersonalTaxCredit === undefined
+            }
+            onUpdate={(value: number) =>
+              setState({
+                ...state,
+                hasError: false,
+                secondPersonalTaxCredit: value,
+              })
+            }
           />
         </Box>
       )}

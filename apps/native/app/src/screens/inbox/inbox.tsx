@@ -217,6 +217,7 @@ function useInboxQuery(incomingFilters?: Filters) {
                 ...(data.documentsV2?.data ?? []),
               ],
               totalCount: data.documentsV2?.totalCount ?? 0,
+              unreadCount: data.documentsV2?.unreadCount ?? 0,
             }))
           } else {
             setData(data.documentsV2)
