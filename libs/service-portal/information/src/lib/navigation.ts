@@ -28,13 +28,28 @@ export const informationNavigation: PortalNavigationItem = {
         {
           name: m.familyChild,
           navHide: true,
-          path: InformationPaths.Child,
+          path: InformationPaths.BioChild,
+        },
+        {
+          name: m.familyChild,
+          navHide: true,
+          path: InformationPaths.ChildCustody,
         },
       ],
     },
     {
       name: m.mySettings,
       path: InformationPaths.Settings,
+      children: [
+        {
+          name: m.mySettingsInformation,
+          path: InformationPaths.Settings,
+        },
+        {
+          name: m.mySettingsNotifications,
+          path: InformationPaths.SettingsNotifications,
+        },
+      ],
     },
     {
       name: m.lists,

@@ -3,7 +3,7 @@ schema:
 documents:
   - libs/application/ui-components/src/**/*.graphql.ts
 generates:
-  libs/application/ui-components/gen/graphql.ts:
+  libs/application/ui-components/gen/schema.ts:
     plugins:
       - typescript
       - typescript-operations

@@ -78,7 +78,11 @@ export const getCartesianGridComponents = ({
 
   const xAxisFormatter = tickFormatter
   const yAxisFormatter = (v: string | number) =>
-    formatValueForPresentation(activeLocale, v)
+    formatValueForPresentation(
+      activeLocale,
+      v,
+      slice.reduceAndRoundValue ?? true,
+    )
 
   return [
     <CartesianGrid
@@ -121,6 +125,7 @@ export const getCartesianGridComponents = ({
       interval={customStyleConfig.yAxis?.interval ?? 'preserveEnd'}
       domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
       tick={customStyleConfig.yAxis?.tick ?? undefined}
+      ticks={customStyleConfig.yAxis?.ticks ?? undefined}
     />,
   ]
 }

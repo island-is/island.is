@@ -12,7 +12,7 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import { CourtClientService } from '@island.is/judicial-system/court-client'
 import { sanitize } from '@island.is/judicial-system/formatters'
-import type { User } from '@island.is/judicial-system/types'
+import type { User, UserRole } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseDecision,
@@ -24,6 +24,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
+import { Defendant } from '../defendant'
 import { EventService } from '../event'
 import { RobotLog } from './models/robotLog.model'
 import { courtModuleConfig } from './court.config'
@@ -126,6 +127,9 @@ enum RobotEmailType {
   APPEAL_CASE_ASSIGNED_ROLES = 'APPEAL_CASE_ASSIGNED_ROLES',
   APPEAL_CASE_CONCLUSION = 'APPEAL_CASE_CONCLUSION',
   APPEAL_CASE_FILE = 'APPEAL_CASE_FILE',
+  NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
+  INDICTMENT_CASE_ASSIGNED_ROLES = 'INDICTMENT_CASE_ASSIGNED_ROLES',
+  INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
 }
 
 @Injectable()
@@ -555,6 +559,122 @@ export class CourtService {
     }
   }
 
+  async updateIndictmentCaseWithIndictmentInfo(
+    user: User,
+    caseId: string,
+    courtCaseNumber?: string,
+    receivedByCourtDate?: Date,
+    indictmentDate?: Date,
+    policeCaseNumber?: string,
+    subtypes?: string[],
+    defendants?: { name?: string; nationalId?: string }[],
+    prosecutor?: { name?: string; nationalId?: string },
+  ): Promise<unknown> {
+    try {
+      const subject = `Ákæra - ${courtCaseNumber} - upplýsingar`
+      const content = JSON.stringify({
+        receivedByCourtDate,
+        indictmentDate,
+        policeCaseNumber,
+        subtypes,
+        defendants,
+        prosecutor,
+      })
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.NEW_INDICTMENT_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with indictment info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+          receivedByCourtDate,
+          indictmentDate,
+          policeCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateIndictmentWithDefenderInfo(
+    user: User,
+    caseId: string,
+    courtCaseNumber?: string,
+    defendants?: Defendant[],
+  ): Promise<unknown> {
+    try {
+      const defendantInfo = defendants?.map((defendant) => ({
+        nationalId: defendant.nationalId,
+        defenderName: defendant.defenderName,
+        defenderEmail: defendant.defenderEmail,
+      }))
+
+      const subject = `Ákæra - ${courtCaseNumber} - verjanda upplýsingar`
+      const content = JSON.stringify(defendantInfo)
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_DEFENDER_INFO,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment with defender info',
+        {
+          caseId,
+          actor: user.name,
+          institution: user.institution?.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
+  async updateIndictmentCaseWithAssignedRoles(
+    user: User,
+    caseId: string,
+    courtCaseNumber?: string,
+    assignedRole?: { name?: string; role?: UserRole },
+  ): Promise<unknown> {
+    try {
+      const subject = `Ákæra - ${courtCaseNumber} - úthlutun`
+      const content = JSON.stringify(assignedRole)
+
+      return this.sendToRobot(
+        subject,
+        content,
+        RobotEmailType.INDICTMENT_CASE_ASSIGNED_ROLES,
+        caseId,
+      )
+    } catch (error) {
+      this.eventService.postErrorEvent(
+        'Failed to update indictment case with assigned roles',
+        {
+          caseId,
+          actor: user.name,
+          courtCaseNumber,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
   async updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
@@ -593,17 +713,25 @@ export class CourtService {
     caseId: string,
     appealCaseNumber?: string,
     appealAssistantNationalId?: string,
+    appealAssistantName?: string,
     appealJudge1NationalId?: string,
+    appealJudge1Name?: string,
     appealJudge2NationalId?: string,
+    appealJudge2Name?: string,
     appealJudge3NationalId?: string,
+    appealJudge3Name?: string,
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - aðilar`
       const content = JSON.stringify({
         appealAssistantNationalId,
+        appealAssistantName,
         appealJudge1NationalId,
+        appealJudge1Name,
         appealJudge2NationalId,
+        appealJudge2Name,
         appealJudge3NationalId,
+        appealJudge3Name,
       })
 
       return this.sendToRobot(
@@ -621,9 +749,13 @@ export class CourtService {
           institution: user.institution?.name,
           appealCaseNumber,
           appealAssistantNationalId,
+          appealAssistantName,
           appealJudge1NationalId,
+          appealJudge1Name,
           appealJudge2NationalId,
+          appealJudge2Name,
           appealJudge3NationalId,
+          appealJudge3Name,
         },
         error,
       )
@@ -685,7 +817,7 @@ export class CourtService {
   ): Promise<unknown> {
     try {
       const subject = `Landsréttur - ${appealCaseNumber} - skjal`
-      const content = JSON.stringify({ category, name, url, dateSent })
+      const content = JSON.stringify({ category, name, dateSent, url })
 
       return this.sendToRobot(
         subject,
@@ -724,7 +856,7 @@ export class CourtService {
       .then((log) => [log.id, log.seqNumber])
   }
 
-  private async sendToRobot(
+  async sendToRobot(
     subject: string,
     content: string,
     type: RobotEmailType,
@@ -779,7 +911,10 @@ export class CourtService {
           )
         })
         .then(() =>
-          this.robotLogModel.update({ sent: true }, { where: { id: logId } }),
+          this.robotLogModel.update(
+            { delivered: true },
+            { where: { id: logId } },
+          ),
         )
     }
 
@@ -803,7 +938,10 @@ export class CourtService {
         text: content,
       })
       .then(() =>
-        this.robotLogModel.update({ sent: true }, { where: { id: logId } }),
+        this.robotLogModel.update(
+          { delivered: true },
+          { where: { id: logId } },
+        ),
       )
   }
 }

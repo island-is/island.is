@@ -71,25 +71,43 @@ export class AdminPatchClientDto {
     description: 'Only super users can update this value.',
   })
   @IsOptional()
+  @IsArray()
+  addedDelegationTypes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Only super users can update this value.',
+  })
+  @IsOptional()
+  @IsArray()
+  removedDelegationTypes?: string[]
+
+  @ApiPropertyOptional({
+    deprecated: true,
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
+  @IsOptional()
   @IsBoolean()
   supportsCustomDelegation?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
   supportsLegalGuardians?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
   supportsProcuringHolders?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
@@ -182,6 +200,13 @@ export class AdminPatchClientDto {
   })
   @IsOptional()
   contactEmail?: string
+
+  @ApiPropertyOptional({
+    description: 'Array of allowed acr values for the client.',
+    example: '[eidas-loa-high]',
+  })
+  @IsOptional()
+  allowedAcr?: string[]
 }
 
 export const superUserFields = [
@@ -189,6 +214,9 @@ export const superUserFields = [
   'supportsLegalGuardians',
   'supportsProcuringHolders',
   'supportsPersonalRepresentatives',
+  'supportedDelegationTypes',
+  'addedDelegationTypes',
+  'removedDelegationTypes',
   'promptDelegations',
   'requireApiScopes',
   'requireConsent',
@@ -198,4 +226,5 @@ export const superUserFields = [
   'accessTokenLifetime',
   'customClaims',
   'singleSession',
+  'allowedAcr',
 ]

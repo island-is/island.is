@@ -5,8 +5,7 @@ import { MessageWithLinkSettings } from './components/MessageWithLinkSettings'
 import { TextInputSettings } from './components/TextInputSettings'
 import { ListSettings } from './components/ListSettings'
 import { ToggleConnection } from './components/ToggleConnection'
-import { FileUploadSettings } from './components/FileUploadSettings'
-
+import { FileUploadSettings } from './components/UploadSettings'
 
 export const InputSettings = () => {
   const { control } = useContext(ControlContext)

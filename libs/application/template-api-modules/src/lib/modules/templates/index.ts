@@ -73,6 +73,8 @@ import {
 } from './european-health-insurance-card'
 import { HealthcareLicenseCertificateModule } from './healthcare-license-certificate/healthcare-license-certificate.module'
 import { HealthcareLicenseCertificateService } from './healthcare-license-certificate/healthcare-license-certificate.service'
+import { HealthcareWorkPermitModule } from './healthcare-work-permit/healthcare-work-permit.module'
+import { HealthcareWorkPermitService } from './healthcare-work-permit/healthcare-work-permit.service'
 import { AnonymityInVehicleRegistryModule } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.module'
 import { AnonymityInVehicleRegistryService } from './transport-authority/anonymity-in-vehicle-registry/anonymity-in-vehicle-registry.service'
 import { ChangeCoOwnerOfVehicleModule } from './transport-authority/change-co-owner-of-vehicle/change-co-owner-of-vehicle.module'
@@ -125,6 +127,8 @@ import { StreetRegistrationTemplateModule } from './aosh/street-registration/str
 import { StreetRegistrationTemplateService } from './aosh/street-registration/street-registration.service'
 import { RequestInspectionTemplateModule } from './aosh/request-inspection/request-inspection.module'
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
+import { HealthInsuranceDeclarationModule } from './health-insurance-declaration/health-insurance-declaration.module'
+import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -180,6 +184,7 @@ export const modules = [
   CitizenshipModule,
   EnergyFundsModule,
   HealthcareLicenseCertificateModule,
+  HealthcareWorkPermitModule,
   SignatureListCreationModule,
   SignatureListSigningModule,
   TransferOfMachineOwnershipTemplateModule,
@@ -191,6 +196,7 @@ export const modules = [
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
+  HealthInsuranceDeclarationModule,
 ]
 
 export const services = [
@@ -247,6 +253,7 @@ export const services = [
   CitizenshipService,
   EnergyFundsService,
   HealthcareLicenseCertificateService,
+  HealthcareWorkPermitService,
   SignatureListCreationService,
   SignatureListSigningService,
   TransferOfMachineOwnershipTemplateService,
@@ -258,4 +265,5 @@ export const services = [
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
+  HealthInsuranceDeclarationService,
 ]

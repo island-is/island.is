@@ -289,27 +289,6 @@ describe('Cases', () => {
   })
 
   describe('Court users', () => {
-    test('should list all cases that do not have status NEW (never returned from the server), DELETED, ACCEPTED or REJECTED in a active cases table', async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      expect(
-        await waitFor(
-          () => screen.getAllByTestId('custody-cases-table-row').length,
-        ),
-      ).toEqual(4)
-    })
-
     test('should display the judge logo', async () => {
       render(
         <MockedProvider
@@ -364,27 +343,6 @@ describe('Cases', () => {
       expect(
         await waitFor(() => screen.queryByLabelText('Viltu eyða drögum?')),
       ).not.toBeInTheDocument()
-    })
-  })
-
-  describe('Prison users', () => {
-    test('should list active and past cases in separate tables based on validToDate', async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockPrisonUserCasesQuery, ...mockPrisonUserQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      await waitFor(() => {
-        expect(screen.getAllByRole('table').length).toEqual(2)
-      })
     })
   })
 

@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
   ApiStepsPostRequest,
   ApiStepsStepIdDeleteRequest,
@@ -24,7 +24,7 @@ export class StepsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: StepsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

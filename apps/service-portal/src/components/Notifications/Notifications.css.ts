@@ -9,8 +9,27 @@ export const link = style({
   overflow: 'hidden',
 })
 
+export const img = style({
+  height: 'auto',
+  width: 'auto',
+  display: 'flex',
+  maxHeight: 28,
+  maxWidth: 28,
+})
+
 globalStyle(`${link} > span`, {
   boxShadow: 'none',
+})
+
+export const noScope = style({})
+
+globalStyle(`${noScope} button:disabled`, {
+  background: theme.color.white,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blue200}`,
+})
+
+globalStyle(`${noScope} button:disabled path`, {
+  stroke: theme.color.dark300,
 })
 
 export const badge = style({

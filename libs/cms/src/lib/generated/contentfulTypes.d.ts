@@ -580,6 +580,9 @@ export interface IChartFields {
 
   /** Custom Style Config */
   customStyleConfig?: Record<string, any> | undefined
+
+  /** Reduce and round value */
+  reduceAndRoundValue?: boolean | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -658,6 +661,12 @@ export interface IChartNumberBoxFields {
 
   /** Date */
   numberBoxDate?: string | undefined
+
+  /** Reduce and round value */
+  reduceAndRoundValue?: boolean | undefined
+
+  /** Display Timestamp */
+  displayTimestamp?: boolean | undefined
 }
 
 /** A standalone component to display a value for a data key and optionally how it has evolved over a period of time. */
@@ -735,11 +744,20 @@ export interface IContactUs extends Entry<IContactUsFields> {
 }
 
 export interface ICustomPageFields {
+  /** Parent Page */
+  parentPage?: ICustomPage | undefined
+
   /** Title */
   title?: string | undefined
 
   /** Unique Identifier */
-  uniqueIdentifier: 'PensionCalculator' | 'OfficialJournalOfIceland'
+  uniqueIdentifier:
+    | 'PensionCalculator'
+    | 'OfficialJournalOfIceland'
+    | 'Vacancies'
+
+  /** Slug */
+  slug?: string | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -749,6 +767,18 @@ export interface ICustomPageFields {
 
   /** Configuration */
   configJson?: Record<string, any> | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Open Graph Title */
+  ogTitle?: string | undefined
+
+  /** Open Graph Description */
+  ogDescription?: string | undefined
+
+  /** Open Graph Image */
+  ogImage?: Asset | undefined
 }
 
 /** This content type is meant to represent a custom made page. Examples include (/starfatorg, /reglugerdir and many more).
@@ -1499,6 +1529,87 @@ export interface IFrontpageSlider extends Entry<IFrontpageSliderFields> {
     contentType: {
       sys: {
         id: 'frontpageSlider'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericListFields {
+  /** Internal Title */
+  internalTitle: string
+
+  /** Card Intro Template */
+  cardIntroTemplate?: Document | undefined
+
+  /** Search Input Placeholder */
+  searchInputPlaceholder: string
+
+  /** Item Type */
+  itemType?: 'Non-clickable' | 'Clickable' | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+}
+
+/** A list of items which can be embedded into rich text */
+
+export interface IGenericList extends Entry<IGenericListFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericList'
+        linkType: 'ContentType'
+        type: 'Link'
+      }
+    }
+  }
+}
+
+export interface IGenericListItemFields {
+  /** Generic List */
+  genericList: IGenericList
+
+  /** Internal Title */
+  internalTitle: string
+
+  /** Title */
+  title: string
+
+  /** Date */
+  date: string
+
+  /** Card Intro */
+  cardIntro?: Document | undefined
+
+  /** Slug */
+  slug?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+}
+
+/** An item that belongs to a generic list */
+
+export interface IGenericListItem extends Entry<IGenericListItemFields> {
+  sys: {
+    id: string
+    type: string
+    createdAt: string
+    updatedAt: string
+    locale: string
+    contentType: {
+      sys: {
+        id: 'genericListItem'
         linkType: 'ContentType'
         type: 'Link'
       }
@@ -2929,6 +3040,9 @@ export interface IOrganizationSubpageFields {
   /** Title */
   title: string
 
+  /** Short Title */
+  shortTitle?: string | undefined
+
   /** Slug */
   slug: string
 
@@ -3341,6 +3455,9 @@ export interface IProjectPage extends Entry<IProjectPageFields> {
 export interface IProjectSubpageFields {
   /** Title */
   title: string
+
+  /** Short Title */
+  shortTitle?: string | undefined
 
   /** Slug */
   slug: string
@@ -4855,6 +4972,8 @@ export type CONTENT_TYPE =
   | 'formField'
   | 'frontpage'
   | 'frontpageSlider'
+  | 'genericList'
+  | 'genericListItem'
   | 'genericOverviewPage'
   | 'genericPage'
   | 'genericTag'

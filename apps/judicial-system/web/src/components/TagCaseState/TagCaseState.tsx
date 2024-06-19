@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
@@ -6,13 +6,15 @@ import {
   isIndictmentCase,
   isInvestigationCase,
 } from '@island.is/judicial-system/types'
-import { tables } from '@island.is/judicial-system-web/messages'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  IndictmentDecision,
+  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { tagCaseState as m } from './TagCaseState.strings'
+import { strings } from './TagCaseState.strings'
 
 interface Props {
   caseState?: CaseState | null
@@ -20,6 +22,32 @@ interface Props {
   isCourtRole?: boolean
   isValidToDateInThePast?: boolean | null
   courtDate?: string | null
+  indictmentReviewer?: User | null
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null
+  customMapCaseStateToTag?: (
+    formatMessage: IntlShape['formatMessage'],
+    state?: CaseState | null,
+    indictmentReviewer?: User | null, // TODO: Refactor so we have a more generalized interface for the info passed in to the component
+  ) => { color: TagVariant; text: string }
+  indictmentDecision?: IndictmentDecision | null
+}
+
+export const mapIndictmentCaseStateToTagVariant = (
+  formatMessage: IntlShape['formatMessage'],
+  state?: CaseState | null,
+  indictmentReviewer?: User | null,
+): { color: TagVariant; text: string } => {
+  switch (state) {
+    case CaseState.COMPLETED:
+      return {
+        color: indictmentReviewer ? 'mint' : 'purple',
+        text: formatMessage(
+          indictmentReviewer ? strings.beingReviewed : strings.new,
+        ),
+      }
+    default:
+      return { color: 'white', text: formatMessage(strings.unknown) }
+  }
 }
 
 export const mapCaseStateToTagVariant = (
@@ -27,43 +55,62 @@ export const mapCaseStateToTagVariant = (
   state?: CaseState | null,
   caseType?: CaseType | null,
   isValidToDateInThePast?: boolean | null,
-  courtDate?: string | null,
+  scheduledDate?: string | null,
   isCourtRole?: boolean,
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
+  indictmentDecision?: IndictmentDecision | null,
 ): { color: TagVariant; text: string } => {
-  switch (state) {
-    case CaseState.NEW:
-    case CaseState.DRAFT:
-    case CaseState.WAITING_FOR_CONFIRMATION:
-      return { color: 'red', text: formatMessage(m.draft) }
-    case CaseState.SUBMITTED:
-      return {
-        color: 'purple',
-        text: formatMessage(isCourtRole ? tables.newTag : m.sent),
-      }
-    case CaseState.RECEIVED:
-      return courtDate
-        ? { color: 'mint', text: formatMessage(m.scheduled) }
-        : { color: 'blueberry', text: formatMessage(tables.receivedTag) }
-    case CaseState.ACCEPTED:
-      return isIndictmentCase(caseType) || isValidToDateInThePast
-        ? { color: 'darkerBlue', text: formatMessage(m.inactive) }
-        : {
-            color: 'blue',
-            text: formatMessage(
-              isInvestigationCase(caseType) ? m.accepted : m.active,
-            ),
-          }
-
-    case CaseState.REJECTED:
-      return { color: 'rose', text: formatMessage(m.rejected) }
-    case CaseState.DISMISSED:
-      return { color: 'dark', text: formatMessage(m.dismissed) }
-    default:
-      return { color: 'white', text: formatMessage(m.unknown) }
+  if (indictmentDecision === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
+    return { color: 'mint', text: formatMessage(strings.postponedUntilVerdict) }
+  } else {
+    switch (state) {
+      case CaseState.NEW:
+      case CaseState.DRAFT:
+      case CaseState.WAITING_FOR_CONFIRMATION:
+        return { color: 'red', text: formatMessage(strings.draft) }
+      case CaseState.SUBMITTED:
+        return {
+          color: 'purple',
+          text: formatMessage(isCourtRole ? strings.new : strings.sent),
+        }
+      case CaseState.RECEIVED:
+        return scheduledDate
+          ? { color: 'mint', text: formatMessage(strings.scheduled) }
+          : { color: 'blueberry', text: formatMessage(strings.received) }
+      case CaseState.MAIN_HEARING:
+        return { color: 'blue', text: formatMessage(strings.reassignment) }
+      case CaseState.ACCEPTED:
+        return isIndictmentCase(caseType) || isValidToDateInThePast
+          ? { color: 'darkerBlue', text: formatMessage(strings.inactive) }
+          : {
+              color: 'blue',
+              text: formatMessage(
+                isInvestigationCase(caseType)
+                  ? strings.accepted
+                  : strings.active,
+              ),
+            }
+      case CaseState.REJECTED:
+        return { color: 'rose', text: formatMessage(strings.rejected) }
+      case CaseState.DISMISSED:
+        return { color: 'dark', text: formatMessage(strings.dismissed) }
+      case CaseState.COMPLETED:
+        return {
+          color: 'darkerBlue',
+          text: formatMessage(strings.completed, { indictmentRulingDecision }),
+        }
+      case CaseState.WAITING_FOR_CANCELLATION:
+        return {
+          color: 'rose',
+          text: formatMessage(strings.recalled),
+        }
+      default:
+        return { color: 'white', text: formatMessage(strings.unknown) }
+    }
   }
 }
 
-const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
+const TagCaseState: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const {
     caseState,
@@ -71,16 +118,24 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
     isCourtRole,
     isValidToDateInThePast,
     courtDate,
-  } = Props
+    indictmentReviewer,
+    indictmentRulingDecision,
+    customMapCaseStateToTag,
+    indictmentDecision,
+  } = props
 
-  const tagVariant = mapCaseStateToTagVariant(
-    formatMessage,
-    caseState,
-    caseType,
-    isValidToDateInThePast,
-    courtDate,
-    isCourtRole,
-  )
+  const tagVariant = customMapCaseStateToTag
+    ? customMapCaseStateToTag(formatMessage, caseState, indictmentReviewer)
+    : mapCaseStateToTagVariant(
+        formatMessage,
+        caseState,
+        caseType,
+        isValidToDateInThePast,
+        courtDate,
+        isCourtRole,
+        indictmentRulingDecision,
+        indictmentDecision,
+      )
 
   if (!tagVariant) return null
 

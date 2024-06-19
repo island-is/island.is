@@ -43,7 +43,6 @@ export const Navbar = () => {
 
   const { activeItem, form } = control
   const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
-
   const stepsIds = useMemo(
     () =>
       steps

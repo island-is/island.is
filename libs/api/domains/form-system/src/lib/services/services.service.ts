@@ -1,13 +1,13 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   ApiServicesFasteignFasteignanumerGetRequest,
   ServicesApi,
 } from '@island.is/clients/form-system'
-import { List, Translation } from '../../models/services.model'
-import { GetPropertyInput, GetTranslationInput } from '../../dto/services.input'
+import { List } from '../../models/services.model'
+import { GetPropertyInput } from '../../dto/services.input'
 import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
@@ -109,36 +109,5 @@ export class FormSystemService {
     }
 
     return response as List
-  }
-
-  async getTranslation(
-    input: GetTranslationInput,
-  ): Promise<Translation> {
-    const { FORM_SYSTEM_MIDEIND_KEY } = process.env
-    const response = await fetch('https://api.greynir.is/translate/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Accept: 'application/json',
-        'X-API-Key': FORM_SYSTEM_MIDEIND_KEY || '',
-      },
-      body: JSON.stringify({
-        contents: input.contents,
-        sourceLanguageCode: 'is',
-        targetLanguageCode: 'en',
-        model: '',
-        domain: '',
-      }),
-    })
-    if (!response.ok) {
-      throw new Error('Failed to get translation')
-    }
-    const result = await response.json()
-    return {
-      translations: result.translations ?? [],
-      sourceLanguageCode: result.sourceLanguageCode ?? '',
-      targetLanguageCode: result.targetLanguageCode ?? '',
-      model: result.model ?? '',
-    } as Translation
   }
 }

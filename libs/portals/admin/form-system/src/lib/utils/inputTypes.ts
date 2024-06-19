@@ -1,5 +1,4 @@
 import { Option } from '@island.is/island-ui/core'
-
 /* eslint-disable @typescript-eslint/naming-convention */
 enum InputTypes {
   Bank_account = 'Bankareikningur',

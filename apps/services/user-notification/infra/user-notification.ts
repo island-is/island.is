@@ -39,12 +39,13 @@ const getEnv = (services: {
   AUTH_DELEGATION_MACHINE_CLIENT_SCOPE: json([
     '@island.is/auth/delegations/index:system',
   ]),
-  USER_NOTIFICATION_APP_PROTOCOL: {
-    dev: 'is.island.app.dev',
-    staging: 'is.island.app.dev', // intentionally set to dev - see firebase setup
-    prod: 'is.island.app',
-  },
   SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
+  EMAIL_FROM_ADDRESS: {
+    dev: 'development@island.is',
+    staging: 'development@island.is',
+    prod: 'noreply@island.is',
+  },
+  REDIS_USE_SSL: 'true',
 })
 
 export const userNotificationServiceSetup = (services: {
@@ -57,6 +58,7 @@ export const userNotificationServiceSetup = (services: {
     .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
+    .redis()
     .env(getEnv(services))
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
@@ -121,6 +123,7 @@ export const userNotificationWorkerSetup = (services: {
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .db()
     .migrations()
+    .redis()
     .env({
       ...getEnv(services),
       EMAIL_REGION: 'eu-west-1',

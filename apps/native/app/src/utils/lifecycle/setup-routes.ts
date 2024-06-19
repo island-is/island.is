@@ -279,24 +279,10 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/notification/:id', (passProps) => {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: ComponentRegistry.NotificationDetailScreen,
-              passProps,
-            },
-          },
-        ],
-      },
-    })
-  })
-
   addRoute(
     '/wallet/:passId',
     async ({ passId, fromId, toId, item, ...rest }: any) => {
+      await Navigation.dismissAllModals()
       selectTab(1)
       await Navigation.popToRoot(StackRegistry.WalletStack)
       Navigation.push(StackRegistry.WalletStack, {
@@ -316,6 +302,7 @@ export function setupRoutes() {
     '/walletpassport/:passId',
     async ({ passId, fromId, toId, ...rest }: any) => {
       selectTab(1)
+      await Navigation.dismissAllModals()
       await Navigation.popToRoot(StackRegistry.WalletStack)
       Navigation.push(StackRegistry.WalletStack, {
         component: {

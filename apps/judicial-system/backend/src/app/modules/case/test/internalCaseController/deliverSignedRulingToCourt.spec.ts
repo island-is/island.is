@@ -1,7 +1,7 @@
 import format from 'date-fns/format'
 import { uuid } from 'uuidv4'
 
-import { User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -38,8 +38,9 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     mockCreateDocument.mockRejectedValue(new Error('Some error'))
 
     mockAwsS3Service = awsS3Service
-    const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-    mockGetObject.mockRejectedValue(new Error('Some error'))
+    const mockGetGeneratedObject =
+      mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+    mockGetGeneratedObject.mockRejectedValue(new Error('Some error'))
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
@@ -56,8 +57,17 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
   describe('signed ruling delivered', () => {
     const caseId = uuid()
     const courtId = uuid()
+    const caseType = CaseType.BODY_SEARCH
+    const caseState = CaseState.ACCEPTED
+
     const courtCaseNumber = uuid()
-    const theCase = { id: caseId, courtId, courtCaseNumber } as Case
+    const theCase = {
+      id: caseId,
+      type: caseType,
+      state: caseState,
+      courtId,
+      courtCaseNumber,
+    } as Case
     const pdf = Buffer.from('test ruling')
     const now = randomDate()
 
@@ -66,21 +76,19 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     beforeEach(async () => {
       const mockNowFactory = nowFactory as jest.Mock
       mockNowFactory.mockReturnValue(now)
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(pdf)
+      const mockGetGeneratedObject =
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+      mockGetGeneratedObject.mockResolvedValueOnce(pdf)
       const mockCreateDocument = mockCourtService.createDocument as jest.Mock
       mockCreateDocument.mockResolvedValueOnce(uuid())
 
       then = await givenWhenThen(caseId, theCase)
     })
 
-    it('should get the signed ruling from S3', async () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        `generated/${caseId}/ruling.pdf`,
-      )
-    })
-
-    it('should create a ruling at court', async () => {
+    it('should deliver the signed ruling to court', async () => {
+      expect(
+        mockAwsS3Service.getGeneratedRequestCaseObject,
+      ).toHaveBeenCalledWith(caseType, `${caseId}/ruling.pdf`)
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
         caseId,
@@ -92,9 +100,6 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
         'application/pdf',
         pdf,
       )
-    })
-
-    it('should return a success response', async () => {
       expect(then.result.delivered).toEqual(true)
     })
   })
@@ -108,8 +113,9 @@ describe('InternalCaseController - Deliver signed ruling to court', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(pdf)
+      const mockGetGeneratedObject =
+        mockAwsS3Service.getGeneratedRequestCaseObject as jest.Mock
+      mockGetGeneratedObject.mockResolvedValueOnce(pdf)
 
       then = await givenWhenThen(caseId, theCase)
     })

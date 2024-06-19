@@ -1,5 +1,4 @@
 import { Field, InputType } from '@nestjs/graphql'
-import graphqlTypeJson from 'graphql-type-json'
 
 @InputType('FormSystemGetPropertyInput')
 export class GetPropertyInput {

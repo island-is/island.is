@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { ChildrenAid, Municipality } from '@island.is/financial-aid/shared/lib'
 
 import { AidModel } from '../../aid'
 import { StaffModel } from '../../staff/models'
@@ -54,4 +54,10 @@ export class MunicipalityModel implements Municipality {
 
   @Field({ nullable: true })
   readonly navPassword?: string
+
+  @Field(() => String)
+  readonly childrenAid!: ChildrenAid
+
+  @Field()
+  readonly decemberCompensation!: number
 }

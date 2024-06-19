@@ -1,6 +1,5 @@
 import { addEventListener } from '@react-native-community/netinfo'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
-import { getPresentedNotificationsAsync } from 'expo-notifications'
 import {
   AppState,
   AppStateStatus,
@@ -12,6 +11,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
+import { notificationsStore } from '../../stores/notifications-store'
 import { offlineStore } from '../../stores/offline-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
@@ -23,8 +23,6 @@ import {
 import { ButtonRegistry, ComponentRegistry as CR } from '../component-registry'
 import { isIos } from '../devices'
 import { handleQuickAction } from '../quick-actions'
-
-import { handleNotificationResponse } from './setup-notifications'
 
 let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 
@@ -94,14 +92,7 @@ export function setupEventHandlers() {
     const { appLockTimeout } = preferencesStore.getState()
 
     if (status === 'active') {
-      getPresentedNotificationsAsync().then((notifications) => {
-        notifications.forEach((notification) =>
-          handleNotificationResponse({
-            notification,
-            actionIdentifier: 'NOOP',
-          }),
-        )
-      })
+      void notificationsStore.getState().checkUnseen()
     }
 
     if (!skipAppLock()) {
@@ -135,9 +126,10 @@ export function setupEventHandlers() {
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
+            lockScreenActivatedAt !== null &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
-            hideAppLockOverlay()
+            hideAppLockOverlay(lockScreenComponentId)
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
@@ -189,6 +181,10 @@ export function setupEventHandlers() {
       offlineStoreState.actions.setNetInfoNoConnection()
     } else {
       offlineStoreState.actions.setIsConnected(true)
+
+      if (!offlineStoreState.pastIsConnected) {
+        offlineStoreState.actions.resetConnectionState()
+      }
     }
   })
 }

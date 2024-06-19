@@ -49,18 +49,11 @@ describe('InternalNotificationController - Send appeal completed notifications',
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}"}`
 
-    const {
-      emailService,
-      notificationConfig,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationConfig, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-
-    const mockFindAll = notificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (
       defenderNationalId?: string,
@@ -194,7 +187,7 @@ describe('InternalNotificationController - Send appeal completed notifications',
         expect.objectContaining({
           to: [{ name: defenderName, address: defenderEmail }],
           subject: `Niðurfelling máls ${appealCaseNumber} (${courtCaseNumber})`,
-          html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Landsréttur hefur móttekið afturköllun á kæru í máli ${courtCaseNumber}. Landsréttarmálið ${appealCaseNumber} hefur verið fellt niður.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })

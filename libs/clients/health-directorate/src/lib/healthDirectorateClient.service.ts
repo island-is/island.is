@@ -1,22 +1,32 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Injectable } from '@nestjs/common'
 import {
-  MinarSidur,
+  NamsUpplysingar,
   StarfsleyfiAMinumSidumApi,
+  StarfsleyfiUmsoknStarfsleyfi,
+  UmsoknStarfsleyfiApi,
+  UtbuaStarfsleyfiSkjalResponse,
   VottordApi,
 } from '../../gen/fetch'
-import { Injectable } from '@nestjs/common'
 import {
   HealthcareLicense,
   HealthcareLicenseCertificate,
   HealthcareLicenseCertificateRequest,
+  HealthcareWorkPermitRequest,
+  HealthDirectorateLicenseStatus,
+  HealthDirectorateLicenseToPractice,
 } from './healthDirectorateClient.types'
+import { isDefined } from '@island.is/shared/utils'
 import format from 'date-fns/format'
+import { handle404 } from '@island.is/clients/middlewares'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class HealthDirectorateClientService {
   constructor(
     private readonly starfsleyfiAMinumSidumApi: StarfsleyfiAMinumSidumApi,
     private readonly vottordApi: VottordApi,
+    private readonly umsoknStarfsleyfiApi: UmsoknStarfsleyfiApi,
   ) {}
 
   private starfsleyfiAMinumSidumApiWithAuth(auth: Auth) {
@@ -29,12 +39,73 @@ export class HealthDirectorateClientService {
     return this.vottordApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  public async getHealthDirectorateLicense(
+  private umsoknStarfsleyfiApiWith(auth: Auth) {
+    return this.umsoknStarfsleyfiApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  public async getHealthDirectorateLicenseToPractice(
     auth: User,
-  ): Promise<Array<MinarSidur> | null> {
-    return this.starfsleyfiAMinumSidumApiWithAuth(
-      auth,
-    ).starfsleyfiAMinumSidumGet()
+  ): Promise<Array<HealthDirectorateLicenseToPractice> | null> {
+    const licenses = await this.starfsleyfiAMinumSidumApiWithAuth(auth)
+      .starfsleyfiAMinumSidumGet()
+      .catch(handle404)
+
+    if (!licenses) {
+      return null
+    }
+
+    const mappedLicenses: Array<HealthDirectorateLicenseToPractice> =
+      licenses
+        ?.map((l) => {
+          if (
+            !l.id ||
+            !l.logadiliID ||
+            !l.kennitala ||
+            !l.nafn ||
+            !l.starfsstett ||
+            !l.leyfi ||
+            !l.leyfisnumer ||
+            !l.gildirFra
+          ) {
+            return null
+          }
+
+          let status: HealthDirectorateLicenseStatus
+          switch (l.stada) {
+            case 'Í gildi':
+              status = 'VALID'
+              break
+            case 'Í gildi - Takmörkun':
+              status = 'LIMITED'
+              break
+            case 'Ógilt':
+              status = 'INVALID'
+              break
+            case 'Svipting':
+              status = 'REVOKED'
+              break
+            case 'Afsal':
+              status = 'WAIVED'
+              break
+            default:
+              status = 'UNKNOWN'
+          }
+
+          return {
+            id: l.id,
+            legalEntityId: l.logadiliID,
+            licenseHolderNationalId: l.kennitala,
+            licenseHolderName: l.nafn,
+            profession: l.starfsstett,
+            practice: l.leyfi,
+            licenseNumber: l.leyfisnumer,
+            validFrom: l.gildirFra,
+            validTo: l.gildirTIl ?? undefined,
+            status,
+          }
+        })
+        .filter(isDefined) ?? []
+    return mappedLicenses
   }
 
   async getMyHealthcareLicenses(auth: Auth): Promise<HealthcareLicense[]> {
@@ -78,6 +149,75 @@ export class HealthDirectorateClientService {
     }
 
     return result
+  }
+
+  async getHealthCareLicensesForWorkPermit(
+    auth: Auth,
+  ): Promise<StarfsleyfiUmsoknStarfsleyfi[] | null> {
+    const licenses = await this.umsoknStarfsleyfiApiWith(auth)
+      .umsoknStarfsleyfiStarfsleyfiGet()
+      .catch(handle404)
+
+    if (!licenses) {
+      logger.warn(
+        'Failed to fetch users healthcare licenses from Health Directorate. Unable to process application without this data with risk of giving out duplicate licenses',
+      )
+      return null
+    }
+
+    return licenses
+  }
+
+  async getHealthCareWorkPermitEducationInfo(
+    auth: Auth,
+  ): Promise<NamsUpplysingar[] | null> {
+    const educationInfo = await this.umsoknStarfsleyfiApiWith(auth)
+      .umsoknStarfsleyfiNamsUpplysGet()
+      .catch(handle404)
+
+    if (!educationInfo) {
+      logger.warn(
+        'Health directorate did not provide the required education information needed to process permits. Unable to process potential permits without this data.',
+      )
+      return null
+    }
+
+    return educationInfo
+  }
+
+  async submitApplicationHealthcareWorkPermit(
+    auth: User,
+    request: HealthcareWorkPermitRequest,
+  ): Promise<UtbuaStarfsleyfiSkjalResponse[] | null> {
+    const items = await this.umsoknStarfsleyfiApiWith(
+      auth,
+    ).umsoknStarfsleyfiUtbuaSkjalPost({
+      utbuaStarfsleyfiSkjalRequest: {
+        name: request.name,
+        dateOfBirth: format(new Date(request.dateOfBirth), 'dd.MM.yyyy'),
+        citizenship: request.citizenship,
+        email: request.email,
+        phoneNo: request.phone,
+        idProfession: request.idProfession,
+        education: request.education,
+      },
+    })
+
+    if (!items || !Array.isArray(items) || items.length === 0) {
+      logger.warn(
+        'Health directorate response is missing the PDF license to practice. User has already been through payment process. Attention required.',
+      )
+      return null
+    }
+
+    if (items.some((item) => !item.base64String)) {
+      logger.warn(
+        'Health directorate response is missing the PDF license to practice or the license number. User has already been through payment process. Attention required.',
+      )
+      return null
+    }
+
+    return items
   }
 
   async submitApplicationHealthcareLicenseCertificate(

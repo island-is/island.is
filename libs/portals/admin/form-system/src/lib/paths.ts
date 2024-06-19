@@ -1,4 +1,4 @@
 export enum FormSystemPaths {
-  FormSystemRoot = '/form-system',
-  Form = '/form-system/:formId',
+  FormSystemRoot = '/umsoknarsmidur',
+  Form = '/umsoknarsmidur/:formId',
 }

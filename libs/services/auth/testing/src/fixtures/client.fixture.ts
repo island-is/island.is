@@ -2,7 +2,7 @@ import * as faker from 'faker'
 import { Client, ClientAllowedScope, ClientType } from '@island.is/auth-api-lib'
 
 export type CreateClient = Pick<
-  Client,
+  Omit<Client, 'supportedDelegationTypes'>,
   | 'clientId'
   | 'clientName'
   | 'nationalId'
@@ -20,6 +20,7 @@ export type CreateClient = Pick<
   allowedGrantTypes?: string[]
   claims?: { type: string; value: string }[]
   allowedScopes?: Pick<ClientAllowedScope, 'clientId' | 'scopeName'>[]
+  supportedDelegationTypes?: string[]
 }
 
 const createRandomClient = (): CreateClient => {
@@ -34,6 +35,7 @@ const createRandomClient = (): CreateClient => {
     supportsPersonalRepresentatives: false,
     requireApiScopes: false,
     singleSession: false,
+    supportedDelegationTypes: [],
   }
 }
 

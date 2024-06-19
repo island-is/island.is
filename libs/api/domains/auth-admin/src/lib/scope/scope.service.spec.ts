@@ -16,6 +16,7 @@ import {
 } from '@island.is/testing/fixtures'
 import { TestApp, testServer, useAuth } from '@island.is/testing/nest'
 
+import { createMockApiResponse } from '../../../test/utils'
 import { ScopeResolver } from './scope.resolver'
 import { ScopeService } from './scope.service'
 import { AdminScopeDTO, AdminCreateScopeDto } from '@island.is/auth-api-lib'
@@ -84,11 +85,15 @@ const createMockAdminApi = (
   findByNameData: AdminScopeDTO,
 ) => ({
   withMiddleware: jest.fn().mockReturnThis(),
-  meScopesControllerCreate: jest.fn().mockResolvedValue(createData),
-  meScopesControllerFindAllByTenantId: jest.fn().mockResolvedValue(findAllData),
-  meScopesControllerFindByTenantIdAndScopeName: jest
+  meScopesControllerCreateRaw: jest
     .fn()
-    .mockResolvedValue(findByNameData),
+    .mockResolvedValue(createMockApiResponse(createData)),
+  meScopesControllerFindAllByTenantIdRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse(findAllData)),
+  meScopesControllerFindByTenantIdAndScopeNameRaw: jest
+    .fn()
+    .mockResolvedValue(createMockApiResponse(findByNameData)),
 })
 
 const mockAdminDevApi = createMockAdminApi(
@@ -126,17 +131,17 @@ describe('ScopeService', () => {
 
   beforeEach(() => {
     // Create
-    mockAdminDevApi.meScopesControllerCreate.mockClear()
-    mockAdminStagingApi.meScopesControllerCreate.mockClear()
-    mockAdminProdApi.meScopesControllerCreate.mockClear()
+    mockAdminDevApi.meScopesControllerCreateRaw.mockClear()
+    mockAdminStagingApi.meScopesControllerCreateRaw.mockClear()
+    mockAdminProdApi.meScopesControllerCreateRaw.mockClear()
     // Find all
-    mockAdminDevApi.meScopesControllerFindAllByTenantId.mockClear()
-    mockAdminStagingApi.meScopesControllerFindAllByTenantId.mockClear()
-    mockAdminProdApi.meScopesControllerFindAllByTenantId.mockClear()
+    mockAdminDevApi.meScopesControllerFindAllByTenantIdRaw.mockClear()
+    mockAdminStagingApi.meScopesControllerFindAllByTenantIdRaw.mockClear()
+    mockAdminProdApi.meScopesControllerFindAllByTenantIdRaw.mockClear()
     // Find by name
-    mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeName.mockClear()
-    mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeName.mockClear()
-    mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeName.mockClear()
+    mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
+    mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
+    mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeNameRaw.mockClear()
   })
 
   describe('with multiple environments', () => {
@@ -177,9 +182,9 @@ describe('ScopeService', () => {
         ],
       })
 
-      expect(mockAdminDevApi.meScopesControllerCreate).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meScopesControllerCreate).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meScopesControllerCreate).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
+      expect(mockAdminStagingApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
+      expect(mockAdminProdApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
       expect(scopeResponses).toEqual([
         {
           scopeName: mockCreateScopes.scope1.name,
@@ -204,9 +209,9 @@ describe('ScopeService', () => {
         environments: [Environment.Production],
       })
 
-      expect(mockAdminDevApi.meScopesControllerCreate).toBeCalledTimes(0)
-      expect(mockAdminStagingApi.meScopesControllerCreate).toBeCalledTimes(0)
-      expect(mockAdminProdApi.meScopesControllerCreate).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopesControllerCreateRaw).toBeCalledTimes(0)
+      expect(mockAdminStagingApi.meScopesControllerCreateRaw).toBeCalledTimes(0)
+      expect(mockAdminProdApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
       expect(scopeResponses).toEqual([
         {
           scopeName: mockCreateScopes.scope1.name,
@@ -243,13 +248,13 @@ describe('ScopeService', () => {
 
       // Assert
       expect(
-        mockAdminDevApi.meScopesControllerFindAllByTenantId,
+        mockAdminDevApi.meScopesControllerFindAllByTenantIdRaw,
       ).toBeCalledTimes(1)
       expect(
-        mockAdminStagingApi.meScopesControllerFindAllByTenantId,
+        mockAdminStagingApi.meScopesControllerFindAllByTenantIdRaw,
       ).toBeCalledTimes(1)
       expect(
-        mockAdminProdApi.meScopesControllerFindAllByTenantId,
+        mockAdminProdApi.meScopesControllerFindAllByTenantIdRaw,
       ).toBeCalledTimes(1)
 
       expect(scopeResponses).toEqual({
@@ -282,13 +287,13 @@ describe('ScopeService', () => {
 
       // Assert
       expect(
-        mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeName,
+        mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
       ).toBeCalledTimes(1)
       expect(
-        mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeName,
+        mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
       ).toBeCalledTimes(1)
       expect(
-        mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeName,
+        mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
       ).toBeCalledTimes(1)
       expect(scopeResponses).toEqual({
         scopeName: mockedScope.name,

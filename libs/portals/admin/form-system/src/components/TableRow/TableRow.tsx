@@ -12,7 +12,6 @@ import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
 import { TranslationTag } from '../TranslationTag/TranslationTag'
-import { formatDate } from '../../utils/formatDate'
 import { FormSystemPaths } from '../../lib/paths'
 import {
   LicenseProviderEnum,
@@ -54,7 +53,7 @@ export const TableRow = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
-  const { formatMessage } = useIntl()
+  const { formatMessage, formatDate } = useIntl()
   const header = () => (
     <>
       <Box className={styles.header}>
@@ -101,7 +100,11 @@ export const TableRow = ({
         </Column>
         <Column span="2/12">
           <ColumnText
-            text={formatDate(lastModified ? lastModified : new Date())}
+            text={formatDate(lastModified ? lastModified : new Date(), {
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric',
+            })}
           />
         </Column>
         <Column span="1/12">
