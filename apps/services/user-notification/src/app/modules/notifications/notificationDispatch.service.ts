@@ -115,7 +115,8 @@ export class NotificationDispatchService {
       case 'messaging/invalid-argument':
       case 'messaging/registration-token-not-registered':
       case 'messaging/invalid-recipient':
-        this.logger.warn('Error calls for removing devicetoken', {
+      case 'messaging/mismatched-credential':
+        this.logger.warn('Firebase response.error calls for removing deviceToken', {
           error,
           messageId,
         })
