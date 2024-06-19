@@ -6,7 +6,7 @@
       "extensions": ["dbaeumer.vscode-eslint"]
     }
   },
-  "runArgs": ["--userns=keep-id"],
+  "runArgs": ["--priveleged"],
 
-  "forwardPorts": [3000]
+  "forwardPorts": [3000, 3333, 4200, 4242]
 }
