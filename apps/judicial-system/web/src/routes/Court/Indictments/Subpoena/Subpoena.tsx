@@ -196,6 +196,7 @@ const Subpoena: FC = () => {
         <Box component="section" marginBottom={10}>
           {workingCase.defendants?.map((defendant, index) => (
             <Box
+              key={defendant.id}
               marginBottom={
                 index + 1 === workingCase.defendants?.length ? 0 : 2
               }
