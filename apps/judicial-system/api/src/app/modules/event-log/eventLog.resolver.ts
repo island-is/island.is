@@ -16,7 +16,7 @@ import { CreateEventLogInput } from '../event-log/dto/createEventLog.input'
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
 export class EventLogResolver {
-constructor(
+  constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
