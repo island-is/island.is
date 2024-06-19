@@ -7,7 +7,14 @@ import {
   YesOrNo,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import { Child, Parents, Person, RelativesRow, SiblingsRow } from '../types'
+import {
+  Child,
+  ChildInformation,
+  Parents,
+  Person,
+  RelativesRow,
+  SiblingsRow,
+} from '../types'
 import {
   FoodAllergiesOptions,
   FoodIntolerancesOptions,
@@ -15,6 +22,7 @@ import {
   RelationOptions,
   SiblingRelationOptions,
   languageCodes,
+  Gender,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
@@ -27,6 +35,13 @@ import { GetFriggOptions } from '../graphql/queries'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
+
+  const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
+
+  const differentPlaceOfResidence = getValueViaPath(
+    answers,
+    'childInfo.differentPlaceOfResidence',
+  ) as YesOrNo
 
   const parents = getValueViaPath(answers, 'parents') as Parents
 
@@ -144,6 +159,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   return {
     childNationalId,
+    childInfo,
+    differentPlaceOfResidence,
     parents,
     relatives,
     reasonForApplication,
@@ -252,9 +269,7 @@ export const hasChildrenThatCanApply = (application: Application) => {
   return children.some((child) => canApply(child))
 }
 
-export const getOtherParent = (
-  application: Application,
-): Person | undefined => {
+export const getSelectedChild = (application: Application) => {
   const { childNationalId } = getApplicationAnswers(application.answers)
   const { children } = getApplicationExternalData(application.externalData)
 
@@ -262,6 +277,13 @@ export const getOtherParent = (
   const selectedChild = children.find((child) => {
     return child.nationalId === childNationalId
   })
+  return selectedChild
+}
+
+export const getOtherParent = (
+  application: Application,
+): Person | undefined => {
+  const selectedChild = getSelectedChild(application)
 
   return selectedChild?.otherParent as Person | undefined
 }
@@ -379,6 +401,42 @@ export const getSiblingRelationOptionLabel = (
 ) => {
   const relationOptions = getSiblingRelationOptions()
   return relationOptions.find((option) => option.value === value)?.label ?? ''
+}
+
+export const getGenderOptions = () => [
+  {
+    value: Gender.MALE,
+    label: newPrimarySchoolMessages.shared.male,
+  },
+  {
+    value: Gender.FEMALE,
+    label: newPrimarySchoolMessages.shared.female,
+  },
+  {
+    value: Gender.OTHER,
+    label: newPrimarySchoolMessages.shared.otherGender,
+  },
+]
+
+export const formatGender = (genderCode?: string): Gender | undefined => {
+  switch (genderCode) {
+    case '1':
+    case '3':
+      return Gender.MALE
+    case '2':
+    case '4':
+      return Gender.FEMALE
+    case '7':
+    case '8':
+      return Gender.OTHER
+    default:
+      return undefined
+  }
+}
+
+export const getGenderOptionLabel = (value: Gender) => {
+  const genderOptions = getGenderOptions()
+  return genderOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getLanguageCodes = () => {

@@ -94,6 +94,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
       [States.DRAFT]: {
         exit: [
           'clearApplicationIfReasonForApplication',
+          'clearPlaceOfResidence',
           'clearLanguages',
           'clearAllergiesAndIntolerances',
           'clearPublication',
@@ -207,6 +208,16 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL
         ) {
           unset(application.answers, 'siblings')
+        }
+        return context
+      }),
+      clearPlaceOfResidence: assign((context) => {
+        const { application } = context
+        const { differentPlaceOfResidence } = getApplicationAnswers(
+          application.answers,
+        )
+        if (differentPlaceOfResidence === NO) {
+          unset(application.answers, 'childInfo.placeOfResidence')
         }
         return context
       }),

@@ -62,7 +62,7 @@ export const Parents = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.shared.municipality,
                   )}
-                  value={parent.address.city}
+                  value={`${parent.address.postalCode}, ${parent.address.city}`}
                 />
               </GridColumn>
             </GridRow>

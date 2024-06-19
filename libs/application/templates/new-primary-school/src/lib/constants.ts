@@ -47,7 +47,7 @@ export enum ReasonForApplicationOptions {
 }
 
 export enum SiblingRelationOptions {
-  SIBLING = 'Sibling',
+  SIBLING = 'sibling',
   HALF_SIBLING = 'halfSibling',
   STEP_SIBLING = 'stepSibling',
 }
@@ -211,6 +211,12 @@ export const languageCodes: Language[] = [
   { code: 'yo', name: 'Yoruba - Èdè Yorùbá' },
   { code: 'zu', name: 'Zulu - isiZulu' },
 ]
+
+export enum Gender {
+  FEMALE = 'FEMALE',
+  MALE = 'MALE',
+  OTHER = 'OTHER',
+}
 
 export enum OptionsType {
   ALLERGRY = 'allergy',
