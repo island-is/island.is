@@ -24,6 +24,8 @@ import { getEditUrl } from './routing'
 import { createHash } from 'crypto'
 import { RegulationDraftTypes, StepNames } from '../types'
 
+export const fileUrl = 'https://files.reglugerd.is'
+
 type QueryResult<T> =
   | {
       data: T
@@ -133,7 +135,7 @@ export const useS3Upload = () => {
         })
         return
       }
-      const location = `https://files.reglugerd.is/${key}`
+      const location = `${fileUrl}/${key}`
       setUploadLocation(location)
       setUploadStatus({ uploading: false })
     })

@@ -13,7 +13,7 @@
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/signature-collection"],
       "options": {
         "jestConfig": "libs/clients/signature-collection/jest.config.ts",
         "passWithNoTests": true

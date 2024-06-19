@@ -24,20 +24,25 @@ const NotificationButton = ({
   showMenu = false,
   disabled,
 }: Props) => {
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [hasMarkedLocally, setHasMarkedLocally] = useState(false)
   const [markAllAsSeen] = useMarkAllNotificationsAsSeenMutation()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const ref = useRef<HTMLButtonElement>(null)
 
-  const { data } = useGetUserNotificationsOverviewQuery({
+  const { data, refetch } = useGetUserNotificationsOverviewQuery({
     variables: {
       input: {
         limit: 5,
       },
+      locale: lang,
     },
   })
+
+  useEffect(() => {
+    refetch()
+  }, [lang, refetch])
 
   const showBadge =
     !!data?.userNotificationsOverview?.unseenCount && !hasMarkedLocally
