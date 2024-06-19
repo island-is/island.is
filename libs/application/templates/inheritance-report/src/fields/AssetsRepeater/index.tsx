@@ -35,6 +35,7 @@ import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import ShareInput from '../../components/ShareInput'
 import DeceasedShare from '../../components/DeceasedShare'
 import { PREPAID_INHERITANCE } from '../../lib/constants'
+import * as styles from '../styles.css'
 
 type RepeaterProps = {
   field: {
@@ -62,7 +63,7 @@ export const AssetsRepeater: FC<
     throw new Error('calcWithShareValue and assetKey are required')
   }
 
-  const { fields, append, replace, update } = useFieldArray<any>({
+  const { fields, append, remove, replace, update } = useFieldArray<any>({
     name: id,
   })
   const { setValue, getValues } = useFormContext()
@@ -167,39 +168,54 @@ export const AssetsRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box
-              display={'flex'}
-              justifyContent="spaceBetween"
-              marginBottom={2}
-            >
-              <Text
-                variant="h4"
-                color={repeaterField.enabled ? 'currentColor' : 'dark300'}
-              >
-                {formatMessage(m.realEstateRepeaterHeader) +
-                  ' ' +
-                  (mainIndex + 1)}
-              </Text>
-              <Box>
+            {!repeaterField.initial ? (
+              <Box position="absolute" className={styles.removeFieldButton}>
                 <Button
-                  variant="text"
+                  variant="ghost"
                   size="small"
-                  icon={repeaterField.enabled ? 'remove' : 'add'}
+                  circle
+                  icon="remove"
                   onClick={() => {
-                    const updatedField = {
-                      ...repeaterField,
-                      enabled: !repeaterField.enabled,
-                    }
-                    update(mainIndex, updatedField)
+                    remove(mainIndex)
                     calculateTotal()
                   }}
-                >
-                  {repeaterField.enabled
-                    ? formatMessage(m.inheritanceDisableMember)
-                    : formatMessage(m.inheritanceEnableMember)}
-                </Button>
+                />
               </Box>
-            </Box>
+            ) : (
+              <Box
+                display={'flex'}
+                justifyContent="spaceBetween"
+                marginBottom={2}
+              >
+                <Text
+                  variant="h4"
+                  color={repeaterField.enabled ? 'currentColor' : 'dark300'}
+                >
+                  {formatMessage(m.realEstateRepeaterHeader) +
+                    ' ' +
+                    (mainIndex + 1)}
+                </Text>
+                <Box>
+                  <Button
+                    variant="text"
+                    size="small"
+                    icon={repeaterField.enabled ? 'remove' : 'add'}
+                    onClick={() => {
+                      const updatedField = {
+                        ...repeaterField,
+                        enabled: !repeaterField.enabled,
+                      }
+                      update(mainIndex, updatedField)
+                      calculateTotal()
+                    }}
+                  >
+                    {repeaterField.enabled
+                      ? formatMessage(m.inheritanceDisableMember)
+                      : formatMessage(m.inheritanceEnableMember)}
+                  </Button>
+                </Box>
+              </Box>
+            )}
             <GridRow>
               {props.fields.map((field: any, index) => {
                 const even = props.fields.length % 2 === 0
