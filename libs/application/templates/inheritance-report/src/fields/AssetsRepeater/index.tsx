@@ -19,7 +19,6 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
-import * as styles from '../styles.css'
 import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
@@ -63,7 +62,7 @@ export const AssetsRepeater: FC<
     throw new Error('calcWithShareValue and assetKey are required')
   }
 
-  const { fields, append, remove, replace } = useFieldArray<any>({
+  const { fields, append, replace, update } = useFieldArray<any>({
     name: id,
   })
   const { setValue, getValues } = useFormContext()
@@ -80,14 +79,15 @@ export const AssetsRepeater: FC<
     }
 
     const total = values.reduce((acc: number, current: any) => {
-      const propertyValuation = valueToNumber(current[props.sumField])
+      const propertyValuation = valueToNumber(
+        current.enabled ? current[props.sumField] : 0,
+      )
       const shareValue = valueToNumber(current?.share, '.')
 
       return (
         Number(acc) +
         (calcWithShareValue
-          ? // TODO?: might need to fix the total value to support decimals
-            Math.round(propertyValuation * (shareValue / 100))
+          ? Math.round(propertyValuation * (shareValue / 100))
           : propertyValuation)
       )
     }, 0)
@@ -143,6 +143,7 @@ export const AssetsRepeater: FC<
           ...x,
           share: String(x.share),
           initial: true,
+          enabled: true,
         })),
       )
       setValue(`assets.${assetKey}.hasModified`, true)
@@ -159,17 +160,38 @@ export const AssetsRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box position="absolute" className={styles.removeFieldButton}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="remove"
-                onClick={() => {
-                  remove(mainIndex)
-                  calculateTotal()
-                }}
-              />
+            <Box
+              display={'flex'}
+              justifyContent="spaceBetween"
+              marginBottom={2}
+            >
+              <Text
+                variant="h4"
+                color={repeaterField.enabled ? 'currentColor' : 'dark300'}
+              >
+                {formatMessage(m.realEstateRepeaterHeader) +
+                  ' ' +
+                  (mainIndex + 1)}
+              </Text>
+              <Box>
+                <Button
+                  variant="text"
+                  size="small"
+                  icon={repeaterField.enabled ? 'remove' : 'add'}
+                  onClick={() => {
+                    const updatedField = {
+                      ...repeaterField,
+                      enabled: !repeaterField.enabled,
+                    }
+                    update(mainIndex, updatedField)
+                    calculateTotal()
+                  }}
+                >
+                  {repeaterField.enabled
+                    ? formatMessage(m.inheritanceDisableMember)
+                    : formatMessage(m.inheritanceEnableMember)}
+                </Button>
+              </Box>
             </Box>
             <GridRow>
               {props.fields.map((field: any, index) => {
@@ -198,6 +220,7 @@ export const AssetsRepeater: FC<
                     error={error}
                     answers={application.answers}
                     readOnly={repeaterField.initial}
+                    disabled={!repeaterField.enabled}
                   />
                 )
               })}
@@ -260,6 +283,7 @@ interface FieldComponentProps {
   error?: string
   answers?: Answers
   readOnly?: boolean
+  disabled?: boolean
 }
 
 const FieldComponent = ({
@@ -274,6 +298,7 @@ const FieldComponent = ({
   error,
   answers,
   readOnly,
+  disabled,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
 
@@ -296,6 +321,7 @@ const FieldComponent = ({
     onChange: () => onAfterChange?.(),
     error: error,
     readOnly: readOnly,
+    disabled: disabled,
   }
 
   switch (field.id) {
@@ -346,6 +372,7 @@ const FieldComponent = ({
           readOnly={readOnly}
           hasError={!!error}
           required={field.required && !readOnly}
+          disabled={disabled}
         />
       )
       break

@@ -329,9 +329,14 @@ export const HeirsAndPartitionRepeater: FC<
               <Box
                 display="flex"
                 justifyContent="spaceBetween"
-                marginBottom={3}
+                marginBottom={2}
               >
-                <Text variant="h4">{formatMessage(m.heir)}</Text>
+                <Text
+                  variant="h4"
+                  color={member.enabled ? 'currentColor' : 'dark300'}
+                >
+                  {formatMessage(m.heir) + ' ' + (mainIndex + 1)}
+                </Text>
                 <Box>
                   <Button
                     variant="text"
