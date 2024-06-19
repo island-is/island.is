@@ -25,7 +25,6 @@ import {
   Properties,
   RskCompanyInfo,
   TransportAuthority,
-  UniversityOfIceland,
   Vehicles,
   VehiclesMileage,
   VehicleServiceFjsV1,
@@ -192,6 +191,11 @@ export const serviceSetup = (services: {
         dev: 'https://api-staging.thinglysing.is/business/tolfraedi',
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
+      },
+      FORM_SYSTEM_API_BASE_PATH: {
+        dev: 'https://profun.island.is/umsoknarkerfi',
+        staging: '',
+        prod: '',
       },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
@@ -407,7 +411,6 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,
-      UniversityOfIceland,
       UniversityCareers,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,

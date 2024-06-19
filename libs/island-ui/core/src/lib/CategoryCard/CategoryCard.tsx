@@ -47,7 +47,6 @@ export type CategoryCardProps = {
   hyphenate?: boolean
   to?: string
   component?: ElementType
-  children?: React.ReactNode
 }
 
 const colorSchemes = {
@@ -108,7 +107,6 @@ const Component = forwardRef<
       hyphenate = false,
       tagOptions,
       autoStack,
-      children,
       ...rest
     },
     ref,
@@ -180,7 +178,6 @@ const Component = forwardRef<
             >
               {text}
             </Text>
-            {children}
             {hasTags && (
               <Box paddingTop={3}>
                 <Inline space={['smallGutter', 'smallGutter', 'gutter']}>

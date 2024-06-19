@@ -65,7 +65,7 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
   describe('deliver case to police', () => {
     const caseId = uuid()
     const caseType = CaseType.INDICTMENT
-    const caseState = CaseState.ACCEPTED
+    const caseState = CaseState.COMPLETED
     const policeCaseNumber = uuid()
     const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
@@ -103,12 +103,10 @@ describe('InternalCaseController - Deliver indictment case to police', () => {
     it('should update the police case', async () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         caseType,
-        caseState,
         courtRecordKey,
       )
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         caseType,
-        caseState,
         rulingKey,
       )
       expect(mockPoliceService.updatePoliceCase).toHaveBeenCalledWith(
