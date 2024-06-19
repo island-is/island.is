@@ -58,6 +58,9 @@ describe('DefendantController - Get subpoena pdf', () => {
       expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
+        undefined,
+        undefined,
+        undefined,
       )
       expect(res.end).toHaveBeenCalledWith(pdf)
     })
