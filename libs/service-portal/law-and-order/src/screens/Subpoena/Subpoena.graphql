@@ -1,0 +1,33 @@
+query GetSubpoena($input: LawAndOrderSubpoenaInput!) {
+  lawAndOrderSubpoena(input: $input) {
+    texts {
+      intro
+      confirmation
+      description
+    }
+    actions {
+      type
+      title
+      data
+    }
+    data {
+      id
+      acknowledged
+      displayClaim
+      chosenDefender
+      groups {
+        label
+        items {
+          label
+          value
+          link
+          action {
+            label
+            url
+            type
+          }
+        }
+      }
+    }
+  }
+}

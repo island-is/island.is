@@ -633,7 +633,9 @@
         "withdrawn": { "type": "boolean" },
         "withdrawnReason": { "type": "string" },
         "minumumAuthenticationType": { "type": "string" },
-        "bookmarked": { "type": "boolean" }
+        "bookmarked": { "type": "boolean" },
+        "fileType": { "type": "string" },
+        "urgent": { "type": "boolean" }
       }
     },
     "BatchRequest": {
@@ -677,7 +679,20 @@
         "senderName": { "type": "string" },
         "senderKennitala": { "type": "string" },
         "subject": { "type": "string" },
-        "categoryId": { "format": "int32", "type": "integer" }
+        "categoryId": { "format": "int32", "type": "integer" },
+        "urgent": { "type": "boolean" },
+        "actions": {
+          "type": "array",
+          "items": { "$ref": "#/definitions/MessageAction" }
+        }
+      }
+    },
+    "MessageAction": {
+      "type": "object",
+      "properties": {
+        "type": { "type": "string" },
+        "title": { "type": "string" },
+        "data": { "type": "string" }
       }
     },
     "PaperMailDTO": {

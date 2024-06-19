@@ -19,6 +19,11 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
         type
         value
       }
+      isUrgent
+      alertMessage {
+        type
+        message
+      }
     }
     totalCount
     unreadCount
@@ -38,6 +43,12 @@ query GetDocumentInboxLineV2($input: DocumentInput!) {
     content {
       type
       value
+    }
+    actions {
+      type
+      title
+      data
+      icon
     }
   }
 }

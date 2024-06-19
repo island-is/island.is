@@ -1,0 +1,41 @@
+query GetCourtCase($input: LawAndOrderCourtCaseInput!) {
+  lawAndOrderCourtCaseDetail(input: $input) {
+    texts {
+      intro
+      footnote
+    }
+    actions {
+      type
+      title
+      data
+    }
+    data {
+      id
+      acknowledged
+      caseNumber
+      caseNumberTitle
+      groups {
+        label
+        items {
+          label
+          value
+          link
+          action {
+            label
+            url
+            type
+          }
+        }
+      }
+    }
+  }
+}
+
+mutation PostSubpoenaAcknowledged(
+  $input: LawAndOrderSubpoenaAcknowledgedInput!
+) {
+  lawAndOrderSubpoenaAcknowledged(input: $input) {
+    caseId
+    acknowledged
+  }
+}

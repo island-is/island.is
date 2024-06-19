@@ -6,8 +6,6 @@ export const wrapper = style({
 })
 
 export const docline = style({
-  paddingTop: theme.spacing.smallGutter * 3,
-  paddingBottom: theme.spacing.smallGutter * 3,
   selectors: {
     '&:hover': {
       backgroundColor: theme.color.blue100,
@@ -124,4 +122,10 @@ export const badge = style({
   width: theme.spacing[1],
   borderRadius: '50%',
   backgroundColor: theme.color.red400,
+})
+
+export const avatar = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
 })

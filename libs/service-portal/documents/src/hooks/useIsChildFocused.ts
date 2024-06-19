@@ -21,11 +21,11 @@ export const useIsChildFocusedorHovered = (ref: RefObject<HTMLElement>) => {
       }
     }
 
-    document.addEventListener('focusin', handleFocus)
+    document.addEventListener('focus', handleFocus)
     document.addEventListener('mouseover', handleHover)
 
     return () => {
-      document.removeEventListener('focusin', handleFocus)
+      document.removeEventListener('focus', handleFocus)
       document.removeEventListener('mouseover', handleHover)
     }
   }, [ref])
