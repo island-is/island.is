@@ -178,6 +178,8 @@ export interface RealEstateData extends DeceasedShare {
   description: string
   propertyValuation: string
   taxFreeInheritance: number
+  enabled?: boolean
+  initial?: boolean
 }
 
 export interface RealEstate {

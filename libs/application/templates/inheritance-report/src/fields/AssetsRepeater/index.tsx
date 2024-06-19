@@ -108,12 +108,19 @@ export const AssetsRepeater: FC<
       return Object.values(field)[1]
     })
 
+    // All additional fields should be enabled by default
+    values.push('enabled')
+
     const repeaterFields: Record<string, string> = values.reduce(
-      (acc: Record<string, string>, elem: string) => {
+      (acc: Record<string, any>, elem: any) => {
         acc[elem] = ''
 
         if (elem === 'share') {
           acc[elem] = '0'
+        }
+
+        if (elem === 'enabled') {
+          acc[elem] = true
         }
 
         return acc

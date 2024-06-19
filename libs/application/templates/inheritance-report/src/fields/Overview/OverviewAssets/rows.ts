@@ -15,7 +15,9 @@ import { format as formatNationalId } from 'kennitala'
 import { PREPAID_INHERITANCE } from '../../../lib/constants'
 
 export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.realEstate?.data
+  const values = (
+    answers.assets as unknown as EstateAssets
+  )?.realEstate?.data?.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
