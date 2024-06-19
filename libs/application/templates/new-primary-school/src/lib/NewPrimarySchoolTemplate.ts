@@ -17,6 +17,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
@@ -26,8 +27,6 @@ import {
   getApplicationAnswers,
   hasChildrenThatCanApply,
 } from './newPrimarySchoolUtils'
-import { GetHealthApi, GetTypesApi } from '../dataProviders'
-import { Features } from '@island.is/feature-flags'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -41,7 +40,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   dataSchema,
   allowMultipleApplicationsInDraft: true,
   featureFlag: Features.newPrimarySchool,
-  // requiredScopes: [ApiScope.carRecycling], ?? do we need scope for the Primary school application ??
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -76,8 +74,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
-                //  GetTypesApi,
-                // GetHealthApi,
               ],
             },
           ],

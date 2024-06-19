@@ -1,3 +1,3 @@
-export enum MmsScope {
+export enum MMSScope {
   frigg = '@mms.is/frigg',
 }

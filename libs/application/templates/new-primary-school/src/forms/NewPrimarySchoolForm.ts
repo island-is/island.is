@@ -866,7 +866,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfAllergiesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  loadOptions: async ({ apolloClient }): Promise<any[]> => {
+                  loadOptions: async ({ apolloClient }) => {
                     /*  return await getOptionsListByType(
                       apolloClient,
                       OptionsType.ALLERGRY,
@@ -918,7 +918,7 @@ export const NewPrimarySchoolForm: Form = buildForm({
                     newPrimarySchoolMessages.differentNeeds
                       .typeOfIntolerancesPlaceholder,
                   // TODO: Nota gögn fá Júní?
-                  loadOptions: async ({ apolloClient }): Promise<any[]> => {
+                  loadOptions: async ({ apolloClient }) => {
                     /*return await getOptionsListByType(
                       apolloClient,
                       OptionsType.INTELERENCE,

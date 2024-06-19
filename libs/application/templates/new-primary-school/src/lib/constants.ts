@@ -214,6 +214,6 @@ export const languageCodes: Language[] = [
 
 export enum OptionsType {
   ALLERGRY = 'allergy',
-  INTELERENCE = 'intolerence',
+  INTOLERANCE = 'intolerence',
   REASON = 'rejectionReason',
 }
