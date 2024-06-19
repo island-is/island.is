@@ -22,12 +22,9 @@ import {
 } from '@island.is/shared/utils/server'
 
 import type { User } from '@island.is/judicial-system/types'
-import {
-  CaseState,
-  CaseType,
-  isIndictmentCase,
-} from '@island.is/judicial-system/types'
+import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
@@ -36,7 +33,7 @@ import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
 import { policeModuleConfig } from './police.config'
 
-export enum CourtDocumentType {
+export enum PoliceDocumentType {
   RVKR = 'RVKR', // Krafa
   RVTB = 'RVTB', // Þingbók
   RVUR = 'RVUR', // Úrskurður
@@ -45,6 +42,11 @@ export enum CourtDocumentType {
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
   RVMG = 'RVMG', // Málsgögn
+}
+
+export interface PoliceDocument {
+  type: PoliceDocumentType
+  courtDocument: string
 }
 
 const getChapter = (category?: string): number | undefined => {
@@ -62,9 +64,9 @@ const getChapter = (category?: string): number | undefined => {
 }
 
 const formatCrimeScenePlace = (
-  street?: string,
-  streetNumber?: string,
-  municipality?: string,
+  street?: string | null,
+  streetNumber?: string | null,
+  municipality?: string | null,
 ) => {
   if (!street && !municipality) {
     return ''
@@ -102,9 +104,9 @@ export class PoliceService {
     upprunalegtMalsnumer: z.string(),
     licencePlate: z.optional(z.string()),
     gotuHeiti: z.optional(z.string()),
-    gotuNumer: z.optional(z.string()),
-    sveitafelag: z.optional(z.string()),
-    postnumer: z.optional(z.string()),
+    gotuNumer: z.string().nullish(),
+    sveitafelag: z.string().nullish(),
+    postnumer: z.string().nullish(),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -220,11 +222,9 @@ export class PoliceService {
         })
       })
 
-    const key = `${
-      isIndictmentCase(caseType) ? 'indictments' : 'uploads'
-    }/${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
+    const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
-    await this.awsS3Service.putObject(key, pdf)
+    await this.awsS3Service.putObject(caseType, key, pdf)
 
     return { key, size: pdf.length }
   }
@@ -233,6 +233,8 @@ export class PoliceService {
     caseId: string,
     user: User,
   ): Promise<PoliceCaseFile[]> {
+    const startTime = nowFactory()
+
     return this.fetchPoliceDocumentApi(
       `${this.xRoadPath}/V2/GetDocumentListById/${caseId}`,
     )
@@ -292,6 +294,8 @@ export class PoliceService {
             caseId,
             actor: user.name,
             institution: user.institution?.name,
+            startTime,
+            endTime: nowFactory(),
           },
           reason,
         )
@@ -336,9 +340,9 @@ export class PoliceService {
               vettvangur?: string
               brotFra?: string
               licencePlate?: string
-              gotuHeiti?: string
-              gotuNumer?: string
-              sveitafelag?: string
+              gotuHeiti?: string | null
+              gotuNumer?: string | null
+              sveitafelag?: string | null
             }) => {
               const policeCaseNumber = info.upprunalegtMalsnumer
 
@@ -434,7 +438,7 @@ export class PoliceService {
     defendantNationalId: string,
     validToDate: Date,
     caseConclusion: string,
-    courtDocuments: { type: CourtDocumentType; courtDocument: string }[],
+    courtDocuments: PoliceDocument[],
   ): Promise<boolean> {
     return this.fetchPoliceCaseApi(
       `${this.xRoadPath}/V2/UpdateRVCase/${caseId}`,

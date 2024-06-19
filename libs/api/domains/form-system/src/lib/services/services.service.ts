@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
@@ -16,7 +16,7 @@ export class FormSystemService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private servicesApi: ServicesApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -112,6 +112,7 @@ export class FormSystemService {
   }
 
   async getTranslation(
+    auth: User,
     input: GetTranslationInput,
   ): Promise<Translation> {
     const { FORM_SYSTEM_MIDEIND_KEY } = process.env

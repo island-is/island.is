@@ -137,6 +137,7 @@ export const hasDateChanged = (
 }
 
 export type stepValidationsType = {
+  [constants.CASES_ROUTE]: () => boolean
   [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
@@ -190,8 +191,9 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => boolean
-  [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
+  [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
@@ -201,6 +203,7 @@ export type stepValidationsType = {
 
 export const stepValidations = (): stepValidationsType => {
   return {
+    [constants.CASES_ROUTE]: () => true,
     [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
     [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>
@@ -246,6 +249,7 @@ export const stepValidations = (): stepValidationsType => {
       validations.isTrafficViolationStepValidIndictments(theCase),
     [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
       validations.isCaseFilesStepValidIndictments(theCase),
+    [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
@@ -277,8 +281,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isSubpoenaStepValid(theCase),
     [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
       validations.isDefenderStepValid(theCase),
-    [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
-    [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => true,
+    [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) =>
+      validations.isConclusionStepValid(theCase),
+    [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),
@@ -297,15 +302,12 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     steps.includes(key),
   )
 
-  if (
-    stepsToCheck.every(([, validationFn]) => validationFn(theCase) === true)
-  ) {
+  if (stepsToCheck.every(([, validationFn]) => validationFn(theCase))) {
     return steps[steps.length - 1]
   }
 
   const [key] =
-    stepsToCheck.find(([, validationFn]) => validationFn(theCase) === false) ||
-    []
+    stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
 }

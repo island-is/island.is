@@ -1,5 +1,4 @@
 import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
   Body,
   Controller,
@@ -8,7 +7,6 @@ import {
   Param,
   Post,
   Query,
-  UseInterceptors,
   Version,
 } from '@nestjs/common'
 import { ApiExtraModels, ApiTags } from '@nestjs/swagger'
@@ -26,7 +24,6 @@ import type { Locale } from '@island.is/shared/types'
 @Controller('notifications')
 @ApiTags('notifications')
 @ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,

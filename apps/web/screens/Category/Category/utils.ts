@@ -82,7 +82,10 @@ type Subgroup =
   | undefined
 
 const isSameSubGroup = (subgroup1: Subgroup, subgroup2: Subgroup) => {
-  return subgroup1?.title === subgroup2?.title
+  return (
+    subgroup1?.title === subgroup2?.title ||
+    (!subgroup1?.title && !subgroup2?.title)
+  )
 }
 
 const sortPages = (pages: CategoryPages) => {

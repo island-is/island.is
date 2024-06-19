@@ -52,8 +52,8 @@ export const EditMeta = () => {
               placeholderText={t(msg.effectiveDate_default)}
               minDate={draft.idealPublishDate.value || null}
               selected={
-                draft.idealPublishDate.value
-                  ? getNextWorkday(draft.idealPublishDate.value)
+                draft.effectiveDate.value
+                  ? getNextWorkday(draft.effectiveDate.value)
                   : undefined
               }
               handleChange={(date: Date) =>

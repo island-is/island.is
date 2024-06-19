@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export function EmptyImageSmall(props: React.SVGProps<SVGSVGElement>) {
+export const EmptyImageSmall = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       viewBox="0 0 183 229"

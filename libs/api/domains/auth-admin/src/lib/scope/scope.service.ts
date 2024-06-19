@@ -25,27 +25,26 @@ export class ScopeService extends MultiEnvironmentService {
   ): Promise<CreateScopeResponse[]> {
     const createdSettledPromises = await Promise.allSettled(
       input.environments.map(async (environment) => {
-        return this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meScopesControllerCreate({
-          tenantId: input.tenantId,
-          adminCreateScopeDto: {
-            name: input.name,
-            displayName: [
-              {
-                value: input.displayName,
-                locale: 'is',
-              },
-            ],
-            description: [
-              {
-                value: input.description,
-                locale: 'is',
-              },
-            ],
-          },
-        })
+        return this.makeRequest(user, environment, (api) =>
+          api.meScopesControllerCreateRaw({
+            tenantId: input.tenantId,
+            adminCreateScopeDto: {
+              name: input.name,
+              displayName: [
+                {
+                  value: input.displayName,
+                  locale: 'is',
+                },
+              ],
+              description: [
+                {
+                  value: input.description,
+                  locale: 'is',
+                },
+              ],
+            },
+          }),
+        )
       }),
     )
 
@@ -74,14 +73,13 @@ export class ScopeService extends MultiEnvironmentService {
 
     const updatedSettledPromises = await Promise.allSettled(
       environments.map(async (environment) => {
-        return this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meScopesControllerUpdate({
-          tenantId,
-          scopeName,
-          adminPatchScopeDto,
-        })
+        return this.makeRequest(user, environment, (api) =>
+          api.meScopesControllerUpdateRaw({
+            tenantId,
+            scopeName,
+            adminPatchScopeDto,
+          }),
+        )
       }),
     )
 
@@ -102,41 +100,45 @@ export class ScopeService extends MultiEnvironmentService {
    */
   async publishScope(
     user: User,
-    input: PublishScopeInput,
+    { sourceEnvironment, targetEnvironment, ...input }: PublishScopeInput,
   ): Promise<ScopeEnvironment> {
     // Fetch the scope from source environment
-    const sourceInput = await this.adminApiByEnvironmentWithAuth(
-      input.sourceEnvironment,
+    const sourceInput = await this.makeRequest(
       user,
+      sourceEnvironment,
+      (sourceApi) =>
+        sourceApi.meScopesControllerFindByTenantIdAndScopeNameRaw({
+          tenantId: input.tenantId,
+          scopeName: input.scopeName,
+        }),
     )
-      ?.meScopesControllerFindByTenantIdAndScopeName({
-        tenantId: input.tenantId,
-        scopeName: input.scopeName,
-      })
-      ?.catch((error) => this.handleError(error, input.sourceEnvironment))
 
     if (!sourceInput) {
-      throw new Error(`Scope ${input.scopeName} not found`)
+      throw new Error(
+        `Scope ${input.scopeName} not found in ${sourceEnvironment}`,
+      )
     }
 
     // If the source scope environment exists then create replica environment in the target environment.
-    const newScope = await this.adminApiByEnvironmentWithAuth(
-      input.targetEnvironment,
+    const newScope = await this.makeRequest(
       user,
-    )?.meScopesControllerCreate({
-      tenantId: input.tenantId,
-      adminCreateScopeDto: sourceInput,
-    })
+      targetEnvironment,
+      (targetApi) =>
+        targetApi.meScopesControllerCreateRaw({
+          tenantId: input.tenantId,
+          adminCreateScopeDto: sourceInput,
+        }),
+    )
 
     if (!newScope) {
       throw new Error(
-        `Failed to create scope ${input.scopeName} on ${input.targetEnvironment}`,
+        `Failed to create scope ${input.scopeName} on ${targetEnvironment}`,
       )
     }
 
     return {
       ...newScope,
-      environment: input.targetEnvironment,
+      environment: targetEnvironment,
     }
   }
 
@@ -146,12 +148,11 @@ export class ScopeService extends MultiEnvironmentService {
   async getScopes(user: User, tenantId: string): Promise<ScopesPayload> {
     const scopesSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
-        this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meScopesControllerFindAllByTenantId({
-          tenantId,
-        }),
+        this.makeRequest(user, environment, (api) =>
+          api.meScopesControllerFindAllByTenantIdRaw({
+            tenantId,
+          }),
+        ),
       ),
     )
 
@@ -194,10 +195,9 @@ export class ScopeService extends MultiEnvironmentService {
   async getScope(user: User, input: ScopeInput): Promise<Scope> {
     const scopeSettledPromises = await Promise.allSettled(
       environments.map((environment) =>
-        this.adminApiByEnvironmentWithAuth(
-          environment,
-          user,
-        )?.meScopesControllerFindByTenantIdAndScopeName(input),
+        this.makeRequest(user, environment, (api) =>
+          api.meScopesControllerFindByTenantIdAndScopeNameRaw(input),
+        ),
       ),
     )
 

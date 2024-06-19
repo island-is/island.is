@@ -1,21 +1,18 @@
 import {
   AlertMessage,
   Button,
-  TopicCard,
   Link,
   LinkContext,
   Text,
   Divider,
-  PdfViewer,
 } from '@island.is/island-ui/core'
 
-import React, { FC, useState } from 'react'
+import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import * as styles from './ConfirmationField.css'
 import { Bus } from '../../assets'
 
 type ConfirmationFieldProps = {
@@ -41,11 +38,9 @@ type ConfirmationFieldProps = {
 export const ConfirmationField: FC<
   React.PropsWithChildren<FieldBaseProps & ConfirmationFieldProps>
 > = ({ application }) => {
-  const { externalData } = application
   const { formatMessage } = useLocale()
-  const [viewCriminalRecord, setViewCriminalRecord] = useState(false)
 
-  function renderFooter() {
+  const renderFooter = () => {
     return (
       <>
         <Divider />
@@ -65,41 +60,6 @@ export const ConfirmationField: FC<
             {formatText(m.openMySites, application, formatMessage)}
           </Button>
         </Box>
-      </>
-    )
-  }
-
-  if (viewCriminalRecord) {
-    return (
-      <>
-        <Box
-          display="flex"
-          marginBottom={2}
-          justifyContent="spaceBetween"
-          alignItems="center"
-        >
-          <Button
-            circle
-            icon="arrowBack"
-            onClick={() => setViewCriminalRecord(false)}
-            colorScheme="light"
-            title="Go back"
-          />
-          <a
-            href={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
-            download="sakavottord.pdf"
-            className={styles.linkWithoutDecorations}
-          >
-            <Button icon="download" iconType="outline" variant="text">
-              {formatText(m.downloadCriminalRecord, application, formatMessage)}
-            </Button>
-          </a>
-        </Box>
-
-        <PdfViewer
-          file={`data:application/pdf;base64,${externalData.getCriminalRecord.data.contentBase64}`}
-        />
-        {renderFooter()}
       </>
     )
   }
@@ -164,16 +124,6 @@ export const ConfirmationField: FC<
             </Link>
           </Text>
         </LinkContext.Provider>
-      </Box>
-
-      <Box marginBottom={3}>
-        <TopicCard
-          onClick={() => setViewCriminalRecord(true)}
-          tag="Pdf"
-          colorScheme="blue"
-        >
-          {formatText(m.criminalRecord, application, formatMessage)}
-        </TopicCard>
       </Box>
 
       <Button

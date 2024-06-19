@@ -1,8 +1,6 @@
-import { getLatestDateType } from '@island.is/judicial-system/types'
 import {
   CaseState,
-  completedCaseStates,
-  DateType,
+  completedRequestCaseStates,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
@@ -14,18 +12,17 @@ const RequestSharedWithDefenderAllowedStates: {
   [RequestSharedWithDefender.READY_FOR_COURT]: [
     CaseState.SUBMITTED,
     CaseState.RECEIVED,
-    ...completedCaseStates,
+    ...completedRequestCaseStates,
   ],
   [RequestSharedWithDefender.COURT_DATE]: [
     CaseState.RECEIVED,
-    ...completedCaseStates,
+    ...completedRequestCaseStates,
   ],
-  [RequestSharedWithDefender.NOT_SHARED]: completedCaseStates,
+  [RequestSharedWithDefender.NOT_SHARED]: completedRequestCaseStates,
 }
 
 export const canDefenderViewRequest = (theCase: Case) => {
   const { requestSharedWithDefender, state } = theCase
-  const courtDate = getLatestDateType(DateType.COURT_DATE, theCase.dateLogs)
 
   if (!requestSharedWithDefender) {
     return false
@@ -38,7 +35,7 @@ export const canDefenderViewRequest = (theCase: Case) => {
     state &&
     allowedStates?.includes(state) &&
     (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
-      Boolean(courtDate))
+      Boolean(theCase.arraignmentDate?.date))
   )
 }
 

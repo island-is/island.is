@@ -41,6 +41,7 @@ export const SearchProducts = ({
       $or: [
         { [`name${locale === 'is' ? 'Is' : 'En'}`]: query },
         { [`specializationName${locale === 'is' ? 'Is' : 'En'}`]: query },
+        { [`description${locale === 'is' ? 'Is' : 'En'}`]: query },
       ],
     })
   }

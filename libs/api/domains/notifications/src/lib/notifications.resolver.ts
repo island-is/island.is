@@ -9,10 +9,10 @@ import {
   NotificationsMarkAllAsSeenResponse,
   MarkNotificationReadResponse,
   NotificationResponse,
+  NotificationsMarkAllAsReadResponse,
 } from './notifications.model'
 import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'notifications-resolver'
 export const AUDIT_NAMESPACE = 'notifications-resolver'
@@ -21,7 +21,6 @@ export const AUDIT_NAMESPACE = 'notifications-resolver'
 @Resolver()
 @Audit({ namespace: AUDIT_NAMESPACE })
 @Scopes(DocumentsScope.main)
-@FeatureFlag(Features.ServicePortalNotificationsEnabled)
 export class NotificationsResolver {
   constructor(
     private readonly service: NotificationsService,
@@ -85,6 +84,27 @@ export class NotificationsResolver {
       result = await this.service.markAllNotificationsAsSeen(user)
     } catch (e) {
       this.logger.error('failed to mark all notifications as seen', {
+        category: LOG_CATEGORY,
+        error: e,
+      })
+      throw e
+    }
+
+    return result
+  }
+
+  @Mutation(() => NotificationsMarkAllAsReadResponse, {
+    name: 'markAllNotificationsRead',
+    nullable: true,
+  })
+  @Audit()
+  async markAllNotificationsAsRead(@CurrentUser() user: User) {
+    let result
+
+    try {
+      result = await this.service.markAllNotificationsAsRead(user)
+    } catch (e) {
+      this.logger.error('failed to mark all notifications as read', {
         category: LOG_CATEGORY,
         error: e,
       })

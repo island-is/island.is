@@ -5,7 +5,7 @@ export type ChangeMachineOwner = {
   delegateNationalId: string
   sellerNationalId: string
   dateOfOwnerChange: Date
-  paymentId: string
+  paymentId: string | null
   phoneNumber: string
   email: string
 }
@@ -34,6 +34,7 @@ export type MachineDto = {
   regNumber?: string
   supervisorName?: string
   status?: string
+  paymentRequiredForOwnerChange?: boolean
 }
 
 export type SupervisorChange = {

@@ -17,6 +17,7 @@ import { FileType } from './models/v2/documentContent.model'
 import { HEALTH_CATEGORY_ID } from './document.types'
 import { Type } from './models/v2/type.model'
 import { DownloadServiceConfig } from '@island.is/nest/config'
+import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 
 const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
@@ -38,10 +39,10 @@ export class DocumentServiceV2 {
     )
 
     if (!document) {
-      return null
+      return null // Null document logged in clients-documents-v2
     }
 
-    let type
+    let type: FileType
     switch (document.fileType) {
       case 'html':
         type = FileType.HTML
@@ -61,6 +62,7 @@ export class DocumentServiceV2 {
       publicationDate: document.date,
       id: documentId,
       name: document.fileName,
+      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
       sender: {
         id: document.senderNationalId,
         name: document.senderName,
@@ -96,10 +98,14 @@ export class DocumentServiceV2 {
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
+      nationalId,
     })
 
-    if (!documents?.totalCount) {
-      throw new Error('Incomplete response')
+    if (typeof documents?.totalCount !== 'number') {
+      this.logger.warn('Document total count unavailable', {
+        category: LOG_CATEGORY,
+        totalCount: documents?.totalCount,
+      })
     }
 
     const documentData: Array<Document> =
@@ -123,7 +129,7 @@ export class DocumentServiceV2 {
 
     return {
       data: documentData,
-      totalCount: documents?.totalCount,
+      totalCount: documents?.totalCount ?? 0,
       unreadCount: documents?.unreadCount,
       pageInfo: {
         hasNextPage: false,
@@ -239,6 +245,19 @@ export class DocumentServiceV2 {
     return {
       wantsPaper: res.wantsPaper,
       nationalId: res.kennitala,
+    }
+  }
+
+  async markAllMailAsRead(
+    nationalId: string,
+  ): Promise<DocumentV2MarkAllMailAsRead> {
+    this.logger.debug('Marking all mail as read', {
+      category: LOG_CATEGORY,
+    })
+    const res = await this.documentService.markAllMailAsRead(nationalId)
+
+    return {
+      success: res.success,
     }
   }
 

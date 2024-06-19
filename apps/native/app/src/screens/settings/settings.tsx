@@ -1,4 +1,4 @@
-import messaging from '@react-native-firebase/messaging'
+import { useApolloClient } from '@apollo/client'
 import {
   Alert,
   NavigationBarSheet,
@@ -10,11 +10,11 @@ import { authenticateAsync } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   Image,
   Linking,
   Platform,
   Pressable,
-  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -29,7 +29,6 @@ import {
 import { useTheme } from 'styled-components/native'
 import editIcon from '../../assets/icons/edit.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { client } from '../../graphql/client'
 import {
   UpdateProfileDocument,
   UpdateProfileMutation,
@@ -62,6 +61,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const theme = useTheme()
   const {
@@ -78,7 +78,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   } = usePreferencesStore()
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
-  const [pushToken, setPushToken] = useState('loading...')
   const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
@@ -125,10 +124,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         setLoadingCP(false)
         setLocalPackage(p)
       })
-      messaging()
-        .getToken()
-        .then((token) => setPushToken(token))
-        .catch(() => setPushToken('no token in simulator'))
     }, 330)
   }, [])
 
@@ -171,6 +166,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'setting.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={userProfile.loading && !!userProfile.data}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
         <Alert

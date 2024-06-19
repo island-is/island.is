@@ -14,7 +14,10 @@ const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
 )
 const UserInfo = lazy(() => import('./screens/UserInfo/UserInfo'))
-const FamilyMemberChild = lazy(() => import('./screens/Child/Child'))
+const FamilyMemberChildCustody = lazy(() =>
+  import('./screens/ChildCustody/ChildCustody'),
+)
+const FamilyMemberBioChild = lazy(() => import('./screens/BioChild/BioChild'))
 const Spouse = lazy(() => import('./screens/Spouse/Spouse'))
 const CompanyInfo = lazy(() => import('./screens/Company/CompanyInfo'))
 const Notifications = lazy(() =>
@@ -22,6 +25,9 @@ const Notifications = lazy(() =>
 )
 const UserProfileSettings = lazy(() =>
   import('./screens/UserProfile/UserProfile'),
+)
+const UserNotificationsSettings = lazy(() =>
+  import('./screens/UserNotifications/UserNotifications'),
 )
 
 const sharedRoutes = (userInfo: User) => [
@@ -68,10 +74,23 @@ export const informationModule: PortalModule = {
       element: <UserInfo />,
     },
     {
-      name: 'Child',
-      path: InformationPaths.Child,
+      name: 'BioChild',
+      path: InformationPaths.BioChild,
       enabled: userInfo.scopes.includes(ApiScope.meDetails),
-      element: <FamilyMemberChild />,
+      element: <FamilyMemberBioChild />,
+    },
+    {
+      name: 'Child',
+      path: InformationPaths.ChildCustody,
+      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      element: <FamilyMemberChildCustody />,
+    },
+    {
+      name: m.userInfo,
+      path: InformationPaths.SettingsNotifications,
+      enabled: userInfo.scopes.includes(ApiScope.internal),
+      key: 'NotificationSettings',
+      element: <UserNotificationsSettings />,
     },
     {
       name: 'Spouse',

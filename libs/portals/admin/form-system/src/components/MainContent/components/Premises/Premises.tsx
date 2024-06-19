@@ -6,7 +6,8 @@ import { useIntl } from 'react-intl'
 import { m } from '../../../../lib/messages'
 
 export const Premises = () => {
-  const { control, documentTypes, updateSettings, controlDispatch } = useContext(ControlContext)
+  const { control, documentTypes, updateSettings, controlDispatch } =
+    useContext(ControlContext)
   const [formDocumentTypes, setFormDocumentTypes] = useState<
     FormSystemDocumentType[]
   >(
@@ -22,15 +23,15 @@ export const Premises = () => {
     )
       ? formDocumentTypes.filter((f) => f?.id !== documentTypeId)
       : ([
-        ...formDocumentTypes,
-        documentTypes?.find((d) => d?.id === documentTypeId),
-      ].filter((d) => d !== undefined) as FormSystemDocumentType[])
+          ...formDocumentTypes,
+          documentTypes?.find((d) => d?.id === documentTypeId),
+        ].filter((d) => d !== undefined) as FormSystemDocumentType[])
     setFormDocumentTypes(newDocumentTypes)
     updateSettings({ ...control.form, documentTypes: newDocumentTypes })
     controlDispatch({
       type: 'CHANGE_FORM_SETTINGS',
       payload: {
-        newForm: { ...control.form, documentTypes: newDocumentTypes }
+        newForm: { ...control.form, documentTypes: newDocumentTypes },
       },
     })
   }

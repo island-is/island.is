@@ -1,4 +1,4 @@
-import { useFormSystemGetTranslationMutation } from "./getTranslation.generated"
+import { useFormSystemGetTranslationMutation } from './getTranslation.generated'
 
 export const translate = async (
   text: string,

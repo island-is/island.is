@@ -1,16 +1,24 @@
-import { Select, Stack, Tabs, GridRow as Row, GridColumn as Column, Box, Input, Option } from "@island.is/island-ui/core"
-import { ChangeEvent, useState } from "react"
-import { useIntl } from "react-intl"
-import { SingleValue } from "react-select"
-import { m } from "../../../../../lib/messages"
-import { FormSystemInput } from "@island.is/api/schema"
+import {
+  Select,
+  Stack,
+  Tabs,
+  GridRow as Row,
+  GridColumn as Column,
+  Box,
+  Input,
+  Option,
+} from '@island.is/island-ui/core'
+import { ChangeEvent, useState } from 'react'
+import { useIntl } from 'react-intl'
+import { SingleValue } from 'react-select'
+import { m } from '../../../../../lib/messages'
+import { FormSystemInput } from '@island.is/api/schema'
 
 interface Props {
   currentItem: FormSystemInput
 }
 
 export const PropertyNumber = ({ currentItem }: Props) => {
-
   const [propertyNumber, setPropertyNumber] = useState<string>('')
   const [ownedProperty, setOwnedProperty] = useState<string>('')
   const showPropertyNumber = propertyNumber.length === 7
@@ -54,7 +62,7 @@ export const PropertyNumber = ({ currentItem }: Props) => {
   const ownedProperties = (
     <Stack space={1}>
       <Row>
-        <Column span="5/10" >
+        <Column span="5/10">
           <Box padding={2}>
             <Select
               name="propertyNumber"
@@ -76,7 +84,9 @@ export const PropertyNumber = ({ currentItem }: Props) => {
     </Stack>
   )
 
-  const handlePropertyNumberChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handlePropertyNumberChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     if (e.target.value.length <= 7) {
       setPropertyNumber(e.target.value)
     }
@@ -86,9 +96,7 @@ export const PropertyNumber = ({ currentItem }: Props) => {
     <Stack space={1}>
       <Row>
         <Column span="5/10">
-          <Box
-            padding={2}
-          >
+          <Box padding={2}>
             <Input
               label={formatMessage(m.propertyNumber)}
               name="propertyNumber"

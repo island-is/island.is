@@ -14,7 +14,7 @@ import { UseGuards } from '@nestjs/common'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormSystemServicesResolver {
-  constructor(private readonly formSystemServices: FormSystemService) { }
+  constructor(private readonly formSystemServices: FormSystemService) {}
 
   @Query(() => List, {
     name: 'formSystemGetCountries',
@@ -67,7 +67,8 @@ export class FormSystemServicesResolver {
   async getTranslation(
     @Args('input', { type: () => GetTranslationInput })
     input: GetTranslationInput,
+    @CurrentUser() user: User,
   ): Promise<Translation> {
-    return this.formSystemServices.getTranslation(input)
+    return this.formSystemServices.getTranslation(user, input)
   }
 }

@@ -1,3 +1,5 @@
+import { Nam } from '../../gen/fetch'
+
 export interface HealthcareLicense {
   professionId: string
   professionNameIs: string
@@ -22,4 +24,34 @@ export interface HealthcareLicenseCertificateRequest {
 export interface HealthcareLicenseCertificate {
   professionId: string
   base64: string
+}
+
+export type HealthDirectorateLicenseStatus =
+  | 'VALID'
+  | 'LIMITED'
+  | 'INVALID'
+  | 'UNKNOWN'
+  | 'REVOKED'
+  | 'WAIVED'
+
+export interface HealthDirectorateLicenseToPractice {
+  id: number
+  legalEntityId: string
+  licenseHolderNationalId: string
+  licenseHolderName: string
+  profession: string
+  practice: string
+  licenseNumber: string
+  validFrom: Date
+  validTo?: Date
+  status: HealthDirectorateLicenseStatus
+}
+export interface HealthcareWorkPermitRequest {
+  name: string
+  dateOfBirth: Date
+  email: string
+  phone: string
+  idProfession: string
+  citizenship: string
+  education: Nam[]
 }

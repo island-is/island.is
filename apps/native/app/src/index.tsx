@@ -1,20 +1,20 @@
-import { setupGlobals } from './utils/lifecycle/setup-globals'
-// rest
 import { Navigation } from 'react-native-navigation'
+import { initializeApolloClient } from './graphql/client'
 import { readAuthorizeResult } from './stores/auth-store'
 import { showAppLockOverlay } from './utils/app-lock'
+import { isAndroid } from './utils/devices'
 import { getDefaultOptions } from './utils/get-default-options'
 import { getAppRoot } from './utils/lifecycle/get-app-root'
 import { registerAllComponents } from './utils/lifecycle/setup-components'
 import { setupDevMenu } from './utils/lifecycle/setup-dev-menu'
 import { setupEventHandlers } from './utils/lifecycle/setup-event-handlers'
+import { setupGlobals } from './utils/lifecycle/setup-globals'
 import {
-  openInitialNotification,
+  handleInitialNotificationAndroid,
   setupNotifications,
 } from './utils/lifecycle/setup-notifications'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
-import { preferencesStore } from './stores/preferences-store'
 
 async function startApp() {
   // setup global packages and polyfills
@@ -31,6 +31,9 @@ async function startApp() {
 
   // Setup notifications
   setupNotifications()
+
+  // Initialize Apollo client. This must be done before registering components
+  await initializeApolloClient()
 
   // Register all components (screens, UI elements)
   registerAllComponents()
@@ -50,7 +53,7 @@ async function startApp() {
     await Navigation.dismissAllOverlays()
 
     // Show lock screen overlay
-    showAppLockOverlay({ enforceActivated: true })
+    void showAppLockOverlay({ enforceActivated: true })
 
     // Dismiss all modals
     await Navigation.dismissAllModals()
@@ -58,8 +61,10 @@ async function startApp() {
     // Set the app root
     await Navigation.setRoot({ root })
 
-    // Open initial notification on android
-    openInitialNotification()
+    if (isAndroid) {
+      // Handle initial notification on android
+      handleInitialNotificationAndroid()
+    }
 
     // Mark app launched
     performanceMetricsAppLaunched()
@@ -67,4 +72,4 @@ async function startApp() {
 }
 
 // Start the app
-startApp()
+void startApp()

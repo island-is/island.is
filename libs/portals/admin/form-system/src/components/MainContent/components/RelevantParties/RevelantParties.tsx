@@ -35,7 +35,7 @@ export const RelevantParties = () => {
     applicantTypes: applicantTypeTemplates,
     control,
     updateSettings,
-    controlDispatch
+    controlDispatch,
   } = useContext(ControlContext)
   const { form } = control
   const { id: formId } = form
@@ -87,8 +87,8 @@ export const RelevantParties = () => {
     controlDispatch({
       type: 'CHANGE_FORM_SETTINGS',
       payload: {
-        newForm: { ...newForm }
-      }
+        newForm: { ...newForm },
+      },
     })
   }
 
@@ -121,7 +121,6 @@ export const RelevantParties = () => {
     setOnFocus('')
   }
 
-
   const handleCheckboxChange = (checked: boolean, index: number) => {
     const updateFormApplicantTypes = (
       newFormApplicantTypes: FormSystemFormApplicantType[],
@@ -131,8 +130,8 @@ export const RelevantParties = () => {
       )
       const newTypes = hasLegalEntity
         ? newFormApplicantTypes.filter(
-          (f) => f.type !== EFormApplicantTypes.logadili,
-        )
+            (f) => f.type !== EFormApplicantTypes.logadili,
+          )
         : newFormApplicantTypes
       const newList = [...formApplicantTypes, ...newTypes]
       saveAndUpdate({ ...form, formApplicantTypes: newList })
@@ -155,7 +154,10 @@ export const RelevantParties = () => {
         if (template !== undefined && template !== null) {
           const newFormApplicantType: FormSystemFormApplicantType =
             createFormApplicantType(EFormApplicantTypes.einstaklingur, template)
-          saveAndUpdate({ ...form, formApplicantTypes: [...formApplicantTypes, newFormApplicantType] })
+          saveAndUpdate({
+            ...form,
+            formApplicantTypes: [...formApplicantTypes, newFormApplicantType],
+          })
           setFormApplicantTypes([...formApplicantTypes, newFormApplicantType])
         }
       } else if (index === 1) {
@@ -183,7 +185,10 @@ export const RelevantParties = () => {
             delegateeTemplate,
           ),
         ]
-        saveAndUpdate({ ...form, formApplicantTypes: [...formApplicantTypes, ...newFormApplicantTypes] })
+        saveAndUpdate({
+          ...form,
+          formApplicantTypes: [...formApplicantTypes, ...newFormApplicantTypes],
+        })
         setFormApplicantTypes([...formApplicantTypes, ...newFormApplicantTypes])
       } else if (index === 2) {
         const delegatorTemplate = applicantTypeTemplates?.find(
