@@ -140,4 +140,12 @@ export class MunicipalityModel extends Model<Municipality> {
   })
   @ApiProperty({ enum: ChildrenAid })
   childrenAid: ChildrenAid
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  @ApiProperty()
+  decemberCompensation: number
 }

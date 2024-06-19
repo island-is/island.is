@@ -73,6 +73,7 @@ export const ApplicationQuery = gql`
       amount {
         aidAmount
         childrenAidAmount
+        decemberAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -277,6 +278,7 @@ export const ApplicationEventMutation = gql`
       amount {
         aidAmount
         childrenAidAmount
+        decemberAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -398,6 +400,7 @@ export const UpdateApplicationMutation = gql`
       amount {
         aidAmount
         childrenAidAmount
+        decemberAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -520,6 +523,7 @@ export const UpdateMunicipalityMutation = gql`
       navUrl
       navUsername
       navPassword
+      decemberCompensation
       childrenAid
       individualAid {
         ownPlace
