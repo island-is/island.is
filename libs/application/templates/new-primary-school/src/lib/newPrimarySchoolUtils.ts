@@ -3,7 +3,6 @@ import {
   Application,
   ExternalData,
   FormValue,
-  YES,
   YesOrNo,
 } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
@@ -18,20 +17,19 @@ import {
 import {
   FoodAllergiesOptions,
   FoodIntolerancesOptions,
+  Gender,
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
-  languageCodes,
-  Gender,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
 import { ApolloClient } from '@apollo/client'
+import { GetFriggOptions } from '../graphql/queries'
 import {
   GetFriggOptionsQuery,
   GetFriggOptionsQueryVariables,
 } from '../types/schema'
-import { GetFriggOptions } from '../graphql/queries'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -437,17 +435,6 @@ export const formatGender = (genderCode?: string): Gender | undefined => {
 export const getGenderOptionLabel = (value: Gender) => {
   const genderOptions = getGenderOptions()
   return genderOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const getLanguageCodes = () => {
-  return languageCodes.map((x) => ({
-    label: x.name,
-    value: x.code,
-  }))
-}
-
-export const getLanguageLabel = (code: string) => {
-  return languageCodes.find((language) => language.code === code)?.name ?? ''
 }
 
 export const getFoodAllergiesOptions = () => [

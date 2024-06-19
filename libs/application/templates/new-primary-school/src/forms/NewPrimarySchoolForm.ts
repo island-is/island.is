@@ -30,10 +30,12 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { getAllCountryCodes } from '@island.is/shared/utils'
+import {
+  getAllCountryCodes,
+  getAllLanguageCodes,
+} from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import {
-  OptionsType,
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
@@ -46,9 +48,7 @@ import {
   getApplicationExternalData,
   getFoodAllergiesOptions,
   getFoodIntolerancesOptions,
-  getLanguageCodes,
   getGenderOptions,
-  getOptionsListByType,
   getOtherParent,
   getReasonForApplicationOptions,
   getRelationOptionLabel,
@@ -874,7 +874,15 @@ export const NewPrimarySchoolForm: Form = buildForm({
                       .languageSubSectionTitle,
                   placeholder:
                     newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
-                  options: getLanguageCodes(),
+                  options: () => {
+                    const languages = getAllLanguageCodes()
+                    return languages.map((language) => {
+                      return {
+                        label: language.name,
+                        value: language.code,
+                      }
+                    })
+                  },
                 }),
                 buildRadioField({
                   id: 'languages.otherLanguagesSpokenDaily',
@@ -905,7 +913,15 @@ export const NewPrimarySchoolForm: Form = buildForm({
                       .languageSubSectionTitle,
                   placeholder:
                     newPrimarySchoolMessages.differentNeeds.languagePlaceholder,
-                  options: getLanguageCodes(),
+                  options: () => {
+                    const languages = getAllLanguageCodes()
+                    return languages.map((language) => {
+                      return {
+                        label: language.name,
+                        value: language.code,
+                      }
+                    })
+                  },
                   isMulti: true,
                   condition: (answers) => {
                     const { otherLanguagesSpokenDaily } =
