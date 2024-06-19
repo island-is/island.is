@@ -8,7 +8,6 @@ import { ProblemError } from '@island.is/nest/problem'
 import {
   CommentType,
   DateType,
-  EventType,
   type User,
   UserRole,
 } from '@island.is/judicial-system/types'
