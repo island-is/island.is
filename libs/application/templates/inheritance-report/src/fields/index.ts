@@ -1,5 +1,5 @@
 export { ReportFieldsRepeater } from './ReportFieldsRepeater'
-export { AssetsRepeater } from './AssetsRepeater'
+export { EstateAndVehiclesRepeater } from './EstateAndVehiclesRepeater'
 export { HeirsAndPartitionRepeater } from './HeirsAndPartitionRepeater'
 export { PrintScreen } from './PrintScreen'
 export { LookupPerson } from './LookupPerson'

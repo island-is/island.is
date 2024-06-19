@@ -56,7 +56,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.realEstate.data',
-                component: 'AssetsRepeater',
+                component: 'EstateAndVehiclesRepeater',
               },
               {
                 fields: [
@@ -192,7 +192,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.vehicles.data',
-                component: 'AssetsRepeater',
+                component: 'EstateAndVehiclesRepeater',
               },
               {
                 fields: [

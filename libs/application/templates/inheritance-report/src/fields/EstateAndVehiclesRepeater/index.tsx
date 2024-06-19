@@ -51,7 +51,7 @@ type RepeaterProps = {
   }
 }
 
-export const AssetsRepeater: FC<
+export const EstateAndVehiclesRepeater: FC<
   React.PropsWithChildren<FieldBaseProps<Answers> & RepeaterProps>
 > = ({ application, field, errors }) => {
   const { id, props } = field
@@ -292,7 +292,7 @@ export const AssetsRepeater: FC<
   )
 }
 
-export default AssetsRepeater
+export default EstateAndVehiclesRepeater
 
 interface FieldComponentProps {
   assetKey?: string
