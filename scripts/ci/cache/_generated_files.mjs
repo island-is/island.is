@@ -32,12 +32,17 @@ const patterns = [
   'libs/judicial-system/**',
 ]
 
+const ignorePatterns = ['node_modules/**', '**/node_modules/**']
+
 export async function getGeneratedFilesHash() {
   const hash = createHash('sha1')
-  const files = await glob(patterns, {
-    cwd: ROOT,
-    nodir: true,
-  })
+  const files = (
+    await glob(patterns, {
+      cwd: ROOT,
+      nodir: true,
+      ignore: ignorePatterns,
+    })
+  ).sort()
   console.log(`Files to hash:`)
   for (const _file of files) {
     console.log(_file)
