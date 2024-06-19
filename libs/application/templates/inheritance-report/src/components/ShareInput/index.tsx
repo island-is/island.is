@@ -123,7 +123,7 @@ export const ShareInput = ({
   }, [ref])
 
   return (
-    <Box marginTop={!!field?.props ? 2 : 0}>
+    <Box marginTop={field?.props ? 2 : 0}>
       <Controller
         control={control}
         name={name ?? field?.props.name}
@@ -171,7 +171,7 @@ export const ShareInput = ({
             }}
             hasError={((!disabled && hasError) || !!errorFromField) ?? false}
             errorMessage={
-              !!errorFromField
+              errorFromField
                 ? errorFromField
                 : formatMessage(m.invalidShareValue)
             }
