@@ -53,14 +53,14 @@ export class NotificationMessage {
   title!: string
 
   @Field()
-  body!: string
+  externalBody!: string
 
   @Field({ nullable: true })
-  dataCopy?: string
+  interalBody?: string
 
   @Field({
     description:
-      'Displays the {dataCopy} by default, will display {body} as fallback',
+      'Displays the {interalBody} by default, will display {externalBody} as fallback',
   })
   displayBody!: string
 
