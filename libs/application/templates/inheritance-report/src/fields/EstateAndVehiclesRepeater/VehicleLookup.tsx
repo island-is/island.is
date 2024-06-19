@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { FieldComponentProps } from './types'
 
-export const VehicleNumberField = ({
+export const VehicleLookup = ({
   fieldIndex,
   fieldName,
   error,

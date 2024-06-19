@@ -4,7 +4,6 @@ export type HeirsAndPartitionRepeaterProps = {
       repeaterButtonText: string
       sumField: string
       customFields: {
-        sectionTitle?: string
         title: string
         id: string
         readOnly: true

@@ -1,12 +1,11 @@
 import { InputController } from '@island.is/shared/form-fields'
-import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { parseLabel } from '../../lib/utils/helpers'
 import ShareInput from '../../components/ShareInput'
-import { RealEstateNumberField } from './RealEstateNumberField'
-import { VehicleNumberField } from './VehicleNumberField'
+import { RealEstateLookup } from './RealEstateLookup'
+import { VehicleLookup } from './VehicleLookup'
 import { FieldComponentProps } from './types'
 
 export const FieldComponent = ({
@@ -24,8 +23,6 @@ export const FieldComponent = ({
   disabled,
 }: FieldComponentProps) => {
   const { formatMessage } = useLocale()
-
-  let content = null
 
   const defaultProps = {
     ...field,
@@ -47,25 +44,13 @@ export const FieldComponent = ({
     disabled: disabled,
   }
 
-  switch (field.id) {
-    case 'sectionTitle':
-      return (
-        <GridColumn key={fieldName} span="1/1">
-          <Text
-            variant={
-              field.sectionTitleVariant ? field.sectionTitleVariant : 'h5'
-            }
-            marginBottom={2}
-          >
-            {field.sectionTitle}
-          </Text>
-        </GridColumn>
-      )
+  let content = null
 
+  switch (field.id) {
     case 'assetNumber':
       if (assetKey === 'assets') {
         content = (
-          <RealEstateNumberField
+          <RealEstateLookup
             field={field}
             fieldName={fieldName}
             fieldIndex={fieldIndex}
@@ -75,7 +60,7 @@ export const FieldComponent = ({
         )
       } else if (assetKey === 'vehicles') {
         content = (
-          <VehicleNumberField
+          <VehicleLookup
             field={field}
             fieldName={fieldName}
             fieldIndex={fieldIndex}
@@ -102,7 +87,6 @@ export const FieldComponent = ({
 
     default:
       content = <InputController {...defaultProps} />
-
       break
   }
 

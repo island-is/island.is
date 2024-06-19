@@ -42,8 +42,6 @@ import DeceasedShare from '../../components/DeceasedShare'
 type RepeaterProps = {
   field: {
     props: {
-      sectionTitle?: string
-      sectionTitleVariant?: string
       fields: Array<Record<string, unknown>>
       repeaterButtonText: string
       sumField: string
@@ -315,20 +313,7 @@ export const ReportFieldsRepeater: FC<
                   }
                   return null
                 }
-                return field?.sectionTitle ? (
-                  <GridColumn key={field.id} span="1/1">
-                    <Text
-                      variant={
-                        field.sectionTitleVariant
-                          ? field.sectionTitleVariant
-                          : 'h5'
-                      }
-                      marginBottom={2}
-                    >
-                      {formatMessage(field.sectionTitle)}
-                    </Text>
-                  </GridColumn>
-                ) : (
+                return (
                   <DoubleColumnRow
                     span={
                       field.width === 'full' ? ['1/1', '1/1'] : ['1/1', '1/2']

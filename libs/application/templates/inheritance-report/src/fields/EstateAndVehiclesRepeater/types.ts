@@ -3,8 +3,6 @@ import { Answers } from '../../types'
 export type RepeaterProps = {
   field: {
     props: {
-      sectionTitle?: string
-      sectionTitleVariant?: string
       fields: Array<object>
       repeaterButtonText: string
       sumField: string

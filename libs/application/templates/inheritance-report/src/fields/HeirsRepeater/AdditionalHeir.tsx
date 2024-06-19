@@ -243,14 +243,6 @@ export const AdditionalHeir = ({
           const defaultValue = currentHeir?.[customField.id]
           return (
             <Fragment key={customFieldIndex}>
-              {customField?.sectionTitle ? (
-                <GridColumn span="1/1">
-                  <Text variant="h5" marginBottom={2}>
-                    {customField.sectionTitle}
-                  </Text>
-                </GridColumn>
-              ) : null}
-
               {customField.id === 'relation' ? (
                 <GridColumn span="1/2" paddingBottom={2}>
                   <SelectController

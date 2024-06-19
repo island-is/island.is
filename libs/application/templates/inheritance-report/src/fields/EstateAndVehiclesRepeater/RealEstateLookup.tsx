@@ -9,7 +9,7 @@ import { m } from '../../lib/messages'
 import { isValidRealEstate } from '../../lib/utils/helpers'
 import { FieldComponentProps } from './types'
 
-export const RealEstateNumberField = ({
+export const RealEstateLookup = ({
   fieldIndex,
   fieldName,
   error,

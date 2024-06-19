@@ -2,18 +2,18 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, Fragment } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { InheritanceReport } from '../../lib/dataSchema'
-import { m } from '../../lib/messages'
+import { InheritanceReport } from '../../../lib/dataSchema'
+import { m } from '../../../lib/messages'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { format as formatNationalId } from 'kennitala'
 import {
   ESTATE_INHERITANCE,
   PREPAID_INHERITANCE,
   RelationSpouse,
-} from '../../lib/constants'
+} from '../../../lib/constants'
 import format from 'date-fns/format'
 
-export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+export const OverviewHeirs: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { answers } = application
@@ -159,4 +159,4 @@ export const HeirsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 }
 
-export default HeirsOverview
+export default OverviewHeirs
