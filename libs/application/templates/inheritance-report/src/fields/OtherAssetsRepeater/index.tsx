@@ -99,7 +99,7 @@ export const OtherAssetsRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box position="absolute" className={styles.removeFieldButtonSingle}>
+            <Box position="absolute" className={styles.removeFieldButton}>
               <Button
                 variant="ghost"
                 size="small"
