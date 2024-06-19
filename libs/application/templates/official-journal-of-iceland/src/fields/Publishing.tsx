@@ -8,14 +8,12 @@ import {
 } from '../lib/types'
 import { publishing } from '../lib/messages'
 import {
-  AnswerOption,
   DEBOUNCE_INPUT_TIMER,
   MINIMUM_WEEKDAYS,
   INITIAL_ANSWERS,
 } from '../lib/constants'
 import { useCallback, useEffect, useState } from 'react'
 import {
-  CheckboxController,
   DatePickerController,
   InputController,
 } from '@island.is/shared/form-fields'
@@ -136,11 +134,19 @@ export const Publishing = (props: OJOIFieldBaseProps) => {
     })
   }
 
-  const onAddChannel = (channel: Channel) => {
+  const onAddChannel = () => {
+    if (!channelState.email) return
     setState({
       ...state,
-      communicationChannels: [...state.communicationChannels, channel],
+      communicationChannels: [
+        ...state.communicationChannels,
+        {
+          email: channelState.email,
+          phone: channelState.phone,
+        },
+      ],
     })
+    setChannelState({ email: '', phone: '' })
   }
 
   const updateHandler = useCallback(async () => {

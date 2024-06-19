@@ -49,18 +49,11 @@ describe('InternalNotificationController - Send appeal completed notifications',
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}"}`
 
-    const {
-      emailService,
-      notificationConfig,
-      notificationModel,
-      internalNotificationController,
-    } = await createTestingNotificationModule()
+    const { emailService, notificationConfig, internalNotificationController } =
+      await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-
-    const mockFindAll = notificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (
       defenderNationalId?: string,

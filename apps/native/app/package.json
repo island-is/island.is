@@ -66,7 +66,7 @@
     "react": "18.2.0",
     "react-intl": "5.20.12",
     "react-native": "0.74.2",
-    "react-native-app-auth": "6.4.3",
+    "react-native-app-auth": "7.2.0",
     "react-native-blob-util": "0.16.4",
     "react-native-code-push": "8.2.2",
     "react-native-device-info": "10.3.0",
