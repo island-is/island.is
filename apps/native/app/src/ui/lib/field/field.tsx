@@ -65,7 +65,7 @@ export function Field({
   return (
     <Host compact={compact} style={style}>
       <Content>
-        <Label>{val}</Label>
+        <Label>{label}</Label>
         {loading ? <Skeleton active /> : <Value size={size}>{val}</Value>}
       </Content>
     </Host>
