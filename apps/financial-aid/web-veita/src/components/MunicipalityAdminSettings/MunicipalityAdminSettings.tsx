@@ -47,7 +47,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     hasDecemberCompensationError,
     errorCheckNav,
     errorCheckAid,
-    errorCheckDesemberAid,
+    errorCheckDecemberCompensation,
     aidChangeHandler,
     navChangeHandler,
   } = useErrorInSettings(aidNames)
@@ -57,7 +57,9 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
     const errorAid =
       errorCheckAid(state.individualAid, INDIVIDUAL, !errorNav) ||
       errorCheckAid(state.cohabitationAid, COHABITATION, !errorNav)
-    const errorDesember = errorCheckDesemberAid(state.decemberCompensation)
+    const errorDesember = errorCheckDecemberCompensation(
+      state.decemberCompensation,
+    )
 
     if (errorNav || errorAid || errorDesember) {
       return

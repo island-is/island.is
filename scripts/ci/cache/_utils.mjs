@@ -55,7 +55,7 @@ export async function getFileHash(file) {
 
 export async function getFilesHash(files = []) {
   const contents = await Promise.all(
-    files.map((file) => readFile(file, 'utf-8')),
+    files.sort().map((file) => readFile(file, 'utf-8')),
   )
   const combinedContent = contents.join('')
   return crypto.createHash('sha256').update(combinedContent).digest('hex')
@@ -153,7 +153,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
     const outputChunks = []
 
     childProcess.stdout.on('data', (data) => {
-      console.log(data.toString())
+      // console.log(data.toString())
       outputChunks.push(data.toString())
     })
 
@@ -202,6 +202,7 @@ export function arrayIncludesOneOf(array, values) {
 export function retry(fn, retries = 5, delay = 2000) {
   return new Promise((resolve, reject) => {
     const attempt = async (n) => {
+      console.log(`Retrying ${fn.name} - ${n} attempts left`)
       try {
         const value = await fn()
         resolve(value)
