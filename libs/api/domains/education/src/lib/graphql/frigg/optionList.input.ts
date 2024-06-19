@@ -1,7 +1,7 @@
 import { Allow } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
 
-@InputType()
+@InputType('EducationFriggOptionsListInput')
 export class FriggOptionListInput {
   @Allow()
   @Field()

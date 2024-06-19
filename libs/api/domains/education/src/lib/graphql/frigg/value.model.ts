@@ -1,10 +1,10 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('EducationFriggValueModel')
 export class FriggValueModel {
-  @Field(() => String)
+  @Field()
   content!: string
 
-  @Field(() => String)
+  @Field()
   language!: string
 }

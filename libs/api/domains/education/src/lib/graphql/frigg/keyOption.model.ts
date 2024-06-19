@@ -2,9 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 import { FriggOptionModel } from './option.model'
 
-@ObjectType()
+@ObjectType('EducationFriggKeyOptionModel')
 export class KeyOptionModel {
-  @Field(() => String)
+  @Field()
   type!: string
 
   @Field(() => [FriggOptionModel])
