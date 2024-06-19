@@ -21,7 +21,8 @@ interface Props {
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType ends with caseFilesRecord
+  elementId?: string
+  queryParameters?: string
 }
 
 const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
@@ -32,16 +33,16 @@ const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
   renderAs = 'button',
   children,
   handleClick, // Overwrites the default onClick handler
-  policeCaseNumber,
+  elementId,
+  queryParameters,
 }) => {
   const { limitedAccess } = useContext(UserContext)
 
   const handlePdfClick = async () => {
     const prefix = limitedAccess ? 'limitedAccess/' : ''
-    const postfix = pdfType?.endsWith('caseFilesRecord')
-      ? `/${policeCaseNumber}`
-      : ''
-    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}`
+    const postfix = elementId ? `/${elementId}` : ''
+    const query = queryParameters ? `?${queryParameters}` : ''
+    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}${query}`
 
     window.open(url, '_blank')
   }

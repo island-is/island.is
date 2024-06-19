@@ -31,20 +31,36 @@ interface Props {
   courtRoomRequired?: boolean
 }
 
+type DateLogKey = keyof Pick<Case, 'arraignmentDate' | 'courtDate'>
+
 export const useCourtArrangements = (
   workingCase: Case,
   setWorkingCase: (value: SetStateAction<Case>) => void,
-  dateKey: keyof Pick<Case, 'arraignmentDate' | 'courtDate'>,
+  dateKey: DateLogKey,
 ) => {
   const { setAndSendCaseToServer } = useCase()
+  const [original, setOriginal] =
+    useState<[DateLogKey, DateLog | undefined | null]>()
   const [courtDate, setCourtDate] = useState<DateLog | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {
+    if (
+      original &&
+      original[0] === dateKey &&
+      original[1]?.date === workingCase[dateKey]?.date &&
+      original[1]?.location === workingCase[dateKey]?.location
+    ) {
+      // Do not reset the court date if it has not changed
+      return
+    }
+
+    setOriginal([dateKey, workingCase[dateKey]])
+
     if (workingCase[dateKey]) {
       setCourtDate(workingCase[dateKey])
     }
-  }, [dateKey, workingCase])
+  }, [dateKey, original, workingCase])
 
   const handleCourtDateChange = (
     date: Date | undefined | null,

@@ -66,7 +66,7 @@ import { CaseArchive } from './models/caseArchive.model'
 import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { caseModuleConfig } from './case.config'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -164,8 +164,8 @@ export class InternalCaseService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => EventLogService))
     private readonly eventLogService: EventLogService,
-    @Inject(forwardRef(() => PDFService))
-    private readonly pdfService: PDFService,
+    @Inject(forwardRef(() => PdfService))
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 

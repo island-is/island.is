@@ -24,19 +24,20 @@ import {
 import {
   createCaseFilesRecord,
   createIndictment,
+  createSubpoena,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
   getRulingPdfAsBuffer,
   IndictmentConfirmation,
 } from '../../formatters'
-import { createSubpoenaPDF } from '../../formatters/subpoenaPdf'
 import { AwsS3Service } from '../aws-s3'
+import { Defendant } from '../defendant'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
 
 @Injectable()
-export class PDFService {
+export class PdfService {
   private throttle = Promise.resolve(Buffer.from(''))
 
   constructor(
@@ -286,5 +287,24 @@ export class PDFService {
     )
 
     return await this.throttle
+  }
+
+  async getSubpoenaPdf(
+    theCase: Case,
+    defendant: Defendant,
+    arraignmentDate?: Date,
+    location?: string,
+    subpoenaType?: SubpoenaType,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    return createSubpoena(
+      theCase,
+      defendant,
+      this.formatMessage,
+      arraignmentDate,
+      location,
+      subpoenaType,
+    )
   }
 }

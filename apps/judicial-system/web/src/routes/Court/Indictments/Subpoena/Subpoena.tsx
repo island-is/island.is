@@ -79,7 +79,7 @@ const Subpoena: FC = () => {
 
       const allDataSentToServer = await Promise.all(promises)
 
-      if (!allDataSentToServer) {
+      if (!allDataSentToServer.every((result) => result)) {
         return
       }
 
@@ -209,6 +209,8 @@ const Subpoena: FC = () => {
                   !courtDate?.location ||
                   !defendant.subpoenaType
                 }
+                elementId={defendant.id}
+                queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
               />
             </Box>
           ))}

@@ -204,7 +204,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
                 policeCaseNumber,
               })}
               pdfType={'caseFilesRecord'}
-              policeCaseNumber={policeCaseNumber}
+              elementId={policeCaseNumber}
               renderAs="row"
             />
           </Box>
