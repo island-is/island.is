@@ -16,22 +16,21 @@ import { CreateEventLogInput } from '../event-log/dto/createEventLog.input'
 @UseGuards(JwtGraphQlAuthGuard)
 @Resolver()
 export class EventLogResolver {
-constructor(
+  constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
   @Mutation(() => Boolean, { nullable: true })
-  createEventLog(
+  async createEventLog(
     @Args('input', { type: () => CreateEventLogInput })
     input: CreateEventLogInput,
     @CurrentGraphQlUser() user: User,
     @Context('dataSources') { backendApi }: { backendApi: BackendApi },
-  ): boolean {
+  ): Promise<boolean> {
     this.logger.debug(`Creating event log for case ${input.caseId}`)
 
-    backendApi.createEventLog(input, user.role)
-
-    return true
+    const res = await backendApi.createEventLog(input, user.role)
+    return res.ok
   }
 }

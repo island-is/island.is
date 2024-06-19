@@ -412,7 +412,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
-    return fetch(`${environment.backend.url}/api/eventLog/logEvent`, {
+    return fetch(`${environment.backend.url}/api/eventLog/event`, {
       method: 'POST',
       headers: {
         authorization: `Bearer ${environment.auth.secretToken}`,
