@@ -19,8 +19,8 @@ export interface TeamListProps {
   teamMembers: {
     title: string
     name: string
-    image: { url: string }
-    imageOnSelect: { url: string }
+    image?: { url: string }
+    imageOnSelect?: { url: string } | null
   }[]
   variant?: 'card' | 'accordion'
 }
@@ -62,7 +62,9 @@ export const TeamMemberCardList = ({
   return (
     <GridRow>
       {teamMembers.map((member, index) => {
-        let image = `${member.image.url}${imagePostfix}`
+        let image = member.image?.url
+          ? `${member.image.url}${imagePostfix}`
+          : undefined
 
         if (selectedIndex === index && member.imageOnSelect?.url) {
           const selectedImageUrl = `${member.imageOnSelect.url}${imagePostfix}`
@@ -141,7 +143,9 @@ const TeamMemberAccordionList = ({
   return (
     <Accordion>
       {teamMembers.map((member, index) => {
-        let image = `${member.image.url}${imagePostfix}`
+        let image = member.image?.url
+          ? `${member.image.url}${imagePostfix}`
+          : undefined
 
         if (selectedIndex === index && member.imageOnSelect?.url) {
           const selectedImageUrl = `${member.imageOnSelect.url}${imagePostfix}`

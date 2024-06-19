@@ -4359,6 +4359,9 @@ export interface ITeamMemberFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Intro */
+  intro?: Document | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {

@@ -17,6 +17,7 @@ import {
 import {
   GenericList as GenericListSchema,
   Slice,
+  TeamList,
 } from '@island.is/web/graphql/schema'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
@@ -92,6 +93,10 @@ const AnchorPageListSlice = dynamic(() =>
 
 const PowerBiSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.PowerBiSlice),
+)
+
+const TeamListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.TeamListSlice),
 )
 
 interface SliceMachineProps {
@@ -190,6 +195,15 @@ const renderSlice = (
           }
           itemType={(slice as GenericListSchema).itemType}
           filterTags={(slice as GenericListSchema).filterTags}
+        />
+      )
+    case 'TeamList':
+      return (
+        <TeamListSlice
+          id={(slice as TeamList).id}
+          teamMembers={(slice as TeamList).teamMembers}
+          filterTags={(slice as TeamList).filterTags}
+          variant={(slice as TeamList).variant}
         />
       )
     default:

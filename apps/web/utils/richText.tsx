@@ -44,6 +44,7 @@ import {
   SpecificHousingBenefitSupportCalculator,
   StraddlingStockCalculator,
   TableSlice,
+  TeamListSlice,
   TemporaryEventLicencesList,
   TwoColumnTextSlice,
 } from '@island.is/web/components'
@@ -67,6 +68,7 @@ import {
   Slice,
   SliceDropdown as SliceDropdownSchema,
   TableSlice as TableSliceSchema,
+  TeamList,
   TwoColumnText,
 } from '@island.is/web/graphql/schema'
 
@@ -194,6 +196,14 @@ const defaultRenderComponent = {
       searchInputPlaceholder={slice.searchInputPlaceholder}
       itemType={slice.itemType}
       filterTags={slice.filterTags}
+    />
+  ),
+  TeamList: (slice: TeamList) => (
+    <TeamListSlice
+      id={slice.id}
+      teamMembers={slice.teamMembers}
+      filterTags={slice.filterTags}
+      variant={slice.variant as 'accordion' | 'card'}
     />
   ),
 }

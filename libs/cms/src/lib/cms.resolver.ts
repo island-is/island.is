@@ -117,6 +117,8 @@ import { GenericList } from './models/genericList.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
 import { GenericListItem } from './models/genericListItem.model'
+import { GetTeamMembersInput } from './dto/getTeamMembers.input'
+import { TeamMemberResponse } from './models/teamMemberResponse.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -676,6 +678,14 @@ export class CmsResolver {
     @Args('input') input: GetGenericListItemBySlugInput,
   ): Promise<GenericListItem | null> {
     return this.cmsElasticsearchService.getGenericListItemBySlug(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => GenericListItem, { nullable: true })
+  getTeamMembers(
+    @Args('input') input: GetTeamMembersInput,
+  ): Promise<TeamMemberResponse | null> {
+    return this.cmsElasticsearchService.getTeamMembers(input)
   }
 }
 
