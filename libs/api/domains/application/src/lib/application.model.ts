@@ -129,6 +129,9 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
 }
 
 @ObjectType()

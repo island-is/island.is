@@ -192,6 +192,11 @@ export const serviceSetup = (services: {
         staging: 'https://api-staging.thinglysing.is/business/tolfraedi',
         prod: 'https://api.thinglysing.is/business/tolfraedi',
       },
+      FORM_SYSTEM_API_BASE_PATH: {
+        dev: 'https://profun.island.is/umsoknarkerfi',
+        staging: '',
+        prod: '',
+      },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
