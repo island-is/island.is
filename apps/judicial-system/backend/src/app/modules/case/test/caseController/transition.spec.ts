@@ -401,7 +401,10 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
-          } else if (newState === CaseState.DELETED) {
+          } else if (
+            newState === CaseState.DELETED &&
+            !isIndictmentCase(theCase.type)
+          ) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
