@@ -16,6 +16,7 @@ interface Props {
   personalTaxReturn?: UploadFile | null
   taxFiles: UploadFile[]
   incomeFiles: UploadFile[]
+  childrenFiles: UploadFile[]
   applicationId: string
 }
 
@@ -25,14 +26,17 @@ const Files = ({
   personalTaxReturn,
   taxFiles,
   incomeFiles,
+  childrenFiles,
   applicationId,
 }: Props) => {
   const { formatMessage } = useIntl()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
 
+  const concatAllFiles = incomeFiles.concat(taxFiles).concat(childrenFiles)
+
   const allFiles = !personalTaxReturn
-    ? incomeFiles.concat(taxFiles)
-    : incomeFiles.concat(taxFiles).concat([personalTaxReturn])
+    ? concatAllFiles
+    : concatAllFiles.concat([personalTaxReturn])
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>

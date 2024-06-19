@@ -4,7 +4,7 @@ export const childrenFilesForm = {
   general: defineMessages({
     sectionTitle: {
       id: 'fa.application:section.childrenFilesForm.general.sectionTitle',
-      defaultMessage: 'Tekjugögn',
+      defaultMessage: 'Fylgigögn',
       description: 'Children files form section Title',
     },
     pageTitle: {

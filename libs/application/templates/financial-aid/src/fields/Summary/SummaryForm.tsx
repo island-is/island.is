@@ -40,7 +40,6 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
-
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const aidAmount = useMemo(() => {
@@ -160,7 +159,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <Files
         route={
-          answers.income === ApproveOptions.Yes
+          answers.childrenFiles.length > 0
+            ? Routes.CHILDRENFILES
+            : answers.income === ApproveOptions.Yes
             ? Routes.INCOMEFILES
             : Routes.TAXRETURNFILES
         }
@@ -171,6 +172,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         }
         taxFiles={answers.taxReturnFiles ?? []}
         incomeFiles={answers.incomeFiles ?? []}
+        childrenFiles={answers.childrenFiles ?? []}
         applicationId={id}
       />
 
