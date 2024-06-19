@@ -454,7 +454,7 @@ export class CmsElasticsearchService {
   async getGenericListItems(
     input: GetGenericListItemsInput,
   ): Promise<GenericListItemResponse> {
-    const must: Record<string, unknown>[] = [
+    let must: Record<string, unknown>[] = [
       {
         term: {
           type: {
@@ -514,6 +514,12 @@ export class CmsElasticsearchService {
     // Order by score first in case there is a query string
     if (queryString.length > 0 && queryString !== '*') {
       sort.unshift('_score')
+    }
+
+    if (input.tags && input.tags.length > 0 && input.tagGroups) {
+      must = must.concat(
+        generateGenericTagGroupQueries(input.tags, input.tagGroups),
+      )
     }
 
     const response: ApiResponse<SearchResponse<MappedData>> =

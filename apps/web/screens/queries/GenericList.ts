@@ -8,6 +8,7 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
       input {
         page
         queryString
+        tags
       }
       items {
         id
@@ -15,6 +16,11 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
         title
         cardIntro {
           ...HtmlFields
+        }
+        filterTags {
+          id
+          title
+          slug
         }
         slug
       }
