@@ -70,10 +70,10 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu sveitarfélag',
       description: 'Select municipality',
     },
-    postalcode: {
-      id: 'dess.nps.application:postalcode',
+    postalCode: {
+      id: 'dess.nps.application:postalCode',
       defaultMessage: 'Póstnúmer',
-      description: 'Postalcode',
+      description: 'Postal code',
     },
     address: {
       id: 'dess.nps.application:address',
@@ -104,6 +104,21 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:school.placeholder',
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
+    },
+    male: {
+      id: 'dess.nps.application:gender.male',
+      defaultMessage: 'Karlkyns',
+      description: 'Male',
+    },
+    female: {
+      id: 'dess.nps.application:gender.female',
+      defaultMessage: 'Kvenkyns',
+      description: 'Female',
+    },
+    otherGender: {
+      id: 'dess.nps.application:gender.other',
+      defaultMessage: 'Kynsegin/Annað',
+      description: 'non-binary/Other',
     },
   }),
 
@@ -224,6 +239,48 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.child.info.sub.section.title',
       defaultMessage: 'Upplýsingar um barn',
       description: 'Information about child',
+    },
+    childInfoTitle: {
+      id: 'dess.nps.application:childrenNParents.child.info.title',
+      defaultMessage: 'Upplýsingar um barn',
+      description: 'Information about child',
+    },
+    childInfoDescription: {
+      id: 'dess.nps.application:childrenNParents.child.info.description',
+      defaultMessage:
+        'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
+      description: 'Check that the information is correct before proceeding.',
+    },
+    childInfoChosenName: {
+      id: 'dess.nps.application:childrenNParents.child.info.chosen.name',
+      defaultMessage: 'Valið nafn',
+      description: 'Preferred name',
+    },
+    childInfoGender: {
+      id: 'dess.nps.application:childrenNParents.child.info.gender',
+      defaultMessage: 'Kyn',
+      description: 'Gender',
+    },
+    childInfoGenderPlaceholder: {
+      id: 'dess.nps.application:childrenNParents.child.info.gender.placeholder',
+      defaultMessage: 'Veldu kyn',
+      description: 'Select gender',
+    },
+    differentPlaceOfResidence: {
+      id: 'dess.nps.application:childrenNParents.child.info.different.place.of.residence',
+      defaultMessage: 'Er dvalarstaður barns annað en skráð lögheimili?',
+      description:
+        "Is the child's place of residence different from the registered legal domicile?",
+    },
+    childInfoPlaceOfResidence: {
+      id: 'dess.nps.application:childrenNParents.child.info.place.of.residence',
+      defaultMessage: 'Dvalarstaður barns',
+      description: "Child's place of residence",
+    },
+    childInfoCurrentSchool: {
+      id: 'dess.nps.application:childrenNParents.child.info.current.school',
+      defaultMessage: 'Núverandi skóli',
+      description: 'Current school',
     },
 
     // Parents/guardians
