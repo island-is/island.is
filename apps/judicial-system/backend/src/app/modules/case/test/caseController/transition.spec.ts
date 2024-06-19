@@ -401,7 +401,10 @@ describe('CaseController - Transition', () => {
                 },
               ],
             )
-          } else if (newState === CaseState.DELETED) {
+          } else if (
+            newState === CaseState.DELETED &&
+            !isIndictmentCase(theCase.type)
+          ) {
             expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
               [
                 {
@@ -502,6 +505,23 @@ describe('CaseController - Transition', () => {
                   },
                   caseId,
                   body: { type: NotificationType.INDICTMENT_DENIED },
+                },
+              ],
+            )
+          } else if (
+            newState === CaseState.WAITING_FOR_CANCELLATION &&
+            isIndictmentCase(theCase.type)
+          ) {
+            expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith(
+              [
+                {
+                  type: MessageType.NOTIFICATION,
+                  user: {
+                    ...defaultUser,
+                    canConfirmIndictment: isIndictmentCase(theCase.type),
+                  },
+                  caseId,
+                  body: { type: NotificationType.REVOKED },
                 },
               ],
             )

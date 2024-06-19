@@ -126,6 +126,9 @@
       "@island.is/api/domains/fiskistofa": [
         "libs/api/domains/fiskistofa/src/index.ts"
       ],
+      "@island.is/api/domains/form-system": [
+        "libs/api/domains/form-system/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -640,6 +643,9 @@
         "libs/clients/fishing-license/src/index.ts"
       ],
       "@island.is/clients/fiskistofa": ["libs/clients/fiskistofa/src/index.ts"],
+      "@island.is/clients/form-system": [
+        "libs/clients/form-system/src/index.ts"
+      ],
       "@island.is/clients/health-directorate": [
         "libs/clients/health-directorate/src/index.ts"
       ],
@@ -841,6 +847,7 @@
       "@island.is/financial-aid/shared/lib": [
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
+      "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
