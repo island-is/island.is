@@ -9,6 +9,7 @@ This library implements a GraphQL client code to use Contentful GraphQL APIs.
 The `CONTENTFUL_ACCESS_TOKEN` env variable need to be configured.
 
 ## Fetch GraphQL Schema
+
 Schema is not automatically updated - use this command to update
 
 ```sh
