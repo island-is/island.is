@@ -17,7 +17,7 @@ export const dataSchema = z.object({
   childNationalId: z.string().min(1),
   childInfo: z
     .object({
-      gender: z.enum([Gender.MALE, Gender.FEMALE, Gender.OTHER]).optional(),
+      gender: z.nativeEnum(Gender).optional(),
       differentPlaceOfResidence: z.enum([YES, NO]),
       placeOfResidence: z
         .object({
@@ -99,13 +99,7 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.enum([
-          RelationOptions.GRANDPARENT,
-          RelationOptions.SIBLING,
-          RelationOptions.STEPPARENT,
-          RelationOptions.RELATIVE,
-          RelationOptions.FRIEND_OR_OTHER,
-        ]),
+        relation: z.nativeEnum(RelationOptions),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -113,18 +107,7 @@ export const dataSchema = z.object({
     }),
   reasonForApplication: z
     .object({
-      reason: z.enum([
-        ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
-        ReasonForApplicationOptions.STUDY_STAY_FOR_PARENTS,
-        ReasonForApplicationOptions.PARENTS_PARLIAMENTARY_MEMBERSHIP,
-        ReasonForApplicationOptions.TEMPORARY_FROSTER,
-        ReasonForApplicationOptions.EXPERT_SERVICE,
-        ReasonForApplicationOptions.SICKLY,
-        ReasonForApplicationOptions.LIVES_IN_TWO_HOMES,
-        ReasonForApplicationOptions.SIBLINGS_IN_THE_SAME_PRIMARY_SCHOOL,
-        ReasonForApplicationOptions.MOVING_ABROAD,
-        ReasonForApplicationOptions.OTHER_REASONS,
-      ]),
+      reason: z.nativeEnum(ReasonForApplicationOptions),
       movingAbroad: z
         .object({
           country: z.string().optional(),
@@ -178,11 +161,7 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.enum([
-          SiblingRelationOptions.SIBLING,
-          SiblingRelationOptions.HALF_SIBLING,
-          SiblingRelationOptions.STEP_SIBLING,
-        ]),
+        relation: z.nativeEnum(SiblingRelationOptions),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -209,27 +188,9 @@ export const dataSchema = z.object({
     .object({
       hasFoodAllergies: z.array(z.string()),
       hasFoodIntolerances: z.array(z.string()),
-      foodAllergies: z
-        .array(
-          z.enum([
-            FoodAllergiesOptions.EGG_ALLERGY,
-            FoodAllergiesOptions.FISH_ALLERGY,
-            FoodAllergiesOptions.PENUT_ALLERGY,
-            FoodAllergiesOptions.WHEAT_ALLERGY,
-            FoodAllergiesOptions.MILK_ALLERGY,
-            FoodAllergiesOptions.OTHER,
-          ]),
-        )
-        .optional(),
+      foodAllergies: z.array(z.nativeEnum(FoodAllergiesOptions)).optional(),
       foodIntolerances: z
-        .array(
-          z.enum([
-            FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
-            FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
-            FoodIntolerancesOptions.MSG_INTOLERANCE,
-            FoodIntolerancesOptions.OTHER,
-          ]),
-        )
+        .array(z.nativeEnum(FoodIntolerancesOptions))
         .optional(),
       isUsingEpiPen: z.array(z.string()),
     })

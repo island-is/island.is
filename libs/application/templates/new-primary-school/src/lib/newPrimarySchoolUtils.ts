@@ -25,11 +25,8 @@ import {
 import { newPrimarySchoolMessages } from './messages'
 
 import { ApolloClient } from '@apollo/client'
-import { GetFriggOptions } from '../graphql/queries'
-import {
-  GetFriggOptionsQuery,
-  GetFriggOptionsQueryVariables,
-} from '../types/schema'
+import { friggOptionsQuery } from '../graphql/queries'
+import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -505,10 +502,10 @@ export const getOptionsListByType = async (
   type: string,
 ) => {
   const { data } = await apolloClient.query<
-    GetFriggOptionsQuery,
-    GetFriggOptionsQueryVariables
+    FriggOptionsQuery,
+    FriggOptionsQueryVariables
   >({
-    query: GetFriggOptions,
+    query: friggOptionsQuery,
     variables: {
       type: {
         type,
@@ -517,7 +514,7 @@ export const getOptionsListByType = async (
   })
 
   return (
-    data?.getFriggOptions?.flatMap(({ options }) =>
+    data?.friggOptions?.flatMap(({ options }) =>
       options.flatMap(({ value, id }) => {
         const content = value.find(({ language }) => language === 'is')?.content
         return { value: id ?? '', label: content ?? '' }
