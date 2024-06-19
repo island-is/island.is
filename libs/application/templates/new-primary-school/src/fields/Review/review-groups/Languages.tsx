@@ -6,11 +6,9 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { getLanguageByCode } from '@island.is/shared/utils'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-  getLanguageLabel,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Languages = ({
@@ -41,7 +39,7 @@ export const Languages = ({
               label={formatMessage(
                 newPrimarySchoolMessages.overview.nativeLanguage,
               )}
-              value={getLanguageLabel(nativeLanguage)}
+              value={getLanguageByCode(nativeLanguage)?.name}
             />
           </GridColumn>
         </GridRow>
@@ -66,7 +64,7 @@ export const Languages = ({
                   )}
                   value={otherLanguages
                     .map((language) => {
-                      return getLanguageLabel(language)
+                      return getLanguageByCode(language)?.name
                     })
                     .join(', ')}
                 />
