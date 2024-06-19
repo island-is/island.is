@@ -334,16 +334,6 @@ export const EHIC = new XroadConf({
   },
 })
 
-export const UniversityOfIceland = new XroadConf({
-  env: {
-    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
-      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
-      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
-      prod: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1',
-    },
-  },
-})
-
 export const UniversityCareers = new XroadConf({
   env: {
     XROAD_UNIVERSITY_OF_AKUREYRI_PATH: {
@@ -370,6 +360,11 @@ export const UniversityCareers = new XroadConf({
       dev: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
       staging: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
       prod: 'IS/EDU/4210984099/LHI-Protected/brautskraning-v1',
+    },
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1',
     },
   },
 })
