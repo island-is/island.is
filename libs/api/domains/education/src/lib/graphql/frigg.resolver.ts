@@ -23,7 +23,7 @@ export class FriggResolver {
   constructor(private readonly friggClientService: FriggClientService) {}
 
   @Query(() => [KeyOptionModel], { nullable: true })
-  getFriggOptions(
+  friggOptions(
     @CurrentUser() user: User,
     @Args('input', { type: () => FriggOptionListInput })
     input: FriggOptionListInput,
