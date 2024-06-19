@@ -11315,7 +11315,7 @@ __metadata:
     "@types/intl": ^1
     "@types/jest": ^29.2.1
     "@types/lodash": 4.17.1
-    "@types/react": ^18.2.6
+    "@types/react": ^18.2.0
     "@types/react-dom": ^18
     "@types/react-test-renderer": ^18.0.0
     "@types/styled-components": ^5
@@ -19374,7 +19374,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^18.2.6":
+"@types/react@npm:^18.2.0":
   version: 18.3.3
   resolution: "@types/react@npm:18.3.3"
   dependencies:
@@ -30621,6 +30621,15 @@ __metadata:
   dependencies:
     invariant: ^2.2.4
   checksum: fd582278399decdf167820dc607da2669601539b18abc96be7b100d780c48b3900724231571dfe6cf5ecdba1718cb29e6325aa8f36a9cb7f7f5f38b150244f79
+  languageName: node
+  linkType: hard
+
+"expo-modules-core@patch:expo-modules-core@npm%3A1.12.15#./.yarn/patches/expo-modules-core-npm-1.12.15-fdd209ec99.patch::locator=island.is%40workspace%3A.":
+  version: 1.12.15
+  resolution: "expo-modules-core@patch:expo-modules-core@npm%3A1.12.15#./.yarn/patches/expo-modules-core-npm-1.12.15-fdd209ec99.patch::version=1.12.15&hash=71f3e7&locator=island.is%40workspace%3A."
+  dependencies:
+    invariant: ^2.2.4
+  checksum: 79b956d1865849eece33f766c4691495128334d94c045e0aef2025c3c7ca700f3a5cbdaa865bf9961b9ee5a8c004c9e5c683887c5643c570d7194b878480436f
   languageName: node
   linkType: hard
 
@@ -45618,6 +45627,28 @@ __metadata:
   bin:
     rnn-link: autolink/postlink/run.js
   checksum: b7aeeb5c2d54f82e0cb5e09b00ad85a3201cd03a0fd71013ad0539db218367ff464e31f5868c8c0daa95d63ea926faab9ca8374e3d58abaf5fb8dfe517b2996b
+  languageName: node
+  linkType: hard
+
+"react-native-navigation@patch:react-native-navigation@npm%3A7.40.0#./.yarn/patches/react-native-navigation-npm-7.40.0-68d0a0ab0d.patch::locator=island.is%40workspace%3A.":
+  version: 7.40.0
+  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A7.40.0#./.yarn/patches/react-native-navigation-npm-7.40.0-68d0a0ab0d.patch::version=7.40.0&hash=0c542e&locator=island.is%40workspace%3A."
+  dependencies:
+    hoist-non-react-statics: 3.x.x
+    lodash: 4.17.x
+    prop-types: 15.x.x
+    react-lifecycles-compat: 2.0.0
+    tslib: 1.9.3
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    remx: "*"
+  peerDependenciesMeta:
+    remx:
+      optional: true
+  bin:
+    rnn-link: autolink/postlink/run.js
+  checksum: bff410f0969c132739252ba5705bdd1368b42d46b72d4d3eda4a2b9e990042cf1c9e2403bce6b73f27d7dfbd6716a1595499f236b2eda5f1ffa338d3bc1a7465
   languageName: node
   linkType: hard
 
