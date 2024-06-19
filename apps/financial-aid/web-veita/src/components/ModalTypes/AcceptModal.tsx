@@ -14,6 +14,7 @@ import {
   calculateTaxOfAmount,
   ChildrenAid,
   FamilyStatus,
+  getMonth,
   HomeCircumstances,
   Municipality,
   showSpouseData,
@@ -63,7 +64,7 @@ const AcceptModal = ({
   const router = useRouter()
   const maximumInputLength = 6
 
-  const hasDecemberAid = appliedMonth === 10
+  const hasDecemberAid = getMonth(appliedMonth, 'en') === 'November'
   const hasChildrenAid =
     applicationMunicipality.childrenAid === ChildrenAid.APPLICANT &&
     hasApplicantChildren
@@ -206,7 +207,7 @@ const AcceptModal = ({
         <Box marginBottom={3}>
           <NumberInput
             label="Desember uppbót"
-            placeholder="Sláðu inn upphæð útborgunar"
+            placeholder="Sláðu inn upphæð desember uppbótar"
             id="decemberAidAmountInput"
             name="decemberAidAmountInput"
             value={
