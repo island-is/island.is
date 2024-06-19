@@ -103,10 +103,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: pruneAfterDays(30),
-          /* onExit: defineTemplateApi({
-            action: Actions.SEND_APPLICATION,
-            throwOnError: true,
-          }),*/
           actionCard: {
             pendingAction: {
               title: 'corePendingActionMessages.applicationReceivedTitle',
@@ -167,9 +163,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
-      /**
-       * Clear answers depending on what is selected as reason for application
-       */
+      // Clear answers depending on what is selected as reason for application
       clearApplicationIfReasonForApplication: assign((context) => {
         const { application } = context
         const { reasonForApplication } = getApplicationAnswers(
