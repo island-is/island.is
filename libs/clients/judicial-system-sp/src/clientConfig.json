@@ -38,14 +38,32 @@
     "/api/cases": {
       "get": {
         "operationId": "CaseController_getAllCases",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
+          }
+        ],
         "responses": {
           "200": {
-            "description": "Get all cases",
+            "description": "Returns a list of accessible indictment cases for authenticated user. If user has no cases it returns an empty list.",
             "content": {
-              "application/json": { "schema": { "type": "string" } }
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/CasesResponse" }
+                }
+              }
             }
-          }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "500": { "description": "Internal Server Error" }
         },
         "tags": ["cases"]
       }
@@ -59,17 +77,32 @@
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
           }
         ],
         "responses": {
           "200": {
-            "description": "Get case by id",
+            "description": "Returns indictment case by case id",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/CaseResponse" }
               }
             }
-          }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "404": {
+            "description": "Case for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
         },
         "tags": ["cases"]
       }
@@ -83,17 +116,32 @@
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
           }
         ],
         "responses": {
           "200": {
-            "description": "Get subpoena by case id",
+            "description": "Returns subpoena by case id",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SubpoenaResponse" }
               }
             }
-          }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "404": {
+            "description": "Subpoena for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
         },
         "tags": ["cases"]
       },
@@ -105,6 +153,13 @@
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "locale",
+            "required": false,
+            "in": "query",
+            "description": "The requested locale of the response. Defaults to Icelandic.",
+            "schema": { "type": "string", "enum": ["is", "en"] }
           }
         ],
         "requestBody": {
@@ -117,13 +172,22 @@
         },
         "responses": {
           "200": {
-            "description": "Update subpoena info",
+            "description": "Updates subpoena info",
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/SubpoenaResponse" }
               }
             }
-          }
+          },
+          "400": { "description": "Bad Request" },
+          "401": {
+            "description": "User is not authorized to perform this action"
+          },
+          "403": { "description": "User is not allowed to update subpoena" },
+          "404": {
+            "description": "Subpoena for given case id and authenticated user not found"
+          },
+          "500": { "description": "Internal Server Error" }
         },
         "tags": ["cases"]
       }
@@ -133,14 +197,39 @@
         "operationId": "DefenderController_getLawyers",
         "parameters": [],
         "responses": {
-          "201": {
-            "description": "Retrieves a list of defenders",
+          "200": {
+            "description": "Returns a list of defenders",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": { "$ref": "#/components/schemas/Defender" }
                 }
+              }
+            }
+          },
+          "500": { "description": "Failed to retrieve defenders" }
+        },
+        "tags": ["defenders"]
+      }
+    },
+    "/api/defender/{nationalId}": {
+      "get": {
+        "operationId": "DefenderController_getLawyer",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Retrieves a defender by national id",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/Defender" }
               }
             }
           }
@@ -272,10 +361,54 @@
         "properties": { "version": { "type": "string" } },
         "required": ["version"]
       },
+      "CasesResponse": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "caseNumber": { "type": "string" },
+          "type": { "type": "string" },
+          "state": { "type": "object" }
+        },
+        "required": ["id", "caseNumber", "type", "state"]
+      },
+      "Items": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "value": { "type": "string" },
+          "linkType": { "type": "string", "enum": ["email", "tel"] }
+        },
+        "required": ["label", "value", "linkType"]
+      },
+      "Groups": {
+        "type": "object",
+        "properties": {
+          "label": { "type": "string" },
+          "items": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Items" }
+          }
+        },
+        "required": ["label", "items"]
+      },
+      "IndictmentCaseData": {
+        "type": "object",
+        "properties": {
+          "caseNumber": { "type": "string" },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Groups" }
+          }
+        },
+        "required": ["caseNumber", "groups"]
+      },
       "CaseResponse": {
         "type": "object",
-        "properties": { "data": { "type": "object" } },
-        "required": ["data"]
+        "properties": {
+          "caseId": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/IndictmentCaseData" }
+        },
+        "required": ["caseId", "data"]
       },
       "DefenderInfo": {
         "type": "object",
@@ -289,10 +422,10 @@
         "type": "object",
         "properties": {
           "caseId": { "type": "string" },
-          "displayInfo": { "type": "string" },
-          "defenderInfo": { "$ref": "#/components/schemas/DefenderInfo" }
+          "defenderInfo": { "$ref": "#/components/schemas/DefenderInfo" },
+          "acceptCompensationClaim": { "type": "boolean" }
         },
-        "required": ["caseId", "displayInfo", "defenderInfo"]
+        "required": ["caseId", "defenderInfo", "acceptCompensationClaim"]
       },
       "UpdateSubpoenaDto": {
         "type": "object",
@@ -301,9 +434,14 @@
             "type": "string",
             "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
           },
-          "defenderNationalId": { "type": "string" }
+          "defenderNationalId": { "type": "string" },
+          "acceptCompensationClaim": { "type": "boolean" }
         },
-        "required": ["defenderChoice", "defenderNationalId"]
+        "required": [
+          "defenderChoice",
+          "defenderNationalId",
+          "acceptCompensationClaim"
+        ]
       },
       "Defender": {
         "type": "object",

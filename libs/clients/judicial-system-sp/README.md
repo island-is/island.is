@@ -7,5 +7,3 @@ This client's main focus is data for the Service Portal, Law and Order module. D
 ## Judicial System App
 
 This client is not related to the app itself "Judicial System" although coming from the same organization, Dómsmálaráðuneytið.
-
-This client is not related to the app itself "Judicial System" although coming from the same organization, Dómsmálaráðuneytið.
