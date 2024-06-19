@@ -17,15 +17,9 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti á PDF takka til að sækja gagnapakka í ákærum.',
   },
-  courtRecordTitle: {
-    id: 'judicial.system.core:court.indictment_case_files_list.court_record_title',
-    defaultMessage: 'Þingbók',
-    description:
-      'Notaður sem titill á þingbókar hluta á dómskjalaskjá í ákærum.',
-  },
-  rulingTitle: {
-    id: 'judicial.system.core:court.indictment_case_files_list.ruling_titles',
-    defaultMessage: 'Dómar, úrskurður og þingbók',
+  rulingAndCourtRecordsTitle: {
+    id: 'judicial.system.core:court.indictment_case_files_list.ruling_court_record_titles',
+    defaultMessage: 'Dómar, úrskurðir og þingbók',
     description: 'Notaður sem titill á dómur hluta á dómskjalaskjá í ákærum.',
   },
 })
