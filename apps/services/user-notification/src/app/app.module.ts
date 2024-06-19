@@ -16,6 +16,7 @@ import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegatio
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments/environment'
 import { UserNotificationsConfig } from '../config'
+import { CmsConfig } from '@island.is/clients/cms'
 
 @Module({
   imports: [
@@ -36,6 +37,7 @@ import { UserNotificationsConfig } from '../config'
         UserProfileClientConfig,
         IdsClientConfig,
         AuthDelegationApiClientConfig,
+        CmsConfig,
       ],
     }),
     NotificationsModule,

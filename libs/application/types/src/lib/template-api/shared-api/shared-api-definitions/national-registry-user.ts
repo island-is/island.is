@@ -8,6 +8,7 @@ export interface NationalRegistryParameters {
   icelandicCitizenship?: boolean
   validateAlreadyHasIcelandicCitizenship?: boolean
   allowPassOnChild?: boolean
+  citizenshipWithinEES?: boolean
 }
 
 export interface ChildrenCustodyInformationParameters {
