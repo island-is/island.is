@@ -10,6 +10,10 @@ export const schema = z.object({
   servicePortalClickActionUrl: z.string(),
   contentfulAccessToken: z.string(),
   emailFromAddress: z.string(),
+  redis: z.object({
+    nodes: z.array(z.string()),
+    ssl: z.boolean(),
+  }),
 })
 
 export const UserNotificationsConfig = defineConfig({
@@ -27,6 +31,17 @@ export const UserNotificationsConfig = defineConfig({
         'EMAIL_FROM_ADDRESS',
         'development@island.is',
       ),
+      redis: {
+        nodes: env.requiredJSON('REDIS_URL_NODE_01', [
+          'localhost:7000',
+          'localhost:7001',
+          'localhost:7002',
+          'localhost:7003',
+          'localhost:7004',
+          'localhost:7005',
+        ]),
+        ssl: env.requiredJSON('REDIS_USE_SSL', false),
+      },
     }
   },
 })

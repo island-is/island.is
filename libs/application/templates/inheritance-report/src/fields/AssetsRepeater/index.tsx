@@ -413,29 +413,31 @@ const RealEstateNumberField = ({
   }, [queryLoading])
 
   useEffect(() => {
-    const propertyNumber = propertyNumberInput
-      .trim()
-      .toUpperCase()
-      .replace('-', '')
+    if (!props.readOnly) {
+      const propertyNumber = propertyNumberInput
+        .trim()
+        .toUpperCase()
+        .replace('-', '')
 
-    setValue(descriptionFieldName, '')
+      setValue(descriptionFieldName, '')
 
-    if (isValidRealEstate(propertyNumber)) {
-      clearErrors(fieldName)
+      if (isValidRealEstate(propertyNumber)) {
+        clearErrors(fieldName)
 
-      getProperty({
-        variables: {
-          input: {
-            propertyNumber,
+        getProperty({
+          variables: {
+            input: {
+              propertyNumber,
+            },
           },
-        },
-      })
-    } else {
-      if (propertyNumber.length !== 0) {
-        setError(fieldName, {
-          message: formatMessage(m.errorPropertyNumber),
-          type: 'validate',
         })
+      } else {
+        if (propertyNumber.length !== 0) {
+          setError(fieldName, {
+            message: formatMessage(m.errorPropertyNumber),
+            type: 'validate',
+          })
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
