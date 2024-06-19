@@ -181,7 +181,6 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.COURT_RECORD,
-        CaseFileCategory.COVER_LETTER,
         CaseFileCategory.INDICTMENT,
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,

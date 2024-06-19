@@ -71,9 +71,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
 
   const cf = workingCase.caseFiles
 
-  const coverLetters = cf?.filter(
-    (file) => file.category === CaseFileCategory.COVER_LETTER,
-  )
   const indictments = cf?.filter(
     (file) => file.category === CaseFileCategory.INDICTMENT,
   )
@@ -100,18 +97,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
   return (
     <>
       <SectionHeading title={formatMessage(strings.title)} />
-      {coverLetters && coverLetters.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.coverLetterSection)}
-          </Text>
-          <RenderFiles
-            caseFiles={coverLetters}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
-        </Box>
-      )}
       {indictments && indictments.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>

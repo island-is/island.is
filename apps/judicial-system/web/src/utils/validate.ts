@@ -499,13 +499,10 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
 
 export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.caseFiles?.some(
-      (file) => file.category === CaseFileCategory.COVER_LETTER,
-    ) &&
-      (isTrafficViolationCase(workingCase) ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.INDICTMENT,
-        )) &&
+    (isTrafficViolationCase(workingCase) ||
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.INDICTMENT,
+      )) &&
       workingCase.caseFiles?.some(
         (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
       ),
