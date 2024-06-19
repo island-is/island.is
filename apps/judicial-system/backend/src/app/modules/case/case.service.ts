@@ -835,11 +835,8 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private addMessagesForDeletedCaseToQueue(
-    theCase: Case,
-    user: TUser,
-  ): Promise<void> {
-    const messages: CaseMessage[] = [
+  private getRevokeMessages(user: TUser, theCase: Case): CaseMessage[] {
+    return [
       {
         type: MessageType.NOTIFICATION,
         user,
@@ -847,8 +844,24 @@ export class CaseService {
         body: { type: NotificationType.REVOKED },
       },
     ]
+  }
 
-    return this.messageService.sendMessagesToQueue(messages)
+  private addMessagesForDeletedCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue(
+      this.getRevokeMessages(user, theCase),
+    )
+  }
+
+  private addMessagesForRevokedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue(
+      this.getRevokeMessages(user, theCase),
+    )
   }
 
   private async addMessagesForAppealedCaseToQueue(
@@ -1077,6 +1090,7 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     const isIndictment = isIndictmentCase(updatedCase.type)
+
     if (updatedCase.state !== theCase.state) {
       // New case state
       if (
@@ -1086,13 +1100,17 @@ export class CaseService {
         // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         await this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
-        await this.addMessagesForDeletedCaseToQueue(updatedCase, user)
+        if (!isIndictment) {
+          await this.addMessagesForDeletedCaseToQueue(updatedCase, user)
+        }
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
-          await this.addMessagesForCompletedIndictmentCaseToQueue(
-            updatedCase,
-            user,
-          )
+          if (theCase.state !== CaseState.WAITING_FOR_CANCELLATION) {
+            await this.addMessagesForCompletedIndictmentCaseToQueue(
+              updatedCase,
+              user,
+            )
+          }
         } else {
           await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
@@ -1116,6 +1134,8 @@ export class CaseService {
           updatedCase,
           user,
         )
+      } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+        await this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
       }
     }
 
