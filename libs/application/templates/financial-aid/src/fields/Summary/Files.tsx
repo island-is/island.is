@@ -32,7 +32,7 @@ const Files = ({
   const { formatMessage } = useIntl()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
 
-  const concatAllFiles = incomeFiles.concat(taxFiles).concat(childrenFiles)
+  const concatAllFiles = [...incomeFiles, ...taxFiles, ...childrenFiles]
 
   const allFiles = !personalTaxReturn
     ? concatAllFiles
