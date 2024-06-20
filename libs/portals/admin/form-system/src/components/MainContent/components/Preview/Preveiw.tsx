@@ -21,7 +21,7 @@ interface Props {
 export const Preview = ({ data }: Props) => {
   const { type } = data
   return (
-    <Box padding={2} background="blue100">
+    <Box background="blue100">
       {type === 'Message' && <MessageWithLink data={data} />}
       {type === 'Bank_account' && (
         <div>

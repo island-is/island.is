@@ -23,9 +23,9 @@ export const Premises = () => {
     )
       ? formDocumentTypes.filter((f) => f?.id !== documentTypeId)
       : ([
-          ...formDocumentTypes,
-          documentTypes?.find((d) => d?.id === documentTypeId),
-        ].filter((d) => d !== undefined) as FormSystemDocumentType[])
+        ...formDocumentTypes,
+        documentTypes?.find((d) => d?.id === documentTypeId),
+      ].filter((d) => d !== undefined) as FormSystemDocumentType[])
     setFormDocumentTypes(newDocumentTypes)
     updateSettings({ ...control.form, documentTypes: newDocumentTypes })
     controlDispatch({
@@ -56,6 +56,7 @@ export const Premises = () => {
               large
               checked={formDocumentTypes?.some((f) => f?.id === d?.id)}
               onChange={() => handleCheckboxChange(d?.id ?? -1)}
+              backgroundColor="blue"
             />
           )
         })}
