@@ -61,6 +61,7 @@ export const updateAnswers = (
 
   return shouldUpdateSecondParent()
     ? {
+        ...application.answers,
         [Routes.APPLICANTSINFORMATION]: {
           name: chosenApplicants.name,
           nationalId: chosenApplicants.nationalId,
@@ -73,15 +74,14 @@ export const updateAnswers = (
           phoneNumber: '',
           email: '',
         },
-        ...application.answers,
       }
     : {
+        ...application.answers,
         [Routes.APPLICANTSINFORMATION]: {
           name: chosenApplicants.name,
           nationalId: chosenApplicants.nationalId,
           phoneNumber: applicantUserProfile?.mobilePhoneNumber,
           email: applicantUserProfile?.email,
         },
-        ...application.answers,
       }
 }

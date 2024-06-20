@@ -4,7 +4,12 @@ export const isAvailableForApplication = (
   dateStr: string,
   idTypeChosen: string,
   oldIdType: string,
+  age?: number,
 ) => {
+  if (age && age < 18 && idTypeChosen === 'ID') {
+    return false
+  }
+
   const inputDate = new Date(dateStr)
   const today = new Date()
   today.setHours(0, 0, 0, 0)
@@ -15,7 +20,7 @@ export const isAvailableForApplication = (
 
   // Check if the input date is within the expiration limit
   const withinExpirationDate = inputDate >= today && inputDate <= xMonthsLater
-  if (idTypeChosen === 'II' && (oldIdType === 'ID' || oldIdType === 'IG')) {
+  if (idTypeChosen === 'ID' && (oldIdType === 'II' || oldIdType === 'IG')) {
     // if types are not the same, then expiration date does not matter since you can apply for an id card type that you don't have regardless of old one
     return true
   }

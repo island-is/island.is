@@ -24,7 +24,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
       description: idInformation.labels.chosenApplicantsDescription,
       children: [
         buildRadioField({
-          id: `${Routes.CHOSENAPPLICANTS}`,
+          id: Routes.CHOSENAPPLICANTS,
           title: '',
           largeButtons: true,
           options: (application) => {
@@ -52,16 +52,18 @@ export const ChosenApplicantsSubSection = buildSubSection({
               [],
             ) as Array<IdentityDocumentChild>
 
-            const idTypeChosen = getValueViaPath(
-              application.answers,
-              'typeOfId',
-              '',
-            ) as string
-
-            const applicantIsDisabled = applicantPassport
+            const applicantIIDisabled = applicantPassport
               ? !isAvailableForApplication(
                   applicantPassport.expirationDate,
-                  idTypeChosen,
+                  'II',
+                  `${applicantPassport.type}${applicantPassport.subType}`,
+                )
+              : false
+
+            const applicantIDDisabled = applicantPassport
+              ? !isAvailableForApplication(
+                  applicantPassport.expirationDate,
+                  'ID',
                   `${applicantPassport.type}${applicantPassport.subType}`,
                 )
               : false
@@ -83,7 +85,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
                       ...idInformation.labels.noIdNumber,
                     },
                 value: applicantNationalId,
-                disabled: applicantIsDisabled,
+                disabled: applicantIIDisabled && applicantIDDisabled,
               },
             ]
 
@@ -92,10 +94,18 @@ export const ChosenApplicantsSubSection = buildSubSection({
                 item.passports && item.passports.length > 0
                   ? (item.passports[0] as IdentityDocument)
                   : undefined
-              const isDisabled = idDocument
+              const IIDisabled = idDocument
                 ? !isAvailableForApplication(
                     idDocument.expirationDate,
-                    idTypeChosen,
+                    'II',
+                    `${idDocument.type}${idDocument.subType}`,
+                  )
+                : false
+
+              const IDDisabled = idDocument
+                ? !isAvailableForApplication(
+                    idDocument.expirationDate,
+                    'ID',
                     `${idDocument.type}${idDocument.subType}`,
                   )
                 : false
@@ -116,7 +126,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
                     },
 
                 value: item.childNationalId,
-                disabled: isDisabled,
+                disabled: IIDisabled && IDDisabled,
               })
             })
 

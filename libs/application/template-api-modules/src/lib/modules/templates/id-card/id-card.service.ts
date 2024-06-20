@@ -64,7 +64,7 @@ export class IdCardService extends BaseTemplateApiService {
     const applicantIdentityWithinLimits = expDate
       ? isAvailableForApplication(
           expDate,
-          'II',
+          'ID',
           `${identityDocument.userPassport?.type}${identityDocument.userPassport?.subType}`,
         )
       : true
@@ -76,7 +76,7 @@ export class IdCardService extends BaseTemplateApiService {
           const withinLimits = id.expirationDate
             ? isAvailableForApplication(
                 id.expirationDate.toString(),
-                'II',
+                'ID',
                 `${id.type}${id.subType}`,
               )
             : true
@@ -277,11 +277,7 @@ export class IdCardService extends BaseTemplateApiService {
       await this.passportApi.preregisterIdentityDocument(auth, {
         guid: application.id,
         appliedForPersonId: auth.nationalId,
-        priority:
-          answers.priceList.priceChoice === Services.REGULAR ||
-          answers.priceList.priceChoice === Services.REGULAR_DISCOUNT
-            ? 0
-            : 1,
+        priority: answers.priceList.priceChoice === Services.EXPRESS ? 1 : 0,
         deliveryName: answers.priceList.location,
         contactInfo: {
           phoneAtHome: applicantInformation.phoneNumber,
@@ -301,8 +297,7 @@ export class IdCardService extends BaseTemplateApiService {
       await this.passportApi.preregisterChildIdentityDocument(auth, {
         guid: application.id,
         appliedForPersonId: applicantInformation.nationalId,
-        priority:
-          answers.priceList.priceChoice === Services.REGULAR_DISCOUNT ? 0 : 1,
+        priority: answers.priceList.priceChoice === Services.EXPRESS ? 1 : 0,
         deliveryName: answers.priceList.location,
         approvalA: {
           personId:

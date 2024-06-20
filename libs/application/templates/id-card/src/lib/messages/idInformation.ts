@@ -42,13 +42,13 @@ export const idInformation = {
     },
     typeOfIdRadioAnswerOne: {
       id: 'id.application:idInformation.labels.typeOfIdRadioAnswerOne',
-      defaultMessage: 'Nafnskírteini sem ferðaskilríki',
-      description: 'Type of id radio answer id card with travel rights',
+      defaultMessage: 'Nafnskírteini ekki sem ferðaskilríki',
+      description: 'Type of id radio answer id card without travel rights',
     },
     typeOfIdRadioAnswerTwo: {
       id: 'id.application:idInformation.labels.typeOfIdRadioAnswerTwo',
-      defaultMessage: 'Nafnskírteini ekki sem ferðaskilríki',
-      description: 'Type of id radio answer id card without travel rights',
+      defaultMessage: 'Nafnskírteini sem ferðaskilríki',
+      description: 'Type of id radio answer id card travel rights',
     },
     infoAlert: {
       id: 'id.application:idInformation.labels.infoAlert',

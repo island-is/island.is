@@ -8,8 +8,8 @@ export const IdInformationSection = buildSection({
   id: 'idInformation',
   title: idInformation.general.sectionTitle,
   children: [
-    TypeOfIdSubSection,
     ChosenApplicantsSubSection,
+    TypeOfIdSubSection,
     ConditionInformationSection,
   ],
 })

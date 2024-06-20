@@ -17,8 +17,8 @@ export const getChosenApplicant = (
   const applicantIdentity = getValueViaPath(
     application.externalData,
     'nationalRegistry.data',
-    undefined,
-  ) as NationalRegistryIndividual | undefined
+    {},
+  ) as NationalRegistryIndividual
 
   const applicantChildren = getValueViaPath(
     application.externalData,
@@ -34,7 +34,10 @@ export const getChosenApplicant = (
       '',
     ) as string)
 
-  if (applicantIdentity?.nationalId === chosenApplicantNationalId) {
+  if (
+    chosenApplicantNationalId === '' ||
+    applicantIdentity?.nationalId === chosenApplicantNationalId
+  ) {
     return {
       nationalId: applicantIdentity?.nationalId,
       name: applicantIdentity?.fullName,

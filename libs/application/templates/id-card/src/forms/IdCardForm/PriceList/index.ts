@@ -35,18 +35,14 @@ export const PriceListSubSection = buildSection({
                   ? priceList.labels.regularPriceTitle
                   : priceList.labels.discountRegularPriceTitle,
                 subLabel: priceList.labels.regularPriceDescription,
-                value: !hasDiscount
-                  ? Services.REGULAR
-                  : Services.REGULAR_DISCOUNT,
+                value: Services.REGULAR,
               },
               {
                 label: !hasDiscount
                   ? priceList.labels.fastPriceTitle
                   : priceList.labels.discountFastPriceTitle,
                 subLabel: priceList.labels.fastPriceDescription,
-                value: !hasDiscount
-                  ? Services.EXPRESS
-                  : Services.EXPRESS_DISCOUNT,
+                value: Services.EXPRESS,
               },
             ]
           },
