@@ -7,7 +7,6 @@ import { PasskeyRegistrationOptions } from '../models/registrationOptions.model'
 import { PasskeyRegistrationVerification } from '../models/verifyRegistration.model'
 import { PasskeyRegistrationObject } from '../dto/registrationObject.input'
 import { PasskeyAuthenticationOptions } from '../models/authenticationOptions.model'
-import { PasskeyAuthenticationObject } from '../dto/authenticationObject.input'
 
 @Injectable()
 export class PasskeyService {
@@ -44,17 +43,6 @@ export class PasskeyService {
     ).passkeysControllerGetPasskeyAuthenticationOptions()
 
     return options as PasskeyAuthenticationOptions
-  }
-
-  verifyAuthentication(
-    user: User,
-    input: PasskeyAuthenticationObject,
-  ): Promise<PasskeyRegistrationVerification> {
-    return this.passkeysApiWithAuth(
-      user,
-    ).passkeysControllerVerifyAuthentication({
-      authenticationResponse: input,
-    })
   }
 
   deletePasskey(user: User): Promise<void> {
