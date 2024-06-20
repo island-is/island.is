@@ -44,7 +44,7 @@ export const FieldComponent = ({
     disabled: disabled,
   }
 
-  let content = null
+  let content
 
   switch (field.id) {
     case 'assetNumber':
