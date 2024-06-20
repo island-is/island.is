@@ -45,7 +45,7 @@ import { User } from '../user'
 import { Case } from './models/case.model'
 import { DateLog } from './models/dateLog.model'
 import { ExplanatoryComment } from './models/explanatoryComment.model'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
   'id',
@@ -221,7 +221,7 @@ export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
     private readonly defendantService: DefendantService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,

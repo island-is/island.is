@@ -1,5 +1,5 @@
-import React, { useContext } from 'react'
-import { useIntl } from 'react-intl'
+import React, { FC, useContext } from 'react'
+import { IntlFormatters, useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import {
@@ -8,17 +8,48 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 
-import { FormContext } from '../FormProvider/FormProvider'
-import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
-import InfoCard, { NameAndEmail } from './InfoCard'
-import { strings } from './InfoCardIndictment.strings'
+import { IndictmentCaseReviewDecision } from '../../../graphql/schema'
+import { FormContext } from '../../FormProvider/FormProvider'
+import { DefendantInfoActionButton } from '../DefendantInfo/DefendantInfo'
+import InfoCard, { DataSection, NameAndEmail } from '../InfoCard'
+import { strings } from '../InfoCardIndictment.strings'
 
 export interface Props {
   defendantInfoActionButton?: DefendantInfoActionButton
   displayAppealExpirationInfo?: boolean
 }
 
-const InfoCardClosedIndictment: React.FC<Props> = (props) => {
+export const getAdditionalDataSections = (
+  formatMessage: IntlFormatters['formatMessage'],
+  reviewerName?: string | null,
+  reviewDecision?: IndictmentCaseReviewDecision | null,
+): DataSection[] => [
+  ...(reviewerName
+    ? [
+        {
+          data: [
+            {
+              title: formatMessage(strings.indictmentReviewer),
+              value: reviewerName,
+            },
+            ...(reviewDecision
+              ? [
+                  {
+                    title: formatMessage(strings.indictmentReviewDecision),
+                    value:
+                      reviewDecision === IndictmentCaseReviewDecision.ACCEPT
+                        ? formatMessage(strings.reviewTagAccepted)
+                        : formatMessage(strings.reviewTagAppealed),
+                  },
+                ]
+              : []),
+          ],
+        },
+      ]
+    : []),
+]
+
+const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
@@ -89,20 +120,11 @@ const InfoCardClosedIndictment: React.FC<Props> = (props) => {
             }
           : undefined
       }
-      additionalDataSections={[
-        ...(workingCase.indictmentReviewer?.name
-          ? [
-              {
-                data: [
-                  {
-                    title: formatMessage(strings.indictmentReviewer),
-                    value: workingCase.indictmentReviewer?.name,
-                  },
-                ],
-              },
-            ]
-          : []),
-      ]}
+      additionalDataSections={getAdditionalDataSections(
+        formatMessage,
+        workingCase.indictmentReviewer?.name,
+        workingCase.indictmentReviewDecision,
+      )}
     />
   )
 }

@@ -76,19 +76,3 @@ export class AuthenticationOptions {
   })
   extensions?: AuthenticationOptionsExtensions
 }
-
-// TODO remove before merging into main
-// should only be possible to verify authentication through auth-ids-api
-export class AuthenticationResult {
-  @IsBoolean()
-  @ApiProperty()
-  verified!: boolean
-
-  @IsString()
-  @ApiProperty()
-  idp!: string
-
-  @IsString()
-  @ApiProperty()
-  sub!: string
-}

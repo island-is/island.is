@@ -791,19 +791,24 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages: CaseMessage[] = [
       {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
         body: { type: NotificationType.RULING },
       },
-      {
+    ]
+
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
         type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
         user,
         caseId: theCase.id,
-      },
-    ])
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForModifiedCaseToQueue(

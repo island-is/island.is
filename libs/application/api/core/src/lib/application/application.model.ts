@@ -189,4 +189,8 @@ export class ApplicationsStatistics {
   @ApiProperty()
   @Expose()
   approved!: number
+
+  @ApiProperty()
+  @Expose()
+  name?: string
 }
