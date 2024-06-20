@@ -52,7 +52,10 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   sortable: { isSortable: true, key: 'defendant' },
                 },
                 { title: formatMessage(tables.state) },
-                { title: formatMessage(tables.deadline) },
+                {
+                  title: formatMessage(tables.deadline),
+                  sortable: { isSortable: true, key: 'deadline' },
+                },
               ]}
               data={cases}
               generateContextMenuItems={(row) => {

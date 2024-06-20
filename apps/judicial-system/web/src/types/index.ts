@@ -23,6 +23,7 @@ export type sortableTableColumn =
   | 'createdAt'
   | 'courtDate'
   | 'appealedDate'
+  | 'deadline'
 
 export interface SortConfig {
   column: sortableTableColumn
