@@ -13,26 +13,22 @@ import {
 } from '../lib/types'
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
-import { TYPES_QUERY } from '../graphql/queries'
+import { TYPE_QUERY } from '../graphql/queries'
 
 export const Preview = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   const { answers } = props.application
   const { advert, signature } = answers
 
-  const { data, loading } = useQuery<
-    OfficialJournalOfIcelandGraphqlResponse<'types'>
-  >(TYPES_QUERY, {
+  const { data, loading } = useQuery(TYPE_QUERY, {
     variables: {
       params: {
-        search: advert?.type,
+        id: advert?.type,
       },
     },
   })
 
-  const category = data?.officialJournalOfIcelandTypes.types?.find(
-    (type) => type.id === advert?.type,
-  )
+  const type = data?.officialJournalOfIcelandType?.type?.title
 
   if (loading) {
     return (
@@ -67,7 +63,7 @@ export const Preview = (props: OJOIFieldBaseProps) => {
           readOnly={true}
           hideWarnings={true}
           value={advertisementTemplate({
-            category: category?.title,
+            category: type,
             content: advert?.document,
             title: advert?.title,
             signature:

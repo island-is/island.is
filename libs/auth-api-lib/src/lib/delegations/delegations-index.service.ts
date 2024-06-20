@@ -69,6 +69,11 @@ type FetchDelegationRecordsArgs = {
 
 const getTimeUntilEighteen = (nationalId: string) => {
   const birthDate = kennitala.info(nationalId).birthday
+
+  if (!birthDate) {
+    return null
+  }
+
   const now = startOfDay(new Date())
   const eighteen = startOfDay(
     new Date(
@@ -361,15 +366,16 @@ export class DelegationsIndexService {
             d.provider === curr.provider,
         )
 
-        if (
-          existing &&
-          (existing.validTo !== curr.validTo ||
+        if (existing) {
+          if (
+            existing.validTo !== curr.validTo ||
             !hasAllSameScopes(
               existing.customDelegationScopes,
               curr.customDelegationScopes,
-            ))
-        ) {
-          acc.updated.push(curr)
+            )
+          ) {
+            acc.updated.push(curr)
+          }
         } else {
           acc.created.push(curr)
         }

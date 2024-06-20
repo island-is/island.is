@@ -21,7 +21,6 @@ import {
   HttpCode,
   Delete,
   Patch,
-  NotFoundException,
 } from '@nestjs/common'
 import { NoContentException } from '@island.is/nest/problem'
 import {
@@ -49,6 +48,7 @@ import { UserProfileService } from './userProfile.service'
 import { VerificationService } from './verification.service'
 import { DataStatus } from './types/dataStatusTypes'
 import { ActorLocale } from './dto/actorLocale'
+import { Locale } from './types/localeTypes'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('User Profile')
@@ -113,7 +113,7 @@ export class UserProfileController {
 
     return {
       nationalId: userProfile.nationalId,
-      locale: userProfile.locale,
+      locale: userProfile.locale ?? Locale.ICELANDIC,
     }
   }
 
@@ -201,8 +201,7 @@ export class UserProfileController {
     try {
       return await this.findOneByNationalId(nationalId, user)
     } catch (error) {
-      const ret = await this.create({ nationalId }, user)
-      return ret
+      return this.create({ nationalId }, user)
     }
   }
 

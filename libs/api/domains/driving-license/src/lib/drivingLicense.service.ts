@@ -70,7 +70,10 @@ export class DrivingLicenseService {
     const drivingLicesnes = await this.drivingLicenseApi
       .getAllDriverLicenses(token)
       .catch((e) => {
-        this.logger.log(`${LOGTAG} Error fetching all driver licenses`, e)
+        this.logger.warn(`Error fetching all driver licenses`, {
+          error: e,
+          category: LOGTAG,
+        })
       })
     return drivingLicesnes ?? []
   }

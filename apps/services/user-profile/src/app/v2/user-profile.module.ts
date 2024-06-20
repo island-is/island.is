@@ -32,9 +32,7 @@ import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegatio
     EmailModule.register(environment.emailOptions),
     SmsModule.register(environment.smsOptions),
     IslykillApiModule.register({
-      basePath: environment.islykillConfig.basePath,
-      cert: environment.islykillConfig.cert,
-      passphrase: environment.islykillConfig.passphrase,
+      ...environment.islykillConfig,
     }),
     AuthDelegationApiClientModule,
   ],

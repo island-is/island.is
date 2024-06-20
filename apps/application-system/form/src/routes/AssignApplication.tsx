@@ -7,6 +7,7 @@ import qs from 'qs'
 import { ErrorShell, LoadingShell } from '@island.is/application/ui-shell'
 import { ASSIGN_APPLICATION } from '@island.is/application/graphql'
 import { getSlugFromType, coreErrorMessages } from '@island.is/application/core'
+import { useEffectOnce } from '@island.is/react-spa/shared'
 
 const parseGraphQLError = (
   error?: GraphQLError,
@@ -41,7 +42,7 @@ export const AssignApplication = () => {
     },
   )
 
-  useEffect(() => {
+  useEffectOnce(() => {
     const init = async () => {
       if (isMissingToken) {
         console.error(
@@ -64,7 +65,7 @@ export const AssignApplication = () => {
 
     init()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  })
 
   if (loading) {
     return <LoadingShell />

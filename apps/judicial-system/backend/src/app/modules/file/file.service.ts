@@ -168,6 +168,7 @@ export class FileService {
         createConfirmedIndictment(
           {
             actor: user.name,
+            title: user.title,
             institution: user.institution?.name ?? '',
             date: confirmationEvent.created,
           },

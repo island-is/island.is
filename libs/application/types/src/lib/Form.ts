@@ -86,6 +86,7 @@ export interface FormItem extends TestSupport {
   condition?: Condition
   readonly type: string
   readonly title: FormText
+  readonly nextButtonText?: FormText
 }
 
 export interface Section extends FormItem {

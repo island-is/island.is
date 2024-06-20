@@ -38,6 +38,7 @@ export const CheckboxFormField: FC<React.PropsWithChildren<Props>> = ({
     width,
     required,
     onSelect,
+    spacing,
   } = field
   const { formatMessage } = useLocale()
 
@@ -76,6 +77,7 @@ export const CheckboxFormField: FC<React.PropsWithChildren<Props>> = ({
           }
           strong={strong}
           error={error}
+          spacing={spacing}
           options={finalOptions?.map(
             ({ label, subLabel, rightContent, tooltip, ...o }) => ({
               ...o,

@@ -297,7 +297,7 @@ const createTestCases: Record<string, CreateTestCase> = {
       input: {
         ...createInput,
         grantToAuthenticatedUser: true,
-        grantToLegalGuardians: true,
+        supportedDelegationTypes: [AuthDelegationType.LegalGuardian],
       },
       expected: {
         status: 200,
@@ -410,9 +410,6 @@ const inputPatch = {
     },
   ],
   grantToAuthenticatedUser: true,
-  grantToLegalGuardians: true,
-  grantToProcuringHolders: true,
-  allowExplicitDelegationGrant: true,
   isAccessControlled: true,
 }
 
@@ -423,6 +420,9 @@ const patchExpectedOutput = {
   emphasize: false,
   enabled: true,
   grantToPersonalRepresentatives: false,
+  grantToLegalGuardians: false,
+  grantToProcuringHolders: false,
+  allowExplicitDelegationGrant: false,
   name: `${TENANT_ID}/scope1`,
   order: 0,
   required: false,
@@ -479,11 +479,6 @@ const patchTestCases: Record<string, PatchTestCase> = {
       status: 200,
       body: {
         ...patchExpectedOutput,
-        supportedDelegationTypes: [
-          AuthDelegationType.Custom,
-          AuthDelegationType.LegalGuardian,
-          AuthDelegationType.ProcurationHolder,
-        ],
       },
     },
   },
@@ -839,46 +834,6 @@ describe('MeScopesController', () => {
         expected.supportedDelegationTypes?.length || 0,
       )
     }
-
-    it('should delete rows from api_scope_delegation_types table when removing types with boolean fields', async () => {
-      // add delegation types that we can then remove
-      await patchAndAssert({
-        input: {
-          grantToPersonalRepresentatives: true,
-          grantToLegalGuardians: true,
-          grantToProcuringHolders: true,
-          allowExplicitDelegationGrant: true,
-        },
-        expected: {
-          grantToPersonalRepresentatives: true,
-          grantToLegalGuardians: true,
-          grantToProcuringHolders: true,
-          allowExplicitDelegationGrant: true,
-          supportedDelegationTypes: [
-            AuthDelegationType.Custom,
-            AuthDelegationType.LegalGuardian,
-            AuthDelegationType.ProcurationHolder,
-            AuthDelegationType.PersonalRepresentative,
-          ],
-        },
-      })
-
-      await patchAndAssert({
-        input: {
-          grantToPersonalRepresentatives: false,
-          grantToLegalGuardians: false,
-          grantToProcuringHolders: false,
-          allowExplicitDelegationGrant: false,
-        },
-        expected: {
-          grantToPersonalRepresentatives: false,
-          grantToLegalGuardians: false,
-          grantToProcuringHolders: false,
-          allowExplicitDelegationGrant: false,
-          supportedDelegationTypes: [],
-        },
-      })
-    })
 
     it('should be able to add supported delegation types to api scope with array property', async () => {
       await patchAndAssert({

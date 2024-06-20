@@ -88,25 +88,6 @@ export const deceased = buildSection({
           title: '',
         }),
         buildRadioField({
-          id: 'customShare.deceasedHadAssets',
-          title: m.hadSeparateProperty,
-          largeButtons: false,
-          backgroundColor: 'white',
-          width: 'half',
-          required: true,
-          condition: (answers) =>
-            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
-          options: [
-            { value: YES, label: m.yes },
-            { value: NO, label: m.no },
-          ],
-        }),
-        buildDescriptionField({
-          id: 'space4',
-          space: 'gutter',
-          title: '',
-        }),
-        buildRadioField({
           id: 'customShare.hasCustomSpouseSharePercentage',
           title: m.hasCustomSpouseSharePercentage,
           largeButtons: false,
@@ -116,8 +97,8 @@ export const deceased = buildSection({
           condition: (answers) =>
             getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
           options: [
-            { value: YES, label: m.spouseSharePart },
             { value: NO, label: m.spouseShareFull },
+            { value: YES, label: m.spouseSharePart },
           ],
         }),
         buildTextField({
@@ -133,6 +114,25 @@ export const deceased = buildSection({
               'customShare.hasCustomSpouseSharePercentage',
             ) === YES &&
             getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
+        }),
+        buildDescriptionField({
+          id: 'space4',
+          space: 'gutter',
+          title: '',
+        }),
+        buildRadioField({
+          id: 'customShare.deceasedHadAssets',
+          title: m.hadSeparateProperty,
+          largeButtons: false,
+          backgroundColor: 'white',
+          width: 'half',
+          required: true,
+          condition: (answers) =>
+            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
+          options: [
+            { value: YES, label: m.yes },
+            { value: NO, label: m.no },
+          ],
         }),
       ],
     }),

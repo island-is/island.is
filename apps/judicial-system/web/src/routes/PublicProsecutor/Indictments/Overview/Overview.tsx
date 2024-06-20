@@ -143,6 +143,7 @@ export const Overview = () => {
                   }
                 : undefined
             }
+            displayAppealExpirationInfo={true}
           />
         </Box>
         {lawsBroken.size > 0 && (

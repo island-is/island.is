@@ -28,6 +28,7 @@ const config: Meta<typeof Select> = {
     isDisabled: { description: 'Is select field disabled' },
     isClearable: { description: 'Is select field clearable' },
     isSearchable: { description: 'Is select field searchable' },
+    isMulti: { description: 'Can select field select multiple options' },
     required: { description: 'Is select field required' },
     hasError: { description: 'Does select field has error' },
     errorMessage: {
@@ -72,6 +73,7 @@ Default.args = {
   isDisabled: false,
   isClearable: false,
   isSearchable: false,
+  isMulti: false,
   hasError: false,
   required: false,
   errorMessage: undefined,
@@ -89,6 +91,12 @@ NoOptions.args = {
   ...Default.args,
   options: [],
   noOptionsMessage: 'No options',
+}
+
+export const Multiple = Template.bind({})
+Multiple.args = {
+  ...Default.args,
+  isMulti: true,
 }
 
 export const SizeSm = Template.bind({})

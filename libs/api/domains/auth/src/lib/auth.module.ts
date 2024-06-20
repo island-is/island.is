@@ -29,6 +29,8 @@ import { ApiScopeResolver } from './resolvers/apiScope.resolver'
 import { DomainResolver } from './resolvers/domain.resolver'
 import { ClientResolver } from './resolvers/client.resolver'
 import { ConsentResolver } from './resolvers/consent.resolver'
+import { PasskeyResolver } from './resolvers/passkey.resolver'
+import { PasskeyService } from './services/passkey.service'
 
 @Module({
   providers: [
@@ -54,6 +56,8 @@ import { ConsentResolver } from './resolvers/consent.resolver'
     ConsentTenantsService,
     LoginRestrictionResolver,
     LoginRestrictionService,
+    PasskeyService,
+    PasskeyResolver,
   ],
   imports: [
     AuthPublicApiClientModule,

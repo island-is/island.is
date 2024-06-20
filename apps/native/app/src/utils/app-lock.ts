@@ -55,13 +55,13 @@ export function showAppLockOverlay({
   })
 }
 
-export function hideAppLockOverlay() {
-  // Dismiss all overlays
-  Navigation.dismissAllOverlays()
+export function hideAppLockOverlay(lockScreenComponentId: string) {
+  // Dismiss the lock screen
+  Navigation.dismissOverlay(lockScreenComponentId)
 
   // reset lockscreen parameters
   authStore.setState({
-    lockScreenActivatedAt: undefined,
+    lockScreenActivatedAt: null,
     lockScreenComponentId: undefined,
   })
 }

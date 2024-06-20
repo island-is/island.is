@@ -20,6 +20,7 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
+  IndictmentConfirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -52,12 +53,6 @@ const roman = (num: number) => {
   return str
 }
 
-export interface IndictmentConfirmation {
-  actor: string
-  institution: string
-  date: Date
-}
-
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
@@ -84,15 +79,10 @@ export const createIndictment = async (
   setTitle(doc, title)
 
   if (confirmation) {
-    addIndictmentConfirmation(
-      doc,
-      confirmation.actor,
-      confirmation.institution,
-      confirmation.date,
-    )
+    addIndictmentConfirmation(doc, confirmation)
   }
 
-  addEmptyLines(doc, 4, doc.page.margins.left)
+  addEmptyLines(doc, 6, doc.page.margins.left)
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')

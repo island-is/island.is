@@ -13,13 +13,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { m } from '../../lib/messages'
-import * as kennitala from 'kennitala'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { Answers, EstateMember, heirAgeValidation } from '../../types'
 import { AdditionalHeir } from './AdditionalHeir'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputController } from '@island.is/shared/form-fields'
-import { format as formatNationalId } from 'kennitala'
+import { format as formatNationalId, info } from 'kennitala'
 import intervalToDuration from 'date-fns/intervalToDuration'
 import {
   formatPhoneNumber,
@@ -32,6 +31,7 @@ import {
   DEFAULT_TAX_FREE_LIMIT,
   PREPAID_INHERITANCE,
   PrePaidHeirsRelations,
+  RelationSpouse,
 } from '../../lib/constants'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import ShareInput from '../../components/ShareInput'
@@ -47,12 +47,13 @@ export const HeirsAndPartitionRepeater: FC<
   const { customFields } = props
 
   const { formatMessage } = useLocale()
-  const { getValues, setError, setValue } = useFormContext()
+  const { getValues, setError, setValue, clearErrors } = useFormContext()
+  const values = getValues()
   const { fields, append, update, remove, replace } = useFieldArray({
     name: id,
   })
 
-  const values = getValues()
+  const isPrePaidApplication = answers.applicationFor === PREPAID_INHERITANCE
 
   const heirsRelations = (values?.heirs?.data ?? []).map((x: EstateMember) => {
     return x.relation
@@ -66,7 +67,7 @@ export const HeirsAndPartitionRepeater: FC<
         hasForeignCitizenship && birthDate
           ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
               ?.years
-          : kennitala.info(member.nationalId)?.age
+          : info(member.nationalId)?.age
       return (
         (memberAge ?? 0) < 18 &&
         (member?.nationalId || birthDate) &&
@@ -78,7 +79,7 @@ export const HeirsAndPartitionRepeater: FC<
   const hasEstateMemberUnder18withoutRep = values.estate?.estateMembers?.some(
     (member: EstateMember) => {
       const advocateAge =
-        member.advocate && kennitala.info(member.advocate.nationalId)?.age
+        member.advocate && info(member.advocate.nationalId)?.age
       return (
         hasEstateMemberUnder18 &&
         member?.advocate?.nationalId &&
@@ -106,34 +107,29 @@ export const HeirsAndPartitionRepeater: FC<
     return [true, null]
   })
 
-  const { clearErrors } = useFormContext()
-
   const externalData = application.externalData.syslumennOnEntry?.data as {
     relationOptions: string[]
     inheritanceReportInfos: Array<InheritanceReportInfo>
   }
 
-  const estateData =
-    answers.applicationFor === PREPAID_INHERITANCE
-      ? undefined
-      : getEstateDataFromApplication(application)
+  const estateData = isPrePaidApplication
+    ? undefined
+    : getEstateDataFromApplication(application)
 
-  const inheritanceTaxFreeLimit =
-    answers.applicationFor === PREPAID_INHERITANCE
-      ? 0
-      : externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
-          ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
+  const inheritanceTaxFreeLimit = isPrePaidApplication
+    ? 0
+    : externalData?.inheritanceReportInfos?.[0]?.inheritanceTax
+        ?.taxExemptionLimit ?? DEFAULT_TAX_FREE_LIMIT
 
-  const relations =
-    answers.applicationFor === PREPAID_INHERITANCE
-      ? PrePaidHeirsRelations.map((relation) => ({
-          value: relation.value,
-          label: formatMessage(relation.label),
-        }))
-      : externalData?.relationOptions?.map((relation) => ({
-          value: relation,
-          label: relation,
-        })) || []
+  const relations = isPrePaidApplication
+    ? PrePaidHeirsRelations.map((relation) => ({
+        value: formatMessage(relation.label),
+        label: formatMessage(relation.label),
+      }))
+    : externalData?.relationOptions?.map((relation) => ({
+        value: relation,
+        label: relation,
+      })) || []
 
   const error =
     ((errors as any)?.heirs?.data || (errors as any)?.heirs?.total) ?? []
@@ -177,11 +173,10 @@ export const HeirsAndPartitionRepeater: FC<
 
   const updateValues = useCallback(
     (updateIndex: string, value: number, index?: number) => {
-      const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
       const numValue = isNaN(value) ? 0 : value
       const percentage = numValue > 0 ? numValue / 100 : 0
       const heirs = getValues()?.heirs?.data as EstateMember[]
-      let currentHeir = isPrePaid
+      let currentHeir = isPrePaidApplication
         ? heirs[index ?? 0]
         : (getValueViaPath(answers, updateIndex) as EstateMember)
 
@@ -195,20 +190,15 @@ export const HeirsAndPartitionRepeater: FC<
 
       // currently we can only check if heir is spouse by relation string value...
       const spouse = (heirs ?? []).filter(
-        (heir) =>
-          heir.enabled &&
-          (heir.relation === 'Maki' ||
-            heir.relation.toLowerCase() === 'spouse'),
+        (heir) => heir.enabled && heir.relation === RelationSpouse,
       )
 
       let isSpouse = false
 
       // it is not possible to select more than one spouse but for now we will check for it anyway
       if (spouse.length > 0) {
-        if (isPrePaid) {
-          isSpouse =
-            currentHeir?.relation === 'Maki' ||
-            currentHeir?.relation.toLowerCase() === 'spouse'
+        if (isPrePaidApplication) {
+          isSpouse = currentHeir?.relation === RelationSpouse
         } else {
           spouse.forEach((currentSpouse) => {
             isSpouse =
@@ -217,7 +207,7 @@ export const HeirsAndPartitionRepeater: FC<
         }
       }
 
-      const netPropertyForExchange = isPrePaid
+      const netPropertyForExchange = isPrePaidApplication
         ? getPrePaidTotalValueFromApplication(application)
         : valueToNumber(getValueViaPath(answers, 'netPropertyForExchange'))
 
@@ -269,11 +259,6 @@ export const HeirsAndPartitionRepeater: FC<
   }, [heirsRelations, initialLoad])
 
   useEffect(() => {
-    initialLoad()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
     if (!hasEstateMemberUnder18) {
       clearErrors(heirAgeValidation)
     }
@@ -297,24 +282,21 @@ export const HeirsAndPartitionRepeater: FC<
       (estateData as any)?.inheritanceReportInfo?.heirs &&
       !(application.answers as any)?.heirs?.hasModified
     ) {
-      // Keeping this in for now, it may not be needed, will find out later
       const heirsData = (estateData as any)?.inheritanceReportInfo?.heirs?.map(
         (heir: any) => {
           return {
             ...heir,
-            phone: heir.phone ? formatPhoneNumber(heir.phone) : '', //Remove all non-digit characters and keep the last 7 digits
+            phone: heir.phone ? formatPhoneNumber(heir.phone) : '',
             initial: true,
             enabled: true,
           }
         },
       )
-      // ran into a problem with "append", as it appeared to be getting called multiple times
-      // despite checking on the length of the fields
-      // so now using "replace" instead, for the initial setup
+      // ran into a problem with "append" as it appeared to be called multiple times
+      // using "replace" instead, for the initial setup
       replace(heirsData)
       setValue('heirs.hasModified', true)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
@@ -595,7 +577,6 @@ export const HeirsAndPartitionRepeater: FC<
         [] as JSX.Element[],
       )}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
-        console.log(error, 'errrrrr')
         if (member.initial) return null
         return (
           <Box key={member.id}>

@@ -9,13 +9,8 @@ import {
   NationalRegistryB2C,
 } from '../../../../infra/src/dsl/xroad'
 
-// We basically don't want it to run in a cron job
-// but manually, so set it to run once a year on dec 31st
-const schedule = '0 0 31 12 *'
-
 const namespace = 'service-portal'
 const serviceId = `${namespace}-api`
-const workerId = `${serviceId}-worker`
 const imageId = 'services-user-profile'
 
 const envVariables: EnvironmentVariables = {
@@ -35,11 +30,6 @@ const envVariables: EnvironmentVariables = {
     dev: 'true',
     staging: 'false',
     prod: 'false',
-  },
-  USER_PROFILE_WORKER_PAGE_SIZE: {
-    dev: '3000',
-    staging: '3000',
-    prod: '3000',
   },
   AUTH_DELEGATION_API_URL: {
     dev: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
@@ -67,32 +57,6 @@ const secrets: Secrets = {
   NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
     '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
 }
-
-export const workerSetup = (): ServiceBuilder<typeof workerId> =>
-  service(workerId)
-    .namespace(namespace)
-    .image(imageId)
-    .env(envVariables)
-    .secrets(secrets)
-    .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
-    .command('node')
-    .args('main.js', '--job=worker')
-    .resources({
-      limits: { cpu: '800m', memory: '1024Mi' },
-      requests: { cpu: '400m', memory: '512Mi' },
-    })
-    .db()
-    .extraAttributes({
-      dev: {
-        schedule,
-      },
-      staging: {
-        schedule,
-      },
-      prod: {
-        schedule,
-      },
-    })
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
   service(serviceId)

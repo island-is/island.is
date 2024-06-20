@@ -24,7 +24,7 @@ import { EstateMember } from '../../types'
 import {
   ErrorValue,
   PREPAID_INHERITANCE,
-  PrePaidHeirsRelationTypes,
+  RelationSpouse,
 } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
 import { HeirsAndPartitionRepeaterProps } from './types'
@@ -131,7 +131,7 @@ export const AdditionalHeir = ({
   }, [foreignCitizenship, requiresAdvocate])
 
   return (
-    <Box position="relative" key={field.id} marginTop={7}>
+    <Box position="relative" key={field.id} marginTop={3}>
       <Controller
         name={initialField}
         control={control}
@@ -284,8 +284,8 @@ export const AdditionalHeir = ({
                   />
                 </GridColumn>
               ) : customField.id === 'taxFreeInheritance' &&
-                currentHeir?.relation !==
-                  PrePaidHeirsRelationTypes.SPOUSE ? null : (
+                values.applicationFor === PREPAID_INHERITANCE &&
+                currentHeir?.relation !== RelationSpouse ? null : (
                 <GridColumn span={['1/2']} paddingBottom={2}>
                   <InputController
                     id={`${fieldIndex}.${customField.id}`}

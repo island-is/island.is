@@ -240,11 +240,13 @@ export class UniversityService extends BaseTemplateApiService {
           modeOfDelivery: mapStringToEnum(
             answers.modeOfDeliveryInformation.chosenMode,
             CreateApplicationDtoModeOfDeliveryEnum,
+            'CreateApplicationDtoModeOfDeliveryEnum',
           ),
           applicant: user,
           educationOption: mapStringToEnum(
             educationOptionChosen,
             CreateApplicationDtoEducationOptionEnum,
+            'CreateApplicationDtoEducationOptionEnum',
           ),
           educationList: combinedEducationList,
           workExperienceList: [],

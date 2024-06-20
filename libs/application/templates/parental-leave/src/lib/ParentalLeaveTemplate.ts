@@ -384,17 +384,13 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.APPROVE,
                 logMessage:
-                  statesMessages.employerApprovalApproveHistoryLogMessage,
+                  statesMessages.employerApprovalApprovePeriodHistoryLogMessage,
               },
               {
                 onEvent: DefaultEvents.REJECT,
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
-              },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
               },
             ],
           },
@@ -532,15 +528,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.REJECT,
                 logMessage:
                   parentalLeaveFormMessages.draftFlow.draftNotApprovedVMLSTDesc,
-              },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage:
-                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
@@ -717,16 +704,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   .residenceGrantClosedDescription,
               displayStatus: 'warning',
             },
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-            ],
           },
           lifecycle: birthDayLifeCycle,
           onEntry: defineTemplateApi({
@@ -783,12 +760,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.REJECT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
                 onEvent: DefaultEvents.APPROVE,
-                logMessage: statesMessages.editHistoryLogMessage,
+                logMessage: statesMessages.residenceGrantSubmitted,
               },
             ],
           },
@@ -850,15 +823,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               {
                 onEvent: PLEvents.CLOSED,
                 logMessage: statesMessages.approvedClosedHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage:
-                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
@@ -968,9 +932,9 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                   statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
               {
-                onEvent: DefaultEvents.ABORT,
+                onEvent: DefaultEvents.ASSIGN,
                 logMessage:
-                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
+                  statesMessages.editOrAddPeriodsSubmitHistoryLogMessage,
               },
             ],
           },
@@ -993,7 +957,7 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
+          [DefaultEvents.SUBMIT]: [
             {
               target: States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
               cond: hasEmployer,
@@ -1039,12 +1003,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           status: 'inprogress',
           actionCard: {
             pendingAction: employerApprovalStatePendingAction,
-            historyLogs: [
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-            ],
           },
           lifecycle: birthDayLifeCycle,
           onEntry: defineTemplateApi({
@@ -1094,10 +1052,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 logMessage:
                   parentalLeaveFormMessages.draftFlow
                     .draftNotApprovedEmployerDesc,
-              },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
               },
             ],
           },
@@ -1181,13 +1135,8 @@ const ParentalLeaveTemplate: ApplicationTemplate<
             },
             historyLogs: [
               {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
                 onEvent: DefaultEvents.ABORT,
-                logMessage:
-                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
+                logMessage: statesMessages.employerActionDeleteChanges,
               },
             ],
           },
@@ -1212,7 +1161,30 @@ const ParentalLeaveTemplate: ApplicationTemplate<
           [DefaultEvents.EDIT]: {
             target: States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS,
           },
-          [DefaultEvents.ABORT]: { target: States.APPROVED },
+          [DefaultEvents.ABORT]: [
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVAL),
+              target: States.VINNUMALASTOFNUN_APPROVAL,
+            },
+            {
+              cond: (application) =>
+                goToState(application, States.VINNUMALASTOFNUN_APPROVE_EDITS),
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+            {
+              cond: (application) =>
+                goToState(
+                  application,
+                  States.EMPLOYER_WAITING_TO_ASSIGN_FOR_EDITS,
+                ),
+              target: States.VINNUMALASTOFNUN_APPROVE_EDITS,
+            },
+            {
+              cond: (application) => goToState(application, States.APPROVED),
+              target: States.APPROVED,
+            },
+          ],
         },
       },
       [States.VINNUMALASTOFNUN_APPROVE_EDITS]: {
@@ -1256,15 +1228,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
                 onEvent: DefaultEvents.REJECT,
                 logMessage:
                   statesMessages.vinnumalastofnunApproveEditsRejectHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.EDIT,
-                logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.SUBMIT,
-                logMessage:
-                  statesMessages.vinnumalastofnunApprovalSubmitHistoryLogMessage,
               },
             ],
           },
@@ -1355,11 +1318,6 @@ const ParentalLeaveTemplate: ApplicationTemplate<
               {
                 onEvent: DefaultEvents.EDIT,
                 logMessage: statesMessages.editHistoryLogMessage,
-              },
-              {
-                onEvent: DefaultEvents.ABORT,
-                logMessage:
-                  statesMessages.editOrAddPeriodsAbortHistoryLogMessage,
               },
             ],
           },

@@ -36,7 +36,7 @@ export enum States {
 export const YES = 'yes'
 export const NO = 'no'
 
-type FakeCurrentLicense = 'none' | 'temp' | 'full'
+type FakeCurrentLicense = 'none' | 'temp' | 'full' | 'BE'
 type YesOrNo = 'yes' | 'no'
 
 export interface DrivingLicenseFakeData {

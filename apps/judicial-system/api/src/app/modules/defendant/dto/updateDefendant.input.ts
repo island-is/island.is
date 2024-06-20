@@ -7,6 +7,7 @@ import {
   DefenderChoice,
   Gender,
   ServiceRequirement,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -88,4 +89,9 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => DefenderChoice, { nullable: true })
   readonly defenderChoice?: DefenderChoice
+
+  @Allow()
+  @IsOptional()
+  @Field(() => SubpoenaType, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
 }

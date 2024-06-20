@@ -461,7 +461,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           title={m.netProperty}
           value={roundedValueToNumber(netTotal)}
         />
-        <Box marginY={4}>
+        <Box>
           {deceasedWasInCohabitation && (
             <TitleRow
               title={m.assetsToShareSpouseShare}

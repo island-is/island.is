@@ -127,11 +127,26 @@ export const m = defineMessages({
     defaultMessage: 'Enginn ökunemi skráður á eftirfarandi kennitölu',
     description: 'No students error in modal',
   },
+  studentsOverviewBTab: {
+    id: 'dir.application:studentsOverviewBTab',
+    defaultMessage: 'Almenn ökuréttindi',
+    description: 'Tab title for B license',
+  },
+  studentsOverviewBETab: {
+    id: 'dir.application:studentsOverviewBETab',
+    defaultMessage: 'Kerruréttindi',
+    description: 'Tab title for BE license',
+  },
 
   /* View Single Student Section */
   viewStudentTitle: {
     id: 'dir.application:viewStudentTitle',
     defaultMessage: 'Ökunámsbók',
+    description: 'Registration page title',
+  },
+  viewBEStudentTitle: {
+    id: 'dir.application:viewBEStudentTitle',
+    defaultMessage: 'Ökunámsbók - Kerruréttindi BE',
     description: 'Registration page title',
   },
   viewStudentName: {

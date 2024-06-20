@@ -45,8 +45,8 @@ export const sectionExternalData = buildSubSection({
         }),
         buildDataProviderItem({
           provider: GlassesCheckApi,
-          title: m.glassesPrescriptionTitle,
-          subTitle: m.glassesPrescriptionSubTitle,
+          title: '',
+          subTitle: '',
         }),
         buildDataProviderItem({
           provider: QualityPhotoApi,

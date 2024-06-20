@@ -126,9 +126,10 @@ export function setupEventHandlers() {
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
+            lockScreenActivatedAt !== null &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
-            hideAppLockOverlay()
+            hideAppLockOverlay(lockScreenComponentId)
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }

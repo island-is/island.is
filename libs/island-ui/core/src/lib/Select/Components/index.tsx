@@ -19,11 +19,41 @@ import {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   GroupBase,
+  MultiValueProps,
+  MultiValueGenericProps,
 } from 'react-select'
 
 import { Icon } from '../../IconRC/Icon'
 import { Option as OptionType } from '../Select.types'
 import * as styles from '../Select.css'
+
+export const MultiValue = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<Value>,
+>(
+  props: MultiValueProps<Value, IsMulti, Group>,
+) => {
+  return (
+    <components.MultiValue className={styles.multiValue} {...props}>
+      {props.children}
+    </components.MultiValue>
+  )
+}
+
+export const MultiValueLabel = <
+  Value,
+  IsMulti extends boolean,
+  Group extends GroupBase<Value>,
+>(
+  props: MultiValueGenericProps<Value, IsMulti, Group>,
+) => {
+  return (
+    <components.MultiValueLabel {...props}>
+      <span className={styles.multiValueLabel}>{props.children}</span>
+    </components.MultiValueLabel>
+  )
+}
 
 export const Menu = <
   Value,

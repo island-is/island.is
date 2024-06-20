@@ -9,19 +9,15 @@ import {
   YES,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
-import { format as formatNationalId } from 'kennitala'
-import { Application, UserProfile } from '@island.is/api/schema'
-import { removeCountryCode } from '@island.is/application/ui-components'
 
 export const inheritanceExecutor = buildSection({
   id: 'inheritanceExecutor',
-  title: 'Arflátar',
+  title: m.grantors,
   children: [
     buildMultiField({
       id: 'inheritanceExecutor',
-      title: 'Arflátar',
-      description:
-        'Lorem ipsum foo bar beep boop meep morp lorem ipsum foo bar beep boop meep morp lorem ipsum foo bar beep boop meep morp.',
+      title: m.grantors,
+      description: m.grantorsDescription,
       children: [
         buildDescriptionField({
           id: 'description.executors.executor',

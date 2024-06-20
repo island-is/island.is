@@ -2807,6 +2807,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
     description: 'Description of the state - employerAction',
   },
+  employerActionDeleteChanges: {
+    id: 'pl.application:employerAction.delete.changes',
+    defaultMessage: 'Umsækjandi eyddi ósamþykktu tímabili.',
+    description: 'Applicant deleted unapproved period.',
+  },
 
   vinnumalastofnunApprovalTitle: {
     id: 'pl.application:vinnumalastofnunApproval.title',
@@ -2938,6 +2943,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
     description: 'You are applying for a residence grant',
   },
+  residenceGrantSubmitted: {
+    id: 'pl.application:residence.grant.submitted',
+    defaultMessage: 'Umsækjandi sótti um dvalarstyrk.',
+    description: 'Applicant applied for residence grant',
+  },
 
   otherParentRequestApprovalTitle: {
     id: 'pl.application:otherParentRequestApproval.title',
@@ -2997,6 +3007,12 @@ export const statesMessages = defineMessages({
     description: 'The employer has approved the dates',
   },
 
+  employerApprovalApprovePeriodHistoryLogMessage: {
+    id: 'pl.application:employerApproval.approve.period.historyLogMessage',
+    defaultMessage: 'Vinnuveitandi hefur samþykkt dagsetningar',
+    description: 'The employer has approved the dates',
+  },
+
   vinnumalastofnunApprovalApproveHistoryLogMessage: {
     id: 'pl.application:vinnumalastofnunApproval.approve.historyLogMessage',
     defaultMessage: 'Vinnumálastofnun hefur samþykkt umsóknina',
@@ -3024,11 +3040,6 @@ export const statesMessages = defineMessages({
     id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
     defaultMessage: 'Vinnuveitanda og tímabili breytt eða bætt við umsókn',
     description: 'Employer and period edited or added to application',
-  },
-  editOrAddPeriodsAbortHistoryLogMessage: {
-    id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',
-    defaultMessage: 'Hætti við breytingar',
-    description: 'Changes aborted',
   },
 
   approvedClosedHistoryLogMessage: {

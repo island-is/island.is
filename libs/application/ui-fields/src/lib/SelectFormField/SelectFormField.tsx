@@ -34,6 +34,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
     onSelect,
     backgroundColor,
     required = false,
+    isMulti,
   } = field
   const { formatMessage } = useLocale()
 
@@ -64,6 +65,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           error={error}
           id={id}
           dataTestId={field.dataTestId}
+          isMulti={isMulti}
           backgroundColor={backgroundColor}
           options={finalOptions?.map(({ label, tooltip, ...o }) => ({
             ...o,
@@ -77,6 +79,8 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
               ? formatText(placeholder as string, application, formatMessage)
               : undefined
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           onSelect={onSelect}
         />
       </Box>

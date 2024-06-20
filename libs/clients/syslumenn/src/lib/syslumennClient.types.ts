@@ -295,6 +295,7 @@ export interface InheritanceReportAsset {
   assetNumber?: string
   share: number
   propertyValuation?: string
+  debtType?: DebtTypes
   amount: string
   exchangeRateOrInterest: string
 }
@@ -359,4 +360,12 @@ export interface VehicleRegistration {
   manufacturer?: string
   licensePlate?: string
   color?: string
+}
+
+export enum DebtTypes {
+  Overdraft = 'overdraft',
+  CreditCard = 'creditCard',
+  Loan = 'loan',
+  InsuranceCompany = 'insuranceCompany',
+  PropertyFees = 'propertyFees',
 }

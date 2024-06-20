@@ -21,6 +21,7 @@ export class DelegationProviderService {
           as: 'delegationTypes',
         },
       ],
+      order: [['order', 'ASC']],
     })
 
     return {

@@ -95,6 +95,9 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
 
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
+  const institutionSlugBelongsToTryggingastofnun =
+    institutionSlug.includes('tryggingastofnun') ||
+    institutionSlug.includes('social-insurance-administration')
 
   const searchResultsItems = (searchResults.items as Array<SupportQna>)
     .filter(
@@ -332,35 +335,37 @@ const ServiceSearch: Screen<ServiceSearchProps> = ({
             </GridRow>
           )}
 
-          <GridRow>
-            <GridColumn
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              offset={[null, null, null, '1/12']}
-              span={['12/12', '12/12', '12/12', '10/12']}
-            >
-              <Box marginTop={[10, 10, 20]}>
-                <ContactBanner
-                  slug={institutionSlug}
-                  cantFindWhatYouAreLookingForText={o(
-                    'cantFindWhatYouAreLookingForText',
-                    n(
+          {!institutionSlugBelongsToTryggingastofnun && (
+            <GridRow>
+              <GridColumn
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                offset={[null, null, null, '1/12']}
+                span={['12/12', '12/12', '12/12', '10/12']}
+              >
+                <Box marginTop={[10, 10, 20]}>
+                  <ContactBanner
+                    slug={institutionSlug}
+                    cantFindWhatYouAreLookingForText={o(
                       'cantFindWhatYouAreLookingForText',
-                      'Finnurðu ekki það sem þig vantar?',
-                    ),
-                  )}
-                  contactUsText={o(
-                    'contactUsText',
-                    n('contactUsText', 'Hafa samband'),
-                  )}
-                  howCanWeHelpText={o(
-                    'howCanWeHelpText',
-                    n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
-                  )}
-                />
-              </Box>
-            </GridColumn>
-          </GridRow>
+                      n(
+                        'cantFindWhatYouAreLookingForText',
+                        'Finnurðu ekki það sem þig vantar?',
+                      ),
+                    )}
+                    contactUsText={o(
+                      'contactUsText',
+                      n('contactUsText', 'Hafa samband'),
+                    )}
+                    howCanWeHelpText={o(
+                      'howCanWeHelpText',
+                      n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
+                    )}
+                  />
+                </Box>
+              </GridColumn>
+            </GridRow>
+          )}
         </GridContainer>
       </Box>
     </ServiceWebWrapper>

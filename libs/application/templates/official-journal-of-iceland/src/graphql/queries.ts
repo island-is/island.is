@@ -57,7 +57,7 @@ export const ADVERTS_QUERY = gql`
 `
 
 export const ADVERT_QUERY = gql`
-  query Advert($params: OfficialJournalOfIcelandAdvertQuery!) {
+  query Advert($params: OfficialJournalOfIcelandAdvertSingleParams!) {
     officialJournalOfIcelandAdvert(params: $params) {
       advert {
         id
@@ -125,6 +125,35 @@ export const TYPES_QUERY = gql`
         hasPreviousPage
         nextPage
         previousPage
+      }
+    }
+  }
+`
+
+export const DEPARTMENT_QUERY = gql`
+  query AdvertDepartment($params: OfficialJournalOfIcelandAdvertSingleParams!) {
+    officialJournalOfIcelandDepartment(params: $params) {
+      department {
+        id
+        title
+        slug
+      }
+    }
+  }
+`
+
+export const TYPE_QUERY = gql`
+  query AdvertType($params: OfficialJournalOfIcelandAdvertSingleParams!) {
+    officialJournalOfIcelandType(params: $params) {
+      type {
+        id
+        title
+        slug
+        department {
+          id
+          title
+          slug
+        }
       }
     }
   }

@@ -7,6 +7,7 @@ import { EnvironmentProvider } from '../../context/EnvironmentContext'
 import { usePermission } from './PermissionContext'
 import { PublishPermission } from './PublishPermission/PublishPermission'
 import { useSuperAdmin } from '../../hooks/useSuperAdmin'
+import { PermissionDelegations } from './components/PermissionDelegations'
 
 export const EditPermission = () => {
   const { selectedPermission, permission } = usePermission()
@@ -20,6 +21,7 @@ export const EditPermission = () => {
         <PermissionBasicInfo />
         <PermissionContent />
         {isSuperAdmin && <PermissionAccessControl />}
+        {isSuperAdmin && <PermissionDelegations />}
         <PublishPermission />
       </Box>
     </EnvironmentProvider>

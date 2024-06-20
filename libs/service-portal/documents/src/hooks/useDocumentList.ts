@@ -34,7 +34,6 @@ export const useDocumentList = () => {
   const fetchObject = {
     input: {
       senderNationalId: filterValue.activeSenders,
-      nationalId: userInfo.profile.nationalId,
       dateFrom: filterValue.dateFrom?.toISOString(),
       dateTo: filterValue.dateTo?.toISOString(),
       categoryIds: filterValue.activeCategories,
@@ -50,7 +49,6 @@ export const useDocumentList = () => {
   }
 
   const { data, loading, error, refetch } = useDocumentsV2Query({
-    fetchPolicy: 'network-only',
     variables: fetchObject,
   })
 

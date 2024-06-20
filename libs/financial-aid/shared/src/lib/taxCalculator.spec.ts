@@ -2,6 +2,7 @@ import {
   acceptedAmountBreakDown,
   calculateAcceptedAidFinalAmount,
   calculateAidFinalAmount,
+  calculateFinalTaxAmount,
   calculatePersonalTaxAllowanceFromAmount,
   calculatePersonalTaxAllowanceUsed,
   calculateTaxOfAmount,
@@ -126,31 +127,65 @@ describe('Tax calculator', () => {
   })
 
   describe('calculateAcceptedAidFinalAmount', () => {
-    test('should return accepted final amount with 100% personal and 100% spose credit', () => {
+    test('should return accepted final amount with 100% personal and 100% spouse credit', () => {
       const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
         100000,
         100,
+        0,
+      )
+      expect(acceptedAidFinalAmount).toEqual(99900)
+    })
+    test('should return accepted final amount with 100% personal and 100% spouse credit, adding children aid', () => {
+      const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
+        100000,
         100,
+        40000,
       )
-      expect(acceptedAidFinalAmount).toEqual(68520)
+      expect(acceptedAidFinalAmount).toEqual(139900)
     })
 
-    test('should return accepted final amount with 10% personal and 30% spose credit', () => {
+    test('should return accepted final amount with 10% personal and 30% spouse credit', () => {
       const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
-        100000,
-        10,
-        30,
+        300000,
+        64926,
+        0,
       )
-      expect(acceptedAidFinalAmount).toEqual(55535)
+      expect(acceptedAidFinalAmount).toEqual(235074)
     })
 
-    test('should return accepted final amount with 10% personal and 30% spose credit', () => {
+    test('should return accepted final amount with 10% personal and 30% spouse credit', () => {
       const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
-        100000,
-        50,
+        150000,
+        50000,
         0,
       )
       expect(acceptedAidFinalAmount).toEqual(100000)
+    })
+
+    test('should return accepted final amount with 10% personal and 30% spouse credit, adding children aid', () => {
+      const acceptedAidFinalAmount = calculateAcceptedAidFinalAmount(
+        150000,
+        50000,
+        50000,
+      )
+      expect(acceptedAidFinalAmount).toEqual(150000)
+    })
+  })
+
+  describe('calculateFinalTaxAmount', () => {
+    test('should return final amount with 100% personal and 0% spouse credit', () => {
+      const finalTaxAmount = calculateFinalTaxAmount(300000, 100, 0)
+      expect(finalTaxAmount).toEqual(29514)
+    })
+
+    test('should return final amount with 100% personal and 100% spouse credit', () => {
+      const finalTaxAmount = calculateFinalTaxAmount(300000, 100, 100)
+      expect(finalTaxAmount).toEqual(0)
+    })
+
+    test('should return final amount with 50% personal and 50% spouse credit', () => {
+      const finalTaxAmount = calculateFinalTaxAmount(300000, 50, 50)
+      expect(finalTaxAmount).toEqual(29514)
     })
   })
 

@@ -54,7 +54,7 @@ export class ApplicationModel extends Model {
     allowNull: false,
   })
   @ApiProperty()
-  applied: Date
+  appliedDate: Date
 
   @Column({
     type: DataType.STRING,

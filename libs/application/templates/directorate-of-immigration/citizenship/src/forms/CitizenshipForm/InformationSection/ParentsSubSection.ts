@@ -11,32 +11,33 @@ import { ApplicantInformation } from '../../../shared'
 export const ParentsSubSection = buildSubSection({
   id: Routes.PARENTINFORMATION,
   title: information.labels.parents.subSectionTitle,
-  condition: (_, externalData) => {
-    const residenceConditionInfo = getValueViaPath(
-      externalData,
-      'applicantInformation.data.residenceConditionInfo',
-      {},
-    ) as ApplicantInformation
+  // TODO REVERT WHEN FIXED WITH UTL
+  // condition: (_, externalData) => {
+  //   const residenceConditionInfo = getValueViaPath(
+  //     externalData,
+  //     'applicantInformation.data.residenceConditionInfo',
+  //     {},
+  //   ) as ApplicantInformation
 
-    const hasResConMaritalStatus =
-      residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
-      residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
-      residenceConditionInfo.marriedISCitizenDomicile4Years ||
-      residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
+  //   const hasResConMaritalStatus =
+  //     residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
+  //     residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
+  //     residenceConditionInfo.marriedISCitizenDomicile4Years ||
+  //     residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
 
-    const hasOtherValidResidenceConditions =
-      residenceConditionInfo.domicileResidence7Years ||
-      residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
-      residenceConditionInfo.noNationalityAnd5YearsDomicile ||
-      residenceConditionInfo.nordicCitizenship4YearDomicile
+  //   const hasOtherValidResidenceConditions =
+  //     residenceConditionInfo.domicileResidence7Years ||
+  //     residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
+  //     residenceConditionInfo.noNationalityAnd5YearsDomicile ||
+  //     residenceConditionInfo.nordicCitizenship4YearDomicile
 
-    const eesResidenceCondition = residenceConditionInfo.eesResidenceCondition
+  //   const eesResidenceCondition = residenceConditionInfo.eesResidenceCondition
 
-    return (
-      (!hasResConMaritalStatus && !hasOtherValidResidenceConditions) ||
-      !eesResidenceCondition
-    ) //only show this screen if cohabitation is not a reason for applying and no other conditions are met
-  },
+  //   return (
+  //     (!hasResConMaritalStatus && !hasOtherValidResidenceConditions) ||
+  //     !eesResidenceCondition
+  //   ) //only show this screen if cohabitation is not a reason for applying and no other conditions are met
+  // },
   children: [
     buildMultiField({
       id: Routes.PARENTINFORMATION,

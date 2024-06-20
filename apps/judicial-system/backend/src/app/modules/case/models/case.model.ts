@@ -30,6 +30,7 @@ import {
   CaseType,
   CourtDocument,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -1013,6 +1014,17 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
   indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  /**********
+   * The judge's pending decision in indictment cases - example: POSTPONING
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentDecision })
+  indictmentDecision?: IndictmentDecision
 
   /**********
    * The md5 hash of the confirmed generated indictment

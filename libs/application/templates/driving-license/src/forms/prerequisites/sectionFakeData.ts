@@ -70,6 +70,10 @@ export const sectionFakeData = buildSubSection({
               value: 'full',
               label: 'Fullnaðarskírteini',
             },
+            {
+              value: 'BE',
+              label: 'Kerruréttindi',
+            },
           ],
         }),
         buildRadioField({

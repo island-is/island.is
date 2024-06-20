@@ -8,6 +8,8 @@ import {
   JournalControllerInstitutionsRequest,
   JournalControllerMainCategoriesRequest,
   JournalControllerTypesRequest,
+  JournalControllerDepartmentRequest,
+  JournalControllerTypeRequest,
 } from '../../gen/fetch/apis'
 
 @Injectable()
@@ -22,12 +24,29 @@ export class OfficialJournalOfIcelandClientService {
     return this.api.journalControllerAdverts(input)
   }
 
+  public async department(params: JournalControllerDepartmentRequest) {
+    return this.api.journalControllerDepartment(params)
+  }
+
   public async departments(params: JournalControllerDepartmentsRequest) {
     return this.api.journalControllerDepartments(params ?? {})
   }
 
+  public async type(params: JournalControllerTypeRequest) {
+    return this.api.journalControllerType(params)
+  }
+
   public async types(params: JournalControllerTypesRequest) {
-    return this.api.journalControllerTypes(params)
+    try {
+      const result = await this.api.journalControllerTypes(params)
+
+      console.log(result)
+
+      return result
+    } catch (error) {
+      console.error(error)
+      throw new Error('Something went wrong')
+    }
   }
 
   public async mainCategories(params: JournalControllerMainCategoriesRequest) {

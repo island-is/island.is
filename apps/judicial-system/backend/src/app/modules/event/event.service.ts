@@ -49,7 +49,7 @@ const caseEvent = {
   ACCEPT: ':white_check_mark: Samþykkt',
   REJECT: ':negative_squared_cross_mark: Hafnað',
   DISMISS: ':woman-shrugging: Vísað frá',
-  COMPLETE: ':white_check_mark: Lokað',
+  COMPLETE: ':white_check_mark: Lokið',
   DELETE: ':fire: Afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
   ARCHIVE: ':file_cabinet: Sett í geymslu',

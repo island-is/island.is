@@ -18,8 +18,6 @@ import {
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { getDefendantPleaText } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isReceptionAndAssignmentStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -31,26 +29,9 @@ const ReceptionAndAssignment = () => {
   const router = useRouter()
   const id = router.query.id
   const { formatMessage } = useIntl()
-  const [courtCaseNumberEM, setCourtCaseNumberEM] = useState('')
-  const [createCourtCaseSuccess, setCreateCourtCaseSuccess] =
-    useState<boolean>(false)
 
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
+  const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-
-  const { createCourtCase, isCreatingCourtCase } = useCase()
-
-  const handleCreateCourtCase = async (workingCase: Case) => {
-    const courtCaseNumber = await createCourtCase(
-      workingCase,
-      setWorkingCase,
-      setCourtCaseNumberEM,
-    )
-
-    if (courtCaseNumber !== '') {
-      setCreateCourtCaseSuccess(true)
-    }
-  }
 
   const getNextRoute = () => {
     return isRestrictionCase(workingCase.type)
@@ -137,16 +118,7 @@ const ReceptionAndAssignment = () => {
           </Text>
         </Box>
         <Box component="section" marginBottom={6}>
-          <CourtCaseNumber
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
-            courtCaseNumberEM={courtCaseNumberEM}
-            setCourtCaseNumberEM={setCourtCaseNumberEM}
-            createCourtCaseSuccess={createCourtCaseSuccess}
-            setCreateCourtCaseSuccess={setCreateCourtCaseSuccess}
-            handleCreateCourtCase={handleCreateCourtCase}
-            isCreatingCourtCase={isCreatingCourtCase}
-          />
+          <CourtCaseNumber />
         </Box>
         <Box component="section" marginBottom={10}>
           <SelectCourtOfficials />

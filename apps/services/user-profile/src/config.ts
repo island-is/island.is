@@ -3,7 +3,6 @@ import { z } from 'zod'
 
 const schema = z.object({
   migrationDate: z.date(),
-  workerProcessPageSize: z.number(),
   email: z.object({
     fromEmail: z.string(),
     fromName: z.string(),
@@ -18,10 +17,6 @@ export const UserProfileConfig = defineConfig({
     return {
       migrationDate: new Date(
         env.optional('USER_PROFILE_MIGRATION_DATE') ?? '2024-04-12',
-      ),
-      workerProcessPageSize: env.optionalJSON<number>(
-        'USER_PROFILE_WORKER_PAGE_SIZE',
-        3000,
       ),
       email: {
         fromEmail: env.required('EMAIL_FROM', 'noreply@island.is'),

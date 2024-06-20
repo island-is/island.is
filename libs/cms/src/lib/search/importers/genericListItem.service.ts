@@ -38,6 +38,18 @@ export class GenericListItemSyncService
             2,
           )
 
+          const tags: MappedData['tags'] = []
+
+          if (mapped.genericList) {
+            tags.push({
+              type: 'referencedBy',
+              key: mapped.genericList.id,
+            })
+          }
+          if (mapped.slug) {
+            tags.push({ type: 'slug', key: mapped.slug })
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -50,14 +62,7 @@ export class GenericListItemSyncService
             }),
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
-            tags: mapped.genericList
-              ? [
-                  {
-                    type: 'referencedBy',
-                    key: mapped.genericList.id,
-                  },
-                ]
-              : [],
+            tags,
             releaseDate: mapped.date,
           }
         } catch (error) {

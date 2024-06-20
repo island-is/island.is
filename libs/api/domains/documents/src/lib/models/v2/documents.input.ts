@@ -34,10 +34,6 @@ registerEnumType(DocumentPageOrder, { name: 'DocumentsV2PageOrder' })
 
 @InputType('DocumentsV2DocumentsInput')
 export class DocumentsInput {
-  @Field()
-  @IsNationalId()
-  readonly nationalId!: string
-
   @Field(() => [String], { nullable: true })
   @IsOptional()
   @IsArray()

@@ -1,24 +1,36 @@
 import React from 'react'
-import { StyleSheet } from 'react-native'
 import styled from 'styled-components/native'
 import { dynamicColor } from '../../utils'
 import { Skeleton } from './skeleton'
 
+interface ListItemSkeletonProps {
+  multilineMessage?: boolean
+}
+
 const Host = styled.SafeAreaView`
   position: relative;
-  margin-right: 16px;
   flex-direction: row;
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${dynamicColor(
+    ({ theme }) => ({
+      light: theme.color.blue200,
+      dark: theme.shades.dark.shade400,
+    }),
+    true,
+  )};
 `
 
-const Icon = styled.View`
-  padding: 22px;
+const Icon = styled.View<{ multilineMessage: boolean }>`
   align-items: center;
-  justify-content: center;
+  justify-content: ${({ multilineMessage }) =>
+    multilineMessage ? 'flex-start' : 'center'};
 `
 
 const Circle = styled.View`
-  height: 25px;
-  width: 25px;
+  margin-vertical: ${({ theme }) => theme.spacing[3]}px;
+  margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  height: 42px;
+  width: 42px;
   border-radius: 50px;
   background-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade100,
@@ -30,14 +42,15 @@ const Content = styled.View`
   flex: 1;
   flex-direction: column;
   align-items: flex-start;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[3]}px;
+  padding-top: ${({ theme }) => theme.spacing[3]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const Row = styled.View`
   flex-direction: row;
   justify-content: space-between;
-  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 const Title = styled.View`
@@ -49,26 +62,18 @@ const Date = styled.View`
   width: 65px;
 `
 
-const Message = styled.View`
-  width: 100%;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+const Message = styled.View<{ multilineMessage: boolean }>`
+  width: ${({ multilineMessage }) => (multilineMessage ? '80%' : '100%')};
+  padding-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
+  margin-top: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Divider = styled.View`
-  position: absolute;
-  left: 0px;
-  right: -16px;
-  bottom: 0px;
-  background-color: ${dynamicColor(({ theme }) => ({
-    dark: theme.shades.dark.shade100,
-    light: theme.color.blue200,
-  }))};
-`
-
-export function ListItemSkeleton() {
+export function ListItemSkeleton({
+  multilineMessage = false,
+}: ListItemSkeletonProps) {
   return (
     <Host>
-      <Icon>
+      <Icon multilineMessage={multilineMessage}>
         <Circle />
       </Icon>
       <Content>
@@ -80,11 +85,17 @@ export function ListItemSkeleton() {
             <Skeleton active style={{ borderRadius: 4 }} height={17} />
           </Date>
         </Row>
-        <Message>
+        <Message multilineMessage={multilineMessage}>
           <Skeleton active style={{ borderRadius: 4 }} height={17} />
+          {multilineMessage && (
+            <Skeleton
+              active
+              style={{ borderRadius: 4, width: '65%', marginTop: 5 }}
+              height={17}
+            />
+          )}
         </Message>
       </Content>
-      <Divider style={{ height: StyleSheet.hairlineWidth }} />
     </Host>
   )
 }

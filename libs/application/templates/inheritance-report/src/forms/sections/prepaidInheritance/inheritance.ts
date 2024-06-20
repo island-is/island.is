@@ -23,8 +23,7 @@ export const inheritance = buildSection({
           options: [
             {
               value: YES,
-              label: m.realEstate,
-              subLabel: m.realEstateDescription,
+              label: m.realEstateRepeaterHeader,
             },
           ],
         }),

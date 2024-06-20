@@ -5,6 +5,9 @@ import {
   Stack,
   Text,
   Table as T,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   DownloadFileButtons,
@@ -104,37 +107,40 @@ export const PaymentPartication = () => {
       {loading || periodsLoading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (
-        <Box marginBottom={SECTION_GAP}>
-          <Text marginBottom={CONTENT_GAP} variant="h5">
-            {formatMessage(messages.period)}
-          </Text>
-          <Box>
-            <Box
-              marginBottom={SECTION_GAP}
-              display="flex"
-              justifyContent="flexStart"
-              columnGap={2}
+        <Stack space={[2, SECTION_GAP]}>
+          <Text variant="h5">{formatMessage(messages.period)}</Text>
+          <GridContainer>
+            <GridRow
+              marginBottom={CONTENT_GAP}
+              direction={['column', 'column', 'column', 'row']}
             >
-              <DatePicker
-                size="xs"
-                label={formatMessage(m.dateFrom)}
-                placeholderText={formatMessage(m.chooseDate)}
-                handleChange={(date) => setStartDate(date)}
-                selected={startDate}
-                backgroundColor="blue"
-                locale={lang}
-              />
-              <DatePicker
-                size="xs"
-                label={formatMessage(m.dateTo)}
-                placeholderText={formatMessage(m.chooseDate)}
-                handleChange={(date) => setEndDate(date)}
-                selected={endDate}
-                backgroundColor="blue"
-                locale={lang}
-              />
-            </Box>
-          </Box>
+              <GridColumn
+                span={['6/8', '6/8', '6/8', '4/8']}
+                paddingBottom={[CONTENT_GAP, CONTENT_GAP, CONTENT_GAP, 0]}
+              >
+                <DatePicker
+                  size="xs"
+                  label={formatMessage(m.dateFrom)}
+                  placeholderText={formatMessage(m.chooseDate)}
+                  handleChange={(date) => setStartDate(date)}
+                  selected={startDate}
+                  backgroundColor="blue"
+                  locale={lang}
+                />
+              </GridColumn>
+              <GridColumn span={['6/8', '6/8', '6/8', '4/8']}>
+                <DatePicker
+                  size="xs"
+                  label={formatMessage(m.dateTo)}
+                  placeholderText={formatMessage(m.chooseDate)}
+                  handleChange={(date) => setEndDate(date)}
+                  selected={endDate}
+                  backgroundColor="blue"
+                  locale={lang}
+                />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
           {(periods?.rightsPortalCopaymentPeriods?.items.length ?? 0) > 0 ? (
             <T.Table>
               <ExpandHeader
@@ -204,7 +210,7 @@ export const PaymentPartication = () => {
               ]}
             />
           ) : undefined}
-        </Box>
+        </Stack>
       )}
       <Box>
         <Text variant="small" marginTop={5} marginBottom={2}>

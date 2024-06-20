@@ -163,6 +163,7 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesPrivateTitle',
               title: m.fileUploadPrivateTransfer,
+              description: m.uploadPrivateTransferUserGuidelines,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
@@ -178,6 +179,7 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
               title: m.fileUploadOtherDocuments,
+              description: m.uploadOtherDocumentsUserGuidelines,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
@@ -209,23 +211,6 @@ export const heirs = buildSection({
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.netProperty,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(
-                    roundedValueToNumber(
-                      getValueViaPath<number>(answers, 'netTotal'),
-                    ),
-                  ),
-                ),
-            }),
-            buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'gutter',
             }),
             buildKeyValueField({
               label: m.totalDeduction,

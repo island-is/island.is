@@ -6,7 +6,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   LATEST_MEASUREMENT_KEY as LATEST_UV_MEASUREMENT_KEY,
-  MEASUREMENT_SERIES_KEY as UV_MEASUREMENT_SERIES_KEY,
+  MEASUREMENT_SERIES_PAST_72_HOURS_KEY as UV_MEASUREMENT_SERIES_PAST_72_HOURS_KEY,
+  MEASUREMENT_SERIES_PAST_YEAR_KEY as UV_MEASUREMENT_SERIES_PAST_YEAR_KEY,
   UltravioletRadiationClientService,
 } from '@island.is/clients/ultraviolet-radiation'
 
@@ -42,8 +43,17 @@ export class StatisticsClientService {
       if (query.sourceDataKeys.includes(LATEST_UV_MEASUREMENT_KEY)) {
         promises.push(this.ultravioletRadiationService.getLatestMeasurement())
       }
-      if (query.sourceDataKeys.includes(UV_MEASUREMENT_SERIES_KEY)) {
-        promises.push(this.ultravioletRadiationService.getMeasurementSeries())
+      if (
+        query.sourceDataKeys.includes(UV_MEASUREMENT_SERIES_PAST_72_HOURS_KEY)
+      ) {
+        promises.push(
+          this.ultravioletRadiationService.getMeasurementSeriesPast72Hours(),
+        )
+      }
+      if (query.sourceDataKeys.includes(UV_MEASUREMENT_SERIES_PAST_YEAR_KEY)) {
+        promises.push(
+          this.ultravioletRadiationService.getMeasurementSeriesPastYear(),
+        )
       }
 
       const [csvSourceData, ...rest] = await Promise.all(promises)

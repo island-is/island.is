@@ -8,6 +8,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
+import { prepaidOverview } from './overview'
 
 export const prePaidHeirs = buildSection({
   id: 'heirs',
@@ -102,6 +103,7 @@ export const prePaidHeirs = buildSection({
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
               title: m.fileUploadOtherDocumentsPrePaid,
+              description: m.fileUploadOtherDocumentsPrePaidUserGuidelines,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
@@ -109,7 +111,7 @@ export const prePaidHeirs = buildSection({
             buildFileUploadField({
               id: 'heirsAdditionalInfoFilesOtherDocuments',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.fileUploadOtherDocumentsPrePaid,
+              uploadDescription: m.fileUploadOtherDocumentsPrePaidDescription,
               title: '',
               uploadHeader: '',
             }),
@@ -117,5 +119,6 @@ export const prePaidHeirs = buildSection({
         }),
       ],
     }),
+    prepaidOverview,
   ],
 })

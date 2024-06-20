@@ -104,7 +104,7 @@ export const supportingDocuments = {
         description: 'Other documents description',
       },
       title: {
-        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.title',
+        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.title#markdown',
         defaultMessage: 'Vinsamlegast hlaðið inn eftirfarandi fylgigögnum.',
         description: 'Other documents title',
       },

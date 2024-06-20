@@ -5,18 +5,18 @@ import {
 import { mapAdvertStatus } from './mapper'
 import { Injectable } from '@nestjs/common'
 import {
-  AdvertQueryParams,
+  AdvertSingleParams,
   QueryParams,
   TypeQueryParams,
 } from './models/advert.input'
 import {
   AdvertCategoryResponse,
-  AdvertDepartmentResponse,
+  AdvertDepartmentsResponse,
   AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
   AdvertsResponse,
-  AdvertTypeResponse,
+  AdvertTypesResponse,
 } from './models/advert.response'
 
 @Injectable()
@@ -25,7 +25,11 @@ export class OfficialJournalOfIcelandService {
     private readonly ojoiService: OfficialJournalOfIcelandClientService,
   ) {}
 
-  async departments(params: QueryParams): Promise<AdvertDepartmentResponse> {
+  async department(params: AdvertSingleParams) {
+    return await this.ojoiService.department(params)
+  }
+
+  async departments(params: QueryParams): Promise<AdvertDepartmentsResponse> {
     return await this.ojoiService.departments(params)
   }
 
@@ -39,7 +43,11 @@ export class OfficialJournalOfIcelandService {
     return await this.ojoiService.categories(params)
   }
 
-  async types(params: TypeQueryParams): Promise<AdvertTypeResponse> {
+  async type(params: AdvertSingleParams) {
+    return await this.ojoiService.type(params)
+  }
+
+  async types(params: TypeQueryParams): Promise<AdvertTypesResponse> {
     return await this.ojoiService.types(params)
   }
 
@@ -47,7 +55,7 @@ export class OfficialJournalOfIcelandService {
     return await this.ojoiService.institutions(params)
   }
 
-  async advert(params: AdvertQueryParams): Promise<AdvertResponse> {
+  async advert(params: AdvertSingleParams): Promise<AdvertResponse> {
     const { advert } = await this.ojoiService.advert(params)
     return {
       advert: {

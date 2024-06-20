@@ -7,7 +7,8 @@ import {
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
-import { createLogger } from 'winston'
+import { ConfigModule } from '@nestjs/config'
+import { defineConfig } from '@island.is/nest/config'
 
 startMocking(requestHandlers)
 
@@ -17,15 +18,24 @@ describe('CriminalRecordService', () => {
   beforeEach(async () => {
     const module = await Test.createTestingModule({
       imports: [
-        CriminalRecordApiModule.register({
-          xroadBaseUrl: 'http://localhost',
-          xroadClientId: '',
-          xroadPath: 'v2',
-          fetchOptions: {
-            logger: createLogger({
-              silent: true,
+        CriminalRecordApiModule,
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [
+            defineConfig({
+              name: 'CriminalRecordClient',
+              load: () => ({
+                xRoadServicePath: 'v2',
+              }),
             }),
-          },
+            defineConfig({
+              name: 'XRoadConfig',
+              load: () => ({
+                xRoadBasePath: 'http://localhost',
+                xRoadClient: '',
+              }),
+            }),
+          ],
         }),
       ],
       providers: [CriminalRecordService, { provide: 'CONFIG', useValue: {} }],

@@ -1,0 +1,19 @@
+{
+  "statistics": {
+    "seo": {
+      "title": "Tölfræði",
+      "url": "/tolfraedi",
+      "description": "Tölfræði um samráðsgátt",
+      "keywords": ""
+    },
+    "breadcrumbs": [
+      {
+        "title": "Samráðsgátt",
+        "href": "/samradsgatt"
+      },
+      {
+        "title": "Tölfræði"
+      }
+    ]
+  }
+}

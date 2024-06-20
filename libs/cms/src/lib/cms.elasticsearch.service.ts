@@ -39,6 +39,8 @@ import { CustomPage } from './models/customPage.model'
 import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
+import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
+import { GenericListItem } from './models/genericListItem.model'
 
 @Injectable()
 export class CmsElasticsearchService {
@@ -438,6 +440,15 @@ export class CmsElasticsearchService {
         JSON.parse(item._source.response ?? 'null'),
       )[0] ?? null
     )
+  }
+
+  async getGenericListItemBySlug(
+    input: GetGenericListItemBySlugInput,
+  ): Promise<GenericListItem | null> {
+    return this.getSingleDocumentTypeBySlug(getElasticsearchIndex(input.lang), {
+      slug: input.slug,
+      type: 'webGenericListItem',
+    })
   }
 
   async getGenericListItems(

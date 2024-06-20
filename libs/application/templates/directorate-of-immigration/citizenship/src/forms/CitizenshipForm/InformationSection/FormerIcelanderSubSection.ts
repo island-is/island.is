@@ -14,40 +14,41 @@ import { ApplicantInformation, ParentsToApplicant } from '../../../shared'
 export const FormerIcelanderSubSection = buildSubSection({
   id: 'formerIcelander',
   title: information.labels.formerIcelander.subSectionTitle,
-  condition: (formValue: FormValue, externalData) => {
-    const residenceConditionInfo = getValueViaPath(
-      externalData,
-      'applicantInformation.data.residenceConditionInfo',
-      {},
-    ) as ApplicantInformation
+  // TODO REVERT WHEN FIXED WITH UTL
+  // condition: (formValue: FormValue, externalData) => {
+  //   const residenceConditionInfo = getValueViaPath(
+  //     externalData,
+  //     'applicantInformation.data.residenceConditionInfo',
+  //     {},
+  //   ) as ApplicantInformation
 
-    const parentAnswer = getValueViaPath(
-      formValue,
-      'parentInformation.parents',
-      [],
-    ) as Array<ParentsToApplicant>
+  //   const parentAnswer = getValueViaPath(
+  //     formValue,
+  //     'parentInformation.parents',
+  //     [],
+  //   ) as Array<ParentsToApplicant>
 
-    const totalParentsInAnswer = parentAnswer.filter(
-      (x) => x.wasRemoved === 'false',
-    )
-    const hasResConMaritalStatus =
-      residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
-      residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
-      residenceConditionInfo.marriedISCitizenDomicile4Years ||
-      residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
+  //   const totalParentsInAnswer = parentAnswer.filter(
+  //     (x) => x.wasRemoved === 'false',
+  //   )
+  //   const hasResConMaritalStatus =
+  //     residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
+  //     residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
+  //     residenceConditionInfo.marriedISCitizenDomicile4Years ||
+  //     residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
 
-    const hasOtherValidResidenceConditions =
-      residenceConditionInfo.domicileResidence7Years ||
-      residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
-      residenceConditionInfo.noNationalityAnd5YearsDomicile ||
-      residenceConditionInfo.nordicCitizenship4YearDomicile
+  //   const hasOtherValidResidenceConditions =
+  //     residenceConditionInfo.domicileResidence7Years ||
+  //     residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
+  //     residenceConditionInfo.noNationalityAnd5YearsDomicile ||
+  //     residenceConditionInfo.nordicCitizenship4YearDomicile
 
-    return (
-      !hasResConMaritalStatus &&
-      !hasOtherValidResidenceConditions &&
-      totalParentsInAnswer.length === 0
-    )
-  },
+  //   return (
+  //     !hasResConMaritalStatus &&
+  //     !hasOtherValidResidenceConditions &&
+  //     totalParentsInAnswer.length === 0
+  //   )
+  // },
   children: [
     buildMultiField({
       id: 'formerIcelanderMultiField',
@@ -68,23 +69,24 @@ export const FormerIcelanderSubSection = buildSubSection({
             { value: NO, label: information.labels.radioButtons.radioOptionNo },
           ],
         }),
-        buildAlertMessageField({
-          id: 'formerIcelanderAlert',
-          title: information.labels.formerIcelander.alertTitle,
-          alertType: 'error',
-          message: information.labels.formerIcelander.alertDescription,
-          condition: (answer: Answer) => {
-            const answers = answer as Citizenship
-            return answers?.formerIcelander === NO
-          },
-          links: [
-            {
-              title: information.labels.formerIcelander.alertLinkTitle,
-              url: information.labels.formerIcelander.alertLinkUrl,
-              isExternal: true,
-            },
-          ],
-        }),
+        // TODO REVERT WHEN UTL FIXES SERVICES
+        // buildAlertMessageField({
+        //   id: 'formerIcelanderAlert',
+        //   title: information.labels.formerIcelander.alertTitle,
+        //   alertType: 'error',
+        //   message: information.labels.formerIcelander.alertDescription,
+        //   condition: (answer: Answer) => {
+        //     const answers = answer as Citizenship
+        //     return answers?.formerIcelander && answers?.formerIcelander !== YES
+        //   },
+        //   links: [
+        //     {
+        //       title: information.labels.formerIcelander.alertLinkTitle,
+        //       url: information.labels.formerIcelander.alertLinkUrl,
+        //       isExternal: true,
+        //     },
+        //   ],
+        // }),
       ],
     }),
   ],

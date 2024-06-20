@@ -139,7 +139,7 @@ export const useFilter = (
   )
 
   return {
-    filter: filter,
+    filter,
     setFilter: setFilterAndStore,
     options: optionsMemo,
     activeCases,

@@ -1,9 +1,16 @@
 import { useMemo } from 'react'
 import cn from 'classnames'
 
-import { Icon, SkeletonLoader, Tooltip } from '@island.is/island-ui/core'
+import {
+  Icon,
+  Inline,
+  SkeletonLoader,
+  Text,
+  Tooltip,
+} from '@island.is/island-ui/core'
 import { ChartNumberBox as IChartNumberBox } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import { useGetChartData } from '../../hooks'
 import { messages } from '../../messages'
@@ -41,6 +48,7 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
     components: [slice],
   })
   const { activeLocale } = useI18n()
+  const { format } = useDateUtils()
 
   const boxData = useMemo(() => {
     const result: ChartNumberBoxData[] = [
@@ -131,6 +139,17 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
                 index === 0 ? mostRecentValue : Math.abs(change - 1),
               )
 
+        const timestamp =
+          slice.displayTimestamp &&
+          index === 0 &&
+          queryResult?.data?.[data.sourceDataIndex]?.header &&
+          !isNaN(Number(queryResult.data[data.sourceDataIndex].header))
+            ? format(
+                new Date(Number(queryResult.data[data.sourceDataIndex].header)),
+                'do MMM yyyy HH:mm',
+              )
+            : ''
+
         return (
           <div
             key={index}
@@ -143,7 +162,10 @@ export const ChartNumberBox = ({ slice }: ChartNumberBoxRendererProps) => {
             tabIndex={0}
           >
             <div className={styles.titleWrapper} id={`${slice.id}.title`}>
-              <h3 className={styles.title}>{data.title}</h3>
+              <Inline space={1} alignY="center" justifyContent="spaceBetween">
+                <h3 className={styles.title}>{data.title}</h3>
+                {timestamp && <Text variant="small">({timestamp})</Text>}
+              </Inline>
               {index === 0 && (
                 <Tooltip
                   text={slice.numberBoxDescription}

@@ -22,9 +22,7 @@ export class DataProtectionComplaintModule {
       imports: [
         SharedTemplateAPIModule.register(config),
         FileStorageModule,
-        ClientsDataProtectionComplaintModule.register(
-          config.dataProtectionComplaint,
-        ),
+        ClientsDataProtectionComplaintModule,
       ],
       providers: [
         ApplicationAttachmentProvider,

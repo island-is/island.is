@@ -103,4 +103,9 @@ export const tables = defineMessages({
     description:
       'Notaður sem titill fyrir birtingarstaða dálk í lista yfir mál.',
   },
+  postponed: {
+    id: 'judicial.system.core:tables.postponed',
+    defaultMessage: 'Frestað',
+    description: 'Notaður sem texti þegar mál er frestað.',
+  },
 })

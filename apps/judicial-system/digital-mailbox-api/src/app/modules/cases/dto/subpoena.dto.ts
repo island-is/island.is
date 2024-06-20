@@ -1,4 +1,10 @@
-import { IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsEnum,
+  IsNotEmpty,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -14,4 +20,9 @@ export class UpdateSubpoenaDto {
   @IsString()
   @ApiProperty({ type: String })
   defenderNationalId?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiProperty({ type: Boolean })
+  acceptCompensationClaim?: boolean
 }

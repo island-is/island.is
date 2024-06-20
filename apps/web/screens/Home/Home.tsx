@@ -109,27 +109,6 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           items={news}
         />
       </Box>
-      <Box
-        component="section"
-        paddingTop={[4, 4, 6]}
-        aria-label={n('newsTickerHeading')}
-      >
-        <GridContainer>
-          <NewLinks
-            heading={n('newsTickerHeading')}
-            seeMoreText={n('newsTickerSeeMore')}
-            items={(page?.linkList?.links ?? [])
-              .filter((x) => x.date)
-              .map(({ date, text, url }) => {
-                return {
-                  text,
-                  date: new Date(date),
-                  href: url,
-                }
-              })}
-          />
-        </GridContainer>
-      </Box>
       {watsonConfig[locale] && (
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore make web strict

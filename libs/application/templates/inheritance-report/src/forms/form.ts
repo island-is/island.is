@@ -1,13 +1,5 @@
-import {
-  YES,
-  buildCheckboxField,
-  buildForm,
-  buildMultiField,
-  buildSection,
-  buildSubmitField,
-} from '@island.is/application/core'
-import { m } from '../lib/messages'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { buildForm } from '@island.is/application/core'
+import { Form, FormModes } from '@island.is/application/types'
 import { assets } from './sections/assets'
 import { debtsAndFuneralCost } from './sections/debtsAndFuneralCost'
 import { heirs } from './sections/heirs'
@@ -19,7 +11,6 @@ import { preSelection } from './sections/applicationTypeSelection'
 import { prePaidHeirs } from './sections/prepaidInheritance/heirs'
 import { inheritanceExecutor } from './sections/prepaidInheritance/inheritanceExecutor'
 import { inheritance } from './sections/prepaidInheritance/inheritance'
-import { prepaidOverview } from './sections/prepaidInheritance/overview'
 import { finalStep } from './sections/finalStep'
 import { prePaidApplicant } from './sections/prepaidInheritance/applicant'
 
@@ -35,7 +26,6 @@ export const prepaidInheritanceForm: Form = buildForm({
     inheritance,
     assets,
     prePaidHeirs,
-    prepaidOverview,
     finalStep,
   ],
 })

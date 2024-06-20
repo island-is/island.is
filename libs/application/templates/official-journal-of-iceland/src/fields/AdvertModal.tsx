@@ -4,19 +4,20 @@ import {
   Icon,
   Input,
   ModalBase,
+  Pagination,
   RadioButton,
   SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './AdvertModal.css'
+import * as styles from './Advert.css'
 import { useLocale } from '@island.is/localization'
 import { advert, error, general } from '../lib/messages'
 import { useQuery } from '@apollo/client'
 import { ADVERTS_QUERY } from '../graphql/queries'
 import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
-import { ChangeEvent, useState } from 'react'
+import { ChangeEvent, ReactNode, useState } from 'react'
 import { OfficialJournalOfIcelandGraphqlResponse } from '../lib/types'
 type Props = {
   visible: boolean
@@ -34,6 +35,7 @@ export const AdvertModal = ({
     string | null
   >(null)
 
+  const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
 
   const updateSearch = (
@@ -45,7 +47,7 @@ export const AdvertModal = ({
   const { data, loading } = useQuery<
     OfficialJournalOfIcelandGraphqlResponse<'adverts'>
   >(ADVERTS_QUERY, {
-    variables: { input: { page: 1, search: search } },
+    variables: { input: { page: page, search: search, pageSize: 10 } },
   })
 
   const debouncedSearch = debounce(updateSearch, DEBOUNCE_INPUT_TIMER)
@@ -107,6 +109,23 @@ export const AdvertModal = ({
               ) : (
                 <Text>{f(error.noResults)}</Text>
               )}
+            </Box>
+            <Box>
+              <Pagination
+                page={page}
+                totalPages={
+                  data?.officialJournalOfIcelandAdverts.paging.totalPages
+                }
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
             </Box>
             <Box className={styles.buttonWrapper}>
               <Button onClick={closeModal} variant="ghost">

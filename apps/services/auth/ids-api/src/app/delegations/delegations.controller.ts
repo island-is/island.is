@@ -1,6 +1,7 @@
 import {
   Controller,
   Get,
+  Inject,
   ParseArrayPipe,
   Query,
   UseGuards,
@@ -9,14 +10,16 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   DelegationDTO,
   DelegationScope,
   DelegationScopeService,
   DelegationsIncomingService,
   DelegationsService,
-  DelegationType,
   MergedDelegationDTO,
+  DelegationsIndexService,
 } from '@island.is/auth-api-lib'
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -25,6 +28,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { AuthDelegationType } from 'delegation'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -34,16 +38,28 @@ import {
 })
 export class DelegationsController {
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    protected readonly logger: Logger,
     private readonly delegationsService: DelegationsService,
     private readonly delegationScopeService: DelegationScopeService,
     private readonly delegationsIncomingService: DelegationsIncomingService,
+    private readonly delegationIndexService: DelegationsIndexService,
   ) {}
 
   @Scopes('@identityserver.api/authentication')
   @Get()
   @ApiOkResponse({ isArray: true })
   async findAllToV1(@CurrentUser() user: User): Promise<DelegationDTO[]> {
-    return this.delegationsService.findAllIncoming(user)
+    const delegations = await this.delegationsService.findAllIncoming(user)
+
+    // don't fail the request if indexing fails
+    try {
+      void this.delegationIndexService.indexDelegations(user)
+    } catch {
+      this.logger.error('Failed to index delegations')
+    }
+
+    return delegations
   }
 
   @Scopes('@identityserver.api/authentication')
@@ -58,10 +74,19 @@ export class DelegationsController {
     )
     requestedScopes: Array<string>,
   ): Promise<MergedDelegationDTO[]> {
-    return this.delegationsIncomingService.findAllAvailable({
+    const delegations = await this.delegationsIncomingService.findAllAvailable({
       user,
       requestedScopes,
     })
+
+    // don't fail the request if indexing fails
+    try {
+      void this.delegationIndexService.indexDelegations(user)
+    } catch {
+      this.logger.error('Failed to index delegations')
+    }
+
+    return delegations
   }
 
   @Scopes('@identityserver.api/authentication')
@@ -74,19 +99,19 @@ export class DelegationsController {
       'delegationType',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
     )
-    delegationType: Array<DelegationType>,
+    delegationType: Array<AuthDelegationType>,
   ): Promise<string[]> {
     const scopePromises = []
 
-    if (delegationType.includes(DelegationType.ProcurationHolder))
+    if (delegationType.includes(AuthDelegationType.ProcurationHolder))
       scopePromises.push(this.delegationScopeService.findAllProcurationScopes())
 
-    if (delegationType.includes(DelegationType.LegalGuardian))
+    if (delegationType.includes(AuthDelegationType.LegalGuardian))
       scopePromises.push(
         this.delegationScopeService.findAllLegalGuardianScopes(),
       )
 
-    if (delegationType.includes(DelegationType.PersonalRepresentative))
+    if (delegationType.includes(AuthDelegationType.PersonalRepresentative))
       scopePromises.push(
         this.delegationScopeService.findPersonalRepresentativeScopes(
           user.nationalId,
@@ -94,7 +119,7 @@ export class DelegationsController {
         ),
       )
 
-    if (delegationType.includes(DelegationType.Custom))
+    if (delegationType.includes(AuthDelegationType.Custom))
       scopePromises.push(
         this.delegationScopeService
           .findAllValidCustomScopesTo(user.nationalId, fromNationalId)
@@ -109,8 +134,8 @@ export class DelegationsController {
 
     if (
       scopes.length > 0 ||
-      delegationType.includes(DelegationType.ProcurationHolder) ||
-      delegationType.includes(DelegationType.LegalGuardian)
+      delegationType.includes(AuthDelegationType.ProcurationHolder) ||
+      delegationType.includes(AuthDelegationType.LegalGuardian)
     ) {
       scopes = [
         ...scopes,

@@ -47,6 +47,12 @@ export const caseFiles = defineMessages({
     defaultMessage: 'Önnur gögn',
     description: 'Titill á önnur gögn hluta á dómskjalaskjá í ákærum.',
   },
+  criminalRecordUpdateSection: {
+    id: 'judicial.system.core:indictments.case_files.criminal_record_update_section',
+    defaultMessage: 'Tilkynning til sakaskrár',
+    description:
+      'Titill á Tilkynning til sakaskrár hluta á dómskjalaskjá í ákærum.',
+  },
   trafficViolationIndictmentTitle: {
     id: 'judicial.system.core:indictments.case_files.traffic_violation_indictment_title',
     defaultMessage: 'Ákæra.pdf',

@@ -82,28 +82,32 @@ export class AdminPatchClientDto {
   removedDelegationTypes?: string[]
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    deprecated: true,
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
   })
   @IsOptional()
   @IsBoolean()
   supportsCustomDelegation?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
   supportsLegalGuardians?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
   supportsProcuringHolders?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()

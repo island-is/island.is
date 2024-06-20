@@ -57,6 +57,7 @@ import { GET_CATEGORIES_QUERY, GET_NAMESPACE_QUERY } from '../screens/queries'
 import { GET_ALERT_BANNER_QUERY } from '../screens/queries/AlertBanner'
 import { GET_GROUPED_MENU_QUERY } from '../screens/queries/Menu'
 import { Screen } from '../types'
+import { extractOrganizationSlugFromPathname } from '../utils/organization'
 import {
   formatMegaMenuCategoryLinks,
   formatMegaMenuLinks,
@@ -246,6 +247,11 @@ const Layout: Screen<LayoutProps> = ({
 
   const isServiceWeb = pathIsRoute(router.asPath, 'serviceweb', activeLocale)
 
+  const organizationSearchFilter = extractOrganizationSlugFromPathname(
+    router.asPath,
+    activeLocale,
+  )
+
   return (
     <GlobalContextProvider namespace={namespace} isServiceWeb={isServiceWeb}>
       <Page component="div">
@@ -403,6 +409,7 @@ const Layout: Screen<LayoutProps> = ({
                 showSearchInHeader={showSearchInHeader}
                 megaMenuData={megaMenuData}
                 languageToggleQueryParams={languageToggleQueryParams}
+                organizationSearchFilter={organizationSearchFilter}
               />
             </ColorSchemeContext.Provider>
           )}

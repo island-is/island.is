@@ -17,12 +17,7 @@ export class AgriculturalUniversityOfIcelandApplicationClient {
   async getPrograms(): Promise<IProgram[]> {
     const res = await this.programsApi.activeProgramsGet()
 
-    return mapUglaPrograms(res, (programExternalId: string, e: Error) => {
-      logger.error(
-        `Failed to map program with externalId ${programExternalId} (agricultural-university-of-iceland), reason:`,
-        e,
-      )
-    })
+    return mapUglaPrograms(res, 'agricultural-university-of-iceland')
   }
 
   async getCourses(programExternalId: string): Promise<ICourse[]> {

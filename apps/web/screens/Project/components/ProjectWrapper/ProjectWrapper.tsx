@@ -27,6 +27,7 @@ interface ProjectWrapperProps {
   projectPage: ProjectPage
   breadcrumbItems: BreadCrumbItem[]
   sidebarNavigationTitle: string
+  backLink?: { url: string; text: string }
 }
 
 export const ProjectWrapper: React.FC<

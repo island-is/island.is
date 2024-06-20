@@ -187,6 +187,14 @@ export const routesTemplate = {
     is: '/v/[slug]',
     en: '/en/p/[slug]',
   },
+  organizationsubpagelistitem: {
+    is: '/s/[organization]/[slug]/[listItemSlug]',
+    en: '/en/o/[organization]/[slug]/[listItemSlug]',
+  },
+  projectsubpagelistitem: {
+    is: '/v/[project]/[slug]/[listItemSlug]',
+    en: '/en/p/[project]/[slug]/[listItemSlug]',
+  },
   lifeevents: {
     is: '/lifsvidburdir',
     en: '/en/life-events',

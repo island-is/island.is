@@ -54,7 +54,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       'B-full',
     )
 
-    const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+    const chargeItemCode =
+      applicationFor === 'B-full'
+        ? 'AY110'
+        : applicationFor === 'BE'
+        ? 'AY115'
+        : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,

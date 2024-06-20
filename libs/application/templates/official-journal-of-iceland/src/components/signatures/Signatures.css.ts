@@ -24,20 +24,31 @@ export const institutionWrapper = style({})
 export const institution = style({
   display: 'flex',
   gap: spacing,
-  flexWrap: 'wrap',
   marginBottom: spacing,
-  justifyContent: 'flexStart',
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+      flexDirection: 'column',
+    },
+  },
 })
 
 export const inputGroup = style({
   display: 'flex',
-  flexDirection: 'column',
-  rowGap: spacing,
+  gap: spacing,
+
+  '@media': {
+    [`screen and (max-width: ${theme.breakpoints.lg}px)`]: {
+      flexDirection: 'column',
+    },
+  },
 })
 
 export const inputWrapper = style({
   display: 'flex',
-  flexWrap: 'wrap',
+  flexDirection: 'column',
+  justifyContent: 'space-between',
+  flex: 1,
   gap: spacing,
 })
 
@@ -45,6 +56,8 @@ export const removeInputGroup = style({
   display: 'flex',
   flexDirection: 'column',
   justifyContent: 'flex-end',
+  width: 48,
+  marginInlineEnd: spacing,
 })
 
 export const addSignatureWrapper = style({

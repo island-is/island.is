@@ -4,7 +4,7 @@ import { Animated, Easing, SafeAreaView } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { getIntl } from '../../contexts/i18n-provider'
-import { useOfflineActions, useOfflineStore } from '../../stores/offline-store'
+import { useOfflineActions } from '../../stores/offline-store'
 import { ComponentRegistry as CR } from '../../utils/component-registry'
 
 const TranslateYValue = 200

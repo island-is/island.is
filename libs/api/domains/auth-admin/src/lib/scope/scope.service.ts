@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 import groupBy from 'lodash/groupBy'
 
 import { User } from '@island.is/auth-nest-tools'
-import { handle204 } from '@island.is/clients/middlewares'
 
 import { MultiEnvironmentService } from '../shared/services/multi-environment.service'
 import { CreateScopeInput } from './dto/create-scope.input'

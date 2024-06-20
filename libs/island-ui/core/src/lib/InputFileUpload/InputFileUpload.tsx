@@ -322,9 +322,11 @@ export const InputFileUpload = ({
       <Text variant="h4">{header}</Text>
       <Text>{description}</Text>
       <Box marginY={4}>
-        <Button variant="ghost" icon="attach" disabled={disabled}>
-          {buttonLabel}
-        </Button>
+        {(multiple || (!multiple && fileList.length === 0)) && (
+          <Button variant="ghost" icon="attach" disabled={disabled}>
+            {buttonLabel}
+          </Button>
+        )}
       </Box>
 
       <Box width="full" paddingX={[2, 2, 2, 2, 12]}>

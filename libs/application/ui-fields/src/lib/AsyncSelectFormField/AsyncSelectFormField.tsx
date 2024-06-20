@@ -33,6 +33,7 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
     onSelect,
     backgroundColor,
     isSearchable,
+    isMulti,
     required = false,
   } = field
   const { formatMessage } = useLocale()
@@ -89,9 +90,12 @@ export const AsyncSelectFormField: FC<React.PropsWithChildren<Props>> = ({
               ? formatText(placeholder as string, application, formatMessage)
               : undefined
           }
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
           onSelect={onSelect}
           backgroundColor={backgroundColor}
           isSearchable={isSearchable}
+          isMulti={isMulti}
         />
       </Box>
     </div>

@@ -623,6 +623,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global('.advertisement__title-main', {
     fontSize: 20,
+    marginBottom: '0.5ch',
     textTransform: 'uppercase',
     textAlign: 'center',
   })

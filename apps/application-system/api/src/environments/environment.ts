@@ -37,37 +37,10 @@ const devConfig = {
       password: process.env.NOVA_PASSWORD,
       acceptUnauthorized: true,
     },
-    criminalRecord: {
-      clientConfig: {
-        xroadClientId:
-          process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-        xroadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8081',
-        xroadPath:
-          process.env.XROAD_CRIMINAL_RECORD_PATH ??
-          'r1/IS-DEV/GOV/10005/Logreglan-Protected/Sakavottord-PDF-v2',
-      },
-    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
-    },
-    healthInsuranceV2: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
-      xRoadProviderId:
-        process.env.XROAD_HEALTH_INSURANCE_ID ??
-        'IS-DEV/GOV/10007/SJUKRA-Protected',
-      xRoadClientId:
-        process.env.XROAD_CLIENT_ID ?? 'IS-DEV/GOV/10000/island-is-client',
-      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME ?? '',
-      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD ?? '',
-    },
-    dataProtectionComplaint: {
-      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
-      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
-      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH ?? 'http://localhost:8080',
     },
     userProfile: {
       serviceBasePath: 'http://localhost:3366',
@@ -123,29 +96,8 @@ const prodConfig = {
     },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
-    criminalRecord: {
-      clientConfig: {
-        xroadClientId: process.env.XROAD_CLIENT_ID,
-        xroadBaseUrl: process.env.XROAD_BASE_PATH,
-        xroadPath: process.env.XROAD_CRIMINAL_RECORD_PATH,
-      },
-    },
     generalPetition: {
       endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
-    },
-    healthInsuranceV2: {
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
-      xRoadProviderId: process.env.XROAD_HEALTH_INSURANCE_ID,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      username: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_USERNAME,
-      password: process.env.XROAD_HEALTH_INSURANCE_V2_XROAD_PASSWORD,
-    },
-    dataProtectionComplaint: {
-      password: process.env.DATA_PROTECTION_COMPLAINT_API_PASSWORD,
-      username: process.env.DATA_PROTECTION_COMPLAINT_API_USERNAME,
-      XRoadProviderId: process.env.DATA_PROTECTION_COMPLAINT_XROAD_PROVIDER_ID,
-      xRoadClientId: process.env.XROAD_CLIENT_ID,
-      xRoadBaseUrl: process.env.XROAD_BASE_PATH,
     },
     userProfile: {
       serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,

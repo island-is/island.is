@@ -9,7 +9,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../types'
 
 // Here you import your module service
 import { HealthInsuranceService } from './health-insurance.service'
-import { HealthInsuranceV2Client } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { HealthInsuranceV2ClientModule } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { BucketService } from './bucket/bucket.service'
 
 export class HealthInsuranceModule {
@@ -17,7 +17,7 @@ export class HealthInsuranceModule {
     return {
       module: HealthInsuranceModule,
       imports: [
-        HealthInsuranceV2Client.register(config.healthInsuranceV2),
+        HealthInsuranceV2ClientModule,
         SharedTemplateAPIModule.register(config),
       ],
       providers: [HealthInsuranceService, BucketService],

@@ -34,6 +34,7 @@ interface TableProps {
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
+  onClick?: (row: CaseListEntry) => boolean
 }
 
 interface TableWrapperProps {
@@ -80,7 +81,7 @@ export const useTable = () => {
 }
 
 const Table: React.FC<TableProps> = (props) => {
-  const { thead, data, columns, generateContextMenuItems } = props
+  const { thead, data, columns, generateContextMenuItems, onClick } = props
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
@@ -122,7 +123,11 @@ const Table: React.FC<TableProps> = (props) => {
       {data.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => handleOpenCase(theCase.id)}
+            onClick={() => {
+              if (!onClick?.(theCase)) {
+                handleOpenCase(theCase.id)
+              }
+            }}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
@@ -185,7 +190,9 @@ const Table: React.FC<TableProps> = (props) => {
             aria-disabled={isOpeningCaseId === row.id || isTransitioningCase}
             className={styles.tableRowContainer}
             onClick={() => {
-              handleOpenCase(row.id)
+              if (!onClick?.(row)) {
+                handleOpenCase(row.id)
+              }
             }}
           >
             {columns.map((td) => (
@@ -195,27 +202,29 @@ const Table: React.FC<TableProps> = (props) => {
             ))}
             {generateContextMenuItems && (
               <td className={styles.td}>
-                <AnimatePresence exitBeforeEnter initial={false}>
-                  {isOpeningCaseId === row.id && showLoading ? (
-                    <Box padding={1}>
-                      <LoadingIndicator />
-                    </Box>
-                  ) : (
-                    <ContextMenu
-                      menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
-                      items={generateContextMenuItems(row)}
-                      disclosure={
-                        <IconButton
-                          icon="ellipsisVertical"
-                          colorScheme="transparent"
-                          onClick={(evt) => {
-                            evt.stopPropagation()
-                          }}
-                        />
-                      }
-                    />
-                  )}
-                </AnimatePresence>
+                {generateContextMenuItems(row).length > 0 && (
+                  <AnimatePresence exitBeforeEnter initial={false}>
+                    {isOpeningCaseId === row.id && showLoading ? (
+                      <Box padding={1}>
+                        <LoadingIndicator />
+                      </Box>
+                    ) : (
+                      <ContextMenu
+                        menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
+                        items={generateContextMenuItems(row)}
+                        disclosure={
+                          <IconButton
+                            icon="ellipsisVertical"
+                            colorScheme="transparent"
+                            onClick={(evt) => {
+                              evt.stopPropagation()
+                            }}
+                          />
+                        }
+                      />
+                    )}
+                  </AnimatePresence>
+                )}
               </td>
             )}
           </tr>

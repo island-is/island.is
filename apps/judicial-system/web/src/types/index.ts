@@ -174,7 +174,6 @@ export interface NationalRegistryResponseBusiness {
  * We use this type so that we don't have to migrate all the code
  * at once and this type will be removed when we are done.
  */
-
 export interface TempIndictmentCount
   extends Omit<IndictmentCount, 'substances'> {
   substances?: SubstanceMap | null

@@ -5,6 +5,7 @@ import {
   SchoolTestResultType,
   StudentOverView,
   StudentShortOverview,
+  TeacherDetailsGetResponse,
 } from '../../gen/fetch'
 import {
   DrivingLicenseBookStudent,
@@ -13,6 +14,7 @@ import {
   PracticalDrivingLesson as PracticalDrivingLessonMapped,
   SchoolType,
   Organization as OrganizationMapped,
+  TeacherRights,
 } from '../lib/drivingLicenseBookType.types'
 
 export const getStudentAndBookMapper = (
@@ -41,7 +43,12 @@ export const getStudentAndBookMapper = (
       isDigital: book.isDigital ?? false,
       status: book.status ?? 1,
       statusName: book.statusName ?? '',
-      totalLessonTime: book.totalLessonTime ?? -1,
+      totalLessonTime: !book.teachersAndLessons
+        ? -1
+        : book.teachersAndLessons.reduce(
+            (total, lesson) => total + (lesson.lessonTime ?? 0),
+            0,
+          ),
       totalLessonCount: book.totalLessonCount ?? -1,
       drivingSchoolExams: !book.drivingSchoolExams
         ? []
@@ -159,5 +166,16 @@ export const schoolTypeMapper = (data: SchoolTestResultType): SchoolType => {
     schoolTypeName: data.schoolTypeName ?? '',
     schoolTypeCode: data.schoolTypeCode ?? '',
     licenseCategory: data.licenseCategory ?? '',
+  }
+}
+
+export const teacherRightsMapper = (
+  data: TeacherDetailsGetResponse,
+): TeacherRights => {
+  return {
+    active: data.data?.active ?? false,
+    hasRegisteredDrivingLessons:
+      data.data?.hasRegisteredDrivingLessons ?? false,
+    rights: data.data?.credentials ?? [],
   }
 }

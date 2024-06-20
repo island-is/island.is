@@ -41,16 +41,32 @@ export class PatchClientInput {
   @Field(() => [String], { nullable: true })
   removedDelegationTypes?: string[]
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   supportsCustomDelegation?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   supportsLegalGuardians?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   supportsProcuringHolders?: boolean
 
-  @Field(() => Boolean, { nullable: true })
+  @Field(() => Boolean, {
+    nullable: true,
+    deprecationReason:
+      'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
   supportsPersonalRepresentatives?: boolean
 
   @Field(() => Boolean, { nullable: true })

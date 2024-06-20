@@ -38,22 +38,11 @@ export class DocumentServiceV2 {
       documentId,
     )
 
-    if (!document?.senderNationalId || !document?.date) {
-      this.logger.debug('Document display data missing', {
-        category: LOG_CATEGORY,
-        document: document,
-      })
-    }
-
     if (!document) {
-      this.logger.warn('No document content', {
-        category: LOG_CATEGORY,
-        documentId,
-      })
-      return null
+      return null // Null document logged in clients-documents-v2
     }
 
-    let type
+    let type: FileType
     switch (document.fileType) {
       case 'html':
         type = FileType.HTML
@@ -73,6 +62,7 @@ export class DocumentServiceV2 {
       publicationDate: document.date,
       id: documentId,
       name: document.fileName,
+      downloadUrl: `${this.downloadServiceConfig.baseUrl}/download/v1/electronic-documents/${documentId}`,
       sender: {
         id: document.senderNationalId,
         name: document.senderName,
@@ -108,6 +98,7 @@ export class DocumentServiceV2 {
     const documents = await this.documentService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
+      nationalId,
     })
 
     if (typeof documents?.totalCount !== 'number') {

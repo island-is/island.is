@@ -73,8 +73,8 @@ export class UserProfileService {
       email: userProfile.email,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
+      emailVerified: userProfile.emailVerified ?? false,
       documentNotifications: userProfile.documentNotifications,
       emailNotifications: userProfile.emailNotifications,
       lastNudge: userProfile.lastNudge,
@@ -158,15 +158,15 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmEmail(
             {
-              email: userProfile.email,
-              hash: userProfile.emailVerificationCode,
+              email: userProfile.email!,
+              hash: userProfile.emailVerificationCode!,
             },
             ...commonArgs,
           )
 
         if (!confirmed) {
           // Check if we should throw a BadRequest or an AttemptFailed error
-          if (remainingAttempts >= 0) {
+          if (remainingAttempts && remainingAttempts >= 0) {
             throw new AttemptFailed(remainingAttempts, {
               emailVerificationCode: 'Verification code does not match.',
             })
@@ -180,15 +180,15 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmSms(
             {
-              mobilePhoneNumber: userProfile.mobilePhoneNumber,
-              code: userProfile.mobilePhoneNumberVerificationCode,
+              mobilePhoneNumber: userProfile.mobilePhoneNumber!,
+              code: userProfile.mobilePhoneNumberVerificationCode!,
             },
             ...commonArgs,
           )
 
         if (confirmed === false) {
           // Check if we should throw a BadRequest or an AttemptFailed error
-          if (remainingAttempts >= 0) {
+          if (remainingAttempts && remainingAttempts >= 0) {
             throw new AttemptFailed(remainingAttempts, {
               smsVerificationCode: 'Verification code does not match.',
             })
@@ -500,10 +500,10 @@ export class UserProfileService {
     mobileStatus,
     emailStatus,
   }: {
-    email: string
-    mobilePhoneNumber: string
-    emailVerified: boolean
-    mobilePhoneNumberVerified: boolean
+    email?: string | null
+    mobilePhoneNumber?: string | null
+    emailVerified?: boolean
+    mobilePhoneNumberVerified?: boolean
     mobileStatus: DataStatus
     emailStatus: DataStatus
   }): boolean {
@@ -525,8 +525,8 @@ export class UserProfileService {
    * @param mobilePhoneNumber
    */
   private checkAudkenniSameAsMobilePhoneNumber(
-    audkenniSimNumber: string,
-    mobilePhoneNumber: string,
+    audkenniSimNumber?: string,
+    mobilePhoneNumber?: string,
   ): boolean {
     if (!audkenniSimNumber || !mobilePhoneNumber) {
       return false
@@ -552,8 +552,8 @@ export class UserProfileService {
       email: userProfile.email,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
-      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
-      emailVerified: userProfile.emailVerified,
+      mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
+      emailVerified: userProfile.emailVerified ?? false,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge(userProfile),
       emailNotifications: userProfile.emailNotifications,
@@ -562,15 +562,22 @@ export class UserProfileService {
       isRestricted: false,
     }
 
-    if ((this.config.migrationDate ?? new Date()) > userProfile.lastNudge) {
+    if (
+      !userProfile.lastNudge ||
+      (this.config.migrationDate ?? new Date()) > userProfile.lastNudge
+    ) {
       filteredUserProfile = {
         ...filteredUserProfile,
         email: isFirstParty ? userProfile.email : null,
         mobilePhoneNumber: isFirstParty ? userProfile.mobilePhoneNumber : null,
-        emailVerified: isFirstParty ? userProfile.emailVerified : false,
-        mobilePhoneNumberVerified: isFirstParty
-          ? userProfile.mobilePhoneNumberVerified
-          : false,
+        emailVerified:
+          isFirstParty && userProfile.emailVerified
+            ? userProfile.emailVerified
+            : false,
+        mobilePhoneNumberVerified:
+          isFirstParty && userProfile.mobilePhoneNumberVerified
+            ? userProfile.mobilePhoneNumberVerified
+            : false,
         isRestricted: true,
       }
     }

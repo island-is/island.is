@@ -4,13 +4,13 @@ const devConfig = {
   smsOptions: {
     url: 'https://smsapi.devnova.is',
     username: 'IslandIs_User_Development',
-    password: process.env.NOVA_PASSWORD,
+    password: process.env.NOVA_PASSWORD ?? '',
     acceptUnauthorized: true,
   },
   islykillConfig: {
-    cert: process.env.ISLYKILL_CERT,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    cert: process.env.ISLYKILL_CERT ?? '',
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
   },
   emailOptions: {
     useTestAccount: true,
@@ -31,20 +31,20 @@ const prodConfig = {
   production: true,
   port: 3333,
   smsOptions: {
-    url: process.env.NOVA_URL,
-    username: process.env.NOVA_USERNAME,
-    password: process.env.NOVA_PASSWORD,
+    url: process.env.NOVA_URL ?? '',
+    username: process.env.NOVA_USERNAME ?? '',
+    password: process.env.NOVA_PASSWORD ?? '',
     acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
   },
   islykillConfig: {
-    cert: process.env.ISLYKILL_CERT,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
+    cert: process.env.ISLYKILL_CERT ?? '',
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
   },
   emailOptions: {
     useTestAccount: false,
     options: {
-      region: process.env.EMAIL_REGION,
+      region: process.env.EMAIL_REGION ?? '',
     },
   },
   audit: {
@@ -53,7 +53,7 @@ const prodConfig = {
     serviceName: 'services-user-profile',
   },
   auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
     audience: ['@island.is', '@admin.island.is'],
   },
 }

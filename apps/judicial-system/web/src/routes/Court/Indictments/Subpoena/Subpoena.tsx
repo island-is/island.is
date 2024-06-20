@@ -18,7 +18,10 @@ import {
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  IndictmentDecision,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
@@ -40,8 +43,18 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
   const { sendNotification } = useCase()
 
+  const isPostponed =
+    workingCase.indictmentDecision ===
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
+    workingCase.indictmentDecision === IndictmentDecision.POSTPONING
+
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
+      if (isPostponed) {
+        router.push(`${destination}/${workingCase.id}`)
+        return
+      }
+
       await sendCourtDateToServer()
 
       if (
@@ -57,6 +70,7 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
       }
     },
     [
+      isPostponed,
       sendCourtDateToServer,
       workingCase.notifications,
       workingCase.id,
@@ -65,9 +79,6 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate?.date)
-  const isPostponed = Boolean(
-    workingCase.courtDate?.date || workingCase.postponedIndefinitelyExplanation,
-  )
 
   return (
     <PageLayout
@@ -100,13 +111,7 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() => {
-            if (isPostponed) {
-              router.push(
-                `${constants.INDICTMENTS_DEFENDER_ROUTE}/${workingCase.id}`,
-              )
-            } else {
-              handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
-            }
+            handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           nextButtonText={
             isPostponed ? undefined : formatMessage(strings.nextButtonText)

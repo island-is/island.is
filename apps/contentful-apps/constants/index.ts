@@ -5,3 +5,8 @@ export const DEV_WEB_BASE_URL = 'https://beta.dev01.devland.is'
 
 export const TITLE_SEARCH_POSTFIX = '--title-search'
 export const SLUGIFIED_POSTFIX = '--slugified'
+
+export const CUSTOM_SLUGIFY_REPLACEMENTS: ReadonlyArray<[string, string]> = [
+  ['ö', 'o'],
+  ['þ', 'th'],
+]

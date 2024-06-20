@@ -22,7 +22,8 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { isJSON, isJWT } from 'class-validator'
-
+import { Cache } from 'cache-manager'
+import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import { UserLicensesResponse } from './dto/UserLicensesResponse.dto'
@@ -33,8 +34,8 @@ import {
 } from './dto/VerifyLicenseBarcodeResult.dto'
 import {
   GenericLicenseFetchResult,
+  GenericLicenseLabels,
   GenericLicenseMapper,
-  GenericLicenseOrganizationSlug,
   GenericLicenseType,
   GenericLicenseTypeType,
   GenericLicenseUserdata,
@@ -61,9 +62,15 @@ export type GetGenericLicenseOptions = {
 }
 
 const { randomUUID } = new ShortUniqueId({ length: 16 })
+
 const COMMON_VERIFY_ERROR = {
   valid: false,
   error: VerifyLicenseBarcodeError.ERROR,
+}
+
+type Namespace = {
+  namespace: string
+  fields?: string
 }
 
 @Injectable()
@@ -73,19 +80,12 @@ export class LicenseServiceService {
     private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
     private readonly cmsContentfulService: CmsContentfulService,
-
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
     ) => Promise<GenericLicenseMapper | null>,
   ) {}
-
-  private async getOrganization(
-    slug: GenericLicenseOrganizationSlug,
-    locale: Locale,
-  ) {
-    return this.cmsContentfulService.getOrganization(slug, locale)
-  }
 
   /**
    * Maps the generic license type to the actual license type used by the license clients
@@ -103,15 +103,27 @@ export class LicenseServiceService {
       ? GenericLicenseType.DriversLicense
       : (type as unknown as GenericLicenseType)
 
-  private async getLicenseLabels(locale: Locale) {
-    const licenseLabels = await this.cmsContentfulService.getNamespace(
-      'Licenses',
-      locale,
-    )
+  private getLicenseLabels = async (
+    locale: Locale,
+  ): Promise<GenericLicenseLabels> => {
+    const cacheKey = `namespace-licenses-${locale}`
+    const namespace = await this.cacheManager.get<Namespace | null>(cacheKey)
+
+    let licenseNamespace: Namespace | null
+    if (!namespace) {
+      const result = await this.cmsContentfulService.getNamespace(
+        'Licenses',
+        locale,
+      )
+      await this.cacheManager.set(cacheKey, result)
+      licenseNamespace = result
+    } else {
+      licenseNamespace = namespace
+    }
 
     return {
-      labels: licenseLabels?.fields
-        ? JSON.parse(licenseLabels?.fields)
+      labels: licenseNamespace?.fields
+        ? JSON.parse(licenseNamespace.fields)
         : undefined,
     }
   }
@@ -150,6 +162,7 @@ export class LicenseServiceService {
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
   ): Promise<UserLicensesResponse> {
+    const labels = await this.getLicenseLabels(locale)
     const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
         return null
@@ -160,7 +173,7 @@ export class LicenseServiceService {
       }
 
       if (!onlyList) {
-        return this.getLicensesOfType(user, locale, license.type)
+        return this.getLicensesOfType(user, locale, license.type, labels)
       }
 
       return null
@@ -186,6 +199,8 @@ export class LicenseServiceService {
     locale: Locale,
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
   ): Promise<GenericUserLicense[]> {
+    const licenseLabels = await this.getLicenseLabels(locale)
+
     const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
         return null
@@ -196,7 +211,7 @@ export class LicenseServiceService {
       }
 
       if (!onlyList) {
-        return this.getLicensesOfType(user, locale, license.type)
+        return this.getLicensesOfType(user, locale, license.type, licenseLabels)
       }
 
       return null
@@ -219,6 +234,7 @@ export class LicenseServiceService {
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
+    labels?: GenericLicenseLabels,
   ): Promise<Array<GenericUserLicense> | null> {
     const licenseTypeDefinition = AVAILABLE_LICENSES.find(
       (i) => i.type === licenseType,
@@ -236,10 +252,6 @@ export class LicenseServiceService {
       return null
     }
 
-    const orgData = licenseTypeDefinition.orgSlug
-      ? await this.getOrganization(licenseTypeDefinition.orgSlug, locale)
-      : undefined
-    const licenseLabels = await this.getLicenseLabels(locale)
     const licenseRes = await this.fetchLicenses(user, licenseService)
 
     const mapper = await this.licenseMapperFactory(licenseType)
@@ -253,7 +265,7 @@ export class LicenseServiceService {
 
     const licensesPayload =
       licenseRes.fetch.status !== GenericUserLicenseFetchStatus.Error
-        ? mapper.parsePayload(licenseRes.data, locale, licenseLabels)
+        ? mapper.parsePayload(licenseRes.data, locale, labels)
         : []
 
     const mappedLicenses = licensesPayload.map((lp) => {
@@ -281,8 +293,6 @@ export class LicenseServiceService {
           ...licenseTypeDefinition,
           status: licenseUserData.status,
           pkpassStatus: licenseUserData.pkpassStatus,
-          title: orgData?.title,
-          logo: orgData?.logo?.url,
         },
         fetch: {
           ...licenseRes.fetch,
@@ -304,8 +314,6 @@ export class LicenseServiceService {
             ...licenseTypeDefinition,
             status: GenericUserLicenseStatus.Unknown,
             pkpassStatus: GenericUserLicenseStatus.Unknown,
-            title: orgData?.title,
-            logo: orgData?.logo?.url,
           },
           fetch: {
             ...licenseRes.fetch,
@@ -323,8 +331,10 @@ export class LicenseServiceService {
     licenseType: GenericLicenseType,
     licenseId?: string,
   ): Promise<GenericUserLicense | null> {
+    const labels = await this.getLicenseLabels(locale)
+
     const licensesOfType =
-      (await this.getLicensesOfType(user, locale, licenseType)) ?? []
+      (await this.getLicensesOfType(user, locale, licenseType, labels)) ?? []
 
     if (!licenseId || licenseId === DEFAULT_LICENSE_ID) {
       return licensesOfType[0] ?? null
@@ -352,7 +362,6 @@ export class LicenseServiceService {
 
   async generatePkPassUrl(
     user: User,
-    locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<string> {
     const mappedLicenseType = this.mapLicenseType(licenseType)
@@ -411,7 +420,6 @@ export class LicenseServiceService {
 
   async generatePkPassQRCode(
     user: User,
-    locale: Locale,
     licenseType: GenericLicenseType,
   ): Promise<string> {
     const mappedLicenseType = this.mapLicenseType(licenseType)
