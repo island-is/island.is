@@ -31,6 +31,11 @@ import { VerifyLicenseBarcodeInput } from './dto/VerifyLicenseBarcodeInput'
 import { VerifyLicenseBarcodeResult } from './dto/VerifyLicenseBarcodeResult.dto'
 import { VerifyPkPassInput } from './dto/VerifyPkPass.input'
 import { LicenseServiceService } from './licenseService.service'
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
 import { LicenseCollection } from './dto/GenericLicenseCollection.dto'
 import { LicenseError } from './dto/GenericLicenseError.dto'
 import { GenericLicense } from './dto/GenericLicense.dto'
@@ -41,6 +46,11 @@ import {
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
+<<<<<<< Updated upstream
+=======
+import { GenericLicenseProvider } from './dto/GenericLicenseProvider.dto'
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
@@ -49,6 +59,11 @@ import { Loader } from '@island.is/nest/dataloader'
 export class LicenseServiceResolver {
   constructor(private readonly licenseServiceService: LicenseServiceService) {}
 
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
   @Query(() => LicenseCollection)
   @Audit()
   async genericLicenseCollection(
@@ -68,14 +83,56 @@ export class LicenseServiceResolver {
         onlyList: input?.onlyList,
       },
     )
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
     return {
       licenses,
     }
   }
+<<<<<<< Updated upstream
 
   @ResolveField('providerName', () => String, {
     nullable: true,
+=======
+  @ResolveField('providerName', () => String)
+  async resolveProviderName(
+    @Parent() license: GenericLicenseProvider,
+    @Loader(OrganizationTitleByReferenceIdLoader)
+    organizationTitleLoader: OrganizationTitleByReferenceIdDataLoader,
+  ): Promise<string> {
+    if (!license.referenceId) {
+      return ''
+    }
+
+    const title: string | null = await organizationTitleLoader.load(
+      license.referenceId,
+    )
+
+    return title ?? ''
+  }
+
+  @ResolveField('providerLogo', () => String)
+  async resolveProviderLogo(
+    @Parent() license: GenericLicenseProvider,
+    @Loader(OrganizationLogoByReferenceIdLoader)
+    organizationLogoLoader: OrganizationLogoByReferenceIdDataLoader,
+  ): Promise<string> {
+    if (!license.referenceId) {
+      return ''
+    }
+
+    const logo: string | null = await organizationLogoLoader.load(
+      license.referenceId,
+    )
+    return logo ?? ''
+  }
+
+>>>>>>> Stashed changes
+  @Query(() => [GenericUserLicense], {
+    deprecationReason: 'Use genericUserLicenses instead',
+>>>>>>> Stashed changes
   })
   async resolveProviderName(
     @Parent() license: GenericLicense,

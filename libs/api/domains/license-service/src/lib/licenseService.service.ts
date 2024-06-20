@@ -5,7 +5,6 @@ import {
   LicenseType,
   LicenseVerifyExtraDataResult,
 } from '@island.is/clients/license-client'
-import { CmsContentfulService } from '@island.is/cms'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -21,8 +20,6 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 import { isJSON, isJWT } from 'class-validator'
-import { Cache } from 'cache-manager'
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import {
@@ -31,7 +28,14 @@ import {
   VerifyLicenseBarcodeType,
 } from './dto/VerifyLicenseBarcodeResult.dto'
 import {
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+  GenericLicenseFetchResult,
+>>>>>>> Stashed changes
   GenericLicenseLabels,
+=======
+>>>>>>> Stashed changes
   GenericLicenseMapper,
   GenericLicenseType,
   GenericLicenseTypeType,
@@ -48,8 +52,15 @@ import {
 } from './licenseService.constants'
 import { CreateBarcodeResult } from './dto/CreateBarcodeResult.dto'
 import { isDefined } from '@island.is/shared/utils'
+<<<<<<< Updated upstream
 import { LicenseError } from './dto/GenericLicenseError.dto'
 import { CmsTranslationsService } from '@island.is/cms-translations'
+=======
+<<<<<<< Updated upstream
+=======
+import { LicenseError } from './dto/GenericLicenseError.dto'
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
 const LOG_CATEGORY = 'license-service'
 
@@ -67,20 +78,18 @@ const COMMON_VERIFY_ERROR = {
   error: VerifyLicenseBarcodeError.ERROR,
 }
 
-type Namespace = {
-  namespace: string
-  fields?: string
-}
-
 @Injectable()
 export class LicenseServiceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
+<<<<<<< Updated upstream
     private readonly cmsContentfulService: CmsContentfulService,
     private readonly cmsTranslationsService: CmsTranslationsService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
+=======
+>>>>>>> Stashed changes
     @Inject(LICENSE_MAPPER_FACTORY)
     private readonly licenseMapperFactory: (
       type: GenericLicenseType,
@@ -103,6 +112,7 @@ export class LicenseServiceService {
       ? GenericLicenseType.DriversLicense
       : (type as unknown as GenericLicenseType)
 
+<<<<<<< Updated upstream
   private getLicenseLabels = async (
     locale: Locale,
   ): Promise<GenericLicenseLabels> => {
@@ -134,6 +144,13 @@ export class LicenseServiceService {
     { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
   ): Promise<Array<LicenseError | GenericUserLicense>> {
     const labels = await this.getLicenseLabels(locale)
+=======
+  async getLicenseCollection(
+    user: User,
+    locale: Locale,
+    { includedTypes, excludedTypes, onlyList }: GetGenericLicenseOptions = {},
+  ): Promise<Array<LicenseError | GenericUserLicense>> {
+>>>>>>> Stashed changes
     const fetchPromises = AVAILABLE_LICENSES.map(async (license) => {
       if (excludedTypes && excludedTypes.indexOf(license.type) >= 0) {
         return null
@@ -144,7 +161,7 @@ export class LicenseServiceService {
       }
 
       if (!onlyList) {
-        return this.getLicensesOfType(user, locale, license.type, labels)
+        return this.getLicensesOfType(user, locale, license.type)
       }
 
       return null
@@ -166,6 +183,8 @@ export class LicenseServiceService {
       }
     }
 
+    this.logger.debug('licenses', licenses)
+
     return licenses
   }
 
@@ -173,8 +192,16 @@ export class LicenseServiceService {
     user: User,
     locale: Locale,
     licenseType: GenericLicenseType,
+<<<<<<< Updated upstream
     labels?: GenericLicenseLabels,
+<<<<<<< Updated upstream
   ): Promise<LicenseTypeFetchResponse | null> {
+=======
+  ): Promise<Array<GenericUserLicense> | null> {
+=======
+  ): Promise<LicenseTypeFetchResponse | null> {
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
     const licenseTypeDefinition = AVAILABLE_LICENSES.find(
       (i) => i.type === licenseType,
     )
@@ -214,11 +241,25 @@ export class LicenseServiceService {
       return null
     }
 
+<<<<<<< Updated upstream
     const licensesPayload = mapper.parsePayload(
       licensesFetchResponse.data,
       locale,
       labels,
     )
+=======
+<<<<<<< Updated upstream
+    const licensesPayload =
+      licenseRes.fetch.status !== GenericUserLicenseFetchStatus.Error
+        ? mapper.parsePayload(licenseRes.data, locale, labels)
+        : []
+=======
+    const licensesPayload = await mapper.parsePayload(
+      licensesFetchResponse.data,
+      locale,
+    )
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     const mappedLicenses: Array<GenericUserLicense> = licensesPayload.map(
       (lp) => {
@@ -227,10 +268,18 @@ export class LicenseServiceService {
           pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
         }
 
+<<<<<<< Updated upstream
         if (lp) {
           licenseUserData.pkpassStatus = client.clientSupportsPkPass
             ? (client.licenseIsValidForPkPass?.(
               lp.payload.rawData,
+=======
+<<<<<<< Updated upstream
+      if (lp) {
+        licenseUserData.pkpassStatus = licenseService.clientSupportsPkPass
+          ? (licenseService.licenseIsValidForPkPass?.(
+              lp.rawData,
+>>>>>>> Stashed changes
               user,
             ) as unknown as GenericUserLicensePkPassStatus) ??
             GenericUserLicensePkPassStatus.Unknown
@@ -242,14 +291,47 @@ export class LicenseServiceService {
 
         const name = labels[]
 
+<<<<<<< Updated upstream
         return {
+=======
+    return (
+      mappedLicenses ?? [
+        {
+=======
+        if (lp) {
+          licenseUserData.pkpassStatus = client.clientSupportsPkPass
+            ? (client.licenseIsValidForPkPass?.(
+                lp.payload.rawData,
+                user,
+              ) as unknown as GenericUserLicensePkPassStatus) ??
+              GenericUserLicensePkPassStatus.Unknown
+            : GenericUserLicensePkPassStatus.NotAvailable
+          licenseUserData.status = GenericUserLicenseStatus.HasLicense
+        } else {
+          licenseUserData.status = GenericUserLicenseStatus.NotAvailable
+        }
+
+        return {
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
           nationalId: user.nationalId,
           isOwnerChildOfUser: lp.type === 'child',
           license: {
             ...licenseTypeDefinition,
+<<<<<<< Updated upstream
             status: licenseUserData.status,
             pkpassStatus: licenseUserData.pkpassStatus,
             name: lp.
+=======
+<<<<<<< Updated upstream
+            status: GenericUserLicenseStatus.Unknown,
+            pkpassStatus: GenericUserLicenseStatus.Unknown,
+=======
+            status: licenseUserData.status,
+            pkpassStatus: licenseUserData.pkpassStatus,
+            name: 'binbong',
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
           },
           payload: {
             ...lp.payload,
@@ -275,14 +357,27 @@ export class LicenseServiceService {
     locale: Locale,
     licenseType: GenericLicenseType,
     licenseId?: string,
+<<<<<<< Updated upstream
   ): Promise<GenericUserLicense | LicenseError | null> {
     const labels = await this.getLicenseLabels(locale)
+=======
+<<<<<<< Updated upstream
+  ): Promise<GenericUserLicense | null> {
+    const labels = await this.getLicenseLabels(locale)
+=======
+  ): Promise<GenericUserLicense | LicenseError | null> {
+>>>>>>> Stashed changes
     const licensesOfType = await this.getLicensesOfType(
       user,
       locale,
       licenseType,
+<<<<<<< Updated upstream
       labels,
     )
+=======
+    )
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
     if (!licensesOfType) {
       return null

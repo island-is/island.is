@@ -5,18 +5,30 @@ import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
+<<<<<<< Updated upstream
   GenericLicenseLabels,
+<<<<<<< Updated upstream
   GenericLicenseMappedPayloadResponse,
+=======
+=======
+  GenericLicenseMappedPayloadResponse,
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   GenericLicenseMapper,
 } from '../licenceService.type'
-import { i18n } from '../utils/translations'
 import { Injectable } from '@nestjs/common'
+import { IntlService } from '@island.is/cms-translations'
+import { m } from '../messages'
+
+export const LICENSE_NAMESPACE = 'api.license-service'
 
 @Injectable()
 export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
-  parsePayload(
+  constructor(private readonly intlService: IntlService) {}
+  async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
+<<<<<<< Updated upstream
     labels?: GenericLicenseLabels,
   ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
@@ -24,28 +36,61 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
     const typedPayload = payload as Array<OrorkuSkirteini>
 
     const label = labels?.labels
+<<<<<<< Updated upstream
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
+=======
+    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
+      (t) => {
+=======
+  ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
+    if (!payload) return Promise.resolve([])
+
+    const typedPayload = payload as Array<OrorkuSkirteini>
+
+    const { formatMessage } = await this.intlService.useIntl(
+      [LICENSE_NAMESPACE],
+      locale,
+    )
+
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         const data: Array<GenericLicenseDataField> = [
           {
             type: GenericLicenseDataFieldType.Value,
-            name: 'Grunnupplýsingar örorkuskírteinis',
-            label: label ? label['fullName'] : i18n.fullName[locale],
+            name: formatMessage(m.basicInfoDisabilityLicense),
+            label: formatMessage(m.fullName),
             value: t.nafn ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: label ? label['publisher'] : i18n.publisher[locale],
+            label: formatMessage(m.publisher),
             value: 'Tryggingastofnun',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: label ? label['validTo'] : i18n.validTo[locale],
+            label: formatMessage(m.validTo),
             value: t.gildirtil?.toISOString() ?? '',
           },
         ]
 
         return {
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+          data,
+          rawData: JSON.stringify(t),
+          metadata: {
+            licenseNumber: t.kennitala?.toString() ?? '',
+            licenseId: DEFAULT_LICENSE_ID,
+            expired: t.gildirtil
+              ? !isAfter(new Date(t.gildirtil), new Date())
+              : null,
+=======
+          licenseName: formatMessage(m.disabilityCard),
+>>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
@@ -57,6 +102,10 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
                 ? !isAfter(new Date(t.gildirtil), new Date())
                 : null,
             },
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
           },
         }
       })

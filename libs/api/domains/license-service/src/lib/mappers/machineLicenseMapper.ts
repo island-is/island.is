@@ -6,17 +6,31 @@ import {
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
+<<<<<<< Updated upstream
   GenericLicenseLabels,
+<<<<<<< Updated upstream
+=======
+  GenericUserLicensePayload,
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMapper,
   GenericLicenseMappedPayloadResponse,
 } from '../licenceService.type'
-import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
-import { getLabel } from '../utils/translations'
+import {
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
+import { m } from '../messages'
+import { FormatMessage, IntlService } from '@island.is/cms-translations'
+
 @Injectable()
 export class MachineLicensePayloadMapper implements GenericLicenseMapper {
+  constructor(private readonly intlService: IntlService) {}
+
   private checkLicenseExpirationDate(license: VinnuvelaDto) {
     return license.vinnuvelaRettindi
       ? license.vinnuvelaRettindi
@@ -31,15 +45,24 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
       : null
   }
 
-  parsePayload(
+  async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
+<<<<<<< Updated upstream
     labels?: GenericLicenseLabels,
   ): Array<GenericLicenseMappedPayloadResponse> {
     if (!payload) return []
+=======
+  ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
+    if (!payload) return Promise.resolve([])
+>>>>>>> Stashed changes
 
     const typedPayload = payload as Array<VinnuvelaDto>
-    const label = labels?.labels
+
+    const { formatMessage } = await this.intlService.useIntl(
+      [LICENSE_NAMESPACE],
+      locale,
+    )
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
@@ -47,39 +70,39 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
 
         const data: Array<GenericLicenseDataField> = [
           {
-            name: getLabel('basicInfoLicense', locale, label),
+            name: formatMessage(m.basicInfoLicense),
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('licenseNumber', locale, label),
+            label: formatMessage(m.licenseNumber),
             value: t.skirteinisNumer?.toString(),
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('fullName', locale, label),
+            label: formatMessage(m.fullName),
             value: t?.fulltNafn ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('placeOfIssue', locale, label),
+            label: formatMessage(m.placeOfIssue),
             value: t.utgafuStadur ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('firstPublishedDate', locale, label),
+            label: formatMessage(m.firstPublishedDate),
             value: t.fyrstiUtgafuDagur?.toString(),
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('validTo', locale, label),
-            value: getLabel('seeRights', locale, label),
+            label: formatMessage(m.validTo),
+            value: formatMessage(m.seeRights),
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('drivingLicenseNumber', locale, label),
+            label: formatMessage(m.drivingLicenseNumber),
             value: t.okuskirteinisNumer ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Group,
-            label: getLabel('classesOfRights', locale, label),
+            label: formatMessage(m.classesOfRights),
             fields: (t.vinnuvelaRettindi ?? [])
               .filter((field) => field.kenna || field.stjorna)
               .map((field) => ({
@@ -87,12 +110,24 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
                 name: field.flokkur ?? '',
                 label: field.fulltHeiti ?? field.stuttHeiti ?? '',
                 description: field.fulltHeiti ?? field.stuttHeiti ?? '',
-                fields: this.parseVvrRights(field, locale, labels),
+                fields: this.parseVvrRights(field, formatMessage),
               })),
           },
         ]
 
         return {
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+          data,
+          rawData: JSON.stringify(t),
+          metadata: {
+            licenseNumber: t.skirteinisNumer?.toString() ?? '',
+            licenseId: DEFAULT_LICENSE_ID,
+            expired: expired,
+=======
+          licenseName: formatMessage(m.heavyMachineryLicense),
+>>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
@@ -102,6 +137,10 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
               licenseId: DEFAULT_LICENSE_ID,
               expired: expired,
             },
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
           },
         }
       })
@@ -110,22 +149,20 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
 
   parseVvrRights(
     rights: VinnuvelaRettindiDto,
-    locale: Locale = 'is',
-    labels?: GenericLicenseLabels,
+    formatMessage: FormatMessage,
   ): Array<GenericLicenseDataField> | undefined {
     const fields = new Array<GenericLicenseDataField>()
-    const label = labels?.labels
     if (rights.stjorna) {
       fields.push({
         type: GenericLicenseDataFieldType.Value,
-        label: getLabel('control', locale, label),
+        label: formatMessage(m.control),
         value: rights.stjorna,
       })
     }
     if (rights.kenna) {
       fields.push({
         type: GenericLicenseDataFieldType.Value,
-        label: getLabel('teach', locale, label),
+        label: formatMessage(m.teach),
         value: rights.kenna,
       })
     }

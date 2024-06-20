@@ -9,6 +9,8 @@ export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
 
 export const DEFAULT_LICENSE_ID = 'default'
 
+export const LICENSE_NAMESPACE = 'sp.license'
+
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,

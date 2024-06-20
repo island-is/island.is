@@ -99,6 +99,11 @@ export const m = defineMessages({
     id: 'sp.license:ehic',
     defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
+<<<<<<< Updated upstream
+=======
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
   name: {
     id: 'sp.license:name',
     defaultMessage: 'Heiti',
@@ -115,10 +120,13 @@ export const m = defineMessages({
     id: 'sp.license:teach',
     defaultMessage: 'Kenna',
   },
+<<<<<<< Updated upstream
   number: {
     id: 'sp.license:number',
     defaultMessage: 'Númer',
   },
+=======
+>>>>>>> Stashed changes
   caliber: {
     id: 'sp.license:caliber',
     defaultMessage: 'Hlaupvídd',
@@ -251,6 +259,10 @@ export const m = defineMessages({
     id: 'sp.license:collector-license-valid-to',
     defaultMessage: 'Safnaraskírteini gildir til',
   },
+<<<<<<< Updated upstream
+=======
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
   ehicDescription: {
     id: 'sp.license:ehic-description',
     defaultMessage:
@@ -295,10 +307,6 @@ export const m = defineMessages({
   sendLicenseToPhone: {
     id: 'sp.license:send-license-to-phone',
     defaultMessage: 'Senda skírteini í síma',
-  },
-  renewDrivingLicense: {
-    id: 'sp.license:renew-license',
-    defaultMessage: 'Endurnýja ökuskírteini',
   },
   seeDetails: {
     id: 'sp.license:see-details',
@@ -487,5 +495,9 @@ export const m = defineMessages({
   applyPassportUrl: {
     id: 'sp.license:url-apply-passport',
     defaultMessage: 'https://island.is/vegabref',
+  },
+  aoshTitle: {
+    id: 'sp.license:aosh-title',
+    defaultMessage: 'Vinnueftirlitið',
   },
 })
