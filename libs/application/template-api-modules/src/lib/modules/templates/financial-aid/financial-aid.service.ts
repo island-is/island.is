@@ -157,6 +157,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
       .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
       .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
+      .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
 
     const newApplication = {
       name: externalData.nationalRegistry.data.fullName,

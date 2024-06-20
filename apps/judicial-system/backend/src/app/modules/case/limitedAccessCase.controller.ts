@@ -60,7 +60,7 @@ import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('limited access cases')
@@ -68,7 +68,7 @@ export class LimitedAccessCaseController {
   constructor(
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
