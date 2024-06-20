@@ -560,16 +560,14 @@ export class CmsElasticsearchService {
     }
   }
 
-  async getTeamMembers(input: GetTeamMembersInput) {
+  async getTeamMembers(
+    input: GetTeamMembersInput,
+  ): Promise<TeamMemberResponse> {
     const response = await this.getListItems({
       ...input,
       type: 'webTeamMember',
       listId: input.teamListId,
     })
-
-    if (!response) {
-      return response
-    }
 
     return {
       ...response,
@@ -585,10 +583,6 @@ export class CmsElasticsearchService {
       type: 'webGenericListItem',
       listId: input.genericListId,
     })
-
-    if (!response) {
-      return response
-    }
 
     return {
       ...response,

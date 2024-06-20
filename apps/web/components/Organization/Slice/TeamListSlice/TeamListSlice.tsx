@@ -1,6 +1,100 @@
+import { useState } from 'react'
+import flatten from 'lodash/flatten'
+import { useLazyQuery } from '@apollo/client'
+
 import { TeamList, type TeamListProps } from '@island.is/island-ui/contentful'
-import { GenericList } from '@island.is/web/components'
-import type { GenericTag } from '@island.is/web/graphql/schema'
+import { GenericList, GenericListWrapper } from '@island.is/web/components'
+import type { GenericTag, Query } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+import { GET_TEAM_MEMBERS_QUERY } from '@island.is/web/screens/queries/TeamList'
+
+const ITEMS_PER_PAGE = 10
+
+interface TeamMemberListWrapperProps {
+  id: string
+  searchInputPlaceholder?: string | null
+  itemType?: string | null
+  filterTags?: GenericTag[] | null
+}
+
+export const TeamMemberListWrapper = ({
+  id,
+  filterTags,
+  itemType,
+  searchInputPlaceholder,
+}: TeamMemberListWrapperProps) => {
+  const searchQueryId = `${id}q`
+  const pageQueryId = `${id}page`
+  const tagQueryId = `${id}tag`
+
+  const { activeLocale } = useI18n()
+
+  const [itemsResponse, setItemsResponse] = useState<null>(null)
+  const [errorOccurred, setErrorOccurred] = useState(false)
+
+  const [fetchListItems, { loading }] = useLazyQuery<Query>(
+    GET_TEAM_MEMBERS_QUERY,
+    {
+      onCompleted(data) {
+        const searchParams = new URLSearchParams(window.location.search)
+
+        const queryString = searchParams.get(searchQueryId) || ''
+        const pageQuery = searchParams.get(pageQueryId) || '1'
+        const tagQuery = searchParams.get(tagQueryId) || '{}'
+
+        const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
+
+        if (
+          // Make sure the response matches the request input
+          queryString === data?.getTeamMembers?.input?.queryString &&
+          pageQuery === data?.getTeamMembers?.input?.page?.toString() &&
+          tags.every((tag) =>
+            (data?.getTeamMembers?.input?.tags ?? []).includes(tag),
+          )
+        ) {
+          setItemsResponse(data.getTeamMembers)
+          setErrorOccurred(false)
+        }
+      },
+      onError(_) {
+        setErrorOccurred(true)
+      },
+    },
+  )
+
+  const totalItems = itemsResponse?.total ?? 0
+  const items = itemsResponse?.items ?? []
+
+  return (
+    <GenericList
+      filterTags={filterTags}
+      itemType={itemType}
+      searchInputPlaceholder={searchInputPlaceholder}
+      displayError={errorOccurred}
+      fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+        fetchListItems({
+          variables: {
+            input: {
+              teamListId: id,
+              size: ITEMS_PER_PAGE,
+              lang: activeLocale,
+              page: page,
+              queryString: searchValue,
+              tags,
+              tagGroups,
+            },
+          },
+        })
+      }}
+      items={items}
+      totalItems={totalItems}
+      loading={loading}
+      pageQueryId={pageQueryId}
+      searchQueryId={searchQueryId}
+      tagQueryId={tagQueryId}
+    />
+  )
+}
 
 interface TeamListSliceProps extends TeamListProps {
   id: string
@@ -13,26 +107,8 @@ export const TeamListSlice = ({
   filterTags,
   id,
 }: TeamListSliceProps) => {
-  // TODO: get team member data from graphql
-
-  // if (variant === 'accordion') {
-  //   return (
-  //     <GenericList
-  //       id={id}
-  //       filterTags={filterTags}
-  //       customItemRenderer={(items) => {
-  //         return (
-  //           <TeamList
-  //             teamMembers={items.map((item) => ({
-  //               name: item.title,
-  //             }))}
-  //             variant="accordion"
-  //           />
-  //         )
-  //       }}
-  //     />
-  //   )
-  // }
-
-  return <TeamList teamMembers={teamMembers} variant={variant} />
+  if (variant === 'accordion') {
+    return <GenericListWrapper id={id} filterTags={filterTags} />
+  }
+  return <TeamList teamMembers={teamMembers} variant="card" />
 }

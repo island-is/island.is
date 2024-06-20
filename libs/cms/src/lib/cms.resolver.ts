@@ -113,7 +113,6 @@ import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
 import { GenericListItemResponse } from './models/genericListItemResponse.model'
 import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
-import { GenericList } from './models/genericList.model'
 import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
 import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
 import { GenericListItem } from './models/genericListItem.model'
@@ -681,10 +680,10 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => GenericListItem, { nullable: true })
+  @Query(() => TeamMemberResponse, { nullable: true })
   getTeamMembers(
     @Args('input') input: GetTeamMembersInput,
-  ): Promise<TeamMemberResponse | null> {
+  ): Promise<TeamMemberResponse> {
     return this.cmsElasticsearchService.getTeamMembers(input)
   }
 }

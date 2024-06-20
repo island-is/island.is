@@ -10,7 +10,7 @@ import {
 } from '@island.is/island-ui/core'
 import {
   EmailSignup,
-  GenericList,
+  GenericListWrapper,
   RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
@@ -188,7 +188,7 @@ const renderSlice = (
       )
     case 'GenericList':
       return (
-        <GenericList
+        <GenericListWrapper
           id={slice.id}
           searchInputPlaceholder={
             (slice as GenericListSchema).searchInputPlaceholder
@@ -203,7 +203,7 @@ const renderSlice = (
           id={(slice as TeamList).id}
           teamMembers={(slice as TeamList).teamMembers}
           filterTags={(slice as TeamList).filterTags}
-          variant={(slice as TeamList).variant}
+          variant={(slice as TeamList).variant as 'card' | 'accordion'}
         />
       )
     default:

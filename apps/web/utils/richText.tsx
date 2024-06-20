@@ -25,7 +25,7 @@ import {
   DrivingInstructorList,
   EmailSignup,
   Form,
-  GenericList,
+  GenericListWrapper,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -191,7 +191,7 @@ const defaultRenderComponent = {
   ),
   Form: (slice: FormSchema) => <Form form={slice} />,
   GenericList: (slice: GenericListSchema) => (
-    <GenericList
+    <GenericListWrapper
       id={slice.id}
       searchInputPlaceholder={slice.searchInputPlaceholder}
       itemType={slice.itemType}
