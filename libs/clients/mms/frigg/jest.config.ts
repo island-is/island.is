@@ -2,7 +2,7 @@
 export default {
   displayName: 'clients-mms',
   preset: './jest.preset.js',
-  rootDir: '../../..',
+  rootDir: '../../../..',
   roots: [__dirname],
   globals: {},
   transform: {
