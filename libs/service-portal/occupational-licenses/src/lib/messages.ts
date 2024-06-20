@@ -155,4 +155,13 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:health-issuer',
     defaultMessage: 'Landlæknir',
   },
+  educationLicenseDigitalUnavailable: {
+    id: 'sp.occupational-licenses:education-license-digital-unavailable',
+    defaultMessage: 'Leyfisbréf óaðgengilegt',
+  },
+  educationLicenseDigitalUnavailableDescription: {
+    id: 'sp.occupational-licenses:education-license-digital-unavailable-description',
+    defaultMessage:
+      'Leyfisbréf gefin út fyrir 1. janúar 2020 eru ekki aðgengileg á island.is. Þurfir þú afrit af áður útgefnu leyfisbréfi getur þú sent póst til mennta- og barnamálaráðuneytisins á netfangið mrn@mrn.is. Afrit leyfisbréfa eru send í tölvupósti sem pdf. skjöl.',
+  },
 })

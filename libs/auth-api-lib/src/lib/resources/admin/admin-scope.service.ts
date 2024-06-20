@@ -25,9 +25,8 @@ import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from 'delegation'
 import { ApiScopeDelegationType } from '../models/api-scope-delegation-type.model'
-import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
 
 /**
  * This is a service that is used to access the admin scopes
@@ -41,8 +40,6 @@ export class AdminScopeService {
     private readonly apiScopeUserClaim: typeof ApiScopeUserClaim,
     @InjectModel(ApiScopeDelegationType)
     private readonly apiScopeDelegationType: typeof ApiScopeDelegationType,
-    @InjectModel(DelegationTypeModel)
-    private readonly delegationTypeModel: typeof DelegationTypeModel,
     private readonly adminTranslationService: AdminTranslationService,
     private readonly translationService: TranslationService,
     private sequelize: Sequelize,
