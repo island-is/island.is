@@ -5,11 +5,12 @@ import {
   Box,
   GridColumn,
   GridRow,
-  Inline,
   ProfileCard,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import type { Slice } from '../richTextRendering'
+import { richText } from '../RichTextRC/RichText'
 
 import * as styles from './TeamList.css'
 
@@ -21,6 +22,7 @@ export interface TeamListProps {
     name: string
     image?: { url: string }
     imageOnSelect?: { url: string } | null
+    intro?: Slice[] | null
   }[]
   variant?: 'card' | 'accordion'
 }
@@ -170,22 +172,26 @@ const TeamMemberAccordionList = ({
             }
             labelUse="div"
           >
-            <Inline space={1}>
-              <Box
-                paddingBottom={2}
-                onClick={() => updateSelectedIndex(index)}
-                onMouseOver={() => updateSelectedIndex(index)}
-                onMouseLeave={() => {
-                  // When the mouse leaves then we set the selected index to -1 if no other index got selected
-                  setSelectedIndex((prevIndex) => {
-                    if (prevIndex !== index) return prevIndex
-                    return -1
-                  })
-                }}
-              >
-                <img src={image} alt="" className={styles.teamMemberImage} />
-              </Box>
-            </Inline>
+            <GridRow rowGap={1}>
+              <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
+                <Box
+                  onClick={() => updateSelectedIndex(index)}
+                  onMouseOver={() => updateSelectedIndex(index)}
+                  onMouseLeave={() => {
+                    // When the mouse leaves then we set the selected index to -1 if no other index got selected
+                    setSelectedIndex((prevIndex) => {
+                      if (prevIndex !== index) return prevIndex
+                      return -1
+                    })
+                  }}
+                >
+                  <img src={image} alt="" className={styles.teamMemberImage} />
+                </Box>
+              </GridColumn>
+              <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
+                <Text as="div">{richText(member.intro ?? [])}</Text>
+              </GridColumn>
+            </GridRow>
           </AccordionItem>
         )
       })}

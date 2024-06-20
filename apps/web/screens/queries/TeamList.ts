@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { imageFields } from './fragments'
+import { htmlFields, imageFields } from './fragments'
 
 export const GET_TEAM_MEMBERS_QUERY = gql`
   query GetTeamMembers($input: GetTeamMembersInput!) {
@@ -20,8 +20,12 @@ export const GET_TEAM_MEMBERS_QUERY = gql`
         imageOnSelect {
           ...ImageFields
         }
+        intro {
+          ...HtmlFields
+        }
       }
     }
   }
   ${imageFields}
+  ${htmlFields}
 `
