@@ -23,7 +23,7 @@ import {
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
-import { mapToContentfulLocale, mapToLocale } from './utils'
+import { mapToContentfulLocale, mapToLocale, cleanString } from './utils'
 import {
   CmsService,
   GetTemplateByTemplateId,
@@ -55,9 +55,8 @@ export class NotificationsService {
     private readonly cmsService: CmsService,
   ) {}
 
-  private cleanString(str: string) {
-    return str.replace(/\s+/g, ' ').trim()
-  }
+  
+
   async getSenderOrganizationTitle(
     senderId: string,
     locale?: Locale,
@@ -74,7 +73,7 @@ export class NotificationsService {
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
-      item.title = this.cleanString(item.title)
+      item.title = cleanString(item.title)
       return item
     } else {
       this.logger.warn(`No org found for senderid: ${senderId}`)
@@ -122,6 +121,7 @@ export class NotificationsService {
         notification.args,
         template,
       )
+
 
       // Map to RenderedNotificationDto
       return {
