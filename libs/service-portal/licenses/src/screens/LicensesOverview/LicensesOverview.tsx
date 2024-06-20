@@ -27,12 +27,13 @@ export const LicensesOverviewV2 = () => {
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
   const [includedTypes, setIncludedTypes] = useState([
-    GenericLicenseType.DriversLicense,
     GenericLicenseType.AdrLicense,
-    GenericLicenseType.MachineLicense,
-    GenericLicenseType.FirearmLicense,
     GenericLicenseType.DisabilityLicense,
+    GenericLicenseType.DriversLicense,
     GenericLicenseType.Ehic,
+    GenericLicenseType.FirearmLicense,
+    GenericLicenseType.HuntingLicense,
+    GenericLicenseType.MachineLicense,
     GenericLicenseType.PCard,
     GenericLicenseType.Passport,
   ])
@@ -65,29 +66,35 @@ export const LicensesOverviewV2 = () => {
     }
   }, [data?.genericLicenseCollection?.licenses])
 
-  const generateLicense = (userLicense: GenericUserLicense, index: number) => (
-    <ActionCard
-      key={userLicense.payload?.metadata.licenseId ?? index}
-      image={{
-        type: 'image',
-        url: userLicense.license.provider.providerLogo ?? undefined,
-      }}
-      text={userLicense.payload?.metadata?.licenseNumberDisplay ?? ''}
-      heading={userLicense.payload?.metadata?.title ?? ''}
-      cta={{
-        label: formatMessage(m.seeDetails),
-        url: `${getPathFromType(userLicense.license.type)}/${
-          userLicense.payload?.metadata.licenseId
-        }`,
-        variant: 'text',
-      }}
-      tag={{
-        label: userLicense.payload?.metadata.displayTag?.text ?? '',
-        variant:
-          (userLicense.payload?.metadata.displayTag?.color as TagVariant) ?? '',
-      }}
-    />
-  )
+  const generateLicense = (userLicense: GenericUserLicense, index: number) => {
+    console.log(userLicense)
+    return (
+      <ActionCard
+        key={userLicense.payload?.metadata.licenseId ?? index}
+        image={{
+          type: 'image',
+          url: userLicense.license.provider.providerLogo ?? undefined,
+        }}
+        text={
+          userLicense.payload?.metadata?.licenseNumberDisplay ?? 'bengobango'
+        }
+        heading={userLicense.license.name ?? 'bejajbn'}
+        cta={{
+          label: formatMessage(m.seeDetails),
+          url: `${getPathFromType(userLicense.license.type)}/${
+            userLicense.payload?.metadata.licenseId
+          }`,
+          variant: 'text',
+        }}
+        tag={{
+          label: userLicense.payload?.metadata.displayTag?.text ?? '',
+          variant:
+            (userLicense.payload?.metadata.displayTag?.color as TagVariant) ??
+            '',
+        }}
+      />
+    )
+  }
 
   return (
     <>
@@ -102,7 +109,7 @@ export const LicensesOverviewV2 = () => {
           type="warning"
           title={formatMessage(m.errorFetchingLicenses)}
           message={formatMessage(m.errorFetchingLicensesDetail, {
-            arg: 'EVERYTHING',
+            arg: 'einhver skírtieni',
           })}
         />
       )}
@@ -150,9 +157,9 @@ export const LicensesOverviewV2 = () => {
           />
         </Box>
       ) : (
-        <Box component="li" marginBottom={3}>
+        <Box marginBottom={3}>
           {licenseCollection.licenses
-            .filter((license) => license.isOwnerChildOfUser)
+            .filter((license) => !license.isOwnerChildOfUser)
             .map((license, index) => generateLicense(license, index))}
         </Box>
       )}
