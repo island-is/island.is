@@ -1,8 +1,9 @@
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
   Accordion,
   AccordionItem,
   Box,
+  BoxProps,
   GridColumn,
   GridRow,
   ProfileCard,
@@ -28,81 +29,97 @@ export interface TeamListProps {
   variant?: 'card' | 'accordion'
 }
 
-export const TeamMemberCardList = ({
-  teamMembers,
-}: Omit<TeamListProps, 'variant'>) => {
-  const [selectedIndex, setSelectedIndex] = useState(-1)
+const loadedImageUrls = new Map<string, boolean>()
 
-  const [loadedImageUrls, setLoadedImageUrls] = useState<
-    Record<string, boolean>
-  >({})
+const HoverImageProvider = ({
+  member,
+  consumer,
+  boxProps,
+}: {
+  member: TeamListProps['teamMembers'][number]
+  consumer: (imageUrl: string) => React.ReactNode
+  boxProps?: BoxProps
+}) => {
+  const initialImageUrl = member.image?.url
+    ? `${member.image.url}${imagePostfix}`
+    : undefined
 
-  const updateSelectedIndex = (index: number) => {
-    setSelectedIndex(index)
+  const isMouseOver = useRef(false)
+  const [imageUrl, setImageUrl] = useState(initialImageUrl)
 
-    let selectedImageUrl = teamMembers[index]?.imageOnSelect?.url
-
-    if (!selectedImageUrl) {
+  const loadHoverImage = () => {
+    if (!member.imageOnSelect?.url) {
       return
     }
 
-    selectedImageUrl += imagePostfix
+    const hoverImageUrl = member.imageOnSelect.url
+    const imageHasBeenLoaded = loadedImageUrls.has(hoverImageUrl)
 
-    if (loadedImageUrls[selectedImageUrl] === true) return
-
-    const selectedImage = new Image()
-
-    selectedImage.onload = () => {
-      setLoadedImageUrls((prevState) => ({
-        ...prevState,
-        [selectedImageUrl]: true,
-      }))
+    if (imageHasBeenLoaded) {
+      setImageUrl(hoverImageUrl)
+    } else {
+      const image = new Image()
+      image.onload = () => {
+        loadedImageUrls.set(hoverImageUrl, true)
+        if (isMouseOver.current) {
+          setImageUrl(hoverImageUrl)
+        }
+      }
+      image.src = member.imageOnSelect.url
     }
-
-    selectedImage.src = selectedImageUrl
   }
 
   return (
+    <Box
+      {...boxProps}
+      onClick={() => {
+        isMouseOver.current = !isMouseOver.current
+        if (isMouseOver.current) {
+          loadHoverImage()
+        } else {
+          setImageUrl(initialImageUrl)
+        }
+      }}
+      onMouseOver={() => {
+        isMouseOver.current = true
+        loadHoverImage()
+      }}
+      onMouseLeave={() => {
+        isMouseOver.current = false
+        setImageUrl(initialImageUrl)
+      }}
+    >
+      {consumer(imageUrl)}
+    </Box>
+  )
+}
+
+export const TeamMemberCardList = ({
+  teamMembers,
+}: Pick<TeamListProps, 'teamMembers'>) => {
+  return (
     <GridRow>
       {teamMembers.map((member, index) => {
-        let image = member.image?.url
-          ? `${member.image.url}${imagePostfix}`
-          : undefined
-
-        if (selectedIndex === index && member.imageOnSelect?.url) {
-          const selectedImageUrl = `${member.imageOnSelect.url}${imagePostfix}`
-          const selectedImageHasLoaded = loadedImageUrls[selectedImageUrl]
-
-          if (selectedImageHasLoaded) {
-            image = selectedImageUrl
-          }
-        }
-
         return (
           <GridColumn
             span={['12/12', '6/12', '12/12', '6/12', '4/12']}
             key={index}
           >
-            <Box
-              paddingBottom={3}
-              height="full"
-              onClick={() => updateSelectedIndex(index)}
-              onMouseOver={() => updateSelectedIndex(index)}
-              onMouseLeave={() => {
-                // When the mouse leaves then we set the selected index to -1 if no other index got selected
-                setSelectedIndex((prevIndex) => {
-                  if (prevIndex !== index) return prevIndex
-                  return -1
-                })
+            <HoverImageProvider
+              boxProps={{
+                height: 'full',
+                paddingBottom: 3,
               }}
-            >
-              <ProfileCard
-                title={member.name}
-                description={member.title}
-                image={image}
-                heightFull
-              />
-            </Box>
+              member={member}
+              consumer={(imageUrl) => (
+                <ProfileCard
+                  title={member.name}
+                  description={member.title}
+                  image={imageUrl}
+                  heightFull
+                />
+              )}
+            />
           </GridColumn>
         )
       })}
@@ -112,55 +129,11 @@ export const TeamMemberCardList = ({
 
 const TeamMemberAccordionList = ({
   teamMembers,
-}: Omit<TeamListProps, 'variant'>) => {
-  const [selectedIndex, setSelectedIndex] = useState(-1)
-  const [loadedImageUrls, setLoadedImageUrls] = useState<
-    Record<string, boolean>
-  >({})
-
-  const updateSelectedIndex = (index: number) => {
-    setSelectedIndex(index)
-
-    let selectedImageUrl = teamMembers[index]?.imageOnSelect?.url
-
-    if (!selectedImageUrl) {
-      return
-    }
-
-    selectedImageUrl += imagePostfix
-
-    if (loadedImageUrls[selectedImageUrl] === true) return
-
-    const selectedImage = new Image()
-
-    selectedImage.onload = () => {
-      setLoadedImageUrls((prevState) => ({
-        ...prevState,
-        [selectedImageUrl]: true,
-      }))
-    }
-
-    selectedImage.src = selectedImageUrl
-  }
-
+}: Pick<TeamListProps, 'teamMembers'>) => {
   return (
     <Accordion>
-      {teamMembers.map((member, index) => {
-        let image = member.image?.url
-          ? `${member.image.url}${imagePostfix}`
-          : undefined
-
-        if (selectedIndex === index && member.imageOnSelect?.url) {
-          const selectedImageUrl = `${member.imageOnSelect.url}${imagePostfix}`
-          const selectedImageHasLoaded = loadedImageUrls[selectedImageUrl]
-
-          if (selectedImageHasLoaded) {
-            image = selectedImageUrl
-          }
-        }
-
+      {teamMembers.map((member) => {
         const id = `${member.name}-${member.title}`
-
         return (
           <AccordionItem
             key={id}
@@ -175,19 +148,16 @@ const TeamMemberAccordionList = ({
           >
             <GridRow rowGap={1}>
               <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
-                <Box
-                  onClick={() => updateSelectedIndex(index)}
-                  onMouseOver={() => updateSelectedIndex(index)}
-                  onMouseLeave={() => {
-                    // When the mouse leaves then we set the selected index to -1 if no other index got selected
-                    setSelectedIndex((prevIndex) => {
-                      if (prevIndex !== index) return prevIndex
-                      return -1
-                    })
-                  }}
-                >
-                  <img src={image} alt="" className={styles.teamMemberImage} />
-                </Box>
+                <HoverImageProvider
+                  member={member}
+                  consumer={(imageUrl) => (
+                    <img
+                      src={imageUrl}
+                      className={styles.teamMemberImage}
+                      alt=""
+                    />
+                  )}
+                />
               </GridColumn>
               <GridColumn span={['1/1', '1/1', '1/1', '1/1', '9/12']}>
                 <Text as="div">{richText(member.intro ?? [])}</Text>
@@ -201,10 +171,10 @@ const TeamMemberAccordionList = ({
 }
 
 export const TeamList = ({ teamMembers, variant = 'card' }: TeamListProps) => {
-  if (variant === 'card') {
-    return <TeamMemberCardList teamMembers={teamMembers} />
+  if (variant === 'accordion') {
+    return <TeamMemberAccordionList teamMembers={teamMembers} />
   }
-  return <TeamMemberAccordionList teamMembers={teamMembers} />
+  return <TeamMemberCardList teamMembers={teamMembers} />
 }
 
 export default TeamList
