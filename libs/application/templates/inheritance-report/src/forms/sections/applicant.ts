@@ -9,6 +9,7 @@ import { format as formatNationalId } from 'kennitala'
 import { removeCountryCode } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import { RelationEnum } from '../../types'
+import { PREPAID_INHERITANCE } from '../../lib/constants'
 
 export const applicant = buildSection({
   id: 'applicantsInformation',
@@ -20,15 +21,6 @@ export const applicant = buildSection({
       description: m.applicantsInfoSubtitle,
       children: [
         buildTextField({
-          id: 'applicant.name',
-          title: m.name,
-          readOnly: true,
-          width: 'half',
-          defaultValue: ({ externalData }: Application) => {
-            return externalData.nationalRegistry?.data.fullName
-          },
-        }),
-        buildTextField({
           id: 'applicant.nationalId',
           title: m.nationalId,
           readOnly: true,
@@ -37,6 +29,15 @@ export const applicant = buildSection({
             return formatNationalId(
               externalData.nationalRegistry?.data.nationalId,
             )
+          },
+        }),
+        buildTextField({
+          id: 'applicant.name',
+          title: m.name,
+          readOnly: true,
+          width: 'half',
+          defaultValue: ({ externalData }: Application) => {
+            return externalData.nationalRegistry?.data.fullName
           },
         }),
         buildTextField({
@@ -52,6 +53,7 @@ export const applicant = buildSection({
           id: 'applicant.phone',
           title: m.phone,
           width: 'half',
+          required: true,
           format: '###-####',
           defaultValue: (application: Application) => {
             const phone =
@@ -68,6 +70,7 @@ export const applicant = buildSection({
           id: 'applicant.email',
           title: m.email,
           width: 'half',
+          required: true,
           defaultValue: ({ externalData }: Application) => {
             const data = externalData.userProfile?.data as UserProfile
             return data?.email
@@ -77,6 +80,7 @@ export const applicant = buildSection({
           id: 'applicant.relation',
           title: m.relation,
           width: 'half',
+          required: true,
           options: [
             { label: m.heir, value: RelationEnum.HEIR },
             { label: m.representative, value: RelationEnum.REPRESENTATIVE },

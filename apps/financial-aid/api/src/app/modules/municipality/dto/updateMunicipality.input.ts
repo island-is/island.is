@@ -47,6 +47,10 @@ export class UpdateMunicipalityInput {
   readonly childrenAid?: ChildrenAid
 
   @Allow()
+  @Field({ nullable: true })
+  readonly decemberCompensation?: number
+
+  @Allow()
   @Field()
   readonly municipalityId!: string
 }

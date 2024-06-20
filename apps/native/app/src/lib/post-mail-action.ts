@@ -21,17 +21,18 @@ export async function toggleAction(
     mutation: PostMailActionMutationDocument,
     variables: {
       input: {
-        messageId,
+        documentIds: [messageId],
         action,
       },
     },
     refetchQueries: refetch ? [ListDocumentsDocument] : undefined,
     update(cache, { data }) {
       const id = cache.identify({
-        __typename: 'Document',
+        __typename: 'DocumentV2',
         id: messageId,
       })
-      const success = data?.postMailAction?.success
+
+      const success = data?.postMailActionV2?.success
       if (!success) {
         return
       }

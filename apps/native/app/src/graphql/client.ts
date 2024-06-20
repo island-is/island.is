@@ -157,17 +157,11 @@ const cache = new InMemoryCache({
     Query: {
       fields: {
         userNotifications: {
-          merge(existing, incoming) {
-            return {
-              ...existing,
-              ...incoming,
-              data: incoming.data || existing.data,
-            }
-          },
+          merge: true,
         },
       },
     },
-    Document: {
+    DocumentV2: {
       fields: {
         archived: {
           read(_value, { readField, variables }) {

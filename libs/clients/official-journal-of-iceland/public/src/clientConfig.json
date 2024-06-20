@@ -1,14 +1,15 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/api/v1/advert": {
+    "/api/v1/adverts/{id}": {
       "get": {
         "operationId": "JournalController_advert",
         "parameters": [
           {
             "name": "id",
             "required": true,
-            "in": "query",
+            "in": "path",
+            "description": "Advert ID.",
             "schema": { "type": "string" }
           }
         ],
@@ -17,7 +18,7 @@
             "description": "Advert by ID.",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/Advert" }
+                "schema": { "$ref": "#/components/schemas/GetAdvertResponse" }
               }
             }
           },
@@ -48,6 +49,13 @@
             "required": false,
             "in": "query",
             "description": "Page number to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Page size to return.",
             "schema": { "type": "number" }
           },
           {
@@ -113,6 +121,32 @@
         }
       }
     },
+    "/api/v1/departments/{id}": {
+      "get": {
+        "operationId": "JournalController_department",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Department ID.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Department by ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetDepartmentResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/departments": {
       "get": {
         "operationId": "JournalController_departments",
@@ -129,6 +163,13 @@
             "required": false,
             "in": "query",
             "description": "Page number to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
@@ -148,6 +189,32 @@
             "content": {
               "application/json": {
                 "schema": { "$ref": "#/components/schemas/ValidationResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/types/{id}": {
+      "get": {
+        "operationId": "JournalController_type",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Advert type ID.",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Advert type by ID.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetAdvertTypeResponse"
+                }
               }
             }
           }
@@ -177,6 +244,13 @@
             "required": false,
             "in": "query",
             "description": "Page number to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Number of items per page.",
             "schema": { "type": "number" }
           }
         ],
@@ -219,6 +293,13 @@
             "in": "query",
             "description": "Page number to return.",
             "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Page size number to return.",
+            "schema": { "type": "number" }
           }
         ],
         "responses": {
@@ -260,6 +341,13 @@
             "in": "query",
             "description": "Page number to return.",
             "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Page size number to return.",
+            "schema": { "type": "number" }
           }
         ],
         "responses": {
@@ -300,6 +388,13 @@
             "required": false,
             "in": "query",
             "description": "Page number to return.",
+            "schema": { "type": "number" }
+          },
+          {
+            "name": "pageSize",
+            "required": false,
+            "in": "query",
+            "description": "Page size number to return.",
             "schema": { "type": "number" }
           }
         ],
@@ -819,6 +914,16 @@
           "attachments"
         ]
       },
+      "GetAdvertResponse": {
+        "type": "object",
+        "properties": {
+          "advert": {
+            "description": "Advert",
+            "allOf": [{ "$ref": "#/components/schemas/Advert" }]
+          }
+        },
+        "required": ["advert"]
+      },
       "AdvertNotFound": {
         "type": "object",
         "properties": {
@@ -897,6 +1002,16 @@
         },
         "required": ["message", "statusCode"]
       },
+      "GetDepartmentResponse": {
+        "type": "object",
+        "properties": {
+          "department": {
+            "description": "The department that was found.",
+            "allOf": [{ "$ref": "#/components/schemas/Department" }]
+          }
+        },
+        "required": ["department"]
+      },
       "GetDepartmentsResponse": {
         "type": "object",
         "properties": {
@@ -911,6 +1026,16 @@
           }
         },
         "required": ["departments", "paging"]
+      },
+      "GetAdvertTypeResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "description": "Advert type",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertType" }]
+          }
+        },
+        "required": ["type"]
       },
       "GetAdvertTypesResponse": {
         "type": "object",

@@ -48,6 +48,7 @@ jobs:
       CREATE_PATTERNS: ^release/
       PRE_RELEASE_PATTERN: ^pre-release/
     outputs:
+      NODE_IMAGE_TAG: ${{ steps.git-branch.outputs.NODE_IMAGE_TAG }}
       GIT_BRANCH: ${{ steps.git-branch.outputs.GIT_BRANCH }}
       GIT_BRANCH_DEPLOY: ${{ steps.git-branch-deploy.outputs.GIT_BRANCH_DEPLOY }}
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
@@ -75,7 +76,6 @@ jobs:
           echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
           echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
           echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
-
       - name: Check if we want to run workflow
         id: should-run
         env:
@@ -156,21 +156,22 @@ jobs:
       SERVERSIDE_FEATURES_ON: ''
 
     outputs:
+      CACHE_KEYS: ${{ steps.get-cache.outputs.keys }}
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
+      NODE_IMAGE_TAG: ${{ steps.nodejs_image.outputs.NODE_IMAGE_TAG }}
       LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       UNAFFECTED: ${{ steps.unaffected.outputs.UNAFFECTED }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
       node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
-      generated-files-cache-key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
     steps:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18.8.0'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -228,13 +229,22 @@ jobs:
           git checkout $GITHUB_SHA
 
       - name: Keep PR run event
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
         with:
           name: pr-event
           path: event.json
           retention-days: 60
 
+      - name: Generate nodejs image tag
+        id: nodejs_image
+        continue-on-error: false
+        run: |
+          export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
+          echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_OUTPUT
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_ENV
+          echo "**NODE_IMAGE_TAG** ${NODE_IMAGE_TAG}" >> $GITHUB_STEP_SUMMARY
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -274,37 +284,21 @@ jobs:
         id: git_nx_head
         name: Preparing HEAD tag
 
-      - name: Calculate cache key for node modules
-        id: calculate_node_modules_hash
-        run: |
-          PACKAGE_JSON_HASH=$(cat package.json | jq '{resolutions,dependencies,devDependencies}' | sha1sum -t | cut -f1 -d" ")
-          echo "PACKAGE_JSON_HASH: $PACKAGE_JSON_HASH"
-          export NODE_MODULES_HASH=${{ runner.os }}-${{ hashFiles('yarn.lock') }}-$PACKAGE_JSON_HASH
-          echo "NODE_MODULES_HASH: $NODE_MODULES_HASH"
-          echo "node-modules-hash=$NODE_MODULES_HASH" >> $GITHUB_OUTPUT
-
-      - name: Calculate cache keys for generated files
-        id: calculate_generated_files_cache_key
-        run: |
-          export HASH=$(./scripts/_hash-generated-files.sh)
-          export GENERATED_FILES_KEY=${{ runner.os }}-$HASH-files-generated
-          echo "GENERATED_FILES_KEY: $GENERATED_FILES_KEY"
-          echo "generated-files-cache-key=$GENERATED_FILES_KEY" >> $GITHUB_OUTPUT
-
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}-yarn
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,generated-files'
 
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
+      - name: Set Test Everything true
+        run: |
+          echo "TEST_EVERYTHING=true" >> $GITHUB_ENV
+        if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'test everything')
 
-      - name: Building NodeJS dependencies
-        if: steps.node-modules.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-host-deps.sh
+      - name: Set Test Everything false
+        run: echo "TEST_EVERYTHING=false" >> $GITHUB_ENV
+        if: github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'test everything')
 
       - name: Preparing BASE tags
         id: git_nx_base
@@ -328,7 +322,6 @@ jobs:
           git checkout $GITHUB_SHA
           echo "BASE=$BASE" >> $GITHUB_ENV
           echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> $GITHUB_OUTPUT
-
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
         env:
@@ -341,7 +334,15 @@ jobs:
           image: '${{ env.DOCKER_BASE_IMAGE_REGISTRY }}/eks-distro-build-tooling/binfmt-misc:qemu-v6.1.0'
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v1
-
+      - name: Get node hash
+        uses: actions/github-script@v7
+        id: calculate_node_modules_hash
+        env:
+          _CACHE_KEY: ${{ steps.get-cache.outputs.keys }}
+        with:
+          script: |
+            const CACHE_KEYS = JSON.parse(process.env._CACHE_KEY)
+            core.setOutput('node-modules-hash', CACHE_KEYS["node_modules"])
       - name: Cache for NodeJS dependencies - Docker layer
         id: cache-deps
         continue-on-error: true
@@ -364,29 +365,8 @@ jobs:
       - name: Check cache success
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
-      - name: Building NodeJS dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true' || steps.cache-deps-base.outputs.cache-hit != 'true'
-        run: ./scripts/ci/10_prepare-docker-deps.sh
-
       - name: set BRANCH env var
         run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ steps.calculate_generated_files_cache_key.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Run codegen
-        if: steps.generated-files-cache.outputs.cache-hit != 'true' || env.SKIP_GENERATED_CACHE == 'true'
-        run: |
-          node --version
-          tar zcvf generated_files.tar.gz $(./scripts/ci/get-files-touched-by.sh yarn codegen --skip-cache | xargs realpath --relative-to $(pwd))
 
       - name: Prepare test targets
         id: test_projects
@@ -448,37 +428,20 @@ jobs:
         with:
           fetch-depth: 0
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
 
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Cache for generated files
-        id: generated-files-cache
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        run: tar zxvf generated_files.tar.gz
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
 
       - uses: ./.github/actions/unit-test
         with:
@@ -501,6 +464,7 @@ jobs:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
+      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG}}
       PUBLISH: true
     strategy:
       fail-fast: false
@@ -515,37 +479,24 @@ jobs:
           echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
           echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
         continue-on-error: true
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '18'
+      - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
-
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
         run: npm install -g yarn
         if: steps.gather.outcome == 'success'
 
-      - uses: actions/checkout@v3
-        if: steps.gather.outcome == 'success'
-      - name: Cache for generated files
-        id: generated-files-cache
-        if: steps.gather.outcome == 'success'
-        continue-on-error: true
-        uses: ./.github/actions/cache
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
         with:
-          path: generated_files.tar.gz
-          key: ${{ needs.prepare.outputs.generated-files-cache-key }}
-
-      - name: Check cache success
-        run: '[[ "${{ steps.generated-files-cache.outputs.success }}" != "false" ]] || exit 1'
-
-      - name: Untar generated files
-        if: steps.gather.outcome == 'success'
-        run: tar zxvf generated_files.tar.gz
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          keys: ${{ needs.prepare.outputs.CACHE_KEYS }}
+          enable-cache: 'node_modules,generated-files'
 
       - name: Cache for dependencies Docker layer
         if: steps.gather.outcome == 'success'
@@ -571,18 +522,6 @@ jobs:
       - name: Check cache success
         run: '[[ "${{ steps.cache-deps.outputs.success }}" != "false" ]] || exit 1'
 
-      # needed to run `nx show project` in scripts/ci/_docker.sh - should be refactored.
-      - name: Cache for NodeJS dependencies - host OS
-        id: node-modules
-        continue-on-error: true
-        uses: ./.github/actions/cache
-        with:
-          path: node_modules
-          key: ${{ needs.prepare.outputs.node-modules-hash }}-yarn
-
-      - name: Check cache success
-        run: '[[ "${{ steps.node-modules.outputs.success }}" != "false" ]] || exit 1'
-
       - name: Docker login to ECR repo
         if: steps.gather.outcome == 'success'
         run: ./scripts/ci/docker-login-ecr.sh
@@ -601,15 +540,25 @@ jobs:
         continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }}'
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          echo Node image tag is: $NODE_IMAGE_TAG
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
-      - name: Building Docker images Retry #This only exists until GHA starts supporting this
+      - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        run: ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
         env:
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }} --build-arg GIT_SHA=${{ github.sha }}'
+          NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
+          SHA: ${{ github.sha }}
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+        run: |
+          echo Node image tag is: $NODE_IMAGE_TAG
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=$DOCKER_BASE_IMAGE_REGISTRY --build-arg GIT_SHA=$SHA --build-arg NODE_IMAGE_TAG=$NODE_IMAGE_TAG"
+          ./scripts/ci/run-in-parallel.sh 90_$DOCKER_TYPE
 
   helm-docker-build:
     needs:
@@ -624,6 +573,7 @@ jobs:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
       DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG}}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH }}
+      NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
     steps:
       - uses: actions/checkout@v3
 
@@ -643,6 +593,9 @@ jobs:
       - name: Docker build image
         working-directory: infra
         run: |
+          echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
+          echo Image tag is: ${{env.NODE_IMAGE_TAG}}
+          export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
           ./scripts/build-docker-container.sh $DOCKER_TAG
           echo "COMMENT<<EOF" >> $GITHUB_ENV
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
@@ -650,10 +603,9 @@ jobs:
           echo 'EOF' >> $GITHUB_ENV
         env:
           PUBLISH: 'true'
-          EXTRA_DOCKER_BUILD_ARGS: '--build-arg DOCKER_IMAGE_REGISTRY=${{ env.DOCKER_BASE_IMAGE_REGISTRY }}'
 
       - name: Retag as latest
-        if: env.GIT_BRANCH == 'main'
+        if: ${{ env.GIT_BRANCH == 'main' && env.NX_AFFECTED_ALL != 'true' }}
         env:
           UNAFFECTED: helm-config
           LAST_GOOD_BUILD_DOCKER_TAG: ${{ env.DOCKER_TAG }}

@@ -1,13 +1,14 @@
 import {
   buildAlertMessageField,
   buildCustomField,
+  buildDateField,
   buildDescriptionField,
   buildMultiField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
 import { accidentDetails } from '../../../lib/messages'
-import { isDateOlderThanAYear } from '../../../utils'
+import { isDateOlderThanAYear, isHomeActivitiesAccident } from '../../../utils'
 import { isHealthInsured } from '../../../utils/isHealthInsured'
 
 // Details of the accident
@@ -50,7 +51,8 @@ export const accidentDetailsSubSection = buildSubSection({
           message: accidentDetails.general.insuranceAlertText,
           width: 'full',
           alertType: 'warning',
-          condition: (formValue) => !isHealthInsured(formValue),
+          condition: (formValue) =>
+            !isHealthInsured(formValue) && isHomeActivitiesAccident(formValue),
           marginBottom: 0,
         }),
         buildTextField({
@@ -80,11 +82,11 @@ export const accidentDetailsSubSection = buildSubSection({
           title: accidentDetails.labels.doctorVisit,
           width: 'full',
         }),
-        buildCustomField({
+        buildDateField({
           id: 'accidentDetails.dateOfDoctorVisit',
           title: accidentDetails.labels.date,
-          component: 'DateOfAccident',
           width: 'half',
+          placeholder: accidentDetails.placeholder.date,
         }),
         buildTextField({
           id: 'accidentDetails.timeOfDoctorVisit',

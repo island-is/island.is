@@ -68,6 +68,7 @@ export * from './lib/resources/models/api-resource-scope.model'
 export * from './lib/resources/models/api-resource-secret.model'
 export * from './lib/resources/models/api-resource-user-claim.model'
 export * from './lib/resources/models/api-scope.model'
+export * from './lib/resources/dto/api-scope-create.dto'
 export * from './lib/resources/models/api-scope-user-claim.model'
 export * from './lib/resources/models/api-scope-delegation-type.model'
 export * from './lib/resources/models/api-scope-group.model'
@@ -178,3 +179,8 @@ export * from './lib/personal-representative/dto/paginated-personal-representati
 export * from './lib/personal-representative/dto/personal-representative-scope-permission.dto'
 export * from './lib/clients/admin/dto/admin-create-client.dto'
 export * from './lib/clients/admin/dto/admin-client.dto'
+
+// Passkeys core module
+export * from './lib/passkeys-core/passkeys-core.module'
+export * from './lib/passkeys-core/passkeys-core.service'
+export * from './lib/passkeys-core/passkeys-core.config'

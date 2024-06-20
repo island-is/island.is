@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import {
   Box,
   Button,
@@ -17,7 +17,7 @@ import {
 } from '@island.is/service-portal/core'
 
 import {
-  useGetUserNotificationsQuery,
+  useGetUserNotificationsListQuery,
   useMarkAllNotificationsAsReadMutation,
   useMarkUserNotificationAsReadMutation,
 } from './Notifications.generated'
@@ -32,7 +32,7 @@ const DEFAULT_PAGE_SIZE = 5
 
 const UserNotifications = () => {
   useNamespaces('sp.information-notifications')
-  const { formatMessage } = useLocale()
+  const { formatMessage, lang } = useLocale()
   const [loadingMore, setLoadingMore] = useState(false)
 
   const [postMarkAsRead] = useMarkUserNotificationAsReadMutation()
@@ -47,15 +47,20 @@ const UserNotifications = () => {
   })
 
   const { data, loading, error, refetch, fetchMore } =
-    useGetUserNotificationsQuery({
+    useGetUserNotificationsListQuery({
       variables: {
         input: {
           limit: DEFAULT_PAGE_SIZE,
           before: '',
           after: '',
         },
+        locale: lang,
       },
     })
+
+  useEffect(() => {
+    refetch()
+  }, [refetch, lang])
 
   const loadMore = (cursor: string) => {
     if (loadingMore) return
@@ -67,6 +72,7 @@ const UserNotifications = () => {
           before: '',
           after: cursor,
         },
+        locale: lang,
       },
       updateQuery: (prevResult, { fetchMoreResult }) => {
         if (
