@@ -78,6 +78,19 @@ export class PasskeyModel extends Model<
   @ApiProperty()
   idp!: string
 
+  @Column({
+    type: DataType.BIGINT,
+    allowNull: false,
+    get() {
+      const rawValue = this.getDataValue('counter')
+
+      // Be explicit about the return type since BIGINT can be handled as a string
+      return Number(rawValue)
+    },
+  })
+  @ApiProperty()
+  counter!: number
+
   @CreatedAt
   @ApiProperty()
   readonly created!: CreationOptional<Date>
