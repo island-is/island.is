@@ -67,9 +67,9 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     }
     if (income === ApproveOptions.Yes) {
       return Routes.INCOMEFILES
-    } else {
-      return Routes.TAXRETURNFILES
     }
+
+    return Routes.TAXRETURNFILES
   }
 
   return (
