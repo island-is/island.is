@@ -226,8 +226,7 @@ export class EndorsementService {
             {
               component: 'Copy',
               context: {
-                copy: `Meðfylgjandi er undirskriftalisti",
-                sem  er skráður ábyrgðarmaður fyrir.`,
+                copy: `Þjóðskrá Íslands afhendir undirskriftalistana til Þjóðskjalasafns Íslands í samræmi við afhendingar- og varðveisluskyldu samkvæmt lögum nr. 77/2014 um opinber skjalasöfn.`,
                 small: true,
               },
             },
