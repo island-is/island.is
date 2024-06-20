@@ -32,11 +32,12 @@ const Files = ({
   const { formatMessage } = useIntl()
   const [createSignedUrlMutation] = useMutation(CreateSignedUrlMutation)
 
-  const concatAllFiles = [...incomeFiles, ...taxFiles, ...childrenFiles]
-
-  const allFiles = !personalTaxReturn
-    ? concatAllFiles
-    : concatAllFiles.concat([personalTaxReturn])
+  const allFiles = [
+    ...incomeFiles,
+    ...taxFiles,
+    ...childrenFiles,
+    ...(personalTaxReturn ? [personalTaxReturn] : []),
+  ]
 
   return (
     <SummaryBlock editAction={() => goToScreen?.(route)}>

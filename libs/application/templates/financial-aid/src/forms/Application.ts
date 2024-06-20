@@ -63,7 +63,7 @@ export const Application: Form = buildForm({
               [],
             ) as ApplicantChildCustodyInformation[]
 
-            return childWithInfo ? childWithInfo.length > 0 : false
+            return Boolean(childWithInfo?.length)
           },
           id: Routes.CHILDRENSCHOOLINFO,
           title: m.childrenForm.general.sectionTitle,
@@ -83,7 +83,7 @@ export const Application: Form = buildForm({
               [],
             ) as ApplicantChildCustodyInformation[]
 
-            return childWithInfo ? childWithInfo.length > 0 : false
+            return Boolean(childWithInfo?.length)
           },
           id: Routes.CHILDRENFILES,
           title: m.childrenFilesForm.general.sectionTitle,
