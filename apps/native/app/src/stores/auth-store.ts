@@ -29,7 +29,10 @@ const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 // Optional scopes (not required for all users so we do not want to force a logout)
-const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
+const OPTIONAL_SCOPES = [
+  '@island.is/licenses:barcode',
+  '@island.is/auth/passkeys',
+]
 
 interface UserInfo {
   sub: string
