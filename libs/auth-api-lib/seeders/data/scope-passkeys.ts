@@ -7,11 +7,6 @@ export const up = compose(
     description:
       'Gerir notanda kleift að innskrá sig með lífkenni í gegnum aðgangslykil',
     addToResource: '@island.is',
-    addToClients: ['@island.is/app', '@island.is/web'],
-    delegation: {
-      custom: true,
-      procuringHolders: true,
-      legalGuardians: true,
-    },
+    addToClients: ['@island.is/app'],
   }),
 )
