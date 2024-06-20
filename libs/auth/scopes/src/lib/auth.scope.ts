@@ -8,6 +8,7 @@ export enum AuthScope {
   consents = '@island.is/auth/consents',
   delegationIndexWrite = '@island.is/auth/delegations/index:system-write',
   delegationIndex = '@island.is/auth/delegations/index:system',
+  passkeys = '@island.is/auth/passkeys',
 }
 
 export const delegationScopes = [

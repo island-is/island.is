@@ -92,7 +92,7 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'HeirsAndPartitionRepeater',
+                component: 'HeirsRepeater',
               },
               {
                 customFields: [
@@ -259,7 +259,7 @@ export const heirs = buildSection({
               title: '',
               id: 'overviewHeirs',
               doesNotRequireAnswer: true,
-              component: 'HeirsOverview',
+              component: 'OverviewHeirs',
             }),
             buildDividerField({}),
             buildDescriptionField({
