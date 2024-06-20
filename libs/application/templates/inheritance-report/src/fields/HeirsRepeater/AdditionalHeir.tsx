@@ -27,7 +27,7 @@ import {
   RelationSpouse,
 } from '../../lib/constants'
 import { LookupPerson } from '../LookupPerson'
-import { HeirsAndPartitionRepeaterProps } from './types'
+import { HeirsRepeaterProps } from './types'
 import ShareInput from '../../components/ShareInput'
 
 export const AdditionalHeir = ({
@@ -40,7 +40,7 @@ export const AdditionalHeir = ({
   relationOptions,
   error,
 }: {
-  customFields: HeirsAndPartitionRepeaterProps['field']['props']['customFields']
+  customFields: HeirsRepeaterProps['field']['props']['customFields']
   field: GenericFormField<EstateMember>
   index: number
   remove: (index?: number | number[] | undefined) => void
@@ -243,14 +243,6 @@ export const AdditionalHeir = ({
           const defaultValue = currentHeir?.[customField.id]
           return (
             <Fragment key={customFieldIndex}>
-              {customField?.sectionTitle ? (
-                <GridColumn span="1/1">
-                  <Text variant="h5" marginBottom={2}>
-                    {customField.sectionTitle}
-                  </Text>
-                </GridColumn>
-              ) : null}
-
               {customField.id === 'relation' ? (
                 <GridColumn span="1/2" paddingBottom={2}>
                   <SelectController
