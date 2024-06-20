@@ -22,6 +22,7 @@ export interface TeamListProps {
     name: string
     image?: { url: string }
     imageOnSelect?: { url: string } | null
+    /** Field is only visible if variant is set to "accordion" */
     intro?: Slice[] | null
   }[]
   variant?: 'card' | 'accordion'
