@@ -457,7 +457,7 @@ export class CmsElasticsearchService {
   }
 
   private async getListItems<
-    T extends 'webGenericListItem' | 'webTeamMember',
+    ListItemType extends 'webGenericListItem' | 'webTeamMember',
   >(input: {
     listId: string
     lang: ElasticsearchIndexLocale
@@ -466,9 +466,9 @@ export class CmsElasticsearchService {
     queryString?: string
     tags?: string[]
     tagGroups?: Record<string, string[]>
-    type: T
+    type: ListItemType
   }): Promise<
-    T extends 'webGenericListItem'
+    ListItemType extends 'webGenericListItem'
       ? Omit<GenericListItemResponse, 'input'>
       : Omit<TeamMemberResponse, 'input'>
   > {
