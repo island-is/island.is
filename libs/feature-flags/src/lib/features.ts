@@ -22,6 +22,8 @@ export enum Features {
   energyFunds = 'isEnergyFundsEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  healthcareWorkPermit = 'ishealthcareworkpermitenabled',
+  pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',

@@ -44,6 +44,18 @@ export const inputGroup = style({
   },
 })
 
+export const committeeInputGroupWrapper = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: spacing,
+})
+
+export const committeeInputGroup = style({
+  display: 'flex',
+  flexDirection: 'column',
+  gap: spacing,
+})
+
 export const inputWrapper = style({
   display: 'flex',
   flexDirection: 'column',
@@ -52,12 +64,20 @@ export const inputWrapper = style({
   gap: spacing,
 })
 
+export const committeInputWrapper = style({
+  display: 'flex',
+  flexWrap: 'wrap',
+  justifyContent: 'space-between',
+  gap: spacing,
+})
+
 export const removeInputGroup = style({
   display: 'flex',
   flexDirection: 'column',
-  justifyContent: 'flex-end',
   width: 48,
-  marginInlineEnd: spacing,
+  height: 48,
+  marginInline: theme.spacing[1],
+  alignSelf: 'flex-end',
 })
 
 export const addSignatureWrapper = style({

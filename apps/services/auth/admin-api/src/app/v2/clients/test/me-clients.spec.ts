@@ -363,14 +363,13 @@ describe('MeClientsController with auth', () => {
   it.each`
     value | typeSpecificDefaults
     ${'super admin fields'} | ${{
-  promptDelegations: true,
-  requireApiScopes: true,
   requireConsent: false,
   singleSession: false,
   allowOfflineAccess: true,
   requirePkce: false,
   supportTokenExchange: true,
   accessTokenLifetime: 100,
+  allowedAcr: ['some-acr-value'],
   customClaims: [{ type: 'claim1', value: 'value1' }],
 }}
   `(

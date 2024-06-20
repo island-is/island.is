@@ -42,4 +42,5 @@ export enum ChargeItemCode {
   ID_CARD_OLDER_EXPRESS = 'AY168', //Nafnskírteini 67 ára og eldri skyndiútgáfa
   ID_CARD_OLDER_TRAVEL_REGULAR = 'AY169', //Nafnskírteini 67 ára og eldri ferðaskilríki
   ID_CARD_OLDER_TRAVEL_EXPRESS = 'AY170', //Nafnskírteini 67 ára og eldri ferðask skyndiútgáfa
+  HEALTHCARE_WORK_PERMIT = 'L6101',
 }
