@@ -51,8 +51,21 @@ export class PasskeysCoreService {
     private readonly config: ConfigType<typeof PasskeysCoreConfig>,
   ) {}
 
+  private getMinimumValidPasskeyDate() {
+    return addDays(new Date(), -this.config.passkey.maxAgeDays)
+  }
+
   async generateRegistrationOptions(user: User) {
     const tokenInfo = getTokenInfo(user.authorization)
+
+    const existingPasskeys = await this.passkeyModel.findAll({
+      where: {
+        user_sub: getUserId(user),
+        created: {
+          [Op.gte]: this.getMinimumValidPasskeyDate(),
+        },
+      },
+    })
 
     const opts: GenerateRegistrationOptionsOpts = {
       rpName: this.config.passkey.rpName,
@@ -64,6 +77,11 @@ export class PasskeysCoreService {
         residentKey: 'discouraged',
         userVerification: 'required',
       },
+      excludeCredentials: existingPasskeys.map((passkey) => ({
+        id: passkey.passkey_id,
+        type: 'public-key',
+        transports: ['internal'],
+      })),
       // ES256 and RS256
       supportedAlgorithmIDs: [-7, -257],
     }
@@ -114,19 +132,21 @@ export class PasskeysCoreService {
       throw new BadRequestException('Registration verification failed')
     }
 
-    const passkey = {
-      passkey_id: registrationInfo.credentialID,
-      public_key: Buffer.from(registrationInfo.credentialPublicKey),
-      user_sub: getUserId(user),
-      type: PASSKEY_TYPE,
-      audkenni_sim_number: user.audkenniSimNumber ?? '',
-      name: tokenInfo.name,
-      idp: tokenInfo.idp,
-    }
-
-    await this.passkeyModel.upsert(passkey, {
-      conflictFields: ['user_sub', 'type'],
-    })
+    await this.passkeyModel.upsert(
+      {
+        passkey_id: registrationInfo.credentialID,
+        public_key: Buffer.from(registrationInfo.credentialPublicKey),
+        user_sub: getUserId(user),
+        type: PASSKEY_TYPE,
+        audkenni_sim_number: user.audkenniSimNumber ?? '',
+        name: tokenInfo.name,
+        idp: tokenInfo.idp,
+        counter: registrationInfo.counter,
+      },
+      {
+        conflictFields: ['user_sub', 'type'],
+      },
+    )
 
     return { verified }
   }
@@ -138,7 +158,7 @@ export class PasskeysCoreService {
       where: {
         user_sub: user.sub,
         created: {
-          [Op.gte]: addDays(new Date(), -this.config.passkey.maxAgeDays),
+          [Op.gte]: this.getMinimumValidPasskeyDate(),
         },
       },
     })
@@ -183,7 +203,7 @@ export class PasskeysCoreService {
       where: {
         passkey_id: response.id,
         created: {
-          [Op.gte]: addDays(new Date(), -this.config.passkey.maxAgeDays),
+          [Op.gte]: this.getMinimumValidPasskeyDate(),
         },
       },
     })
@@ -195,11 +215,12 @@ export class PasskeysCoreService {
     let challenge: string
 
     try {
-      challenge = JSON.parse(
+      const decodedClientDataJSON = JSON.parse(
         Buffer.from(response.response.clientDataJSON, 'base64').toString(
           'utf-8',
         ),
-      ).challenge
+      )
+      challenge = decodedClientDataJSON.challenge
     } catch (e) {
       this.logger.log('Invalid clientDataJSON', e)
       throw new BadRequestException('Invalid clientDataJSON')
@@ -221,7 +242,9 @@ export class PasskeysCoreService {
         authenticator: {
           credentialID: passkey.passkey_id,
           credentialPublicKey: passkey.public_key,
-          counter: 0, // TODO: Store in db and increment on authentication
+          // pass the current counter value from the db
+          // the client authenticator should provide a value that is greater than this
+          counter: passkey.counter,
           transports: ['internal'],
         },
       })
@@ -230,11 +253,15 @@ export class PasskeysCoreService {
       throw new BadRequestException('Auth verification failed')
     }
 
-    const { verified } = verification
+    const { verified, authenticationInfo } = verification
 
     if (!verified) {
       throw new BadRequestException('Auth verification failed')
     }
+
+    // update the db passkey counter to match new counter value from client authenticator
+    passkey.counter = authenticationInfo.newCounter
+    await passkey.save()
 
     return {
       verified,
