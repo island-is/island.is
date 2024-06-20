@@ -1,4 +1,12 @@
 import { gql } from '@apollo/client'
+
+export const GET_PRICE_QUERY = gql`
+  query GetPrice($id: String!) {
+    officialJournalOfIcelandApplicationGetPrice(id: $id) {
+      price
+    }
+  }
+`
 export const ADVERTS_QUERY = gql`
   query Adverts($input: OfficialJournalOfIcelandAdvertsInput!) {
     officialJournalOfIcelandAdverts(input: $input) {

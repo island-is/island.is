@@ -56,9 +56,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
     mockConfig = notificationConfig
     mockNotificationModel = notificationModel
 
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
-
     givenWhenThen = async (
       caseId: string,
       theCase: Case,
@@ -241,16 +238,21 @@ describe('InternalNotificationController - Send defender assigned notifications'
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([
-        {
-          caseId,
-          type: notificationDto.type,
-          recipients: [{ address: defendant.defenderEmail, success: true }],
-        } as Notification,
-      ])
 
-      then = await givenWhenThen(caseId, theCase, notificationDto)
+      then = await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          notifications: [
+            {
+              caseId,
+              type: notificationDto.type,
+              recipients: [{ address: defendant.defenderEmail, success: true }],
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
     })
 
     it('should return notification was not sent', () => {

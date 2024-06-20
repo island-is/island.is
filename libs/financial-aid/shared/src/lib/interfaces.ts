@@ -91,6 +91,7 @@ export interface Amount {
   tax: number
   finalAmount: number
   deductionFactors?: DeductionFactors[]
+  decemberAidAmount?: number
 }
 
 export interface DeductionFactors {
@@ -231,6 +232,7 @@ export interface Municipality {
   navUsername?: string
   navPassword?: string
   apiKeyInfo?: ApiKeysForMunicipality
+  decemberCompensation: number
 }
 
 export interface UpdateMunicipalityActivity {

@@ -1,6 +1,32 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/applications/{id}/price": {
+      "get": {
+        "operationId": "getPrice",
+        "summary": "Get price of application by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Id of the application to get price.",
+            "allowEmptyValue": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CasePriceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/applications/{id}/post": {
       "post": {
         "operationId": "postApplication",
@@ -96,6 +122,13 @@
   "servers": [],
   "components": {
     "schemas": {
+      "CasePriceResponse": {
+        "type": "object",
+        "properties": {
+          "price": { "type": "number", "description": "The price of the case" }
+        },
+        "required": ["price"]
+      },
       "CaseCommentTask": {
         "type": "object",
         "properties": {
@@ -153,7 +186,14 @@
           },
           "type": {
             "type": "string",
-            "enum": ["submit", "assign", "update", "comment", "message"],
+            "enum": [
+              "submit",
+              "assign",
+              "assign_self",
+              "update",
+              "comment",
+              "message"
+            ],
             "example": "comment",
             "description": "Type of the case task."
           },
