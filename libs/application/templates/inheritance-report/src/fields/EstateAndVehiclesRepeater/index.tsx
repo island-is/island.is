@@ -136,11 +136,7 @@ export const EstateAndVehiclesRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box
-              display={'flex'}
-              justifyContent="flexEnd"
-              marginBottom={2}
-            >
+            <Box display={'flex'} justifyContent="flexEnd" marginBottom={2}>
               {repeaterField.initial ? (
                 <Button
                   variant="text"
