@@ -9,7 +9,14 @@
     {
       "files": ["**/schema.ts"],
       "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
         "@typescript-eslint/naming-convention": "off"
+      }
+    },
+    {
+      "files": ["**/cms.service.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
       }
     }
   ]
