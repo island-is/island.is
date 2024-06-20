@@ -177,48 +177,47 @@ const OccupationalLicenseDetail = () => {
               }
             />
           )}
-          {(license?.status || loading) &&
-            license?.type !== OccupationalLicenseV2LicenseType.EDUCATION && (
-              <UserInfoLine
-                loading={loading}
-                label={formatMessage(om.licenseStatus)}
-                content={
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    columnGap="p1"
-                  >
-                    <Text>
-                      {formatMessage(
-                        license?.status === 'VALID'
-                          ? om.validLicense
-                          : license?.status === 'LIMITED'
-                          ? om.validWithLimitationsLicense
-                          : om.invalidLicense,
-                      )}
-                    </Text>
-                    <Icon
-                      icon={
-                        license?.status === 'VALID'
-                          ? 'checkmarkCircle'
-                          : license?.status === 'LIMITED'
-                          ? 'warning'
-                          : 'closeCircle'
-                      }
-                      color={
-                        license?.status === 'VALID'
-                          ? 'mint600'
-                          : license?.status === 'LIMITED'
-                          ? 'yellow600'
-                          : 'red600'
-                      }
-                      type="filled"
-                    />
-                  </Box>
-                }
-              />
-            )}
+          {(license?.status || loading) && !isOldEducationLicense && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.licenseStatus)}
+              content={
+                <Box
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                  columnGap="p1"
+                >
+                  <Text>
+                    {formatMessage(
+                      license?.status === 'VALID'
+                        ? om.validLicense
+                        : license?.status === 'LIMITED'
+                        ? om.validWithLimitationsLicense
+                        : om.invalidLicense,
+                    )}
+                  </Text>
+                  <Icon
+                    icon={
+                      license?.status === 'VALID'
+                        ? 'checkmarkCircle'
+                        : license?.status === 'LIMITED'
+                        ? 'warning'
+                        : 'closeCircle'
+                    }
+                    color={
+                      license?.status === 'VALID'
+                        ? 'mint600'
+                        : license?.status === 'LIMITED'
+                        ? 'yellow600'
+                        : 'red600'
+                    }
+                    type="filled"
+                  />
+                </Box>
+              }
+            />
+          )}
           {license?.genericFields?.length &&
             license.genericFields.map((g, index) => (
               <UserInfoLine
