@@ -59,15 +59,17 @@ const Completed: FC = () => {
       uploadFiles.filter((file) => !file.key),
       updateUploadFile,
     )
-
     if (!allSucceeded) {
       return
     }
 
-    createEventLog({
+    const eventLogCreated = createEventLog({
       caseId: workingCase.id,
       eventType: EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
     })
+    if (!eventLogCreated) {
+      return
+    }
 
     setModalVisible('SENT_TO_PUBLIC_PROSECUTOR')
   }, [

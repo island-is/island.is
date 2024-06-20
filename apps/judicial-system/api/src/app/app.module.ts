@@ -14,7 +14,6 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
-import { EventLogModule } from './modules/event-log/eventLog.module'
 import {
   AuthModule,
   authModuleConfig,
@@ -23,6 +22,7 @@ import {
   DefendantModule,
   DefenderModule,
   defenderModuleConfig,
+  EventLogModule,
   FeatureModule,
   featureModuleConfig,
   FileModule,

@@ -20,11 +20,10 @@ const useEventLog = () => {
           },
         })
 
-        if (data) {
-          return data.createEventLog
-        }
+        return Boolean(data?.createEventLog)
       } catch (error) {
         toast.error(formatMessage(errors.createEventLog))
+        return false
       }
     },
     [createEventLogMutation, formatMessage],
