@@ -834,6 +834,7 @@ export class FeaturedEventsResolver {
 export class TeamListResolver {
   @ResolveField(() => [TeamMember])
   async teamMembers(@Parent() teamList: TeamList) {
+    // The 'accordion' variant has a search so to reduce the inital payload (since it isn't used) we simply return an empty list
     return teamList?.variant === 'accordion' ? [] : teamList?.teamMembers ?? []
   }
 }
