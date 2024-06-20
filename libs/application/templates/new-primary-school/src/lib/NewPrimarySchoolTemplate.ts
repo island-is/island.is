@@ -23,10 +23,7 @@ import { assign } from 'xstate'
 import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
-import {
-  getApplicationAnswers,
-  hasChildrenThatCanApply,
-} from './newPrimarySchoolUtils'
+import { getApplicationAnswers } from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -79,16 +76,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: [
-            {
-              target: States.DRAFT,
-              cond: (application) =>
-                hasChildrenThatCanApply(application?.application),
-            },
-            {
-              actions: 'setApproveExternalData',
-            },
-          ],
+          SUBMIT: [{ target: States.DRAFT }],
         },
       },
       [States.DRAFT]: {

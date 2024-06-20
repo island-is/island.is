@@ -248,22 +248,6 @@ export const canApply = (child: Child): boolean => {
   return false
 }
 
-export const hasChildrenThatCanApply = (application: Application) => {
-  if (!application) {
-    return false
-  }
-
-  const { children } = getApplicationExternalData(application.externalData)
-
-  // No child found
-  if (!children || children.length === 0) {
-    return false
-  }
-
-  // Check if the applicant has some children at primary school age
-  return children.some((child) => canApply(child))
-}
-
 export const getSelectedChild = (application: Application) => {
   const { childNationalId } = getApplicationAnswers(application.answers)
   const { children } = getApplicationExternalData(application.externalData)

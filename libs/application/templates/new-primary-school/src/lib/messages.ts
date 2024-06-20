@@ -167,47 +167,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
-    noChildrenFoundTitle: {
-      id: 'dess.nps.application:prerequisites.nochildren.title',
-      defaultMessage: 'Því miður ert þú ekki með skráð barn á grunnskólaaldri',
-      description:
-        'Unfortunately, you do not have a child registered at primary school age.',
-    },
-    noChildrenFoundReasons: {
-      id: 'dess.nps.application:prerequisites.nochildren.reasons#markdown',
-      defaultMessage:
-        'Eingöngu sá sem er með lögheimilisforsjá hefur heimild til að sækja um fyrir barn. Ástæður fyrir því að þú ert ekki með skráð barn geta verið eftirfarandi:\n\n\n* Þú ert ekki skráður forsjáraðili hjá Þjóðskrá með lögheimilistengsl. \n* Barnið er ekki skráð í Þjóðskrá.',
-      description:
-        'Only the person who has legal custody has the authority to apply for a child. Reasons why you do not have a registered child may include the following',
-    },
-    noChildrenFoundNationalRegistryDescription: {
-      id: 'dess.nps.application:prerequisites.nochildren.national.registry.description',
-      defaultMessage:
-        'Þjóðskrá skráir hver eða hverjir teljast foreldrar barns og hver fari með forsjárskyldur þess. Upplýsingar um skráningu forsjár og lögheimilisforeldris má nálgast hér: [Foreldrar og forsjá | Þjóðskrá (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)',
-      description:
-        'The National Registry records who or which individuals are considered to be the parents of a child and who has custody responsibilities. Information on registering custody and legal guardianship can be found here: [Parents and Custody | National Registry (skra.is)](https://www.skra.is/folk/skraning-barns/foreldrar-og-forsja/)',
-    },
-    noChildrenFoundIslandisDescription: {
-      id: 'dess.nps.application:prerequisites.nochildren.islandis.description',
-      defaultMessage:
-        'Upplýsingum um tengsl á milli barna og foreldra auk forsjáraðila eru einnig aðgengilegar á [Mínum síðum á Ísland.is](https://island.is/minarsidur)',
-      description:
-        'Information about the relationship between children and parents, as well as custody authorities, is also available on [My Pages on Iceland.is](https://island.is/minarsidur)',
-    },
-    noChildrenFoundNationalRegistryInfo: {
-      id: 'dess.nps.application:prerequisites.nochildren.national.registry.info#markdown',
-      defaultMessage:
-        'Ef þú telur þessi atriði eiga við þig, vinsamlegast hafið samband við Þjóðskrá:\n\n\nBorgartúni 21, 105 Reykjavík\n\nSími: [515 5300](tel:5155300)\n\nOpið frá 10-15 alla virka daga',
-      description:
-        'If you believe these points apply to you, please contact the National Registry: Borgartún 21, 105 Reykjavík Phone: 515 5300 Open from 10 AM to 3 PM on weekdays',
-    },
-    noChildrenFoundMMSInfo: {
-      id: 'dess.nps.application:prerequisites.nochildren.mmm.info#markdown',
-      defaultMessage:
-        'Annars er hægt að hafa samband við Miðstöð menntunar og skólaþjónustu:\n\n\nSími: [514 7500](tel:5147500)\n\nNetfang: [postur@midstodmenntunar.is](mailto:postur@midstodmenntunar.is)',
-      description:
-        'Otherwise, you can contact the Directorate of Education and School Services: Phone: 514 7500 Email: postur@midstodmenntunar.is',
-    },
   }),
 
   childrenNParents: defineMessages({
