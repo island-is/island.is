@@ -9,7 +9,7 @@ generates:
       baseTypesPath: '~@island.is/api/schema'
     config:
       scalars:
-        DateTime: Date
+        DateTime: string
     plugins:
       - typescript-operations
       - typescript-react-apollo

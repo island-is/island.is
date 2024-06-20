@@ -818,18 +818,3 @@ export class FeaturedEventsResolver {
     }
   }
 }
-
-@Resolver(() => GenericList)
-@CacheControl(defaultCache)
-export class GenericListResolver {
-  constructor(
-    private readonly cmsElasticsearchService: CmsElasticsearchService,
-  ) {}
-
-  @ResolveField(() => GenericListItemResponse)
-  firstPageListItemResponse(
-    @Parent() { firstPageListItemResponse: input }: GenericList,
-  ) {
-    return this.cmsElasticsearchService.getGenericListItems(input)
-  }
-}
