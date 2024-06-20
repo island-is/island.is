@@ -55,8 +55,6 @@ export class NotificationsService {
     private readonly cmsService: CmsService,
   ) {}
 
-  
-
   async getSenderOrganizationTitle(
     senderId: string,
     locale?: Locale,
@@ -121,7 +119,6 @@ export class NotificationsService {
         notification.args,
         template,
       )
-
 
       // Map to RenderedNotificationDto
       return {

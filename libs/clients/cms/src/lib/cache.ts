@@ -12,8 +12,8 @@ const overrideCacheControl = (_request: Request) => {
   return buildCacheControl({
     maxAge: 10 * 60, // 10 minutes
     public: true, // required to enable caching for contentful gql
-  });
-};
+  })
+}
 
 export const getCache = async (
   config: ConfigType<typeof CmsConfig>,
