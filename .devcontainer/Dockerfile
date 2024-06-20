@@ -25,10 +25,6 @@ RUN ls -lah . && ls -lah -R target/
 
 
 FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION} as base
-ENV SHELL=bash
-ARG SHELL=${SHELL}
-ENV USERNAME=dev
-ARG USERNAME=${USERNAME}
 
 #######################
 # System dependencies #
@@ -45,10 +41,15 @@ RUN --mount=type=cache,target=/var/cache/dnf \
   # Niceties
   the_silver_searcher ripgrep fzf neovim
 
+ENV SHELL=bash
+ARG SHELL=${SHELL}
+ENV USERNAME=root
+ARG USERNAME=${USERNAME}
+
 # Create user and environment
-RUN useradd -m -s /bin/${SHELL} -G wheel ${USERNAME}
+RUN grep "${USERNAME}" /etc/passwd || useradd -m -s /bin/${SHELL} -G wheel ${USERNAME}
 USER ${USERNAME}
-WORKDIR /home/${USERNAME}
+WORKDIR /tmp/build-workdir
 
 
 
@@ -73,7 +74,7 @@ RUN . ~/.${SHELL}rc && volta install "node@$(jq -r '.engines.node' package.json)
 
 # Set up user's shell config
 # Initialize starship prompt
-RUN echo "eval \"\$(starship init ${SHELL})\"" >> /home/${USERNAME}/.${SHELL}rc && \
+RUN echo "eval \"\$(starship init ${SHELL})\"" >> ~/.${SHELL}rc && \
   # Set vi mode in shell
   echo "set -o vi" >> ~/.${SHELL}rc
 
