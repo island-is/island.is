@@ -137,7 +137,6 @@ export class Message {
   @IsOptional()
   @IsString()
   internalBody?: string
-
 }
 
 export class PaginatedNotificationDto {
