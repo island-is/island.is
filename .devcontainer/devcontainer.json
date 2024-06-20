@@ -1,6 +1,6 @@
 // vi: ft=jsonc
 {
-  "build": { "dockerfile": "../Dockerfile", "context": "../../" },
+  "build": { "dockerfile": "Dockerfile", "context": "../" },
   "customizations": {
     "vscode": {
       "extensions": ["dbaeumer.vscode-eslint"]
