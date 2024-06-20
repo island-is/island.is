@@ -43,11 +43,6 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
 
   const stepIsValid =
-    uploadFiles.some(
-      (file) =>
-        file.category === CaseFileCategory.COVER_LETTER &&
-        file.status === 'done',
-    ) &&
     (isTrafficViolationCaseCheck ||
       uploadFiles.some(
         (file) =>
@@ -83,28 +78,6 @@ const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <SectionHeading
-            title={formatMessage(strings.caseFiles.coverLetterSection)}
-            required
-          />
-          <InputFileUpload
-            fileList={uploadFiles.filter(
-              (file) => file.category === CaseFileCategory.COVER_LETTER,
-            )}
-            accept={Object.values(fileExtensionWhitelist)}
-            header={formatMessage(strings.caseFiles.inputFieldLabel)}
-            buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
-            onChange={(files) =>
-              handleUpload(
-                addUploadFiles(files, CaseFileCategory.COVER_LETTER),
-                updateUploadFile,
-              )
-            }
-            onRemove={(file) => handleRemove(file, removeUploadFile)}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
-          />
-        </Box>
         {!isTrafficViolationCaseCheck && (
           <Box component="section" marginBottom={5}>
             <SectionHeading
