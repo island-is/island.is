@@ -8,6 +8,7 @@ import {
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 
+import { IndictmentCaseReviewDecision } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import { DefendantInfoActionButton } from './DefendantInfo/DefendantInfo'
 import InfoCard, { NameAndEmail } from './InfoCard'
@@ -98,6 +99,20 @@ const InfoCardClosedIndictment: React.FC<Props> = (props) => {
                     title: formatMessage(strings.indictmentReviewer),
                     value: workingCase.indictmentReviewer?.name,
                   },
+                  ...(workingCase.indictmentReviewDecision
+                    ? [
+                        {
+                          title: formatMessage(
+                            strings.indictmentReviewDecision,
+                          ),
+                          value:
+                            workingCase.indictmentReviewDecision ===
+                            IndictmentCaseReviewDecision.ACCEPT
+                              ? formatMessage(strings.reviewTagAccepted)
+                              : formatMessage(strings.reviewTagAppealed),
+                        },
+                      ]
+                    : []),
                 ],
               },
             ]
