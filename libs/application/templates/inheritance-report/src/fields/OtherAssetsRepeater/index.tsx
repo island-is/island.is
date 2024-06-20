@@ -79,16 +79,22 @@ export const OtherAssetsRepeater: FC<
       return Object.values(field)[1]
     })
 
-    const repeaterFields: Record<string, string> = values.reduce(
-      (acc: Record<string, unknown>, elem: string) => {
-        acc[elem] = ''
-
-        return acc
-      },
-      {},
-    )
+    const repeaterFields = Object.fromEntries(values.map((elem) => [elem, '']))
 
     append(repeaterFields)
+  }
+
+  const handleClick = (field: any, index: number) => {
+    if (field.initial) {
+      const updatedField = {
+        ...field,
+        enabled: !field.enabled,
+      }
+      update(index, updatedField)
+    } else {
+      remove(index)
+    }
+    calculateTotal()
   }
 
   return (
@@ -98,38 +104,25 @@ export const OtherAssetsRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box display={'flex'} justifyContent="flexEnd" marginBottom={2}>
-              {repeaterField.initial ? (
-                <Button
-                  variant="text"
-                  size="small"
-                  icon={repeaterField.enabled ? 'remove' : 'add'}
-                  onClick={() => {
-                    const updatedField = {
-                      ...repeaterField,
-                      enabled: !repeaterField.enabled,
-                    }
-                    update(mainIndex, updatedField)
-                    calculateTotal()
-                  }}
-                >
-                  {repeaterField.enabled
+            <Box display="flex" justifyContent="flexEnd" marginBottom={2}>
+              <Button
+                variant="text"
+                size="small"
+                icon={
+                  repeaterField.initial
+                    ? repeaterField.enabled
+                      ? 'remove'
+                      : 'add'
+                    : 'trash'
+                }
+                onClick={() => handleClick(repeaterField, mainIndex)}
+              >
+                {repeaterField.initial
+                  ? repeaterField.enabled
                     ? formatMessage(m.inheritanceDisableMember)
-                    : formatMessage(m.inheritanceEnableMember)}
-                </Button>
-              ) : (
-                <Button
-                  variant="text"
-                  size="small"
-                  icon="trash"
-                  onClick={() => {
-                    remove(mainIndex)
-                    calculateTotal()
-                  }}
-                >
-                  {formatMessage(m.inheritanceDeleteMember)}
-                </Button>
-              )}
+                    : formatMessage(m.inheritanceEnableMember)
+                  : formatMessage(m.inheritanceDeleteMember)}
+              </Button>
             </Box>
             <GridRow>
               {props.fields.map((field: any) => {

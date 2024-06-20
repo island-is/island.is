@@ -1,4 +1,4 @@
-export type HeirsAndPartitionRepeaterProps = {
+export type HeirsRepeaterProps = {
   field: {
     props: {
       repeaterButtonText: string

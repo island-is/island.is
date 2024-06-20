@@ -26,7 +26,7 @@ import {
   getPrePaidTotalValueFromApplication,
   valueToNumber,
 } from '../../lib/utils/helpers'
-import { HeirsAndPartitionRepeaterProps } from './types'
+import { HeirsRepeaterProps } from './types'
 import {
   DEFAULT_TAX_FREE_LIMIT,
   PREPAID_INHERITANCE,
@@ -38,9 +38,7 @@ import ShareInput from '../../components/ShareInput'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 
 export const HeirsRepeater: FC<
-  React.PropsWithChildren<
-    FieldBaseProps<Answers> & HeirsAndPartitionRepeaterProps
-  >
+  React.PropsWithChildren<FieldBaseProps<Answers> & HeirsRepeaterProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { answers } = application
   const { id, props } = field

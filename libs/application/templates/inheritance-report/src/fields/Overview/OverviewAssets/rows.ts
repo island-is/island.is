@@ -279,7 +279,6 @@ export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
     }
 
     return {
-      title: isPrePaid ? undefined : item.info,
       value: formatCurrency(String(value)),
       items,
     }
