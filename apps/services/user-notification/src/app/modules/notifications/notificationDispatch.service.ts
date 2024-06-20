@@ -90,12 +90,8 @@ export class NotificationDispatchService {
         body: notification.externalBody,
       },
       data: {
-        createdAt: new Date().toISOString(),
         messageId,
-        ...(notification.appURI && {
-          url: notification.appURI,
-          islandIsUrl: notification.appURI, // CLEANUP ?????
-        }),
+        clickActionUrl: notification.clickActionUrl
       },
     }
 

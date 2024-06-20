@@ -14,7 +14,7 @@ export class HnippTemplate {
   internalBody?: string
 
   @ApiProperty({ example: 'https://island.is/minarsidur/postholf' })
-  clickActionUrl?: string
+  clickActionUrl!: string
 
   @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]

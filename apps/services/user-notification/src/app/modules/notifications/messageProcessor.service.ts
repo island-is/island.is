@@ -27,12 +27,11 @@ export class MessageProcessorService {
         ...template,
       },
     )
-
     return {
       title: notification.title,
       externalBody: notification.externalBody,
       internalBody: notification.internalBody,
-      appURI: notification.clickActionUrl, // IS THIS BEING USED ? web vs url deprecateing...
+      clickActionUrl: notification.clickActionUrl,
     }
   }
 }

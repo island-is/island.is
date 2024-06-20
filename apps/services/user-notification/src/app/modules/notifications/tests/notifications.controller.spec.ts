@@ -56,8 +56,8 @@ describe('NotificationsController', () => {
       const templates: HnippTemplate[] = [
         {
           templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-          notificationTitle: 'New document',
-          notificationExternalBody: 'New document from {{organization}}',
+          title: 'New document',
+          externalBody: 'New document from {{organization}}',
           args: ['arg1', 'arg2'],
         },
       ]
@@ -78,8 +78,8 @@ describe('NotificationsController', () => {
     it('should return a single notification template by ID', async () => {
       const template: HnippTemplate = {
         templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-        notificationTitle: 'Title',
-        notificationExternalBody: 'Body',
+        title: 'Title',
+        externalBody: 'Body',
         args: ['arg1'],
       }
 
