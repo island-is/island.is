@@ -7,16 +7,8 @@ import {
   SelectController,
 } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Button,
-  Input,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridRow, Button, Input } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
-import * as styles from '../styles.css'
 import {
   YES,
   getErrorViaPath,
@@ -67,7 +59,7 @@ export const ReportFieldsRepeater: FC<
 
   const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
 
-  const { fields, append, remove, replace } = useFieldArray<any>({
+  const { fields, append, remove, replace, update } = useFieldArray<any>({
     name: id,
   })
 
@@ -94,7 +86,10 @@ export const ReportFieldsRepeater: FC<
 
     const total = values.reduce((acc: number, current: any, index: number) => {
       const sumField2 = valueToNumber(current[props?.sumField2], ',')
-      let currentValue = valueToNumber(current[props?.sumField], ',')
+      let currentValue = valueToNumber(
+        current.enabled ? current[props?.sumField] : 0,
+        ',',
+      )
       currentValue = currentValue + sumField2
       const shareValueNumber = valueToNumber(current?.share, '.')
 
@@ -134,12 +129,17 @@ export const ReportFieldsRepeater: FC<
       return Object.values(field)[1]
     })
 
-    const repeaterFields: Record<string, string> = values.reduce(
-      (acc: Record<string, unknown>, elem: string) => {
-        if (elem === 'foreignBankAccount') {
+    // All additional fields should be enabled by default
+    values.push('enabled')
+
+    const repeaterFields: Record<string, any> = values.reduce(
+      (acc: Record<string, unknown>, elem: any) => {
+        acc[elem] = ''
+
+        if (elem === 'enabled') {
+          acc[elem] = true
+        } else if (elem === 'foreignBankAccount') {
           acc[elem] = []
-        } else {
-          acc[elem] = ''
         }
 
         return acc
@@ -203,9 +203,17 @@ export const ReportFieldsRepeater: FC<
         : getEstateDataFromApplication(application).inheritanceReportInfo
     const extData: Array<InheritanceReportAsset> =
       estateData && props.fromExternalData
-        ? (estateData[
-            props.fromExternalData as keyof InheritanceReportInfo
-          ] as InheritanceReportAsset[])
+        ? (
+            estateData[
+              props.fromExternalData as keyof InheritanceReportInfo
+            ] as InheritanceReportAsset[]
+          ).map((data: any) => {
+            return {
+              ...data,
+              initial: true,
+              enabled: true,
+            }
+          }) ?? []
         : []
 
     if (
@@ -276,17 +284,38 @@ export const ReportFieldsRepeater: FC<
         const fieldIndex = `${id}[${mainIndex}]`
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box position="absolute" className={styles.removeFieldButton}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="remove"
-                onClick={() => {
-                  remove(mainIndex)
-                  calculateTotal()
-                }}
-              />
+            <Box display={'flex'} justifyContent="flexEnd" marginBottom={2}>
+              {repeaterField.initial ? (
+                <Button
+                  variant="text"
+                  size="small"
+                  icon={repeaterField.enabled ? 'remove' : 'add'}
+                  onClick={() => {
+                    const updatedField = {
+                      ...repeaterField,
+                      enabled: !repeaterField.enabled,
+                    }
+                    update(mainIndex, updatedField)
+                    calculateTotal()
+                  }}
+                >
+                  {repeaterField.enabled
+                    ? formatMessage(m.inheritanceDisableMember)
+                    : formatMessage(m.inheritanceEnableMember)}
+                </Button>
+              ) : (
+                <Button
+                  variant="text"
+                  size="small"
+                  icon="trash"
+                  onClick={() => {
+                    remove(mainIndex)
+                    calculateTotal()
+                  }}
+                >
+                  {formatMessage(m.inheritanceDeleteMember)}
+                </Button>
+              )}
             </Box>
             <GridRow>
               {props.fields.map((field: any, index) => {
@@ -328,6 +357,7 @@ export const ReportFieldsRepeater: FC<
                         name={`${fieldIndex}.${field.id}`}
                         defaultValue={[]}
                         spacing={0}
+                        disabled={!repeaterField.enabled}
                         options={[
                           {
                             label: formatMessage(m.bankAccountForeignLabel),
@@ -358,7 +388,9 @@ export const ReportFieldsRepeater: FC<
                           placeholder: '0000-00-000000',
                         })}
                         error={err}
-                        required
+                        disabled={!repeaterField.enabled}
+                        readOnly={repeaterField.initial}
+                        required={!repeaterField.initial}
                       />
                     ) : field.id === 'share' ? (
                       <InputController
@@ -381,6 +413,7 @@ export const ReportFieldsRepeater: FC<
                         error={err}
                         type="number"
                         suffix="%"
+                        disabled={!repeaterField.enabled}
                         required
                       />
                     ) : field.id === 'debtType' ? (
@@ -398,6 +431,7 @@ export const ReportFieldsRepeater: FC<
                           value: type.value,
                         }))}
                         backgroundColor="blue"
+                        disabled={!repeaterField.enabled}
                       />
                     ) : (
                       <InputController
@@ -419,6 +453,7 @@ export const ReportFieldsRepeater: FC<
                         rows={field.rows}
                         required={field.required}
                         error={err}
+                        disabled={!repeaterField.enabled}
                         onChange={() => {
                           if (valueKeys.includes(field.id)) {
                             updateValue(fieldIndex)

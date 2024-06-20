@@ -16,7 +16,6 @@ import {
 import { InheritanceReportAsset } from '@island.is/clients/syslumenn'
 import DeceasedShare from '../../components/DeceasedShare'
 import { PREPAID_INHERITANCE } from '../../lib/constants'
-import * as styles from '../styles.css'
 import { FieldComponent } from './FieldComponent'
 import { RepeaterProps } from './types'
 
@@ -137,54 +136,44 @@ export const EstateAndVehiclesRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            {!repeaterField.initial ? (
-              <Box position="absolute" className={styles.removeFieldButton}>
+            <Box
+              display={'flex'}
+              justifyContent="flexEnd"
+              marginBottom={2}
+            >
+              {repeaterField.initial ? (
                 <Button
-                  variant="ghost"
+                  variant="text"
                   size="small"
-                  circle
-                  icon="remove"
+                  icon={repeaterField.enabled ? 'remove' : 'add'}
+                  onClick={() => {
+                    const updatedField = {
+                      ...repeaterField,
+                      enabled: !repeaterField.enabled,
+                    }
+                    update(mainIndex, updatedField)
+                    calculateTotal()
+                  }}
+                >
+                  {repeaterField.enabled
+                    ? formatMessage(m.inheritanceDisableMember)
+                    : formatMessage(m.inheritanceEnableMember)}
+                </Button>
+              ) : (
+                <Button
+                  variant="text"
+                  size="small"
+                  icon="trash"
                   onClick={() => {
                     remove(mainIndex)
                     calculateTotal()
                   }}
-                />
-              </Box>
-            ) : (
-              <Box
-                display={'flex'}
-                justifyContent="spaceBetween"
-                marginBottom={2}
-              >
-                <Text
-                  variant="h4"
-                  color={repeaterField.enabled ? 'currentColor' : 'dark300'}
                 >
-                  {formatMessage(m.realEstateRepeaterHeader) +
-                    ' ' +
-                    (mainIndex + 1)}
-                </Text>
-                <Box>
-                  <Button
-                    variant="text"
-                    size="small"
-                    icon={repeaterField.enabled ? 'remove' : 'add'}
-                    onClick={() => {
-                      const updatedField = {
-                        ...repeaterField,
-                        enabled: !repeaterField.enabled,
-                      }
-                      update(mainIndex, updatedField)
-                      calculateTotal()
-                    }}
-                  >
-                    {repeaterField.enabled
-                      ? formatMessage(m.inheritanceDisableMember)
-                      : formatMessage(m.inheritanceEnableMember)}
-                  </Button>
-                </Box>
-              </Box>
-            )}
+                  {formatMessage(m.inheritanceDeleteMember)}
+                </Button>
+              )}
+            </Box>
+
             <GridRow>
               {props.fields.map((field: any, index) => {
                 const even = props.fields.length % 2 === 0

@@ -217,7 +217,9 @@ export const getStocksDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.bankAccounts?.data
+  const values = (
+    answers.assets as unknown as EstateAssets
+  )?.bankAccounts?.data.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)

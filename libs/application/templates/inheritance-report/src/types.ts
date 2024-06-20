@@ -205,6 +205,7 @@ export interface BankAccountsData extends DeceasedShare {
   propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
+  enabled?: boolean
 }
 
 export interface BankAccounts {

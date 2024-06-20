@@ -5,7 +5,6 @@ import { InputController } from '@island.is/shared/form-fields'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, GridRow, Button, Input } from '@island.is/island-ui/core'
 import { Answers } from '../../types'
-import * as styles from '../styles.css'
 import { getErrorViaPath } from '@island.is/application/core'
 import { formatCurrency } from '@island.is/application/ui-components'
 import { useLocale } from '@island.is/localization'
@@ -46,7 +45,7 @@ export const OtherAssetsRepeater: FC<
       : getEstateDataFromApplication(application)?.inheritanceReportInfo
           ?.otherAssets?.[index]?.[fieldName] ?? ''
 
-  const { fields, append, remove } = useFieldArray<any>({
+  const { fields, append, remove, update } = useFieldArray<any>({
     name: id,
   })
 
@@ -99,17 +98,38 @@ export const OtherAssetsRepeater: FC<
 
         return (
           <Box position="relative" key={repeaterField.id} marginTop={4}>
-            <Box position="absolute" className={styles.removeFieldButton}>
-              <Button
-                variant="ghost"
-                size="small"
-                circle
-                icon="remove"
-                onClick={() => {
-                  remove(mainIndex)
-                  calculateTotal()
-                }}
-              />
+            <Box display={'flex'} justifyContent="flexEnd" marginBottom={2}>
+              {repeaterField.initial ? (
+                <Button
+                  variant="text"
+                  size="small"
+                  icon={repeaterField.enabled ? 'remove' : 'add'}
+                  onClick={() => {
+                    const updatedField = {
+                      ...repeaterField,
+                      enabled: !repeaterField.enabled,
+                    }
+                    update(mainIndex, updatedField)
+                    calculateTotal()
+                  }}
+                >
+                  {repeaterField.enabled
+                    ? formatMessage(m.inheritanceDisableMember)
+                    : formatMessage(m.inheritanceEnableMember)}
+                </Button>
+              ) : (
+                <Button
+                  variant="text"
+                  size="small"
+                  icon="trash"
+                  onClick={() => {
+                    remove(mainIndex)
+                    calculateTotal()
+                  }}
+                >
+                  {formatMessage(m.inheritanceDeleteMember)}
+                </Button>
+              )}
             </Box>
             <GridRow>
               {props.fields.map((field: any) => {
