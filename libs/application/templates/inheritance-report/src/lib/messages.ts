@@ -1206,11 +1206,6 @@ export const m = defineMessages({
     defaultMessage: 'Hlutfall séreignar',
     description: '',
   },
-  deceasedSharePart: {
-    id: 'ir.application:deceasedSharePart',
-    defaultMessage: 'Hlutfall séreignar',
-    description: '',
-  },
   spousesShareDescription: {
     id: 'ir.application:spousesShareDescription',
     defaultMessage:
