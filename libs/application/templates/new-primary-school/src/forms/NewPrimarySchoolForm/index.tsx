@@ -1,4 +1,4 @@
-import { buildForm, buildSection } from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { childrenNParentsSection } from './childrenNParentsSection'
@@ -12,11 +12,6 @@ export const NewPrimarySchoolForm: Form = buildForm({
   title: newPrimarySchoolMessages.shared.formTitle,
   mode: FormModes.DRAFT,
   children: [
-    buildSection({
-      id: 'prerequisites',
-      title: newPrimarySchoolMessages.pre.externalDataSection,
-      children: [],
-    }),
     childrenNParentsSection,
     primarySchoolSection,
     differentNeedsSection,

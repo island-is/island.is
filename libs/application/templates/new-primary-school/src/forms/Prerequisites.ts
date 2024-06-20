@@ -67,30 +67,5 @@ export const Prerequisites: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'childrenNParentsSection',
-      title: newPrimarySchoolMessages.childrenNParents.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'primarySchoolSection',
-      title: newPrimarySchoolMessages.primarySchool.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'differentNeedsSection',
-      title: newPrimarySchoolMessages.differentNeeds.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'overviewSection',
-      title: newPrimarySchoolMessages.overview.sectionTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusionSection',
-      title: newPrimarySchoolMessages.conclusion.sectionTitle,
-      children: [],
-    }),
   ],
 })
