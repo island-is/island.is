@@ -35,7 +35,7 @@ FROM registry.fedoraproject.org/fedora:${FEDORA_VERSION} as base
 RUN --mount=type=cache,target=/var/cache/dnf \
   dnf install -y \
   # Basic requirements
-  bash zsh git java-11-openjdk gcc-c++ jq graphviz \
+  bash zsh git java-11-openjdk gcc-c++ jq graphviz python3-devel \
   # AWS/DevOps specific dependencies
   awscli2 \
   # Niceties
@@ -84,3 +84,4 @@ RUN echo "eval \"\$(starship init ${SHELL})\"" >> ~/.${SHELL}rc && \
 # https://stackoverflow.com/a/63148464
 # RUN echo "NX_REJECT_UNKNOWN_LOCAL_CACHE=0" >> /home/${USERNAME}/.${SHELL}rc
 
+WORKDIR /workspaces/island.is
