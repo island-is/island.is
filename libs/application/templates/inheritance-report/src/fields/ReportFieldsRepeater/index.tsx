@@ -476,6 +476,7 @@ export const ReportFieldsRepeater: FC<
                 id={fieldIndex}
                 paddingBottom={2}
                 pushRight={shouldPushRight}
+                disabled={!repeaterField.enabled}
               />
             )}
           </Box>
