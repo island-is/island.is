@@ -5,6 +5,7 @@ import {
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
+import { ChildrenModel } from './children.model'
 import {
   AmountModel,
   ApplicationFileModel,
@@ -109,4 +110,10 @@ export class ApplicationModel {
 
   @Field({ nullable: true })
   readonly navSuccess?: boolean
+
+  @Field({ nullable: true })
+  readonly childrenComment?: string
+
+  @Field(() => [ChildrenModel])
+  readonly children?: ChildrenModel[]
 }
