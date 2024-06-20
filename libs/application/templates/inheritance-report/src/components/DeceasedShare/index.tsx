@@ -66,7 +66,7 @@ export const DeceasedShare = ({
         paddingBottom={paddingBottom}
       >
         <Box width="full">
-          <Box paddingBottom={checked ? 5 : 0} width="full">
+          <Box paddingBottom={checked ? 3 : 0} width="full">
             <CheckboxController
               name={checkboxFieldName}
               large={false}
