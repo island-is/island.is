@@ -28,137 +28,141 @@ import type {
   ConsentSectionProps,
   ConsentGroupProps,
 } from './types'
+import { DynamicTitle } from '@island.is/service-portal/core'
 
-function Consent() {
+const Consent = () => {
   const { formatMessage } = useLocale()
 
   const { data, loading } = useGetConsentListQuery()
   const isData = Array.isArray(data?.consentsList?.data)
 
   return (
-    <GridRow>
-      <GridColumn span={['12/12', '12/12', '12/12', '10/12', '8/12']}>
-        <IntroHeader
-          title={m.consent}
-          intro={m.consentHeaderIntro}
-          marginBottom={8}
-        >
-          <GridColumn span={['8/8', '5/8']}>
-            <Box marginTop={1}>
-              <Text variant="small">
-                {formatMessage(m.consentHeaderDetails)}
-              </Text>
-            </Box>
-          </GridColumn>
-        </IntroHeader>
+    <>
+      <DynamicTitle title={formatMessage(m.consent)} />
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12', '8/12']}>
+          <IntroHeader
+            title={m.consent}
+            intro={m.consentHeaderIntro}
+            marginBottom={8}
+          >
+            <GridColumn span={['8/8', '5/8']}>
+              <Box marginTop={1}>
+                <Text variant="small">
+                  {formatMessage(m.consentHeaderDetails)}
+                </Text>
+              </Box>
+            </GridColumn>
+          </IntroHeader>
 
-        <Accordion
-          singleExpand={false}
-          dividers={false}
-          dividerOnTop={false}
-          dividerOnBottom={false}
-        >
-          {loading ? (
-            <Box>
-              <SkeletonLoader
-                display="block"
-                height={117}
-                repeat={2}
-                space={2}
-                borderRadius="large"
-              />
-            </Box>
-          ) : isData ? (
-            data?.consentsList?.data?.map(({ client, tenants }) => {
-              const title = client?.clientName || client.clientId
-              return (
-                <AccordionCard
-                  id={client.clientId}
-                  key={client.clientId}
-                  labelUse="h2"
-                  dataTestId="consent-accordion-card"
-                  label={
-                    <Box
-                      display="flex"
-                      columnGap={2}
-                      alignItems="center"
-                      component="span"
-                    >
+          <Accordion
+            singleExpand={false}
+            dividers={false}
+            dividerOnTop={false}
+            dividerOnBottom={false}
+          >
+            {loading ? (
+              <Box>
+                <SkeletonLoader
+                  display="block"
+                  height={117}
+                  repeat={2}
+                  space={2}
+                  borderRadius="large"
+                />
+              </Box>
+            ) : isData ? (
+              data?.consentsList?.data?.map(({ client, tenants }) => {
+                const title = client?.clientName || client.clientId
+                return (
+                  <AccordionCard
+                    id={client.clientId}
+                    key={client.clientId}
+                    labelUse="h2"
+                    dataTestId="consent-accordion-card"
+                    label={
                       <Box
-                        component="span"
                         display="flex"
+                        columnGap={2}
                         alignItems="center"
-                        className={styles.logoContainer}
+                        component="span"
                       >
-                        {client.domain?.organisationLogoUrl ? (
-                          <img
-                            src={client.domain?.organisationLogoUrl || ''}
-                            alt={''}
-                            width={24}
-                          />
-                        ) : null}
-                      </Box>
-                      <Box component="span">
-                        {client.domain?.displayName ? (
-                          <Text
-                            variant="eyebrow"
-                            color="purple400"
-                            dataTestId="consent-accordion-display-name"
-                          >
-                            {client.domain.displayName}
-                          </Text>
-                        ) : null}
-                        <Text
-                          as="span"
-                          variant="h4"
-                          dataTestId="consent-accordion-title"
+                        <Box
+                          component="span"
+                          display="flex"
+                          alignItems="center"
+                          className={styles.logoContainer}
                         >
-                          {title}
-                        </Text>
-                      </Box>
-                    </Box>
-                  }
-                >
-                  <Box paddingY={3} paddingX={[3, 6]}>
-                    <Text variant="eyebrow" marginBottom={4}>
-                      {formatMessage(m.consentExplanation)}
-                    </Text>
-                    <ul>
-                      {tenants
-                        ?.filter(Boolean)
-                        ?.map((tenant, permissionIndex, arr) => {
-                          return (
-                            <ConsentSection
-                              {...tenant}
-                              clientId={client.clientId}
-                              key={permissionIndex}
-                              isLast={permissionIndex + 1 === arr.length}
+                          {client.domain?.organisationLogoUrl ? (
+                            <img
+                              src={client.domain?.organisationLogoUrl || ''}
+                              alt={''}
+                              width={24}
                             />
-                          )
-                        })}
-                    </ul>
-                  </Box>
-                </AccordionCard>
-              )
-            })
-          ) : (
-            <AlertMessage
-              type="info"
-              message={formatMessage(m.consentEmptyInfo)}
-            />
-          )}
-        </Accordion>
-      </GridColumn>
-    </GridRow>
+                          ) : null}
+                        </Box>
+                        <Box component="span">
+                          {client.domain?.displayName ? (
+                            <Text
+                              variant="eyebrow"
+                              color="purple400"
+                              dataTestId="consent-accordion-display-name"
+                            >
+                              {client.domain.displayName}
+                            </Text>
+                          ) : null}
+                          <Text
+                            as="span"
+                            variant="h4"
+                            dataTestId="consent-accordion-title"
+                          >
+                            {title}
+                          </Text>
+                        </Box>
+                      </Box>
+                    }
+                  >
+                    <Box paddingY={3} paddingX={[3, 6]}>
+                      <Text variant="eyebrow" marginBottom={4}>
+                        {formatMessage(m.consentExplanation)}
+                      </Text>
+                      <ul>
+                        {tenants
+                          ?.filter(Boolean)
+                          ?.map((tenant, permissionIndex, arr) => {
+                            return (
+                              <ConsentSection
+                                {...tenant}
+                                clientId={client.clientId}
+                                key={permissionIndex}
+                                isLast={permissionIndex + 1 === arr.length}
+                              />
+                            )
+                          })}
+                      </ul>
+                    </Box>
+                  </AccordionCard>
+                )
+              })
+            ) : (
+              <AlertMessage
+                type="info"
+                message={formatMessage(m.consentEmptyInfo)}
+              />
+            )}
+          </Accordion>
+        </GridColumn>
+      </GridRow>
+    </>
   )
 }
 
-function ConsentSection({
+const ConsentSection = ({
   clientId,
   tenant,
   scopes = [],
   isLast = false,
-}: ConsentSectionProps) {
+}: ConsentSectionProps) => {
   if (!scopes?.length || !tenant) {
     return null
   }
@@ -221,11 +225,11 @@ function ConsentSection({
   )
 }
 
-function ConsentGroup({
+const ConsentGroup = ({
   displayName,
   description,
   children,
-}: ConsentGroupProps) {
+}: ConsentGroupProps) => {
   return (
     <Box marginY={2} component="li">
       <Box marginBottom={2}>
@@ -244,14 +248,14 @@ function ConsentGroup({
   )
 }
 
-function ConsentLine({
+const ConsentLine = ({
   name,
   displayName,
   description,
   hasConsent,
   clientId,
   isLast,
-}: ConsentLineProps) {
+}: ConsentLineProps) => {
   const { formatMessage } = useLocale()
   const [patchConsent, { loading }] = usePatchConsentMutation({
     onError: (_) => toast.error(formatMessage(m.consentUpdateError)),

@@ -13,7 +13,7 @@ import {
   useBreakpoint,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
+import { IntroHeader } from '@island.is/service-portal/core'
 
 import LogTable from '../../components/LogTable/LogTable'
 import LogTableMobile from '../../components/LogTable/LogTableMobile'

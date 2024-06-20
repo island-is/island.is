@@ -38,6 +38,7 @@ import * as styles from './Dashboard.css'
 import cn from 'classnames'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import { DocumentsScope } from '@island.is/auth/scopes'
+import { Helmet } from 'react-helmet-async'
 
 export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const { userInfo } = useAuth()
@@ -156,6 +157,9 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
 
   return (
     <Box>
+      <Helmet>
+        <title>{'Mínar síður - Ísland.is'}</title>
+      </Helmet>
       <Greeting />
       <Box paddingTop={[0, 0, 0, 4]} marginBottom={3}>
         <GridContainer>

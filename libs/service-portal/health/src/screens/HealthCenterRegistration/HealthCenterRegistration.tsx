@@ -11,11 +11,11 @@ import {
   FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { IntroHeader } from '@island.is/portals/core'
 import {
   EmptyState,
   ErrorScreen,
   ExcludesFalse,
+  IntroHeader,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import * as styles from './HealthRegistration.css'

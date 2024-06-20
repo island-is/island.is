@@ -6,7 +6,7 @@ import { FootNote, SYSLUMENN_SLUG, m } from '@island.is/service-portal/core'
 import { IntroHeader } from '@island.is/service-portal/core'
 import { LicenseCards } from './components/LicenseCards'
 
-function EducationLicense() {
+const EducationLicense = function () {
   useNamespaces('sp.education-license')
   const { formatMessage } = useLocale()
 

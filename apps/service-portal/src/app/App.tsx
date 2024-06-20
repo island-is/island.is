@@ -10,26 +10,29 @@ import { modules } from '../lib/modules'
 import { createRoutes } from '../lib/routes'
 import { environment } from '../environments'
 import * as styles from './App.css'
+import { HelmetProvider } from 'react-helmet-async'
 
 export const App = () => (
   <div className={styles.page}>
-    <ApolloProvider client={client}>
-      <LocaleProvider locale={defaultLanguage} messages={{}}>
-        <AuthProvider basePath={ServicePortalPaths.Base}>
-          <ApplicationErrorBoundary>
-            <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
-              <PortalRouter
-                modules={modules}
-                createRoutes={createRoutes}
-                portalMeta={{
-                  basePath: ServicePortalPaths.Base,
-                  portalType: 'my-pages',
-                }}
-              />
-            </FeatureFlagProvider>
-          </ApplicationErrorBoundary>
-        </AuthProvider>
-      </LocaleProvider>
-    </ApolloProvider>
+    <HelmetProvider>
+      <ApolloProvider client={client}>
+        <LocaleProvider locale={defaultLanguage} messages={{}}>
+          <AuthProvider basePath={ServicePortalPaths.Base}>
+            <ApplicationErrorBoundary>
+              <FeatureFlagProvider sdkKey={environment.featureFlagSdkKey}>
+                <PortalRouter
+                  modules={modules}
+                  createRoutes={createRoutes}
+                  portalMeta={{
+                    basePath: ServicePortalPaths.Base,
+                    portalType: 'my-pages',
+                  }}
+                />
+              </FeatureFlagProvider>
+            </ApplicationErrorBoundary>
+          </AuthProvider>
+        </LocaleProvider>
+      </ApolloProvider>
+    </HelmetProvider>
   </div>
 )
