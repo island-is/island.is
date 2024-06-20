@@ -12,6 +12,17 @@ import {
 } from './constants'
 import { errorMessages } from './messages'
 
+const validatePhoneNumber = (value: string) => {
+  const phoneNumber = parsePhoneNumberFromString(value, 'IS')
+  return phoneNumber && phoneNumber.isValid()
+}
+
+const phoneNumberSchema = z
+  .string()
+  .refine((value) => validatePhoneNumber(value), {
+    params: errorMessages.phoneNumber,
+  })
+
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   childNationalId: z.string().min(1),
@@ -43,38 +54,12 @@ export const dataSchema = z.object({
   parents: z.object({
     parent1: z.object({
       email: z.string().email(),
-      phoneNumber: z.string().refine(
-        (p) => {
-          const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-          const phoneNumberStartStr = ['6', '7', '8']
-          return (
-            phoneNumber &&
-            phoneNumber.isValid() &&
-            phoneNumberStartStr.some((substr) =>
-              phoneNumber.nationalNumber.startsWith(substr),
-            )
-          )
-        },
-        { params: errorMessages.phoneNumber },
-      ),
+      phoneNumber: phoneNumberSchema,
     }),
     parent2: z
       .object({
         email: z.string().email(),
-        phoneNumber: z.string().refine(
-          (p) => {
-            const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-            const phoneNumberStartStr = ['6', '7', '8']
-            return (
-              phoneNumber &&
-              phoneNumber.isValid() &&
-              phoneNumberStartStr.some((substr) =>
-                phoneNumber.nationalNumber.startsWith(substr),
-              )
-            )
-          },
-          { params: errorMessages.phoneNumber },
-        ),
+        phoneNumber: phoneNumberSchema,
       })
       .optional(),
   }),
@@ -82,20 +67,7 @@ export const dataSchema = z.object({
     .array(
       z.object({
         fullName: z.string().min(1),
-        phoneNumber: z.string().refine(
-          (p) => {
-            const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-            const phoneNumberStartStr = ['6', '7', '8']
-            return (
-              phoneNumber &&
-              phoneNumber.isValid() &&
-              phoneNumberStartStr.some((substr) =>
-                phoneNumber.nationalNumber.startsWith(substr),
-              )
-            )
-          },
-          { params: errorMessages.phoneNumber },
-        ),
+        phoneNumber: phoneNumberSchema,
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
