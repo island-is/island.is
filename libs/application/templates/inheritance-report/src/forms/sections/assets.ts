@@ -56,8 +56,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.realEstate.data',
-                doesNotRequireAnswer: true,
-                component: 'AssetsRepeater',
+                component: 'EstateAndVehiclesRepeater',
               },
               {
                 fields: [
@@ -151,7 +150,6 @@ export const assets = buildSection({
                 title: '',
                 condition: shouldShowDeceasedShareField,
                 id: 'assets.inventory',
-                doesNotRequireAnswer: true,
                 width: 'full',
                 component: 'DeceasedShareField',
               },
@@ -194,8 +192,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.vehicles.data',
-                doesNotRequireAnswer: true,
-                component: 'AssetsRepeater',
+                component: 'EstateAndVehiclesRepeater',
               },
               {
                 fields: [
@@ -262,7 +259,6 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.guns.data',
-                doesNotRequireAnswer: true,
                 component: 'ReportFieldsRepeater',
               },
               {
@@ -326,7 +322,6 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.bankAccounts.data',
                 component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [
@@ -408,7 +403,6 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.claims.data',
                 component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [
@@ -475,7 +469,6 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.stocks.data',
                 component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [
@@ -597,7 +590,6 @@ export const assets = buildSection({
                 title: '',
                 condition: shouldShowDeceasedShareField,
                 id: 'assets.money',
-                doesNotRequireAnswer: true,
                 width: 'full',
                 component: 'DeceasedShareField',
               },
@@ -645,7 +637,6 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.otherAssets.data',
                 component: 'OtherAssetsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [

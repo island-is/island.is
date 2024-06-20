@@ -151,6 +151,7 @@ describe('PasskeyCoreService', () => {
         name: 'Tester',
         type: 'IslandisApp',
         idp: 'gervimadur',
+        counter: 0,
       })
 
       const user = {
@@ -180,6 +181,7 @@ describe('PasskeyCoreService', () => {
         created: new Date(
           Date.now() - 1000 * 60 * 60 * 24 * PASSKEY_AGE_IN_DAYS,
         ),
+        counter: 0,
       })
 
       const user = {
@@ -204,6 +206,7 @@ describe('PasskeyCoreService', () => {
         name: 'Tester',
         type: 'IslandisApp',
         idp: 'gervimadur',
+        counter: 0,
       })
 
       const user = {
@@ -218,11 +221,11 @@ describe('PasskeyCoreService', () => {
         async (options: VerifyAuthenticationResponseOpts) => {
           return {
             verified: true,
-            registrationInfo: {
+            authenticationInfo: {
               credentialID: options.response.id,
               credentialPublicKey:
                 Buffer.from('test-public-key').toString('base64'),
-              counter: 0,
+              newCounter: 0,
             },
           }
         },
@@ -245,5 +248,71 @@ describe('PasskeyCoreService', () => {
 
       expect(verification.verified).toBe(true)
     })
+  })
+
+  it('passkey counter should match new counter in client authenticator response', async () => {
+    const PASSKEY_ID = '1337'
+    const EXPECTED_NEW_COUNTER = 13
+
+    // Create a passkey for the user
+    await passkeyModel.create({
+      user_sub: USER_SUB,
+      passkey_id: PASSKEY_ID,
+      public_key: new TextEncoder().encode('public_key'),
+      audkenni_sim_number: '123',
+      name: 'Tester',
+      type: 'IslandisApp',
+      idp: 'gervimadur',
+      counter: 0,
+    })
+
+    const user = {
+      sub: USER_SUB,
+      authorization: TEST_AUTHORIZATION_TOKEN,
+    } as any // since only user.sub is used in the function
+
+    const opts = await passkeysCoreService.generateAuthenticationOptions(user)
+
+    // mock the verifyAuthentication method since we don't have a browser client to create it
+    verifyAuthenticationResponse.mockImplementation(
+      async (options: VerifyAuthenticationResponseOpts) => {
+        return {
+          verified: true,
+          authenticationInfo: {
+            credentialID: options.response.id,
+            credentialPublicKey:
+              Buffer.from('test-public-key').toString('base64'),
+            newCounter: EXPECTED_NEW_COUNTER,
+          },
+        }
+      },
+    )
+
+    // During this verification, the counter of the passkey in the database
+    // should be updated to the new counter from the client response
+    await passkeysCoreService.verifyAuthentication({
+      // Mock the authentication response that the client would send
+      id: PASSKEY_ID,
+      // ... only the id is used in the mocked function above
+      // and then the clientDataJSON is used by the service function
+      response: {
+        clientDataJSON: Buffer.from(
+          JSON.stringify({
+            // to find the challenge from the authentication options
+            challenge: opts.challenge,
+          }),
+        ).toString('base64'),
+      },
+    } as any)
+
+    const passkey = await passkeyModel.findOne({
+      where: { passkey_id: PASSKEY_ID },
+    })
+
+    assert(passkey)
+
+    // Ensure that the counter of the passkey in the database
+    // has been updated to the new counter from the client response
+    expect(passkey.counter).toBe(EXPECTED_NEW_COUNTER)
   })
 })

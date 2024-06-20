@@ -26,7 +26,7 @@ import {
   getPrePaidTotalValueFromApplication,
   valueToNumber,
 } from '../../lib/utils/helpers'
-import { HeirsAndPartitionRepeaterProps } from './types'
+import { HeirsRepeaterProps } from './types'
 import {
   DEFAULT_TAX_FREE_LIMIT,
   PREPAID_INHERITANCE,
@@ -37,10 +37,8 @@ import DoubleColumnRow from '../../components/DoubleColumnRow'
 import ShareInput from '../../components/ShareInput'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 
-export const HeirsAndPartitionRepeater: FC<
-  React.PropsWithChildren<
-    FieldBaseProps<Answers> & HeirsAndPartitionRepeaterProps
-  >
+export const HeirsRepeater: FC<
+  React.PropsWithChildren<FieldBaseProps<Answers> & HeirsRepeaterProps>
 > = ({ application, field, errors, setBeforeSubmitCallback }) => {
   const { answers } = application
   const { id, props } = field
@@ -329,9 +327,14 @@ export const HeirsAndPartitionRepeater: FC<
               <Box
                 display="flex"
                 justifyContent="spaceBetween"
-                marginBottom={3}
+                marginBottom={2}
               >
-                <Text variant="h4">{formatMessage(m.heir)}</Text>
+                <Text
+                  variant="h4"
+                  color={member.enabled ? 'currentColor' : 'dark300'}
+                >
+                  {formatMessage(m.heir) + ' ' + (mainIndex + 1)}
+                </Text>
                 <Box>
                   <Button
                     variant="text"
@@ -422,14 +425,6 @@ export const HeirsAndPartitionRepeater: FC<
 
                   return (
                     <Fragment key={customFieldIndex}>
-                      {customField?.sectionTitle ? (
-                        <GridColumn span="1/1">
-                          <Text variant="h5" marginBottom={2}>
-                            {customField.sectionTitle}
-                          </Text>
-                        </GridColumn>
-                      ) : null}
-
                       {customField.id === 'relation' ? (
                         <GridColumn span="1/2" paddingBottom={2}>
                           <InputController
@@ -647,4 +642,4 @@ export const HeirsAndPartitionRepeater: FC<
   )
 }
 
-export default HeirsAndPartitionRepeater
+export default HeirsRepeater
