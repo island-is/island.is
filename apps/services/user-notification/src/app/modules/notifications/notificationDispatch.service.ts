@@ -91,7 +91,7 @@ export class NotificationDispatchService {
       },
       data: {
         messageId,
-        clickActionUrl: notification.clickActionUrl
+        clickActionUrl: notification.clickActionUrl,
       },
     }
 
