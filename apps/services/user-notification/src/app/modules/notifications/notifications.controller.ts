@@ -22,7 +22,6 @@ import type { Locale } from '@island.is/shared/types'
 
 @Controller('notifications')
 @ApiTags('notifications')
-// @ApiExtraModels(CreateNotificationDto)
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,

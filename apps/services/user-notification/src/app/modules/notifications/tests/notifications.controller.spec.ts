@@ -58,6 +58,7 @@ describe('NotificationsController', () => {
           templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
           title: 'New document',
           externalBody: 'New document from {{organization}}',
+          clickActionUrl: 'https://island.is/minarsidur/postholf',
           args: ['arg1', 'arg2'],
         },
       ]
@@ -80,6 +81,7 @@ describe('NotificationsController', () => {
         templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
         title: 'Title',
         externalBody: 'Body',
+        clickActionUrl: 'https://island.is/minarsidur/postholf',
         args: ['arg1'],
       }
 
