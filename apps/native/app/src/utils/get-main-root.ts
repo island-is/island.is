@@ -11,37 +11,33 @@ import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { testIDs } from './test-ids'
 
 export const getRightButtons = ({
-  unreadCount = notificationsStore.getState().unreadCount,
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  unseenCount = notificationsStore.getState().unseenCount,
   theme = getThemeWithPreferences(preferencesStore.getState()),
 } = {}): OptionsTopBarButton[] => {
+  const iconBackground = {
+    color: 'transparent',
+    cornerRadius: 8,
+    width: theme.spacing[4],
+    height: theme.spacing[4],
+  }
+
   return [
     {
       accessibilityLabel: 'Settings',
       id: ButtonRegistry.SettingsButton,
       testID: testIDs.TOPBAR_SETTINGS_BUTTON,
       icon: require('../assets/icons/settings.png'),
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground,
     },
     {
       accessibilityLabel: 'Notifications',
       id: ButtonRegistry.NotificationsButton,
       testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
       icon:
-        unreadCount > 0
+        unseenCount > 0
           ? require('../assets/icons/topbar-notifications-bell.png')
           : require('../assets/icons/topbar-notifications.png'),
-      iconBackground: {
-        color: 'transparent',
-        cornerRadius: 8,
-        width: 32,
-        height: 32,
-      },
+      iconBackground,
     },
   ]
 }
@@ -52,6 +48,7 @@ export const getRightButtons = ({
  */
 export function getMainRoot(): Layout {
   const rightButtons = getRightButtons()
+
   return {
     bottomTabs: {
       id: MainBottomTabs,

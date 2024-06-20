@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button, Select } from '@island.is/island-ui/core'
 import { User, Locale } from '@island.is/shared/types'
 import { useLocale } from '@island.is/localization'
-import { useUpdateUserProfileMutation } from '../../../gen/graphql'
+import { useUpdateUserProfileMutation } from '../../../gen/schema'
 import { sharedMessages } from '@island.is/shared/translations'
 import { checkDelegation } from '@island.is/shared/utils'
 
@@ -65,7 +65,11 @@ export const UserLanguageSwitcher = ({
         variant="utility"
         colorScheme="white"
         onClick={handleLanguageChange}
-        aria-label={'switch language'}
+        aria-label={formatMessage(
+          lang === 'en'
+            ? sharedMessages.switchToIcelandic
+            : sharedMessages.switchToEnglish,
+        )}
         data-testid="language-switcher-button"
       >
         {lang === 'en' ? 'IS' : 'EN'}

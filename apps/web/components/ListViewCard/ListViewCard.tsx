@@ -23,6 +23,7 @@ type CardProps = {
   checkboxId?: string
   checked?: boolean
   subHeading?: string
+  onCardClick?: () => void
 }
 
 export const ListViewCard = ({
@@ -36,6 +37,7 @@ export const ListViewCard = ({
   checked,
   href,
   subHeading,
+  onCardClick,
 }: CardProps) => {
   return (
     <Box height="full">
@@ -71,32 +73,35 @@ export const ListViewCard = ({
           )}
           {iconText && <Text variant="small">{iconText}</Text>}
         </Box>
-        <LinkV2 href={href} passHref>
-          <Text
-            as="h3"
-            variant="h4"
-            color="blue400"
-            truncate={false}
-            paddingBottom={subHeading ? 0 : 3}
-            lineHeight="sm"
-          >
-            {heading}
-          </Text>
-          {subHeading && (
-            <Box style={{ paddingTop: '4px' }}>
-              <Text
-                variant="eyebrow"
-                color="blue400"
-                truncate={false}
-                title={subHeading}
-                paddingBottom={3}
-                lineHeight="sm"
-              >
-                {subHeading}
-              </Text>
-            </Box>
-          )}
-        </LinkV2>
+        <Box onClick={onCardClick}>
+          <LinkV2 href={href} passHref>
+            <Text
+              as="h3"
+              variant="h4"
+              color="blue400"
+              truncate={false}
+              paddingBottom={subHeading ? 0 : 3}
+              lineHeight="sm"
+            >
+              {heading}
+            </Text>
+            {subHeading && (
+              <Box style={{ paddingTop: '4px' }}>
+                <Text
+                  variant="eyebrow"
+                  color="blue400"
+                  truncate={false}
+                  title={subHeading}
+                  paddingBottom={3}
+                  lineHeight="sm"
+                >
+                  {subHeading}
+                </Text>
+              </Box>
+            )}
+          </LinkV2>
+        </Box>
+
         {infoItems.map((item) => {
           return (
             <Box
@@ -125,21 +130,27 @@ export const ListViewCard = ({
           </Box>
         )}
         <Box paddingTop={3} width="full" height="full">
-          <Box display={'flex'} alignItems={'flexEnd'} height="full">
+          <Box
+            display={'flex'}
+            alignItems={'flexEnd'}
+            height="full"
+            width="full"
+            style={{ cursor: cta.disabled ? 'not-allowed' : undefined }}
+          >
             {cta.href ? (
-              <LinkV2 href={cta.href} newTab={true}>
-                <Button
-                  {...(cta.buttonType ?? { variant: cta.variant })}
-                  size={cta.size}
-                  fluid
-                  disabled={cta.disabled}
-                  icon={cta.icon}
-                  iconType={cta.iconType}
-                  nowrap
-                >
+              <Button
+                {...(cta.buttonType ?? { variant: cta.variant })}
+                size={cta.size}
+                fluid
+                disabled={cta.disabled}
+                icon={cta.icon}
+                iconType={cta.iconType}
+                nowrap
+              >
+                <LinkV2 href={cta.href} newTab={true}>
                   {cta.label}
-                </Button>
-              </LinkV2>
+                </LinkV2>
+              </Button>
             ) : (
               <Button
                 {...(cta.buttonType ?? { variant: cta.variant })}

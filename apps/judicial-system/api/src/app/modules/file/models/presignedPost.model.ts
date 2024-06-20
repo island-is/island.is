@@ -4,9 +4,12 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class PresignedPost {
-  @Field()
+  @Field(() => String)
   readonly url!: string
 
   @Field(() => graphqlTypeJson)
   readonly fields!: { [key: string]: string }
+
+  @Field(() => String)
+  readonly key!: string
 }

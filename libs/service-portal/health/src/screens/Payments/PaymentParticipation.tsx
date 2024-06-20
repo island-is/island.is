@@ -5,11 +5,13 @@ import {
   Stack,
   Text,
   Table as T,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
   DownloadFileButtons,
   ExpandHeader,
-  ExpandRow,
   UserInfoLine,
   amountFormat,
   m,
@@ -19,61 +21,36 @@ import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useState } from 'react'
 import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
-import * as styles from './Payments.css'
 import {
   useGetCopaymentStatusQuery,
   useGetCopaymentPeriodsQuery,
-  useGetCopaymentBillsLazyQuery,
 } from './Payments.generated'
 import sub from 'date-fns/sub'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
-import {
-  exportPaymentParticipationFile,
-  exportPaymentParticipationOverview,
-} from '../../utils/FileBreakdown'
+import { exportPaymentParticipationOverview } from '../../utils/FileBreakdown'
+import { PaymentTableRow } from './PaymentTableRow'
 
 export const PaymentPartication = () => {
-  const { formatMessage, formatDateFns, lang } = useLocale()
+  const { formatMessage, lang } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
     sub(new Date(), { years: 1 }),
   )
   const [endDate, setEndDate] = useState<Date>(new Date())
-  const [loadingExpand, setLoadingExpand] = useState<number[]>([])
 
   const { data, loading, error } = useGetCopaymentStatusQuery()
-  const [
-    getCopaymentBillsQuery,
-    { data: billsData, loading: billsLoading, error: billsError },
-  ] = useGetCopaymentBillsLazyQuery()
 
-  const {
-    data: periods,
-    loading: periodsLoading,
-    error: periodsError,
-  } = useGetCopaymentPeriodsQuery({
-    variables: {
-      input: {
-        dateTo: formatDateFns(endDate.toString(), 'MM.dd.yyyy'),
-        dateFrom: formatDateFns(startDate.toString(), 'MM.dd.yyyy'),
-      },
-    },
-  })
-
-  const getBills = (periodId: number) => {
-    getCopaymentBillsQuery({
+  const { data: periods, loading: periodsLoading } =
+    useGetCopaymentPeriodsQuery({
       variables: {
         input: {
-          periodId,
+          dateTo: endDate,
+          dateFrom: startDate,
         },
       },
-      onCompleted: () => {
-        setLoadingExpand(loadingExpand.filter((item) => item !== periodId))
-      },
     })
-  }
 
   if (error) {
     return (
@@ -109,7 +86,7 @@ export const PaymentPartication = () => {
           </Box>
           <Box marginBottom={SECTION_GAP}>
             <Text variant="small" marginTop={5} marginBottom={2}>
-              {formatMessage(messages.paymentParticationExplination, {
+              {formatMessage(messages.paymentParticationExplanation, {
                 basePayment: numberFormat(
                   data.rightsPortalCopaymentStatus?.basePayment ?? 0,
                 ),
@@ -130,37 +107,40 @@ export const PaymentPartication = () => {
       {loading || periodsLoading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (
-        <Box marginBottom={SECTION_GAP}>
-          <Text marginBottom={CONTENT_GAP} variant="h5">
-            {formatMessage(messages.period)}
-          </Text>
-          <Box>
-            <Box
-              marginBottom={SECTION_GAP}
-              display="flex"
-              justifyContent="flexStart"
-              columnGap={2}
+        <Stack space={[2, SECTION_GAP]}>
+          <Text variant="h5">{formatMessage(messages.period)}</Text>
+          <GridContainer>
+            <GridRow
+              marginBottom={CONTENT_GAP}
+              direction={['column', 'column', 'column', 'row']}
             >
-              <DatePicker
-                size="xs"
-                label={formatMessage(m.dateFrom)}
-                placeholderText={formatMessage(m.chooseDate)}
-                handleChange={(date) => setStartDate(date)}
-                selected={startDate}
-                backgroundColor="blue"
-                locale={lang}
-              />
-              <DatePicker
-                size="xs"
-                label={formatMessage(m.dateTo)}
-                placeholderText={formatMessage(m.chooseDate)}
-                handleChange={(date) => setEndDate(date)}
-                selected={endDate}
-                backgroundColor="blue"
-                locale={lang}
-              />
-            </Box>
-          </Box>
+              <GridColumn
+                span={['6/8', '6/8', '6/8', '4/8']}
+                paddingBottom={[CONTENT_GAP, CONTENT_GAP, CONTENT_GAP, 0]}
+              >
+                <DatePicker
+                  size="xs"
+                  label={formatMessage(m.dateFrom)}
+                  placeholderText={formatMessage(m.chooseDate)}
+                  handleChange={(date) => setStartDate(date)}
+                  selected={startDate}
+                  backgroundColor="blue"
+                  locale={lang}
+                />
+              </GridColumn>
+              <GridColumn span={['6/8', '6/8', '6/8', '4/8']}>
+                <DatePicker
+                  size="xs"
+                  label={formatMessage(m.dateTo)}
+                  placeholderText={formatMessage(m.chooseDate)}
+                  handleChange={(date) => setEndDate(date)}
+                  selected={endDate}
+                  backgroundColor="blue"
+                  locale={lang}
+                />
+              </GridColumn>
+            </GridRow>
+          </GridContainer>
           {(periods?.rightsPortalCopaymentPeriods?.items.length ?? 0) > 0 ? (
             <T.Table>
               <ExpandHeader
@@ -177,203 +157,25 @@ export const PaymentPartication = () => {
               <T.Body>
                 {periods?.rightsPortalCopaymentPeriods.items &&
                   periods?.rightsPortalCopaymentPeriods.items.map(
-                    (period, idx) => (
-                      <ExpandRow
-                        key={`period-row-${idx}`}
-                        expandWhenLoadingFinished
-                        backgroundColor="default"
-                        loading={
-                          billsLoading && loadingExpand.includes(period.id ?? 0)
-                        }
-                        onExpandCallback={() => {
-                          getBills(period.id ?? 0)
-                          setLoadingExpand([...loadingExpand, period.id ?? 0])
-                        }}
-                        data={[
-                          {
-                            value: period.status?.display ?? '',
-                          },
-                          { value: period.month ?? '' },
-                          {
-                            value: amountFormat(period.maximumPayment ?? 0),
-                          },
-                          {
-                            value: amountFormat(period.monthPayment ?? 0),
-                          },
-                          {
-                            value: amountFormat(period.overpaid ?? 0),
-                          },
-                          {
-                            value: amountFormat(period.repaid ?? 0),
-                          },
-                        ]}
-                      >
-                        <Box padding={2} paddingBottom={5} background="blue100">
-                          <Text
-                            marginBottom={1}
-                            variant="default"
-                            fontWeight="semiBold"
-                          >
-                            {formatMessage(messages.monthlyBreakdownOfInvoices)}
-                          </Text>
-                          <T.Table box={{ className: styles.subTable }}>
-                            <T.Head>
-                              <T.Row>
-                                <T.HeadData
-                                  text={{
-                                    variant: 'small',
-                                    fontWeight: 'semiBold',
-                                  }}
-                                >
-                                  {formatMessage(m.service)}
-                                </T.HeadData>
-                                <T.HeadData
-                                  text={{
-                                    variant: 'small',
-                                    fontWeight: 'semiBold',
-                                  }}
-                                >
-                                  {formatMessage(m.dateOfInvoiceShort)}
-                                </T.HeadData>
-                                <T.HeadData
-                                  text={{
-                                    variant: 'small',
-                                    fontWeight: 'semiBold',
-                                  }}
-                                >
-                                  {formatMessage(m.totalPrice)}
-                                </T.HeadData>
-                                <T.HeadData
-                                  text={{
-                                    variant: 'small',
-                                    fontWeight: 'semiBold',
-                                  }}
-                                >
-                                  {formatMessage(
-                                    messages.medicinePaidByInsuranceShort,
-                                  )}
-                                </T.HeadData>
-                                <T.HeadData
-                                  text={{
-                                    variant: 'small',
-                                    fontWeight: 'semiBold',
-                                  }}
-                                >
-                                  {formatMessage(messages.yourPayment)}
-                                </T.HeadData>
-                                <T.HeadData
-                                  text={{
-                                    variant: 'small',
-                                    fontWeight: 'semiBold',
-                                  }}
-                                >
-                                  {formatMessage(messages.overpayment)}
-                                </T.HeadData>
-                              </T.Row>
-                            </T.Head>
-                            <T.Body>
-                              {billsData?.rightsPortalCopaymentBills.items
-                                .length &&
-                                billsData?.rightsPortalCopaymentBills.items.map(
-                                  (bill) => (
-                                    <tr key={bill.id}>
-                                      <T.Data>{bill.serviceType}</T.Data>
-                                      <T.Data>
-                                        {formatDateFns(bill.date, 'dd.MM.yyyy')}
-                                      </T.Data>
-                                      <T.Data>
-                                        {amountFormat(bill.totalAmount ?? 0)}
-                                      </T.Data>
-                                      <T.Data>
-                                        {amountFormat(
-                                          bill.insuranceAmount ?? 0,
-                                        )}
-                                      </T.Data>
-                                      <T.Data>
-                                        {amountFormat(bill.ownAmount ?? 0)}
-                                      </T.Data>
-                                      <T.Data>
-                                        {amountFormat(bill.overpaid ?? 0)}
-                                      </T.Data>
-                                    </tr>
-                                  ),
-                                )}
-                              <tr>
-                                <T.Data>
-                                  <Text variant="small" fontWeight="semiBold">
-                                    {formatMessage(m.total)}
-                                  </Text>
-                                </T.Data>
-                                <T.Data />
-                                <T.Data>
-                                  <Text variant="small" fontWeight="semiBold">
-                                    {amountFormat(
-                                      billsData?.rightsPortalCopaymentBills.items.reduce(
-                                        (acc, curr) =>
-                                          (acc += curr.totalAmount ?? 0),
-                                        0,
-                                      ) ?? 0,
-                                    )}
-                                  </Text>
-                                </T.Data>
-                                <T.Data>
-                                  <Text variant="small" fontWeight="semiBold">
-                                    {amountFormat(
-                                      billsData?.rightsPortalCopaymentBills.items.reduce(
-                                        (acc, curr) =>
-                                          (acc += curr.insuranceAmount ?? 0),
-                                        0,
-                                      ) ?? 0,
-                                    )}
-                                  </Text>
-                                </T.Data>
-                                <T.Data>
-                                  <Text variant="small" fontWeight="semiBold">
-                                    {amountFormat(
-                                      billsData?.rightsPortalCopaymentBills.items.reduce(
-                                        (acc, curr) =>
-                                          (acc += curr.ownAmount ?? 0),
-                                        0,
-                                      ) ?? 0,
-                                    )}
-                                  </Text>
-                                </T.Data>
-                                <T.Data>
-                                  <Text variant="small" fontWeight="semiBold">
-                                    {amountFormat(
-                                      billsData?.rightsPortalCopaymentBills.items.reduce(
-                                        (acc, curr) =>
-                                          (acc += curr.overpaid ?? 0),
-                                        0,
-                                      ) ?? 0,
-                                    )}
-                                  </Text>
-                                </T.Data>
-                              </tr>
-                            </T.Body>
-                          </T.Table>
-                          <DownloadFileButtons
-                            BoxProps={{
-                              paddingTop: 2,
-                              display: 'flex',
-                              flexDirection: 'row',
-                              justifyContent: 'flexEnd',
-                            }}
-                            buttons={[
-                              {
-                                text: formatMessage(m.getAsExcel),
-                                onClick: () =>
-                                  exportPaymentParticipationFile(
-                                    billsData?.rightsPortalCopaymentBills
-                                      ?.items ?? [],
-                                    'xlsx',
-                                  ),
-                              },
-                            ]}
-                          />
-                        </Box>
-                      </ExpandRow>
-                    ),
+                    (period, idx) => {
+                      if (!period.id) {
+                        return null
+                      }
+                      return (
+                        <PaymentTableRow
+                          key={`payment-table-row-${idx}`}
+                          periodId={period.id}
+                          headerData={[
+                            period.status?.display ?? '',
+                            period.month ?? '',
+                            amountFormat(period.maximumPayment ?? 0),
+                            amountFormat(period.monthPayment ?? 0),
+                            amountFormat(period.overpaid ?? 0),
+                            amountFormat(period.repaid ?? 0),
+                          ]}
+                        />
+                      )
+                    },
                   )}
               </T.Body>
             </T.Table>
@@ -408,11 +210,11 @@ export const PaymentPartication = () => {
               ]}
             />
           ) : undefined}
-        </Box>
+        </Stack>
       )}
       <Box>
         <Text variant="small" marginTop={5} marginBottom={2}>
-          {formatMessage(messages.paymentParticationExplinationFooter)}
+          {formatMessage(messages.paymentParticationExplanationFooter)}
         </Text>
       </Box>
     </PaymentsWrapper>

@@ -1,8 +1,8 @@
 import { dynamicColor, font } from '@ui'
 import { selectionAsync } from 'expo-haptics'
 import {
-  AuthenticationType,
   authenticateAsync,
+  AuthenticationType,
 } from 'expo-local-authentication'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -89,15 +89,18 @@ export const AppLockScreen: NavigationFunctionComponent<{
       lockScreenComponentId: undefined,
     }))
   }, [])
-
   const unlockApp = useCallback(() => {
     Animated.spring(av, {
       toValue: 0,
       useNativeDriver: true,
       delay: 100,
     }).start(() => {
-      resetLockScreen()
-      Navigation.dismissAllOverlays()
+      // We want to reset lockScreenActivatedAt to null here to trigger offline banner if offline
+      authStore.setState(() => ({
+        lockScreenActivatedAt: null,
+        lockScreenComponentId: undefined,
+      }))
+      void Navigation.dismissOverlay(componentId)
       av.setValue(1)
     })
   }, [componentId])

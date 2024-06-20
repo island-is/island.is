@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
@@ -7,12 +7,12 @@ import {
   GraphqlGatewayResponse,
 } from '@island.is/application/types'
 import {
-  BaseTemplateAPIModuleConfig,
-  EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
+  AssignmentSmsTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
-  AssignmentSmsTemplateGenerator,
+  BaseTemplateAPIModuleConfig,
+  EmailTemplateGenerator,
   SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
@@ -242,26 +242,39 @@ export class SharedTemplateApiService {
     )
   }
 
-  async getAttachmentContentAsBase64(
+  async getS3File(
     application: ApplicationWithAttachments,
     attachmentKey: string,
-  ): Promise<string> {
+  ) {
     const fileName = (
       application.attachments as {
         [key: string]: string
       }
     )[attachmentKey]
-
     const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
     const file = await this.s3
       .getObject({
-        Bucket: uploadBucket,
+        Bucket: bucket,
         Key: key,
       })
       .promise()
-    const fileContent = file.Body as Buffer
+    return file
+  }
+
+  async getAttachmentContentAsBase64(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<string> {
+    const fileContent = (await this.getS3File(application, attachmentKey))
+      ?.Body as Buffer
     return fileContent?.toString('base64') || ''
+  }
+
+  async getAttachmentContentAsBlob(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<Blob> {
+    const file = await this.getS3File(application, attachmentKey)
+    return new Blob([file.Body as ArrayBuffer], { type: file.ContentType })
   }
 }

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import format from 'date-fns/format'
@@ -13,18 +13,13 @@ import {
   displayFirstPlusRemaining,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
-import {
-  CaseState,
-  isDistrictCourtUser,
-  isProsecutionUser,
-} from '@island.is/judicial-system/types'
+import { isRequestCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
   Modal,
   TagAppealState,
   TagCaseState,
-  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { contextMenu as contextMenuStrings } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
@@ -33,7 +28,10 @@ import {
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { table as tableStrings } from '@island.is/judicial-system-web/src/components/Table/Table.strings'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseListEntry,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   directionType,
   sortableTableColumn,
@@ -46,6 +44,7 @@ import {
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import MobileCase from './MobileCase'
+import { strings } from './ActiveCases.strings'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
@@ -58,7 +57,6 @@ interface Props {
 const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, isDeletingCase, onDeleteCase } = props
 
-  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { width } = useViewport()
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(
@@ -68,12 +66,12 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
       direction: 'descending',
     },
   )
-  const [displayCases, setDisplayCases] = useState<CaseListEntry[]>([])
-  const [modalVisible, setVisibleModal] = useState<'DELETE_CASE'>()
-  // The index of requset that's about to be removed
-  const [requestToRemoveIndex, setRequestToRemoveIndex] = useState<number>(-1)
   const { isOpeningCaseId, showLoading, handleOpenCase, LoadingIndicator } =
     useCaseList()
+  const [displayCases, setDisplayCases] = useState<CaseListEntry[]>([])
+  const [modalVisible, setVisibleModal] = useState<'DELETE_CASE'>()
+  // The id of the case that's about to be removed
+  const [caseToRemove, setCaseToRemove] = useState<CaseListEntry>()
 
   useEffect(() => {
     setDisplayCases(cases)
@@ -91,7 +89,9 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
             return entry.defendants[0].name ?? ''
           }
           if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
+            return entry.postponedIndefinitelyExplanation
+              ? ''
+              : entry.courtDate ?? ''
           }
           return entry.created
         }
@@ -132,9 +132,11 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
       {displayCases.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => handleOpenCase(theCase.id)}
+            onClick={() => {
+              handleOpenCase(theCase.id)
+            }}
             theCase={theCase}
-            isCourtRole={isDistrictCourtUser(user)}
+            isCourtRole={false}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
             {theCase.state &&
@@ -145,13 +147,17 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   )}: ${theCase.prosecutor?.name}`}
                 </Text>
               )}
-            {theCase.courtDate && (
-              <Text fontWeight={'medium'} variant="small">
-                {`${formatMessage(tableStrings.hearing)} ${format(
-                  parseISO(theCase.courtDate),
-                  'd.M.y',
-                )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
-              </Text>
+            {theCase.postponedIndefinitelyExplanation ? (
+              <Text>{formatMessage(strings.postponed)}</Text>
+            ) : (
+              theCase.courtDate && (
+                <Text fontWeight={'medium'} variant="small">
+                  {`${formatMessage(tableStrings.hearing)} ${format(
+                    parseISO(theCase.courtDate),
+                    'd.M.y',
+                  )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
+                </Text>
+              )
             )}
           </MobileCase>
         </Box>
@@ -216,7 +222,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
         <LayoutGroup>
           <tbody>
             <AnimatePresence>
-              {cases.map((c, i) => (
+              {cases.map((c) => (
                 <motion.tr
                   key={c.id}
                   className={styles.tableRowContainer}
@@ -314,9 +320,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                       <TagCaseState
                         caseState={c.state}
                         caseType={c.type}
-                        isCourtRole={isDistrictCourtUser(user)}
                         isValidToDateInThePast={c.isValidToDateInThePast}
                         courtDate={c.courtDate}
+                        indictmentDecision={c.indictmentDecision}
+                        indictmentRulingDecision={c.indictmentRulingDecision}
                       />
                     </Box>
                     {c.appealState && (
@@ -327,21 +334,32 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                                locale: localeIS,
-                              }),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
+                    {c.postponedIndefinitelyExplanation ? (
+                      <Text>{formatMessage(strings.postponed)}</Text>
+                    ) : (
+                      c.courtDate && (
+                        <>
+                          <Text>
+                            <Box
+                              component="span"
+                              className={styles.blockColumn}
+                            >
+                              {capitalize(
+                                format(
+                                  parseISO(c.courtDate),
+                                  'EEEE d. LLLL y',
+                                  {
+                                    locale: localeIS,
+                                  },
+                                ),
+                              ).replace('dagur', 'd.')}
+                            </Box>
+                          </Text>
+                          <Text as="span" variant="small">
+                            kl. {format(parseISO(c.courtDate), 'kk:mm')}
+                          </Text>
+                        </>
+                      )
                     )}
                   </td>
                   <td className={styles.td}>
@@ -361,14 +379,16 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                               onClick: () => handleOpenCase(c.id, true),
                               icon: 'open',
                             },
-                            ...(isProsecutionUser(user)
+                            ...(isRequestCase(c.type) ||
+                            c.state === CaseState.DRAFT ||
+                            c.state === CaseState.WAITING_FOR_CONFIRMATION
                               ? [
                                   {
                                     title: formatMessage(
                                       contextMenuStrings.deleteCase,
                                     ),
                                     onClick: () => {
-                                      setRequestToRemoveIndex(i)
+                                      setCaseToRemove(c)
                                       setVisibleModal('DELETE_CASE')
                                     },
                                     icon: 'trash' as IconMapIcon,
@@ -400,12 +420,12 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
           title={formatMessage(m.activeRequests.deleteCaseModal.title)}
           text={formatMessage(m.activeRequests.deleteCaseModal.text)}
           onPrimaryButtonClick={async () => {
-            if (onDeleteCase && requestToRemoveIndex !== -1) {
-              await onDeleteCase(cases[requestToRemoveIndex])
+            if (onDeleteCase && caseToRemove) {
+              await onDeleteCase(caseToRemove)
               setDisplayCases((prev) =>
-                prev.filter((c) => c.id !== cases[requestToRemoveIndex].id),
+                prev.filter((c) => c.id !== caseToRemove.id),
               )
-              setRequestToRemoveIndex(-1)
+              setCaseToRemove(undefined)
               setVisibleModal(undefined)
             }
           }}

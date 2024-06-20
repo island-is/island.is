@@ -22,10 +22,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -42,7 +39,7 @@ export class EndorsementListService {
     private logger: Logger,
     @Inject(EmailService)
     private emailService: EmailService,
-    private readonly nationalRegistryApiV2: NationalRegistryClientService,
+    private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -139,7 +136,10 @@ export class EndorsementListService {
           model: EndorsementList,
           required: true,
           as: 'endorsementList',
-          where: { adminLock: false },
+          where: {
+            adminLock: false,
+            tags: { [Op.contains]: [ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS] },
+          },
           attributes: [
             'id',
             'title',
@@ -296,8 +296,8 @@ export class EndorsementListService {
     }
 
     try {
-      const person = await this.nationalRegistryApiV2.getIndividual(owner)
-      return person?.fullName ? person.fullName : ''
+      const person = await this.nationalRegistryApiV3.getName(owner)
+      return person?.fulltNafn ? person.fulltNafn : ''
     } catch (e) {
       if (e instanceof Error) {
         this.logger.warn(

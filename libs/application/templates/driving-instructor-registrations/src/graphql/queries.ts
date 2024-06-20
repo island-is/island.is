@@ -42,8 +42,8 @@ export const ViewSingleStudentQuery = gql`
 `
 
 export const InstructorsStudentsQuery = gql`
-  query drivingLicenseBookStudentsForTeacher {
-    drivingLicenseBookStudentsForTeacher {
+  query drivingLicenseBookStudentsForTeacher($licenseCategory: String!) {
+    drivingLicenseBookStudentsForTeacher(licenseCategory: $licenseCategory) {
       id
       name
       nationalId

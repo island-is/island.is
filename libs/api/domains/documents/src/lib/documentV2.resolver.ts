@@ -1,11 +1,4 @@
-import {
-  Args,
-  Int,
-  Mutation,
-  Query,
-  ResolveField,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { UseGuards, Inject } from '@nestjs/common'
 
 import type { User } from '@island.is/auth-nest-tools'
@@ -16,7 +9,7 @@ import {
   Scopes,
 } from '@island.is/auth-nest-tools'
 import { DocumentsScope } from '@island.is/auth/scopes'
-import { AuditService } from '@island.is/nest/audit'
+import { AuditService, Audit } from '@island.is/nest/audit'
 
 import {
   DocumentPageNumber,
@@ -35,11 +28,13 @@ import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
 import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { DocumentMailAction } from './models/v2/mailAction.model.'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 
 const LOG_CATEGORY = 'documents-resolver'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => PaginatedDocuments)
+@Audit({ namespace: '@island.is/api/document-v2' })
 export class DocumentResolverV2 {
   constructor(
     private documentServiceV2: DocumentServiceV2,
@@ -64,7 +59,7 @@ export class DocumentResolverV2 {
         this.documentServiceV2.findDocumentById(user.nationalId, input.id),
       )
     } catch (e) {
-      this.logger.error('failed to get single document', {
+      this.logger.info('failed to get single document', {
         category: LOG_CATEGORY,
         provider: input.provider,
         error: e,
@@ -75,6 +70,7 @@ export class DocumentResolverV2 {
 
   @Scopes(DocumentsScope.main)
   @Query(() => PaginatedDocuments, { nullable: true })
+  @Audit()
   documentsV2(
     @Args('input') input: DocumentsInput,
     @CurrentUser() user: User,
@@ -120,6 +116,7 @@ export class DocumentResolverV2 {
 
   @Scopes(DocumentsScope.main)
   @Mutation(() => PaperMailPreferences, { nullable: true })
+  @Audit()
   postPaperMailInfo(
     @CurrentUser() user: User,
     @Args('input') input: PostRequestPaperInput,
@@ -131,10 +128,23 @@ export class DocumentResolverV2 {
   }
 
   @Scopes(DocumentsScope.main)
+  @Mutation(() => DocumentV2MarkAllMailAsRead, {
+    nullable: true,
+    name: 'documentsV2MarkAllAsRead',
+  })
+  @Audit()
+  markAllMailAsRead(
+    @CurrentUser() user: User,
+  ): Promise<DocumentV2MarkAllMailAsRead> {
+    return this.documentServiceV2.markAllMailAsRead(user.nationalId)
+  }
+
+  @Scopes(DocumentsScope.main)
   @Mutation(() => DocumentMailAction, {
     nullable: true,
     name: 'postMailActionV2',
   })
+  @Audit()
   async postMailAction(
     @CurrentUser() user: User,
     @Args('input') input: MailActionInput,
@@ -157,7 +167,7 @@ export class DocumentResolverV2 {
         input.action,
       )
     } catch (e) {
-      this.logger.error('failed to post document action', {
+      this.logger.info('failed to post document action', {
         category: LOG_CATEGORY,
         action: input.action,
         error: e,

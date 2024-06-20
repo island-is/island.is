@@ -568,7 +568,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     textAlign: 'center',
   })
 
-  global('.signature__textAbove', {
+  global('.signature__above', {
     marginTop: 0,
     marginBottom: 0,
     fontSize: 14,
@@ -623,6 +623,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
 
   global('.advertisement__title-main', {
     fontSize: 20,
+    marginBottom: '0.5ch',
     textTransform: 'uppercase',
     textAlign: 'center',
   })

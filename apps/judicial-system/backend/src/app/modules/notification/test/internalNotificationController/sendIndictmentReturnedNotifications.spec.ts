@@ -13,7 +13,6 @@ import { createTestingNotificationModule } from '../createTestingNotificationMod
 import { Case } from '../../../case'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 
 jest.mock('../../../../factories')
 
@@ -36,18 +35,13 @@ describe('InternalNotificationController - Send indictment returned notification
   const courtName = uuid()
 
   let mockEmailService: EmailService
-  let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, internalNotificationController, notificationModel } =
+    const { emailService, internalNotificationController } =
       await createTestingNotificationModule()
 
     mockEmailService = emailService
-    mockNotificationModel = notificationModel
-
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (
       theCase: Case,
@@ -81,9 +75,6 @@ describe('InternalNotificationController - Send indictment returned notification
     } as Case
 
     beforeEach(async () => {
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([])
-
       then = await givenWhenThen(theCase, notificationDto)
     })
 

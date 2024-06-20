@@ -7,9 +7,13 @@ generates:
     preset: 'near-operation-file'
     presetConfig:
       baseTypesPath: '~@island.is/api/schema'
+    config:
+      scalars:
+        DateTime: string
     plugins:
       - typescript-operations
       - typescript-react-apollo
+
 hooks:
   afterAllFileWrite:
     - prettier --write

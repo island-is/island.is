@@ -6,6 +6,7 @@ import { NotFoundException } from '@nestjs/common'
 import {
   CaseFileCategory,
   CaseFileState,
+  CaseType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -65,15 +66,17 @@ describe('InternalFileController - Deliver case file to court', () => {
 
   describe('case file delivered', () => {
     const caseId = uuid()
+    const caseType = CaseType.CUSTODY
     const courtId = uuid()
     const courtCaseNumber = 'R-999/2021'
     const theCase = {
       id: caseId,
+      type: caseType,
       courtId,
       courtCaseNumber,
     } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const fileName = 'test.txt'
     const fileType = 'text/plain'
     const caseFile = {
@@ -100,11 +103,11 @@ describe('InternalFileController - Deliver case file to court', () => {
     })
 
     it('should check if the file exists in AWS S3', () => {
-      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(caseType, key)
     })
 
     it('should get the file from AWS S3', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(caseType, key)
     })
 
     it('should upload the file to court', () => {
@@ -159,7 +162,7 @@ describe('InternalFileController - Deliver case file to court', () => {
         courtCaseNumber,
       } as Case
       const fileId = uuid()
-      const key = `uploads/${caseId}/${uuid()}/test.txt`
+      const key = `${caseId}/${uuid()}/test.txt`
       const fileName = 'test.txt'
       const fileType = 'text/plain'
       const caseFile = {
@@ -170,10 +173,8 @@ describe('InternalFileController - Deliver case file to court', () => {
         category: caseFileCategory,
       } as CaseFile
       const content = Buffer.from('Test content')
-      let mockCreateDocument: jest.Mock
 
       beforeEach(async () => {
-        mockCreateDocument = mockCourtService.createDocument as jest.Mock
         const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
         mockObjectExists.mockResolvedValueOnce(true)
         const mockGetObject = mockAwsS3Service.getObject as jest.Mock
@@ -183,7 +184,7 @@ describe('InternalFileController - Deliver case file to court', () => {
       })
 
       it('should upload the file to court', () => {
-        expect(mockCreateDocument).toHaveBeenCalledWith(
+        expect(mockCourtService.createDocument).toHaveBeenCalledWith(
           user,
           caseId,
           courtId,
@@ -202,7 +203,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
@@ -263,7 +264,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
@@ -291,7 +292,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
@@ -312,7 +313,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     let then: Then
 
@@ -335,7 +336,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then
@@ -361,7 +362,7 @@ describe('InternalFileController - Deliver case file to court', () => {
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const fileId = uuid()
-    const key = `uploads/${caseId}/${uuid()}/test.txt`
+    const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const content = Buffer.from('Test content')
     let then: Then

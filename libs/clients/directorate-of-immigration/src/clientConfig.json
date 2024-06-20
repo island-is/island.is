@@ -2,6 +2,27 @@
   "openapi": "3.0.1",
   "info": { "title": "ST2-api", "version": "v1" },
   "paths": {
+    "/api/Applicant/GetCitizenshipValidity": {
+      "get": {
+        "tags": ["Applicant"],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/CitizenshipValidity" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CitizenshipValidity" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/CitizenshipValidity" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Applicant/Get": {
       "get": {
         "tags": ["Applicant"],
@@ -293,6 +314,42 @@
               "text/plain": { "schema": { "type": "string" } },
               "application/json": { "schema": { "type": "string" } },
               "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/{applicationId}": {
+      "get": {
+        "tags": ["Application"],
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationViewCompleteModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationViewCompleteModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationViewCompleteModel"
+                }
+              }
             }
           }
         }
@@ -1125,6 +1182,42 @@
         }
       }
     },
+    "/api/StaticData/{staticDataId}": {
+      "get": {
+        "tags": ["StaticData"],
+        "parameters": [
+          {
+            "name": "staticDataId",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationViewModel"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationViewModel"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationViewModel"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/Study": {
       "post": {
         "tags": ["Study"],
@@ -1377,7 +1470,15 @@
         "type": "object",
         "properties": {
           "isAnyResConValid": { "type": "boolean" },
-          "isOnlyMarriedOrCohabitationWithISCitizen": { "type": "boolean" }
+          "domicileResidence7Years": { "type": "boolean" },
+          "cohabitationISCitizen5YrsDomicileMissingDate": { "type": "boolean" },
+          "asylumSeekerOrHumanitarianResPerm5year": { "type": "boolean" },
+          "cohabitationISCitizen5YearDomicile": { "type": "boolean" },
+          "isMarriedOrCohabiationWithISCitizen": { "type": "boolean" },
+          "marriedISCitizenDomicile4Years": { "type": "boolean" },
+          "noNationalityAnd5YearsDomicile": { "type": "boolean" },
+          "nordicCitizenship4YearDomicile": { "type": "boolean" },
+          "marriedISCitizenDomicile4YrsMissingDate": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -1428,6 +1529,31 @@
           "applications": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/ApplicationViewModel" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicantViewSimpleModel": {
+        "type": "object",
+        "properties": {
+          "icelandicIDNO": { "type": "string", "nullable": true },
+          "icelandicIDNOWithHyphen": {
+            "type": "string",
+            "nullable": true,
+            "readOnly": true
+          },
+          "emailAddress": { "type": "string", "nullable": true },
+          "telephone": { "type": "string", "nullable": true },
+          "addressCity": { "type": "string", "nullable": true },
+          "applicantId": { "type": "string", "nullable": true },
+          "givenName": { "type": "string", "nullable": true },
+          "surName": { "type": "string", "nullable": true },
+          "countryOfResidence": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/CountryOfResidenceViewModel"
+            },
             "nullable": true
           }
         },
@@ -1515,6 +1641,50 @@
         },
         "additionalProperties": false
       },
+      "ApplicationViewCompleteModel": {
+        "type": "object",
+        "properties": {
+          "caseTypeId": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "caseTypeName": { "type": "string", "nullable": true },
+          "classificationId": { "type": "string", "nullable": true },
+          "classificationName": { "type": "string", "nullable": true },
+          "classificationTypeId": { "type": "string", "nullable": true },
+          "classificationTypeName": { "type": "string", "nullable": true },
+          "classificationDetailId": { "type": "string", "nullable": true },
+          "classificationDetailName": { "type": "string", "nullable": true },
+          "staticDataId": { "type": "string", "nullable": true },
+          "applicationId": { "type": "string", "nullable": true },
+          "parentApplicationId": { "type": "string", "nullable": true },
+          "createdOn": { "type": "string", "format": "date-time" },
+          "permitValidTo": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "ticketNumber": { "type": "string", "nullable": true },
+          "applicant": {
+            "$ref": "#/components/schemas/ApplicantViewSimpleModel"
+          },
+          "staticData": { "$ref": "#/components/schemas/StaticDataViewModel" },
+          "residenceAbroads": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ResidenceAbroadViewModel"
+            },
+            "nullable": true
+          },
+          "travelDocuments": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/TravelDocumentViewModel" },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "ApplicationViewModel": {
         "type": "object",
         "properties": {
@@ -1538,7 +1708,8 @@
             "type": "string",
             "format": "date-time",
             "nullable": true
-          }
+          },
+          "ticketNumber": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1557,6 +1728,17 @@
           "CriminalRecord"
         ],
         "type": "string"
+      },
+      "CitizenshipValidity": {
+        "type": "object",
+        "properties": {
+          "applicantExists": { "type": "boolean" },
+          "isEESCitizen": { "type": "boolean" },
+          "eesNordicCitizen": { "type": "boolean" },
+          "eesResidenceCondition": { "type": "boolean" },
+          "spouseIsCitizen": { "type": "boolean" }
+        },
+        "additionalProperties": false
       },
       "ClassificationDetailViewModel": {
         "type": "object",
@@ -1757,7 +1939,9 @@
           "parent1Name": { "type": "string", "nullable": true },
           "postalCode": { "type": "string", "nullable": true },
           "parent2SSN": { "type": "string", "nullable": true },
+          "parentOfChild2SSN": { "type": "string", "nullable": true },
           "parent2Name": { "type": "string", "nullable": true },
+          "parentOfChild2Name": { "type": "string", "nullable": true },
           "applicantIsChildOfIcelandicCitizen": {
             "type": "boolean",
             "nullable": true
@@ -1774,7 +1958,8 @@
         "properties": {
           "parent2SSN": { "type": "string", "nullable": true },
           "parent2Name": { "type": "string", "nullable": true },
-          "parent2BirthDate": { "type": "string", "nullable": true }
+          "parent2BirthDate": { "type": "string", "nullable": true },
+          "nationality": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -1799,7 +1984,9 @@
           "parent1Name": { "type": "string", "nullable": true },
           "postalCode": { "type": "string", "nullable": true },
           "parent2SSN": { "type": "string", "nullable": true },
+          "parentOfChild2SSN": { "type": "string", "nullable": true },
           "parent2Name": { "type": "string", "nullable": true },
+          "parentOfChild2Name": { "type": "string", "nullable": true },
           "applicantIsChildOfIcelandicCitizen": {
             "type": "boolean",
             "nullable": true
@@ -1834,6 +2021,13 @@
         },
         "additionalProperties": false
       },
+      "TravelDocumentIncidentViewModel": {
+        "type": "object",
+        "properties": {
+          "applicationId": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TravelDocumentNewModel": {
         "type": "object",
         "properties": {
@@ -1858,7 +2052,6 @@
         "type": "object",
         "properties": {
           "travelDocumentId": { "type": "string", "nullable": true },
-          "applicationId": { "type": "string", "nullable": true },
           "applicantId": { "type": "string", "nullable": true },
           "dateOfExpiry": {
             "type": "string",
@@ -1884,7 +2077,14 @@
             "nullable": true
           },
           "travelDocumentTypeName": { "type": "string", "nullable": true },
-          "createdOn": { "type": "string", "format": "date-time" }
+          "createdOn": { "type": "string", "format": "date-time" },
+          "applications": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TravelDocumentIncidentViewModel"
+            },
+            "nullable": true
+          }
         },
         "additionalProperties": false
       }

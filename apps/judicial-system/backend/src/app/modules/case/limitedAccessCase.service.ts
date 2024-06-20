@@ -13,6 +13,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
@@ -24,6 +25,9 @@ import {
   CaseFileCategory,
   CaseFileState,
   CaseState,
+  CommentType,
+  DateType,
+  EventType,
   NotificationType,
   UserRole,
 } from '@island.is/judicial-system/types'
@@ -31,6 +35,7 @@ import {
 import { nowFactory, uuidFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant, DefendantService } from '../defendant'
+import { EventLog } from '../event-log'
 import {
   CaseFile,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
@@ -38,6 +43,8 @@ import {
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'
+import { DateLog } from './models/dateLog.model'
+import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { PDFService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
@@ -59,7 +66,6 @@ export const attributes: (keyof Case)[] = [
   'requestedCustodyRestrictions',
   'prosecutorId',
   'courtCaseNumber',
-  'courtDate',
   'courtEndTime',
   'decision',
   'validToDate',
@@ -94,6 +100,8 @@ export const attributes: (keyof Case)[] = [
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
+  'indictmentRulingDecision',
+  'indictmentHash',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -105,6 +113,10 @@ export interface LimitedAccessUpdateCase
     | 'openedByDefender'
     | 'appealRulingDecision'
   > {}
+
+const eventTypes = Object.values(EventType)
+const dateTypes = Object.values(DateType)
+const commentTypes = Object.values(CommentType)
 
 export const include: Includeable[] = [
   { model: Institution, as: 'prosecutorsOffice' },
@@ -178,10 +190,31 @@ export const include: Includeable[] = [
       ],
     },
   },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: { eventType: { [Op.in]: eventTypes } },
+    order: [['created', 'ASC']],
+    separate: true,
+  },
+  {
+    model: DateLog,
+    as: 'dateLogs',
+    required: false,
+    where: { dateType: { [Op.in]: dateTypes } },
+  },
+  {
+    model: ExplanatoryComment,
+    as: 'explanatoryComments',
+    required: false,
+    where: { commentType: { [Op.in]: commentTypes } },
+  },
 ]
 
 export const order: OrderItem[] = [
   [{ model: Defendant, as: 'defendants' }, 'created', 'ASC'],
+  [{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC'],
 ]
 
 @Injectable()
@@ -322,10 +355,14 @@ export class LimitedAccessCaseService {
   }
 
   async findDefenderByNationalId(nationalId: string): Promise<User> {
+    const formattedNationalId = formatNationalId(nationalId)
     return this.caseModel
       .findOne({
         where: {
-          defenderNationalId: nationalId,
+          [Op.or]: [
+            { defenderNationalId: formattedNationalId },
+            { defenderNationalId: nationalId },
+          ],
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -358,9 +395,7 @@ export class LimitedAccessCaseService {
       })
   }
 
-  private zipFiles(
-    files: Array<{ data: Buffer; name: string }>,
-  ): Promise<Buffer> {
+  private zipFiles(files: { data: Buffer; name: string }[]): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const buffs: Buffer[] = []
       const converter = new Writable()
@@ -391,7 +426,7 @@ export class LimitedAccessCaseService {
   }
 
   async getAllFilesZip(theCase: Case, user: TUser): Promise<Buffer> {
-    const filesToZip: Array<{ data: Buffer; name: string }> = []
+    const filesToZip: { data: Buffer; name: string }[] = []
 
     const caseFilesByCategory =
       theCase.caseFiles?.filter(
@@ -403,9 +438,10 @@ export class LimitedAccessCaseService {
           ),
       ) ?? []
 
+    // TODO: speed this up by fetching all files in parallel
     for (const file of caseFilesByCategory) {
       await this.awsS3Service
-        .getObject(file.key ?? '')
+        .getObject(theCase.type, file.key)
         .then((content) => filesToZip.push({ data: content, name: file.name }))
         .catch((reason) =>
           // Tolerate failure, but log what happened

@@ -1,0 +1,210 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "uv-maelingar",
+    "version": "2024-03-08"
+  },
+  "servers": [
+    {
+      "url": "https://y6z28kw7p3.execute-api.eu-north-1.amazonaws.com/{basePath}",
+      "variables": {
+        "basePath": {
+          "default": "Prod"
+        }
+      }
+    }
+  ],
+  "paths": {
+    "/getAPISpec": {
+      "get": {
+        "operationId": "getAPISpec",
+        "summary": "Returns API specification.",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved API spec",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "headers": {
+                      "type": "object",
+                      "properties": {
+                        "Content-Type": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "body": {
+                      "type": "object"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/returnHourlyUV": {
+      "get": {
+        "operationId": "returnHourlyUV",
+        "summary": "Get latest UV measurements in Reykjavik.",
+        "description": "Get latest UV measurement and measurements for past 72 hrs in Reykjavik. New UV values updated approx. every 15 minutes.",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved UV values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "headers": {
+                      "type": "object",
+                      "properties": {
+                        "Content-Type": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "location": {
+                          "type": "string",
+                          "enum": ["reykjavik"]
+                        },
+                        "data_period": {
+                          "type": "string",
+                          "enum": ["hourly"]
+                        },
+                        "data_latest": {
+                          "type": "object",
+                          "properties": {
+                            "time": {
+                              "type": "string"
+                            },
+                            "uv_val": {
+                              "type": "number"
+                            }
+                          }
+                        },
+                        "data_all": {
+                          "type": "array",
+                          "maxItems": 288,
+                          "minItems": 1,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "time": {
+                                "type": "string"
+                              },
+                              "uv_val": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    },
+    "/returnDailyUV": {
+      "get": {
+        "operationId": "returnDailyUV",
+        "summary": "Get daily max UV measurement for past 1 year in Reykjavik.",
+        "description": "Get daily max UV measurements for past 1 year in Reykjavik. Updated once per day at approx. 06:00.",
+        "responses": {
+          "200": {
+            "description": "Successfully retrieved UV values",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "statusCode": {
+                      "type": "integer"
+                    },
+                    "headers": {
+                      "type": "object",
+                      "properties": {
+                        "Content-Type": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "body": {
+                      "type": "object",
+                      "properties": {
+                        "location": {
+                          "type": "string",
+                          "enum": ["reykjavik"]
+                        },
+                        "data_period": {
+                          "type": "string",
+                          "enum": ["daily"]
+                        },
+                        "data_all": {
+                          "type": "array",
+                          "maxItems": 366,
+                          "minItems": 365,
+                          "items": {
+                            "type": "object",
+                            "properties": {
+                              "time": {
+                                "type": "string"
+                              },
+                              "uv_val": {
+                                "type": "number"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "api_key": []
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "api_key": {
+        "type": "apiKey",
+        "name": "x-api-key",
+        "in": "header"
+      }
+    }
+  }
+}

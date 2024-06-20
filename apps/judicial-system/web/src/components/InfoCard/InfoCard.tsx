@@ -1,12 +1,17 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 
 import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
-import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import {
+  DefendantInfo,
+  DefendantInfoActionButton,
+} from './DefendantInfo/DefendantInfo'
+import { strings } from './InfoCard.strings'
 import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
 
@@ -22,12 +27,22 @@ interface UniqueDefendersProps {
   defenders: Defender[]
 }
 
+interface DataSection {
+  data: { title: string; value?: React.ReactNode }[]
+}
+
 interface Props {
-  courtOfAppealData?: Array<{ title: string; value?: React.ReactNode }>
-  data: Array<{ title: string; value?: React.ReactNode }>
-  defendants?: { title: string; items: Defendant[] }
+  courtOfAppealData?: { title: string; value?: React.ReactNode }[]
+  data: { title: string; value?: React.ReactNode }[]
+  defendants?: {
+    title: string
+    items: Defendant[]
+    defendantInfoActionButton?: DefendantInfoActionButton
+    displayAppealExpirationInfo?: boolean
+  }
   defenders?: Defender[]
   icon?: IconMapIcon
+  additionalDataSections?: DataSection[]
 }
 
 export const NameAndEmail = (name?: string | null, email?: string | null) => [
@@ -44,6 +59,8 @@ export const NameAndEmail = (name?: string | null, email?: string | null) => [
 const UniqueDefenders: React.FC<
   React.PropsWithChildren<UniqueDefendersProps>
 > = (props) => {
+  const { formatMessage } = useIntl()
+
   const { defenders } = props
   const uniqueDefenders = defenders?.filter(
     (defender, index, self) =>
@@ -55,8 +72,10 @@ const UniqueDefenders: React.FC<
       <Text variant="h4">
         {defenders[0].sessionArrangement ===
         SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? 'Talsmaður'
-          : `Verj${uniqueDefenders.length > 1 ? 'endur' : 'andi'}`}
+          ? formatMessage(strings.spokesperson)
+          : uniqueDefenders.length > 1
+          ? formatMessage(strings.defenders)
+          : formatMessage(strings.defender)}
       </Text>
       {uniqueDefenders.map((defender, index) =>
         defender?.name ? (
@@ -70,7 +89,7 @@ const UniqueDefenders: React.FC<
           </Box>
         ) : (
           <Text key={`defender_not_registered_${index}`}>
-            Hefur ekki verið skráður
+            {formatMessage(strings.noDefender)}
           </Text>
         ),
       )}
@@ -79,7 +98,14 @@ const UniqueDefenders: React.FC<
 }
 
 const InfoCard: React.FC<Props> = (props) => {
-  const { data, defendants, defenders, courtOfAppealData, icon } = props
+  const {
+    courtOfAppealData,
+    data,
+    defendants,
+    defenders,
+    icon,
+    additionalDataSections,
+  } = props
 
   return (
     <Box
@@ -90,35 +116,24 @@ const InfoCard: React.FC<Props> = (props) => {
       <Box
         className={(defendants || defenders) && styles.infoCardTitleContainer}
         marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={(defendants || defenders) && [2, 2, 3, 3]}
+        paddingBottom={defenders && [2, 2, 2, 2]}
       >
         {defendants && (
           <>
             <Text variant="h4">{defendants.title}</Text>
-            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0}>
+            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0} marginTop={1}>
               {defendants.items.map((defendant) => (
-                <Text key={defendant.id}>
-                  <span className={styles.infoCardDefendant}>
-                    <Text
-                      as="span"
-                      fontWeight="semiBold"
-                    >{`${defendant.name}, `}</Text>
-                    <Text as="span" fontWeight="semiBold">
-                      {defendant.nationalId
-                        ? `${formatDOB(
-                            defendant.nationalId,
-                            defendant.noNationalId,
-                          )}, `
-                        : ''}
-                    </Text>
-                    <Text as="span">
-                      {defendant.citizenship && ` (${defendant.citizenship}), `}
-                    </Text>
-                    {defendant.address && (
-                      <Text as="span">{`${defendant.address}`}</Text>
-                    )}
-                  </span>
-                </Text>
+                <DefendantInfo
+                  key={defendant.id}
+                  defendant={defendant}
+                  displayDefenderInfo={!defenders}
+                  displayAppealExpirationInfo={
+                    defendants.displayAppealExpirationInfo
+                  }
+                  defendantInfoActionButton={
+                    defendants.defendantInfoActionButton
+                  }
+                />
               ))}
             </Box>
           </>
@@ -144,13 +159,12 @@ const InfoCard: React.FC<Props> = (props) => {
         })}
       </Box>
       {courtOfAppealData && (
-        <Box className={styles.infoCardCourtOfAppealDataContainer}>
+        <Box className={styles.infoCardAdditionalSectionContainer}>
           {courtOfAppealData.map((dataItem, index) => {
             return (
               <Box
                 data-testid={`infoCardDataContainer${index}`}
                 key={dataItem.title}
-                margin={1}
               >
                 <Text variant="h4">{dataItem.title}</Text>
                 {typeof dataItem.value === 'string' ? (
@@ -163,6 +177,23 @@ const InfoCard: React.FC<Props> = (props) => {
           })}
         </Box>
       )}
+      {additionalDataSections?.map((section, index) => (
+        <Box className={styles.infoCardAdditionalSectionContainer} key={index}>
+          {section.data.map((dataItem, dataIndex) => (
+            <Box
+              key={dataItem.title}
+              data-testid={`infoCardDataContainer-${index}-${dataIndex}`}
+            >
+              <Text variant="h4">{dataItem.title}</Text>
+              {typeof dataItem.value === 'string' ? (
+                <Text>{dataItem.value}</Text>
+              ) : (
+                dataItem.value
+              )}
+            </Box>
+          ))}
+        </Box>
+      ))}
       {icon && (
         <Box position="absolute" top={[2, 2, 3, 3]} right={[2, 2, 3, 3]}>
           <Icon icon={icon} type="outline" color="blue400" size="large" />

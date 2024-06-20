@@ -25,6 +25,7 @@ import {
   FormContentContainer,
   FormContext,
   InfoCard,
+  InfoCardCaseScheduled,
   MarkdownWrapper,
   Modal,
   PageHeader,
@@ -41,7 +42,6 @@ import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/h
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { NameAndEmail } from '../../components/InfoCard/InfoCard'
-import InfoCardCaseScheduled from '../../components/InfoCard/InfoCardCaseScheduled'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 
@@ -130,13 +130,13 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
             </Box>
           )}
           {workingCase.state === CaseState.RECEIVED &&
-            workingCase.courtDate &&
+            workingCase.arraignmentDate?.date &&
             workingCase.court && (
               <Box component="section" marginBottom={5}>
                 <InfoCardCaseScheduled
                   court={workingCase.court}
-                  courtDate={workingCase.courtDate}
-                  courtRoom={workingCase.courtRoom}
+                  courtDate={workingCase.arraignmentDate.date}
+                  courtRoom={workingCase.arraignmentDate.location}
                 />
               </Box>
             )}
@@ -364,7 +364,9 @@ export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
               strings.confirmAppealAfterDeadlineModalSecondaryButtonText,
             )}
             onPrimaryButtonClick={() => {
-              router.push(`${constants.APPEAL_ROUTE}/${workingCase.id}`)
+              router.push(
+                `${constants.DEFENDER_APPEAL_ROUTE}/${workingCase.id}`,
+              )
             }}
             onSecondaryButtonClick={() => {
               setModalVisible('NoModal')

@@ -14,6 +14,7 @@ import {
 import {
   DrivingLicenseBookService,
   Organization as DrivingLicenseBookSchool,
+  TeacherRights,
 } from '@island.is/api/domains/driving-license-book'
 import {
   DrivingLicenseApi,
@@ -43,6 +44,23 @@ export class DrivingLicenseProviderService extends BaseTemplateApiService {
     const teachingRights = await this.hasTeachingRights(auth.authorization)
     if (teachingRights) {
       return true
+    } else {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.drivingLicenseNoTeachingRightsTitle,
+          summary: coreErrorMessages.drivingLicenseNoTeachingRightsSummary,
+        },
+        400,
+      )
+    }
+  }
+
+  async getTeacherRights({ auth }: TemplateApiModuleActionProps) {
+    const teachingRights = await this.drivingLicenseBookService.getTeacher(
+      auth.nationalId,
+    )
+    if (teachingRights.rights) {
+      return teachingRights
     } else {
       throw new TemplateApiError(
         {

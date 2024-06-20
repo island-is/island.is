@@ -2,6 +2,7 @@ export enum Features {
   testing = 'do-not-remove-for-testing-only',
   // Integrate auth-api with user-profile-api.
   userProfileClaims = 'shouldAuthApiReturnUserProfileClaims',
+  shouldAuthIdsApiUseNationalRegistryV3 = 'shouldAuthIdsApiUseNationalRegistryV3',
 
   // Application visibility flags
   exampleApplication = 'isExampleApplicationEnabled',
@@ -16,24 +17,23 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
-  oldAgePensionApplication = 'isOldAgePensionEnable',
-  householdSupplementApplication = 'isHouseholdSupplementEnable',
   signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   energyFunds = 'isEnergyFundsEnabled',
-  carRecyclingApplication = 'isCarRecyclingApplicationEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  healthcareWorkPermit = 'ishealthcareworkpermitenabled',
   pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
-  additionalSupportForTheElderlyApplication = 'isAdditionalSupportForTheElderlyEnable',
   homeSupport = 'isHomeSupportEnabled',
   ChangeMachineSupervisor = 'isChangeMachineSupervisorEnabled',
   DeregisterMachine = 'isDeregisterMachineEnabled',
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  StreetRegistration = 'isStreetRegistrationEnabled',
+  HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -41,19 +41,25 @@ export enum Features {
   // Service portal modules
   servicePortalPetitionsModule = 'isServicePortalPetitionsModuleEnabled',
   servicePortalConsentModule = 'isServicePortalConsentModuleEnabled',
-  servicePortalHealthRightsModule = 'isServicePortalHealthRightsModuleEnabled',
   servicePortalSecondaryEducationPages = 'isServicePortalSecondaryEducationPageEnabled',
-  servicePortalHealthCenterDentistPage = 'isServicePortalHealthCenterPageEnabled',
   servicePortalWorkMachinesModule = 'isServicePortalWorkMachinesPageEnabled',
-  servicePortalHealthMedicinePages = 'isServicePortalHealthMedicinePageEnabled',
-  servicePortalHealthPaymentPages = 'isServicePortalHealthPaymentPageEnabled',
-  servicePortalHealthOverviewPage = 'isServicePortalHealthOverviewPageEnabled',
   servicePortalSignatureCollection = 'isServicePortalSignatureCollectionEnabled',
   servicePortalVehicleMileagePageEnabled = 'isServicePortalVehicleMileagePageEnabled',
   servicePortalSocialInsurancePageEnabled = 'isServicePortalSocialInsurancePageEnabled',
+  ServicePortalNotificationsEnabled = 'isServicePortalNotificationsPageEnabled',
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
+
+  //Occupational License Health directorate fetch enabled
+  occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
+  //Possible universities
+  isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',
+  isAgriculturalUniversityOfIcelandEnabled = 'isAgriculturalUniversityOfIcelandEnabled',
+  isBifrostUniversityEnabled = 'isBifrostUniversityEnabled',
+  isHolarUniversityEnabled = 'isHolarUniversityEnabled',
+  isIcelandUniversityOfTheArtsEnabled = 'isIcelandUniversityOfTheArtsEnabled',
 
   //License service new drivers license client enabled
   licenseServiceDrivingLicenseClient = 'isLicenseServiceDrivingLicenceClientV2Enabled',
@@ -79,7 +85,15 @@ export enum Features {
 
   // Notifications
   isNotificationEmailWorkerEnabled = 'isnotificationemailworkerenabled',
+
+  // New/updated delegation notification
+  isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
+
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
+
+  // Single sign on passkeys
+  isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
+  isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
 }
 
 export enum ServerSideFeature {

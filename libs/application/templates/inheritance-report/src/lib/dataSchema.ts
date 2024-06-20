@@ -1,6 +1,5 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
-import { NO, YES } from './constants'
 import {
   customZodError,
   isValidEmail,
@@ -9,6 +8,13 @@ import {
   valueToNumber,
 } from './utils/helpers'
 import { m } from './messages'
+import { NO, YES } from '@island.is/application/core'
+import {
+  ESTATE_INHERITANCE,
+  PREPAID_INHERITANCE,
+  RelationSpouse,
+} from './constants'
+import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),
@@ -21,17 +27,27 @@ const validateDeceasedShare = ({
   deceasedShareEnabled,
 }: {
   deceasedShare: string | undefined
-  deceasedShareEnabled: 'Yes'[] | undefined
+  deceasedShareEnabled: 'yes'[] | undefined
 }) => {
   if (
     Array.isArray(deceasedShareEnabled) &&
     deceasedShareEnabled.includes(YES)
   ) {
     const value = valueToNumber(deceasedShare)
-    return value > 0 && value <= 100
+    return value >= 0 && value <= 100
   }
 
   return true
+}
+
+const validateAssetNumber = (assetNumber: string) => {
+  const assetNumberPattern = /^[Ff]{0,1}\d{7}$|^[Ll]{0,1}\d{6}$/
+  return assetNumberPattern.test(assetNumber)
+}
+
+const validateDebtBankAccount = (assetNumber: string) => {
+  const assetNumberPattern = /^\d{4}-\d{2}-\d{6}|\d{12}$/
+  return assetNumberPattern.test(assetNumber)
 }
 
 const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
@@ -39,7 +55,9 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
     .object({
       data: z
         .object({
-          assetNumber: z.string(),
+          assetNumber: z
+            .string()
+            .refine((v) => (withShare ? validateAssetNumber(v) : true)),
           description: z.string(),
           propertyValuation: z.string(),
           ...(withShare ? { share: z.string() } : {}),
@@ -68,7 +86,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
 
               const value = isNaN(num) ? 0 : num
 
-              return value >= 0 && value <= 100
+              return value > 0 && value <= 100
             }
 
             return true
@@ -114,6 +132,48 @@ export const inheritanceReportSchema = z.object({
     nationalId: z.string(),
     relation: z.string(),
   }),
+
+  /* prePaid inheritance executor */
+  executors: z
+    .object({
+      includeSpouse: z.array(z.enum([YES])).optional(),
+      executor: z.object({
+        email: z.string().email(),
+        phone: z.string().refine((v) => isValidPhoneNumber(v)),
+      }),
+      spouse: z
+        .object({
+          email: z.string().optional(),
+          phone: z.string().optional(),
+        })
+        .optional(),
+    })
+    .refine(
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
+          return isValidEmail(spouse?.email ?? '')
+        } else {
+          return true
+        }
+      },
+      {
+        path: ['spouse', 'email'],
+      },
+    )
+    .refine(
+      ({ includeSpouse, spouse }) => {
+        if (includeSpouse && includeSpouse[0] === YES) {
+          return isValidPhoneNumber(spouse?.phone ?? '')
+        } else {
+          return true
+        }
+      },
+      {
+        path: ['spouse', 'phone'],
+      },
+    ),
+
+  applicationFor: z.enum([ESTATE_INHERITANCE, PREPAID_INHERITANCE]),
 
   /* assets */
   assets: z.object({
@@ -211,6 +271,16 @@ export const inheritanceReportSchema = z.object({
             ...deceasedShare,
           })
           .refine(
+            ({ amount, exchangeRateOrInterest, description }) => {
+              return amount === '' && exchangeRateOrInterest === ''
+                ? true
+                : description !== ''
+            },
+            {
+              path: ['description'],
+            },
+          )
+          .refine(
             ({ assetNumber }) => {
               return assetNumber === ''
                 ? true
@@ -306,8 +376,15 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string(),
+            assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
             propertyValuation: z.string(),
+            debtType: z.enum([
+              DebtTypes.CreditCard,
+              DebtTypes.InsuranceCompany,
+              DebtTypes.Loan,
+              DebtTypes.Overdraft,
+              DebtTypes.PropertyFees,
+            ]),
           })
           .refine(
             ({ nationalId }) => {
@@ -365,6 +442,8 @@ export const inheritanceReportSchema = z.object({
     debtsTotal: z.number().optional(),
   }),
 
+  estateInfoSelection: z.string().min(1),
+
   funeralCost: z
     .object({
       build: z.string().optional(),
@@ -419,12 +498,7 @@ export const inheritanceReportSchema = z.object({
         enabled: z.boolean(),
         phone: z.string().optional(),
         email: z.string(),
-        heirsPercentage: z.string().refine((v) => {
-          if (!v) return true
-
-          const num = parseInt(v, 10) ?? 0
-          return num > -1 && num < 101
-        }),
+        heirsPercentage: z.string().optional(),
         taxFreeInheritance: z.string(),
         inheritance: z.string(),
         taxableInheritance: z.string(),
@@ -439,6 +513,15 @@ export const inheritanceReportSchema = z.object({
           })
           .optional(),
       })
+      .refine(
+        ({ enabled, heirsPercentage }) => {
+          const num = heirsPercentage ? parseInt(heirsPercentage, 10) : 0
+          return enabled ? num > 0 && num < 101 : true
+        },
+        {
+          path: ['heirsPercentage'],
+        },
+      )
       .refine(
         ({ enabled, foreignCitizenship, dateOfBirth }) => {
           if (!enabled) return true
@@ -509,8 +592,7 @@ export const inheritanceReportSchema = z.object({
         (v) => {
           if (v.length > 0) {
             const count = v.filter(
-              (x) =>
-                x.enabled && (x.relation === 'Maki' || x.relation === 'Spouse'),
+              (x) => x.enabled && x.relation === RelationSpouse,
             )?.length
             return count <= 1
           }
@@ -577,16 +659,61 @@ export const inheritanceReportSchema = z.object({
   spouseTotal: z.number(),
   estateTotal: z.number(),
   netPropertyForExchange: z.number(),
-  hasCustomSpouseSharePercentage: z.array(z.enum([YES])).optional(),
-  customSpouseSharePercentage: z
-    .string()
-    .refine((v) => {
-      const val = valueToNumber(v)
-      return val >= 0 && val <= 100
+  customShare: z
+    .object({
+      deceasedWasMarried: z.enum([YES, NO]),
+      deceasedHadAssets: z.string().optional(),
+      hasCustomSpouseSharePercentage: z.string().optional(),
+      customSpouseSharePercentage: z.string().optional(),
     })
-    .optional(),
+    .refine(
+      ({ deceasedWasMarried, hasCustomSpouseSharePercentage }) => {
+        if (deceasedWasMarried === YES) {
+          return (
+            hasCustomSpouseSharePercentage &&
+            [YES, NO].includes(hasCustomSpouseSharePercentage)
+          )
+        }
 
-  /* einkaskipti */
+        return true
+      },
+      {
+        path: ['hasCustomSpouseSharePercentage'],
+      },
+    )
+    .refine(
+      ({ deceasedWasMarried, deceasedHadAssets }) => {
+        if (deceasedWasMarried === YES) {
+          return deceasedHadAssets && [YES, NO].includes(deceasedHadAssets)
+        }
+
+        return true
+      },
+      {
+        path: ['deceasedHadAssets'],
+      },
+    )
+    .refine(
+      ({
+        hasCustomSpouseSharePercentage,
+        customSpouseSharePercentage,
+        deceasedWasMarried,
+      }) => {
+        if (
+          hasCustomSpouseSharePercentage === YES &&
+          deceasedWasMarried === YES
+        ) {
+          const val = valueToNumber(customSpouseSharePercentage)
+          return val >= 50 && val <= 100
+        }
+
+        return true
+      },
+      {
+        path: ['customSpouseSharePercentage'],
+        params: m.assetsToShareHasCustomSpousePercentageError,
+      },
+    ),
   confirmAction: z.array(z.enum([YES])).length(1),
 })
 

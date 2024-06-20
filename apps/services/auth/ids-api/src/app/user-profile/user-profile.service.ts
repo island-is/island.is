@@ -1,21 +1,26 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { FetchError } from '@island.is/clients/middlewares'
 import {
   AddressDto as NationalRegistryAddress,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
+import {
+  EinstaklingurDTOHeimili,
+  NationalRegistryV3ClientService,
+} from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
-import { UserProfileApi } from '@island.is/clients/user-profile'
-import type { Logger } from '@island.is/logging'
+import { V2MeApi } from '@island.is/clients/user-profile'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
-import type { GenderValue } from './dto/user-profile.dto'
-import { UserProfileDTO } from './dto/user-profile.dto'
 import { AddressDTO } from './dto/address.dto'
+import { UserProfileDTO } from './dto/user-profile.dto'
 
+import type { Auth, User } from '@island.is/auth-nest-tools'
+import type { Logger } from '@island.is/logging'
+import type { GenderValue } from './dto/user-profile.dto'
 interface Address extends NationalRegistryAddress {
   country?: string
 }
@@ -34,7 +39,9 @@ export class UserProfileService {
 
   constructor(
     private individualClient: NationalRegistryClientService,
-    private userProfileApi: UserProfileApi,
+    private readonly featureFlagService: FeatureFlagService,
+    private readonly nationalRegistryV3: NationalRegistryV3ClientService,
+    private userProfileApi: V2MeApi,
     private companyRegistryApi: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
@@ -106,38 +113,79 @@ export class UserProfileService {
   private async getClaimsFromNationalRegistry(
     auth: User,
   ): Promise<UserProfileDTO> {
-    const individual = await this.individualClient.getIndividual(
-      auth.nationalId,
-    )
-    if (!individual) {
-      return {}
-    }
+    if (
+      await this.featureFlagService.getValue(
+        Features.shouldAuthIdsApiUseNationalRegistryV3,
+        false,
+        auth,
+      )
+    ) {
+      const individual = await this.nationalRegistryV3.getAllDataIndividual(
+        auth.nationalId,
+        false,
+      )
 
-    return {
-      name: individual.name,
-      givenName: individual.givenName ?? undefined,
-      familyName: individual.familyName ?? undefined,
-      middleName: individual.middleName ?? undefined,
-      gender: this.formatGender(individual.genderCode),
-      address: this.formatAddress(
-        individual.residence ?? individual.legalDomicile,
-      ),
-      legalDomicile: this.formatAddress(individual.legalDomicile),
-      birthdate: this.formatBirthdate(individual.birthdate),
+      if (!individual) {
+        return {}
+      }
+
+      return {
+        name: individual.fulltNafn?.fulltNafn ?? individual.nafn ?? undefined,
+        givenName: individual.fulltNafn?.eiginNafn ?? undefined,
+        familyName: individual.fulltNafn?.kenniNafn ?? undefined,
+        middleName: individual.fulltNafn?.milliNafn ?? undefined,
+        gender: this.formatGender(individual.kyn?.kynKodi ?? ''),
+        address: this.formatAddressV3(
+          individual.itarupplysingar?.adsetur ??
+            individual.heimilisfang ??
+            null,
+        ),
+        legalDomicile: this.formatAddressV3(individual.heimilisfang ?? null),
+        birthdate: this.formatBirthdate(
+          individual.faedingarstadur?.faedingarDagur ?? undefined,
+        ),
+      }
+    } else {
+      const individual = await this.individualClient.getIndividual(
+        auth.nationalId,
+      )
+
+      if (!individual) {
+        return {}
+      }
+
+      return {
+        name: individual.name,
+        givenName: individual.givenName ?? undefined,
+        familyName: individual.familyName ?? undefined,
+        middleName: individual.middleName ?? undefined,
+        gender: this.formatGender(individual.genderCode),
+        address: this.formatAddress(
+          individual.residence ?? individual.legalDomicile,
+        ),
+        legalDomicile: this.formatAddress(individual.legalDomicile),
+        birthdate: this.formatBirthdate(individual.birthdate),
+      }
     }
   }
 
   private async getClaimsFromUserProfile(auth: User): Promise<UserProfileDTO> {
     const userProfile = await this.userProfileApiWithAuth(
       auth,
-    ).userProfileControllerFindOneByNationalId({
-      nationalId: auth.nationalId,
-    })
+    ).meUserProfileControllerFindUserProfile()
     return {
-      email: userProfile.email,
-      emailVerified: userProfile.emailVerified,
-      phoneNumber: userProfile.mobilePhoneNumber,
-      phoneNumberVerified: userProfile.mobilePhoneNumberVerified,
+      email: userProfile.isRestricted
+        ? undefined
+        : userProfile.email ?? undefined,
+      emailVerified: userProfile.isRestricted
+        ? undefined
+        : userProfile.emailVerified,
+      phoneNumber: userProfile.isRestricted
+        ? undefined
+        : userProfile.mobilePhoneNumber ?? undefined,
+      phoneNumberVerified: userProfile.isRestricted
+        ? undefined
+        : userProfile.mobilePhoneNumberVerified,
       locale: userProfile.locale,
       picture: userProfile.profileImageUrl,
     }
@@ -196,7 +244,63 @@ export class UserProfileService {
       country,
     }
   }
+  private formatAddressV3(
+    address: EinstaklingurDTOHeimili | null,
+    hasCountryCode = false,
+  ): AddressDTO | undefined {
+    if (!address) {
+      return undefined
+    }
 
+    // Take an address object from National Registry and Company Registry and try to make it consistent.
+    // According to schemas and experience:
+    //
+    // The national registry only requires the "heiti" field and does not include a country field. If the person
+    // lives abroad, the "heiti" field stores the country name and the other fields are empty.
+    //
+    // The company registry includes a country code field, but the quality of the fields is unknown, including
+    // which fields are always set.
+
+    let streetAddress = address.husHeiti
+    const locality = address.poststod ?? undefined
+    const postalCode = address.postnumer ?? undefined
+    let formatted = undefined
+    const valid = streetAddress && locality && postalCode
+
+    let country = null
+    if (country && hasCountryCode) {
+      country = this.countryFormatter.of(country)
+    }
+
+    // When individuals live abroad, the national registry stores the country name under "heiti" or streetAddress.
+    const likelyForeign =
+      streetAddress != null &&
+      locality == null &&
+      postalCode == null &&
+      country == null
+    if (likelyForeign) {
+      country = streetAddress
+      streetAddress = undefined
+    }
+
+    if (valid) {
+      if (!country) {
+        country = 'Ísland'
+      }
+      formatted = `${streetAddress}\n${postalCode} ${locality}\n${country}`
+    }
+
+    if (streetAddress == null) streetAddress = undefined
+    if (country == null) country = undefined
+
+    return {
+      formatted,
+      streetAddress,
+      locality,
+      postalCode,
+      country,
+    }
+  }
   private formatBirthdate(date?: Date): string | undefined {
     return !date || isNaN(date.getTime())
       ? undefined

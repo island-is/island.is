@@ -7,12 +7,13 @@ export interface DrivingLicenseType {
   name: string
 }
 
-export type DrivingLicenseApplicationType = 'B-full' | 'B-temp'
+export type DrivingLicenseApplicationType = 'B-full' | 'B-temp' | 'BE'
 
 export interface NewDrivingLicenseInput {
   jurisdictionId: number
   needsToPresentHealthCertificate: boolean
   needsToPresentQualityPhoto: boolean
+  licenseCategory: DrivingLicenseCategory
 }
 
 export interface NewTemporaryDrivingLicenseInput {
@@ -59,6 +60,8 @@ export enum RequirementKey {
   hasPoints = 'HasPoints',
   personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beRequiresHealthCertificate = 'beRequiresHealthCertificate',
 }
 
 export interface ApplicationEligibilityRequirement {
@@ -74,6 +77,7 @@ export interface ApplicationEligibility {
 
 export enum DrivingLicenseCategory {
   B = 'B',
+  BE = 'BE',
 }
 
 export enum NeedsHealhCertificate {

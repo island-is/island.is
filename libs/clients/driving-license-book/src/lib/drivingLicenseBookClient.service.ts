@@ -1,4 +1,8 @@
-import { Configuration, DrivingLicenseBookApi } from '../../gen/fetch'
+import {
+  Configuration,
+  DrivingLicenseBookApi,
+  TeacherDetailsGetResponse,
+} from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -25,6 +29,7 @@ import {
   PracticalDrivingLesson,
   PracticalDrivingLessonsInput,
   SchoolType,
+  TeacherRights,
   UpdatePracticalDrivingLessonInput,
 } from './drivingLicenseBookType.types'
 import {
@@ -34,6 +39,7 @@ import {
   getStudentMapper,
   schoolForSchoolStaffMapper,
   schoolTypeMapper,
+  teacherRightsMapper,
 } from '../utils/mappers'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -174,12 +180,14 @@ export class DrivingLicenseBookClientApiFactory {
 
   async getStudentsForTeacher(
     user: User,
+    licenseCategory: 'B' | 'BE',
   ): Promise<DrivingLicenseBookStudentForTeacher[]> {
     const api = await this.create()
     const { data } =
       await api.apiTeacherGetStudentOverviewForTeacherTeacherSsnGet({
         teacherSsn: user.nationalId,
         showExpired: false,
+        licenseCategory: licenseCategory,
       })
     if (!data) {
       this.logger.error(`${LOGTAG} Error fetching students for teacher`)
@@ -198,6 +206,7 @@ export class DrivingLicenseBookClientApiFactory {
 
   async getStudent({
     nationalId,
+    licenseCategory,
   }: DrivingLicenseBookStudentInput): Promise<DrivingLicenseBookStudentOverview> {
     const api = await this.create()
     const { data } = await api.apiStudentGetStudentOverviewSsnGet({
@@ -205,10 +214,12 @@ export class DrivingLicenseBookClientApiFactory {
       showInactiveBooks: false,
     })
 
-    const book = data?.books?.[0]
+    const book = licenseCategory
+      ? data?.books?.find((book) => book.licenseCategory === licenseCategory)
+      : data?.books?.[0]
 
     if (!book || !data) {
-      this.logger.error(
+      this.logger.warn(
         `${LOGTAG} Error fetching student, student has no active book`,
       )
       throw new NotFoundException(
@@ -407,5 +418,14 @@ export class DrivingLicenseBookClientApiFactory {
     } catch (e) {
       return { success: false }
     }
+  }
+
+  async getTeacher(nationalId: string): Promise<TeacherRights> {
+    const api = await this.create()
+    return teacherRightsMapper(
+      await api.apiTeacherGetTeacherSsnGet({
+        ssn: nationalId,
+      }),
+    )
   }
 }

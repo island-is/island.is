@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { HealthcenterApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
@@ -8,23 +8,15 @@ import {
   PaginatedHealthCentersResponse,
 } from './models/healthCenter.model'
 import { isDefined } from '@island.is/shared/utils'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { HealthCenterRegisterResponse } from './models/healthCenterTransfer.model'
 import { HealthCenterRegistrationHistory } from './models/healthCenterRecordHistory.model'
 import { HealthCenterRecord } from './models/healthCenterRecord.model'
 import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
 import { HealthCenterDoctorsInput } from './dto/healthCenterDoctors.input'
 
-const LOG_CATEGORY = 'rights-portal-health-center'
-
 @Injectable()
 export class HealthCenterService {
-  constructor(
-    private api: HealthcenterApi,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {}
+  constructor(private api: HealthcenterApi) {}
 
   async getHealthCenters(
     user: User,
@@ -77,10 +69,8 @@ export class HealthCenterService {
       api.getCurrentHealthCenter().catch(handle404),
       api
         .getHealthCenterHistory({
-          dateFrom: dateFrom
-            ? dateFrom.toDateString()
-            : subYears(new Date(), 5).toDateString(),
-          dateTo: dateTo ? dateTo.toDateString() : new Date().toDateString(),
+          dateFrom: dateFrom ? dateFrom : subYears(new Date(), 5),
+          dateTo: dateTo ? dateTo : new Date(),
         })
         .catch(handle404),
     ])
