@@ -1,14 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
-<<<<<<< Updated upstream
-import { LicenseError } from './dto/GenericLicenseError.dto'
-import { GenericUserLicense as GenericUserLicenseModel } from './dto/GenericUserLicense.dto'
-
-export interface GenericLicenseMappedPayloadResponse {
-  payload: GenericUserLicensePayload
-=======
-<<<<<<< Updated upstream
-=======
 import { LicenseError } from './dto/GenericLicenseError.dto'
 import { GenericUserLicense as GenericUserLicenseModel } from './dto/GenericUserLicense.dto'
 import { GenericUserLicenseMetadata } from './dto/GenericUserLicenseMetadata.dto'
@@ -16,7 +7,6 @@ import { GenericUserLicenseMetadata } from './dto/GenericUserLicenseMetadata.dto
 export interface GenericLicenseMappedPayloadResponse {
   licenseName: string
   payload: GenericUserLicenseMetadata
->>>>>>> Stashed changes
   type: 'user' | 'child'
 }
 export type LicenseTypeFetchResponse =
@@ -28,10 +18,6 @@ export type LicenseTypeFetchResponse =
       fetchResponseType: 'licenses'
       data: Array<GenericUserLicenseModel>
     }
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
@@ -282,13 +268,5 @@ export interface GenericLicenseMapper {
     payload: Array<unknown>,
     locale: Locale,
     labels?: GenericLicenseLabels,
-<<<<<<< Updated upstream
-  ) => Array<GenericLicenseMappedPayloadResponse>
-=======
-<<<<<<< Updated upstream
-  ) => Array<GenericUserLicensePayload>
-=======
   ) => Promise<Array<GenericLicenseMappedPayloadResponse>>
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 }
