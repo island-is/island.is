@@ -6,7 +6,7 @@ import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapTeamMember } from '../../models/teamMember.model'
 
 @Injectable()
-export class SupportQNASyncService implements CmsSyncProvider<ITeamList> {
+export class TeamListSyncService implements CmsSyncProvider<ITeamList> {
   processSyncData(entries: processSyncDataInput<ITeamList>) {
     return entries.filter(
       (entry) => entry.sys.contentType.sys.id === 'teamList',

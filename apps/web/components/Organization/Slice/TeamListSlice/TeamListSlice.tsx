@@ -3,8 +3,12 @@ import flatten from 'lodash/flatten'
 import { useLazyQuery } from '@apollo/client'
 
 import { TeamList, type TeamListProps } from '@island.is/island-ui/contentful'
-import { GenericList, GenericListWrapper } from '@island.is/web/components'
-import type { GenericTag, Query } from '@island.is/web/graphql/schema'
+import { GenericList } from '@island.is/web/components'
+import {
+  type GenericTag,
+  type Query,
+  TeamMemberResponse,
+} from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_TEAM_MEMBERS_QUERY } from '@island.is/web/screens/queries/TeamList'
 
@@ -12,16 +16,12 @@ const ITEMS_PER_PAGE = 10
 
 interface TeamMemberListWrapperProps {
   id: string
-  searchInputPlaceholder?: string | null
-  itemType?: string | null
   filterTags?: GenericTag[] | null
 }
 
 export const TeamMemberListWrapper = ({
   id,
   filterTags,
-  itemType,
-  searchInputPlaceholder,
 }: TeamMemberListWrapperProps) => {
   const searchQueryId = `${id}q`
   const pageQueryId = `${id}page`
@@ -29,7 +29,9 @@ export const TeamMemberListWrapper = ({
 
   const { activeLocale } = useI18n()
 
-  const [itemsResponse, setItemsResponse] = useState<null>(null)
+  const [itemsResponse, setItemsResponse] = useState<TeamMemberResponse | null>(
+    null,
+  )
   const [errorOccurred, setErrorOccurred] = useState(false)
 
   const [fetchListItems, { loading }] = useLazyQuery<Query>(
@@ -68,8 +70,7 @@ export const TeamMemberListWrapper = ({
   return (
     <GenericList
       filterTags={filterTags}
-      itemType={itemType}
-      searchInputPlaceholder={searchInputPlaceholder}
+      searchInputPlaceholder={activeLocale === 'is' ? 'Leit' : 'Search'}
       displayError={errorOccurred}
       fetchListItems={({ page, searchValue, tags, tagGroups }) => {
         fetchListItems({
@@ -86,13 +87,14 @@ export const TeamMemberListWrapper = ({
           },
         })
       }}
-      items={items}
       totalItems={totalItems}
       loading={loading}
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
-    />
+    >
+      <TeamList teamMembers={items} variant="accordion" />
+    </GenericList>
   )
 }
 
@@ -108,7 +110,7 @@ export const TeamListSlice = ({
   id,
 }: TeamListSliceProps) => {
   if (variant === 'accordion') {
-    return <GenericListWrapper id={id} filterTags={filterTags} />
+    return <TeamMemberListWrapper id={id} filterTags={filterTags} />
   }
   return <TeamList teamMembers={teamMembers} variant="card" />
 }

@@ -147,7 +147,6 @@ const ClickableItem = ({ item }: ItemProps) => {
 
 interface GenericListProps {
   searchInputPlaceholder?: string | null
-  itemType?: string | null
   filterTags?: GenericTag[] | null
   searchQueryId: string
   pageQueryId: string
@@ -160,23 +159,21 @@ interface GenericListProps {
   }) => void
   loading: boolean
   totalItems: number
-  items: unknown[]
   displayError: boolean
 }
 
 export const GenericList = ({
   searchInputPlaceholder,
-  itemType,
   filterTags,
   searchQueryId,
   pageQueryId,
   tagQueryId,
   fetchListItems,
   totalItems,
-  items,
   loading,
   displayError,
-}: GenericListProps) => {
+  children,
+}: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
   const [parameters, setParameters] = useQueryState<Record<string, string[]>>(
@@ -232,8 +229,6 @@ export const GenericList = ({
     activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
 
   const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
-
-  const itemsAreClickable = itemType === 'Clickable'
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
 
@@ -397,10 +392,10 @@ export const GenericList = ({
               }
             />
           )}
-          {items.length === 0 && !displayError && (
+          {totalItems === 0 && !displayError && (
             <Text>{noResultsFoundText}</Text>
           )}
-          {items.length > 0 && (
+          {totalItems > 0 && (
             <Stack space={3}>
               <Inline space={2} justifyContent="spaceBetween" alignY="center">
                 <Text>
@@ -413,28 +408,7 @@ export const GenericList = ({
                   </Text>
                 )}
               </Inline>
-              <GridContainer>
-                <GridRow rowGap={3}>
-                  {!itemsAreClickable &&
-                    items.map((item) => (
-                      <GridColumn
-                        key={item.id}
-                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-                      >
-                        <NonClickableItem item={item} />
-                      </GridColumn>
-                    ))}
-                  {itemsAreClickable &&
-                    items.map((item) => (
-                      <GridColumn
-                        key={item.id}
-                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-                      >
-                        <ClickableItem item={item} />
-                      </GridColumn>
-                    ))}
-                </GridRow>
-              </GridContainer>
+              {children}
             </Stack>
           )}
 
@@ -526,10 +500,11 @@ export const GenericListWrapper = ({
   const totalItems = itemsResponse?.total ?? 0
   const items = itemsResponse?.items ?? []
 
+  const itemsAreClickable = itemType === 'Clickable'
+
   return (
     <GenericList
       filterTags={filterTags}
-      itemType={itemType}
       searchInputPlaceholder={searchInputPlaceholder}
       displayError={errorOccurred}
       fetchListItems={({ page, searchValue, tags, tagGroups }) => {
@@ -547,12 +522,34 @@ export const GenericListWrapper = ({
           },
         })
       }}
-      items={items}
       totalItems={totalItems}
       loading={loading}
       pageQueryId={pageQueryId}
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
-    />
+    >
+      <GridContainer>
+        <GridRow rowGap={3}>
+          {!itemsAreClickable &&
+            items.map((item) => (
+              <GridColumn
+                key={item.id}
+                span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+              >
+                <NonClickableItem item={item} />
+              </GridColumn>
+            ))}
+          {itemsAreClickable &&
+            items.map((item) => (
+              <GridColumn
+                key={item.id}
+                span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+              >
+                <ClickableItem item={item} />
+              </GridColumn>
+            ))}
+        </GridRow>
+      </GridContainer>
+    </GenericList>
   )
 }

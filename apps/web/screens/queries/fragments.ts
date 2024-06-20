@@ -275,6 +275,11 @@ export const slices = gql`
       id
       title
       slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
     }
     teamMembers {
       name
