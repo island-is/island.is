@@ -260,6 +260,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
         </Box>
         <Box>
           <HTMLEditor
+            title={f(advert.inputs.editor.label)}
             name={InputFields.advert.document}
             value={state.document as HTMLText}
             onChange={(value) => setState({ ...state, document: value })}
