@@ -181,7 +181,7 @@ export const AdditionalEstateMember = ({
             options={relationOptions}
             error={error?.relation}
             backgroundColor="blue"
-            required
+            required={!field.initial}
           />
         </GridColumn>
         {application.answers.selectedEstate ===

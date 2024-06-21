@@ -45,6 +45,7 @@ const getEnv = (services: {
     staging: 'development@island.is',
     prod: 'noreply@island.is',
   },
+  REDIS_USE_SSL: 'true',
 })
 
 export const userNotificationServiceSetup = (services: {
@@ -57,6 +58,7 @@ export const userNotificationServiceSetup = (services: {
     .db()
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
+    .redis()
     .env(getEnv(services))
     .secrets({
       FIREBASE_CREDENTIALS: `/k8s/${serviceName}/firestore-credentials`,
@@ -121,6 +123,7 @@ export const userNotificationWorkerSetup = (services: {
     .args('--no-experimental-fetch', 'main.js', '--job=worker')
     .db()
     .migrations()
+    .redis()
     .env({
       ...getEnv(services),
       EMAIL_REGION: 'eu-west-1',
