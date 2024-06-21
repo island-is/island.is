@@ -865,6 +865,9 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.employer.registerEmployer,
               removeButtonTooltipText:
                 parentalLeaveFormMessages.employer.deleteEmployer,
+              editButtonTooltipText:
+                parentalLeaveFormMessages.employer.editEmployer,
+              editField: true,
               marginTop: 0,
               fields: {
                 email: {
