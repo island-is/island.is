@@ -9,6 +9,7 @@ import {
   defineTemplateApi,
   UserProfileApi,
   InstitutionNationalIds,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { dataSchema } from './dataSchema'
 import { Roles, States, Events, ApiActions } from './constants'
@@ -54,6 +55,9 @@ const getCodes = (application: Application) => {
   return [chargeItemCode]
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.OPERATING_LCENSE]
+
 const OperatingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -64,6 +68,7 @@ const OperatingLicenseTemplate: ApplicationTemplate<
   institution: m.institution,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

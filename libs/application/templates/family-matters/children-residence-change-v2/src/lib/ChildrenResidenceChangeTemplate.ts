@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   InstitutionNationalIds,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'
 import { dataSchema } from './dataSchema'
@@ -45,6 +46,9 @@ enum TemplateApiActions {
 
 const applicationName = 'Umsókn um breytt lögheimili barns'
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]
+
 const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -53,6 +57,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
   type: ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2,
   name: application.name,
   dataSchema,
+  translationNamespaces: [configuration.translation],
   featureFlag: Features.childrenResidenceChangeV2,
   stateMachineConfig: {
     initial: ApplicationStates.PREREQUISITES,
@@ -419,8 +424,10 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
     actions: {
       assignToOtherParent: assign((context) => {
         // TODO: fix this..
-        const { externalData, answers } =
-          context.application as unknown as CRCApplication
+        const {
+          externalData,
+          answers,
+        } = (context.application as unknown) as CRCApplication
         const children = externalData.childrenCustodyInformation.data
         const selectedChildren = getSelectedChildrenFromExternalData(
           children,

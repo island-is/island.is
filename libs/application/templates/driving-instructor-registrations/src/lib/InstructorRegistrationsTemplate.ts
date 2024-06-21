@@ -10,6 +10,7 @@ import {
   HasTeachingRightsApi,
   NationalRegistryUserApi,
   GetTeacherRightsApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -21,6 +22,9 @@ import {
 } from './getApplicationFeatureFlags'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]
+
 const InstructorRegistrationsTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -29,6 +33,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.REGISTRY,
     states: {
