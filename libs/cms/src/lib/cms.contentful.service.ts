@@ -730,7 +730,7 @@ export class CmsContentfulService {
     )
   }
 
-  async getLifeEvents(lang: string): Promise<LifeEventPage[]> {
+  async getLifeEventsForOverview(lang: string): Promise<LifeEventPage[]> {
     const params = {
       ['content_type']: 'lifeEventPage',
       order: 'sys.createdAt',
