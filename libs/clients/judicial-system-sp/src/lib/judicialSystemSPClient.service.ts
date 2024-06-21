@@ -77,11 +77,7 @@ export class JudicialSystemSPClientService {
     return subpoena
   }
 
-  async patchSubpoena(
-    input: CaseControllerUpdateSubpoenaRequest,
-    user: User,
-    locale: Locale,
-  ) {
+  async patchSubpoena(input: CaseControllerUpdateSubpoenaRequest, user: User) {
     let response
     try {
       response = await this.casesApiWithAuth(user).caseControllerUpdateSubpoena(
