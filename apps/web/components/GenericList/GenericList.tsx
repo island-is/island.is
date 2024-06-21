@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useLazyQuery } from '@apollo/client'
 
 import {

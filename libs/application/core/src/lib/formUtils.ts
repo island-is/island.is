@@ -25,7 +25,7 @@ import {
   StaticTextObject,
   SubSection,
 } from '@island.is/application/types'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false

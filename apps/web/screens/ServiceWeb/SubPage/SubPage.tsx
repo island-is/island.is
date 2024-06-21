@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import groupBy from 'lodash/groupBy'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'

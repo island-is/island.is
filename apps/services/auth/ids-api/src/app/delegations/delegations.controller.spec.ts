@@ -56,7 +56,7 @@ import {
   getScopePermission,
   personalRepresentativeType,
 } from '../../../test/stubs/personalRepresentativeStubs'
-import { AuthDelegationProvider } from 'delegation'
+import { AuthDelegationProvider } from '@island.is/shared/types'
 import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
 
 describe('DelegationsController', () => {

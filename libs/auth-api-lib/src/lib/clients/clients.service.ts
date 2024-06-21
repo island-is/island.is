@@ -29,7 +29,10 @@ import { ClientSecretDTO } from './dto/client-secret.dto'
 import { ClientsTranslationService } from './clients-translation.service'
 import { BulkCreateOptions, DestroyOptions } from 'sequelize'
 import { ClientDelegationType } from './models/client-delegation-type.model'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 import { DelegationTypeModel } from '../delegations/models/delegation-type.model'
 
 @Injectable()

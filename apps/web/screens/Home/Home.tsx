@@ -28,7 +28,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { GlobalContext } from '@island.is/web/context'
 import { QueryGetNewsArgs } from '@island.is/api/schema'
 import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { watsonConfig } from './config'
 
 interface HomeProps {
