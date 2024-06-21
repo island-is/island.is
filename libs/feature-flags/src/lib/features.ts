@@ -22,6 +22,8 @@ export enum Features {
   energyFunds = 'isEnergyFundsEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  healthcareWorkPermit = 'ishealthcareworkpermitenabled',
+  pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
@@ -33,6 +35,7 @@ export enum Features {
   idCardApplication = 'isIdCardApplicationEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
+  newPrimarySchool = 'isNewPrimarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

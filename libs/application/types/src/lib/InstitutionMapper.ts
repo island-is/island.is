@@ -227,6 +227,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
     slug: InstitutionTypes.EMBAETTI_LANDLAEKNIS,
   },
+  [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: {
+    nationalId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
+    slug: InstitutionTypes.EMBAETTI_LANDLAEKNIS,
+  },
   [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
@@ -278,5 +282,9 @@ export const institutionMapper = {
   [ApplicationTypes.STREET_REGISTRATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
+    nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+    slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
 }

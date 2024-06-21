@@ -375,6 +375,7 @@ services-auth-ids-api:
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
+    PASSKEY_CORE_MAX_AGE_DAYS: '365'
     PASSKEY_CORE_RP_ID: 'island.is'
     PASSKEY_CORE_RP_NAME: 'Island.is'
     PUBLIC_URL: 'https://innskra.island.is/api'
@@ -475,7 +476,6 @@ services-auth-ids-api:
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
     PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
-    PASSKEY_CORE_MAX_AGE_DAYS: '/k8s/services-auth/PASSKEY_CORE_MAX_AGE_DAYS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

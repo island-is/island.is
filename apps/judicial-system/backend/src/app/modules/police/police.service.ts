@@ -165,7 +165,6 @@ export class PoliceService {
   private async throttleUploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
-    caseState: CaseState,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
@@ -225,7 +224,7 @@ export class PoliceService {
 
     const key = `${caseId}/${uuid()}/${uploadPoliceCaseFile.name}`
 
-    await this.awsS3Service.putObject(caseType, caseState, key, pdf)
+    await this.awsS3Service.putObject(caseType, key, pdf)
 
     return { key, size: pdf.length }
   }
@@ -416,14 +415,12 @@ export class PoliceService {
   async uploadPoliceCaseFile(
     caseId: string,
     caseType: CaseType,
-    caseState: CaseState,
     uploadPoliceCaseFile: UploadPoliceCaseFileDto,
     user: User,
   ): Promise<UploadPoliceCaseFileResponse> {
     this.throttle = this.throttleUploadPoliceCaseFile(
       caseId,
       caseType,
-      caseState,
       uploadPoliceCaseFile,
       user,
     )

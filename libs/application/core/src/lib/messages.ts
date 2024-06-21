@@ -556,6 +556,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með íslenskt ríkisfang',
     description: 'You do not have a domicile in Iceland',
   },
+  nationalRegistryCitizenshipNotWithinEES: {
+    id: 'application.system:core.fetch.data.nationalRegistryCitizenshipNotWithinEES',
+    defaultMessage: 'Þú ert ekki með ríkisfang innan EES',
+    description: 'You do not have citizenship with EES',
+  },
   nationalRegistryAgeNotValid: {
     id: 'application.system:core.fetch.data.nationalRegistryAgeNotValid',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
@@ -844,6 +849,24 @@ export const coreErrorScreenMessages = defineMessages({
   badSubjectDescription: {
     id: 'application.system:core.errorScreen.badSubjectDescription#markdown',
     defaultMessage: `* Þú hefur ekki rétt umboð til að opna þessa umsóknartegund`,
+    description:
+      'Error screen description when user has a bad subject error after checking delegations',
+  },
+  prunedTitle: {
+    id: 'application.system:core.errorScreen.prunedTitle',
+    defaultMessage: 'Umsóknin er runnin út',
+    description:
+      'Error screen title when the application has been pruned and is not editable',
+  },
+  prunedSubTitle: {
+    id: 'application.system:core.errorScreen.prunedSubTitle',
+    defaultMessage: 'Umsóknin hefur runnið út og er ekki lengur aðgengileg',
+    description:
+      'Error screen subtitle when the application has been pruned and is not editable',
+  },
+  prunedDescription: {
+    id: 'application.system:core.errorScreen.prunedDescription#markdown',
+    defaultMessage: `* Öllum persónugögnum var eytt þegar umsóknin rann út\n* Ef klára á umsókn af þessu tagi þarf að stofna nýja`,
     description:
       'Error screen description when user has a bad subject error after checking delegations',
   },

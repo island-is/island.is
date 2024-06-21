@@ -119,8 +119,8 @@ const Conclusion: React.FC = () => {
       const success = await setAndSendCaseToServer(
         [
           {
-            indictmentRulingDecision: selectedDecision,
             indictmentDecision: IndictmentDecision.COMPLETING,
+            indictmentRulingDecision: selectedDecision,
             force: true,
           },
         ],
@@ -200,8 +200,10 @@ const Conclusion: React.FC = () => {
       const updateSuccess = await setAndSendCaseToServer(
         [
           {
+            indictmentDecision: IndictmentDecision.POSTPONING,
             courtDate: null,
             postponedIndefinitelyExplanation: postponement?.reason,
+            force: true,
           },
         ],
         workingCase,
@@ -230,6 +232,7 @@ const Conclusion: React.FC = () => {
                 }
               : undefined,
             postponedIndefinitelyExplanation: null,
+            force: true,
           },
         ],
         workingCase,
@@ -329,55 +332,52 @@ const Conclusion: React.FC = () => {
   }, [workingCase.courtDate?.date])
 
   const stepIsValid = () => {
-    if (selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT) {
-      return postponement?.isSettingVerdictDate
-        ? Boolean(courtDate?.date)
-        : true
-    } else if (!allFilesDoneOrError) {
+    // Do not leave any downloads unfinished
+    if (!allFilesDoneOrError) {
       return false
-    } else {
-      switch (selectedAction) {
-        case IndictmentDecision.POSTPONING:
-          return Boolean(
-            postponement?.postponedIndefinitely
-              ? postponement.reason
-              : courtDate?.date,
-          )
-        case IndictmentDecision.REDISTRIBUTING:
-          return uploadFiles.some(
-            (file) =>
-              file.category === CaseFileCategory.COURT_RECORD &&
-              file.status === 'done',
-          )
-        case IndictmentDecision.COMPLETING:
-          switch (selectedDecision) {
-            case CaseIndictmentRulingDecision.RULING:
-            case CaseIndictmentRulingDecision.DISMISSAL:
-              return (
-                uploadFiles.some(
-                  (file) =>
-                    file.category === CaseFileCategory.COURT_RECORD &&
-                    file.status === 'done',
-                ) &&
-                uploadFiles.some(
-                  (file) =>
-                    file.category === CaseFileCategory.RULING &&
-                    file.status === 'done',
-                )
-              )
-            case CaseIndictmentRulingDecision.FINE:
-            case CaseIndictmentRulingDecision.CANCELLATION:
-              return uploadFiles.some(
+    }
+
+    switch (selectedAction) {
+      case IndictmentDecision.POSTPONING:
+        return Boolean(
+          postponement?.postponedIndefinitely
+            ? postponement.reason
+            : courtDate?.date,
+        )
+      case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+        return postponement?.isSettingVerdictDate
+          ? Boolean(courtDate?.date)
+          : true
+      case IndictmentDecision.COMPLETING:
+        switch (selectedDecision) {
+          case CaseIndictmentRulingDecision.RULING:
+          case CaseIndictmentRulingDecision.DISMISSAL:
+            return (
+              uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
                   file.status === 'done',
+              ) &&
+              uploadFiles.some(
+                (file) =>
+                  file.category === CaseFileCategory.RULING &&
+                  file.status === 'done',
               )
-            default:
-              return false
-          }
-        default:
-          return false
-      }
+            )
+          case CaseIndictmentRulingDecision.FINE:
+          case CaseIndictmentRulingDecision.CANCELLATION:
+            return uploadFiles.some(
+              (file) =>
+                file.category === CaseFileCategory.COURT_RECORD &&
+                file.status === 'done',
+            )
+          default:
+            return false
+        }
+      case IndictmentDecision.REDISTRIBUTING:
+        return true
+      default:
+        return false
     }
   }
 
@@ -635,7 +635,7 @@ const Conclusion: React.FC = () => {
           >
             <SectionHeading
               title={formatMessage(strings.courtRecordTitle)}
-              required={selectedAction === IndictmentDecision.REDISTRIBUTING}
+              required={selectedAction === IndictmentDecision.COMPLETING}
             />
             <InputFileUpload
               fileList={uploadFiles.filter(

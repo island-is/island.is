@@ -41,12 +41,18 @@ export class ApplicationService {
   }
 
   async findOne(id: string, auth: Auth, locale: Locale) {
-    return await this.applicationApiWithAuth(auth).applicationControllerFindOne(
-      {
-        id,
-        locale,
-      },
-    )
+    const data = await this.applicationApiWithAuth(
+      auth,
+    ).applicationControllerFindOne({
+      id,
+      locale,
+    })
+
+    if (data.pruned) {
+      return { ...data, answers: {}, attachments: {}, externalData: {} }
+    }
+
+    return data
   }
 
   async getPaymentStatus(

@@ -196,6 +196,7 @@ export const getFileTypeName: KeyMapping<FileType, string> = {
   Income: 'Tekjugögn',
   Other: 'Innsend gögn',
   SpouseFiles: 'Gögn frá maka',
+  ChildrenFiles: 'Útgjöld vegna barna',
 }
 
 export const getAidAmountModalInfo = (

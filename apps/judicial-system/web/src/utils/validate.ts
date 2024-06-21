@@ -413,10 +413,20 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
 export const isSubpoenaStepValid = (
   workingCase: Case,
   courtDate?: string | null,
+  courtRoom?: string | null,
 ): boolean => {
-  return validate([
-    [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
-  ]).isValid
+  return (
+    validate([
+      [
+        courtDate ?? workingCase.arraignmentDate?.date,
+        ['empty', 'date-format'],
+      ],
+      [courtRoom, ['empty']],
+    ]).isValid &&
+    Boolean(
+      workingCase.defendants?.every((defendant) => defendant.subpoenaType),
+    )
+  )
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
@@ -499,13 +509,10 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
 
 export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.caseFiles?.some(
-      (file) => file.category === CaseFileCategory.COVER_LETTER,
-    ) &&
-      (isTrafficViolationCase(workingCase) ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.INDICTMENT,
-        )) &&
+    (isTrafficViolationCase(workingCase) ||
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.INDICTMENT,
+      )) &&
       workingCase.caseFiles?.some(
         (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
       ),

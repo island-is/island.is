@@ -23,6 +23,7 @@ interface Then {
 type GivenWhenThen = (
   userRole: UserRole,
   appealReceivedByCourtDate?: Date,
+  notifications?: Notification[],
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send appeal withdrawn notifications', () => {
@@ -60,10 +61,11 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     mockEmailService = emailService
     mockNotificationModel = notificationModel
 
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
-
-    givenWhenThen = async (userRole, appealReceivedByCourtDate) => {
+    givenWhenThen = async (
+      userRole,
+      appealReceivedByCourtDate,
+      notifications,
+    ) => {
       const then = {} as Then
 
       await internalNotificationController
@@ -88,6 +90,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             judge: { name: judgeName, email: judgeEmail },
             appealJudge1: { name: appealJudge1Name, email: appealJudge1Email },
             registrar: { name: registrarName, email: registrarEmail },
+            notifications,
           } as Case,
           {
             user: {
@@ -151,15 +154,13 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([
+
+      then = await givenWhenThen(UserRole.PROSECUTOR, receivedDate, [
         {
           caseId,
           type: NotificationType.APPEAL_JUDGES_ASSIGNED,
         } as Notification,
       ])
-
-      then = await givenWhenThen(UserRole.PROSECUTOR, receivedDate)
     })
     it('should send notification to defender', () => {
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
