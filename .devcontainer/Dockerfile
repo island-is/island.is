@@ -72,6 +72,9 @@ RUN volta setup
 COPY package.json .
 RUN . ~/.${SHELL}rc && volta install "node@$(jq -r '.engines.node' package.json)"
 
+# Install brew for additional binaries
+RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 ENV AWS_CONFIG_FILE=~/.aws/config
 RUN mkdir -p "$(dirname "${AWS_CONFIG_FILE}")" && cat <<EOF > "${AWS_CONFIG_FILE}"
 [profile islandis-dev]
