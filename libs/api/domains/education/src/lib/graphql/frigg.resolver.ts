@@ -30,5 +30,4 @@ export class FriggResolver {
   ): Promise<KeyOption[]> {
     return this.friggClientService.getAllKeyOptions(user, input.type)
   }
-  /* SMALL TEST */
 }
