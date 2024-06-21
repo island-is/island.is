@@ -14,7 +14,7 @@ export class InternalCaseResponse {
   judge!: User
   prosecutorsOffice!: Institution
   prosecutor!: User
-  dateLog?: DateLog[]
+  dateLogs?: DateLog[]
 }
 
 interface Defendant {

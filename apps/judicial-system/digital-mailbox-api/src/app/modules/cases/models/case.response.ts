@@ -1,5 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { DateType } from '@island.is/judicial-system/types'
+
 import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
 import { getTranslations } from './utils/translations.strings'
@@ -25,6 +28,10 @@ export class CaseResponse {
   ): CaseResponse {
     const t = getTranslations(lang)
     const defendant = res.defendants[0]
+    const subpoenaDateLog = res.dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+    )
+    const subpoenaCreatedDate = subpoenaDateLog?.created.toString() ?? ''
 
     return {
       caseId: res.id,
@@ -37,6 +44,7 @@ export class CaseResponse {
               [t.name, defendant.name],
               [t.nationalId, defendant.nationalId],
               [t.address, defendant.address],
+              [t.subpoenaSent, formatDate(subpoenaCreatedDate, 'PP')],
             ].map((item) => ({
               label: item[0] ?? '',
               value: item[1] ?? t.notAvailable,
@@ -62,7 +70,7 @@ export class CaseResponse {
                 value: t.indictment,
               },
               {
-                label: t.caseNumber,
+                label: t.courtCaseNumber,
                 value: res.courtCaseNumber,
               },
               {

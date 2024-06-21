@@ -4,30 +4,32 @@ type Translations = {
   [key in Language]: {
     accused: string
     active: string
+    address: string
     arraignmentDate: string
     caseNumber: string
     completed: string
+    court: string
+    courtCaseNumber: string
     courtCeremony: string
     date: string
     defendant: string
-    institution: string
-    location: string
-    notAvailable: string
-    parliamentaryConfirmation: string
-    prosecutor: string
-    subpoena: string
-    name: string
-    nationalId: string
-    address: string
     defender: string
     email: string
-    phoneNumber: string
     information: string
-    type: string
+    institution: string
     indictment: string
-    court: string
     judge: string
+    location: string
+    name: string
+    nationalId: string
+    notAvailable: string
+    parliamentaryConfirmation: string
+    phoneNumber: string
+    prosecutor: string
     prosecutorsOffice: string
+    subpoena: string
+    subpoenaSent: string
+    type: string
   }
 }
 
@@ -35,58 +37,62 @@ const translations: Translations = {
   en: {
     accused: 'Accused',
     active: 'Active',
+    address: 'Address',
     arraignmentDate: 'Arraignment date',
     caseNumber: 'Case number',
     completed: 'Completed',
+    court: 'Court',
+    courtCaseNumber: 'Case number',
     courtCeremony: 'Court ceremony',
     date: 'Date',
     defendant: 'Defendant',
-    institution: 'Institution',
-    location: 'Location',
-    notAvailable: 'N/A',
-    parliamentaryConfirmation: 'Parliamentary confirmation',
-    prosecutor: 'Prosecutor',
-    subpoena: 'Subpoena',
-    name: 'Name',
-    nationalId: 'National ID',
-    address: 'Address',
     defender: 'Defender',
     email: 'Email',
-    phoneNumber: 'Phone Nr.',
     information: 'Information',
-    type: 'Type',
+    institution: 'Institution',
     indictment: 'Indictment',
-    court: 'Court',
     judge: 'Judge',
+    location: 'Location',
+    name: 'Name',
+    nationalId: 'National ID',
+    notAvailable: 'N/A',
+    parliamentaryConfirmation: 'Parliamentary confirmation',
+    phoneNumber: 'Phone Nr.',
+    prosecutor: 'Prosecutor',
     prosecutorsOffice: 'Institution',
+    subpoena: 'Subpoena',
+    subpoenaSent: 'Subpoena sent',
+    type: 'Type',
   },
   is: {
     accused: 'Ákærði',
     active: 'Í vinnslu',
+    address: 'Lögheimili',
     arraignmentDate: 'Verður tekið fyrir á dómþingi',
     caseNumber: 'Málsnúmer',
     completed: 'Lokið',
+    court: 'Dómstóll',
+    courtCaseNumber: 'Málsnúmer héraðsdóms',
     courtCeremony: 'Dómsathöfn',
     date: 'Dagsetning',
     defendant: 'Varnaraðili',
-    institution: 'Embætti',
-    location: 'Staður',
-    notAvailable: 'Ekki skráð',
-    parliamentaryConfirmation: 'Þingfesting',
-    prosecutor: 'Ákærandi',
-    subpoena: 'Fyrirkall',
-    name: 'Nafn',
-    nationalId: 'Kennitala',
-    address: 'Heimilisfang',
     defender: 'Verjandi',
     email: 'Netfang',
-    phoneNumber: 'Símanúmer',
     information: 'Málsupplýsingar',
-    type: 'Tegund',
+    institution: 'Embætti',
     indictment: 'Ákæra',
-    court: 'Dómstóll',
     judge: 'Dómari',
+    location: 'Staður',
+    name: 'Nafn',
+    nationalId: 'Kennitala',
+    notAvailable: 'Ekki skráð',
+    parliamentaryConfirmation: 'Þingfesting',
+    phoneNumber: 'Símanúmer',
+    prosecutor: 'Ákærandi',
     prosecutorsOffice: 'Embætti',
+    subpoena: 'Fyrirkall',
+    subpoenaSent: 'Fyrirkall sent',
+    type: 'Tegund',
   },
 }
 

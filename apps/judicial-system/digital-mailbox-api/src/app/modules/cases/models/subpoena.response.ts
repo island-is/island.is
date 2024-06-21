@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { formatNationalId } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatNationalId,
+} from '@island.is/judicial-system/formatters'
 import { DateType, DefenderChoice } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -18,6 +21,7 @@ class DefenderInfo {
 class SubpoenaData {
   @ApiProperty({ type: () => String })
   title!: string
+
   @ApiProperty({ type: () => [Groups] })
   groups!: Groups[]
 }
@@ -50,10 +54,13 @@ export class SubpoenaResponse {
     )
 
     const hasDefender = defendantInfo?.defenderChoice !== DefenderChoice.WAIVE
-
-    const subpoenaDate = internalCase.dateLog?.find(
+    const subpoenaDateLog = internalCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
+
+    const arraignmentDate = subpoenaDateLog?.date ?? ''
+    const subpoenaCreatedDate = subpoenaDateLog?.created ?? ''
+
     return {
       caseId: internalCase.id,
       data: {
@@ -62,12 +69,15 @@ export class SubpoenaResponse {
           {
             label: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
             items: [
-              [t.date, subpoenaDate?.created.toDateString()],
+              [t.date, formatDate(subpoenaCreatedDate, 'PP')],
               [t.institution, 'Lögreglustjórinn á höfuðborgarsvæðinu'],
               [t.prosecutor, internalCase.prosecutor?.name],
               [t.accused, defendantInfo?.name],
-              [t.arraignmentDate, subpoenaDate?.date.toDateString()],
-              [t.location, subpoenaDate?.location],
+              [
+                t.arraignmentDate,
+                formatDate(arraignmentDate, "d.M.yyyy 'kl.' HH:mm"),
+              ],
+              [t.location, subpoenaDateLog?.location ?? ''],
               [t.courtCeremony, t.parliamentaryConfirmation],
             ].map((item) => ({
               label: item[0] ?? '',
