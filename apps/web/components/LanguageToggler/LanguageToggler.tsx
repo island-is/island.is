@@ -110,7 +110,7 @@ export const LanguageToggler = ({
       activeTranslations = res.data?.getContentSlug?.activeTranslations
     }
 
-    if (resolveLinkTypeLocally) {
+    if ((type as string) === 'genericListItem' || resolveLinkTypeLocally) {
       const localType = typeResolver(pathWithoutQueryParams)?.type
       if (localType) {
         type = localType

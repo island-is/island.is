@@ -84,7 +84,7 @@ const CaseFile = () => {
                   policeCaseNumber: policeCaseNumber,
                 })}
                 pdfType="caseFilesRecord"
-                policeCaseNumber={policeCaseNumber}
+                elementId={policeCaseNumber}
               />
             </Box>
           ))}

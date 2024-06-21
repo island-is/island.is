@@ -1,6 +1,6 @@
 import gql from 'graphql-tag'
 
-import { htmlFields } from './fragments'
+import { htmlFields, nestedFields, slices } from './fragments'
 
 export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
   query GetGenericListItems($input: GetGenericListItemsInput!) {
@@ -8,6 +8,7 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
       input {
         page
         queryString
+        tags
       }
       items {
         id
@@ -16,9 +17,31 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
         cardIntro {
           ...HtmlFields
         }
+        filterTags {
+          id
+          title
+          slug
+        }
+        slug
       }
       total
     }
   }
   ${htmlFields}
+`
+
+export const GET_GENERIC_LIST_ITEM_BY_SLUG_QUERY = gql`
+  query GetGenericListItemBySlug($input: GetGenericListItemBySlugInput!) {
+    getGenericListItemBySlug(input: $input) {
+      id
+      date
+      title
+      slug
+      content {
+        ...AllSlices
+        ${nestedFields}
+      }
+    }
+  }
+  ${slices}
 `

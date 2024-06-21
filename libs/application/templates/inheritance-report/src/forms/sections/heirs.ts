@@ -60,10 +60,6 @@ export const heirs = buildSection({
               id: 'netPropertyForExchange',
               title: '',
             }),
-            buildDescriptionField({
-              id: 'customShare.customSpouseSharePercentage',
-              title: '',
-            }),
             buildCustomField({
               title: '',
               id: 'share',
@@ -96,7 +92,7 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'HeirsAndPartitionRepeater',
+                component: 'HeirsRepeater',
               },
               {
                 customFields: [
@@ -167,6 +163,7 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesPrivateTitle',
               title: m.fileUploadPrivateTransfer,
+              description: m.uploadPrivateTransferUserGuidelines,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
@@ -174,7 +171,7 @@ export const heirs = buildSection({
             buildFileUploadField({
               id: 'heirsAdditionalInfoPrivateTransferFiles',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.fileUploadFileTypes,
+              uploadDescription: m.uploadPrivateTransferDescription,
               uploadMultiple: false,
               title: '',
               uploadHeader: '',
@@ -182,6 +179,7 @@ export const heirs = buildSection({
             buildDescriptionField({
               id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
               title: m.fileUploadOtherDocuments,
+              description: m.uploadOtherDocumentsUserGuidelines,
               titleVariant: 'h5',
               space: 'containerGutter',
               marginBottom: 'smallGutter',
@@ -189,7 +187,7 @@ export const heirs = buildSection({
             buildFileUploadField({
               id: 'heirsAdditionalInfoFilesOtherDocuments',
               uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
-              uploadDescription: m.fileUploadFileTypes,
+              uploadDescription: m.uploadOtherDocumentsDescription,
               title: '',
               uploadHeader: '',
             }),
@@ -213,23 +211,6 @@ export const heirs = buildSection({
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.netProperty,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(
-                  String(
-                    roundedValueToNumber(
-                      getValueViaPath<number>(answers, 'netTotal'),
-                    ),
-                  ),
-                ),
-            }),
-            buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'gutter',
             }),
             buildKeyValueField({
               label: m.totalDeduction,
@@ -278,7 +259,7 @@ export const heirs = buildSection({
               title: '',
               id: 'overviewHeirs',
               doesNotRequireAnswer: true,
-              component: 'HeirsOverview',
+              component: 'OverviewHeirs',
             }),
             buildDividerField({}),
             buildDescriptionField({

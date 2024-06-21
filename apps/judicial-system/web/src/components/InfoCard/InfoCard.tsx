@@ -27,13 +27,13 @@ interface UniqueDefendersProps {
   defenders: Defender[]
 }
 
-interface DataSection {
-  data: Array<{ title: string; value?: React.ReactNode }>
+export interface DataSection {
+  data: { title: string; value?: React.ReactNode }[]
 }
 
 interface Props {
-  courtOfAppealData?: Array<{ title: string; value?: React.ReactNode }>
-  data: Array<{ title: string; value?: React.ReactNode }>
+  courtOfAppealData?: { title: string; value?: React.ReactNode }[]
+  data: { title: string; value?: React.ReactNode }[]
   defendants?: {
     title: string
     items: Defendant[]

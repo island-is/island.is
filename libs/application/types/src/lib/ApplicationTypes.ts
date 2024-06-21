@@ -56,6 +56,7 @@ export enum ApplicationTypes {
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
   HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  HEALTHCARE_WORK_PERMIT = 'HealthcareWorkPermit',
   PENSION_SUPPLEMENT = 'PensionSupplement',
   TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
   UNIVERSITY = 'University',
@@ -67,6 +68,7 @@ export enum ApplicationTypes {
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
+  NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
 }
 
 export const ApplicationConfigurations = {
@@ -302,6 +304,10 @@ export const ApplicationConfigurations = {
     slug: 'starfsleyfis-vottord',
     translation: 'hlc.application',
   },
+  [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: {
+    slug: 'starfsleyfis-umsokn',
+    translation: 'hwp.application',
+  },
   [ApplicationTypes.PENSION_SUPPLEMENT]: {
     slug: 'uppbot-a-lifeyri',
     translation: ['ul.application', 'sia.application', 'uiForms.application'],
@@ -312,7 +318,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.HOME_SUPPORT]: {
     slug: 'heimastudningur',
-    translation: 'hst.application',
+    translation: ['hst.application', 'uiForms.application'],
   },
   [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
     slug: 'umradaskipti-taekis',
@@ -345,5 +351,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',
     translation: 'sr.application',
+  },
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
+    slug: 'nyr-grunnskoli',
+    translation: ['dess.nps.application', 'uiForms.application'],
   },
 }

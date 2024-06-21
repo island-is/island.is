@@ -1,0 +1,125 @@
+{
+  "openapi": "3.0.0",
+  "paths": {
+    "/keyOptions": {
+      "get": {
+        "operationId": "getAllKeyOptions",
+        "summary": "Get all key options.",
+        "description": "Get all key options, can be filtered by type. If type input is not valid, all key options will be returned.",
+        "parameters": [
+          {
+            "name": "type",
+            "required": false,
+            "in": "query",
+            "description": "Type of key option",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/KeyOption" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["KeyOptionsManagement"],
+        "security": [{ "Authorization": [] }]
+      }
+    },
+    "/keyOptions/types": {
+      "get": {
+        "operationId": "getTypes",
+        "summary": "Get list of types of key options",
+        "description": "Get types.",
+        "parameters": [],
+        "responses": { "200": { "description": "" } },
+        "tags": ["KeyOptionsManagement"],
+        "security": [{ "Authorization": [] }]
+      }
+    },
+    "/health": {
+      "get": {
+        "operationId": "health",
+        "parameters": [],
+        "responses": { "200": { "description": "" } }
+      }
+    }
+  },
+  "info": {
+    "title": "MMS Internal API",
+    "description": "Frigg - student information system",
+    "version": "1",
+    "contact": {}
+  },
+  "tags": [],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "Authorization": {
+        "scheme": "Bearer",
+        "bearerFormat": "Bearer",
+        "description": "Please enter token in from IAS",
+        "name": "Authorization",
+        "type": "http",
+        "in": "Header"
+      }
+    },
+    "schemas": {
+      "Value": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Text to be displayed for option",
+            "example": "Fish allergy"
+          },
+          "language": {
+            "type": "string",
+            "description": "Language code of describing the language text is translated to.",
+            "example": "en"
+          }
+        },
+        "required": ["content", "language"]
+      },
+      "Option": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of option." },
+          "key": {
+            "type": "string",
+            "description": "Key of the option.",
+            "example": "fish"
+          },
+          "value": {
+            "description": "List of translations of readable strings of the option.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Value" }
+          }
+        },
+        "required": ["id", "key", "value"]
+      },
+      "KeyOption": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "string",
+            "description": "Type of options.",
+            "example": "allergy"
+          },
+          "options": {
+            "description": "List of options.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Option" }
+          }
+        },
+        "required": ["type", "options"]
+      }
+    }
+  }
+}

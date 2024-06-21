@@ -80,7 +80,11 @@ const template: ApplicationTemplate<
               write: 'all',
               delete: true,
               api: [
-                NationalRegistryUserApi,
+                NationalRegistryUserApi.configure({
+                  params: {
+                    citizenshipWithinEES: true,
+                  },
+                }),
                 UserProfileApi,
                 EmbaettiLandlaeknisPaymentCatalogApi,
                 HealtcareLicenesApi,

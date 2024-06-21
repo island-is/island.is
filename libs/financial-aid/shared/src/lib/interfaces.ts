@@ -91,6 +91,7 @@ export interface Amount {
   tax: number
   finalAmount: number
   deductionFactors?: DeductionFactors[]
+  decemberAidAmount?: number
 }
 
 export interface DeductionFactors {
@@ -130,6 +131,7 @@ export interface Address {
 }
 
 export interface UpdateApplication {
+  applied?: string
   state?: ApplicationState
   event: ApplicationEventType
   rejection?: string
@@ -230,6 +232,7 @@ export interface Municipality {
   navUsername?: string
   navPassword?: string
   apiKeyInfo?: ApiKeysForMunicipality
+  decemberCompensation: number
 }
 
 export interface UpdateMunicipalityActivity {
@@ -333,7 +336,7 @@ export interface Application {
   id: string
   created: string
   modified: string
-  applied: string
+  appliedDate: string
   nationalId: string
   name: string
   phoneNumber?: string

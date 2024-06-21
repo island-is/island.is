@@ -60,6 +60,8 @@ export enum RequirementKey {
   hasPoints = 'HasPoints',
   personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beRequiresHealthCertificate = 'beRequiresHealthCertificate',
 }
 
 export interface ApplicationEligibilityRequirement {

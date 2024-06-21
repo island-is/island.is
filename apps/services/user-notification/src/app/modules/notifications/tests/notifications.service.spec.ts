@@ -17,6 +17,7 @@ import {
   UnreadNotificationsCountDto,
   UnseenNotificationsCountDto,
 } from '../dto/notification.dto'
+import { CmsService } from '@island.is/clients/cms'
 
 const user: User = {
   nationalId: '1234567890',
@@ -61,6 +62,12 @@ describe('NotificationsService', () => {
         {
           provide: getModelToken(Notification),
           useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: CmsService,
+          useValue: {
+            fetchData: jest.fn(),
+          },
         },
       ],
     }).compile()

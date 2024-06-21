@@ -11,6 +11,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
@@ -191,6 +192,37 @@ export class DefendantService {
         ])
       }
     }
+
+    return updatedDefendant
+  }
+
+  async updateByNationalId(
+    caseId: string,
+    defendantNationalId: string,
+    update: UpdateDefendantDto,
+  ): Promise<Defendant> {
+    const formattedNationalId = formatNationalId(defendantNationalId)
+
+    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
+      update,
+      {
+        where: {
+          caseId,
+          [Op.or]: [
+            { national_id: formattedNationalId },
+            { national_id: defendantNationalId },
+          ],
+        },
+        returning: true,
+      },
+    )
+
+    const updatedDefendant = this.getUpdatedDefendant(
+      numberOfAffectedRows,
+      defendants,
+      defendants[0].id,
+      caseId,
+    )
 
     return updatedDefendant
   }

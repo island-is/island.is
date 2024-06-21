@@ -17,6 +17,7 @@ import {
 } from '../components/htmlEditor/templates/signatures'
 import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
 import { useFormContext } from 'react-hook-form'
+import { AdditionalSignature } from '../components/signatures/Additional'
 
 type LocalState = typeof INITIAL_ANSWERS['signature']
 
@@ -92,6 +93,20 @@ export const Signatures = ({ application, errors }: OJOIFieldBaseProps) => {
       },
     })
   }, [application.answers, application.id, locale, state, updateApplication])
+
+  const updateAdditionalSignature = useCallback((newSignature: string) => {
+    setState((prev) => {
+      return {
+        ...prev,
+        additional: newSignature,
+      }
+    })
+  }, [])
+
+  const debouncedAdditionalSignatureUpdate = debounce(
+    updateAdditionalSignature,
+    DEBOUNCE_INPUT_TIMER,
+  )
 
   const updateState = useCallback((newState: typeof state) => {
     setState((prev) => {
@@ -169,6 +184,12 @@ export const Signatures = ({ application, errors }: OJOIFieldBaseProps) => {
           }}
           tabs={tabs}
           label={f(signatures.general.title)}
+        />
+        <AdditionalSignature
+          application={application}
+          errors={errors}
+          setSignature={debouncedAdditionalSignatureUpdate}
+          signature={state.additional}
         />
       </FormGroup>
       <FormGroup title={f(signatures.headings.preview)}>

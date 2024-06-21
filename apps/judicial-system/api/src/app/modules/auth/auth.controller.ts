@@ -88,9 +88,9 @@ export class AuthController {
 
   @Get('login')
   login(
-    @Res() res: Response,
     @Query('redirectRoute') redirectRoute: string,
     @Query('nationalId') nationalId: string,
+    @Res() res: Response,
   ) {
     this.logger.debug('Received login request')
 

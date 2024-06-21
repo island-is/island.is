@@ -109,7 +109,6 @@ describe('InternalCaseController - Deliver case files record to police', () => {
     it('should update the police case', () => {
       expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
         caseType,
-        caseState,
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
@@ -120,7 +119,6 @@ describe('InternalCaseController - Deliver case files record to police', () => {
       )
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString(),
       )

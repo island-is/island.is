@@ -31,8 +31,9 @@ interface Props {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
-  applicationCreated: string
+  applicationAppliedDate: string
   applicationMunicipality: Municipality
+  decemberCompensation: number
   hasApplicantChildren?: boolean
 }
 
@@ -45,12 +46,13 @@ const StateModal = ({
   setIsLoading,
   homeCircumstances,
   familyStatus,
-  applicationCreated,
+  applicationAppliedDate,
   applicationMunicipality,
   hasApplicantChildren = false,
+  decemberCompensation,
 }: Props) => {
+  const appliedMonth = new Date(applicationAppliedDate).getMonth()
   const [selected, setSelected] = useState<ApplicationState | undefined>()
-
   const changeApplicationState = useApplicationState()
 
   const saveStateApplication = async (
@@ -66,8 +68,9 @@ const StateModal = ({
 
     await changeApplicationState(
       applicationId,
-      state,
       eventTypeFromApplicationState[state],
+      state,
+      undefined,
       rejection,
       comment,
       amount,
@@ -191,6 +194,8 @@ const StateModal = ({
           familyStatus={familyStatus}
           applicationMunicipality={applicationMunicipality}
           hasApplicantChildren={hasApplicantChildren}
+          decemberCompensation={decemberCompensation}
+          appliedMonth={appliedMonth}
         />
         <EmailFormatInputModal
           onCancel={onClickCancel}
@@ -206,7 +211,7 @@ const StateModal = ({
           submitButtonText="Synja og senda á umsækjanda"
           defaultErrorMessage="Þú þarft að greina frá ástæðu synjunar"
           prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
-            new Date(applicationCreated).getMonth(),
+            appliedMonth,
           )} hefur verið synjað.`}
           postfixText="Frekari upplýsingar um fjárhagsaðstoð má finna í reglunum hér fyrir neðan."
           municipalityEmail={applicationMunicipality?.email}
