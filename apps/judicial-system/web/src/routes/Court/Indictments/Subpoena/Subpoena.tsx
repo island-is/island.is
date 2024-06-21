@@ -50,7 +50,7 @@ const Subpoena: FC = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
   const { sendNotification } = useCase()
 
-  const isArraignmentDone = workingCase.indictmentDecision
+  const isArraignmentDone = Boolean(workingCase.indictmentDecision)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
