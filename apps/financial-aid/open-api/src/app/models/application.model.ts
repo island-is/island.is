@@ -8,9 +8,9 @@ import {
 import {
   AmountModel,
   ApplicationFileModel,
+  ChildrenModel,
   DirectTaxPaymentModel,
   StaffModel,
-  ChildrenModel,
 } from './index'
 
 @ObjectType()
