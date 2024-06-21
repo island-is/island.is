@@ -31,7 +31,11 @@ import { GET_MASTER_LICENCES_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof MasterLicence)[] = ['name', 'dateOfPublication']
+const SEARCH_KEYS: (keyof MasterLicence)[] = [
+  'name',
+  'dateOfPublication',
+  'nationalId',
+]
 
 interface MasterListProps {
   slice: ConnectedComponent
