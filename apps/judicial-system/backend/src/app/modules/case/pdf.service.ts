@@ -17,12 +17,14 @@ import {
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   isTrafficViolationCase,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
 import {
   createCaseFilesRecord,
   createIndictment,
+  createSubpoena,
   getCourtRecordPdfAsBuffer,
   getCustodyNoticePdfAsBuffer,
   getRequestPdfAsBuffer,
@@ -30,11 +32,12 @@ import {
   IndictmentConfirmation,
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
+import { Defendant } from '../defendant'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
 
 @Injectable()
-export class PDFService {
+export class PdfService {
   private throttle = Promise.resolve(Buffer.from(''))
 
   constructor(
@@ -284,5 +287,24 @@ export class PDFService {
     )
 
     return await this.throttle
+  }
+
+  async getSubpoenaPdf(
+    theCase: Case,
+    defendant: Defendant,
+    arraignmentDate?: Date,
+    location?: string,
+    subpoenaType?: SubpoenaType,
+  ): Promise<Buffer> {
+    await this.refreshFormatMessage()
+
+    return createSubpoena(
+      theCase,
+      defendant,
+      this.formatMessage,
+      arraignmentDate,
+      location,
+      subpoenaType,
+    )
   }
 }
