@@ -295,7 +295,7 @@ const MasterList = ({ slice }: MasterListProps) => {
                         <T.Data>
                           {licences.dateOfPublication && (
                             <Box>
-                              <Text textAlign="right" variant="small">
+                              <Text variant="small">
                                 {format(
                                   new Date(licences.dateOfPublication),
                                   'yyyy',
@@ -306,7 +306,9 @@ const MasterList = ({ slice }: MasterListProps) => {
                         </T.Data>
                         <T.Data>
                           <Box>
-                            <Text variant="small">{licences.nationalId}</Text>
+                            <Text textAlign="right" variant="small">
+                              {licences.nationalId}
+                            </Text>
                           </Box>
                         </T.Data>
                       </T.Row>
