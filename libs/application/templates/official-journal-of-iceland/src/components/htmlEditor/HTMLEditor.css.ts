@@ -568,7 +568,7 @@ globalStyle(`${classes.warnings__item_high}::marker`, {
     textAlign: 'center',
   })
 
-  global('.signature__textAbove', {
+  global('.signature__above', {
     marginTop: 0,
     marginBottom: 0,
     fontSize: 14,

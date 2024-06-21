@@ -210,15 +210,6 @@ export class AdminPatchClientDto {
 }
 
 export const superUserFields = [
-  'supportsCustomDelegation',
-  'supportsLegalGuardians',
-  'supportsProcuringHolders',
-  'supportsPersonalRepresentatives',
-  'supportedDelegationTypes',
-  'addedDelegationTypes',
-  'removedDelegationTypes',
-  'promptDelegations',
-  'requireApiScopes',
   'requireConsent',
   'allowOfflineAccess',
   'requirePkce',

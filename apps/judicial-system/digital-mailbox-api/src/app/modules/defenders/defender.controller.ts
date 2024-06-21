@@ -11,7 +11,7 @@ import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LawyersService } from '@island.is/judicial-system/lawyers'
+import { LawyersService, LawyerType } from '@island.is/judicial-system/lawyers'
 
 import { Defender } from './models/defender.response'
 
@@ -32,9 +32,12 @@ export class DefenderController {
   @ApiResponse({ status: 500, description: 'Failed to retrieve defenders' })
   async getLawyers(): Promise<Defender[]> {
     try {
-      this.logger.debug('Retrieving lawyers from lawyer registry')
+      this.logger.debug('Retrieving litigators from lawyer registry')
 
-      const lawyers = await this.lawyersService.getLawyers()
+      const lawyers = await this.lawyersService.getLawyers(
+        LawyerType.LITIGATORS,
+      )
+
       return lawyers.map((lawyer) => ({
         nationalId: lawyer.SSN,
         name: lawyer.Name,
