@@ -7,18 +7,15 @@ import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseState,
-  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockJudgeQuery,
-  mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { LocaleProvider } from '@island.is/localization'
 
 import Cases from './Cases'
 import { CasesDocument } from './cases.generated'
-import { PrisonCasesDocument } from './prisonCases.generated'
 
 import '@testing-library/jest-dom'
 
@@ -176,42 +173,6 @@ const mockCourtCasesQuery = [
             policeCaseNumbers: ['008-2020-X'],
             defendants: [{ nationalId: '012345-6789', name: 'Moe' }],
             validToDate: '2020-11-11T12:31:00.000Z',
-          },
-        ],
-      },
-    },
-  },
-]
-
-const mockPrisonUserCasesQuery = [
-  {
-    request: {
-      query: PrisonCasesDocument,
-    },
-    result: {
-      data: {
-        cases: [
-          {
-            id: 'test_id_1',
-            type: CaseType.CUSTODY,
-            created: '2020-05-16T19:50:08.033Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            state: CaseState.ACCEPTED,
-            policeCaseNumbers: ['008-2020-X'],
-            defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
-            isValidToDateInThePast: true,
-            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
-          },
-          {
-            id: 'test_id_2',
-            type: CaseType.CUSTODY,
-            created: '2020-05-16T19:50:08.033Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            state: CaseState.ACCEPTED,
-            policeCaseNumbers: ['008-2020-X'],
-            defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
-            isValidToDateInThePast: false,
-            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
           },
         ],
       },

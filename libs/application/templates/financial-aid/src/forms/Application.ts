@@ -63,7 +63,7 @@ export const Application: Form = buildForm({
               [],
             ) as ApplicantChildCustodyInformation[]
 
-            return childWithInfo ? childWithInfo.length > 0 : false
+            return Boolean(childWithInfo?.length)
           },
           id: Routes.CHILDRENSCHOOLINFO,
           title: m.childrenForm.general.sectionTitle,
@@ -72,6 +72,26 @@ export const Application: Form = buildForm({
               id: Routes.CHILDRENSCHOOLINFO,
               title: m.childrenForm.general.pageTitle,
               component: 'ChildrenForm',
+            }),
+          ],
+        }),
+        buildSubSection({
+          condition: (_, externalData) => {
+            const childWithInfo = getValueViaPath(
+              externalData,
+              'childrenCustodyInformation.data',
+              [],
+            ) as ApplicantChildCustodyInformation[]
+
+            return Boolean(childWithInfo?.length)
+          },
+          id: Routes.CHILDRENFILES,
+          title: m.childrenFilesForm.general.sectionTitle,
+          children: [
+            buildCustomField({
+              id: Routes.CHILDRENFILES,
+              title: m.childrenFilesForm.general.pageTitle,
+              component: 'ChildrenFilesForm',
             }),
           ],
         }),

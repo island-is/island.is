@@ -30,7 +30,6 @@ const Delegation = ({
   selectedEnvironment,
 }: DelegationProps) => {
   const { formatMessage } = useLocale()
-  const { isSuperAdmin } = useSuperAdmin()
   const { client } = useClient()
   const { getDelegationProviders } = useDelegationProviders()
 
@@ -149,7 +148,6 @@ const Delegation = ({
                       large
                       name={`${FIELD_PREFIX}${delegationType.id}`}
                       value="true"
-                      disabled={!isSuperAdmin}
                       checked={inputValues.supportedDelegationTypes?.includes(
                         delegationType.id,
                       )}
@@ -172,7 +170,6 @@ const Delegation = ({
             label={formatMessage(m.alwaysPromptDelegations)}
             backgroundColor={'blue'}
             large
-            disabled={!isSuperAdmin}
             name="promptDelegations"
             value="true"
             checked={inputValues.promptDelegations}
@@ -188,7 +185,6 @@ const Delegation = ({
             label={formatMessage(m.requirePermissions)}
             backgroundColor={'blue'}
             large
-            disabled={!isSuperAdmin}
             name="requireApiScopes"
             value="true"
             checked={inputValues.requireApiScopes}
