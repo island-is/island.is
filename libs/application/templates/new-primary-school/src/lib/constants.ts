@@ -20,11 +20,6 @@ export enum Roles {
   APPLICANT = 'applicant',
 }
 
-export type Option = {
-  value: string
-  label: string
-}
-
 export enum RelationOptions {
   GRANDPARENT = 'grandparent',
   SIBLING = 'sibling',
@@ -50,22 +45,6 @@ export enum SiblingRelationOptions {
   SIBLING = 'sibling',
   HALF_SIBLING = 'halfSibling',
   STEP_SIBLING = 'stepSibling',
-}
-
-export enum FoodAllergiesOptions {
-  EGG_ALLERGY = 'eggAllergy',
-  FISH_ALLERGY = 'fishAllergy',
-  PENUT_ALLERGY = 'peanutAllergy',
-  WHEAT_ALLERGY = 'wheatAllergy',
-  MILK_ALLERGY = 'milkAllergy',
-  OTHER = 'other',
-}
-
-export enum FoodIntolerancesOptions {
-  LACTOSE_INTOLERANCE = 'lactoseIntolerance',
-  GLUTEN_INTOLERANCE = 'glutenIntolerance',
-  MSG_INTOLERANCE = 'msgIntolerance',
-  OTHER = 'other',
 }
 
 export enum Gender {

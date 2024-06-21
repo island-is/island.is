@@ -606,51 +606,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Notar adrenalínpenna',
       description: 'Uses epinephrine pen',
     },
-    eggAllergy: {
-      id: 'dess.nps.application:different.needs.egg.allergy',
-      defaultMessage: 'Eggjaofnæmi',
-      description: 'Egg allergy',
-    },
-    fishAllergy: {
-      id: 'dess.nps.application:different.needs.fish.allergy',
-      defaultMessage: 'Fiskiofnæmi',
-      description: 'Fish allergy',
-    },
-    nutAllergy: {
-      id: 'dess.nps.application:different.needs.nut.allergy',
-      defaultMessage: 'Hnetuofnæmi',
-      description: 'Nut allergy',
-    },
-    wheatAllergy: {
-      id: 'dess.nps.application:different.needs.wheat.allergy',
-      defaultMessage: 'Hveitiofnæmi',
-      description: 'Wheat allergy',
-    },
-    milkAllergy: {
-      id: 'dess.nps.application:different.needs.milk.allergy',
-      defaultMessage: 'Mjólkurofnæmi',
-      description: 'Milk allergy',
-    },
-    other: {
-      id: 'dess.nps.application:different.needs.other',
-      defaultMessage: 'Annað',
-      description: 'Other',
-    },
-    lactoseIntolerance: {
-      id: 'dess.nps.application:different.needs.lactose.intolerance',
-      defaultMessage: 'Mjólkursykuróþol',
-      description: 'Lactose intolerance',
-    },
-    glutenIntolerance: {
-      id: 'dess.nps.application:different.needs.gluten.intolerance',
-      defaultMessage: 'Glútenóþol',
-      description: 'Gluten intolerance',
-    },
-    msgIntolerance: {
-      id: 'dess.nps.application:different.needs.msg.intolerance',
-      defaultMessage: 'MSG-óþol',
-      description: 'MSG intolerance',
-    },
 
     // Support
     supportSubSectionTitle: {
