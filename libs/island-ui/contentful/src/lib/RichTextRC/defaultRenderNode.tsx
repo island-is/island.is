@@ -251,7 +251,7 @@ export const defaultRenderNodeObject: RenderNode = {
         return href ? (
           <Hyperlink
             href={`${
-              !entry?.sys?.locale || entry?.sys?.locale === 'is-IS'
+              !entry?.sys?.locale || entry.sys.locale === 'is-IS'
                 ? ''
                 : `/${entry.sys.locale}`
             }${href}`}
