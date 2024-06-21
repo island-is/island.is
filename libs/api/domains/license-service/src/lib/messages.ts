@@ -69,6 +69,10 @@ export const m = defineMessages({
     id: 'api.license-service:license-number',
     defaultMessage: 'Skírteinisnúmer',
   },
+  licenseNumberVariant: {
+    id: 'api.license-service:license-number-variant',
+    defaultMessage: 'Skírteinisnúmer: {arg}',
+  },
   publishedDate: {
     id: 'api.license-service:published-date',
     defaultMessage: 'Útgáfudagur',
@@ -85,17 +89,9 @@ export const m = defineMessages({
     id: 'api.license-service:comments',
     defaultMessage: 'Athugasemdir',
   },
-  renewDrivingLicense: {
-    id: 'api.license-service:renew-driving-license',
-    defaultMessage: 'Endurnýja ökuskírteini',
-  },
-  renewFirearmLicense: {
-    id: 'api.license-service:renew-firearm-license',
-    defaultMessage: 'Endurnýja skotvopnaleyfi',
-  },
-  renewHuntingLicense: {
-    id: 'api.license-service:renew-hunting-license',
-    defaultMessage: 'Endurnýja veiðikort',
+  renewLicense: {
+    id: 'api.license-service:renew-license',
+    defaultMessage: 'Endurnýja {arg}',
   },
   nationalId: {
     id: 'api.license-service:national-id',
@@ -205,8 +201,144 @@ export const m = defineMessages({
     id: 'api.license-service:expired',
     defaultMessage: 'Útrunnið',
   },
+  expiresWithin: {
+    id: 'api.license-service:expires-within',
+    defaultMessage: 'Rennur út innan {arg}',
+  },
+  validUntil: {
+    id: 'api.license-service:valid-until',
+    defaultMessage: 'Í gildi til {arg}',
+  },
   valid: {
     id: 'api.license-service:valid',
     defaultMessage: 'Í gildi',
+  },
+  lost: {
+    id: 'api.license-service:lost',
+    defaultMessage: 'Glatað',
+  },
+  invalid: {
+    id: 'api.license-service:invalid',
+    defaultMessage: 'Ógilt',
+  },
+  unknown: {
+    id: 'api.license-service:unknown',
+    defaultMessage: 'Óþekkt',
+  },
+  licenseInvalid: {
+    id: 'api.license-service:license-invalid',
+    defaultMessage: '{arg} ógilt',
+  },
+  sixMonths: {
+    id: 'api.license-service:six-months',
+    defaultMessage: '6 mánaða',
+  },
+  invalidPassportText: {
+    id: 'api.license-service:passport-invalid-text',
+    defaultMessage: 'Athugið að vegabréf er ógilt og þarf að sækja um nýtt',
+  },
+  expiringPassportText: {
+    id: 'api.license-service:passport-expiring-text',
+    defaultMessage:
+      'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða. Þeir sem hyggast ferðast utan EES verða að hafa vegabréf sem gilda í amk 6 mánuði frá áætluðum ferðalokum.',
+  },
+  renewPassport: {
+    id: 'api.license-service:passport-renew',
+    defaultMessage: 'Endurnýja vegabréf',
+  },
+  notifyLostPassport: {
+    id: 'api.license-service:passport-notify-lost',
+    defaultMessage: 'Tilkynna glatað vegabréf',
+  },
+  lostPassportUrl: {
+    id: 'api.license-service:passport-lost-url',
+    defaultMessage: 'https://island.is/stolidtynt-vegabref',
+  },
+  applyPassportUrl: {
+    id: 'api.license-service:passport-apply-url',
+    defaultMessage: 'https://island.is/vegabref',
+  },
+  passportNumberDisplay: {
+    id: 'api.license-service:passport-number-display',
+    defaultMessage: 'Númer vegabréfs: {arg}',
+  },
+  passportDescription: {
+    id: 'api.license-service:passport-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um vegabréfið þitt. Athugaðu að þetta eru aðeins upplýsingar en ekki gilt vegabréf',
+  },
+  yourADRLicense: {
+    id: 'api.license-service:your-adr-license',
+    defaultMessage: 'ADR réttindin þín',
+  },
+  yourFirearmLicense: {
+    id: 'api.license-service:your-firearm-license',
+    defaultMessage: 'Skotvopnaleyfið þitt',
+  },
+  yourDrivingLicense: {
+    id: 'api.license-service:your-driving-license',
+    defaultMessage: 'Ökuréttindin þín',
+  },
+  yourDisabilityLicense: {
+    id: 'api.license-service:your-disability-license',
+    defaultMessage: 'Örorkuskírteinið þitt',
+  },
+  yourMachineLicense: {
+    id: 'api.license-service:your-machine-license',
+    defaultMessage: 'Vinnuvélaréttindin þín',
+  },
+  yourPCard: {
+    id: 'api.license-service:your-p-card',
+    defaultMessage: 'P-kortið þitt',
+  },
+  yourPCardDescription: {
+    id: 'api.license-service:p-card-description',
+    defaultMessage: 'Stæðiskort fyrir hreyfihamlaða',
+  },
+  ehicDescription: {
+    id: 'api.license-service:ehic-description',
+    defaultMessage:
+      'Evrópska sjúkratryggingakortið veitir korthafa rétt til heilbrigðisþjónustu í öðrum EES löndum, og Sviss.',
+  },
+  ehicDescription2: {
+    id: 'api.license-service:ehic-description-2',
+    defaultMessage: 'Nánar um kortið.',
+  },
+  ehicDescriptionLink: {
+    id: 'api.license-service:ehic-description-link',
+    defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
+  },
+  yourAdrLicenseDescription: {
+    id: 'api.license-service:your-adr-license-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um ADR skírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
+  },
+  yourFirearmLicenseDescription: {
+    id: 'api.license-service:your-firearm-license-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um skoptvopnaleyfið þitt ásamt skotvopnum skráð í þinni eigu.',
+  },
+  yourDisabilityLicenseDescription: {
+    id: 'api.license-service:your-disability-license-description',
+    defaultMessage: 'Hér birtast upplýsingar um örorkuskírteinið þitt.',
+  },
+  huntingLicenseDescription: {
+    id: 'api.license-service:hunting-license-description',
+    defaultMessage:
+      'Allir sem stunda veiðar á fuglum og spendýrum hér á landi þurfa að hafa veiðikort. Til að fá veiðikort í fyrsta sinn þurfa menn að hafa tekið próf fyrir verðandi veiðimenn.',
+  },
+  yourMachineLicenseDescription: {
+    id: 'api.license-service:your-machine-license-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um vinnuvélaskírteini þitt ásamt þeim réttindum sem þú ert með í gildi á hverjum tíma.',
+  },
+  yourDrivingLicenseDescription: {
+    id: 'api.license-service:your-driving-license-description',
+    defaultMessage:
+      'Hér birtast upplýsingar um ökuskírteini þitt ásamt þeim ökuréttindum sem þú ert með í gildi á hverjum tíma.',
+  },
+  yourHuntingCard: {
+    id: 'api.license-service:your-hunting-card',
+    defaultMessage: 'Veiðikortið þitt',
   },
 })

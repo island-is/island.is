@@ -2,21 +2,13 @@ import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-<<<<<<< Updated upstream
-  GenericLicenseLabels,
-<<<<<<< Updated upstream
   GenericLicenseMappedPayloadResponse,
-=======
-=======
-  GenericLicenseMappedPayloadResponse,
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   GenericLicenseMapper,
 } from '../licenceService.type'
 import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { Injectable } from '@nestjs/common'
-import { format } from 'kennitala'
-import dateFormat from 'date-fns/format'
+import { format as formatNationalId } from 'kennitala'
+import format from 'date-fns/format'
 import { isDefined } from '@island.is/shared/utils'
 import capitalize from 'lodash/capitalize'
 import {
@@ -25,8 +17,9 @@ import {
 } from '../licenseService.constants'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
+import { expiryTag } from '../utils/expiryTag'
 
-const formatDate = (date: Date) => dateFormat(date, 'dd.MM.yyyy')
+const formatDate = (date: Date) => format(date, 'dd.MM.yyyy')
 
 @Injectable()
 export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
@@ -34,14 +27,8 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-<<<<<<< Updated upstream
-    labels?: GenericLicenseLabels,
-  ): Array<GenericLicenseMappedPayloadResponse> {
-    if (!payload) return []
-=======
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
->>>>>>> Stashed changes
 
     const typedPayload = payload as Array<HuntingLicenseDto>
 
@@ -67,7 +54,9 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.nationalId),
-            value: t.holderNationalId ? format(t.holderNationalId) : '',
+            value: t.holderNationalId
+              ? formatNationalId(t.holderNationalId)
+              : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
@@ -111,53 +100,43 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
         ].filter(isDefined)
 
         return {
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.number?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: !t.isValid,
-            expireDate: t.validTo ? t.validTo.toISOString() : undefined,
-            links: [
-              {
-                label: getLabel('renewHuntingLicense', locale, label),
-                value:
-                  t.renewalUrl ??
-                  'https://innskraning.island.is/?id=gogn.ust.is',
-              },
-            ],
-=======
           licenseName: formatMessage(m.huntingCard),
->>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
             rawData: JSON.stringify(t),
             metadata: {
               licenseNumber: t.number?.toString() ?? '',
+              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                arg: t.number?.toString() ?? formatMessage(m.unknown),
+              }),
               licenseId: DEFAULT_LICENSE_ID,
               expired: !t.isValid,
               expireDate: t.validTo ? t.validTo.toISOString() : undefined,
+              displayTag:
+                t.validTo &&
+                expiryTag(
+                  formatMessage,
+                  !t.isValid,
+                  formatMessage(m.validUntil, {
+                    arg: formatDate(t.validTo),
+                  }),
+                ),
               links: [
                 {
-<<<<<<< Updated upstream
-                  label: getLabel('renewHuntingLicense', locale, label),
-=======
-                  label: formatMessage(m.renewHuntingLicense),
->>>>>>> Stashed changes
+                  label: formatMessage(m.renewLicense, {
+                    arg: formatMessage(m.huntingCard).toLowerCase(),
+                  }),
                   value:
                     t.renewalUrl ??
                     'https://innskraning.island.is/?id=gogn.ust.is',
                 },
               ],
+              title: formatMessage(m.yourHuntingCard),
+              description: [
+                { text: formatMessage(m.huntingLicenseDescription) },
+              ],
             },
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
           },
         }
       })

@@ -33,7 +33,10 @@ export class GenericLicense {
   })
   provider!: GenericLicenseProvider
 
-  @Field({ description: 'Display name of license' })
+  @Field({
+    description: 'Display name of license',
+    deprecationReason: 'Use metadata property instead',
+  })
   name?: string
 
   @Field({ description: 'Does the license support pkpass?' })

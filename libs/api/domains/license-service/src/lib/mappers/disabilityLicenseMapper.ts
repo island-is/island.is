@@ -5,20 +5,13 @@ import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-<<<<<<< Updated upstream
-  GenericLicenseLabels,
-<<<<<<< Updated upstream
   GenericLicenseMappedPayloadResponse,
-=======
-=======
-  GenericLicenseMappedPayloadResponse,
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   GenericLicenseMapper,
 } from '../licenceService.type'
 import { Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
+import { expiryTag } from '../utils/expiryTag'
 
 export const LICENSE_NAMESPACE = 'api.license-service'
 
@@ -28,21 +21,6 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-<<<<<<< Updated upstream
-    labels?: GenericLicenseLabels,
-  ): Array<GenericLicenseMappedPayloadResponse> {
-    if (!payload) return []
-
-    const typedPayload = payload as Array<OrorkuSkirteini>
-
-    const label = labels?.labels
-<<<<<<< Updated upstream
-    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
-      typedPayload.map((t) => {
-=======
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
-=======
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
 
@@ -55,8 +33,6 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
->>>>>>> Stashed changes
->>>>>>> Stashed changes
         const data: Array<GenericLicenseDataField> = [
           {
             type: GenericLicenseDataFieldType.Value,
@@ -76,36 +52,33 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
           },
         ]
 
+        const isExpired: boolean | undefined = t.gildirtil
+          ? !isAfter(new Date(t.gildirtil), new Date())
+          : undefined
+
         return {
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.kennitala?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: t.gildirtil
-              ? !isAfter(new Date(t.gildirtil), new Date())
-              : null,
-=======
           licenseName: formatMessage(m.disabilityCard),
->>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
             rawData: JSON.stringify(t),
             metadata: {
               licenseNumber: t.kennitala?.toString() ?? '',
+              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                arg: t.kennitala?.toString() ?? formatMessage(m.unknown),
+              }),
               licenseId: DEFAULT_LICENSE_ID,
-              expired: t.gildirtil
-                ? !isAfter(new Date(t.gildirtil), new Date())
-                : null,
+              expired: isExpired,
+              expireDate: t.gildirtil?.toISOString() ?? undefined,
+              displayTag:
+                isExpired !== undefined
+                  ? expiryTag(formatMessage, isExpired)
+                  : undefined,
+              title: formatMessage(m.yourDisabilityLicense),
+              description: [
+                { text: formatMessage(m.yourDisabilityLicenseDescription) },
+              ],
             },
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
           },
         }
       })

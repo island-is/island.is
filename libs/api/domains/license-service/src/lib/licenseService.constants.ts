@@ -11,6 +11,12 @@ export const DEFAULT_LICENSE_ID = 'default'
 
 export const LICENSE_NAMESPACE = 'sp.license'
 
+export enum AlertType {
+  WARNING,
+  ERROR,
+  INFO,
+}
+
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
     type: GenericLicenseType.FirearmLicense,

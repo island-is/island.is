@@ -4,15 +4,7 @@ import {
 } from '../licenseService.constants'
 import {
   GenericLicenseDataFieldType,
-<<<<<<< Updated upstream
-  GenericLicenseLabels,
-<<<<<<< Updated upstream
   GenericLicenseMappedPayloadResponse,
-=======
-=======
-  GenericLicenseMappedPayloadResponse,
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   GenericLicenseMapper,
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
@@ -22,6 +14,9 @@ import { DriverLicenseDto as DriversLicense } from '@island.is/clients/driving-l
 import { isDefined } from '@island.is/shared/utils'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
+import { expiryTag } from '../utils/expiryTag'
+import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
 
 @Injectable()
 export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
@@ -29,14 +24,8 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-<<<<<<< Updated upstream
-    labels?: GenericLicenseLabels,
-  ): Array<GenericLicenseMappedPayloadResponse> {
-    if (!payload) return []
-=======
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
->>>>>>> Stashed changes
 
     const typedPayload = payload as Array<DriversLicense>
 
@@ -50,10 +39,6 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
-        const expired = t.dateValidTo
-          ? !isAfter(new Date(t.dateValidTo), new Date())
-          : null
-
         const data = [
           {
             name: formatMessage(m.basicInfoLicense),
@@ -112,50 +97,48 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             })),
           },
         ]
+
+        const isExpired = t.dateValidTo
+          ? !isAfter(new Date(t.dateValidTo), new Date())
+          : undefined
+
         return {
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.id?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired,
-            expireDate: t.dateValidTo?.toISOString() ?? undefined,
-            links: [
-              {
-                label: getLabel('renewDrivingLicense', locale, label),
-                value: 'https://island.is/endurnyjun-okuskirteina',
-              },
-            ],
-=======
           licenseName: formatMessage(m.drivingLicense),
->>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
             rawData: JSON.stringify(t),
             metadata: {
-              licenseNumber: t.id?.toString() ?? '',
-              licenseId: DEFAULT_LICENSE_ID,
-              expired,
-              expireDate: t.dateValidTo?.toISOString() ?? undefined,
               links: [
                 {
-<<<<<<< Updated upstream
-                  label: getLabel('renewDrivingLicense', locale, label),
-=======
-                  label: formatMessage(m.renewDrivingLicense),
->>>>>>> Stashed changes
+                  label: formatMessage(m.renewLicense, {
+                    arg: formatMessage(m.drivingLicense).toLowerCase(),
+                  }),
                   value: 'https://island.is/endurnyjun-okuskirteina',
                 },
               ],
+              licenseNumber: t.id?.toString() ?? '',
+              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                arg: t.id?.toString() ?? formatMessage(m.unknown),
+              }),
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: isExpired,
+              expireDate: t.dateValidTo?.toISOString() ?? undefined,
+              displayTag:
+                isExpired !== undefined && t.dateValidTo
+                  ? expiryTag(
+                      formatMessage,
+                      isExpired,
+                      formatMessage(m.validUntil, {
+                        arg: format(new Date(t.dateValidTo), dateFormat.is),
+                      }),
+                    )
+                  : undefined,
+              title: formatMessage(m.yourDrivingLicense),
+              description: [
+                { text: formatMessage(m.yourDrivingLicenseDescription) },
+              ],
             },
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
           },
         }
       })

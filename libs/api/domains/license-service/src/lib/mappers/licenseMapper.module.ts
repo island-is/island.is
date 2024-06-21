@@ -7,15 +7,8 @@ import { DrivingLicensePayloadMapper } from '../mappers/drivingLicenseMapper'
 import { PCardPayloadMapper } from '../mappers/pCardMapper'
 import { EHICCardPayloadMapper } from '../mappers/ehicCardMapper'
 import { HuntingLicensePayloadMapper } from '../mappers/huntingLicenseMapper'
-<<<<<<< Updated upstream
-import { PassportMapper } from '../mappers/passportMapper'
-=======
-<<<<<<< Updated upstream
-=======
 import { PassportMapper } from '../mappers/passportMapper'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
->>>>>>> Stashed changes
->>>>>>> Stashed changes
 
 @Module({
   imports: [CmsTranslationsModule],

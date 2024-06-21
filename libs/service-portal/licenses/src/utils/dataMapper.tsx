@@ -445,6 +445,7 @@ enum LicenseType {
   DisabilityLicense = 'DisabilityLicense',
   PCard = 'PCard',
   Ehic = 'Ehic',
+  Passport = 'Passport',
 }
 enum LicenseTypePath {
   okurettindi = 'okurettindi',
@@ -455,6 +456,7 @@ enum LicenseTypePath {
   ororkuskirteini = 'ororkuskirteini',
   pcard = 'pkort',
   ehic = 'ehic',
+  vegabref = 'vegabref',
 }
 enum LicenseProviderId {
   NationalPoliceCommissioner = 'NationalPoliceCommissioner',

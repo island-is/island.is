@@ -4,21 +4,23 @@ import {
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericUserLicenseMetaLinksType,
   GenericUserLicensePayload,
 } from '../licenceService.type'
-import {
-  DEFAULT_LICENSE_ID,
-  LICENSE_NAMESPACE,
-} from '../licenseService.constants'
+import { AlertType, LICENSE_NAMESPACE } from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
-import { format } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import {
   type IdentityDocument,
   type IdentityDocumentChild,
 } from '@island.is/clients/passports'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
+import { GenericUserLicenseAlert } from '../dto/GenericUserLicenseAlert.dto'
+import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.dto'
+import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
+import { capitalize } from '../utils/capitalize'
 
 const isChildPassport = (
   passport: IdentityDocument | IdentityDocumentChild,
@@ -88,7 +90,7 @@ export class PassportMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.number),
 
-            value: format(document.number),
+            value: formatNationalId(document.number),
           }
         : null,
       document.issuingDate
@@ -121,14 +123,92 @@ export class PassportMapper implements GenericLicenseMapper {
         : null,
     ].filter(isDefined)
 
+    const isExpired = document.expiryStatus === 'EXPIRED'
+    const isLost = document.expiryStatus === 'LOST'
+    const isExpiring = document.expiresWithinNoticeTime
+    const isInvalid = document.status
+      ? document.status.toLowerCase() === 'invalid'
+      : undefined
+
+    const alert: GenericUserLicenseAlert | undefined =
+      isExpired || isExpiring || isLost
+        ? {
+            title:
+              isExpired || isLost
+                ? formatMessage(m.licenseInvalid, {
+                    arg: formatMessage(m.passport),
+                  })
+                : formatMessage(m.expiresWithin, {
+                    arg: formatMessage(m.sixMonths),
+                  }),
+            message:
+              isExpired || isLost
+                ? formatMessage(m.invalidPassportText)
+                : formatMessage(m.expiringPassportText),
+            type: AlertType.WARNING,
+          }
+        : undefined
+
+    const links: Array<GenericUserLicenseMetaLinks> = [
+      {
+        label: formatMessage(m.notifyLostPassport),
+        value: formatMessage(m.lostPassportUrl),
+        type: GenericUserLicenseMetaLinksType.External,
+      },
+      isExpired || isExpiring || isLost
+        ? {
+            label: formatMessage(m.renewLicense, {
+              arg: formatMessage(m.passport).toLowerCase(),
+            }),
+            value: formatMessage(m.applyPassportUrl),
+            type: GenericUserLicenseMetaLinksType.External,
+          }
+        : undefined,
+    ].filter(isDefined)
+    const displayTag: GenericUserLicenseMetaTag | undefined =
+      isInvalid !== undefined && document.expirationDate
+        ? {
+            text: isInvalid
+              ? formatMessage(m.invalid)
+              : isExpiring
+              ? formatMessage(m.expiresWithin, {
+                  arg: formatMessage(m.sixMonths),
+                })
+              : formatMessage(m.valid),
+            color: isInvalid || isExpiring ? 'red' : 'blue',
+            icon: isInvalid ? 'closeCircle' : 'checkmarkCircle',
+            iconColor: isInvalid
+              ? 'red600'
+              : isExpiring
+              ? 'yellow600'
+              : 'mint600',
+            iconText: isInvalid
+              ? formatMessage(isLost ? m.lost : m.expired)
+              : formatMessage(m.valid),
+          }
+        : undefined
+
     return {
       data,
       rawData: JSON.stringify(document),
       metadata: {
+        links,
         licenseNumber: document.number?.toString() ?? '',
-        licenseId: DEFAULT_LICENSE_ID,
-        expired: document.expiryStatus === 'EXPIRED',
+        licenseNumberDisplay: formatMessage(m.passportNumberDisplay, {
+          arg: document.number?.toString() ?? formatMessage(m.unknown),
+        }),
+        licenseId: document.number?.toString(),
+        expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
+        displayTag,
+        title:
+          document.displayFirstName && document.displayLastName
+            ? capitalize(
+                document.displayFirstName + ' ' + document.displayLastName,
+              )
+            : document.verboseType ?? undefined,
+        description: [{ text: formatMessage(m.passportDescription) }],
+        alert,
       },
     }
   }

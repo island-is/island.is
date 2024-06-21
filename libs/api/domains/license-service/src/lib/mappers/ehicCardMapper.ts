@@ -3,25 +3,20 @@ import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-<<<<<<< Updated upstream
-  GenericLicenseLabels,
-<<<<<<< Updated upstream
   GenericLicenseMappedPayloadResponse,
-=======
-=======
-  GenericLicenseMappedPayloadResponse,
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   GenericLicenseMapper,
   GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { Injectable } from '@nestjs/common'
 import { getDocument, isDefined } from '@island.is/shared/utils'
-import { format } from 'kennitala'
+import { format as formatNationalId } from 'kennitala'
 import { EhicCardResponse } from '@island.is/clients/license-client'
 import { IntlService } from '@island.is/cms-translations'
 import { LICENSE_NAMESPACE } from '../licenseService.constants'
 import { m } from '../messages'
+import { expiryTag } from '../utils/expiryTag'
+import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
 
 @Injectable()
 export class EHICCardPayloadMapper implements GenericLicenseMapper {
@@ -29,14 +24,8 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-<<<<<<< Updated upstream
-    labels?: GenericLicenseLabels,
-  ): Array<GenericLicenseMappedPayloadResponse> {
-    if (!payload) return []
-=======
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
->>>>>>> Stashed changes
 
     const typedPayload = payload as Array<EhicCardResponse>
 
@@ -50,125 +39,6 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
         .map((t) => {
           if (!t || !t.expiryDate) return null
 
-          const expired = t.expiryDate
-            ? !isAfter(new Date(t.expiryDate?.toISOString()), new Date())
-            : null
-
-<<<<<<< Updated upstream
-          const data: Array<GenericLicenseDataField> = [
-            t.cardHolderName
-              ? {
-                  type: GenericLicenseDataFieldType.Value,
-                  label: getLabel('fullName', locale, label),
-                  value: t.cardHolderName ?? '',
-                }
-              : null,
-            t.cardHolderNationalId
-              ? {
-                  type: GenericLicenseDataFieldType.Value,
-                  label: getLabel('nationalId', locale, label),
-                  value: t.cardHolderNationalId
-                    ? format(t.cardHolderNationalId)
-                    : '',
-                }
-              : null,
-            t.cardNumber
-              ? {
-                  type: GenericLicenseDataFieldType.Value,
-                  label: getLabel('cardNumber', locale, label),
-                  value: t.cardNumber,
-                }
-              : null,
-            t.issued
-              ? {
-                  type: GenericLicenseDataFieldType.Value,
-                  label: getLabel('publishedDate', locale, label),
-                  value: t.issued.toISOString(),
-                }
-              : null,
-            t.expiryDate
-              ? {
-                  type: GenericLicenseDataFieldType.Value,
-                  label: getLabel('validTo', locale, label),
-                  value: t.expiryDate.toISOString(),
-                }
-              : null,
-            {
-              type: GenericLicenseDataFieldType.Value,
-              label: getLabel('publisher', locale, label),
-              value: 'Sjúkratryggingar',
-            },
-          ].filter(isDefined)
-
-          return {
-=======
-<<<<<<< Updated upstream
-        const data: Array<GenericLicenseDataField> = [
-          t.cardHolderName
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('fullName', locale, label),
-                value: t.cardHolderName ?? '',
-              }
-            : null,
-          t.cardHolderNationalId
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('nationalId', locale, label),
-                value: t.cardHolderNationalId
-                  ? format(t.cardHolderNationalId)
-                  : '',
-              }
-            : null,
-          t.cardNumber
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('cardNumber', locale, label),
-                value: t.cardNumber,
-              }
-            : null,
-          t.issued
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('publishedDate', locale, label),
-                value: t.issued.toISOString(),
-              }
-            : null,
-          t.expiryDate
-            ? {
-                type: GenericLicenseDataFieldType.Value,
-                label: getLabel('validTo', locale, label),
-                value: t.expiryDate.toISOString(),
-              }
-            : null,
-          {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publisher', locale, label),
-            value: 'Sjúkratryggingar',
-          },
-        ].filter(isDefined)
-
-        return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.cardNumber?.toString() ?? '',
-            licenseId: t.cardNumber?.toString() ?? 'default',
-            expired,
-            expireDate: t.expiryDate.toISOString(),
-            links: [
-              t.hasTempCard && t.tempCardPdf
-                ? {
-                    label: getLabel('downloadCard', locale, label),
-                    value: getDocument(t.tempCardPdf, 'pdf'),
-                    type: GenericUserLicenseMetaLinksType.Download,
-                    name: `EHIC_${new Date().toISOString().split('T')[0]}.pdf`,
-                  }
-                : undefined,
-              {
-                label: getLabel('applyForNewCard', locale, label),
-                value: '/umsoknir/evropska-sjukratryggingakortid',
-=======
           const data: Array<GenericLicenseDataField> = [
             t.cardHolderName
               ? {
@@ -182,7 +52,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.nationalId),
                   value: t.cardHolderNationalId
-                    ? format(t.cardHolderNationalId)
+                    ? formatNationalId(t.cardHolderNationalId)
                     : '',
                 }
               : null,
@@ -214,26 +84,38 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
             },
           ].filter(isDefined)
 
+          const isExpired = t.expiryDate
+            ? !isAfter(new Date(t.expiryDate?.toISOString()), new Date())
+            : undefined
+
           return {
             licenseName: formatMessage(m.ehicCard),
->>>>>>> Stashed changes
             type: 'user' as const,
             payload: {
               data,
               rawData: JSON.stringify(t),
               metadata: {
                 licenseNumber: t.cardNumber?.toString() ?? '',
+                licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                  arg: t.cardNumber?.toString() ?? formatMessage(m.unknown),
+                }),
                 licenseId: t.cardNumber?.toString() ?? 'default',
-                expired,
+                expired: isExpired,
                 expireDate: t.expiryDate.toISOString(),
+                displayTag:
+                  isExpired !== undefined && t.expiryDate
+                    ? expiryTag(
+                        formatMessage,
+                        isExpired,
+                        formatMessage(m.validUntil, {
+                          arg: format(t.expiryDate, dateFormat.is),
+                        }),
+                      )
+                    : undefined,
                 links: [
                   t.hasTempCard && t.tempCardPdf
                     ? {
-<<<<<<< Updated upstream
-                        label: getLabel('downloadCard', locale, label),
-=======
                         label: formatMessage(m.downloadCard),
->>>>>>> Stashed changes
                         value: getDocument(t.tempCardPdf, 'pdf'),
                         type: GenericUserLicenseMetaLinksType.Download,
                         name: `EHIC_${
@@ -242,18 +124,18 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                       }
                     : undefined,
                   {
-<<<<<<< Updated upstream
-                    label: getLabel('applyForNewCard', locale, label),
-                    value: '/umsoknir/evropska-sjukratryggingakortid',
-                  },
-                ].filter(isDefined),
-=======
                     label: formatMessage(m.applyForNewCard),
                     value: '/umsoknir/evropska-sjukratryggingakortid',
                   },
                 ].filter(isDefined),
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+                title: formatMessage(m.ehicCard),
+                description: [
+                  { text: formatMessage(m.ehicDescription) },
+                  {
+                    text: formatMessage(m.ehicDescription2),
+                    linkInText: formatMessage(m.ehicDescriptionLink),
+                  },
+                ],
               },
             },
           }

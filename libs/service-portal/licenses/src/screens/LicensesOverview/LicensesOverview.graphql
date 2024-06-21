@@ -4,51 +4,49 @@ query GenericLicenseCollection(
 ) {
   genericLicenseCollection(input: $input, locale: $locale) {
     licenses {
-      ... on GenericUserLicense {
-        __typename
-        nationalId
-        license {
-          type
-          provider {
-            id
-            providerName
-            providerLogo
-          }
-          name
-          pkpass
-          pkpassVerify
-          status
-          pkpassStatus
-        }
-        isOwnerChildOfUser
-        payload {
-          data {
-            type
-            value
-            name
-            label
-          }
-          metadata {
-            licenseId
-            licenseNumberDisplay
-            displayTag {
-              text
-              color
-            }
-          }
-        }
-      }
-      ... on GenericUserLicenseError {
-        __typename
+      __typename
+      nationalId
+      isOwnerChildOfUser
+      license {
         type
         provider {
           id
+          referenceId
           providerName
+          providerLogo
         }
-        errorCode
-        errorMessage
-        extraData
+        name
+        pkpass
+        pkpassVerify
+        status
+        pkpassStatus
       }
+      payload {
+        data {
+          type
+        }
+        metadata {
+          licenseId
+          licenseNumber
+          licenseNumberDisplay
+          displayTag {
+            text
+            color
+          }
+          title
+        }
+      }
+    }
+    errors {
+      __typename
+      type
+      provider {
+        id
+        providerName
+      }
+      errorCode
+      errorMessage
+      extraData
     }
   }
 }

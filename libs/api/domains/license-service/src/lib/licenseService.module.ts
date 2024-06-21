@@ -1,38 +1,23 @@
 import { LicenseClientModule } from '@island.is/clients/license-client'
-<<<<<<< Updated upstream
-import { CmsTranslationsModule } from '@island.is/cms-translations'
-=======
-<<<<<<< Updated upstream
->>>>>>> Stashed changes
-import { CmsModule } from '@island.is/cms'
-=======
->>>>>>> Stashed changes
 import { LicenseModule } from '@island.is/services/license'
 import { Module } from '@nestjs/common'
 
-import { LicenseServiceResolver } from './licenseService.resolver'
 import { LicenseServiceService } from './licenseService.service'
 import { LicenseMapperModule } from './mappers/licenseMapper.module'
 
 import { LicenseMapperProvider, LoggerProvider } from './providers'
+import { LicenseCollectionResolver } from './resolvers/licenseCollection.resolver'
+import { PkPassResolver } from './resolvers/pkPass.resolver'
+import { UserLicenseResolver } from './resolvers/userLicense.resolver'
+import { LicenseProviderResolver } from './resolvers/provider.resolver'
 
 @Module({
-<<<<<<< Updated upstream
-  imports: [
-    LicenseClientModule,
-    LicenseMapperModule,
-    CmsModule,
-    CmsTranslationsModule,
-    LicenseModule,
-    CacheModule.register({
-      ttl: 60 * 10 * 1000, // 10 minutes
-    }),
-  ],
-=======
   imports: [LicenseClientModule, LicenseMapperModule, LicenseModule],
->>>>>>> Stashed changes
   providers: [
-    LicenseServiceResolver,
+    LicenseCollectionResolver,
+    PkPassResolver,
+    UserLicenseResolver,
+    LicenseProviderResolver,
     LicenseServiceService,
     LoggerProvider,
     LicenseMapperProvider,

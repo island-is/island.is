@@ -6,14 +6,6 @@ import {
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
-<<<<<<< Updated upstream
-  GenericLicenseLabels,
-<<<<<<< Updated upstream
-=======
-  GenericUserLicensePayload,
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMapper,
@@ -26,6 +18,7 @@ import {
 import { Injectable } from '@nestjs/common'
 import { m } from '../messages'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import { expiryTag } from '../utils/expiryTag'
 
 @Injectable()
 export class MachineLicensePayloadMapper implements GenericLicenseMapper {
@@ -42,20 +35,14 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
               field.stjorna &&
               !isAfter(new Date(field.stjorna), new Date()),
           )
-      : null
+      : undefined
   }
 
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-<<<<<<< Updated upstream
-    labels?: GenericLicenseLabels,
-  ): Array<GenericLicenseMappedPayloadResponse> {
-    if (!payload) return []
-=======
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
->>>>>>> Stashed changes
 
     const typedPayload = payload as Array<VinnuvelaDto>
 
@@ -66,8 +53,6 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
-        const expired: boolean | null = this.checkLicenseExpirationDate(t)
-
         const data: Array<GenericLicenseDataField> = [
           {
             name: formatMessage(m.basicInfoLicense),
@@ -115,32 +100,30 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
           },
         ]
 
+        const isExpired = this.checkLicenseExpirationDate(t)
+
         return {
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.skirteinisNumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: expired,
-=======
           licenseName: formatMessage(m.heavyMachineryLicense),
->>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
             rawData: JSON.stringify(t),
             metadata: {
               licenseNumber: t.skirteinisNumer?.toString() ?? '',
+              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                arg: t.skirteinisNumer?.toString() ?? formatMessage(m.unknown),
+              }),
               licenseId: DEFAULT_LICENSE_ID,
-              expired: expired,
+              expired: isExpired,
+              displayTag:
+                isExpired != undefined
+                  ? expiryTag(formatMessage, isExpired)
+                  : undefined,
             },
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
+            title: formatMessage(m.yourMachineLicense),
+            description: [
+              { text: formatMessage(m.yourMachineLicenseDescription) },
+            ],
           },
         }
       })

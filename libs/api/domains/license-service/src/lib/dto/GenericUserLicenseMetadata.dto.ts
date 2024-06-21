@@ -1,6 +1,8 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GenericUserLicenseMetaLinks } from './GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from './GenericUserLicenseMetaTag.dto'
+import { GenericUserLicenseAlert } from './GenericUserLicenseAlert.dto'
+import { GenericUserLicenseMetadataDescription } from './GenericUserLicenseMetadataDescription.dto'
 
 @ObjectType()
 export class GenericUserLicenseMetadata {
@@ -34,6 +36,15 @@ export class GenericUserLicenseMetadata {
   })
   title?: string
 
-  @Field({ nullable: true, description: 'Display description for detail view' })
-  description?: string
+  @Field(() => [GenericUserLicenseMetadataDescription], {
+    nullable: true,
+    description: 'Display description for detail view',
+  })
+  description?: Array<GenericUserLicenseMetadataDescription>
+
+  @Field(() => GenericUserLicenseAlert, {
+    nullable: true,
+    description: 'Display an alert on the detail view',
+  })
+  alert?: GenericUserLicenseAlert
 }

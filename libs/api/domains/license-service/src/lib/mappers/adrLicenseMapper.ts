@@ -8,37 +8,26 @@ import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-<<<<<<< Updated upstream
-  GenericLicenseLabels,
-<<<<<<< Updated upstream
   GenericLicenseMappedPayloadResponse,
-=======
-=======
-  GenericLicenseMappedPayloadResponse,
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   GenericLicenseMapper,
 } from '../licenceService.type'
 import { Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
+import { expiryTag } from '../utils/expiryTag'
+import format from 'date-fns/format'
+import { dateFormat } from '@island.is/shared/constants'
 
 export const LICENSE_NAMESPACE = 'api.license-service'
 
 @Injectable()
 export class AdrLicensePayloadMapper implements GenericLicenseMapper {
-  constructor(private readonly intlService: IntlService) { }
+  constructor(private readonly intlService: IntlService) {}
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-<<<<<<< Updated upstream
-    labels?: GenericLicenseLabels,
-  ): Array<GenericLicenseMappedPayloadResponse> {
-    if (!payload) return []
-=======
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
->>>>>>> Stashed changes
 
     const typedPayload = payload as Array<FlattenedAdrDto>
 
@@ -92,44 +81,34 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
           : undefined
 
         return {
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.skirteinisNumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: t.gildirTil
-              ? !isAfter(new Date(t.gildirTil), new Date())
-              : null,
-            expireDate: t.gildirTil ?? undefined,
-=======
           licenseName: formatMessage(m.adrLicense),
->>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
             rawData: JSON.stringify(t),
             metadata: {
-              licenseNumber: t.skirteinisNumer?.toString() ?? '',
+              licenseNumber: t.skirteinisNumer ?? '',
+              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                arg: t.skirteinisNumer ?? formatMessage(m.unknown),
+              }),
               licenseId: DEFAULT_LICENSE_ID,
-              expired: t.gildirTil
-                ? !isAfter(new Date(t.gildirTil), new Date())
-                : null,
+              expired: isExpired,
               expireDate: t.gildirTil ?? undefined,
-<<<<<<< Updated upstream
+              displayTag:
+                isExpired !== undefined && t.gildirTil
+                  ? expiryTag(
+                      formatMessage,
+                      isExpired,
+                      formatMessage(m.validUntil, {
+                        arg: format(new Date(t.gildirTil), dateFormat.is),
+                      }),
+                    )
+                  : undefined,
+              title: formatMessage(m.yourADRLicense),
+              description: [
+                { text: formatMessage(m.yourAdrLicenseDescription) },
+              ],
             },
-=======
-              displayTag: t.gildirTil ? {
-                text: isExpired ?
-                  formatMessage(m.expired)
-                  : formatMessage(m.valid)
-                color: isExpired ? 'red100' : 'blue100'
-              } : undefined,
-            },
->>>>>>> Stashed changes
->>>>>>> Stashed changes
           },
         }
       })

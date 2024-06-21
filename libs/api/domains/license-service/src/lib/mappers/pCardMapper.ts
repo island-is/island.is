@@ -3,15 +3,7 @@ import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-<<<<<<< Updated upstream
-  GenericLicenseLabels,
-<<<<<<< Updated upstream
   GenericLicenseMappedPayloadResponse,
-=======
-=======
-  GenericLicenseMappedPayloadResponse,
->>>>>>> Stashed changes
->>>>>>> Stashed changes
   GenericLicenseMapper,
 } from '../licenceService.type'
 import {
@@ -24,6 +16,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { format } from 'kennitala'
 import { m } from '../messages'
 import { IntlService } from '@island.is/cms-translations'
+import { expiryTag } from '../utils/expiryTag'
 
 @Injectable()
 export class PCardPayloadMapper implements GenericLicenseMapper {
@@ -31,14 +24,8 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-<<<<<<< Updated upstream
-    labels?: GenericLicenseLabels,
-  ): Array<GenericLicenseMappedPayloadResponse> {
-    if (!payload) return []
-=======
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
     if (!payload) return Promise.resolve([])
->>>>>>> Stashed changes
 
     const typedPayload = payload as Array<Staediskortamal>
 
@@ -49,10 +36,6 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
-        const expired = t.gildistimi
-          ? !isAfter(new Date(t.gildistimi.toISOString()), new Date())
-          : null
-
         const data: Array<GenericLicenseDataField> = [
           t.nafn
             ? {
@@ -98,34 +81,31 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
             : null,
         ].filter(isDefined)
 
+        const isExpired = t.gildistimi
+          ? !isAfter(new Date(t.gildistimi.toISOString()), new Date())
+          : undefined
+
         return {
-<<<<<<< Updated upstream
-=======
-<<<<<<< Updated upstream
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.malsnumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired,
-            expireDate: t.gildistimi?.toISOString(),
-=======
           licenseName: formatMessage(m.pCard),
->>>>>>> Stashed changes
           type: 'user',
           payload: {
             data,
             rawData: JSON.stringify(t),
             metadata: {
               licenseNumber: t.malsnumer?.toString() ?? '',
+              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                arg: t.malsnumer?.toString() ?? formatMessage(m.unknown),
+              }),
               licenseId: DEFAULT_LICENSE_ID,
-              expired,
+              expired: isExpired,
               expireDate: t.gildistimi?.toISOString(),
+              displayTag:
+                isExpired !== undefined
+                  ? expiryTag(formatMessage, isExpired)
+                  : undefined,
+              title: formatMessage(m.yourPCard),
+              description: [{ text: formatMessage(m.yourPCardDescription) }],
             },
-<<<<<<< Updated upstream
-=======
->>>>>>> Stashed changes
->>>>>>> Stashed changes
           },
         }
       })

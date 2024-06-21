@@ -6,7 +6,7 @@ import { GenericUserLicenseMetadata } from './dto/GenericUserLicenseMetadata.dto
 
 export interface GenericLicenseMappedPayloadResponse {
   licenseName: string
-  payload: GenericUserLicenseMetadata
+  payload: GenericUserLicensePayload
   type: 'user' | 'child'
 }
 export type LicenseTypeFetchResponse =
@@ -267,6 +267,5 @@ export interface GenericLicenseMapper {
   parsePayload: (
     payload: Array<unknown>,
     locale: Locale,
-    labels?: GenericLicenseLabels,
   ) => Promise<Array<GenericLicenseMappedPayloadResponse>>
 }
