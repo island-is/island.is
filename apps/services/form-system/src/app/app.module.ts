@@ -11,6 +11,9 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
 import { GroupsModule } from './modules/groups/groups.module'
 import { InputsModule } from './modules/inputs/inputs.module'
 import { LoggingModule } from '@island.is/logging'
+import { TestimoniesModule } from './modules/testimonies/testimonies.module'
+import { ListsModule } from './modules/lists/lists.module'
+import { InputSettingsModule } from './modules/inputSettings/inputSettings.module'
 
 @Module({
   imports: [
@@ -26,6 +29,9 @@ import { LoggingModule } from '@island.is/logging'
     StepsModule,
     GroupsModule,
     InputsModule,
+    TestimoniesModule,
+    ListsModule,
+    InputSettingsModule,
   ],
 })
 export class AppModule {}

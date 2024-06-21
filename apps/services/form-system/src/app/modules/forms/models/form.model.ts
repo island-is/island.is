@@ -1,5 +1,6 @@
-import { CreationOptional } from 'sequelize'
+import { CreationOptional, NonAttribute } from 'sequelize'
 import {
+  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
@@ -14,6 +15,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicant } from '../../applicants/models/formApplicant.model'
+import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 
 @Table({ tableName: 'forms' })
 export class Form extends Model<Form> {
@@ -91,7 +93,7 @@ export class Form extends Model<Form> {
 
   @HasMany(() => FormApplicant)
   @ApiProperty({ type: [FormApplicant] })
-  formApplicants?: FormApplicant[]
+  applicants?: FormApplicant[]
 
   @ForeignKey(() => Organization)
   @Column({
@@ -100,4 +102,11 @@ export class Form extends Model<Form> {
     field: 'organization_id',
   })
   organizationId!: string
+
+  @BelongsToMany(() => TestimonyType, {
+    through: 'form_testimony_types',
+    foreignKey: 'form_id',
+    otherKey: 'testimony_type_id',
+  })
+  testimonyTypes?: NonAttribute<TestimonyType[]>
 }

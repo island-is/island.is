@@ -8,12 +8,6 @@ export class StepDto {
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
-  @ApiProperty({ type: Date })
-  created!: Date
-
-  @ApiProperty({ type: Date })
-  modified!: Date
-
   @ApiProperty()
   stepType!: string
 
@@ -24,11 +18,5 @@ export class StepDto {
   waitingText?: LanguageType
 
   @ApiProperty()
-  isHidden!: boolean
-
-  @ApiProperty()
   callRuleset!: boolean
-
-  @ApiProperty()
-  isCompleted!: boolean
 }

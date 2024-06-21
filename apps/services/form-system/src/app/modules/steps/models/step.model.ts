@@ -14,14 +14,7 @@ import { Form } from '../../forms/models/form.model'
 import { ApiProperty } from '@nestjs/swagger'
 import { Group } from '../../groups/models/group.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { StepType } from '../../../enums/stepType.enum'
-
-export const StepTypes = {
-  premises: 'premises',
-  parties: 'parties',
-  input: 'input',
-  payment: 'payment',
-}
+import { StepTypes } from '../../../enums/stepTypes'
 
 @Table({ tableName: 'steps' })
 export class Step extends Model<Step> {

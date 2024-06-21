@@ -1,13 +1,12 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Form } from './models/form.model'
 import { InjectModel } from '@nestjs/sequelize'
-import { Step, StepTypes } from '../steps/models/step.model'
+import { Step } from '../steps/models/step.model'
 import { Group } from '../groups/models/group.model'
 import { Input } from '../inputs/models/input.model'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { InputType } from '../inputs/models/inputType.model'
-import { InputSettings } from '../inputs/models/inputSettings.model'
-import { StepType } from '../../enums/stepType.enum'
+import { InputSettings } from '../inputSettings/models/inputSettings.model'
 import { LanguageType } from '../../dataTypes/languageType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { FormDto } from './models/dto/form.dto'
@@ -17,6 +16,17 @@ import { InputDto } from '../inputs/models/dto/input.dto'
 import { FormResponse } from './models/dto/form.response.dto'
 import { InputTypeDto } from '../inputs/models/dto/inputType.dto'
 import { FormApplicantDto } from '../applicants/models/dto/formApplicant.dto'
+import { TestimonyType } from '../testimonies/models/testimonyType.model'
+import { TestimonyTypeDto } from '../testimonies/dto/testimonyType.dto'
+import { FormTestimonyTypeDto } from '../testimonies/dto/formTestimonyType.dto'
+import { ListTypeDto } from '../lists/models/dto/listType.dto'
+import { ListType } from '../lists/models/listType.model'
+import {
+  InputSettingsDto,
+  TextboxInputSettingsDto,
+} from '../inputSettings/models/dto/inputSettings.dto'
+import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
+import { StepTypes } from '../../enums/stepTypes'
 
 @Injectable()
 export class FormsService {
@@ -31,6 +41,11 @@ export class FormsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(InputType)
     private readonly inputTypeModel: typeof InputType,
+    @InjectModel(TestimonyType)
+    private readonly testimonyTypeModel: typeof TestimonyType,
+    @InjectModel(ListType)
+    private readonly listTypeModel: typeof ListType,
+    private readonly inputSettingsMapper: InputSettingsMapper,
   ) {}
 
   async findAll(organizationId: string): Promise<Form[]> {
@@ -45,21 +60,12 @@ export class FormsService {
     if (!form) {
       return null
     }
-    // const formDto = this.setArrays(form)
-
-    const formResponse = this.buildFormResponse(form)
-
-    // const organizationSpecificInputTypes =
-    //   await this.organizationModel.findByPk(form.organizationId, {
-    //     include: [InputType],
-    //   })
-
-    // console.log(organizationSpecificInputTypes)
+    const formResponse = await this.buildFormResponse(form)
 
     return formResponse
   }
 
-  async create(createFormDto: CreateFormDto): Promise<FormDto | null> {
+  async create(createFormDto: CreateFormDto): Promise<FormResponse | null> {
     const { organizationId } = createFormDto
 
     if (!organizationId) {
@@ -77,23 +83,22 @@ export class FormsService {
       organizationId: organizationId,
     } as Form)
 
-    try {
-      await this.createFormTemplate(newForm)
-    } catch (err) {
-      throw new Error(`Could not create formTemplate for form ${newForm.id}`)
-    }
+    await this.createFormTemplate(newForm)
 
     const form = await this.findById(newForm.id)
-    if (!form) {
-      return null
-    }
-    const formDto = this.setArrays(form)
 
-    return formDto
+    const formResponse = await this.buildFormResponse(form)
+
+    return formResponse
   }
 
-  private async findById(id: string): Promise<Form | null> {
-    return await this.formModel.findByPk(id, {
+  async delete(id: string): Promise<void> {
+    const form = await this.findById(id)
+    form?.destroy()
+  }
+
+  private async findById(id: string): Promise<Form> {
+    const form = await this.formModel.findByPk(id, {
       include: [
         {
           model: Step,
@@ -119,15 +124,48 @@ export class FormsService {
         },
       ],
     })
+
+    if (!form) {
+      throw new NotFoundException(`Form with id '${id}' not found`)
+    }
+
+    return form
   }
 
   private async buildFormResponse(form: Form): Promise<FormResponse> {
     const response: FormResponse = {
       form: this.setArrays(form),
       inputTypes: await this.getInputTypes(form.organizationId),
+      testimonyTypes: await this.getTestimonyTypes(form.organizationId),
+      listTypes: await this.getListTypes(form.organizationId),
     }
 
     return response
+  }
+
+  private async getTestimonyTypes(
+    organizationId: string,
+  ): Promise<TestimonyTypeDto[]> {
+    const organizationSpecificTestimonyTypes =
+      await this.organizationModel.findByPk(organizationId, {
+        include: [TestimonyType],
+      })
+
+    const organizationTestimonyTypes =
+      organizationSpecificTestimonyTypes?.organizationTestimonyTypes as TestimonyType[]
+
+    const testimonyTypesDto: TestimonyTypeDto[] = []
+
+    organizationTestimonyTypes?.map((testimonyType) => {
+      testimonyTypesDto.push({
+        id: testimonyType.id,
+        type: testimonyType.type,
+        name: testimonyType.name,
+        description: testimonyType.description,
+      } as TestimonyTypeDto)
+    })
+
+    return testimonyTypesDto
   }
 
   private async getInputTypes(organizationId: string): Promise<InputTypeDto[]> {
@@ -151,10 +189,42 @@ export class FormsService {
         name: inputType.name,
         description: inputType.description,
         isCommon: inputType.isCommon,
+        inputSettings: this.inputSettingsMapper.mapInputTypeToInputSettings(
+          null,
+          inputType.type,
+        ),
       } as InputTypeDto)
     })
 
+    console.log('blalala:', InputSettingsDto)
     return inputTypesDto
+  }
+
+  private async getListTypes(organizationId: string): Promise<ListTypeDto[]> {
+    const commonListTypes = await this.listTypeModel.findAll({
+      where: { isCommon: true },
+    })
+    const organizationSpecificListTypes = await this.organizationModel.findByPk(
+      organizationId,
+      { include: [ListType] },
+    )
+
+    const organizationListTypes = commonListTypes.concat(
+      organizationSpecificListTypes?.organizationListTypes as ListType[],
+    )
+
+    const listTypesDto: ListTypeDto[] = []
+    organizationListTypes.map((listType) => {
+      listTypesDto.push({
+        id: listType.id,
+        type: listType.type,
+        name: listType.name,
+        description: listType.description,
+        isCommon: listType.isCommon,
+      } as ListTypeDto)
+    })
+
+    return listTypesDto
   }
 
   private setArrays(form: Form): FormDto {
@@ -170,14 +240,24 @@ export class FormsService {
       derivedFrom: form.derivedFrom,
       stopProgressOnValidatingStep: form.stopProgressOnValidatingStep,
       completedMessage: form.completedMessage,
-      formApplicants: [],
+      testimonyTypes: [],
+      applicants: [],
       steps: [],
       groups: [],
       inputs: [],
     }
 
-    form.formApplicants?.map((applicant) => {
-      formDto.formApplicants?.push({
+    form.testimonyTypes?.map((testimonyType) => {
+      formDto.testimonyTypes?.push({
+        id: testimonyType.id,
+        name: testimonyType.name,
+        description: testimonyType.description,
+        type: testimonyType.type,
+      } as FormTestimonyTypeDto)
+    })
+
+    form.applicants?.map((applicant) => {
+      formDto.applicants?.push({
         id: applicant.id,
         applicantType: applicant.applicantType,
         name: applicant.name,
@@ -232,28 +312,28 @@ export class FormsService {
   private async createFormTemplate(form: Form): Promise<void> {
     await this.stepModel.create({
       formId: form.id,
-      stepType: StepTypes.premises,
+      stepType: StepTypes.PREMISES,
       displayOrder: 0,
       name: { is: 'Forsendur', en: 'Premises' },
     } as Step)
 
     await this.stepModel.create({
       formId: form.id,
-      stepType: StepTypes.parties,
+      stepType: StepTypes.PARTIES,
       displayOrder: 1,
       name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
     } as Step)
 
     const inputStep = await this.stepModel.create({
       formId: form.id,
-      stepType: StepTypes.input,
+      stepType: StepTypes.INPUT,
       displayOrder: 2,
       name: { is: 'Innsláttarskref', en: 'InputStep' },
     } as Step)
 
     await this.stepModel.create({
       formId: form.id,
-      stepType: StepTypes.payment,
+      stepType: StepTypes.PAYMENT,
       displayOrder: 3,
       name: { is: 'Greiðsla', en: 'Payment' },
     } as Step)

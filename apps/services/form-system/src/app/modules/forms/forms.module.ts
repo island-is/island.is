@@ -9,6 +9,9 @@ import { Step } from '../steps/models/step.model'
 import { Group } from '../groups/models/group.model'
 import { Organization } from '../organizations/models/organization.model'
 import { InputType } from '../inputs/models/inputType.model'
+import { TestimonyType } from '../testimonies/models/testimonyType.model'
+import { ListType } from '../lists/models/listType.model'
+import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
 
 @Module({
   imports: [
@@ -19,9 +22,11 @@ import { InputType } from '../inputs/models/inputType.model'
       Group,
       Organization,
       InputType,
+      TestimonyType,
+      ListType,
     ]),
   ],
   controllers: [FormsController],
-  providers: [FormsService],
+  providers: [FormsService, InputSettingsMapper],
 })
 export class FormsModule {}

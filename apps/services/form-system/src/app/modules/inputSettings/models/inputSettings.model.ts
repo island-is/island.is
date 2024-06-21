@@ -11,8 +11,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Input } from './input.model'
-import { TimeInterval } from '../../../enums/timeInterval.enum'
+import { Input } from '../../inputs/models/input.model'
+import { TimeIntervals } from '../../../enums/timeIntervals'
 
 @Table({ tableName: 'input_settings' })
 export class InputSettings extends Model<InputSettings> {
@@ -38,134 +38,134 @@ export class InputSettings extends Model<InputSettings> {
     allowNull: true,
   })
   @ApiProperty()
-  minValue?: number
+  minValue?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   @ApiProperty()
-  maxValue?: number
+  maxValue?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   @ApiProperty()
-  minLength?: number
+  minLength?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   @ApiProperty()
-  maxLength?: number
+  maxLength?: number | null
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
-  minDate?: Date
+  minDate?: Date | null
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
   @ApiProperty()
-  maxDate?: Date
+  maxDate?: Date | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  minAmount?: string
+  minAmount?: string | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  maxAmount?: string
+  maxAmount?: string | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   @ApiProperty()
-  year?: number
+  year?: number | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  hasLink?: boolean
+  hasLink?: boolean | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  url?: string
+  url?: string | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
   @ApiProperty()
-  buttonText?: string
+  buttonText?: string | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  hasPropertyInput?: boolean
+  hasPropertyInput?: boolean | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
   @ApiProperty()
-  hasPropertyList?: boolean
+  hasPropertyList?: boolean | null
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
   @ApiProperty()
-  list?: string
+  list?: string | null
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
   @ApiProperty()
-  fileTypes?: string
+  fileTypes?: string | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   @ApiProperty()
-  fileMaxSize?: number
+  fileMaxSize?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
   @ApiProperty()
-  maxFiles?: number
+  maxFiles?: number | null
 
   @Column({
     type: DataType.ENUM,
     allowNull: true,
-    values: ['minutely', 'quarterly', 'halfHourly', 'hourly'],
+    values: Object.values(TimeIntervals),
   })
-  @ApiProperty({ enum: TimeInterval })
-  timeInterval?: TimeInterval
+  @ApiProperty({ enum: TimeIntervals })
+  timeInterval?: string | null
 
   @ForeignKey(() => Input)
   @Column({

@@ -3,14 +3,18 @@ import {
   Controller,
   Post,
   Get,
+  Delete,
   Param,
   NotFoundException,
+  Put,
 } from '@nestjs/common'
 import { StepsService } from './steps.service'
 import { CreateStepDto } from './models/dto/createStep.dto'
 import { Step } from './models/step.model'
 import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
+import { UpdateStepDto } from './models/dto/updateStep.dto'
+import { StepDto } from './models/dto/step.dto'
 
 @ApiTags('steps')
 @Controller('steps')
@@ -43,5 +47,18 @@ export class StepsController {
     }
 
     return step
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<void> {
+    return this.stepsService.delete(id)
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id') id: string,
+    @Body() updateStepDto: UpdateStepDto,
+  ): Promise<StepDto> {
+    return await this.stepsService.update(id, updateStepDto)
   }
 }

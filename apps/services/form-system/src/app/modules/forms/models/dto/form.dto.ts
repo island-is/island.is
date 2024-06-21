@@ -7,6 +7,7 @@ import { Input } from '../../../inputs/models/input.model'
 import { StepDto } from '../../../steps/models/dto/step.dto'
 import { Step } from '../../../steps/models/step.model'
 import { ApiProperty } from '@nestjs/swagger'
+import { FormTestimonyTypeDto } from '../../../testimonies/dto/formTestimonyType.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -42,8 +43,11 @@ export class FormDto {
   @ApiProperty({ type: LanguageType })
   completedMessage?: LanguageType
 
+  @ApiProperty({ type: [FormTestimonyTypeDto] })
+  testimonyTypes?: FormTestimonyTypeDto[]
+
   @ApiProperty({ type: [FormApplicantDto] })
-  formApplicants?: FormApplicantDto[]
+  applicants?: FormApplicantDto[]
 
   @ApiProperty({ type: [StepDto] })
   steps?: StepDto[]

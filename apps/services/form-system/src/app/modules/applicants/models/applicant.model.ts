@@ -8,7 +8,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApplicantType } from '../../../enums/applicantType.enum'
+import { ApplicantTypes } from '../../../enums/applicantTypes'
 
 @Table({ tableName: 'applicants' })
 export class Applicant extends Model<Applicant> {
@@ -87,9 +87,9 @@ export class Applicant extends Model<Applicant> {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: [''],
-    defaultValue: ApplicantType.individual,
+    values: Object.values(ApplicantTypes),
+    defaultValue: ApplicantTypes.INDIVIDUAL,
   })
-  @ApiProperty({ enum: ApplicantType })
-  applicantType!: ApplicantType
+  @ApiProperty({ enum: ApplicantTypes })
+  applicantType!: string
 }

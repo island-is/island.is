@@ -8,11 +8,10 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApplicantType } from '../../../enums/applicantType.enum'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Form } from '../../forms/models/form.model'
 import { CreationOptional } from 'sequelize'
-import { ApplicantTypes } from './applicantTypes'
+import { ApplicantTypes } from '../../../enums/applicantTypes'
 
 @Table({ tableName: 'form_applicants' })
 export class FormApplicant extends Model<FormApplicant> {

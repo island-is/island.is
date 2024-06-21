@@ -13,7 +13,7 @@ import {
 import { Group } from '../../groups/models/group.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { InputType } from './inputType.model'
-import { InputSettings } from './inputSettings.model'
+import { InputSettings } from '../../inputSettings/models/inputSettings.model'
 
 @Table({ tableName: 'inputs' })
 export class Input extends Model<Input> {

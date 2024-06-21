@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Delete,
   NotFoundException,
   Param,
   Post,
@@ -22,14 +23,14 @@ export class FormsController {
   @Post()
   @Documentation({
     description: 'Create new form',
-    response: { status: 200, type: FormDto },
+    response: { status: 200, type: FormResponse },
   })
-  async create(@Body() createFormDto: CreateFormDto): Promise<FormDto> {
-    const formDto = await this.formsService.create(createFormDto)
-    if (!formDto) {
-      throw new Error('bla')
+  async create(@Body() createFormDto: CreateFormDto): Promise<FormResponse> {
+    const formResponse = await this.formsService.create(createFormDto)
+    if (!formResponse) {
+      throw new Error('Error')
     }
-    return formDto
+    return formResponse
   }
 
   @Get('organization/:organizationId')
@@ -55,5 +56,10 @@ export class FormsController {
     }
 
     return formResponse
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: string): Promise<void> {
+    return this.formsService.delete(id)
   }
 }

@@ -41,6 +41,7 @@ module.exports = {
           },
           step_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: false,
             references: {
               model: 'steps',

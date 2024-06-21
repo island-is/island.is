@@ -9,9 +9,9 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { ApplicantType } from '../../../enums/applicantType.enum'
 import { Organization } from '../../organizations/models/organization.model'
 import { CreationOptional } from 'sequelize'
+import { ApplicantTypes } from '../../../enums/applicantTypes'
 
 @Table({ tableName: 'applicant_type_name_suggestions' })
 export class ApplicantTypeNameSuggestion extends Model<ApplicantTypeNameSuggestion> {
@@ -43,11 +43,11 @@ export class ApplicantTypeNameSuggestion extends Model<ApplicantTypeNameSuggesti
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: [''],
-    defaultValue: ApplicantType.individual,
+    values: Object.values(ApplicantTypes),
+    defaultValue: ApplicantTypes.INDIVIDUAL,
   })
-  @ApiProperty({ enum: ApplicantType })
-  applicantType!: ApplicantType
+  @ApiProperty({ enum: ApplicantTypes })
+  applicantType!: string
 
   @ForeignKey(() => Organization)
   @Column({

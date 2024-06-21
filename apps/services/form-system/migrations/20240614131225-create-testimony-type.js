@@ -30,7 +30,7 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          testimony_type: {
+          type: {
             type: Sequelize.DataTypes.ENUM(
               'estateGuardianshipCertificateStamped',
               'estateGuardianshipCertificateUnstamped',

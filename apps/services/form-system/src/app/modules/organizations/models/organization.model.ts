@@ -14,6 +14,8 @@ import { Form } from '../../forms/models/form.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
 import { InputType } from '../../inputs/models/inputType.model'
+import { TestimonyType } from '../../testimonies/models/testimonyType.model'
+import { ListType } from '../../lists/models/listType.model'
 
 @Table({ tableName: 'organizations' })
 export class Organization extends Model<Organization> {
@@ -65,15 +67,17 @@ export class Organization extends Model<Organization> {
   })
   organizationInputTypes?: NonAttribute<InputType[]>
 
-  // @HasMany(() => InputType)
-  // @ApiProperty()
-  // inputTypes?: InputType[]
+  @BelongsToMany(() => TestimonyType, {
+    through: 'organization_testimony_types',
+    foreignKey: 'organization_id',
+    otherKey: 'testimony_type_id',
+  })
+  organizationTestimonyTypes?: NonAttribute<TestimonyType[]>
 
-  // @HasMany(() => DocumentType)
-  // @ApiProperty()
-  // documentTypes?: DocumentType[]
-
-  // @HasMany(() => ListType)
-  // @ApiProperty()
-  // listTypes?: ListType[]
+  @BelongsToMany(() => ListType, {
+    through: 'organization_list_types',
+    foreignKey: 'organization_id',
+    otherKey: 'list_type_id',
+  })
+  organizationListTypes?: NonAttribute<ListType[]>
 }
