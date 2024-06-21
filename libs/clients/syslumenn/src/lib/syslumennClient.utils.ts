@@ -479,12 +479,14 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
     availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
   }
 }
+
 export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
   return {
     name: licence.nafn,
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
     office: licence.embaetti,
+    nationalId: licence.kennitala,
   }
 }
 

@@ -3322,6 +3322,9 @@
         "nafn": {
           "type": "string"
         },
+        "kennitala": {
+          "type": "string"
+        },
         "idngrein": {
           "type": "string"
         },

@@ -115,6 +115,7 @@ const MasterList = ({ slice }: MasterListProps) => {
           n('csvHeaderMasterLicenceName', 'Nafn') as string,
           n('csvHeaderMasterLicenseProfession', 'Iðngrein') as string,
           n('csvHeaderMasterLicenceDateOfPublication', 'Útgáfuár') as string,
+          n('csvHeaderMasterLicenceNationalId', 'Kennitala') as string,
         ]
         const dataRows = []
         for (const licence of licences) {
@@ -124,6 +125,7 @@ const MasterList = ({ slice }: MasterListProps) => {
             licence.dateOfPublication // Útgáfuár
               ? format(new Date(licence.dateOfPublication), 'yyyy')
               : '',
+            licence.nationalId ?? '', // Kennitala
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -267,8 +269,9 @@ const MasterList = ({ slice }: MasterListProps) => {
                 <T.Row>
                   <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
                   <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
+                  <T.HeadData>{n('dateOfPublication', 'Útgáfuár')}</T.HeadData>
                   <T.HeadData align="right">
-                    {n('dateOfPublication', 'Útgáfuár')}
+                    {n('nationalId', 'Kennitala')}
                   </T.HeadData>
                 </T.Row>
               </T.Head>
@@ -300,6 +303,11 @@ const MasterList = ({ slice }: MasterListProps) => {
                               </Text>
                             </Box>
                           )}
+                        </T.Data>
+                        <T.Data>
+                          <Box>
+                            <Text variant="small">{licences.nationalId}</Text>
+                          </Box>
                         </T.Data>
                       </T.Row>
                     )

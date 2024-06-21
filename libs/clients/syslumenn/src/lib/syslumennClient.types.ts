@@ -353,6 +353,7 @@ export interface MasterLicence {
   dateOfPublication?: Date
   profession?: string
   office?: string
+  nationalId?: string
 }
 
 export interface JourneymanLicence {
