@@ -55,7 +55,6 @@ export class SubpoenaResponse {
     const hasChosenDefense = defendantInfo?.defenderChoice !== undefined
     const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
     const hasDefender = defendantInfo?.defenderName !== undefined
-
     const defenseValue = waivedRight
       ? t.waiveRightToCounsel
       : hasDefender
@@ -65,7 +64,6 @@ export class SubpoenaResponse {
     const subpoenaDateLog = internalCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
-
     const arraignmentDate = subpoenaDateLog?.date ?? ''
     const subpoenaCreatedDate = subpoenaDateLog?.created ?? ''
 
