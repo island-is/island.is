@@ -60,9 +60,15 @@ export const AdditionalHeir = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
+  // Advocate
   const advocateField = `${fieldIndex}.advocate`
   const advocatePhoneField = `${advocateField}.phone`
   const advocateEmailField = `${advocateField}.email`
+
+  // Advocate 2
+  const advocateField2 = `${fieldIndex}.advocate2`
+  const advocatePhoneField2 = `${advocateField2}.phone`
+  const advocateEmailField2 = `${advocateField2}.email`
 
   const foreignCitizenship = useWatch({
     name: `${fieldIndex}.foreignCitizenship`,
@@ -300,7 +306,27 @@ export const AdditionalHeir = ({
           )
         })}
       </GridRow>
-
+      <GridRow>
+        <GridColumn span="1/1" paddingBottom={3}>
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
+            />
+          </Box>
+        </GridColumn>
+      </GridRow>
       {/* ADVOCATE */}
       {(currentHeir?.nationalId || hasForeignCitizenship) && requiresAdvocate && (
         <Box
@@ -353,27 +379,58 @@ export const AdditionalHeir = ({
           </GridRow>
         </Box>
       )}
-      <GridRow>
-        <GridColumn span="1/1" paddingBottom={2}>
-          <Box width="half">
-            <CheckboxController
-              key={foreignCitizenshipField}
-              id={foreignCitizenshipField}
-              name={foreignCitizenshipField}
-              defaultValue={field?.foreignCitizenship || []}
-              options={[
-                {
-                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                  value: YES,
-                },
-              ]}
-              onSelect={(val) => {
-                setValue(foreignCitizenshipField, val)
-              }}
-            />
-          </Box>
-        </GridColumn>
-      </GridRow>
+      {/* ADVOCATE 2 */}
+      {(currentHeir?.nationalId || hasForeignCitizenship) && requiresAdvocate && (
+        <Box
+          marginTop={2}
+          marginBottom={2}
+          paddingY={5}
+          paddingX={7}
+          borderRadius="large"
+          border="standard"
+        >
+          <GridRow>
+            <GridColumn span={['1/1']} paddingBottom={2}>
+              <Text variant="h4">
+                {formatMessage(m.inheritanceAdvocateLabel)}
+              </Text>
+            </GridColumn>
+            <GridColumn span={['1/1']} paddingBottom={2}>
+              <LookupPerson
+                nested
+                field={{
+                  id: `${fieldIndex}.advocate2`,
+                }}
+                backgroundColor="blue"
+                error={error}
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={advocatePhoneField2}
+                name={advocatePhoneField2}
+                label={formatMessage(m.phone)}
+                backgroundColor="blue"
+                format="###-####"
+                error={(error?.advocate2 as unknown as ErrorValue)?.phone}
+                size="sm"
+                required
+              />
+            </GridColumn>
+            <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+              <InputController
+                id={advocateEmailField2}
+                name={advocateEmailField2}
+                label={formatMessage(m.email)}
+                backgroundColor="blue"
+                error={(error?.advocate2 as unknown as ErrorValue)?.email}
+                size="sm"
+                required
+              />
+            </GridColumn>
+          </GridRow>
+        </Box>
+      )}
     </Box>
   )
 }
