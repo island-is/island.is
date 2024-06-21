@@ -68,6 +68,7 @@ export enum ApplicationTypes {
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
+  NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
 }
 
 export const ApplicationConfigurations = {
@@ -350,5 +351,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',
     translation: 'sr.application',
+  },
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
+    slug: 'nyr-grunnskoli',
+    translation: ['dess.nps.application', 'uiForms.application'],
   },
 }

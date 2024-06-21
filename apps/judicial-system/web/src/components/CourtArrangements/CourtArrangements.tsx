@@ -1,4 +1,4 @@
-import React, { SetStateAction, useEffect, useState } from 'react'
+import React, { FC, SetStateAction, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 
@@ -28,22 +28,39 @@ interface Props {
   blueBox?: boolean
   dateTimeDisabled?: boolean
   courtRoomDisabled?: boolean
+  courtRoomRequired?: boolean
 }
+
+type DateLogKey = keyof Pick<Case, 'arraignmentDate' | 'courtDate'>
 
 export const useCourtArrangements = (
   workingCase: Case,
   setWorkingCase: (value: SetStateAction<Case>) => void,
-  dateKey: keyof Pick<Case, 'arraignmentDate' | 'courtDate'>,
+  dateKey: DateLogKey,
 ) => {
   const { setAndSendCaseToServer } = useCase()
+  const [original, setOriginal] =
+    useState<[DateLogKey, DateLog | undefined | null]>()
   const [courtDate, setCourtDate] = useState<DateLog | null>()
   const [courtDateHasChanged, setCourtDateHasChanged] = useState(false)
 
   useEffect(() => {
+    if (
+      original &&
+      original[0] === dateKey &&
+      original[1]?.date === workingCase[dateKey]?.date &&
+      original[1]?.location === workingCase[dateKey]?.location
+    ) {
+      // Do not reset the court date if it has not changed
+      return
+    }
+
+    setOriginal([dateKey, workingCase[dateKey]])
+
     if (workingCase[dateKey]) {
       setCourtDate(workingCase[dateKey])
     }
-  }, [dateKey, workingCase])
+  }, [dateKey, original, workingCase])
 
   const handleCourtDateChange = (
     date: Date | undefined | null,
@@ -112,7 +129,7 @@ export const useCourtArrangements = (
   }
 }
 
-export const CourtArrangements: React.FC<Props> = (props) => {
+export const CourtArrangements: FC<Props> = (props) => {
   const {
     handleCourtDateChange,
     handleCourtRoomChange,
@@ -120,20 +137,9 @@ export const CourtArrangements: React.FC<Props> = (props) => {
     blueBox = true,
     dateTimeDisabled,
     courtRoomDisabled,
+    courtRoomRequired = false,
   } = props
   const { formatMessage } = useIntl()
-
-  const [courtRoomValue, setCourtRoomValue] = useState<string>('')
-
-  useEffect(() => {
-    if (courtDate?.location === null) {
-      setCourtRoomValue('')
-    }
-
-    if (courtDate?.location) {
-      setCourtRoomValue(courtDate.location)
-    }
-  }, [courtDate?.location])
 
   const renderCourtArrangements = () => (
     <>
@@ -153,15 +159,13 @@ export const CourtArrangements: React.FC<Props> = (props) => {
         name="courtroom"
         label={formatMessage(strings.courtRoomLabel)}
         autoComplete="off"
-        value={courtRoomValue}
+        value={courtDate?.location || ''}
         placeholder="Skráðu inn dómsal"
         onChange={(evt) => {
-          setCourtRoomValue(evt.target.value)
-        }}
-        onBlur={(evt) => {
           handleCourtRoomChange(evt.target.value)
         }}
         disabled={courtRoomDisabled}
+        required={courtRoomRequired}
       />
     </>
   )

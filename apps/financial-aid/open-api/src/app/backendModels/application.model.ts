@@ -13,6 +13,7 @@ import { ApiProperty } from '@nestjs/swagger'
 
 import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
+import { ChildrenBackendModel } from './children.model'
 import {
   AmountBackendModel,
   ApplicationFileBackendModel,

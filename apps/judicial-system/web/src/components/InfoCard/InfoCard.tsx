@@ -27,7 +27,7 @@ interface UniqueDefendersProps {
   defenders: Defender[]
 }
 
-interface DataSection {
+export interface DataSection {
   data: { title: string; value?: React.ReactNode }[]
 }
 
