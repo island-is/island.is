@@ -5,14 +5,13 @@ import {
   FamilyStatus,
 } from '@island.is/financial-aid/shared/lib'
 
-import { ChildrenModel } from './children.model'
 import {
   AmountModel,
   ApplicationFileModel,
   DirectTaxPaymentModel,
   StaffModel,
+  ChildrenModel,
 } from './index'
-import { ChildrenModel } from './children.model'
 
 @ObjectType()
 export class ApplicationModel {
