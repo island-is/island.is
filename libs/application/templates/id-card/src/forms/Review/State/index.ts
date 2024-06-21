@@ -49,20 +49,21 @@ export const StateSection = buildSection({
               `${Routes.APPLICANTSINFORMATION}.name`,
               '',
             ) as string
-            const heading = GetFormattedText(state.labels.actionCardTitle)
-            const description = GetFormattedText(
-              state.labels.actionCardDescription,
-            )
-            const label = GetFormattedText(state.labels.actionCardTag)
+            // const heading = GetFormattedText(state.labels.actionCardTitle)
+            // const description = GetFormattedText(
+            //   state.labels.actionCardDescription,
+            // )
+            // const label = GetFormattedText(state.labels.actionCardTag)
+            // TODO get a different way of rendering translation text
             return [
               {
-                heading: heading,
+                heading: state.labels.actionCardTitle.defaultMessage,
                 tag: {
-                  label: label,
+                  label: state.labels.actionCardTag.defaultMessage,
                   outlined: false,
                   variant: 'purple',
                 },
-                text: `${description} ${chosenApplicantName}`,
+                text: `${state.labels.actionCardDescription.defaultMessage} ${chosenApplicantName}`,
               },
             ]
           },

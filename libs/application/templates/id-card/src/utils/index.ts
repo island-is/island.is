@@ -1,5 +1,5 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-export * from './formatText'
+// export * from './formatText'
 export * from './getChosenApplicant'
 export * from './hasSecondGuardian'
 export * from './hasDiscount'

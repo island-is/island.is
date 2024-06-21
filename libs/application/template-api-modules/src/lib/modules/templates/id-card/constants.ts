@@ -1,10 +1,3 @@
-export enum PASSPORT_CHARGE_CODES {
-  REGULAR = 'AY105',
-  EXPRESS = 'AY106',
-  DISCOUNT_REGULAR = 'AY107',
-  DISCOUNT_EXPRESS = 'AY108',
-}
-
 export const YES = 'yes'
 export const NO = 'no'
 export type YesOrNo = 'yes' | 'no'
