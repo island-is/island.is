@@ -49,10 +49,6 @@ const OccupationalLicenseDetail = () => {
   const res = data?.occupationalLicenseV2
   const license = res?.license
 
-  const isOldEducationLicense =
-    license?.type === OccupationalLicenseV2LicenseType.EDUCATION &&
-    license?.validFrom < new Date('01.01.2020')
-
   return (
     <>
       <IntroHeader
@@ -61,7 +57,7 @@ const OccupationalLicenseDetail = () => {
         intro={res?.headerText ?? ''}
         serviceProviderSlug={license?.issuer as OrganizationSlugType}
       >
-        {res?.actions && !isOldEducationLicense && (
+        {res?.actions && (
           <Box paddingTop={3}>
             {
               <Inline space={1} collapseBelow="sm">
@@ -69,8 +65,6 @@ const OccupationalLicenseDetail = () => {
                   if (!a) {
                     return null
                   }
-                  //TEMP FIX
-
                   if (a.type === OccupationalLicensesV2LinkType.FILE) {
                     return (
                       <Button
@@ -116,13 +110,6 @@ const OccupationalLicenseDetail = () => {
         )}
       </IntroHeader>
       {error && !loading && <Problem noBorder={false} error={error} />}
-      {!error && !loading && isOldEducationLicense && (
-        <AlertMessage
-          type="warning"
-          title={'blingbolng'}
-          message={'parrappa'}
-        />
-      )}
       {!error && (loading || data?.occupationalLicenseV2) && (
         <StackWithBottomDivider space={2} box={{ marginTop: [2, 3, 6] }}>
           <UserInfoLine
