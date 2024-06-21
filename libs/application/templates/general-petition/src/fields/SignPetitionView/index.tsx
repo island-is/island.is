@@ -140,15 +140,13 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                           },
                         ]}
                       />
-                      <Box
-                        hidden={showName}
-                        marginBottom={[0, 4]}
-                        paddingLeft={[0, 5]}
-                      >
-                        <Text variant="eyebrow">
-                          {formatMessage(m.hideNameInfoText)}
-                        </Text>
-                      </Box>
+                      {!showName && (
+                        <Box marginBottom={[0, 4]} paddingLeft={[0, 5]}>
+                          <Text variant="eyebrow">
+                            {formatMessage(m.hideNameInfoText)}
+                          </Text>
+                        </Box>
+                      )}
                       <Box paddingLeft={[0, 5]}>
                         <Text variant="eyebrow">
                           {formatMessage(m.hideNameText)}
