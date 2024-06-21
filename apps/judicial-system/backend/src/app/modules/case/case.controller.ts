@@ -100,7 +100,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -109,7 +109,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -404,6 +404,12 @@ export class CaseController {
       case CaseTransition.REDISTRIBUTE:
         update.judgeId = null
         break
+      case CaseTransition.ASK_FOR_CANCELLATION:
+        if (theCase.indictmentDecision) {
+          throw new ForbiddenException(
+            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(

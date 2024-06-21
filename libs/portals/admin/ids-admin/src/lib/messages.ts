@@ -766,7 +766,8 @@ export const m = defineMessages({
   },
   isAccessControlledDescription: {
     id: 'ap.ids-admin:is-access-controlled-description',
-    defaultMessage: 'Only allow specific national ids',
+    defaultMessage:
+      'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
   },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
@@ -774,7 +775,8 @@ export const m = defineMessages({
   },
   grantToAuthenticatedUserDescription: {
     id: 'ap.ids-admin:grant-to-authenticated-user-description',
-    defaultMessage: 'Should the authenticated user get this scope',
+    defaultMessage:
+      'Should the authenticated individual get this scope (uncheck if only delegated users should be allowed).',
   },
   grantToProcuringHolders: {
     id: 'ap.ids-admin:grant-to-procuring-holders',
@@ -914,14 +916,6 @@ export const m = defineMessages({
     defaultMessage:
       'Allow users to sign into this application on behalf of disabled individuals according to permissions on an active personal representation contract at the Ministry of Social Affairs and Labour.',
   },
-  clientDelegationTypePersonalRepresentativefinanceName: {
-    id: 'ap.ids-admin:client-delegation-type-personal-representative-finance-name',
-    defaultMessage: 'Finance',
-  },
-  clientDelegationTypePersonalRepresentativehealthName: {
-    id: 'ap.ids-admin:client-delegation-type-personal-representative-health-name',
-    defaultMessage: 'Health',
-  },
   clientDelegationTypePersonalRepresentativepostholfName: {
     id: 'ap.ids-admin:client-delegation-type-personal-representative-postholf-name',
     defaultMessage: 'Documents (ísl. pósthólf)',
@@ -968,24 +962,6 @@ export const m = defineMessages({
   apiScopeDelegationProviderTalsmannagrunnurName: {
     id: 'ap.ids-admin:api-scope-delegation-provider-talsmannagrunnur-name',
     defaultMessage: 'Personal representatives',
-  },
-  apiScopeDelegationTypePersonalRepresentativefinanceName: {
-    id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-finance-name',
-    defaultMessage: 'Finance',
-  },
-  apiScopeDelegationTypePersonalRepresentativefinanceDescription: {
-    id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-finance-description',
-    defaultMessage:
-      'Should personal representatives automatically get this permission for their clients',
-  },
-  apiScopeDelegationTypePersonalRepresentativehealthName: {
-    id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-health-name',
-    defaultMessage: 'Health',
-  },
-  apiScopeDelegationTypePersonalRepresentativehealthDescription: {
-    id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-health-description',
-    defaultMessage:
-      'Should personal representatives automatically get this permission for their clients',
   },
   apiScopeDelegationTypePersonalRepresentativepostholfName: {
     id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-postholf-name',

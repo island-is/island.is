@@ -22,6 +22,8 @@ export enum Features {
   energyFunds = 'isEnergyFundsEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
   healthcareLicenseCertificate = 'isHealthcareLicenseCertificateEnabled',
+  healthcareWorkPermit = 'ishealthcareworkpermitenabled',
+  pensionSupplementApplication = 'isPensionSupplementEnable',
   transferOfMachineOwnership = 'isTransferOfMachineOwnershipEnabled',
   university = 'isUniversityEnabled',
   homeSupport = 'isHomeSupportEnabled',
@@ -32,6 +34,7 @@ export enum Features {
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
+  newPrimarySchool = 'isNewPrimarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -88,6 +91,10 @@ export enum Features {
   isDelegationNotificationEnabled = 'isDelegationNotificationEnabled',
 
   shouldSendEmailNotificationsToDelegations = 'shouldSendEmailNotificationsToDelegations',
+
+  // Single sign on passkeys
+  isPasskeyRegistrationEnabled = 'isPasskeyRegistrationEnabled',
+  isPasskeyAuthEnabled = 'isPasskeyAuthEnabled',
 }
 
 export enum ServerSideFeature {

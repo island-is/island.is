@@ -22,7 +22,10 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
@@ -44,7 +47,8 @@ const IndictmentOverview = () => {
     useState(false)
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id
+    workingCase.indictmentReviewer?.id === user?.id &&
+    Boolean(!workingCase.indictmentReviewDecision)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -89,7 +93,12 @@ const IndictmentOverview = () => {
         )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
-            <InfoCardClosedIndictment />
+            <InfoCardClosedIndictment
+              displayAppealExpirationInfo={
+                user?.role === UserRole.DEFENDER ||
+                workingCase.indictmentReviewer?.id === user?.id
+              }
+            />
           ) : (
             <InfoCardActiveIndictment />
           )}

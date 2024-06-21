@@ -101,8 +101,26 @@ export class FileService {
       return true
     }
 
+    if (
+      isIndictmentCase(theCase.type) &&
+      file.category === CaseFileCategory.INDICTMENT
+    ) {
+      // The file may have been confirmed
+      return this.awsS3Service
+        .deleteConfirmedIndictmentCaseObject(theCase.type, file.key)
+        .catch((reason) => {
+          // Tolerate failure, but log what happened
+          this.logger.error(
+            `Could not delete confirmed file ${file.id} of case ${file.caseId} from AWS S3`,
+            { reason },
+          )
+
+          return false
+        })
+    }
+
     return this.awsS3Service
-      .deleteObject(theCase.type, theCase.state, file.key)
+      .deleteObject(theCase.type, file.key)
       .catch((reason) => {
         // Tolerate failure, but log what happened
         this.logger.error(
@@ -118,7 +136,6 @@ export class FileService {
     let courtDocumentFolder: CourtDocumentFolder
 
     switch (file.category) {
-      case CaseFileCategory.COVER_LETTER:
       case CaseFileCategory.INDICTMENT:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:
@@ -168,6 +185,7 @@ export class FileService {
         createConfirmedIndictment(
           {
             actor: user.name,
+            title: user.title,
             institution: user.institution?.name ?? '',
             date: confirmationEvent.created,
           },
@@ -199,9 +217,8 @@ export class FileService {
       hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
       file.category === CaseFileCategory.INDICTMENT
     ) {
-      return this.awsS3Service.getConfirmedObject(
+      return this.awsS3Service.getConfirmedIndictmentCaseObject(
         theCase.type,
-        theCase.state,
         file.key,
         !file.hash,
         (content: Buffer) =>
@@ -209,7 +226,7 @@ export class FileService {
       )
     }
 
-    return this.awsS3Service.getObject(theCase.type, theCase.state, file.key)
+    return this.awsS3Service.getObject(theCase.type, file.key)
   }
 
   private async throttleUpload(
@@ -253,7 +270,7 @@ export class FileService {
     return caseFile
   }
 
-  createPresignedPost(
+  async createPresignedPost(
     theCase: Case,
     createPresignedPost: CreatePresignedPostDto,
   ): Promise<PresignedPost> {
@@ -262,7 +279,7 @@ export class FileService {
     const key = `${theCase.id}/${uuid()}/${fileName}`
 
     return this.awsS3Service
-      .createPresignedPost(theCase.type, theCase.state, key, type)
+      .createPresignedPost(theCase.type, key, type)
       .then((presignedPost) => ({
         ...presignedPost,
         key,
@@ -323,11 +340,7 @@ export class FileService {
       throw new NotFoundException(`File ${file.id} does not exist in AWS S3`)
     }
 
-    const exists = await this.awsS3Service.objectExists(
-      theCase.type,
-      theCase.state,
-      file.key,
-    )
+    const exists = await this.awsS3Service.objectExists(theCase.type, file.key)
 
     if (!exists) {
       // Fire and forget, no need to wait for the result
@@ -347,9 +360,8 @@ export class FileService {
       hasIndictmentCaseBeenSubmittedToCourt(theCase.state) &&
       file.category === CaseFileCategory.INDICTMENT
     ) {
-      return this.awsS3Service.getConfirmedSignedUrl(
+      return this.awsS3Service.getConfirmedIndictmentCaseSignedUrl(
         theCase.type,
-        theCase.state,
         file.key,
         !file.hash,
         (content: Buffer) =>
@@ -358,12 +370,7 @@ export class FileService {
       )
     }
 
-    return this.awsS3Service.getSignedUrl(
-      theCase.type,
-      theCase.state,
-      file.key,
-      timeToLive,
-    )
+    return this.awsS3Service.getSignedUrl(theCase.type, file.key, timeToLive)
   }
 
   async getCaseFileSignedUrl(
@@ -478,24 +485,6 @@ export class FileService {
 
       return Promise.all(updates)
     })
-  }
-
-  async archive(theCase: Case, file: CaseFile): Promise<boolean> {
-    if (!file.key) {
-      return true
-    }
-
-    return this.awsS3Service
-      .archiveObject(theCase.type, theCase.state, file.key)
-      .then(() => true)
-      .catch((reason) => {
-        this.logger.error(
-          `Failed to archive file ${file.id} of case ${file.caseId}`,
-          { reason },
-        )
-
-        return false
-      })
   }
 
   resetCaseFileStates(caseId: string, transaction: Transaction) {

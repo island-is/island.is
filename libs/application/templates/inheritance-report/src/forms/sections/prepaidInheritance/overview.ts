@@ -22,7 +22,7 @@ export const prepaidOverview = buildSubSection({
   title: m.overview,
   children: [
     buildMultiField({
-      id: 'heirsOverview',
+      id: 'prepaidOverview',
       title: m.overviewHeirsTitle,
       description: m.overviewHeirsDescription,
       children: [
@@ -52,7 +52,7 @@ export const prepaidOverview = buildSubSection({
           title: '',
           id: 'overviewHeirs',
           doesNotRequireAnswer: true,
-          component: 'HeirsOverview',
+          component: 'OverviewHeirs',
         }),
         buildDividerField({}),
         buildDescriptionField({

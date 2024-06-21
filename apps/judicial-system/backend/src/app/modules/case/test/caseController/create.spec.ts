@@ -98,6 +98,7 @@ describe('CaseController - Create', () => {
           ...createProperties,
           type: CaseType.CUSTODY,
           origin: CaseOrigin.RVG,
+          state: CaseState.NEW,
           creatingProsecutorId: userId,
           prosecutorId: userId,
           courtId,

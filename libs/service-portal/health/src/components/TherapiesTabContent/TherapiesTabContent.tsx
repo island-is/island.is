@@ -14,6 +14,7 @@ import { formatNumberToString } from '../../utils/format'
 import { TherapyStatus } from '../../utils/constants'
 import { RightsPortalTherapy } from '@island.is/api/schema'
 import { Problem } from '@island.is/react-spa/shared'
+import { CONTENT_GAP, CONTENT_GAP_SM } from '../../screens/Medicine/constants'
 interface Props {
   data: RightsPortalTherapy[]
   link?: string
@@ -93,7 +94,7 @@ export const TherapiesTabContent = ({
           />
         </Box>
       )}
-      <Stack space={2}>
+      <Stack space={CONTENT_GAP_SM}>
         <UserInfoLine
           title={formatMessage(messages.informationAboutStatus)}
           label={formatMessage(messages.timePeriod)}
