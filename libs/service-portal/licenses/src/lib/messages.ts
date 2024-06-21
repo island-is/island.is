@@ -99,157 +99,13 @@ export const m = defineMessages({
     id: 'sp.license:ehic',
     defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
-  name: {
-    id: 'sp.license:name',
-    defaultMessage: 'Heiti',
-  },
-  type: {
-    id: 'sp.license:type',
-    defaultMessage: 'Tegund',
-  },
-  tanks: {
-    id: 'sp.license:tanks',
-    defaultMessage: 'Tankar',
-  },
-  teach: {
-    id: 'sp.license:teach',
-    defaultMessage: 'Kenna',
-  },
-  number: {
-    id: 'sp.license:number',
-    defaultMessage: 'Númer',
-  },
-  caliber: {
-    id: 'sp.license:caliber',
-    defaultMessage: 'Hlaupvídd',
-  },
-  comments: {
-    id: 'sp.license:comments',
-    defaultMessage: 'Athugasemdir',
-  },
-  control: {
-    id: 'sp.license:control',
-    defaultMessage: 'Stjórna',
-  },
-  validTo: {
-    id: 'sp.license:valid-to',
-    defaultMessage: 'Gildir til',
-  },
-  category: {
-    id: 'sp.license:category',
-    defaultMessage: 'Flokkur',
-  },
-  fullName: {
-    id: 'sp.license:full-name',
-    defaultMessage: 'Fullt nafn',
-  },
-  publisher: {
-    id: 'sp.license:publisher',
-    defaultMessage: 'Útgefandi',
-  },
-  seeRights: {
-    id: 'sp.license:see-rights',
-    defaultMessage: 'Sjá réttindi',
-  },
-  cardNumber: {
-    id: 'sp.license:card-number',
-    defaultMessage: 'Númer korts',
-  },
-  expiryDate: {
-    id: 'sp.license:expiry-date',
-    defaultMessage: 'Lokadagur',
-  },
-  limitation: {
-    id: 'sp.license:limitation',
-    defaultMessage: 'Takmarkanir',
-  },
-  nationalId: {
-    id: 'sp.license:national-id',
-    defaultMessage: 'Kennitala',
-  },
-  personName: {
-    id: 'sp.license:person-name',
-    defaultMessage: 'Nafn einstaklings',
-  },
-  downloadCard: {
-    id: 'sp.license:download-card',
-    defaultMessage: 'Hlaða niður korti',
-  },
-  legalAddress: {
-    id: 'sp.license:legal-address',
-    defaultMessage: 'Lögheimili',
-  },
-  placeOfIssue: {
-    id: 'sp.license:place-of-issue',
-    defaultMessage: 'Útgáfustaður',
-  },
-  countryNumber: {
-    id: 'sp.license:country-number',
-    defaultMessage: 'Landsnúmer',
-  },
-  firearmStatus: {
-    id: 'sp.license:firearm-status',
-    defaultMessage: 'Staða skotvopns',
-  },
-  publishedDate: {
-    id: 'sp.license:published-date',
-    defaultMessage: 'Útgáfudagur',
-  },
-  validDuration: {
-    id: 'sp.license:valid-duration',
-    defaultMessage: 'Gildistími',
-  },
-  otherThanTanks: {
-    id: 'sp.license:other-than-tanks',
-    defaultMessage: 'Annað en í tanki',
-  },
-  applyForNewCard: {
-    id: 'sp.license:apply-for-new-card',
-    defaultMessage: 'Sækja um nýtt kort',
-  },
-  classesOfRights: {
-    id: 'sp.license:classes-of-rights',
-    defaultMessage: 'Réttindaflokkar',
-  },
-  basicInfoLicense: {
-    id: 'sp.license:basic-info-license',
-    defaultMessage: 'Grunnupplýsingar skírteinis',
-  },
-  firearmProperties: {
-    id: 'sp.license:firearm-properties',
-    defaultMessage: 'Skotvopn í eigu leyfishafa',
-  },
-  firstPublishedDate: {
-    id: 'sp.license:first-published-date',
-    defaultMessage: 'Fyrsti útgáfudagur',
-  },
-  renewDrivingLicense: {
-    id: 'sp.license:renew-driving-license',
-    defaultMessage: 'Endurnýja ökuskírteini',
-  },
-  renewFirearmLicense: {
-    id: 'sp.license:renew-firearm-license',
-    defaultMessage: 'Endurnýja skotvopnaleyfi',
-  },
-  renewHuntingLicense: {
-    id: 'sp.license:renew-hunting-license',
-    defaultMessage: 'Endurnýja veiðikort',
-  },
   drivingLicenseNumber: {
     id: 'sp.license:driving-license-number',
-    defaultMessage: 'Ökuskírteinisnúmer',
+    defaultMessage: 'Númer ökuskírteinis',
   },
-  huntingPermitBenefits: {
-    id: 'sp.license:hunting-permit-benefits',
-    defaultMessage: 'Hlunnindajarðir',
-  },
-  huntingPermitValidFor: {
-    id: 'sp.license:hunting-permit-valid-for',
-    defaultMessage: 'Kortið gildir fyrir veiðar á',
-  },
-  collectorLicenseValidTo: {
-    id: 'sp.license:collector-license-valid-to',
-    defaultMessage: 'Safnaraskírteini gildir til',
+  renewDrivingLicense: {
+    id: 'sp.license:renew-license',
+    defaultMessage: 'Endurnýja ökuskírteini',
   },
   ehicDescription: {
     id: 'sp.license:ehic-description',
@@ -479,9 +335,5 @@ export const m = defineMessages({
   applyPassportUrl: {
     id: 'sp.license:url-apply-passport',
     defaultMessage: 'https://island.is/vegabref',
-  },
-  aoshTitle: {
-    id: 'sp.license:aosh-title',
-    defaultMessage: 'Vinnueftirlitið',
   },
 })
