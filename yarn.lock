@@ -11368,7 +11368,7 @@ __metadata:
     react-intl: 5.20.12
     react-native: 0.74.2
     react-native-app-auth: 7.2.0
-    react-native-blob-util: 0.16.4
+    react-native-blob-util: 0.19.9
     react-native-code-push: 8.2.2
     react-native-device-info: 10.3.0
     react-native-dialogs: 1.1.2
@@ -11380,7 +11380,7 @@ __metadata:
     react-native-navigation: 7.40.0
     react-native-navigation-hooks: 6.3.0
     react-native-passkit-wallet: 0.1.6
-    react-native-pdf: 6.6.2
+    react-native-pdf: 6.7.5
     react-native-quick-actions: 0.3.13
     react-native-share: 7.1.1
     react-native-spotlight-search: 2.0.0
@@ -26573,7 +26573,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"crypto-js@npm:^3.1.9-1, crypto-js@npm:^3.2.0":
+"crypto-js@npm:^3.1.9-1":
   version: 3.3.0
   resolution: "crypto-js@npm:3.3.0"
   checksum: 193923143a4784b2f974366068d96fe8280168fd3fef2bfea9551a5c3e32096f5a8fa49ff4eeb5bd0b9716d325618d38cfbe6125e359a4ef488fbca93e600824
@@ -32615,6 +32615,22 @@ __metadata:
   bin:
     glob: dist/esm/bin.mjs
   checksum: 5d33c686c80bf6877f4284adf99a8c3cbb2a6eccbc92342943fe5d4b42c01d78c1881f2223d950c92a938d0f857e12e37b86a8e5483ab2141822e053b67d0dde
+  languageName: node
+  linkType: hard
+
+"glob@npm:^10.3.10":
+  version: 10.4.2
+  resolution: "glob@npm:10.4.2"
+  dependencies:
+    foreground-child: ^3.1.0
+    jackspeak: ^3.1.2
+    minimatch: ^9.0.4
+    minipass: ^7.1.2
+    package-json-from-dist: ^1.0.0
+    path-scurry: ^1.11.1
+  bin:
+    glob: dist/esm/bin.mjs
+  checksum: bd7c0e30701136e936f414e5f6f82c7f04503f01df77408f177aa584927412f0bde0338e6ec541618cd21eacc57dde33e7b3c6c0a779cc1c6e6a0e14f3d15d9b
   languageName: node
   linkType: hard
 
@@ -42919,6 +42935,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"package-json-from-dist@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "package-json-from-dist@npm:1.0.0"
+  checksum: ac706ec856a5a03f5261e4e48fa974f24feb044d51f84f8332e2af0af04fbdbdd5bbbfb9cbbe354190409bc8307c83a9e38c6672c3c8855f709afb0006a009ea
+  languageName: node
+  linkType: hard
+
 "packet-reader@npm:1.0.0":
   version: 1.0.0
   resolution: "packet-reader@npm:1.0.0"
@@ -45611,16 +45634,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-blob-util@npm:0.16.4":
-  version: 0.16.4
-  resolution: "react-native-blob-util@npm:0.16.4"
+"react-native-blob-util@npm:0.19.9":
+  version: 0.19.9
+  resolution: "react-native-blob-util@npm:0.19.9"
   dependencies:
     base-64: 0.1.0
-    glob: ^7.2.3
+    glob: ^10.3.10
   peerDependencies:
     react: "*"
     react-native: "*"
-  checksum: 9458e0dbbd8d88988dbd9beecfd3555a66b771b14865024db530cc622848793031bbea008d2dd70f7df2e308b30a0e4f1329a0853a3756ea07dbb7adc61b5d59
+  checksum: 1bb315965cabc9858f022d54da998a9d312b731f21da3e04783a593a10a41d8aa37c479b91e4deaae180b751472823ea524c4c74b3a16ed359b66a3a9e284d09
   languageName: node
   linkType: hard
 
@@ -45769,13 +45792,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-pdf@npm:6.6.2":
-  version: 6.6.2
-  resolution: "react-native-pdf@npm:6.6.2"
+"react-native-pdf@npm:6.7.5":
+  version: 6.7.5
+  resolution: "react-native-pdf@npm:6.7.5"
   dependencies:
-    crypto-js: ^3.2.0
+    crypto-js: 4.2.0
     deprecated-react-native-prop-types: ^2.3.0
-  checksum: e2e5cd19e7b429ed9bb35d7860fe2e2fe607f4643e2b9ad89c322f2fc586ef94ad1e8b4e4589f0b5351d2af4e601907dd1dbba3c55afb705813b1454ee70fa72
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+    react-native-blob-util: ">=0.13.7"
+  checksum: fa07d2e972efd0fd4f8b8d061ffbc63306766e4f792855f7010fc28814692c62b7ab942777b914a4d471a45044013793a854357fab19740596ad64034832f368
   languageName: node
   linkType: hard
 

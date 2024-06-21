@@ -1183,7 +1183,7 @@ PODS:
   - react-native-app-auth (7.2.0):
     - AppAuth (>= 1.7.3)
     - React-Core
-  - react-native-blob-util (0.16.4):
+  - react-native-blob-util (0.19.9):
     - React-Core
   - react-native-cookies (6.2.1):
     - React-Core
@@ -1194,7 +1194,7 @@ PODS:
     - React-Core
   - react-native-passkit-wallet (0.1.6):
     - React
-  - react-native-pdf (6.6.2):
+  - react-native-pdf (6.7.5):
     - React-Core
   - react-native-progress-bar-android (1.0.5):
     - React
@@ -1901,12 +1901,12 @@ SPEC CHECKSUMS:
   React-logger: 29fa3e048f5f67fe396bc08af7606426d9bd7b5d
   React-Mapbuffer: bf56147c9775491e53122a94c423ac201417e326
   react-native-app-auth: 63fa4e58c5bd29aeb974d3a06a23c5858322d533
-  react-native-blob-util: 60453b777610c87a22b3524032c0214e8db555db
+  react-native-blob-util: 18b510205c080a453574a7d2344d64673d0ad9af
   react-native-cookies: f54fcded06bb0cda05c11d86788020b43528a26c
   react-native-mmkv-storage: cfb6854594cfdc5f7383a9e464bb025417d1721c
   react-native-netinfo: bdb108d340cdb41875c9ced535977cac6d2ff321
   react-native-passkit-wallet: bd06b26f147016c352013a75271dd22cc11514df
-  react-native-pdf: 33c622cbdf776a649929e8b9d1ce2d313347c4fa
+  react-native-pdf: 103940c90d62adfd259f63cca99c7c0c306b514c
   react-native-progress-bar-android: 092e6a794f158642692f25c8839d9aa8eb779afb
   react-native-progress-view: 9e6b6a5305a9115c2157ae3b8852081aba0aab7c
   react-native-spotlight-search: a42542a7818d20f8d815b38436be538e85755330
