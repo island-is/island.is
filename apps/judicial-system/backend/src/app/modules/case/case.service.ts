@@ -652,13 +652,8 @@ export class CaseService {
       }))
 
     const caseFilesCategories = isTrafficViolationCase(theCase)
-      ? [
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-        ]
+      ? [CaseFileCategory.CRIMINAL_RECORD, CaseFileCategory.COST_BREAKDOWN]
       : [
-          CaseFileCategory.COVER_LETTER,
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
@@ -796,19 +791,24 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
+    const messages: CaseMessage[] = [
       {
         type: MessageType.NOTIFICATION,
         user,
         caseId: theCase.id,
         body: { type: NotificationType.RULING },
       },
-      {
+    ]
+
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
         type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
         user,
         caseId: theCase.id,
-      },
-    ])
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForModifiedCaseToQueue(

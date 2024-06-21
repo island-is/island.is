@@ -47,7 +47,8 @@ const IndictmentOverview = () => {
     useState(false)
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id
+    workingCase.indictmentReviewer?.id === user?.id &&
+    Boolean(!workingCase.indictmentReviewDecision)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
