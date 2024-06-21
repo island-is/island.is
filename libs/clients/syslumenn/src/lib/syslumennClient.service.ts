@@ -579,7 +579,7 @@ export class SyslumennService {
 
   async getJourneymanLicences() {
     const { id, api } = await this.createApi()
-    const res = await api.meistaraleyfiGet({
+    const res = await api.sveinsbrefGet({
       audkenni: id,
     })
     return res
