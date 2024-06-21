@@ -180,7 +180,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
           title={n('errorTitle', 'Villa')}
           message={n(
             'errorMessage',
-            'Ekki tókst að sækja lista yfir meistarabréfin.',
+            'Ekki tókst að sækja lista yfir sveinsbréfin.',
           )}
           type="error"
         />
@@ -238,7 +238,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                       'csvButtonLabelError',
                       'Ekki tókst að sækja leyfi, reyndu aftur',
                     )}
-                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Meistarabréf')}
+                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Sveinslisti')}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
