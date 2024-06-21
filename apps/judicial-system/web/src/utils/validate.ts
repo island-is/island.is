@@ -8,8 +8,10 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseType,
   DefenderChoice,
+  IndictmentDecision,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -421,7 +423,7 @@ export const isSubpoenaStepValid = (
         courtDate ?? workingCase.arraignmentDate?.date,
         ['empty', 'date-format'],
       ],
-      [courtRoom, ['empty']],
+      [courtRoom ?? workingCase.arraignmentDate?.location, ['empty']],
     ]).isValid &&
     Boolean(
       workingCase.defendants?.every((defendant) => defendant.subpoenaType),
@@ -446,8 +448,20 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 }
 
 export const isConclusionStepValid = (workingCase: Case): boolean => {
-  // TODO: Implement after selected action has been added as a field to the case
-  return true
+  return Boolean(
+    workingCase.indictmentDecision === IndictmentDecision.COMPLETING &&
+      workingCase.indictmentRulingDecision &&
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.COURT_RECORD,
+      ) &&
+      ([
+        CaseIndictmentRulingDecision.FINE,
+        CaseIndictmentRulingDecision.CANCELLATION,
+      ].includes(workingCase.indictmentRulingDecision) ||
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.RULING,
+        )),
+  )
 }
 
 export const isAdminUserFormValid = (user: User): boolean => {

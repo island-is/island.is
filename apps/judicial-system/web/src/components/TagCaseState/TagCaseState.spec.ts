@@ -175,7 +175,17 @@ describe('mapCaseStateToTagVariant', () => {
   })
 
   test('should return reassignment state', () => {
-    expect(fn(CaseState.MAIN_HEARING, false, CaseType.INDICTMENT)).toEqual({
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        null,
+        IndictmentDecision.REDISTRIBUTING,
+      ),
+    ).toEqual({
       color: 'blue',
       text: strings.reassignment.defaultMessage,
     })

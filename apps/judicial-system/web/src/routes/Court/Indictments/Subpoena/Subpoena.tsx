@@ -21,7 +21,6 @@ import {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  IndictmentDecision,
   NotificationType,
   SubpoenaType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -51,14 +50,11 @@ const Subpoena: FC = () => {
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
   const { sendNotification } = useCase()
 
-  const isPostponed =
-    workingCase.indictmentDecision ===
-      IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
-    workingCase.indictmentDecision === IndictmentDecision.POSTPONING
+  const isArraignmentDone = workingCase.indictmentDecision
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      if (isPostponed) {
+      if (isArraignmentDone) {
         router.push(`${destination}/${workingCase.id}`)
         return
       }
@@ -96,7 +92,7 @@ const Subpoena: FC = () => {
       }
     },
     [
-      isPostponed,
+      isArraignmentDone,
       sendCourtDateToServer,
       workingCase,
       courtDateHasChanged,
@@ -154,7 +150,7 @@ const Subpoena: FC = () => {
                         setWorkingCase,
                       )
                     }}
-                    disabled={isPostponed}
+                    disabled={isArraignmentDone}
                   />
                   <RadioButton
                     large
@@ -173,7 +169,7 @@ const Subpoena: FC = () => {
                         setWorkingCase,
                       )
                     }}
-                    disabled={isPostponed}
+                    disabled={isArraignmentDone}
                   />
                 </Box>
               </BlueBox>
@@ -188,8 +184,8 @@ const Subpoena: FC = () => {
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
             courtDate={courtDate}
-            dateTimeDisabled={isPostponed}
-            courtRoomDisabled={isPostponed}
+            dateTimeDisabled={isArraignmentDone}
+            courtRoomDisabled={isArraignmentDone}
             courtRoomRequired
           />
         </Box>
@@ -226,7 +222,9 @@ const Subpoena: FC = () => {
             handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
           }}
           nextButtonText={
-            isPostponed ? undefined : formatMessage(strings.nextButtonText)
+            isArraignmentDone
+              ? undefined
+              : formatMessage(strings.nextButtonText)
           }
           nextIsDisabled={!stepIsValid}
         />

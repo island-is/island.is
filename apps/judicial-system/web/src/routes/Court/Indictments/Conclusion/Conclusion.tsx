@@ -27,13 +27,12 @@ import {
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
-  CaseTransition,
-  DateLog,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
+  UpdateCase,
   useCase,
   useS3Upload,
   useUploadFiles,
@@ -41,21 +40,10 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-type Decision =
-  | CaseIndictmentRulingDecision.RULING
-  | CaseIndictmentRulingDecision.FINE
-  | CaseIndictmentRulingDecision.DISMISSAL
-  | CaseIndictmentRulingDecision.CANCELLATION
-
 interface Postponement {
   postponedIndefinitely?: boolean
   isSettingVerdictDate?: boolean
   reason?: string
-}
-
-interface PostponeUntilVerdictUpdates {
-  indictmentDecision?: IndictmentDecision
-  courtDate?: DateLog | null
 }
 
 const Conclusion: React.FC = () => {
@@ -64,13 +52,13 @@ const Conclusion: React.FC = () => {
     useContext(FormContext)
 
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
-  const [selectedDecision, setSelectedDecision] = useState<Decision>()
+  const [selectedDecision, setSelectedDecision] =
+    useState<CaseIndictmentRulingDecision>()
   const [postponement, setPostponement] = useState<Postponement>()
 
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
-
-  const { isUpdatingCase, transitionCase, setAndSendCaseToServer } = useCase()
+  const { isUpdatingCase, setAndSendCaseToServer } = useCase()
 
   const {
     uploadFiles,
@@ -83,245 +71,105 @@ const Conclusion: React.FC = () => {
     workingCase.id,
   )
 
-  const handleRedistribution = useCallback(
-    async (destination: string) => {
-      const success = await setAndSendCaseToServer(
-        [
-          {
-            indictmentDecision: IndictmentDecision.REDISTRIBUTING,
-            force: true,
-          },
-        ],
+  const handleNavigationTo = useCallback(
+    async (destination: keyof stepValidationsType) => {
+      if (!selectedAction) {
+        return
+      }
+
+      const update: UpdateCase = {
+        indictmentDecision: selectedAction,
+        courtDate: null,
+        postponedIndefinitelyExplanation: null,
+        indictmentRulingDecision: null,
+        force: true,
+      }
+
+      switch (selectedAction) {
+        case IndictmentDecision.POSTPONING:
+          if (postponement?.postponedIndefinitely) {
+            if (courtDate?.date) {
+              update.courtDate = {
+                date: formatDateForServer(new Date(courtDate.date)),
+                location: courtDate.location,
+              }
+            }
+          } else {
+            update.postponedIndefinitelyExplanation = postponement?.reason
+          }
+          break
+        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+          if (postponement?.isSettingVerdictDate && courtDate?.date) {
+            update.courtDate = {
+              date: formatDateForServer(new Date(courtDate.date)),
+              location: courtDate.location,
+            }
+          }
+          break
+        case IndictmentDecision.COMPLETING:
+          update.indictmentRulingDecision = selectedDecision
+          break
+        case IndictmentDecision.REDISTRIBUTING:
+          update.judgeId = null
+          break
+      }
+
+      const updateSuccess = await setAndSendCaseToServer(
+        [update],
         workingCase,
         setWorkingCase,
       )
 
-      if (!success) {
+      if (!updateSuccess) {
         return
       }
 
-      const transitionSuccessful = await transitionCase(
-        workingCase.id,
-        CaseTransition.REDISTRIBUTE,
+      router.push(
+        selectedAction === IndictmentDecision.REDISTRIBUTING
+          ? destination
+          : `${destination}/${workingCase.id}`,
       )
-
-      if (!transitionSuccessful) {
-        return
-      }
-
-      router.push(destination)
-    },
-    [setAndSendCaseToServer, setWorkingCase, transitionCase, workingCase],
-  )
-
-  const handleCompletion = useCallback(
-    async (destination: string) => {
-      const success = await setAndSendCaseToServer(
-        [
-          {
-            indictmentDecision: IndictmentDecision.COMPLETING,
-            indictmentRulingDecision: selectedDecision,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      if (!success) {
-        return
-      }
-
-      router.push(`${destination}/${workingCase.id}`)
-    },
-    [selectedDecision, setAndSendCaseToServer, setWorkingCase, workingCase],
-  )
-
-  const handlePostponementUntilVerdict = useCallback(
-    async (destination: string) => {
-      const prepareUpdates = () => {
-        const updates: PostponeUntilVerdictUpdates = {}
-
-        if (
-          workingCase.indictmentDecision !==
-          IndictmentDecision.POSTPONING_UNTIL_VERDICT
-        ) {
-          updates.indictmentDecision =
-            IndictmentDecision.POSTPONING_UNTIL_VERDICT
-        }
-
-        if (postponement?.isSettingVerdictDate || workingCase.courtDate) {
-          updates.courtDate =
-            postponement?.isSettingVerdictDate && courtDate?.date
-              ? {
-                  date: formatDateForServer(new Date(courtDate.date)),
-                  location: courtDate.location,
-                }
-              : null
-        }
-
-        return updates
-      }
-
-      const updates = prepareUpdates()
-
-      const success =
-        Object.keys(updates).length > 0
-          ? await setAndSendCaseToServer(
-              [
-                {
-                  ...updates,
-                  force: true,
-                },
-              ],
-              workingCase,
-              setWorkingCase,
-            )
-          : true
-
-      if (!success) {
-        return
-      }
-
-      router.push(`${destination}/${workingCase.id}`)
     },
     [
       courtDate?.date,
       courtDate?.location,
       postponement?.isSettingVerdictDate,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
-  )
-
-  const handlePostponementIndefinitely = useCallback(
-    async (destination: string) => {
-      const updateSuccess = await setAndSendCaseToServer(
-        [
-          {
-            indictmentDecision: IndictmentDecision.POSTPONING,
-            courtDate: null,
-            postponedIndefinitelyExplanation: postponement?.reason,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      if (!updateSuccess) {
-        return
-      }
-
-      router.push(`${destination}/${workingCase.id}`)
-    },
-    [postponement?.reason, setAndSendCaseToServer, setWorkingCase, workingCase],
-  )
-
-  const handlePostponement = useCallback(
-    async (destination: string) => {
-      const updateSuccess = await setAndSendCaseToServer(
-        [
-          {
-            indictmentDecision: IndictmentDecision.POSTPONING,
-            courtDate: courtDate?.date
-              ? {
-                  date: formatDateForServer(new Date(courtDate.date)),
-                  location: courtDate.location,
-                }
-              : undefined,
-            postponedIndefinitelyExplanation: null,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
-
-      if (!updateSuccess) {
-        return
-      }
-
-      router.push(`${destination}/${workingCase.id}`)
-    },
-    [
-      courtDate?.date,
-      courtDate?.location,
-      setAndSendCaseToServer,
-      setWorkingCase,
-      workingCase,
-    ],
-  )
-
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      switch (selectedAction) {
-        case IndictmentDecision.REDISTRIBUTING:
-          handleRedistribution(destination)
-          break
-        case IndictmentDecision.COMPLETING:
-          handleCompletion(destination)
-          break
-        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
-          handlePostponementUntilVerdict(destination)
-          break
-        case IndictmentDecision.POSTPONING:
-          postponement?.postponedIndefinitely
-            ? handlePostponementIndefinitely(destination)
-            : handlePostponement(destination)
-          break
-        default:
-          break
-      }
-    },
-    [
-      selectedAction,
       postponement?.postponedIndefinitely,
-      handleRedistribution,
-      handleCompletion,
-      handlePostponementUntilVerdict,
-      handlePostponementIndefinitely,
-      handlePostponement,
+      postponement?.reason,
+      selectedAction,
+      selectedDecision,
+      setAndSendCaseToServer,
+      setWorkingCase,
+      workingCase,
     ],
   )
 
   useEffect(() => {
-    if (
-      workingCase.indictmentDecision ===
-      IndictmentDecision.POSTPONING_UNTIL_VERDICT
-    ) {
-      setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
-
+    if (!workingCase.indictmentDecision) {
       return
     }
-    if (workingCase.indictmentRulingDecision) {
-      setSelectedDecision(workingCase.indictmentRulingDecision)
-      setSelectedAction(IndictmentDecision.COMPLETING)
 
-      return
-    } else if (
-      workingCase.courtDate?.date ||
-      workingCase.postponedIndefinitelyExplanation
-    ) {
-      setSelectedAction(IndictmentDecision.POSTPONING)
+    setSelectedAction(workingCase.indictmentDecision)
 
-      if (workingCase.postponedIndefinitelyExplanation) {
-        setPostponement({
-          postponedIndefinitely: true,
-          reason: workingCase.postponedIndefinitelyExplanation,
-        })
-      }
-    } else {
-      return
+    switch (workingCase.indictmentDecision) {
+      case IndictmentDecision.POSTPONING:
+        if (workingCase.postponedIndefinitelyExplanation) {
+          setPostponement({
+            postponedIndefinitely: true,
+            reason: workingCase.postponedIndefinitelyExplanation,
+          })
+        }
+        break
+      case IndictmentDecision.COMPLETING:
+        if (workingCase.indictmentRulingDecision) {
+          setSelectedDecision(workingCase.indictmentRulingDecision)
+        }
+        break
     }
   }, [
-    workingCase.courtDate?.date,
-    workingCase.postponedIndefinitelyExplanation,
-    workingCase.indictmentRulingDecision,
     workingCase.indictmentDecision,
-    courtDate,
-    postponement?.isSettingVerdictDate,
+    workingCase.indictmentRulingDecision,
+    workingCase.postponedIndefinitelyExplanation,
   ])
 
   useEffect(() => {

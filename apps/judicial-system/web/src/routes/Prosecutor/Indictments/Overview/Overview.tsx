@@ -63,9 +63,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
   const isIndictmentWaitingForCancellation =
     workingCase.state === CaseState.WAITING_FOR_CANCELLATION
-  const isIndictmentReceived =
-    workingCase.state === CaseState.RECEIVED ||
-    workingCase.state === CaseState.MAIN_HEARING
+  const isIndictmentReceived = workingCase.state === CaseState.RECEIVED
 
   const userCanSendIndictmentToCourt =
     Boolean(user?.canConfirmIndictment) &&
