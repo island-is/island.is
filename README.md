@@ -29,9 +29,8 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
 
-{% hint style="info" %}
-If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
-{% endhint %}
+> [!NOTE]
+> If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
 
 ### For fetching secrets
 
