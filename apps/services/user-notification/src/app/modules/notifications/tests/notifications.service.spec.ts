@@ -139,7 +139,7 @@ describe('NotificationsService', () => {
     expect(counts).toBe(false)
   })
 
-  it('should replace template {{placeholders}} with args', async() => {
+  it('should replace template {{placeholders}} with args', async () => {
     mockCreateHnippNotificationDto.args = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },

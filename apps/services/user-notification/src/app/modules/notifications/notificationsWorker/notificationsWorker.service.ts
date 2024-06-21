@@ -268,8 +268,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         ...template,
       },
       message?.senderId,
-      profile.locale as Locale
-
+      profile.locale as Locale,
     )
 
     try {

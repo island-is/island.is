@@ -25,10 +25,9 @@ export class MessageProcessorService {
       // Shallow copy is enough with the current definition of HnippTemplate (./dto/hnippTemplate.response.ts)
       {
         ...template,
-
       },
       message.senderId,
-      locale
+      locale,
     )
 
     return {

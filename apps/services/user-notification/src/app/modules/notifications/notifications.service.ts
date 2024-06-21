@@ -83,8 +83,6 @@ export class NotificationsService {
     }
   }
 
- 
-
   async formatAndMapNotification(
     notification: Notification,
     templateId: string,
@@ -207,29 +205,29 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<HnippTemplate> {
     // Fetch and update organization name if needed
-  if (senderId && args.some(arg => arg.key === 'organization')) {
-    try {
-      const sender = await this.getSenderOrganizationTitle(senderId, locale)
-      if (sender?.title != undefined) {
-        args = args.map(arg =>
-          arg.key === 'organization' ? { ...arg, value: sender.title } : arg
-        )
+    if (senderId && args.some((arg) => arg.key === 'organization')) {
+      try {
+        const sender = await this.getSenderOrganizationTitle(senderId, locale)
+        if (sender?.title != undefined) {
+          args = args.map((arg) =>
+            arg.key === 'organization' ? { ...arg, value: sender.title } : arg,
+          )
+        }
+      } catch (error) {
+        this.logger.error('Error fetching sender organization title:', {
+          senderId,
+          locale,
+        })
       }
-    } catch (error) {
-      this.logger.error('Error fetching sender organization title:', {
-        senderId,
-        locale,
-      })
     }
-  }
-  
+
     // Deep clone the template to avoid modifying the original
     const formattedTemplate = JSON.parse(JSON.stringify(template))
-  
+
     args.forEach((arg) => {
       Object.keys(formattedTemplate).forEach((key) => {
         const templateKey = key as keyof HnippTemplate
-  
+
         if (
           ALLOWED_REPLACE_PROPS.includes(templateKey) &&
           typeof formattedTemplate[templateKey] === 'string'
@@ -240,7 +238,7 @@ export class NotificationsService {
         }
       })
     })
-  
+
     return formattedTemplate
   }
 
