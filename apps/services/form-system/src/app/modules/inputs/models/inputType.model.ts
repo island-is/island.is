@@ -1,20 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { CreationOptional, NonAttribute } from 'sequelize'
 import {
   BelongsToMany,
   Column,
   CreatedAt,
   DataType,
-  ForeignKey,
   HasMany,
-  HasOne,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { CreationOptional, NonAttribute } from 'sequelize'
-import { Input } from './input.model'
 import { Organization } from '../../organizations/models/organization.model'
+import { Input } from './input.model'
 
 @Table({ tableName: 'input_types' })
 export class InputType extends Model<InputType> {

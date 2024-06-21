@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { LanguageType } from '../../../dataTypes/languageType.model'
+import { LanguageType } from '../../../../dataTypes/languageType.model'
 
-export class FormTestimonyTypeDto {
+export class TestimonyTypeDto {
   @ApiProperty()
   id!: string
 

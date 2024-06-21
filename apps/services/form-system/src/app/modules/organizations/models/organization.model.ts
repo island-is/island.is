@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { CreationOptional, NonAttribute, UUID, UUIDV4 } from 'sequelize'
+import { CreationOptional, NonAttribute } from 'sequelize'
 import {
   BelongsToMany,
   Column,
@@ -10,12 +10,12 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Form } from '../../forms/models/form.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
+import { Form } from '../../forms/models/form.model'
 import { InputType } from '../../inputs/models/inputType.model'
-import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 import { ListType } from '../../lists/models/listType.model'
+import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 
 @Table({ tableName: 'organizations' })
 export class Organization extends Model<Organization> {

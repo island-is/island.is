@@ -1,13 +1,10 @@
+import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
 import { GroupDto } from '../../../groups/models/dto/group.dto'
-import { Group } from '../../../groups/models/group.model'
 import { InputDto } from '../../../inputs/models/dto/input.dto'
-import { Input } from '../../../inputs/models/input.model'
 import { StepDto } from '../../../steps/models/dto/step.dto'
-import { Step } from '../../../steps/models/step.model'
-import { ApiProperty } from '@nestjs/swagger'
-import { FormTestimonyTypeDto } from '../../../testimonies/dto/formTestimonyType.dto'
+import { FormTestimonyTypeDto } from '../../../testimonies/models/dto/formTestimonyType.dto'
 
 export class FormDto {
   @ApiProperty()

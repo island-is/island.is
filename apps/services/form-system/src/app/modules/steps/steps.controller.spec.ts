@@ -1,11 +1,7 @@
-import { Test, TestingModule } from '@nestjs/testing'
 import { TestApp, testServer, useDatabase } from '@island.is/testing/nest'
+import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { StepsController } from './steps.controller'
 import { StepsModule } from './steps.module'
-import { StepsService } from './steps.service'
-import { Step } from './models/step.model'
-import { SequelizeModule } from '@nestjs/sequelize'
-import { SequelizeConfigService } from '../../sequelizeConfig.service'
 
 describe('StepsController', () => {
   let controller: StepsController

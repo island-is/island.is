@@ -1,32 +1,28 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Form } from './models/form.model'
 import { InjectModel } from '@nestjs/sequelize'
-import { Step } from '../steps/models/step.model'
-import { Group } from '../groups/models/group.model'
-import { Input } from '../inputs/models/input.model'
-import { CreateFormDto } from './models/dto/createForm.dto'
-import { InputType } from '../inputs/models/inputType.model'
-import { InputSettings } from '../inputSettings/models/inputSettings.model'
-import { LanguageType } from '../../dataTypes/languageType.model'
-import { Organization } from '../organizations/models/organization.model'
-import { FormDto } from './models/dto/form.dto'
-import { StepDto } from '../steps/models/dto/step.dto'
-import { GroupDto } from '../groups/models/dto/group.dto'
-import { InputDto } from '../inputs/models/dto/input.dto'
-import { FormResponse } from './models/dto/form.response.dto'
-import { InputTypeDto } from '../inputs/models/dto/inputType.dto'
+import { StepTypes } from '../../enums/stepTypes'
 import { FormApplicantDto } from '../applicants/models/dto/formApplicant.dto'
-import { TestimonyType } from '../testimonies/models/testimonyType.model'
-import { TestimonyTypeDto } from '../testimonies/dto/testimonyType.dto'
-import { FormTestimonyTypeDto } from '../testimonies/dto/formTestimonyType.dto'
+import { GroupDto } from '../groups/models/dto/group.dto'
+import { Group } from '../groups/models/group.model'
+import { InputSettingsDto } from '../inputSettings/models/dto/inputSettings.dto'
+import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
+import { InputSettings } from '../inputSettings/models/inputSettings.model'
+import { InputDto } from '../inputs/models/dto/input.dto'
+import { InputTypeDto } from '../inputs/models/dto/inputType.dto'
+import { Input } from '../inputs/models/input.model'
+import { InputType } from '../inputs/models/inputType.model'
 import { ListTypeDto } from '../lists/models/dto/listType.dto'
 import { ListType } from '../lists/models/listType.model'
-import {
-  InputSettingsDto,
-  TextboxInputSettingsDto,
-} from '../inputSettings/models/dto/inputSettings.dto'
-import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
-import { StepTypes } from '../../enums/stepTypes'
+import { Organization } from '../organizations/models/organization.model'
+import { StepDto } from '../steps/models/dto/step.dto'
+import { Step } from '../steps/models/step.model'
+import { FormTestimonyTypeDto } from '../testimonies/models/dto/formTestimonyType.dto'
+import { TestimonyTypeDto } from '../testimonies/models/dto/testimonyType.dto'
+import { TestimonyType } from '../testimonies/models/testimonyType.model'
+import { CreateFormDto } from './models/dto/createForm.dto'
+import { FormDto } from './models/dto/form.dto'
+import { FormResponse } from './models/dto/form.response.dto'
+import { Form } from './models/form.model'
 
 @Injectable()
 export class FormsService {
@@ -41,8 +37,6 @@ export class FormsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(InputType)
     private readonly inputTypeModel: typeof InputType,
-    @InjectModel(TestimonyType)
-    private readonly testimonyTypeModel: typeof TestimonyType,
     @InjectModel(ListType)
     private readonly listTypeModel: typeof ListType,
     private readonly inputSettingsMapper: InputSettingsMapper,
@@ -72,7 +66,7 @@ export class FormsService {
       throw new Error('Missing organizationId')
     }
 
-    var organization = this.organizationModel.findByPk(organizationId)
+    const organization = this.organizationModel.findByPk(organizationId)
     if (!organization) {
       throw new NotFoundException(
         `Organization with id ${organizationId} not found`,

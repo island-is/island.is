@@ -1,3 +1,4 @@
+import { CreationOptional } from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -8,8 +9,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Organization } from '../../organizations/models/organization.model'
-import { InputType } from '../../inputs/models/inputType.model'
-import { CreationOptional } from 'sequelize'
 import { TestimonyType } from './testimonyType.model'
 
 @Table({ tableName: 'organization_testimony_types' })

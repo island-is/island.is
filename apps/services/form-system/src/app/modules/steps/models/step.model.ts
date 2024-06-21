@@ -1,20 +1,19 @@
+import { ApiProperty } from '@nestjs/swagger'
+import { CreationOptional, DataTypes } from 'sequelize'
 import {
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
-  HasMany,
-  Sequelize,
 } from 'sequelize-typescript'
-import { CreationOptional, DataTypes } from 'sequelize'
-import { Form } from '../../forms/models/form.model'
-import { ApiProperty } from '@nestjs/swagger'
-import { Group } from '../../groups/models/group.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { StepTypes } from '../../../enums/stepTypes'
+import { Form } from '../../forms/models/form.model'
+import { Group } from '../../groups/models/group.model'
 
 @Table({ tableName: 'steps' })
 export class Step extends Model<Step> {

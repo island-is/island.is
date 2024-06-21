@@ -1,13 +1,11 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
-import { Input } from './models/input.model'
-import { CreateInputDto } from './models/dto/createInput.dto'
 import { InjectModel } from '@nestjs/sequelize'
-import { UpdateInputDto } from './models/dto/updateInput.dto'
-import { InputSettings } from '../inputSettings/models/inputSettings.model'
-import { InputDto } from './models/dto/input.dto'
 import { InputSettingsService } from '../inputSettings/inputSettings.service'
+import { CreateInputDto } from './models/dto/createInput.dto'
+import { InputDto } from './models/dto/input.dto'
+import { UpdateInputDto } from './models/dto/updateInput.dto'
 import { InputMapper } from './models/input.mapper'
-import { TextboxInputSettingsDto } from '../inputSettings/models/dto/inputSettings.dto'
+import { Input } from './models/input.model'
 
 @Injectable()
 export class InputsService {

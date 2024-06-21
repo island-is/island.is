@@ -1,19 +1,18 @@
+import { Documentation } from '@island.is/nest/swagger'
 import {
   Body,
   Controller,
-  Get,
   Delete,
+  Get,
   NotFoundException,
   Param,
   Post,
 } from '@nestjs/common'
-import { Documentation } from '@island.is/nest/swagger'
-import { FormsService } from './forms.service'
-import { Form } from './models/form.model'
 import { ApiTags } from '@nestjs/swagger'
+import { FormsService } from './forms.service'
 import { CreateFormDto } from './models/dto/createForm.dto'
-import { FormDto } from './models/dto/form.dto'
 import { FormResponse } from './models/dto/form.response.dto'
+import { Form } from './models/form.model'
 
 @ApiTags('forms')
 @Controller('forms')

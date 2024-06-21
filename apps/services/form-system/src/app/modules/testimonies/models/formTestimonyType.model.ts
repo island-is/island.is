@@ -1,3 +1,4 @@
+import { CreationOptional } from 'sequelize'
 import {
   Column,
   CreatedAt,
@@ -7,10 +8,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { InputType } from '../../inputs/models/inputType.model'
-import { CreationOptional } from 'sequelize'
-import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 import { Form } from '../../forms/models/form.model'
+import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 
 @Table({ tableName: 'form_testimony_types' })
 export class FormTestimonyType extends Model<FormTestimonyType> {

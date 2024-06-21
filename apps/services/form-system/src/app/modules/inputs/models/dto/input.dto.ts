@@ -1,11 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { InputSettings } from '../../../inputSettings/models/inputSettings.model'
-import { InputType } from '../inputType.model'
-import {
-  InputSettingsDto,
-  TextboxInputSettingsDto,
-} from '../../../inputSettings/models/dto/inputSettings.dto'
+import { InputSettingsDto } from '../../../inputSettings/models/dto/inputSettings.dto'
 
 export class InputDto {
   @ApiProperty()

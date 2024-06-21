@@ -1,11 +1,8 @@
 import { Injectable } from '@nestjs/common'
+import { InputSettingsDto } from '../../inputSettings/models/dto/inputSettings.dto'
 import { InputDto } from './dto/input.dto'
-import { Input } from './input.model'
 import { UpdateInputDto } from './dto/updateInput.dto'
-import {
-  InputSettingsDto,
-  TextboxInputSettingsDto,
-} from '../../inputSettings/models/dto/inputSettings.dto'
+import { Input } from './input.model'
 
 @Injectable()
 export class InputMapper {

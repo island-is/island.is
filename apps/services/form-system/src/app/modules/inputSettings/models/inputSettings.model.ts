@@ -5,14 +5,12 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
-  HasMany,
-  HasOne,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Input } from '../../inputs/models/input.model'
 import { TimeIntervals } from '../../../enums/timeIntervals'
+import { Input } from '../../inputs/models/input.model'
 
 @Table({ tableName: 'input_settings' })
 export class InputSettings extends Model<InputSettings> {

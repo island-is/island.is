@@ -1,17 +1,15 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Organization } from './models/organization.model'
 import { Form } from '../forms/models/form.model'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
-import { InputType } from '../inputs/models/inputType.model'
+import { Organization } from './models/organization.model'
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     @InjectModel(Organization)
-    private readonly organizationModel: typeof Organization, // @InjectModel(InputType)
-  ) // private readonly inputTypeModel: typeof InputType,
-  {}
+    private readonly organizationModel: typeof Organization,
+  ) {}
 
   async findAll(): Promise<Organization[]> {
     return await this.organizationModel.findAll()
@@ -32,11 +30,4 @@ export class OrganizationsService {
     )
     return await newOrganzation.save()
   }
-
-  // async findInputTypes(organizationId: string): Promise<InputType[]> {
-  //   const commons = await this.inputTypeModel.findAll({
-  //     where: { isCommon: true },
-  //   })
-  //   return commons
-  // }
 }

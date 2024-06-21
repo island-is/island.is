@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { CreationOptional, DataTypes, NonAttribute } from 'sequelize'
-import { TestimonyTypes } from './testimonyTypes'
+import { TestimonyTypes } from '../../../enums/testimonyTypes'
 import { Organization } from '../../organizations/models/organization.model'
 import { Form } from '../../forms/models/form.model'
 
