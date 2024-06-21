@@ -100,6 +100,7 @@ const Table: FC<TableProps> = (props) => {
     if (sortConfig) {
       data.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {
+          console.log(sortConfig.column)
           if (
             sortConfig.column === 'defendant' &&
             entry.defendants &&
@@ -110,7 +111,9 @@ const Table: FC<TableProps> = (props) => {
           if (sortConfig.column === 'courtDate') {
             return entry.courtDate ?? ''
           }
-          return entry.created
+          if (sortConfig.column === 'deadline') {
+            return entry.indictmentAppealDeadline
+          }
         }
         const compareResult = compareLocaleIS(
           getColumnValue(a),
@@ -175,7 +178,7 @@ const Table: FC<TableProps> = (props) => {
                   sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
                   isActive={sortConfig?.column === th.sortable.key}
-                  dataTestid="accusedNameSortButton"
+                  dataTestid={`${th.sortable.key}SortButton`}
                 />
               ) : (
                 <Text as="span" fontWeight="regular">
@@ -200,6 +203,7 @@ const Table: FC<TableProps> = (props) => {
                 handleOpenCase(row.id)
               }
             }}
+            data-testid="tableRow"
           >
             {columns.map((td) => (
               <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>

@@ -88,12 +88,10 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <Text>{row.indictmentReviewer?.name}</Text>
-                  ),
+                  cell: (row) => <Text>{row.indictmentReviewer?.name}</Text>,
                 },
                 {
-                  cell: (row: CaseListEntry) => (
+                  cell: (row) => (
                     <Text>{formatDate(row.indictmentAppealDeadline, 'P')}</Text>
                   ),
                 },
