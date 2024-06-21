@@ -56,14 +56,14 @@ const getCodes = (application: Application) => {
 }
 
 const configuration =
-  ApplicationConfigurations[ApplicationTypes.OPERATING_LCENSE]
+  ApplicationConfigurations[ApplicationTypes.OPERATING_LICENSE]
 
 const OperatingLicenseTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.OPERATING_LCENSE,
+  type: ApplicationTypes.OPERATING_LICENSE,
   name: m.formName.defaultMessage,
   institution: m.institution,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],

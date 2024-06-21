@@ -47,7 +47,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
   ) {
-    super(ApplicationTypes.OPERATING_LCENSE)
+    super(ApplicationTypes.OPERATING_LICENSE)
     this.s3 = new S3()
   }
 
@@ -77,8 +77,9 @@ export class OperatingLicenseService extends BaseTemplateApiService {
         application.applicantActors.length > 0
           ? application.applicantActors[0]
           : application.applicant
-      const hasCriminalRecord =
-        await this.criminalRecordService.validateCriminalRecord(applicantSsn)
+      const hasCriminalRecord = await this.criminalRecordService.validateCriminalRecord(
+        applicantSsn,
+      )
       if (hasCriminalRecord) {
         return { success: true }
       }
