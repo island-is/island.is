@@ -44,7 +44,7 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
 ]
 
 type SenderOrganization = {
-  title: string | undefined
+  title: string
 }
 
 @Injectable()
@@ -83,6 +83,8 @@ export class NotificationsService {
     }
   }
 
+ 
+
   async formatAndMapNotification(
     notification: Notification,
     templateId: string,
@@ -96,33 +98,12 @@ export class NotificationsService {
         template = await this.getTemplate(templateId, locale)
       }
 
-      // check for organization argument to fetch translated organization title
-      const organizationArg = notification.args.find(
-        (arg) => arg.key === 'organization',
-      )
-
-      // if senderId is set and args contains organization, fetch organizationtitle from senderId
-      if (notification.senderId && organizationArg) {
-        try {
-          const sender = await this.getSenderOrganizationTitle(
-            notification.senderId,
-            locale,
-          )
-          if (sender?.title) {
-            organizationArg.value = sender.title
-          }
-        } catch (error) {
-          this.logger.error(error.message, {
-            senderId: notification.senderId,
-            locale,
-          })
-        }
-      }
-
       // Format the template with arguments from the notification
-      const formattedTemplate = this.formatArguments(
+      const formattedTemplate = await this.formatArguments(
         notification.args,
         template,
+        notification.senderId,
+        locale,
       )
 
       // Map to RenderedNotificationDto
@@ -219,14 +200,36 @@ export class NotificationsService {
   /**
    * Replaces the placeholders in the template with the values provided in the request body
    */
-  formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
+  async formatArguments(
+    args: ArgumentDto[],
+    template: HnippTemplate,
+    senderId?: string,
+    locale?: Locale,
+  ): Promise<HnippTemplate> {
+    // Fetch and update organization name if needed
+  if (senderId && args.some(arg => arg.key === 'organization')) {
+    try {
+      const sender = await this.getSenderOrganizationTitle(senderId, locale)
+      if (sender?.title != undefined) {
+        args = args.map(arg =>
+          arg.key === 'organization' ? { ...arg, value: sender.title } : arg
+        )
+      }
+    } catch (error) {
+      this.logger.error('Error fetching sender organization title:', {
+        senderId,
+        locale,
+      })
+    }
+  }
+  
     // Deep clone the template to avoid modifying the original
     const formattedTemplate = JSON.parse(JSON.stringify(template))
-
+  
     args.forEach((arg) => {
       Object.keys(formattedTemplate).forEach((key) => {
         const templateKey = key as keyof HnippTemplate
-
+  
         if (
           ALLOWED_REPLACE_PROPS.includes(templateKey) &&
           typeof formattedTemplate[templateKey] === 'string'
@@ -237,7 +240,7 @@ export class NotificationsService {
         }
       })
     })
-
+  
     return formattedTemplate
   }
 
