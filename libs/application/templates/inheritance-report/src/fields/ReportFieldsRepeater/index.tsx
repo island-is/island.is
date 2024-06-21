@@ -129,6 +129,9 @@ export const ReportFieldsRepeater: FC<
       return Object.values(field)[1]
     })
 
+    // All additional fields should be enabled by default
+    values.push('enabled')
+
     const repeaterFields = Object.fromEntries(
       values.map((elem) => [
         elem,
