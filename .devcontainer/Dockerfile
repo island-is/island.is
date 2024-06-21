@@ -72,11 +72,39 @@ RUN volta setup
 COPY package.json .
 RUN . ~/.${SHELL}rc && volta install "node@$(jq -r '.engines.node' package.json)"
 
+ENV AWS_CONFIG_FILE=~/.aws/config
+RUN mkdir -p "$(dirname "${AWS_CONFIG_FILE}")" && cat <<EOF > "${AWS_CONFIG_FILE}"
+[profile islandis-dev]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 013313053092
+sso_role_name = AWSPowerUserAccess
+sso_region = eu-west-1
+region = eu-west-1
+
+[profile islandis-staging]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 261174024191
+sso_role_name = Secret_Service
+sso_region = eu-west-1
+region = eu-west-1
+
+[profile islandis-prod]
+sso_start_url = https://island-is.awsapps.com/start
+sso_account_id = 251502586493
+sso_role_name = Secret_Service
+sso_region = eu-west-1
+region = eu-west-1
+EOF
+
 # Set up user's shell config
-# Initialize starship prompt
-RUN echo "eval \"\$(starship init ${SHELL})\"" >> ~/.${SHELL}rc && \
+SHELL ["/bin/bash", "-o", "pipefail", "-c"]
+RUN \
+  # Initialize starship prompt
+  echo "eval \"\$(starship init ${SHELL})\"" | tee -a ~/.${SHELL}rc && \
   # Set vi mode in shell
-  echo "set -o vi" >> ~/.${SHELL}rc
+  echo "set -o vi" | tee -a ~/.${SHELL}rc \
+  # Set default AWS_PROFILE
+  echo "export AWS_PROFILE=islandis-dev" | tee -a ~/.${SHELL}rc
 
 # The local machine ID is different from the host, so we get NX cache poisoning warnings.
 # This "fixes" it, but not very clean.
