@@ -7,7 +7,7 @@ import {
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { state } from '../../../lib/messages'
-import { GetFormattedText } from '../../../utils'
+// import { GetFormattedText } from '../../../utils'
 
 export const StateSection = buildSection({
   id: 'reviewState',
