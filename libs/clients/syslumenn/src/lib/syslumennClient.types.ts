@@ -362,6 +362,11 @@ export interface JourneymanLicence {
   profession?: string
 }
 
+export interface ProfessionRight {
+  name?: string
+  profession?: string
+}
+
 export interface VehicleRegistration {
   modelName?: string
   manufacturer?: string

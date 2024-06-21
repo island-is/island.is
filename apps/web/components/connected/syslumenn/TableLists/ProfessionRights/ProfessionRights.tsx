@@ -2,7 +2,6 @@ import { CSSProperties, useState } from 'react'
 import { useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client/react'
 
-import { ConnectedComponent, Query } from '@island.is/api/schema'
 import {
   AlertMessage,
   Box,
@@ -18,45 +17,44 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
-import { JourneymanLicence } from '@island.is/web/graphql/schema'
+import type {
+  ConnectedComponent,
+  ProfessionRight,
+  Query,
+} from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
 import {
   getNormalizedSearchTerms,
   getSortedAndFilteredList,
   prepareCsvString,
 } from '../../utils'
-import { GET_JOURNEYMAN_LICENCES_QUERY } from './queries'
+import { GET_PROFESSION_RIGHTS_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof JourneymanLicence)[] = ['name', 'dateOfPublication']
+const SEARCH_KEYS: (keyof ProfessionRight)[] = ['name']
 
-interface JourneymanListProps {
+interface ProfessionRightsProps {
   slice: ConnectedComponent
 }
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const JourneymanList = ({ slice }: JourneymanListProps) => {
+const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
   const n = useNamespace(slice.json ?? {})
   const [listState, setListState] = useState<ListState>('loading')
-  const [licences, setLicences] = useState<
-    Query['getJourneymanLicences']['licences']
-  >([])
+  const [list, setList] = useState<Query['getProfessionRights']['list']>([])
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
-  const { format } = useDateUtils()
 
   const [searchTerms, _setSearchTerms] = useState([] as string[])
   const setSearchString = (searchString: string) =>
     _setSearchTerms(getNormalizedSearchTerms(searchString))
-  const [
-    availableLicenceProfessionOptions,
-    setAvailableLicenceProfessionOptions,
-  ] = useState<{ label: string; value: string }[]>([])
+  const [availableProfessionOptions, setProfessionOptions] = useState<
+    { label: string; value: string }[]
+  >([])
 
-  const [filterLicenceProfession, setFilterLicenceProfession] = useState<
+  const [filterProfession, setFilterProfession] = useState<
     | {
         label: string
         value: string
@@ -72,16 +70,16 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
     setSearchString(searchString)
   }
 
-  useQuery<Query>(GET_JOURNEYMAN_LICENCES_QUERY, {
+  useQuery<Query>(GET_PROFESSION_RIGHTS_QUERY, {
     onCompleted: (data) => {
-      const fetchedLicences = [...(data?.getJourneymanLicences?.licences ?? [])]
-      setLicences(fetchedLicences.sort(sortAlpha('name')))
+      const fetchedList = [...(data?.getProfessionRights?.list ?? [])]
+      setList(fetchedList.sort(sortAlpha('name')))
       setListState('loaded')
       const options = [
-        allLicenceProfessionOption,
+        allProfessionOption,
         ...Array.from(
           new Set<string>(
-            fetchedLicences
+            fetchedList
               .filter((x) => x.profession)
               .map((x) => x.profession as string),
           ).values(),
@@ -92,8 +90,8 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
           value: x,
         }))
         .sort(sortAlpha('label'))
-      setAvailableLicenceProfessionOptions(options)
-      setFilterLicenceProfession(
+      setProfessionOptions(options)
+      setFilterProfession(
         options.find((x) => {
           return filterValue === x.value
         }) ?? options?.[0],
@@ -108,40 +106,36 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
 
   const csvStringProvider = () => {
     return new Promise<string>((resolve, reject) => {
-      if (licences) {
+      if (list) {
         const headerRow = [
           n('csvHeaderName', 'Nafn') as string,
-          n('csvHeaderProfession', 'Iðngrein') as string,
-          n('csvHeaderDateOfPublication', 'Útgáfuár') as string,
+          n('csvHeaderProfession', 'Starf') as string,
         ]
         const dataRows = []
-        for (const licence of licences) {
+        for (const item of list) {
           dataRows.push([
-            licence.name ?? '', // Nafn
-            licence.profession ?? '', // Iðngrein
-            licence.dateOfPublication // Útgáfuár
-              ? format(new Date(licence.dateOfPublication), 'yyyy')
-              : '',
+            item.name ?? '', // Nafn
+            item.profession ?? '', // Starf
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
       }
-      reject('Journeyman licences data has not been loaded.')
+      reject('Profession rights data has not been loaded.')
     })
   }
 
   // Filter - Profession
-  const allLicenceProfessionOption = n(
-    'filterLicenceProfessionAll',
+  const allProfessionOption = n(
+    'filterProfessionAll',
     'Allar tegundir',
   ) as string
 
   // Filter
-  const filteredLicences = getSortedAndFilteredList(
-    licences.filter((licence) =>
-      filterLicenceProfession?.value === allLicenceProfessionOption
+  const filteredList = getSortedAndFilteredList(
+    list.filter((item) =>
+      filterProfession?.value === allProfessionOption
         ? true
-        : licence.profession === filterLicenceProfession?.value,
+        : item.profession === filterProfession?.value,
     ),
     searchTerms,
     SEARCH_KEYS,
@@ -149,7 +143,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
 
   const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
 
-  const totalPages = Math.ceil(filteredLicences.length / pageSize)
+  const totalPages = Math.ceil(filteredList.length / pageSize)
 
   const minHeightFromConfig = slice?.configJson?.minHeight
   const tableContainerStyles: CSSProperties = {}
@@ -180,7 +174,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
           title={n('errorTitle', 'Villa')}
           message={n(
             'errorMessage',
-            'Ekki tókst að sækja lista yfir sveinsbréfin.',
+            'Ekki tókst að sækja lista yfir starfsréttindi.',
           )}
           type="error"
         />
@@ -199,13 +193,13 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={n('licencesFilterLicenceProfession', 'Iðngrein')}
-                  name="licenceProfessionSelect"
-                  options={availableLicenceProfessionOptions}
-                  value={filterLicenceProfession}
+                  label={n('filterProfession', 'Starf')}
+                  name="professionSelect"
+                  options={availableProfessionOptions}
+                  value={filterProfession}
                   onChange={(option) => {
                     setCurrentPageNumber(1)
-                    setFilterLicenceProfession(option)
+                    setFilterProfession(option)
                     setFilterValue(option ? option.value : '')
                   }}
                 />
@@ -214,7 +208,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
             <GridRow>
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
-                  name="licencesSearchInput"
+                  name="searchInput"
                   placeholder={n('searchPlaceholder', 'Leita')}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
@@ -228,17 +222,20 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                   <SyslumennListCsvExport
                     defaultLabel={n(
                       'csvButtonLabelDefault',
-                      'Sækja öll leyfi (CSV)',
+                      'Sækja öll starfsréttindi (CSV)',
                     )}
                     loadingLabel={n(
                       'csvButtonLabelLoading',
-                      'Sæki öll leyfi...',
+                      'Sæki öll starfsréttindi...',
                     )}
                     errorLabel={n(
                       'csvButtonLabelError',
-                      'Ekki tókst að sækja leyfi, reyndu aftur',
+                      'Ekki tókst að sækja starfsréttindi, reyndu aftur',
                     )}
-                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Sveinslisti')}
+                    csvFilenamePrefix={n(
+                      'csvFileTitlePrefix',
+                      'Starfsréttindi',
+                    )}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -247,54 +244,39 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
           </GridContainer>
         </Box>
       )}
-      {listState === 'loaded' && filteredLicences.length === 0 && (
+      {listState === 'loaded' && filteredList.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
           <Text variant="h3">
-            {n('noLicencesFound', 'Engar niðurstöður fundust.')}
+            {n('noResultsFound', 'Engar niðurstöður fundust.')}
           </Text>
         </Box>
       )}
-      {listState === 'loaded' && filteredLicences.length > 0 && (
+      {listState === 'loaded' && filteredList.length > 0 && (
         <Box>
           <Box style={tableContainerStyles}>
             <T.Table>
               <T.Head>
                 <T.Row>
                   <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-                  <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
-                  <T.HeadData align="right">
-                    {n('dateOfPublication', 'Útgáfuár')}
-                  </T.HeadData>
+                  <T.HeadData>{n('profession', 'Starf')}</T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
-                {filteredLicences
+                {filteredList
                   .slice(
                     (currentPageNumber - 1) * pageSize,
                     currentPageNumber * pageSize,
                   )
-                  .map((licences, index) => {
+                  .map((item, index) => {
                     return (
                       <T.Row key={index}>
                         <T.Data>
-                          <Text variant="small">{licences.name}</Text>
+                          <Text variant="small">{item.name}</Text>
                         </T.Data>
                         <T.Data>
                           <Box>
-                            <Text variant="small">{licences.profession}</Text>
+                            <Text variant="small">{item.profession}</Text>
                           </Box>
-                        </T.Data>
-                        <T.Data>
-                          {licences.dateOfPublication && (
-                            <Box>
-                              <Text textAlign="right" variant="small">
-                                {format(
-                                  new Date(licences.dateOfPublication),
-                                  'yyyy',
-                                )}
-                              </Text>
-                            </Box>
-                          )}
                         </T.Data>
                       </T.Row>
                     )
@@ -325,4 +307,4 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
   )
 }
 
-export default JourneymanList
+export default ProfessionRights

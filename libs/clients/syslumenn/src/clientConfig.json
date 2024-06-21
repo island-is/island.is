@@ -595,6 +595,52 @@
         ]
       }
     },
+    "/api/Starfsrettindi/api/Starfsrettindi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Starfsrettindi_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StarfsrettindiModel"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Taekifaerisleyfi/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -3333,6 +3379,17 @@
           "format": "date-time"
         },
         "embaetti": {
+          "type": "string"
+        }
+      }
+    },
+    "StarfsrettindiModel": {
+      "type": "object",
+      "properties": {
+        "nafn": {
+          "type": "string"
+        },
+        "starfsrettindi": {
           "type": "string"
         }
       }

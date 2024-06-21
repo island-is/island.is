@@ -27,6 +27,7 @@ import {
   DanarbuUpplErfdafjarskatt,
   EignirDanarbusErfdafjarskatt,
   SveinsbrefModel,
+  StarfsrettindiModel,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -64,6 +65,7 @@ import {
   InheritanceReportInfo,
   DebtTypes,
   JourneymanLicence,
+  ProfessionRight,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -497,6 +499,15 @@ export const mapJourneymanLicence = (
     name: licence.nafn,
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
+  }
+}
+
+export const mapProfessionRight = (
+  professionRight: StarfsrettindiModel,
+): ProfessionRight => {
+  return {
+    name: professionRight.nafn,
+    profession: professionRight.starfsrettindi,
   }
 }
 
