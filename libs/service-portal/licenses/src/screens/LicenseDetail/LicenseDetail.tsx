@@ -346,9 +346,6 @@ const LicenseDetail = () => {
   const { type, id } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
 
-  console.log(id)
-  console.log(licenseType)
-
   const {
     data,
     loading: queryLoading,
