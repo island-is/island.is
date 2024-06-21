@@ -91,6 +91,7 @@ const translations: Translations = {
 }
 
 export const getTranslations = (lang = 'is'): Translations[Language] => {
-  const language = lang in translations ? (lang as Language) : 'is'
+  const language =
+    lang.toLowerCase() in translations ? (lang as Language) : 'is'
   return translations[language]
 }
