@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { IntlProvider } from 'react-intl'
+import { createIntl, IntlProvider } from 'react-intl'
 
 import { FormContext, UserContext } from '../components'
 import { UserRole } from '../graphql/schema'
@@ -23,6 +23,11 @@ export const IntlProviderWrapper = ({ children }: any) => {
     </IntlProvider>
   )
 }
+
+export const formatMessage = createIntl({
+  locale: 'is',
+  onError: jest.fn,
+}).formatMessage
 
 export const FormContextWrapper = ({
   theCase,

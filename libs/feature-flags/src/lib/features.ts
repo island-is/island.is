@@ -35,6 +35,7 @@ export enum Features {
   idCardApplication = 'isIdCardApplicationEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
+  newPrimarySchool = 'isNewPrimarySchoolEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
