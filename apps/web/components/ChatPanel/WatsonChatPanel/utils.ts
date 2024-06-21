@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { uuid } from 'uuidv4'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 
@@ -102,7 +102,7 @@ const getUserInformation = async (
                 ? `<p style="font-size: 14px">${translations.introText}</p><br /><br />`
                 : ''
             }
-            
+
             <div class="bx--form-item">
               <label for="${emailInputId}" class="bx--label">${
     translations.emailText
@@ -110,9 +110,9 @@ const getUserInformation = async (
               <input id="${emailInputId}" name="${emailInputId}" type="text" class="bx--text-input">
               <span id="${emailInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
-  
+
             <br />
-  
+
             <div class="bx--form-item">
               <label for="${nameInputId}" class="bx--label">${
     translations.nameText
@@ -120,9 +120,9 @@ const getUserInformation = async (
               <input id="${nameInputId}" type="text" class="bx--text-input">
               <span id="${nameInputId}-error" style="color: red; min-height: 18px"></span>
             </div>
-  
+
             <br />
-            
+
             <div style="display: flex; justify-content: center">
               <button id="${submitButtonId}" type="button" style="display: flex; justify-content: center; border-radius: 4px; padding: 12px; background-color: #0061FF; color: white; font-size: 15px; cursor:pointer; border:none">${
     translations.continueText

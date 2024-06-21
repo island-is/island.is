@@ -1,5 +1,5 @@
 import { ReactNode, useMemo, useState } from 'react'
-import type { Locale } from 'locale'
+import type { Locale } from '@island.is/shared/types'
 import { useQuery } from '@apollo/client'
 
 import { EmbeddedVideo } from '@island.is/island-ui/contentful'

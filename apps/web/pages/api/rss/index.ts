@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import type { Locale } from 'locale'
+import type { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
   GetNewsQuery,

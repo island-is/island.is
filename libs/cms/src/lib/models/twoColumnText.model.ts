@@ -4,7 +4,7 @@ import { CacheField } from '@island.is/nest/graphql'
 import { ITwoColumnText } from '../generated/contentfulTypes'
 
 import { Link, mapLink } from './link.model'
-import { SystemMetadata } from 'api-cms-domain'
+import { SystemMetadata } from '@island.is/shared/types'
 import { mapDocument, SliceUnion } from '../unions/slice.union'
 
 @ObjectType()

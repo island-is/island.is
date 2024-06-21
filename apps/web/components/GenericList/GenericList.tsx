@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import flatten from 'lodash/flatten'
 import { useRouter } from 'next/router'
 import { parseAsInteger, parseAsJson, useQueryState } from 'next-usequerystate'
