@@ -30,6 +30,7 @@ type Translations = {
     subpoena: string
     subpoenaSent: string
     type: string
+    waiveRightToCounsel: string
   }
 }
 
@@ -63,6 +64,7 @@ const translations: Translations = {
     subpoena: 'Subpoena',
     subpoenaSent: 'Subpoena sent',
     type: 'Type',
+    waiveRightToCounsel: 'Right to counsel waived',
   },
   is: {
     accused: 'Ákærði',
@@ -93,6 +95,7 @@ const translations: Translations = {
     subpoena: 'Fyrirkall',
     subpoenaSent: 'Fyrirkall sent',
     type: 'Tegund',
+    waiveRightToCounsel: 'Ekki er óskað eftir verjanda',
   },
 }
 

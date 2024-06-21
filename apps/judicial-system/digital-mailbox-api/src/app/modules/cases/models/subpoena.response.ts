@@ -52,8 +52,16 @@ export class SubpoenaResponse {
         defendant.nationalId === formattedNationalId ||
         defendant.nationalId === defendantNationalId,
     )
+    const hasChosenDefense = defendantInfo?.defenderChoice !== undefined
+    const waivedRight = defendantInfo?.defenderChoice === DefenderChoice.WAIVE
+    const hasDefender = defendantInfo?.defenderName !== undefined
 
-    const hasDefender = defendantInfo?.defenderChoice !== DefenderChoice.WAIVE
+    const defenseValue = waivedRight
+      ? t.waiveRightToCounsel
+      : hasDefender
+      ? defendantInfo?.defenderName
+      : t.notAvailable
+
     const subpoenaDateLog = internalCase.dateLogs?.find(
       (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
     )
@@ -79,6 +87,7 @@ export class SubpoenaResponse {
               ],
               [t.location, subpoenaDateLog?.location ?? ''],
               [t.courtCeremony, t.parliamentaryConfirmation],
+              hasChosenDefense ? [t.defender, defenseValue] : [],
             ].map((item) => ({
               label: item[0] ?? '',
               value: item[1] ?? t.notAvailable,
@@ -90,7 +99,10 @@ export class SubpoenaResponse {
       defenderInfo: defendantInfo
         ? {
             defenderChoice: defendantInfo?.defenderChoice,
-            defenderName: hasDefender ? defendantInfo?.defenderName : undefined,
+            defenderName:
+              !waivedRight && hasDefender
+                ? defendantInfo?.defenderName
+                : undefined,
           }
         : undefined,
       acceptCompensationClaim: defendantInfo?.acceptCompensationClaim,
