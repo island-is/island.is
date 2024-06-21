@@ -96,8 +96,8 @@ const ApplicationProfile = ({
     {
       title: 'Fyrir tímabilið',
       content:
-        getMonth(new Date(application.applied).getMonth()) +
-        format(new Date(application.applied), ' y'),
+        getMonth(new Date(application.appliedDate).getMonth()) +
+        format(new Date(application.appliedDate), ' y'),
       onclick: () => {
         setAppliedMonthModalVisible(true)
       },
@@ -306,11 +306,12 @@ const ApplicationProfile = ({
           homeCircumstances={application.homeCircumstances}
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
-          applicationCreated={application.created}
+          applicationAppliedDate={application.appliedDate}
           applicationMunicipality={applicationMunicipality}
           hasApplicantChildren={
             !application?.children || application?.children.length > 0
           }
+          decemberCompensation={applicationMunicipality.decemberCompensation}
         />
       )}
 
@@ -337,7 +338,7 @@ const ApplicationProfile = ({
         onVisibilityChange={(isVisibleBoolean) => {
           setAppliedMonthModalVisible(isVisibleBoolean)
         }}
-        appliedDate={application.applied}
+        appliedDate={application.appliedDate}
         createdDate={application.created}
         applicationId={application.id}
         setApplication={setApplication}

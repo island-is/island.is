@@ -7,7 +7,7 @@ export const ApplicationQuery = gql`
       applicationSystemId
       nationalId
       created
-      applied
+      appliedDate
       modified
       name
       phoneNumber
@@ -73,6 +73,7 @@ export const ApplicationQuery = gql`
       amount {
         aidAmount
         childrenAidAmount
+        decemberAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -124,6 +125,7 @@ export const ApplicationFilterQuery = gql`
         state
         modified
         created
+        appliedDate
         staff {
           name
         }
@@ -151,7 +153,7 @@ export const UpdateApplicationTableMutation = gql`
         email
         modified
         created
-        applied
+        appliedDate
         state
         staff {
           name
@@ -180,7 +182,7 @@ export const ApplicationsQuery = gql`
       email
       modified
       created
-      applied
+      appliedDate
       state
       staff {
         name
@@ -211,7 +213,7 @@ export const ApplicationEventMutation = gql`
       nationalId
       created
       modified
-      applied
+      appliedDate
       name
       phoneNumber
       email
@@ -276,6 +278,7 @@ export const ApplicationEventMutation = gql`
       amount {
         aidAmount
         childrenAidAmount
+        decemberAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -332,7 +335,7 @@ export const UpdateApplicationMutation = gql`
       nationalId
       created
       modified
-      applied
+      appliedDate
       name
       phoneNumber
       email
@@ -397,6 +400,7 @@ export const UpdateApplicationMutation = gql`
       amount {
         aidAmount
         childrenAidAmount
+        decemberAidAmount
         income
         personalTaxCredit
         spousePersonalTaxCredit
@@ -519,6 +523,7 @@ export const UpdateMunicipalityMutation = gql`
       navUrl
       navUsername
       navPassword
+      decemberCompensation
       childrenAid
       individualAid {
         ownPlace

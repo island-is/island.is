@@ -1,5 +1,5 @@
 import { Box, Button } from '@island.is/island-ui/core'
-import * as styles from '../styles.css'
+import * as styles from './styles.css'
 
 export const PrintScreen = () => {
   return (

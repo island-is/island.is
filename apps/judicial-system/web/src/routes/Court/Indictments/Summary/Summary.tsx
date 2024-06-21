@@ -85,43 +85,40 @@ const Summary: React.FC = () => {
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
-        <Box marginBottom={1}>
+        <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
               caseNumber: workingCase.courtCaseNumber,
             })}
           </Text>
         </Box>
-        <Box marginBottom={2}>
+        <Box component="section" marginBottom={2}>
           <Prosecutor workingCase={workingCase} />
           <Defendants workingCase={workingCase} />
         </Box>
-        <Box marginBottom={6}>
+        <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
         </Box>
         <SectionHeading title={formatMessage(strings.caseFiles)} />
-        {rulingFiles.length > 0 && (
+        {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
-            <RenderFiles
-              caseFiles={rulingFiles}
-              workingCase={workingCase}
-              onOpenFile={onOpen}
-            />
-          </Box>
-        )}
-        {courtRecordFiles.length > 0 && (
-          <Box marginBottom={10}>
-            <Text variant="h4" as="h4">
-              {formatMessage(strings.caseFilesSubtitleFine)}
-            </Text>
-            <RenderFiles
-              caseFiles={courtRecordFiles}
-              workingCase={workingCase}
-              onOpenFile={onOpen}
-            />
+            {rulingFiles.length > 0 && (
+              <RenderFiles
+                caseFiles={rulingFiles}
+                workingCase={workingCase}
+                onOpenFile={onOpen}
+              />
+            )}
+            {courtRecordFiles.length > 0 && (
+              <RenderFiles
+                caseFiles={courtRecordFiles}
+                workingCase={workingCase}
+                onOpenFile={onOpen}
+              />
+            )}
           </Box>
         )}
       </FormContentContainer>

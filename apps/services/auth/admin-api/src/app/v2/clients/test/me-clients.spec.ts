@@ -142,10 +142,6 @@ const clientForCreateTest: Partial<AdminCreateClientDto> = {
   requireApiScopes: true,
   requireConsent: true,
   requirePkce: true,
-  supportsCustomDelegation: true,
-  supportsLegalGuardians: true,
-  supportsPersonalRepresentatives: true,
-  supportsProcuringHolders: true,
   promptDelegations: true,
   singleSession: true,
 }
@@ -370,18 +366,13 @@ describe('MeClientsController with auth', () => {
   it.each`
     value | typeSpecificDefaults
     ${'super admin fields'} | ${{
-  supportsCustomDelegation: true,
-  supportsLegalGuardians: true,
-  supportsProcuringHolders: true,
-  supportsPersonalRepresentatives: true,
-  promptDelegations: true,
-  requireApiScopes: true,
   requireConsent: false,
   singleSession: false,
   allowOfflineAccess: true,
   requirePkce: false,
   supportTokenExchange: true,
   accessTokenLifetime: 100,
+  allowedAcr: ['some-acr-value'],
   customClaims: [{ type: 'claim1', value: 'value1' }],
 }}
   `(
@@ -573,20 +564,7 @@ describe('MeClientsController with auth', () => {
         customClaims: typeSpecificDefaults.customClaims ?? [],
         singleSession: typeSpecificDefaults.singleSession ?? false,
         allowedAcr: [defaultAcrValue],
-        supportedDelegationTypes: [
-          typeSpecificDefaults.supportsCustomDelegation
-            ? AuthDelegationType.Custom
-            : undefined,
-          typeSpecificDefaults.supportsLegalGuardians
-            ? AuthDelegationType.LegalGuardian
-            : undefined,
-          typeSpecificDefaults.supportsPersonalRepresentatives
-            ? AuthDelegationType.PersonalRepresentative
-            : undefined,
-          typeSpecificDefaults.supportsProcuringHolders
-            ? AuthDelegationType.ProcurationHolder
-            : undefined,
-        ].filter(Boolean),
+        supportedDelegationTypes: [],
       })
 
       // Assert - db record
@@ -636,10 +614,12 @@ describe('MeClientsController with auth', () => {
       clientId: newClientId,
       clientName: 'test-client',
       clientType: 'web',
-      supportsCustomDelegation: true,
-      supportsLegalGuardians: true,
-      supportsProcuringHolders: true,
-      supportsPersonalRepresentatives: true,
+      supportedDelegationTypes: [
+        AuthDelegationType.Custom,
+        AuthDelegationType.PersonalRepresentative,
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationType.LegalGuardian,
+      ],
     }
 
     // Act
@@ -896,10 +876,6 @@ describe('MeClientsController with auth', () => {
         const server = request(app.getHttpServer())
         const expected = await createTestClientData(app, user)
         const updatedClient: AdminPatchClientDto = {
-          supportsCustomDelegation: true,
-          supportsLegalGuardians: true,
-          supportsProcuringHolders: true,
-          supportsPersonalRepresentatives: true,
           promptDelegations: true,
           requireApiScopes: true,
           requireConsent: true,
@@ -941,12 +917,6 @@ describe('MeClientsController with auth', () => {
           expect(res.body).toEqual({
             ...expected,
             ...updatedClient,
-            supportedDelegationTypes: [
-              AuthDelegationType.Custom,
-              AuthDelegationType.LegalGuardian,
-              AuthDelegationType.PersonalRepresentative,
-              AuthDelegationType.ProcurationHolder,
-            ],
           })
         } else {
           throw new Error('Invalid user role')
@@ -1091,41 +1061,6 @@ describe('MeClientsController with auth', () => {
           supportsLegalGuardians: false,
           supportsPersonalRepresentatives: false,
           supportsProcuringHolders: false,
-        })
-      })
-
-      it('should update client using delegation boolean fields and add to client_delegation_types table', async () => {
-        // Arrange
-        const app = await setupApp({
-          AppModule,
-          SequelizeConfigService,
-          user: superUser,
-          dbType: 'postgres',
-        })
-        const server = request(app.getHttpServer())
-        await createTestClientData(app, superUser)
-
-        const body: AdminPatchClientDto = {
-          supportsCustomDelegation: true,
-          supportsLegalGuardians: true,
-          supportsPersonalRepresentatives: true,
-          supportsProcuringHolders: true,
-        }
-
-        // Act
-        await updateAndAssert({
-          server,
-          body,
-          supportedDelegationTypes: [
-            AuthDelegationType.Custom,
-            AuthDelegationType.LegalGuardian,
-            AuthDelegationType.PersonalRepresentative,
-            AuthDelegationType.ProcurationHolder,
-          ],
-          supportsCustomDelegation: true,
-          supportsLegalGuardians: true,
-          supportsPersonalRepresentatives: true,
-          supportsProcuringHolders: true,
         })
       })
     })
