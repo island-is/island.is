@@ -10,8 +10,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import type { Slice } from '../richTextRendering'
-import { richText } from '../RichTextRC/RichText'
+import { type SliceType, richText } from '../RichTextRC/RichText'
 
 import * as styles from './TeamList.css'
 
@@ -24,20 +23,20 @@ export interface TeamListProps {
     image?: { url: string }
     imageOnSelect?: { url: string } | null
     /** Field is only visible if variant is set to "accordion" */
-    intro?: Slice[] | null
+    intro?: SliceType[] | null
   }[]
   variant?: 'card' | 'accordion'
 }
 
 const loadedImageUrls = new Map<string, boolean>()
 
-const HoverImageProvider = ({
+const TeamMemberImageUrlProvider = ({
   member,
   consumer,
   boxProps,
 }: {
   member: TeamListProps['teamMembers'][number]
-  consumer: (imageUrl: string) => React.ReactNode
+  consumer: (imageUrl: string | undefined) => React.ReactNode
   boxProps?: BoxProps
 }) => {
   const initialImageUrl = member.image?.url
@@ -105,7 +104,7 @@ export const TeamMemberCardList = ({
             span={['12/12', '6/12', '12/12', '6/12', '4/12']}
             key={index}
           >
-            <HoverImageProvider
+            <TeamMemberImageUrlProvider
               boxProps={{
                 height: 'full',
                 paddingBottom: 3,
@@ -148,7 +147,7 @@ const TeamMemberAccordionList = ({
           >
             <GridRow rowGap={1}>
               <GridColumn span={['1/1', '1/1', '1/1', '1/1', '3/12']}>
-                <HoverImageProvider
+                <TeamMemberImageUrlProvider
                   member={member}
                   consumer={(imageUrl) => (
                     <img

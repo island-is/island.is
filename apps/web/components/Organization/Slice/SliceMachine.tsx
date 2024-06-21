@@ -201,7 +201,7 @@ const renderSlice = (
       return (
         <TeamListSlice
           id={(slice as TeamList).id}
-          teamMembers={(slice as TeamList).teamMembers}
+          teamMembers={slice.teamMembers}
           filterTags={(slice as TeamList).filterTags}
           variant={(slice as TeamList).variant as 'card' | 'accordion'}
         />

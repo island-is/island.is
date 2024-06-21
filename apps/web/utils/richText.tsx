@@ -1,10 +1,11 @@
 import {
   FaqList,
-  FaqListProps,
+  type FaqListProps,
   renderConnectedComponent,
   richText,
   SectionWithImage,
-  SliceType,
+  type SliceType,
+  type TeamListProps,
 } from '@island.is/island-ui/contentful'
 import {
   defaultRenderComponentObject,
@@ -201,7 +202,7 @@ const defaultRenderComponent = {
   TeamList: (slice: TeamList) => (
     <TeamListSlice
       id={slice.id}
-      teamMembers={slice.teamMembers}
+      teamMembers={slice.teamMembers as TeamListProps['teamMembers']}
       filterTags={slice.filterTags}
       variant={slice.variant as 'accordion' | 'card'}
     />

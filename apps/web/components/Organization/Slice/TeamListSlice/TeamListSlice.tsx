@@ -93,7 +93,10 @@ export const TeamMemberListWrapper = ({
       searchQueryId={searchQueryId}
       tagQueryId={tagQueryId}
     >
-      <TeamList teamMembers={items} variant="accordion" />
+      <TeamList
+        teamMembers={items as TeamListProps['teamMembers']}
+        variant="accordion"
+      />
     </GenericList>
   )
 }
