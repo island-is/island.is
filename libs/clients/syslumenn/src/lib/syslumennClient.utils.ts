@@ -26,6 +26,7 @@ import {
   ErfdafjarskatturSvar,
   DanarbuUpplErfdafjarskatt,
   EignirDanarbusErfdafjarskatt,
+  SveinsbrefModel,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -62,6 +63,7 @@ import {
   InheritanceEstateMember,
   InheritanceReportInfo,
   DebtTypes,
+  JourneymanLicence,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -483,6 +485,16 @@ export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
     office: licence.embaetti,
+  }
+}
+
+export const mapJourneymanLicence = (
+  licence: SveinsbrefModel,
+): JourneymanLicence => {
+  return {
+    name: licence.nafn,
+    dateOfPublication: licence.gildirFra,
+    profession: licence.idngrein,
   }
 }
 

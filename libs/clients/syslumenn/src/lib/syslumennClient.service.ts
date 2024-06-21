@@ -49,6 +49,7 @@ import {
   mapDepartedToRegistryPerson,
   mapInheritanceTax,
   mapEstateToInheritanceReportInfo,
+  mapJourneymanLicence,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -573,6 +574,16 @@ export class SyslumennService {
     })
     return res
       .map(mapMasterLicence)
+      .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
+  }
+
+  async getJourneymanLicences() {
+    const { id, api } = await this.createApi()
+    const res = await api.meistaraleyfiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapJourneymanLicence)
       .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
   }
 

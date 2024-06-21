@@ -355,6 +355,12 @@ export interface MasterLicence {
   office?: string
 }
 
+export interface JourneymanLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+}
+
 export interface VehicleRegistration {
   modelName?: string
   manufacturer?: string

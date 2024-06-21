@@ -74,6 +74,7 @@ import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/co
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
@@ -128,6 +129,8 @@ export const webRenderConnectedComponent = (
       return <SpecificHousingBenefitSupportCalculator slice={slice} />
     case 'GrindavikResidentialPropertyPurchaseCalculator':
       return <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
+    case 'Sveinslisti/JourneymanList':
+      return <JourneymanList slice={slice} />
     default:
       break
   }
