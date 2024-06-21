@@ -5,17 +5,12 @@ interface Props {
   currentItem: FormSystemInput
 }
 
-const CheckboxPreview = ({ currentItem }: Props) => {
+export const CheckboxPreview = ({ currentItem }: Props) => {
   return (
     <Checkbox
       name="checkbox"
       label={currentItem?.name?.is ?? ''}
       checked={currentItem?.inputSettings?.checked ?? false}
-      onChange={() => {
-        console.log()
-      }}
     />
   )
 }
-
-export default CheckboxPreview

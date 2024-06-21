@@ -4,14 +4,14 @@ import {
   Input,
 } from '@island.is/island-ui/core'
 import { ChangeEvent, useContext, useState } from 'react'
-import ControlContext from '../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../context/ControlContext'
 import { FormSystemInput } from '@island.is/api/schema'
 
 interface Props {
   currentItem: FormSystemInput
 }
 
-const Currency = ({ currentItem }: Props) => {
+export const Currency = ({ currentItem }: Props) => {
   const [currency, setCurrency] = useState('')
   const { control } = useContext(ControlContext)
   const label = control.activeItem?.data?.name?.is
@@ -30,7 +30,7 @@ const Currency = ({ currentItem }: Props) => {
       <Column span="10/10">
         <Input
           label={label ?? ''}
-          name={'Currency'}
+          name="Currency"
           value={currency}
           onChange={handleCurrencyChange}
           required={currentItem?.isRequired ?? false}
@@ -39,5 +39,3 @@ const Currency = ({ currentItem }: Props) => {
     </Row>
   )
 }
-
-export default Currency

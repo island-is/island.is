@@ -191,8 +191,9 @@ const defaultRenderComponent = {
   GenericList: (slice: GenericListSchema) => (
     <GenericList
       id={slice.id}
-      firstPageItemResponse={slice.firstPageListItemResponse}
       searchInputPlaceholder={slice.searchInputPlaceholder}
+      itemType={slice.itemType}
+      filterTags={slice.filterTags}
     />
   ),
 }

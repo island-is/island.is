@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './global.model'
 import { Group } from './group.model'
 import { Input } from './input.model'
@@ -64,4 +64,7 @@ export class Form {
 
   @Field(() => [Input], { nullable: 'itemsAndList' })
   inputsList?: Input[] | null
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }

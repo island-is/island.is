@@ -84,7 +84,7 @@ const ApplicationsFilterTable = ({
                   TextTableItem('default', calcDifferenceInDate(item.modified)),
                   TextTableItem(
                     'default',
-                    getMonth(new Date(item.created).getMonth()),
+                    getMonth(new Date(item.appliedDate).getMonth()),
                   ),
                   staff(item.staff?.name),
                 ]}

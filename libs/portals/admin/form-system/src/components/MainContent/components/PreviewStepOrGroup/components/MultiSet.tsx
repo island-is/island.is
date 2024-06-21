@@ -1,13 +1,14 @@
 import { useContext, useState } from 'react'
 import { Box, Icon } from '@island.is/island-ui/core'
 import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
-import ControlContext from '../../../../../context/ControlContext'
-import Preview from '../../Preview/Preveiw'
+import { ControlContext } from '../../../../../context/ControlContext'
+import { Preview } from '../../Preview/Preveiw'
 
 interface Props {
   group: FormSystemGroup
 }
-const MultiSet = ({ group }: Props) => {
+
+export const MultiSet = ({ group }: Props) => {
   const { control } = useContext(ControlContext)
   const { inputsList: inputs } = control.form
   const originalInput = inputs?.filter((i) => i?.groupGuid === group.guid)
@@ -21,7 +22,7 @@ const MultiSet = ({ group }: Props) => {
     }
   }
   return (
-    <Box>
+    <div>
       {multiInput.map((inputArray, index) => (
         <div key={index}>
           {inputArray.map((i) => (
@@ -38,6 +39,7 @@ const MultiSet = ({ group }: Props) => {
         <Box
           width="half"
           style={{ width: '50%', height: '50px', cursor: 'pointer' }}
+          cursor="pointer"
           border="standard"
           borderRadius="standard"
           borderWidth="large"
@@ -50,8 +52,6 @@ const MultiSet = ({ group }: Props) => {
           <Icon icon="add" />
         </Box>
       </Box>
-    </Box>
+    </div>
   )
 }
-
-export default MultiSet

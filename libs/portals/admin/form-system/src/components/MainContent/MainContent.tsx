@@ -8,19 +8,22 @@ import {
   Checkbox,
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
-import ControlContext from '../../context/ControlContext'
+import { ControlContext } from '../../context/ControlContext'
 import { FormSystemGroup, FormSystemStep } from '@island.is/api/schema'
-import BaseSettings from './components/BaseSettings/BaseSettings'
-import Premises from './components/Premises/Premises'
-import InputContent from './components/InputContent/InputContent'
-import PreviewStepOrGroup from './components/PreviewStepOrGroup/PreviewStepOrGroup'
-import RelevantParties from './components/RelevantParties/RevelantParties'
+import { BaseSettings } from './components/BaseSettings/BaseSettings'
+import { Premises } from './components/Premises/Premises'
+import { InputContent } from './components/InputContent/InputContent'
+import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
+import { RelevantParties } from './components/RelevantParties/RevelantParties'
+import { useIntl } from 'react-intl'
+import { m } from '../../lib/messages'
 
-export default function MainContent() {
+export const MainContent = () => {
   const { control, controlDispatch, updateActiveItem, setFocus, focus } =
     useContext(ControlContext)
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
+  const { formatMessage } = useIntl()
 
   return (
     <Box padding={2}>
@@ -30,10 +33,10 @@ export default function MainContent() {
         (activeItem.data as FormSystemStep).type === 'BaseSetting' ? (
         <BaseSettings />
       ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'Forsendur' ? (
+        (activeItem.data as FormSystemStep).type === 'Premises' ? (
         <Premises />
       ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'Aðilar' ? (
+        (activeItem.data as FormSystemStep).type === 'Parties' ? (
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
@@ -42,7 +45,7 @@ export default function MainContent() {
           <Row>
             <Column span="10/10">
               <Input
-                label="Heiti"
+                label={formatMessage(m.name)}
                 name="name"
                 value={activeItem?.data?.name?.is ?? ''}
                 backgroundColor="blue"
@@ -63,7 +66,7 @@ export default function MainContent() {
           <Row>
             <Column span="10/10">
               <Input
-                label="Heiti (enska)"
+                label={formatMessage(m.nameEnglish)}
                 name="nameEn"
                 value={activeItem?.data?.name?.en ?? ''}
                 backgroundColor="blue"
@@ -86,7 +89,7 @@ export default function MainContent() {
               <Column>
                 <Checkbox
                   name="multi"
-                  label="Er fjölval"
+                  label={formatMessage(m.allowMultiple)}
                   checked={(activeItem.data as FormSystemGroup).multiSet !== 0}
                   onChange={(e) =>
                     controlDispatch({
@@ -104,7 +107,7 @@ export default function MainContent() {
           <Row>
             <Column>
               <Button variant="ghost" onClick={() => setOpenPreview(true)}>
-                Skoða
+                {formatMessage(m.preview)}
               </Button>
             </Column>
           </Row>

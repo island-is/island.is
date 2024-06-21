@@ -4,8 +4,10 @@ import { Field, ID, InputType } from '@nestjs/graphql'
 
 import {
   DefendantPlea,
+  DefenderChoice,
   Gender,
   ServiceRequirement,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -70,11 +72,6 @@ export class UpdateDefendantInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => Boolean, { nullable: true })
-  readonly defendantWaivesRightToCounsel?: boolean
-
-  @Allow()
-  @IsOptional()
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
@@ -87,4 +84,14 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => String, { nullable: true })
   readonly verdictViewDate?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => DefenderChoice, { nullable: true })
+  readonly defenderChoice?: DefenderChoice
+
+  @Allow()
+  @IsOptional()
+  @Field(() => SubpoenaType, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
 }

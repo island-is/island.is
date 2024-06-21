@@ -334,16 +334,6 @@ export const EHIC = new XroadConf({
   },
 })
 
-export const UniversityOfIceland = new XroadConf({
-  env: {
-    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
-      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
-      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
-      prod: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1',
-    },
-  },
-})
-
 export const UniversityCareers = new XroadConf({
   env: {
     XROAD_UNIVERSITY_OF_AKUREYRI_PATH: {
@@ -371,6 +361,11 @@ export const UniversityCareers = new XroadConf({
       staging: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
       prod: 'IS/EDU/4210984099/LHI-Protected/brautskraning-v1',
     },
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1',
+    },
   },
 })
 
@@ -379,12 +374,12 @@ export const Education = new XroadConf({
     XROAD_MMS_LICENSE_SERVICE_ID: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1',
       staging: 'IS-TEST/GOV/6601241280/MMS-Protected/license-api-v1',
-      prod: 'IS/EDU/5708150320/MMS-Protected/license-api-v1',
+      prod: 'IS/GOV/6601241280/MMS-Protected/license-api-v1',
     },
     XROAD_MMS_GRADE_SERVICE_ID: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1',
       staging: 'IS-TEST/GOV/6601241280/MMS-Protected/grade-api-v1',
-      prod: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1',
+      prod: 'IS/GOV/6601241280/MMS-Protected/grade-api-v1',
     },
   },
 })
@@ -447,23 +442,23 @@ export const NationalRegistryAuthB2C = new XroadConf({
   env: {
     NATIONAL_REGISTRY_B2C_CLIENT_ID: {
       dev: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1',
-      staging: '',
-      prod: '',
+      staging: '6cf94113-d326-4e4d-b97c-1fea12d2f5e1',
+      prod: '8271bbc2-d8de-480f-8540-ea43fc40b7ae',
     },
     NATIONAL_REGISTRY_B2C_ENDPOINT: {
       dev: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       staging:
-        'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
+        'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
       prod: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     },
     NATIONAL_REGISTRY_B2C_SCOPE: {
       dev: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
-      staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
+      staging: 'https://skraidentitydev.onmicrosoft.com/midlun/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+      staging: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
       prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
     },
   },
@@ -619,7 +614,7 @@ export const Inna = new XroadConf({
     XROAD_INNA_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1',
       staging: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1',
-      prod: 'IS/EDU/5708150320/MMS-Protected/inna-v1',
+      prod: 'IS/GOV/6601241280/MMS-Protected/inna-v1',
     },
   },
 })
@@ -881,6 +876,16 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
+    },
+  },
+})
+
+export const Frigg = new XroadConf({
+  env: {
+    XROAD_MMS_FRIGG_PATH: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      staging: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
     },
   },
 })

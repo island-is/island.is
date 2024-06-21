@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
   ApiStepsPostRequest,
   ApiStepsStepIdDeleteRequest,
@@ -16,6 +16,7 @@ import {
   UpdateStepInput,
 } from '../../dto/steps.input'
 import { Step } from '../../models/step.model'
+import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
 export class StepsService {
@@ -25,6 +26,7 @@ export class StepsService {
     private formsApi: StepsApi,
   ) {}
 
+  // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
     const err = {
       error: JSON.stringify(error),
@@ -33,13 +35,6 @@ export class StepsService {
     this.logger.error(errorDetail || 'Error in steps service', err)
 
     throw new ApolloError(error.message)
-  }
-
-  private handle4xx(error: any, errorDetail?: string): ApolloError | null {
-    if (error.status === 403 || error.status === 404) {
-      return null
-    }
-    return this.handleError(error, errorDetail)
   }
 
   private stepsApiWithAuth(auth: User) {
@@ -52,7 +47,9 @@ export class StepsService {
     }
     const response = await this.stepsApiWithAuth(auth)
       .apiStepsStepIdGet(request)
-      .catch((e) => this.handle4xx(e, 'failed to get step from Id'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get step from Id'),
+      )
     if (!response || response instanceof ApolloError) {
       return {}
     }
@@ -65,7 +62,7 @@ export class StepsService {
     }
     const response = await this.stepsApiWithAuth(auth)
       .apiStepsPost(request)
-      .catch((e) => this.handle4xx(e, 'failed to post step'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to post step'))
 
     if (!response || response instanceof ApolloError) {
       return {}
@@ -78,14 +75,11 @@ export class StepsService {
       stepId: input.stepId,
     }
 
-    const response = await this.stepsApiWithAuth(auth)
+    await this.stepsApiWithAuth(auth)
       .apiStepsStepIdDelete(request)
-      .catch((e) => this.handle4xx(e, 'failed to delete step'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to delete step'))
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 
   async updateStep(auth: User, input: UpdateStepInput): Promise<void> {
@@ -94,13 +88,10 @@ export class StepsService {
       stepUpdateDto: input.stepUpdateDto,
     }
 
-    const response = await this.stepsApiWithAuth(auth)
+    await this.stepsApiWithAuth(auth)
       .apiStepsStepIdPut(request)
-      .catch((e) => this.handle4xx(e, 'failed to update step'))
+      .catch((e) => handle4xx(e, this.handleError, 'failed to update step'))
 
-    if (!response || response instanceof ApolloError) {
-      return void 0
-    }
-    return response
+    return
   }
 }

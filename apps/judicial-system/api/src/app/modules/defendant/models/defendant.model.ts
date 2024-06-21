@@ -2,13 +2,17 @@ import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import {
   DefendantPlea,
+  DefenderChoice,
   Gender,
   ServiceRequirement,
+  SubpoenaType,
 } from '@island.is/judicial-system/types'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
 registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
+registerEnumType(DefenderChoice, { name: 'DefenderChoice' })
+registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 
 @ObjectType()
 export class Defendant {
@@ -54,9 +58,6 @@ export class Defendant {
   @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
-  @Field(() => Boolean, { nullable: true })
-  readonly defendantWaivesRightToCounsel?: boolean
-
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
@@ -68,4 +69,13 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
+
+  @Field(() => DefenderChoice, { nullable: true })
+  readonly defenderChoice?: DefenderChoice
+
+  @Field(() => Boolean, { nullable: true })
+  readonly acceptCompensationClaim?: boolean
+
+  @Field(() => SubpoenaType, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
 }

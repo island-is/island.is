@@ -7,8 +7,8 @@ import {
   FormSystemStepInput,
   InputMaybe,
 } from '@island.is/api/schema'
-import { useFormSystemUpdateFormMutation } from '../../gql/Form.generated'
 import { ControlState } from '../../hooks/controlReducer'
+import { useFormSystemUpdateFormMutation } from '../../screens/Form/Form.generated'
 
 export const entireFormUpdate = (
   control: ControlState,

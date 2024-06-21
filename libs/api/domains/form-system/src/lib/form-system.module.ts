@@ -1,6 +1,5 @@
 import { Module } from '@nestjs/common'
 import { FormSystemClientModule } from '@island.is/clients/form-system'
-import { AuthModule } from '@island.is/auth-nest-tools'
 import { FormsService } from './forms/forms.service'
 import { FormsResolver } from './forms/forms.resolver'
 import { GroupsService } from './groups/groups.service'
@@ -30,6 +29,6 @@ import { StepsResolver } from './steps/steps.resolver'
     StepsResolver,
   ],
   exports: [],
-  imports: [AuthModule, FormSystemClientModule],
+  imports: [FormSystemClientModule],
 })
 export class FormSystemModule {}

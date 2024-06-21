@@ -1,4 +1,4 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 import { LanguageTypeInput } from './language.input'
 import { InputInput } from './inputs.input'
@@ -84,6 +84,9 @@ export class FormInput {
 
   @Field(() => [InputInput], { nullable: 'itemsAndList' })
   inputsList?: InputInput[] | null
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }
 
 @InputType('FormSystemUpdateFormInput')

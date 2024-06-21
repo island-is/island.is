@@ -25,7 +25,6 @@ import {
   Properties,
   RskCompanyInfo,
   TransportAuthority,
-  UniversityOfIceland,
   Vehicles,
   VehiclesMileage,
   VehicleServiceFjsV1,
@@ -47,6 +46,7 @@ import {
   UniversityCareers,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  Frigg,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -194,8 +194,8 @@ export const serviceSetup = (services: {
       },
       FORM_SYSTEM_API_BASE_PATH: {
         dev: 'https://profun.island.is/umsoknarkerfi',
-        staging: 'https://profun.island.is/umsoknarkerfi',
-        prod: 'https://profun.island.is/umsoknarkerfi',
+        staging: '',
+        prod: '',
       },
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
@@ -411,7 +411,6 @@ export const serviceSetup = (services: {
       TransportAuthority,
       ChargeFjsV2,
       EnergyFunds,
-      UniversityOfIceland,
       UniversityCareers,
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
@@ -425,6 +424,7 @@ export const serviceSetup = (services: {
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
       OfficialJournalOfIcelandApplication,
+      Frigg,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

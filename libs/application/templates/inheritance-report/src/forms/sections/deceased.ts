@@ -1,16 +1,17 @@
 import {
+  NO,
+  YES,
+  buildCustomField,
   buildDescriptionField,
   buildKeyValueField,
   buildMultiField,
   buildRadioField,
   buildSection,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import format from 'date-fns/format'
 import { getEstateDataFromApplication } from '../../lib/utils/helpers'
-import { NO, YES } from '../../lib/constants'
 import { format as formatNationalId } from 'kennitala'
 
 export const deceased = buildSection({
@@ -87,6 +88,45 @@ export const deceased = buildSection({
           title: '',
         }),
         buildRadioField({
+          id: 'customShare.hasCustomSpouseSharePercentage',
+          title: m.hasCustomSpouseSharePercentage,
+          largeButtons: false,
+          backgroundColor: 'white',
+          width: 'half',
+          required: true,
+          condition: (answers) =>
+            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
+          options: [
+            { value: NO, label: m.spouseShareFull },
+            { value: YES, label: m.spouseSharePart },
+          ],
+        }),
+        buildCustomField(
+          {
+            id: 'customShare.customSpouseSharePercentage',
+            title: '',
+            width: 'half',
+            component: 'ShareInput',
+            condition: (answers) =>
+              getValueViaPath(
+                answers,
+                'customShare.hasCustomSpouseSharePercentage',
+              ) === YES &&
+              getValueViaPath(answers, 'customShare.deceasedWasMarried') ===
+                YES,
+          },
+          {
+            name: 'customShare.customSpouseSharePercentage',
+            placeholder: '50%',
+            label: m.deceasedShare.defaultMessage,
+          },
+        ),
+        buildDescriptionField({
+          id: 'space4',
+          space: 'gutter',
+          title: '',
+        }),
+        buildRadioField({
           id: 'customShare.deceasedHadAssets',
           title: m.hadSeparateProperty,
           largeButtons: false,
@@ -99,39 +139,6 @@ export const deceased = buildSection({
             { value: YES, label: m.yes },
             { value: NO, label: m.no },
           ],
-        }),
-        buildDescriptionField({
-          id: 'space4',
-          space: 'gutter',
-          title: '',
-        }),
-        buildRadioField({
-          id: 'customShare.hasCustomSpouseSharePercentage',
-          title: m.hasCustomSpouseSharePercentage,
-          largeButtons: false,
-          backgroundColor: 'white',
-          width: 'half',
-          required: true,
-          condition: (answers) =>
-            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
-          options: [
-            { value: YES, label: m.spouseSharePart },
-            { value: NO, label: m.spouseShareFull },
-          ],
-        }),
-        buildTextField({
-          id: 'customShare.customSpouseSharePercentage',
-          title: m.deceasedShare,
-          width: 'half',
-          placeholder: '50%',
-          suffix: '%',
-          variant: 'number',
-          condition: (answers) =>
-            getValueViaPath(
-              answers,
-              'customShare.hasCustomSpouseSharePercentage',
-            ) === YES &&
-            getValueViaPath(answers, 'customShare.deceasedWasMarried') === YES,
         }),
       ],
     }),

@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import ControlContext from '../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../context/ControlContext'
 import { FormSystemInput } from '@island.is/api/schema'
 import {
   Stack,
@@ -11,8 +11,11 @@ import {
   Checkbox,
 } from '@island.is/island-ui/core'
 import { SingleValue } from 'react-select'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../lib/messages'
+import { inputTypesSelectObject } from '../../../../../lib/utils/inputTypes'
 
-const BaseInput = () => {
+export const BaseInput = () => {
   const {
     control,
     controlDispatch,
@@ -24,30 +27,22 @@ const BaseInput = () => {
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
 
-  const sortedInputTypes = inputTypes
-    ?.map((i) => ({
-      label: i?.type ?? '',
-      value: i?.type ?? '',
-    }))
-    .sort((a, b) => (a?.label ?? '').localeCompare(b?.label ?? ''))
-
-  const defaultOption =
-    currentItem.type === ''
-      ? null
-      : sortedInputTypes?.find((o) => o.value === currentItem.type)
+  const selectList = inputTypesSelectObject()
+  const defaultValue = selectList.find((i) => i.value === currentItem?.type)
+  const { formatMessage } = useIntl()
 
   return (
     <Stack space={2}>
       <Row>
         <Column span="5/10">
           <Select
-            label="Tegund"
+            label={formatMessage(m.type)}
             name="inputTypeSelect"
-            options={sortedInputTypes}
-            placeholder="Veldu tegund"
+            options={selectList}
+            placeholder={formatMessage(m.chooseType)}
             backgroundColor="blue"
             isSearchable
-            value={defaultOption}
+            value={defaultValue}
             onChange={(e: SingleValue<Option<string>>) =>
               controlDispatch({
                 type: 'CHANGE_INPUT_TYPE',
@@ -67,7 +62,7 @@ const BaseInput = () => {
         {/* Name  */}
         <Column span="10/10">
           <Input
-            label="Heiti"
+            label={formatMessage(m.name)}
             name="name"
             value={currentItem?.name?.is ?? ''}
             backgroundColor="blue"
@@ -89,7 +84,7 @@ const BaseInput = () => {
         {/* Name en */}
         <Column span="10/10">
           <Input
-            label="Heiti (enska)"
+            label={formatMessage(m.nameEnglish)}
             name="nameEn"
             value={currentItem?.name?.en ?? ''}
             backgroundColor="blue"
@@ -108,12 +103,12 @@ const BaseInput = () => {
         </Column>
       </Row>
       {/* Description  */}
-      {['Textalýsing'].includes(currentItem?.type ?? '') && (
+      {['Message'].includes(currentItem?.type ?? '') && (
         <>
           <Row>
             <Column span="10/10">
               <Input
-                label="Lýsing"
+                label={formatMessage(m.description)}
                 name="description"
                 value={currentItem?.description?.is ?? ''}
                 textarea
@@ -135,7 +130,7 @@ const BaseInput = () => {
           <Row>
             <Column span="10/10">
               <Input
-                label="Lýsing (enska)"
+                label={formatMessage(m.descriptionEnglish)}
                 name="description"
                 value={currentItem?.description?.en ?? ''}
                 textarea
@@ -160,7 +155,7 @@ const BaseInput = () => {
         {/* Required checkbox */}
         <Column span="5/10">
           <Checkbox
-            label="Krafist"
+            label={formatMessage(m.required)}
             checked={currentItem.isRequired ?? false}
             onChange={(e) =>
               controlDispatch({
@@ -176,5 +171,3 @@ const BaseInput = () => {
     </Stack>
   )
 }
-
-export default BaseInput

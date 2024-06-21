@@ -11,13 +11,14 @@ import * as styles from './TableRow.css'
 import { useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useNavigate } from 'react-router-dom'
-import TranslationTag from '../TranslationTag/TranslationTag'
-import { formatDate } from '../../utils/formatDate'
+import { TranslationTag } from '../TranslationTag/TranslationTag'
 import { FormSystemPaths } from '../../lib/paths'
 import {
   LicenseProviderEnum,
   ApplicationTemplateStatus,
 } from '../../lib/utils/interfaces'
+import { useIntl } from 'react-intl'
+import { m } from '../../lib/messages'
 
 interface Props {
   id?: number | null
@@ -41,7 +42,7 @@ const ColumnText = ({ text }: ColumnTextProps) => (
   </Box>
 )
 
-const TableRow = ({
+export const TableRow = ({
   id,
   name,
   lastModified,
@@ -52,6 +53,36 @@ const TableRow = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
+  const { formatMessage, formatDate } = useIntl()
+  const header = () => (
+    <>
+      <Box className={styles.header}>
+        <Row>
+          <Column span="1/12">
+            <Text variant="medium">{formatMessage(m.number)}</Text>
+          </Column>
+          <Column span="4/12">
+            <Text variant="medium">{formatMessage(m.name)}</Text>
+          </Column>
+          <Column span="2/12">
+            <Text variant="medium">{formatMessage(m.lastModified)}</Text>
+          </Column>
+          <Column span="1/12">
+            <Text variant="medium">{formatMessage(m.translations)}</Text>
+          </Column>
+          <Column span="2/12">
+            <Text variant="medium">{formatMessage(m.organisation)}</Text>
+          </Column>
+          <Column span="1/12">
+            <Text variant="medium">{formatMessage(m.state)}</Text>
+          </Column>
+          <Column span="1/12">
+            <Text variant="medium">{formatMessage(m.actions)}</Text>
+          </Column>
+        </Row>
+      </Box>
+    </>
+  )
   if (isHeader) return header()
   return (
     <Box
@@ -69,7 +100,11 @@ const TableRow = ({
         </Column>
         <Column span="2/12">
           <ColumnText
-            text={formatDate(lastModified ? lastModified : new Date())}
+            text={formatDate(lastModified ? lastModified : new Date(), {
+              day: 'numeric',
+              month: 'numeric',
+              year: 'numeric',
+            })}
           />
         </Column>
         <Column span="1/12">
@@ -84,22 +119,22 @@ const TableRow = ({
           <ColumnText text={ApplicationTemplateStatus[state ? state : 0]} />
         </Column>
         <Column span="1/12">
-          <Box display="flex" justifyContent={'center'} alignItems={'center'}>
+          <Box display="flex" justifyContent="center" alignItems="center">
             <DropdownMenu
-              menuLabel={`Aðgerðir ${name}`}
+              menuLabel={`${formatMessage(m.actions)} ${name}`}
               disclosure={
                 <Button
                   icon="menu"
                   circle
                   colorScheme="negative"
-                  title="Aðgerðir"
+                  title={formatMessage(m.actions)}
                   inline
                   aria-label={`Aðgerðir`}
                 />
               }
               items={[
                 {
-                  title: 'Breyta',
+                  title: formatMessage(m.edit),
                   onClick: () => {
                     navigate(
                       FormSystemPaths.Form.replace(':formId', String(id)),
@@ -112,26 +147,26 @@ const TableRow = ({
                   },
                 },
                 {
-                  title: 'Afrita',
+                  title: formatMessage(m.copy),
                 },
                 {
-                  title: 'Þýðing enska',
+                  title: formatMessage(m.translateToEnglish),
                 },
                 {
-                  title: 'Sækja slóð',
+                  title: formatMessage(m.translateToEnglish),
                 },
                 {
                   title: 'Export',
                 },
                 {
-                  title: 'Sækja json',
+                  title: formatMessage(m.getJson),
                 },
               ]}
             />
           </Box>
         </Column>
       </Row>
-      <Box>
+      <div>
         {isOpen === true ? (
           <motion.div
             key={id}
@@ -151,39 +186,7 @@ const TableRow = ({
           </motion.div>
         ) : null}
         <Divider />
-      </Box>
+      </div>
     </Box>
   )
 }
-
-export default TableRow
-
-const header = () => (
-  <>
-    <Box className={styles.header}>
-      <Row>
-        <Column span="1/12">
-          <Text variant="medium">Númer</Text>
-        </Column>
-        <Column span="4/12">
-          <Text variant="medium">Heiti</Text>
-        </Column>
-        <Column span="2/12">
-          <Text variant="medium">Síðast breytt</Text>
-        </Column>
-        <Column span="1/12">
-          <Text variant="medium">Þýðingar</Text>
-        </Column>
-        <Column span="2/12">
-          <Text variant="medium">Stofnun</Text>
-        </Column>
-        <Column span="1/12">
-          <Text variant="medium">Staða</Text>
-        </Column>
-        <Column span="1/12">
-          <Text variant="medium">Aðgerðir</Text>
-        </Column>
-      </Row>
-    </Box>
-  </>
-)

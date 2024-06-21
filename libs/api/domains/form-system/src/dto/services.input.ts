@@ -5,3 +5,9 @@ export class GetPropertyInput {
   @Field(() => String)
   propertyId!: string
 }
+
+@InputType('FormSystemGetTranslationInput')
+export class GetTranslationInput {
+  @Field(() => [String])
+  contents: string[] = []
+}

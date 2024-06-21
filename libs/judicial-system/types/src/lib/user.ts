@@ -50,15 +50,15 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
       prosecutionRoles.includes(user.role) &&
-      user?.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
+      user.institution?.type === InstitutionType.PROSECUTORS_OFFICE,
   )
 }
 
 export const isPublicProsecutor = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
-      user?.role === UserRole.PROSECUTOR &&
-      user?.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
+      user.role === UserRole.PROSECUTOR &&
+      user.institution?.id === '8f9e2f6d-6a00-4a5e-b39b-95fd110d762e', // TODO: Create a new institution type to avoid hardcoding
   )
 }
 

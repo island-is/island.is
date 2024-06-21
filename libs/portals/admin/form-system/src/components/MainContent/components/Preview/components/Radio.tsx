@@ -6,7 +6,7 @@ interface Props {
   currentItem: FormSystemInput
 }
 
-const Radio = ({ currentItem }: Props) => {
+export const Radio = ({ currentItem }: Props) => {
   const radioButtons = currentItem.inputSettings?.list as FormSystemListItem[]
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
 
@@ -40,20 +40,18 @@ const Radio = ({ currentItem }: Props) => {
 
   return (
     <>
-      <Box>
+      <div>
         <Text variant="h3">{currentItem?.name?.is}</Text>
-      </Box>
+      </div>
       <Box
         marginTop={2}
         marginBottom={2}
         display="flex"
-        flexDirection={'row'}
-        flexWrap={'wrap'}
+        flexDirection="row"
+        flexWrap="wrap"
       >
         {radioButtons?.map((rb, index) => radioButton(rb, index))}
       </Box>
     </>
   )
 }
-
-export default Radio

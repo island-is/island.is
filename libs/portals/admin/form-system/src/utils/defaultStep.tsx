@@ -9,7 +9,7 @@ export const defaultStep: FormSystemStep = {
     is: '',
     en: '',
   },
-  type: 'Innsláttur',
+  type: 'Input',
   waitingText: {
     is: '',
     en: '',

@@ -1,7 +1,6 @@
-import { Field, InputType, Int } from '@nestjs/graphql'
+import { Field, ID, InputType, Int } from '@nestjs/graphql'
 import { LanguageTypeInput } from './language.input'
 import graphqlTypeJson from 'graphql-type-json'
-import { InputSettingsInput } from './inputSettings.input'
 
 @InputType('FormSystemInputCreation')
 export class CreateInput {
@@ -98,7 +97,7 @@ export class InputInput {
   @Field(() => String, { nullable: true })
   type?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => ID, { nullable: true })
   guid?: string
 
   @Field()

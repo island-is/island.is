@@ -1,7 +1,7 @@
 import { FormSystemForm } from '@island.is/api/schema'
-import { useFormSystemUpdateFormSettingsMutation } from '../../gql/FormSettings.generated'
 import { ControlState } from '../../hooks/controlReducer'
 import { removeTypename } from './removeTypename'
+import { useFormSystemUpdateFormSettingsMutation } from '../../screens/Form/FormSettings.generated'
 
 export const updateSettings = (
   control: ControlState,
@@ -13,7 +13,6 @@ export const updateSettings = (
     formId: form.id,
     documentTypeId: dt?.id,
   }))
-  console.log('form', form)
   updateFormSettings({
     variables: {
       input: {

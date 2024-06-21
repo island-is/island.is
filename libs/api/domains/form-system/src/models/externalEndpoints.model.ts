@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   EExternalEndpointType,
   EExternalEndpointEnvironment,
@@ -20,9 +20,12 @@ export class ExternalEndpoints {
   @Field(() => String, { nullable: true })
   url?: string | null
 
-  @Field(() => EExternalEndpointType)
+  @Field(() => EExternalEndpointType, { nullable: true })
   type?: EExternalEndpointType
 
   @Field(() => EExternalEndpointEnvironment, { nullable: true })
   environment?: EExternalEndpointEnvironment
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }

@@ -16,20 +16,20 @@ const allowedScopes: string[] = [
 ]
 
 export const formSystemModule: PortalModule = {
-  name: m.formSystemIntro,
+  name: m.rootName,
   layout: 'full',
   enabled: ({ userInfo }) =>
     userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
   routes: (props) => {
     return [
       {
-        name: m.formSystemTitle,
+        name: m.rootName,
         path: FormSystemPaths.FormSystemRoot,
         element: <Forms />,
         loader: formsLoader(props),
       },
       {
-        name: m.formSystemIntro,
+        name: m.rootName,
         path: FormSystemPaths.Form,
         element: <Form />,
         loader: formLoader(props),

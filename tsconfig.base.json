@@ -409,6 +409,9 @@
       "@island.is/application/templates/healthcare-license-certificate": [
         "libs/application/templates/healthcare-license-certificate/src/index.ts"
       ],
+      "@island.is/application/templates/healthcare-work-permit": [
+        "libs/application/templates/healthcare-work-permit/src/index.ts"
+      ],
       "@island.is/application/templates/home-support": [
         "libs/application/templates/home-support/src/index.ts"
       ],
@@ -435,6 +438,9 @@
       ],
       "@island.is/application/templates/mortgage-certificate": [
         "libs/application/templates/mortgage-certificate/src/index.ts"
+      ],
+      "@island.is/application/templates/new-primary-school": [
+        "libs/application/templates/new-primary-school/src/index.ts"
       ],
       "@island.is/application/templates/no-debt-certificate": [
         "libs/application/templates/no-debt-certificate/src/index.ts"
@@ -586,6 +592,7 @@
       "@island.is/clients/charge-fjs-v2": [
         "libs/clients/charge-fjs-v2/src/index.ts"
       ],
+      "@island.is/clients/cms": ["libs/clients/cms/src/index.ts"],
       "@island.is/clients/consultation-portal": [
         "libs/clients/consultation-portal/src/index.ts"
       ],
@@ -679,7 +686,8 @@
       "@island.is/clients/middlewares": [
         "libs/clients/middlewares/src/index.ts"
       ],
-      "@island.is/clients/mms": ["libs/clients/mms/src/index.ts"],
+      "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
+      "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],

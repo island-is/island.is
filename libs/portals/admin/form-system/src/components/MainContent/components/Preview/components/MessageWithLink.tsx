@@ -5,7 +5,7 @@ interface Props {
   data: FormSystemInput
 }
 
-const MessageWithLink = ({ data }: Props) => {
+export const MessageWithLink = ({ data }: Props) => {
   const formatUrl = (url: string): string => {
     if (url.startsWith('http://')) {
       url = url.replace('http://', 'https://')
@@ -16,11 +16,11 @@ const MessageWithLink = ({ data }: Props) => {
   }
   return (
     <Box
-      flexDirection={'row'}
-      display={'flex'}
+      flexDirection="row"
+      display="flex"
       padding={4}
-      background={'white'}
-      alignItems={'center'}
+      background="white"
+      alignItems="center"
     >
       <Box display="flex" flexDirection="column">
         <Box paddingBottom={1}>
@@ -33,7 +33,8 @@ const MessageWithLink = ({ data }: Props) => {
       {data.inputSettings?.hasLink && (
         <Box
           alignItems="center"
-          style={{ top: '50%', marginLeft: 'auto' }}
+          marginLeft="auto"
+          style={{ top: '50%' }}
           paddingLeft={1}
         >
           <Button
@@ -51,5 +52,3 @@ const MessageWithLink = ({ data }: Props) => {
     </Box>
   )
 }
-
-export default MessageWithLink

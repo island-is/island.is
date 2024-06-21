@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './global.model'
 import { ApplicantTypeNameSuggestion } from './applicantTypeNameSuggestion'
 
@@ -21,4 +21,7 @@ export class ApplicantType {
 
   @Field(() => [ApplicantTypeNameSuggestion], { nullable: 'itemsAndList' })
   nameSuggestions?: ApplicantTypeNameSuggestion[] | null
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }

@@ -49,7 +49,7 @@ export class GroupsResolver {
     @Args('input', { type: () => DeleteGroupInput }) input: DeleteGroupInput,
     @CurrentUser() user: User,
   ): Promise<void> {
-    return await this.groupsService.deleteGroup(user, input)
+    return this.groupsService.deleteGroup(user, input)
   }
 
   @Mutation(() => Boolean, {

@@ -5,10 +5,6 @@
     "declaration": true,
     "types": ["node"],
     "target": "es2021",
-    "strictNullChecks": true,
-    "noImplicitAny": true,
-    "strictBindCallApply": true,
-    "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true
   },
   "include": ["src/**/*.ts"],

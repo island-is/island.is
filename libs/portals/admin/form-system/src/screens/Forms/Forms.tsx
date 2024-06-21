@@ -1,11 +1,11 @@
 import { Box, Button, Text, Inline } from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
-import TableRow from '../../components/TableRow/TableRow'
+import { TableRow } from '../../components/TableRow/TableRow'
 import { useFormSystemGetFormsQuery } from './Forms.generated'
 import { useFormSystemCreateFormMutation } from './CreateForm.generated'
 
-const Forms = () => {
+export const Forms = () => {
   const navigate = useNavigate()
 
   const { data, loading, error } = useFormSystemGetFormsQuery({
@@ -27,11 +27,11 @@ const Forms = () => {
   const forms = data?.formSystemGetForms.forms
   if (!loading && !error) {
     return (
-      <Box>
+      <div>
         {/* Title and buttons  */}
-        <Box>
+        <div>
           <Text variant="h2">Forskriftir</Text>
-        </Box>
+        </div>
         <Box marginTop={5}>
           <Inline space={2}>
             <Button
@@ -60,8 +60,7 @@ const Forms = () => {
         <Box marginTop={5}></Box>
 
         <Box marginTop={5}>
-          <Box width={'half'}></Box>
-          <Box></Box>
+          <Box width="half"></Box>
         </Box>
         <TableRow isHeader={true} />
         {forms &&
@@ -77,10 +76,10 @@ const Forms = () => {
               />
             )
           })}
-      </Box>
+      </div>
     )
   }
-  return <>AAAAA</>
+  return <></>
 }
 
 export default Forms

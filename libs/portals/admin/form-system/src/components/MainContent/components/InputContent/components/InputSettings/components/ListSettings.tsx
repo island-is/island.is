@@ -1,5 +1,5 @@
 import { useContext, useState } from 'react'
-import ControlContext from '../../../../../../../context/ControlContext'
+import { ControlContext } from '../../../../../../../context/ControlContext'
 import {
   GridColumn as Column,
   GridRow as Row,
@@ -10,6 +10,8 @@ import {
   RadioButton,
 } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
+import { useIntl } from 'react-intl'
+import { m } from '../../../../../../../lib/messages'
 
 const predeterminedLists = [
   {
@@ -30,8 +32,7 @@ const predeterminedLists = [
   },
 ]
 
-// Need to fix the radio buttons
-const ListSettings = () => {
+export const ListSettings = () => {
   const { control, setInListBuilder } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
@@ -46,18 +47,17 @@ const ListSettings = () => {
       )
   }
 
+  const { formatMessage } = useIntl()
+
   return (
     <Stack space={2}>
-      {currentItem.type === 'Fellilisti' && (
+      {currentItem.type === 'Dropdown_list' && (
         <>
           <Row>
             <Column>
               <Box onClick={() => radioHandler(0)}>
                 <RadioButton
-                  label="Nýr fellilisti"
-                  onChange={(e) => {
-                    console.log()
-                  }}
+                  label={formatMessage(m.customList)}
                   checked={radio[0]}
                 />
               </Box>
@@ -66,10 +66,7 @@ const ListSettings = () => {
           <Row>
             <Column>
               <RadioButton
-                label="Tilbúnir fellilistar"
-                onChange={(e) => {
-                  console.log()
-                }}
+                label={formatMessage(m.predeterminedLists)}
                 checked={radio[1]}
               />
             </Column>
@@ -78,23 +75,20 @@ const ListSettings = () => {
       )}
       {radio[0] && (
         <Button variant="ghost" onClick={() => setInListBuilder(true)}>
-          Listasmiður
+          {formatMessage(m.listBuilder)}
         </Button>
       )}
       {radio[1] && (
         <Column span="5/10">
           <Select
-            placeholder="Veldu lista tegund"
+            placeholder={formatMessage(m.chooseListType)}
             name="predeterminedLists"
-            label="Tilbúnir fellilistar"
+            label={formatMessage(m.predeterminedLists)}
             options={predeterminedLists}
             backgroundColor="blue"
-            // TODO: add lists
           />
         </Column>
       )}
     </Stack>
   )
 }
-
-export default ListSettings

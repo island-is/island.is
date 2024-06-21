@@ -11,7 +11,7 @@ type ListItem = {
   value: string | number
 }
 
-const List = ({ currentItem }: Props) => {
+export const List = ({ currentItem }: Props) => {
   const [listItems, setListItems] = useState<ListItem[]>([])
   useEffect(() => {
     const currentList = currentItem.inputSettings?.list ?? []
@@ -34,5 +34,3 @@ const List = ({ currentItem }: Props) => {
     </>
   )
 }
-
-export default List

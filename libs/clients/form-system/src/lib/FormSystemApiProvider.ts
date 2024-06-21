@@ -12,18 +12,6 @@ import {
   ServicesApi,
   StepsApi,
 } from '../../gen/fetch'
-import * as https from 'https'
-import fetch, { RequestInfo, RequestInit } from 'node-fetch'
-
-const httpsAgent = new https.Agent({
-  // remove
-  rejectUnauthorized: false, // This will ignore SSL certificates
-})
-
-const fetchWithHttpsAgent = (
-  url: RequestInfo,
-  options: RequestInit | undefined,
-) => fetch(url, { ...options, agent: httpsAgent }) //remove
 
 const provideApi = <T>(
   Api: new (configuration: Configuration) => T,
@@ -37,7 +25,6 @@ const provideApi = <T>(
           name: 'form-system',
           organizationSlug: 'stafraent-island',
           logErrorResponseBody: true,
-          fetch: fetchWithHttpsAgent, // remove
         }),
         basePath: config.basePath,
         headers: {

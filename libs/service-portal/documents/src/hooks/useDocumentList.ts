@@ -34,7 +34,6 @@ export const useDocumentList = () => {
   const fetchObject = {
     input: {
       senderNationalId: filterValue.activeSenders,
-      nationalId: userInfo.profile.nationalId,
       dateFrom: filterValue.dateFrom?.toISOString(),
       dateTo: filterValue.dateTo?.toISOString(),
       categoryIds: filterValue.activeCategories,
@@ -50,7 +49,6 @@ export const useDocumentList = () => {
   }
 
   const { data, loading, error, refetch } = useDocumentsV2Query({
-    fetchPolicy: 'network-only',
     variables: fetchObject,
   })
 
@@ -75,10 +73,10 @@ export const useDocumentList = () => {
   const totalCount = data?.documentsV2?.totalCount || 0
   useEffect(() => {
     const pageCount = Math.ceil(totalCount / pageSize)
-    if (pageCount !== totalPages && pageCount !== 0) {
+    if (pageCount !== totalPages && !loading) {
       setTotalPages(pageCount)
     }
-  }, [pageSize, totalCount])
+  }, [pageSize, totalCount, loading])
 
   const filteredDocuments = data?.documentsV2?.data || []
   const activeArchive = filterValue.archived === true

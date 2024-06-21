@@ -151,6 +151,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/energy-funds'),
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: () =>
     import('@island.is/application/templates/healthcare-license-certificate'),
+  [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: () =>
+    import('@island.is/application/templates/healthcare-work-permit'),
   [ApplicationTypes.PENSION_SUPPLEMENT]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/pension-supplement'
@@ -175,6 +177,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/aosh/request-for-inspection'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
     import('@island.is/application/templates/health-insurance-declaration'),
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: () =>
+    import('@island.is/application/templates/new-primary-school'),
 }
 
 export default templates

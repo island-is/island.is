@@ -1,27 +1,30 @@
 import { useContext } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
-import SelectNavComponent from './components/SelectNavComponent'
-import ControlContext from '../../context/ControlContext'
+import { NavComponent as SelectNavComponent } from '../NavComponent/NavComponent'
+import { ControlContext } from '../../context/ControlContext'
 import {
   FormSystemGroup,
   FormSystemInput,
   FormSystemStep,
 } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../lib/utils/interfaces'
+import { useIntl } from 'react-intl'
+import { m } from '../../lib/messages'
 
-export default function NavbarSelect() {
+export const NavbarSelect = () => {
   const { control, selectStatus } = useContext(ControlContext)
   const { activeItem, form } = control
   const { stepsList: steps, groupsList: groups, inputsList: inputs } = form
   let selectable = false
+  const { formatMessage } = useIntl()
   return (
-    <Box>
+    <div>
       <Box paddingBottom={2} overflow="hidden">
-        <Text variant="h5">Skref</Text>
+        <Text variant="h5">{formatMessage(m.step)}</Text>
       </Box>
       {steps
         ?.filter((s): s is FormSystemStep => s !== null && s !== undefined)
-        .filter((s) => s.type === 'Innsláttur')
+        .filter((s) => s.type === 'Input')
         .map((s) => (
           <Box key={s.guid}>
             <SelectNavComponent
@@ -64,6 +67,6 @@ export default function NavbarSelect() {
               ))}
           </Box>
         ))}
-    </Box>
+    </div>
   )
 }

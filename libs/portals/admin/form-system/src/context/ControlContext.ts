@@ -35,7 +35,7 @@ export interface IControlContext {
   updateSettings: (updatedForm?: FormSystemForm) => void
 }
 
-const ControlContext = createContext<IControlContext>({
+export const ControlContext = createContext<IControlContext>({
   control: {} as ControlState,
   controlDispatch: function (_value: unknown): void {
     throw new Error('Function not implemented.')
@@ -73,5 +73,3 @@ const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
 })
-
-export default ControlContext

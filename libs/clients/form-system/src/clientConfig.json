@@ -4,6 +4,11 @@
     "title": "UmsóknarkerfiWebAPI",
     "version": "1.0"
   },
+  "servers": [
+    {
+      "url": "/umsoknarkerfi"
+    }
+  ],
   "paths": {
     "/api/Files": {
       "post": {
@@ -900,6 +905,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "type": {
             "type": "string",
             "nullable": true
@@ -929,6 +938,10 @@
           "applicantTypeId": {
             "type": "integer",
             "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -943,6 +956,10 @@
           "applicantTypeId": {
             "type": "integer",
             "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
@@ -969,6 +986,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "type": {
             "type": "string",
             "nullable": true
@@ -992,6 +1013,10 @@
           "documentTypeId": {
             "type": "integer",
             "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
           }
         },
         "additionalProperties": false
@@ -1010,6 +1035,10 @@
           "id": {
             "type": "integer",
             "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
           },
           "url": {
             "type": "string",
@@ -1082,6 +1111,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
@@ -1098,6 +1131,10 @@
           "id": {
             "type": "integer",
             "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
@@ -1245,6 +1282,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
@@ -1305,6 +1346,10 @@
           "id": {
             "type": "integer",
             "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
@@ -1525,6 +1570,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "type": {
             "type": "string",
             "nullable": true
@@ -1605,6 +1654,10 @@
             "type": "integer",
             "format": "int32"
           },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "type": {
             "type": "string",
             "nullable": true
@@ -1652,7 +1705,7 @@
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
-          "kennitala": {
+          "nationalId": {
             "type": "string",
             "nullable": true
           }
@@ -1666,10 +1719,14 @@
             "type": "integer",
             "format": "int32"
           },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          },
           "name": {
             "$ref": "#/components/schemas/LanguageType"
           },
-          "kennitala": {
+          "nationalId": {
             "type": "string",
             "nullable": true
           },
@@ -1782,6 +1839,10 @@
           "id": {
             "type": "integer",
             "format": "int32"
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
           },
           "name": {
             "$ref": "#/components/schemas/LanguageType"

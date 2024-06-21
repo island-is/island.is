@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './global.model'
 import { Input } from './input.model'
 import { ApplicantType } from './applicantType.model'
@@ -35,4 +35,7 @@ export class Organization {
 
   @Field(() => [ExternalEndpoints], { nullable: 'itemsAndList' })
   externalEndpoints?: ExternalEndpoints[] | null
+
+  @Field(() => ID, { nullable: true })
+  guid?: string
 }

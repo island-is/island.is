@@ -1,4 +1,4 @@
-import { Field, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 import graphqlTypeJson from 'graphql-type-json'
 
 import { InputSettings } from './inputSettings.model'
@@ -30,7 +30,7 @@ export class Input {
   @Field(() => String, { nullable: true })
   type?: string | null
 
-  @Field(() => String, { nullable: true })
+  @Field(() => ID, { nullable: true })
   guid?: string
 
   @Field(() => Boolean, { nullable: true })
