@@ -31,6 +31,8 @@ type UseParams = {
   id: string
 }
 
+const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date('01.01.2020')
+
 const OccupationalLicenseDetail = () => {
   const { id } = useParams() as UseParams
   useNamespaces('sp.occupational-licenses')
@@ -49,6 +51,11 @@ const OccupationalLicenseDetail = () => {
   const res = data?.occupationalLicenseV2
   const license = res?.license
 
+  const isOldEducationLicense =
+    license?.type === OccupationalLicenseV2LicenseType.EDUCATION &&
+    license.validFrom &&
+    new Date(license.validFrom) < EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF
+
   return (
     <>
       <IntroHeader
@@ -57,7 +64,7 @@ const OccupationalLicenseDetail = () => {
         intro={res?.headerText ?? ''}
         serviceProviderSlug={license?.issuer as OrganizationSlugType}
       >
-        {res?.actions && (
+        {!isOldEducationLicense && res?.actions && (
           <Box paddingTop={3}>
             {
               <Inline space={1} collapseBelow="sm">
@@ -110,6 +117,15 @@ const OccupationalLicenseDetail = () => {
         )}
       </IntroHeader>
       {error && !loading && <Problem noBorder={false} error={error} />}
+      {!error && !loading && isOldEducationLicense && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(om.educationLicenseDigitalUnavailable)}
+          message={formatMessage(
+            om.educationLicenseDigitalUnavailableDescription,
+          )}
+        />
+      )}
       {!error && (loading || data?.occupationalLicenseV2) && (
         <StackWithBottomDivider space={2} box={{ marginTop: [2, 3, 6] }}>
           <UserInfoLine
@@ -160,7 +176,7 @@ const OccupationalLicenseDetail = () => {
               }
             />
           )}
-          {(license?.status || loading) && (
+          {(license?.status || loading) && !isOldEducationLicense && (
             <UserInfoLine
               loading={loading}
               label={formatMessage(om.licenseStatus)}

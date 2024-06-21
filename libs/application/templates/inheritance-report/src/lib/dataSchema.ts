@@ -512,6 +512,15 @@ export const inheritanceReportSchema = z.object({
             email: z.string().optional(),
           })
           .optional(),
+        // Málsvari 2
+        advocate2: z
+          .object({
+            name: z.string().optional(),
+            nationalId: z.string().optional(),
+            phone: z.string().optional(),
+            email: z.string().optional(),
+          })
+          .optional(),
       })
       .refine(
         ({ enabled, heirsPercentage }) => {

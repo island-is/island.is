@@ -3,6 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { SliceUnion, mapDocument } from '../unions/slice.union'
 import { GenericList, mapGenericList } from './genericList.model'
 import { IGenericListItem } from '../generated/contentfulTypes'
+import { GenericTag, mapGenericTag } from './genericTag.model'
 
 @ObjectType()
 export class GenericListItem {
@@ -26,6 +27,9 @@ export class GenericListItem {
 
   @Field(() => String, { nullable: true })
   slug?: string
+
+  @CacheField(() => [GenericTag], { nullable: true })
+  filterTags?: GenericTag[]
 }
 
 export const mapGenericListItem = ({
@@ -45,4 +49,5 @@ export const mapGenericListItem = ({
     ? mapDocument(fields.content, `${sys.id}:content`)
     : [],
   slug: fields.slug,
+  filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
 })

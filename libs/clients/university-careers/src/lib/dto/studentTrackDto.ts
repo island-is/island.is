@@ -21,6 +21,7 @@ export interface StudentTrackDto {
   faculty?: string
   studyProgram?: string
   degree?: string
+  programId?: string
 }
 
 export const mapToStudentTrackDto = (

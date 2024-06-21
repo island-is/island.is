@@ -47,7 +47,8 @@ const IndictmentOverview = () => {
     useState(false)
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id
+    workingCase.indictmentReviewer?.id === user?.id &&
+    Boolean(!workingCase.indictmentReviewDecision)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -93,7 +94,10 @@ const IndictmentOverview = () => {
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment
-              displayAppealExpirationInfo={user?.role === UserRole.DEFENDER}
+              displayAppealExpirationInfo={
+                user?.role === UserRole.DEFENDER ||
+                workingCase.indictmentReviewer?.id === user?.id
+              }
             />
           ) : (
             <InfoCardActiveIndictment />

@@ -140,7 +140,7 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
-import { CmsModule, PowerBiConfig } from '@island.is/cms'
+import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
@@ -168,6 +168,9 @@ import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/di
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
+import { FormSystemClientConfig } from '@island.is/clients/form-system'
+import { FormSystemModule } from '@island.is/api/domains/form-system'
+
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
@@ -185,6 +188,10 @@ import {
 import { HousingBenefitsConfig } from '@island.is/clients/hms-housing-benefits'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { UltravioletRadiationClientConfig } from '@island.is/clients/ultraviolet-radiation'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { VmstClientConfig } from '@island.is/clients/vmst'
+import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 
 const environment = getConfig
 
@@ -205,6 +212,7 @@ const environment = getConfig
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     ConsultationPortalModule,
+    FormSystemModule,
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
@@ -223,7 +231,7 @@ const environment = getConfig
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     LicenseServiceModule,
-    DirectorateOfLabourModule.register(),
+    DirectorateOfLabourModule,
     FileUploadModule,
     DocumentModule,
     DocumentProviderModule.register({
@@ -246,15 +254,7 @@ const environment = getConfig
     }),
     CmsTranslationsModule,
     TerminusModule,
-    HealthInsuranceModule.register({
-      clientV2Config: {
-        xRoadBaseUrl: environment.healthInsuranceV2.xRoadBaseUrl!,
-        xRoadProviderId: environment.healthInsuranceV2.xRoadProviderId!,
-        xRoadClientId: environment.healthInsuranceV2.xRoadClientId!,
-        username: environment.healthInsuranceV2.username!,
-        password: environment.healthInsuranceV2.password!,
-      },
-    }),
+    HealthInsuranceModule,
     UserProfileModule.register({
       islykill: {
         cert: environment.islykill.cert!,
@@ -309,13 +309,7 @@ const environment = getConfig
     ApiDomainsPaymentModule,
     PaymentScheduleModule,
     ProblemModule,
-    CriminalRecordModule.register({
-      clientConfig: {
-        xroadBaseUrl: environment.xroad.baseUrl!,
-        xroadClientId: environment.xroad.clientId!,
-        xroadPath: environment.criminalRecord.xroadPath!,
-      },
-    }),
+    CriminalRecordModule,
     MunicipalitiesFinancialAidModule,
     FishingLicenseModule,
     MortgageCertificateModule,
@@ -331,6 +325,7 @@ const environment = getConfig
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        FormSystemClientConfig,
         WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
@@ -414,6 +409,10 @@ const environment = getConfig
         LicenseConfig,
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
+        FriggClientConfig,
+        VmstClientConfig,
+        HealthInsuranceV2ClientConfig,
+        CriminalRecordClientConfig,
       ],
     }),
   ],
