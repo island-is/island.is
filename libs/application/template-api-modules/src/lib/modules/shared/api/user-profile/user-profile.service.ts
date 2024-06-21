@@ -64,13 +64,15 @@ export class UserProfileService extends BaseTemplateApiService {
     const bankInfo = await this.getBankInfoFromIslykill(auth)
 
     return {
-      mobilePhoneNumber,
-      email,
+      mobilePhoneNumber: mobilePhoneNumber ?? undefined,
+      email: email ?? undefined,
       bankInfo,
     }
   }
 
-  private async getBankInfoFromIslykill(auth: User) {
+  private async getBankInfoFromIslykill(
+    auth: User,
+  ): Promise<string | undefined> {
     return this.islyklarApi
       .islyklarGet({ ssn: auth.nationalId })
       .then((results) => {
