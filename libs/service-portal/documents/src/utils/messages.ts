@@ -92,4 +92,12 @@ export const messages = defineMessages({
     id: 'sp.documents:mark-as-bulk-selection',
     defaultMessage: 'Merkja skjal fyrir fjöldaframkvæmd',
   },
+  goToPage: {
+    id: 'sp.documents:go-to-page',
+    defaultMessage: 'Fara á síðu {page}',
+  },
+  selectAll: {
+    id: 'sp.documents:select-all',
+    defaultMessage: 'Velja allt',
+  },
 })

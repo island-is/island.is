@@ -165,6 +165,7 @@ export const ServicePortalDocumentsV2 = () => {
                   {!activeArchive && (
                     <Checkbox
                       name="checkbox-select-all"
+                      aria-label={formatMessage(messages.selectAll)}
                       checked={selectedLines.length > 0}
                       onChange={(e) => {
                         if (e.target.checked) {
@@ -246,6 +247,7 @@ export const ServicePortalDocumentsV2 = () => {
                       <button
                         className={className}
                         onClick={handlePageChange.bind(null, page)}
+                        aria-label={formatMessage(messages.goToPage, { page })}
                       >
                         {children}
                       </button>
