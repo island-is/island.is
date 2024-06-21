@@ -652,13 +652,8 @@ export class CaseService {
       }))
 
     const caseFilesCategories = isTrafficViolationCase(theCase)
-      ? [
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-        ]
+      ? [CaseFileCategory.CRIMINAL_RECORD, CaseFileCategory.COST_BREAKDOWN]
       : [
-          CaseFileCategory.COVER_LETTER,
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
