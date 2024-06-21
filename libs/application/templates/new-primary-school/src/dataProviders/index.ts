@@ -14,3 +14,21 @@ export const GetHealthApi = defineTemplateApi({
   externalDataId: 'health',
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })
+
+export const GetUserApi = defineTemplateApi({
+  action: 'getUserById',
+  externalDataId: 'userInfo',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})
+
+export const GetSchoolsApi = defineTemplateApi({
+  action: 'getAllSchoolsByMunicipality',
+  externalDataId: 'schools',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})
+
+export const OptionsApi = defineTemplateApi({
+  action: 'getAllKeyOptions',
+  externalDataId: 'KeyOptions',
+  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
+})

@@ -28,8 +28,7 @@
             }
           }
         },
-        "tags": ["KeyOptionsManagement"],
-        "security": [{ "Authorization": [] }]
+        "tags": ["KeyOptionsManagement"]
       }
     },
     "/keyOptions/types": {
@@ -39,8 +38,7 @@
         "description": "Get types.",
         "parameters": [],
         "responses": { "200": { "description": "" } },
-        "tags": ["KeyOptionsManagement"],
-        "security": [{ "Authorization": [] }]
+        "tags": ["KeyOptionsManagement"]
       }
     },
     "/health": {
@@ -48,6 +46,56 @@
         "operationId": "health",
         "parameters": [],
         "responses": { "200": { "description": "" } }
+      }
+    },
+    "/schools": {
+      "get": {
+        "operationId": "getAllSchoolsByMunicipality",
+        "summary": "Get all schools.",
+        "description": "Returns a paginated collection of schools.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/OrganizationModel" }
+                }
+              }
+            }
+          }
+        },
+        "tags": ["SchoolsManagement"],
+        "security": [{ "Authorization": [] }]
+      }
+    },
+    "/student/{nationalId}": {
+      "get": {
+        "operationId": "getUserBySourcedId",
+        "summary": "Get user by nationalId",
+        "description": "Get user by Id. ",
+        "parameters": [
+          {
+            "name": "nationalId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/UserModel" }
+              }
+            }
+          }
+        },
+        "tags": ["UsersManagement"],
+        "security": [{ "Authorization": [] }]
       }
     }
   },
@@ -119,6 +167,139 @@
           }
         },
         "required": ["type", "options"]
+      },
+      "OrganizationModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["municipality", "national", "school"]
+          },
+          "gradeLevels": { "type": "array", "items": { "type": "string" } },
+          "parent": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/OrganizationModel" }]
+          },
+          "children": {
+            "nullable": true,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/OrganizationModel" }
+          }
+        },
+        "required": [
+          "id",
+          "nationalId",
+          "name",
+          "type",
+          "gradeLevels",
+          "parent",
+          "children"
+        ]
+      },
+      "AddressModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "street": { "type": "string" },
+          "municipality": { "type": "object", "nullable": true },
+          "zip": { "type": "string" },
+          "country": { "type": "object", "nullable": true }
+        },
+        "required": ["id", "street", "municipality", "zip", "country"]
+      },
+      "MembershipModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "role": {
+            "type": "string",
+            "enum": [
+              "admin",
+              "guardian",
+              "parent",
+              "principal",
+              "relative",
+              "student",
+              "teacher"
+            ]
+          },
+          "beginDate": { "format": "date-time", "type": "string" },
+          "endDate": {
+            "format": "date-time",
+            "type": "string",
+            "nullable": true
+          },
+          "organization": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/OrganizationModel" }]
+          }
+        },
+        "required": ["id", "role", "beginDate", "endDate", "organization"]
+      },
+      "AgentModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "name": { "type": "string" },
+          "phone": { "type": "string" },
+          "email": { "type": "string" },
+          "role": { "type": "string" },
+          "address": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
+          }
+        },
+        "required": [
+          "id",
+          "nationalId",
+          "name",
+          "phone",
+          "email",
+          "role",
+          "address"
+        ]
+      },
+      "UserModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "name": { "type": "string" },
+          "preferredName": { "type": "object", "nullable": true },
+          "pronouns": { "type": "array", "items": { "type": "string" } },
+          "gradeLevels": { "type": "array", "items": { "type": "string" } },
+          "email": { "type": "object", "nullable": true },
+          "address": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
+          },
+          "primaryOrgId": { "type": "object" },
+          "memberships": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/MembershipModel" }
+          },
+          "agents": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentModel" }
+          }
+        },
+        "required": [
+          "id",
+          "nationalId",
+          "name",
+          "preferredName",
+          "pronouns",
+          "gradeLevels",
+          "email",
+          "address",
+          "primaryOrgId",
+          "memberships",
+          "agents"
+        ]
       }
     }
   }

@@ -24,6 +24,13 @@ import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import { getApplicationAnswers } from './newPrimarySchoolUtils'
+import {
+  GetHealthApi,
+  GetSchoolsApi,
+  GetTypesApi,
+  GetUserApi,
+  OptionsApi,
+} from '../dataProviders'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -71,6 +78,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
+                /*  GetTypesApi,
+                GetHealthApi,
+                OptionsApi,*/
+                //   GetSchoolsApi,
+                //GetUserApi,
               ],
             },
           ],
