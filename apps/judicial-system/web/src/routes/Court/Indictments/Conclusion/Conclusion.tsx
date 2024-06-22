@@ -88,14 +88,14 @@ const Conclusion: React.FC = () => {
       switch (selectedAction) {
         case IndictmentDecision.POSTPONING:
           if (postponement?.postponedIndefinitely) {
+            update.postponedIndefinitelyExplanation = postponement?.reason
+          } else {
             if (courtDate?.date) {
               update.courtDate = {
                 date: formatDateForServer(new Date(courtDate.date)),
                 location: courtDate.location,
               }
             }
-          } else {
-            update.postponedIndefinitelyExplanation = postponement?.reason
           }
           break
         case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
