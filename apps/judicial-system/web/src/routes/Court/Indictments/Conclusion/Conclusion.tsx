@@ -131,19 +131,21 @@ const Conclusion: React.FC = () => {
       return
     }
 
-    setSelectedAction(workingCase.indictmentDecision)
-
     switch (workingCase.indictmentDecision) {
       case IndictmentDecision.POSTPONING:
         if (workingCase.postponedIndefinitelyExplanation) {
           setPostponementReason(workingCase.postponedIndefinitelyExplanation)
         }
+        setSelectedAction(IndictmentDecision.SCHEDULING)
         break
       case IndictmentDecision.COMPLETING:
         if (workingCase.indictmentRulingDecision) {
           setSelectedDecision(workingCase.indictmentRulingDecision)
         }
+        setSelectedAction(IndictmentDecision.COMPLETING)
         break
+      default:
+        setSelectedAction(IndictmentDecision.SCHEDULING)
     }
   }, [
     workingCase.indictmentDecision,
