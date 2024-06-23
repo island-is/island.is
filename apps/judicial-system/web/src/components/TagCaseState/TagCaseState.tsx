@@ -73,6 +73,7 @@ export const mapCaseStateToTagVariant = (
     case CaseState.RECEIVED:
       switch (indictmentDecision) {
         case IndictmentDecision.POSTPONING:
+        case IndictmentDecision.SCHEDULING:
         case IndictmentDecision.COMPLETING:
           return { color: 'mint', text: formatMessage(strings.scheduled) }
         case IndictmentDecision.POSTPONING_UNTIL_VERDICT:

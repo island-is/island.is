@@ -208,6 +208,57 @@ describe('mapCaseStateToTagVariant', () => {
     })
   })
 
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.POSTPONING,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.scheduled.defaultMessage,
+    })
+  })
+
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.SCHEDULING,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.scheduled.defaultMessage,
+    })
+  })
+
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.COMPLETING,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.scheduled.defaultMessage,
+    })
+  })
+
   test('should return revoked state', () => {
     expect(
       fn(CaseState.WAITING_FOR_CANCELLATION, false, CaseType.INDICTMENT),

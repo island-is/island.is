@@ -4,7 +4,6 @@ import router from 'next/router'
 
 import {
   Box,
-  Checkbox,
   Input,
   InputFileUpload,
   RadioButton,
@@ -40,21 +39,15 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-interface Postponement {
-  postponedIndefinitely?: boolean
-  isSettingVerdictDate?: boolean
-  reason?: string
-}
-
 const Conclusion: React.FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
+  const [postponementReason, setPostponementReason] = useState<string>()
   const [selectedDecision, setSelectedDecision] =
     useState<CaseIndictmentRulingDecision>()
-  const [postponement, setPostponement] = useState<Postponement>()
 
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
@@ -87,19 +80,10 @@ const Conclusion: React.FC = () => {
 
       switch (selectedAction) {
         case IndictmentDecision.POSTPONING:
-          if (postponement?.postponedIndefinitely) {
-            update.postponedIndefinitelyExplanation = postponement?.reason
-          } else {
-            if (courtDate?.date) {
-              update.courtDate = {
-                date: formatDateForServer(new Date(courtDate.date)),
-                location: courtDate.location,
-              }
-            }
-          }
+          update.postponedIndefinitelyExplanation = postponementReason
           break
-        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
-          if (postponement?.isSettingVerdictDate && courtDate?.date) {
+        case IndictmentDecision.SCHEDULING:
+          if (courtDate?.date) {
             update.courtDate = {
               date: formatDateForServer(new Date(courtDate.date)),
               location: courtDate.location,
@@ -133,9 +117,7 @@ const Conclusion: React.FC = () => {
     [
       courtDate?.date,
       courtDate?.location,
-      postponement?.isSettingVerdictDate,
-      postponement?.postponedIndefinitely,
-      postponement?.reason,
+      postponementReason,
       selectedAction,
       selectedDecision,
       setAndSendCaseToServer,
@@ -154,10 +136,7 @@ const Conclusion: React.FC = () => {
     switch (workingCase.indictmentDecision) {
       case IndictmentDecision.POSTPONING:
         if (workingCase.postponedIndefinitelyExplanation) {
-          setPostponement({
-            postponedIndefinitely: true,
-            reason: workingCase.postponedIndefinitelyExplanation,
-          })
+          setPostponementReason(workingCase.postponedIndefinitelyExplanation)
         }
         break
       case IndictmentDecision.COMPLETING:
@@ -172,13 +151,6 @@ const Conclusion: React.FC = () => {
     workingCase.postponedIndefinitelyExplanation,
   ])
 
-  useEffect(() => {
-    setPostponement((prev) => ({
-      ...prev,
-      isSettingVerdictDate: Boolean(workingCase.courtDate?.date),
-    }))
-  }, [workingCase.courtDate?.date])
-
   const stepIsValid = () => {
     // Do not leave any downloads unfinished
     if (!allFilesDoneOrError) {
@@ -187,15 +159,9 @@ const Conclusion: React.FC = () => {
 
     switch (selectedAction) {
       case IndictmentDecision.POSTPONING:
-        return Boolean(
-          postponement?.postponedIndefinitely
-            ? postponement.reason
-            : courtDate?.date,
-        )
-      case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
-        return postponement?.isSettingVerdictDate
-          ? Boolean(courtDate?.date)
-          : true
+        return Boolean(postponementReason)
+      case IndictmentDecision.SCHEDULING:
+        return Boolean(courtDate?.date)
       case IndictmentDecision.COMPLETING:
         switch (selectedDecision) {
           case CaseIndictmentRulingDecision.RULING:
@@ -222,6 +188,7 @@ const Conclusion: React.FC = () => {
           default:
             return false
         }
+      case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
       case IndictmentDecision.REDISTRIBUTING:
         return true
       default:
@@ -249,171 +216,108 @@ const Conclusion: React.FC = () => {
           <BlueBox>
             <Box marginBottom={2}>
               <RadioButton
-                id="conclusion-postpone"
+                id="conclusion-postponing"
                 name="conclusion-decision"
-                checked={
-                  selectedAction === IndictmentDecision.POSTPONING ||
-                  (!selectedAction &&
-                    workingCase.indictmentDecision ===
-                      IndictmentDecision.POSTPONING)
-                }
+                checked={selectedAction === IndictmentDecision.POSTPONING}
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.POSTPONING)
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.postponed)}
+                label={formatMessage(strings.postponing)}
               />
             </Box>
             <Box marginBottom={2}>
               <RadioButton
-                id="conclusion-postpone-until-verdict"
+                id="conclusion-scheduling"
+                name="conclusion-decision"
+                checked={selectedAction === IndictmentDecision.SCHEDULING}
+                onChange={() => {
+                  setSelectedAction(IndictmentDecision.SCHEDULING)
+                }}
+                large
+                backgroundColor="white"
+                label={formatMessage(strings.scheduling)}
+              />
+            </Box>
+            <Box marginBottom={2}>
+              <RadioButton
+                id="conclusion-postponing-until-verdict"
                 name="conclusion-decision"
                 checked={
-                  selectedAction ===
-                    IndictmentDecision.POSTPONING_UNTIL_VERDICT ||
-                  (!selectedAction &&
-                    workingCase.indictmentDecision ===
-                      IndictmentDecision.POSTPONING_UNTIL_VERDICT)
+                  selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT
                 }
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.POSTPONING_UNTIL_VERDICT)
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.postponedUntilVerdict)}
+                label={formatMessage(strings.postponingUntilVerdict)}
               />
             </Box>
             <Box marginBottom={2}>
               <RadioButton
-                id="conclusion-complete"
+                id="conclusion-completing"
                 name="conclusion-decision"
-                checked={
-                  selectedAction === IndictmentDecision.COMPLETING ||
-                  (!selectedAction &&
-                    workingCase.indictmentDecision ===
-                      IndictmentDecision.COMPLETING)
-                }
+                checked={selectedAction === IndictmentDecision.COMPLETING}
                 onChange={() => {
                   setSelectedAction(IndictmentDecision.COMPLETING)
                 }}
                 large
                 backgroundColor="white"
-                label={formatMessage(strings.complete)}
+                label={formatMessage(strings.completing)}
               />
             </Box>
             <RadioButton
-              id="conclusion-redistribute"
+              id="conclusion-redistributing"
               name="conclusion-redistribute"
-              checked={
-                selectedAction === IndictmentDecision.REDISTRIBUTING ||
-                (!selectedAction &&
-                  workingCase.indictmentDecision ===
-                    IndictmentDecision.REDISTRIBUTING)
-              }
+              checked={selectedAction === IndictmentDecision.REDISTRIBUTING}
               onChange={() => {
                 setSelectedAction(IndictmentDecision.REDISTRIBUTING)
               }}
               large
               backgroundColor="white"
-              label={formatMessage(strings.redistribute)}
+              label={formatMessage(strings.redistributing)}
             />
           </BlueBox>
         </Box>
         {selectedAction === IndictmentDecision.POSTPONING && (
-          <>
-            <SectionHeading
-              title={formatMessage(strings.arrangeAnotherHearing)}
+          <Box marginBottom={5}>
+            <SectionHeading title={formatMessage(strings.postponingTitle)} />
+            <Input
+              name="reasonForPostponement"
+              rows={10}
+              autoExpand={{ on: true, maxHeight: 600 }}
+              label={formatMessage(strings.reasonForPostponementTitle)}
+              placeholder={formatMessage(
+                strings.reasonForPostponementPlaceholder,
+              )}
+              value={postponementReason}
+              onChange={(event) => setPostponementReason(event.target.value)}
+              textarea
+              required
             />
-            <Box marginBottom={5}>
-              <BlueBox>
-                <Box marginBottom={2}>
-                  <CourtArrangements
-                    handleCourtDateChange={handleCourtDateChange}
-                    handleCourtRoomChange={handleCourtRoomChange}
-                    courtDate={courtDate}
-                    blueBox={false}
-                    dateTimeDisabled={postponement?.postponedIndefinitely}
-                    courtRoomDisabled={postponement?.postponedIndefinitely}
-                  />
-                </Box>
-                <Box marginBottom={2}>
-                  <Checkbox
-                    name="postponedIndefinitely"
-                    label={formatMessage(strings.postponedIndefinitely)}
-                    large
-                    filled
-                    checked={postponement?.postponedIndefinitely}
-                    onChange={(event) =>
-                      setPostponement((prev) => ({
-                        ...prev,
-                        postponedIndefinitely: event.target.checked,
-                      }))
-                    }
-                  />
-                </Box>
-                <Input
-                  name="reasonForPostponement"
-                  rows={10}
-                  autoExpand={{ on: true, maxHeight: 600 }}
-                  label={formatMessage(strings.reasonForPostponement)}
-                  placeholder={formatMessage(
-                    strings.reasonForPostponementPlaceholder,
-                  )}
-                  value={postponement?.reason}
-                  onChange={(event) =>
-                    setPostponement((prev) => ({
-                      ...prev,
-                      reason: event.target.value,
-                    }))
-                  }
-                  disabled={!postponement?.postponedIndefinitely}
-                  textarea
-                  required
-                />
-              </BlueBox>
-            </Box>
-          </>
+          </Box>
         )}
-        {selectedAction === IndictmentDecision.POSTPONING_UNTIL_VERDICT && (
-          <Box component="section" marginBottom={5}>
-            <SectionHeading
-              title={formatMessage(strings.arrangeVerdictTitle)}
-            />
+        {selectedAction === IndictmentDecision.SCHEDULING && (
+          <Box marginBottom={5}>
+            <SectionHeading title={formatMessage(strings.schedulingTitle)} />
             <BlueBox>
-              <Box marginBottom={2}>
-                <Checkbox
-                  id="arrange-verdict"
-                  name="arrange-verdict"
-                  checked={Boolean(postponement?.isSettingVerdictDate)}
-                  onChange={() => {
-                    setPostponement((prev) => ({
-                      ...prev,
-                      isSettingVerdictDate: !prev?.isSettingVerdictDate,
-                    }))
-                    handleCourtDateChange(null)
-                    handleCourtRoomChange(null)
-                  }}
-                  backgroundColor="white"
-                  label={formatMessage(strings.arrangeVerdict)}
-                  large
-                  filled
-                />
-              </Box>
               <CourtArrangements
                 handleCourtDateChange={handleCourtDateChange}
                 handleCourtRoomChange={handleCourtRoomChange}
-                blueBox={false}
-                dateTimeDisabled={!postponement?.isSettingVerdictDate}
-                courtRoomDisabled={!postponement?.isSettingVerdictDate}
                 courtDate={courtDate}
+                blueBox={false}
               />
             </BlueBox>
           </Box>
         )}
         {selectedAction === IndictmentDecision.COMPLETING && (
           <Box marginBottom={5}>
-            <SectionHeading title={formatMessage(strings.decision)} required />
+            <SectionHeading
+              title={formatMessage(strings.completingTitle)}
+              required
+            />
             <BlueBox>
               <Box marginBottom={2}>
                 <RadioButton
@@ -513,8 +417,8 @@ const Conclusion: React.FC = () => {
               <SectionHeading
                 title={formatMessage(
                   selectedDecision === CaseIndictmentRulingDecision.RULING
-                    ? strings.rulingUploadTitle
-                    : strings.dismissalUploadTitle,
+                    ? strings.verdictUploadTitle
+                    : strings.rulingUploadTitle,
                 )}
                 required
               />

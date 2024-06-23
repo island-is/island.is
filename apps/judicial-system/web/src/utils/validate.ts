@@ -448,20 +448,39 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
 }
 
 export const isConclusionStepValid = (workingCase: Case): boolean => {
-  return Boolean(
-    workingCase.indictmentDecision === IndictmentDecision.COMPLETING &&
-      workingCase.indictmentRulingDecision &&
-      workingCase.caseFiles?.some(
-        (file) => file.category === CaseFileCategory.COURT_RECORD,
-      ) &&
-      ([
-        CaseIndictmentRulingDecision.FINE,
-        CaseIndictmentRulingDecision.CANCELLATION,
-      ].includes(workingCase.indictmentRulingDecision) ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.RULING,
-        )),
-  )
+  switch (workingCase.indictmentDecision) {
+    case IndictmentDecision.POSTPONING:
+      return Boolean(workingCase.postponedIndefinitelyExplanation)
+    case IndictmentDecision.SCHEDULING:
+      return Boolean(workingCase.courtDate?.date)
+    case IndictmentDecision.COMPLETING:
+      switch (workingCase.indictmentRulingDecision) {
+        case CaseIndictmentRulingDecision.RULING:
+        case CaseIndictmentRulingDecision.DISMISSAL:
+          return Boolean(
+            workingCase.caseFiles?.some(
+              (file) => file.category === CaseFileCategory.COURT_RECORD,
+            ) &&
+              workingCase.caseFiles?.some(
+                (file) => file.category === CaseFileCategory.RULING,
+              ),
+          )
+        case CaseIndictmentRulingDecision.FINE:
+        case CaseIndictmentRulingDecision.CANCELLATION:
+          return Boolean(
+            workingCase.caseFiles?.some(
+              (file) => file.category === CaseFileCategory.COURT_RECORD,
+            ),
+          )
+        default:
+          return false
+      }
+    case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+    case IndictmentDecision.REDISTRIBUTING:
+      return true
+    default:
+      return false
+  }
 }
 
 export const isAdminUserFormValid = (user: User): boolean => {

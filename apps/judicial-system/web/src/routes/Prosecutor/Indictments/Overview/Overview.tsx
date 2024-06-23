@@ -32,6 +32,7 @@ import {
 import {
   CaseState,
   CaseTransition,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -176,12 +177,15 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.court &&
-          latestDate?.date && (
+        {workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduledIndictment
                 court={workingCase.court}
+                indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
                 courtRoom={latestDate.location}
                 postponedIndefinitelyExplanation={

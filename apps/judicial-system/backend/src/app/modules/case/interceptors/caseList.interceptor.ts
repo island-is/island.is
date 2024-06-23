@@ -7,6 +7,8 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
+import { IndictmentDecision } from '@island.is/judicial-system/types'
+
 import { Case } from '../models/case.model'
 import { DateLog } from '../models/dateLog.model'
 import { ExplanatoryComment } from '../models/explanatoryComment.model'
@@ -32,7 +34,9 @@ export class CaseListInterceptor implements NestInterceptor {
             decision: theCase.decision,
             validToDate: theCase.validToDate,
             courtDate: theCase.indictmentDecision
-              ? DateLog.courtDate(theCase.dateLogs)?.date
+              ? theCase.indictmentDecision === IndictmentDecision.SCHEDULING
+                ? DateLog.courtDate(theCase.dateLogs)?.date
+                : undefined
               : DateLog.arraignmentDate(theCase.dateLogs)?.date,
             initialRulingDate: theCase.initialRulingDate,
             rulingDate: theCase.rulingDate,
