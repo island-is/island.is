@@ -98,35 +98,34 @@ const Table: FC<TableProps> = (props) => {
 
   useMemo(() => {
     if (sortConfig) {
-      console.log('sortConfig', sortConfig)
-      data.sort(() => (sortConfig.direction === 'ascending' ? 1 : -1))
-      // data.sort((a: CaseListEntry, b: CaseListEntry) => {
-      //   console.log(a, b)
-      //   const getColumnValue = (entry: CaseListEntry) => {
-      //     if (
-      //       sortConfig.column === 'defendant' &&
-      //       entry.defendants &&
-      //       entry.defendants.length > 0
-      //     ) {
-      //       return entry.defendants[0].name ?? ''
-      //     }
-      //     if (sortConfig.column === 'courtDate') {
-      //       return entry.courtDate ?? ''
-      //     }
-      //     if (sortConfig.column === 'deadline') {
-      //       return entry.indictmentAppealDeadline
-      //     }
-      //   }
+      data.sort((a: CaseListEntry, b: CaseListEntry) => {
+        const getColumnValue = (entry: CaseListEntry) => {
+          if (
+            sortConfig.column === 'defendant' &&
+            entry.defendants &&
+            entry.defendants.length > 0
+          ) {
+            return entry.defendants[0].name ?? ''
+          }
+          if (sortConfig.column === 'courtDate') {
+            return entry.courtDate ?? ''
+          }
+          if (sortConfig.column === 'deadline') {
+            return entry.indictmentAppealDeadline
+              ? new Date(entry.indictmentAppealDeadline).toLocaleDateString()
+              : ''
+          }
+        }
 
-      //   const compareResult = compareLocaleIS(
-      //     getColumnValue(a),
-      //     getColumnValue(b),
-      //   )
+        const compareResult =
+          sortConfig.column === 'defendant'
+            ? compareLocaleIS(getColumnValue(a) ?? '', getColumnValue(b) ?? '')
+            : 1
 
-      //   return sortConfig.direction === 'ascending'
-      //     ? compareResult
-      //     : -compareResult
-      // })
+        return sortConfig.direction === 'ascending'
+          ? compareResult
+          : -compareResult
+      })
     }
   }, [data, sortConfig])
 
