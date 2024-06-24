@@ -154,15 +154,7 @@ clean_node_modules() {
 clean_all() {
   local jobs=("generated" "caches" "yarn" "node_modules")
 
-  for job in "${jobs[@]}"; do
-    local job_var="CLEAN_${job^^}"
-    if [[ "${!job_var}" == "true" ]]; then
-      log "Cleaning $job files"
-      "clean_$job"
-    else
-      log "Skipping $job"
-    fi
-  done
+  clean_generated
 }
 
 cli "$@"

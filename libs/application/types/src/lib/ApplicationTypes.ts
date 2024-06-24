@@ -52,6 +52,7 @@ export enum ApplicationTypes {
   CAR_RECYCLING = 'CarRecycling',
   SIGNATURE_LIST_CREATION = 'SignatureListCreation',
   SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -284,6 +285,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
     slug: 'maela-med-frambodi',
     translation: 'sls.application',
+  },
+  [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: {
+    slug: 'althingis-medmaelasofnun',
+    translation: 'plc.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
