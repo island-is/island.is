@@ -234,6 +234,9 @@
       "@island.is/api/domains/transport-authority": [
         "libs/api/domains/transport-authority/src/index.ts"
       ],
+      "@island.is/api/domains/umbodsmadur-skuldara": [
+        "libs/api/domains/umbodsmadur-skuldara/src/index.ts"
+      ],
       "@island.is/api/domains/university-careers": [
         "libs/api/domains/university-careers/src/index.ts"
       ],
@@ -767,6 +770,9 @@
       ],
       "@island.is/clients/ultraviolet-radiation": [
         "libs/clients/ultraviolet-radiation/src/index.ts"
+      ],
+      "@island.is/clients/ums-cost-of-living-calculator": [
+        "libs/clients/ums-cost-of-living-calculator/src/index.ts"
       ],
       "@island.is/clients/university-application/agricultural-university-of-iceland": [
         "libs/clients/university-application/agricultural-university-of-iceland/src/index.ts"
