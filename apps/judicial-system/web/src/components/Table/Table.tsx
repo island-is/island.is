@@ -112,14 +112,12 @@ const Table: FC<TableProps> = (props) => {
           }
           if (sortConfig.column === 'deadline') {
             return entry.indictmentAppealDeadline
-              ? new Date(entry.indictmentAppealDeadline).toLocaleDateString()
-              : ''
           }
         }
 
         const compareResult =
           sortConfig.column === 'defendant'
-            ? compareLocaleIS(getColumnValue(a) ?? '', getColumnValue(b) ?? '')
+            ? compareLocaleIS(getColumnValue(a), getColumnValue(b))
             : 1
 
         return sortConfig.direction === 'ascending'

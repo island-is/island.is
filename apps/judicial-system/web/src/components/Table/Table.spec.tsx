@@ -65,12 +65,6 @@ describe('Table', () => {
       </IntlProviderWrapper>,
     )
 
-    // let tableRows = []
-    // tableRows = await screen.findAllByTestId('tableRow')
-    // expect(tableRows).toHaveLength(2)
-
-    // console.log('tableRows', tableRows[0].textContent)
-
     await act(async () => {
       await user.click(await screen.findByTestId('deadlineSortButton'))
     })
@@ -86,10 +80,5 @@ describe('Table', () => {
     const tableRows2 = await screen.findAllByTestId('tableRow')
     expect(tableRows2[0]).toHaveTextContent('2021-01-01T00:00:00Z')
     expect(tableRows2[1]).toHaveTextContent('2021-01-02T00:00:00Z')
-
-    // await user.click(await screen.findByTestId('deadlineSortButton'))
-    // tableRows = await screen.findAllByTestId('tableRow')
-    // expect(tableRows[0]).toHaveTextContent('2021-01-01T00:00:00Z')
-    // expect(tableRows[1]).toHaveTextContent('2021-01-02T00:00:00Z')
   })
 })
