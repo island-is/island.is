@@ -66,7 +66,7 @@ export const deceased = buildSection({
         }),
         buildDescriptionField({
           id: 'space2',
-          space: 'gutter',
+          space: 'containerGutter',
           title: '',
         }),
         buildRadioField({

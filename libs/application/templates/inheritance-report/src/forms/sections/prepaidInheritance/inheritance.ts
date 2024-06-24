@@ -5,6 +5,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { m } from '../../../lib/messages'
+import { PrePaidInheritanceOptions } from '../../../lib/constants'
 
 export const inheritance = buildSection({
   id: 'inheritance',
@@ -16,49 +17,25 @@ export const inheritance = buildSection({
       description: m.inheritanceSelectionDescriptionPrePaid,
       children: [
         buildCheckboxField({
-          id: 'prepaidInheritance.realEstate',
+          id: 'prepaidInheritance',
           title: '',
           large: true,
           defaultValue: [],
           options: [
             {
-              value: YES,
+              value: PrePaidInheritanceOptions.REAL_ESTATE,
               label: m.realEstateRepeaterHeader,
             },
-          ],
-        }),
-        buildCheckboxField({
-          id: 'prepaidInheritance.stocks',
-          title: '',
-          large: true,
-          defaultValue: [],
-          options: [
             {
-              value: YES,
+              value: PrePaidInheritanceOptions.STOCKS,
               label: m.stocksTitle,
             },
-          ],
-        }),
-        buildCheckboxField({
-          id: 'prepaidInheritance.money',
-          title: '',
-          large: true,
-          defaultValue: [],
-          options: [
             {
-              value: YES,
+              value: PrePaidInheritanceOptions.MONEY,
               label: m.moneyTitlePrePaid,
             },
-          ],
-        }),
-        buildCheckboxField({
-          id: 'prepaidInheritance.other',
-          title: '',
-          large: true,
-          defaultValue: [],
-          options: [
             {
-              value: YES,
+              value: PrePaidInheritanceOptions.OTHER_ASSETS,
               label: m.otherAssetsTitle,
             },
           ],

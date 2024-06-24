@@ -25,6 +25,13 @@ export interface NewTemporaryDrivingLicenseInput {
   phone: string
 }
 
+export interface NewBEDrivingLicenseInput {
+  jurisdiction: number
+  instructorSSN: string
+  primaryPhoneNumber: string
+  studentEmail: string
+}
+
 export interface NewDrivingLicenseResult {
   success: boolean
   errorMessage: string | null
