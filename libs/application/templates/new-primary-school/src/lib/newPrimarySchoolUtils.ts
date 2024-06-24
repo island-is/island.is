@@ -445,7 +445,10 @@ export const getOptionsListByType = async (
   )
 }
 
-export const getSelectOptionLabel = (options: SelectOption[], key?: string) => {
+export const getSelectedOptionLabel = (
+  options: SelectOption[],
+  key?: string,
+) => {
   if (key === undefined) {
     return undefined
   }

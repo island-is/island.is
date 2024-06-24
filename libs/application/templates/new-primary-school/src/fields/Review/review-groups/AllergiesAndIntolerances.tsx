@@ -7,7 +7,7 @@ import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getSelectOptionLabel,
+  getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
@@ -43,7 +43,7 @@ export const AllergiesAndIntolerances = ({
                 )}
                 value={foodAllergies
                   .map((allergies) => {
-                    return getSelectOptionLabel(
+                    return getSelectedOptionLabel(
                       foodAllergiesFriggOptions,
                       allergies,
                     )
@@ -62,7 +62,7 @@ export const AllergiesAndIntolerances = ({
                 )}
                 value={foodIntolerances
                   .map((intolerances) => {
-                    return getSelectOptionLabel(
+                    return getSelectedOptionLabel(
                       foodIntolerancesFriggOptions,
                       intolerances,
                     )
