@@ -259,6 +259,8 @@ codemagic.yaml                                                                  
 /libs/clients/administration-of-occupational-safety-and-health/                                          @island-is/stefna
 /libs/api/domains/administration-of-occupational-safety-and-health/                                      @island-is/stefna
 /libs/clients/ultraviolet-radiation/                                                                     @island-is/stefna
+/libs/clients/ums-cost-of-living-calculator/                                                             @island-is/stefna
+/libs/api/domains/umbodsmadur-skuldara/                                                                  @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
