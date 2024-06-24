@@ -73,7 +73,10 @@ COPY package.json .
 RUN . ~/.${SHELL}rc && volta install "node@$(jq -r '.engines.node' package.json)"
 
 # Install brew for additional binaries
-RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+RUN \
+  touch /.dockerenv && \
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)" && \
+  rm /.dockerenv
 
 # Set up user's shell config
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
