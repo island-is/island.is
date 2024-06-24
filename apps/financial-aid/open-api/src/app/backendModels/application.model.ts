@@ -16,9 +16,9 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import {
   AmountBackendModel,
   ApplicationFileBackendModel,
+  ChildrenBackendModel,
   DirectTaxPaymentBackendModel,
   StaffBackendModel,
-  ChildrenBackendModel,
 } from './index'
 
 @Table({
