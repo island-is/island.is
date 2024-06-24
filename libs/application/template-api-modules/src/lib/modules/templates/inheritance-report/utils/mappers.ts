@@ -47,6 +47,13 @@ const estateMemberMapper = (element: EstateMember) => {
           email: '',
         }
       : undefined,
+    advocate2: element.advocate2
+      ? {
+          ...element.advocate2,
+          phone: '',
+          email: '',
+        }
+      : undefined,
   }
 }
 
