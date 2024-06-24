@@ -1,18 +1,15 @@
 import {
   buildAlertMessageField,
-  buildAsyncSelectField,
   buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildSubSection,
 } from '@island.is/application/core'
 import { YES } from '@island.is/application/types'
+import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import {
-  getApplicationAnswers,
-  getFoodAllergiesOptions,
-  getFoodIntolerancesOptions,
-} from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
 export const allergiesAndIntolerancesSubSection = buildSubSection({
   id: 'allergiesAndIntolerancesSubSection',
@@ -41,28 +38,25 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           ],
         }),
-        buildAsyncSelectField({
-          id: 'allergiesAndIntolerances.foodAllergies',
-          title: newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
-          dataTestId: 'food-allergies',
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds.typeOfAllergiesPlaceholder,
-          // TODO: Nota gögn fá Júní
-          loadOptions: async ({ apolloClient }) => {
-            /*  return await getOptionsListByType(
-              apolloClient,
-              OptionsType.ALLERGRY,
-            )*/
+        buildCustomField(
+          {
+            id: 'allergiesAndIntolerances.foodAllergies',
+            title: newPrimarySchoolMessages.differentNeeds.typeOfAllergies,
+            component: 'FriggOptionsAsyncSelectField',
+            dataTestId: 'food-allergies',
+            condition: (answers) => {
+              const { hasFoodAllergies } = getApplicationAnswers(answers)
 
-            return getFoodAllergiesOptions()
+              return hasFoodAllergies?.includes(YES)
+            },
           },
-          isMulti: true,
-          condition: (answers) => {
-            const { hasFoodAllergies } = getApplicationAnswers(answers)
-
-            return hasFoodAllergies?.includes(YES)
+          {
+            optionsType: OptionsType.ALLERGRY,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .typeOfAllergiesPlaceholder,
           },
-        }),
+        ),
         buildAlertMessageField({
           id: 'allergiesAndIntolerances.info',
           title: newPrimarySchoolMessages.shared.alertTitle,
@@ -91,29 +85,25 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           ],
         }),
-        buildAsyncSelectField({
-          id: 'allergiesAndIntolerances.foodIntolerances',
-          title: newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
-          dataTestId: 'food-intolerances',
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .typeOfIntolerancesPlaceholder,
-          // TODO: Nota gögn fá Júní
-          loadOptions: async ({ apolloClient }) => {
-            /*return await getOptionsListByType(
-              apolloClient,
-              OptionsType.INTELERENCE,
-            )*/
+        buildCustomField(
+          {
+            id: 'allergiesAndIntolerances.foodIntolerances',
+            title: newPrimarySchoolMessages.differentNeeds.typeOfIntolerances,
+            component: 'FriggOptionsAsyncSelectField',
+            dataTestId: 'food-intolerances',
+            condition: (answers) => {
+              const { hasFoodIntolerances } = getApplicationAnswers(answers)
 
-            return getFoodIntolerancesOptions()
+              return hasFoodIntolerances?.includes(YES)
+            },
           },
-          isMulti: true,
-          condition: (answers) => {
-            const { hasFoodIntolerances } = getApplicationAnswers(answers)
-
-            return hasFoodIntolerances?.includes(YES)
+          {
+            optionsType: OptionsType.INTOLERANCE,
+            placeholder:
+              newPrimarySchoolMessages.differentNeeds
+                .typeOfIntolerancesPlaceholder,
           },
-        }),
+        ),
         buildDescriptionField({
           // Needed to add space
           id: 'allergiesAndIntolerances.divider',
