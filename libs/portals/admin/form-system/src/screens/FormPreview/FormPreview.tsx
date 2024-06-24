@@ -13,7 +13,7 @@ import {
 import { useState } from "react"
 import { FormPreviewLoader } from "./FormPreview.loader"
 import { Preview } from "../../components/MainContent/components/Preview/Preveiw"
-import { PremisesPreview } from "../../components/MainContent/components/Premises/PremisesPreview"
+import { PremisesPreview } from "../../components/FormPreview/PremisesPreview"
 import { FormSystemDocumentType } from "@island.is/api/schema"
 
 
@@ -37,8 +37,7 @@ import { FormSystemDocumentType } from "@island.is/api/schema"
         <Section section={'Section #5'} />,
       ]}
     />
-  */}
-
+*/}
 {/*
   Current step
   Current group
@@ -47,17 +46,23 @@ import { FormSystemDocumentType } from "@island.is/api/schema"
 export const FormPreview = () => {
   const { formBuilder } = useLoaderData() as FormPreviewLoader
   const { form } = formBuilder
-  const { stepsList: steps, groupsList: groups, inputsList: inputs } = form || {}
+  const { stepsList: steps, groupsList: groups, inputsList: inputs } = form ?? {}
   const [currentStep, setCurrentStep] = useState<number>(0)
   const [currentGroup, setCurrentGroup] = useState<number>(0)
   const documents = form?.documentTypes ?? [] as FormSystemDocumentType[]
-  console.log(formBuilder)
+
   const handleForward = () => {
     setCurrentStep(prev => prev + 1)
+    if (steps?.[currentStep]?.type === 'Input') {
+      setCurrentGroup(prev => prev + 1)
+    }
   }
 
   const handleBack = () => {
     setCurrentStep(prev => prev - 1)
+    if (steps?.[currentStep]?.type === 'Input') {
+      setCurrentGroup(prev => prev - 1)
+    }
   }
 
   const renderStepContent = () => {
@@ -133,9 +138,17 @@ export const FormPreview = () => {
                 theme={FormStepperThemes.BLUE}
                 subSections={groups
                   .filter((g) => g?.stepGuid === step?.guid)
-                  .map((group, j) => (
-                    <Text key={`s${i}g${j}`}>{group?.name?.is}</Text>
-                  ))}
+                  .map((group, j) => {
+                    return (
+                      currentGroup === groups.findIndex((g) => group?.guid === g?.guid) ? (
+                        <Text key={`s${i}g${j}`} fontWeight="semiBold">
+                          {group?.name?.is}
+                        </Text>
+                      ) : (
+                        <Text key={`s${i}g${j}`}>{group?.name?.is}</Text>
+                      )
+                    );
+                  })}
               />
             ))}
           />
