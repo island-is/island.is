@@ -51,7 +51,7 @@ export const HelloModule = React.memo(() => {
           ) : (
             <Image
               source={{ uri: imageSrc }}
-              style={{ height: 167, width: '100%' }}
+              style={{ height: 167 }}
               resizeMode="contain"
             />
           )}
