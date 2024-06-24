@@ -401,9 +401,6 @@ export class CaseController {
         update.courtCaseNumber = null
         update.indictmentHash = null
         break
-      case CaseTransition.REDISTRIBUTE:
-        update.judgeId = null
-        break
       case CaseTransition.ASK_FOR_CANCELLATION:
         if (theCase.indictmentDecision) {
           throw new ForbiddenException(
