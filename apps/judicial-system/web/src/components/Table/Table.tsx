@@ -101,7 +101,7 @@ const Table: FC<TableProps> = (props) => {
       data.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {
           if (
-            sortConfig.column === 'defendant' &&
+            sortConfig.column === 'defendants' &&
             entry.defendants &&
             entry.defendants.length > 0
           ) {
@@ -110,13 +110,13 @@ const Table: FC<TableProps> = (props) => {
           if (sortConfig.column === 'courtDate') {
             return entry.courtDate ?? ''
           }
-          if (sortConfig.column === 'deadline') {
+          if (sortConfig.column === 'indictmentAppealDeadline') {
             return entry.indictmentAppealDeadline
           }
         }
 
         const compareResult =
-          sortConfig.column === 'defendant'
+          sortConfig.column === 'defendants'
             ? compareLocaleIS(getColumnValue(a), getColumnValue(b))
             : 1
 

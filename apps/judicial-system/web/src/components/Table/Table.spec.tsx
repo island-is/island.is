@@ -33,7 +33,7 @@ describe('Table', () => {
         title: 'Title',
         sortable: {
           isSortable: true,
-          key: 'deadline' as sortableTableColumn,
+          key: 'indictmentAppealDeadline' as sortableTableColumn,
         },
       },
     ]
@@ -66,7 +66,9 @@ describe('Table', () => {
     )
 
     await act(async () => {
-      await user.click(await screen.findByTestId('deadlineSortButton'))
+      await user.click(
+        await screen.findByTestId('indictmentAppealDeadlineSortButton'),
+      )
     })
 
     const tableRows = await screen.findAllByTestId('tableRow')
@@ -74,7 +76,9 @@ describe('Table', () => {
     expect(tableRows[1]).toHaveTextContent('2021-01-01T00:00:00Z')
 
     await act(async () => {
-      await user.click(await screen.findByTestId('deadlineSortButton'))
+      await user.click(
+        await screen.findByTestId('indictmentAppealDeadlineSortButton'),
+      )
     })
 
     const tableRows2 = await screen.findAllByTestId('tableRow')
