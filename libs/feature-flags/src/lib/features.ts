@@ -32,6 +32,7 @@ export enum Features {
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  idCardApplication = 'isIdCardApplicationEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
