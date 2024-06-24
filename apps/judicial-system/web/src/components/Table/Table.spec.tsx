@@ -7,7 +7,6 @@ import {
   ApolloProviderWrapper,
   IntlProviderWrapper,
 } from '@island.is/judicial-system-web/src/utils/testHelpers'
-import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { sortableTableColumn } from '../../types'
 import Table from './Table'
@@ -35,7 +34,6 @@ describe('Table', () => {
         sortable: {
           isSortable: true,
           key: 'indictmentAppealDeadline' as sortableTableColumn,
-          compareFn: compareLocaleIS,
         },
       },
     ]

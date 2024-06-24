@@ -24,7 +24,6 @@ export type sortableTableColumn = keyof CaseListEntry
 export interface SortConfig {
   column: sortableTableColumn
   direction: directionType
-  compareFn?: (a?: string | null, b?: string | null) => number
 }
 
 interface NationalRegistryPerson {

@@ -7,8 +7,6 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
-import compareAsc from 'date-fns/compareAsc'
-import compareDesc from 'date-fns/compareDesc'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence } from 'framer-motion'
 
@@ -22,6 +20,7 @@ import { CaseListEntry, CaseState } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
+import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -29,12 +28,10 @@ import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
-import { compareLocaleIS } from '../../utils/sortHelper'
 
 interface Sortable {
   isSortable: boolean
   key: sortableTableColumn
-  compareFn?: (a?: string | null, b?: string | null) => number
 }
 
 interface TableProps {
@@ -68,10 +65,7 @@ export const useTable = () => {
     },
   )
 
-  const requestSort = (
-    column: sortableTableColumn,
-    compareFn?: (a?: string | null, b?: string | null) => number,
-  ) => {
+  const requestSort = (column: sortableTableColumn) => {
     let d: directionType = 'ascending'
 
     if (
@@ -81,7 +75,7 @@ export const useTable = () => {
     ) {
       d = 'descending'
     }
-    setSortConfig({ column, direction: d, compareFn })
+    setSortConfig({ column, direction: d })
   }
 
   const getClassNamesFor = (name: sortableTableColumn) => {
@@ -114,15 +108,16 @@ const Table: FC<TableProps> = (props) => {
             entry.defendants.length > 0 &&
             entry.defendants[0].name
           ) {
-            return entry?.defendants[0].name
+            return entry.defendants[0].name
           }
 
           return entry[sortConfig.column]?.toString()
         }
 
-        const compareResult = sortConfig.compareFn
-          ? sortConfig.compareFn(getColumnValue(a), getColumnValue(b))
-          : compareLocaleIS(getColumnValue(a), getColumnValue(b))
+        const compareResult = compareLocaleIS(
+          getColumnValue(a),
+          getColumnValue(b),
+        )
 
         return sortConfig.direction === 'ascending'
           ? compareResult
@@ -178,10 +173,7 @@ const Table: FC<TableProps> = (props) => {
               {th.sortable ? (
                 <SortButton
                   title={th.title}
-                  onClick={() =>
-                    th.sortable &&
-                    requestSort(th.sortable.key, th.sortable.compareFn)
-                  }
+                  onClick={() => th.sortable && requestSort(th.sortable.key)}
                   sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
                   isActive={sortConfig?.column === th.sortable.key}

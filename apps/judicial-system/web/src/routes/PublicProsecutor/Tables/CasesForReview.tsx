@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -19,7 +19,6 @@ import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
 } from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
-import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { strings } from './CasesForReview.strings'
 
@@ -28,10 +27,7 @@ interface CasesForReviewTableProps {
   cases: CaseListEntry[]
 }
 
-const CasesForReview: React.FC<CasesForReviewTableProps> = ({
-  loading,
-  cases,
-}) => {
+const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
@@ -53,7 +49,6 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   sortable: {
                     isSortable: true,
                     key: 'defendants',
-                    compareFn: compareLocaleIS,
                   },
                 },
                 { title: formatMessage(tables.state) },
