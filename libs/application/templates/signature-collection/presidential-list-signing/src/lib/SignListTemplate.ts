@@ -25,7 +25,7 @@ export const WeekLifeCycle: StateLifeCycle = {
 }
 
 const configuration =
-  ApplicationConfigurations[ApplicationTypes.SIGNATURE_LIST_SIGNING]
+  ApplicationConfigurations[ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]
 
 const SignListTemplate: ApplicationTemplate<
   ApplicationContext,
