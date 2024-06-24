@@ -41,7 +41,6 @@ const canProsecutionUserAccessCase = (
       CaseState.SUBMITTED,
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
@@ -119,7 +118,6 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
       CaseState.SUBMITTED,
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
@@ -237,7 +235,6 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
       CaseState.SUBMITTED,
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,

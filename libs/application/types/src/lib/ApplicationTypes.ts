@@ -31,7 +31,7 @@ export enum ApplicationTypes {
   MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
-  OPERATING_LCENSE = 'OperatingLicense',
+  OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
@@ -66,8 +66,10 @@ export enum ApplicationTypes {
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
+  ID_CARD = 'IdCard',
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
+  NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
 }
 
 export const ApplicationConfigurations = {
@@ -203,7 +205,7 @@ export const ApplicationConfigurations = {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
   },
-  [ApplicationTypes.OPERATING_LCENSE]: {
+  [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
     translation: 'ol.application',
   },
@@ -343,6 +345,10 @@ export const ApplicationConfigurations = {
     slug: 'stjornartidindi',
     translation: 'ojoi.application',
   },
+  [ApplicationTypes.ID_CARD]: {
+    slug: 'nafnskirteini',
+    translation: 'id.application',
+  },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     slug: 'tryggingaryfirlysing',
     translation: ['hid.application', 'uiForms.application'],
@@ -350,5 +356,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',
     translation: 'sr.application',
+  },
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
+    slug: 'nyr-grunnskoli',
+    translation: ['dess.nps.application', 'uiForms.application'],
   },
 }

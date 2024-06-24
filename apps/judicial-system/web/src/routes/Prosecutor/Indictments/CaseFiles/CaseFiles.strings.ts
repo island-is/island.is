@@ -22,11 +22,6 @@ export const caseFiles = defineMessages({
     defaultMessage: 'Velja gögn til að hlaða upp',
     description: 'Texti í tökkum í öllum file upload svæðum.',
   },
-  coverLetterSection: {
-    id: 'judicial.system.core:indictments.case_files.cover_letter_section',
-    defaultMessage: 'Fylgibréf',
-    description: 'Titill á fylgibréf hluta á dómskjalaskjá í ákærum.',
-  },
   indictmentSection: {
     id: 'judicial.system.core:indictments.case_files.indictment_section',
     defaultMessage: 'Ákæra',

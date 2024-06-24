@@ -33,7 +33,7 @@ import { Case } from '../models/case.model'
 import { CaseArchive } from '../models/caseArchive.model'
 import { DateLog } from '../models/dateLog.model'
 import { ExplanatoryComment } from '../models/explanatoryComment.model'
-import { PDFService } from '../pdf.service'
+import { PdfService } from '../pdf.service'
 
 jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
@@ -123,7 +123,7 @@ export const createTestingCaseModule = async () => {
       CaseService,
       InternalCaseService,
       LimitedAccessCaseService,
-      PDFService,
+      PdfService,
     ],
   })
     .useMocker((token) => {

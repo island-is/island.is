@@ -131,7 +131,7 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },
-  [ApplicationTypes.OPERATING_LCENSE]: {
+  [ApplicationTypes.OPERATING_LICENSE]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },
@@ -271,6 +271,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
     slug: InstitutionTypes.DOMSMALARADUNEYTID,
   },
+  [ApplicationTypes.ID_CARD]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+  },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     nationalId: InstitutionNationalIds.SJUKRATRYGGINGAR_ISLANDS,
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
@@ -278,5 +282,9 @@ export const institutionMapper = {
   [ApplicationTypes.STREET_REGISTRATION]: {
     nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
     slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
+    nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+    slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
 }

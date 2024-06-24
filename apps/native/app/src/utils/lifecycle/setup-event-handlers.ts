@@ -91,10 +91,6 @@ export function setupEventHandlers() {
     } = authStore.getState()
     const { appLockTimeout } = preferencesStore.getState()
 
-    if (status === 'active') {
-      void notificationsStore.getState().checkUnseen()
-    }
-
     if (!skipAppLock()) {
       if (noLockScreenUntilNextAppStateActive) {
         authStore.setState({ noLockScreenUntilNextAppStateActive: false })
@@ -105,6 +101,7 @@ export function setupEventHandlers() {
         // Add a small delay for those accidental backgrounds in iOS
         // and to prevent the lock screen from showing up on Android when react-native-vision-camera is used.
         backgroundAppLockTimeout = setTimeout(() => {
+          const { lockScreenComponentId } = authStore.getState()
           if (!lockScreenComponentId) {
             showAppLockOverlay({ status })
           } else {
