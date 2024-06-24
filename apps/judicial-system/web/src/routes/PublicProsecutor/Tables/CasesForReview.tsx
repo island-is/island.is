@@ -19,6 +19,7 @@ import TagCaseState, {
   mapIndictmentCaseStateToTagVariant,
 } from '@island.is/judicial-system-web/src/components/TagCaseState/TagCaseState'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { strings } from './CasesForReview.strings'
 
@@ -49,7 +50,11 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendants' },
+                  sortable: {
+                    isSortable: true,
+                    key: 'defendants',
+                    compareFn: compareLocaleIS,
+                  },
                 },
                 { title: formatMessage(tables.state) },
                 { title: formatMessage(tables.prosecutorName) },

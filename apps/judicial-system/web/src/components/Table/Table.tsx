@@ -7,6 +7,8 @@ import React, {
 } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
+import compareAsc from 'date-fns/compareAsc'
+import compareDesc from 'date-fns/compareDesc'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence } from 'framer-motion'
 
@@ -20,7 +22,6 @@ import { CaseListEntry, CaseState } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
 import { directionType, sortableTableColumn, SortConfig } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
-import { compareLocaleIS } from '../../utils/sortHelper'
 import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
 import IconButton from '../IconButton/IconButton'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -29,13 +30,16 @@ import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
+interface Sortable {
+  isSortable: boolean
+  key: sortableTableColumn
+  compareFn?: (a?: string | null, b?: string | null) => number
+}
+
 interface TableProps {
   thead: {
     title: string
-    sortable?: {
-      isSortable: boolean
-      key: sortableTableColumn
-    }
+    sortable?: Sortable
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -63,7 +67,10 @@ export const useTable = () => {
     },
   )
 
-  const requestSort = (column: sortableTableColumn) => {
+  const requestSort = (
+    column: sortableTableColumn,
+    compareFn?: (a?: string | null, b?: string | null) => number,
+  ) => {
     let d: directionType = 'ascending'
 
     if (
@@ -73,7 +80,7 @@ export const useTable = () => {
     ) {
       d = 'descending'
     }
-    setSortConfig({ column, direction: d })
+    setSortConfig({ column, direction: d, compareFn })
   }
 
   const getClassNamesFor = (name: sortableTableColumn) => {
@@ -98,36 +105,63 @@ const Table: FC<TableProps> = (props) => {
 
   useMemo(() => {
     if (sortConfig) {
-      data.sort((a: CaseListEntry, b: CaseListEntry) => {
-        const getColumnValue = (entry: CaseListEntry) => {
-          if (
-            sortConfig.column === 'defendants' &&
-            entry.defendants &&
-            entry.defendants.length > 0
-          ) {
-            return entry.defendants[0].name ?? ''
-          }
-          if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
-          }
-          if (sortConfig.column === 'indictmentAppealDeadline') {
-            return entry.indictmentAppealDeadline
-          }
-        }
+      data.sort((a: CaseListEntry, b: CaseListEntry) =>
+        sortConfig.direction === 'ascending'
+          ? compareAsc(
+              new Date(
+                a.indictmentAppealDeadline ? a.indictmentAppealDeadline : '',
+              ),
+              new Date(
+                b.indictmentAppealDeadline ? b.indictmentAppealDeadline : '',
+              ),
+            )
+          : compareDesc(
+              new Date(
+                a.indictmentAppealDeadline ? a.indictmentAppealDeadline : '',
+              ),
+              new Date(
+                b.indictmentAppealDeadline ? b.indictmentAppealDeadline : '',
+              ),
+            ),
+      )
+      // data.sort((a: CaseListEntry, b: CaseListEntry) => {
+      //   const getColumnValue = (entry: CaseListEntry) => {
+      //     if (
+      //       sortConfig.column === 'defendants' &&
+      //       entry.defendants &&
+      //       entry.defendants.length > 0
+      //     ) {
+      //       return entry.defendants[0].name ?? ''
+      //     }
+      //     if (sortConfig.column === 'courtDate') {
+      //       return entry.courtDate ?? ''
+      //     }
+      //     if (sortConfig.column === 'indictmentAppealDeadline') {
+      //       return entry.indictmentAppealDeadline
+      //     }
+      //   }
 
-        const compareResult =
-          sortConfig.column === 'defendants'
-            ? compareLocaleIS(getColumnValue(a), getColumnValue(b))
-            : 1
+      //   if (sortConfig.compareFn) {
+      //     const compareResult = sortConfig.compareFn(
+      //       getColumnValue(a),
+      //       getColumnValue(b),
+      //     )
+      //     return sortConfig.direction === 'ascending'
+      //       ? compareResult
+      //       : -compareResult
+      //   }
 
-        return sortConfig.direction === 'ascending'
-          ? compareResult
-          : -compareResult
-      })
+      //   return sortConfig.direction === 'ascending' &&
+      //     a.indictmentAppealDeadline &&
+      //     b.indictmentAppealDeadline
+      //     ? compareAsc(
+      //         new Date(a.indictmentAppealDeadline),
+      //         new Date(b.indictmentAppealDeadline),
+      //       )
+      //     : -1
+      // })
     }
   }, [data, sortConfig])
-
-  console.log(data)
 
   return width < theme.breakpoints.md ? (
     <>
@@ -176,7 +210,10 @@ const Table: FC<TableProps> = (props) => {
               {th.sortable ? (
                 <SortButton
                   title={th.title}
-                  onClick={() => th.sortable && requestSort(th.sortable.key)}
+                  onClick={() =>
+                    th.sortable &&
+                    requestSort(th.sortable.key, th.sortable.compareFn)
+                  }
                   sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
                   isActive={sortConfig?.column === th.sortable.key}
