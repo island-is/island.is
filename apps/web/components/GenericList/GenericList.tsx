@@ -16,6 +16,7 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Inline,
   Pagination,
   Stack,
@@ -42,6 +43,7 @@ import { GET_GENERIC_LIST_ITEMS_QUERY } from '@island.is/web/screens/queries/Gen
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { FilterTag } from '../FilterTag'
+import * as styles from './GenericList.css'
 
 const DEBOUNCE_TIME_IN_MS = 300
 const ITEMS_PER_PAGE = 10
@@ -111,36 +113,61 @@ const ClickableItem = ({ item }: ItemProps) => {
 
   const pathname = new URL(router.asPath, 'https://island.is').pathname
 
+  let href = item.slug ? `${pathname}/${item.slug}` : undefined
+  if (item.assetUrl) {
+    href = item.assetUrl
+  }
+
   return (
     <FocusableBox
       padding={[2, 2, 3]}
       border="standard"
       borderRadius="large"
-      href={item.slug ? `${pathname}/${item.slug}` : undefined}
+      href={href}
       height="full"
+      width="full"
     >
-      <Stack space={3}>
-        <Stack space={0}>
-          <Stack space={0}>
-            <Text variant="eyebrow" color="purple400">
-              {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
-            </Text>
-            <Text variant="h3" as="span" color="blue400">
-              {item.title}
-            </Text>
-          </Stack>
-          {item.cardIntro?.length > 0 && (
-            <Box>{webRichText(item.cardIntro ?? [])}</Box>
-          )}
+      <Box width="full">
+        <Stack space={3}>
+          <Box width="full">
+            <Box width="full">
+              <Box className={styles.clickableItemTopRowContainer}>
+                <Inline space={2} justifyContent="spaceBetween">
+                  <Text variant="eyebrow" color="purple400">
+                    {item.date && format(new Date(item.date), 'dd.MM.yyyy')}
+                  </Text>
+                  {item.assetUrl && (
+                    <Icon
+                      size="medium"
+                      type="outline"
+                      color="blue400"
+                      icon="document"
+                    />
+                  )}
+                </Inline>
+              </Box>
+              <Text variant="h3" as="span" color="blue400">
+                {item.title}
+              </Text>
+            </Box>
+            {item.cardIntro?.length > 0 && (
+              <Box>{webRichText(item.cardIntro ?? [])}</Box>
+            )}
+          </Box>
+          <Inline space={1}>
+            {item.filterTags?.map((tag) => (
+              <Tag
+                disabled={true}
+                variant="purple"
+                outlined={true}
+                key={tag.id}
+              >
+                {tag.title}
+              </Tag>
+            ))}
+          </Inline>
         </Stack>
-        <Inline space={1}>
-          {item.filterTags?.map((tag) => (
-            <Tag disabled={true} variant="purple" outlined={true} key={tag.id}>
-              {tag.title}
-            </Tag>
-          ))}
-        </Inline>
-      </Stack>
+      </Box>
     </FocusableBox>
   )
 }

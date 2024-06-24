@@ -3,7 +3,7 @@ import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { UserProfileService } from './user-profile.service'
 
 import { Configuration, UserProfileApi } from '@island.is/clients/user-profile'
-import { IslyklarApi, IslykillApiModule } from '@island.is/clients/islykill'
+import { IslykillApiModule } from '@island.is/clients/islykill'
 export class UserProfileModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {

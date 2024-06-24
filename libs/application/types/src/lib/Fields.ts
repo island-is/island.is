@@ -384,6 +384,7 @@ export interface KeyValueField extends BaseField {
   divider?: boolean
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
+  paddingBottom?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
