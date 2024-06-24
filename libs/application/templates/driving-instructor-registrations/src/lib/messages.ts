@@ -191,7 +191,7 @@ export const m = defineMessages({
   },
   viewStudentExamsComplete: {
     id: 'dir.application:viewStudentExamsComplete',
-    defaultMessage: 'Skriflegum prófum lokið',
+    defaultMessage: 'Prófum lokið',
     description: 'Student complete exams',
   },
   viewStudentNoCompleteSchools: {
@@ -201,7 +201,7 @@ export const m = defineMessages({
   },
   viewStudentNoExamsComplete: {
     id: 'dir.application:viewStudentNoExamsComplete',
-    defaultMessage: 'Engu skriflegu prófi lokið',
+    defaultMessage: 'Engu prófi lokið',
     description: 'Student complete exams',
   },
   viewStudentRegisterDrivingLesson: {

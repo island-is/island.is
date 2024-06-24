@@ -46,6 +46,7 @@ import {
   UniversityCareers,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  Frigg,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -375,6 +376,8 @@ export const serviceSetup = (services: {
       LICENSE_SERVICE_BARCODE_SECRET_KEY:
         '/k8s/api/LICENSE_SERVICE_BARCODE_SECRET_KEY',
       ULTRAVIOLET_RADIATION_API_KEY: '/k8s/api/ULTRAVIOLET_RADIATION_API_KEY',
+      UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL:
+        '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
     })
     .xroad(
       AdrAndMachine,
@@ -423,6 +426,7 @@ export const serviceSetup = (services: {
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
       OfficialJournalOfIcelandApplication,
+      Frigg,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
