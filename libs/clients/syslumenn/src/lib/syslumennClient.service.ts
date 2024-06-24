@@ -25,6 +25,7 @@ import {
   RegistryPerson,
   InheritanceTax,
   InheritanceReportInfo,
+  ManyPropertyDetail,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -51,6 +52,9 @@ import {
   mapEstateToInheritanceReportInfo,
   mapJourneymanLicence,
   mapProfessionRight,
+  mapVehicleResponse,
+  mapRealEstateResponse,
+  mapShipResponse,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -58,9 +62,9 @@ import {
   SvarSkeyti,
   Configuration,
   VirkLeyfiGetRequest,
-  VedbandayfirlitReguverkiSvarSkeyti,
   VedbondTegundAndlags,
   Skilabod,
+  VedbandayfirlitRegluverkGeneralSvar,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -339,7 +343,7 @@ export class SyslumennService {
   async getAsset(
     assetId: string,
     assetType: AssetType,
-    assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName,
+    assetMapper: (res: VedbandayfirlitRegluverkGeneralSvar) => AssetName,
   ): Promise<Array<AssetName>> {
     const { id, api } = await this.createApi()
     const response = await api
@@ -352,12 +356,12 @@ export class SyslumennService {
       })
       .catch((e) => {
         if ((e as { status: number })?.status === 404) {
-          return []
+          return null
         }
         throw e
       })
 
-    return response.map(assetMapper)
+    return response ? [assetMapper(response)] : []
   }
 
   async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
@@ -381,7 +385,7 @@ export class SyslumennService {
     return mapVehicle(response)
   }
 
-  async getMortgageCertificate(
+  async getMortgageCertificateOld(
     propertyNumber: string,
   ): Promise<MortgageCertificate> {
     const { id, api } = await this.createApi()
@@ -403,13 +407,13 @@ export class SyslumennService {
     return certificate
   }
 
-  async validateMortgageCertificate(
+  async validateMortgageCertificateOld(
     propertyNumber: string,
     isFromSearch: boolean | undefined,
   ): Promise<MortgageCertificateValidation> {
     try {
       // Note: this function will throw an error if something goes wrong
-      const certificate = await this.getMortgageCertificate(propertyNumber)
+      const certificate = await this.getMortgageCertificateOld(propertyNumber)
 
       const exists = certificate.contentBase64.length !== 0
       const hasKMarking =
@@ -419,46 +423,173 @@ export class SyslumennService {
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
       return {
         propertyNumber: propertyNumber,
-        isFromSearch: isFromSearch,
         exists: exists,
         hasKMarking: hasKMarking,
       }
     } catch (exception) {
       return {
         propertyNumber: propertyNumber,
-        isFromSearch: isFromSearch,
         exists: false,
         hasKMarking: false,
       }
     }
   }
 
+  async getMortgageCertificate(
+    properties: {
+      propertyNumber: string
+      propertyType: string
+    }[],
+  ): Promise<MortgageCertificate[]> {
+    const { id, api } = await this.createApi()
+
+    properties.map(({ propertyNumber, propertyType }) => {
+      console.log('STUFF', propertyNumber)
+      console.log('AND THINGS', propertyType)
+    })
+
+    const res = await api.vedbokarvottord2Post({
+      skilabod: {
+        audkenni: id,
+        eignir: properties.map(({ propertyNumber, propertyType }) => {
+          return {
+            fastanumer: propertyNumber,
+            tegundAndlags:
+              propertyType === '1'
+                ? VedbondTegundAndlags.NUMBER_1 // 1 = Vehicle
+                : propertyType === '2'
+                ? VedbondTegundAndlags.NUMBER_2 // 2 = Ship
+                : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+          }
+        }),
+      },
+    })
+
+    // console.log('RESSSSS', res)
+
+    const certificates: MortgageCertificate[] =
+      res.skilabodOgSkra?.map((resultItem) => {
+        // console.log(resultItem.vedbandayfirlitPDFSkra)
+        const contentBase64 = resultItem.vedbandayfirlitPDFSkra || ''
+        // console.log('property number', resultItem.fastanumer)
+        return {
+          contentBase64: contentBase64,
+          apiMessage: resultItem.skilabod,
+          propertyNumber: resultItem.fastanumer,
+        }
+      }) ?? []
+
+    console.log('CERTIFICATES: ', certificates)
+
+    return certificates
+  }
+
+  async validateMortgageCertificate(
+    properties: {
+      propertyNumber: string
+      propertyType: string
+    }[],
+  ): Promise<MortgageCertificateValidation[]> {
+    try {
+      // Note: this function will throw an error if something goes wrong
+      const certificates = await this.getMortgageCertificate(properties)
+
+      // Note: we are saving propertyNumber and isFromSearch also in externalData,
+      // since it is not saved in answers if we go from state DRAFT -> DRAFT
+      return certificates.map((certificate) => {
+        // console.log('Certificate', certificate)
+        const exists = certificate.contentBase64.length !== 0
+        const hasKMarking =
+          exists && certificate.contentBase64 !== 'Precondition Required'
+
+        console.log('Does exist: ', {
+          propertyNumber: certificate.propertyNumber ?? '',
+          exists: exists,
+          hasKMarking: hasKMarking,
+        })
+        return {
+          propertyNumber: certificate.propertyNumber ?? '',
+          exists: exists,
+          hasKMarking: hasKMarking,
+        }
+      })
+    } catch (exception) {
+      return properties.map((property) => {
+        return {
+          propertyNumber: property.propertyNumber,
+          exists: false,
+          hasKMarking: false,
+        }
+      })
+    }
+  }
+
   async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
     const { id, api } = await this.createApi()
 
-    const res = await api.vedbokavottordRegluverkiPost({
-      skilabod: {
-        audkenni: id,
-        fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+    const res = await api
+      .vedbokavottordRegluverkiPost({
+        skilabod: {
+          audkenni: id,
+          fastanumer: cleanPropertyNumber(propertyNumber),
+          tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+        },
+      })
+      .catch(() => {
+        throw new Error()
+      })
+
+    const fasteign = res.fasteign?.length ? res.fasteign[0] : undefined
+
+    return {
+      propertyNumber: propertyNumber,
+      defaultAddress: {
+        display: fasteign?.heiti || '',
       },
-    })
-    if (res.length > 0) {
-      return {
-        propertyNumber: propertyNumber,
-        defaultAddress: {
-          display: res[0].heiti,
+      unitsOfUse: {
+        unitsOfUse: [
+          {
+            explanation: fasteign?.notkun,
+          },
+        ],
+      },
+    }
+  }
+
+  async getAllPropertyDetails(
+    propertyNumber: string,
+    propertyType: string,
+  ): Promise<ManyPropertyDetail> {
+    const { id, api } = await this.createApi()
+
+    const res = await api
+      .vedbokavottordRegluverkiPost({
+        skilabod: {
+          audkenni: id,
+          fastanumer:
+            propertyType === '0'
+              ? cleanPropertyNumber(propertyNumber)
+              : propertyNumber,
+          tegundAndlags:
+            propertyType === '1'
+              ? VedbondTegundAndlags.NUMBER_1 // 1 = Vehicle
+              : propertyType === '2'
+              ? VedbondTegundAndlags.NUMBER_2 // 2 = Ship
+              : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
         },
-        unitsOfUse: {
-          unitsOfUse: [
-            {
-              explanation: res[0].notkun,
-            },
-          ],
-        },
-      }
-    } else {
-      throw new Error()
+      })
+      .catch(() => {
+        throw new Error()
+      })
+
+    console.log('RES::::', res)
+
+    return {
+      propertyNumber: res.fastanum,
+      propertyType: res.tegundEignar,
+      realEstate: res.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
+      vehicle: res.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
+      ship: res.skip ? mapShipResponse(res.skip) : undefined,
     }
   }
 

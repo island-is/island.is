@@ -630,6 +630,7 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile = false,
   } = data
   return {
     ...extractCommonFields(data),
@@ -638,6 +639,7 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile,
     children: undefined,
     type: FieldTypes.PDF_LINK_BUTTON,
     component: FieldComponents.PDF_LINK_BUTTON,

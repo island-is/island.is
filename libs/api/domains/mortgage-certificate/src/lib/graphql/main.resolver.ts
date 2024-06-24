@@ -14,13 +14,12 @@ export class MainResolver {
     private readonly mortgageCertificateService: MortgageCertificateService,
   ) {}
 
-  @Query(() => MortgageCertificateValidationModel)
+  @Query(() => [MortgageCertificateValidationModel])
   async validateMortgageCertificate(
     @Args('input') input: ValidateMortgageCertificateInput,
   ) {
     return await this.mortgageCertificateService.validateMortgageCertificate(
-      input.propertyNumber,
-      input.isFromSearch,
+      input.properties,
     )
   }
 }

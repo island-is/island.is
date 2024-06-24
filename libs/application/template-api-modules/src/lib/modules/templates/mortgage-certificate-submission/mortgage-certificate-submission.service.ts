@@ -10,15 +10,10 @@ import {
   MortgageCertificate,
 } from '@island.is/clients/syslumenn'
 import { generateSyslumennNotifyErrorEmail } from './emailGenerators/syslumennNotifyError'
-import { generateSyslumennSubmitRequestErrorEmail } from './emailGenerators/syslumennSubmitRequestError'
 import { Application, ApplicationTypes } from '@island.is/application/types'
-import {
-  Identity,
-  UserProfile,
-  SubmitRequestToSyslumennResult,
-  ValidateMortgageCertificateResult,
-} from './types'
+import { Identity, UserProfile, SelectedProperty } from './types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class MortgageCertificateSubmissionService extends BaseTemplateApiService {
@@ -54,64 +49,52 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     }
   }
 
-  async validateMortgageCertificate({
-    application,
-  }: TemplateApiModuleActionProps): Promise<ValidateMortgageCertificateResult> {
-    const { propertyNumber, isFromSearch } = application.answers
-      .selectProperty as {
-      propertyNumber: string
-      isFromSearch: boolean
-    }
-
-    return {
-      validation:
-        await this.mortgageCertificateService.validateMortgageCertificate(
-          propertyNumber,
-          isFromSearch,
-        ),
-      propertyDetails: await this.syslumennService.getPropertyDetails(
-        propertyNumber,
-      ),
-    }
-  }
-
   async getMortgageCertificate({
     application,
-  }: TemplateApiModuleActionProps): Promise<MortgageCertificate> {
-    const { propertyNumber } = application.answers.selectProperty as {
-      propertyNumber: string
-    }
-    const document =
-      await this.mortgageCertificateService.getMortgageCertificate(
-        propertyNumber,
-      )
-
-    // Call sýslumaður to get the document sealed before handing it over to the user
-    const sealedDocumentResponse = await this.syslumennService.sealDocument(
-      document.contentBase64,
+  }: TemplateApiModuleActionProps): Promise<MortgageCertificate[]> {
+    const selectedProperties = getValueViaPath(
+      application.answers,
+      'selectedProperties.properties',
+      [],
+    ) as SelectedProperty[]
+    const properties = selectedProperties.map(
+      ({ propertyType, propertyNumber }) => {
+        return {
+          propertyNumber,
+          propertyType,
+        }
+      },
     )
 
-    if (!sealedDocumentResponse?.skjal) {
-      throw new Error('Eitthvað fór úrskeiðis.')
-    }
+    const documents =
+      await this.mortgageCertificateService.getMortgageCertificate(properties)
 
-    const sealedDocument: MortgageCertificate = {
-      contentBase64: sealedDocumentResponse.skjal,
-    }
+    // Call sýslumaður to get the document sealed before handing it over to the user
+    const sealedDocuments: MortgageCertificate[] = await Promise.all(
+      documents.map(async (document) => {
+        const sealedDocumentResponse = await this.syslumennService.sealDocument(
+          document.contentBase64,
+        )
+        if (!sealedDocumentResponse?.skjal) {
+          throw new Error('Eitthvað fór úrskeiðis.')
+        }
+        return {
+          contentBase64: sealedDocumentResponse.skjal,
+          propertyNumber: document.propertyNumber,
+        }
+      }),
+    )
 
     // Notify Sýslumaður that person has received the mortgage certificate
-    await this.notifySyslumenn(application, sealedDocument)
+    await this.notifySyslumenn(application, documents)
 
-    return sealedDocument
+    return sealedDocuments
   }
 
   private async notifySyslumenn(
     application: Application,
-    document: MortgageCertificate,
+    documents: MortgageCertificate[],
   ) {
-    const { propertyNumber } = application.answers.selectProperty as {
-      propertyNumber: string
-    }
     const identityData = application.externalData.identity?.data as Identity
     const userProfileData = application.externalData.userProfile
       ?.data as UserProfile
@@ -130,15 +113,19 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const persons: Person[] = [person]
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    const attachments: Attachment[] = [
-      {
-        name: `vedbokarvottord_${identityData?.nationalId}_${dateStr}.pdf`,
+    const attachments: Attachment[] = documents.map((document) => {
+      return {
+        name: `vedbokarvottord_${document.propertyNumber}_${identityData?.nationalId}_${dateStr}.pdf`,
         content: document.contentBase64,
-      },
-    ]
+      }
+    })
 
     const extraData: { [key: string]: string } = {
-      propertyNumber: propertyNumber,
+      propertyNumber: documents
+        .map((document) => {
+          return document.propertyNumber
+        })
+        .join(','),
     }
 
     const uploadDataName = 'Umsókn um veðbókarvottorð frá Ísland.is'
@@ -153,51 +140,5 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
         )
         return undefined
       })
-  }
-
-  async submitRequestToSyslumenn({
-    application,
-  }: TemplateApiModuleActionProps): Promise<SubmitRequestToSyslumennResult> {
-    const { propertyNumber } = application.answers.selectProperty as {
-      propertyNumber: string
-    }
-    const identityData = application.externalData.identity?.data as Identity
-    const userProfileData = application.externalData.userProfile
-      ?.data as UserProfile
-
-    const person: Person = {
-      name: identityData?.name,
-      ssn: identityData?.nationalId,
-      phoneNumber: userProfileData?.mobilePhoneNumber,
-      email: userProfileData?.email,
-      homeAddress: identityData?.address?.streetAddress || '',
-      postalCode: identityData?.address?.postalCode || '',
-      city: identityData?.address?.city || '',
-      signed: true,
-      type: PersonType.MortgageCertificateApplicant,
-    }
-    const persons: Person[] = [person]
-
-    const extraData: { [key: string]: string } = {
-      propertyNumber: propertyNumber,
-    }
-
-    const uploadDataName =
-      'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
-    const uploadDataId = 'VedbokavottordVilla1.0'
-
-    await this.syslumennService
-      .uploadData(persons, undefined, extraData, uploadDataName, uploadDataId)
-      .catch(async () => {
-        await this.sharedTemplateAPIService.sendEmail(
-          generateSyslumennSubmitRequestErrorEmail,
-          application as unknown as Application,
-        )
-        return undefined
-      })
-
-    return {
-      hasSentRequest: true,
-    }
   }
 }
