@@ -1589,6 +1589,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Eyða vinnuveitanda',
       description: 'Remove employer',
     },
+    editEmployer: {
+      id: 'pl.application:employer.editEmployer',
+      defaultMessage: 'Breyta vinnuveitanda',
+      description: 'Edit employer',
+    },
   }),
 
   selfEmployed: defineMessages({

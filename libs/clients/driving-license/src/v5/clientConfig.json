@@ -2987,6 +2987,11 @@
             "type": "string",
             "description": "Origin of creation",
             "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District id",
+            "format": "int32"
           }
         },
         "additionalProperties": false,
@@ -3404,6 +3409,21 @@
           "userId": {
             "type": "string",
             "description": "UserId",
+            "nullable": true
+          },
+          "instructorSSN": {
+            "type": "string",
+            "description": "Driving instructor social security number",
+            "nullable": true
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+            "description": "Primary phone number",
+            "nullable": true
+          },
+          "studentEmail": {
+            "type": "string",
+            "description": "Student email",
             "nullable": true
           },
           "districtId": {
@@ -3850,6 +3870,11 @@
             "type": "string",
             "description": "Origin of creation",
             "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District id",
+            "format": "int32"
           }
         },
         "additionalProperties": false,

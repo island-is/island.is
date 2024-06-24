@@ -227,6 +227,7 @@ export type EstateMember = {
   phone?: string
   email?: string
   advocate?: Advocate
+  advocate2?: Advocate
 }
 
 export type InheritanceEstateMember = EstateMember & {
