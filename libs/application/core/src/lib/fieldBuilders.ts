@@ -404,6 +404,7 @@ export function buildKeyValueField(data: {
   divider?: boolean
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
+  paddingBottom?: BoxProps['padding']
 }): KeyValueField {
   const {
     label,
@@ -415,6 +416,7 @@ export function buildKeyValueField(data: {
     divider = false,
     paddingX,
     paddingY,
+    paddingBottom,
   } = data
 
   return {
@@ -433,6 +435,7 @@ export function buildKeyValueField(data: {
     display,
     paddingX,
     paddingY,
+    paddingBottom,
   }
 }
 
