@@ -112,14 +112,14 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.type) },
                 {
                   title: capitalize(
                     formatMessage(tables.created, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'createdAt' },
+                  sortable: { isSortable: true, key: 'created' },
                 },
                 { title: formatMessage(tables.state) },
                 {

@@ -49,13 +49,16 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.state) },
                 { title: formatMessage(tables.prosecutorName) },
                 {
                   title: formatMessage(tables.deadline),
-                  sortable: { isSortable: true, key: 'deadline' },
+                  sortable: {
+                    isSortable: true,
+                    key: 'indictmentAppealDeadline',
+                  },
                 },
               ]}
               data={cases}
