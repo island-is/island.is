@@ -29,6 +29,7 @@ import SortButton from './SortButton/SortButton'
 import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
+import { compareLocaleIS } from '../../utils/sortHelper'
 
 interface Sortable {
   isSortable: boolean
@@ -105,61 +106,28 @@ const Table: FC<TableProps> = (props) => {
 
   useMemo(() => {
     if (sortConfig) {
-      data.sort((a: CaseListEntry, b: CaseListEntry) =>
-        sortConfig.direction === 'ascending'
-          ? compareAsc(
-              new Date(
-                a.indictmentAppealDeadline ? a.indictmentAppealDeadline : '',
-              ),
-              new Date(
-                b.indictmentAppealDeadline ? b.indictmentAppealDeadline : '',
-              ),
-            )
-          : compareDesc(
-              new Date(
-                a.indictmentAppealDeadline ? a.indictmentAppealDeadline : '',
-              ),
-              new Date(
-                b.indictmentAppealDeadline ? b.indictmentAppealDeadline : '',
-              ),
-            ),
-      )
-      // data.sort((a: CaseListEntry, b: CaseListEntry) => {
-      //   const getColumnValue = (entry: CaseListEntry) => {
-      //     if (
-      //       sortConfig.column === 'defendants' &&
-      //       entry.defendants &&
-      //       entry.defendants.length > 0
-      //     ) {
-      //       return entry.defendants[0].name ?? ''
-      //     }
-      //     if (sortConfig.column === 'courtDate') {
-      //       return entry.courtDate ?? ''
-      //     }
-      //     if (sortConfig.column === 'indictmentAppealDeadline') {
-      //       return entry.indictmentAppealDeadline
-      //     }
-      //   }
+      data.sort((a: CaseListEntry, b: CaseListEntry) => {
+        const getColumnValue = (entry: CaseListEntry) => {
+          if (
+            sortConfig.column === 'defendants' &&
+            entry.defendants &&
+            entry.defendants.length > 0 &&
+            entry.defendants[0].name
+          ) {
+            return entry?.defendants[0].name
+          }
 
-      //   if (sortConfig.compareFn) {
-      //     const compareResult = sortConfig.compareFn(
-      //       getColumnValue(a),
-      //       getColumnValue(b),
-      //     )
-      //     return sortConfig.direction === 'ascending'
-      //       ? compareResult
-      //       : -compareResult
-      //   }
+          return entry[sortConfig.column]?.toString()
+        }
 
-      //   return sortConfig.direction === 'ascending' &&
-      //     a.indictmentAppealDeadline &&
-      //     b.indictmentAppealDeadline
-      //     ? compareAsc(
-      //         new Date(a.indictmentAppealDeadline),
-      //         new Date(b.indictmentAppealDeadline),
-      //       )
-      //     : -1
-      // })
+        const compareResult = sortConfig.compareFn
+          ? sortConfig.compareFn(getColumnValue(a), getColumnValue(b))
+          : compareLocaleIS(getColumnValue(a), getColumnValue(b))
+
+        return sortConfig.direction === 'ascending'
+          ? compareResult
+          : -compareResult
+      })
     }
   }, [data, sortConfig])
 
