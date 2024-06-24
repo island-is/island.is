@@ -4,9 +4,7 @@
   "sourceRoot": "apps/system-e2e/src",
   "projectType": "application",
   "prefix": "system-e2e",
-  "tags": [
-    "scope:e2e"
-  ],
+  "tags": ["scope:e2e"],
   "generators": {},
   "targets": {
     "build": {
@@ -21,9 +19,7 @@
       "configurations": {
         "production": {}
       },
-      "outputs": [
-        "{workspaceRoot}/dist/apps/system-e2e"
-      ]
+      "outputs": ["{workspaceRoot}/dist/apps/system-e2e"]
     },
     "lint": {
       "executor": "@nx/eslint:lint"
