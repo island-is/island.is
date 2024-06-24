@@ -102,22 +102,15 @@ export function setupEventHandlers() {
       }
 
       if (status === 'background' || status === 'inactive') {
-        if (isIos) {
-          // Add a small delay for those accidental backgrounds in iOS
-          backgroundAppLockTimeout = setTimeout(() => {
-            if (!lockScreenComponentId) {
-              showAppLockOverlay({ status })
-            } else {
-              Navigation.updateProps(lockScreenComponentId, { status })
-            }
-          }, 100)
-        } else {
+        // Add a small delay for those accidental backgrounds in iOS
+        // and to prevent the lock screen from showing up on Android when react-native-vision-camera is used.
+        backgroundAppLockTimeout = setTimeout(() => {
           if (!lockScreenComponentId) {
             showAppLockOverlay({ status })
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
-        }
+        }, 100)
       }
 
       if (status === 'active') {

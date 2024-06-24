@@ -3685,6 +3685,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-arrow-functions@npm:^7.0.0-0":
+  version: 7.24.7
+  resolution: "@babel/plugin-transform-arrow-functions@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.24.7
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 707c209b5331c7dc79bd326128c6a6640dbd62a78da1653c844db20c4f36bf7b68454f1bc4d2d051b3fde9136fa291f276ec03a071bb00ee653069ff82f91010
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-arrow-functions@npm:^7.20.7":
   version: 7.20.7
   resolution: "@babel/plugin-transform-arrow-functions@npm:7.20.7"
@@ -4697,6 +4708,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-nullish-coalescing-operator@npm:^7.0.0-0":
+  version: 7.24.7
+  resolution: "@babel/plugin-transform-nullish-coalescing-operator@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.24.7
+    "@babel/plugin-syntax-nullish-coalescing-operator": ^7.8.3
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 4a9221356401d87762afbc37a9e8e764afc2daf09c421117537820f8cfbed6876888372ad3a7bcfae2d45c95f026651f050ab4020b777be31d3ffb00908dbdd3
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-nullish-coalescing-operator@npm:^7.22.11, @babel/plugin-transform-nullish-coalescing-operator@npm:^7.22.5":
   version: 7.22.11
   resolution: "@babel/plugin-transform-nullish-coalescing-operator@npm:7.22.11"
@@ -4846,6 +4869,19 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: e766bd2ac74fcd2226c8816500c788268a1fa5200498a288f10854253addb36871cd7b415e20736819e7fcb996a0e33312bc1ce6db9b540ec9dd7b946cb37dda
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-transform-optional-chaining@npm:^7.0.0-0":
+  version: 7.24.7
+  resolution: "@babel/plugin-transform-optional-chaining@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.24.7
+    "@babel/helper-skip-transparent-expression-wrappers": ^7.24.7
+    "@babel/plugin-syntax-optional-chaining": ^7.8.3
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 877e7ce9097d475132c7f4d1244de50bb2fd37993dc4580c735f18f8cbc49282f6e77752821bcad5ca9d3528412d2c8a7ee0aa7ca71bb680ff82648e7a5fed25
   languageName: node
   linkType: hard
 
@@ -5354,6 +5390,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/plugin-transform-shorthand-properties@npm:^7.0.0-0":
+  version: 7.24.7
+  resolution: "@babel/plugin-transform-shorthand-properties@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.24.7
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 7b524245814607188212b8eb86d8c850e5974203328455a30881b4a92c364b93353fae14bc2af5b614ef16300b75b8c1d3b8f3a08355985b4794a7feb240adc3
+  languageName: node
+  linkType: hard
+
 "@babel/plugin-transform-shorthand-properties@npm:^7.18.6":
   version: 7.18.6
   resolution: "@babel/plugin-transform-shorthand-properties@npm:7.18.6"
@@ -5442,6 +5489,17 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: bc0102ed8c789e5bc01053088e2de85b82cebcd4d57af9fdc32ca62f559d3dd19c33e9d26caa71c5fd8e94152e5ce4fc4da19badc2d537620e6dea83bce7eb05
+  languageName: node
+  linkType: hard
+
+"@babel/plugin-transform-template-literals@npm:^7.0.0-0":
+  version: 7.24.7
+  resolution: "@babel/plugin-transform-template-literals@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.24.7
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: ad44e5826f5a98c1575832dbdbd033adfe683cdff195e178528ead62507564bf02f479b282976cfd3caebad8b06d5fd7349c1cdb880dec3c56daea4f1f179619
   languageName: node
   linkType: hard
 
@@ -6139,6 +6197,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@babel/preset-typescript@npm:^7.16.7, @babel/preset-typescript@npm:^7.23.0":
+  version: 7.24.7
+  resolution: "@babel/preset-typescript@npm:7.24.7"
+  dependencies:
+    "@babel/helper-plugin-utils": ^7.24.7
+    "@babel/helper-validator-option": ^7.24.7
+    "@babel/plugin-syntax-jsx": ^7.24.7
+    "@babel/plugin-transform-modules-commonjs": ^7.24.7
+    "@babel/plugin-transform-typescript": ^7.24.7
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+  checksum: 12929b24757f3bd6548103475f86478eda4c872bc7cefd920b29591eee8f4a4f350561d888e133d632d0c9402b8615fdcec9138e5127a6567dcb22f804ff207f
+  languageName: node
+  linkType: hard
+
 "@babel/preset-typescript@npm:^7.21.0":
   version: 7.21.5
   resolution: "@babel/preset-typescript@npm:7.21.5"
@@ -6166,21 +6239,6 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.0.0-0
   checksum: 02ac4d5c812a52357c8f517f81584725f06f385d54ccfda89dd082e0ed89a94bd9f4d9b05fa1cbdcf426e3489c1921f04c93c5acc5deea83407a64c22ad2feb4
-  languageName: node
-  linkType: hard
-
-"@babel/preset-typescript@npm:^7.23.0":
-  version: 7.24.7
-  resolution: "@babel/preset-typescript@npm:7.24.7"
-  dependencies:
-    "@babel/helper-plugin-utils": ^7.24.7
-    "@babel/helper-validator-option": ^7.24.7
-    "@babel/plugin-syntax-jsx": ^7.24.7
-    "@babel/plugin-transform-modules-commonjs": ^7.24.7
-    "@babel/plugin-transform-typescript": ^7.24.7
-  peerDependencies:
-    "@babel/core": ^7.0.0-0
-  checksum: 12929b24757f3bd6548103475f86478eda4c872bc7cefd920b29591eee8f4a4f350561d888e133d632d0c9402b8615fdcec9138e5127a6567dcb22f804ff207f
   languageName: node
   linkType: hard
 
@@ -8781,6 +8839,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@egjs/hammerjs@npm:^2.0.17":
+  version: 2.0.17
+  resolution: "@egjs/hammerjs@npm:2.0.17"
+  dependencies:
+    "@types/hammerjs": ^2.0.36
+  checksum: 8945137cec5837edd70af3f2e0ea621543eb0aa3b667e6269ec6485350f4d120c2434b37c7c30b1cf42a65275dd61c1f24626749c616696d3956ac0c008c4766
+  languageName: node
+  linkType: hard
+
 "@elastic/elasticsearch@npm:7.7.1":
   version: 7.7.1
   resolution: "@elastic/elasticsearch@npm:7.7.1"
@@ -11354,8 +11421,6 @@ __metadata:
     configcat-js: 7.0.0
     dynamic-color: 0.3.0
     expo: 51.0.14
-    expo-barcode-scanner: 13.0.1
-    expo-camera: 15.0.11
     expo-file-system: 17.0.1
     expo-haptics: 13.0.1
     expo-local-authentication: 14.0.1
@@ -11372,6 +11437,7 @@ __metadata:
     react-native-code-push: 8.2.2
     react-native-device-info: 10.3.0
     react-native-dialogs: 1.1.2
+    react-native-gesture-handler: 2.17.1
     react-native-inappbrowser-reborn: 3.7.0
     react-native-interactable: 2.0.1
     react-native-keyboard-manager: 6.5.4-3
@@ -11382,9 +11448,11 @@ __metadata:
     react-native-passkit-wallet: 0.1.6
     react-native-pdf: 6.7.5
     react-native-quick-actions: 0.3.13
+    react-native-reanimated: 3.12.1
     react-native-share: 7.1.1
     react-native-spotlight-search: 2.0.0
     react-native-svg: 15.1.0
+    react-native-vision-camera: 4.3.2
     react-native-webview: 11.26.1
     react-test-renderer: 18.2.0
     styled-components: 6.1.11
@@ -18629,6 +18697,13 @@ __metadata:
   dependencies:
     graphql: "*"
   checksum: 8f6e3873a75f1818b6551dae88002d786f764c6c3f5d3b228078ecfc8fb1b116fcec03a1a0dd1f83790505d8e5ecfc4737e152ad7abb6948ff5412f11d7b1b38
+  languageName: node
+  linkType: hard
+
+"@types/hammerjs@npm:^2.0.36":
+  version: 2.0.45
+  resolution: "@types/hammerjs@npm:2.0.45"
+  checksum: 40a29067c485a2a1f4345718104218fcf769adb1dbe091cdb6f679b3293dfa0798b207eb498ee7fd79ae8664c999117738fa0c01753f7465a639128f38c3ff5b
   languageName: node
   linkType: hard
 
@@ -30606,28 +30681,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"expo-barcode-scanner@npm:13.0.1":
-  version: 13.0.1
-  resolution: "expo-barcode-scanner@npm:13.0.1"
-  dependencies:
-    expo-image-loader: ~4.7.0
-  peerDependencies:
-    expo: "*"
-  checksum: e466207298ccd6f1eb136b199f96df508eb8b45eb644d19881a13c283408e2d19ef66ce406f375d3f193e6d029d06022fe1e2e2918c069288f0922115f3a3ffd
-  languageName: node
-  linkType: hard
-
-"expo-camera@npm:15.0.11":
-  version: 15.0.11
-  resolution: "expo-camera@npm:15.0.11"
-  dependencies:
-    invariant: ^2.2.4
-  peerDependencies:
-    expo: "*"
-  checksum: 087b611503693fc9b36068d2f366a83c95b16a576f37ce3607d7f24abad0b46fc014543183831dcd1cf24bfac94196ec391d6c0a0e4154d9b6f1a70e05980f57
-  languageName: node
-  linkType: hard
-
 "expo-constants@npm:~16.0.0":
   version: 16.0.2
   resolution: "expo-constants@npm:16.0.2"
@@ -30666,15 +30719,6 @@ __metadata:
   peerDependencies:
     expo: "*"
   checksum: 5419e6451d3718dde8fb099eb710d7c90448d75d00d44e8b42ec301ec45d52bdb52e6ef2959fd0f207abcbe090b0c851b8bd94aba90343053d5435e4e545a997
-  languageName: node
-  linkType: hard
-
-"expo-image-loader@npm:~4.7.0":
-  version: 4.7.0
-  resolution: "expo-image-loader@npm:4.7.0"
-  peerDependencies:
-    expo: "*"
-  checksum: 1630e988443f87fe86761fb2909e3de88978004a55f769cce7d7965c3ff6e4497e73e9607e826d9a1d5588361b92350e8d4ec0111c9a3243d04a565eddfcf346
   languageName: node
   linkType: hard
 
@@ -45678,6 +45722,21 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-gesture-handler@npm:2.17.1":
+  version: 2.17.1
+  resolution: "react-native-gesture-handler@npm:2.17.1"
+  dependencies:
+    "@egjs/hammerjs": ^2.0.17
+    hoist-non-react-statics: ^3.3.0
+    invariant: ^2.2.4
+    prop-types: ^15.7.2
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 70da4fc51d92899591aadf03396a8e0b78223fbe71da5b10e76232058c1ef5943d54c1dd8da815d5b6a8b41f259ea9d50457680e2ef7878c88d7396771170ae3
+  languageName: node
+  linkType: hard
+
 "react-native-inappbrowser-reborn@npm:3.7.0":
   version: 3.7.0
   resolution: "react-native-inappbrowser-reborn@npm:3.7.0"
@@ -45813,6 +45872,26 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-reanimated@npm:3.12.1":
+  version: 3.12.1
+  resolution: "react-native-reanimated@npm:3.12.1"
+  dependencies:
+    "@babel/plugin-transform-arrow-functions": ^7.0.0-0
+    "@babel/plugin-transform-nullish-coalescing-operator": ^7.0.0-0
+    "@babel/plugin-transform-optional-chaining": ^7.0.0-0
+    "@babel/plugin-transform-shorthand-properties": ^7.0.0-0
+    "@babel/plugin-transform-template-literals": ^7.0.0-0
+    "@babel/preset-typescript": ^7.16.7
+    convert-source-map: ^2.0.0
+    invariant: ^2.2.4
+  peerDependencies:
+    "@babel/core": ^7.0.0-0
+    react: "*"
+    react-native: "*"
+  checksum: 91575b3a20a5878f42d0302cf304ed46ff35c12ce717018c0bfb6af047bf675f224ab95de778daae483b139e66c5290a661635c06304065879b02a5926243e1c
+  languageName: node
+  linkType: hard
+
 "react-native-share@npm:7.1.1":
   version: 7.1.1
   resolution: "react-native-share@npm:7.1.1"
@@ -45839,6 +45918,26 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: a3694b74097e56a810a9142c9480532b63fb9cac0ff8b74c038478172d09acdb4077d93cfa53a8bb31e7ec1a9fc9f6e81a95b028c64af5370b5b3534c99aee0b
+  languageName: node
+  linkType: hard
+
+"react-native-vision-camera@npm:4.3.2":
+  version: 4.3.2
+  resolution: "react-native-vision-camera@npm:4.3.2"
+  peerDependencies:
+    "@shopify/react-native-skia": "*"
+    react: "*"
+    react-native: "*"
+    react-native-reanimated: "*"
+    react-native-worklets-core: "*"
+  peerDependenciesMeta:
+    "@shopify/react-native-skia":
+      optional: true
+    react-native-reanimated:
+      optional: true
+    react-native-worklets-core:
+      optional: true
+  checksum: a4a93e053e3005c007da7e6be5d7160c16015548052e29ff362a7f23c6030a4db536e2a081a56e82e8922613fc1480e4b29cc71ac53635dea31fe7577344096e
   languageName: node
   linkType: hard
 

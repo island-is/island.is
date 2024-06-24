@@ -23,26 +23,14 @@ PODS:
   - DoubleConversion (1.1.6)
   - EXApplication (5.9.1):
     - ExpoModulesCore
-  - EXBarCodeScanner (13.0.1):
-    - EXImageLoader
-    - ExpoModulesCore
-    - ZXingObjC/OneD
-    - ZXingObjC/PDF417
   - EXConstants (16.0.2):
     - ExpoModulesCore
-  - EXImageLoader (4.7.0):
-    - ExpoModulesCore
-    - React-Core
   - EXNotifications (0.28.9):
     - ExpoModulesCore
   - Expo (51.0.14):
     - ExpoModulesCore
   - ExpoAsset (10.0.9):
     - ExpoModulesCore
-  - ExpoCamera (15.0.11):
-    - ExpoModulesCore
-    - ZXingObjC/OneD
-    - ZXingObjC/PDF417
   - ExpoFileSystem (17.0.1):
     - ExpoModulesCore
   - ExpoFont (12.0.7):
@@ -1472,24 +1460,67 @@ PODS:
     - Firebase/Performance (= 10.3.0)
     - React-Core
     - RNFBApp
+  - RNGestureHandler (2.17.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNInAppBrowser (3.7.0):
     - React-Core
   - RNKeychain (8.1.1):
     - React-Core
   - RNQuickAction (0.3.13):
     - React
+  - RNReanimated (3.12.1):
+    - DoubleConversion
+    - glog
+    - hermes-engine
+    - RCT-Folly (= 2024.01.01.00)
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
+    - React-Core
+    - React-debug
+    - React-Fabric
+    - React-featureflags
+    - React-graphics
+    - React-ImageManager
+    - React-NativeModulesApple
+    - React-RCTFabric
+    - React-rendererdebug
+    - React-utils
+    - ReactCommon/turbomodule/bridging
+    - ReactCommon/turbomodule/core
+    - Yoga
   - RNShare (7.1.1):
     - React-Core
   - RNSVG (15.1.0):
     - React-Core
   - SocketRocket (0.7.0)
   - SSZipArchive (2.2.3)
+  - VisionCamera (4.3.2):
+    - VisionCamera/Core (= 4.3.2)
+    - VisionCamera/React (= 4.3.2)
+  - VisionCamera/Core (4.3.2)
+  - VisionCamera/React (4.3.2):
+    - React-Core
   - Yoga (0.0.0)
-  - ZXingObjC/Core (3.6.9)
-  - ZXingObjC/OneD (3.6.9):
-    - ZXingObjC/Core
-  - ZXingObjC/PDF417 (3.6.9):
-    - ZXingObjC/Core
 
 DEPENDENCIES:
   - boost (from `../node_modules/react-native/third-party-podspecs/boost.podspec`)
@@ -1497,13 +1528,10 @@ DEPENDENCIES:
   - "DatadogSDKReactNative (from `../node_modules/@datadog/mobile-react-native`)"
   - DoubleConversion (from `../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec`)
   - EXApplication (from `../node_modules/expo-application/ios`)
-  - EXBarCodeScanner (from `../node_modules/expo-barcode-scanner/ios`)
   - EXConstants (from `../node_modules/expo-constants/ios`)
-  - EXImageLoader (from `../node_modules/expo-image-loader/ios`)
   - EXNotifications (from `../node_modules/expo-notifications/ios`)
   - Expo (from `../node_modules/expo`)
   - ExpoAsset (from `../node_modules/expo-asset/ios`)
-  - ExpoCamera (from `../node_modules/expo-camera/ios`)
   - ExpoFileSystem (from `../node_modules/expo-file-system/ios`)
   - ExpoFont (from `../node_modules/expo-font/ios`)
   - ExpoHaptics (from `../node_modules/expo-haptics/ios`)
@@ -1590,11 +1618,14 @@ DEPENDENCIES:
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBMessaging (from `../node_modules/@react-native-firebase/messaging`)"
   - "RNFBPerf (from `../node_modules/@react-native-firebase/perf`)"
+  - RNGestureHandler (from `../node_modules/react-native-gesture-handler`)
   - RNInAppBrowser (from `../node_modules/react-native-inappbrowser-reborn`)
   - RNKeychain (from `../node_modules/react-native-keychain`)
   - RNQuickAction (from `../node_modules/react-native-quick-actions`)
+  - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNShare (from `../node_modules/react-native-share`)
   - RNSVG (from `../node_modules/react-native-svg`)
+  - VisionCamera (from `../node_modules/react-native-vision-camera`)
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -1628,7 +1659,6 @@ SPEC REPOS:
     - PromisesObjC
     - SocketRocket
     - SSZipArchive
-    - ZXingObjC
 
 EXTERNAL SOURCES:
   boost:
@@ -1641,20 +1671,14 @@ EXTERNAL SOURCES:
     :podspec: "../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec"
   EXApplication:
     :path: "../node_modules/expo-application/ios"
-  EXBarCodeScanner:
-    :path: "../node_modules/expo-barcode-scanner/ios"
   EXConstants:
     :path: "../node_modules/expo-constants/ios"
-  EXImageLoader:
-    :path: "../node_modules/expo-image-loader/ios"
   EXNotifications:
     :path: "../node_modules/expo-notifications/ios"
   Expo:
     :path: "../node_modules/expo"
   ExpoAsset:
     :path: "../node_modules/expo-asset/ios"
-  ExpoCamera:
-    :path: "../node_modules/expo-camera/ios"
   ExpoFileSystem:
     :path: "../node_modules/expo-file-system/ios"
   ExpoFont:
@@ -1812,16 +1836,22 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-firebase/messaging"
   RNFBPerf:
     :path: "../node_modules/@react-native-firebase/perf"
+  RNGestureHandler:
+    :path: "../node_modules/react-native-gesture-handler"
   RNInAppBrowser:
     :path: "../node_modules/react-native-inappbrowser-reborn"
   RNKeychain:
     :path: "../node_modules/react-native-keychain"
   RNQuickAction:
     :path: "../node_modules/react-native-quick-actions"
+  RNReanimated:
+    :path: "../node_modules/react-native-reanimated"
   RNShare:
     :path: "../node_modules/react-native-share"
   RNSVG:
     :path: "../node_modules/react-native-svg"
+  VisionCamera:
+    :path: "../node_modules/react-native-vision-camera"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -1835,13 +1865,10 @@ SPEC CHECKSUMS:
   DatadogSDKReactNative: 9b3452c88b092e48a42ea0d54af5ff210f9eeaf1
   DoubleConversion: 76ab83afb40bddeeee456813d9c04f67f78771b5
   EXApplication: c08200c34daca7af7fd76ac4b9d606077410e8ad
-  EXBarCodeScanner: e2dd9b42c1b522a2adc9202b1dfbc64cb34456d1
   EXConstants: 409690fbfd5afea964e5e9d6c4eb2c2b59222c59
-  EXImageLoader: ab589d67d6c5f2c33572afea9917304418566334
   EXNotifications: fcecd5a47fc8448d4f6173490b6fa8ee747f687d
   Expo: 9c87c876b45a6934894ba5e9353ee94fdba48125
   ExpoAsset: 39e60dc31b16e204a9949caf3edb6dcda322e667
-  ExpoCamera: 06b98940743afa41fdbb8b8240c87a8b5e30cf26
   ExpoFileSystem: 80bfe850b1f9922c16905822ecbf97acd711dc51
   ExpoFont: 43b69559cef3d773db57c7ae7edd3cb0aa0dc610
   ExpoHaptics: 5a3a88971af384255baf2504f38b41189cec6984
@@ -1943,15 +1970,17 @@ SPEC CHECKSUMS:
   RNFBApp: aecfcdc0964d9bc0c5f7ba05efb50be724d8e8b3
   RNFBMessaging: a647b2db61602e9981933b5fc90f1b058e61922c
   RNFBPerf: 6fbd022fd0200d2bc48c443718a8bf6438a9a004
+  RNGestureHandler: 8dbcccada4a7e702e7dec9338c251b1cf393c960
   RNInAppBrowser: e36d6935517101ccba0e875bac8ad7b0cb655364
   RNKeychain: ff836453cba46938e0e9e4c22e43d43fa2c90333
   RNQuickAction: 6d404a869dc872cde841ad3147416a670d13fa93
+  RNReanimated: f9192536fa8a312c737eaf15c905f78831193ef1
   RNShare: a22398d8d02336133e28bf8b6e0b47b31abade41
   RNSVG: 50cf2c7018e57cf5d3522d98d0a3a4dd6bf9d093
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
+  VisionCamera: 2c4cb89c573c5d54d1191e433bd224998d3b14b7
   Yoga: 2f71ecf38d934aecb366e686278102a51679c308
-  ZXingObjC: 8898711ab495761b2dbbdec76d90164a6d7e14c5
 
 PODFILE CHECKSUM: 6edb7e5e876d07218fb4a9d2c4413758111b9710
 
