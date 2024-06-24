@@ -10,7 +10,7 @@ export const UmbodsmadurSkuldaraClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      url: env.required('UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR'),
+      url: env.required('UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL'),
     }
   },
 })
