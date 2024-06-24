@@ -3,7 +3,6 @@ import { UmsCostOfLivingCalculatorClientService } from './umsCostOfLivingCalcula
 import { CostOfLivingCalculatorApi } from './fetch/apis/CostOfLivingCalculatorApi'
 
 @Module({
-  controllers: [],
   providers: [
     UmsCostOfLivingCalculatorClientService,
     CostOfLivingCalculatorApi,
