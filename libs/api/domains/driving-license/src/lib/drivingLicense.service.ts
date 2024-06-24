@@ -13,6 +13,7 @@ import {
   NewTemporaryDrivingLicenseInput,
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
+  NewBEDrivingLicenseInput,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -459,12 +460,15 @@ export class DrivingLicenseService {
   async applyForBELicense(
     nationalId: User['nationalId'],
     auth: User['authorization'],
-    jurisdiction: number,
+    input: NewBEDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postApplyForBELicense({
       nationalIdApplicant: nationalId,
       token: auth,
-      jurisdictionId: jurisdiction,
+      jurisdictionId: input.jurisdiction,
+      instructorSSN: input.instructorSSN,
+      email: input.studentEmail,
+      phoneNumber: input.primaryPhoneNumber,
     })
 
     return {
