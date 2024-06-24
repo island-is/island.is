@@ -6,7 +6,6 @@ import {
   coreMessages,
   buildMultiField,
   buildAlertMessageField,
-  buildRepeater,
   buildPdfLinkButtonField,
   getValueViaPath,
 } from '@island.is/application/core'
