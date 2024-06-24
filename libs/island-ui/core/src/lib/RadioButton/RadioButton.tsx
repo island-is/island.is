@@ -114,7 +114,7 @@ export const RadioButton = ({
           <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
             {label}
           </Text>
-          {subLabel && large && (
+          {subLabel && (
             <Text
               as="span"
               marginTop="smallGutter"
