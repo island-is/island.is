@@ -13,25 +13,25 @@ export type DistrictCommissionerAgencies = {
   key: string
 }
 
-export interface IdentityDocumentChild {
-  childNationalId: string
-  secondParent: string
-  secondParentName: string
-  childName: string
-  passports?: IdentityDocument[]
-}
+// export interface IdentityDocumentChild {
+//   childNationalId: string
+//   secondParent: string
+//   secondParentName: string
+//   childName: string
+//   passports?: IdentityDocument[]
+// }
 
-export type IdentityDocument = {
-  number: string
-  type: string
-  verboseType: string
-  subType: string
-  status: string
-  issuingDate: string
-  expirationDate: string
-  displayFirstName: string
-  displayLastName: string
-  mrzFirstName: string
-  mrzLastName: string
-  sex: string
-}
+// export type IdentityDocument = {
+//   number: string
+//   type: string
+//   verboseType: string
+//   subType: string
+//   status: string
+//   issuingDate: string
+//   expirationDate: string
+//   displayFirstName: string
+//   displayLastName: string
+//   mrzFirstName: string
+//   mrzLastName: string
+//   sex: string
+// }

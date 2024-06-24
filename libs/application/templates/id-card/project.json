@@ -20,18 +20,18 @@
       "options": {
         "jestConfig": "libs/application/templates/id-card/jest.config.ts",
         "passWithNoTests": true
-      },
-      "extract-strings": {
-        "executor": "nx:run-commands",
-        "options": {
-          "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/id-card/src/**/*.{js,ts,tsx}'"
-        }
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/id-card/src/**/*.{js,ts,tsx}'"
+      }
+    },
+    "configurations": {
+      "ci": {
+        "ci": true,
+        "codeCoverage": true
       }
     }
   }

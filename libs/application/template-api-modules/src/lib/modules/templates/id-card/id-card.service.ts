@@ -4,16 +4,16 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import {
-  DistrictCommissionerAgencies,
-  IdentityDocumentChild,
-} from './constants'
+import { DistrictCommissionerAgencies } from './constants'
 import {
   ChargeFjsV2ClientService,
   getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
-import { PassportsService } from '@island.is/clients/passports'
+import {
+  IdentityDocumentChild,
+  PassportsService,
+} from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ApplicationTypes,
