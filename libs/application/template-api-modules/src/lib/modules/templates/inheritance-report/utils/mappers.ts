@@ -47,6 +47,13 @@ const estateMemberMapper = (element: EstateMember) => {
           email: '',
         }
       : undefined,
+    advocate2: element.advocate2
+      ? {
+          ...element.advocate2,
+          phone: '',
+          email: '',
+        }
+      : undefined,
   }
 }
 
@@ -94,14 +101,20 @@ export const expandAnswers = (
   return {
     applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
+    prePaidApplicant: answers.prePaidApplicant,
+    prepaidInheritance: answers.prepaidInheritance,
     executors: {
       executor: {
         email: '',
         phone: '',
+        name: '',
+        nationalId: '',
       },
       spouse: {
         email: '',
         phone: '',
+        name: '',
+        nationalId: '',
       },
       includeSpouse: undefined,
     },

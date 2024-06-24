@@ -26,11 +26,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { EventLog } from './eventLog.model'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
