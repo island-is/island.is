@@ -145,7 +145,12 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                 { cell: (row) => <CreatedDate created={row.created} /> },
                 {
                   cell: (row) => (
-                    <TagCaseState caseState={row.state} isCourtRole={true} />
+                    <TagCaseState
+                      caseState={row.state}
+                      isCourtRole={true}
+                      courtDate={row.courtDate}
+                      indictmentDecision={row.indictmentDecision}
+                    />
                   ),
                 },
                 {
