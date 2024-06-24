@@ -6,16 +6,21 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationLifecycle,
   ApplicationStateSchema,
+  ApplicationStatus,
   ApplicationTemplate,
+  ApplicationTypes,
 } from '@island.is/application/types'
 import { Unwrap } from '@island.is/shared/types'
 import { getApplicationTemplateByTypeId } from '@island.is/application/template-loader'
 import isObject from 'lodash/isObject'
 import { EventObject } from 'xstate'
 import { FormatMessage } from '@island.is/cms-translations'
+import { ApplicationStatistics } from '../dto/applicationAdmin.response.dto'
+import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 
 export const getApplicationLifecycle = (
   application: Application,
@@ -53,12 +58,14 @@ export const getApplicationLifecycle = (
   }
 }
 
+type Template = ApplicationTemplate<
+  ApplicationContext,
+  ApplicationStateSchema<EventObject>,
+  EventObject
+>
+
 export const getApplicationNameTranslationString = (
-  template: ApplicationTemplate<
-    ApplicationContext,
-    ApplicationStateSchema<EventObject>,
-    EventObject
-  >,
+  template: Template,
   application: Application,
   formatMessage: FormatMessage,
 ) => {
@@ -75,6 +82,31 @@ export const getApplicationNameTranslationString = (
     }
     return formatMessage(returnValue)
   }
+  return formatMessage(template.name)
+}
+
+export const getApplicationStatisticsNameTranslationString = (
+  template: Template,
+  model: ApplicationStatistics,
+  formatMessage: FormatMessage,
+) => {
+  if (typeof template.name === 'function') {
+    const returnValue = template.name(
+      mockApplicationFromTypeId(model.typeid as ApplicationTypes),
+    )
+
+    if (
+      isObject(returnValue) &&
+      'value' in returnValue &&
+      'name' in returnValue
+    ) {
+      return formatMessage(returnValue.name, {
+        value: returnValue.value,
+      })
+    }
+    return formatMessage(returnValue)
+  }
+
   return formatMessage(template.name)
 }
 
@@ -105,4 +137,22 @@ export const getApplicantName = (application: Application) => {
     return getValueViaPath(application.externalData, 'person.data.fullname')
   }
   return null
+}
+
+export const mockApplicationFromTypeId = (
+  typeId: ApplicationTypes,
+): Application => {
+  return {
+    id: '',
+    state: ApplicationState.INPROGRESS,
+    applicant: '',
+    assignees: [],
+    applicantActors: [],
+    typeId,
+    modified: new Date(),
+    created: new Date(),
+    answers: {},
+    externalData: {},
+    status: ApplicationStatus.IN_PROGRESS,
+  }
 }
