@@ -23,10 +23,13 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-export const createSubpoenaPDF = (
+export const createSubpoena = (
   theCase: Case,
+  defendant: Defendant,
   formatMessage: FormatMessage,
-  defendant?: Defendant,
+  arraignmentDate?: Date,
+  location?: string,
+  subpoenaType?: SubpoenaType,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -39,12 +42,8 @@ export const createSubpoenaPDF = (
     bufferPages: true,
   })
 
-  if (!defendant) {
-    return Promise.reject('Defendant is missing')
-  }
-
   const sinc: Buffer[] = []
-  const arraignmentDate = theCase.dateLogs?.find(
+  const dateLog = theCase.dateLogs?.find(
     (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
   )
 
@@ -53,13 +52,17 @@ export const createSubpoenaPDF = (
   setTitle(doc, formatMessage(strings.title))
   addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
 
-  if (arraignmentDate) {
+  if (dateLog) {
     addNormalRightAlignedText(
       doc,
-      `${formatDate(new Date(arraignmentDate.created), 'PPP')}`,
+      `${formatDate(new Date(dateLog.created), 'PPP')}`,
       'Times-Roman',
     )
   }
+
+  arraignmentDate = arraignmentDate || dateLog?.date
+  location = location || dateLog?.location
+  subpoenaType = subpoenaType || defendant.subpoenaType
 
   if (theCase.court?.name) {
     addNormalText(
@@ -105,21 +108,21 @@ export const createSubpoenaPDF = (
   addNormalText(doc, defendant.name || 'Nafn ekki skráð', 'Times-Roman')
   addEmptyLines(doc, 2)
 
-  if (arraignmentDate?.date) {
+  if (arraignmentDate) {
     addNormalText(
       doc,
       formatMessage(strings.arraignmentDate, {
-        arraignmentDate: formatDate(new Date(arraignmentDate.date), 'PPP'),
+        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPP'),
       }),
       'Times-Bold',
     )
   }
 
-  if (arraignmentDate?.location) {
+  if (location) {
     addNormalText(
       doc,
       formatMessage(strings.courtRoom, {
-        courtRoom: arraignmentDate.location,
+        courtRoom: location,
       }),
       'Times-Roman',
     )
@@ -128,15 +131,18 @@ export const createSubpoenaPDF = (
   addNormalText(doc, formatMessage(strings.type), 'Times-Roman')
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(strings.intro), 'Times-Bold')
-  addNormalText(
-    doc,
-    formatMessage(
-      defendant.subpoenaType === SubpoenaType.ABSENCE
-        ? strings.absenceIntro
-        : strings.arrestIntro,
-    ),
-    'Times-Bold',
-  )
+
+  if (subpoenaType) {
+    addNormalText(
+      doc,
+      formatMessage(
+        subpoenaType === SubpoenaType.ABSENCE
+          ? strings.absenceIntro
+          : strings.arrestIntro,
+      ),
+      'Times-Bold',
+    )
+  }
 
   addEmptyLines(doc)
   addNormalText(doc, formatMessage(strings.deadline), 'Times-Roman')

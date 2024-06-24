@@ -136,7 +136,6 @@ export class FileService {
     let courtDocumentFolder: CourtDocumentFolder
 
     switch (file.category) {
-      case CaseFileCategory.COVER_LETTER:
       case CaseFileCategory.INDICTMENT:
       case CaseFileCategory.CRIMINAL_RECORD:
       case CaseFileCategory.COST_BREAKDOWN:

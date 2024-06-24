@@ -12,6 +12,7 @@ import { NO, YES } from '@island.is/application/core'
 import {
   ESTATE_INHERITANCE,
   PREPAID_INHERITANCE,
+  PrePaidInheritanceOptions,
   RelationSpouse,
 } from './constants'
 import { DebtTypes } from '../types'
@@ -133,6 +134,15 @@ export const inheritanceReportSchema = z.object({
     relation: z.string(),
   }),
 
+  /* prePaid inheritance applicant */
+  prePaidApplicant: z.object({
+    email: z.string().email(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v)),
+    name: z.string(),
+    nationalId: z.string().refine((v) => kennitala.isValid(v)),
+    relation: z.string(),
+  }),
+
   /* prePaid inheritance executor */
   executors: z
     .object({
@@ -140,11 +150,15 @@ export const inheritanceReportSchema = z.object({
       executor: z.object({
         email: z.string().email(),
         phone: z.string().refine((v) => isValidPhoneNumber(v)),
+        name: z.string(),
+        nationalId: z.string().refine((v) => kennitala.isValid(v)),
       }),
       spouse: z
         .object({
           email: z.string().optional(),
           phone: z.string().optional(),
+          name: z.string(),
+          nationalId: z.string().refine((v) => kennitala.isValid(v)),
         })
         .optional(),
     })
@@ -174,6 +188,14 @@ export const inheritanceReportSchema = z.object({
     ),
 
   applicationFor: z.enum([ESTATE_INHERITANCE, PREPAID_INHERITANCE]),
+  prepaidInheritance: z.array(
+    z.enum([
+      PrePaidInheritanceOptions.REAL_ESTATE,
+      PrePaidInheritanceOptions.STOCKS,
+      PrePaidInheritanceOptions.MONEY,
+      PrePaidInheritanceOptions.OTHER_ASSETS,
+    ]),
+  ),
 
   /* assets */
   assets: z.object({
@@ -505,6 +527,15 @@ export const inheritanceReportSchema = z.object({
         inheritanceTax: z.string(),
         // Málsvari
         advocate: z
+          .object({
+            name: z.string().optional(),
+            nationalId: z.string().optional(),
+            phone: z.string().optional(),
+            email: z.string().optional(),
+          })
+          .optional(),
+        // Málsvari 2
+        advocate2: z
           .object({
             name: z.string().optional(),
             nationalId: z.string().optional(),
