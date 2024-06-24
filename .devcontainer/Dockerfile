@@ -75,30 +75,6 @@ RUN . ~/.${SHELL}rc && volta install "node@$(jq -r '.engines.node' package.json)
 # Install brew for additional binaries
 RUN /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-ENV AWS_CONFIG_FILE=~/.aws/config
-RUN mkdir -p "$(dirname "${AWS_CONFIG_FILE}")" && cat <<EOF > "${AWS_CONFIG_FILE}"
-[profile islandis-dev]
-sso_start_url = https://island-is.awsapps.com/start
-sso_account_id = 013313053092
-sso_role_name = AWSPowerUserAccess
-sso_region = eu-west-1
-region = eu-west-1
-
-[profile islandis-staging]
-sso_start_url = https://island-is.awsapps.com/start
-sso_account_id = 261174024191
-sso_role_name = Secret_Service
-sso_region = eu-west-1
-region = eu-west-1
-
-[profile islandis-prod]
-sso_start_url = https://island-is.awsapps.com/start
-sso_account_id = 251502586493
-sso_role_name = Secret_Service
-sso_region = eu-west-1
-region = eu-west-1
-EOF
-
 # Set up user's shell config
 SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN \
