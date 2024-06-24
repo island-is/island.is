@@ -420,14 +420,13 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
-            }) => {
-              return nationalId !== '' ||
-                description !== '' ||
-                propertyValuation !== '' ||
-                debtType !== ''
+            }) =>
+              [description, nationalId, propertyValuation, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(assetNumber)
-                : true
-            },
+                : true,
+
             {
               path: ['assetNumber'],
             },
@@ -439,14 +438,12 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
-            }) => {
-              return nationalId !== '' ||
-                description !== '' ||
-                assetNumber !== '' ||
-                debtType !== ''
+            }) =>
+              [description, nationalId, assetNumber, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(propertyValuation)
-                : true
-            },
+                : true,
             {
               path: ['propertyValuation'],
             },
@@ -458,14 +455,12 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
-            }) => {
-              return nationalId !== '' ||
-                propertyValuation !== '' ||
-                assetNumber !== '' ||
-                debtType !== ''
+            }) =>
+              [nationalId, propertyValuation, assetNumber, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(description)
-                : true
-            },
+                : true,
             {
               path: ['description'],
             },
@@ -477,14 +472,13 @@ export const inheritanceReportSchema = z.object({
               propertyValuation,
               assetNumber,
               debtType,
-            }) => {
-              return description !== '' ||
-                nationalId !== '' ||
-                propertyValuation !== '' ||
-                assetNumber !== ''
+            }) =>
+              [description, nationalId, propertyValuation, assetNumber].some(
+                (field) => field !== '',
+              )
                 ? isValidString(debtType)
-                : true
-            },
+                : true,
+
             {
               path: ['debtType'],
             },
