@@ -7,33 +7,30 @@ import {
   ApplicationTypes,
   DefaultEvents,
   NationalRegistryUserApi,
+  StateLifeCycle,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
-import { StateLifeCycle } from '@island.is/application/types'
-import { CanSignApi, GetListApi } from '../dataProviders'
+import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
 
-export const WeekLifeCycle: StateLifeCycle = {
+const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
   shouldBePruned: true,
   whenToPrune: 1000 * 3600 * 24 * 7,
 }
 
-const SignListTemplate: ApplicationTemplate<
+const CreateListTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.SIGNATURE_LIST_SIGNING,
+  type: ApplicationTypes.PRESIDENTIAL_LIST_CREATION,
   name: m.applicationName,
   institution: m.institution,
-  featureFlag: Features.signatureListCreation,
-  initialQueryParameter: 'candidate',
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -64,8 +61,8 @@ const SignListTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                CanSignApi,
-                GetListApi,
+                OwnerRequirementsApi,
+                CurrentCollectionApi,
               ],
             },
           ],
@@ -102,7 +99,7 @@ const SignListTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: m.logListSigned,
+                logMessage: m.logListCreated,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -148,4 +145,4 @@ const SignListTemplate: ApplicationTemplate<
   },
 }
 
-export default SignListTemplate
+export default CreateListTemplate

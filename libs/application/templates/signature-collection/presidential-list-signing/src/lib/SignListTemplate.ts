@@ -7,32 +7,31 @@ import {
   ApplicationTypes,
   DefaultEvents,
   NationalRegistryUserApi,
-  StateLifeCycle,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
-import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
+import { StateLifeCycle } from '@island.is/application/types'
+import { CanSignApi, GetListApi } from '../dataProviders'
 
-const WeekLifeCycle: StateLifeCycle = {
+export const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
   shouldBePruned: true,
   whenToPrune: 1000 * 3600 * 24 * 7,
 }
 
-const CreateListTemplate: ApplicationTemplate<
+const SignListTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.SIGNATURE_LIST_CREATION,
+  type: ApplicationTypes.PRESIDENTIAL_LIST_SIGNING,
   name: m.applicationName,
   institution: m.institution,
-  featureFlag: Features.signatureListCreation,
+  initialQueryParameter: 'candidate',
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -63,8 +62,8 @@ const CreateListTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                OwnerRequirementsApi,
-                CurrentCollectionApi,
+                CanSignApi,
+                GetListApi,
               ],
             },
           ],
@@ -101,7 +100,7 @@ const CreateListTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: m.logListCreated,
+                logMessage: m.logListSigned,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -147,4 +146,4 @@ const CreateListTemplate: ApplicationTemplate<
   },
 }
 
-export default CreateListTemplate
+export default SignListTemplate

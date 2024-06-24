@@ -19,7 +19,7 @@ import { formatPhone } from '../lib/utils'
 import format from 'date-fns/format'
 
 export const Draft: Form = buildForm({
-  id: 'SignatureListCreationDraft',
+  id: 'PresidentialListCreationDraft',
   title: '',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,

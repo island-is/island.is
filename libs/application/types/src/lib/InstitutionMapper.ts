@@ -207,11 +207,11 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.URVINNSLUSJODUR,
     slug: InstitutionTypes.URVINNSLUSJODUR,
   },
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },
