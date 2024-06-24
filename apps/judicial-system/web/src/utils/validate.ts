@@ -447,6 +447,30 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
+const isIndictmentRulingDecisionValid = (workingCase: Case) => {
+  switch (workingCase.indictmentRulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return Boolean(
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        ) &&
+          workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.RULING,
+          ),
+      )
+    case CaseIndictmentRulingDecision.FINE:
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return Boolean(
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        ),
+      )
+    default:
+      return false
+  }
+}
+
 export const isConclusionStepValid = (workingCase: Case): boolean => {
   switch (workingCase.indictmentDecision) {
     case IndictmentDecision.POSTPONING:
@@ -454,27 +478,7 @@ export const isConclusionStepValid = (workingCase: Case): boolean => {
     case IndictmentDecision.SCHEDULING:
       return Boolean(workingCase.courtDate?.date)
     case IndictmentDecision.COMPLETING:
-      switch (workingCase.indictmentRulingDecision) {
-        case CaseIndictmentRulingDecision.RULING:
-        case CaseIndictmentRulingDecision.DISMISSAL:
-          return Boolean(
-            workingCase.caseFiles?.some(
-              (file) => file.category === CaseFileCategory.COURT_RECORD,
-            ) &&
-              workingCase.caseFiles?.some(
-                (file) => file.category === CaseFileCategory.RULING,
-              ),
-          )
-        case CaseIndictmentRulingDecision.FINE:
-        case CaseIndictmentRulingDecision.CANCELLATION:
-          return Boolean(
-            workingCase.caseFiles?.some(
-              (file) => file.category === CaseFileCategory.COURT_RECORD,
-            ),
-          )
-        default:
-          return false
-      }
+      return isIndictmentRulingDecisionValid(workingCase)
     case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
     case IndictmentDecision.REDISTRIBUTING:
       return true
