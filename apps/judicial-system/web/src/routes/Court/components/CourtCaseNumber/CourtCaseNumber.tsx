@@ -23,8 +23,7 @@ const CourtCaseNumber: React.FC = () => {
         <Text>
           {workingCase.state !== CaseState.SUBMITTED &&
           workingCase.state !== CaseState.WAITING_FOR_CANCELLATION &&
-          workingCase.state !== CaseState.RECEIVED &&
-          workingCase.state !== CaseState.MAIN_HEARING
+          workingCase.state !== CaseState.RECEIVED
             ? formatMessage(courtCaseNumber.explanationDisabled)
             : formatMessage(courtCaseNumber.explanation)}
         </Text>

@@ -95,7 +95,6 @@ export enum CaseState {
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
-  MAIN_HEARING = 'MAIN_HEARING',
   WAITING_FOR_CANCELLATION = 'WAITING_FOR_CANCELLATION',
   COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
@@ -109,7 +108,6 @@ export enum IndictmentCaseState {
   WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
   SUBMITTED = CaseState.SUBMITTED,
   RECEIVED = CaseState.RECEIVED,
-  MAIN_HEARING = CaseState.MAIN_HEARING,
   WAITING_FOR_CANCELLATION = CaseState.WAITING_FOR_CANCELLATION,
   COMPLETED = CaseState.COMPLETED,
   DELETED = CaseState.DELETED,
@@ -141,7 +139,6 @@ export enum CaseTransition {
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   RECEIVE = 'RECEIVE',
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
-  REDISTRIBUTE = 'REDISTRIBUTE',
   COMPLETE = 'COMPLETE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
@@ -162,7 +159,6 @@ export enum IndictmentCaseTransition {
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   RECEIVE = CaseTransition.RECEIVE,
   RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
-  REDISTRIBUTE = CaseTransition.REDISTRIBUTE,
   COMPLETE = CaseTransition.COMPLETE,
   DELETE = CaseTransition.DELETE,
 }
@@ -223,6 +219,7 @@ export enum CaseDecision {
 
 export enum IndictmentDecision {
   POSTPONING = 'POSTPONING',
+  SCHEDULING = 'SCHEDULING',
   POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
   COMPLETING = 'COMPLETING',
   REDISTRIBUTING = 'REDISTRIBUTING',
@@ -355,7 +352,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
         ...completedIndictmentCaseStates,
       ].includes(state),
   )
