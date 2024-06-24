@@ -474,6 +474,7 @@ export interface PdfLinkButtonField extends BaseField {
     filename: string
   }[]
   setViewPdfFile?: (file: { base64: string; filename: string }) => void
+  viewPdfFile?: boolean
 }
 
 export interface NationalIdWithNameField extends BaseField {

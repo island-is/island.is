@@ -1,7 +1,16 @@
+export interface RequestCorrection {
+  hasSentRequest: boolean
+}
+
 export interface Address {
   streetAddress?: string
   city?: string
   postalCode?: string
+}
+
+export interface Properties {
+  propertyNumber: string
+  propertyType: string
 }
 
 export interface Identity {
@@ -13,14 +22,4 @@ export interface Identity {
 export interface UserProfile {
   email: string
   mobilePhoneNumber: string
-}
-
-export interface SubmitRequestToSyslumennResult {
-  hasSentRequest: boolean
-}
-
-export interface SelectedProperty {
-  propertyNumber: string
-  propertyName: string
-  propertyType: string
 }

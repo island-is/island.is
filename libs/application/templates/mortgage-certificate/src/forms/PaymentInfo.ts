@@ -1,8 +1,8 @@
 import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
-import { m } from '../lib/messages'
 import { buildFormPaymentChargeOverviewSection } from '@island.is/application/ui-forms'
 import { getChargeItemCodesAndExtraLabel } from '../util'
+import { confirmation, externalData, payment, property } from '../lib/messages'
 
 export const PaymentInfo: Form = buildForm({
   id: 'PaymentInfo',
@@ -12,23 +12,23 @@ export const PaymentInfo: Form = buildForm({
   children: [
     buildSection({
       id: 'externalData',
-      title: m.externalDataSection,
+      title: externalData.general.sectionTitle,
       children: [],
     }),
     buildSection({
-      id: 'selectRealEstate',
-      title: m.property,
+      id: 'selectProperty',
+      title: property.general.sectionTitle,
       children: [],
     }),
     buildFormPaymentChargeOverviewSection({
-      sectionTitle: m.payment,
-      forPaymentLabel: m.overviewPaymentCharge,
+      sectionTitle: payment.general.sectionTitle,
+      forPaymentLabel: payment.labels.forPayment,
       getSelectedChargeItems: (application) =>
         getChargeItemCodesAndExtraLabel(application),
     }),
     buildSection({
       id: 'confirmation',
-      title: m.confirmation,
+      title: confirmation.general.sectionTitle,
       children: [],
     }),
   ],
