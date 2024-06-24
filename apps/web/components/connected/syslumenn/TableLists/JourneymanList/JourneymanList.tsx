@@ -18,7 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
-import { MasterLicence } from '@island.is/web/graphql/schema'
+import { JourneymanLicence } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 
@@ -27,27 +27,23 @@ import {
   getSortedAndFilteredList,
   prepareCsvString,
 } from '../../utils'
-import { GET_MASTER_LICENCES_QUERY } from './queries'
+import { GET_JOURNEYMAN_LICENCES_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof MasterLicence)[] = [
-  'name',
-  'dateOfPublication',
-  'nationalId',
-]
+const SEARCH_KEYS: (keyof JourneymanLicence)[] = ['name', 'dateOfPublication']
 
-interface MasterListProps {
+interface JourneymanListProps {
   slice: ConnectedComponent
 }
 
 type ListState = 'loading' | 'loaded' | 'error'
 
-const MasterList = ({ slice }: MasterListProps) => {
+const JourneymanList = ({ slice }: JourneymanListProps) => {
   const n = useNamespace(slice.json ?? {})
   const [listState, setListState] = useState<ListState>('loading')
   const [licences, setLicences] = useState<
-    Query['getMasterLicences']['licences']
+    Query['getJourneymanLicences']['licences']
   >([])
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
   const { format } = useDateUtils()
@@ -76,18 +72,16 @@ const MasterList = ({ slice }: MasterListProps) => {
     setSearchString(searchString)
   }
 
-  useQuery<Query>(GET_MASTER_LICENCES_QUERY, {
+  useQuery<Query>(GET_JOURNEYMAN_LICENCES_QUERY, {
     onCompleted: (data) => {
-      const fetchedMasterLicences = [
-        ...(data?.getMasterLicences.licences ?? []),
-      ]
-      setLicences(fetchedMasterLicences.sort(sortAlpha('name')))
+      const fetchedLicences = [...(data?.getJourneymanLicences?.licences ?? [])]
+      setLicences(fetchedLicences.sort(sortAlpha('name')))
       setListState('loaded')
       const options = [
         allLicenceProfessionOption,
         ...Array.from(
           new Set<string>(
-            fetchedMasterLicences
+            fetchedLicences
               .filter((x) => x.profession)
               .map((x) => x.profession as string),
           ).values(),
@@ -116,10 +110,9 @@ const MasterList = ({ slice }: MasterListProps) => {
     return new Promise<string>((resolve, reject) => {
       if (licences) {
         const headerRow = [
-          n('csvHeaderMasterLicenceName', 'Nafn') as string,
-          n('csvHeaderMasterLicenseProfession', 'Iðngrein') as string,
-          n('csvHeaderMasterLicenceDateOfPublication', 'Útgáfuár') as string,
-          n('csvHeaderMasterLicenceNationalId', 'Kennitala') as string,
+          n('csvHeaderName', 'Nafn') as string,
+          n('csvHeaderProfession', 'Iðngrein') as string,
+          n('csvHeaderDateOfPublication', 'Útgáfuár') as string,
         ]
         const dataRows = []
         for (const licence of licences) {
@@ -129,12 +122,11 @@ const MasterList = ({ slice }: MasterListProps) => {
             licence.dateOfPublication // Útgáfuár
               ? format(new Date(licence.dateOfPublication), 'yyyy')
               : '',
-            licence.nationalId ?? '', // Kennitala
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
       }
-      reject('Master Licences data has not been loaded.')
+      reject('Journeyman licences data has not been loaded.')
     })
   }
 
@@ -145,7 +137,7 @@ const MasterList = ({ slice }: MasterListProps) => {
   ) as string
 
   // Filter
-  const filteredMasterLicences = getSortedAndFilteredList(
+  const filteredLicences = getSortedAndFilteredList(
     licences.filter((licence) =>
       filterLicenceProfession?.value === allLicenceProfessionOption
         ? true
@@ -157,7 +149,7 @@ const MasterList = ({ slice }: MasterListProps) => {
 
   const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
 
-  const totalPages = Math.ceil(filteredMasterLicences.length / pageSize)
+  const totalPages = Math.ceil(filteredLicences.length / pageSize)
 
   const minHeightFromConfig = slice?.configJson?.minHeight
   const tableContainerStyles: CSSProperties = {}
@@ -188,7 +180,7 @@ const MasterList = ({ slice }: MasterListProps) => {
           title={n('errorTitle', 'Villa')}
           message={n(
             'errorMessage',
-            'Ekki tókst að sækja lista yfir meistarabréfin.',
+            'Ekki tókst að sækja lista yfir sveinsbréfin.',
           )}
           type="error"
         />
@@ -207,10 +199,7 @@ const MasterList = ({ slice }: MasterListProps) => {
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={n(
-                    'alcoholLicencesFilterLicenceProfession',
-                    'Iðngrein',
-                  )}
+                  label={n('licencesFilterLicenceProfession', 'Iðngrein')}
                   name="licenceProfessionSelect"
                   options={availableLicenceProfessionOptions}
                   value={filterLicenceProfession}
@@ -249,7 +238,7 @@ const MasterList = ({ slice }: MasterListProps) => {
                       'csvButtonLabelError',
                       'Ekki tókst að sækja leyfi, reyndu aftur',
                     )}
-                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Meistarabréf')}
+                    csvFilenamePrefix={n('csvFileTitlePrefix', 'Sveinslisti')}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -258,14 +247,14 @@ const MasterList = ({ slice }: MasterListProps) => {
           </GridContainer>
         </Box>
       )}
-      {listState === 'loaded' && filteredMasterLicences.length === 0 && (
+      {listState === 'loaded' && filteredLicences.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
           <Text variant="h3">
             {n('noLicencesFound', 'Engar niðurstöður fundust.')}
           </Text>
         </Box>
       )}
-      {listState === 'loaded' && filteredMasterLicences.length > 0 && (
+      {listState === 'loaded' && filteredLicences.length > 0 && (
         <Box>
           <Box style={tableContainerStyles}>
             <T.Table>
@@ -273,14 +262,13 @@ const MasterList = ({ slice }: MasterListProps) => {
                 <T.Row>
                   <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
                   <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
-                  <T.HeadData>{n('dateOfPublication', 'Útgáfuár')}</T.HeadData>
                   <T.HeadData align="right">
-                    {n('nationalId', 'Kennitala')}
+                    {n('dateOfPublication', 'Útgáfuár')}
                   </T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
-                {filteredMasterLicences
+                {filteredLicences
                   .slice(
                     (currentPageNumber - 1) * pageSize,
                     currentPageNumber * pageSize,
@@ -299,7 +287,7 @@ const MasterList = ({ slice }: MasterListProps) => {
                         <T.Data>
                           {licences.dateOfPublication && (
                             <Box>
-                              <Text variant="small">
+                              <Text textAlign="right" variant="small">
                                 {format(
                                   new Date(licences.dateOfPublication),
                                   'yyyy',
@@ -307,13 +295,6 @@ const MasterList = ({ slice }: MasterListProps) => {
                               </Text>
                             </Box>
                           )}
-                        </T.Data>
-                        <T.Data>
-                          <Box>
-                            <Text textAlign="right" variant="small">
-                              {licences.nationalId}
-                            </Text>
-                          </Box>
                         </T.Data>
                       </T.Row>
                     )
@@ -344,4 +325,4 @@ const MasterList = ({ slice }: MasterListProps) => {
   )
 }
 
-export default MasterList
+export default JourneymanList
