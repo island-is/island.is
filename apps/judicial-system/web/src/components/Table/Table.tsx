@@ -98,34 +98,39 @@ const Table: FC<TableProps> = (props) => {
 
   useMemo(() => {
     if (sortConfig) {
-      data.sort((a: CaseListEntry, b: CaseListEntry) => {
-        const getColumnValue = (entry: CaseListEntry) => {
-          console.log(sortConfig.column)
-          if (
-            sortConfig.column === 'defendant' &&
-            entry.defendants &&
-            entry.defendants.length > 0
-          ) {
-            return entry.defendants[0].name ?? ''
-          }
-          if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
-          }
-          if (sortConfig.column === 'deadline') {
-            return entry.indictmentAppealDeadline
-          }
-        }
-        const compareResult = compareLocaleIS(
-          getColumnValue(a),
-          getColumnValue(b),
-        )
+      console.log('sortConfig', sortConfig)
+      data.sort(() => (sortConfig.direction === 'ascending' ? 1 : -1))
+      // data.sort((a: CaseListEntry, b: CaseListEntry) => {
+      //   console.log(a, b)
+      //   const getColumnValue = (entry: CaseListEntry) => {
+      //     if (
+      //       sortConfig.column === 'defendant' &&
+      //       entry.defendants &&
+      //       entry.defendants.length > 0
+      //     ) {
+      //       return entry.defendants[0].name ?? ''
+      //     }
+      //     if (sortConfig.column === 'courtDate') {
+      //       return entry.courtDate ?? ''
+      //     }
+      //     if (sortConfig.column === 'deadline') {
+      //       return entry.indictmentAppealDeadline
+      //     }
+      //   }
 
-        return sortConfig.direction === 'ascending'
-          ? compareResult
-          : -compareResult
-      })
+      //   const compareResult = compareLocaleIS(
+      //     getColumnValue(a),
+      //     getColumnValue(b),
+      //   )
+
+      //   return sortConfig.direction === 'ascending'
+      //     ? compareResult
+      //     : -compareResult
+      // })
     }
   }, [data, sortConfig])
+
+  console.log(data)
 
   return width < theme.breakpoints.md ? (
     <>
