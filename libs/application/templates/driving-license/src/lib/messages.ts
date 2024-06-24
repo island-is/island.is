@@ -728,7 +728,7 @@ export const m = defineMessages({
   },
   applicationForBELicenseTitle: {
     id: 'dl.application:applicationForBELicenseTitle',
-    defaultMessage: 'Kerruréttindi BE',
+    defaultMessage: 'Eftirvagn BE',
     description: 'Option title for selecting to apply for trailer license',
   },
   applicationForBELicenseDescription: {
