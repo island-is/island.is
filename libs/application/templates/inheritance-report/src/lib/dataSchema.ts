@@ -398,15 +398,9 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
+            assetNumber: z.string(),
             propertyValuation: z.string(),
-            debtType: z.enum([
-              DebtTypes.CreditCard,
-              DebtTypes.InsuranceCompany,
-              DebtTypes.Loan,
-              DebtTypes.Overdraft,
-              DebtTypes.PropertyFees,
-            ]),
+            debtType: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -420,10 +414,17 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) => {
               return nationalId !== '' ||
                 description !== '' ||
-                propertyValuation !== ''
+                propertyValuation !== '' ||
+                debtType !== ''
                 ? isValidString(assetNumber)
                 : true
             },
@@ -432,10 +433,17 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) => {
               return nationalId !== '' ||
                 description !== '' ||
-                assetNumber !== ''
+                assetNumber !== '' ||
+                debtType !== ''
                 ? isValidString(propertyValuation)
                 : true
             },
@@ -444,15 +452,41 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) => {
               return nationalId !== '' ||
                 propertyValuation !== '' ||
-                assetNumber !== ''
+                assetNumber !== '' ||
+                debtType !== ''
                 ? isValidString(description)
                 : true
             },
             {
               path: ['description'],
+            },
+          )
+          .refine(
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) => {
+              return description !== '' ||
+                nationalId !== '' ||
+                propertyValuation !== '' ||
+                assetNumber !== ''
+                ? isValidString(debtType)
+                : true
+            },
+            {
+              path: ['debtType'],
             },
           )
           .array()
