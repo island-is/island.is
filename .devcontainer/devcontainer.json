@@ -8,9 +8,12 @@
   },
   "privileged": true,
   "runArgs": ["--name=devcontainer-islandis"],
-  "postCreateCommand": "cp .devcontainer/aws-config.default.ini .devcontainer/aws-config.ini",
+  "postCreateCommands": [
+    "cp .devcontainer/aws-config.default.ini .devcontainer/aws-config.ini",
+    "cp .devcontainer/.envrc.default .devcontainer/.envrc"
+  ],
   "containerEnv": {
-    "AWS_CONFIG_FILE": "${workspaceFolder}/.devcontainer/aws-aws-config.ini"
+    "AWS_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/aws-config.ini"
   },
 
   "forwardPorts": [3000, 3333, 4200, 4242]
