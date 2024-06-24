@@ -13,7 +13,8 @@
     "cp .devcontainer/.envrc.default .devcontainer/.envrc"
   ],
   "containerEnv": {
-    "AWS_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/aws-config.ini"
+    "AWS_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/aws-config.ini",
+    "IS_DEVCONTAINER": true
   },
 
   "forwardPorts": [3000, 3333, 4200, 4242]
