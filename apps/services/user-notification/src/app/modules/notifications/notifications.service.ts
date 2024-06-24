@@ -208,7 +208,7 @@ export class NotificationsService {
     if (senderId && args.some((arg) => arg.key === 'organization')) {
       try {
         const sender = await this.getSenderOrganizationTitle(senderId, locale)
-        if (sender?.title != undefined) {
+        if (sender?.title) {
           args = args.map((arg) =>
             arg.key === 'organization' ? { ...arg, value: sender.title } : arg,
           )
