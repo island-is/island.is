@@ -409,7 +409,6 @@ export class SyslumennService {
 
   async validateMortgageCertificateOld(
     propertyNumber: string,
-    isFromSearch: boolean | undefined,
   ): Promise<MortgageCertificateValidation> {
     try {
       // Note: this function will throw an error if something goes wrong

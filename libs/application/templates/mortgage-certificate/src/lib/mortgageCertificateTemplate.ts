@@ -159,9 +159,9 @@ const template: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
-          onEntry: defineTemplateApi({
-            action: ApiActions.getMortgageCertificate,
-          }),
+          // onEntry: defineTemplateApi({
+          //   action: ApiActions.getMortgageCertificate,
+          // }),
           roles: [
             {
               id: Roles.APPLICANT,
