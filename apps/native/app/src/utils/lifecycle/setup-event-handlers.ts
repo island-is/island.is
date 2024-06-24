@@ -101,6 +101,7 @@ export function setupEventHandlers() {
         if (isIos) {
           // Add a small delay for those accidental backgrounds in iOS
           backgroundAppLockTimeout = setTimeout(() => {
+            const { lockScreenComponentId } = authStore.getState()
             if (!lockScreenComponentId) {
               showAppLockOverlay({ status })
             } else {
