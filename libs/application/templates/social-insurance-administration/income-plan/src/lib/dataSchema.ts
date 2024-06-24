@@ -10,7 +10,7 @@ export const dataSchema = z.object({
         incomeTypes: z.string(),
         income: z.enum([RatioType.YEARLY, RatioType.MONTHLY]),
         incomePerYear: z.string().optional(),
-        equalIncomePerYear: z.string().optional(),
+        equalIncomePerMonth: z.string().optional(),
         currency: z.string(),
       })
       .refine(
@@ -21,10 +21,10 @@ export const dataSchema = z.object({
         },
       )
       .refine(
-        ({ income, equalIncomePerYear }) =>
-          income === RatioType.MONTHLY ? !!equalIncomePerYear : true,
+        ({ income, equalIncomePerMonth }) =>
+          income === RatioType.MONTHLY ? !!equalIncomePerMonth : true,
         {
-          path: ['equalIncomePerYear'],
+          path: ['equalIncomePerMonth'],
         },
       ),
   ),

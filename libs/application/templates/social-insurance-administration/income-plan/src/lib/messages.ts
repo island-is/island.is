@@ -75,6 +75,11 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Eyða tekjum',
       description: 'Remove income',
     },
+    editIncome: {
+      id: 'pp.application:edit.income',
+      defaultMessage: 'Breyta tekjum',
+      description: 'Edit income',
+    },
     incomeCategory: {
       id: 'pp.application:income.category',
       defaultMessage: 'Tekjuflokkur',
@@ -122,8 +127,10 @@ export const incomePlanFormMessage: MessageDir = {
     },
     monthlyDistributionOfIncomeTooltip: {
       id: 'pp.application:monthly.distribution.of.income.tooltip',
-      defaultMessage: 'Atvinnutekjur hafa einungis áhrif á lífeyrisgreiðslur þess mánaðar sem atvinnutekna er aflað.',
-      description: 'Income only affects the pension payments for the month in which income is earned.',
+      defaultMessage:
+        'Atvinnutekjur hafa einungis áhrif á lífeyrisgreiðslur þess mánaðar sem atvinnutekna er aflað.',
+      description:
+        'Income only affects the pension payments for the month in which income is earned.',
     },
     currency: {
       id: 'pp.application:currency',

@@ -5,6 +5,7 @@ import {
   buildSection,
   buildSubSection,
   buildTableRepeaterField,
+  buildTextField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
@@ -70,6 +71,9 @@ export const IncomePlanForm: Form = buildForm({
               formTitle: incomePlanFormMessage.incomePlan.registerIncome,
               addItemButtonText: incomePlanFormMessage.incomePlan.addIncome,
               saveItemButtonText: incomePlanFormMessage.incomePlan.saveIncome,
+              editField: true,
+              editButtonTooltipText:
+                incomePlanFormMessage.incomePlan.editIncome,
               removeButtonTooltipText:
                 incomePlanFormMessage.incomePlan.removeIncome,
               fields: {
@@ -122,21 +126,15 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   type: 'number',
                   currency: true,
-                  suffix: '',
-                  condition: (_, activeField) => {
-                    return activeField?.income === RatioType.YEARLY
-                  },
-                },
-                equalIncomePerMonth: {
-                  component: 'input',
-                  label: incomePlanFormMessage.incomePlan.equalIncomePerMonth,
-                  width: 'half',
-                  type: 'number',
-                  displayInTable: false,
-                  currency: true,
-                  suffix: '',
-                  condition: (_, activeField) => {
+                  readonly: (_, activeField) => {
                     return activeField?.income === RatioType.MONTHLY
+                  },
+                  suffix: '',
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.YEARLY ||
+                      activeField?.income === RatioType.MONTHLY
+                    )
                   },
                 },
                 currency: {
@@ -164,14 +162,11 @@ export const IncomePlanForm: Form = buildForm({
                     return getCurrencies(currencies, hideISKCurrency)
                   },
                 },
-                annualIncome: {
+                equalIncomePerMonth: {
                   component: 'input',
-                  label: incomePlanFormMessage.incomePlan.annualIncome,
-                  width: 'half',
+                  label: incomePlanFormMessage.incomePlan.equalIncomePerMonth,
                   type: 'number',
-                  backgroundColor: 'white',
                   displayInTable: false,
-                  readonly: true,
                   currency: true,
                   suffix: '',
                   condition: (_, activeField) => {
@@ -180,20 +175,21 @@ export const IncomePlanForm: Form = buildForm({
                 },
                 unevenIncomePerYear: {
                   component: 'checkbox',
-                  large: false,
+                  large: true,
+                  width: 'full',
                   options: [
                     {
                       value: YES,
                       label:
                         incomePlanFormMessage.incomePlan
                           .monthlyDistributionOfIncome,
+                      tooltip:
+                        incomePlanFormMessage.incomePlan
+                          .monthlyDistributionOfIncomeTooltip,
                     },
                   ],
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
-                  tooltip:
-                    incomePlanFormMessage.incomePlan
-                      .monthlyDistributionOfIncomeTooltip,
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
@@ -377,7 +373,7 @@ export const IncomePlanForm: Form = buildForm({
                     )
                   },
                 },
-                desember: {
+                december: {
                   component: 'input',
                   label: socialInsuranceAdministrationMessage.months.desember,
                   width: 'third',

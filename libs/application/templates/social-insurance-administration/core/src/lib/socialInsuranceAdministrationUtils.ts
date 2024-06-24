@@ -90,7 +90,10 @@ export const shouldNotUpdateBankAccount = (
   }
 }
 
-export const getCurrencies = (currencies: string[], hideISKCurrency?: string) => {
+export const getCurrencies = (
+  currencies: string[],
+  hideISKCurrency?: string,
+) => {
   return (
     currencies
       .filter((i) => i !== hideISKCurrency)

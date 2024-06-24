@@ -174,11 +174,11 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: () =>
     import('@island.is/application/templates/aosh/request-for-inspection'),
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: () =>
-    import('@island.is/application/templates/health-insurance-declaration'), 
+    import('@island.is/application/templates/health-insurance-declaration'),
   [ApplicationTypes.INCOME_PLAN]: () =>
     import(
       '@island.is/application/templates/social-insurance-administration/income-plan'
-    ),   
+    ),
 }
 
 export default templates

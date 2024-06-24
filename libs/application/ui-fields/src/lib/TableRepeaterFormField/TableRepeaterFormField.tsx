@@ -269,14 +269,21 @@ export const TableRepeaterFormField: FC<Props> = ({
                         application,
                         formatMessage,
                       ),
-                      ...(tooltip && {
+                      ...(option.tooltip && {
                         tooltip: formatText(
-                          tooltip,
+                          option.tooltip,
                           application,
                           formatMessage,
                         ),
                       }),
                     }))
+                  }
+
+                  let Readonly: boolean | undefined
+                  if (typeof readonly === 'function') {
+                    Readonly = readonly(application, activeValues)
+                  } else {
+                    Readonly = readonly
                   }
 
                   if (condition && !condition(application, activeValues)) {
@@ -308,7 +315,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                         split={width === 'half' ? '1/2' : '1/1'}
                         error={getFieldError(itemId)}
                         control={methods.control}
-                        readOnly={readonly}
+                        readOnly={Readonly}
                         backgroundColor={backgroundColor}
                         onChange={() => {
                           if (error) {

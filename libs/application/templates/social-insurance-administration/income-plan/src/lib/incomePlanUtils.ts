@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
-import { categorizedIncomeTypes } from '../types'
+import { categorizedIncomeTypes, withholdingTax } from '../types'
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
@@ -16,9 +16,15 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationCurrencies.data',
   ) as Array<string>
 
+  const withholdingTax = getValueViaPath(
+    externalData,
+    'socaialInsuranceAdministrationWithholdingTax.data',
+  ) as withholdingTax
+
   return {
     categorizedIncomeTypes,
     currencies,
+    withholdingTax,
   }
 }
 
