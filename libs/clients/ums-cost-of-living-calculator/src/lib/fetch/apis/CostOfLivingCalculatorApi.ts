@@ -20,22 +20,17 @@ export class CostOfLivingCalculatorApi {
     private clientConfig: ConfigType<typeof UmbodsmadurSkuldaraClientConfig>,
   ) {}
   async getCalculatorData(): Promise<Array<CostOfLivingCalculatorRequest>> {
-    const data = await Promise.all([
-      fetch(this.clientConfig.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify({ isEinstaklingur: 'false' }),
-      }).then((response) => response.json()),
-      fetch(this.clientConfig.url, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json; charset=utf-8',
-        },
-        body: JSON.stringify({ isEinstaklingur: 'true' }),
-      }).then((response) => response.json()),
-    ])
+    const data = await Promise.all(
+      [false, true].map((isEinstaklingur) =>
+        fetch(this.clientConfig.url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8',
+          },
+          body: JSON.stringify({ isEinstaklingur: isEinstaklingur.toString() }),
+        }).then((response) => response.json()),
+      ),
+    )
 
     return [...data[0].d, ...data[1].d]
   }
