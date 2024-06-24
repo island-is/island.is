@@ -107,7 +107,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
             rawData: JSON.stringify(t),
             metadata: {
               licenseNumber: t.number?.toString() ?? '',
-              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+              subtitle: formatMessage(m.licenseNumberVariant, {
                 arg: t.number?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,

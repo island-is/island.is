@@ -12,9 +12,6 @@ export class GenericUserLicenseMetadata {
   @Field({ nullable: true })
   licenseNumber?: string
 
-  @Field({ nullable: true })
-  licenseNumberDisplay?: string
-
   @Field({
     nullable: true,
     description: 'Unique license identifier',
@@ -36,11 +33,23 @@ export class GenericUserLicenseMetadata {
   })
   title?: string
 
+  @Field({
+    nullable: true,
+    description: 'Display subtitle for detail view',
+  })
+  subtitle?: string
+
   @Field(() => [GenericUserLicenseMetadataDescription], {
     nullable: true,
     description: 'Display description for detail view',
   })
   description?: Array<GenericUserLicenseMetadataDescription>
+
+  @Field(() => GenericUserLicenseMetaLinks, {
+    nullable: true,
+    description: 'CTA link, only use if necessary',
+  })
+  ctaLink?: GenericUserLicenseMetaLinks
 
   @Field(() => GenericUserLicenseAlert, {
     nullable: true,

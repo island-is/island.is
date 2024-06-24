@@ -8,7 +8,7 @@ import {
 import { ApiScope, LicenseApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import type { Locale } from '@island.is/shared/types'
-import { ForbiddenException, Inject, UseGuards } from '@nestjs/common'
+import { ForbiddenException, UseGuards } from '@nestjs/common'
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { CreateBarcodeResult } from '../dto/CreateBarcodeResult.dto'
 import { GenericUserLicense } from '../dto/GenericUserLicense.dto'

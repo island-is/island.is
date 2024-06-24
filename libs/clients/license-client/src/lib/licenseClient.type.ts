@@ -5,15 +5,15 @@ import { OrorkuSkirteini } from '@island.is/clients/disability-license'
 import { DriverLicenseDto } from '@island.is/clients/driving-license'
 import { BasicCardInfoDTO } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Staediskortamal } from '@island.is/clients/p-card'
-import {
-  IdentityDocument,
-  IdentityDocumentChild,
-} from '@island.is/clients/passports'
 import { Locale } from '@island.is/shared/types'
 import { FlattenedAdrDto } from './clients/adr-license-client'
 import { FirearmLicenseDto } from './clients/firearm-license-client'
 import { DrivingLicenseVerifyExtraData } from './clients/driving-license-client'
 import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
+import {
+  IdentityDocument,
+  IdentityDocumentChild,
+} from '@island.is/clients/passports'
 
 export type LicenseLabelsObject = {
   [x: string]: string

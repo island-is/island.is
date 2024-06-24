@@ -131,7 +131,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
               rawData: JSON.stringify(t),
               metadata: {
                 licenseNumber: t.licenseInfo?.licenseNumber?.toString() ?? '',
-                licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                subtitle: formatMessage(m.licenseNumberVariant, {
                   arg:
                     t.licenseInfo?.licenseNumber?.toString() ??
                     formatMessage(m.unknown),

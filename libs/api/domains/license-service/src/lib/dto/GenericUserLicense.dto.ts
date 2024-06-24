@@ -12,11 +12,16 @@ export class GenericUserLicense {
   nationalId!: string
 
   @Field({
-    defaultValue: false,
     nullable: true,
     description: 'Is license owner child of user',
   })
   isOwnerChildOfUser?: boolean
+
+  @Field({
+    nullable: true,
+    description: 'Toggle display if there isnt any payload',
+  })
+  displayIfNoPayload?: boolean
 
   @Field(() => GenericLicense, { description: 'License info' })
   license!: GenericLicense

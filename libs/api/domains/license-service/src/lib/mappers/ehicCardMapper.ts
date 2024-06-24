@@ -96,7 +96,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
               rawData: JSON.stringify(t),
               metadata: {
                 licenseNumber: t.cardNumber?.toString() ?? '',
-                licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+                subtitle: formatMessage(m.licenseNumberVariant, {
                   arg: t.cardNumber?.toString() ?? formatMessage(m.unknown),
                 }),
                 licenseId: t.cardNumber?.toString() ?? 'default',

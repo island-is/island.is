@@ -118,7 +118,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
                 },
               ],
               licenseNumber: t.id?.toString() ?? '',
-              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+              subtitle: formatMessage(m.licenseNumberVariant, {
                 arg: t.id?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,

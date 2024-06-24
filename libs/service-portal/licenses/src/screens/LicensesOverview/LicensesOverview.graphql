@@ -28,7 +28,7 @@ query GenericLicenseCollection(
         metadata {
           licenseId
           licenseNumber
-          licenseNumberDisplay
+          subtitle
           displayTag {
             text
             color

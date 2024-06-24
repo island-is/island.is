@@ -88,7 +88,7 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
             rawData: JSON.stringify(t),
             metadata: {
               licenseNumber: t.skirteinisNumer ?? '',
-              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+              subtitle: formatMessage(m.licenseNumberVariant, {
                 arg: t.skirteinisNumer ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,

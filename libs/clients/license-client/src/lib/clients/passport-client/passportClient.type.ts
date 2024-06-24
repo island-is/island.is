@@ -1,5 +1,9 @@
-import { Passport } from '@island.is/clients/passports'
+import {
+  IdentityDocument,
+  IdentityDocumentChild,
+} from '@island.is/clients/passports'
 
 export interface Passports {
-  passportData?: Passport
+  userPassport?: IdentityDocument | undefined
+  childPassports?: Array<IdentityDocumentChild>
 }

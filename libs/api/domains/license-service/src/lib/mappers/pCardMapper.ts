@@ -93,7 +93,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
             rawData: JSON.stringify(t),
             metadata: {
               licenseNumber: t.malsnumer?.toString() ?? '',
-              licenseNumberDisplay: formatMessage(m.licenseNumberVariant, {
+              subtitle: formatMessage(m.licenseNumberVariant, {
                 arg: t.malsnumer?.toString() ?? formatMessage(m.unknown),
               }),
               licenseId: DEFAULT_LICENSE_ID,

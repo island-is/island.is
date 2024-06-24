@@ -7,13 +7,7 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserProfile } from '@island.is/service-portal/graphql'
 import { Locale } from '@island.is/shared/types'
 import { useGenericLicenseCollectionQuery } from './LicensesOverview.generated'
-import {
-  AlertMessage,
-  Box,
-  Stack,
-  Tabs,
-  TagVariant,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
 import {
   ActionCard,
   CardLoader,
@@ -30,17 +24,7 @@ export const LicensesOverviewV2 = () => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
-  const includedTypes = [
-    GenericLicenseType.AdrLicense,
-    GenericLicenseType.DisabilityLicense,
-    GenericLicenseType.DriversLicense,
-    GenericLicenseType.Ehic,
-    GenericLicenseType.FirearmLicense,
-    GenericLicenseType.HuntingLicense,
-    GenericLicenseType.MachineLicense,
-    GenericLicenseType.PCard,
-    GenericLicenseType.Passport,
-  ]
+  const includedTypes = [GenericLicenseType.Passport]
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
@@ -52,6 +36,7 @@ export const LicensesOverviewV2 = () => {
   })
 
   const generateLicense = (userLicense: GenericUserLicense, index: number) => {
+    const isPayloadEmpty = (userLicense.payload?.data.length ?? 0) <= 0 ?? true
     return (
       <ActionCard
         key={`license-card-${userLicense.payload?.metadata.licenseId}-${index}`}
@@ -59,17 +44,22 @@ export const LicensesOverviewV2 = () => {
           type: 'image',
           url: userLicense.license.provider.providerLogo ?? undefined,
         }}
-        text={
-          userLicense.payload?.metadata?.licenseNumberDisplay ?? 'bengobango'
-        }
-        heading={userLicense.license.name}
+        text={userLicense.payload?.metadata?.subtitle ?? ''}
+        heading={userLicense?.payload?.metadata.title ?? ''}
+        headingColor={isPayloadEmpty ? 'currentColor' : undefined}
+        borderColor={isPayloadEmpty ? 'blue200' : undefined}
         cta={{
-          label: formatMessage(m.seeDetails),
-          url: `${getPathFromType(userLicense.license.type)}/${
-            userLicense.payload?.metadata.licenseId
-          } `,
+          label:
+            userLicense.payload?.metadata.ctaLink?.label ??
+            formatMessage(m.seeDetails),
+          url:
+            userLicense.payload?.metadata.ctaLink?.value ??
+            `${getPathFromType(userLicense.license.type)}/${
+              userLicense.payload?.metadata.licenseId
+            } `,
           variant: 'text',
         }}
+        backgroundColor={userLicense.payload?.data?.length ? 'white' : 'blue'}
         tag={{
           label: userLicense.payload?.metadata.displayTag?.text ?? '',
           variant:

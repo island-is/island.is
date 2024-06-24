@@ -105,6 +105,10 @@ export const m = defineMessages({
     id: 'api.license-service:download-card',
     defaultMessage: 'Hlaða niður korti',
   },
+  apply: {
+    id: 'api.license-service:apply',
+    defaultMessage: 'Sækja um',
+  },
   applyForNewCard: {
     id: 'api.license-service:apply-for-new-card',
     defaultMessage: 'Sækja um nýtt kort',
@@ -340,5 +344,9 @@ export const m = defineMessages({
   yourHuntingCard: {
     id: 'api.license-service:your-hunting-card',
     defaultMessage: 'Veiðikortið þitt',
+  },
+  noValidPassport: {
+    id: 'api.license-service:no-valid-passport',
+    defaultMessage: 'Engin gild vegabréf',
   },
 })

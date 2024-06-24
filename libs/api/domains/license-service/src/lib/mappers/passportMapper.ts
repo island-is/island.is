@@ -8,7 +8,7 @@ import {
   GenericUserLicensePayload,
 } from '../licenceService.type'
 import { AlertType, LICENSE_NAMESPACE } from '../licenseService.constants'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { format as formatNationalId } from 'kennitala'
 import {
@@ -21,6 +21,7 @@ import { GenericUserLicenseAlert } from '../dto/GenericUserLicenseAlert.dto'
 import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
 import { capitalize } from '../utils/capitalize'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const isChildPassport = (
   passport: IdentityDocument | IdentityDocumentChild,
@@ -30,36 +31,56 @@ const isChildPassport = (
 
 @Injectable()
 export class PassportMapper implements GenericLicenseMapper {
-  constructor(private readonly intlService: IntlService) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly intlService: IntlService,
+  ) {}
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
   ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
-    if (!payload) {
-      return Promise.resolve([])
-    }
-    const typedPayload = payload as Array<
-      IdentityDocument | IdentityDocumentChild
-    >
-
     const { formatMessage } = await this.intlService.useIntl(
       [LICENSE_NAMESPACE],
       locale,
     )
 
+    if (!payload.length) {
+      return [
+        {
+          licenseName: formatMessage(m.passport),
+          type: 'user',
+          payload: {
+            data: [],
+            rawData: '',
+            metadata: {
+              title: formatMessage(m.passport),
+              subtitle: formatMessage(m.noValidPassport),
+              ctaLink: {
+                label: formatMessage(m.apply),
+                value: formatMessage(m.applyPassportUrl),
+              },
+            },
+          },
+        },
+      ]
+    }
+
+    const typedPayload = payload as Array<
+      IdentityDocument | IdentityDocumentChild
+    >
+
+    this.logger.debug('typedPayload', typedPayload)
+
     const mappedLicenses: Array<GenericLicenseMappedPayloadResponse> = []
     typedPayload.forEach((t) => {
       if (isChildPassport(t)) {
-        const childPassports = t.passports ?? []
-        childPassports.forEach((p) => {
-          const document = this.mapDocument(p, formatMessage)
-          if (document) {
-            mappedLicenses.push({
-              licenseName: formatMessage(m.passport),
-              type: 'child',
-              payload: document,
-            })
-          }
+        const childDocuments = this.mapChildDocument(t, formatMessage)
+        childDocuments.forEach((document) => {
+          mappedLicenses.push({
+            licenseName: formatMessage(m.passport),
+            type: 'child',
+            payload: document,
+          })
         })
       } else {
         mappedLicenses.push({
@@ -71,6 +92,32 @@ export class PassportMapper implements GenericLicenseMapper {
     })
 
     return mappedLicenses
+  }
+
+  private mapChildDocument(
+    document: IdentityDocumentChild,
+    formatMessage: FormatMessage,
+  ): Array<GenericUserLicensePayload> {
+    if (!document.passports) {
+      return [
+        {
+          data: [],
+          rawData: '',
+          metadata: {
+            title: document.childName ?? '',
+            subtitle: formatMessage(m.noValidPassport),
+            ctaLink: {
+              label: formatMessage(m.apply),
+              value: formatMessage(m.applyPassportUrl),
+            },
+          },
+        },
+      ]
+    }
+
+    return (
+      document.passports?.map((p) => this.mapDocument(p, formatMessage)) ?? []
+    )
   }
 
   private mapDocument(
@@ -194,7 +241,7 @@ export class PassportMapper implements GenericLicenseMapper {
       metadata: {
         links,
         licenseNumber: document.number?.toString() ?? '',
-        licenseNumberDisplay: formatMessage(m.passportNumberDisplay, {
+        subtitle: formatMessage(m.passportNumberDisplay, {
           arg: document.number?.toString() ?? formatMessage(m.unknown),
         }),
         licenseId: document.number?.toString(),
