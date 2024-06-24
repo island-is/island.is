@@ -82,7 +82,7 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     type: GenericLicenseType.PCard,
     provider: {
       id: GenericLicenseProviderId.DistrictCommissioners,
-      referenceId: '',
+      referenceId: 'syslumenn',
     },
     pkpass: false,
     pkpassVerify: false,

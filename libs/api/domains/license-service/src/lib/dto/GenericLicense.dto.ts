@@ -34,8 +34,8 @@ export class GenericLicense {
   provider!: GenericLicenseProvider
 
   @Field({
+    nullable: true,
     description: 'Display name of license',
-    deprecationReason: 'Use metadata property instead',
   })
   name?: string
 

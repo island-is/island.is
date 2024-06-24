@@ -16,7 +16,7 @@ import {
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
-import { getPathFromType } from '../../utils/dataMapper'
+import { getPathFromType } from '../../utils/mapPaths'
 
 export const LicensesOverviewV2 = () => {
   useNamespaces('sp.license')
@@ -24,7 +24,18 @@ export const LicensesOverviewV2 = () => {
   const { data: userProfile } = useUserProfile()
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
-  const includedTypes = [GenericLicenseType.Passport]
+  const includedTypes = [
+    GenericLicenseType.Passport,
+    GenericLicenseType.AdrLicense,
+    GenericLicenseType.DisabilityLicense,
+    GenericLicenseType.DriversLicense,
+    GenericLicenseType.Ehic,
+    GenericLicenseType.FirearmLicense,
+    GenericLicenseType.HuntingLicense,
+    GenericLicenseType.MachineLicense,
+    GenericLicenseType.PCard,
+    GenericLicenseType.Passport,
+  ]
 
   const { data, loading, error } = useGenericLicenseCollectionQuery({
     variables: {
@@ -45,7 +56,11 @@ export const LicensesOverviewV2 = () => {
           url: userLicense.license.provider.providerLogo ?? undefined,
         }}
         text={userLicense.payload?.metadata?.subtitle ?? ''}
-        heading={userLicense?.payload?.metadata.title ?? ''}
+        heading={
+          userLicense.license?.name ??
+          userLicense?.payload?.metadata.title ??
+          ''
+        }
         headingColor={isPayloadEmpty ? 'currentColor' : undefined}
         borderColor={isPayloadEmpty ? 'blue200' : undefined}
         cta={{

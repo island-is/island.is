@@ -98,6 +98,17 @@ export enum GenericUserLicenseMetaLinksType {
   Download = 'Download',
 }
 
+export enum GenericUserLicenseDataFieldTagType {
+  'openCheckmark',
+  'closedCheckmark',
+}
+
+export enum GenericUserLicenseDataFieldTagColor {
+  'green',
+  'red',
+  'yellow',
+}
+
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
   referenceId: string

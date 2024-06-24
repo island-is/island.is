@@ -1,4 +1,17 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import {
+  GenericUserLicenseDataFieldTagColor,
+  GenericUserLicenseDataFieldTagType,
+} from '../licenceService.type'
+
+registerEnumType(GenericUserLicenseDataFieldTagType, {
+  name: 'GenericUserLicenseDataFieldTagType',
+  description: 'Exhaustive lsit of possible tag icons',
+})
+registerEnumType(GenericUserLicenseDataFieldTagColor, {
+  name: 'GenericUserLicenseDataFieldTagColor',
+  description: 'Exhaustive lsit of possible tag icon color',
+})
 
 @ObjectType()
 export class GenericUserLicenseMetaTag {
@@ -8,11 +21,11 @@ export class GenericUserLicenseMetaTag {
   @Field({ nullable: true })
   color?: string
 
-  @Field({ nullable: true })
-  icon?: string
+  @Field(() => GenericUserLicenseDataFieldTagType, { nullable: true })
+  icon?: GenericUserLicenseDataFieldTagType
 
-  @Field({ nullable: true })
-  iconColor?: string
+  @Field(() => GenericUserLicenseDataFieldTagColor, { nullable: true })
+  iconColor?: GenericUserLicenseDataFieldTagColor
 
   @Field({
     nullable: true,

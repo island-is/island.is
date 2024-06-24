@@ -91,6 +91,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
           payload: {
             data,
             rawData: JSON.stringify(t),
+            name: formatMessage(m.pCard),
             metadata: {
               licenseNumber: t.malsnumer?.toString() ?? '',
               subtitle: formatMessage(m.licenseNumberVariant, {

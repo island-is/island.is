@@ -1,6 +1,10 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
 import { m } from '../messages'
+import {
+  GenericUserLicenseDataFieldTagColor,
+  GenericUserLicenseDataFieldTagType,
+} from '../licenceService.type'
 
 export const expiryTag = (
   formatMessage: FormatMessage,
@@ -14,7 +18,11 @@ export const expiryTag = (
   return {
     text: isExpired ? expiredText : validText,
     color: isExpired ? 'red' : 'blue',
-    icon: isExpired ? 'closeCircle' : 'checkmarkCircle',
-    iconColor: isExpired ? 'red600' : 'mint600',
+    icon: isExpired
+      ? GenericUserLicenseDataFieldTagType.openCheckmark
+      : GenericUserLicenseDataFieldTagType.closedCheckmark,
+    iconColor: isExpired
+      ? GenericUserLicenseDataFieldTagColor.red
+      : GenericUserLicenseDataFieldTagColor.green,
   }
 }

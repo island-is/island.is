@@ -33,6 +33,10 @@ query GenericLicenseCollection(
             text
             color
           }
+          ctaLink {
+            value
+            label
+          }
           title
         }
       }

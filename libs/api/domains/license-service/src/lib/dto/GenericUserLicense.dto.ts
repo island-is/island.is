@@ -17,12 +17,6 @@ export class GenericUserLicense {
   })
   isOwnerChildOfUser?: boolean
 
-  @Field({
-    nullable: true,
-    description: 'Toggle display if there isnt any payload',
-  })
-  displayIfNoPayload?: boolean
-
   @Field(() => GenericLicense, { description: 'License info' })
   license!: GenericLicense
 

@@ -4,6 +4,8 @@ import {
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericUserLicenseDataFieldTagColor,
+  GenericUserLicenseDataFieldTagType,
   GenericUserLicenseMetaLinksType,
   GenericUserLicensePayload,
 } from '../licenceService.type'
@@ -223,12 +225,14 @@ export class PassportMapper implements GenericLicenseMapper {
                 })
               : formatMessage(m.valid),
             color: isInvalid || isExpiring ? 'red' : 'blue',
-            icon: isInvalid ? 'closeCircle' : 'checkmarkCircle',
+            icon: isInvalid
+              ? GenericUserLicenseDataFieldTagType.closedCheckmark
+              : GenericUserLicenseDataFieldTagType.openCheckmark,
             iconColor: isInvalid
-              ? 'red600'
+              ? GenericUserLicenseDataFieldTagColor.red
               : isExpiring
-              ? 'yellow600'
-              : 'mint600',
+              ? GenericUserLicenseDataFieldTagColor.yellow
+              : GenericUserLicenseDataFieldTagColor.green,
             iconText: isInvalid
               ? formatMessage(isLost ? m.lost : m.expired)
               : formatMessage(m.valid),
@@ -241,9 +245,6 @@ export class PassportMapper implements GenericLicenseMapper {
       metadata: {
         links,
         licenseNumber: document.number?.toString() ?? '',
-        subtitle: formatMessage(m.passportNumberDisplay, {
-          arg: document.number?.toString() ?? formatMessage(m.unknown),
-        }),
         licenseId: document.number?.toString(),
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
@@ -254,6 +255,12 @@ export class PassportMapper implements GenericLicenseMapper {
                 document.displayFirstName + ' ' + document.displayLastName,
               )
             : document.verboseType ?? undefined,
+        subtitle: formatMessage(m.passportNumberDisplay, {
+          arg:
+            document.subType && document.number
+              ? `${document.subType}${document.number}`
+              : formatMessage(m.unknown),
+        }),
         description: [{ text: formatMessage(m.passportDescription) }],
         alert,
       },

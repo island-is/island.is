@@ -1,0 +1,103 @@
+query GenericLicense($input: GetGenericLicenseInput!, $locale: String!) {
+  genericLicense(input: $input, locale: $locale) {
+    __typename
+    nationalId
+    isOwnerChildOfUser
+    license {
+      type
+      pkpass
+      pkpassVerify
+      pkpassStatus
+    }
+    payload {
+      data {
+        type
+        name
+        label
+        value
+        tag {
+          text
+          color
+          icon
+          iconColor
+          iconText
+        }
+        link {
+          label
+          value
+          name
+          type
+        }
+        hideFromServicePortal
+        fields {
+          type
+          name
+          label
+          value
+          tag {
+            text
+            color
+            icon
+            iconColor
+            iconText
+          }
+          link {
+            label
+            value
+            name
+            type
+          }
+          hideFromServicePortal
+          fields {
+            type
+            name
+            label
+            value
+            tag {
+              text
+              color
+              icon
+              iconColor
+              iconText
+            }
+            link {
+              label
+              value
+              name
+              type
+            }
+            hideFromServicePortal
+          }
+        }
+      }
+      metadata {
+        links {
+          label
+          value
+          name
+          type
+        }
+        licenseId
+        licenseNumber
+        title
+        description {
+          text
+          linkInText
+          linkIconType
+        }
+        displayTag {
+          text
+          color
+          icon
+          iconColor
+          iconText
+        }
+        alert {
+          title
+          type
+          message
+        }
+      }
+    }
+  }
+}

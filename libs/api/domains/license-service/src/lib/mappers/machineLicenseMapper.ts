@@ -108,6 +108,7 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
           payload: {
             data,
             rawData: JSON.stringify(t),
+            name: formatMessage(m.heavyMachineryLicense),
             metadata: {
               licenseNumber: t.skirteinisNumer?.toString() ?? '',
               subtitle: formatMessage(m.licenseNumberVariant, {
