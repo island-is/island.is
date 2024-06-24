@@ -2,7 +2,7 @@ import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -12,7 +12,6 @@ import {
   FormFooter,
   IndictmentCaseFilesList,
   IndictmentsLawsBrokenAccordionItem,
-  InfoCard,
   InfoCardActiveIndictment,
   InfoCardCaseScheduledIndictment,
   PageHeader,
@@ -56,43 +55,17 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.indictmentDecision ===
-          IndictmentDecision.POSTPONING_UNTIL_VERDICT && (
-          <Box component="section" marginBottom={5}>
-            {workingCase.courtDate &&
-            workingCase.courtDate.date &&
-            workingCase.court ? (
-              <InfoCardCaseScheduledIndictment
-                court={workingCase.court}
-                courtDate={workingCase.courtDate.date}
-                courtRoom={workingCase.courtDate.location}
-              />
-            ) : (
-              <InfoCard
-                data={[
-                  {
-                    title: formatMessage(strings.scheduledInfoCardTitle),
-                    value: (
-                      <Text marginTop={2}>
-                        {formatMessage(strings.scheduledInfoCardValue)}
-                      </Text>
-                    ),
-                  },
-                ]}
-                icon="calendar"
-              />
-            )}
-          </Box>
-        )}
-        {workingCase.indictmentDecision === IndictmentDecision.POSTPONING &&
-          workingCase.court &&
-          latestDate &&
-          latestDate.date && (
+        {workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
               <InfoCardCaseScheduledIndictment
                 court={workingCase.court}
-                courtDate={latestDate?.date}
-                courtRoom={latestDate?.location}
+                indictmentDecision={workingCase.indictmentDecision}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
                 postponedIndefinitelyExplanation={
                   workingCase.postponedIndefinitelyExplanation
                 }

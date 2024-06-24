@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -23,6 +24,9 @@ export const WeekLifeCycle: StateLifeCycle = {
   whenToPrune: 1000 * 3600 * 24 * 7,
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.SIGNATURE_LIST_SIGNING]
+
 const SignListTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -33,6 +37,7 @@ const SignListTemplate: ApplicationTemplate<
   institution: m.institution,
   initialQueryParameter: 'candidate',
   dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

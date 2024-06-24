@@ -131,7 +131,7 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },
-  [ApplicationTypes.OPERATING_LCENSE]: {
+  [ApplicationTypes.OPERATING_LICENSE]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },

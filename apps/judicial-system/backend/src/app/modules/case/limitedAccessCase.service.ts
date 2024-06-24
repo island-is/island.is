@@ -100,6 +100,7 @@ export const attributes: (keyof Case)[] = [
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
+  'indictmentDecision',
   'indictmentRulingDecision',
   'indictmentHash',
 ]
