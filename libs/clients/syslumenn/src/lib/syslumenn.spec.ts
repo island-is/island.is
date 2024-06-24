@@ -263,7 +263,7 @@ describe('SyslumennService', () => {
 
   describe('validateMortgageCertificate', () => {
     it('hasKMarking should be true', async () => {
-      const res = await service.validateMortgageCertificate(
+      const res = await service.validateMortgageCertificateOld(
         MOCK_PROPERTY_NUMBER_OK,
         undefined,
       )
@@ -271,7 +271,7 @@ describe('SyslumennService', () => {
     })
 
     it('hasKMarking should be false', async () => {
-      const res = await service.validateMortgageCertificate(
+      const res = await service.validateMortgageCertificateOld(
         MOCK_PROPERTY_NUMBER_NO_KMARKING,
         undefined,
       )
@@ -279,7 +279,7 @@ describe('SyslumennService', () => {
     })
 
     it('exists should be false', async () => {
-      const res = await service.validateMortgageCertificate(
+      const res = await service.validateMortgageCertificateOld(
         MOCK_PROPERTY_NUMBER_NOT_EXISTS,
         undefined,
       )
