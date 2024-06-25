@@ -171,12 +171,49 @@ function cleanGenerated() {
 }
 
 function cleanCaches() {
-  config.CLEAN_CACHES_LIST.forEach((item) => {
-    if (dry(`Would delete: ${item}`)) {
-      log(`Would delete: ${item}`)
+  const yarnCacheFolder = execSync('yarn config get cacheFolder', {
+    encoding: 'utf-8',
+  }).trim()
+
+  const cachesToDelete = [...config.CLEAN_CACHES_LIST, yarnCacheFolder]
+
+  function findAndDeleteDistFolders(baseDir) {
+    fs.readdirSync(baseDir).forEach((name) => {
+      const dirPath = path.join(baseDir, name)
+      const stat = fs.statSync(dirPath)
+
+      if (stat.isDirectory()) {
+        if (name === 'dist') {
+          if (dry(`Would delete: ${dirPath}`)) {
+            log(`Would delete: ${dirPath}`)
+          } else {
+            log(`Deleting now: ${dirPath}`)
+            fs.rmSync(dirPath, { recursive: true, force: true })
+          }
+        } else {
+          findAndDeleteDistFolders(dirPath) // Recursively search subdirectories
+        }
+      }
+    })
+  }
+
+  cachesToDelete.forEach((item) => {
+    if (fs.existsSync(item)) {
+      if (dry(`Would delete: ${item}`)) {
+        log(`Would delete: ${item}`)
+      } else {
+        log(`Deleting now: ${item}`)
+        fs.rmSync(item, { recursive: true, force: true })
+      }
     } else {
-      log(`Deleting now: ${item}`)
-      fs.rmdirSync(item, { recursive: true })
+      log(`Skipping ${item}: directory does not exist`)
+    }
+  })
+
+  // Check dist folders in apps and libs directories
+  ;['apps', 'libs'].forEach((baseDir) => {
+    if (fs.existsSync(baseDir)) {
+      findAndDeleteDistFolders(baseDir)
     }
   })
 }
