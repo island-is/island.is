@@ -1,15 +1,27 @@
 {
-  "extends": ["plugin:@nx/react", "../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
+  "extends": [
+    "plugin:@nx/react",
+    "../../.eslintrc.json"
+  ],
+  "ignorePatterns": [
+    "!**/*"
+  ],
   "rules": {
     "@nx/enforce-module-boundaries": [
       "error",
       {
         "enforceBuildableLibDependency": true,
         "allowCircularSelfDependency": true,
-        "allow": [],
+        "allow": [
+          "../../../infra/src/dsl"
+        ],
         "depConstraints": [
-          { "sourceTag": "*", "onlyDependOnLibsWithTags": ["*"] }
+          {
+            "sourceTag": "*",
+            "onlyDependOnLibsWithTags": [
+              "*"
+            ]
+          }
         ]
       }
     ],
@@ -18,9 +30,15 @@
       {
         "groups": [
           // React related packages come first, followed by all external imports.
-          ["^react", "^\\w", "^@(?!island).+"],
+          [
+            "^react",
+            "^\\w",
+            "^@(?!island).+"
+          ],
           // Then island.is packages.
-          ["^(@island.is).*"],
+          [
+            "^(@island.is).*"
+          ],
           // Then all other imports in this order: "../", "./", "./css"
           [
             "^\\.\\.(?!/?$)",
@@ -34,10 +52,32 @@
       }
     ]
   },
-  "plugins": ["simple-import-sort"],
+  "plugins": [
+    "simple-import-sort"
+  ],
   "overrides": [
-    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
-    { "files": ["*.ts", "*.tsx"], "rules": {} },
-    { "files": ["*.js", "*.jsx"], "rules": {} }
+    {
+      "files": [
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx"
+      ],
+      "rules": {}
+    },
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {}
+    },
+    {
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "rules": {}
+    }
   ]
 }
