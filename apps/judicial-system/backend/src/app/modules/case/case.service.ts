@@ -156,13 +156,17 @@ export interface UpdateCase
     | 'appealIsolationToDate'
     | 'indictmentRulingDecision'
     | 'indictmentReviewerId'
+    | 'indictmentReviewDecision'
+    | 'indictmentDecision'
+    | 'rulingSignatureDate'
+    | 'judgeId'
+    | 'courtSessionType'
   > {
   type?: CaseType
   state?: CaseState
   policeCaseNumbers?: string[]
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
-  rulingSignatureDate?: Date | null
   courtCaseNumber?: string | null
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
@@ -170,7 +174,6 @@ export interface UpdateCase
   arraignmentDate?: UpdateDateLog | null
   courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
-  judgeId?: string | null
   indictmentReturnedExplanation?: string | null
   indictmentDeniedExplanation?: string | null
   indictmentHash?: string | null
