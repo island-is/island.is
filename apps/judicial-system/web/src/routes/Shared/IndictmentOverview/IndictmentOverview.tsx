@@ -22,7 +22,11 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  IndictmentDecision,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
@@ -44,7 +48,8 @@ const IndictmentOverview = () => {
     useState(false)
   const shouldDisplayReviewDecision =
     isCompletedCase(workingCase.state) &&
-    workingCase.indictmentReviewer?.id === user?.id
+    workingCase.indictmentReviewer?.id === user?.id &&
+    Boolean(!workingCase.indictmentReviewDecision)
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -75,21 +80,32 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
-          <Box component="section" marginBottom={5}>
-            <InfoCardCaseScheduledIndictment
-              court={workingCase.court}
-              courtDate={latestDate.date}
-              courtRoom={latestDate.location}
-              postponedIndefinitelyExplanation={
-                workingCase.postponedIndefinitelyExplanation
-              }
-            />
-          </Box>
-        )}
+        {caseHasBeenReceivedByCourt &&
+          workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduledIndictment
+                court={workingCase.court}
+                indictmentDecision={workingCase.indictmentDecision}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
-            <InfoCardClosedIndictment />
+            <InfoCardClosedIndictment
+              displayAppealExpirationInfo={
+                user?.role === UserRole.DEFENDER ||
+                workingCase.indictmentReviewer?.id === user?.id
+              }
+            />
           ) : (
             <InfoCardActiveIndictment />
           )}
@@ -100,7 +116,10 @@ const IndictmentOverview = () => {
           </Box>
         )}
         {workingCase.caseFiles && (
-          <Box component="section" marginBottom={caseIsClosed ? 5 : 10}>
+          <Box
+            component="section"
+            marginBottom={shouldDisplayReviewDecision ? 5 : 10}
+          >
             <IndictmentCaseFilesList workingCase={workingCase} />
           </Box>
         )}
@@ -116,16 +135,15 @@ const IndictmentOverview = () => {
           />
         )}
       </FormContentContainer>
-      {shouldDisplayReviewDecision && (
-        <FormContentContainer isFooter>
-          <FormFooter
-            previousUrl={`${constants.CASES_ROUTE}`}
-            nextButtonText={formatMessage(strings.completeReview)}
-            onNextButtonClick={() => setModalVisible(true)}
-            nextIsDisabled={!isReviewDecisionSelected}
-          />
-        </FormContentContainer>
-      )}
+      <FormContentContainer isFooter>
+        <FormFooter
+          previousUrl={`${constants.CASES_ROUTE}`}
+          hideNextButton={!shouldDisplayReviewDecision}
+          nextButtonText={formatMessage(strings.completeReview)}
+          onNextButtonClick={() => setModalVisible(true)}
+          nextIsDisabled={!isReviewDecisionSelected}
+        />
+      </FormContentContainer>
     </PageLayout>
   )
 }

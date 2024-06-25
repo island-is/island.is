@@ -49,9 +49,6 @@ describe('InternalNotificationController - Send court date notifications', () =>
     mockEmailService = emailService
     mockNotificationModel = notificationModel
 
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
-
     givenWhenThen = async (
       theCase: Case,
       notificationDto: SendInternalNotificationDto,
@@ -86,9 +83,6 @@ describe('InternalNotificationController - Send court date notifications', () =>
     } as Case
 
     beforeEach(async () => {
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([])
-
       then = await givenWhenThen(theCase, notificationDto)
     })
 
@@ -141,16 +135,20 @@ describe('InternalNotificationController - Send court date notifications', () =>
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([
-        {
-          caseId,
-          type: NotificationType.READY_FOR_COURT,
-          recipients: [{ address: defenderEmail, success: true }],
-        } as Notification,
-      ])
 
-      then = await givenWhenThen(theCase, notificationDto)
+      then = await givenWhenThen(
+        {
+          ...theCase,
+          notifications: [
+            {
+              caseId,
+              type: NotificationType.READY_FOR_COURT,
+              recipients: [{ address: defenderEmail, success: true }],
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
     })
 
     it('should not send link to case to defender', () => {
@@ -190,9 +188,6 @@ describe('InternalNotificationController - Send court date notifications', () =>
     } as Case
 
     beforeEach(async () => {
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([])
-
       then = await givenWhenThen(theCase, notificationDto)
     })
 

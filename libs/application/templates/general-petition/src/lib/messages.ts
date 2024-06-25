@@ -192,6 +192,12 @@ export const m = defineMessages({
       '* Athugið að nafn þitt er sýnilegt ábyrgðamanni listans en birtist ekki á vef eða hjá öðrum sem hafa skráð sig á lista.',
     description: '',
   },
+  hideNameInfoText: {
+    id: 'gpl.application:hideNameInfoText',
+    defaultMessage:
+      'Þjóðskrá Íslands afhendir undirskriftalistana til Þjóðskjalasafns Íslands í samræmi við afhendingar- og varðveisluskyldu samkvæmt lögum nr. 77/2014 um opinber skjalasöfn.',
+    description: '',
+  },
   agreeToTermsLabel: {
     id: 'gpl.application:agreeToTermsLabel',
     defaultMessage:
@@ -244,6 +250,12 @@ export const m = defineMessages({
     id: 'gpl.application:validationTilBeforeFrom',
     defaultMessage:
       'Lokadagsetning má ekki vera á undan eða sú sama og upphafsdagsetning',
+    description: '',
+  },
+  validationDateTooFarInFuture: {
+    id: 'gpl.application:validationDateTooFarInFuture',
+    defaultMessage:
+      'Gildistími má ekki vera lengri en 3 mánuðum frá upphafsdagsetningu',
     description: '',
   },
   validationPhone: {

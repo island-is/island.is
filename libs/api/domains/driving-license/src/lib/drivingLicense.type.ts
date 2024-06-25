@@ -25,6 +25,13 @@ export interface NewTemporaryDrivingLicenseInput {
   phone: string
 }
 
+export interface NewBEDrivingLicenseInput {
+  jurisdiction: number
+  instructorSSN: string
+  primaryPhoneNumber: string
+  studentEmail: string
+}
+
 export interface NewDrivingLicenseResult {
   success: boolean
   errorMessage: string | null
@@ -60,6 +67,8 @@ export enum RequirementKey {
   hasPoints = 'HasPoints',
   personNotAtLeast24YearsOld = 'PersonNotAtLeast24YearsOld',
   hasHadValidCategoryForFiveYearsOrMore = 'HasHadValidCategoryForFiveYearsOrMore',
+  //TODO: Remove when RLS/SGS supports health certificate in BE license
+  beRequiresHealthCertificate = 'beRequiresHealthCertificate',
 }
 
 export interface ApplicationEligibilityRequirement {

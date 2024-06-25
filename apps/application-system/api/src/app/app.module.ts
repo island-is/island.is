@@ -37,6 +37,21 @@ import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/so
 import { SignatureCollectionClientConfig } from '@island.is/clients/signature-collection'
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
+import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { HealthDirectorateClientConfig } from '@island.is/clients/health-directorate'
+import {
+  AgriculturalUniversityOfIcelandCareerClientConfig,
+  BifrostUniversityCareerClientConfig,
+  HolarUniversityCareerClientConfig,
+  IcelandUniversityOfTheArtsCareerClientConfig,
+  UniversityOfAkureyriCareerClientConfig,
+  UniversityOfIcelandCareerClientConfig,
+} from '@island.is/clients/university-careers'
+import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
+import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
+import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
+import { VmstClientConfig } from '@island.is/clients/vmst'
+import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 
 @Module({
   imports: [
@@ -77,6 +92,19 @@ import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/officia
         SignatureCollectionClientConfig,
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
+        OfficialJournalOfIcelandApplicationClientConfig,
+        HealthDirectorateClientConfig,
+        AgriculturalUniversityOfIcelandCareerClientConfig,
+        BifrostUniversityCareerClientConfig,
+        UniversityOfAkureyriCareerClientConfig,
+        UniversityOfIcelandCareerClientConfig,
+        HolarUniversityCareerClientConfig,
+        IcelandUniversityOfTheArtsCareerClientConfig,
+        DataProtectionComplaintClientConfig,
+        CriminalRecordClientConfig,
+        HealthInsuranceV2ClientConfig,
+        VmstClientConfig,
+        FriggClientConfig,
       ],
     }),
   ],

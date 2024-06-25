@@ -27,13 +27,11 @@ export class MessageProcessorService {
         ...template,
       },
     )
-
     return {
-      title: notification.notificationTitle,
-      body: notification.notificationBody,
-      dataCopy: notification.notificationDataCopy,
-      category: notification.category,
-      appURI: notification.clickAction,
+      title: notification.title,
+      externalBody: notification.externalBody,
+      internalBody: notification.internalBody,
+      clickActionUrl: notification.clickActionUrl,
     }
   }
 }

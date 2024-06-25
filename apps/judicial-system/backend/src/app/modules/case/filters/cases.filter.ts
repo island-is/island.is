@@ -2,6 +2,7 @@ import { Op, WhereOptions } from 'sequelize'
 
 import { ForbiddenException } from '@nestjs/common'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -32,8 +33,8 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         CaseState.DRAFT,
         CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
+        CaseState.WAITING_FOR_CANCELLATION,
         CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
@@ -99,8 +100,8 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
       {
         state: [
           CaseState.SUBMITTED,
+          CaseState.WAITING_FOR_CANCELLATION,
           CaseState.RECEIVED,
-          CaseState.MAIN_HEARING,
           CaseState.COMPLETED,
         ],
       },
@@ -129,8 +130,8 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
             {
               state: [
                 CaseState.SUBMITTED,
+                CaseState.WAITING_FOR_CANCELLATION,
                 CaseState.RECEIVED,
-                CaseState.MAIN_HEARING,
                 CaseState.COMPLETED,
               ],
             },
@@ -202,6 +203,7 @@ const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
 }
 
 const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
+  const formattedNationalId = formatNationalId(user.nationalId)
   const options: WhereOptions = [
     { isArchived: false },
     {
@@ -235,7 +237,11 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
                 },
               ],
             },
-            { defender_national_id: user.nationalId },
+            {
+              defender_national_id: {
+                [Op.or]: [user.nationalId, formattedNationalId],
+              },
+            },
           ],
         },
         {
@@ -243,13 +249,15 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
             { type: indictmentCases },
             {
               state: [
+                CaseState.WAITING_FOR_CANCELLATION,
                 CaseState.RECEIVED,
-                CaseState.MAIN_HEARING,
                 CaseState.COMPLETED,
               ],
             },
             {
-              '$defendants.defender_national_id$': user.nationalId,
+              '$defendants.defender_national_id$': {
+                [Op.or]: [user.nationalId, formattedNationalId],
+              },
             },
           ],
         },
@@ -263,7 +271,6 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
 }
 
 export const getCasesQueryFilter = (user: User): WhereOptions => {
-  // TODO: Convert to switch
   if (isProsecutionUser(user)) {
     return getProsecutionUserCasesQueryFilter(user)
   }

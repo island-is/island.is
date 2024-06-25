@@ -15,6 +15,7 @@ import {
   UserProfileApi,
   DistrictsApi,
   InstitutionNationalIds,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { assign } from 'xstate'
 import { getSpouseNationalId } from './utils'
@@ -23,7 +24,11 @@ import {
   getApplicationFeatureFlags,
   MarriageCondtionsFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { MaritalStatusApi, ReligionCodesApi } from '../dataProviders'
+import {
+  DistrictCommissionersPaymentCatalogApi,
+  MaritalStatusApi,
+  ReligionCodesApi,
+} from '../dataProviders'
 import { coreHistoryMessages } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 
@@ -35,6 +40,9 @@ const pruneAfter = (time: number) => {
   }
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.MARRIAGE_CONDITIONS]
+
 const MarriageConditionsTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -43,6 +51,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
   type: ApplicationTypes.MARRIAGE_CONDITIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -82,6 +91,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
+                DistrictCommissionersPaymentCatalogApi,
               ],
               delete: true,
             },
@@ -148,6 +158,7 @@ const MarriageConditionsTemplate: ApplicationTemplate<
                 DistrictsApi,
                 MaritalStatusApi,
                 ReligionCodesApi,
+                DistrictCommissionersPaymentCatalogApi,
               ],
             },
           ],

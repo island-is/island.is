@@ -11,8 +11,11 @@ import { IdsUserGuard, CurrentUser, Scopes } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { Inject, UseGuards } from '@nestjs/common'
-import { OrganizationLogoLoader } from '@island.is/cms'
-import type { LogoUrl, OrganizationLogoDataLoader } from '@island.is/cms'
+import { OrganizationLogoByNationalIdLoader } from '@island.is/cms'
+import type {
+  LogoUrl,
+  OrganizationLogoByNationalIdDataLoader,
+} from '@island.is/cms'
 import { NotificationsService } from './notifications.service'
 import {
   NotificationSender,
@@ -23,7 +26,6 @@ import type { Locale } from '@island.is/shared/types'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Loader } from '@island.is/nest/dataloader'
 import { AUDIT_NAMESPACE } from './notifications.resolver'
-import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
 import { DocumentsScope } from '@island.is/auth/scopes'
 
 const LOG_CATEGORY = 'notification-list-resolver'
@@ -32,7 +34,6 @@ const LOG_CATEGORY = 'notification-list-resolver'
 @Resolver(() => NotificationsResponse)
 @Audit({ namespace: AUDIT_NAMESPACE })
 @Scopes(DocumentsScope.main)
-@FeatureFlag(Features.ServicePortalNotificationsEnabled)
 export class NotificationsListResolver {
   constructor(
     private readonly service: NotificationsService,
@@ -93,13 +94,10 @@ export class NotificationsListResolver {
 export class NotificationSenderResolver {
   @ResolveField('logoUrl', () => String, { nullable: true })
   async resolveOrganisationLogoUrl(
-    @Loader(OrganizationLogoLoader)
-    organizationLogoLoader: OrganizationLogoDataLoader,
+    @Loader(OrganizationLogoByNationalIdLoader)
+    organizationLogoLoader: OrganizationLogoByNationalIdDataLoader,
     @Parent() sender: NotificationSender,
   ): Promise<LogoUrl | undefined> {
-    return organizationLogoLoader.load({
-      value: sender?.id ?? '',
-      field: 'kennitala',
-    })
+    return organizationLogoLoader.load(sender?.id ?? '')
   }
 }

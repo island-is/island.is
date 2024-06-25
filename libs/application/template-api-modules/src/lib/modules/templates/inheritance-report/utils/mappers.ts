@@ -47,6 +47,13 @@ const estateMemberMapper = (element: EstateMember) => {
           email: '',
         }
       : undefined,
+    advocate2: element.advocate2
+      ? {
+          ...element.advocate2,
+          phone: '',
+          email: '',
+        }
+      : undefined,
   }
 }
 
@@ -88,9 +95,29 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
 
 export const expandAnswers = (
   answers: InheritanceReportSchema,
-): InheritanceReportSchema => {
+): Omit<InheritanceReportSchema, 'estateSelectionInfo'> & {
+  caseNumber: string
+} => {
   return {
+    applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
+    prePaidApplicant: answers.prePaidApplicant,
+    prepaidInheritance: answers.prepaidInheritance,
+    executors: {
+      executor: {
+        email: '',
+        phone: '',
+        name: '',
+        nationalId: '',
+      },
+      spouse: {
+        email: '',
+        phone: '',
+        name: '',
+        nationalId: '',
+      },
+      includeSpouse: undefined,
+    },
     approveExternalData: answers.approveExternalData,
     assets: {
       assetsTotal: answers.assets.assetsTotal ?? 0,
@@ -205,24 +232,27 @@ export const expandAnswers = (
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
+    caseNumber: answers.estateInfoSelection,
     confirmAction: answers.confirmAction,
     debts: {
-      debtsTotal: answers.debts.debtsTotal ?? 0,
+      debtsTotal: answers?.debts?.debtsTotal ?? 0,
       domesticAndForeignDebts: {
-        data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
+        data: (answers.debts?.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
               assetNumber: debt.assetNumber ?? '',
               propertyValuation: debt.propertyValuation ?? 0,
               description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
+              debtType: debt.debtType ?? '',
             }
           },
         ),
-        total: answers.debts.domesticAndForeignDebts?.total ?? 0,
+        total: answers.debts?.domesticAndForeignDebts?.total ?? 0,
       },
-      publicCharges: (answers.debts.publicCharges ?? 0).toString(),
+      publicCharges: (answers.debts?.publicCharges ?? 0).toString(),
     },
+    estateInfoSelection: answers.estateInfoSelection,
     funeralCost: {
       build: answers?.funeralCost?.build ?? '',
       cremation: answers?.funeralCost?.cremation ?? '',
@@ -283,9 +313,11 @@ export const expandAnswers = (
     netPropertyForExchange: answers.netPropertyForExchange ?? 0,
     customShare: {
       hasCustomSpouseSharePercentage:
-        answers?.customShare?.hasCustomSpouseSharePercentage ?? [],
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
       customSpouseSharePercentage:
         answers?.customShare?.customSpouseSharePercentage ?? '50',
+      deceasedWasMarried: answers?.customShare?.deceasedWasMarried ?? '',
+      deceasedHadAssets: answers?.customShare?.deceasedHadAssets ?? '',
     },
   }
 }

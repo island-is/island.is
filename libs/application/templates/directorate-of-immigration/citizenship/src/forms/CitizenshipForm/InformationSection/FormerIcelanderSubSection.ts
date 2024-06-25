@@ -7,28 +7,48 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
-import { Answer, YES } from '@island.is/application/types'
+import { Answer, FormValue, YES } from '@island.is/application/types'
 import { Citizenship } from '../../../lib/dataSchema'
-import { ApplicantResidenceConditionViewModel } from '@island.is/clients/directorate-of-immigration'
+import { ApplicantInformation, ParentsToApplicant } from '../../../shared'
 
 export const FormerIcelanderSubSection = buildSubSection({
   id: 'formerIcelander',
   title: information.labels.formerIcelander.subSectionTitle,
-  condition: (answer: Answer, externalData) => {
-    const answers = answer as Citizenship
-    const hasValidParents = answers?.parentInformation?.hasValidParents === YES
+  // TODO REVERT WHEN FIXED WITH UTL
+  // condition: (formValue: FormValue, externalData) => {
+  //   const residenceConditionInfo = getValueViaPath(
+  //     externalData,
+  //     'applicantInformation.data.residenceConditionInfo',
+  //     {},
+  //   ) as ApplicantInformation
 
-    const residenceConditionInfo = getValueViaPath(
-      externalData,
-      'residenceConditionInfo.data',
-      {},
-    ) as ApplicantResidenceConditionViewModel
-    const isAnyResConValid = residenceConditionInfo.isAnyResConValid
+  //   const parentAnswer = getValueViaPath(
+  //     formValue,
+  //     'parentInformation.parents',
+  //     [],
+  //   ) as Array<ParentsToApplicant>
 
-    // TODO revert
-    // return !isAnyResConValid && !hasValidParents
-    return !hasValidParents
-  },
+  //   const totalParentsInAnswer = parentAnswer.filter(
+  //     (x) => x.wasRemoved === 'false',
+  //   )
+  //   const hasResConMaritalStatus =
+  //     residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
+  //     residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
+  //     residenceConditionInfo.marriedISCitizenDomicile4Years ||
+  //     residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
+
+  //   const hasOtherValidResidenceConditions =
+  //     residenceConditionInfo.domicileResidence7Years ||
+  //     residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
+  //     residenceConditionInfo.noNationalityAnd5YearsDomicile ||
+  //     residenceConditionInfo.nordicCitizenship4YearDomicile
+
+  //   return (
+  //     !hasResConMaritalStatus &&
+  //     !hasOtherValidResidenceConditions &&
+  //     totalParentsInAnswer.length === 0
+  //   )
+  // },
   children: [
     buildMultiField({
       id: 'formerIcelanderMultiField',
@@ -49,7 +69,7 @@ export const FormerIcelanderSubSection = buildSubSection({
             { value: NO, label: information.labels.radioButtons.radioOptionNo },
           ],
         }),
-        // TODO revert
+        // TODO REVERT WHEN UTL FIXES SERVICES
         // buildAlertMessageField({
         //   id: 'formerIcelanderAlert',
         //   title: information.labels.formerIcelander.alertTitle,
@@ -57,7 +77,7 @@ export const FormerIcelanderSubSection = buildSubSection({
         //   message: information.labels.formerIcelander.alertDescription,
         //   condition: (answer: Answer) => {
         //     const answers = answer as Citizenship
-        //     return answers?.formerIcelander === NO
+        //     return answers?.formerIcelander && answers?.formerIcelander !== YES
         //   },
         //   links: [
         //     {

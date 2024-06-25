@@ -1,13 +1,54 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { m } from './messages'
 
-export const YES = 'Yes'
-export const NO = 'No'
+export const PREPAID_INHERITANCE = 'prepaidInheritance'
+export const ESTATE_INHERITANCE = 'estateInheritance'
 
 export const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
   done: 'done',
 }
+
+export enum PrePaidHeirsRelationTypes {
+  SPOUSE = 'spouse',
+  CHILD = 'child',
+  SIBLING = 'sibling',
+  PARENT = 'parent',
+  OTHER = 'other',
+}
+
+export const RelationSpouse = 'Maki'
+
+export enum PrePaidInheritanceOptions {
+  REAL_ESTATE = 'realEstate',
+  STOCKS = 'stocks',
+  MONEY = 'money',
+  OTHER_ASSETS = 'otherAssets',
+}
+
+export const PrePaidHeirsRelations = [
+  {
+    value: PrePaidHeirsRelationTypes.SPOUSE,
+    label: m.spouse,
+  },
+  {
+    value: PrePaidHeirsRelationTypes.CHILD,
+    label: m.child,
+  },
+  {
+    value: PrePaidHeirsRelationTypes.SIBLING,
+    label: m.sibling,
+  },
+  {
+    value: PrePaidHeirsRelationTypes.PARENT,
+    label: m.parent,
+  },
+  {
+    value: PrePaidHeirsRelationTypes.OTHER,
+    label: m.other,
+  },
+]
 
 export type InheritanceReportEvent =
   | { type: DefaultEvents.APPROVE }
@@ -17,7 +58,8 @@ export type InheritanceReportEvent =
   | { type: DefaultEvents.EDIT }
 
 export enum Roles {
-  APPLICANT = 'applicant',
+  ESTATE_INHERITANCE_APPLICANT = 'estateInheritanceApplicant',
+  PREPAID_INHERITANCE_APPLICANT = 'prepaidInheritanceApplicant',
 }
 
 export enum ApiActions {

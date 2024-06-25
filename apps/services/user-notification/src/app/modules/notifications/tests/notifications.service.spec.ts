@@ -6,7 +6,7 @@ import { CreateHnippNotificationDto } from '../dto/createHnippNotification.dto'
 import { CacheModule } from '@nestjs/cache-manager'
 import { getModelToken } from '@nestjs/sequelize'
 import { Notification } from '../notification.model'
-import { NotificationsScope } from '@island.is/auth/scopes'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 
 import {
@@ -17,21 +17,21 @@ import {
   UnreadNotificationsCountDto,
   UnseenNotificationsCountDto,
 } from '../dto/notification.dto'
+import { CmsService } from '@island.is/clients/cms'
 
 const user: User = {
   nationalId: '1234567890',
-  scope: [NotificationsScope.read, NotificationsScope.write],
+  scope: [DocumentsScope.main],
   authorization: '',
   client: '',
 }
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title ',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
-  clickAction: 'Demo click action {{arg2}}',
-  category: 'Demo category',
+  title: 'Demo title ',
+  externalBody: 'Demo body {{arg1}}',
+  internalBody: 'Demo data copy',
+  clickActionUrl: 'Demo click action {{arg2}}',
   args: ['arg1', 'arg2'],
 }
 
@@ -61,6 +61,12 @@ describe('NotificationsService', () => {
         {
           provide: getModelToken(Notification),
           useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: CmsService,
+          useValue: {
+            fetchData: jest.fn(),
+          },
         },
       ],
     }).compile()
@@ -141,8 +147,8 @@ describe('NotificationsService', () => {
       mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
-    expect(template.notificationBody).toEqual('Demo body hello')
-    expect(template.clickAction).toEqual('Demo click action world')
+    expect(template.externalBody).toEqual('Demo body hello')
+    expect(template.clickActionUrl).toEqual('Demo click action world')
   })
 
   describe('findMany', () => {

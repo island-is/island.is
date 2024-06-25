@@ -49,6 +49,8 @@ import {
   mapDepartedToRegistryPerson,
   mapInheritanceTax,
   mapEstateToInheritanceReportInfo,
+  mapJourneymanLicence,
+  mapProfessionRight,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -574,5 +576,36 @@ export class SyslumennService {
     return res
       .map(mapMasterLicence)
       .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
+  }
+
+  async getJourneymanLicences() {
+    const { id, api } = await this.createApi()
+    const res = await api.sveinsbrefGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapJourneymanLicence)
+      .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
+  }
+
+  async getProfessionRights() {
+    const { id, api } = await this.createApi()
+    const res = await api.starfsrettindiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapProfessionRight)
+      .filter(
+        (professionRight) =>
+          Boolean(professionRight.name) && Boolean(professionRight.profession),
+      )
+  }
+
+  async checkCriminalRecord(nationalId: string) {
+    const { id, api } = await this.createApi()
+    return await api.kannaSakavottordGet({
+      audkenni: id,
+      kennitala: nationalId,
+    })
   }
 }

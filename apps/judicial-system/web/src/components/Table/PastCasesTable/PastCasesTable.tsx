@@ -169,6 +169,8 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     caseType={column.type}
                     isCourtRole={isDistrictCourtUser(user)}
                     isValidToDateInThePast={column.isValidToDateInThePast}
+                    indictmentRulingDecision={column.indictmentRulingDecision}
+                    indictmentDecision={column.indictmentDecision}
                   />
                 </Box>
                 {column.appealState && (

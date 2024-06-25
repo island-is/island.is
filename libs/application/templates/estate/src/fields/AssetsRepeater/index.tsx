@@ -13,8 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { AssetFormField } from '../../types'
 
-import { EstateAsset } from '@island.is/clients/syslumenn'
-
 import * as styles from '../styles.css'
 import { m } from '../../lib/messages'
 import { getEstateDataFromApplication } from '../../lib/utils'

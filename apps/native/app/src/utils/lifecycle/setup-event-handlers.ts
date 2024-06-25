@@ -91,10 +91,6 @@ export function setupEventHandlers() {
     } = authStore.getState()
     const { appLockTimeout } = preferencesStore.getState()
 
-    if (status === 'active') {
-      void notificationsStore.getState().checkUnseen()
-    }
-
     if (!skipAppLock()) {
       if (noLockScreenUntilNextAppStateActive) {
         authStore.setState({ noLockScreenUntilNextAppStateActive: false })
@@ -105,6 +101,7 @@ export function setupEventHandlers() {
         if (isIos) {
           // Add a small delay for those accidental backgrounds in iOS
           backgroundAppLockTimeout = setTimeout(() => {
+            const { lockScreenComponentId } = authStore.getState()
             if (!lockScreenComponentId) {
               showAppLockOverlay({ status })
             } else {
@@ -126,9 +123,10 @@ export function setupEventHandlers() {
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
+            lockScreenActivatedAt !== null &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
-            hideAppLockOverlay()
+            hideAppLockOverlay(lockScreenComponentId)
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }

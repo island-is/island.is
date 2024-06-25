@@ -21,7 +21,6 @@ import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
 import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
-import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../../factories')
@@ -46,7 +45,6 @@ describe('InternalNotificationController - Send ruling notifications', () => {
 
   let mockEmailService: EmailService
   let mockConfig: ConfigType<typeof notificationModuleConfig>
-  let mockNotificationModel: typeof Notification
   let mockDefendantService: DefendantService
   let givenWhenThen: GivenWhenThen
 
@@ -56,18 +54,13 @@ describe('InternalNotificationController - Send ruling notifications', () => {
     const {
       emailService,
       notificationConfig,
-      notificationModel,
       defendantService,
       internalNotificationController,
     } = await createTestingNotificationModule()
 
     mockEmailService = emailService
     mockConfig = notificationConfig
-    mockNotificationModel = notificationModel
     mockDefendantService = defendantService
-
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (caseId: string, theCase: Case) => {
       const then = {} as Then
@@ -108,7 +101,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Máli lokið 007-2022-07',
-          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Ekki skráð<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Máli 007-2022-07 hjá Héraðsdómi Reykjavíkur hefur verið lokið.<br /><br />Niðurstaða: Ekki skráð<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -138,7 +131,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07',
-          html: `Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Dómari hefur undirritað og staðfest úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -169,7 +162,7 @@ describe('InternalNotificationController - Send ruling notifications', () => {
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: 'Úrskurður í máli 007-2022-07 leiðréttur',
-          html: `Dómari hefur leiðrétt úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
+          html: `Dómari hefur leiðrétt úrskurð í máli 007-2022-07 hjá Héraðsdómi Reykjavíkur.<br /><br />Skjöl málsins eru aðgengileg á ${expectedLink}yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
     })

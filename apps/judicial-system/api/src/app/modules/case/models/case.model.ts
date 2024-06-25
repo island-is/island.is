@@ -19,17 +19,18 @@ import {
   CaseType,
   CourtDocument,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { EventLog } from './eventLog.model'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
@@ -51,6 +52,7 @@ registerEnumType(CaseIndictmentRulingDecision, {
 registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
+registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
 
 @ObjectType()
 class DateLog {
@@ -428,4 +430,13 @@ export class Case {
 
   @Field(() => String, { nullable: true })
   readonly indictmentAppealDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictViewedByAll?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentVerdictAppealDeadline?: string
+
+  @Field(() => IndictmentDecision, { nullable: true })
+  readonly indictmentDecision?: IndictmentDecision
 }

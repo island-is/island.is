@@ -41,3 +41,45 @@ export class ApplicationAdminPaginatedResponse {
   @IsNumber()
   count!: number
 }
+
+export class ApplicationStatistics {
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  typeid!: string
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  count!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  draft!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  inprogress!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  completed!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  rejected!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsNumber()
+  approved!: number
+
+  @ApiProperty()
+  @Expose()
+  @IsString()
+  name?: string
+}

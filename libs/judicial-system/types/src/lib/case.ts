@@ -1,5 +1,7 @@
 import flatten from 'lodash/flatten'
 
+import { CaseFileCategory } from './file'
+
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
   RVG = 'RVG',
@@ -93,7 +95,7 @@ export enum CaseState {
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
-  MAIN_HEARING = 'MAIN_HEARING',
+  WAITING_FOR_CANCELLATION = 'WAITING_FOR_CANCELLATION',
   COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
@@ -106,7 +108,7 @@ export enum IndictmentCaseState {
   WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
   SUBMITTED = CaseState.SUBMITTED,
   RECEIVED = CaseState.RECEIVED,
-  MAIN_HEARING = CaseState.MAIN_HEARING,
+  WAITING_FOR_CANCELLATION = CaseState.WAITING_FOR_CANCELLATION,
   COMPLETED = CaseState.COMPLETED,
   DELETED = CaseState.DELETED,
 }
@@ -134,9 +136,9 @@ export enum CaseTransition {
   ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   DENY_INDICTMENT = 'DENY_INDICTMENT',
   SUBMIT = 'SUBMIT',
+  ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   RECEIVE = 'RECEIVE',
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
-  REDISTRIBUTE = 'REDISTRIBUTE',
   COMPLETE = 'COMPLETE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
@@ -151,30 +153,30 @@ export enum CaseTransition {
 }
 
 export enum IndictmentCaseTransition {
-  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
-  DENY_INDICTMENT = 'DENY_INDICTMENT',
-  SUBMIT = 'SUBMIT',
-  RECEIVE = 'RECEIVE',
-  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
-  REDISTRIBUTE = 'REDISTRIBUTE',
-  COMPLETE = 'COMPLETE',
-  DELETE = 'DELETE',
+  ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
+  DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  SUBMIT = CaseTransition.SUBMIT,
+  ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
+  RECEIVE = CaseTransition.RECEIVE,
+  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
+  COMPLETE = CaseTransition.COMPLETE,
+  DELETE = CaseTransition.DELETE,
 }
 
 export enum RequestCaseTransition {
-  OPEN = 'OPEN',
-  SUBMIT = 'SUBMIT',
-  RECEIVE = 'RECEIVE',
-  ACCEPT = 'ACCEPT',
-  REJECT = 'REJECT',
-  DISMISS = 'DISMISS',
-  DELETE = 'DELETE',
-  REOPEN = 'REOPEN',
-  APPEAL = 'APPEAL',
-  RECEIVE_APPEAL = 'RECEIVE_APPEAL',
-  COMPLETE_APPEAL = 'COMPLETE_APPEAL',
-  REOPEN_APPEAL = 'REOPEN_APPEAL',
-  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+  OPEN = CaseTransition.OPEN,
+  SUBMIT = CaseTransition.SUBMIT,
+  RECEIVE = CaseTransition.RECEIVE,
+  ACCEPT = CaseTransition.ACCEPT,
+  REJECT = CaseTransition.REJECT,
+  DISMISS = CaseTransition.DISMISS,
+  DELETE = CaseTransition.DELETE,
+  REOPEN = CaseTransition.REOPEN,
+  APPEAL = CaseTransition.APPEAL,
+  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
+  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
+  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
+  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -215,6 +217,14 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum IndictmentDecision {
+  POSTPONING = 'POSTPONING',
+  SCHEDULING = 'SCHEDULING',
+  POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
+  COMPLETING = 'COMPLETING',
+  REDISTRIBUTING = 'REDISTRIBUTING',
+}
+
 export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
@@ -229,6 +239,8 @@ export enum CaseAppealRulingDecision {
 export enum CaseIndictmentRulingDecision {
   RULING = 'RULING',
   FINE = 'FINE',
+  DISMISSAL = 'DISMISSAL',
+  CANCELLATION = 'CANCELLATION',
 }
 
 export enum IndictmentCaseReviewDecision {
@@ -310,7 +322,6 @@ export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
-// TODO: Move to the client as it is only used there
 export const isAcceptingCaseDecision = (
   decision?: CaseDecision | null,
 ): boolean => {
@@ -333,21 +344,43 @@ export const isCompletedCase = (state?: CaseState | null): boolean => {
   return Boolean(state && completedCaseStates.includes(state))
 }
 
-export const isTrafficViolationCase = (
-  indictmentSubtypes?: IndictmentSubtypeMap,
-  type?: CaseType,
+export const hasIndictmentCaseBeenSubmittedToCourt = (
+  state?: CaseState | null,
 ): boolean => {
-  if (!indictmentSubtypes || type !== CaseType.INDICTMENT) {
+  return Boolean(
+    state &&
+      [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        ...completedIndictmentCaseStates,
+      ].includes(state),
+  )
+}
+
+export const isTrafficViolationCase = (theCase: {
+  type?: CaseType | null
+  indictmentSubtypes?: IndictmentSubtypeMap
+  caseFiles?: { category?: CaseFileCategory | null }[] | null
+}): boolean => {
+  if (
+    theCase.type !== CaseType.INDICTMENT ||
+    !theCase.indictmentSubtypes ||
+    theCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.INDICTMENT,
+    )
+  ) {
     return false
   }
 
-  const flatIndictmentSubtypes = flatten(Object.values(indictmentSubtypes))
+  const flatIndictmentSubtypes = flatten(
+    Object.values(theCase.indictmentSubtypes),
+  )
 
-  return Boolean(
+  return (
     flatIndictmentSubtypes.length > 0 &&
-      flatIndictmentSubtypes.every(
-        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
-      ),
+    flatIndictmentSubtypes.every(
+      (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
+    )
   )
 }
 
@@ -404,6 +437,23 @@ export const isRequestCaseTransition = (
   )
 }
 
-export type IndictmentConfirmation =
-  | { actor: string; institution: string; date: Date }
-  | undefined
+export type DistrictCourts =
+  | 'Héraðsdómur Reykjavíkur'
+  | 'Héraðsdómur Reykjaness'
+  | 'Héraðsdómur Vesturlands'
+  | 'Héraðsdómur Vestfjarða'
+  | 'Héraðsdómur Norðurlands vestra'
+  | 'Héraðsdómur Norðurlands eystra'
+  | 'Héraðsdómur Austurlands'
+  | 'Héraðsdómur Suðurlands'
+
+export const DistrictCourtLocation: Record<DistrictCourts, string> = {
+  'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
+  'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
+  'Héraðsdómur Vesturlands': 'Bjarnarbraut 8, Borgarnesi',
+  'Héraðsdómur Vestfjarða': 'Hafnarstræti 9, Ísafirði',
+  'Héraðsdómur Norðurlands vestra': 'Skagfirðingabraut 21, Sauðárkróki',
+  'Héraðsdómur Norðurlands eystra': 'Hafnarstræti 107, 4. hæð, Akureyri',
+  'Héraðsdómur Austurlands': 'Lyngás 15, Egilsstöðum',
+  'Héraðsdómur Suðurlands': 'Austurvegur 4, Selfossi',
+}

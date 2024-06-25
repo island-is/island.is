@@ -20,7 +20,6 @@ describe('DelegationsController', () => {
   let factory: FixtureFactory
   let nationalRegistryApi: NationalRegistryClientService
   let rskApi: RskRelationshipsClient
-
   beforeAll(async () => {
     app = await setupWithAuth({
       user: user,
@@ -38,7 +37,6 @@ describe('DelegationsController', () => {
           name: faker.name.findName(),
         }),
       )
-
     rskApi = app.get(RskRelationshipsClient)
 
     factory = new FixtureFactory(app)

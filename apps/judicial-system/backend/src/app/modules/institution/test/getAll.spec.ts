@@ -39,7 +39,7 @@ describe('InstitutionController - Get all', () => {
 
     beforeEach(async () => {
       const mockFindAll = mockInstitutionModel.findAll as jest.Mock
-      mockFindAll.mockReturnValueOnce(institutions)
+      mockFindAll.mockResolvedValueOnce(institutions)
 
       then = await givenWhenThen()
     })

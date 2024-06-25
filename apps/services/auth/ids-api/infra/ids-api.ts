@@ -1,10 +1,27 @@
 import { json, service, ServiceBuilder } from '../../../../../infra/src/dsl/dsl'
-import { Base, Client, RskProcuring } from '../../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistryAuthB2C,
+  RskProcuring,
+} from '../../../../../infra/src/dsl/xroad'
 // eslint-disable-next-line
 import { UserProfileScope } from '../../../../../libs/auth/scopes/src/lib/userProfile.scope'
 
 const namespace = 'identity-server'
 const imageName = 'services-auth-ids-api'
+
+const REDIS_NODE_CONFIG = {
+  dev: json([
+    'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
+  ]),
+  staging: json([
+    'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
+  ]),
+  prod: json([
+    'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+  ]),
+}
 
 export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
   return service('services-auth-ids-api')
@@ -17,6 +34,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      PASSKEY_CORE_MAX_AGE_DAYS: '365',
       PUBLIC_URL: {
         dev: 'https://identity-server.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
@@ -34,39 +52,9 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
         prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
       },
-      XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
-      COMPANY_REGISTRY_REDIS_NODES: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
-      XROAD_RSK_PROCURING_REDIS_NODES: {
-        dev: json([
-          'clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379',
-        ]),
-        staging: json([
-          'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
-        ]),
-        prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
-        ]),
-      },
+      XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,
       COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
         dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
         staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
@@ -83,6 +71,10 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'false',
         prod: 'false',
       },
+      PASSKEY_CORE_RP_ID: 'island.is',
+      PASSKEY_CORE_RP_NAME: 'Island.is',
+      PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
+      REDIS_NODES: REDIS_NODE_CONFIG,
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -90,8 +82,12 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
+      PASSKEY_CORE_ALLOWED_ORIGINS:
+        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(Base, Client, RskProcuring)
+    .xroad(Base, Client, RskProcuring, NationalRegistryAuthB2C)
     .readiness('/health/check')
     .liveness('/liveness')
     .db({ name: 'servicesauth', extensions: ['uuid-ossp'] })

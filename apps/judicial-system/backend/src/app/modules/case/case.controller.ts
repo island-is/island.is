@@ -96,12 +96,11 @@ import {
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
-import { TransitionInterceptor } from './interceptors/transition.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -110,7 +109,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -260,7 +259,6 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
-  @UseInterceptors(TransitionInterceptor)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -304,9 +302,8 @@ export class CaseController {
               `User ${user.id} does not have permission to confirm indictments`,
             )
           }
-          if (theCase.indictmentDeniedExplanation) {
-            update.indictmentDeniedExplanation = ''
-          }
+
+          update.indictmentDeniedExplanation = null
         }
         break
       case CaseTransition.ACCEPT:
@@ -339,7 +336,6 @@ export class CaseController {
             ),
           }
         }
-
         break
       case CaseTransition.REOPEN:
         update.rulingDate = null
@@ -399,16 +395,18 @@ export class CaseController {
         }
         break
       case CaseTransition.ASK_FOR_CONFIRMATION:
-        if (theCase.indictmentReturnedExplanation) {
-          update.indictmentReturnedExplanation = ''
-        }
+        update.indictmentReturnedExplanation = null
         break
       case CaseTransition.RETURN_INDICTMENT:
-        update.courtCaseNumber = ''
+        update.courtCaseNumber = null
+        update.indictmentHash = null
         break
-      case CaseTransition.REDISTRIBUTE:
-        update.judgeId = null
-        break
+      case CaseTransition.ASK_FOR_CANCELLATION:
+        if (theCase.indictmentDecision) {
+          throw new ForbiddenException(
+            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(
