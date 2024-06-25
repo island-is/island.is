@@ -678,4 +678,9 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Í bið',
     description: 'Pending',
   },
+  inProgressTag: {
+    id: 'sia.application:in.progress.tag',
+    defaultMessage: 'Í vinnslu',
+    description: 'In progress',
+  },
 })

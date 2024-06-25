@@ -21,9 +21,11 @@ import {
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
+  ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
 import {
@@ -35,6 +37,7 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { yearsToMonths } from 'date-fns/esm'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -508,5 +511,60 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getCurrencies({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getCurrencies(auth)
+  }
+
+  async getCategorizedIncomeTypes({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCategorizedIncomeTypes(auth)
+  }
+
+  async getWithholdingTax(
+    { auth }: TemplateApiModuleActionProps,
+    year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest = {},
+  ) {
+    const res = await this.siaClientService.getWithholdingTax(auth, year)
+
+    // mock data since gervimenn don't have withholding tax
+    if (isRunningOnEnvironment('local')) {
+      res.incomeTypes = [
+        {
+          incomeType: 'Ökutækjastyrkur',
+          january: 103062,
+          february: 103488,
+          march: 103318,
+          april: 104695,
+          may: 0,
+          june: 0,
+          july: 0,
+          august: 0,
+          september: 0,
+          october: 0,
+          november: 0,
+          december: 0,
+          total: 414563,
+        },
+        {
+          incomeType: 'Laun',
+          january: 53133,
+          february: 53133,
+          march: 53133,
+          april: 0,
+          may: 0,
+          june: 0,
+          july: 0,
+          august: 0,
+          september: 0,
+          october: 0,
+          november: 0,
+          december: 0,
+          total: 159399,
+        },
+      ]
+    }
+
+    return res
+  }
+
+  async getLatestIncomePlan({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getLatestIncomePlan(auth)
   }
 }
