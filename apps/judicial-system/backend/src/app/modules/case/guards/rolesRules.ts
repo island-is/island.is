@@ -92,6 +92,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'postponedIndefinitelyExplanation',
   'indictmentRulingDecision',
   'indictmentDecision',
+  'courtSessionType',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
@@ -257,7 +258,6 @@ export const districtCourtJudgeTransitionRule: RolesRule = {
   dtoFieldValues: [
     CaseTransition.RECEIVE,
     CaseTransition.RETURN_INDICTMENT,
-    CaseTransition.REDISTRIBUTE,
     CaseTransition.ACCEPT,
     CaseTransition.REJECT,
     CaseTransition.DISMISS,

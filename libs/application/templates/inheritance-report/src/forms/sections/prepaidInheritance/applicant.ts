@@ -15,17 +15,18 @@ export const prePaidApplicant = buildSection({
   title: m.applicantsInfo,
   children: [
     buildMultiField({
-      id: 'applicant',
+      id: 'prePaidApplicant',
       title: m.applicantsInfo,
       description: m.applicantsInfoSubtitle,
       children: [
         buildNationalIdWithNameField({
-          id: 'applicant',
+          id: 'prePaidApplicant',
           title: m.name,
+          width: 'full',
           required: true,
         }),
         buildTextField({
-          id: 'applicant.phone',
+          id: 'prePaidApplicant.phone',
           title: m.phone,
           width: 'half',
           required: true,
@@ -42,7 +43,7 @@ export const prePaidApplicant = buildSection({
           },
         }),
         buildTextField({
-          id: 'applicant.email',
+          id: 'prePaidApplicant.email',
           title: m.email,
           width: 'half',
           required: true,
@@ -52,7 +53,7 @@ export const prePaidApplicant = buildSection({
           },
         }),
         buildSelectField({
-          id: 'applicant.relation',
+          id: 'prePaidApplicant.relation',
           title: m.heirsRelation,
           width: 'half',
           required: true,
