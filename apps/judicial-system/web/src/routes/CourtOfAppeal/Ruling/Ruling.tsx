@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -45,7 +45,7 @@ import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
-const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealRuling: FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

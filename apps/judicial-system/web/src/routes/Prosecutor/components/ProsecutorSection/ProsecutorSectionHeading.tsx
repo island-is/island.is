@@ -10,7 +10,7 @@ interface Props {
   isIndictment?: boolean
 }
 
-const ProsecutorSectionHeading: React.FC<React.PropsWithChildren<Props>> = (
+const ProsecutorSectionHeading: FC<React.PropsWithChildren<Props>> = (
   props,
 ) => {
   const { isIndictment = false } = props

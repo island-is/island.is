@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 
@@ -44,9 +44,9 @@ const selectableListItemVariants = {
   }),
   hidden: { opacity: 0, y: 10 },
 }
-const AnimateChildren: React.FC<
-  React.PropsWithChildren<AnimateChildrenProps>
-> = (props) => {
+const AnimateChildren: FC<React.PropsWithChildren<AnimateChildrenProps>> = (
+  props,
+) => {
   const { children, id } = props
   return (
     <motion.div
@@ -60,7 +60,7 @@ const AnimateChildren: React.FC<
   )
 }
 
-const SelectableList: React.FC<Props> = (props) => {
+const SelectableList: FC<Props> = (props) => {
   const {
     items,
     CTAButton,

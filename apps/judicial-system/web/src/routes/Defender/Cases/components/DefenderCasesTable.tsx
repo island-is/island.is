@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import format from 'date-fns/format'
@@ -42,7 +42,7 @@ interface Props {
   loading?: boolean
 }
 
-export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
+export const DefenderCasesTable: FC<React.PropsWithChildren<Props>> = (
   props,
 ) => {
   const { formatMessage } = useIntl()

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
@@ -30,7 +30,7 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const DateTime: FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     name,
     datepickerLabel = 'Veldu dagsetningu',

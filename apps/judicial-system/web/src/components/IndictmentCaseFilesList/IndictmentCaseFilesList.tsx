@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -35,7 +35,7 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-export const RenderFiles: React.FC<
+export const RenderFiles: FC<
   React.PropsWithChildren<Props & RenderFilesProps>
 > = (props) => {
   const { caseFiles, onOpenFile, workingCase } = props
@@ -57,9 +57,7 @@ export const RenderFiles: React.FC<
   )
 }
 
-const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const IndictmentCaseFilesList: FC<React.PropsWithChildren<Props>> = (props) => {
   const { workingCase } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)

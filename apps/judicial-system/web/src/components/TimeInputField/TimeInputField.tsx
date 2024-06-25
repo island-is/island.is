@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { FC, PropsWithChildren } from 'react'
 import InputMask from 'react-input-mask'
 
 interface Props {
@@ -9,7 +9,7 @@ interface Props {
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
 }
 
-const TimeInputField: React.FC<React.PropsWithChildren<Props>> = (
+const TimeInputField: FC<React.PropsWithChildren<Props>> = (
   props: PropsWithChildren<Props>,
 ) => {
   return (

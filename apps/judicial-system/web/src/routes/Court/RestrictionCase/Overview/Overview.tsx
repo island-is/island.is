@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -50,7 +50,7 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 
 import { DraftConclusionModal } from '../../components'
 
-export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const JudgeOverview: FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)

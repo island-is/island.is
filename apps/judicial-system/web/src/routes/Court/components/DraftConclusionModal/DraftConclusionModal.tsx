@@ -18,9 +18,7 @@ interface Props {
   >
 }
 
-const DraftConclusionModal: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const DraftConclusionModal: FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     workingCase,
     setWorkingCase,

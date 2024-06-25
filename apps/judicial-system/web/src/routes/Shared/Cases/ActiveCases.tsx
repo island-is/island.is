@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import format from 'date-fns/format'
@@ -54,7 +54,7 @@ interface Props {
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
-const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const ActiveCases: FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, isDeletingCase, onDeleteCase } = props
 
   const { formatMessage } = useIntl()

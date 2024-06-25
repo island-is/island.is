@@ -4,7 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './SharedPageLayout.css'
 
-const SharedPageLayout: React.FC<React.PropsWithChildren<unknown>> = ({
+const SharedPageLayout: FC<React.PropsWithChildren<unknown>> = ({
   children,
 }) => {
   return (

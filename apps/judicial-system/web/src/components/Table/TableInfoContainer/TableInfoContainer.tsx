@@ -9,7 +9,7 @@ interface TableInfoContainerProps {
   message: string
 }
 
-const TableInfoContainer: React.FC<TableInfoContainerProps> = (props) => {
+const TableInfoContainer: FC<TableInfoContainerProps> = (props) => {
   const { title, message } = props
   return (
     <motion.div

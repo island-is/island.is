@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
@@ -43,7 +43,7 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
-const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
+const PoliceCaseFiles: FC<React.PropsWithChildren<Props>> = ({
   onUpload,
   policeCaseFileList,
   policeCaseFiles,

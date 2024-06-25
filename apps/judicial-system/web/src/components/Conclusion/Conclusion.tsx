@@ -10,7 +10,7 @@ interface Props {
   judgeName?: string | null
 }
 
-const Conclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const Conclusion: FC<React.PropsWithChildren<Props>> = (props) => {
   const { conclusionText, judgeName, title } = props
 
   return conclusionText ? (

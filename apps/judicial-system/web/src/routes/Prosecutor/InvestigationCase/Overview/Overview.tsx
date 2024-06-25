@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -52,7 +52,7 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Overview: FC<React.PropsWithChildren<unknown>> = () => {
   const router = useRouter()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)

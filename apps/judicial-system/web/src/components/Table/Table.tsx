@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, ReactNode, useContext, useMemo } from 'react'
+import React, {
+  FC,
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useMemo,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -41,7 +47,7 @@ interface TableWrapperProps {
   loading: boolean
 }
 
-export const TableWrapper: React.FC<PropsWithChildren<TableWrapperProps>> = ({
+export const TableWrapper: FC<PropsWithChildren<TableWrapperProps>> = ({
   loading,
   children,
 }) => (
@@ -80,7 +86,7 @@ export const useTable = () => {
   return { requestSort, getClassNamesFor, sortConfig, setSortConfig }
 }
 
-const Table: React.FC<TableProps> = (props) => {
+const Table: FC<TableProps> = (props) => {
   const { thead, data, columns, generateContextMenuItems, onClick } = props
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()

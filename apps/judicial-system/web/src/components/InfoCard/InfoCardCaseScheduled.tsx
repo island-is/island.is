@@ -15,7 +15,7 @@ interface Props {
   title?: string
 }
 
-const InfoCardCaseScheduled: React.FC<Props> = (props) => {
+const InfoCardCaseScheduled: FC<Props> = (props) => {
   const { court, courtDate, courtRoom, title } = props
   const { formatMessage } = useIntl()
 

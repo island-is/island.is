@@ -9,7 +9,7 @@ interface Props {
   message: string
 }
 
-const IconAndText: React.FC<Props> = (props) => {
+const IconAndText: FC<Props> = (props) => {
   const { icon, iconColor, message } = props
 
   return (

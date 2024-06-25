@@ -8,7 +8,7 @@ interface Props {
   title: string
 }
 
-const TableHeaderText: React.FC<Props> = (props) => {
+const TableHeaderText: FC<Props> = (props) => {
   const { title } = props
 
   return (

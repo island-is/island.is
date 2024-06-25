@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -24,7 +24,7 @@ interface Props {
   onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
-export const Substances: React.FC<React.PropsWithChildren<Props>> = (props) => {
+export const Substances: FC<React.PropsWithChildren<Props>> = (props) => {
   const {
     indictmentCount,
     indictmentCountOffenseType,

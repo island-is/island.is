@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
@@ -15,7 +15,7 @@ interface Props {
   title: string
 }
 
-const ArrestDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const ArrestDate: FC<React.PropsWithChildren<Props>> = (props) => {
   const { title, workingCase, setWorkingCase } = props
   const { setAndSendCaseToServer } = useCase()
 

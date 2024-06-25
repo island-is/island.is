@@ -10,9 +10,7 @@ interface Props {
   defendants?: Defendant[] | null
 }
 
-const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = ({
-  defendants,
-}) => {
+const DefendantInfo: FC<React.PropsWithChildren<Props>> = ({ defendants }) => {
   return defendants && defendants.length > 0 ? (
     <>
       <Text>

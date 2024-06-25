@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -91,7 +91,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const PoliceDemands: FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

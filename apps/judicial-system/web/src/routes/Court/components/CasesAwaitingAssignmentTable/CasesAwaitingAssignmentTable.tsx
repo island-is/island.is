@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -29,9 +29,9 @@ interface CasesAwaitingAssignmentTableProps {
   cases: CaseListEntry[]
 }
 
-const CasesAwaitingAssignmentTable: React.FC<
-  CasesAwaitingAssignmentTableProps
-> = (props) => {
+const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
+  props,
+) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 

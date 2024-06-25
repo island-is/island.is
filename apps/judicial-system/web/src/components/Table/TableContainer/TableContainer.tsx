@@ -11,7 +11,7 @@ interface Props {
   testid?: string
 }
 
-const TableContainer: React.FC<Props> = (props) => {
+const TableContainer: FC<Props> = (props) => {
   const { loading, tableHeader, children, testid } = props
 
   if (loading) {

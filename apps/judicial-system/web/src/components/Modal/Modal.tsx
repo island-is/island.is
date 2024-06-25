@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react'
+import React, { FC, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import { motion } from 'framer-motion'
@@ -24,7 +24,7 @@ interface ModalProps {
   invertButtonColors?: boolean
 }
 
-const Modal: React.FC<React.PropsWithChildren<ModalProps>> = ({
+const Modal: FC<React.PropsWithChildren<ModalProps>> = ({
   title,
   text,
   primaryButtonText,

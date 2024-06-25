@@ -16,7 +16,7 @@ interface Props {
   postponedIndefinitelyExplanation?: string | null
 }
 
-const InfoCardCaseScheduledIndictment: React.FC<Props> = (props) => {
+const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
   const {
     court,
     indictmentDecision,

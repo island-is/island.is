@@ -25,7 +25,7 @@ interface Props {
   onClose: () => void
 }
 
-const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
+const ReopenModal: FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { workingCase } = useContext(FormContext)

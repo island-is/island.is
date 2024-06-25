@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
@@ -17,7 +17,7 @@ interface Props {
   onDelete: (sub: SubstanceEnum) => void
 }
 
-export const Substance: React.FC<React.PropsWithChildren<Props>> = (props) => {
+export const Substance: FC<React.PropsWithChildren<Props>> = (props) => {
   const { substance, onUpdateAmount, onDelete, amount } = props
   const { formatMessage } = useIntl()
 

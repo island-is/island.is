@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 import {
@@ -40,7 +40,7 @@ interface Props {
   loading: boolean
 }
 
-export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
+export const UserForm: FC<React.PropsWithChildren<Props>> = (props) => {
   const [user, setUser] = useState<User>(props.user)
 
   const { personData, personError } = useNationalRegistry(user.nationalId)

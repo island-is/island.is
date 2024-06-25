@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'
@@ -107,7 +107,7 @@ export const getConclusionAutofill = (
       })
 }
 
-export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Ruling: FC<React.PropsWithChildren<unknown>> = () => {
   const {
     workingCase,
     setWorkingCase,

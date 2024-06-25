@@ -16,7 +16,7 @@ import { formatCaseResult } from './'
 interface Props {
   getMessage: (formatMessage: IntlFormatters['formatMessage']) => string
 }
-const Message: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const Message: FC<React.PropsWithChildren<Props>> = (props) => {
   const { formatMessage } = useIntl()
   const message = props.getMessage(formatMessage)
   return <span data-testid="message">{message}</span>

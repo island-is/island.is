@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext } from 'react'
+import React, { FC, ReactNode, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -54,7 +54,7 @@ interface SectionProps {
   activeSubSection?: number
 }
 
-const SubsectionChild: React.FC<
+const SubsectionChild: FC<
   React.PropsWithChildren<{
     isActive: boolean
   }>
@@ -66,9 +66,7 @@ const SubsectionChild: React.FC<
   </Box>
 )
 
-const DisplaySection: React.FC<React.PropsWithChildren<SectionProps>> = (
-  props,
-) => {
+const DisplaySection: FC<React.PropsWithChildren<SectionProps>> = (props) => {
   const { section, index, activeSection, activeSubSection } = props
 
   return (
@@ -122,7 +120,7 @@ interface SidePanelProps {
   isValid?: boolean
 }
 
-const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
+const SidePanel: FC<React.PropsWithChildren<SidePanelProps>> = ({
   user,
   isValid,
   onNavigationTo,
@@ -183,7 +181,7 @@ interface PageProps {
   isValid?: boolean
 }
 
-const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
+const PageLayout: FC<React.PropsWithChildren<PageProps>> = ({
   workingCase,
   children,
   isLoading,

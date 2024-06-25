@@ -32,9 +32,9 @@ import {
 } from './rulingSignatureConfirmation.generated'
 import { signingModal as m } from './SigningModal.strings'
 
-const ControlCode: React.FC<
-  React.PropsWithChildren<{ controlCode?: string }>
-> = ({ controlCode }) => {
+const ControlCode: FC<React.PropsWithChildren<{ controlCode?: string }>> = ({
+  controlCode,
+}) => {
   const { formatMessage } = useIntl()
 
   return (
@@ -115,9 +115,7 @@ export const getSigningProgress = (
   return 'error'
 }
 
-export const SigningModal: React.FC<
-  React.PropsWithChildren<SigningModalProps>
-> = ({
+export const SigningModal: FC<React.PropsWithChildren<SigningModalProps>> = ({
   workingCase,
   requestRulingSignature,
   requestRulingSignatureResponse,

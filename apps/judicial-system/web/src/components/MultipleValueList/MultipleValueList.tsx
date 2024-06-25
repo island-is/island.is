@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { FC, useRef, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 import { Button, Input } from '@island.is/island-ui/core'
@@ -21,7 +21,7 @@ interface MultipleValueListProps {
   ) => void
 }
 
-const MultipleValueList: React.FC<
+const MultipleValueList: FC<
   React.PropsWithChildren<MultipleValueListProps>
 > = ({
   children,

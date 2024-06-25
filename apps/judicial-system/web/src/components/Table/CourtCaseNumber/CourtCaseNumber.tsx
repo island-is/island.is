@@ -11,7 +11,7 @@ interface Props {
   appealCaseNumber?: string | null
 }
 
-const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = ({
+const CourtCaseNumber: FC<React.PropsWithChildren<Props>> = ({
   courtCaseNumber,
   policeCaseNumbers,
   appealCaseNumber,

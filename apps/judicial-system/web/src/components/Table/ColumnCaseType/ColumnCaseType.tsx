@@ -15,7 +15,7 @@ interface Props {
   parentCaseId?: string | null
 }
 
-const ColumnCaseType: React.FC<Props> = ({ type, decision, parentCaseId }) => {
+const ColumnCaseType: FC<Props> = ({ type, decision, parentCaseId }) => {
   const { formatMessage } = useIntl()
 
   return (

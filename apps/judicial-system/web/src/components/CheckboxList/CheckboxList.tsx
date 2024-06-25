@@ -24,7 +24,7 @@ interface Props {
   fullWidth?: boolean
 }
 
-const CheckboxList: React.FC<React.PropsWithChildren<Props>> = ({
+const CheckboxList: FC<React.PropsWithChildren<Props>> = ({
   checkboxes,
   selected,
   onChange,

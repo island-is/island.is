@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
@@ -13,9 +13,7 @@ import { FormContext } from '../FormProvider/FormProvider'
 import InfoCard, { NameAndEmail } from './InfoCard'
 import { strings } from './InfoCardIndictment.strings'
 
-const InfoCardActiveIndictment: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const InfoCardActiveIndictment: FC<React.PropsWithChildren<unknown>> = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 

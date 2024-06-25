@@ -56,9 +56,9 @@ export const NameAndEmail = (name?: string | null, email?: string | null) => [
     : []),
 ]
 
-const UniqueDefenders: React.FC<
-  React.PropsWithChildren<UniqueDefendersProps>
-> = (props) => {
+const UniqueDefenders: FC<React.PropsWithChildren<UniqueDefendersProps>> = (
+  props,
+) => {
   const { formatMessage } = useIntl()
 
   const { defenders } = props
@@ -97,7 +97,7 @@ const UniqueDefenders: React.FC<
   )
 }
 
-const InfoCard: React.FC<Props> = (props) => {
+const InfoCard: FC<Props> = (props) => {
   const {
     courtOfAppealData,
     data,

@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
@@ -46,7 +46,7 @@ interface Props {
   testid?: string
 }
 
-const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const PastCasesTable: FC<React.PropsWithChildren<Props>> = (props) => {
   const { cases, loading = false, testid } = props
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)

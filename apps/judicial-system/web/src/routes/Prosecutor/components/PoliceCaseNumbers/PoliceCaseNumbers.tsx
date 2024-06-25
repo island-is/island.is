@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
@@ -37,7 +37,7 @@ export const usePoliceCaseNumbers = (workingCase: Case) => {
   return { clientPoliceNumbers, setClientPoliceNumbers }
 }
 
-export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
+export const PoliceCaseNumbers: FC<React.PropsWithChildren<Props>> = (
   props,
 ) => {
   const {

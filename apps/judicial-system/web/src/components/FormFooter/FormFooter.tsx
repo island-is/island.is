@@ -36,7 +36,7 @@ interface Props {
   infoBoxText?: string
 }
 
-const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
+const FormFooter: FC<React.PropsWithChildren<Props>> = (props: Props) => {
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md

@@ -22,7 +22,7 @@ interface Props {
   isLoading?: boolean
 }
 
-const MobilePastCase: React.FC<Props> = ({
+const MobilePastCase: FC<Props> = ({
   theCase,
   onClick,
   isCourtRole,

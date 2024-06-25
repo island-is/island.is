@@ -18,7 +18,7 @@ interface Props {
   isLoading?: boolean
 }
 
-const MobileAppealCase: React.FC<Props> = ({
+const MobileAppealCase: FC<Props> = ({
   theCase,
   onClick,
   children,

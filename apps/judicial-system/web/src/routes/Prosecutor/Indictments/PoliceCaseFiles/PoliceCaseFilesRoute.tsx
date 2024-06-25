@@ -1,4 +1,5 @@
 import React, {
+  FC,
   memo,
   useCallback,
   useContext,
@@ -53,7 +54,7 @@ import {
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import { strings } from './PoliceCaseFilesRoute.strings'
 
-const UploadFilesToPoliceCase: React.FC<
+const UploadFilesToPoliceCase: FC<
   React.PropsWithChildren<{
     caseId: string
     policeCaseNumber: string
@@ -275,7 +276,7 @@ type AllUploadedState = {
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
  * causing a endless rendering loop.
  */
-const PoliceUploadListMemo: React.FC<
+const PoliceUploadListMemo: FC<
   React.PropsWithChildren<{
     caseId: string
     policeCaseNumbers?: string[] | null

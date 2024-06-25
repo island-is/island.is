@@ -10,7 +10,7 @@ interface Props {
   continueDisabled?: boolean
 }
 
-const RulingModifiedModal: React.FC<React.PropsWithChildren<Props>> = ({
+const RulingModifiedModal: FC<React.PropsWithChildren<Props>> = ({
   onCancel,
   onContinue,
   continueDisabled,

@@ -15,7 +15,7 @@ interface Props {
   description: string
 }
 
-const RequestRulingSignatureModal: React.FC<React.PropsWithChildren<Props>> = ({
+const RequestRulingSignatureModal: FC<React.PropsWithChildren<Props>> = ({
   onYes,
   onNo,
   description,
