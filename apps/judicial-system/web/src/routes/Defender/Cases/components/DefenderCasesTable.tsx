@@ -31,7 +31,6 @@ import {
   useSortCases,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { strings } from './DefenderCasesTable.string'
 import * as styles from './DefenderCasesTable.css'
 
 interface Props {
