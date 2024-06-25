@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildSection,
   buildMessageWithLinkButtonField,
-  coreMessages,
   buildDescriptionField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
