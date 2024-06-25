@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -41,7 +41,7 @@ import {
 } from '../../components'
 import ArrestDate from './ArrestDate'
 
-export const HearingArrangements: FC<React.PropsWithChildren<unknown>> = () => {
+export const HearingArrangements = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =

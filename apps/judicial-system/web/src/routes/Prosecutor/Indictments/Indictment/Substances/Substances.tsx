@@ -24,13 +24,11 @@ interface Props {
   onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
-export const Substances: FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    indictmentCount,
-    indictmentCountOffenseType,
-
-    onChange,
-  } = props
+export const Substances: FC<Props> = ({
+  indictmentCount,
+  indictmentCountOffenseType,
+  onChange,
+}) => {
   const { formatMessage } = useIntl()
 
   const getSubstanceOptions = useMemo(

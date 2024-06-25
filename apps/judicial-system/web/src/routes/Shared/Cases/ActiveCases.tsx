@@ -55,9 +55,7 @@ interface Props {
   onDeleteCase?: (caseToDelete: CaseListEntry) => Promise<void>
 }
 
-const ActiveCases: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, isDeletingCase, onDeleteCase } = props
-
+const ActiveCases: FC<Props> = ({ cases, isDeletingCase, onDeleteCase }) => {
   const { formatMessage } = useIntl()
   const { width } = useViewport()
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(

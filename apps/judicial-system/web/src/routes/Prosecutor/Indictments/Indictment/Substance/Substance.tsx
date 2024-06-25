@@ -17,8 +17,12 @@ interface Props {
   onDelete: (sub: SubstanceEnum) => void
 }
 
-export const Substance: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { substance, onUpdateAmount, onDelete, amount } = props
+export const Substance: FC<Props> = ({
+  substance,
+  onUpdateAmount,
+  onDelete,
+  amount,
+}) => {
   const { formatMessage } = useIntl()
 
   const [

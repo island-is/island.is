@@ -15,8 +15,7 @@ interface Props {
   title: string
 }
 
-const ArrestDate: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { title, workingCase, setWorkingCase } = props
+const ArrestDate: FC<Props> = ({ title, workingCase, setWorkingCase }) => {
   const { setAndSendCaseToServer } = useCase()
 
   const onChange = useCallback(

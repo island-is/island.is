@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'framer-motion'
@@ -76,7 +76,7 @@ export const getIndictmentIntroductionAutofill = (
     : []
 }
 
-const Indictment: FC<React.PropsWithChildren<unknown>> = () => {
+const Indictment = () => {
   const {
     workingCase,
     setWorkingCase,

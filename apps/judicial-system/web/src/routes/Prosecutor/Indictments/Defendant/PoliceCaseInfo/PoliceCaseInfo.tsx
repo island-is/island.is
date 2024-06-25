@@ -57,20 +57,18 @@ interface Props {
   policeCaseNumberImmutable: boolean
 }
 
-export const PoliceCaseInfo: FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    index,
-    policeCaseNumbers,
-    policeCaseNumberPrefix,
-    subtypes,
-    crimeScene,
-    setPoliceCase,
-    deletePoliceCase,
-    updatePoliceCase,
-    policeCaseNumberImmutable = false,
-    updateIndictmentCount,
-  } = props
-
+export const PoliceCaseInfo: FC<Props> = ({
+  index,
+  policeCaseNumbers,
+  policeCaseNumberPrefix,
+  subtypes,
+  crimeScene,
+  setPoliceCase,
+  deletePoliceCase,
+  updatePoliceCase,
+  policeCaseNumberImmutable = false,
+  updateIndictmentCount,
+}) => {
   const { formatMessage } = useIntl()
 
   const { user } = useContext(UserContext)

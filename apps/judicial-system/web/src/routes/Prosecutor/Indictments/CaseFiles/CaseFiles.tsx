@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -25,7 +25,7 @@ import {
 
 import * as strings from './CaseFiles.strings'
 
-const CaseFiles: FC<React.PropsWithChildren<unknown>> = () => {
+const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()

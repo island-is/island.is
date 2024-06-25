@@ -316,15 +316,14 @@ export const getIncidentDescription = (
   return incidentDescription
 }
 
-export const IndictmentCount: FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    indictmentCount,
-    workingCase,
-    onChange,
-    onDelete,
-    updateIndictmentCountState,
-    setWorkingCase,
-  } = props
+export const IndictmentCount: FC<Props> = ({
+  indictmentCount,
+  workingCase,
+  onChange,
+  onDelete,
+  updateIndictmentCountState,
+  setWorkingCase,
+}) => {
   const { formatMessage } = useIntl()
   const { lawTag } = useIndictmentCounts()
 
