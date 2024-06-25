@@ -13,8 +13,7 @@ interface Props {
   onChange: (prosecutorId: string) => boolean
 }
 
-const ProsecutorSelection: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { onChange } = props
+const ProsecutorSelection: FC<Props> = ({ onChange }) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
