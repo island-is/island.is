@@ -201,12 +201,44 @@ function cleanYarn() {
 }
 
 function cleanNodeModules() {
-  if (dry('Would delete: node_modules')) {
-    log('Would delete: node_modules')
-  } else {
-    log('Deleting now: node_modules')
-    fs.rmdirSync('node_modules', { recursive: true })
+  function findAndDeleteNodeModules(baseDir) {
+    fs.readdirSync(baseDir).forEach((name) => {
+      const dirPath = path.join(baseDir, name)
+      const stat = fs.statSync(dirPath)
+
+      if (stat.isDirectory()) {
+        if (name === 'node_modules') {
+          if (dry(`Would delete: ${dirPath}`)) {
+            log(`Would delete: ${dirPath}`)
+          } else {
+            log(`Deleting now: ${dirPath}`)
+            fs.rmSync(dirPath, { recursive: true, force: true })
+          }
+        } else {
+          findAndDeleteNodeModules(dirPath) // Recursively search subdirectories
+        }
+      }
+    })
   }
+
+  // Check root node_modules
+  if (fs.existsSync('node_modules')) {
+    if (dry('Would delete: node_modules')) {
+      log('Would delete: node_modules')
+    } else {
+      log('Deleting now: node_modules')
+      fs.rmSync('node_modules', { recursive: true, force: true })
+    }
+  } else {
+    log('Skipping root node_modules: directory does not exist')
+  }
+
+  // Check node_modules in apps and libs directories
+  ;['apps', 'libs'].forEach((baseDir) => {
+    if (fs.existsSync(baseDir)) {
+      findAndDeleteNodeModules(baseDir)
+    }
+  })
 }
 
 function cleanAll() {
