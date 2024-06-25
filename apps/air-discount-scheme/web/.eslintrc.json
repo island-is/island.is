@@ -1,28 +1,55 @@
 {
-  "extends": ["plugin:@nx/react", "../../../.eslintrc.json"],
+  "extends": [
+    "plugin:@nx/react",
+    "../../../.eslintrc.json"
+  ],
   "rules": {},
-  "ignorePatterns": ["!**/*", "translation.d.ts"],
+  "ignorePatterns": [
+    "!**/*",
+    "translation.d.ts"
+  ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
+      "files": [
+        "*.ts",
+        "*.tsx",
+        "*.js",
+        "*.jsx"
+      ],
       "rules": {
         "@nx/enforce-module-boundaries": [
           "error",
           {
             "enforceBuildableLibDependency": true,
             "allowCircularSelfDependency": true,
-            "allow": [],
+            "allow": [
+              "../../../infra/src/dsl"
+            ],
             "depConstraints": [
               {
                 "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
+                "onlyDependOnLibsWithTags": [
+                  "*"
+                ]
               }
             ]
           }
         ]
       }
     },
-    { "files": ["*.ts", "*.tsx"], "rules": {} },
-    { "files": ["*.js", "*.jsx"], "rules": {} }
+    {
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
+      "rules": {}
+    },
+    {
+      "files": [
+        "*.js",
+        "*.jsx"
+      ],
+      "rules": {}
+    }
   ]
 }
