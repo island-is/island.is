@@ -50,8 +50,8 @@ export enum ApplicationTypes {
   OLD_AGE_PENSION = 'OldAgePension',
   HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
   CAR_RECYCLING = 'CarRecycling',
-  SIGNATURE_LIST_CREATION = 'SignatureListCreation',
-  SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
+  PRESIDENTIAL_LIST_SIGNING = 'PresidentialListSigning',
   PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
@@ -278,11 +278,11 @@ export const ApplicationConfigurations = {
     slug: 'skilavottord',
     translation: 'rf.cr.application',
   },
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: {
     slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: {
     slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },

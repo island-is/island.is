@@ -11,7 +11,6 @@ import {
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
@@ -26,17 +25,16 @@ export const WeekLifeCycle: StateLifeCycle = {
 }
 
 const configuration =
-  ApplicationConfigurations[ApplicationTypes.SIGNATURE_LIST_SIGNING]
+  ApplicationConfigurations[ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]
 
 const SignListTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.SIGNATURE_LIST_SIGNING,
+  type: ApplicationTypes.PRESIDENTIAL_LIST_SIGNING,
   name: m.applicationName,
   institution: m.institution,
-  featureFlag: Features.signatureListCreation,
   initialQueryParameter: 'candidate',
   dataSchema,
   translationNamespaces: [configuration.translation],

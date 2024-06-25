@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'application-templates-signature-list-creation',
+  displayName: 'application-templates-presidential-list-signing',
   preset: './jest.preset.js',
   rootDir: '../../../../..',
   roots: [__dirname],
@@ -9,5 +9,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory:
-    '<rootDir>/coverage/libs/application/templates/signature-collection/signature-list-creation',
+    '<rootDir>/coverage/libs/application/templates/signature-collection/presidential-list-signing',
 }
