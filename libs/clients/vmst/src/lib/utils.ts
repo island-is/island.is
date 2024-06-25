@@ -1,5 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { logger } from '@island.is/logging'
+import omit from 'lodash/omit'
+import pick from 'lodash/pick'
 
 // A parental leave request body:
 type Init = {
@@ -59,29 +61,20 @@ export const createWrappedFetchWithLogging = (
         })
 
         // Filter known sensitive data
-        requestBody = {
-          ...requestBody,
-          applicant: undefined,
-          otherParentId: undefined,
-          email: undefined,
-          phoneNumber: undefined,
-          paymentInfo: {
-            ...requestBody?.paymentInfo,
-            bankAccount: undefined,
-          },
-          attachments: requestBody?.attachments?.length,
-          employers: requestBody?.employers?.map(
-            (
-              employer: Init['employers'][0],
-            ): Partial<Init['employers'][0]> => ({
-              ...employer,
-              email: undefined,
-              approverNationalRegistryId: undefined,
-            }),
-          ),
-        }
-        const { hasError, hasActivePregnancy, errocCode } = responseBody
-        responseBody = { hasError, hasActivePregnancy, errocCode }
+        requestBody = omit(requestBody, [
+          'applicant',
+          'otherParentId',
+          'email',
+          'phoneNumber',
+          'paymentInfo.bankAccount',
+          'employers.email',
+          'employers.approverNationalRegistryId',
+        ])
+        responseBody = pick(responseBody, [
+          'hasError',
+          'hasActivePregnancy',
+          'errocCode',
+        ])
 
         const vmstMetadata = {
           request: {
