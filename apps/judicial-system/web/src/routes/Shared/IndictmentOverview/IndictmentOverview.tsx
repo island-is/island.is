@@ -95,6 +95,7 @@ const IndictmentOverview: FC = () => {
                 postponedIndefinitelyExplanation={
                   workingCase.postponedIndefinitelyExplanation
                 }
+                courtSessionType={workingCase.courtSessionType}
               />
             </Box>
           )}
