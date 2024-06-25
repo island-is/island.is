@@ -1,33 +1,37 @@
-import { useEffect, useState } from 'react'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  Box,
-  Divider,
-  Text,
-  Button,
-  Icon,
-  Table as T,
-  Pagination,
-} from '@island.is/island-ui/core'
-import {
-  UserInfoLine,
-  CardLoader,
-  m as coreMessages,
-  IntroHeader,
-} from '@island.is/service-portal/core'
-import ExpandableLine from './ExpandableLine'
-import { useParams } from 'react-router-dom'
 import {
   GenericLicenseDataField,
+  GenericLicenseType,
   GenericUserLicenseDataFieldTagColor,
   GenericUserLicenseDataFieldTagType,
   GenericUserLicenseMetaLinksType,
+  GenericUserLicensePkPassStatus,
 } from '@island.is/api/schema'
-import { isDefined } from '@island.is/shared/utils'
-import { useUserProfile } from '@island.is/service-portal/graphql'
-import { useGenericLicenseLazyQuery } from './LicenseDetailV2.generated'
+import {
+  Box,
+  Divider,
+  Icon,
+  Inline,
+  Pagination,
+  Table as T,
+  Text,
+} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
+import {
+  CardLoader,
+  IntroHeader,
+  LinkButton,
+  UserInfoLine,
+  m as coreMessages,
+} from '@island.is/service-portal/core'
+import { useUserProfile } from '@island.is/service-portal/graphql'
+import { isDefined } from '@island.is/shared/utils'
+import { useEffect, useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
 import { getTypeFromPath, isLicenseTypePath } from '../../utils/mapPaths'
+import ExpandableLine from './ExpandableLine'
+import { useGenericLicenseLazyQuery } from './LicenseDetailV2.generated'
+import { PkPass } from '../../components/QRCodeModal/PkPass'
 
 const getTagColor = (
   color: GenericUserLicenseDataFieldTagColor,
@@ -51,7 +55,6 @@ const DataFields = ({
   fields: GenericLicenseDataField[]
   licenseType?: string
 }) => {
-  const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
   const pageSize = 15
 
@@ -63,9 +66,8 @@ const DataFields = ({
     <>
       {fields.map((field, i) => {
         if (field.hideFromServicePortal) return undefined
-
         return (
-          <>
+          <Box key={`data-field-${i}`}>
             {field.type === 'Value' && (
               <>
                 <UserInfoLine
@@ -111,7 +113,7 @@ const DataFields = ({
                                   />
                                 )}
                               </Box>
-                              {field.tag?.iconText && (
+                              {field.tag?.text && (
                                 <Text variant="eyebrow">
                                   {field.tag.iconText}
                                 </Text>
@@ -134,7 +136,7 @@ const DataFields = ({
                     : [field.name, field.label].filter(Boolean).join(' ')
                 }
                 data={field.fields ?? []}
-                description={field.value ?? undefined}
+                description={field.description ?? undefined}
                 type={licenseType}
               />
             )}
@@ -225,7 +227,7 @@ const DataFields = ({
                 )}
               </>
             )}
-          </>
+          </Box>
         )
       })}
     </>
@@ -248,19 +250,26 @@ const LicenseDetail = () => {
   const [genericLicenseQuery, { data, loading, error }] =
     useGenericLicenseLazyQuery()
 
-  useEffect(() => {
+  const licenseType: GenericLicenseType | undefined = useMemo(() => {
     if (type && isLicenseTypePath(type)) {
+      return getTypeFromPath(type)
+    }
+    return
+  }, [type])
+
+  useEffect(() => {
+    if (licenseType) {
       genericLicenseQuery({
         variables: {
           locale,
           input: {
             licenseId: id,
-            licenseType: getTypeFromPath(type),
+            licenseType,
           },
         },
       })
     }
-  }, [genericLicenseQuery, id, type, locale])
+  }, [genericLicenseQuery, id, locale, licenseType])
 
   const { genericLicense = null } = data ?? {}
 
@@ -271,46 +280,64 @@ const LicenseDetail = () => {
           data?.genericLicense?.payload?.metadata?.title ??
           formatMessage(coreMessages.licenseNavTitle)
         }
-        buttonGroup={genericLicense?.payload?.metadata?.links
-          ?.map((link, index) => {
-            if (link.label && link.value) {
-              return (
-                <a
-                  href={link.value}
-                  target="_blank"
-                  rel="noreferrer"
-                  download={
-                    link.type === GenericUserLicenseMetaLinksType.Download
-                      ? link.name
-                      : false
-                  }
-                  key={type + '_link_' + index}
-                >
-                  <Button
-                    as="span"
-                    unfocusable
-                    variant="utility"
-                    size="small"
-                    icon={
-                      link.type === GenericUserLicenseMetaLinksType.Download
-                        ? 'download'
-                        : 'open'
-                    }
-                    iconType="outline"
-                  >
-                    {link.label}
-                  </Button>
-                </a>
-              )
-            }
-            return null
-          })
-          .filter(isDefined)}
+        introComponent={
+          data?.genericLicense?.payload?.metadata?.description &&
+          data?.genericLicense?.payload?.metadata?.description
+            .map((message, index) => {
+              if (!message.linkInText) {
+                return (
+                  <>
+                    {message.text}
+                    <br />
+                  </>
+                )
+              }
+              if (message.linkInText && message.linkIconType) {
+                return (
+                  <LinkButton
+                    key={`intro-header-button-${index}`}
+                    variant="text"
+                    to={message.linkInText}
+                    text={message.text}
+                  />
+                )
+              }
+              return null
+            })
+            .filter(isDefined)
+        }
         marginBottom={4}
       >
-        bingbingeia
-        <br />
-        bjrioabjnaio
+        {genericLicense?.payload?.metadata?.links ? (
+          <Box paddingTop={3}>
+            <Inline space={1}>
+              {!genericLicense.payload.metadata.expired &&
+                genericLicense.license.pkpassStatus ===
+                  GenericUserLicensePkPassStatus.Available &&
+                licenseType && <PkPass licenseType={licenseType} />}
+              {genericLicense.payload.metadata.links
+                .map((link, index) => {
+                  if (link.label && link.value && link.type) {
+                    return (
+                      <LinkButton
+                        variant="button"
+                        key={`${type}-license-button-${index}`}
+                        to={link.value}
+                        text={link.label}
+                        icon={
+                          link.type === GenericUserLicenseMetaLinksType.Download
+                            ? 'download'
+                            : 'open'
+                        }
+                      />
+                    )
+                  }
+                  return null
+                })
+                .filter(isDefined)}
+            </Inline>
+          </Box>
+        ) : undefined}
       </IntroHeader>
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
       {!error && !loading && !data?.genericLicense && (
@@ -326,7 +353,7 @@ const LicenseDetail = () => {
       {!error && loading && <CardLoader />}
       <DataFields
         fields={genericLicense?.payload?.data ?? []}
-        licenseType={type}
+        licenseType={licenseType}
       />
     </>
   )

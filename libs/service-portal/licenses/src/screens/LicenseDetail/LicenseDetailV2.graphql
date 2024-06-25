@@ -13,6 +13,7 @@ query GenericLicense($input: GetGenericLicenseInput!, $locale: String!) {
       data {
         type
         name
+        description
         label
         value
         tag {
@@ -33,6 +34,7 @@ query GenericLicense($input: GetGenericLicenseInput!, $locale: String!) {
           type
           name
           label
+          description
           value
           tag {
             text
@@ -51,6 +53,7 @@ query GenericLicense($input: GetGenericLicenseInput!, $locale: String!) {
           fields {
             type
             name
+            description
             label
             value
             tag {
@@ -92,6 +95,7 @@ query GenericLicense($input: GetGenericLicenseInput!, $locale: String!) {
           iconColor
           iconText
         }
+        expired
         alert {
           title
           type

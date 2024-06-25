@@ -19,10 +19,11 @@ export const expiryTag = (
     text: isExpired ? expiredText : validText,
     color: isExpired ? 'red' : 'blue',
     icon: isExpired
-      ? GenericUserLicenseDataFieldTagType.openCheckmark
-      : GenericUserLicenseDataFieldTagType.closedCheckmark,
+      ? GenericUserLicenseDataFieldTagType.closeCircle
+      : GenericUserLicenseDataFieldTagType.checkmarkCircle,
     iconColor: isExpired
       ? GenericUserLicenseDataFieldTagColor.red
       : GenericUserLicenseDataFieldTagColor.green,
+    iconText: isExpired ? formatMessage(m.expired) : formatMessage(m.valid),
   }
 }

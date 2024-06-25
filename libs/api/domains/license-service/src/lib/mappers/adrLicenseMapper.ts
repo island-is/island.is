@@ -5,18 +5,16 @@ import {
   FlattenedAdrRightsDto,
 } from '@island.is/clients/license-client'
 import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
+import { Injectable } from '@nestjs/common'
+import { IntlService } from '@island.is/cms-translations'
+import { m } from '../messages'
+import { formatDate, expiryTag } from '../utils'
 import {
-  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
 } from '../licenceService.type'
-import { Injectable } from '@nestjs/common'
-import { IntlService } from '@island.is/cms-translations'
-import { m } from '../messages'
-import { expiryTag } from '../utils/expiryTag'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 export const LICENSE_NAMESPACE = 'api.license-service'
 
@@ -38,6 +36,10 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
+        const isExpired: boolean | undefined = t.gildirTil
+          ? !isAfter(new Date(t.gildirTil), new Date())
+          : undefined
+
         const data: Array<GenericLicenseDataField> = [
           {
             name: formatMessage(m.basicInfoLicense),
@@ -58,7 +60,11 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.validTo),
-            value: t.gildirTil ?? '',
+            value: t.gildirTil ? formatDate(new Date(t.gildirTil)) : '',
+            tag:
+              isExpired !== undefined && t.gildirTil
+                ? expiryTag(formatMessage, isExpired)
+                : undefined,
           },
         ]
 
@@ -75,10 +81,6 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
           adrRights,
         )
         if (grunn) data.push(grunn)
-
-        const isExpired: boolean | undefined = t.gildirTil
-          ? !isAfter(new Date(t.gildirTil), new Date())
-          : undefined
 
         return {
           licenseName: formatMessage(m.adrLicense),
@@ -101,7 +103,7 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
                       formatMessage,
                       isExpired,
                       formatMessage(m.validUntil, {
-                        arg: format(new Date(t.gildirTil), dateFormat.is),
+                        arg: formatDate(new Date(t.gildirTil)),
                       }),
                     )
                   : undefined,
@@ -131,7 +133,6 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
       fields: data.map((field) => ({
         type: GenericLicenseDataFieldType.Category,
         name: field.flokkur ?? '',
-        label: field.heiti ?? '',
         description: field.heiti ?? '',
       })),
     }

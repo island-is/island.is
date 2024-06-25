@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import {
   GridColumn,
   GridRow,
@@ -41,7 +41,6 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   if (props.loading) {
     return <LoadingDots />
   }
-
   return (
     <GridRow marginBottom={marginBottom ?? 4}>
       <GridColumn span={props.span ? props.span : columnSpan}>

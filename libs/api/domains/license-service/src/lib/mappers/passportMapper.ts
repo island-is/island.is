@@ -7,7 +7,6 @@ import {
   GenericUserLicenseDataFieldTagColor,
   GenericUserLicenseDataFieldTagType,
   GenericUserLicenseMetaLinksType,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
 import { AlertType, LICENSE_NAMESPACE } from '../licenseService.constants'
 import { Inject, Injectable } from '@nestjs/common'
@@ -24,6 +23,7 @@ import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
 import { capitalize } from '../utils/capitalize'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { Payload } from '../dto/Payload.dto'
 
 const isChildPassport = (
   passport: IdentityDocument | IdentityDocumentChild,
@@ -71,8 +71,6 @@ export class PassportMapper implements GenericLicenseMapper {
       IdentityDocument | IdentityDocumentChild
     >
 
-    this.logger.debug('typedPayload', typedPayload)
-
     const mappedLicenses: Array<GenericLicenseMappedPayloadResponse> = []
     typedPayload.forEach((t) => {
       if (isChildPassport(t)) {
@@ -99,7 +97,7 @@ export class PassportMapper implements GenericLicenseMapper {
   private mapChildDocument(
     document: IdentityDocumentChild,
     formatMessage: FormatMessage,
-  ): Array<GenericUserLicensePayload> {
+  ): Array<Payload> {
     if (!document.passports) {
       return [
         {
@@ -125,7 +123,7 @@ export class PassportMapper implements GenericLicenseMapper {
   private mapDocument(
     document: IdentityDocument,
     formatMessage: FormatMessage,
-  ): GenericUserLicensePayload {
+  ): Payload {
     const data: Array<GenericLicenseDataField> = [
       document.displayFirstName && document.displayLastName
         ? {
@@ -214,6 +212,7 @@ export class PassportMapper implements GenericLicenseMapper {
           }
         : undefined,
     ].filter(isDefined)
+
     const displayTag: GenericUserLicenseMetaTag | undefined =
       isInvalid !== undefined && document.expirationDate
         ? {
@@ -226,8 +225,8 @@ export class PassportMapper implements GenericLicenseMapper {
               : formatMessage(m.valid),
             color: isInvalid || isExpiring ? 'red' : 'blue',
             icon: isInvalid
-              ? GenericUserLicenseDataFieldTagType.closedCheckmark
-              : GenericUserLicenseDataFieldTagType.openCheckmark,
+              ? GenericUserLicenseDataFieldTagType.closeCircle
+              : GenericUserLicenseDataFieldTagType.checkmarkCircle,
             iconColor: isInvalid
               ? GenericUserLicenseDataFieldTagColor.red
               : isExpiring

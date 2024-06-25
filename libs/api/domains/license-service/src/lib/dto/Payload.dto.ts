@@ -14,7 +14,7 @@ export class Payload {
     nullable: true,
     description: 'Raw JSON data',
   })
-  rawData?: object
+  rawData?: string
 
   @Field(() => GenericUserLicenseMetadata)
   metadata?: GenericUserLicenseMetadata

@@ -3,7 +3,6 @@ import { Locale } from '@island.is/shared/types'
 import { OrorkuSkirteini } from '@island.is/clients/disability-license'
 import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
 import {
-  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -11,7 +10,8 @@ import {
 import { Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
-import { expiryTag } from '../utils/expiryTag'
+import { formatDate, expiryTag } from '../utils'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 export const LICENSE_NAMESPACE = 'api.license-service'
 
@@ -33,6 +33,10 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
+        const isExpired: boolean | undefined = t.gildirtil
+          ? !isAfter(new Date(t.gildirtil), new Date())
+          : undefined
+
         const data: Array<GenericLicenseDataField> = [
           {
             type: GenericLicenseDataFieldType.Value,
@@ -48,13 +52,13 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.validTo),
-            value: t.gildirtil?.toISOString() ?? '',
+            value: t.gildirtil ? formatDate(t.gildirtil) : '',
+            tag:
+              isExpired !== undefined && t.gildirtil
+                ? expiryTag(formatMessage, isExpired)
+                : undefined,
           },
         ]
-
-        const isExpired: boolean | undefined = t.gildirtil
-          ? !isAfter(new Date(t.gildirtil), new Date())
-          : undefined
 
         return {
           licenseName: formatMessage(m.disabilityCard),

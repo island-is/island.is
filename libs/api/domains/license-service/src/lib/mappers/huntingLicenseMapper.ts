@@ -1,25 +1,22 @@
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
 import { Injectable } from '@nestjs/common'
-import { format as formatNationalId } from 'kennitala'
-import format from 'date-fns/format'
 import { isDefined } from '@island.is/shared/utils'
-import capitalize from 'lodash/capitalize'
 import {
   DEFAULT_LICENSE_ID,
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
-import { expiryTag } from '../utils/expiryTag'
-
-const formatDate = (date: Date) => format(date, 'dd.MM.yyyy')
+import { format as formatNationalId } from 'kennitala'
+import { expiryTag, formatDate, capitalize } from '../utils'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 @Injectable()
 export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
@@ -131,6 +128,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
                   value:
                     t.renewalUrl ??
                     'https://innskraning.island.is/?id=gogn.ust.is',
+                  type: GenericUserLicenseMetaLinksType.External,
                 },
               ],
               title: formatMessage(m.yourHuntingCard),

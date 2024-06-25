@@ -6,6 +6,7 @@ import {
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
@@ -14,9 +15,7 @@ import { DriverLicenseDto as DriversLicense } from '@island.is/clients/driving-l
 import { isDefined } from '@island.is/shared/utils'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
-import { expiryTag } from '../utils/expiryTag'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
+import { formatDate, expiryTag } from '../utils'
 
 @Injectable()
 export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
@@ -39,6 +38,10 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
+        const isExpired = t.dateValidTo
+          ? !isAfter(new Date(t.dateValidTo), new Date())
+          : undefined
+
         const data = [
           {
             name: formatMessage(m.basicInfoLicense),
@@ -59,12 +62,16 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.publishedDate),
-            value: t.publishDate ? new Date(t.publishDate).toISOString() : '',
+            value: t.publishDate ? formatDate(t.publishDate) : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.validTo),
-            value: t.dateValidTo ? new Date(t.dateValidTo).toISOString() : '',
+            value: t.dateValidTo ? formatDate(t.dateValidTo) : '',
+            tag:
+              isExpired !== undefined && t.dateValidTo
+                ? expiryTag(formatMessage, isExpired)
+                : undefined,
           },
           {
             type: GenericLicenseDataFieldType.Group,
@@ -77,14 +84,12 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
                 {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.expiryDate),
-                  value: field.dateTo ? field.dateTo.toISOString() : '',
+                  value: field.dateTo ? formatDate(field.dateTo) : '',
                 },
                 {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.publishedDate),
-                  value: field.publishDate
-                    ? field.publishDate.toISOString()
-                    : '',
+                  value: field.publishDate ? formatDate(field.publishDate) : '',
                 },
                 field.comment
                   ? {
@@ -97,10 +102,6 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             })),
           },
         ]
-
-        const isExpired = t.dateValidTo
-          ? !isAfter(new Date(t.dateValidTo), new Date())
-          : undefined
 
         return {
           licenseName: formatMessage(m.drivingLicense),
@@ -116,6 +117,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
                     arg: formatMessage(m.drivingLicense).toLowerCase(),
                   }),
                   value: 'https://island.is/endurnyjun-okuskirteina',
+                  type: GenericUserLicenseMetaLinksType.External,
                 },
               ],
               licenseNumber: t.id?.toString() ?? '',
@@ -131,7 +133,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
                       formatMessage,
                       isExpired,
                       formatMessage(m.validUntil, {
-                        arg: format(new Date(t.dateValidTo), dateFormat.is),
+                        arg: formatDate(t.dateValidTo),
                       }),
                     )
                   : undefined,

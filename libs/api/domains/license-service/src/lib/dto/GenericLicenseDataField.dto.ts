@@ -21,6 +21,12 @@ export class GenericLicenseDataField {
   @Field({ nullable: true, description: 'Label of data field' })
   label?: string
 
+  @Field({
+    nullable: true,
+    description: 'Display value of data field category',
+  })
+  description?: string
+
   @Field({ nullable: true, description: 'Value of data field' })
   value?: string
 
@@ -45,12 +51,4 @@ export class GenericLicenseDataField {
     description: 'Name of data field',
   })
   fields?: GenericLicenseDataField[]
-
-  /* DEPRECATED SECTION*/
-  @Field({
-    nullable: true,
-    description: 'Same as value, used in service portal',
-    deprecationReason: 'Redundant',
-  })
-  description?: string
 }

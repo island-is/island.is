@@ -9,19 +9,18 @@ import {
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
 import {
-  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
+  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { FirearmLicenseDto } from '@island.is/clients/license-client'
 import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
-import { expiryTag } from '../utils/expiryTag'
-import { dateFormat } from '@island.is/shared/constants'
-import format from 'date-fns/format'
+import { expiryTag, formatDate } from '../utils'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 @Injectable()
 export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
@@ -44,6 +43,10 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
           const { licenseInfo, properties, categories } = t
 
           if (!licenseInfo) return null
+
+          const isExpired = licenseInfo?.expirationDate
+            ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
+            : undefined
 
           const data: Array<GenericLicenseDataField> = [
             licenseInfo.licenseNumber
@@ -73,6 +76,10 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.validTo),
                   value: licenseInfo.expirationDate ?? '',
+                  tag:
+                    isExpired !== undefined && licenseInfo.expirationDate
+                      ? expiryTag(formatMessage, isExpired)
+                      : undefined,
                 }
               : null,
             licenseInfo.collectorLicenseExpirationDate
@@ -119,10 +126,6 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
               : null,
           ].filter(isDefined)
 
-          const isExpired = licenseInfo?.expirationDate
-            ? !isAfter(new Date(licenseInfo.expirationDate), new Date())
-            : undefined
-
           return {
             licenseName: formatMessage(m.firearmLicense),
             type: 'user' as const,
@@ -146,9 +149,8 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                         formatMessage,
                         isExpired,
                         formatMessage(m.validUntil, {
-                          arg: format(
+                          arg: formatDate(
                             new Date(t.licenseInfo.expirationDate),
-                            dateFormat.is,
                           ),
                         }),
                       )
@@ -159,6 +161,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                       arg: formatMessage(m.firearmLicense).toLowerCase(),
                     }),
                     value: 'https://island.is/skotvopnaleyfi',
+                    type: GenericUserLicenseMetaLinksType.External,
                   },
                 ],
                 title: formatMessage(m.yourFirearmLicense),

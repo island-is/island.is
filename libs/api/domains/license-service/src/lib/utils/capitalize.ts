@@ -1,4 +1,4 @@
-export const capitalize = (s: string) => {
+export const capitalize = (s?: string) => {
   if (typeof s !== 'string') return ''
 
   const arr = s.split(' ')

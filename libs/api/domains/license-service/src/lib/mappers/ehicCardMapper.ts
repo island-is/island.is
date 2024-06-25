@@ -1,7 +1,6 @@
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseDataField,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
@@ -14,9 +13,8 @@ import { EhicCardResponse } from '@island.is/clients/license-client'
 import { IntlService } from '@island.is/cms-translations'
 import { LICENSE_NAMESPACE } from '../licenseService.constants'
 import { m } from '../messages'
-import { expiryTag } from '../utils/expiryTag'
-import format from 'date-fns/format'
-import { dateFormat } from '@island.is/shared/constants'
+import { expiryTag, formatDate } from '../utils'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 @Injectable()
 export class EHICCardPayloadMapper implements GenericLicenseMapper {
@@ -38,6 +36,10 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
       typedPayload
         .map((t) => {
           if (!t || !t.expiryDate) return null
+
+          const isExpired = t.expiryDate
+            ? !isAfter(new Date(t.expiryDate?.toISOString()), new Date())
+            : undefined
 
           const data: Array<GenericLicenseDataField> = [
             t.cardHolderName
@@ -67,14 +69,18 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
               ? {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.publishedDate),
-                  value: t.issued.toISOString(),
+                  value: t.issued ? formatDate(t.issued) : '',
                 }
               : null,
             t.expiryDate
               ? {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.validTo),
-                  value: t.expiryDate.toISOString(),
+                  value: t.expiryDate ? formatDate(t.expiryDate) : '',
+                  tag:
+                    isExpired !== undefined && t.expiryDate
+                      ? expiryTag(formatMessage, isExpired)
+                      : undefined,
                 }
               : null,
             {
@@ -83,10 +89,6 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
               value: 'Sjúkratryggingar',
             },
           ].filter(isDefined)
-
-          const isExpired = t.expiryDate
-            ? !isAfter(new Date(t.expiryDate?.toISOString()), new Date())
-            : undefined
 
           return {
             licenseName: formatMessage(m.ehicCard),
@@ -109,7 +111,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                         formatMessage,
                         isExpired,
                         formatMessage(m.validUntil, {
-                          arg: format(t.expiryDate, dateFormat.is),
+                          arg: formatDate(t.expiryDate),
                         }),
                       )
                     : undefined,

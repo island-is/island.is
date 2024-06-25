@@ -3,10 +3,11 @@ import { Locale } from '@island.is/shared/types'
 import { LicenseError } from './dto/GenericLicenseError.dto'
 import { GenericUserLicense as GenericUserLicenseModel } from './dto/GenericUserLicense.dto'
 import { GenericUserLicenseMetadata } from './dto/GenericUserLicenseMetadata.dto'
+import { Payload } from './dto/Payload.dto'
 
 export interface GenericLicenseMappedPayloadResponse {
   licenseName: string
-  payload: GenericUserLicensePayload
+  payload: Payload
   type: 'user' | 'child'
 }
 export type LicenseTypeFetchResponse =
@@ -99,8 +100,8 @@ export enum GenericUserLicenseMetaLinksType {
 }
 
 export enum GenericUserLicenseDataFieldTagType {
-  'openCheckmark',
-  'closedCheckmark',
+  'checkmarkCircle',
+  'closeCircle',
 }
 
 export enum GenericUserLicenseDataFieldTagColor {

@@ -18,7 +18,7 @@ import {
 import { Injectable } from '@nestjs/common'
 import { m } from '../messages'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
-import { expiryTag } from '../utils/expiryTag'
+import { formatDate, expiryTag } from '../utils'
 
 @Injectable()
 export class MachineLicensePayloadMapper implements GenericLicenseMapper {
@@ -73,7 +73,9 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
           {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.firstPublishedDate),
-            value: t.fyrstiUtgafuDagur?.toString(),
+            value: t.fyrstiUtgafuDagur
+              ? formatDate(new Date(t.fyrstiUtgafuDagur))
+              : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
@@ -93,7 +95,6 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
               .map((field) => ({
                 type: GenericLicenseDataFieldType.Category,
                 name: field.flokkur ?? '',
-                label: field.fulltHeiti ?? field.stuttHeiti ?? '',
                 description: field.fulltHeiti ?? field.stuttHeiti ?? '',
                 fields: this.parseVvrRights(field, formatMessage),
               })),
