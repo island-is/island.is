@@ -52,7 +52,11 @@ export const createWrappedFetchWithLogging = (
     fetch(input, init)
       .then(async (response) => {
         let requestBody = init?.body ? JSON.parse(init?.body as string) : {}
-        let responseBody = await response.json()
+        let responseBody = await response.json().catch((error) => {
+          logger.error('Error parsing JSON from response', {
+            error: error.message,
+          })
+        })
 
         // Filter known sensitive data
         requestBody = {
