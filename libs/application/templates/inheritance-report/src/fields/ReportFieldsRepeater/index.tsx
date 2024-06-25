@@ -129,6 +129,9 @@ export const ReportFieldsRepeater: FC<
       return Object.values(field)[1]
     })
 
+    // All additional fields should be enabled by default
+    values.push('enabled')
+
     const repeaterFields = Object.fromEntries(
       values.map((elem) => [
         elem,
@@ -417,10 +420,11 @@ export const ReportFieldsRepeater: FC<
                         placeholder={field.placeholder}
                         options={debtTypes.map((type) => ({
                           label: formatMessage(type.label),
-                          value: type.value,
+                          value: type.label,
                         }))}
                         backgroundColor="blue"
                         disabled={!repeaterField.enabled}
+                        error={err}
                       />
                     ) : (
                       <InputController

@@ -294,6 +294,7 @@ const ProjectPage: Screen<PageProps> = ({
         sidebarNavigationTitle={navigationTitle}
         withSidebar={projectPage?.sidebar}
         backLink={backLink}
+        isSubpage={(subpage && p('smallerSubpageHeader', false)) ?? false}
       >
         {customContent ? customContent : mainContent}
       </ProjectWrapper>

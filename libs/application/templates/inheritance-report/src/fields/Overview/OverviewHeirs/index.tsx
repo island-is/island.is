@@ -30,7 +30,7 @@ export const OverviewHeirs: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         if (!heir.enabled) return null
 
         return (
-          <Box key={index} marginTop={index === 0 ? 3 : 6}>
+          <Box key={index} marginTop={index === 0 ? 1 : 5}>
             <Text marginBottom={2} variant="h4">
               {formatMessage(m.heir) + ' ' + (index + 1)}
             </Text>
@@ -148,6 +148,35 @@ export const OverviewHeirs: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   <Box width="half">
                     <Text variant="h4">{formatMessage(m.advocatePhone)}</Text>
                     <Text>{heir.advocate.phone}</Text>
+                  </Box>
+                </Box>
+              </Fragment>
+            )}
+            {heir.advocate2?.nationalId && (
+              <Fragment>
+                <Text marginBottom={2} variant="h4">
+                  {formatMessage(m.advocate)}
+                </Text>
+                <Box display="flex" marginBottom={2}>
+                  <Box width="half">
+                    <Text variant="h4">
+                      {formatMessage(m.advocateNationalId)}
+                    </Text>
+                    <Text>{formatNationalId(heir.advocate2.nationalId)}</Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="h4">{formatMessage(m.advocateName)}</Text>
+                    <Text>{heir.advocate2.name}</Text>
+                  </Box>
+                </Box>
+                <Box display="flex" marginBottom={2}>
+                  <Box width="half">
+                    <Text variant="h4">{formatMessage(m.advocateEmail)}</Text>
+                    <Text>{heir.advocate2.email}</Text>
+                  </Box>
+                  <Box width="half">
+                    <Text variant="h4">{formatMessage(m.advocatePhone)}</Text>
+                    <Text>{heir.advocate2.phone}</Text>
                   </Box>
                 </Box>
               </Fragment>
