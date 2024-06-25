@@ -588,6 +588,7 @@ export class InternalCaseService {
       .updateIndictmentCaseWithIndictmentInfo(
         user,
         theCase.id,
+        theCase.court?.name,
         theCase.courtCaseNumber,
         theCase.eventLogs?.find(
           (eventLog) => eventLog.eventType === EventType.CASE_RECEIVED_BY_COURT,
@@ -624,9 +625,10 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
-      .updateIndictmentWithDefenderInfo(
+      .updateIndictmentCaseWithDefenderInfo(
         user,
         theCase.id,
+        theCase.court?.name,
         theCase.courtCaseNumber,
         theCase.defendants,
       )
@@ -663,6 +665,7 @@ export class InternalCaseService {
       .updateIndictmentCaseWithAssignedRoles(
         user,
         theCase.id,
+        theCase.court?.name,
         theCase.courtCaseNumber,
         assignedRole,
       )
