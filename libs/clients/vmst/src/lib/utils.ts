@@ -31,13 +31,11 @@ type Init = {
     },
   ]
   applicationComment: string
-  employers: [
-    {
-      email: string
-      nationalRegistryId: string
-      approverNationalRegistryId: string
-    },
-  ]
+  employers: {
+    email: string
+    nationalRegistryId: string
+    approverNationalRegistryId: string
+  }[]
   status: string
   rightsCode: string
   attachments: number
@@ -52,125 +50,56 @@ export const createWrappedFetchWithLogging = (
   return new Promise((resolve, reject) => {
     fetch(input, init)
       .then(async (response) => {
-        const body: Partial<Init> = init?.body
-          ? JSON.parse(init?.body as string)
-          : {}
+        let requestBody = init?.body ? JSON.parse(init?.body as string) : {}
+        const responseBody = await response.json()
 
         // Filter known sensitive data
-        // NOTE: Should only select what we need, not expand the entire object
-
-        const foo = {
-          adoptionDate: '',
-          applicationId: 'uuidv4',
-          applicationFundId: '',
-          applicant: 'hidden',
-          otherParentId: '',
-          expectedDateOfBirth: '1970-01-01',
-          dateOfBirth: '',
-          email: 'hidden',
-          phoneNumber: 'hidden',
+        requestBody = {
+          ...requestBody,
+          applicant: undefined,
+          otherParentId: undefined,
+          email: undefined,
+          phoneNumber: undefined,
           paymentInfo: {
-            bankAccount: 'hidden',
-            personalAllowance: 0,
-            personalAllowanceFromSpouse: 0,
-            union: { id: 'Secret', name: '' },
-            pensionFund: { id: 'Secret', name: '' },
-            privatePensionFund: { id: 'Secret', name: '' },
-            privatePensionFundRatio: 0,
+            ...requestBody?.paymentInfo,
+            bankAccount: undefined,
           },
-          periods: [
-            {
-              from: '2024-01-01',
-              to: '2024-01-01',
-              ratio: '100',
-              approved: false,
-              paid: false,
-              rightsCodePeriod: 'Secret',
-            },
-          ],
-          applicationComment: '',
-          employers: [
-            {
-              email: 'secret@email.tld',
-              nationalRegistryId: '1234567890',
-              approverNationalRegistryId: '--MASKED--',
-            },
-          ],
-          status: 'In Progress',
-          rightsCode: 'Secret',
-          attachments: 0,
-          testData: 'false',
-          otherParentBlocked: false,
+          attachments: requestBody?.attachments?.length,
+          employers: requestBody?.employers?.map(
+            (
+              employer: Init['employers'][0],
+            ): Partial<Init['employers'][0]> => ({
+              ...employer,
+              email: undefined,
+              approverNationalRegistryId: undefined,
+            }),
+          ),
         }
-        const {
-          adoptionDate,
-          applicationId,
-          applicationFundId,
-          applicant,
-          otherParentId,
-          expectedDateOfBirth,
-          dateOfBirth,
-          email,
-          phoneNumber,
-          paymentInfo,
-          periods,
-          applicationComment,
-          employers,
-          status,
-          rightsCode,
-          attachments,
-          testData,
-          otherParentBlocked,
-        } = body
-        const metaAttributes = {
-          adoptionDate,
-          applicationId,
-          applicationFundId,
-          applicant,
-          otherParentId,
-          expectedDateOfBirth,
-          dateOfBirth,
-          email,
-          phoneNumber,
-          paymentInfo,
-          periods,
-          applicationComment,
-          employers,
-          status,
-          rightsCode,
-          attachments,
-          testData,
-          otherParentBlocked,
+        const vmstMetadata = {
+          request: {
+            body: requestBody,
+          },
+          response: {
+            status_text: response.statusText,
+            responseBody,
+          },
         }
 
         if (response.ok) {
-          logger.info(
-            `vmst-module.success: input - ${JSON.stringify(
-              input,
-            )}, init - ${JSON.stringify(init)}`,
-            {
-              vmst_module: {
-                success: true,
-                metaAttributes,
-              },
+          logger.info(`Successfully fetched to VMST`, {
+            vmst: {
+              ...vmstMetadata,
+              success: true,
             },
-          )
+          })
         } else {
-          const body = await response.json()
-          logger.error(
-            `vmst-module.error: input - ${JSON.stringify(
-              input,
-            )}, init - ${JSON.stringify(init)}, response - ${JSON.stringify(
-              body,
-            )} status text: ${response.statusText}`,
-            {
-              vmst: {
-                success: false,
-                metaAttributes,
-              },
+          logger.error(`Failed fetching to VMST`, {
+            vmst: {
+              ...vmstMetadata,
+              success: false,
             },
-          )
-          return reject(body)
+          })
+          return reject(requestBody)
         }
 
         return resolve(response)
