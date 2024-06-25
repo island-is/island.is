@@ -12,9 +12,7 @@ interface Props {
   defaultInstitution?: string | null
 }
 
-const Logo: FC<React.PropsWithChildren<Props>> = ({
-  defaultInstitution = '',
-}) => {
+const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
   const institutionName = user?.institution?.name ?? defaultInstitution ?? ''
   const institutionNameArr = institutionName.split(' ')
