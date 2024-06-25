@@ -31,6 +31,7 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -392,7 +393,11 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putGeneratedObject(theCase.type, `${theCase.id}/ruling.pdf`, pdf)
+      .putGeneratedRequestCaseObject(
+        theCase.type,
+        `${theCase.id}/ruling.pdf`,
+        pdf,
+      )
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -409,7 +414,11 @@ export class CaseService {
     pdf: string,
   ): Promise<boolean> {
     return this.awsS3Service
-      .putGeneratedObject(theCase.type, `${theCase.id}/courtRecord.pdf`, pdf)
+      .putGeneratedRequestCaseObject(
+        theCase.type,
+        `${theCase.id}/courtRecord.pdf`,
+        pdf,
+      )
       .then(() => true)
       .catch((reason) => {
         this.logger.error(
@@ -532,36 +541,6 @@ export class CaseService {
     return messages
   }
 
-  private getIndictmentArchiveMessages(
-    theCase: Case,
-    user: TUser,
-    archiveCaseFilesRecords: boolean,
-  ): CaseMessage[] {
-    const messages: CaseMessage[] =
-      theCase.caseFiles
-        ?.filter((caseFile) => caseFile.key)
-        .map((caseFile) => ({
-          type: MessageType.ARCHIVING_CASE_FILE,
-          user,
-          caseId: theCase.id,
-          elementId: caseFile.id,
-        })) ?? []
-
-    if (archiveCaseFilesRecords) {
-      const caseFilesRecordMessages =
-        theCase.policeCaseNumbers?.map((policeCaseNumber) => ({
-          type: MessageType.ARCHIVING_CASE_FILES_RECORD,
-          user,
-          caseId: theCase.id,
-          elementId: policeCaseNumber,
-        })) ?? []
-
-      messages.push(...caseFilesRecordMessages)
-    }
-
-    return messages
-  }
-
   private getDeliverAssignedRolesToCourtOfAppealsMessages(
     user: TUser,
     theCase: Case,
@@ -629,6 +608,21 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
+  private addMessagesForIndictmentCourtRoleAssigned(
+    theCase: Case,
+    user: TUser,
+    assignedNationalId: string,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue([
+      {
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES,
+        user,
+        caseId: theCase.id,
+        elementId: assignedNationalId,
+      },
+    ])
+  }
+
   private addMessagesForCourtCaseConnectionToQueue(
     theCase: Case,
     user: TUser,
@@ -659,13 +653,8 @@ export class CaseService {
       }))
 
     const caseFilesCategories = isTrafficViolationCase(theCase)
-      ? [
-          CaseFileCategory.COVER_LETTER,
-          CaseFileCategory.CRIMINAL_RECORD,
-          CaseFileCategory.COST_BREAKDOWN,
-        ]
+      ? [CaseFileCategory.CRIMINAL_RECORD, CaseFileCategory.COST_BREAKDOWN]
       : [
-          CaseFileCategory.COVER_LETTER,
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
@@ -803,21 +792,24 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getIndictmentArchiveMessages(theCase, user, true).concat([
-        {
-          type: MessageType.NOTIFICATION,
-          user,
-          caseId: theCase.id,
-          body: { type: NotificationType.RULING },
-        },
-        {
-          type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
-          user,
-          caseId: theCase.id,
-        },
-      ]),
-    )
+    const messages: CaseMessage[] = [
+      {
+        type: MessageType.NOTIFICATION,
+        user,
+        caseId: theCase.id,
+        body: { type: NotificationType.RULING },
+      },
+    ]
+
+    if (theCase.origin === CaseOrigin.LOKE) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_POLICE_INDICTMENT_CASE,
+        user,
+        caseId: theCase.id,
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private addMessagesForModifiedCaseToQueue(
@@ -844,12 +836,8 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private addMessagesForDeletedCaseToQueue(
-    theCase: Case,
-    user: TUser,
-    previousState: CaseState,
-  ): Promise<void> {
-    const messages: CaseMessage[] = [
+  private getRevokeMessages(user: TUser, theCase: Case): CaseMessage[] {
+    return [
       {
         type: MessageType.NOTIFICATION,
         user,
@@ -857,19 +845,24 @@ export class CaseService {
         body: { type: NotificationType.REVOKED },
       },
     ]
+  }
 
-    // Indictment cases need some case file cleanup
-    if (isIndictmentCase(theCase.type)) {
-      messages.push(
-        ...this.getIndictmentArchiveMessages(
-          theCase,
-          user,
-          previousState === CaseState.RECEIVED,
-        ),
-      )
-    }
+  private addMessagesForDeletedCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue(
+      this.getRevokeMessages(user, theCase),
+    )
+  }
 
-    return this.messageService.sendMessagesToQueue(messages)
+  private addMessagesForRevokedIndictmentCaseToQueue(
+    theCase: Case,
+    user: TUser,
+  ): Promise<void> {
+    return this.messageService.sendMessagesToQueue(
+      this.getRevokeMessages(user, theCase),
+    )
   }
 
   private async addMessagesForAppealedCaseToQueue(
@@ -1098,6 +1091,7 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     const isIndictment = isIndictmentCase(updatedCase.type)
+
     if (updatedCase.state !== theCase.state) {
       // New case state
       if (
@@ -1107,17 +1101,17 @@ export class CaseService {
         // Only send messages if the case was in a SUBMITTED state - not when reopening a case
         await this.addMessagesForReceivedCaseToQueue(updatedCase, user)
       } else if (updatedCase.state === CaseState.DELETED) {
-        await this.addMessagesForDeletedCaseToQueue(
-          updatedCase,
-          user,
-          theCase.state,
-        )
+        if (!isIndictment) {
+          await this.addMessagesForDeletedCaseToQueue(updatedCase, user)
+        }
       } else if (isCompletedCase(updatedCase.state)) {
         if (isIndictment) {
-          await this.addMessagesForCompletedIndictmentCaseToQueue(
-            updatedCase,
-            user,
-          )
+          if (theCase.state !== CaseState.WAITING_FOR_CANCELLATION) {
+            await this.addMessagesForCompletedIndictmentCaseToQueue(
+              updatedCase,
+              user,
+            )
+          }
         } else {
           await this.addMessagesForCompletedCaseToQueue(updatedCase, user)
         }
@@ -1141,6 +1135,8 @@ export class CaseService {
           updatedCase,
           user,
         )
+      } else if (updatedCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+        await this.addMessagesForRevokedIndictmentCaseToQueue(updatedCase, user)
       }
     }
 
@@ -1200,6 +1196,30 @@ export class CaseService {
           // New defender email
           await this.addMessagesForDefenderEmailChangeToQueue(updatedCase, user)
         }
+      }
+    }
+
+    if (
+      isIndictmentCase(updatedCase.type) &&
+      ![
+        CaseState.DRAFT,
+        CaseState.SUBMITTED,
+        CaseState.WAITING_FOR_CONFIRMATION,
+      ].includes(updatedCase.state)
+    ) {
+      const updatedRole =
+        updatedCase.judge?.nationalId !== theCase.judge?.nationalId
+          ? updatedCase.judge
+          : updatedCase.registrar?.nationalId !== theCase.registrar?.nationalId
+          ? updatedCase.registrar
+          : null
+
+      if (updatedRole?.nationalId) {
+        await this.addMessagesForIndictmentCourtRoleAssigned(
+          updatedCase,
+          user,
+          updatedRole.nationalId,
+        )
       }
     }
 
@@ -1421,7 +1441,11 @@ export class CaseService {
     const receivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
     const returningIndictmentCase =
-      update.state === CaseState.DRAFT && theCase.state === CaseState.RECEIVED
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.DRAFT &&
+      theCase.state === CaseState.RECEIVED
+    const completingIndictmentCase =
+      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
 
     return this.sequelize
       .transaction(async (transaction) => {
@@ -1478,6 +1502,25 @@ export class CaseService {
           await this.fileService.resetIndictmentCaseFileHashes(
             theCase.id,
             transaction,
+          )
+        }
+
+        if (
+          completingIndictmentCase &&
+          theCase.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.FINE,
+            CaseIndictmentRulingDecision.CANCELLATION,
+          ].includes(theCase.indictmentRulingDecision)
+        ) {
+          await Promise.all(
+            theCase.caseFiles
+              ?.filter(
+                (caseFile) => caseFile.category === CaseFileCategory.RULING,
+              )
+              ?.map((caseFile) =>
+                this.fileService.deleteCaseFile(theCase, caseFile, transaction),
+              ) ?? [],
           )
         }
       })

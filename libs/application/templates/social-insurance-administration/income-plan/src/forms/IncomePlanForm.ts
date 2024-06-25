@@ -438,11 +438,18 @@ export const IncomePlanForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      multiFieldTitle: incomePlanFormMessage.conclusionScreen.receivedTitle,
-      alertTitle: incomePlanFormMessage.conclusionScreen.alertTitle,
-      alertMessage: '',
-      expandableDescription: incomePlanFormMessage.conclusionScreen.bulletList,
-      expandableIntro: '',
+      multiFieldTitle:
+        incomePlanFormMessage.conclusionScreen.receivedTitle,
+      alertTitle:
+        incomePlanFormMessage.conclusionScreen.alertTitle,
+      alertMessage:
+        '',
+      expandableDescription:
+        incomePlanFormMessage.conclusionScreen.bulletList,
+      expandableIntro:
+        '',
+      bottomButtonMessage: 
+        incomePlanFormMessage.conclusionScreen.bottomButtonMessage,   
     }),
   ],
 })

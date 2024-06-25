@@ -6,7 +6,6 @@ import { NotFoundException } from '@nestjs/common'
 import {
   CaseFileCategory,
   CaseFileState,
-  CaseState,
   CaseType,
   User,
 } from '@island.is/judicial-system/types'
@@ -68,13 +67,11 @@ describe('InternalFileController - Deliver case file to court', () => {
   describe('case file delivered', () => {
     const caseId = uuid()
     const caseType = CaseType.CUSTODY
-    const caseState = CaseState.RECEIVED
     const courtId = uuid()
     const courtCaseNumber = 'R-999/2021'
     const theCase = {
       id: caseId,
       type: caseType,
-      state: caseState,
       courtId,
       courtCaseNumber,
     } as Case
@@ -106,19 +103,11 @@ describe('InternalFileController - Deliver case file to court', () => {
     })
 
     it('should check if the file exists in AWS S3', () => {
-      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
-        caseType,
-        caseState,
-        key,
-      )
+      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(caseType, key)
     })
 
     it('should get the file from AWS S3', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        caseType,
-        caseState,
-        key,
-      )
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(caseType, key)
     })
 
     it('should upload the file to court', () => {
@@ -151,7 +140,6 @@ describe('InternalFileController - Deliver case file to court', () => {
     caseFileCategory                                          | courtDocumentFolder
     ${CaseFileCategory.COURT_RECORD}                          | ${CourtDocumentFolder.COURT_DOCUMENTS}
     ${CaseFileCategory.RULING}                                | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.COVER_LETTER}                          | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.INDICTMENT}                            | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.CRIMINAL_RECORD}                       | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.COST_BREAKDOWN}                        | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}

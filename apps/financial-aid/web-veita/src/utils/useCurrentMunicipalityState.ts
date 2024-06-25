@@ -36,6 +36,7 @@ const useCurrentMunicipalityState = ({ municipality }: Props) => {
           navUsername: state.navUsername,
           navPassword: state.navPassword,
           childrenAid: state.childrenAid,
+          decemberCompensation: state.decemberCompensation,
         },
       },
     })

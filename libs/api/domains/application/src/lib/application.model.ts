@@ -129,6 +129,9 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
 }
 
 @ObjectType()
@@ -153,6 +156,9 @@ export class ApplicationStatistics {
 
   @Field(() => Number)
   approved!: number
+
+  @Field(() => String)
+  name?: string
 }
 
 @ObjectType()

@@ -6,7 +6,6 @@ import { NotFoundException } from '@nestjs/common'
 import {
   CaseFileCategory,
   CaseFileState,
-  CaseState,
   CaseType,
   User,
 } from '@island.is/judicial-system/types'
@@ -70,7 +69,6 @@ describe('FileController - Upload case file to court', () => {
     const theCase = {
       id: caseId,
       type: CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-      state: CaseState.DISMISSED,
     } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
@@ -83,7 +81,6 @@ describe('FileController - Upload case file to court', () => {
     it('should check if the file exists in AWS S3', () => {
       expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
         theCase.type,
-        theCase.state,
         key,
       )
     })
@@ -93,8 +90,7 @@ describe('FileController - Upload case file to court', () => {
     const user = {} as User
     const caseId = uuid()
     const type = CaseType.INDICTMENT
-    const state = CaseState.REJECTED
-    const theCase = { id: caseId, type, state } as Case
+    const theCase = { id: caseId, type } as Case
     const fileId = uuid()
     const key = `${caseId}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
@@ -107,7 +103,7 @@ describe('FileController - Upload case file to court', () => {
     })
 
     it('should get the file from AWS S3', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(type, state, key)
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(type, key)
     })
   })
 
@@ -163,7 +159,6 @@ describe('FileController - Upload case file to court', () => {
     caseFileCategory                       | courtDocumentFolder
     ${CaseFileCategory.COURT_RECORD}       | ${CourtDocumentFolder.COURT_DOCUMENTS}
     ${CaseFileCategory.RULING}             | ${CourtDocumentFolder.COURT_DOCUMENTS}
-    ${CaseFileCategory.COVER_LETTER}       | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.INDICTMENT}         | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.CRIMINAL_RECORD}    | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}
     ${CaseFileCategory.COST_BREAKDOWN}     | ${CourtDocumentFolder.INDICTMENT_DOCUMENTS}

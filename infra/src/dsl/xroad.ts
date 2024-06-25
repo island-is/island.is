@@ -334,16 +334,6 @@ export const EHIC = new XroadConf({
   },
 })
 
-export const UniversityOfIceland = new XroadConf({
-  env: {
-    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
-      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
-      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
-      prod: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1',
-    },
-  },
-})
-
 export const UniversityCareers = new XroadConf({
   env: {
     XROAD_UNIVERSITY_OF_AKUREYRI_PATH: {
@@ -371,6 +361,11 @@ export const UniversityCareers = new XroadConf({
       staging: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1',
       prod: 'IS/EDU/4210984099/LHI-Protected/brautskraning-v1',
     },
+    XROAD_UNIVERSITY_OF_ICELAND_PATH: {
+      dev: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      staging: 'IS-DEV/EDU/10010/HI-Protected/brautskraning-v1',
+      prod: 'IS/EDU/6001692039/HI-Protected/brautskraning-v1',
+    },
   },
 })
 
@@ -379,12 +374,12 @@ export const Education = new XroadConf({
     XROAD_MMS_LICENSE_SERVICE_ID: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1',
       staging: 'IS-TEST/GOV/6601241280/MMS-Protected/license-api-v1',
-      prod: 'IS/EDU/5708150320/MMS-Protected/license-api-v1',
+      prod: 'IS/GOV/6601241280/MMS-Protected/license-api-v1',
     },
     XROAD_MMS_GRADE_SERVICE_ID: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1',
       staging: 'IS-TEST/GOV/6601241280/MMS-Protected/grade-api-v1',
-      prod: 'IS/EDU/5708150320/MMS-Protected/grade-api-v1',
+      prod: 'IS/GOV/6601241280/MMS-Protected/grade-api-v1',
     },
   },
 })
@@ -619,7 +614,7 @@ export const Inna = new XroadConf({
     XROAD_INNA_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1',
       staging: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1',
-      prod: 'IS/EDU/5708150320/MMS-Protected/inna-v1',
+      prod: 'IS/GOV/6601241280/MMS-Protected/inna-v1',
     },
   },
 })
@@ -881,6 +876,16 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
+    },
+  },
+})
+
+export const Frigg = new XroadConf({
+  env: {
+    XROAD_MMS_FRIGG_PATH: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      staging: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
     },
   },
 })

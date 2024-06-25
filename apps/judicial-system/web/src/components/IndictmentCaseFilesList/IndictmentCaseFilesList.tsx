@@ -71,9 +71,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
 
   const cf = workingCase.caseFiles
 
-  const coverLetters = cf?.filter(
-    (file) => file.category === CaseFileCategory.COVER_LETTER,
-  )
   const indictments = cf?.filter(
     (file) => file.category === CaseFileCategory.INDICTMENT,
   )
@@ -100,18 +97,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
   return (
     <>
       <SectionHeading title={formatMessage(strings.title)} />
-      {coverLetters && coverLetters.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.coverLetterSection)}
-          </Text>
-          <RenderFiles
-            caseFiles={coverLetters}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
-        </Box>
-      )}
       {indictments && indictments.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -204,40 +189,35 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
                 policeCaseNumber,
               })}
               pdfType={'caseFilesRecord'}
-              policeCaseNumber={policeCaseNumber}
+              elementId={policeCaseNumber}
               renderAs="row"
             />
           </Box>
         ))}
       </Box>
-      {isDistrictCourtUser(user) || isCompletedCase(workingCase.state) ? (
-        <>
+      {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
+      (courtRecords?.length || rulings?.length) ? (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(strings.rulingAndCourtRecordsTitle)}
+          </Text>
           {courtRecords && courtRecords.length > 0 && (
-            <Box marginBottom={5}>
-              <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(strings.courtRecordTitle)}
-              </Text>
-              <RenderFiles
-                caseFiles={courtRecords}
-                onOpenFile={onOpen}
-                workingCase={workingCase}
-              />
-            </Box>
+            <RenderFiles
+              caseFiles={courtRecords}
+              onOpenFile={onOpen}
+              workingCase={workingCase}
+            />
           )}
           {rulings && rulings.length > 0 && (
-            <Box marginBottom={5}>
-              <Text variant="h4" as="h4" marginBottom={1}>
-                {formatMessage(strings.rulingTitle)}
-              </Text>
-              <RenderFiles
-                caseFiles={rulings}
-                onOpenFile={onOpen}
-                workingCase={workingCase}
-              />
-            </Box>
+            <RenderFiles
+              caseFiles={rulings}
+              onOpenFile={onOpen}
+              workingCase={workingCase}
+            />
           )}
-        </>
+        </Box>
       ) : null}
+
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
