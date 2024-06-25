@@ -10,35 +10,54 @@ export const createWrappedFetchWithLogging = (
       .then(async (response) => {
         const body = init?.body ? JSON.parse(init?.body as string) : {}
 
-        const newInit = {
-          ...init,
-          body: {
-            ...body,
-            applicant: 'hidden',
-            otherParentId: '' ?? 'hidden',
-            email: 'hidden',
-            phoneNumber: 'hidden',
-            paymentInfo: {
-              ...body?.paymentInfo,
-              bankAccount: 'hidden',
-            },
-            attachments: body?.attachments?.length,
-          },
-        }
+        // Filter known sensitive data
+        // NOTE: Should only select what we need, not expand the entire object
+        init = init?.body
+          ? {
+              ...init,
+              body: {
+                ...body,
+                applicant: 'hidden',
+                otherParentId: '' ?? 'hidden',
+                email: 'hidden',
+                phoneNumber: 'hidden',
+                paymentInfo: {
+                  ...body?.paymentInfo,
+                  bankAccount: 'hidden',
+                },
+                attachments: body?.attachments?.length,
+              },
+            }
+          : init
         if (response.ok) {
           logger.info(
             `vmst-module.success: input - ${JSON.stringify(
               input,
-            )}, init - ${JSON.stringify(init?.body ? newInit : init)}`,
+            )}, init - ${JSON.stringify(init)}`,
+            {
+              vmst_module: {
+                success: true,
+              },
+              input, // Should filter what we know we want
+              init, // Should filter what we know we want
+            },
           )
         } else {
           const body = await response.json()
           logger.error(
             `vmst-module.error: input - ${JSON.stringify(
               input,
-            )}, init - ${JSON.stringify(newInit)}, response - ${JSON.stringify(
+            )}, init - ${JSON.stringify(init)}, response - ${JSON.stringify(
               body,
             )} status text: ${response.statusText}`,
+            {
+              vmst_module: {
+                success: false,
+                error: true,
+              },
+              input, // Should filter what we know we want
+              init, // Should filter what we know we want
+            },
           )
           return reject(body)
         }
