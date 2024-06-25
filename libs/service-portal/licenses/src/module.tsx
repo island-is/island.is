@@ -6,11 +6,11 @@ import { LicensePaths } from './lib/paths'
 import { defineMessage } from 'react-intl'
 import { translationLoader } from './screens/Translation.loader'
 
-const LicensesOverview = lazy(
-  () => import('./screens/LicensesOverview/LicensesOverview'),
+const LicensesOverview = lazy(() =>
+  import('./screens/LicensesOverview/LicensesOverview'),
 )
-const LicenseDetail = lazy(
-  () => import('./screens/LicenseDetail/LicenseDetailV2'),
+const LicenseDetail = lazy(() =>
+  import('./screens/LicenseDetail/LicenseDetailV2'),
 )
 
 export const licensesModule: PortalModule = {
