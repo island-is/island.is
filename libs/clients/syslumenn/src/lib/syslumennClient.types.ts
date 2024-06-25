@@ -354,6 +354,18 @@ export interface MasterLicence {
   dateOfPublication?: Date
   profession?: string
   office?: string
+  nationalId?: string
+}
+
+export interface JourneymanLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+}
+
+export interface ProfessionRight {
+  name?: string
+  profession?: string
 }
 
 export interface VehicleRegistration {
