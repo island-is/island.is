@@ -36,7 +36,13 @@ export const EducationDetail = () => {
     },
   })
 
+  const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date('01.01.2020')
+
   const license = data?.occupationalLicensesEducationalLicense?.items[0]
+
+  const isOldEducationLicense =
+    license?.__typename === 'OccupationalLicensesEducationalLicense' &&
+    new Date(license.validFrom) < EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF
 
   const downloadUrl =
     license?.__typename === 'OccupationalLicensesEducationalLicense'
@@ -91,6 +97,7 @@ export const EducationDetail = () => {
           </Box>
         ) : undefined
       }
+      isOldEducationLicense={isOldEducationLicense}
       name={user.profile.name}
       dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={programme}
