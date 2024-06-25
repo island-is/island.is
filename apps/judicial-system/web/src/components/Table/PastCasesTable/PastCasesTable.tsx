@@ -46,8 +46,7 @@ interface Props {
   testid?: string
 }
 
-const PastCasesTable: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { cases, loading = false, testid } = props
+const PastCasesTable: FC<Props> = ({ cases, loading = false, testid }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
