@@ -977,4 +977,9 @@ export const messages = defineMessages({
     id: 'sp.health:organ-registration-other-text',
     defaultMessage: 'Vinsamlegast skráðu hvaða líffæri hér',
   },
+  organLimitationsError: {
+    id: 'sp.health:organ-limitations-error',
+    defaultMessage:
+      'Textareitur má ekki vera tómur sé þessi valkostur valinn. ',
+  },
 })
