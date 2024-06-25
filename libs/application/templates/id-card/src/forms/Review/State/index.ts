@@ -7,7 +7,6 @@ import {
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import { state } from '../../../lib/messages'
-// import { GetFormattedText } from '../../../utils'
 
 export const StateSection = buildSection({
   id: 'reviewState',
@@ -49,21 +48,15 @@ export const StateSection = buildSection({
               `${Routes.APPLICANTSINFORMATION}.name`,
               '',
             ) as string
-            // const heading = GetFormattedText(state.labels.actionCardTitle)
-            // const description = GetFormattedText(
-            //   state.labels.actionCardDescription,
-            // )
-            // const label = GetFormattedText(state.labels.actionCardTag)
-            // TODO get a different way of rendering translation text
             return [
               {
-                heading: state.labels.actionCardTitle.defaultMessage,
+                heading: state.labels.actionCardTitle,
                 tag: {
-                  label: state.labels.actionCardTag.defaultMessage,
+                  label: state.labels.actionCardTag,
                   outlined: false,
                   variant: 'purple',
                 },
-                text: `${state.labels.actionCardDescription.defaultMessage} ${chosenApplicantName}`,
+                text: `${state.labels.actionCardDescription} ${chosenApplicantName}`,
               },
             ]
           },

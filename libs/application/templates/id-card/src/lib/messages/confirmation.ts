@@ -59,7 +59,7 @@ export const reviewConfirmation = {
       description: 'Review confirmation first information message',
     },
     infoMessageText2: {
-      id: 'id.application:reviewConfirmation.general.infoMessageText1',
+      id: 'id.application:reviewConfirmation.general.infoMessageText2',
       defaultMessage:
         'Athugaðu að eftir að báðir forsjáraðilar hafa samþykkt umsókn er hún opin í 60 daga inni á island.is - að þeim tíma liðnum þarf að sækja um endurgreiðslu ef ekki er mætt í myndatöku.',
       description: 'Review confirmation second information message',
