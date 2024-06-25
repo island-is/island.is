@@ -43,7 +43,7 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
-const PoliceCaseFiles: FC<React.PropsWithChildren<Props>> = ({
+const PoliceCaseFiles: FC<Props> = ({
   onUpload,
   policeCaseFileList,
   policeCaseFiles,

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext } from 'react'
+import React, { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -23,7 +23,7 @@ import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/va
 import SelectDefender from './SelectDefender'
 import { defender as m } from './Defender.strings'
 
-const HearingArrangements: FC<React.PropsWithChildren<unknown>> = () => {
+const HearingArrangements = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()

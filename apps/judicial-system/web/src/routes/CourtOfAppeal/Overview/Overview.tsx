@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -28,7 +28,7 @@ import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview
 import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 import { overview as strings } from './Overview.strings'
 
-const CourtOfAppealOverview: FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 

@@ -39,11 +39,12 @@ interface Props {
   loading?: boolean
 }
 
-export const DefenderCasesTable: FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+export const DefenderCasesTable: FC<Props> = ({
+  cases,
+  showingCompletedCases,
+  loading,
+}) => {
   const { formatMessage } = useIntl()
-  const { cases, showingCompletedCases, loading } = props
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('createdAt', 'descending', cases)
   const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =

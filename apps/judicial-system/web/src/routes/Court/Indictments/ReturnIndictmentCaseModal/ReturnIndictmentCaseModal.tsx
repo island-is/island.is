@@ -23,7 +23,7 @@ interface Props {
   onComplete: () => void
 }
 
-const ReturnIndictmentModal: FC<React.PropsWithChildren<Props>> = ({
+const ReturnIndictmentModal: FC<Props> = ({
   workingCase,
   setWorkingCase,
   onClose,

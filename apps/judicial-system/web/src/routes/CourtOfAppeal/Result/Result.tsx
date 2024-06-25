@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertBanner, AlertMessage, Box, Text } from '@island.is/island-ui/core'
@@ -30,7 +30,7 @@ import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
 
-const CourtOfAppealResult: FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealResult = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [modalVisible, setModalVisible] = React.useState<modalTypes>('none')

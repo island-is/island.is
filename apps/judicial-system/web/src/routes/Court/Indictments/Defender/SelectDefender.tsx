@@ -22,8 +22,7 @@ interface Props {
   defendant: Defendant
 }
 
-const SelectDefender: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { defendant } = props
+const SelectDefender: FC<Props> = ({ defendant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()

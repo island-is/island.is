@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -32,7 +32,7 @@ import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-syste
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
-export const HearingArrangements: FC<React.PropsWithChildren<unknown>> = () => {
+export const HearingArrangements = () => {
   const {
     workingCase,
     setWorkingCase,
