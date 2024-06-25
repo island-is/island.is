@@ -27,8 +27,7 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const DefenderInfo: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase } = props
+const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)

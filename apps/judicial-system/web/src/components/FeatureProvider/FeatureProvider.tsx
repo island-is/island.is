@@ -17,7 +17,7 @@ const availableFeatures = Object.values(Feature)
 
 export const FeatureContext = createContext<FeatureProvider>({ features: [] })
 
-const FeatureProvider: FC<PropsWithChildren<unknown>> = ({ children }) => {
+const FeatureProvider: FC<PropsWithChildren> = ({ children }) => {
   const [features, setFeatures] = useState<Feature[]>([])
 
   useEffect(() => {

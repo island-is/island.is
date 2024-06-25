@@ -30,25 +30,24 @@ interface Props {
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    name,
-    datepickerLabel = 'Veldu dagsetningu',
-    datepickerPlaceholder = 'Veldu dagsetningu',
-    minDate,
-    maxDate,
-    selectedDate,
-    timeLabel,
-    disabled,
-    required = false,
-    blueBox = true,
-    locked = false,
-    backgroundColor = 'white',
-    size = 'md',
-    dateOnly = false,
-    defaultTime = '',
-    onChange,
-  } = props
+const DateTime: FC<Props> = ({
+  name,
+  datepickerLabel = 'Veldu dagsetningu',
+  datepickerPlaceholder = 'Veldu dagsetningu',
+  minDate,
+  maxDate,
+  selectedDate,
+  timeLabel,
+  disabled,
+  required = false,
+  blueBox = true,
+  locked = false,
+  backgroundColor = 'white',
+  size = 'md',
+  dateOnly = false,
+  defaultTime = '',
+  onChange,
+}) => {
   const { formatMessage } = useIntl()
 
   const getTimeFromDate = (date: Date | undefined): string =>

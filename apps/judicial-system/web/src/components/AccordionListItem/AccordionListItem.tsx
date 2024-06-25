@@ -7,23 +7,25 @@ interface AccordionListItemProps {
   breakSpaces?: boolean
 }
 
-const AccordionListItem: FC<PropsWithChildren<AccordionListItemProps>> = (
-  props,
-) => {
+const AccordionListItem: FC<PropsWithChildren<AccordionListItemProps>> = ({
+  title,
+  breakSpaces,
+  children,
+}) => {
   return (
     <>
       <Box marginBottom={1}>
         <Text variant="h5" as="h5">
-          {props.title}
+          {title}
         </Text>
       </Box>
       <Box marginBottom={3}>
-        {props.breakSpaces ? (
+        {breakSpaces ? (
           <Text as="span" whiteSpace="breakSpaces">
-            {props.children}
+            {children}
           </Text>
         ) : (
-          props.children
+          children
         )}
       </Box>
     </>

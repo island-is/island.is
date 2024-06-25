@@ -49,7 +49,7 @@ interface PropertyValidation {
 
 type InputType = 'defenderEmail' | 'defenderPhoneNumber'
 
-const DefenderInput: FC<React.PropsWithChildren<Props>> = ({
+const DefenderInput: FC<Props> = ({
   onDefenderNotFound,
   disabled,
   defendantId,

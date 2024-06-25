@@ -1,4 +1,10 @@
-import React, { FC, useContext, useEffect, useState } from 'react'
+import React, {
+  FC,
+  PropsWithChildren,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import getConfig from 'next/config'
 import Link from 'next/link'
@@ -36,7 +42,7 @@ import * as styles from './Header.css'
 
 const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
-const LogoIcon: FC<React.PropsWithChildren<unknown>> = () => (
+const LogoIcon = () => (
   <>
     <Hidden above="sm">
       <Logo width={40} iconOnly />
@@ -47,7 +53,7 @@ const LogoIcon: FC<React.PropsWithChildren<unknown>> = () => (
   </>
 )
 
-const Container: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
+const Container: FC<PropsWithChildren> = ({ children }) => {
   return (
     <Box paddingX={[3, 3, 4]}>
       <GridContainer className={styles.gridContainer}>
@@ -68,7 +74,7 @@ const Container: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   )
 }
 
-const HeaderContainer: FC<React.PropsWithChildren<unknown>> = () => {
+const HeaderContainer = () => {
   const { formatMessage } = useIntl()
   const { isAuthenticated, user } = useContext(UserContext)
   const [isRobot, setIsRobot] = useState<boolean>()
