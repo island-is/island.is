@@ -21231,13 +21231,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aria-query@npm:^5.1.3":	
-  version: 5.1.3	
-  resolution: "aria-query@npm:5.1.3"	
-  dependencies:	
-    deep-equal: ^2.0.5	
-  checksum: 929ff95f02857b650fb4cbcd2f41072eee2f46159a6605ea03bf63aa572e35ffdff43d69e815ddc462e16e07de8faba3978afc2813650b4448ee18c9895d982b	
-  languageName: node	
+"aria-query@npm:^5.1.3":
+  version: 5.1.3
+  resolution: "aria-query@npm:5.1.3"
+  dependencies:
+    deep-equal: ^2.0.5
+  checksum: 929ff95f02857b650fb4cbcd2f41072eee2f46159a6605ea03bf63aa572e35ffdff43d69e815ddc462e16e07de8faba3978afc2813650b4448ee18c9895d982b
+  languageName: node
   linkType: hard
 
 "arr-diff@npm:^4.0.0":
