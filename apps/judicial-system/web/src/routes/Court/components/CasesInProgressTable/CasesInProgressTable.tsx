@@ -145,18 +145,25 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                 { cell: (row) => <CreatedDate created={row.created} /> },
                 {
                   cell: (row) => (
-                    <TagCaseState caseState={row.state} isCourtRole={true} />
+                    <TagCaseState
+                      caseState={row.state}
+                      isCourtRole={true}
+                      courtDate={row.courtDate}
+                      indictmentDecision={row.indictmentDecision}
+                    />
                   ),
                 },
                 {
-                  cell: (row) => (
-                    <CourtDate
-                      courtDate={row.courtDate}
-                      postponedIndefinitelyExplanation={
-                        row.postponedIndefinitelyExplanation
-                      }
-                    />
-                  ),
+                  cell: (row) =>
+                    row.state === CaseState.WAITING_FOR_CANCELLATION ? null : (
+                      <CourtDate
+                        courtDate={row.courtDate}
+                        postponedIndefinitelyExplanation={
+                          row.postponedIndefinitelyExplanation
+                        }
+                        courtSessionType={row.courtSessionType}
+                      />
+                    ),
                 },
               ]}
               generateContextMenuItems={(row) => {

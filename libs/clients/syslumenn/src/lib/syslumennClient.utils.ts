@@ -26,6 +26,8 @@ import {
   ErfdafjarskatturSvar,
   DanarbuUpplErfdafjarskatt,
   EignirDanarbusErfdafjarskatt,
+  SveinsbrefModel,
+  StarfsrettindiModel,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -62,6 +64,8 @@ import {
   InheritanceEstateMember,
   InheritanceReportInfo,
   DebtTypes,
+  JourneymanLicence,
+  ProfessionRight,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -477,12 +481,33 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
     availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
   }
 }
+
 export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
   return {
     name: licence.nafn,
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
     office: licence.embaetti,
+    nationalId: licence.kennitala,
+  }
+}
+
+export const mapJourneymanLicence = (
+  licence: SveinsbrefModel,
+): JourneymanLicence => {
+  return {
+    name: licence.nafn,
+    dateOfPublication: licence.gildirFra,
+    profession: licence.idngrein,
+  }
+}
+
+export const mapProfessionRight = (
+  professionRight: StarfsrettindiModel,
+): ProfessionRight => {
+  return {
+    name: professionRight.nafn,
+    profession: professionRight.starfsrettindi,
   }
 }
 

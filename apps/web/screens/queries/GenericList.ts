@@ -23,6 +23,7 @@ export const GET_GENERIC_LIST_ITEMS_QUERY = gql`
           slug
         }
         slug
+        assetUrl
       }
       total
     }
