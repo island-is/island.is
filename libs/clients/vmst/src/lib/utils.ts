@@ -61,6 +61,7 @@ export const createWrappedFetchWithLogging = (
         })
 
         // Filter known sensitive data
+        // TODO: Should pick what we need instead
         requestBody = omit(requestBody, [
           'applicant',
           'otherParentId',
