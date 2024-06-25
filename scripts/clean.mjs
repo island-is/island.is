@@ -2,6 +2,7 @@
 
 import fs from 'fs'
 import path from 'path'
+import { execSync } from 'child_process'
 
 const config = {
   CLEAN_DRY: process.env.CLEAN_DRY === 'true' || false,
@@ -85,6 +86,15 @@ function parseArgs(args) {
   }
 }
 
+function isGitTracked(filePath) {
+  try {
+    execSync(`git ls-files --error-unmatch ${filePath}`, { stdio: 'ignore' })
+    return true
+  } catch {
+    return false
+  }
+}
+
 function cleanGenerated() {
   const patterns = [
     'openapi.yaml',
@@ -99,7 +109,7 @@ function cleanGenerated() {
   ]
 
   function findFiles(baseDir, pattern) {
-    const regex = new RegExp(pattern.replace(/\*/g, '.*'))
+    const regex = new RegExp('/' + pattern.replace(/\*/g, '.*'))
     const results = []
     function walkSync(currentDirPath) {
       if (currentDirPath.includes('node_modules')) {
@@ -122,11 +132,15 @@ function cleanGenerated() {
   ;['apps', 'libs'].forEach((baseDir) => {
     patterns.forEach((pattern) => {
       findFiles(baseDir, pattern).forEach((file) => {
-        if (dry(`Would delete: ${file}`)) {
-          log(`Would delete: ${file}`)
+        if (!isGitTracked(file)) {
+          if (dry(`Would delete: ${file}`)) {
+            log(`Would delete: ${file}`)
+          } else {
+            log(`Deleting now: ${file}`)
+            fs.unlinkSync(file)
+          }
         } else {
-          log(`Deleting now: ${file}`)
-          fs.unlinkSync(file)
+          log(`Skipping git-tracked file: ${file}`)
         }
       })
     })
