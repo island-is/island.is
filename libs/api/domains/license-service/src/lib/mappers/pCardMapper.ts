@@ -17,6 +17,7 @@ import { format } from 'kennitala'
 import { m } from '../messages'
 import { IntlService } from '@island.is/cms-translations'
 import { expiryTag } from '../utils/expiryTag'
+import { formatDate } from '../utils'
 
 @Injectable()
 export class PCardPayloadMapper implements GenericLicenseMapper {
@@ -62,14 +63,14 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
             ? {
                 type: GenericLicenseDataFieldType.Value,
                 label: formatMessage(m.publishedDate),
-                value: t.utgafudagur.toISOString(),
+                value: formatDate(t.utgafudagur),
               }
             : null,
           t.gildistimi
             ? {
                 type: GenericLicenseDataFieldType.Value,
                 label: formatMessage(m.validTo),
-                value: t.gildistimi.toISOString(),
+                value: formatDate(t.gildistimi),
               }
             : null,
           t.utgefandi
