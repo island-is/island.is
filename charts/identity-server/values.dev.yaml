@@ -281,6 +281,8 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -544,6 +546,8 @@ services-auth-ids-api-cleanup:
 services-auth-personal-representative:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
@@ -697,6 +701,8 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS-DEV/GOV/10006/Skatturinn/ft-v1'
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
