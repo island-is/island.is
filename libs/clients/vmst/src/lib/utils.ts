@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-fetch'
 import { logger } from '@island.is/logging'
 
+// A parental leave request body:
 type Init = {
   adoptionDate: string
   applicationId: string
@@ -51,7 +52,7 @@ export const createWrappedFetchWithLogging = (
     fetch(input, init)
       .then(async (response) => {
         let requestBody = init?.body ? JSON.parse(init?.body as string) : {}
-        const responseBody = await response.json()
+        let responseBody = await response.json()
 
         // Filter known sensitive data
         requestBody = {
@@ -75,25 +76,28 @@ export const createWrappedFetchWithLogging = (
             }),
           ),
         }
+        const { hasError, hasActivePregnancy, errocCode } = responseBody
+        responseBody = { hasError, hasActivePregnancy, errocCode }
+
         const vmstMetadata = {
           request: {
             body: requestBody,
           },
           response: {
             status_text: response.statusText,
-            responseBody,
+            body: responseBody,
           },
         }
 
         if (response.ok) {
-          logger.info(`Successfully fetched to VMST`, {
+          logger.info(`Successfully fetched from VMST`, {
             vmst: {
               ...vmstMetadata,
               success: true,
             },
           })
         } else {
-          logger.error(`Failed fetching to VMST`, {
+          logger.error(`Failed fetching from VMST`, {
             vmst: {
               ...vmstMetadata,
               success: false,
