@@ -25,6 +25,7 @@ import { contextMenu as contextMenuStrings } from '@island.is/judicial-system-we
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
+  CourtDate,
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { table as tableStrings } from '@island.is/judicial-system-web/src/components/Table/Table.strings'
@@ -334,33 +335,13 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.postponedIndefinitelyExplanation ? (
-                      <Text>{formatMessage(strings.postponed)}</Text>
-                    ) : (
-                      c.courtDate && (
-                        <>
-                          <Text>
-                            <Box
-                              component="span"
-                              className={styles.blockColumn}
-                            >
-                              {capitalize(
-                                format(
-                                  parseISO(c.courtDate),
-                                  'EEEE d. LLLL y',
-                                  {
-                                    locale: localeIS,
-                                  },
-                                ),
-                              ).replace('dagur', 'd.')}
-                            </Box>
-                          </Text>
-                          <Text as="span" variant="small">
-                            kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                          </Text>
-                        </>
-                      )
-                    )}
+                    <CourtDate
+                      courtDate={c.courtDate}
+                      postponedIndefinitelyExplanation={
+                        c.postponedIndefinitelyExplanation
+                      }
+                      courtSessionType={c.courtSessionType}
+                    />
                   </td>
                   <td className={styles.td}>
                     <AnimatePresence exitBeforeEnter initial={false}>
