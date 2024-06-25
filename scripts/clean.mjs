@@ -225,13 +225,19 @@ function cleanYarn() {
   }
 
   fs.readdirSync('.yarn').forEach((item) => {
+    const fullPath = path.join('.yarn', item)
     if (!config.CLEAN_YARN_IGNORES_LIST.includes(item)) {
-      const fullPath = path.join('.yarn', item)
+      const stat = fs.statSync(fullPath)
       if (dry(`Would delete: ${fullPath}`)) {
         log(`Would delete: ${fullPath}`)
       } else {
-        log(`Deleting now: ${fullPath}`)
-        fs.rmdirSync(fullPath, { recursive: true })
+        if (stat.isDirectory()) {
+          log(`Deleting directory now: ${fullPath}`)
+          fs.rmSync(fullPath, { recursive: true, force: true })
+        } else if (stat.isFile()) {
+          log(`Deleting file now: ${fullPath}`)
+          fs.unlinkSync(fullPath)
+        }
       }
     }
   })
