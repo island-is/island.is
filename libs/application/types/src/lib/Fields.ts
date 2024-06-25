@@ -99,7 +99,6 @@ export type TableRepeaterItem = {
         application: Application,
         activeField?: Record<string, string>,
       ) => boolean)
-  tooltip?: FormText
 } & (
   | {
       component: 'input'

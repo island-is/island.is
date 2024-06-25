@@ -187,3 +187,37 @@ export const incomePlanFormMessage: MessageDir = {
     },
   }),
 }
+
+export const inReviewFormMessages = defineMessages({
+  formTitle: {
+    id: 'ip.application:inReview.form.title',
+    defaultMessage: 'Tekjuáætlun',
+    description: 'Income plan',
+  },
+  description: {
+    id: 'ip.application:inReview.description',
+    defaultMessage: 'Tekjuáætlun þín hefur ekki verið tekin til vinnslu.',
+    description: 'Your income plan has not been processed.',
+  },
+})
+
+export const statesMessages = defineMessages({
+  externalDataSubmitButton: {
+    id: 'ip.application:external.data.submit.button',
+    defaultMessage: 'Stofna tekjuáætlun',
+    description: 'Create an income plan',
+  },
+  tryggingastofnunSubmittedTitle: {
+    id: 'ip.application:tryggingastofnunSubmittedTitle',
+    defaultMessage: 'Tekjuáætlun hefur verið send til Tryggingastofnunnar',
+    description:
+      'Income plan has been sent to the Social Insurance Administration',
+  },
+  tryggingastofnunSubmittedContent: {
+    id: 'ip.application:tryggingastofnunSubmittedContent',
+    defaultMessage:
+      'Tekjuáætlunin þín er í bið eftir yfirferð. Hægt er að breyta tekjuáætlun þar til hún er komin í yfirferð.',
+    description:
+      'Your income plan is awaiting review. It is possible to edit the income plan until it is under review.',
+  },
+})

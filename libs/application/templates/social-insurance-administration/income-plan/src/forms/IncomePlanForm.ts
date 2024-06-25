@@ -1,13 +1,14 @@
 import {
+  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildMultiField,
   buildSection,
   buildSubSection,
+  buildSubmitField,
   buildTableRepeaterField,
-  buildTextField,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { incomePlanFormMessage } from '../lib/messages'
@@ -396,6 +397,41 @@ export const IncomePlanForm: Form = buildForm({
                     value && formatCurrencyWithoutSuffix(value),
                 },
               },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'confirm',
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
+      children: [
+        buildMultiField({
+          id: 'confirm',
+          title: '',
+          description: '',
+          children: [
+            buildCustomField(
+              {
+                id: 'confirmScreen',
+                title: '',
+                component: 'Review',
+              },
+              {
+                editable: true,
+              },
+            ),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: socialInsuranceAdministrationMessage.confirm.submitButton,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: incomePlanFormMessage.confirm.title,
+                  type: 'primary',
+                },
+              ],
             }),
           ],
         }),

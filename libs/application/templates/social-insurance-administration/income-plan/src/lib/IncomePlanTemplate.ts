@@ -14,11 +14,15 @@ import {
 import {
   EphemeralStateLifeCycle,
   DefaultStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
-import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { incomePlanFormMessage } from './messages'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  socialInsuranceAdministrationMessage,
+  statesMessages as coreSIAStatesMessages,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { statesMessages } from '../lib/messages'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -28,6 +32,11 @@ import {
 import { assign } from 'xstate'
 import { getApplicationExternalData } from './incomePlanUtils'
 import { set } from 'lodash'
+import {
+  Events,
+  Roles,
+  States,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -40,12 +49,12 @@ const IncomePlanTemplate: ApplicationTemplate<
   translationNamespaces: [ApplicationConfigurations.IncomePlan.translation],
   dataSchema,
   stateMachineConfig: {
-    initial: States.PREREQUESITES,
+    initial: States.PREREQUISITES,
     states: {
-      [States.PREREQUESITES]: {
+      [States.PREREQUISITES]: {
         exit: ['setWithholdingTaxInTable'],
         meta: {
-          name: States.PREREQUESITES,
+          name: States.PREREQUISITES,
           status: 'draft',
           lifecycle: EphemeralStateLifeCycle,
           roles: [
@@ -58,7 +67,7 @@ const IncomePlanTemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Hefja umsókn',
+                  name: statesMessages.externalDataSubmitButton,
                   type: 'primary',
                 },
               ],
@@ -88,6 +97,11 @@ const IncomePlanTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.inProgressTag,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -107,9 +121,64 @@ const IncomePlanTemplate: ApplicationTemplate<
             },
           ],
         },
-        // on: {
-        //   SUBMIT: [],
-        // },
+        on: {
+          SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+        },
+      },
+      [States.TRYGGINGASTOFNUN_SUBMITTED]: {
+        meta: {
+          name: States.TRYGGINGASTOFNUN_SUBMITTED,
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(365),
+          actionCard: {
+            tag: {
+              label: coreSIAStatesMessages.pendingTag,
+            },
+            pendingAction: {
+              title: statesMessages.tryggingastofnunSubmittedTitle,
+              content: statesMessages.tryggingastofnunSubmittedContent,
+              displayStatus: 'info',
+            },
+            historyLogs: [
+              {
+                onEvent: DefaultEvents.EDIT,
+                logMessage: coreSIAStatesMessages.applicationEdited,
+              },
+            ],
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.EDIT,
+                  name: incomePlanFormMessage.confirm.buttonEdit,
+                  type: 'primary',
+                },
+              ],
+              read: 'all',
+              write: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.EDIT]: { target: States.DRAFT },
+          // INREVIEW: {
+          //   target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          // },
+        },
       },
     },
   },

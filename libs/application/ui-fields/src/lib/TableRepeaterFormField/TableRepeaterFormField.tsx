@@ -242,7 +242,6 @@ export const TableRepeaterFormField: FC<Props> = ({
                     width = 'full',
                     condition,
                     readonly = false,
-                    tooltip,
                     ...props
                   } = item
                   const isHalfColumn = component !== 'radio' && width === 'half'

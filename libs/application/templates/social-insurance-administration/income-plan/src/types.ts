@@ -28,3 +28,9 @@ interface withholdingTaxIncomeType {
   december?: number | null
   total?: number | null
 }
+
+export interface incomePlanRow {
+  incomeTypes: string
+  incomePerYear: string
+  currency: string
+}
