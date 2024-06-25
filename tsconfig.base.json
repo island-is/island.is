@@ -481,8 +481,8 @@
       "@island.is/application/templates/reference-template": [
         "libs/application/templates/reference-template/src/index.ts"
       ],
-      "@island.is/application/templates/signature-collection/signature-list-creation": [
-        "libs/application/templates/signature-collection/signature-list-creation/src/index.ts"
+      "@island.is/application/templates/signature-collection/presidential-list-creation": [
+        "libs/application/templates/signature-collection/presidential-list-creation/src/index.ts"
       ],
       "@island.is/application/templates/signature-collection/presidential-list-signing": [
         "libs/application/templates/signature-collection/presidential-list-signing/src/index.ts"
