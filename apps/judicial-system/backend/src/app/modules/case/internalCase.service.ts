@@ -1205,6 +1205,7 @@ export class InternalCaseService {
         { model: Institution, as: 'prosecutorsOffice' },
         { model: User, as: 'judge' },
         { model: User, as: 'prosecutor' },
+        { model: DateLog, as: 'dateLogs' },
       ],
       attributes: ['courtCaseNumber', 'id'],
       where: {
