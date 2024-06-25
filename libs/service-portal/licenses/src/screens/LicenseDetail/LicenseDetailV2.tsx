@@ -104,7 +104,7 @@ const DataFields = ({
                                   <Icon
                                     icon={
                                       field.tag.icon ===
-                                      GenericUserLicenseDataFieldTagType.closedCheckmark
+                                      GenericUserLicenseDataFieldTagType.closeCircle
                                         ? 'closeCircle'
                                         : 'checkmarkCircle'
                                     }
