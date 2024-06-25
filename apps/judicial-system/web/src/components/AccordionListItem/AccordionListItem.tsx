@@ -1,4 +1,4 @@
-import React, { PropsWithChildren } from 'react'
+import React, { FC, PropsWithChildren } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
@@ -7,9 +7,9 @@ interface AccordionListItemProps {
   breakSpaces?: boolean
 }
 
-const AccordionListItem: React.FC<
-  React.PropsWithChildren<AccordionListItemProps>
-> = (props: PropsWithChildren<AccordionListItemProps>) => {
+const AccordionListItem: FC<PropsWithChildren<AccordionListItemProps>> = (
+  props: PropsWithChildren<AccordionListItemProps>,
+) => {
   return (
     <>
       <Box marginBottom={1}>
