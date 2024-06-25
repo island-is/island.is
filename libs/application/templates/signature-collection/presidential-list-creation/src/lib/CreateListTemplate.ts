@@ -11,7 +11,6 @@ import {
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
@@ -29,10 +28,9 @@ const CreateListTemplate: ApplicationTemplate<
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.SIGNATURE_LIST_CREATION,
+  type: ApplicationTypes.PRESIDENTIAL_LIST_CREATION,
   name: m.applicationName,
   institution: m.institution,
-  featureFlag: Features.signatureListCreation,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
