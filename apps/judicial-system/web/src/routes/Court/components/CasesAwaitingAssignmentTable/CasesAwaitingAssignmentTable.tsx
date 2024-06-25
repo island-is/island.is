@@ -89,7 +89,11 @@ const CasesAwaitingAssignmentTable: React.FC<
                 },
                 {
                   cell: (row) => (
-                    <TagCaseState caseState={row.state} isCourtRole={true} />
+                    <TagCaseState
+                      caseState={row.state}
+                      isCourtRole={true}
+                      indictmentDecision={row.indictmentDecision}
+                    />
                   ),
                 },
               ]}

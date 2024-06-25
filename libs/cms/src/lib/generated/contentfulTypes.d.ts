@@ -1596,6 +1596,9 @@ export interface IGenericListItemFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Asset */
+  asset?: Asset | undefined
 }
 
 /** An item that belongs to a generic list */
