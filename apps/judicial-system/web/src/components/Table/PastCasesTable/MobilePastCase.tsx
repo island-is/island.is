@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'

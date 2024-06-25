@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 
 import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 

@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { motion } from 'framer-motion'
 
 import { AlertMessage } from '@island.is/island-ui/core'

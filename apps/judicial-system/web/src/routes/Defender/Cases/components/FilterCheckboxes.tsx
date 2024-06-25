@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'

@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import RequestRulingSignatureModal from './RequestRulingSignatureModal'
