@@ -154,14 +154,16 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
                   ),
                 },
                 {
-                  cell: (row) => (
-                    <CourtDate
-                      courtDate={row.courtDate}
-                      postponedIndefinitelyExplanation={
-                        row.postponedIndefinitelyExplanation
-                      }
-                    />
-                  ),
+                  cell: (row) =>
+                    row.state === CaseState.WAITING_FOR_CANCELLATION ? null : (
+                      <CourtDate
+                        courtDate={row.courtDate}
+                        postponedIndefinitelyExplanation={
+                          row.postponedIndefinitelyExplanation
+                        }
+                        courtSessionType={row.courtSessionType}
+                      />
+                    ),
                 },
               ]}
               generateContextMenuItems={(row) => {

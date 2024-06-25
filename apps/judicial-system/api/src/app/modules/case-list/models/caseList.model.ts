@@ -8,6 +8,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
 } from '@island.is/judicial-system/types'
@@ -128,4 +129,7 @@ export class CaseListEntry {
 
   @Field(() => CaseIndictmentRulingDecision, { nullable: true })
   readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @Field(() => CourtSessionType, { nullable: true })
+  readonly courtSessionType?: CourtSessionType
 }
