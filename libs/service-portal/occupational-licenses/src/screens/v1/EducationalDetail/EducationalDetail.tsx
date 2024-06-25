@@ -19,6 +19,8 @@ type UseParams = {
   id: string
 }
 
+const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date('01.01.2020')
+
 export const EducationDetail = () => {
   const { id } = useParams() as UseParams
   useNamespaces('sp.occupational-licenses')
@@ -36,12 +38,11 @@ export const EducationDetail = () => {
     },
   })
 
-  const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date('01.01.2020')
-
   const license = data?.occupationalLicensesEducationalLicense?.items[0]
 
   const isOldEducationLicense =
     license?.__typename === 'OccupationalLicensesEducationalLicense' &&
+    !!license.validFrom &&
     new Date(license.validFrom) < EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF
 
   const downloadUrl =
