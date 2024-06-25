@@ -14,12 +14,13 @@ import { LicenseDetail } from '../../../components/LicenseDetail'
 import { useEffect, useState } from 'react'
 import { m } from '@island.is/service-portal/core'
 import { olMessage as om } from '../../../lib/messages'
+import isBefore from 'date-fns/isBefore'
 
 type UseParams = {
   id: string
 }
 
-const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date('01.01.2020')
+const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date(2020, 0, 1)
 
 export const EducationDetail = () => {
   const { id } = useParams() as UseParams
@@ -43,7 +44,10 @@ export const EducationDetail = () => {
   const isOldEducationLicense =
     license?.__typename === 'OccupationalLicensesEducationalLicense' &&
     !!license.validFrom &&
-    new Date(license.validFrom) < EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF
+    isBefore(
+      new Date(license.validFrom),
+      EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF,
+    )
 
   const downloadUrl =
     license?.__typename === 'OccupationalLicensesEducationalLicense'
