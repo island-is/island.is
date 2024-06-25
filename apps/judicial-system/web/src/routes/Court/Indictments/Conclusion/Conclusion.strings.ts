@@ -127,4 +127,16 @@ export const strings = defineMessages({
     defaultMessage: 'Staðfesta',
     description: 'Notaður sem texti á halda áfram takka.',
   },
+  courtSessionLabel: {
+    id: 'judicial.system.core:court.indictments.conclusion.court_session_label',
+    defaultMessage: 'Tegund þinghalds',
+    description:
+      'Notaður sem titill á tegund þinghalds valkosti á Niðurstaða skrefi.',
+  },
+  courtSessionPlaceholder: {
+    id: 'judicial.system.core:court.indictments.conclusion.court_session_placeholder',
+    defaultMessage: 'Veldu tegund þinghalds',
+    description:
+      'Notaður sem skýritexti í tegund þinghalds valkosti á Niðurstaða skrefi.',
+  },
 })
