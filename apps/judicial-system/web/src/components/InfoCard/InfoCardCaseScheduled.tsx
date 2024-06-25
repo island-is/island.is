@@ -12,17 +12,18 @@ interface Props {
   court: Institution
   courtDate: string
   courtRoom?: string | null
+  title?: string | null
 }
 
 const InfoCardCaseScheduled: React.FC<Props> = (props) => {
-  const { court, courtDate, courtRoom } = props
+  const { court, courtDate, courtRoom, title } = props
   const { formatMessage } = useIntl()
 
   return (
     <InfoCard
       data={[
         {
-          title: formatMessage(strings.scheduled),
+          title: title ?? formatMessage(strings.scheduled),
           value: (
             <>
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>

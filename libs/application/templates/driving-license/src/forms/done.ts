@@ -24,6 +24,8 @@ export const done: Form = buildForm({
       expandableDescription: ({ answers, externalData }) =>
         answers.applicationFor === B_TEMP
           ? m.nextStepsDescription
+          : answers.applicationFor === BE
+          ? m.nextStepsDescriptionBEFull
           : needsHealthCertificateCondition(YES)(answers, externalData)
           ? m.nextStepsDescriptionBFull
           : '',
