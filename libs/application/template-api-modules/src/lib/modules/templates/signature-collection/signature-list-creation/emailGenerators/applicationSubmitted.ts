@@ -1,5 +1,5 @@
 import { EmailTemplateGenerator } from '../../../../../types'
-import { CreateListSchema } from '@island.is/application/templates/signature-collection/signature-list-creation'
+import { CreateListSchema } from '@island.is/application/templates/signature-collection/presidential-list-creation'
 import { OwnerInput } from '@island.is/clients/signature-collection'
 import { SignatureCollection } from '../types'
 import { Message, Body } from '@island.is/email-service'

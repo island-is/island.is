@@ -32,6 +32,7 @@ export interface DefaultHeaderProps {
   imageObjectPosition?: 'left' | 'center' | 'right'
   className?: string
   logoAltText?: string
+  isSubpage?: boolean
 }
 
 export const DefaultHeader: React.FC<
@@ -54,6 +55,7 @@ export const DefaultHeader: React.FC<
   className,
   logoAltText,
   titleSectionPaddingLeft,
+  isSubpage,
 }) => {
   const { width } = useWindowSize()
   const imageProvided = !!image
@@ -70,11 +72,17 @@ export const DefaultHeader: React.FC<
     <>
       {logoProvided && (
         <Hidden below="lg">
-          <div className={styles.contentContainer}>
+          <div
+            className={cn(styles.contentContainer, {
+              [styles.contentContainerSubpage]: isSubpage,
+            })}
+          >
             <div className={styles.innerContentContainer}>
               <LinkWrapper href={logoHref as string}>
                 <Box
-                  className={styles.logoContainer}
+                  className={cn(styles.logoContainer, {
+                    [styles.logoContainerSubpage]: isSubpage,
+                  })}
                   borderRadius="circle"
                   background="white"
                 >
@@ -95,12 +103,15 @@ export const DefaultHeader: React.FC<
           className={cn(
             {
               [styles.gridContainer]: !className,
+              [styles.gridContainerSubpage]: isSubpage,
             },
             className,
           )}
         >
           <div
-            className={styles.textContainer}
+            className={cn(styles.textContainer, {
+              [styles.textContainerSubpage]: isSubpage,
+            })}
             style={
               !logoProvided
                 ? {
@@ -111,17 +122,23 @@ export const DefaultHeader: React.FC<
                 : {}
             }
           >
-            <div className={styles.textInnerContainer}>
+            <div
+              className={cn(styles.textInnerContainer, {
+                [styles.textInnerContainerSubpage]: isSubpage,
+              })}
+            >
               {logoProvided && (
                 <Hidden above="md">
                   <LinkWrapper href={logoHref as string}>
                     <Box
-                      className={styles.logoContainerMobile}
+                      className={cn(styles.logoContainerMobile, {
+                        [styles.logoContainerMobileSubpage]: isSubpage,
+                      })}
                       borderRadius="circle"
                       background="white"
                     >
                       <img
-                        className={styles.logo}
+                        className={isSubpage ? styles.logoSubpage : styles.logo}
                         src={logo}
                         alt={logoAltText}
                       />
@@ -131,10 +148,12 @@ export const DefaultHeader: React.FC<
               )}
               <Box
                 className={styles.title}
-                paddingLeft={!isMobile ? titleSectionPaddingLeft : 0}
+                paddingLeft={
+                  !isMobile ? titleSectionPaddingLeft : isSubpage ? 2 : 0
+                }
               >
                 <Text
-                  variant="h1"
+                  variant={isSubpage && isMobile ? 'h4' : 'h2'}
                   as="h1"
                   color={!customTitleColor ? titleColor : undefined}
                 >
@@ -153,7 +172,7 @@ export const DefaultHeader: React.FC<
               </Box>
             </div>
           </div>
-          {imageProvided && (
+          {imageProvided && !isSubpage && (
             <Hidden below="lg">
               <img
                 style={{
