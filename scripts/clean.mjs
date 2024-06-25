@@ -46,7 +46,7 @@ function parseArgs(args) {
     process.exit(0)
   }
 
-  for (const arg of args) {
+  args.forEach((arg) => {
     switch (arg) {
       case '--generated':
         config.CLEAN_GENERATED = true
@@ -76,7 +76,7 @@ function parseArgs(args) {
         showHelp()
         process.exit(1)
     }
-  }
+  })
 
   if (config.CLEAN_ALL) {
     config.CLEAN_GENERATED = true
@@ -95,6 +95,41 @@ function isGitTracked(filePath) {
   }
 }
 
+function findAndDeleteFiles(baseDir, patterns) {
+  const regexPatterns = patterns.map(
+    (pattern) => new RegExp('/' + pattern.replace(/\*/g, '.*')),
+  )
+
+  function walkSync(currentDirPath) {
+    if (currentDirPath.includes('node_modules')) {
+      return
+    }
+    fs.readdirSync(currentDirPath).forEach((name) => {
+      const filePath = path.join(currentDirPath, name)
+      const stat = fs.statSync(filePath)
+      if (
+        stat.isFile() &&
+        regexPatterns.some((regex) => regex.test(filePath))
+      ) {
+        if (!isGitTracked(filePath)) {
+          if (dry(`Would delete: ${filePath}`)) {
+            log(`Would delete: ${filePath}`)
+          } else {
+            log(`Deleting now: ${filePath}`)
+            fs.unlinkSync(filePath)
+          }
+        } else {
+          log(`Skipping git-tracked file: ${filePath}`)
+        }
+      } else if (stat.isDirectory()) {
+        walkSync(filePath)
+      }
+    })
+  }
+
+  walkSync(baseDir)
+}
+
 function cleanGenerated() {
   const patterns = [
     'openapi.yaml',
@@ -108,46 +143,13 @@ function cleanGenerated() {
     'fragmentTypes.json',
   ]
 
-  function findFiles(baseDir, pattern) {
-    const regex = new RegExp('/' + pattern.replace(/\*/g, '.*'))
-    const results = []
-    function walkSync(currentDirPath) {
-      if (currentDirPath.includes('node_modules')) {
-        return
-      }
-      fs.readdirSync(currentDirPath).forEach((name) => {
-        const filePath = path.join(currentDirPath, name)
-        const stat = fs.statSync(filePath)
-        if (stat.isFile() && regex.test(filePath)) {
-          results.push(filePath)
-        } else if (stat.isDirectory()) {
-          walkSync(filePath)
-        }
-      })
-    }
-    walkSync(baseDir)
-    return results
-  }
-
   ;['apps', 'libs'].forEach((baseDir) => {
-    patterns.forEach((pattern) => {
-      findFiles(baseDir, pattern).forEach((file) => {
-        if (!isGitTracked(file)) {
-          if (dry(`Would delete: ${file}`)) {
-            log(`Would delete: ${file}`)
-          } else {
-            log(`Deleting now: ${file}`)
-            fs.unlinkSync(file)
-          }
-        } else {
-          log(`Skipping git-tracked file: ${file}`)
-        }
-      })
-    })
+    findAndDeleteFiles(baseDir, patterns)
   })
 
   const dirsToDelete = 'gen/fetch'
-  function findDirsToDelete(baseDir) {
+
+  function findAndDeleteDirs(baseDir) {
     fs.readdirSync(baseDir).forEach((name) => {
       const dirPath = path.join(baseDir, name)
       const stat = fs.statSync(dirPath)
@@ -159,15 +161,19 @@ function cleanGenerated() {
           log(`Would delete directory: ${dirPath}`)
         } else {
           log(`Deleting directory now: ${dirPath}`)
-          fs.rmdirSync(dirPath, { recursive: true })
+          fs.rmSync(dirPath, { recursive: true, force: true })
         }
       } else if (stat.isDirectory()) {
-        findDirsToDelete(dirPath)
+        findAndDeleteDirs(dirPath)
       }
     })
   }
 
-  ;['apps', 'libs'].forEach((baseDir) => findDirsToDelete(baseDir))
+  ;['apps', 'libs'].forEach((baseDir) => {
+    if (fs.existsSync(baseDir)) {
+      findAndDeleteDirs(baseDir)
+    }
+  })
 }
 
 function cleanCaches() {
