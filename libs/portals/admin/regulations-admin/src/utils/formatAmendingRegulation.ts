@@ -247,7 +247,6 @@ export const formatAmendingRegBody = (
           testGroup.isAddition = false
           if (isArticleTitle) {
             // Title was changed
-            console.log('newText', newText)
             pushHtml =
               `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isParagraph) {
