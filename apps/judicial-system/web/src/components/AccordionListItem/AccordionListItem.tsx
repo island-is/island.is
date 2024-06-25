@@ -8,7 +8,7 @@ interface AccordionListItemProps {
 }
 
 const AccordionListItem: FC<PropsWithChildren<AccordionListItemProps>> = (
-  props: PropsWithChildren<AccordionListItemProps>,
+  props,
 ) => {
   return (
     <>
