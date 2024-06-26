@@ -10,8 +10,9 @@ const config = {
   CLEAN_YARN: process.env.CLEAN_YARN === 'true' || false,
   CLEAN_GENERATED: process.env.CLEAN_GENERATED === 'true' || false,
   CLEAN_NODE_MODULES: process.env.CLEAN_NODE_MODULES === 'true' || false,
+  CLEAN_DIST: process.env.CLEAN_DIST === 'true' || false,
   CLEAN_ALL: process.env.CLEAN_ALL === 'true' || false,
-  CLEAN_CACHES_LIST: ['.cache', 'dist'],
+  CLEAN_CACHES_LIST: ['.cache'],
   CLEAN_YARN_IGNORES_LIST: ['patches', 'releases'],
   SEARCH_DIRECTORIES: ['apps', 'libs'],
   GENERATED_PATTERNS: [
@@ -48,7 +49,8 @@ Options:
   --yarn             Clean yarn files
   --cache            Clean cache files
   --node-modules     Clean node_modules folder
-  --all              Clean all (generated, yarn, cache, and node_modules files)
+  --dist             Clean dist directories
+  --all              Clean all (generated, yarn, cache, dist, and node_modules files)
   -n, --dry          Dry run (show what would be done without actually doing it)
   -h, --help         Show this help message`)
 }
@@ -73,6 +75,9 @@ function parseArgs(args) {
       case '--node-modules':
         config.CLEAN_NODE_MODULES = true
         break
+      case '--dist':
+        config.CLEAN_DIST = true
+        break
       case '--all':
         config.CLEAN_ALL = true
         break
@@ -95,6 +100,7 @@ function parseArgs(args) {
     config.CLEAN_YARN = true
     config.CLEAN_CACHES = true
     config.CLEAN_NODE_MODULES = true
+    config.CLEAN_DIST = true
   }
 }
 
@@ -191,7 +197,9 @@ function cleanCaches() {
       log(`Skipping ${item}: directory does not exist`)
     }
   })
+}
 
+function cleanDist() {
   config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
       findAndDelete(
@@ -256,6 +264,7 @@ function cleanAll() {
     },
     { name: 'cache files', flag: config.CLEAN_CACHES, func: cleanCaches },
     { name: 'yarn files', flag: config.CLEAN_YARN, func: cleanYarn },
+    { name: 'dist directories', flag: config.CLEAN_DIST, func: cleanDist },
     {
       name: 'node_modules',
       flag: config.CLEAN_NODE_MODULES,
