@@ -28,9 +28,7 @@ import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview
 import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
 import { overview as strings } from './Overview.strings'
 
-const CourtOfAppealOverview: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const CourtOfAppealOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 

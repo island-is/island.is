@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react'
+import React, { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import partition from 'lodash/partition'
 
@@ -38,7 +38,7 @@ import { usePrisonCasesQuery } from './prisonCases.generated'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-export const PrisonCases: React.FC = () => {
+export const PrisonCases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { openCaseInNewTabMenuItem } = useContextMenu()
@@ -70,14 +70,14 @@ export const PrisonCases: React.FC = () => {
             },
             {
               title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-              sortable: { isSortable: true, key: 'defendant' },
+              sortable: { isSortable: true, key: 'defendants' },
             },
             {
               title: formatMessage(tables.type),
             },
             {
               title: capitalize(formatMessage(tables.created)),
-              sortable: { isSortable: true, key: 'createdAt' },
+              sortable: { isSortable: true, key: 'created' },
             },
             { title: formatMessage(tables.state) },
             {

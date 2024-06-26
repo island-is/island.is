@@ -50,7 +50,7 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 
 import { DraftConclusionModal } from '../../components'
 
-export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const JudgeOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)

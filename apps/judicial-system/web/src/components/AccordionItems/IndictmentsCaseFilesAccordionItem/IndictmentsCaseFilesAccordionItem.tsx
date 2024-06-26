@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { FC, useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
@@ -174,7 +174,7 @@ const renderChapter = (chapter: number, name?: string | null) => (
   </Box>
 )
 
-const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
+const CaseFile: FC<CaseFileProps> = (props) => {
   const { caseFile, onReorder, onOpen, onRename, onDelete } = props
   const { formatMessage } = useIntl()
   const y = useMotionValue(0)
@@ -382,9 +382,7 @@ const CaseFile: React.FC<React.PropsWithChildren<CaseFileProps>> = (props) => {
   )
 }
 
-const IndictmentsCaseFilesAccordionItem: React.FC<
-  React.PropsWithChildren<Props>
-> = (props) => {
+const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   const {
     policeCaseNumber,
     caseFiles,

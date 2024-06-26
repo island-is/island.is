@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -30,9 +30,7 @@ interface DefendantInfoProps {
   displayVerdictViewDate?: boolean
 }
 
-export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
-  props,
-) => {
+export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const {
     defendant,
     displayDefenderInfo,
