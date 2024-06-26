@@ -129,10 +129,18 @@ function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
       const stat = fs.statSync(filePath)
 
       if (stat.isDirectory()) {
-        if (deleteDirectories && patternCheck(filePath)) {
+        if (
+          deleteDirectories &&
+          patternCheck(filePath) &&
+          !isGitTracked(filePath)
+        ) {
           if (!dry(`Would delete directory: ${filePath}`)) {
-            log(`Deleting directory now: ${filePath}`)
-            fs.rmSync(filePath, { recursive: true, force: true })
+            try {
+              log(`Deleting directory now: ${filePath}`)
+              fs.rmSync(filePath, { recursive: true, force: true })
+            } catch (err) {
+              log(`Failed to delete directory: ${filePath}`, err)
+            }
           }
         } else {
           walkSync(filePath)
@@ -150,8 +158,12 @@ function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
       }
 
       if (!dry(`Would delete: ${filePath}`)) {
-        log(`Deleting now: ${filePath}`)
-        fs.unlinkSync(filePath)
+        try {
+          log(`Deleting now: ${filePath}`)
+          fs.unlinkSync(filePath)
+        } catch (err) {
+          log(`Failed to delete file: ${filePath}`, err)
+        }
       }
     })
   }
@@ -185,10 +197,11 @@ function cleanCaches() {
 
   cachesToDelete.forEach((item) => {
     if (fs.existsSync(item)) {
-      if (!dry(`Would delete: ${item}`)) {
-        log(`Deleting now: ${item}`)
-        fs.rmSync(item, { recursive: true, force: true })
-      }
+      findAndDelete(
+        item,
+        (_) => true, // No specific pattern, delete all items in cache
+        true, // Indicate that we are deleting directories
+      )
     } else {
       log(`Skipping ${item}: directory does not exist`)
     }
@@ -196,59 +209,36 @@ function cleanCaches() {
 }
 
 function cleanDist() {
-  config.SEARCH_DIRECTORIES.forEach((baseDir) => {
-    if (fs.existsSync(baseDir)) {
-      findAndDelete(
-        baseDir,
-        (filePath) => path.basename(filePath) === 'dist',
-        true, // Indicate that we are deleting directories
-      )
-    }
-  })
+  const baseDir = './'
+  if (fs.existsSync(baseDir)) {
+    findAndDelete(
+      baseDir,
+      (filePath) => path.basename(filePath) === 'dist',
+      true, // Indicate that we are deleting directories
+    )
+  }
 }
 
 function cleanYarn() {
-  if (!fs.existsSync('.yarn')) {
+  if (fs.existsSync('.yarn')) {
+    findAndDelete(
+      '.yarn',
+      (filePath) =>
+        !config.CLEAN_YARN_IGNORES_LIST.includes(path.basename(filePath)),
+      true, // Indicate that we are deleting directories
+    )
+  } else {
     log('No .yarn folder')
-    return
   }
-
-  fs.readdirSync('.yarn').forEach((item) => {
-    const fullPath = path.join('.yarn', item)
-    if (!config.CLEAN_YARN_IGNORES_LIST.includes(item)) {
-      const stat = fs.statSync(fullPath)
-      if (!dry(`Would delete: ${fullPath}`)) {
-        if (stat.isDirectory()) {
-          log(`Deleting directory now: ${fullPath}`)
-          fs.rmSync(fullPath, { recursive: true, force: true })
-        } else if (stat.isFile()) {
-          log(`Deleting file now: ${fullPath}`)
-          fs.unlinkSync(fullPath)
-        }
-      }
-    }
-  })
 }
 
 function cleanNodeModules() {
-  config.SEARCH_DIRECTORIES.forEach((baseDir) => {
-    if (fs.existsSync(baseDir)) {
-      findAndDelete(
-        baseDir,
-        (filePath) => path.basename(filePath) === 'node_modules',
-        true, // Indicate that we are deleting directories
-      )
-    }
-  })
-
-  if (fs.existsSync('node_modules')) {
-    if (!dry(`Would delete: node_modules`)) {
-      log(`Deleting now: node_modules`)
-      fs.rmSync('node_modules', { recursive: true, force: true })
-    }
-  } else {
-    log('Skipping root node_modules: directory does not exist')
-  }
+  const baseDir = './'
+  findAndDelete(
+    baseDir,
+    (filePath) => path.basename(filePath) === 'node_modules',
+    true, // Indicate that we are deleting directories
+  )
 }
 
 function cleanAll() {
