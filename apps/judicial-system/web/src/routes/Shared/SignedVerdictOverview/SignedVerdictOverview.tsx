@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { AnimatePresence } from 'framer-motion'
@@ -174,7 +174,7 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
 
-export const SignedVerdictOverview: React.FC = () => {
+export const SignedVerdictOverview: FC = () => {
   const {
     workingCase,
     setWorkingCase,
