@@ -5,9 +5,6 @@ export class UpdateStepDto {
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
-  @ApiProperty()
-  displayOrder!: number
-
   @ApiProperty({ type: LanguageType })
   waitingText?: LanguageType
 

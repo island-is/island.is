@@ -7,8 +7,8 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Organization } from './organization.model'
-import { InputType } from '../../inputs/models/inputType.model'
+import { Organization } from '../../organizations/models/organization.model'
+import { InputType } from './inputType.model'
 import { CreationOptional } from 'sequelize'
 
 @Table({ tableName: 'organization_input_types' })

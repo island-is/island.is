@@ -15,6 +15,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
 import { UpdateStepDto } from './models/dto/updateStep.dto'
 import { StepDto } from './models/dto/step.dto'
+import { UpdateStepsDisplayOrderDto } from './models/dto/updateStepsDisplayOrder.dto'
 
 @ApiTags('steps')
 @Controller('steps')
@@ -60,5 +61,16 @@ export class StepsController {
     @Body() updateStepDto: UpdateStepDto,
   ): Promise<StepDto> {
     return await this.stepsService.update(id, updateStepDto)
+  }
+
+  @Put()
+  @Documentation({
+    description: 'Update display order of steps',
+    response: { status: 204 },
+  })
+  async updateDisplayOrder(
+    @Body() updateStepsDisplayOrderDto: UpdateStepsDisplayOrderDto,
+  ): Promise<void> {
+    return this.stepsService.updateDisplayOrder(updateStepsDisplayOrderDto)
   }
 }

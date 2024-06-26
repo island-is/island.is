@@ -15,6 +15,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
 import { UpdateGroupDto } from './models/dto/updateGroup.dto'
 import { GroupDto } from './models/dto/group.dto'
+import { UpdateGroupsDisplayOrderDto } from './models/dto/updateGroupsDisplayOrder.dto'
 
 @ApiTags('groups')
 @Controller('groups')
@@ -55,6 +56,17 @@ export class GroupsController {
     @Body() updateGroupDto: UpdateGroupDto,
   ): Promise<GroupDto> {
     return await this.groupsService.update(id, updateGroupDto)
+  }
+
+  @Put()
+  @Documentation({
+    description: 'Update display order of groups',
+    response: { status: 204 },
+  })
+  async updateDisplayOrder(
+    @Body() updateGroupsDisplayOrderDto: UpdateGroupsDisplayOrderDto,
+  ): Promise<void> {
+    return this.groupsService.updateDisplayOrder(updateGroupsDisplayOrderDto)
   }
 
   @Delete(':id')

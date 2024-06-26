@@ -11,6 +11,8 @@ import { TestimonyType } from '../testimonies/models/testimonyType.model'
 import { FormsController } from './forms.controller'
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
+import { ListItemMapper } from '../listItems/models/listItem.mapper'
+import { ListItem } from '../listItems/models/listItem.model'
 
 @Module({
   imports: [
@@ -23,9 +25,10 @@ import { Form } from './models/form.model'
       InputType,
       TestimonyType,
       ListType,
+      ListItem,
     ]),
   ],
   controllers: [FormsController],
-  providers: [FormsService, InputSettingsMapper],
+  providers: [FormsService, InputSettingsMapper, ListItemMapper],
 })
 export class FormsModule {}

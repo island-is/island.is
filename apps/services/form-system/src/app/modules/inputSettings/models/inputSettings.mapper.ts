@@ -14,14 +14,15 @@ import {
   TextboxInputSettingsDto,
   TimeInputInputSettingsDto,
 } from './dto/inputSettings.dto'
+import { ListItemMapper } from '../../listItems/models/listItem.mapper'
 
 @Injectable()
 export class InputSettingsMapper {
+  constructor(private readonly listItemMapper: ListItemMapper) {}
   mapUpdateInputSettingsDtoToInputSettings(
     inputSettings: InputSettings,
     updateInputSettingsDto: UpdateInputSettingsDto,
   ): void {
-    console.log(updateInputSettingsDto.minLength)
     ;(inputSettings.modified = new Date()),
       (inputSettings.minValue = updateInputSettingsDto.minValue ?? null),
       (inputSettings.maxValue = updateInputSettingsDto.maxValue ?? null),
@@ -39,17 +40,15 @@ export class InputSettingsMapper {
         updateInputSettingsDto.hasPropertyInput ?? null),
       (inputSettings.hasPropertyList =
         updateInputSettingsDto.hasPropertyList ?? null),
-      (inputSettings.list = updateInputSettingsDto.list ?? null),
+      (inputSettings.listType = updateInputSettingsDto.listType ?? null),
       (inputSettings.fileTypes = updateInputSettingsDto.fileTypes ?? null),
       (inputSettings.fileMaxSize = updateInputSettingsDto.fileMaxSize ?? null),
       (inputSettings.maxFiles = updateInputSettingsDto.maxFiles ?? null),
       (inputSettings.timeInterval = updateInputSettingsDto.timeInterval ?? null)
-
-    console.log(inputSettings.minLength)
   }
 
-  mapInputTypeToInputSettings(
-    inputSettings: InputSettings | null,
+  mapInputTypeToInputSettingsDto(
+    inputSettings: InputSettings | null | undefined,
     inputType: string,
   ): InputSettingsDto {
     switch (inputType) {
@@ -78,11 +77,16 @@ export class InputSettingsMapper {
         } as DatePickerInputSettingsDto
       case 'dropdownList':
         return {
-          list: inputSettings ? inputSettings.list : null,
+          list: inputSettings?.list
+            ? this.listItemMapper.mapListItemsToListItemsDto(inputSettings.list)
+            : '',
+          listType: inputSettings?.listType ? inputSettings.listType : '',
         } as DropdownListInputSettingsDto
       case 'radioButtons':
         return {
-          list: inputSettings ? inputSettings.list : null,
+          list: inputSettings?.list
+            ? this.listItemMapper.mapListItemsToListItemsDto(inputSettings.list)
+            : null,
         } as RadioButtonsInputSettingsDto
       case 'iskNumberbox':
         return {

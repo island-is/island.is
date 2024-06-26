@@ -78,8 +78,15 @@ module.exports = {
             type: Sequelize.BOOLEAN,
             allowNull: true,
           },
-          list: {
-            type: Sequelize.JSON,
+          list_type: {
+            type: Sequelize.ENUM(
+              'custom',
+              'municipalities',
+              'countries',
+              'postalCodes',
+              'mastersTrades',
+              'registrationCategoriesOfActivities',
+            ),
             allowNull: true,
           },
           file_types: {
@@ -105,6 +112,7 @@ module.exports = {
           },
           input_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: false,
             references: {
               model: 'inputs',

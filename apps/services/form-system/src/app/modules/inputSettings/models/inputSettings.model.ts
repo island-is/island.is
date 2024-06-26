@@ -5,12 +5,15 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { TimeIntervals } from '../../../enums/timeIntervals'
 import { Input } from '../../inputs/models/input.model'
+import { ListTypes } from '../../../enums/listTypes'
+import { ListItem } from '../../listItems/models/listItem.model'
 
 @Table({ tableName: 'input_settings' })
 export class InputSettings extends Model<InputSettings> {
@@ -129,12 +132,17 @@ export class InputSettings extends Model<InputSettings> {
   @ApiProperty()
   hasPropertyList?: boolean | null
 
+  @HasMany(() => ListItem)
+  @ApiProperty({ type: [ListItem] })
+  list?: ListItem[] | null
+
   @Column({
-    type: DataType.JSON,
+    type: DataType.ENUM,
     allowNull: true,
+    values: Object.values(ListTypes),
   })
-  @ApiProperty()
-  list?: string | null
+  @ApiProperty({ enum: ListTypes })
+  listType?: string | null
 
   @Column({
     type: DataType.JSON,

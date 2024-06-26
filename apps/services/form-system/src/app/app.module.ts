@@ -13,6 +13,7 @@ import { OrganizationsModule } from './modules/organizations/organizations.modul
 import { StepsModule } from './modules/steps/steps.module'
 import { TestimoniesModule } from './modules/testimonies/testimonies.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
+import { ListItemsModule } from './modules/listItems/listItems.module'
 
 @Module({
   imports: [
@@ -30,6 +31,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     TestimoniesModule,
     ListsModule,
     InputSettingsModule,
+    ListItemsModule,
   ],
 })
 export class AppModule {}

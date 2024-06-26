@@ -4,6 +4,7 @@ import { UpdateInputSettingsDto } from './models/dto/updateInputSettings.dto'
 import { InjectModel } from '@nestjs/sequelize'
 import { InputSettingsMapper } from './models/inputSettings.mapper'
 import { InputSettingsDto } from './models/dto/inputSettings.dto'
+import { ListItem } from '../listItems/models/listItem.model'
 
 @Injectable()
 export class InputSettingsService {
@@ -24,6 +25,7 @@ export class InputSettingsService {
   async findByInputId(inputId: string): Promise<InputSettings> {
     const inputSettings = await this.inputSettingsModel.findOne({
       where: { inputId: inputId },
+      include: [{ model: ListItem, as: 'list' }],
     })
 
     if (!inputSettings) {
@@ -38,10 +40,13 @@ export class InputSettingsService {
   async findOne(inputId: string, inputType: string): Promise<InputSettingsDto> {
     const inputSettings = await this.findByInputId(inputId)
 
-    return this.inputSettingsMapper.mapInputTypeToInputSettings(
-      inputSettings,
-      inputType,
-    )
+    const inputSettingsDto =
+      this.inputSettingsMapper.mapInputTypeToInputSettingsDto(
+        inputSettings,
+        inputType,
+      )
+
+    return inputSettingsDto
   }
 
   async update(

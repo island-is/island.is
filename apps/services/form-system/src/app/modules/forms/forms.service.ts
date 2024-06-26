@@ -23,6 +23,7 @@ import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponse } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
+import { ListItem } from '../listItems/models/listItem.model'
 
 @Injectable()
 export class FormsService {
@@ -109,6 +110,12 @@ export class FormsService {
                     {
                       model: InputSettings,
                       as: 'inputSettings',
+                      include: [
+                        {
+                          model: ListItem,
+                          as: 'list',
+                        },
+                      ],
                     },
                   ],
                 },
@@ -183,7 +190,7 @@ export class FormsService {
         name: inputType.name,
         description: inputType.description,
         isCommon: inputType.isCommon,
-        inputSettings: this.inputSettingsMapper.mapInputTypeToInputSettings(
+        inputSettings: this.inputSettingsMapper.mapInputTypeToInputSettingsDto(
           null,
           inputType.type,
         ),
@@ -293,7 +300,11 @@ export class FormsService {
             description: input.description,
             isHidden: input.isHidden,
             isPartOfMultiset: input.isPartOfMultiset,
-            inputSettings: input.inputSettings,
+            inputSettings:
+              this.inputSettingsMapper.mapInputTypeToInputSettingsDto(
+                input.inputSettings,
+                input.inputType,
+              ),
             inputType: input.inputType,
           } as InputDto)
         })

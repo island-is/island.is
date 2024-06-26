@@ -6,8 +6,5 @@ export class UpdateGroupDto {
   name!: LanguageType
 
   @ApiProperty()
-  displayOrder!: number
-
-  @ApiProperty()
   multiset!: number
 }

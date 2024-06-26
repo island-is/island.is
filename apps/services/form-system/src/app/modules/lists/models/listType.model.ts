@@ -10,7 +10,7 @@ import {
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { CreationOptional, DataTypes, NonAttribute } from 'sequelize'
-import { ListTypes } from './listTypes'
+import { ListTypes } from '../../../enums/listTypes'
 import { Organization } from '../../organizations/models/organization.model'
 
 @Table({ tableName: 'list_types' })

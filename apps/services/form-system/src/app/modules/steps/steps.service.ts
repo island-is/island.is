@@ -6,6 +6,7 @@ import { Group } from '../groups/models/group.model'
 import { Input } from '../inputs/models/input.model'
 import { UpdateStepDto } from './models/dto/updateStep.dto'
 import { StepDto } from './models/dto/step.dto'
+import { UpdateStepsDisplayOrderDto } from './models/dto/updateStepsDisplayOrder.dto'
 
 @Injectable()
 export class StepsService {
@@ -46,7 +47,6 @@ export class StepsService {
     const step = await this.findOne(id)
 
     step.name = updateStepDto.name
-    step.displayOrder = updateStepDto.displayOrder
     step.waitingText = updateStepDto.waitingText
     step.callRuleset = updateStepDto.callRuleset
     step.modified = new Date()
@@ -63,6 +63,26 @@ export class StepsService {
     }
 
     return stepDto
+  }
+
+  async updateDisplayOrder(
+    updateStepsDisplayOrderDto: UpdateStepsDisplayOrderDto,
+  ): Promise<void> {
+    const { stepsDisplayOrderDto } = updateStepsDisplayOrderDto
+
+    for (let i = 0; i < stepsDisplayOrderDto.length; i++) {
+      const step = await this.stepModel.findByPk(stepsDisplayOrderDto[i].id)
+
+      if (!step) {
+        throw new NotFoundException(
+          `Step with id '${stepsDisplayOrderDto[i].id}' not found`,
+        )
+      }
+
+      await step.update({
+        displayOrder: i,
+      })
+    }
   }
 
   async delete(id: string): Promise<void> {

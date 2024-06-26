@@ -15,6 +15,7 @@ import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
 import { UpdateInputDto } from './models/dto/updateInput.dto'
 import { InputDto } from './models/dto/input.dto'
+import { UpdateInputsDisplayOrderDto } from './models/dto/updateInputsDisplayOrder.dto'
 
 @ApiTags('inputs')
 @Controller('inputs')
@@ -55,6 +56,17 @@ export class InputsController {
     @Body() updateInputDto: UpdateInputDto,
   ): Promise<void> {
     await this.inputsService.update(id, updateInputDto)
+  }
+
+  @Put()
+  @Documentation({
+    description: 'Update display order of inputs',
+    response: { status: 204 },
+  })
+  async updateDisplayOrder(
+    @Body() updateInputsDisplayOrderDto: UpdateInputsDisplayOrderDto,
+  ): Promise<void> {
+    return this.inputsService.updateDisplayOrder(updateInputsDisplayOrderDto)
   }
 
   @Delete(':id')

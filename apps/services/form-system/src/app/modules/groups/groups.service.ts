@@ -5,6 +5,7 @@ import { Input } from '../inputs/models/input.model'
 import { CreateGroupDto } from './models/dto/createGroup.dto'
 import { UpdateGroupDto } from './models/dto/updateGroup.dto'
 import { GroupDto } from './models/dto/group.dto'
+import { UpdateGroupsDisplayOrderDto } from './models/dto/updateGroupsDisplayOrder.dto'
 
 @Injectable()
 export class GroupsService {
@@ -51,6 +52,24 @@ export class GroupsService {
     }
 
     return groupDto
+  }
+
+  async updateDisplayOrder(
+    updateGroupsDisplayOrderDto: UpdateGroupsDisplayOrderDto,
+  ): Promise<void> {
+    const { groupsDisplayOrderDto } = updateGroupsDisplayOrderDto
+
+    for (let i = 0; i < groupsDisplayOrderDto.length; i++) {
+      const group = await this.groupModel.findByPk(groupsDisplayOrderDto[i].id)
+
+      if (!group) {
+        throw new NotFoundException(
+          `Group with id '${groupsDisplayOrderDto[i].id}' not found`,
+        )
+      }
+
+      group.update({ displayOrder: i, stepId: groupsDisplayOrderDto[i].stepId })
+    }
   }
 
   async delete(id: string): Promise<void> {

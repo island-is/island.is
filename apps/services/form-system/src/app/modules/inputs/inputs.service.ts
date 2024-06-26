@@ -6,6 +6,7 @@ import { InputDto } from './models/dto/input.dto'
 import { UpdateInputDto } from './models/dto/updateInput.dto'
 import { InputMapper } from './models/input.mapper'
 import { Input } from './models/input.model'
+import { UpdateInputsDisplayOrderDto } from './models/dto/updateInputsDisplayOrder.dto'
 
 @Injectable()
 export class InputsService {
@@ -74,6 +75,27 @@ export class InputsService {
     }
 
     await input.save()
+  }
+
+  async updateDisplayOrder(
+    updateInputsDisplayOrderDto: UpdateInputsDisplayOrderDto,
+  ): Promise<void> {
+    const { inputsDisplayOrderDto } = updateInputsDisplayOrderDto
+
+    for (let i = 0; i < inputsDisplayOrderDto.length; i++) {
+      const input = await this.inputModel.findByPk(inputsDisplayOrderDto[i].id)
+
+      if (!input) {
+        throw new NotFoundException(
+          `Input with id '${inputsDisplayOrderDto[i].id}' not found`,
+        )
+      }
+
+      await input.update({
+        displayOrder: i,
+        groupId: inputsDisplayOrderDto[i].groupId,
+      })
+    }
   }
 
   async delete(id: string): Promise<void> {

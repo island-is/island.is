@@ -6,9 +6,6 @@ export class UpdateInputDto {
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
-  @ApiProperty()
-  displayOrder!: number
-
   @ApiProperty({ type: LanguageType })
   description!: LanguageType
 

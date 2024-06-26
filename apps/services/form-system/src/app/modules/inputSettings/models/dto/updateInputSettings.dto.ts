@@ -44,7 +44,7 @@ export class UpdateInputSettingsDto {
   hasPropertyList?: boolean
 
   @ApiProperty()
-  list?: string
+  listType?: string
 
   @ApiProperty()
   fileTypes?: string

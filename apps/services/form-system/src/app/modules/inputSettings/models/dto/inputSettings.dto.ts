@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { ListItemDto } from '../../../listItems/models/dto/listItem.dto'
 
 export class InputSettingsDto {
   @ApiProperty()
@@ -43,8 +44,11 @@ export class InputSettingsDto {
   @ApiProperty()
   hasPropertyList?: boolean
 
+  @ApiProperty({ type: [ListItemDto] })
+  list?: ListItemDto[]
+
   @ApiProperty()
-  list?: string
+  listType?: string
 
   @ApiProperty()
   fileTypes?: string
@@ -81,7 +85,7 @@ export class DatePickerInputSettingsDto extends (InputSettingsDto as new () => P
 
 export class DropdownListInputSettingsDto extends (InputSettingsDto as new () => Pick<
   InputSettingsDto,
-  'list'
+  'list' | 'listType'
 >) {}
 
 export class RadioButtonsInputSettingsDto extends (InputSettingsDto as new () => Pick<
