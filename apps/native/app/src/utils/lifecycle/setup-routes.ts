@@ -116,6 +116,21 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/passkey', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.PasskeyScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/settings', async (passProps) => {
     Navigation.showModal({
       stack: {
