@@ -87,10 +87,10 @@ export const PrerequisitesForm: Form = buildForm({
               provider: SocialInsuranceAdministrationWithholdingTaxApi,
               title: '',
             }),
-            // buildDataProviderItem({
-            //   provider: SocialInsuranceAdministrationLatestIncomePlan,
-            //   title: '',
-            // }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationLatestIncomePlan,
+              title: '',
+            }),
             buildDataProviderItem({
               id: 'sia.privacy',
               title:
@@ -103,16 +103,6 @@ export const PrerequisitesForm: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
     }),
   ],
 })

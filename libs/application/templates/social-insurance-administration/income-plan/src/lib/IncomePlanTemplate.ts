@@ -82,7 +82,7 @@ const IncomePlanTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationWithholdingTaxApi,
-                //SocialInsuranceAdministrationLatestIncomePlan,
+                SocialInsuranceAdministrationLatestIncomePlan,
               ],
               delete: true,
             },

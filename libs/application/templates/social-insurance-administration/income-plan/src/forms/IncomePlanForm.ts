@@ -35,11 +35,6 @@ export const IncomePlanForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'externalData',
-      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-      children: [],
-    }),
-    buildSection({
       id: 'incomePlan',
       title: incomePlanFormMessage.info.section,
       children: [
@@ -438,18 +433,13 @@ export const IncomePlanForm: Form = buildForm({
       ],
     }),
     buildFormConclusionSection({
-      multiFieldTitle:
-        incomePlanFormMessage.conclusionScreen.receivedTitle,
-      alertTitle:
-        incomePlanFormMessage.conclusionScreen.alertTitle,
-      alertMessage:
-        '',
-      expandableDescription:
-        incomePlanFormMessage.conclusionScreen.bulletList,
-      expandableIntro:
-        '',
-      bottomButtonMessage: 
-        incomePlanFormMessage.conclusionScreen.bottomButtonMessage,   
+      multiFieldTitle: incomePlanFormMessage.conclusionScreen.receivedTitle,
+      alertTitle: incomePlanFormMessage.conclusionScreen.alertTitle,
+      alertMessage: '',
+      expandableDescription: incomePlanFormMessage.conclusionScreen.bulletList,
+      expandableIntro: '',
+      bottomButtonMessage:
+        incomePlanFormMessage.conclusionScreen.bottomButtonMessage,
     }),
   ],
 })
