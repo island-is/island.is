@@ -197,11 +197,11 @@ const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
               indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
               id: {
                 [Op.notIn]: Sequelize.literal(`
-                    (SELECT "case_id"
-                      FROM "defendant"
-                      WHERE "defendant"."verdict_view_date" IS NULL
-                      OR "defendant"."verdict_view_date" > NOW() - INTERVAL '28 days')
-                    `),
+                        (SELECT "case_id"
+                          FROM "defendant"
+                          WHERE "defendant"."verdict_view_date" IS NULL
+                          OR "defendant"."verdict_view_date" > NOW() - INTERVAL '28 days')
+                        `),
               },
             },
           ],
