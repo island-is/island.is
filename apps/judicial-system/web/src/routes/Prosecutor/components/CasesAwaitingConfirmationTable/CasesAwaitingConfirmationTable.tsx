@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -35,7 +35,7 @@ interface CasesAwaitingConfirmationTableProps {
   onContextMenuDeleteClick: (id: string) => void
 }
 
-const CasesAwaitingConfirmationTable: React.FC<
+const CasesAwaitingConfirmationTable: FC<
   CasesAwaitingConfirmationTableProps
 > = (props) => {
   const { loading, isFiltering, cases, onContextMenuDeleteClick } = props

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -40,7 +40,7 @@ import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCas
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
-const Overview = () => {
+const Overview: FC<unknown> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)

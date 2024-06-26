@@ -1,4 +1,5 @@
 import React, {
+  FC,
   memo,
   useCallback,
   useContext,
@@ -53,15 +54,21 @@ import {
 import { useIndictmentPoliceCaseFilesQuery } from './indictmentPoliceCaseFiles.generated'
 import { strings } from './PoliceCaseFilesRoute.strings'
 
-const UploadFilesToPoliceCase: React.FC<
-  React.PropsWithChildren<{
-    caseId: string
-    policeCaseNumber: string
-    setAllUploaded: (allUploaded: boolean) => void
-    caseFiles: CaseFile[]
-    caseOrigin?: CaseOrigin | null
-  }>
-> = ({ caseId, policeCaseNumber, setAllUploaded, caseFiles, caseOrigin }) => {
+interface UploadFilesToPoliceCaseProps {
+  caseId: string
+  policeCaseNumber: string
+  setAllUploaded: (allUploaded: boolean) => void
+  caseFiles: CaseFile[]
+  caseOrigin?: CaseOrigin | null
+}
+
+const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
+  caseId,
+  policeCaseNumber,
+  setAllUploaded,
+  caseFiles,
+  caseOrigin,
+}) => {
   const { formatMessage } = useIntl()
   const {
     uploadFiles,
@@ -271,21 +278,21 @@ type AllUploadedState = {
   [policeCaseNumber: string]: boolean
 }
 
+interface PoliceUploadListMenuProps {
+  caseId: string
+  policeCaseNumbers?: string[] | null
+  subtypes?: IndictmentSubtypeMap
+  crimeScenes?: CrimeSceneMap
+  caseFiles?: CaseFile[] | null
+  setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
+  caseOrigin?: CaseOrigin | null
+}
+
 /* We need to make sure this list is not rerenderd unless the props are changing.
  * Since we passing `setAllUploaded` to the children and they are calling it within a useEffect
  * causing a endless rendering loop.
  */
-const PoliceUploadListMemo: React.FC<
-  React.PropsWithChildren<{
-    caseId: string
-    policeCaseNumbers?: string[] | null
-    subtypes?: IndictmentSubtypeMap
-    crimeScenes?: CrimeSceneMap
-    caseFiles?: CaseFile[] | null
-    setAllUploaded: (policeCaseNumber: string) => (value: boolean) => void
-    caseOrigin?: CaseOrigin | null
-  }>
-> = memo(
+const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
   ({
     caseId,
     policeCaseNumbers,
