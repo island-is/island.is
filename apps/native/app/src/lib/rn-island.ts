@@ -12,7 +12,7 @@ export function overrideUserInterfaceStyle(
   }
 }
 
-export async function openBrowser(url: string, componentId?: string) {
+export async function openNativeBrowser(url: string, componentId?: string) {
   if (Platform.OS === 'ios' && componentId) {
     return RNIsland.openSafari(componentId, {
       url,
