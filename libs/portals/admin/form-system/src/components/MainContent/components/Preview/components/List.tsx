@@ -98,8 +98,8 @@ export const List = ({ currentItem }: Props) => {
         required={currentItem?.isRequired ?? false}
         placeholder={
           ListTypePlaceholder[
-          currentItem.inputSettings
-            ?.listType as keyof typeof ListTypePlaceholder
+            currentItem.inputSettings
+              ?.listType as keyof typeof ListTypePlaceholder
           ] ?? 'Select an option'
         }
       />
