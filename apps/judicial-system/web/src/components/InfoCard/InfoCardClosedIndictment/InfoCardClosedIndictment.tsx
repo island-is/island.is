@@ -4,6 +4,7 @@ import { IntlFormatters, useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
+  formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -18,12 +19,14 @@ export interface Props {
   defendantInfoActionButton?: DefendantInfoActionButton
   displayAppealExpirationInfo?: boolean
   displayVerdictViewDate?: boolean
+  indictmentReviewedDate?: string | null
 }
 
 export const getAdditionalDataSections = (
   formatMessage: IntlFormatters['formatMessage'],
   reviewerName?: string | null,
   reviewDecision?: IndictmentCaseReviewDecision | null,
+  indictmendReviewedDate?: string | null,
 ): DataSection[] => [
   ...(reviewerName
     ? [
@@ -44,6 +47,14 @@ export const getAdditionalDataSections = (
                   },
                 ]
               : []),
+            ...(indictmendReviewedDate
+              ? [
+                  {
+                    title: formatMessage(strings.indictmentReviewedDateTitle),
+                    value: formatDate(indictmendReviewedDate, 'PPP'),
+                  },
+                ]
+              : []),
           ],
         },
       ]
@@ -58,6 +69,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     defendantInfoActionButton,
     displayAppealExpirationInfo,
     displayVerdictViewDate,
+    indictmentReviewedDate,
   } = props
 
   return (
@@ -130,6 +142,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         formatMessage,
         workingCase.indictmentReviewer?.name,
         workingCase.indictmentReviewDecision,
+        indictmentReviewedDate,
       )}
     />
   )

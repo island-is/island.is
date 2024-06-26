@@ -48,4 +48,9 @@ export const strings = defineMessages({
     defaultMessage: 'Una',
     description: 'Notað sem texti á tagg fyrir "Una" tillögu í yfirliti ákæru.',
   },
+  indictmentReviewedDateTitle: {
+    id: 'judicial.system.core:info_card_indictment.indictment_reviewed_date_title',
+    defaultMessage: 'Dagsetning',
+    description: 'Notaður sem titill á "Dagsetning" hluta af yfirliti ákæru.',
+  },
 })

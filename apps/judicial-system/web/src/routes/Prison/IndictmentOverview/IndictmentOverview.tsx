@@ -24,6 +24,10 @@ const IndictmentOverview = () => {
     (log) => log.eventType === EventType.INDICTMENT_COMPLETED,
   )?.created
 
+  const indictmentReviewedDate = workingCase.eventLogs?.find(
+    (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
+  )?.created
+
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
       <PageHeader title={formatMessage(strings.htmlTitle)} />
@@ -51,7 +55,10 @@ const IndictmentOverview = () => {
             </Text>
           </Box>
         )}
-        <InfoCardClosedIndictment displayVerdictViewDate />
+        <InfoCardClosedIndictment
+          displayVerdictViewDate
+          indictmentReviewedDate={indictmentReviewedDate}
+        />
       </FormContentContainer>
     </PageLayout>
   )
