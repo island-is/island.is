@@ -15,7 +15,7 @@ import { Loader } from '@island.is/nest/dataloader'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => GenericLicenseProvider)
-@Audit({ namespace: '@isla d.is/api/license-service' })
+@Audit({ namespace: '@island.is/api/license-service' })
 export class LicenseProviderResolver {
   @ResolveField('providerName', () => String, {
     nullable: true,

@@ -323,7 +323,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         (backgroundColor === 'red'
           ? 'black'
           : backgroundColor === 'blue'
-          ? 'red100'
+          ? 'blue100'
           : 'blue200')
       }
       borderRadius="large"

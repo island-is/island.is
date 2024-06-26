@@ -6,11 +6,11 @@ import {
 
 registerEnumType(GenericUserLicenseDataFieldTagType, {
   name: 'GenericUserLicenseDataFieldTagType',
-  description: 'Exhaustive lsit of possible tag icons',
+  description: 'Exhaustive list of possible tag icons',
 })
 registerEnumType(GenericUserLicenseDataFieldTagColor, {
   name: 'GenericUserLicenseDataFieldTagColor',
-  description: 'Exhaustive lsit of possible tag icon color',
+  description: 'Exhaustive list of possible tag icon color',
 })
 
 @ObjectType()

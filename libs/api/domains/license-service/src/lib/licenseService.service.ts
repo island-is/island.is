@@ -182,7 +182,6 @@ export class LicenseServiceService {
       licensesFetchResponse.data,
       locale,
     )
-    this.logger.debug('layoad', licensesPayload)
 
     const mappedLicenses: Array<GenericUserLicense> = licensesPayload.map(
       (lp) => {
