@@ -13,9 +13,7 @@
             "externalDependencies": []
           }
         ],
-        "outputs": [
-          "libs/api/schema/src/lib/schema.ts"
-        ],
+        "outputs": ["libs/api/schema/src/lib/schema.ts"],
         "commands": [
           {
             "command": "node libs/codegen-bootstrap/src/codegen-bootstrap.mjs"
@@ -25,14 +23,10 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "dependsOn": [],
       "options": {
-        "lintFilePatterns": [
-          "libs/codegen-bootstrap/**/*.mjs"
-        ]
+        "lintFilePatterns": ["libs/codegen-bootstrap/**/*.mjs"]
       }
     }
   },

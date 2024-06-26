@@ -117,21 +117,35 @@
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
     "codegen/backend-client": {
-      "dependsOn":  ["^codegen/backend-client", "^codegen/backend-schema", { "target": "codegen/bootstrap", "projects": "codegen-bootstrap", "params": "ignore" }],
+      "dependsOn": [
+        "^codegen/backend-client",
+        "^codegen/backend-schema",
+        {
+          "target": "codegen/bootstrap",
+          "projects": "codegen-bootstrap",
+          "params": "ignore"
+        }
+      ],
       "inputs": ["schema-files"]
     },
     "codegen/backend-schema": {
-      "dependsOn":  [
+      "dependsOn": [
         "codegen/backend-client",
         "^codegen/backend-client",
         "^codegen/backend-schema",
-        { "target": "codegen/bootstrap", "projects": "codegen-bootstrap" }
+        {
+          "target": "codegen/bootstrap",
+          "projects": "codegen-bootstrap"
+        }
       ],
       "inputs": ["default", "^production"]
     },
     "codegen/frontend-client": {
       "dependsOn": [
-        { "target": "codegen/backend-post", "projects": "codegen-backend-post" }
+        {
+          "target": "codegen/backend-post",
+          "projects": "codegen-backend-post"
+        }
       ],
       "inputs": ["graphql-files"],
       "outputs": [

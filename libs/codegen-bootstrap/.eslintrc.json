@@ -2,8 +2,8 @@
   "extends": ["../../.eslintrc.json"],
   "ignorePatterns": ["!**/*"],
   "parserOptions": {
-        "sourceType": "module",
-        "ecmaVersion": 2024
+    "sourceType": "module",
+    "ecmaVersion": 2024
   },
   "overrides": [
     {

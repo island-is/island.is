@@ -6,14 +6,9 @@
   "targets": {
     "codegen/backend-post": {
       "executor": "nx:run-commands",
-      "dependsOn": [
-        "^codegen/backend-client",
-        "^codegen/backend-schema"
-      ],
+      "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
       "options": {
-        "inputs": [
-          "{projectRoot}/src/*"
-        ],
+        "inputs": ["{projectRoot}/src/*"],
         "outputs": [],
         "commands": [
           {
@@ -24,13 +19,9 @@
     },
     "lint": {
       "executor": "@nx/linter:eslint",
-      "outputs": [
-        "{options.outputFile}"
-      ],
+      "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": [
-          "libs/codegen-backend-post/**/*.mjs"
-        ]
+        "lintFilePatterns": ["libs/codegen-backend-post/**/*.mjs"]
       }
     }
   },
