@@ -2,8 +2,13 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
+import { courtSessionTypeNames } from '@island.is/judicial-system/types'
+import {
+  CourtSessionType,
+  IndictmentDecision,
+  Institution,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { IndictmentDecision, Institution } from '../../graphql/schema'
 import InfoCard from './InfoCard'
 import InfoCardCaseScheduled from './InfoCardCaseScheduled'
 import { strings } from './InfoCardCaseScheduledIndictment.strings'
@@ -14,6 +19,7 @@ interface Props {
   courtDate: string
   courtRoom?: string | null
   postponedIndefinitelyExplanation?: string | null
+  courtSessionType?: CourtSessionType | null
 }
 
 const InfoCardCaseScheduledIndictment: React.FC<Props> = (props) => {
@@ -23,6 +29,7 @@ const InfoCardCaseScheduledIndictment: React.FC<Props> = (props) => {
     courtDate,
     courtRoom,
     postponedIndefinitelyExplanation,
+    courtSessionType,
   } = props
   const { formatMessage } = useIntl()
 
@@ -59,7 +66,7 @@ const InfoCardCaseScheduledIndictment: React.FC<Props> = (props) => {
         court={court}
         courtDate={courtDate}
         courtRoom={courtRoom}
-        title={formatMessage(strings.schedulingTitle)}
+        title={courtSessionType && courtSessionTypeNames[courtSessionType]}
       />
     )
   ) : (

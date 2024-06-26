@@ -11,7 +11,6 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
-import { notificationsStore } from '../../stores/notifications-store'
 import { offlineStore } from '../../stores/offline-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
@@ -25,6 +24,8 @@ import { isIos } from '../devices'
 import { handleQuickAction } from '../quick-actions'
 
 let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
+// Flag to track overlay state
+let overlayShown = false
 
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
@@ -102,16 +103,19 @@ export function setupEventHandlers() {
           // Add a small delay for those accidental backgrounds in iOS
           backgroundAppLockTimeout = setTimeout(() => {
             const { lockScreenComponentId } = authStore.getState()
-            if (!lockScreenComponentId) {
+
+            if (!lockScreenComponentId && !overlayShown) {
+              overlayShown = true
               showAppLockOverlay({ status })
-            } else {
+            } else if (lockScreenComponentId) {
               Navigation.updateProps(lockScreenComponentId, { status })
             }
           }, 100)
         } else {
-          if (!lockScreenComponentId) {
+          if (!lockScreenComponentId && !overlayShown) {
+            overlayShown = true
             showAppLockOverlay({ status })
-          } else {
+          } else if (lockScreenComponentId) {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
         }
@@ -127,9 +131,12 @@ export function setupEventHandlers() {
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
             hideAppLockOverlay(lockScreenComponentId)
+            overlayShown = false // Mark overlay as hidden
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
+        } else {
+          overlayShown = false // Reset overlay state if no lock screen component
         }
       }
     }

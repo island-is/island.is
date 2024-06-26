@@ -25,6 +25,7 @@ import { contextMenu as contextMenuStrings } from '@island.is/judicial-system-we
 import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
+  CourtDate,
   SortButton,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { table as tableStrings } from '@island.is/judicial-system-web/src/components/Table/Table.strings'
@@ -82,7 +83,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
       cases.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {
           if (
-            sortConfig.column === 'defendant' &&
+            sortConfig.column === 'defendants' &&
             entry.defendants &&
             entry.defendants.length > 0
           ) {
@@ -178,10 +179,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('defendant')}
-                sortAsc={getClassNamesFor('defendant') === 'ascending'}
-                sortDes={getClassNamesFor('defendant') === 'descending'}
-                isActive={sortConfig?.column === 'defendant'}
+                onClick={() => requestSort('defendants')}
+                sortAsc={getClassNamesFor('defendants') === 'ascending'}
+                sortDes={getClassNamesFor('defendants') === 'descending'}
+                isActive={sortConfig?.column === 'defendants'}
                 dataTestid="accusedNameSortButton"
               />
             </th>
@@ -195,10 +196,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(tables.created, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('createdAt')}
-                sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-                sortDes={getClassNamesFor('createdAt') === 'descending'}
-                isActive={sortConfig?.column === 'createdAt'}
+                onClick={() => requestSort('created')}
+                sortAsc={getClassNamesFor('created') === 'ascending'}
+                sortDes={getClassNamesFor('created') === 'descending'}
+                isActive={sortConfig?.column === 'created'}
                 dataTestid="createdAtSortButton"
               />
             </th>
@@ -334,33 +335,13 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                     )}
                   </td>
                   <td className={styles.td}>
-                    {c.postponedIndefinitelyExplanation ? (
-                      <Text>{formatMessage(strings.postponed)}</Text>
-                    ) : (
-                      c.courtDate && (
-                        <>
-                          <Text>
-                            <Box
-                              component="span"
-                              className={styles.blockColumn}
-                            >
-                              {capitalize(
-                                format(
-                                  parseISO(c.courtDate),
-                                  'EEEE d. LLLL y',
-                                  {
-                                    locale: localeIS,
-                                  },
-                                ),
-                              ).replace('dagur', 'd.')}
-                            </Box>
-                          </Text>
-                          <Text as="span" variant="small">
-                            kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                          </Text>
-                        </>
-                      )
-                    )}
+                    <CourtDate
+                      courtDate={c.courtDate}
+                      postponedIndefinitelyExplanation={
+                        c.postponedIndefinitelyExplanation
+                      }
+                      courtSessionType={c.courtSessionType}
+                    />
                   </td>
                   <td className={styles.td}>
                     <AnimatePresence exitBeforeEnter initial={false}>
