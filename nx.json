@@ -101,39 +101,20 @@
   "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
     "build": {
-      "dependsOn": [
-        "^build"
-      ],
-      "inputs": [
-        "production",
-        "^production"
-      ]
+      "dependsOn": ["^build"],
+      "inputs": ["production", "^production"]
     },
     "e2e": {
-      "inputs": [
-        "default",
-        "^production"
-      ]
+      "inputs": ["default", "^production"]
     },
     "lint": {
-      "inputs": [
-        "default",
-        "{workspaceRoot}/.eslintrc.json"
-      ]
+      "inputs": ["default", "{workspaceRoot}/.eslintrc.json"]
     },
     "test": {
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js"
-      ]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
     "external-test": {
-      "inputs": [
-        "default",
-        "^production",
-        "{workspaceRoot}/jest.preset.js"
-      ]
+      "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
     "codegen/backend-client": {
       "dependsOn": [
@@ -145,9 +126,7 @@
           "params": "ignore"
         }
       ],
-      "inputs": [
-        "schema-files"
-      ]
+      "inputs": ["schema-files"]
     },
     "codegen/backend-schema": {
       "dependsOn": [
@@ -174,9 +153,7 @@
           "projects": "codegen-backend-post"
         }
       ],
-      "inputs": [
-        "graphql-files"
-      ],
+      "inputs": ["graphql-files"],
       "outputs": [
         "{projectRoot}/**/schema.{ts,tsx}",
         "{projectRoot}/**/fragmentTypes.json",
@@ -185,10 +162,7 @@
     }
   },
   "namedInputs": {
-    "default": [
-      "{projectRoot}/**/*",
-      "sharedGlobals"
-    ],
+    "default": ["{projectRoot}/**/*", "sharedGlobals"],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
