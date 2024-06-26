@@ -12,7 +12,7 @@ interface Props {
   court: Institution
   courtDate: string
   courtRoom?: string | null
-  title?: string
+  title?: string | null
 }
 
 const InfoCardCaseScheduled: React.FC<Props> = (props) => {

@@ -40,7 +40,30 @@ If you are running on Windows we recommend using [Docker and WSL2](https://docs.
 - You have [jq](https://stedolan.github.io/jq/) installed.
   - `brew install jq`
 
-## Usage
+## Devcontainers
+
+Devcontainers provide a consistent development environment using Docker containers, ensuring all developers have the same setup.
+
+### Setup
+
+1. **Requirements**:
+
+   - Docker
+   - Visual Studio Code (VS Code) with the Remote - Containers extension
+
+2. **Using Devcontainers**:
+   - Refer to the [Devcontainers documentation](https://code.visualstudio.com/docs/remote/containers) for detailed instructions on setting up and using Devcontainers with VS Code.
+
+### devcontainers-cli Tool
+
+`devcontainers-cli` offers command-line management of devcontainers.
+
+1. **Installation and Usage**:
+   - Refer to the [devcontainers-cli documentation](https://github.com/devcontainers/cli) for detailed instructions on installation and usage.
+
+Using Devcontainers and the `devcontainers-cli` tool ensures a uniform development environment, reducing setup time and discrepancies between machines.
+
+## Setting up Digital Iceland
 
 There are many projects that can be built and run. [Click here to see the full list](https://github.com/island-is/island.is/blob/main/nx.json).
 

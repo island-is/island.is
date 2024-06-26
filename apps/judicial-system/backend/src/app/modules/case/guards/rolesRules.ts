@@ -92,6 +92,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'postponedIndefinitelyExplanation',
   'indictmentRulingDecision',
   'indictmentDecision',
+  'courtSessionType',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [
