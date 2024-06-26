@@ -464,5 +464,5 @@
     "cms",
     "web"
   ],
-  "tags": ["lib:js"]
+  "tags": ["lib:js", "scope:node"]
 }
