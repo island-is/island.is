@@ -55,6 +55,7 @@ import { DeductionFactorsModel } from '../deductionFactors'
 import { DirectTaxPaymentService } from '../directTaxPayment'
 import { DirectTaxPaymentModel } from '../directTaxPayment/models'
 import { ChildrenModel, ChildrenService } from '../children'
+import { nowFactory } from './factories/date.factory'
 
 interface Recipient {
   name: string
@@ -146,7 +147,7 @@ export class ApplicationService {
             spouseNationalId: nationalId,
           },
         ],
-        created: { [Op.gte]: firstDateOfMonth() },
+        appliedDate: { [Op.gte]: firstDateOfMonth() },
       },
     })
 
@@ -294,6 +295,7 @@ export class ApplicationService {
 
     const appModel = await this.applicationModel.create({
       ...application,
+      appliedDate: nowFactory(),
       nationalId: application.nationalId || user.nationalId,
     })
 
@@ -324,6 +326,8 @@ export class ApplicationService {
           name: child.name,
           nationalId: child.nationalId,
           school: child?.school,
+          livesWithApplicant: child.livesWithApplicant,
+          livesWithBothParents: child.livesWithBothParents,
         })
       }),
     ])
@@ -507,6 +511,12 @@ export class ApplicationService {
         updatedApplication?.setDataValue('applicationEvents', eventsResolved)
       })
 
+    const children = this.childrenService
+      .findById(id)
+      .then((childrenResolved) => {
+        updatedApplication?.setDataValue('children', childrenResolved)
+      })
+
     const files = this.fileService
       .getAllApplicationFiles(id)
       .then((filesResolved) => {
@@ -534,7 +544,7 @@ export class ApplicationService {
       ])
     }
 
-    await Promise.all([events, files, directTaxPayments])
+    await Promise.all([events, files, directTaxPayments, children])
 
     return updatedApplication
   }
@@ -663,9 +673,9 @@ export class ApplicationService {
         },
         municipalityCode: { [Op.in]: municipalityCodes },
       },
-      attributes: ['created'],
+      attributes: ['appliedDate'],
       include: [staffOptions],
-      order: [['created', 'ASC']],
+      order: [['appliedDate', 'ASC']],
     })
 
     const resultsStaffWithApplications = await this.applicationModel.findAll({
@@ -691,7 +701,7 @@ export class ApplicationService {
     return {
       applications: resultsApplications.rows,
       totalCount: resultsApplications.count,
-      minDateCreated: resultsMinDate?.created,
+      minDateCreated: resultsMinDate?.appliedDate,
       staffList: staffListUniq,
     }
   }

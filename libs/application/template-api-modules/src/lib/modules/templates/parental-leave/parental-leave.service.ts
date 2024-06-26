@@ -127,7 +127,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     return {
-      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+      message: e.errors
+        ? Object.entries(e.errors).map(([, values]) => values.join(', '))
+        : e.status,
     }
   }
 
@@ -787,9 +789,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       } catch (e) {
         this.logger.warn(
-          `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
-            .replace(`{${'applicationId'}}`, application.id)
-            .replace(`{${'error'}}`, e),
+          `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
         )
       }
     }
@@ -1529,8 +1529,27 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return
     } catch (e) {
-      this.logger.error('Failed to validate the parental leave application', e)
+      this.logger.warn('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)
     }
+  }
+
+  async setVMSTPeriods({ application }: TemplateApiModuleActionProps) {
+    try {
+      const applicationInformation =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return applicationInformation.periods
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
+      )
+    }
+
+    return null
   }
 }

@@ -1,4 +1,4 @@
-import { useContext, useMemo } from 'react'
+import { Dispatch, SetStateAction, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import isNil from 'lodash/isNil'
@@ -109,10 +109,7 @@ export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
   return validUpdates
 }
 
-export const formatUpdates = (
-  updates: Array<UpdateCase>,
-  workingCase: Case,
-) => {
+export const formatUpdates = (updates: UpdateCase[], workingCase: Case) => {
   const changes: UpdateCase[] = updates.map((entry) => {
     if (entry.force) {
       return overwrite(entry)
@@ -211,10 +208,7 @@ const useCase = () => {
     () =>
       async (
         workingCase: Case,
-        setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
-        setCourtCaseNumberErrorMessage: React.Dispatch<
-          React.SetStateAction<string>
-        >,
+        setWorkingCase: Dispatch<SetStateAction<Case>>,
       ): Promise<string> => {
         try {
           if (isCreatingCourtCase === false) {
@@ -228,16 +222,11 @@ const useCase = () => {
                 courtCaseNumber: (data.createCourtCase as Case).courtCaseNumber,
               }))
 
-              setCourtCaseNumberErrorMessage('')
-
               return data.createCourtCase.courtCaseNumber
             }
           }
         } catch (error) {
-          // Catch all so we can set an eror message
-          setCourtCaseNumberErrorMessage(
-            'Ekki tókst að stofna nýtt mál, reyndu aftur eða sláðu inn málsnúmer',
-          )
+          // Catch all so we can return the empty string
         }
 
         return ''
@@ -251,10 +240,6 @@ const useCase = () => {
         ? limitedAccessUpdateCaseMutation
         : updateCaseMutation
 
-      const resultType = limitedAccess
-        ? 'limitedAccessUpdateCase'
-        : 'updateCase'
-
       try {
         if (!id || Object.keys(updateCase).length === 0) {
           return
@@ -266,7 +251,7 @@ const useCase = () => {
 
         const res = data as UpdateCaseMutation & LimitedAccessUpdateCaseMutation
 
-        return res && res[resultType]
+        return res?.[limitedAccess ? 'limitedAccessUpdateCase' : 'updateCase']
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
@@ -284,7 +269,7 @@ const useCase = () => {
       async (
         caseId: string,
         transition: CaseTransition,
-        setWorkingCase?: React.Dispatch<React.SetStateAction<Case>>,
+        setWorkingCase?: Dispatch<SetStateAction<Case>>,
       ): Promise<boolean> => {
         const mutation = limitedAccess
           ? limitedAccessTransitionCaseMutation
@@ -307,8 +292,8 @@ const useCase = () => {
           const res = data as TransitionCaseMutation &
             LimitedAccessTransitionCaseMutation
 
-          const state = res && res[resultType]?.state
-          const appealState = res && res[resultType]?.appealState
+          const state = res?.[resultType]?.state
+          const appealState = res?.[resultType]?.appealState
 
           if (!state && !appealState) {
             return false
@@ -378,14 +363,14 @@ const useCase = () => {
   const setAndSendCaseToServer = async (
     updates: UpdateCase[],
     workingCase: Case,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => {
     try {
       const updatesToCase: UpdateCase = formatUpdates(updates, workingCase)
       delete updatesToCase.force
 
       if (Object.keys(updatesToCase).length === 0) {
-        return
+        return false
       }
 
       setWorkingCase((prevWorkingCase) => ({
@@ -394,16 +379,19 @@ const useCase = () => {
       }))
 
       if (!workingCase.id) {
-        return
+        return false
       }
 
       const newWorkingCase = await updateCase(workingCase.id, updatesToCase)
 
       if (!newWorkingCase) {
-        throw new Error()
+        return false
       }
+
+      return true
     } catch (error) {
       toast.error(formatMessage(errors.updateCase))
+      return false
     }
   }
 

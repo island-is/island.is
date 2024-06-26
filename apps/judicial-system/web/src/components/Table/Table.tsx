@@ -1,4 +1,10 @@
-import React, { PropsWithChildren, ReactNode, useContext, useMemo } from 'react'
+import React, {
+  FC,
+  PropsWithChildren,
+  ReactNode,
+  useContext,
+  useMemo,
+} from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -23,24 +29,27 @@ import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
+interface Sortable {
+  isSortable: boolean
+  key: sortableTableColumn
+}
+
 interface TableProps {
   thead: {
     title: string
-    sortable?: {
-      isSortable: boolean
-      key: sortableTableColumn
-    }
+    sortable?: Sortable
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
+  onClick?: (row: CaseListEntry) => boolean
 }
 
 interface TableWrapperProps {
   loading: boolean
 }
 
-export const TableWrapper: React.FC<PropsWithChildren<TableWrapperProps>> = ({
+export const TableWrapper: FC<PropsWithChildren<TableWrapperProps>> = ({
   loading,
   children,
 }) => (
@@ -79,8 +88,8 @@ export const useTable = () => {
   return { requestSort, getClassNamesFor, sortConfig, setSortConfig }
 }
 
-const Table: React.FC<TableProps> = (props) => {
-  const { thead, data, columns, generateContextMenuItems } = props
+const Table: FC<TableProps> = (props) => {
+  const { thead, data, columns, generateContextMenuItems, onClick } = props
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
   const { sortConfig, requestSort, getClassNamesFor } = useTable()
@@ -94,17 +103,17 @@ const Table: React.FC<TableProps> = (props) => {
       data.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {
           if (
-            sortConfig.column === 'defendant' &&
+            sortConfig.column === 'defendants' &&
             entry.defendants &&
-            entry.defendants.length > 0
+            entry.defendants.length > 0 &&
+            entry.defendants[0].name
           ) {
-            return entry.defendants[0].name ?? ''
+            return entry.defendants[0].name
           }
-          if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
-          }
-          return entry.created
+
+          return entry[sortConfig.column]?.toString()
         }
+
         const compareResult = compareLocaleIS(
           getColumnValue(a),
           getColumnValue(b),
@@ -122,7 +131,11 @@ const Table: React.FC<TableProps> = (props) => {
       {data.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
           <MobileCase
-            onClick={() => handleOpenCase(theCase.id)}
+            onClick={() => {
+              if (!onClick?.(theCase)) {
+                handleOpenCase(theCase.id)
+              }
+            }}
             theCase={theCase}
             isCourtRole={isDistrictCourtUser(user)}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
@@ -164,7 +177,7 @@ const Table: React.FC<TableProps> = (props) => {
                   sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
                   isActive={sortConfig?.column === th.sortable.key}
-                  dataTestid="accusedNameSortButton"
+                  dataTestid={`${th.sortable.key}SortButton`}
                 />
               ) : (
                 <Text as="span" fontWeight="regular">
@@ -185,8 +198,11 @@ const Table: React.FC<TableProps> = (props) => {
             aria-disabled={isOpeningCaseId === row.id || isTransitioningCase}
             className={styles.tableRowContainer}
             onClick={() => {
-              handleOpenCase(row.id)
+              if (!onClick?.(row)) {
+                handleOpenCase(row.id)
+              }
             }}
+            data-testid="tableRow"
           >
             {columns.map((td) => (
               <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
@@ -195,27 +211,29 @@ const Table: React.FC<TableProps> = (props) => {
             ))}
             {generateContextMenuItems && (
               <td className={styles.td}>
-                <AnimatePresence exitBeforeEnter initial={false}>
-                  {isOpeningCaseId === row.id && showLoading ? (
-                    <Box padding={1}>
-                      <LoadingIndicator />
-                    </Box>
-                  ) : (
-                    <ContextMenu
-                      menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
-                      items={generateContextMenuItems(row)}
-                      disclosure={
-                        <IconButton
-                          icon="ellipsisVertical"
-                          colorScheme="transparent"
-                          onClick={(evt) => {
-                            evt.stopPropagation()
-                          }}
-                        />
-                      }
-                    />
-                  )}
-                </AnimatePresence>
+                {generateContextMenuItems(row).length > 0 && (
+                  <AnimatePresence exitBeforeEnter initial={false}>
+                    {isOpeningCaseId === row.id && showLoading ? (
+                      <Box padding={1}>
+                        <LoadingIndicator />
+                      </Box>
+                    ) : (
+                      <ContextMenu
+                        menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
+                        items={generateContextMenuItems(row)}
+                        disclosure={
+                          <IconButton
+                            icon="ellipsisVertical"
+                            colorScheme="transparent"
+                            onClick={(evt) => {
+                              evt.stopPropagation()
+                            }}
+                          />
+                        }
+                      />
+                    )}
+                  </AnimatePresence>
+                )}
               </td>
             )}
           </tr>

@@ -9,11 +9,21 @@ import {
   defineTemplateApi,
   HasTeachingRightsApi,
   NationalRegistryUserApi,
+  GetTeacherRightsApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
+import {
+  DrivingLicenseFeatureFlags,
+  getApplicationFeatureFlags,
+} from './getApplicationFeatureFlags'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS]
 
 const InstructorRegistrationsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -23,6 +33,7 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_INSTRUCTOR_REGISTRATIONS,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.REGISTRY,
     states: {
@@ -47,10 +58,18 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
           roles: [
             {
               id: Roles.INSTRUCTOR,
-              formLoader: () =>
-                import('../forms/instructorRegistrations').then((val) =>
-                  Promise.resolve(val.getInstructorRegistrations()),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                const getForm = await import(
+                  '../forms/instructorRegistrations'
+                ).then((val) => val.getInstructorRegistrations)
+
+                return getForm(
+                  featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
+                )
+              },
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -58,13 +77,18 @@ const InstructorRegistrationsTemplate: ApplicationTemplate<
                   type: 'primary',
                 },
               ],
-              api: [HasTeachingRightsApi, NationalRegistryUserApi],
+              api: [
+                HasTeachingRightsApi,
+                NationalRegistryUserApi,
+                GetTeacherRightsApi,
+              ],
               delete: true,
               write: {
                 answers: ['approveExternalData'],
                 externalData: [
                   HasTeachingRightsApi.externalDataId,
                   NationalRegistryUserApi.externalDataId,
+                  GetTeacherRightsApi.externalDataId,
                 ],
               },
             },

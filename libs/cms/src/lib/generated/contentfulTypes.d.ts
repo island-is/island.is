@@ -580,6 +580,9 @@ export interface IChartFields {
 
   /** Custom Style Config */
   customStyleConfig?: Record<string, any> | undefined
+
+  /** Reduce and round value */
+  reduceAndRoundValue?: boolean | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -658,6 +661,12 @@ export interface IChartNumberBoxFields {
 
   /** Date */
   numberBoxDate?: string | undefined
+
+  /** Reduce and round value */
+  reduceAndRoundValue?: boolean | undefined
+
+  /** Display Timestamp */
+  displayTimestamp?: boolean | undefined
 }
 
 /** A standalone component to display a value for a data key and optionally how it has evolved over a period of time. */
@@ -1536,6 +1545,12 @@ export interface IGenericListFields {
 
   /** Search Input Placeholder */
   searchInputPlaceholder: string
+
+  /** Item Type */
+  itemType?: 'Non-clickable' | 'Clickable' | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
 }
 
 /** A list of items which can be embedded into rich text */
@@ -1572,6 +1587,18 @@ export interface IGenericListItemFields {
 
   /** Card Intro */
   cardIntro?: Document | undefined
+
+  /** Slug */
+  slug?: string | undefined
+
+  /** Content */
+  content?: Document | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Asset */
+  asset?: Asset | undefined
 }
 
 /** An item that belongs to a generic list */

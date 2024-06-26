@@ -151,13 +151,13 @@ export interface DistrictCommissionerAgencies {
 }
 
 export interface Person {
-  name: string
+  name?: string
   ssn: string
   phoneNumber?: string
   email?: string
-  homeAddress: string
-  postalCode: string
-  city: string
+  homeAddress?: string
+  postalCode?: string
+  city?: string
   signed: boolean
   type: number
 }
@@ -227,6 +227,7 @@ export type EstateMember = {
   phone?: string
   email?: string
   advocate?: Advocate
+  advocate2?: Advocate
 }
 
 export type InheritanceEstateMember = EstateMember & {
@@ -295,6 +296,7 @@ export interface InheritanceReportAsset {
   assetNumber?: string
   share: number
   propertyValuation?: string
+  debtType?: DebtTypes
   amount: string
   exchangeRateOrInterest: string
 }
@@ -352,6 +354,18 @@ export interface MasterLicence {
   dateOfPublication?: Date
   profession?: string
   office?: string
+  nationalId?: string
+}
+
+export interface JourneymanLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+}
+
+export interface ProfessionRight {
+  name?: string
+  profession?: string
 }
 
 export interface VehicleRegistration {
@@ -359,4 +373,12 @@ export interface VehicleRegistration {
   manufacturer?: string
   licensePlate?: string
   color?: string
+}
+
+export enum DebtTypes {
+  Overdraft = 'overdraft',
+  CreditCard = 'creditCard',
+  Loan = 'loan',
+  InsuranceCompany = 'insuranceCompany',
+  PropertyFees = 'propertyFees',
 }

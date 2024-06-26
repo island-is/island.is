@@ -13,6 +13,8 @@ export const HealthCenterApi = defineTemplateApi({
 
 export const HealthInsuranceStatementsApi = defineTemplateApi({
   action: 'getInsuranceStatementData',
+  order: 1,
+  throwOnError: true,
   namespace: 'HealthInsuranceDeclaration',
   externalDataId: 'insuranceStatementData',
 })

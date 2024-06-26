@@ -55,7 +55,7 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
 
-  // peronal info screen
+  // personal info screen
   'personalInfo.screenTitle': 'Personal info',
 
   // user
@@ -91,6 +91,18 @@ export const en: TranslatedMessages = {
   'settings.security.useBiometricsLabel': 'Use {biometricType}',
   'settings.security.useBiometricsDescription':
     'With {biometricType} you don’t need to enter PIN',
+  'settings.security.createPasskeyLabel': 'Create a passkey',
+  'settings.security.createPasskeyDescription':
+    'To automatically sign in to Island.is through the app in this device',
+  'settings.security.removePasskeyLabel': 'Delete passkey',
+  'settings.security.removePasskeyDescription':
+    'By deleting your passkey you skip signing in automatically to Island.is with the app',
+  'settings.security.removePasskeyPromptTitle':
+    'Do you want to delete the passkey?',
+  'settings.security.removePasskeyPromptDescription':
+    'By deleting your passkey you can not sign in automatically to Island.is with the app',
+  'settings.security.removePasskeyButton': 'Delete',
+  'settings.security.removePasskeyCancelButton': 'Cancel',
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
@@ -169,10 +181,14 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-  'inbox.filterButtonTitle': 'Open filter',
+  'inbox.filterButtonTitle': 'Filter',
   'inbox.filterOpenedTagTitle': 'Unread',
   'inbox.filterArchivedTagTitle': 'Archived',
   'inbox.filterStarredTagTitle': 'Starred',
+  'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
+  'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
+  'inbox.markAllAsReadPromptCancel': 'Cancel',
+  'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
@@ -183,6 +199,7 @@ export const en: TranslatedMessages = {
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
+  'documentDetail.errorUnknown': 'Error occurred while loading document',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -273,9 +290,12 @@ export const en: TranslatedMessages = {
 
   // notifications
   'notifications.screenTitle': 'Notifications',
-
-  // notification detail
-  'notificationDetail.screenTitle': 'Notification',
+  'notifications.markAllAsRead': 'Mark all as read',
+  'notifications.settings': 'My settings',
+  'notifications.errorUnknown': 'Error occurred while loading notifications',
+  'notifications.emptyListTitle': 'No notifications',
+  'notifications.emptyListDescription':
+    'When you receive notifications, they will appear here.',
 
   // profile
   'profile.screenTitle': 'More',
@@ -504,4 +524,26 @@ export const en: TranslatedMessages = {
   // offline
   'offline.title': 'No internet connection',
   'offline.message': 'Information has not been updated.',
+
+  // problem
+  'problem.error.tag': 'Error',
+  'problem.error.title': 'Service is temporarily down',
+  'problem.error.message': 'Please try again later',
+  'problem.noData.title': 'No data',
+  'problem.noData.message':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'problem.offline.title': 'No internet connection',
+  'problem.offline.message':
+    'An error occurred while communicating with the service provider',
+
+  // passkeys
+  'passkeys.headingTitle': 'Sign in with Island.is app',
+  'passkeys.openUrlHeadingSubtitle':
+    'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.headingSubtitle':
+    'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.createButton': 'Create a passkey',
+  'passkeys.skipButton': 'Skip',
+  'passkeys.errorRegistering': 'Error',
+  'passkeys.errorRegisteringMessage': 'Could not create a passkey',
 }

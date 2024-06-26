@@ -12,30 +12,43 @@ export const strings = defineMessages({
     defaultMessage: 'Staða',
     description: 'Notaður sem titill á Staða hluta á Niðurstaða skrefi.',
   },
-  postponed: {
-    id: 'judicial.system.core:court.indictments.conclusion.postponed',
-    defaultMessage: 'Frestun',
-    description: 'Notaður sem texti fyrir frestun valkost á Niðurstaða skrefi.',
+  postponing: {
+    id: 'judicial.system.core:court.indictments.conclusion.postponing',
+    defaultMessage: 'Frestun um ótilgreindan tíma',
+    description:
+      'Notaður sem texti fyrir frestun um ótilgreindan tíma valkost á Niðurstaða skrefi.',
   },
-  complete: {
-    id: 'judicial.system.core:court.indictments.conclusion.complete',
-    defaultMessage: 'Lokið',
-    description: 'Notaður sem texti fyrir lokið valkost á Niðurstaða skrefi.',
-  },
-  arrangeAnotherHearing: {
-    id: 'judicial.system.core:court.indictments.conclusion.arrange_another_hearing',
+  scheduling: {
+    id: 'judicial.system.core:court.indictments.conclusion.scheduling',
     defaultMessage: 'Bóka annað þinghald',
     description:
       'Notaður sem texti fyrir bóka annað þinghald valkost á Niðurstaða skrefi.',
   },
-  postponedIndefinitely: {
-    id: 'judicial.system.core:court.indictments.conclusion.postponed_indefinitely',
-    defaultMessage: 'Frestað um ótilgreindan tíma',
+  postponingUntilVerdict: {
+    id: 'judicial.system.core:court.indictments.conclusion.postponing_until_verdict',
+    defaultMessage: 'Dómtekið',
     description:
-      'Notaður sem texti fyrir frestað um ótilgreindan tíma valkost á Niðurstaða skrefi.',
+      'Notaður sem texti fyrir dómtekið valkost á Niðurstaða skrefi.',
   },
-  reasonForPostponement: {
-    id: 'judicial.system.core:court.indictments.conclusion.reason_for_postponement',
+  completing: {
+    id: 'judicial.system.core:court.indictments.conclusion.completing',
+    defaultMessage: 'Lokið',
+    description: 'Notaður sem texti fyrir lokið valkost á Niðurstaða skrefi.',
+  },
+  redistributing: {
+    id: 'judicial.system.core:court.indictments.conclusion.redistributing',
+    defaultMessage: 'Fer í úthlutun til dómara',
+    description:
+      'Notaður sem texti fyrir fer í úthlutun til dómara valkost á Niðurstaða skrefi.',
+  },
+  postponingTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.postponing_title',
+    defaultMessage: 'Ástæða frestunar',
+    description:
+      'Notaður sem titill fyrir ástæða fresutnar hluta á Niðurstaða skrefi.',
+  },
+  reasonForPostponementTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.reason_for_postponement_title',
     defaultMessage: 'Ástæða frestunar',
     description:
       'Notaður sem titill á ástæða frestunar textabox á Niðurstaða skrefi.',
@@ -46,11 +59,57 @@ export const strings = defineMessages({
     description:
       'Notaður sem skýritexti í ástæða frestunar textabox á Niðurstaða skrefi.',
   },
+  schedulingTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.scheduling_title',
+    defaultMessage: 'Bóka annað þinghald',
+    description:
+      'Notaður sem titill fyrir bóka annað þinghald hluta á Niðurstaða skrefi.',
+  },
+  completingTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.completing_title',
+    defaultMessage: 'Lyktir',
+    description: 'Notaður sem titill á lyktir hluta á Niðurstaða skrefi.',
+  },
+  ruling: {
+    id: 'judicial.system.core:court.indictments.conclusion.ruling',
+    defaultMessage: 'Dómur',
+    description: 'Notaður sem texti í dómur valmöguleika á Niðurstaða skrefi.',
+  },
+  fine: {
+    id: 'judicial.system.core:court.indictments.conclusion.fine',
+    defaultMessage: 'Viðurlagaákvörðun',
+    description:
+      'Notaður sem texti í viðurlagaákvörðun valmöguleika á Niðurstaða skrefi.',
+  },
+  dismissal: {
+    id: 'judicial.system.core:court.indictments.conclusion.dismissal',
+    defaultMessage: 'Frávísun',
+    description:
+      'Notaður sem texti í frávísun valmöguleika á Niðurstaða skrefi.',
+  },
+  cancellation: {
+    id: 'judicial.system.core:court.indictments.conclusion.cancellation',
+    defaultMessage: 'Niðurfelling máls',
+    description:
+      'Notaður sem texti í niðurfelling máls valmöguleika á Niðurstaða skrefi.',
+  },
   courtRecordTitle: {
     id: 'judicial.system.core:court.indictments.conclusion.court_record_title',
     defaultMessage: 'Þingbók',
     description:
       'Notaður sem titill á þingbókar hluta á Niðurstaða skrefi í ákærum í dómaraflæði.',
+  },
+  verdictUploadTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.verdict_upload_title',
+    defaultMessage: 'Dómur',
+    description:
+      'Notaður sem fyrirsögn fyrir dómur upphlöðunarsvæði á Niðurstaða skrefi.',
+  },
+  rulingUploadTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.ruling_upload_title_v1',
+    defaultMessage: 'Úrskurður',
+    description:
+      'Notaður sem fyrirsögn fyrir úrskurður upphlöðunarsvæði á Niðurstaða skrefi.',
   },
   inputFieldLabel: {
     id: 'judicial.system.core:court.indictments.conclusion.input_field_label',
@@ -63,32 +122,21 @@ export const strings = defineMessages({
     defaultMessage: 'Velja gögn til að hlaða upp',
     description: 'Notaður sem titill á hlaða upp takka á Niðurstaða skrefi.',
   },
-  redistribute: {
-    id: 'judicial.system.core:court.indictments.conclusion.redistribute',
-    defaultMessage: 'Fer í útlutun til dómara',
+  nextButtonTextConfirm: {
+    id: 'judicial.system.core:court.indictments.conclusion.next_button_text_confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Notaður sem texti á halda áfram takka.',
+  },
+  courtSessionLabel: {
+    id: 'judicial.system.core:court.indictments.conclusion.court_session_label',
+    defaultMessage: 'Tegund þinghalds',
     description:
-      'Notaður sem texti fyrir Fer í útlutun til dómara á Niðurstaða skrefi.',
+      'Notaður sem titill á tegund þinghalds valkosti á Niðurstaða skrefi.',
   },
-  decision: {
-    id: 'judicial.system.core:court.indictments.conclusion.decision',
-    defaultMessage: 'Lyktir',
-    description: 'Notaður sem titill á lyktir hluta á Niðurstaða skrefi.',
-  },
-  ruling: {
-    id: 'judicial.system.core:court.indictments.conclusion.ruling',
-    defaultMessage: 'Dómur',
-    description: 'Notaður sem texti í dómur valmöguleika á Niðurstaða skrefi.',
-  },
-  rulingUploadTitle: {
-    id: 'judicial.system.core:court.indictments.conclusion.ruling_upload_title',
-    defaultMessage: 'Dómur',
+  courtSessionPlaceholder: {
+    id: 'judicial.system.core:court.indictments.conclusion.court_session_placeholder',
+    defaultMessage: 'Veldu tegund þinghalds',
     description:
-      'Notaður sem fyrirsögn fyrir Dómur upphlöðunarsvæði á Niðurstaða skrefi.',
-  },
-  fine: {
-    id: 'judicial.system.core:court.indictments.conclusion.fine',
-    defaultMessage: 'Viðurlagaákvörðun',
-    description:
-      'Notaður sem texti í viðurlagaákvörðun valmöguleika á Niðurstaða skrefi.',
+      'Notaður sem skýritexti í tegund þinghalds valkosti á Niðurstaða skrefi.',
   },
 })

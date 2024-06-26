@@ -47,8 +47,8 @@ describe('getCasesQueryFilter', () => {
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
@@ -60,12 +60,7 @@ describe('getCasesQueryFilter', () => {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
-            {
-              [Op.and]: [
-                { indictment_reviewer_id: 'Prosecutor Id' },
-                { indictment_review_decision: null },
-              ],
-            },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
@@ -111,8 +106,8 @@ describe('getCasesQueryFilter', () => {
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
@@ -123,12 +118,7 @@ describe('getCasesQueryFilter', () => {
           [Op.or]: [
             { prosecutors_office_id: 'Prosecutors Office Id' },
             { shared_with_prosecutors_office_id: 'Prosecutors Office Id' },
-            {
-              [Op.and]: [
-                { indictment_reviewer_id: 'Prosecutor Id' },
-                { indictment_review_decision: null },
-              ],
-            },
+            { indictment_reviewer_id: 'Prosecutor Id' },
           ],
         },
         {
@@ -191,8 +181,8 @@ describe('getCasesQueryFilter', () => {
                   {
                     state: [
                       CaseState.SUBMITTED,
+                      CaseState.WAITING_FOR_CANCELLATION,
                       CaseState.RECEIVED,
-                      CaseState.MAIN_HEARING,
                       CaseState.COMPLETED,
                     ],
                   },
@@ -238,8 +228,8 @@ describe('getCasesQueryFilter', () => {
           {
             state: [
               CaseState.SUBMITTED,
+              CaseState.WAITING_FOR_CANCELLATION,
               CaseState.RECEIVED,
-              CaseState.MAIN_HEARING,
               CaseState.COMPLETED,
             ],
           },
@@ -429,7 +419,11 @@ describe('getCasesQueryFilter', () => {
                     { state: completedRequestCaseStates },
                   ],
                 },
-                { defender_national_id: user.nationalId },
+                {
+                  defender_national_id: {
+                    [Op.or]: [user.nationalId, user.nationalId],
+                  },
+                },
               ],
             },
             {
@@ -437,13 +431,15 @@ describe('getCasesQueryFilter', () => {
                 { type: indictmentCases },
                 {
                   state: [
+                    CaseState.WAITING_FOR_CANCELLATION,
                     CaseState.RECEIVED,
-                    CaseState.MAIN_HEARING,
                     ...completedIndictmentCaseStates,
                   ],
                 },
                 {
-                  '$defendants.defender_national_id$': user.nationalId,
+                  '$defendants.defender_national_id$': {
+                    [Op.or]: [user.nationalId, user.nationalId],
+                  },
                 },
               ],
             },

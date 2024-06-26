@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable, Inject } from '@nestjs/common'
 import { OverviewApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
@@ -29,7 +29,7 @@ export class OverviewService {
     }
 
     if (!data.fileName || !data.contentType || !data.data) {
-      this.logger.warning('Missing data from external service', {
+      this.logger.warn('Missing data from external service', {
         category: LOG_CATEGORY,
       })
       return null
@@ -42,50 +42,33 @@ export class OverviewService {
     }
   }
 
-  async getInsuranceOverview(user: User): Promise<InsuranceOverview | null> {
+  async getInsuranceOverview(user: User): Promise<InsuranceOverview> {
     const data = await this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
       .getInsuranceOverview()
       .catch(handle404)
 
     if (!data) {
-      return null
-    }
-    if (
-      !data.isInsured ||
-      !data.from ||
-      !data.status?.display ||
-      !data.status?.code ||
-      !data.maximumPayment
-    ) {
-      this.logger.warning('Missing data from external service', {
-        category: LOG_CATEGORY,
-      })
-      return null
+      return {
+        isInsured: false,
+      }
     }
 
     const codeEnum: InsuranceStatusType | undefined =
-      data.status.code in InsuranceStatusType
+      data.status?.code && data.status.code in InsuranceStatusType
         ? InsuranceStatusType[
             data.status.code as keyof typeof InsuranceStatusType
           ]
         : undefined
 
-    if (!codeEnum) {
-      this.logger.warning('Invalid insurance status code provided', {
-        category: LOG_CATEGORY,
-      })
-      return null
-    }
-
     return {
-      isInsured: data.isInsured,
+      isInsured: !!data.isInsured,
       explanation: data.explanation ?? '',
-      from: data.from,
+      from: data.from ?? undefined,
       maximumPayment: data.maximumPayment,
       ehicCardExpiryDate: data.ehicCardExpiryDate ?? undefined,
       status: {
-        display: data.status.display,
+        display: data.status?.display,
         code: codeEnum,
       },
     }

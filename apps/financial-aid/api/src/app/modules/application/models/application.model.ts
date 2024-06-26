@@ -27,6 +27,9 @@ export class ApplicationModel implements Application {
   readonly modified!: string
 
   @Field()
+  readonly appliedDate!: string
+
+  @Field()
   readonly nationalId!: string
 
   @Field()
@@ -76,6 +79,9 @@ export class ApplicationModel implements Application {
 
   @Field({ nullable: true })
   readonly formComment?: string
+
+  @Field({ nullable: true })
+  readonly childrenComment?: string
 
   @Field({ nullable: true })
   readonly spouseFormComment?: string

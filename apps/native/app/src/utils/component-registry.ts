@@ -22,7 +22,6 @@ export const ComponentRegistry = {
   WalletPassportScreen: `${prefix}.screens.WalletPassport`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
-  NotificationDetailScreen: `${prefix}.screens.NotificationDetail`,
   WebViewScreen: `${prefix}.screens.WebViewScreen`,
   LicenseScannerScreen: `${prefix}.screens.LicenseScannerScreen`,
   LicenseScanDetailScreen: `${prefix}.screens.LicenseScanDetailScreen`,
@@ -50,6 +49,7 @@ export const ComponentRegistry = {
 
   // overlays
   OfflineBanner: `${prefix}.overlay.OfflineBanner`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
 }
 
 export const ButtonRegistry = {

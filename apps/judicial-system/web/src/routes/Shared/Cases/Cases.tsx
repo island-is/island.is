@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
@@ -38,6 +38,7 @@ import {
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAssignmentTable/CasesAwaitingAssignmentTable'
+import CasesInProgressTable from '../../Court/components/CasesInProgressTable/CasesInProgressTable'
 import CasesAwaitingConfirmationTable from '../../Prosecutor/components/CasesAwaitingConfirmationTable/CasesAwaitingConfirmationTable'
 import CasesAwaitingReview from '../../PublicProsecutor/Tables/CasesAwaitingReview'
 import ActiveCases from './ActiveCases'
@@ -50,7 +51,7 @@ interface CreateCaseButtonProps {
   user: User
 }
 
-const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
+const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
   const { user } = props
   const { formatMessage } = useIntl()
 
@@ -99,16 +100,14 @@ const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
   )
 }
 
-export const Cases: React.FC = () => {
+export const Cases: FC = () => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
+  const { transitionCase, isTransitioningCase, isSendingNotification } =
+    useCase()
 
   const [isFiltering, setIsFiltering] = useState<boolean>(false)
   const [modalVisible, setVisibleModal] = useState<string>()
-
-  const { user } = useContext(UserContext)
-
-  const { transitionCase, isTransitioningCase, isSendingNotification } =
-    useCase()
 
   const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
@@ -146,14 +145,15 @@ export const Cases: React.FC = () => {
     )
 
     const casesAwaitingAssignment = filterCases(
-      (c) => isIndictmentCase(c.type) && c.judge === null,
+      (c) =>
+        isIndictmentCase(c.type) &&
+        c.state !== CaseState.WAITING_FOR_CANCELLATION &&
+        !c.judge,
     )
 
     const casesAwaitingReview = filterCases(
       (c) =>
-        isIndictmentCase(c.type) &&
-        c.indictmentReviewer !== null &&
-        c.indictmentReviewer?.id === user?.id,
+        c.indictmentReviewer?.id === user?.id && !c.indictmentReviewDecision,
     )
 
     const activeCases = filterCases((c) => {
@@ -165,11 +165,27 @@ export const Cases: React.FC = () => {
         return false
       }
 
-      if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
-        return !isCompletedCase(c.state)
-      } else {
-        return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+      if (isDistrictCourtUser(user)) {
+        if (isIndictmentCase(c.type)) {
+          return !isCompletedCase(c.state)
+        } else {
+          return !(isCompletedCase(c.state) && c.rulingSignatureDate)
+        }
       }
+
+      if (isProsecutionUser(user)) {
+        if (isIndictmentCase(c.type)) {
+          return !(
+            isCompletedCase(c.state) ||
+            c.state === CaseState.WAITING_FOR_CANCELLATION
+          )
+        } else {
+          return !isCompletedCase(c.state)
+        }
+      }
+
+      // This componenet is only used for prosecution and district court users
+      return false
     })
 
     const pastCases = filterCases(
@@ -202,8 +218,7 @@ export const Cases: React.FC = () => {
       caseToDelete.state === CaseState.DRAFT ||
       caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION ||
       caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED ||
-      caseToDelete.state === CaseState.MAIN_HEARING
+      caseToDelete.state === CaseState.RECEIVED
     ) {
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
@@ -262,48 +277,67 @@ export const Cases: React.FC = () => {
           </div>
         ) : (
           <>
-            {isProsecutionUser(user) && filter.value !== 'INVESTIGATION' && (
+            {isProsecutionUser(user) && (
               <>
-                <CasesAwaitingConfirmationTable
-                  loading={loading}
-                  isFiltering={isFiltering}
-                  cases={casesAwaitingConfirmation}
-                  onContextMenuDeleteClick={setVisibleModal}
-                />
-                {isPublicProsecutor(user) && (
-                  <CasesAwaitingReview
-                    loading={loading}
-                    cases={casesAwaitingReview}
-                  />
+                {filter.value !== 'INVESTIGATION' && (
+                  <>
+                    <CasesAwaitingConfirmationTable
+                      loading={loading}
+                      isFiltering={isFiltering}
+                      cases={casesAwaitingConfirmation}
+                      onContextMenuDeleteClick={setVisibleModal}
+                    />
+                    {isPublicProsecutor(user) && (
+                      <CasesAwaitingReview
+                        loading={loading}
+                        cases={casesAwaitingReview}
+                      />
+                    )}
+                  </>
                 )}
+                <SectionHeading title={formatMessage(m.activeRequests.title)} />
+                <TableWrapper loading={loading || isFiltering}>
+                  {activeCases.length > 0 ? (
+                    <ActiveCases
+                      cases={activeCases}
+                      isDeletingCase={
+                        isTransitioningCase || isSendingNotification
+                      }
+                      onDeleteCase={deleteCase}
+                    />
+                  ) : (
+                    <div className={styles.infoContainer}>
+                      <AlertMessage
+                        type="info"
+                        title={formatMessage(
+                          m.activeRequests.infoContainerTitle,
+                        )}
+                        message={formatMessage(
+                          m.activeRequests.infoContainerText,
+                        )}
+                      />
+                    </div>
+                  )}
+                </TableWrapper>
               </>
             )}
-
-            {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
-              <CasesAwaitingAssignmentTable
-                cases={casesAwaitingAssignment}
-                loading={loading || isFiltering}
-                isFiltering={isFiltering}
-              />
-            )}
-            <SectionHeading title={formatMessage(m.activeRequests.title)} />
-            <TableWrapper loading={loading || isFiltering}>
-              {activeCases.length > 0 ? (
-                <ActiveCases
-                  cases={activeCases}
-                  isDeletingCase={isTransitioningCase || isSendingNotification}
-                  onDeleteCase={deleteCase}
-                />
-              ) : (
-                <div className={styles.infoContainer}>
-                  <AlertMessage
-                    type="info"
-                    title={formatMessage(m.activeRequests.infoContainerTitle)}
-                    message={formatMessage(m.activeRequests.infoContainerText)}
+            {isDistrictCourtUser(user) && (
+              <>
+                {filter.value !== 'INVESTIGATION' && (
+                  <CasesAwaitingAssignmentTable
+                    cases={casesAwaitingAssignment}
+                    loading={loading || isFiltering}
+                    isFiltering={isFiltering}
                   />
-                </div>
-              )}
-            </TableWrapper>
+                )}
+                <CasesInProgressTable
+                  loading={loading}
+                  isFiltering={isFiltering}
+                  cases={activeCases}
+                  refetch={refetch}
+                />
+              </>
+            )}
             <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
               <PastCasesTable

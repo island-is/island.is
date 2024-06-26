@@ -40,6 +40,26 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
     ),
   }
 
+  const getVerdictViewTag = (row: CaseListEntry) => {
+    const today = new Date()
+    const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
+    const variant = !row.indictmentVerdictViewedByAll
+      ? 'red'
+      : today > deadline
+      ? 'mint'
+      : 'blue'
+    const message = !row.indictmentVerdictViewedByAll
+      ? strings.tagVerdictUnviewed
+      : today > deadline
+      ? strings.tagVerdictViewComplete
+      : strings.tagVerdictViewOnDeadline
+    return (
+      <Tag variant={variant} outlined disabled truncate>
+        {formatMessage(message)}
+      </Tag>
+    )
+  }
+
   return (
     <>
       <SectionHeading title={formatMessage(strings.title)} />
@@ -55,9 +75,10 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.reviewDecision) },
+                { title: formatMessage(tables.verdictViewState) },
                 { title: formatMessage(tables.prosecutorName) },
               ]}
               data={cases}
@@ -86,9 +107,10 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   ),
                 },
                 {
-                  cell: (row: CaseListEntry) => (
-                    <Text>{row.indictmentReviewer?.name}</Text>
-                  ),
+                  cell: (row) => getVerdictViewTag(row),
+                },
+                {
+                  cell: (row) => <Text>{row.indictmentReviewer?.name}</Text>,
                 },
               ]}
             />

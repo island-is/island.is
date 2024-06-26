@@ -90,6 +90,7 @@ export const InputController = forwardRef(
       if (currency) {
         return (
           <NumberFormat
+            size={size}
             customInput={Input}
             id={id}
             icon={icon ? { name: icon } : undefined}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import {
   Text,
   Box,
@@ -6,20 +6,24 @@ import {
   Button,
   ToastContainer,
   Checkbox,
+  RadioButton,
 } from '@island.is/island-ui/core'
 
 import {
-  Aid,
   AidName,
   ApiKeysForMunicipality,
+  ChildrenAid,
   Municipality,
-  scrollToId,
 } from '@island.is/financial-aid/shared/lib'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
-import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
+import {
+  PercentageInput,
+  SelectedMunicipality,
+} from '@island.is/financial-aid-web/veita/src/components'
 import useCurrentMunicipalityState from '@island.is/financial-aid-web/veita/src/utils/useCurrentMunicipalityState'
 import ApiKeysSettings from './ApiKeysSettings/ApiKeysSettings'
 import ApiKeyInfo from './ApiKeysSettings/ApiKeysInfo'
+import { useErrorInSettings } from '../../utils/useErrorInSettings'
 
 interface Props {
   currentMunicipality: Municipality
@@ -33,62 +37,34 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
 
   const { apiKeyInfo, municipalityId } = state
 
-  const [hasNavError, setHasNavError] = useState(false)
-  const [hasAidError, setHasAidError] = useState(false)
-
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
   const aidNames = Object.values(AidName).map(String)
 
-  const errorCheckAid = (aid: Aid, prefix: string, scrollToError: boolean) => {
-    const firstErrorAid = Object.entries(aid).find(
-      (a) => aidNames.includes(a[0]) && a[1] <= 0,
-    )
-
-    if (firstErrorAid === undefined) {
-      return false
-    }
-
-    setHasAidError(true)
-    if (scrollToError) {
-      scrollToId(`${prefix}${firstErrorAid[0]}`)
-    }
-    return true
-  }
-
-  const errorCheckNav = () => {
-    if (
-      state.usingNav &&
-      (!state.navUrl || !state.navUsername || !state.navPassword)
-    ) {
-      setHasNavError(true)
-      scrollToId('navSettings')
-      return true
-    }
-
-    return false
-  }
+  const {
+    hasNavError,
+    hasAidError,
+    hasDecemberCompensationError,
+    errorCheckNav,
+    errorCheckAid,
+    errorCheckDecemberCompensation,
+    aidChangeHandler,
+    navChangeHandler,
+  } = useErrorInSettings(aidNames)
 
   const submit = () => {
-    const errorNav = errorCheckNav()
+    const errorNav = errorCheckNav(state)
     const errorAid =
       errorCheckAid(state.individualAid, INDIVIDUAL, !errorNav) ||
       errorCheckAid(state.cohabitationAid, COHABITATION, !errorNav)
+    const errorDesember = errorCheckDecemberCompensation(
+      state.decemberCompensation,
+    )
 
-    if (errorNav || errorAid) {
+    if (errorNav || errorAid || errorDesember) {
       return
     }
     updateMunicipality()
-  }
-
-  const aidChangeHandler = (update: () => void) => {
-    setHasAidError(false)
-    update()
-  }
-
-  const navChangeHandler = (update: () => void) => {
-    setHasNavError(false)
-    update()
   }
 
   //This is because of animation on select doesnt work stand alone
@@ -249,6 +225,28 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       ),
     },
     {
+      headline: 'Desember uppbót',
+      smallText: 'Prósenta af grunnupphæð',
+      component: (
+        <PercentageInput
+          id={`input-desember`}
+          name={`decemberCompensation`}
+          label="Desember uppbót"
+          value={state.decemberCompensation.toString()}
+          hasError={
+            hasDecemberCompensationError && state.decemberCompensation === 0
+          }
+          errorMessage={'Desember uppbót þarf að vera hærri en 0'}
+          onUpdate={(value) =>
+            setState({
+              ...state,
+              decemberCompensation: value,
+            })
+          }
+        />
+      ),
+    },
+    {
       headline: 'Einstaklingar',
       component: Object.entries(state.individualAid).map(
         (aid) =>
@@ -378,6 +376,50 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           </Box>
         )
       })}
+
+      <Box marginBottom={[2, 2, 7]} id="childrenAid" className={`contentUp`}>
+        <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+          Börn
+        </Text>
+        <Box
+          display="flex"
+          alignItems="center"
+          width="full"
+          columnGap={3}
+          rowGap={3}
+          flexWrap={'wrap'}
+        >
+          <Box flexGrow={1}>
+            <RadioButton
+              name="children-aid-institution"
+              label="Styrkur greiddur til stofnunar"
+              value={ChildrenAid.INSTITUTION}
+              checked={state.childrenAid === ChildrenAid.INSTITUTION}
+              onChange={() => {
+                setState({ ...state, childrenAid: ChildrenAid.INSTITUTION })
+              }}
+              backgroundColor="blue"
+              large
+            />
+          </Box>
+          <Box flexGrow={1}>
+            <RadioButton
+              name="children-aid-applicant"
+              label="Styrkur greiddur til umsækjanda"
+              value={ChildrenAid.APPLICANT}
+              checked={state.childrenAid === ChildrenAid.APPLICANT}
+              onChange={() => {
+                setState({
+                  ...state,
+                  childrenAid: ChildrenAid.APPLICANT,
+                })
+              }}
+              backgroundColor="blue"
+              large
+            />
+          </Box>
+        </Box>
+      </Box>
 
       <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={submit} icon="checkmark">

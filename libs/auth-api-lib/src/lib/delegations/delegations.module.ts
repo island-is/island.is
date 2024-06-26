@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { UserSystemNotificationModule } from '../user-notification'
 
@@ -30,6 +31,8 @@ import { DelegationsIndexService } from './delegations-index.service'
 import { UserIdentitiesModule } from '../user-identities/user-identities.module'
 import { DelegationTypeModel } from './models/delegation-type.model'
 import { DelegationProviderModel } from './models/delegation-provider.model'
+import { DelegationProviderService } from './delegation-provider.service'
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
 
 @Module({
   imports: [
@@ -37,10 +40,12 @@ import { DelegationProviderModel } from './models/delegation-provider.model'
     PersonalRepresentativeModule,
     NationalRegistryClientModule,
     RskRelationshipsClientModule,
+    CompanyRegistryClientModule,
     UserIdentitiesModule,
     FeatureFlagModule,
     SequelizeModule.forFeature([
       ApiScope,
+      ApiScopeDelegationType,
       IdentityResource,
       Delegation,
       DelegationScope,
@@ -65,6 +70,7 @@ import { DelegationProviderModel } from './models/delegation-provider.model'
     DelegationsIncomingCustomService,
     DelegationsIncomingRepresentativeService,
     DelegationsIndexService,
+    DelegationProviderService,
   ],
   exports: [
     DelegationsService,
@@ -72,6 +78,7 @@ import { DelegationProviderModel } from './models/delegation-provider.model'
     DelegationsIncomingService,
     DelegationScopeService,
     DelegationsIndexService,
+    DelegationProviderService,
   ],
 })
 export class DelegationsModule {}

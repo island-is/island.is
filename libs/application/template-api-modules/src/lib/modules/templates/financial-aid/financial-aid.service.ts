@@ -82,15 +82,17 @@ export class FinancialAidService extends BaseTemplateApiService {
           externalData.currentApplication.data.currentApplicationId,
       }
     }
-
-    const children = externalData.childrenCustodyInformation?.data.map(
-      (child) => {
-        return {
-          name: child.fullName,
-          nationalId: child.nationalId,
-        }
-      },
-    )
+    const children = answers.childrenSchoolInfo
+      ? answers.childrenSchoolInfo.map((child) => {
+          return {
+            name: child.fullName,
+            nationalId: child.nationalId,
+            school: child.school,
+            livesWithApplicant: child.livesWithApplicant,
+            livesWithBothParents: child.livesWithBothParents,
+          }
+        })
+      : []
 
     const formatFiles = (files: ApplicationAnswerFile[], type: FileType) => {
       if (!files || files.length <= 0) {
@@ -134,7 +136,7 @@ export class FinancialAidService extends BaseTemplateApiService {
 
     const directTaxPayments = () => {
       if (externalData?.taxDataSpouse?.data) {
-        return externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
+        externalData?.taxData?.data?.municipalitiesDirectTaxPayments?.directTaxPayments.concat(
           externalData?.taxDataSpouse?.data.municipalitiesDirectTaxPayments
             ?.directTaxPayments,
         )
@@ -155,6 +157,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       .concat(formatFiles(answers.spouseTaxReturnFiles, FileType.SPOUSEFILES))
       .concat(formatFiles(spouseTaxFiles(), FileType.SPOUSEFILES))
       .concat(formatFiles(applicantTaxFiles(), FileType.TAXRETURN))
+      .concat(formatFiles(answers.childrenFiles, FileType.CHILDRENFILES))
 
     const newApplication = {
       name: externalData.nationalRegistry.data.fullName,
@@ -178,6 +181,7 @@ export class FinancialAidService extends BaseTemplateApiService {
       state: ApplicationState.NEW,
       files: files,
       children: children,
+      childrenComment: answers.childrenComment,
       spouseNationalId:
         externalData.nationalRegistrySpouse.data?.nationalId ||
         answers.relationshipStatus?.spouseNationalId,

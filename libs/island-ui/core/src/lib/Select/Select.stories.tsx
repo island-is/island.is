@@ -2,91 +2,149 @@ import React from 'react'
 
 import { withFigma } from '../../utils/withFigma'
 import { Select } from './Select'
+import type { Meta, StoryObj } from '@storybook/react'
 
-export default {
+const config: Meta<typeof Select> = {
   title: 'Form/Select',
   component: Select,
   parameters: withFigma('Select'),
+  argTypes: {
+    name: { description: 'Field name' },
+    label: { description: 'Label text', control: { type: 'text' } },
+    placeholder: { description: 'Placeholder text' },
+    backgroundColor: {
+      description: 'Background color',
+      options: ['white', 'blue'],
+      control: { type: 'radio' },
+      defaultValue: 'white',
+    },
+    noOptionsMessage: { description: 'No options message' },
+    size: {
+      description: 'Field size',
+      options: ['xs', 'sm', 'md'],
+      control: { type: 'radio' },
+    },
+    options: { description: 'Select options' },
+    isDisabled: { description: 'Is select field disabled' },
+    isClearable: { description: 'Is select field clearable' },
+    isSearchable: { description: 'Is select field searchable' },
+    isMulti: { description: 'Can select field select multiple options' },
+    required: { description: 'Is select field required' },
+    hasError: { description: 'Does select field has error' },
+    errorMessage: {
+      description: 'Error message description',
+      control: { type: 'text' },
+    },
+    icon: { description: 'Icon name' },
+  },
 }
 
-const Template = (args) => <Select {...args} />
+export default config
+type SelectProps = StoryObj<typeof Select>
 
-const options = [
-  {
-    label: 'Text 1',
-    value: '0',
-  },
-  {
-    label: 'Text 2',
-    value: '1',
-  },
-  {
-    label: 'Text 3',
-    value: '2',
-  },
-]
+const Template = (args) => (
+  <div style={{ height: 150, overflow: 'auto' }}>
+    <Select {...args} />
+  </div>
+)
 
-const selectArgs = {
-  name: 'select',
-  label: 'Label text',
+export const Default: SelectProps = Template.bind({})
+Default.args = {
+  name: 'Select',
+  label: 'Select label text',
   placeholder: 'Text',
-  options: options,
+  noOptionsMessage: 'No options',
+  options: [
+    {
+      label: 'Text 1',
+      value: '0',
+    },
+    {
+      label: 'Text 2',
+      value: '1',
+    },
+    {
+      label: 'Text 3',
+      value: '2',
+    },
+  ],
   backgroundColor: 'white',
+  size: 'md',
   isDisabled: false,
-  noOptionsMessage: 'Enginn valmöguleiki',
   isClearable: false,
   isSearchable: false,
-  size: 'md',
+  isMulti: false,
   hasError: false,
+  required: false,
+  errorMessage: undefined,
+  icon: undefined,
 }
 
-export const Default = Template.bind({})
-Default.args = selectArgs
-
-export const Blue = Template.bind({})
-Blue.args = {
-  ...selectArgs,
+export const BlueBackground = Template.bind({})
+BlueBackground.args = {
+  ...Default.args,
   backgroundColor: 'blue',
 }
 
-export const Disabled = Template.bind({})
-Disabled.args = {
-  ...selectArgs,
-  isDisabled: true,
+export const NoOptions = Template.bind({})
+NoOptions.args = {
+  ...Default.args,
+  options: [],
+  noOptionsMessage: 'No options',
 }
 
-export const NoOption = Template.bind({})
-NoOption.args = {
-  ...selectArgs,
-  noOptionsMessage: 'Enginn valmöguleiki',
-}
-
-export const Clearable = Template.bind({})
-Clearable.args = {
-  ...selectArgs,
-  isClearable: true,
-}
-
-export const Searchable = Template.bind({})
-Searchable.args = {
-  ...selectArgs,
-  isSearchable: true,
+export const Multiple = Template.bind({})
+Multiple.args = {
+  ...Default.args,
+  isMulti: true,
 }
 
 export const SizeSm = Template.bind({})
 SizeSm.args = {
-  ...selectArgs,
+  ...Default.args,
   size: 'sm',
 }
 
 export const SizeXs = Template.bind({})
 SizeXs.args = {
-  ...selectArgs,
+  ...Default.args,
   size: 'xs',
 }
 
-export const WithError = Template.bind({})
-WithError.args = {
-  ...selectArgs,
+export const Disabled = Template.bind({})
+Disabled.args = {
+  ...Default.args,
+  isDisabled: true,
+}
+
+export const Clearable = Template.bind({})
+Clearable.args = {
+  ...Default.args,
+  isClearable: true,
+}
+
+export const Searchable = Template.bind({})
+Searchable.args = {
+  ...Default.args,
+  isSearchable: true,
+  placeholder: 'Type to search',
+}
+
+export const WithDifferentIcon = Template.bind({})
+WithDifferentIcon.args = {
+  ...Default.args,
+  icon: 'ellipsisVertical',
+}
+
+export const Required = Template.bind({})
+Required.args = {
+  ...Default.args,
+  required: true,
+}
+
+export const HasError = Template.bind({})
+HasError.args = {
+  ...Default.args,
   hasError: true,
+  errorMessage: 'This is an error message',
 }

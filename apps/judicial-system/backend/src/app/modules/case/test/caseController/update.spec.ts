@@ -190,6 +190,7 @@ describe('CaseController - Update', () => {
 
     it('should delete a case file', () => {
       expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
         caseFile,
         transaction,
       )
@@ -405,7 +406,6 @@ describe('CaseController - Update', () => {
       const caseToUpdate = { courtCaseNumber }
       const policeCaseNumber1 = uuid()
       const policeCaseNumber2 = uuid()
-      const coverLetterId = uuid()
       const indictmentId = uuid()
       const criminalRecordId = uuid()
       const costBreakdownId = uuid()
@@ -415,12 +415,6 @@ describe('CaseController - Update', () => {
         type,
         policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
         caseFiles: [
-          {
-            id: coverLetterId,
-            key: uuid(),
-            state: CaseFileState.STORED_IN_RVG,
-            category: CaseFileCategory.COVER_LETTER,
-          },
           {
             id: indictmentId,
             key: uuid(),
@@ -492,12 +486,6 @@ describe('CaseController - Update', () => {
             user,
             caseId,
             elementId: policeCaseNumber2,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-            user,
-            caseId,
-            elementId: coverLetterId,
           },
           {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILE,

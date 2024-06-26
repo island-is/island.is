@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
@@ -37,15 +37,12 @@ export const usePoliceCaseNumbers = (workingCase: Case) => {
   return { clientPoliceNumbers, setClientPoliceNumbers }
 }
 
-export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    clientPoliceNumbers,
-    setClientPoliceNumbers,
-  } = props
+export const PoliceCaseNumbers: FC<Props> = ({
+  workingCase,
+  setWorkingCase,
+  clientPoliceNumbers,
+  setClientPoliceNumbers,
+}) => {
   const { user } = useContext(UserContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()

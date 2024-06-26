@@ -20,6 +20,7 @@ import {
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  CaseOrigin,
   Defendant,
   IndictmentCountOffense,
   Institution,
@@ -75,7 +76,7 @@ export const getIndictmentIntroductionAutofill = (
     : []
 }
 
-const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Indictment = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -103,7 +104,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
         caseId: workingCase.id,
       },
     },
-    skip: !workingCase.id,
+    skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     onCompleted: (data) => {
       if (!data.policeCaseInfo) {

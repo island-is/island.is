@@ -1,6 +1,7 @@
 import { EmailService } from '@island.is/email-service'
 import {
   ApplicationState,
+  ChildrenAid,
   Employment,
   FamilyStatus,
   FileType,
@@ -21,6 +22,8 @@ import { ApplicationModel } from '../models/application.model'
 import { createTestingApplicationModule } from './createTestingApplicationModule'
 import { DirectTaxPaymentService } from '../../directTaxPayment'
 import { ChildrenService } from '../../children'
+import { nowFactory } from '../factories/date.factory'
+jest.mock('../factories/date.factory')
 
 interface Then {
   result: ApplicationModel
@@ -80,6 +83,7 @@ describe('ApplicationController - Create', () => {
   describe('database query', () => {
     let mockCreate: jest.Mock
     let mockFindOne: jest.Mock
+    const date = new Date()
 
     const user: User = {
       nationalId: '0000000000',
@@ -121,6 +125,8 @@ describe('ApplicationController - Create', () => {
       applicationSystemId: '',
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
+      children: [],
+      childrenComment: '',
     }
 
     beforeEach(async () => {
@@ -129,6 +135,9 @@ describe('ApplicationController - Create', () => {
       const mockFindApplication = mockApplicationModel.findOne as jest.Mock
       mockFindApplication.mockReturnValueOnce(null)
 
+      const mockToday = nowFactory as jest.Mock
+      mockToday.mockReturnValueOnce(date)
+
       await givenWhenThen(user, application)
     })
 
@@ -136,6 +145,7 @@ describe('ApplicationController - Create', () => {
       expect(mockCreate).toHaveBeenCalledWith({
         nationalId: user.nationalId,
         ...application,
+        appliedDate: date,
       })
     })
 
@@ -150,7 +160,7 @@ describe('ApplicationController - Create', () => {
               spouseNationalId: user.nationalId,
             },
           ],
-          created: { [Op.gte]: firstDateOfMonth() },
+          appliedDate: { [Op.gte]: firstDateOfMonth() },
         },
       })
     })
@@ -201,6 +211,8 @@ describe('ApplicationController - Create', () => {
       applicationSystemId: '',
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
+      children: [],
+      childrenComment: '',
     }
 
     const municipality: Municipality = {
@@ -213,12 +225,14 @@ describe('ApplicationController - Create', () => {
       individualAid: undefined,
       cohabitationAid: undefined,
       usingNav: false,
+      childrenAid: ChildrenAid.NOTDEFINED,
     }
 
     const appModel = {
       id,
       state: application.state,
       created: new Date(),
+      appliedDate: new Date(),
       email: application.email,
     }
 
@@ -323,6 +337,8 @@ describe('ApplicationController - Create', () => {
       applicationSystemId: null,
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
+      children: [],
+      childrenComment: '',
     }
 
     const municipality: Municipality = {
@@ -335,12 +351,14 @@ describe('ApplicationController - Create', () => {
       individualAid: undefined,
       cohabitationAid: undefined,
       usingNav: false,
+      childrenAid: ChildrenAid.NOTDEFINED,
     }
 
     const appModel = {
       id,
       state: application.state,
       created: new Date(),
+      appliedDate: new Date(),
       email: application.email,
       spouseEmail: application.spouseEmail,
       spouseName: application.spouseName,
@@ -437,12 +455,15 @@ describe('ApplicationController - Create', () => {
       applicationSystemId: '',
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
+      children: [],
+      childrenComment: '',
     }
 
     const appModel = {
       id,
       state: application.state,
       created: new Date(),
+      appliedDate: new Date(),
       email: application.email,
     }
 
@@ -532,6 +553,8 @@ describe('ApplicationController - Create', () => {
       applicationSystemId: '',
       nationalId: '',
       spouseHasFetchedDirectTaxPayment: false,
+      children: [],
+      childrenComment: '',
     }
     const user: User = {
       nationalId: '0000000000',
@@ -542,6 +565,7 @@ describe('ApplicationController - Create', () => {
       id,
       state: application.state,
       created: new Date(),
+      appliedDate: new Date(),
       email: application.email,
     }
 
@@ -575,7 +599,7 @@ describe('ApplicationController - Create', () => {
     })
   })
 
-  describe('applicant has applied for period', () => {
+  describe('applicant has appliedDate for period', () => {
     let then: Then
 
     const id = uuid()
@@ -623,13 +647,8 @@ describe('ApplicationController - Create', () => {
       applicationSystemId: '',
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
-    }
-
-    const appModel = {
-      id,
-      state: application.state,
-      created: new Date(),
-      email: application.email,
+      children: [],
+      childrenComment: '',
     }
 
     beforeEach(async () => {
@@ -687,6 +706,8 @@ describe('ApplicationController - Create', () => {
       applicationSystemId: '',
       nationalId: user.nationalId,
       spouseHasFetchedDirectTaxPayment: false,
+      children: [],
+      childrenComment: '',
     }
 
     beforeEach(async () => {

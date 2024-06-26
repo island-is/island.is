@@ -1,6 +1,5 @@
 import { addEventListener } from '@react-native-community/netinfo'
 import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
-import { getPresentedNotificationsAsync } from 'expo-notifications'
 import {
   AppState,
   AppStateStatus,
@@ -24,9 +23,9 @@ import { ButtonRegistry, ComponentRegistry as CR } from '../component-registry'
 import { isIos } from '../devices'
 import { handleQuickAction } from '../quick-actions'
 
-import { handleNotificationResponse } from './setup-notifications'
-
 let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
+// Flag to track overlay state
+let overlayShown = false
 
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
@@ -93,17 +92,6 @@ export function setupEventHandlers() {
     } = authStore.getState()
     const { appLockTimeout } = preferencesStore.getState()
 
-    if (status === 'active') {
-      getPresentedNotificationsAsync().then((notifications) => {
-        notifications.forEach((notification) =>
-          handleNotificationResponse({
-            notification,
-            actionIdentifier: 'NOOP',
-          }),
-        )
-      })
-    }
-
     if (!skipAppLock()) {
       if (noLockScreenUntilNextAppStateActive) {
         authStore.setState({ noLockScreenUntilNextAppStateActive: false })
@@ -114,16 +102,20 @@ export function setupEventHandlers() {
         if (isIos) {
           // Add a small delay for those accidental backgrounds in iOS
           backgroundAppLockTimeout = setTimeout(() => {
-            if (!lockScreenComponentId) {
+            const { lockScreenComponentId } = authStore.getState()
+
+            if (!lockScreenComponentId && !overlayShown) {
+              overlayShown = true
               showAppLockOverlay({ status })
-            } else {
+            } else if (lockScreenComponentId) {
               Navigation.updateProps(lockScreenComponentId, { status })
             }
           }, 100)
         } else {
-          if (!lockScreenComponentId) {
+          if (!lockScreenComponentId && !overlayShown) {
+            overlayShown = true
             showAppLockOverlay({ status })
-          } else {
+          } else if (lockScreenComponentId) {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
         }
@@ -135,12 +127,16 @@ export function setupEventHandlers() {
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
+            lockScreenActivatedAt !== null &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
-            hideAppLockOverlay()
+            hideAppLockOverlay(lockScreenComponentId)
+            overlayShown = false // Mark overlay as hidden
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
+        } else {
+          overlayShown = false // Reset overlay state if no lock screen component
         }
       }
     }

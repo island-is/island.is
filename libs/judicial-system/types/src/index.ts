@@ -1,9 +1,9 @@
 export { Feature } from './lib/feature'
 
-export { Gender } from './lib/defendant'
-
+export { Gender, DefenderChoice, SubpoenaType } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
+export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
 export { DateType } from './lib/dateLog'
 export { CommentType } from './lib/comment'
@@ -55,6 +55,7 @@ export {
   restrictionCases,
   investigationCases,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
   isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
@@ -65,18 +66,22 @@ export {
   completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
+  hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   prosecutorCanSelectDefenderForInvestigationCase,
   isIndictmentCaseState,
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
+  DistrictCourtLocation,
+  CourtSessionType,
+  courtSessionTypeNames,
 } from './lib/case'
 export type {
   CrimeScene,
   CrimeSceneMap,
+  DistrictCourts,
   IndictmentSubtypeMap,
-  IndictmentConfirmation,
 } from './lib/case'
 
 export {

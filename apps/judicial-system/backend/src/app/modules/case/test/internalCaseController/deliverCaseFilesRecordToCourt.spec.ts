@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { BadRequestException } from '@nestjs/common'
 
-import { CaseState, User } from '@island.is/judicial-system/types'
+import { CaseState, CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
@@ -33,7 +33,8 @@ describe('InternalCaseController - Deliver case files record to court', () => {
   const courtCaseNumber = uuid()
   const theCase = {
     id: caseId,
-    state: CaseState.ACCEPTED,
+    type: CaseType.INDICTMENT,
+    state: CaseState.COMPLETED,
     policeCaseNumbers: [policeCaseNumber],
     courtId,
     courtCaseNumber,
@@ -45,9 +46,6 @@ describe('InternalCaseController - Deliver case files record to court', () => {
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const mockGet = createCaseFilesRecord as jest.Mock
-    mockGet.mockRejectedValue(new Error('Some error'))
-
     const { awsS3Service, courtService, internalCaseController } =
       await createTestingCaseModule()
 
@@ -94,37 +92,22 @@ describe('InternalCaseController - Deliver case files record to court', () => {
       then = await givenWhenThen(caseId, policeCaseNumber, theCase)
     })
 
-    it('should try to get the pdf from AWS S3 indictment completed folder', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        1,
-        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+    it('should deliver the case files record', () => {
+      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
+        theCase.type,
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
       )
-    })
-
-    it('should try to get the pdf from AWS S3 indictment folder', () => {
-      expect(mockAwsS3Service.getObject).toHaveBeenNthCalledWith(
-        2,
-        `indictments/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
-      )
-    })
-
-    it('should generate the case files record', async () => {
       expect(createCaseFilesRecord).toHaveBeenCalledWith(
         theCase,
         policeCaseNumber,
         [],
         expect.any(Function),
       )
-    })
-
-    it('should store the case files record in AWS S3', async () => {
       expect(mockAwsS3Service.putObject).toHaveBeenCalledWith(
-        `indictments/completed/${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
+        theCase.type,
+        `${theCase.id}/${policeCaseNumber}/caseFilesRecord.pdf`,
         pdf.toString(),
       )
-    })
-
-    it('should create a case files record at court', async () => {
       expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
         caseId,
@@ -136,41 +119,14 @@ describe('InternalCaseController - Deliver case files record to court', () => {
         'application/pdf',
         pdf,
       )
-    })
-
-    it('should return a success response', async () => {
       expect(then.result).toEqual({ delivered: true })
     })
   })
 
-  describe('pdf returned from AWS S3 indictment completed folder', () => {
+  describe('pdf returned from AWS S3', () => {
     beforeEach(async () => {
       const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockReturnValueOnce(pdf)
-
-      await givenWhenThen(caseId, policeCaseNumber, theCase)
-    })
-
-    it('should use the AWS S3 pdf', () => {
-      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
-        user,
-        caseId,
-        courtId,
-        courtCaseNumber,
-        CourtDocumentFolder.CASE_DOCUMENTS,
-        `Skjalaskrá ${policeCaseNumber}`,
-        `Skjalaskrá ${policeCaseNumber}.pdf`,
-        'application/pdf',
-        pdf,
-      )
-    })
-  })
-
-  describe('pdf returned from AWS S3 indictment folder', () => {
-    beforeEach(async () => {
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockRejectedValueOnce(new Error('Some error'))
-      mockGetObject.mockReturnValueOnce(pdf)
+      mockGetObject.mockResolvedValueOnce(pdf)
 
       await givenWhenThen(caseId, policeCaseNumber, theCase)
     })

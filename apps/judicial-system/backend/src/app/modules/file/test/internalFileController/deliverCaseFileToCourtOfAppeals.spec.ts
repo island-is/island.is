@@ -98,8 +98,12 @@ describe('InternalFileController - Deliver case file to court of appeals', () =>
     })
 
     it('should return success', () => {
-      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
+        theCase.type,
+        key,
+      )
       expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
+        theCase.type,
         key,
         mockFileConfig.robotS3TimeToLiveGet,
       )

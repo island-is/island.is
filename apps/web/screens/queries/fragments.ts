@@ -833,6 +833,7 @@ export const slices = gql`
     xAxisFormat
     xAxisValueType
     customStyleConfig
+    reduceAndRoundValue
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {
@@ -845,29 +846,24 @@ export const slices = gql`
     displayChangeMonthOverMonth
     displayChangeYearOverYear
     numberBoxDate
+    reduceAndRoundValue
+    displayTimestamp
   }
 
   fragment GenericListFields on GenericList {
     __typename
     id
     searchInputPlaceholder
-    firstPageListItemResponse {
-      input {
-        genericListId
-        lang
-        page
-        queryString
-        size
-      }
-      items {
+    itemType
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
         id
-        date
         title
-        cardIntro {
-          ...HtmlFields
-        }
+        slug
       }
-      total
     }
   }
 

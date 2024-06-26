@@ -296,6 +296,62 @@ describe('Transition Case', () => {
     },
   )
 
+  describe.each(indictmentCases)('ask for cancellation %s', (type) => {
+    const allowedFromStates = [CaseState.SUBMITTED, CaseState.RECEIVED]
+
+    describe.each(allowedFromStates)(
+      'state %s - should ask for cancellation',
+      (fromState) => {
+        // Act
+        const res = transitionCase(
+          CaseTransition.ASK_FOR_CANCELLATION,
+          type,
+          fromState,
+        )
+
+        // Assert
+        expect(res).toEqual({ state: CaseState.WAITING_FOR_CANCELLATION })
+      },
+    )
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not ask for cancellation', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(CaseTransition.ASK_FOR_CANCELLATION, type, fromState)
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
+  })
+
+  describe.each([...restrictionCases, ...investigationCases])(
+    'ask for cancellation %s',
+    (type) => {
+      describe.each(Object.values(CaseState))('state %s', (fromState) => {
+        it.each([undefined, ...Object.values(CaseAppealState)])(
+          'appeal state %s - should not ask for cancellation',
+          (fromAppealState) => {
+            // Arrange
+            const act = () =>
+              transitionCase(
+                CaseTransition.ASK_FOR_CANCELLATION,
+                type,
+                fromState,
+                fromAppealState,
+              )
+
+            // Act and assert
+            expect(act).toThrow(ForbiddenException)
+          },
+        )
+      })
+    },
+  )
+
   describe.each(indictmentCases)('receive %s', (type) => {
     const allowedFromStates = [CaseState.SUBMITTED]
 
@@ -445,60 +501,11 @@ describe('Transition Case', () => {
     },
   )
 
-  describe.each(indictmentCases)('redistribute %s', (type) => {
-    const allowedFromStates = [CaseState.RECEIVED]
-
-    describe.each(allowedFromStates)(
-      'state %s - should redistribute',
-      (fromState) => {
-        // Act
-        const res = transitionCase(CaseTransition.REDISTRIBUTE, type, fromState)
-
-        // Assert
-        expect(res).toEqual({ state: CaseState.MAIN_HEARING })
-      },
-    )
-
-    describe.each(
-      Object.values(CaseState).filter(
-        (state) => !allowedFromStates.includes(state),
-      ),
-    )('state %s - should not redistribute', (fromState) => {
-      // Arrange
-      const act = () =>
-        transitionCase(CaseTransition.REDISTRIBUTE, type, fromState)
-
-      // Act and assert
-      expect(act).toThrow(ForbiddenException)
-    })
-  })
-
-  describe.each([...restrictionCases, ...investigationCases])(
-    'redistribute %s',
-    (type) => {
-      describe.each(Object.values(CaseState))('state %s', (fromState) => {
-        it.each([undefined, ...Object.values(CaseAppealState)])(
-          'appeal state %s - should not redistribute',
-          (fromAppealState) => {
-            // Arrange
-            const act = () =>
-              transitionCase(
-                CaseTransition.REDISTRIBUTE,
-                type,
-                fromState,
-                fromAppealState,
-              )
-
-            // Act and assert
-            expect(act).toThrow(ForbiddenException)
-          },
-        )
-      })
-    },
-  )
-
   describe.each(indictmentCases)('complete %s', (type) => {
-    const allowedFromStates = [CaseState.RECEIVED]
+    const allowedFromStates = [
+      CaseState.WAITING_FOR_CANCELLATION,
+      CaseState.RECEIVED,
+    ]
 
     describe.each(allowedFromStates)(
       'state %s - should complete',
@@ -748,8 +755,6 @@ describe('Transition Case', () => {
     const allowedFromStates = [
       CaseState.DRAFT,
       CaseState.WAITING_FOR_CONFIRMATION,
-      CaseState.SUBMITTED,
-      CaseState.RECEIVED,
     ]
 
     describe.each(allowedFromStates)(

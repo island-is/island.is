@@ -100,7 +100,7 @@ const LoadingOverlay = styled.View`
   z-index: 999;
 
   background-color: #000;
-  opacity: 0.25;
+  opacity: ${({ theme }) => (theme.isDark ? 0.6 : 0.4)};
   width: 100%;
   height: 100%;
 `
@@ -148,7 +148,7 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     fetchPolicy: 'network-only',
     variables: {
       input: {
-        licenseType: item?.license.type ?? '',
+        licenseType: item?.license.type ?? id,
       },
     },
   })
@@ -341,6 +341,17 @@ export const WalletPassScreen: NavigationFunctionComponent<{
     )
   }
 
+  // If we don't have an item we want to return a loading spinner for the whole screen to prevent showing the wrong license while fetching
+  if (loading && !item) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#0061FF"
+        style={{ marginTop: theme.spacing[4] }}
+      />
+    )
+  }
+
   return (
     <View style={{ flex: 1 }}>
       <View style={{ height: cardHeight }} />
@@ -432,8 +443,8 @@ export const WalletPassScreen: NavigationFunctionComponent<{
         <LoadingOverlay>
           <ActivityIndicator
             size="large"
-            color="#0061FF"
-            style={{ marginTop: 32 }}
+            color={theme.color.white}
+            style={{ marginTop: theme.spacing[4] }}
           />
         </LoadingOverlay>
       )}

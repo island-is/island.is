@@ -22,7 +22,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
@@ -76,7 +76,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
-
+  const { openBrowser } = useBrowser()
   const flatListRef = useRef<FlatList>(null)
   const [refetching, setRefetching] = useState(false)
   const intl = useIntl()

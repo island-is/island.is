@@ -39,6 +39,7 @@ import {
   AdminPatchClientDto,
   superUserFields,
 } from './dto/admin-patch-client.dto'
+import { ClientDelegationType } from '../models/client-delegation-type.model'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -73,6 +74,8 @@ export class AdminClientsService {
     private readonly clientGrantType: typeof ClientGrantType,
     @InjectModel(ClientAllowedScope)
     private readonly clientAllowedScope: typeof ClientAllowedScope,
+    @InjectModel(ClientDelegationType)
+    private readonly clientDelegationType: typeof ClientDelegationType,
     @InjectModel(ApiScope)
     private readonly apiScopeModel: typeof ApiScope,
     private readonly translationService: TranslationService,
@@ -207,7 +210,10 @@ export class AdminClientsService {
           tenantId,
           displayName,
           refreshTokenExpiration,
-          clientAttributes,
+          clientAttributes: {
+            ...clientAttributes,
+            addedDelegationTypes: clientAttributes.supportedDelegationTypes,
+          },
           redirectUris,
           postLogoutRedirectUris,
           customClaims,
@@ -384,7 +390,7 @@ export class AdminClientsService {
       tenantId?: string
       displayName?: TranslatedValueDto[]
       refreshTokenExpiration?: RefreshTokenExpiration
-      clientAttributes?: Omit<
+      clientAttributes: Omit<
         AdminPatchClientDto,
         | 'customClaims'
         | 'displayName'
@@ -401,14 +407,26 @@ export class AdminClientsService {
       removedScopes?: string[]
     },
   ) {
-    if (Object.keys(data.clientAttributes as object).length > 0) {
+    const {
+      addedDelegationTypes,
+      removedDelegationTypes,
+      supportsCustomDelegation,
+      supportsProcuringHolders,
+      supportsPersonalRepresentatives,
+      supportsLegalGuardians,
+      ...clientAttributes
+    } = data.clientAttributes
+
+    if (Object.keys(clientAttributes as object).length > 0) {
       // Update includes client base attributes
+      const refreshTokenExpiration = data.refreshTokenExpiration
+        ? translateRefreshTokenExpiration(data.refreshTokenExpiration)
+        : undefined
+
       await this.clientModel.update(
         {
-          ...data.clientAttributes,
-          refreshTokenExpiration: translateRefreshTokenExpiration(
-            data.refreshTokenExpiration,
-          ),
+          ...clientAttributes,
+          refreshTokenExpiration,
         },
         {
           where: {
@@ -482,6 +500,26 @@ export class AdminClientsService {
         transaction,
       })
     }
+
+    if (addedDelegationTypes && addedDelegationTypes.length > 0) {
+      await this.clientsService.addClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: addedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
+
+    if (removedDelegationTypes && removedDelegationTypes.length > 0) {
+      await this.clientsService.removeClientDelegationTypes({
+        clientId: data.clientId,
+        delegationTypes: removedDelegationTypes,
+        options: {
+          transaction,
+        },
+      })
+    }
   }
 
   private defaultClientAttributes(clientType: ClientType) {
@@ -548,6 +586,10 @@ export class AdminClientsService {
           type: claim.type,
           value: claim.value,
         })) ?? [],
+      supportedDelegationTypes:
+        client.supportedDelegationTypes?.map(
+          (clientDelegationType) => clientDelegationType.delegationType,
+        ) ?? [],
       allowedAcr: client.allowedAcr ?? [],
     }
   }
@@ -594,6 +636,7 @@ export class AdminClientsService {
       { model: ClientGrantType, as: 'allowedGrantTypes' },
       { model: ClientRedirectUri, as: 'redirectUris' },
       { model: ClientPostLogoutRedirectUri, as: 'postLogoutRedirectUris' },
+      { model: ClientDelegationType, as: 'supportedDelegationTypes' },
     ]
   }
 

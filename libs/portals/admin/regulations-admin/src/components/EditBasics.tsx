@@ -26,6 +26,9 @@ import ConfirmModal from './ConfirmModal/ConfirmModal'
 import { ReferenceText } from './impacts/ReferenceText'
 import { DraftChangeForm, DraftImpactForm } from '../state/types'
 
+const updateText =
+  'Ósamræmi er í texta stofnreglugerðar og breytingareglugerðar. Texti breytingareglugerðar þarf að samræmast breytingum sem gerðar hafa verið á stofnreglugerð, eigi breytingarnar að færast inn með réttum hætti.'
+
 export const EditBasics = () => {
   const t = useLocale().formatMessage
   const { draft, actions } = useDraftingState()
@@ -117,6 +120,7 @@ export const EditBasics = () => {
     const additions = formatAmendingBodyWithArticlePrefix(draft.impacts)
 
     setEditorKey(Date.now().toString())
+    updateState('title', formatAmendingRegTitle(draft))
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
     setHasUpdated(true)
@@ -173,7 +177,7 @@ export const EditBasics = () => {
                 <AlertMessage
                   type="default"
                   title="Uppfæra texta"
-                  message="Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út."
+                  message={updateText}
                   action={
                     <Button
                       icon="reload"
@@ -232,9 +236,7 @@ export const EditBasics = () => {
               isModalVisible
             }
             title="Uppfæra texta"
-            message={
-              'Uppfæra texta reglugerðar með breytingum frá fyrsta skrefi. Allur viðbættur texti í núverandi skrefi verður hreinsaður út.'
-            }
+            message={updateText}
             onConfirm={() => {
               updateEditorText()
               setIsModalVisible(false)

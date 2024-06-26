@@ -5,7 +5,7 @@ export type ChangeMachineOwner = {
   delegateNationalId: string
   sellerNationalId: string
   dateOfOwnerChange: Date
-  paymentId: string
+  paymentId: string | null
   phoneNumber: string
   email: string
 }

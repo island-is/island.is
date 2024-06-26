@@ -1,3 +1,4 @@
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -38,8 +39,8 @@ const canProsecutionUserAccessCase = (
       CaseState.DRAFT,
       CaseState.WAITING_FOR_CONFIRMATION,
       CaseState.SUBMITTED,
+      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
@@ -115,8 +116,8 @@ const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {
   } else if (
     ![
       CaseState.SUBMITTED,
+      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       CaseState.COMPLETED,
     ].includes(theCase.state)
   ) {
@@ -232,8 +233,8 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
   if (
     ![
       CaseState.SUBMITTED,
+      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       CaseState.ACCEPTED,
       CaseState.REJECTED,
       CaseState.DISMISSED,
@@ -272,17 +273,23 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     }
   }
 
+  const formattedNationalId = formatNationalId(user.nationalId)
   // Check case defender access
   if (isIndictmentCase(theCase.type)) {
     if (
       !theCase.defendants?.some(
-        (defendant) => defendant.defenderNationalId === user.nationalId,
+        (defendant) =>
+          defendant.defenderNationalId === user.nationalId ||
+          defendant.defenderNationalId === formattedNationalId,
       )
     ) {
       return false
     }
   } else {
-    if (theCase.defenderNationalId !== user.nationalId) {
+    if (
+      theCase.defenderNationalId !== user.nationalId &&
+      theCase.defenderNationalId !== formattedNationalId
+    ) {
       return false
     }
   }

@@ -20,6 +20,7 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
+import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
 
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
@@ -30,6 +31,30 @@ const createTestClientData = async (app: TestApp, user: User) => {
     name: tenantId,
     nationalId: user.nationalId,
   })
+
+  await Promise.all(
+    [
+      [AuthDelegationType.Custom, AuthDelegationProvider.Custom],
+      [
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationProvider.CompanyRegistry,
+      ],
+      [
+        AuthDelegationType.PersonalRepresentative,
+        AuthDelegationProvider.PersonalRepresentativeRegistry,
+      ],
+      [
+        AuthDelegationType.LegalGuardian,
+        AuthDelegationProvider.NationalRegistry,
+      ],
+    ].map(async ([delegationType, provider]) =>
+      fixtureFactory.createDelegationType({
+        id: delegationType,
+        providerId: provider,
+      }),
+    ),
+  )
+
   const client = await fixtureFactory.createClient({
     ...clientBaseAttributes,
     clientId,
@@ -38,6 +63,7 @@ const createTestClientData = async (app: TestApp, user: User) => {
     postLogoutRedirectUris: [faker.internet.url()],
     allowedGrantTypes: [],
     claims: [{ type: faker.random.word(), value: faker.random.word() }],
+    supportedDelegationTypes: [],
   })
   const [translation] = await fixtureFactory.createTranslations(client, 'en', {
     clientName: faker.random.word(),
@@ -81,6 +107,9 @@ const createTestClientData = async (app: TestApp, user: User) => {
     supportsProcuringHolders: false,
     promptDelegations: false,
     singleSession: false,
+    supportedDelegationTypes: client.supportedDelegationTypes?.map(
+      (type) => type.delegationType,
+    ),
     allowedAcr: [defaultAcrValue],
   }
 }
@@ -110,10 +139,6 @@ const clientForCreateTest: Partial<AdminCreateClientDto> = {
   requireApiScopes: true,
   requireConsent: true,
   requirePkce: true,
-  supportsCustomDelegation: true,
-  supportsLegalGuardians: true,
-  supportsPersonalRepresentatives: true,
-  supportsProcuringHolders: true,
   promptDelegations: true,
   singleSession: true,
 }
@@ -316,6 +341,7 @@ describe('MeClientsController with auth', () => {
         customClaims: [],
         singleSession: false,
         allowedAcr: [defaultAcrValue],
+        supportedDelegationTypes: [],
       })
 
       // Assert - db record
@@ -337,18 +363,13 @@ describe('MeClientsController with auth', () => {
   it.each`
     value | typeSpecificDefaults
     ${'super admin fields'} | ${{
-  supportsCustomDelegation: true,
-  supportsLegalGuardians: true,
-  supportsProcuringHolders: true,
-  supportsPersonalRepresentatives: true,
-  promptDelegations: true,
-  requireApiScopes: true,
   requireConsent: false,
   singleSession: false,
   allowOfflineAccess: true,
   requirePkce: false,
   supportTokenExchange: true,
   accessTokenLifetime: 100,
+  allowedAcr: ['some-acr-value'],
   customClaims: [{ type: 'claim1', value: 'value1' }],
 }}
   `(
@@ -415,6 +436,7 @@ describe('MeClientsController with auth', () => {
         promptDelegations: false,
         customClaims: [],
         singleSession: false,
+        supportedDelegationTypes: [],
         allowedAcr: [defaultAcrValue],
       })
 
@@ -539,6 +561,7 @@ describe('MeClientsController with auth', () => {
         customClaims: typeSpecificDefaults.customClaims ?? [],
         singleSession: typeSpecificDefaults.singleSession ?? false,
         allowedAcr: [defaultAcrValue],
+        supportedDelegationTypes: [],
       })
 
       // Assert - db record
@@ -573,6 +596,45 @@ describe('MeClientsController with auth', () => {
       })
     },
   )
+
+  it('should create client with correct delegation types for super user', async () => {
+    const app = await setupApp({
+      AppModule,
+      SequelizeConfigService,
+      user: superUser,
+      dbType: 'postgres',
+    })
+    const server = request(app.getHttpServer())
+    const newClientId = '@test.is/new-test-client'
+    await createTestClientData(app, superUser)
+    const newClient = {
+      clientId: newClientId,
+      clientName: 'test-client',
+      clientType: 'web',
+      supportedDelegationTypes: [
+        AuthDelegationType.Custom,
+        AuthDelegationType.PersonalRepresentative,
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationType.LegalGuardian,
+      ],
+    }
+
+    // Act
+    const res = await server
+      .post(`/v2/me/tenants/${tenantId}/clients`)
+      .send(newClient)
+
+    // Assert
+    expect(res.status).toEqual(201)
+    expect(res.body.supportedDelegationTypes).toEqual(
+      expect.arrayContaining([
+        AuthDelegationType.Custom,
+        AuthDelegationType.PersonalRepresentative,
+        AuthDelegationType.ProcurationHolder,
+        AuthDelegationType.LegalGuardian,
+      ]),
+    )
+  })
 
   describe('create client with invalid request body', () => {
     it('should return 400 Bad Request with invalid client id', async () => {
@@ -811,10 +873,6 @@ describe('MeClientsController with auth', () => {
         const server = request(app.getHttpServer())
         const expected = await createTestClientData(app, user)
         const updatedClient: AdminPatchClientDto = {
-          supportsCustomDelegation: true,
-          supportsLegalGuardians: true,
-          supportsProcuringHolders: true,
-          supportsPersonalRepresentatives: true,
           promptDelegations: true,
           requireApiScopes: true,
           requireConsent: true,
@@ -860,6 +918,147 @@ describe('MeClientsController with auth', () => {
         } else {
           throw new Error('Invalid user role')
         }
+      })
+    })
+
+    describe('update supported delegation types', () => {
+      const updateAndAssert = async ({
+        server,
+        body,
+        supportedDelegationTypes,
+        supportsCustomDelegation,
+        supportsLegalGuardians,
+        supportsPersonalRepresentatives,
+        supportsProcuringHolders,
+      }: {
+        server: request.SuperTest<request.Test>
+        body: AdminPatchClientDto
+        supportedDelegationTypes: string[]
+        supportsCustomDelegation: boolean
+        supportsLegalGuardians: boolean
+        supportsPersonalRepresentatives: boolean
+        supportsProcuringHolders: boolean
+      }) => {
+        const res = await server
+          .patch(
+            `/v2/me/tenants/${tenantId}/clients/${encodeURIComponent(
+              clientId,
+            )}`,
+          )
+          .send(body)
+
+        // Assert
+        expect(res.status).toEqual(200)
+        expect(res.body.supportedDelegationTypes.length).toEqual(
+          supportedDelegationTypes.length,
+        )
+        expect(res.body).toEqual(
+          expect.objectContaining({
+            supportedDelegationTypes: expect.arrayContaining(
+              supportedDelegationTypes,
+            ),
+            supportsCustomDelegation,
+            supportsLegalGuardians,
+            supportsPersonalRepresentatives,
+            supportsProcuringHolders,
+          }),
+        )
+      }
+
+      it('should add supported delegation types and still support old boolean fields', async () => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: superUser,
+          dbType: 'postgres',
+        })
+        const server = request(app.getHttpServer())
+        await createTestClientData(app, superUser)
+
+        const body: AdminPatchClientDto = {
+          addedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.ProcurationHolder,
+          ],
+        }
+
+        // Act
+        await updateAndAssert({
+          server,
+          body,
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.ProcurationHolder,
+          ],
+          supportsCustomDelegation: true,
+          supportsLegalGuardians: true,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: true,
+        })
+      })
+
+      it('should remove supported delegation types and still support old boolean fields', async () => {
+        // Arrange
+        const app = await setupApp({
+          AppModule,
+          SequelizeConfigService,
+          user: superUser,
+          dbType: 'postgres',
+        })
+        const server = request(app.getHttpServer())
+        await createTestClientData(app, superUser)
+
+        // add delegation types that we can then remove
+        await updateAndAssert({
+          server,
+          body: {
+            addedDelegationTypes: [
+              AuthDelegationType.Custom,
+              AuthDelegationType.LegalGuardian,
+              AuthDelegationType.PersonalRepresentative,
+              AuthDelegationType.ProcurationHolder,
+            ],
+            supportsCustomDelegation: true,
+            supportsLegalGuardians: true,
+            supportsPersonalRepresentatives: true,
+            supportsProcuringHolders: true,
+          },
+          supportedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.ProcurationHolder,
+          ],
+          supportsCustomDelegation: true,
+          supportsLegalGuardians: true,
+          supportsPersonalRepresentatives: true,
+          supportsProcuringHolders: true,
+        })
+
+        const body: AdminPatchClientDto = {
+          removedDelegationTypes: [
+            AuthDelegationType.Custom,
+            AuthDelegationType.LegalGuardian,
+            AuthDelegationType.PersonalRepresentative,
+            AuthDelegationType.ProcurationHolder,
+          ],
+        }
+
+        // Act
+        await updateAndAssert({
+          server,
+          body,
+          supportedDelegationTypes: [],
+          supportsCustomDelegation: false,
+          supportsLegalGuardians: false,
+          supportsPersonalRepresentatives: false,
+          supportsProcuringHolders: false,
+        })
       })
     })
   })

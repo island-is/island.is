@@ -1,13 +1,16 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
-import { formatDOB } from '@island.is/judicial-system/formatters'
 import {
   Defendant,
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import {
+  DefendantInfo,
+  DefendantInfoActionButton,
+} from './DefendantInfo/DefendantInfo'
 import { strings } from './InfoCard.strings'
 import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
@@ -24,14 +27,19 @@ interface UniqueDefendersProps {
   defenders: Defender[]
 }
 
-interface DataSection {
-  data: Array<{ title: string; value?: React.ReactNode }>
+export interface DataSection {
+  data: { title: string; value?: React.ReactNode }[]
 }
 
 interface Props {
-  courtOfAppealData?: Array<{ title: string; value?: React.ReactNode }>
-  data: Array<{ title: string; value?: React.ReactNode }>
-  defendants?: { title: string; items: Defendant[] }
+  courtOfAppealData?: { title: string; value?: React.ReactNode }[]
+  data: { title: string; value?: React.ReactNode }[]
+  defendants?: {
+    title: string
+    items: Defendant[]
+    defendantInfoActionButton?: DefendantInfoActionButton
+    displayAppealExpirationInfo?: boolean
+  }
   defenders?: Defender[]
   icon?: IconMapIcon
   additionalDataSections?: DataSection[]
@@ -48,12 +56,9 @@ export const NameAndEmail = (name?: string | null, email?: string | null) => [
     : []),
 ]
 
-const UniqueDefenders: React.FC<
-  React.PropsWithChildren<UniqueDefendersProps>
-> = (props) => {
+const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
   const { formatMessage } = useIntl()
 
-  const { defenders } = props
   const uniqueDefenders = defenders?.filter(
     (defender, index, self) =>
       index === self.findIndex((d) => d.email === defender.email),
@@ -89,7 +94,7 @@ const UniqueDefenders: React.FC<
   )
 }
 
-const InfoCard: React.FC<Props> = (props) => {
+const InfoCard: FC<Props> = (props) => {
   const {
     courtOfAppealData,
     data,
@@ -108,35 +113,24 @@ const InfoCard: React.FC<Props> = (props) => {
       <Box
         className={(defendants || defenders) && styles.infoCardTitleContainer}
         marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={(defendants || defenders) && [2, 2, 3, 3]}
+        paddingBottom={defenders && [2, 2, 2, 2]}
       >
         {defendants && (
           <>
             <Text variant="h4">{defendants.title}</Text>
-            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0}>
+            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0} marginTop={1}>
               {defendants.items.map((defendant) => (
-                <Text key={defendant.id}>
-                  <span className={styles.infoCardDefendant}>
-                    <Text
-                      as="span"
-                      fontWeight="semiBold"
-                    >{`${defendant.name}, `}</Text>
-                    <Text as="span" fontWeight="semiBold">
-                      {defendant.nationalId
-                        ? `${formatDOB(
-                            defendant.nationalId,
-                            defendant.noNationalId,
-                          )}, `
-                        : ''}
-                    </Text>
-                    <Text as="span">
-                      {defendant.citizenship && ` (${defendant.citizenship}), `}
-                    </Text>
-                    {defendant.address && (
-                      <Text as="span">{`${defendant.address}`}</Text>
-                    )}
-                  </span>
-                </Text>
+                <DefendantInfo
+                  key={defendant.id}
+                  defendant={defendant}
+                  displayDefenderInfo={!defenders}
+                  displayAppealExpirationInfo={
+                    defendants.displayAppealExpirationInfo
+                  }
+                  defendantInfoActionButton={
+                    defendants.defendantInfoActionButton
+                  }
+                />
               ))}
             </Box>
           </>

@@ -595,6 +595,52 @@
         ]
       }
     },
+    "/api/Starfsrettindi/api/Starfsrettindi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Starfsrettindi_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StarfsrettindiModel"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Taekifaerisleyfi/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -2001,6 +2047,52 @@
         ]
       }
     },
+    "/api/KannaSakavottord/{audkenni}/{kennitala}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "KannaSakavottord_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "kennitala",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/KaupmaliJaNei/{kennitala}/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -2301,24 +2393,10 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs": {
+    "/RettindiFyrirIslandIs/RettindiFyrirIslandIs": {
       "get": {
         "tags": ["Syslumenn"],
         "operationId": "RettindiFyrirIslandIs_Get",
-        "parameters": [
-          {
-            "type": "string",
-            "name": "Kennitala",
-            "in": "query",
-            "x-nullable": true
-          },
-          {
-            "type": "string",
-            "name": "Locale",
-            "in": "query",
-            "x-nullable": true
-          }
-        ],
         "responses": {
           "200": {
             "x-nullable": false,
@@ -2356,7 +2434,7 @@
         ]
       }
     },
-    "/api/RettindiFyrirIslandIs/{audkenni}": {
+    "/RettindiFyrirIslandIs/RettindiFyrirIslandIs/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
         "operationId": "RettindiFyrirIslandIs_GetStakt",
@@ -2720,6 +2798,45 @@
         ]
       }
     },
+    "/api/Vedbokarvottord2": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "Vedbokarvottord2_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitMargirSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Vedbokarvottord": {
       "post": {
         "tags": ["Syslumenn"],
@@ -2749,6 +2866,51 @@
             "description": "NotFound",
             "schema": {
               "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/Vedbokavottord2Regluverki": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "Vedbokavottord2Regluverki_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "skilabod",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/VedbandayfirlitMargirSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
+            }
+          },
+          "404": {
+            "x-nullable": false,
+            "description": "NotFound",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+              }
             }
           }
         },
@@ -3206,6 +3368,9 @@
         "nafn": {
           "type": "string"
         },
+        "kennitala": {
+          "type": "string"
+        },
         "idngrein": {
           "type": "string"
         },
@@ -3214,6 +3379,17 @@
           "format": "date-time"
         },
         "embaetti": {
+          "type": "string"
+        }
+      }
+    },
+    "StarfsrettindiModel": {
+      "type": "object",
+      "properties": {
+        "nafn": {
+          "type": "string"
+        },
+        "starfsrettindi": {
           "type": "string"
         }
       }
@@ -4251,7 +4427,7 @@
     },
     "TegundAndlags": {
       "type": "integer",
-      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar\n5 = Oskrad\n6 = AdrarEignir\n7 = Hlutabref\n8 = InnistaedaIBanka\n9 = PeningarOgBankaholf\n10 = Skotvopn\n11 = VerdbrefOgKrofur\n12 = Utfarakostnadur\n13 = OpinberGjold\n14 = AdrarSkuldir\n15 = EignirIAtvinnurekstri\n16 = SkuldirIAtvinnurekstri",
+      "description": "0 = Fasteign\n1 = Okutaeki\n2 = Skip\n3 = Lausafe\n4 = Loftfar\n5 = Oskrad\n6 = AdrarEignir\n7 = Hlutabref\n8 = InnistaedaIBanka\n9 = PeningarOgBankaholf\n10 = Skotvopn\n11 = VerdbrefOgKrofur\n12 = Utfarakostnadur\n13 = OpinberGjold\n14 = AdrarSkuldir\n15 = EignirIAtvinnurekstri\n16 = SkuldirIAtvinnurekstri\n17 = Fasteignagjold\n18 = Tryggingastofnun\n19 = Lan\n20 = Kreditkort\n21 = Yfirdrattur",
       "x-enumNames": [
         "Fasteign",
         "Okutaeki",
@@ -4269,9 +4445,17 @@
         "OpinberGjold",
         "AdrarSkuldir",
         "EignirIAtvinnurekstri",
-        "SkuldirIAtvinnurekstri"
+        "SkuldirIAtvinnurekstri",
+        "Fasteignagjold",
+        "Tryggingastofnun",
+        "Lan",
+        "Kreditkort",
+        "Yfirdrattur"
       ],
-      "enum": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16]
+      "enum": [
+        0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19,
+        20, 21
+      ]
     },
     "UpplysingarUrDanarbuiRadstofunSkeyti": {
       "type": "object",
@@ -5438,7 +5622,7 @@
         }
       }
     },
-    "VedbandayfirlitSkeyti": {
+    "VedbandayfirlitMargirSkeyti": {
       "type": "object",
       "required": ["tegundAndlags"],
       "properties": {
@@ -5446,7 +5630,10 @@
           "type": "string"
         },
         "fastanumer": {
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "tegundAndlags": {
           "$ref": "#/definitions/VedbondTegundAndlags"
@@ -5465,6 +5652,21 @@
         "Oskrad"
       ],
       "enum": [0, 1, 2, 3, 4, 5]
+    },
+    "VedbandayfirlitSkeyti": {
+      "type": "object",
+      "required": ["tegundAndlags"],
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "fastanumer": {
+          "type": "string"
+        },
+        "tegundAndlags": {
+          "$ref": "#/definitions/VedbondTegundAndlags"
+        }
+      }
     },
     "VedbandayfirlitReguverkiSvarSkeyti": {
       "type": "object",
