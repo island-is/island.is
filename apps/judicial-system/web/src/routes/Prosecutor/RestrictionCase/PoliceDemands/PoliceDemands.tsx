@@ -91,7 +91,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const PoliceDemands = () => {
   const {
     workingCase,
     setWorkingCase,

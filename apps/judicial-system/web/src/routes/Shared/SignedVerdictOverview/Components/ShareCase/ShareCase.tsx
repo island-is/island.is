@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { Dispatch, FC, SetStateAction, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 
@@ -14,15 +14,15 @@ import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   selectedSharingInstitutionId: SingleValue<ReactSelectOption>
-  setSelectedSharingInstitutionId: React.Dispatch<
-    React.SetStateAction<SingleValue<ReactSelectOption>>
+  setSelectedSharingInstitutionId: Dispatch<
+    SetStateAction<SingleValue<ReactSelectOption>>
   >
   shareCaseWithAnotherInstitution: (
     institution?: SingleValue<ReactSelectOption>,
   ) => void
 }
 
-const ShareCase: React.FC<React.PropsWithChildren<Props>> = ({
+const ShareCase: FC<Props> = ({
   selectedSharingInstitutionId,
   setSelectedSharingInstitutionId,
   shareCaseWithAnotherInstitution,

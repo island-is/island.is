@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
@@ -39,11 +39,12 @@ interface Props {
   loading?: boolean
 }
 
-export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+export const DefenderCasesTable: FC<Props> = ({
+  cases,
+  showingCompletedCases,
+  loading,
+}) => {
   const { formatMessage } = useIntl()
-  const { cases, showingCompletedCases, loading } = props
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
     useSortCases('created', 'descending', cases)
   const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
