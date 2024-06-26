@@ -13,16 +13,39 @@ export const createWrappedFetchWithLogging = (
         let requestBody = init?.body ? JSON.parse(init?.body as string) : {}
 
         // Filter known sensitive data
-        // TODO: Should pick what we need instead
-        requestBody = omit(requestBody, [
-          'applicant',
-          'otherParentId',
-          'email',
-          'phoneNumber',
-          'paymentInfo.bankAccount',
-          'employers.email',
-          'employers.approverNationalRegistryId',
+        // First pick what we need
+        requestBody = pick(requestBody, [
+          'adoptionDate',
+          // 'applicant',
+          'applicationComment',
+          'applicationFundId',
+          'applicationId',
+          'attachments',
+          'dateOfBirth',
+          // 'email',
+          'employers',
+          'expectedDateOfBirth',
+          'otherParentBlocked',
+          // 'otherParentId',
+          'paymentInfo',
+          'periods',
+          // 'phoneNumber',
+          'rightsCode',
+          'status',
+          // 'testData',
         ])
+        // Then omit the sensitive sub-attributes
+        // requestBody = omit(requestBody, [
+        //   'employers.approverNationalRegistryId',
+        //   'employers.email',
+        //   'paymentInfo.bankAccount',
+        // ])
+        requestBody.employers = requestBody.employers.map(
+          (employer: Init['employers'][number]) => {
+            return omit(employer, ['email', 'approverNationalRegistryId'])
+          },
+        )
+        requestBody.paymentInfo = omit(requestBody.paymentInfo, ['bankAccount'])
 
         const vmstMetadata = {
           request: {
