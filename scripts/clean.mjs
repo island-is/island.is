@@ -16,15 +16,15 @@ const config = {
   CLEAN_YARN_IGNORES_LIST: ['patches', 'releases'],
   SEARCH_DIRECTORIES: ['apps', 'libs'],
   GENERATED_PATTERNS: [
-    'openapi.yaml',
-    'api.graphql',
-    'schema.d.ts',
-    'schema.tsx',
-    'schema.ts',
-    'gen/graphql.ts',
-    '*.generated.ts',
-    'possibleTypes.json',
-    'fragmentTypes.json',
+    /\/openapi\.yaml$/,
+    /\/api\.graphql$/,
+    /\/schema\.d\.ts$/,
+    /\/schema\.tsx$/,
+    /\/schema\.ts$/,
+    /\/gen\/graphql\.ts$/,
+    /\/.*\.generated\.ts$/,
+    /\/possibleTypes\.json$/,
+    /\/fragmentTypes\.json$/,
   ],
   DIRS_TO_DELETE: ['gen/fetch'],
 }
@@ -160,14 +160,10 @@ function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
 }
 
 function cleanGenerated() {
-  const patterns = config.GENERATED_PATTERNS.map(
-    (pattern) => new RegExp('/' + pattern.replace(/\*/g, '.*')),
-  )
-
   config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
       findAndDelete(baseDir, (filePath) =>
-        patterns.some((regex) => regex.test(filePath)),
+        config.GENERATED_PATTERNS.some((regex) => regex.test(filePath)),
       )
       config.DIRS_TO_DELETE.forEach((dirToDelete) => {
         findAndDelete(
