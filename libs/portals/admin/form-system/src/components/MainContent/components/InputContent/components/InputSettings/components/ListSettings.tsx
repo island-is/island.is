@@ -61,8 +61,8 @@ export const ListSettings = () => {
       type: 'SET_LIST_TYPE',
       payload: {
         listType: index === 0 ? 'customList' : 'other',
-        update: updateActiveItem
-      }
+        update: updateActiveItem,
+      },
     })
   }
 
@@ -72,9 +72,7 @@ export const ListSettings = () => {
         <>
           <Row>
             <Column>
-              <Box
-                onClick={() => onClickRadioHandler(0)}
-              >
+              <Box onClick={() => onClickRadioHandler(0)}>
                 <RadioButton
                   label={formatMessage(m.customList)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -86,9 +84,7 @@ export const ListSettings = () => {
           </Row>
           <Row>
             <Column>
-              <Box
-                onClick={() => onClickRadioHandler(1)}
-              >
+              <Box onClick={() => onClickRadioHandler(1)}>
                 <RadioButton
                   label={formatMessage(m.predeterminedLists)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -99,42 +95,35 @@ export const ListSettings = () => {
             </Column>
           </Row>
         </>
-      )
-      }
-      {
-        radio[0] && (
-          <Column span="5/10">
-            <Button variant="ghost" onClick={() => setInListBuilder(true)}>
-              {formatMessage(m.listBuilder)}
-            </Button>
-          </Column>
-        )
-      }
-      {
-        radio[1] && (
-          <Row>
-            <Column span="5/10">
-              <Select
-                placeholder={formatMessage(m.chooseListType)}
-                name="predeterminedLists"
-                label={formatMessage(m.predeterminedLists)}
-                options={predeterminedLists}
-                backgroundColor="blue"
-                onChange={(option) => {
-                  const listType = getListType(option?.value as number)
-                  controlDispatch({
-                    type: 'SET_LIST_TYPE',
-                    payload: {
-                      listType: listType,
-                      update: updateActiveItem,
-                    },
-                  })
-                }}
-              />
-            </Column>
-          </Row>
-        )
-      }
-    </Stack >
+      )}
+      {radio[0] && (
+        <Column span="5/10">
+          <Button variant="ghost" onClick={() => setInListBuilder(true)}>
+            {formatMessage(m.listBuilder)}
+          </Button>
+        </Column>
+      )}
+      {radio[1] && (
+        <Column span="5/10">
+          <Select
+            placeholder={formatMessage(m.chooseListType)}
+            name="predeterminedLists"
+            label={formatMessage(m.predeterminedLists)}
+            options={predeterminedLists}
+            backgroundColor="blue"
+            onChange={(option) => {
+              const listType = getListType(option?.value as number)
+              controlDispatch({
+                type: 'SET_LIST_TYPE',
+                payload: {
+                  listType: listType,
+                  update: updateActiveItem,
+                },
+              })
+            }}
+          />
+        </Column>
+      )}
+    </Stack>
   )
 }

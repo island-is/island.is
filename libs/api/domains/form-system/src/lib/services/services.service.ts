@@ -16,7 +16,7 @@ export class FormSystemService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private servicesApi: ServicesApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -111,7 +111,9 @@ export class FormSystemService {
     return response as List
   }
 
-  private async fetchTranslation(input: GetTranslationInput): Promise<Response> {
+  private async fetchTranslation(
+    input: GetTranslationInput,
+  ): Promise<Response> {
     const { FORM_SYSTEM_MIDEIND_KEY } = process.env
     if (!FORM_SYSTEM_MIDEIND_KEY) {
       throw new Error('Api key for translation service is not configured')
@@ -132,7 +134,9 @@ export class FormSystemService {
       }),
     })
     if (!response.ok) {
-      throw new Error(`Failed to fetch translation with status: ${response.status}`)
+      throw new Error(
+        `Failed to fetch translation with status: ${response.status}`,
+      )
     }
     return response
   }

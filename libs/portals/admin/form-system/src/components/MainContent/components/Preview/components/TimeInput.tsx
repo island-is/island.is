@@ -16,21 +16,22 @@ export const TimeInput = ({ currentItem }: Props) => {
   // 2: Half hour
   // 3: Quarter
   const chosenMinuteList = (): { label: string; value: string }[] => {
-    const createOptions = (list: string[]) => list.map(t => ({ label: t, value: t }));
+    const createOptions = (list: string[]) =>
+      list.map((t) => ({ label: t, value: t }))
 
-    const interval = currentItem?.inputSettings?.interval;
+    const interval = currentItem?.inputSettings?.interval
 
     switch (interval) {
       case 1:
-        return [{ label: '00', value: '00' }];
+        return [{ label: '00', value: '00' }]
       case 2:
-        return createOptions(halfList.minuteList);
+        return createOptions(halfList.minuteList)
       case 3:
         return createOptions(quarterList.minuteList);
       default:
-        return createOptions(minuteList);
+        return createOptions(minuteList)
     }
-  };
+  }
 
   return (
     <>

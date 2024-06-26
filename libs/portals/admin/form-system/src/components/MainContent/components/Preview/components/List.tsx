@@ -33,12 +33,15 @@ export const List = ({ currentItem }: Props) => {
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const mapToListItems = (items: any[]): ListItem[] =>
-    items?.map(item => ({
+    items?.map((item) => ({
       label: item?.label?.is ?? '',
       value: item?.label?.is ?? '',
     })) ?? []
 
-  const fetchAndSetList = async (fetcher: () => Promise<any>, dataKey: string) => {
+  const fetchAndSetList = async (
+    fetcher: () => Promise<any>,
+    dataKey: string,
+  ) => {
     try {
       const { data } = await fetcher()
       if (!data || !data[dataKey] || !data[dataKey].list) {
@@ -59,10 +62,15 @@ export const List = ({ currentItem }: Props) => {
       setListItems(mapToListItems(currentList))
     } else {
       const fetchMap: Record<string, () => Promise<void>> = {
-        'lond': () => fetchAndSetList(getCountries, 'formSystemGetCountries'),
-        'sveitarfelog': () => fetchAndSetList(getMunicipalities, 'formSystemGetMunicipalities'),
-        'postnumer': () => fetchAndSetList(getZipCodes, 'formSystemGetZipCodes'),
-        'idngreinarMeistara': () => fetchAndSetList(getTradesProfessions, 'formSystemGetTradesProfessions'),
+        lond: () => fetchAndSetList(getCountries, 'formSystemGetCountries'),
+        sveitarfelog: () =>
+          fetchAndSetList(getMunicipalities, 'formSystemGetMunicipalities'),
+        postnumer: () => fetchAndSetList(getZipCodes, 'formSystemGetZipCodes'),
+        idngreinarMeistara: () =>
+          fetchAndSetList(
+            getTradesProfessions,
+            'formSystemGetTradesProfessions',
+          ),
       }
 
       const fetcher = fetchMap[type]
@@ -90,7 +98,8 @@ export const List = ({ currentItem }: Props) => {
         required={currentItem?.isRequired ?? false}
         placeholder={
           ListTypePlaceholder[
-          currentItem.inputSettings?.listType as keyof typeof ListTypePlaceholder
+            currentItem.inputSettings
+              ?.listType as keyof typeof ListTypePlaceholder
           ] ?? 'Select an option'
         }
       />
