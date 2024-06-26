@@ -464,5 +464,5 @@
     "web",
     "cms"
   ],
-  "tags": []
+  "tags": ["lib:js"]
 }
