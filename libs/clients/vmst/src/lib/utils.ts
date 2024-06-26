@@ -11,11 +11,6 @@ export const createWrappedFetchWithLogging = (
     fetch(input, init)
       .then(async (response) => {
         let requestBody = init?.body ? JSON.parse(init?.body as string) : {}
-        let responseBody = await response.json().catch((error) => {
-          logger.error('Error parsing JSON from response', {
-            error: error.message,
-          })
-        })
 
         // Filter known sensitive data
         // TODO: Should pick what we need instead
@@ -28,11 +23,6 @@ export const createWrappedFetchWithLogging = (
           'employers.email',
           'employers.approverNationalRegistryId',
         ])
-        responseBody = pick(responseBody, [
-          'hasError',
-          'hasActivePregnancy',
-          'errocCode',
-        ])
 
         const vmstMetadata = {
           request: {
@@ -40,7 +30,7 @@ export const createWrappedFetchWithLogging = (
           },
           response: {
             status_text: response.statusText,
-            body: responseBody,
+            body: undefined,
           },
         }
 
@@ -52,6 +42,13 @@ export const createWrappedFetchWithLogging = (
             },
           })
         } else {
+          let responseBody = await response.json()
+          responseBody = pick(responseBody, [
+            'hasError',
+            'hasActivePregnancy',
+            'errocCode',
+          ])
+          vmstMetadata.response.body = responseBody
           logger.error(`Failed fetching from VMST`, {
             vmst: {
               ...vmstMetadata,
