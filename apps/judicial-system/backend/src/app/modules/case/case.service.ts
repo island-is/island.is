@@ -31,6 +31,7 @@ import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
+  CaseIndictmentRulingDecision,
   CaseOrigin,
   CaseState,
   CaseTransition,
@@ -155,13 +156,17 @@ export interface UpdateCase
     | 'appealIsolationToDate'
     | 'indictmentRulingDecision'
     | 'indictmentReviewerId'
+    | 'indictmentReviewDecision'
+    | 'indictmentDecision'
+    | 'rulingSignatureDate'
+    | 'judgeId'
+    | 'courtSessionType'
   > {
   type?: CaseType
   state?: CaseState
   policeCaseNumbers?: string[]
   defendantWaivesRightToCounsel?: boolean
   rulingDate?: Date | null
-  rulingSignatureDate?: Date | null
   courtCaseNumber?: string | null
   courtRecordSignatoryId?: string | null
   courtRecordSignatureDate?: Date | null
@@ -169,7 +174,6 @@ export interface UpdateCase
   arraignmentDate?: UpdateDateLog | null
   courtDate?: UpdateDateLog | null
   postponedIndefinitelyExplanation?: string | null
-  judgeId?: string | null
   indictmentReturnedExplanation?: string | null
   indictmentDeniedExplanation?: string | null
   indictmentHash?: string | null
@@ -1440,7 +1444,11 @@ export class CaseService {
     const receivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
     const returningIndictmentCase =
-      update.state === CaseState.DRAFT && theCase.state === CaseState.RECEIVED
+      isIndictmentCase(theCase.type) &&
+      update.state === CaseState.DRAFT &&
+      theCase.state === CaseState.RECEIVED
+    const completingIndictmentCase =
+      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
 
     return this.sequelize
       .transaction(async (transaction) => {
@@ -1497,6 +1505,25 @@ export class CaseService {
           await this.fileService.resetIndictmentCaseFileHashes(
             theCase.id,
             transaction,
+          )
+        }
+
+        if (
+          completingIndictmentCase &&
+          theCase.indictmentRulingDecision &&
+          [
+            CaseIndictmentRulingDecision.FINE,
+            CaseIndictmentRulingDecision.CANCELLATION,
+          ].includes(theCase.indictmentRulingDecision)
+        ) {
+          await Promise.all(
+            theCase.caseFiles
+              ?.filter(
+                (caseFile) => caseFile.category === CaseFileCategory.RULING,
+              )
+              ?.map((caseFile) =>
+                this.fileService.deleteCaseFile(theCase, caseFile, transaction),
+              ) ?? [],
           )
         }
       })

@@ -525,6 +525,11 @@ export const m = defineMessages({
     defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
     description: '',
   },
+  nextStepsDescriptionBEFull: {
+    id: 'dl.application:nextStepsDescriptionBEFull#markdown',
+    defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
+    description: '',
+  },
   congratulationsCertificateTitle: {
     id: 'dl.application:congratulationsCertificateTitle',
     defaultMessage: 'Læknisvottorð',
