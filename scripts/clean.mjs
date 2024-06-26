@@ -152,25 +152,11 @@ function cleanGenerated() {
 
   config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
-      findAndDelete(
-        baseDir,
-        (stat) => stat.isFile(),
-        (filePath) => patterns.some((regex) => regex.test(filePath)),
-        (filePath) => {
-          log(`Deleting now: ${filePath}`)
-          fs.unlinkSync(filePath)
-        },
+      findAndDelete(baseDir, (filePath) =>
+        patterns.some((regex) => regex.test(filePath)),
       )
       config.DIRS_TO_DELETE.forEach((dirToDelete) => {
-        findAndDelete(
-          baseDir,
-          (stat) => stat.isDirectory(),
-          (filePath) => filePath.includes(dirToDelete),
-          (dirPath) => {
-            log(`Deleting directory now: ${dirPath}`)
-            fs.rmSync(dirPath, { recursive: true, force: true })
-          },
-        )
+        findAndDelete(baseDir, (filePath) => filePath.includes(dirToDelete))
       })
     }
   })
@@ -196,15 +182,7 @@ function cleanCaches() {
 
   config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
-      findAndDelete(
-        baseDir,
-        (stat) => stat.isDirectory(),
-        (filePath) => path.basename(filePath) === 'dist',
-        (dirPath) => {
-          log(`Deleting now: ${dirPath}`)
-          fs.rmSync(dirPath, { recursive: true, force: true })
-        },
-      )
+      findAndDelete(baseDir, (filePath) => path.basename(filePath) === 'dist')
     }
   })
 }
@@ -251,9 +229,7 @@ function cleanNodeModules() {
     if (fs.existsSync(baseDir)) {
       findAndDelete(
         baseDir,
-        (stat) => stat.isDirectory(),
         (filePath) => path.basename(filePath) === nodeModulesName,
-        checkAndDeleteNodeModules,
       )
     }
   })
