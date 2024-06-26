@@ -109,22 +109,28 @@ function isGitTracked(filePath) {
 
 function findAndDelete(baseDir, isFileCheck, patternCheck, deleteAction) {
   function walkSync(currentDirPath) {
-    if (currentDirPath.includes('node_modules')) {
-      return
-    }
+    if (currentDirPath.includes('node_modules')) return
+
     fs.readdirSync(currentDirPath).forEach((name) => {
       const filePath = path.join(currentDirPath, name)
       const stat = fs.statSync(filePath)
-      if (isFileCheck(stat) && patternCheck(filePath)) {
-        if (!isGitTracked(filePath)) {
-          if (!dry(`Would delete: ${filePath}`)) {
-            deleteAction(filePath)
-          }
-        } else {
-          log(`Skipping git-tracked file: ${filePath}`)
-        }
-      } else if (stat.isDirectory()) {
+
+      if (stat.isDirectory()) {
         walkSync(filePath)
+        return
+      }
+
+      if (!isFileCheck(stat)) return
+
+      if (!patternCheck(filePath)) return
+
+      if (isGitTracked(filePath)) {
+        log(`Skipping git-tracked file: ${filePath}`)
+        return
+      }
+
+      if (!dry(`Would delete: ${filePath}`)) {
+        deleteAction(filePath)
       }
     })
   }
