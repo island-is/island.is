@@ -1,5 +1,5 @@
 // Based on libs/island-ui/core/src/lib/Input/Input.treat.ts
-import { style } from '@vanilla-extract/css'
+import { globalStyle, style } from '@vanilla-extract/css'
 import { theme, helperStyles } from '@island.is/island-ui/theme'
 import * as mixins from './EditorInput.mixins'
 import omit from 'lodash/omit'
@@ -50,4 +50,8 @@ export const hasFocus = style({
   selectors: {
     [`&${container}`]: mixins.containerFocus,
   },
+})
+
+globalStyle(`.tox-icon.tox-tbtn__icon-wrap`, {
+  color: '#217bb7',
 })
