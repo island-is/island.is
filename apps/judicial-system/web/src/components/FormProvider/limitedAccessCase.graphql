@@ -144,6 +144,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       name
     }
     postponedIndefinitelyExplanation
+    indictmentDecision
     indictmentRulingDecision
+    courtSessionType
   }
 }

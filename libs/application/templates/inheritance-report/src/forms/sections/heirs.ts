@@ -376,7 +376,7 @@ export const heirs = buildSection({
                   answers,
                   'heirsAdditionalInfoPrivateTransferFiles',
                 )?.[0]
-                return file?.name
+                return file?.name ?? ''
               },
             }),
             buildDescriptionField({
