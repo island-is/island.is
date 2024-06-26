@@ -86,8 +86,8 @@ export const TableRepeaterFormField: FC<Props> = ({
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
   let values = useWatch({ name: data.id, control: methods.control })
-  let tableHeader = table?.header ?? tableItems.map((item) => item.label)
-  let tableRows = table?.rows ?? tableItems.map((item) => item.id)
+  const tableHeader = table?.header ?? tableItems.map((item) => item.label)
+  const tableRows = table?.rows ?? tableItems.map((item) => item.id)
 
   tableItems.map((item) => {
     if (item.component === 'nationalIdWithName') {
