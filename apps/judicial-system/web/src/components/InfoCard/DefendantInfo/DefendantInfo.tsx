@@ -27,7 +27,7 @@ interface DefendantInfoProps {
   displayDefenderInfo: boolean
   displayAppealExpirationInfo?: boolean
   defendantInfoActionButton?: DefendantInfoActionButton
-  verdictDisplayedDate?: string
+  displayVerdictViewDate?: boolean
 }
 
 export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
@@ -38,7 +38,7 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
     displayDefenderInfo,
     displayAppealExpirationInfo,
     defendantInfoActionButton,
-    verdictDisplayedDate,
+    displayVerdictViewDate,
   } = props
   const { formatMessage } = useIntl()
 
@@ -107,10 +107,10 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
             )}
           </Box>
         )}
-        {verdictDisplayedDate && (
+        {displayVerdictViewDate && (
           <Text>
             {formatMessage(strings.verdictDisplayedDate, {
-              date: formatDate(verdictDisplayedDate, 'PPP'),
+              date: formatDate(defendant.verdictViewDate, 'PPP'),
             })}
           </Text>
         )}

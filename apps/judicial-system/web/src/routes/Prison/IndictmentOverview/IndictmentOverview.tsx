@@ -8,6 +8,7 @@ import {
   FormContentContainer,
   FormContext,
   InfoCard,
+  InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
@@ -50,15 +51,7 @@ const IndictmentOverview = () => {
             </Text>
           </Box>
         )}
-        <InfoCard
-          defendants={{
-            title: formatMessage(strings.infoCardDefendantsTitle, {
-              count: workingCase.defendants?.length,
-            }),
-            items: workingCase.defendants ?? [],
-          }}
-          data={[]}
-        />
+        <InfoCardClosedIndictment displayVerdictViewDate />
       </FormContentContainer>
     </PageLayout>
   )

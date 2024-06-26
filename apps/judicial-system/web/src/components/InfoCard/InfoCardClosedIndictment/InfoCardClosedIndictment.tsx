@@ -17,6 +17,7 @@ import { strings } from '../InfoCardIndictment.strings'
 export interface Props {
   defendantInfoActionButton?: DefendantInfoActionButton
   displayAppealExpirationInfo?: boolean
+  displayVerdictViewDate?: boolean
 }
 
 export const getAdditionalDataSections = (
@@ -53,7 +54,11 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
-  const { defendantInfoActionButton, displayAppealExpirationInfo } = props
+  const {
+    defendantInfoActionButton,
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+  } = props
 
   return (
     <InfoCard
@@ -117,6 +122,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
               items: workingCase.defendants,
               defendantInfoActionButton: defendantInfoActionButton,
               displayAppealExpirationInfo,
+              displayVerdictViewDate,
             }
           : undefined
       }
