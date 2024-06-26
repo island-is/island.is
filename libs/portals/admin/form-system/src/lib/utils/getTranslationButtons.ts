@@ -109,7 +109,10 @@ export const getTranslationButtons = (
       label: 'Translate',
       name: 'reader',
       onClick: async () => {
-        const translation = await translate(text)
+        const translation = await translate(text).catch((e) => {
+          console.error('Translation failed', e)
+          return text
+        })
         controlDispatch({
           type: type,
           payload: {

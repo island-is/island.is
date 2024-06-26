@@ -52,23 +52,8 @@ export const ListSettings = () => {
   }
 
   const { formatMessage } = useIntl()
-
-  const getListType = (index: number) => {
-    switch (index) {
-      case 0:
-        return 'sveitarfelog'
-      case 1:
-        return 'lond'
-      case 2:
-        return 'postnumer'
-      case 3:
-        return 'idngreinarMeistara'
-      case 4:
-        return 'skraningarflokkar'
-      default:
-        return 'customList'
-    }
-  }
+  const listTypes = ['sveitarfelog', 'lond', 'postnumer', 'idngreinarMeistara', 'skraningarflokkar']
+  const getListType = (index: number) => listTypes[index] || 'customList'
 
   const onClickRadioHandler = (index: number) => {
     radioHandler(index)
@@ -127,25 +112,27 @@ export const ListSettings = () => {
       }
       {
         radio[1] && (
-          <Column span="5/10">
-            <Select
-              placeholder={formatMessage(m.chooseListType)}
-              name="predeterminedLists"
-              label={formatMessage(m.predeterminedLists)}
-              options={predeterminedLists}
-              backgroundColor="blue"
-              onChange={(option) => {
-                const listType = getListType(option?.value as number)
-                controlDispatch({
-                  type: 'SET_LIST_TYPE',
-                  payload: {
-                    listType: listType,
-                    update: updateActiveItem,
-                  },
-                })
-              }}
-            />
-          </Column>
+          <Row>
+            <Column span="5/10">
+              <Select
+                placeholder={formatMessage(m.chooseListType)}
+                name="predeterminedLists"
+                label={formatMessage(m.predeterminedLists)}
+                options={predeterminedLists}
+                backgroundColor="blue"
+                onChange={(option) => {
+                  const listType = getListType(option?.value as number)
+                  controlDispatch({
+                    type: 'SET_LIST_TYPE',
+                    payload: {
+                      listType: listType,
+                      update: updateActiveItem,
+                    },
+                  })
+                }}
+              />
+            </Column>
+          </Row>
         )
       }
     </Stack >
