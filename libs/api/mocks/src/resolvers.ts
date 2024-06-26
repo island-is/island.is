@@ -8,6 +8,7 @@ import { resolvers as assetResolvers } from './domains/assets'
 import { resolvers as authResolvers } from './domains/auth/resolvers'
 import { resolvers as identityResolvers } from './domains/identity/resolvers'
 import { resolvers as financeResolvers } from './domains/finance'
+import { resolvers as licenseServiceResolvers } from './domains/license-service'
 import { resolvers as airDiscountResolvers } from './domains/air-discount-scheme'
 import { resolvers as rightsPortalPaymentResolver } from './domains/rights-portal'
 
@@ -20,6 +21,7 @@ export const resolvers = createResolvers<Resolvers>(
     searchResolvers,
     applicationsResolvers,
     assetResolvers,
+    licenseServiceResolvers,
     financeResolvers,
     airDiscountResolvers,
     rightsPortalPaymentResolver,
