@@ -46,10 +46,16 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.state) },
-                { title: formatMessage(tables.deadline) },
+                {
+                  title: formatMessage(tables.deadline),
+                  sortable: {
+                    isSortable: true,
+                    key: 'indictmentAppealDeadline',
+                  },
+                },
               ]}
               data={cases}
               generateContextMenuItems={(row) => {

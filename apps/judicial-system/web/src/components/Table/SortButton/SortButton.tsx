@@ -39,6 +39,7 @@ const SortButton: FC<Props> = (props) => {
       >
         <Icon icon="caretDown" size="small" />
       </Box>
+      <p className="visually-hidden">Sort button</p>
     </Box>
   )
 }

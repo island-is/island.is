@@ -29,13 +29,15 @@ import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
+interface Sortable {
+  isSortable: boolean
+  key: sortableTableColumn
+}
+
 interface TableProps {
   thead: {
     title: string
-    sortable?: {
-      isSortable: boolean
-      key: sortableTableColumn
-    }
+    sortable?: Sortable
   }[]
   data: CaseListEntry[]
   columns: { cell: (row: CaseListEntry) => ReactNode }[]
@@ -101,17 +103,17 @@ const Table: FC<TableProps> = (props) => {
       data.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {
           if (
-            sortConfig.column === 'defendant' &&
+            sortConfig.column === 'defendants' &&
             entry.defendants &&
-            entry.defendants.length > 0
+            entry.defendants.length > 0 &&
+            entry.defendants[0].name
           ) {
-            return entry.defendants[0].name ?? ''
+            return entry.defendants[0].name
           }
-          if (sortConfig.column === 'courtDate') {
-            return entry.courtDate ?? ''
-          }
-          return entry.created
+
+          return entry[sortConfig.column]?.toString()
         }
+
         const compareResult = compareLocaleIS(
           getColumnValue(a),
           getColumnValue(b),
@@ -175,7 +177,7 @@ const Table: FC<TableProps> = (props) => {
                   sortAsc={getClassNamesFor(th.sortable.key) === 'ascending'}
                   sortDes={getClassNamesFor(th.sortable.key) === 'descending'}
                   isActive={sortConfig?.column === th.sortable.key}
-                  dataTestid="accusedNameSortButton"
+                  dataTestid={`${th.sortable.key}SortButton`}
                 />
               ) : (
                 <Text as="span" fontWeight="regular">
@@ -200,6 +202,7 @@ const Table: FC<TableProps> = (props) => {
                 handleOpenCase(row.id)
               }
             }}
+            data-testid="tableRow"
           >
             {columns.map((td) => (
               <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
