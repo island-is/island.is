@@ -121,7 +121,8 @@ export const createWrappedFetchWithLogging = (
           responseBody = pick(responseBody, [
             'hasError',
             'hasActivePregnancy',
-            'errocCode',
+            'errorCode',
+            'status',
           ])
           vmstMetadata.response.body = responseBody
           logger.error(`Failed fetching from VMST`, {
