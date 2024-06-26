@@ -136,10 +136,15 @@ function isGitTracked(filePath) {
  * Recursively finds and deletes files or directories based on given conditions.
  *
  * @param {string} baseDir - The base directory to start the search from.
- * @param {function} patternCheck - A function that takes a file path and returns true if the file path matches the pattern.
- * @param {boolean} deleteDirectories - Whether to delete directories that match the pattern.
+ * @param {(filePath: string) => boolean} patternCheck - A function that takes a file path and returns true if the file path matches the pattern.
+ * @param {boolean} [deleteDirectories=false] - Whether to delete directories that match the pattern.
  */
 function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
+  /**
+   * Recursively walks through directories and files.
+   *
+   * @param {string} currentDirPath - The current directory path.
+   */
   function walkSync(currentDirPath) {
     if (currentDirPath.includes('node_modules')) return
 
@@ -148,21 +153,21 @@ function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
       const stat = fs.statSync(filePath)
 
       if (stat.isDirectory()) {
-        if (
-          deleteDirectories &&
-          patternCheck(filePath) &&
-          !isGitTracked(filePath)
-        ) {
-          if (!dry(`Would delete directory: ${filePath}`)) {
-            try {
-              log(`Deleting directory now: ${filePath}`)
-              fs.rmSync(filePath, { recursive: true, force: true })
-            } catch (err) {
-              log(`Failed to delete directory: ${filePath}`, err)
-            }
-          }
-        } else {
+        if (!deleteDirectories || !patternCheck(filePath)) {
           walkSync(filePath)
+          return
+        }
+        if (isGitTracked(filePath)) {
+          log(`Skipping git-tracked directory: ${filePath}`)
+          return
+        }
+
+        if (dry(`Would delete directory: ${filePath}`)) return
+        try {
+          log(`Deleting directory now: ${filePath}`)
+          fs.rmSync(filePath, { recursive: true, force: true })
+        } catch (err) {
+          log(`Failed to delete directory: ${filePath}`, err)
         }
         return
       }
@@ -185,6 +190,18 @@ function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
         }
       }
     })
+  }
+
+  if (deleteDirectories && patternCheck(baseDir)) {
+    if (!dry(`Would delete directory: ${baseDir}`)) {
+      try {
+        log(`Deleting directory now: ${baseDir}`)
+        fs.rmSync(baseDir, { recursive: true, force: true })
+      } catch (err) {
+        log(`Failed to delete directory: ${baseDir}`, err)
+      }
+    }
+    return
   }
 
   walkSync(baseDir)
