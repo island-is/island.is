@@ -1,4 +1,4 @@
-import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
+import { FormSystemInput } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
 import { Select } from '@island.is/island-ui/core'
 import {
@@ -98,8 +98,8 @@ export const List = ({ currentItem }: Props) => {
         required={currentItem?.isRequired ?? false}
         placeholder={
           ListTypePlaceholder[
-            currentItem.inputSettings
-              ?.listType as keyof typeof ListTypePlaceholder
+          currentItem.inputSettings
+            ?.listType as keyof typeof ListTypePlaceholder
           ] ?? 'Select an option'
         }
       />
