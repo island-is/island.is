@@ -112,8 +112,9 @@ function isGitTracked(filePath) {
  *
  * @param {string} baseDir - The base directory to start the search from.
  * @param {function} patternCheck - A function that takes a file path and returns true if the file path matches the pattern.
+ * @param {boolean} deleteDirectories - Whether to delete directories that match the pattern.
  */
-function findAndDelete(baseDir, patternCheck) {
+function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
   function walkSync(currentDirPath) {
     if (currentDirPath.includes('node_modules')) return
 
@@ -122,7 +123,14 @@ function findAndDelete(baseDir, patternCheck) {
       const stat = fs.statSync(filePath)
 
       if (stat.isDirectory()) {
-        walkSync(filePath)
+        if (deleteDirectories && patternCheck(filePath)) {
+          if (!dry(`Would delete directory: ${filePath}`)) {
+            log(`Deleting directory now: ${filePath}`)
+            fs.rmSync(filePath, { recursive: true, force: true })
+          }
+        } else {
+          walkSync(filePath)
+        }
         return
       }
 
@@ -156,7 +164,11 @@ function cleanGenerated() {
         patterns.some((regex) => regex.test(filePath)),
       )
       config.DIRS_TO_DELETE.forEach((dirToDelete) => {
-        findAndDelete(baseDir, (filePath) => filePath.includes(dirToDelete))
+        findAndDelete(
+          baseDir,
+          (filePath) => filePath.includes(dirToDelete),
+          true, // Indicate that we are deleting directories
+        )
       })
     }
   })
@@ -182,7 +194,11 @@ function cleanCaches() {
 
   config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
-      findAndDelete(baseDir, (filePath) => path.basename(filePath) === 'dist')
+      findAndDelete(
+        baseDir,
+        (filePath) => path.basename(filePath) === 'dist',
+        true, // Indicate that we are deleting directories
+      )
     }
   })
 }
@@ -211,28 +227,24 @@ function cleanYarn() {
 }
 
 function cleanNodeModules() {
-  const nodeModulesName = 'node_modules'
-  const checkAndDeleteNodeModules = (dirPath) => {
-    if (!dry(`Would delete: ${dirPath}`)) {
-      log(`Deleting now: ${dirPath}`)
-      fs.rmSync(dirPath, { recursive: true, force: true })
-    }
-  }
-
-  if (fs.existsSync(nodeModulesName)) {
-    checkAndDeleteNodeModules(nodeModulesName)
-  } else {
-    log('Skipping root node_modules: directory does not exist')
-  }
-
   config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
       findAndDelete(
         baseDir,
-        (filePath) => path.basename(filePath) === nodeModulesName,
+        (filePath) => path.basename(filePath) === 'node_modules',
+        true, // Indicate that we are deleting directories
       )
     }
   })
+
+  if (fs.existsSync('node_modules')) {
+    if (!dry(`Would delete: node_modules`)) {
+      log(`Deleting now: node_modules`)
+      fs.rmSync('node_modules', { recursive: true, force: true })
+    }
+  } else {
+    log('Skipping root node_modules: directory does not exist')
+  }
 }
 
 function cleanAll() {
