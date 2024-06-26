@@ -24,6 +24,7 @@ import {
 import {
   CaseFile,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -66,7 +67,14 @@ const Summary: React.FC = () => {
     (acc, cf) => {
       if (cf.category === CaseFileCategory.COURT_RECORD) {
         acc[0].push(cf)
-      } else if (cf.category === CaseFileCategory.RULING) {
+      } else if (
+        cf.category === CaseFileCategory.RULING &&
+        workingCase.indictmentRulingDecision &&
+        [
+          CaseIndictmentRulingDecision.RULING,
+          CaseIndictmentRulingDecision.DISMISSAL,
+        ].includes(workingCase.indictmentRulingDecision)
+      ) {
         acc[1].push(cf)
       }
 

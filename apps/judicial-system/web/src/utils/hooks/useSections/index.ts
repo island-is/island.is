@@ -398,8 +398,7 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, state } = workingCase
-    const caseHasBeenReceivedByCourt =
-      state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING
+    const caseHasBeenReceivedByCourt = state === CaseState.RECEIVED
     const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
@@ -408,7 +407,6 @@ const useSections = (
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
         state !== CaseState.RECEIVED &&
-        state !== CaseState.MAIN_HEARING &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
       children: caseHasBeenReceivedByCourt
@@ -899,8 +897,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        (isProsecutionUser(user) &&
-          (state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING)) ||
+        (isProsecutionUser(user) && state === CaseState.RECEIVED) ||
         ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
           !isCompletedCase(state)),
       children: isDistrictCourtUser(user)
