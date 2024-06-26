@@ -18,6 +18,7 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
@@ -53,6 +54,7 @@ registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
 registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
+registerEnumType(CourtSessionType, { name: 'CourtSessionType' })
 
 @ObjectType()
 class DateLog {
@@ -439,4 +441,7 @@ export class Case {
 
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
+
+  @Field(() => CourtSessionType, { nullable: true })
+  readonly courtSessionType?: CourtSessionType
 }

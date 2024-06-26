@@ -11,4 +11,4 @@ export const dataSchema = z.object({
   listId: z.string().min(1),
 })
 
-export type SignatureListSchema = z.TypeOf<typeof dataSchema>
+export type PresidentialSignListSchema = z.TypeOf<typeof dataSchema>

@@ -7,11 +7,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á Frestað um ótilgreindan tíma upplýsingakorti.',
   },
-  schedulingTitle: {
-    id: 'judicial.system.core:info_card_case_scheduled_indictment.scheduling_title',
-    defaultMessage: 'Aðalmeðferð',
-    description: 'Notaður sem titill á Aðalmeðferð upplýsingakorti.',
-  },
   schedulingUntilVerdictTitle: {
     id: 'judicial.system.core:info_card_case_scheduled_indictment.scheduling_until_verdict_title',
     defaultMessage: 'Á dagskrá',
