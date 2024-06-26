@@ -83,7 +83,7 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
       cases.sort((a: CaseListEntry, b: CaseListEntry) => {
         const getColumnValue = (entry: CaseListEntry) => {
           if (
-            sortConfig.column === 'defendant' &&
+            sortConfig.column === 'defendants' &&
             entry.defendants &&
             entry.defendants.length > 0
           ) {
@@ -179,10 +179,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('defendant')}
-                sortAsc={getClassNamesFor('defendant') === 'ascending'}
-                sortDes={getClassNamesFor('defendant') === 'descending'}
-                isActive={sortConfig?.column === 'defendant'}
+                onClick={() => requestSort('defendants')}
+                sortAsc={getClassNamesFor('defendants') === 'ascending'}
+                sortDes={getClassNamesFor('defendants') === 'descending'}
+                isActive={sortConfig?.column === 'defendants'}
                 dataTestid="accusedNameSortButton"
               />
             </th>
@@ -196,10 +196,10 @@ const ActiveCases: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(tables.created, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('createdAt')}
-                sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-                sortDes={getClassNamesFor('createdAt') === 'descending'}
-                isActive={sortConfig?.column === 'createdAt'}
+                onClick={() => requestSort('created')}
+                sortAsc={getClassNamesFor('created') === 'ascending'}
+                sortDes={getClassNamesFor('created') === 'descending'}
+                isActive={sortConfig?.column === 'created'}
                 dataTestid="createdAtSortButton"
               />
             </th>

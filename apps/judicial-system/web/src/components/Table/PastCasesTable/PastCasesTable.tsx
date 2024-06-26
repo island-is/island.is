@@ -53,7 +53,7 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortCases('createdAt', 'descending', cases)
+    useSortCases('created', 'descending', cases)
 
   const {
     withdrawAppealMenuOption,
@@ -108,10 +108,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(core.defendant, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('defendant')}
-                sortAsc={getClassNamesFor('defendant') === 'ascending'}
-                sortDes={getClassNamesFor('defendant') === 'descending'}
-                isActive={isActiveColumn('defendant')}
+                onClick={() => requestSort('defendants')}
+                sortAsc={getClassNamesFor('defendants') === 'ascending'}
+                sortDes={getClassNamesFor('defendants') === 'descending'}
+                isActive={isActiveColumn('defendants')}
               />
             </th>
             <TableHeaderText title={formatMessage(tables.type)} />
@@ -120,10 +120,10 @@ const PastCasesTable: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 title={capitalize(
                   formatMessage(tables.created, { suffix: 'i' }),
                 )}
-                onClick={() => requestSort('createdAt')}
-                sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-                sortDes={getClassNamesFor('createdAt') === 'descending'}
-                isActive={isActiveColumn('createdAt')}
+                onClick={() => requestSort('created')}
+                sortAsc={getClassNamesFor('created') === 'ascending'}
+                sortDes={getClassNamesFor('created') === 'descending'}
+                isActive={isActiveColumn('created')}
               />
             </th>
             <TableHeaderText title={formatMessage(tables.state)} />
