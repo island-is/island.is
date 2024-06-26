@@ -190,6 +190,8 @@ export const en: TranslatedMessages = {
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
+  'inbox.cardNoInboxDocuments':
+    'When you receive mail in your mailbox, it will appear here.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',

@@ -74,7 +74,7 @@ export const InboxModule = React.memo(
             <EmptyWrapper>
               <EmptyCard
                 text={intl.formatMessage({
-                  id: 'applicationStatusCard.noActiveApplications',
+                  id: 'inbox.cardNoInboxDocuments',
                 })}
                 image={
                   <Image

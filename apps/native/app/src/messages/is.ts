@@ -188,6 +188,8 @@ export const is = {
   'inbox.markAllAsReadPromptDescription': 'Þessi aðgerð er ekki afturkræf',
   'inbox.markAllAsReadPromptCancel': 'Hætta við',
   'inbox.markAllAsReadPromptConfirm': 'Merkja lesið',
+  'inbox.cardNoInboxDocuments':
+    'Þegar þú færð sendan póst í pósthólfið þá birtist hann hér.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Sía skjöl',

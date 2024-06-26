@@ -123,7 +123,7 @@ export const ApplicationsModule = React.memo(
                     <TouchableOpacity
                       onPress={() => navigateTo(`/applications`)}
                     >
-                      <LinkText>
+                      <LinkText variant="small">
                         {intl.formatMessage({
                           id: 'applicationStatusCard.seeMoreApplications',
                         })}
