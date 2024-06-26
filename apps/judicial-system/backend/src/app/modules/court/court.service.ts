@@ -562,6 +562,7 @@ export class CourtService {
   async updateIndictmentCaseWithIndictmentInfo(
     user: User,
     caseId: string,
+    courtName?: string,
     courtCaseNumber?: string,
     receivedByCourtDate?: Date,
     indictmentDate?: Date,
@@ -571,7 +572,7 @@ export class CourtService {
     prosecutor?: { name?: string; nationalId?: string },
   ): Promise<unknown> {
     try {
-      const subject = `Ákæra - ${courtCaseNumber} - upplýsingar`
+      const subject = `${courtName} - ${courtCaseNumber} - upplýsingar`
       const content = JSON.stringify({
         receivedByCourtDate,
         indictmentDate,
@@ -606,9 +607,10 @@ export class CourtService {
     }
   }
 
-  async updateIndictmentWithDefenderInfo(
+  async updateIndictmentCaseWithDefenderInfo(
     user: User,
     caseId: string,
+    courtName?: string,
     courtCaseNumber?: string,
     defendants?: Defendant[],
   ): Promise<unknown> {
@@ -619,7 +621,7 @@ export class CourtService {
         defenderEmail: defendant.defenderEmail,
       }))
 
-      const subject = `Ákæra - ${courtCaseNumber} - verjanda upplýsingar`
+      const subject = `${courtName} - ${courtCaseNumber} - verjanda upplýsingar`
       const content = JSON.stringify(defendantInfo)
 
       return this.sendToRobot(
@@ -647,11 +649,12 @@ export class CourtService {
   async updateIndictmentCaseWithAssignedRoles(
     user: User,
     caseId: string,
+    courtName?: string,
     courtCaseNumber?: string,
     assignedRole?: { name?: string; role?: UserRole },
   ): Promise<unknown> {
     try {
-      const subject = `Ákæra - ${courtCaseNumber} - úthlutun`
+      const subject = `${courtName} - ${courtCaseNumber} - úthlutun`
       const content = JSON.stringify(assignedRole)
 
       return this.sendToRobot(
@@ -856,7 +859,7 @@ export class CourtService {
       .then((log) => [log.id, log.seqNumber])
   }
 
-  async sendToRobot(
+  private async sendToRobot(
     subject: string,
     content: string,
     type: RobotEmailType,
