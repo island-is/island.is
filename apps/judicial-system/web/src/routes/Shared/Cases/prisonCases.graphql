@@ -82,5 +82,6 @@ query PrisonCases {
     }
     postponedIndefinitelyExplanation
     indictmentRulingDecision
+    indictmentAppealDeadline
   }
 }

@@ -1,6 +1,7 @@
 import {
   CaseAppealDecision,
   CaseType,
+  getIndictmentVerdictAppealDeadline,
   getStatementDeadline,
   isIndictmentCase,
   UserRole,
@@ -117,22 +118,14 @@ export const getIndictmentInfo = (
       (defendant) => defendant.verdictViewDate,
     )
 
-    if (!verdictViewDates || verdictViewDates?.some((date) => !date)) {
-      indictmentInfo.indictmentVerdictViewedByAll = false
-    } else {
-      indictmentInfo.indictmentVerdictViewedByAll = true
-      const newestViewDate = verdictViewDates
-        ?.filter((date): date is string => date !== undefined)
-        .map((date) => new Date(date))
-        .reduce(
-          (newest, current) => (current > newest ? current : newest),
-          new Date(0),
-        )
-      const expiryDate = new Date(newestViewDate.getTime())
-      expiryDate.setDate(newestViewDate.getDate() + 28)
+    const verdictAppealDeadline =
+      getIndictmentVerdictAppealDeadline(verdictViewDates)
+    indictmentInfo.indictmentVerdictAppealDeadline = verdictAppealDeadline
+      ? verdictAppealDeadline.toISOString()
+      : undefined
 
-      indictmentInfo.indictmentVerdictAppealDeadline = expiryDate.toISOString()
-    }
+    indictmentInfo.indictmentVerdictViewedByAll =
+      indictmentInfo.indictmentVerdictAppealDeadline ? true : false
   }
 
   return indictmentInfo
