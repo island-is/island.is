@@ -404,7 +404,7 @@ export class InternalCaseService {
           'ASC',
         ],
       ],
-      where: { isArchived: false, archiveFilter },
+      where: archiveFilter,
     })
 
     if (!theCase) {

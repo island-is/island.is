@@ -1,4 +1,4 @@
-import { Stack, Box, Icon, Text } from '@island.is/island-ui/core'
+import { Stack, Box, Icon, Text, AlertMessage } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   IntroHeader,
@@ -14,6 +14,7 @@ type LicenseDetailProps = {
   intro?: string | null
   serviceProviderSlug?: OrganizationSlugType
   serviceProviderTooltip?: string
+  isOldEducationLicense?: boolean
   name?: string | null
   dateOfBirth?: string | null
   profession?: string | null
@@ -29,6 +30,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   intro,
   serviceProviderSlug,
   serviceProviderTooltip,
+  isOldEducationLicense,
   buttonGroup,
   name,
   dateOfBirth,
@@ -47,8 +49,17 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
         intro={intro ? intro : undefined}
         serviceProviderSlug={serviceProviderSlug}
         serviceProviderTooltip={serviceProviderTooltip}
-        children={buttonGroup}
+        children={!isOldEducationLicense ? buttonGroup : undefined}
       />
+      {isOldEducationLicense && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(om.educationLicenseDigitalUnavailable)}
+          message={formatMessage(
+            om.educationLicenseDigitalUnavailableDescription,
+          )}
+        />
+      )}
       <Stack dividers space="auto">
         {name && (
           <UserInfoLine
@@ -104,7 +115,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
             valueColumnSpan={['6/12']}
           />
         )}
-        {status && (
+        {!isOldEducationLicense && status && (
           <UserInfoLine
             paddingY={3}
             label={formatMessage(om.licenseStatus)}

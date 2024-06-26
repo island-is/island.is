@@ -44,7 +44,7 @@ import {
 import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
-export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const CaseFiles = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
