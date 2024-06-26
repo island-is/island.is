@@ -8,7 +8,7 @@ const Host = styled.View`
   display: flex;
   flex-direction: row;
   padding-horizontal: ${({ theme }) => theme.spacing[3]}px;
-  padding-vertical: ${({ theme }) => theme.spacing[4]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
 
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
