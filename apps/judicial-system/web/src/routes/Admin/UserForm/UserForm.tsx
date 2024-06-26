@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { FC, useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 import {
@@ -40,8 +40,13 @@ interface Props {
   loading: boolean
 }
 
-export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const [user, setUser] = useState<User>(props.user)
+export const UserForm: FC<Props> = ({
+  user: existingUser,
+  institutions,
+  onSave,
+  loading,
+}) => {
+  const [user, setUser] = useState<User>(existingUser)
 
   const { personData, personError } = useNationalRegistry(user.nationalId)
 
@@ -77,7 +82,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
     }
   }, [personData, personError, setName])
 
-  const selectInstitutions = props.institutions.map((institution) => ({
+  const selectInstitutions = institutions.map((institution) => ({
     label: institution.name ?? '',
     value: institution.id,
     institution,
@@ -120,7 +125,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
   }
 
   const saveUser = () => {
-    props.onSave({
+    onSave({
       ...user,
       // Make sure only prosecutors can confirm indictments
       canConfirmIndictment:
@@ -472,7 +477,7 @@ export const UserForm: React.FC<React.PropsWithChildren<Props>> = (props) => {
           nextButtonIcon="arrowForward"
           onNextButtonClick={saveUser}
           nextIsDisabled={!isValid()}
-          nextIsLoading={props.loading}
+          nextIsLoading={loading}
           nextButtonText="Vista"
           previousUrl={constants.USERS_ROUTE}
         />
