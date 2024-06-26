@@ -13,6 +13,19 @@ const config = {
   CLEAN_ALL: process.env.CLEAN_ALL === 'true' || false,
   CLEAN_CACHES_LIST: ['.cache', 'dist'],
   CLEAN_YARN_IGNORES_LIST: ['patches', 'releases'],
+  SEARCH_DIRECTORIES: ['apps', 'libs'],
+  GENERATED_PATTERNS: [
+    'openapi.yaml',
+    'api.graphql',
+    'schema.d.ts',
+    'schema.tsx',
+    'schema.ts',
+    'gen/graphql.ts',
+    '*.generated.ts',
+    'possibleTypes.json',
+    'fragmentTypes.json',
+  ],
+  DIRS_TO_DELETE: ['gen/fetch'],
 }
 
 function log(...messages) {
@@ -95,11 +108,7 @@ function isGitTracked(filePath) {
   }
 }
 
-function findAndDeleteFiles(baseDir, patterns) {
-  const regexPatterns = patterns.map(
-    (pattern) => new RegExp('/' + pattern.replace(/\*/g, '.*')),
-  )
-
+function findAndDelete(baseDir, isFileCheck, patternCheck, deleteAction) {
   function walkSync(currentDirPath) {
     if (currentDirPath.includes('node_modules')) {
       return
@@ -107,16 +116,13 @@ function findAndDeleteFiles(baseDir, patterns) {
     fs.readdirSync(currentDirPath).forEach((name) => {
       const filePath = path.join(currentDirPath, name)
       const stat = fs.statSync(filePath)
-      if (
-        stat.isFile() &&
-        regexPatterns.some((regex) => regex.test(filePath))
-      ) {
-        if (!isGitTracked(filePath)) {
+      if (isFileCheck(stat)) {
+        if (patternCheck(filePath) && !isGitTracked(filePath)) {
           if (dry(`Would delete: ${filePath}`)) {
             log(`Would delete: ${filePath}`)
           } else {
             log(`Deleting now: ${filePath}`)
-            fs.unlinkSync(filePath)
+            deleteAction(filePath)
           }
         } else {
           log(`Skipping git-tracked file: ${filePath}`)
@@ -131,47 +137,26 @@ function findAndDeleteFiles(baseDir, patterns) {
 }
 
 function cleanGenerated() {
-  const patterns = [
-    'openapi.yaml',
-    'api.graphql',
-    'schema.d.ts',
-    'schema.tsx',
-    'schema.ts',
-    'gen/graphql.ts',
-    '*.generated.ts',
-    'possibleTypes.json',
-    'fragmentTypes.json',
-  ]
+  const patterns = config.GENERATED_PATTERNS.map(
+    (pattern) => new RegExp('/' + pattern.replace(/\*/g, '.*')),
+  )
 
-  ;['apps', 'libs'].forEach((baseDir) => {
-    findAndDeleteFiles(baseDir, patterns)
-  })
-
-  const dirsToDelete = 'gen/fetch'
-
-  function findAndDeleteDirs(baseDir) {
-    fs.readdirSync(baseDir).forEach((name) => {
-      const dirPath = path.join(baseDir, name)
-      const stat = fs.statSync(dirPath)
-      if (dirPath.includes('node_modules')) {
-        return
-      }
-      if (stat.isDirectory() && dirPath.includes(dirsToDelete)) {
-        if (dry(`Would delete directory: ${dirPath}`)) {
-          log(`Would delete directory: ${dirPath}`)
-        } else {
-          log(`Deleting directory now: ${dirPath}`)
-          fs.rmSync(dirPath, { recursive: true, force: true })
-        }
-      } else if (stat.isDirectory()) {
-        findAndDeleteDirs(dirPath)
-      }
-    })
-  }
-
-  ;['apps', 'libs'].forEach((baseDir) => {
+  config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
-      findAndDeleteDirs(baseDir)
+      findAndDelete(
+        baseDir,
+        (stat) => stat.isFile(),
+        (filePath) => patterns.some((regex) => regex.test(filePath)),
+        (filePath) => fs.unlinkSync(filePath),
+      )
+      config.DIRS_TO_DELETE.forEach((dirToDelete) => {
+        findAndDelete(
+          baseDir,
+          (stat) => stat.isDirectory() && filePath.includes(dirToDelete),
+          (filePath) => filePath.includes(dirToDelete),
+          (dirPath) => fs.rmSync(dirPath, { recursive: true, force: true }),
+        )
+      })
     }
   })
 }
@@ -182,26 +167,6 @@ function cleanCaches() {
   }).trim()
 
   const cachesToDelete = [...config.CLEAN_CACHES_LIST, yarnCacheFolder]
-
-  function findAndDeleteDistFolders(baseDir) {
-    fs.readdirSync(baseDir).forEach((name) => {
-      const dirPath = path.join(baseDir, name)
-      const stat = fs.statSync(dirPath)
-
-      if (stat.isDirectory()) {
-        if (name === 'dist') {
-          if (dry(`Would delete: ${dirPath}`)) {
-            log(`Would delete: ${dirPath}`)
-          } else {
-            log(`Deleting now: ${dirPath}`)
-            fs.rmSync(dirPath, { recursive: true, force: true })
-          }
-        } else {
-          findAndDeleteDistFolders(dirPath) // Recursively search subdirectories
-        }
-      }
-    })
-  }
 
   cachesToDelete.forEach((item) => {
     if (fs.existsSync(item)) {
@@ -216,10 +181,14 @@ function cleanCaches() {
     }
   })
 
-  // Check dist folders in apps and libs directories
-  ;['apps', 'libs'].forEach((baseDir) => {
+  config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
-      findAndDeleteDistFolders(baseDir)
+      findAndDelete(
+        baseDir,
+        (stat) => stat.isDirectory(),
+        (filePath) => path.basename(filePath) === 'dist',
+        (dirPath) => fs.rmSync(dirPath, { recursive: true, force: true }),
+      )
     }
   })
 }
@@ -250,74 +219,58 @@ function cleanYarn() {
 }
 
 function cleanNodeModules() {
-  function findAndDeleteNodeModules(baseDir) {
-    fs.readdirSync(baseDir).forEach((name) => {
-      const dirPath = path.join(baseDir, name)
-      const stat = fs.statSync(dirPath)
-
-      if (stat.isDirectory()) {
-        if (name === 'node_modules') {
-          if (dry(`Would delete: ${dirPath}`)) {
-            log(`Would delete: ${dirPath}`)
-          } else {
-            log(`Deleting now: ${dirPath}`)
-            fs.rmSync(dirPath, { recursive: true, force: true })
-          }
-        } else {
-          findAndDeleteNodeModules(dirPath) // Recursively search subdirectories
-        }
-      }
-    })
+  const nodeModulesName = 'node_modules'
+  const checkAndDeleteNodeModules = (dirPath) => {
+    if (dry(`Would delete: ${dirPath}`)) {
+      log(`Would delete: ${dirPath}`)
+    } else {
+      log(`Deleting now: ${dirPath}`)
+      fs.rmSync(dirPath, { recursive: true, force: true })
+    }
   }
 
-  // Check root node_modules
-  if (fs.existsSync('node_modules')) {
-    if (dry('Would delete: node_modules')) {
-      log('Would delete: node_modules')
-    } else {
-      log('Deleting now: node_modules')
-      fs.rmSync('node_modules', { recursive: true, force: true })
-    }
+  if (fs.existsSync(nodeModulesName)) {
+    checkAndDeleteNodeModules(nodeModulesName)
   } else {
     log('Skipping root node_modules: directory does not exist')
   }
 
-  // Check node_modules in apps and libs directories
-  ;['apps', 'libs'].forEach((baseDir) => {
+  config.SEARCH_DIRECTORIES.forEach((baseDir) => {
     if (fs.existsSync(baseDir)) {
-      findAndDeleteNodeModules(baseDir)
+      findAndDelete(
+        baseDir,
+        (stat) => stat.isDirectory(),
+        (filePath) => path.basename(filePath) === nodeModulesName,
+        checkAndDeleteNodeModules,
+      )
     }
   })
 }
 
 function cleanAll() {
-  if (config.CLEAN_GENERATED) {
-    log('Cleaning generated files')
-    cleanGenerated()
-  } else {
-    log('Skipping generated files')
-  }
+  const tasks = [
+    {
+      name: 'generated files',
+      flag: config.CLEAN_GENERATED,
+      func: cleanGenerated,
+    },
+    { name: 'cache files', flag: config.CLEAN_CACHES, func: cleanCaches },
+    { name: 'yarn files', flag: config.CLEAN_YARN, func: cleanYarn },
+    {
+      name: 'node_modules',
+      flag: config.CLEAN_NODE_MODULES,
+      func: cleanNodeModules,
+    },
+  ]
 
-  if (config.CLEAN_CACHES) {
-    log('Cleaning cache files')
-    cleanCaches()
-  } else {
-    log('Skipping cache files')
-  }
-
-  if (config.CLEAN_YARN) {
-    log('Cleaning yarn files')
-    cleanYarn()
-  } else {
-    log('Skipping yarn files')
-  }
-
-  if (config.CLEAN_NODE_MODULES) {
-    log('Cleaning node_modules')
-    cleanNodeModules()
-  } else {
-    log('Skipping node_modules')
-  }
+  tasks.forEach(({ name, flag, func }) => {
+    if (flag) {
+      log(`Cleaning ${name}`)
+      func()
+    } else {
+      log(`Skipping ${name}`)
+    }
+  })
 }
 
 parseArgs(process.argv.slice(2))
