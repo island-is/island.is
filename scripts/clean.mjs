@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+// @ts-check
 
 import fs from 'fs'
 import path from 'path'
@@ -29,10 +30,19 @@ const config = {
   DIRS_TO_DELETE: ['gen/fetch'],
 }
 
+/**
+ * Logs messages to the console.
+ * @param  {...any} messages - The messages to log.
+ */
 function log(...messages) {
   console.error(...messages)
 }
 
+/**
+ * Performs a dry run if configured.
+ * @param {string} message - The message to log during a dry run.
+ * @returns {boolean} - Returns true if it's a dry run.
+ */
 function dry(message) {
   if (config.CLEAN_DRY) {
     log(`Dry run: ${message}`)
@@ -55,6 +65,10 @@ Options:
   -h, --help         Show this help message`)
 }
 
+/**
+ * Parses command line arguments.
+ * @param {string[]} args - The command line arguments.
+ */
 function parseArgs(args) {
   if (args.length === 0) {
     showHelp()
@@ -104,6 +118,11 @@ function parseArgs(args) {
   }
 }
 
+/**
+ * Checks if a file is tracked by git.
+ * @param {string} filePath - The path to the file.
+ * @returns {boolean} - Returns true if the file is tracked by git.
+ */
 function isGitTracked(filePath) {
   try {
     execSync(`git ls-files --error-unmatch ${filePath}`, { stdio: 'ignore' })
