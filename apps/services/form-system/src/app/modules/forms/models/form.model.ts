@@ -36,6 +36,13 @@ export class Form extends Model<Form> {
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: '',
+  })
+  urlName!: string
+
   @Column
   @ApiProperty()
   invalidationDate?: Date

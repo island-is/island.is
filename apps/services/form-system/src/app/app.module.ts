@@ -14,6 +14,7 @@ import { StepsModule } from './modules/steps/steps.module'
 import { TestimoniesModule } from './modules/testimonies/testimonies.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
+import { ApplicationsModule } from './modules/applications/applications.module'
 
 @Module({
   imports: [
@@ -32,6 +33,7 @@ import { ListItemsModule } from './modules/listItems/listItems.module'
     ListsModule,
     InputSettingsModule,
     ListItemsModule,
+    ApplicationsModule,
   ],
 })
 export class AppModule {}

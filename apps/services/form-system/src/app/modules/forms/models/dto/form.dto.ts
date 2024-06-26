@@ -5,6 +5,7 @@ import { GroupDto } from '../../../groups/models/dto/group.dto'
 import { InputDto } from '../../../inputs/models/dto/input.dto'
 import { StepDto } from '../../../steps/models/dto/step.dto'
 import { FormTestimonyTypeDto } from '../../../testimonies/models/dto/formTestimonyType.dto'
+import { String } from 'aws-sdk/clients/apigateway'
 
 export class FormDto {
   @ApiProperty()
@@ -15,6 +16,9 @@ export class FormDto {
 
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
+
+  @ApiProperty()
+  urlName!: String
 
   @ApiProperty()
   invalidationDate?: Date

@@ -13,6 +13,7 @@ import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
 import { ListItemMapper } from '../listItems/models/listItem.mapper'
 import { ListItem } from '../listItems/models/listItem.model'
+import { FormMapper } from './models/form.mapper'
 
 @Module({
   imports: [
@@ -29,6 +30,6 @@ import { ListItem } from '../listItems/models/listItem.model'
     ]),
   ],
   controllers: [FormsController],
-  providers: [FormsService, InputSettingsMapper, ListItemMapper],
+  providers: [FormsService, InputSettingsMapper, ListItemMapper, FormMapper],
 })
 export class FormsModule {}

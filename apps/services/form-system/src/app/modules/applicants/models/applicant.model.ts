@@ -4,11 +4,13 @@ import {
   Column,
   CreatedAt,
   DataType,
+  ForeignKey,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApplicantTypes } from '../../../enums/applicantTypes'
+import { Application } from '../../applications/models/application.model'
 
 @Table({ tableName: 'applicants' })
 export class Applicant extends Model<Applicant> {
@@ -54,32 +56,28 @@ export class Applicant extends Model<Applicant> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
+    allowNull: true,
   })
   @ApiProperty()
   email!: string
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
+    allowNull: true,
   })
   @ApiProperty()
   phoneNumber!: string
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
+    allowNull: true,
   })
   @ApiProperty()
   address!: string
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: '',
+    allowNull: true,
   })
   @ApiProperty()
   municipality!: string
@@ -92,4 +90,12 @@ export class Applicant extends Model<Applicant> {
   })
   @ApiProperty({ enum: ApplicantTypes })
   applicantType!: string
+
+  @ForeignKey(() => Application)
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'application_id',
+  })
+  applicationId!: string
 }

@@ -24,6 +24,9 @@ import { FormDto } from './models/dto/form.dto'
 import { FormResponse } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
+import { FormsListFormDto } from './models/dto/formsListForm.dto'
+import { FormsListDto } from './models/dto/formsList.dto'
+import { FormMapper } from './models/form.mapper'
 
 @Injectable()
 export class FormsService {
@@ -41,12 +44,18 @@ export class FormsService {
     @InjectModel(ListType)
     private readonly listTypeModel: typeof ListType,
     private readonly inputSettingsMapper: InputSettingsMapper,
+    private readonly formMapper: FormMapper,
   ) {}
 
-  async findAll(organizationId: string): Promise<Form[]> {
-    return await this.formModel.findAll({
+  async findAll(organizationId: string): Promise<FormsListDto> {
+    const forms = await this.formModel.findAll({
       where: { organizationId: organizationId },
     })
+
+    const formsListDto: FormsListDto =
+      this.formMapper.mapFormsToFormsListDto(forms)
+
+    return formsListDto
   }
 
   async findOne(id: string): Promise<FormResponse | null> {
@@ -233,6 +242,7 @@ export class FormsService {
       id: form.id,
       organizationId: form.organizationId,
       name: form.name,
+      urlName: form.urlName,
       invalidationDate: form.invalidationDate,
       created: form.created,
       modified: form.modified,

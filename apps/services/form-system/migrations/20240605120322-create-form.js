@@ -16,6 +16,11 @@ module.exports = {
             type: Sequelize.JSON,
             allowNull: false,
           },
+          url_name: {
+            type: Sequelize.STRING,
+            allowNull: false,
+            defaultValue: '',
+          },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
