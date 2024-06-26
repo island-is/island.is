@@ -84,7 +84,6 @@ function parseArgs(args) {
       case '--help':
         showHelp()
         process.exit(0)
-        break
       default:
         showHelp()
         process.exit(1)
@@ -118,10 +117,7 @@ function findAndDelete(baseDir, isFileCheck, patternCheck, deleteAction) {
       const stat = fs.statSync(filePath)
       if (isFileCheck(stat)) {
         if (patternCheck(filePath) && !isGitTracked(filePath)) {
-          if (dry(`Would delete: ${filePath}`)) {
-            log(`Would delete: ${filePath}`)
-          } else {
-            log(`Deleting now: ${filePath}`)
+          if (!dry(`Would delete: ${filePath}`)) {
             deleteAction(filePath)
           }
         } else {
@@ -147,14 +143,20 @@ function cleanGenerated() {
         baseDir,
         (stat) => stat.isFile(),
         (filePath) => patterns.some((regex) => regex.test(filePath)),
-        (filePath) => fs.unlinkSync(filePath),
+        (filePath) => {
+          log(`Deleting now: ${filePath}`)
+          fs.unlinkSync(filePath)
+        },
       )
       config.DIRS_TO_DELETE.forEach((dirToDelete) => {
         findAndDelete(
           baseDir,
-          (stat) => stat.isDirectory() && filePath.includes(dirToDelete),
+          (stat) => stat.isDirectory(),
           (filePath) => filePath.includes(dirToDelete),
-          (dirPath) => fs.rmSync(dirPath, { recursive: true, force: true }),
+          (dirPath) => {
+            log(`Deleting directory now: ${dirPath}`)
+            fs.rmSync(dirPath, { recursive: true, force: true })
+          },
         )
       })
     }
@@ -170,9 +172,7 @@ function cleanCaches() {
 
   cachesToDelete.forEach((item) => {
     if (fs.existsSync(item)) {
-      if (dry(`Would delete: ${item}`)) {
-        log(`Would delete: ${item}`)
-      } else {
+      if (!dry(`Would delete: ${item}`)) {
         log(`Deleting now: ${item}`)
         fs.rmSync(item, { recursive: true, force: true })
       }
@@ -187,7 +187,10 @@ function cleanCaches() {
         baseDir,
         (stat) => stat.isDirectory(),
         (filePath) => path.basename(filePath) === 'dist',
-        (dirPath) => fs.rmSync(dirPath, { recursive: true, force: true }),
+        (dirPath) => {
+          log(`Deleting now: ${dirPath}`)
+          fs.rmSync(dirPath, { recursive: true, force: true })
+        },
       )
     }
   })
@@ -203,9 +206,7 @@ function cleanYarn() {
     const fullPath = path.join('.yarn', item)
     if (!config.CLEAN_YARN_IGNORES_LIST.includes(item)) {
       const stat = fs.statSync(fullPath)
-      if (dry(`Would delete: ${fullPath}`)) {
-        log(`Would delete: ${fullPath}`)
-      } else {
+      if (!dry(`Would delete: ${fullPath}`)) {
         if (stat.isDirectory()) {
           log(`Deleting directory now: ${fullPath}`)
           fs.rmSync(fullPath, { recursive: true, force: true })
@@ -221,9 +222,7 @@ function cleanYarn() {
 function cleanNodeModules() {
   const nodeModulesName = 'node_modules'
   const checkAndDeleteNodeModules = (dirPath) => {
-    if (dry(`Would delete: ${dirPath}`)) {
-      log(`Would delete: ${dirPath}`)
-    } else {
+    if (!dry(`Would delete: ${dirPath}`)) {
       log(`Deleting now: ${dirPath}`)
       fs.rmSync(dirPath, { recursive: true, force: true })
     }
