@@ -118,14 +118,20 @@ export const addPasskeyAsLoginHint = (
     return
   }
 
+  const parsedUrl = new URL(url)
+
   if (url.includes('/minarsidur')) {
-    return `https://island.is/minarsidur/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
+    return `${
+      parsedUrl.origin
+    }/minarsidur/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
 
   if (url.includes('/umsoknir')) {
-    return `https://island.is/umsoknir/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
+    return `${
+      parsedUrl.origin
+    }/umsoknir/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
@@ -135,6 +141,7 @@ export const doesUrlSupportPasskey = (url: string): boolean => {
   // Check if domain is correct and url includes /minarsidur or /umsoknir
   if (
     (url.startsWith('https://beta.dev01.devland.is') ||
+      url.startsWith('https://beta.staging01.devland.is') ||
       url.startsWith('https://island.is')) &&
     (url.includes('/minarsidur') || url.includes('/umsoknir'))
   ) {
