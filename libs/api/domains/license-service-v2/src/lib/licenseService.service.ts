@@ -63,7 +63,7 @@ const COMMON_VERIFY_ERROR = {
 }
 
 @Injectable()
-export class LicenseServiceService {
+export class LicenseServiceV2 {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly barcodeService: BarcodeService,

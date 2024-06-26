@@ -1,29 +1,31 @@
 {
-  "name": "api-domains-license-service",
+  "name": "api-domains-license-service-v2",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/api/domains/license-service/src",
+  "sourceRoot": "libs/api/domains/license-service-v2/src",
   "projectType": "library",
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
       "options": {
         "lintFilePatterns": [
-          "libs/api/domains/license-service/**/*.{ts,tsx,js,jsx}"
+          "libs/api/domains/license-service-v2/**/*.{ts,tsx,js,jsx}"
         ]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/api/domains/license-service"],
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/api/domains/license-service-v2"
+      ],
       "options": {
-        "jestConfig": "libs/api/domains/license-service/jest.config.ts",
+        "jestConfig": "libs/api/domains/license-service-v2/jest.config.ts",
         "passWithNoTests": true
       }
     },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/license-service/src/lib/messages.ts'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/license-service-v2/src/lib/messages.ts'"
       }
     }
   },

@@ -28,10 +28,10 @@ import { useUserProfile } from '@island.is/service-portal/graphql'
 import { isDefined } from '@island.is/shared/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { getTypeFromPath, isLicenseTypePath } from '../../utils/mapPaths'
-import ExpandableLine from './ExpandableLine'
+import { getTypeFromPath, isLicenseTypePath } from '../../../utils/mapPaths'
 import { useGenericLicenseLazyQuery } from './LicenseDetailV2.generated'
-import { PkPass } from '../../components/QRCodeModal/PkPass'
+import { PkPass } from '../../../components/QRCodeModal/PkPass'
+import ExpandableLine from '../../v1/LicenseDetail/ExpandableLine'
 
 const getTagColor = (
   color: GenericUserLicenseDataFieldTagColor,

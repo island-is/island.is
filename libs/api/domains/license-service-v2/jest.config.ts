@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'api-domains-license-service',
+  displayName: 'api-domains-license-service-v2',
   preset: './jest.preset.js',
   rootDir: '../../../..',
   roots: [__dirname],
@@ -12,6 +12,6 @@ export default {
     ],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '<rootDir>/coverage/libs/api/domains/license-service',
+  coverageDirectory: '<rootDir>/coverage/libs/api/domains/license-service-v2',
   testEnvironment: 'node',
 }

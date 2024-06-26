@@ -35,4 +35,4 @@ import { CmsTranslationsModule } from '@island.is/cms-translations'
     PassportMapper,
   ],
 })
-export class LicenseMapperModule {}
+export class LicenseMapperModuleV2 {}
