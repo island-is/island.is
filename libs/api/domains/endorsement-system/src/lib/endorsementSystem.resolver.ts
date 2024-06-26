@@ -35,7 +35,6 @@ const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => EndorsementList)
-
 export class EndorsementSystemResolver {
   constructor(private endorsementSystemService: EndorsementSystemService) {}
 
@@ -71,7 +70,6 @@ export class EndorsementSystemResolver {
     )
   }
 
-
   @Mutation(() => Endorsement)
   async endorsementSystemEndorseList(
     @Args('input') input: CreateEndorsementInput,
@@ -82,7 +80,6 @@ export class EndorsementSystemResolver {
       user,
     )
   }
-
 
   @Mutation(() => Boolean)
   async endorsementSystemUnendorseList(
