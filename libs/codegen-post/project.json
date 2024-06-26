@@ -6,7 +6,7 @@
   "targets": {
     "codegen": {
       "executor": "nx:run-commands",
-      "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
+      "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema",  "^codegen/frontend-client"],
       "options": {
         "inputs": ["{projectRoot}/src/*"],
         "outputs": [],

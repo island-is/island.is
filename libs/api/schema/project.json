@@ -13,6 +13,12 @@
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
+      "outputs": [
+        "libs/api/schema/src/lib/schema.ts",
+        "{projectRoot}/**/schema.{ts,tsx}",
+        "{projectRoot}/**/fragmentTypes.json",
+        "{projectRoot}/**/*.generated.ts"
+      ],
       "options": {
         "command": "graphql-codegen --config libs/api/schema/codegen.yml"
       }
