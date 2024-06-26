@@ -41,7 +41,10 @@ type Init = {
   }[]
   status: string
   rightsCode: string
-  attachments: number
+  attachments: {
+    attachmentBytes: string
+    attachmentType: string
+  }[]
   testData: string
   otherParentBlocked: boolean
 }
@@ -89,6 +92,12 @@ export const createWrappedFetchWithLogging = (
           },
         )
         requestBody.paymentInfo = omit(requestBody.paymentInfo, ['bankAccount'])
+        // Remove attachmentsBytes
+        requestBody.attachments = requestBody.attachments.map(
+          (attachment: Init['attachments'][number]) => {
+            return omit(attachment, ['attachmentBytes'])
+          },
+        )
 
         const vmstMetadata = {
           request: {
