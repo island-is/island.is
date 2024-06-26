@@ -26,6 +26,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { NationalIdWithName } from '@island.is/application/ui-components'
+import { flattenValueObject, insert } from './utils'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -37,6 +39,7 @@ const componentMapper = {
   checkbox: CheckboxController,
   date: DatePickerController,
   radio: RadioController,
+  nationalIdWithName: NationalIdWithName,
 }
 
 export const TableRepeaterFormField: FC<Props> = ({
@@ -76,14 +79,28 @@ export const TableRepeaterFormField: FC<Props> = ({
     name: data.id,
   })
 
-  const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
   const savedFields = fields.filter((_, index) => index !== activeIndex)
   const tableItems = items.filter((x) => x.displayInTable !== false)
-  const tableHeader = table?.header ?? tableItems.map((item) => item.label)
-  const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
+
+  let values = useWatch({ name: data.id, control: methods.control })
+  let tableHeader = table?.header ?? tableItems.map((item) => item.label)
+  let tableRows = table?.rows ?? tableItems.map((item) => item.id)
+
+  tableItems.map((item) => {
+    if (item.component === 'nationalIdWithName') {
+      //let table account for name thats being lookup up
+      insert(tableRows, item.id, 'name')
+      insert(tableHeader, item.label, 'Nafn')
+
+      //nationalIdWithName returns an object that we extract entries from and add to values
+      if (values) {
+        values = values.map((value: any) => flattenValueObject(value, item.id))
+      }
+    }
+  })
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -290,6 +307,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                             methods.clearErrors(id)
                           }
                         }}
+                        application={application}
                         {...props}
                       />
                     </GridColumn>
