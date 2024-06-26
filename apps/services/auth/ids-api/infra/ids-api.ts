@@ -123,7 +123,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
     .resources({
       limits: {
         cpu: '400m',
-        memory: '512Mi',
+        memory: '1024Mi',
       },
       requests: {
         cpu: '100m',
