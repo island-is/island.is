@@ -11,7 +11,10 @@ import {
   NotificationSender,
 } from '@island.is/api/schema'
 import { AvatarImage } from '@island.is/service-portal/documents'
-import { resolveLink } from '@island.is/service-portal/information'
+import {
+  COAT_OF_ARMS,
+  resolveLink,
+} from '@island.is/service-portal/information'
 
 interface Props {
   data: {
@@ -47,14 +50,12 @@ export const NotificationLine = ({ data, onClickCallback }: Props) => {
             [styles.unread]: !isRead,
           })}
         >
-          {data.sender?.logoUrl ? (
-            <AvatarImage
-              img={data.sender.logoUrl}
-              background={!isRead ? 'white' : 'blue100'}
-              as="div"
-              imageClass={styles.img}
-            />
-          ) : undefined}
+          <AvatarImage
+            img={data.sender?.logoUrl ?? COAT_OF_ARMS}
+            background={!isRead ? 'white' : 'blue100'}
+            as="div"
+            imageClass={styles.img}
+          />
           <Box
             width="full"
             display="flex"
