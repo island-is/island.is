@@ -51,8 +51,8 @@ const IconsWrapper = styled.View`
 `
 
 const CloseButton = styled.TouchableOpacity`
-  width: ${({ theme }) => theme.spacing[3]}px;
-  height: ${({ theme }) => theme.spacing[3]}px;
+  width: ${({ theme }) => theme.spacing[4]}px;
+  height: ${({ theme }) => theme.spacing[4]}px;
   border-radius: ${({ theme }) => theme.spacing[2]}px;
   background-color: ${dynamicColor((props) => ({
     dark: props.theme.color.dark400,
@@ -63,8 +63,8 @@ const CloseButton = styled.TouchableOpacity`
 `
 
 const CloseIcon = styled.Image`
-  width: ${({ theme }) => theme.spacing[2]}px;
-  height: ${({ theme }) => theme.spacing[2]}px;
+  width: ${({ theme }) => theme.spacing[3]}px;
+  height: ${({ theme }) => theme.spacing[3]}px;
 `
 
 export function NavigationBarSheet({
