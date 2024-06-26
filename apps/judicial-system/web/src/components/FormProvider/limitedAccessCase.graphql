@@ -147,5 +147,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     indictmentDecision
     indictmentRulingDecision
     courtSessionType
+    eventLogs {
+      created
+      eventType
+    }
   }
 }

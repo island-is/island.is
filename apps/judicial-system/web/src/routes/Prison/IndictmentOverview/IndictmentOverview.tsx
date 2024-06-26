@@ -2,19 +2,26 @@ import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
+  InfoCard,
   PageHeader,
   PageLayout,
 } from '@island.is/judicial-system-web/src/components'
+import { EventType } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
+
+  const indictmentCompletedDate = workingCase.eventLogs?.find(
+    (log) => log.eventType === EventType.INDICTMENT_COMPLETED,
+  )?.created
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -34,13 +41,24 @@ const IndictmentOverview = () => {
             </Text>
           </Box>
         )}
-        <Box marginBottom={1}>
-          <Text variant="h2" as="h2">
-            {formatMessage(core.caseNumber, {
-              caseNumber: workingCase.courtCaseNumber,
-            })}
-          </Text>
-        </Box>
+        {indictmentCompletedDate && (
+          <Box marginBottom={5}>
+            <Text variant="h4" as="h3">
+              {formatMessage(strings.indictmentCompletedTitle, {
+                date: formatDate(indictmentCompletedDate, 'PPP'),
+              })}
+            </Text>
+          </Box>
+        )}
+        <InfoCard
+          defendants={{
+            title: formatMessage(strings.infoCardDefendantsTitle, {
+              count: workingCase.defendants?.length,
+            }),
+            items: workingCase.defendants ?? [],
+          }}
+          data={[]}
+        />
       </FormContentContainer>
     </PageLayout>
   )
