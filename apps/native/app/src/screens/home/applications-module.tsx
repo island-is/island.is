@@ -16,7 +16,7 @@ import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
 import { Application } from '../../graphql/types/schema'
 import { navigateTo } from '../../lib/deep-linking'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationUrl } from '../../utils/applications-utils'
 
 interface ApplicationsModuleProps {
@@ -35,6 +35,7 @@ export const ApplicationsModule = React.memo(
   }: ApplicationsModuleProps) => {
     const intl = useIntl()
     const count = applications.length
+    const { openBrowser } = useBrowser()
 
     const children = applications.slice(0, 5).map((application) => (
       <StatusCard

@@ -24,7 +24,7 @@ import {
   useUpdateVehicleMileageMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/useBrowser'
 import { MileageCell } from './components/mileage-cell'
 
 const { getNavigationOptions, useNavigationOptions } =
@@ -56,6 +56,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
 
   const intl = useIntl()
   const dynamicColor = useDynamicColor()
+  const { openBrowser } = useBrowser()
   const [input, setInput] = useState('')
   const info = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
