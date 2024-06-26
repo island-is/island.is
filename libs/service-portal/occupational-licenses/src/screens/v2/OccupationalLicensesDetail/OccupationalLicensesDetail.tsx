@@ -31,7 +31,7 @@ type UseParams = {
   id: string
 }
 
-const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date('01.01.2020')
+const EDUCATION_LICENSE_SIGNED_CERTIFICATE_CUTOFF = new Date(2020, 0, 1)
 
 const OccupationalLicenseDetail = () => {
   const { id } = useParams() as UseParams
