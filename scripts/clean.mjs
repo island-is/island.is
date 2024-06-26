@@ -107,7 +107,13 @@ function isGitTracked(filePath) {
   }
 }
 
-function findAndDelete(baseDir, isFileCheck, patternCheck, deleteAction) {
+/**
+ * Recursively finds and deletes files or directories based on given conditions.
+ *
+ * @param {string} baseDir - The base directory to start the search from.
+ * @param {function} patternCheck - A function that takes a file path and returns true if the file path matches the pattern.
+ */
+function findAndDelete(baseDir, patternCheck) {
   function walkSync(currentDirPath) {
     if (currentDirPath.includes('node_modules')) return
 
@@ -120,7 +126,7 @@ function findAndDelete(baseDir, isFileCheck, patternCheck, deleteAction) {
         return
       }
 
-      if (!isFileCheck(stat)) return
+      if (!stat.isFile()) return
 
       if (!patternCheck(filePath)) return
 
@@ -130,7 +136,8 @@ function findAndDelete(baseDir, isFileCheck, patternCheck, deleteAction) {
       }
 
       if (!dry(`Would delete: ${filePath}`)) {
-        deleteAction(filePath)
+        log(`Deleting now: ${filePath}`)
+        fs.unlinkSync(filePath)
       }
     })
   }
