@@ -60,6 +60,7 @@ export type TableRepeaterFields =
   | 'radio'
   | 'checkbox'
   | 'date'
+  | 'nationalIdWithName'
 
 export type TableRepeaterItem = {
   component: TableRepeaterFields
