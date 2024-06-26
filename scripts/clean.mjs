@@ -136,7 +136,7 @@ function isGitTracked(filePath) {
  * Recursively finds and deletes files or directories based on given conditions.
  *
  * @param {string} baseDir - The base directory to start the search from.
- * @param {(filePath: string) => boolean} patternCheck - A function that takes a file path and returns true if the file path matches the pattern.
+ * @param {(filePath: string) => boolean} patternCheck - A function that takes a file path and returns true if the path should be deleted.
  * @param {boolean} [deleteDirectories=false] - Whether to delete directories that match the pattern.
  */
 function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
@@ -257,10 +257,10 @@ function cleanDist() {
 
 function cleanYarn() {
   if (fs.existsSync('.yarn')) {
+    const r = new RegExp(`\\.yarn/${config.CLEAN_YARN_IGNORES_LIST.join('|')}`)
     findAndDelete(
       '.yarn',
-      (filePath) =>
-        !config.CLEAN_YARN_IGNORES_LIST.includes(path.basename(filePath)),
+      (filePath) => r.test(filePath),
       true, // Indicate that we are deleting directories
     )
   } else {
