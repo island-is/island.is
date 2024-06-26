@@ -280,10 +280,7 @@ export class DelegationsIncomingCustomService {
         .filter(isDefined)
         .map((identity) => ({
           nationalId: identity.nationalId,
-          name:
-            (kennitala.isCompany(identity.nationalId)
-              ? (identity as CompanyExtendedInfo).name
-              : (identity as IndividualDto).fullName) ?? UNKNOWN_NAME,
+          name: identity.name ?? UNKNOWN_NAME,
         }))
 
       // Divide delegations into alive or deceased delegations.
@@ -292,7 +289,7 @@ export class DelegationsIncomingCustomService {
         ({ fromNationalId }, index) =>
           // All companies will be divided into aliveDelegations
           kennitala.isCompany(fromNationalId) ||
-          // Pass through altough Þjóðskrá API throws an error since it is not required to view the delegation.
+          // Pass through although Þjóðskrá API throws an error since it is not required to view the delegation.
           identities[index] instanceof Error ||
           // Make sure we can match the person to the delegation, i.e. not deceased
           (identities[index] as IndividualDto)?.nationalId === fromNationalId,
