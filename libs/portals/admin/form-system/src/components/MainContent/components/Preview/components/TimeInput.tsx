@@ -27,7 +27,7 @@ export const TimeInput = ({ currentItem }: Props) => {
       case 2:
         return createOptions(halfList.minuteList)
       case 3:
-        return createOptions(quarterList.minuteList);
+        return createOptions(quarterList.minuteList)
       default:
         return createOptions(minuteList)
     }
