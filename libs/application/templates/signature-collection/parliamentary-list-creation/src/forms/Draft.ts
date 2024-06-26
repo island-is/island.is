@@ -159,19 +159,9 @@ export const Draft: Form = buildForm({
               addItemButtonText: 'Bæta við aðila',
               marginTop: 0,
               fields: {
-                nationalId: {
-                  component: 'input',
+                person: {
+                  component: 'nationalIdWithName',
                   label: 'Kennitala',
-                  width: 'half',
-                  type: 'text',
-                  format: '######-####',
-                  placeholder: '000000-0000',
-                },
-                name: {
-                  component: 'input',
-                  label: 'Nafn',
-                  width: 'half',
-                  type: 'text',
                 },
                 role: {
                   component: 'select',
