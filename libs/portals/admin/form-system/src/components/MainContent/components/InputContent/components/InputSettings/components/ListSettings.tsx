@@ -70,6 +70,17 @@ export const ListSettings = () => {
     }
   }
 
+  const onClickRadioHandler = (index: number) => {
+    radioHandler(index)
+    controlDispatch({
+      type: 'SET_LIST_TYPE',
+      payload: {
+        listType: index === 0 ? 'customList' : 'other',
+        update: updateActiveItem
+      }
+    })
+  }
+
   return (
     <Stack space={2}>
       {currentItem.type === 'Dropdown_list' && (
@@ -77,21 +88,12 @@ export const ListSettings = () => {
           <Row>
             <Column>
               <Box
-                onClick={() => {
-                  controlDispatch({
-                    type: 'SET_LIST_TYPE',
-                    payload: {
-                      listType: 'customList',
-                      update: updateActiveItem,
-                    },
-                  })
-                  radioHandler(0)
-                }}
+                onClick={() => onClickRadioHandler(0)}
               >
                 <RadioButton
                   label={formatMessage(m.customList)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => {}}
+                  onChange={() => { }}
                   checked={radio[0]}
                 />
               </Box>
@@ -100,56 +102,52 @@ export const ListSettings = () => {
           <Row>
             <Column>
               <Box
-                onClick={() => {
-                  controlDispatch({
-                    type: 'SET_LIST_TYPE',
-                    payload: {
-                      listType: 'other',
-                      update: updateActiveItem,
-                    },
-                  })
-                  radioHandler(1)
-                }}
+                onClick={() => onClickRadioHandler(1)}
               >
                 <RadioButton
                   label={formatMessage(m.predeterminedLists)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
-                  onChange={() => {}}
+                  onChange={() => { }}
                   checked={radio[1]}
                 />
               </Box>
             </Column>
           </Row>
         </>
-      )}
-      {radio[0] && (
-        <Column span="5/10">
-          <Button variant="ghost" onClick={() => setInListBuilder(true)}>
-            {formatMessage(m.listBuilder)}
-          </Button>
-        </Column>
-      )}
-      {radio[1] && (
-        <Column span="5/10">
-          <Select
-            placeholder={formatMessage(m.chooseListType)}
-            name="predeterminedLists"
-            label={formatMessage(m.predeterminedLists)}
-            options={predeterminedLists}
-            backgroundColor="blue"
-            onChange={(option) => {
-              const listType = getListType(option?.value as number)
-              controlDispatch({
-                type: 'SET_LIST_TYPE',
-                payload: {
-                  listType: listType,
-                  update: updateActiveItem,
-                },
-              })
-            }}
-          />
-        </Column>
-      )}
-    </Stack>
+      )
+      }
+      {
+        radio[0] && (
+          <Column span="5/10">
+            <Button variant="ghost" onClick={() => setInListBuilder(true)}>
+              {formatMessage(m.listBuilder)}
+            </Button>
+          </Column>
+        )
+      }
+      {
+        radio[1] && (
+          <Column span="5/10">
+            <Select
+              placeholder={formatMessage(m.chooseListType)}
+              name="predeterminedLists"
+              label={formatMessage(m.predeterminedLists)}
+              options={predeterminedLists}
+              backgroundColor="blue"
+              onChange={(option) => {
+                const listType = getListType(option?.value as number)
+                controlDispatch({
+                  type: 'SET_LIST_TYPE',
+                  payload: {
+                    listType: listType,
+                    update: updateActiveItem,
+                  },
+                })
+              }}
+            />
+          </Column>
+        )
+      }
+    </Stack >
   )
 }
