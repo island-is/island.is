@@ -141,16 +141,21 @@ export class FormSystemService {
     auth: User,
     input: GetTranslationInput,
   ): Promise<Translation> {
-    const response = await this.fetchTranslation(input)
-    if (!response.ok) {
-      throw new Error('Failed to get translation')
+    try {
+      const response = await this.fetchTranslation(input)
+      if (!response.ok) {
+        throw new Error('Failed to get translation')
+      }
+      const result = await response.json()
+      return {
+        translations: result.translations ?? [],
+        sourceLanguageCode: result.sourceLanguageCode ?? '',
+        targetLanguageCode: result.targetLanguageCode ?? '',
+        model: result.model ?? '',
+      } as Translation
+    } catch (error) {
+      handle4xx(error, this.handleError, 'failed to get translation')
+      return error
     }
-    const result = await response.json()
-    return {
-      translations: result.translations ?? [],
-      sourceLanguageCode: result.sourceLanguageCode ?? '',
-      targetLanguageCode: result.targetLanguageCode ?? '',
-      model: result.model ?? '',
-    } as Translation
   }
 }

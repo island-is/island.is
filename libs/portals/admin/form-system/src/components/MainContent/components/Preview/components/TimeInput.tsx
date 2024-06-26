@@ -5,7 +5,6 @@ import {
   Select,
   Box,
 } from '@island.is/island-ui/core'
-import { ChangeEvent } from 'react'
 
 interface Props {
   currentItem: FormSystemInput
@@ -28,8 +27,6 @@ export const TimeInput = ({ currentItem }: Props) => {
         return createOptions(halfList.minuteList);
       case 3:
         return createOptions(quarterList.minuteList);
-      case 0:
-      case undefined:
       default:
         return createOptions(minuteList);
     }
