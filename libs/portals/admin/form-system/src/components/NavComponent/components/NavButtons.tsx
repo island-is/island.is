@@ -39,9 +39,8 @@ export const NavButtons = () => {
       return inputs?.some(
         (input) => input?.groupGuid === activeItem?.data?.guid,
       )
-    } else {
-      return false
     }
+    return false
   }
 
   const addItem = async () => {

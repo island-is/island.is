@@ -31,61 +31,46 @@ export const List = ({ currentItem }: Props) => {
   const [getZipCodes] = useFormSystemGetZipCodesLazyQuery()
   const [getTradesProfessions] = useFormSystemGetTradesProfessionsLazyQuery()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const mapToListItems = (items: any[]): ListItem[] =>
+    items?.map(item => ({
+      label: item?.label?.is ?? '',
+      value: item?.label?.is ?? '',
+    })) ?? []
+
+  const fetchAndSetList = async (fetcher: () => Promise<any>, dataKey: string) => {
+    try {
+      const { data } = await fetcher()
+      if (!data || !data[dataKey] || !data[dataKey].list) {
+        throw new Error(`Invalid data structure for ${dataKey}`)
+      }
+      setListItems(mapToListItems(data[dataKey].list))
+    } catch (err) {
+      console.error(`Error fetching ${dataKey}:`, err)
+      setListItems([])
+    }
+  }
+
   useEffect(() => {
     const type = currentItem.inputSettings?.listType
+
     if (type === 'customList' || type === '') {
       const currentList = currentItem.inputSettings?.list ?? []
-      setListItems(
-        currentList.map((l: FormSystemListItem) => ({
-          label: l?.label?.is ?? '',
-          value: l?.label?.is ?? '',
-        })),
-      )
+      setListItems(mapToListItems(currentList))
     } else {
-      const fetchList = async () => {
-        let data, loading, error
-        switch (type) {
-          case 'lond':
-            ;({ data, loading, error } = await getCountries())
-            setListItems(
-              data?.formSystemGetCountries?.list?.map((c) => ({
-                label: c?.label?.is ?? '',
-                value: c?.label?.is ?? '',
-              })) ?? [],
-            )
-            break
-          case 'sveitarfelog':
-            ;({ data, loading, error } = await getMunicipalities())
-            setListItems(
-              data?.formSystemGetMunicipalities.list?.map((m) => ({
-                label: m?.label?.is ?? '',
-                value: m?.label?.is ?? '',
-              })) ?? [],
-            )
-            break
-          case 'postnumer':
-            ;({ data, loading, error } = await getZipCodes())
-            setListItems(
-              data?.formSystemGetZipCodes.list?.map((z) => ({
-                label: z?.label?.is ?? '',
-                value: z?.label?.is ?? '',
-              })) ?? [],
-            )
-            break
-          case 'idngreinarMeistara':
-            ;({ data, loading, error } = await getTradesProfessions())
-            setListItems(
-              data?.formSystemGetTradesProfessions.list?.map((t) => ({
-                label: t?.label?.is ?? '',
-                value: t?.label?.is ?? '',
-              })) ?? [],
-            )
-            break
-          default:
-            break
-        }
+      const fetchMap: Record<string, () => Promise<void>> = {
+        'lond': () => fetchAndSetList(getCountries, 'formSystemGetCountries'),
+        'sveitarfelog': () => fetchAndSetList(getMunicipalities, 'formSystemGetMunicipalities'),
+        'postnumer': () => fetchAndSetList(getZipCodes, 'formSystemGetZipCodes'),
+        'idngreinarMeistara': () => fetchAndSetList(getTradesProfessions, 'formSystemGetTradesProfessions'),
       }
-      fetchList()
+
+      const fetcher = fetchMap[type]
+      if (fetcher) {
+        fetcher()
+      } else {
+        setListItems([])
+      }
     }
   }, [
     currentItem.inputSettings?.list,
@@ -105,9 +90,8 @@ export const List = ({ currentItem }: Props) => {
         required={currentItem?.isRequired ?? false}
         placeholder={
           ListTypePlaceholder[
-            currentItem.inputSettings
-              ?.listType as keyof typeof ListTypePlaceholder
-          ]
+          currentItem.inputSettings?.listType as keyof typeof ListTypePlaceholder
+          ] ?? 'Select an option'
         }
       />
     </>
