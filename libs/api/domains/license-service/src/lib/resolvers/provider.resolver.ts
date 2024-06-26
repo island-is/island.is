@@ -1,13 +1,13 @@
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { Inject, UseGuards } from '@nestjs/common'
+import { UseGuards } from '@nestjs/common'
 import { Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { GenericLicenseProvider } from '../dto/GenericLicenseProvider.dto'
 import {
-  OrganizationLogoByReferenceIdDataLoader,
+  type OrganizationLogoByReferenceIdDataLoader,
   OrganizationLogoByReferenceIdLoader,
-  OrganizationTitleByReferenceIdDataLoader,
+  type OrganizationTitleByReferenceIdDataLoader,
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
