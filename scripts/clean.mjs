@@ -115,8 +115,8 @@ function findAndDelete(baseDir, isFileCheck, patternCheck, deleteAction) {
     fs.readdirSync(currentDirPath).forEach((name) => {
       const filePath = path.join(currentDirPath, name)
       const stat = fs.statSync(filePath)
-      if (isFileCheck(stat)) {
-        if (patternCheck(filePath) && !isGitTracked(filePath)) {
+      if (isFileCheck(stat) && patternCheck(filePath)) {
+        if (!isGitTracked(filePath)) {
           if (!dry(`Would delete: ${filePath}`)) {
             deleteAction(filePath)
           }
