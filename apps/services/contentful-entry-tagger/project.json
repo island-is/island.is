@@ -41,6 +41,13 @@
         "jestConfig": "apps/services/contentful-entry-tagger/jest.config.ts"
       }
     },
-    "docker-express": {}
+    "docker-express": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    }
   }
 }

@@ -122,6 +122,13 @@
         "{projectRoot}/graphql/possibleTypes.json"
       ]
     },
-    "docker-next": {}
+    "docker-next": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    }
   }
 }

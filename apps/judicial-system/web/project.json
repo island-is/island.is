@@ -101,7 +101,14 @@
         "command": "graphql-codegen --config apps/judicial-system/web/codegen.yml"
       }
     },
-    "docker-next": {},
+    "docker-next": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {

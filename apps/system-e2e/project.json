@@ -36,6 +36,13 @@
         "command": "yarn playwright test apps/system-e2e/src/tests -c apps/system-e2e/src"
       }
     },
-    "docker-playwright": {}
+    "docker-playwright": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    }
   }
 }

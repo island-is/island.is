@@ -125,7 +125,14 @@
         "cwd": "apps/services/endorsements/api"
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    },
     "service-endorsement-system-api": {}
   }
 }

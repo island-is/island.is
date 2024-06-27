@@ -40,6 +40,13 @@
       },
       "outputs": ["{options.outputDir}"]
     },
-    "docker-static": {}
+    "docker-static": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    }
   }
 }

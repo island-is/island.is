@@ -108,6 +108,13 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/web-osk"]
     },
-    "docker-next": {}
+    "docker-next": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    }
   }
 }

@@ -136,6 +136,13 @@
         "parallel": true
       }
     },
-    "docker-next": {}
+    "docker-next": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "echo not implemented"
+        ]
+      }
+    }
   }
 }
