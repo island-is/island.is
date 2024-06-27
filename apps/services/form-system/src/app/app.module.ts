@@ -5,12 +5,12 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { FormsModule } from './modules/forms/forms.module'
-import { GroupsModule } from './modules/groups/groups.module'
+import { PagesModule } from './modules/pages/pages.module'
 import { InputSettingsModule } from './modules/inputSettings/inputSettings.module'
 import { InputsModule } from './modules/inputs/inputs.module'
 import { ListsModule } from './modules/lists/lists.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
-import { StepsModule } from './modules/steps/steps.module'
+import { SectionsModule } from './modules/sections/sections.module'
 import { TestimoniesModule } from './modules/testimonies/testimonies.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
@@ -26,8 +26,8 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     }),
     OrganizationsModule,
     FormsModule,
-    StepsModule,
-    GroupsModule,
+    SectionsModule,
+    PagesModule,
     InputsModule,
     TestimoniesModule,
     ListsModule,

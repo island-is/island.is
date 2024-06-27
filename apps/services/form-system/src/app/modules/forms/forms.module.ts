@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FormApplicant } from '../applicants/models/formApplicant.model'
-import { Group } from '../groups/models/group.model'
+import { Page } from '../pages/models/page.model'
 import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
 import { InputType } from '../inputs/models/inputType.model'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
-import { Step } from '../steps/models/step.model'
+import { Section } from '../sections/models/section.model'
 import { TestimonyType } from '../testimonies/models/testimonyType.model'
 import { FormsController } from './forms.controller'
 import { FormsService } from './forms.service'
@@ -20,8 +20,8 @@ import { FormMapper } from './models/form.mapper'
     SequelizeModule.forFeature([
       Form,
       FormApplicant,
-      Step,
-      Group,
+      Section,
+      Page,
       Organization,
       InputType,
       TestimonyType,

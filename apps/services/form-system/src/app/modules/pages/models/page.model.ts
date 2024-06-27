@@ -1,22 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { CreationOptional } from 'sequelize'
 import {
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
-  HasOne,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Page } from '../../pages/models/page.model'
+import { Section } from '../../sections/models/section.model'
+import { CreationOptional } from 'sequelize'
+import { Input } from '../../inputs/models/input.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { InputType } from './inputType.model'
-import { InputSettings } from '../../inputSettings/models/inputSettings.model'
 
-@Table({ tableName: 'inputs' })
-export class Input extends Model<Input> {
+@Table({ tableName: 'pages' })
+export class Page extends Model<Page> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -51,14 +50,6 @@ export class Input extends Model<Input> {
   displayOrder!: number
 
   @Column({
-    type: DataType.JSON,
-    allowNull: false,
-    defaultValue: () => new LanguageType(),
-  })
-  @ApiProperty()
-  description!: LanguageType
-
-  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
@@ -67,32 +58,22 @@ export class Input extends Model<Input> {
   isHidden!: boolean
 
   @Column({
-    type: DataType.BOOLEAN,
+    type: DataType.INTEGER,
     allowNull: false,
-    defaultValue: false,
+    defaultValue: 0,
   })
   @ApiProperty()
-  isPartOfMultiset!: boolean
+  multiset!: number
 
-  @ForeignKey(() => Page)
+  @HasMany(() => Input)
+  @ApiProperty({ type: [Input] })
+  inputs?: Input[]
+
+  @ForeignKey(() => Section)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'page_id',
+    field: 'section_id',
   })
-  pageId!: string
-
-  @HasOne(() => InputSettings)
-  @ApiProperty({ type: InputSettings })
-  inputSettings?: InputSettings
-
-  @ForeignKey(() => InputType)
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    defaultValue: 'default',
-    field: 'input_type',
-  })
-  @ApiProperty()
-  inputType!: string
+  sectionId!: string
 }

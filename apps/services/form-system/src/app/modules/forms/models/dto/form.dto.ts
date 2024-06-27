@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
-import { GroupDto } from '../../../groups/models/dto/group.dto'
+import { PageDto } from '../../../pages/models/dto/page.dto'
 import { InputDto } from '../../../inputs/models/dto/input.dto'
-import { StepDto } from '../../../steps/models/dto/step.dto'
+import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { FormTestimonyTypeDto } from '../../../testimonies/models/dto/formTestimonyType.dto'
 import { String } from 'aws-sdk/clients/apigateway'
 
@@ -39,7 +39,7 @@ export class FormDto {
   derivedFrom!: number
 
   @ApiProperty()
-  stopProgressOnValidatingStep!: boolean
+  stopProgressOnValidatingPage!: boolean
 
   @ApiProperty({ type: LanguageType })
   completedMessage?: LanguageType
@@ -50,11 +50,11 @@ export class FormDto {
   @ApiProperty({ type: [FormApplicantDto] })
   applicants?: FormApplicantDto[]
 
-  @ApiProperty({ type: [StepDto] })
-  steps?: StepDto[]
+  @ApiProperty({ type: [SectionDto] })
+  sections?: SectionDto[]
 
-  @ApiProperty({ type: [GroupDto] })
-  groups?: GroupDto[]
+  @ApiProperty({ type: [PageDto] })
+  pages?: PageDto[]
 
   @ApiProperty({ type: [InputDto] })
   inputs?: InputDto[]

@@ -44,12 +44,12 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
-          group_id: {
+          page_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'groups',
+              model: 'pages',
               key: 'id',
             },
           },

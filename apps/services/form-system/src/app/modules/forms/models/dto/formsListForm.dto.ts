@@ -30,5 +30,5 @@ export class FormsListFormDto {
   derivedFrom!: number
 
   @ApiProperty()
-  stopProgressOnValidatingStep!: boolean
+  stopProgressOnValidatingPage!: boolean
 }

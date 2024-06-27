@@ -1,9 +1,9 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { StepTypes } from '../../enums/stepTypes'
+import { SectionTypes } from '../../enums/sectionTypes'
 import { FormApplicantDto } from '../applicants/models/dto/formApplicant.dto'
-import { GroupDto } from '../groups/models/dto/group.dto'
-import { Group } from '../groups/models/group.model'
+import { PageDto } from '../pages/models/dto/page.dto'
+import { Page } from '../pages/models/page.model'
 import { InputSettingsDto } from '../inputSettings/models/dto/inputSettings.dto'
 import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
 import { InputSettings } from '../inputSettings/models/inputSettings.model'
@@ -14,8 +14,8 @@ import { InputType } from '../inputs/models/inputType.model'
 import { ListTypeDto } from '../lists/models/dto/listType.dto'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
-import { StepDto } from '../steps/models/dto/step.dto'
-import { Step } from '../steps/models/step.model'
+import { SectionDto } from '../sections/models/dto/section.dto'
+import { Section } from '../sections/models/section.model'
 import { FormTestimonyTypeDto } from '../testimonies/models/dto/formTestimonyType.dto'
 import { TestimonyTypeDto } from '../testimonies/models/dto/testimonyType.dto'
 import { TestimonyType } from '../testimonies/models/testimonyType.model'
@@ -33,10 +33,10 @@ export class FormsService {
   constructor(
     @InjectModel(Form)
     private readonly formModel: typeof Form,
-    @InjectModel(Step)
-    private readonly stepModel: typeof Step,
-    @InjectModel(Group)
-    private readonly groupModel: typeof Group,
+    @InjectModel(Section)
+    private readonly sectionModel: typeof Section,
+    @InjectModel(Page)
+    private readonly pageModel: typeof Page,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
     @InjectModel(InputType)
@@ -105,12 +105,12 @@ export class FormsService {
     const form = await this.formModel.findByPk(id, {
       include: [
         {
-          model: Step,
-          as: 'steps',
+          model: Section,
+          as: 'sections',
           include: [
             {
-              model: Group,
-              as: 'groups',
+              model: Page,
+              as: 'pages',
               include: [
                 {
                   model: Input,
@@ -249,12 +249,12 @@ export class FormsService {
       isTranslated: form.isTranslated,
       applicationDaysToRemove: form.applicationDaysToRemove,
       derivedFrom: form.derivedFrom,
-      stopProgressOnValidatingStep: form.stopProgressOnValidatingStep,
+      stopProgressOnValidatingPage: form.stopProgressOnValidatingPage,
       completedMessage: form.completedMessage,
       testimonyTypes: [],
       applicants: [],
-      steps: [],
-      groups: [],
+      sections: [],
+      pages: [],
       inputs: [],
     }
 
@@ -275,34 +275,34 @@ export class FormsService {
       } as FormApplicantDto)
     })
 
-    form.steps.map((step) => {
-      formDto.steps?.push({
-        id: step.id,
-        name: step.name,
-        created: step.created,
-        modified: step.modified,
-        stepType: step.stepType,
-        displayOrder: step.displayOrder,
-        waitingText: step.waitingText,
-        isHidden: step.isHidden,
-        isCompleted: step.isCompleted,
-        callRuleset: step.callRuleset,
-      } as StepDto)
-      step.groups?.map((group) => {
-        formDto.groups?.push({
-          id: group.id,
-          stepId: step.id,
-          name: group.name,
-          created: group.created,
-          modified: group.modified,
-          displayOrder: group.displayOrder,
-          isHidden: group.isHidden,
-          multiset: group.multiset,
-        } as GroupDto)
-        group.inputs?.map((input) => {
+    form.sections.map((section) => {
+      formDto.sections?.push({
+        id: section.id,
+        name: section.name,
+        created: section.created,
+        modified: section.modified,
+        sectionType: section.sectionType,
+        displayOrder: section.displayOrder,
+        waitingText: section.waitingText,
+        isHidden: section.isHidden,
+        isCompleted: section.isCompleted,
+        callRuleset: section.callRuleset,
+      } as SectionDto)
+      section.pages?.map((page) => {
+        formDto.pages?.push({
+          id: page.id,
+          sectionId: section.id,
+          name: page.name,
+          created: page.created,
+          modified: page.modified,
+          displayOrder: page.displayOrder,
+          isHidden: page.isHidden,
+          multiset: page.multiset,
+        } as PageDto)
+        page.inputs?.map((input) => {
           formDto.inputs?.push({
             id: input.id,
-            groupId: group.id,
+            pageId: page.id,
             name: input.name,
             created: input.created,
             modified: input.modified,
@@ -325,38 +325,38 @@ export class FormsService {
   }
 
   private async createFormTemplate(form: Form): Promise<void> {
-    await this.stepModel.create({
+    await this.sectionModel.create({
       formId: form.id,
-      stepType: StepTypes.PREMISES,
+      sectionType: SectionTypes.PREMISES,
       displayOrder: 0,
       name: { is: 'Forsendur', en: 'Premises' },
-    } as Step)
+    } as Section)
 
-    await this.stepModel.create({
+    await this.sectionModel.create({
       formId: form.id,
-      stepType: StepTypes.PARTIES,
+      sectionType: SectionTypes.PARTIES,
       displayOrder: 1,
       name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
-    } as Step)
+    } as Section)
 
-    const inputStep = await this.stepModel.create({
+    const inputSection = await this.sectionModel.create({
       formId: form.id,
-      stepType: StepTypes.INPUT,
+      sectionType: SectionTypes.INPUT,
       displayOrder: 2,
-      name: { is: 'Innsláttarskref', en: 'InputStep' },
-    } as Step)
+      name: { is: 'Innsláttarsíða', en: 'InputPage' },
+    } as Section)
 
-    await this.stepModel.create({
+    await this.sectionModel.create({
       formId: form.id,
-      stepType: StepTypes.PAYMENT,
+      sectionType: SectionTypes.PAYMENT,
       displayOrder: 3,
       name: { is: 'Greiðsla', en: 'Payment' },
-    } as Step)
+    } as Section)
 
-    await this.groupModel.create({
-      stepId: inputStep.id,
+    await this.pageModel.create({
+      sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'Hópur 1', en: 'Group 1' },
-    } as Group)
+      name: { is: 'Síða 1', en: 'Page 1' },
+    } as Page)
   }
 }

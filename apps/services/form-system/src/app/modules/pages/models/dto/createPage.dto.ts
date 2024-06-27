@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CreateInputDto {
+export class CreatePageDto {
   @ApiProperty()
-  pageId!: string
+  sectionId!: string
 }

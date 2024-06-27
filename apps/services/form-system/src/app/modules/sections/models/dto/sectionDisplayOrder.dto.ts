@@ -1,9 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class InputDisplayOrderDto {
+export class SectionDisplayOrderDto {
   @ApiProperty()
   id!: string
-
-  @ApiProperty()
-  pageId!: string
 }

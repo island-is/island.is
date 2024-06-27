@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { ApplicationStep } from '../../../steps/models/dto/applicationStep.dto'
+import { ApplicationSection } from '../../../sections/models/dto/applicationSection.dto'
 
 export class ApplicationDto {
   @ApiProperty()
@@ -20,6 +20,6 @@ export class ApplicationDto {
   @ApiProperty()
   modified?: Date
 
-  @ApiProperty({ type: [ApplicationStep] })
-  steps?: ApplicationStep[]
+  @ApiProperty({ type: [ApplicationSection] })
+  sections?: ApplicationSection[]
 }

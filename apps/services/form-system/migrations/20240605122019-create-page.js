@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'forms',
+        'pages',
         {
           id: {
             type: Sequelize.UUID,
@@ -16,11 +16,6 @@ module.exports = {
             type: Sequelize.JSON,
             allowNull: false,
           },
-          url_name: {
-            type: Sequelize.STRING,
-            allowNull: false,
-            defaultValue: '',
-          },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
@@ -31,38 +26,25 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          invalidation_date: {
-            type: Sequelize.DATE,
-            allowNull: true,
+          display_order: {
+            type: Sequelize.INTEGER,
+            allowNull: false,
           },
-          is_translated: {
+          is_hidden: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
           },
-          application_days_to_remove: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-            defaultValue: 60,
-          },
-          derived_from: {
+          multiset: {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          stop_progress_on_validating_page: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: true,
-          },
-          completed_message: {
-            type: Sequelize.JSON,
-            allowNull: true,
-          },
-          organization_id: {
+          section_id: {
             type: Sequelize.UUID,
+            onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'organizations',
+              model: 'sections',
               key: 'id',
             },
           },
@@ -74,7 +56,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('forms', { transaction: t }),
+      queryInterface.dropTable('pages', { transaction: t }),
     )
   },
 }

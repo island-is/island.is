@@ -10,7 +10,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Step } from '../../steps/models/step.model'
+import { Section } from '../../sections/models/section.model'
 import { ApiProperty } from '@nestjs/swagger'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
@@ -84,7 +84,7 @@ export class Form extends Model<Form> {
     defaultValue: true,
   })
   @ApiProperty()
-  stopProgressOnValidatingStep!: boolean
+  stopProgressOnValidatingPage!: boolean
 
   @Column({
     type: DataType.JSON,
@@ -94,9 +94,9 @@ export class Form extends Model<Form> {
   @ApiProperty({ type: LanguageType })
   completedMessage?: LanguageType
 
-  @HasMany(() => Step)
-  @ApiProperty({ type: [Step] })
-  steps!: Step[]
+  @HasMany(() => Section)
+  @ApiProperty({ type: [Section] })
+  sections!: Section[]
 
   @HasMany(() => FormApplicant)
   @ApiProperty({ type: [FormApplicant] })

@@ -1,22 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger'
-import { CreationOptional } from 'sequelize'
+import { CreationOptional, DataTypes } from 'sequelize'
 import {
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
-  HasOne,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Page } from '../../pages/models/page.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
-import { InputType } from './inputType.model'
-import { InputSettings } from '../../inputSettings/models/inputSettings.model'
+import { SectionTypes } from '../../../enums/sectionTypes'
+import { Form } from '../../forms/models/form.model'
+import { Page } from '../../pages/models/page.model'
 
-@Table({ tableName: 'inputs' })
-export class Input extends Model<Input> {
+@Table({ tableName: 'sections' })
+export class Section extends Model<Section> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -43,6 +43,14 @@ export class Input extends Model<Input> {
   modified!: CreationOptional<Date>
 
   @Column({
+    type: DataTypes.ENUM,
+    allowNull: false,
+    values: Object.values(SectionTypes),
+  })
+  @ApiProperty({ enum: SectionTypes })
+  sectionType!: string
+
+  @Column({
     type: DataType.INTEGER,
     allowNull: false,
     defaultValue: 0,
@@ -52,11 +60,11 @@ export class Input extends Model<Input> {
 
   @Column({
     type: DataType.JSON,
-    allowNull: false,
+    allowNull: true,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
-  description!: LanguageType
+  @ApiProperty({ type: LanguageType })
+  waitingText?: LanguageType
 
   @Column({
     type: DataType.BOOLEAN,
@@ -72,27 +80,21 @@ export class Input extends Model<Input> {
     defaultValue: false,
   })
   @ApiProperty()
-  isPartOfMultiset!: boolean
+  callRuleset!: boolean
 
-  @ForeignKey(() => Page)
   @Column({
-    type: DataType.STRING,
+    type: DataType.BOOLEAN,
     allowNull: false,
-    field: 'page_id',
-  })
-  pageId!: string
-
-  @HasOne(() => InputSettings)
-  @ApiProperty({ type: InputSettings })
-  inputSettings?: InputSettings
-
-  @ForeignKey(() => InputType)
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    defaultValue: 'default',
-    field: 'input_type',
+    defaultValue: false,
   })
   @ApiProperty()
-  inputType!: string
+  isCompleted!: boolean
+
+  @HasMany(() => Page)
+  @ApiProperty({ type: [Page] })
+  pages?: Page[]
+
+  @ForeignKey(() => Form)
+  @Column({ type: DataType.STRING, allowNull: false, field: 'form_id' })
+  formId!: string
 }
