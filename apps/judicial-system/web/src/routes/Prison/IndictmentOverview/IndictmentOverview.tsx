@@ -9,6 +9,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
+  FormFooter,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -66,6 +67,9 @@ const IndictmentOverview = () => {
           displayVerdictViewDate
           indictmentReviewedDate={indictmentReviewedDate}
         />
+      </FormContentContainer>
+      <FormContentContainer isFooter>
+        <FormFooter previousUrl={constants.PRISON_CASES_ROUTE} hideNextButton />
       </FormContentContainer>
     </PageLayout>
   )
