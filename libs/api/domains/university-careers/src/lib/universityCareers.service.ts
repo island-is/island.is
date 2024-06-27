@@ -84,6 +84,11 @@ export class UniversityCareersService {
       await this.universityCareers
         .getStudentTrackHistory(user, university, locale)
         .catch((e: Error | FetchError) => {
+          this.logger.warn('Student track history fetch failed', {
+            university,
+            locale,
+            error: e,
+          })
           return {
             institution: {
               id: university,
@@ -121,7 +126,7 @@ export class UniversityCareersService {
     )
 
     if (!data?.transcript) {
-      this.logger.debug('No transcript data found', {
+      this.logger.info('No transcript data found', {
         category: LOG_CATEGORY,
         university,
       })
