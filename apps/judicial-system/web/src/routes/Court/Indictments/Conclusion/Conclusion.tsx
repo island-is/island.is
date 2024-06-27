@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -7,8 +7,10 @@ import {
   Input,
   InputFileUpload,
   RadioButton,
+  Select,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -26,6 +28,7 @@ import {
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
+  CourtSessionType,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -39,20 +42,52 @@ import {
 
 import { strings } from './Conclusion.strings'
 
-const Conclusion: React.FC = () => {
+const courtSessionOptions = [
+  {
+    label: courtSessionTypeNames[CourtSessionType.MAIN_HEARING],
+    value: CourtSessionType.MAIN_HEARING,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.OTHER],
+    value: CourtSessionType.OTHER,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.APPRAISER_SUMMONS],
+    value: CourtSessionType.APPRAISER_SUMMONS,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.VERDICT],
+    value: CourtSessionType.VERDICT,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.MAIN_HEARING_CONTINUATION],
+    value: CourtSessionType.MAIN_HEARING_CONTINUATION,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.HEARING],
+    value: CourtSessionType.HEARING,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.ORAL_ARGUMENTS],
+    value: CourtSessionType.ORAL_ARGUMENTS,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.RULING],
+    value: CourtSessionType.RULING,
+  },
+  {
+    label: courtSessionTypeNames[CourtSessionType.ARRAIGNMENT],
+    value: CourtSessionType.ARRAIGNMENT,
+  },
+]
+
+const Conclusion: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-
-  const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
-  const [postponementReason, setPostponementReason] = useState<string>()
-  const [selectedDecision, setSelectedDecision] =
-    useState<CaseIndictmentRulingDecision>()
-
+  const { isUpdatingCase, setAndSendCaseToServer } = useCase()
   const { courtDate, handleCourtDateChange, handleCourtRoomChange } =
     useCourtArrangements(workingCase, setWorkingCase, 'courtDate')
-  const { isUpdatingCase, setAndSendCaseToServer } = useCase()
-
   const {
     uploadFiles,
     allFilesDoneOrError,
@@ -64,6 +99,13 @@ const Conclusion: React.FC = () => {
     workingCase.id,
   )
 
+  const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
+  const [postponementReason, setPostponementReason] = useState<string>()
+  const [selectedCourtSessionType, setSelectedCourtSessionType] =
+    useState<CourtSessionType>()
+  const [selectedDecision, setSelectedDecision] =
+    useState<CaseIndictmentRulingDecision>()
+
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
       if (!selectedAction) {
@@ -72,6 +114,7 @@ const Conclusion: React.FC = () => {
 
       const update: UpdateCase = {
         indictmentDecision: selectedAction,
+        courtSessionType: null,
         courtDate: null,
         postponedIndefinitelyExplanation: null,
         indictmentRulingDecision: null,
@@ -83,6 +126,7 @@ const Conclusion: React.FC = () => {
           update.postponedIndefinitelyExplanation = postponementReason
           break
         case IndictmentDecision.SCHEDULING:
+          update.courtSessionType = selectedCourtSessionType
           if (courtDate?.date) {
             update.courtDate = {
               date: formatDateForServer(new Date(courtDate.date)),
@@ -119,6 +163,7 @@ const Conclusion: React.FC = () => {
       courtDate?.location,
       postponementReason,
       selectedAction,
+      selectedCourtSessionType,
       selectedDecision,
       setAndSendCaseToServer,
       setWorkingCase,
@@ -138,6 +183,12 @@ const Conclusion: React.FC = () => {
         }
         setSelectedAction(IndictmentDecision.SCHEDULING)
         break
+      case IndictmentDecision.SCHEDULING:
+        if (workingCase.courtSessionType) {
+          setSelectedCourtSessionType(workingCase.courtSessionType)
+        }
+        setSelectedAction(IndictmentDecision.SCHEDULING)
+        break
       case IndictmentDecision.COMPLETING:
         if (workingCase.indictmentRulingDecision) {
           setSelectedDecision(workingCase.indictmentRulingDecision)
@@ -148,6 +199,7 @@ const Conclusion: React.FC = () => {
         setSelectedAction(IndictmentDecision.SCHEDULING)
     }
   }, [
+    workingCase.courtSessionType,
     workingCase.indictmentDecision,
     workingCase.indictmentRulingDecision,
     workingCase.postponedIndefinitelyExplanation,
@@ -163,7 +215,7 @@ const Conclusion: React.FC = () => {
       case IndictmentDecision.POSTPONING:
         return Boolean(postponementReason)
       case IndictmentDecision.SCHEDULING:
-        return Boolean(courtDate?.date)
+        return Boolean(selectedCourtSessionType && courtDate?.date)
       case IndictmentDecision.COMPLETING:
         switch (selectedDecision) {
           case CaseIndictmentRulingDecision.RULING:
@@ -305,6 +357,25 @@ const Conclusion: React.FC = () => {
           <Box marginBottom={5}>
             <SectionHeading title={formatMessage(strings.schedulingTitle)} />
             <BlueBox>
+              <Box marginBottom={2}>
+                <Select
+                  name="court-session-type"
+                  label={formatMessage(strings.courtSessionLabel)}
+                  placeholder={formatMessage(strings.courtSessionPlaceholder)}
+                  options={courtSessionOptions}
+                  value={
+                    selectedCourtSessionType &&
+                    courtSessionOptions.find(
+                      (option) => option.value === selectedCourtSessionType,
+                    )
+                  }
+                  onChange={(selectedOption) => {
+                    const type = selectedOption?.value
+                    setSelectedCourtSessionType(type)
+                  }}
+                  required
+                />
+              </Box>
               <CourtArrangements
                 handleCourtDateChange={handleCourtDateChange}
                 handleCourtRoomChange={handleCourtRoomChange}
