@@ -1,13 +1,14 @@
 import React, { useContext } from 'react'
 import { useIntl } from 'react-intl'
+import { useRouter } from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   FormContentContainer,
   FormContext,
-  InfoCard,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -19,10 +20,7 @@ import { strings } from './IndictmentOverview.strings'
 const IndictmentOverview = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
-
-  const indictmentCompletedDate = workingCase.eventLogs?.find(
-    (log) => log.eventType === EventType.INDICTMENT_COMPLETED,
-  )?.created
+  const router = useRouter()
 
   const indictmentReviewedDate = workingCase.eventLogs?.find(
     (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
@@ -33,6 +31,15 @@ const IndictmentOverview = () => {
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
         <Box marginBottom={5}>
+          <Box marginBottom={3}>
+            <Button
+              variant="text"
+              preTextIcon="arrowBack"
+              onClick={() => router.push(constants.PRISON_CASES_ROUTE)}
+            >
+              {formatMessage(core.back)}
+            </Button>
+          </Box>
           <Text as="h1" variant="h1">
             {formatMessage(strings.title)}
           </Text>
@@ -46,11 +53,11 @@ const IndictmentOverview = () => {
             </Text>
           </Box>
         )}
-        {indictmentCompletedDate && (
+        {workingCase.indictmentCompletedDate && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h3">
               {formatMessage(strings.indictmentCompletedTitle, {
-                date: formatDate(indictmentCompletedDate, 'PPP'),
+                date: formatDate(workingCase.indictmentCompletedDate, 'PPP'),
               })}
             </Text>
           </Box>
