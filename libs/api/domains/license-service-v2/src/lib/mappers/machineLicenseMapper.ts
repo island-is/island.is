@@ -120,7 +120,6 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
                 isExpired != undefined
                   ? expiryTag(formatMessage, isExpired)
                   : undefined,
-
               name: formatMessage(m.heavyMachineryLicense),
               title: formatMessage(m.yourMachineLicense),
               description: [

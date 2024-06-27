@@ -1,17 +1,7 @@
 import { Locale } from '@island.is/shared/types'
-import {
-  GenericLicenseDataField,
-  GenericLicenseDataFieldType,
-  GenericLicenseMappedPayloadResponse,
-  GenericLicenseMapper,
-  GenericUserLicenseDataFieldTagColor,
-  GenericUserLicenseDataFieldTagType,
-  GenericUserLicenseMetaLinksType,
-} from '../licenceService.type'
 import { AlertType, LICENSE_NAMESPACE } from '../licenseService.constants'
 import { Inject, Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
-import { format as formatNationalId } from 'kennitala'
 import {
   type IdentityDocument,
   type IdentityDocumentChild,
@@ -24,6 +14,16 @@ import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
 import { capitalize } from '../utils/capitalize'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Payload } from '../dto/Payload.dto'
+import { formatDate } from '../utils'
+import {
+  GenericLicenseDataFieldType,
+  GenericLicenseMappedPayloadResponse,
+  GenericLicenseMapper,
+  GenericUserLicenseDataFieldTagColor,
+  GenericUserLicenseDataFieldTagType,
+  GenericUserLicenseMetaLinksType,
+} from '../licenceService.type'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 const isChildPassport = (
   passport: IdentityDocument | IdentityDocumentChild,
@@ -126,58 +126,90 @@ export class PassportMapper implements GenericLicenseMapper {
     document: IdentityDocument,
     formatMessage: FormatMessage,
   ): Payload {
-    const data: Array<GenericLicenseDataField> = [
-      document.displayFirstName && document.displayLastName
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.name),
-            value: `${document.displayFirstName} ${document.displayLastName}`,
-          }
-        : null,
-      document.number
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.number),
-
-            value: formatNationalId(document.number),
-          }
-        : null,
-      document.issuingDate
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.publishedDate),
-            value: document.issuingDate.toISOString(),
-          }
-        : null,
-      document.expirationDate
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.expiryDate),
-            value: document.expirationDate.toISOString(),
-          }
-        : null,
-      document.mrzFirstName && document.mrzLastName
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.name),
-            value: `${document.mrzFirstName} ${document.mrzLastName}`,
-          }
-        : null,
-      document.sex
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.sex),
-            value: document.sex,
-          }
-        : null,
-    ].filter(isDefined)
-
     const isExpired = document.expiryStatus === 'EXPIRED'
     const isLost = document.expiryStatus === 'LOST'
     const isExpiring = document.expiresWithinNoticeTime
     const isInvalid = document.status
       ? document.status.toLowerCase() === 'invalid'
       : undefined
+
+    const displayTag: GenericUserLicenseMetaTag | undefined =
+      isInvalid !== undefined && document.expirationDate
+        ? {
+            text: isInvalid
+              ? formatMessage(m.invalid)
+              : isExpiring
+              ? formatMessage(m.expiresWithin, {
+                  arg: formatMessage(m.sixMonths),
+                })
+              : formatMessage(m.valid),
+            color: isInvalid || isExpiring ? 'red' : 'blue',
+            icon: isInvalid
+              ? GenericUserLicenseDataFieldTagType.closeCircle
+              : GenericUserLicenseDataFieldTagType.checkmarkCircle,
+            iconColor: isInvalid
+              ? GenericUserLicenseDataFieldTagColor.red
+              : isExpiring
+              ? GenericUserLicenseDataFieldTagColor.yellow
+              : GenericUserLicenseDataFieldTagColor.green,
+            iconText: isInvalid
+              ? formatMessage(isLost ? m.lost : m.expired)
+              : formatMessage(m.valid),
+          }
+        : undefined
+
+    const data: Array<GenericLicenseDataField> = [
+      document.displayFirstName && document.displayLastName
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.personName),
+            value: capitalize(
+              `${document.displayFirstName} ${document.displayLastName}`,
+            ),
+          }
+        : null,
+      document.numberWithType
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.number),
+            value: document.numberWithType,
+          }
+        : null,
+      document.issuingDate
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.publishedDate),
+            value: formatDate(document.issuingDate),
+          }
+        : null,
+      document.expirationDate
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.expiryDate),
+            value: formatDate(document.expirationDate),
+            tag: displayTag,
+          }
+        : null,
+      document.mrzFirstName && document.mrzLastName
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.passportNameComputer),
+            value: `${document.mrzLastName} ${document.mrzFirstName}`,
+          }
+        : null,
+      document.sex
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.sex),
+            value:
+              document.sex === 'M'
+                ? formatMessage(m.male)
+                : document.sex === 'F'
+                ? formatMessage(m.female)
+                : formatMessage(m.otherGender),
+          }
+        : null,
+    ].filter(isDefined)
 
     const alert: GenericUserLicenseAlert | undefined =
       isExpired || isExpiring || isLost
@@ -215,31 +247,6 @@ export class PassportMapper implements GenericLicenseMapper {
         : undefined,
     ].filter(isDefined)
 
-    const displayTag: GenericUserLicenseMetaTag | undefined =
-      isInvalid !== undefined && document.expirationDate
-        ? {
-            text: isInvalid
-              ? formatMessage(m.invalid)
-              : isExpiring
-              ? formatMessage(m.expiresWithin, {
-                  arg: formatMessage(m.sixMonths),
-                })
-              : formatMessage(m.valid),
-            color: isInvalid || isExpiring ? 'red' : 'blue',
-            icon: isInvalid
-              ? GenericUserLicenseDataFieldTagType.closeCircle
-              : GenericUserLicenseDataFieldTagType.checkmarkCircle,
-            iconColor: isInvalid
-              ? GenericUserLicenseDataFieldTagColor.red
-              : isExpiring
-              ? GenericUserLicenseDataFieldTagColor.yellow
-              : GenericUserLicenseDataFieldTagColor.green,
-            iconText: isInvalid
-              ? formatMessage(isLost ? m.lost : m.expired)
-              : formatMessage(m.valid),
-          }
-        : undefined
-
     return {
       data,
       rawData: JSON.stringify(document),
@@ -251,12 +258,7 @@ export class PassportMapper implements GenericLicenseMapper {
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
         name: document.verboseType ?? undefined,
-        title:
-          document.displayFirstName && document.displayLastName
-            ? capitalize(
-                document.displayFirstName + ' ' + document.displayLastName,
-              )
-            : undefined,
+        title: document.verboseType ?? undefined,
         subtitle: formatMessage(m.passportNumberDisplay, {
           arg:
             document.subType && document.number

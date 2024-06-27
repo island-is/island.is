@@ -271,6 +271,22 @@ export const m = defineMessages({
     defaultMessage:
       'Hér birtast upplýsingar um vegabréfið þitt. Athugaðu að þetta eru aðeins upplýsingar en ekki gilt vegabréf',
   },
+  passportNameComputer: {
+    id: 'api.license-service:passport-name-computer',
+    defaultMessage: 'Nafn á tölvulesanlegu formi',
+  },
+  male: {
+    id: 'api.license-service:gender-male',
+    defaultMessage: 'Karl',
+  },
+  female: {
+    id: 'api.license-service:gender-female',
+    defaultMessage: 'Kona',
+  },
+  otherGender: {
+    id: 'api.license-service:gender-other',
+    defaultMessage: 'Kynsegin/Annað',
+  },
   yourADRLicense: {
     id: 'api.license-service:your-adr-license',
     defaultMessage: 'ADR réttindin þín',

@@ -7,6 +7,7 @@ import {
   LicenseServiceV2GenericUserLicensePkPassStatus as GenericUserLicensePkPassStatus,
 } from '@island.is/api/schema'
 import {
+  AlertMessage,
   Box,
   Divider,
   Icon,
@@ -66,6 +67,7 @@ const DataFields = ({
     <>
       {fields.map((field, i) => {
         if (field.hideFromServicePortal) return undefined
+        console.log(field)
         return (
           <Box key={`data-field-${i}`}>
             {field.type === 'Value' && (
@@ -308,6 +310,21 @@ const LicenseDetail = () => {
         }
         marginBottom={4}
       >
+        {genericLicense?.payload?.metadata.alert ? (
+          <Box paddingTop={3}>
+            <AlertMessage
+              type={
+                genericLicense.payload.metadata.alert.type === 'WARNING'
+                  ? 'warning'
+                  : genericLicense.payload.metadata.alert.type === 'ERROR'
+                  ? 'error'
+                  : 'info'
+              }
+              title={genericLicense.payload.metadata.alert.title}
+              message={genericLicense.payload.metadata.alert.message}
+            />
+          </Box>
+        ) : undefined}
         {genericLicense?.payload?.metadata?.links ? (
           <Box paddingTop={3}>
             <Inline space={1}>
