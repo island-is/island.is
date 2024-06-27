@@ -120,6 +120,10 @@ export const addPasskeyAsLoginHint = (
 
   const origin = extractProtocolAndDomain(url)
 
+  if (origin.length === 0) {
+    return false
+  }
+
   if (url.includes('/minarsidur')) {
     return `${origin}/minarsidur/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
