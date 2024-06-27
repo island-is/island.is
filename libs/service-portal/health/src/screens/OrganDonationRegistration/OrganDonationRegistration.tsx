@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useForm } from 'react-hook-form'
+import { useForm, FormProvider, Controller, Control } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   IntroHeader,
@@ -11,23 +11,22 @@ import {
   Box,
   Button,
   GridColumn,
-  Input,
   RadioButton,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { InputController } from '@island.is/shared/form-fields'
+
 import { Problem } from '@island.is/react-spa/shared'
 import { HealthPaths } from '../../lib/paths'
 import { messages as m } from '../../lib/messages'
 import * as styles from './OrganDonationRegistration.css'
-import { OptionsOptions, getOptions } from '../../utils/OrganDonationMock'
-
-type SelectedChoice = Pick<OptionsOptions, 'id' | 'title'>
+import { getOptions } from '../../utils/OrganDonationMock'
 
 interface FormData {
-  selectedChoice: SelectedChoice | null
-  selectedLimitations: string[] | null
+  selectedChoice?: string
+  selectedLimitations?: string[] // is array because it can have multiple values in the future
 }
 
 const OrganDonationRegistration = () => {
@@ -37,50 +36,37 @@ const OrganDonationRegistration = () => {
   const { data, loading, error } = getOptions(lang)
   const navigate = useNavigate()
 
-  const [selectedChoice, setSelectedChoice] = useState<SelectedChoice | null>(
-    null,
-  )
-  const [selectedLimitations, setSelectedLimitations] = useState<
-    string[] | null
-  >(null)
+  const [formState, setFormState] = useState<FormData>()
+
+  const hookFormData = useForm<FormData>()
 
   const {
     handleSubmit,
-    formState: { errors, isSubmitting },
+    formState: { isSubmitting, errors },
     reset,
-  } = useForm<FormData>({ mode: 'onChange' })
+    control,
+  } = hookFormData
 
   const clearAll = () => {
     // Clear form, state and errors on success.
-    setSelectedChoice(null)
-    setSelectedLimitations(null)
+    setFormState(undefined)
     reset()
-    // refetch()
   }
 
-  const limitationChanges = (currentValue: string) => {
-    const arr = selectedLimitations ?? []
-    if (selectedLimitations?.includes(currentValue)) {
-      const index = arr.indexOf(currentValue)
-      if (index > -1) arr.splice(index, 1)
-    } else {
-      arr?.push(currentValue)
-    }
-    setSelectedLimitations(arr)
-  }
-
-  const handleSubmitForm = (data: FormData) => {
+  const handleSubmitForm = (submitData: FormData) => {
     const formData = new FormData()
-    // const data = Object.fromEntries(formData.entries())
     // TODO: Skipta út fyrir þjónustu
-    if (selectedChoice !== null) {
-      formData.append('selectedChoice.id', selectedChoice.id)
-      formData.append('selectedChoice.title', selectedChoice.title)
-      if (selectedLimitations !== null) {
-        formData.append('selectedLimitations', selectedLimitations.toString())
+    console.log(submitData)
+    if (submitData.selectedChoice) {
+      formData.append('selectedChoice.id', submitData.selectedChoice)
+      if (submitData.selectedLimitations) {
+        formData.append(
+          'selectedLimitations',
+          submitData.selectedLimitations.toString(),
+        )
       }
-
       clearAll()
+
       toast.success('Skráning tókst')
       navigate(HealthPaths.HealthOrganDonation, { replace: true })
     } else {
@@ -97,121 +83,149 @@ const OrganDonationRegistration = () => {
         intro={formatMessage(m.organDonationDescription)}
       />
       <Box>
-        <form onSubmit={handleSubmit(handleSubmitForm)}>
-          <fieldset style={{ border: 'none' }}>
-            <legend>
-              <Text variant="eyebrow" color="purple400" marginBottom={1}>
-                {formatMessage(m.changeRegistration)}
-              </Text>
-            </legend>
-            {!loading && !error && (
-              <>
-                <Box>
-                  <Stack space={2}>
-                    {data.data.options.map((x, xi) => {
-                      return (
-                        <Box
-                          background="blue100"
-                          borderRadius="large"
-                          border="standard"
-                          borderColor="blue200"
-                          padding={3}
-                          key={`organ-donation-${xi}`}
-                        >
-                          <RadioButton
-                            id={x.id}
-                            name="organ-donation"
-                            label={x.title}
-                            key={`organ-donation-${x.id}`}
-                            value={x.id}
-                            checked={selectedChoice?.id === x.id}
-                            onChange={(e) =>
-                              setSelectedChoice({
-                                id: e.target.value,
-                                title: x.title,
-                              })
-                            }
-                          />
-                          {selectedChoice?.id === x.id && x.limitations && (
-                            <Box marginTop={2}>
-                              <Stack space={2}>
+        <FormProvider {...hookFormData}>
+          <form onSubmit={handleSubmit(handleSubmitForm)}>
+            <fieldset style={{ border: 'none' }}>
+              <legend>
+                <Text variant="eyebrow" color="purple400" marginBottom={1}>
+                  {formatMessage(m.changeRegistration)}
+                </Text>
+              </legend>
+              {!loading && !error && (
+                <>
+                  <Box>
+                    <Stack space={2}>
+                      <Controller
+                        name="organ-donation-radio-buttons"
+                        control={control as Control<any, string>}
+                        render={({ field: { value, onChange } }) => (
+                          <Stack space={2}>
+                            {data.data.options.map((x, xi) => {
+                              return (
                                 <Box
-                                  display="flex"
-                                  flexDirection="row"
-                                  flexWrap="wrap"
-                                  width="full"
+                                  background="blue100"
+                                  borderRadius="large"
+                                  border="standard"
+                                  borderColor="blue200"
+                                  padding={3}
+                                  key={`organ-donation-${xi}`}
                                 >
-                                  {x.limitations.map((y, yi) => {
-                                    return (
-                                      <GridColumn
-                                        span="5/7"
-                                        key={`organ-donation-limitation-${yi}`}
-                                      >
-                                        <Box marginY="smallGutter">
-                                          <Input
-                                            id={y}
-                                            textarea
-                                            label={formatMessage(
-                                              m.organRegistrationOtherLabel,
-                                            )}
-                                            placeholder={formatMessage(
-                                              m.organRegistrationOtherText,
-                                            )}
-                                            maxLength={220}
-                                            required
-                                            value={
-                                              selectedLimitations
-                                                ? selectedLimitations[yi]
-                                                : ''
-                                            }
-                                            name="organ-donation"
-                                            onChange={(e) => {
-                                              setSelectedLimitations([
-                                                e.target.value,
-                                              ])
-                                            }}
-                                          />
+                                  <RadioButton
+                                    id={x.id}
+                                    name="organ-donation-form"
+                                    label={x.title}
+                                    key={`organ-donation-${x.id}`}
+                                    value={x.id}
+                                    checked={value === x.id}
+                                    onChange={({ target }) => {
+                                      onChange(target.value)
+                                      setFormState((currentState) => ({
+                                        ...currentState,
+                                        selectedChoice: target.value,
+                                      }))
+                                    }}
+                                  />
+                                  {value === x.id && x.limitations && (
+                                    <Box marginTop={2}>
+                                      <Stack space={2}>
+                                        <Box
+                                          display="flex"
+                                          flexDirection="row"
+                                          flexWrap="wrap"
+                                          width="full"
+                                        >
+                                          {x.limitations.map((y, yi) => {
+                                            return (
+                                              <GridColumn
+                                                span="5/7"
+                                                key={`organ-donation-limitation-${yi}`}
+                                              >
+                                                <Box marginY="smallGutter">
+                                                  <InputController
+                                                    id="organ-donation-limitation"
+                                                    name="organ-donation-limitation"
+                                                    textarea
+                                                    label={formatMessage(
+                                                      m.organRegistrationOtherLabel,
+                                                    )}
+                                                    placeholder={formatMessage(
+                                                      m.organRegistrationOtherText,
+                                                    )}
+                                                    maxLength={220}
+                                                    rules={{
+                                                      minLength: {
+                                                        value: 1,
+                                                        message: formatMessage(
+                                                          m.organLimitationsError,
+                                                        ),
+                                                      },
+                                                    }}
+                                                    onChange={(e) => {
+                                                      setFormState(
+                                                        (currentState) =>
+                                                          ({
+                                                            ...currentState,
+                                                            selectedLimitations:
+                                                              [e.target.value], // Initialize the array with the new value if it doesn't exist
+                                                          } as FormData),
+                                                      )
+                                                    }}
+                                                  />
+                                                </Box>
+                                              </GridColumn>
+                                            )
+                                          })}
                                         </Box>
-                                      </GridColumn>
-                                    )
-                                  })}
+                                      </Stack>
+                                    </Box>
+                                  )}
                                 </Box>
-                              </Stack>
-                            </Box>
-                          )}
-                        </Box>
-                      )
-                    })}
-                  </Stack>
-                </Box>
-                <Box
-                  display="flex"
-                  justifyContent="flexEnd"
-                  marginTop={3}
-                  className={styles.buttonContainer}
-                >
-                  <LinkResolver href={HealthPaths.HealthOrganDonation}>
-                    <Button size="small" variant="ghost">
-                      {formatMessage(coreMessages.buttonCancel)}
-                    </Button>
-                  </LinkResolver>
-                  <Button
-                    size="small"
-                    type="submit"
-                    loading={loading}
-                    disabled={selectedChoice === null || isSubmitting}
+                              )
+                            })}
+                          </Stack>
+                        )}
+                      />
+                    </Stack>
+                  </Box>
+                  <Box
+                    display="flex"
+                    justifyContent="flexEnd"
+                    marginTop={3}
+                    className={styles.buttonContainer}
                   >
-                    {formatMessage(coreMessages.codeConfirmation)}
-                  </Button>
-                </Box>
-              </>
+                    <LinkResolver href={HealthPaths.HealthOrganDonation}>
+                      <Button size="small" variant="ghost">
+                        {formatMessage(coreMessages.buttonCancel)}
+                      </Button>
+                    </LinkResolver>
+                    <Button
+                      size="small"
+                      type="submit"
+                      loading={loading || isSubmitting}
+                      disabled={
+                        !formState?.selectedChoice ||
+                        (formState?.selectedChoice === '2' &&
+                          formState?.selectedLimitations === undefined) ||
+                        (formState?.selectedChoice === '2' &&
+                          formState?.selectedLimitations &&
+                          formState?.selectedLimitations[0] === '') ||
+                        isSubmitting
+                      }
+                    >
+                      {formatMessage(coreMessages.codeConfirmation)}
+                    </Button>
+                  </Box>
+                </>
+              )}
+            </fieldset>
+            {error && !loading && (
+              <Problem error={undefined} noBorder={false} />
             )}
-          </fieldset>
-          {error && !loading && <Problem error={undefined} noBorder={false} />}
-          {!error && !loading && data.data.options.length === 0 && (
-            <Problem type="no_data" noBorder={false} />
-          )}
-        </form>
+            {!error && !loading && data.data.options.length === 0 && (
+              <Problem type="no_data" noBorder={false} />
+            )}
+          </form>
+        </FormProvider>
       </Box>
     </Box>
   )
