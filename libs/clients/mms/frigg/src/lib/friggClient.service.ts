@@ -9,16 +9,10 @@ import {
 
 @Injectable()
 export class FriggClientService {
-  constructor(
-    private readonly friggApi: FriggApi,
-
-  ) {}
+  constructor(private readonly friggApi: FriggApi) {}
 
   private friggApiWithAuth = (user: User) =>
-    this.friggApi.withMiddleware(
-      new AuthMiddleware(user as Auth),
-    )
-
+    this.friggApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   async getAllKeyOptions(
     user: User,
@@ -31,19 +25,16 @@ export class FriggClientService {
 
   async getTypes(user: User): Promise<string[]> {
     return await this.friggApiWithAuth(user).getTypes()
-
   }
 
   async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
   }
 
-  async getUserById(user: User, ): Promise<UserModel> {
-
-      // TODO: use childs nationalid
-      return await this.friggApiWithAuth(user).getUserBySourcedId({
-        nationalId: user.nationalId,
-      })
-   
+  async getUserById(user: User): Promise<UserModel> {
+    // TODO: use childs nationalid
+    return await this.friggApiWithAuth(user).getUserBySourcedId({
+      nationalId: user.nationalId,
+    })
   }
 }

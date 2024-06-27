@@ -69,22 +69,22 @@ export const Prerequisites: Form = buildForm({
               subTitle:
                 newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
             }),
-             buildDataProviderItem({
+            buildDataProviderItem({
               provider: GetTypesApi,
               title: 'Type',
             }),
             buildDataProviderItem({
               provider: OptionsApi,
               title: 'OPtions',
-            }), 
-              buildDataProviderItem({
+            }),
+            buildDataProviderItem({
               provider: GetUserApi,
               title: 'usr',
             }),
-             buildDataProviderItem({
+            buildDataProviderItem({
               provider: GetSchoolsApi,
               title: 'schools',
-            })
+            }),
           ],
         }),
       ],
