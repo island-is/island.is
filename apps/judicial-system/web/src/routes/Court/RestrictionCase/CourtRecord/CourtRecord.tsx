@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -51,7 +51,7 @@ import { isCourtRecordStepValidRC } from '@island.is/judicial-system-web/src/uti
 
 import { AppealSections } from '../../components'
 
-export const CourtRecord: React.FC = () => {
+export const CourtRecord: FC = () => {
   const {
     workingCase,
     setWorkingCase,

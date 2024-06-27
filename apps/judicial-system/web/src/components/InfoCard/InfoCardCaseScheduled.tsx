@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
@@ -15,7 +15,7 @@ interface Props {
   title?: string | null
 }
 
-const InfoCardCaseScheduled: React.FC<Props> = (props) => {
+const InfoCardCaseScheduled: FC<Props> = (props) => {
   const { court, courtDate, courtRoom, title } = props
   const { formatMessage } = useIntl()
 
