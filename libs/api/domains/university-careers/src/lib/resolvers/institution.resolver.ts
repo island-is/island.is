@@ -6,9 +6,9 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Institution } from '../models/institution.model'
 import { Loader } from '@island.is/nest/dataloader'
 import {
-  OrganizationLogoByReferenceIdDataLoader,
+  type OrganizationLogoByReferenceIdDataLoader,
   OrganizationLogoByReferenceIdLoader,
-  OrganizationTitleByReferenceIdDataLoader,
+  type OrganizationTitleByReferenceIdDataLoader,
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
 import { UniversityContentfulReferenceIds } from '../universityCareers.types'
