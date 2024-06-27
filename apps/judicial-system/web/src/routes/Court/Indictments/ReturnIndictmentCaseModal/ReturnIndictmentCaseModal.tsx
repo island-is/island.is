@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -23,7 +23,7 @@ interface Props {
   onComplete: () => void
 }
 
-const ReturnIndictmentModal: React.FC<React.PropsWithChildren<Props>> = ({
+const ReturnIndictmentModal: FC<Props> = ({
   workingCase,
   setWorkingCase,
   onClose,

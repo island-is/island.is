@@ -260,13 +260,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const isEnglish = profile.locale === 'en'
 
-    const formattedTemplate = this.notificationsService.formatArguments(
+    const formattedTemplate = await this.notificationsService.formatArguments(
       message.args,
       // We need to shallow copy the template here so that the
       // in-memory cache is not modified.
       {
         ...template,
       },
+      message?.senderId,
+      profile.locale as Locale,
     )
 
     try {

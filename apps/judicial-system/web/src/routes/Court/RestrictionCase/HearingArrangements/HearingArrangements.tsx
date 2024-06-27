@@ -32,9 +32,7 @@ import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-syste
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
-export const HearingArrangements: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export const HearingArrangements = () => {
   const {
     workingCase,
     setWorkingCase,
