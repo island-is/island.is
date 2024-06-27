@@ -155,7 +155,8 @@ clean_all() {
   local jobs=("generated" "caches" "yarn" "node_modules")
 
   for job in "${jobs[@]}"; do
-    local job_var="CLEAN_${job^^}"
+    local job_var
+    job_var="CLEAN_$(echo $job | tr '[:lower:]' '[:upper:]')"
     if [[ "${!job_var}" == "true" ]]; then
       log "Cleaning $job files"
       "clean_$job"
