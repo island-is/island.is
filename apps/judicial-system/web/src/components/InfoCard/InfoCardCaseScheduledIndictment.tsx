@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
@@ -22,7 +22,7 @@ interface Props {
   courtSessionType?: CourtSessionType | null
 }
 
-const InfoCardCaseScheduledIndictment: React.FC<Props> = (props) => {
+const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
   const {
     court,
     indictmentDecision,

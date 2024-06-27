@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClientModule } from '@island.is/clients-rsk-relationships'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { UserSystemNotificationModule } from '../user-notification'
 
@@ -39,6 +40,7 @@ import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation
     PersonalRepresentativeModule,
     NationalRegistryClientModule,
     RskRelationshipsClientModule,
+    CompanyRegistryClientModule,
     UserIdentitiesModule,
     FeatureFlagModule,
     SequelizeModule.forFeature([

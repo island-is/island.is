@@ -16,7 +16,6 @@ import {
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   Application,
   useListApplicationsQuery,
@@ -31,6 +30,7 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { OnboardingModule } from './onboarding-module'
+import { HelloModule } from './hello-module'
 
 interface ListItem {
   id: string
@@ -46,11 +46,6 @@ const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
-        title: {
-          text: initialized
-            ? intl.formatMessage({ id: 'home.screenTitle' })
-            : '',
-        },
         rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
@@ -75,9 +70,6 @@ const { useNavigationOptions, getNavigationOptions } =
     {
       topBar: {
         rightButtons: [],
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -118,12 +110,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     refetching,
   })
 
-  // Get feature flag for mileage
-  const isMileageEnabled = useFeatureFlag(
-    'isServicePortalVehicleMileagePageEnabled',
-    false,
-  )
-
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => item.component,
     [],
@@ -154,6 +140,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   }
 
   const data = [
+    {
+      id: 'hello',
+      component: <HelloModule />,
+    },
     {
       id: 'onboarding',
       component: <OnboardingModule />,
