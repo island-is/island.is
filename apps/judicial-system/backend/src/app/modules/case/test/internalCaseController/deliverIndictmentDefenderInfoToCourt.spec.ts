@@ -23,11 +23,13 @@ type GivenWhenThen = (
 describe('InternalCaseController - Deliver indictment defender info to court', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
+  const courtName = uuid()
   const courtCaseNumber = uuid()
 
   const theCase = {
     id: caseId,
     type: CaseType.INDICTMENT,
+    court: { name: courtName },
     courtCaseNumber,
     defendants: [
       {
@@ -55,7 +57,9 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
       await createTestingCaseModule()
 
     mockCourtService = courtService as jest.Mocked<CourtService>
-    mockCourtService.updateIndictmentWithDefenderInfo.mockResolvedValue(uuid())
+    mockCourtService.updateIndictmentCaseWithDefenderInfo.mockResolvedValue(
+      uuid(),
+    )
 
     givenWhenThen = async (caseId: string, theCase: Case, body: DeliverDto) => {
       const then = {} as Then
@@ -73,11 +77,12 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
     const then = await givenWhenThen(caseId, theCase, { user })
 
     expect(
-      mockCourtService.updateIndictmentWithDefenderInfo,
+      mockCourtService.updateIndictmentCaseWithDefenderInfo,
     ).toHaveBeenCalledWith(
       user,
-      theCase.id,
-      theCase.courtCaseNumber,
+      caseId,
+      courtName,
+      courtCaseNumber,
       theCase.defendants,
     )
 
@@ -87,7 +92,7 @@ describe('InternalCaseController - Deliver indictment defender info to court', (
 
   it('should handle not deliver if error occurs', async () => {
     const error = new Error('Service error')
-    mockCourtService.updateIndictmentWithDefenderInfo.mockRejectedValueOnce(
+    mockCourtService.updateIndictmentCaseWithDefenderInfo.mockRejectedValueOnce(
       error,
     )
 

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -8,7 +8,7 @@ import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import CourtCaseNumberInput from './CourtCaseNumberInput'
 import { courtCaseNumber } from './CourtCaseNumber.strings'
 
-const CourtCaseNumber: React.FC = () => {
+const CourtCaseNumber: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 

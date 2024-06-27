@@ -52,7 +52,7 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Overview = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')

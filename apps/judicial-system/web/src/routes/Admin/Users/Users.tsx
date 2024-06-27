@@ -29,7 +29,7 @@ import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
 
-export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Users = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()

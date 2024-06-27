@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { AnimatePresence } from 'framer-motion'
@@ -39,13 +39,14 @@ interface Props {
   loading?: boolean
 }
 
-export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+export const DefenderCasesTable: FC<Props> = ({
+  cases,
+  showingCompletedCases,
+  loading,
+}) => {
   const { formatMessage } = useIntl()
-  const { cases, showingCompletedCases, loading } = props
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortCases('createdAt', 'descending', cases)
+    useSortCases('created', 'descending', cases)
   const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
     useCaseList()
 
@@ -74,10 +75,10 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   title={capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   )}
-                  onClick={() => requestSort('defendant')}
-                  sortAsc={getClassNamesFor('defendant') === 'ascending'}
-                  sortDes={getClassNamesFor('defendant') === 'descending'}
-                  isActive={isActiveColumn('defendant')}
+                  onClick={() => requestSort('defendants')}
+                  sortAsc={getClassNamesFor('defendants') === 'ascending'}
+                  sortDes={getClassNamesFor('defendants') === 'descending'}
+                  isActive={isActiveColumn('defendants')}
                   dataTestid="accusedNameSortButton"
                 />
               </th>
@@ -91,10 +92,10 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   title={capitalize(
                     formatMessage(tables.created, { suffix: 'i' }),
                   )}
-                  onClick={() => requestSort('createdAt')}
-                  sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-                  sortDes={getClassNamesFor('createdAt') === 'descending'}
-                  isActive={isActiveColumn('createdAt')}
+                  onClick={() => requestSort('created')}
+                  sortAsc={getClassNamesFor('created') === 'ascending'}
+                  sortDes={getClassNamesFor('created') === 'descending'}
+                  isActive={isActiveColumn('created')}
                 />
               </th>
               <th className={cn(styles.th, styles.largeColumn)}>
