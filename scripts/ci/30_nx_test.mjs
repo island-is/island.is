@@ -61,7 +61,7 @@ function getNumberFromEnv(key) {
  * @param {string} cmd
  * @param {string | undefined} cwd
  */
-async function runCommand(cmd, cwd = undefined, env = {}) {
+async function runCommand(cmd, cwd = undefined) {
     return new Promise((resolve, reject) => {
         const options = cwd ? { cwd, encoding: 'utf-8' } : {}
         options.env = env;
