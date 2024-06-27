@@ -5,7 +5,6 @@ import {
   UniversityCareersClientService,
   UniversityId,
 } from '@island.is/clients/university-careers'
-import { CmsContentfulService } from '@island.is/cms'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { Locale } from '@island.is/shared/types'
@@ -16,7 +15,6 @@ import { StudentTrack } from './models/studentTrack.model'
 import { StudentTrackHistory } from './models/studentTrackHistory.model'
 import { StudentTrackTranscript } from './models/studentTrackTranscript.model'
 import { StudentTrackTranscriptError } from './models/studentTrackTranscriptError.model'
-import { UniversityContentfulReferenceIds } from './universityCareers.types'
 import { UniversityIdMap } from '@island.is/clients/university-careers'
 
 const LOG_CATEGORY = 'university-careers-api'
