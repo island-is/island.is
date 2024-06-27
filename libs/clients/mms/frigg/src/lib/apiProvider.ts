@@ -6,19 +6,13 @@ import {
 } from '@island.is/nest/config'
 import {
   Configuration,
-  DefaultApi,
-  KeyOptionsManagementApi,
-  SchoolsManagementApi,
-  UsersManagementApi,
+FriggApi,
 } from '../../gen/fetch'
 import { ConfigFactory } from './configFactory'
 import { FriggClientConfig } from './friggClient.config'
 
 export const apiProvider = [
-  KeyOptionsManagementApi,
-  DefaultApi,
-  SchoolsManagementApi,
-  UsersManagementApi,
+  FriggApi
 ].map((apiRecord) => ({
   provide: apiRecord,
   scope: LazyDuringDevScope,

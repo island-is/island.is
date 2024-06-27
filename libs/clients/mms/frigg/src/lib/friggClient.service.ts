@@ -2,10 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import {
   KeyOption,
-  KeyOptionsManagementApi,
-  DefaultApi,
-  UsersManagementApi,
-  SchoolsManagementApi,
+  FriggApi,
   OrganizationModel,
   UserModel,
 } from '../../gen/fetch'
@@ -13,50 +10,44 @@ import {
 @Injectable()
 export class FriggClientService {
   constructor(
-    private readonly keyOptionsManagementApi: KeyOptionsManagementApi,
-    private readonly defaultApi: DefaultApi,
-    private readonly usersManagementApi: UsersManagementApi,
-    private readonly schoolsManagementApi: SchoolsManagementApi,
+    private readonly friggApi: FriggApi,
+
   ) {}
 
-  private keyOptionsManagementApiWithAuth = (user: User) =>
-    this.keyOptionsManagementApi.withMiddleware(
+  private friggApiWithAuth = (user: User) =>
+    this.friggApi.withMiddleware(
       new AuthMiddleware(user as Auth),
     )
 
-  private defaultApiWithAuth = (user: User) =>
-    this.defaultApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  private usersManagementApiWithAuth = (user: User) =>
-    this.usersManagementApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  private schoolsManagementApiWithAuth = (user: User) =>
-    this.schoolsManagementApi.withMiddleware(new AuthMiddleware(user as Auth))
-
-  async getHealth(user: User): Promise<void> {
-    return this.defaultApiWithAuth(user).health()
-  }
 
   async getAllKeyOptions(
     user: User,
     type: string | undefined,
   ): Promise<KeyOption[]> {
-    return this.keyOptionsManagementApiWithAuth(user).getAllKeyOptions({
+    return await this.friggApiWithAuth(user).getAllKeyOptions({
       type: type,
     })
   }
 
-  async getTypes(user: User): Promise<void> {
-    return this.keyOptionsManagementApiWithAuth(user).getTypes()
+  async getTypes(user: User): Promise<string[]> {
+    // this.friggApiWithAuth(user).getTypes()
+    const t = await this.friggApiWithAuth(user).getTypes()
+    return t
   }
 
   async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
-    return this.schoolsManagementApiWithAuth(user).getAllSchoolsByMunicipality()
+    return this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
   }
 
   async getUserById(user: User): Promise<UserModel> {
-    return this.usersManagementApiWithAuth(user).getUserBySourcedId({
-      nationalId: user.nationalId,
-    })
+    console.log('getUserById')
+    try {
+      return this.friggApiWithAuth(user).getUserBySourcedId({
+        nationalId: '1111111119',
+      })
+    } catch (error) {
+      console.log('error', error)
+      throw error
+    }
   }
 }

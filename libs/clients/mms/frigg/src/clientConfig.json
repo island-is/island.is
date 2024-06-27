@@ -28,7 +28,7 @@
             }
           }
         },
-        "tags": ["KeyOptionsManagement"]
+        "tags": ["Frigg"]
       }
     },
     "/keyOptions/types": {
@@ -37,15 +37,25 @@
         "summary": "Get list of types of key options",
         "description": "Get types.",
         "parameters": [],
-        "responses": { "200": { "description": "" } },
-        "tags": ["KeyOptionsManagement"]
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "tags": ["Frigg"]
       }
     },
     "/health": {
       "get": {
         "operationId": "health",
         "parameters": [],
-        "responses": { "200": { "description": "" } }
+        "responses": { "200": { "description": "" } },
+        "tags": ["Utils"]
       }
     },
     "/schools": {
@@ -67,8 +77,8 @@
             }
           }
         },
-        "tags": ["SchoolsManagement"],
-        "security": [{ "Authorization": [] }]
+        "tags": ["Frigg"],
+        "security": [{ "bearer": [] }]
       }
     },
     "/student/{nationalId}": {
@@ -94,8 +104,8 @@
             }
           }
         },
-        "tags": ["UsersManagement"],
-        "security": [{ "Authorization": [] }]
+        "tags": ["Frigg"],
+        "security": [{ "bearer": [] }]
       }
     }
   },
@@ -109,13 +119,11 @@
   "servers": [],
   "components": {
     "securitySchemes": {
-      "Authorization": {
-        "scheme": "Bearer",
-        "bearerFormat": "Bearer",
+      "bearer": {
+        "scheme": "bearer",
+        "bearerFormat": "JWT",
         "description": "Please enter token in from IAS",
-        "name": "Authorization",
-        "type": "http",
-        "in": "Header"
+        "type": "http"
       }
     },
     "schemas": {
@@ -168,6 +176,17 @@
         },
         "required": ["type", "options"]
       },
+      "AddressModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "street": { "type": "string" },
+          "municipality": { "type": "object", "nullable": true },
+          "zip": { "type": "string" },
+          "country": { "type": "object", "nullable": true }
+        },
+        "required": ["id", "street", "municipality", "zip", "country"]
+      },
       "OrganizationModel": {
         "type": "object",
         "properties": {
@@ -179,12 +198,18 @@
             "enum": ["municipality", "national", "school"]
           },
           "gradeLevels": { "type": "array", "items": { "type": "string" } },
+          "address": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
+          },
           "parent": {
             "nullable": true,
+            "default": null,
             "allOf": [{ "$ref": "#/components/schemas/OrganizationModel" }]
           },
           "children": {
             "nullable": true,
+            "default": [],
             "type": "array",
             "items": { "$ref": "#/components/schemas/OrganizationModel" }
           }
@@ -195,20 +220,23 @@
           "name",
           "type",
           "gradeLevels",
+          "address",
           "parent",
           "children"
         ]
       },
-      "AddressModel": {
+      "MembershipOrganizationModel": {
         "type": "object",
         "properties": {
           "id": { "type": "string" },
-          "street": { "type": "string" },
-          "municipality": { "type": "object", "nullable": true },
-          "zip": { "type": "string" },
-          "country": { "type": "object", "nullable": true }
+          "nationalId": { "type": "string" },
+          "name": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["municipality", "national", "school"]
+          }
         },
-        "required": ["id", "street", "municipality", "zip", "country"]
+        "required": ["id", "nationalId", "name", "type"]
       },
       "MembershipModel": {
         "type": "object",
@@ -234,7 +262,9 @@
           },
           "organization": {
             "nullable": true,
-            "allOf": [{ "$ref": "#/components/schemas/OrganizationModel" }]
+            "allOf": [
+              { "$ref": "#/components/schemas/MembershipOrganizationModel" }
+            ]
           }
         },
         "required": ["id", "role", "beginDate", "endDate", "organization"]
