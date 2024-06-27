@@ -19,6 +19,7 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import {
   Application,
   useListApplicationsQuery,
+  useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
@@ -31,6 +32,7 @@ import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { OnboardingModule } from './onboarding-module'
 import { HelloModule } from './hello-module'
+import { InboxModule } from './inbox-module'
 
 interface ListItem {
   id: string
@@ -102,6 +104,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   })
 
   const applicationsRes = useListApplicationsQuery()
+  const inboxRes = useListDocumentsQuery({
+    variables: { input: { page: 1, pageSize: 3 } },
+  })
 
   useConnectivityIndicator({
     componentId,
@@ -147,6 +152,15 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     {
       id: 'onboarding',
       component: <OnboardingModule />,
+    },
+    {
+      id: 'inbox',
+      component: (
+        <InboxModule
+          documents={inboxRes.data?.documentsV2?.data ?? []}
+          loading={inboxRes.loading}
+        />
+      ),
     },
     {
       id: 'applications',
