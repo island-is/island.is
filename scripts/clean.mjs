@@ -257,14 +257,14 @@ function cleanDist() {
 
 function cleanYarn() {
   if (fs.existsSync('.yarn')) {
-    const r = new RegExp(`\\.yarn/${config.CLEAN_YARN_IGNORES_LIST.join('|')}`)
+    const r = new RegExp(`\\.yarn/(${config.CLEAN_YARN_IGNORES_LIST.join('|')})`)
     findAndDelete(
       '.yarn',
       (filePath) => r.test(filePath),
       true, // Indicate that we are deleting directories
     )
   } else {
-    log('No .yarn folder')
+    log('No .yarn folder found')
   }
 }
 
