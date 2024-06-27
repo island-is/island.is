@@ -32,6 +32,7 @@ import {
   CaseListEntry,
   CaseState,
   CaseType,
+  EventType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -191,7 +192,9 @@ export const PrisonCases: FC = () => {
               cell: (row) => <ColumnCaseType type={row.type} />,
             },
             {
-              cell: (row) => <CreatedDate created={row.created} />, //TODO: Change to real date
+              cell: (row) => (
+                <CreatedDate created={row.indictmentCompletedDate} />
+              ),
             },
             {
               cell: () => (

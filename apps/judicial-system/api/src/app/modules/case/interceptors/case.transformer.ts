@@ -1,6 +1,7 @@
 import {
   CaseAppealDecision,
   CaseType,
+  EventType,
   getIndictmentVerdictAppealDeadline,
   getStatementDeadline,
   isIndictmentCase,
@@ -8,6 +9,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
@@ -27,6 +29,7 @@ interface IndictmentInfo {
   indictmentAppealDeadline?: string
   indictmentVerdictViewedByAll?: boolean
   indictmentVerdictAppealDeadline?: string
+  indictmentCompletedDate?: string
 }
 
 const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
@@ -101,6 +104,7 @@ export const getIndictmentInfo = (
   rulingDate?: string,
   caseType?: CaseType,
   defendants?: Defendant[],
+  eventLog?: EventLog[],
 ): IndictmentInfo => {
   const indictmentInfo: IndictmentInfo = {}
 
@@ -126,6 +130,10 @@ export const getIndictmentInfo = (
 
     indictmentInfo.indictmentVerdictViewedByAll =
       indictmentInfo.indictmentVerdictAppealDeadline ? true : false
+
+    indictmentInfo.indictmentCompletedDate = eventLog
+      ?.find((log) => log.eventType === EventType.INDICTMENT_COMPLETED)
+      ?.created?.toString()
   }
 
   return indictmentInfo
@@ -160,6 +168,7 @@ export const transformCase = (theCase: Case): Case => {
     theCase.rulingDate,
     theCase.type,
     theCase.defendants,
+    theCase.eventLogs,
   )
   const defendants = getDefendantsInfo(theCase.defendants, theCase.type)
 
