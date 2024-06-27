@@ -87,14 +87,13 @@ const Summary: FC = () => {
     indictmentRulingDecision: CaseIndictmentRulingDecision,
   ): TagVariant => {
     switch (indictmentRulingDecision) {
-      case CaseIndictmentRulingDecision.RULING:
-        return 'darkerBlue'
       case CaseIndictmentRulingDecision.FINE:
         return 'mint'
       case CaseIndictmentRulingDecision.CANCELLATION:
         return 'rose'
       case CaseIndictmentRulingDecision.DISMISSAL:
         return 'blue'
+      case CaseIndictmentRulingDecision.RULING:
       default:
         return 'darkerBlue'
     }
