@@ -34,9 +34,11 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
   NODE_OPTIONS \
   SERVERSIDE_FEATURES_ON=\"\" # disable server-side features
 
-yarn run test \
-  "${APP}" \
-  ${EXTRA_OPTS} \
-  --verbose \
-  --no-watchman \
-  "$@"
+echo RUNNING TEST FOR  "$APP"
+if ! yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
+  echo "TEST FAILED FOR $APP"
+  exit 1
+else
+  echo "TEST PASSED"
+fi
+
