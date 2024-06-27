@@ -8,6 +8,7 @@ import {
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { AuditModule } from '@island.is/nest/audit'
 import {
@@ -46,6 +47,7 @@ import { ScopesModule } from './scopes/scopes.module'
         IdsClientConfig,
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
+        CompanyRegistryConfig,
         XRoadConfig,
         DelegationApiUserSystemNotificationConfig,
       ],
