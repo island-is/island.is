@@ -5,7 +5,7 @@ import { sortableTableColumn } from '@island.is/judicial-system-web/src/types'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 const useSortCases = (
-  defaultColumn: string,
+  defaultColumn: sortableTableColumn,
   defaultDirection: 'ascending' | 'descending',
   data: CaseListEntry[],
 ) => {
@@ -14,7 +14,7 @@ const useSortCases = (
     direction: defaultDirection,
   })
 
-  const requestSort = (column: string) => {
+  const requestSort = (column: sortableTableColumn) => {
     let direction: 'ascending' | 'descending' = 'ascending'
 
     if (sortConfig.column === column && sortConfig.direction === 'ascending') {
@@ -24,7 +24,7 @@ const useSortCases = (
     setSortConfig({ column, direction })
   }
 
-  const getClassNamesFor = (column: string) => {
+  const getClassNamesFor = (column: sortableTableColumn) => {
     if (!sortConfig) {
       return
     }
@@ -43,7 +43,7 @@ const useSortCases = (
       return [...data].sort((a, b) => {
         const getColumnValue = (entry: CaseListEntry) => {
           if (
-            sortConfig.column === 'defendant' &&
+            sortConfig.column === 'defendants' &&
             entry.defendants &&
             entry.defendants.length > 0
           ) {

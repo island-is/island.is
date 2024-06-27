@@ -476,7 +476,9 @@ export const isConclusionStepValid = (workingCase: Case): boolean => {
     case IndictmentDecision.POSTPONING:
       return Boolean(workingCase.postponedIndefinitelyExplanation)
     case IndictmentDecision.SCHEDULING:
-      return Boolean(workingCase.courtDate?.date)
+      return Boolean(
+        workingCase.courtSessionType && workingCase.courtDate?.date,
+      )
     case IndictmentDecision.COMPLETING:
       return isIndictmentRulingDecisionValid(workingCase)
     case IndictmentDecision.POSTPONING_UNTIL_VERDICT:

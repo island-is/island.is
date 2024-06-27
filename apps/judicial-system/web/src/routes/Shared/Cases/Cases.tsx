@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
@@ -51,7 +51,7 @@ interface CreateCaseButtonProps {
   user: User
 }
 
-const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
+const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
   const { user } = props
   const { formatMessage } = useIntl()
 
@@ -100,7 +100,7 @@ const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
   )
 }
 
-export const Cases: React.FC = () => {
+export const Cases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase, isSendingNotification } =

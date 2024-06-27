@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -18,15 +18,12 @@ interface Props {
   >
 }
 
-const DraftConclusionModal: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    isDraftingConclusion,
-    setIsDraftingConclusion,
-  } = props
+const DraftConclusionModal: FC<Props> = ({
+  workingCase,
+  setWorkingCase,
+  isDraftingConclusion,
+  setIsDraftingConclusion,
+}) => {
   const { formatMessage } = useIntl()
 
   return (
