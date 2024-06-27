@@ -22,7 +22,7 @@ export const HelloModule = React.memo(() => {
   const { dismissed } = usePreferencesStore()
   const { userInfo } = useAuthStore()
 
-  const { data, loading } = useGetFrontPageImageQuery({
+  const { data, loading, error } = useGetFrontPageImageQuery({
     variables: { input: { pageIdentifier: 'frontpage' } },
   })
   const imageSrc = data?.getFrontpage?.imageMobile?.url
@@ -50,17 +50,22 @@ export const HelloModule = React.memo(() => {
           {userInfo?.name}
         </Typography>
 
-        <ImageWrapper>
-          {loading ? (
-            <Skeleton height={167} style={{ borderRadius: theme.spacing[1] }} />
-          ) : (
-            <Image
-              source={{ uri: imageSrc }}
-              style={{ height: 167 }}
-              resizeMode="contain"
-            />
-          )}
-        </ImageWrapper>
+        {!error && (
+          <ImageWrapper>
+            {loading ? (
+              <Skeleton
+                height={167}
+                style={{ borderRadius: theme.spacing[1] }}
+              />
+            ) : (
+              <Image
+                source={{ uri: imageSrc }}
+                style={{ height: 167 }}
+                resizeMode="contain"
+              />
+            )}
+          </ImageWrapper>
+        )}
       </Host>
     </SafeAreaView>
   )
