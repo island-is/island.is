@@ -132,7 +132,6 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
             payload: {
               data,
               rawData: JSON.stringify(t),
-              name: formatMessage(m.firearmLicense),
               metadata: {
                 licenseNumber: t.licenseInfo?.licenseNumber?.toString() ?? '',
                 subtitle: formatMessage(m.licenseNumberVariant, {
@@ -164,6 +163,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                     type: GenericUserLicenseMetaLinksType.External,
                   },
                 ],
+                name: formatMessage(m.firearmLicense),
                 title: formatMessage(m.yourFirearmLicense),
                 description: [
                   { text: formatMessage(m.yourFirearmLicenseDescription) },

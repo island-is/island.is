@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericPkPass')
 export class GenericPkPass {
   @Field()
   pkpassUrl!: string

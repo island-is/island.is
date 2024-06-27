@@ -2,11 +2,11 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { GenericLicenseProviderId } from '../licenceService.type'
 
 registerEnumType(GenericLicenseProviderId, {
-  name: 'GenericLicenseProviderId',
+  name: 'LicenseServiceV2GenericLicenseProviderId',
   description: 'Exhaustive list of license provider IDs',
 })
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericLicenseProvider')
 export class GenericLicenseProvider {
   @Field(() => GenericLicenseProviderId, {
     description: 'ID of license provider',

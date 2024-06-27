@@ -2,7 +2,7 @@ import { Field, InputType } from '@nestjs/graphql'
 import { IsArray, IsBoolean, IsOptional } from 'class-validator'
 import { GenericLicenseTypeType } from '../licenceService.type'
 
-@InputType()
+@InputType('LicenseServiceV2GetGenericLicensesInput')
 export class GetGenericLicensesInput {
   @Field(() => [String], { nullable: true })
   @IsOptional()

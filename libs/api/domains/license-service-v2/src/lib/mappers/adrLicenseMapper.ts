@@ -88,7 +88,6 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
           payload: {
             data,
             rawData: JSON.stringify(t),
-            name: formatMessage(m.adrLicense),
             metadata: {
               licenseNumber: t.skirteinisNumer ?? '',
               subtitle: formatMessage(m.licenseNumberVariant, {
@@ -107,6 +106,7 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
                       }),
                     )
                   : undefined,
+              name: formatMessage(m.adrLicense),
               title: formatMessage(m.yourADRLicense),
               description: [
                 { text: formatMessage(m.yourAdrLicenseDescription) },

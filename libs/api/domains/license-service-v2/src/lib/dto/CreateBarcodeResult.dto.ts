@@ -1,6 +1,6 @@
 import { Field, Int, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('CreateBarcodeResult')
+@ObjectType('LicenseServiceV2CreateBarcodeResult')
 export class CreateBarcodeResult {
   @Field({
     description: 'Barcode token',

@@ -92,7 +92,6 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
           payload: {
             data,
             rawData: JSON.stringify(t),
-            name: formatMessage(m.pCard),
             metadata: {
               licenseNumber: t.malsnumer?.toString() ?? '',
               subtitle: formatMessage(m.licenseNumberVariant, {
@@ -105,6 +104,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
                 isExpired !== undefined
                   ? expiryTag(formatMessage, isExpired)
                   : undefined,
+              name: formatMessage(m.pCard),
               title: formatMessage(m.yourPCard),
               description: [{ text: formatMessage(m.yourPCardDescription) }],
             },

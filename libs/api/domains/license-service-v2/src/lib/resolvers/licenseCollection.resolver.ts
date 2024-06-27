@@ -10,20 +10,27 @@ import { Audit } from '@island.is/nest/audit'
 
 import type { Locale } from '@island.is/shared/types'
 import { UseGuards } from '@nestjs/common'
-import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
-import { GenericUserLicense } from '../dto/GenericUserLicense.dto'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { GetGenericLicensesInput } from '../dto/GetGenericLicenses.input'
-import { LicenseServiceService } from '../licenseService.service'
+import { LicenseServiceV2 } from '../licenseService.service'
 import { LicenseCollection } from '../dto/GenericLicenseCollection.dto'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => LicenseCollection)
-@Audit({ namespace: '@island.is/api/license-service' })
+@FeatureFlag(Features.licensesV2)
+@Audit({ namespace: '@island.is/api/license-service-v2' })
 export class LicenseCollectionResolver {
-  constructor(private readonly licenseServiceService: LicenseServiceService) {}
+  constructor(private readonly licenseServiceService: LicenseServiceV2) {}
 
-  @Query(() => LicenseCollection)
+  @Query(() => LicenseCollection, {
+    name: 'licenseServiceV2GenericLicenseCollection',
+  })
   @Audit()
   async genericLicenseCollection(
     @CurrentUser() user: User,
@@ -38,29 +45,5 @@ export class LicenseCollectionResolver {
       force: input?.force,
       onlyList: input?.onlyList,
     })
-  }
-
-  @Query(() => [GenericUserLicense], {
-    deprecationReason: 'Use genericLicenseCollection instead',
-  })
-  @Directive(
-    '@deprecated(reason: "Deprecated in favor of genericLicenseCollection")',
-  )
-  @Audit()
-  async genericLicenses(
-    @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
-    @Args('input', { nullable: true }) input?: GetGenericLicensesInput,
-  ) {
-    const licenseCollection =
-      await this.licenseServiceService.getLicenseCollection(user, locale, {
-        includedTypes: input?.includedTypes ?? ['DriversLicense'],
-        excludedTypes: input?.excludedTypes,
-        force: input?.force,
-        onlyList: input?.onlyList,
-      })
-
-    return licenseCollection.licenses
   }
 }

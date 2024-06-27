@@ -3,7 +3,7 @@ import { GenericLicenseDataField } from './GenericLicenseDataField.dto'
 import { GenericUserLicenseMetadata } from './GenericUserLicenseMetadata.dto'
 import GraphQLJSON from 'graphql-type-json'
 
-@ObjectType()
+@ObjectType('LicenseServiceV2Payload')
 export class Payload {
   @Field(() => [GenericLicenseDataField], {
     description: 'Data parsed into a standard format',

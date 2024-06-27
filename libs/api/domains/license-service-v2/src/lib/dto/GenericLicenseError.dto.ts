@@ -2,7 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 import { GenericLicenseType } from '../licenceService.type'
 import { GenericLicenseProvider } from './GenericLicenseProvider.dto'
 
-@ObjectType('GenericUserLicenseError')
+@ObjectType('LicenseServiceV2GenericUserLicenseError')
 export class LicenseError {
   @Field(() => GenericLicenseType)
   type!: GenericLicenseType

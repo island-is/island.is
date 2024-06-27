@@ -7,21 +7,21 @@ import {
 import { GenericLicenseProvider } from './GenericLicenseProvider.dto'
 
 registerEnumType(GenericLicenseType, {
-  name: 'GenericLicenseType',
+  name: 'LicenseServiceV2GenericLicenseType',
   description: 'Exhaustive list of license types',
 })
 
 registerEnumType(GenericUserLicenseStatus, {
-  name: 'GenericUserLicenseStatus',
+  name: 'LicenseServiceV2GenericUserLicenseStatus',
   description: 'Possible license statuses for user',
 })
 
 registerEnumType(GenericUserLicensePkPassStatus, {
-  name: 'GenericUserLicensePkPassStatus',
+  name: 'LicenseServiceV2GenericUserLicensePkPassStatus',
   description: 'Possible license pkpass statuses',
 })
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericLicense')
 export class GenericLicense {
   @Field(() => GenericLicenseType, {
     description: 'Type of license from an exhaustive list',
@@ -32,12 +32,6 @@ export class GenericLicense {
     description: 'Provider of the license',
   })
   provider!: GenericLicenseProvider
-
-  @Field({
-    nullable: true,
-    description: 'Display name of license',
-  })
-  name?: string
 
   @Field({ description: 'Does the license support pkpass?' })
   pkpass!: boolean

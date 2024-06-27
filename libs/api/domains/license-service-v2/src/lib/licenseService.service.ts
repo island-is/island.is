@@ -203,6 +203,12 @@ export class LicenseServiceV2 {
           licenseUserData.status = GenericUserLicenseStatus.NotAvailable
         }
 
+        this.logger.debug(
+          `license of type ${mappedLicenseType}, is owner child of user ${
+            lp.type === 'child'
+          }`,
+        )
+
         return {
           nationalId: user.nationalId,
           isOwnerChildOfUser: lp.type === 'child',

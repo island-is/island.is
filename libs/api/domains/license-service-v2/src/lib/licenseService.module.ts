@@ -9,9 +9,15 @@ import { LicenseCollectionResolver } from './resolvers/licenseCollection.resolve
 import { PkPassResolver } from './resolvers/pkPass.resolver'
 import { UserLicenseResolver } from './resolvers/userLicense.resolver'
 import { LicenseProviderResolver } from './resolvers/provider.resolver'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 
 @Module({
-  imports: [LicenseClientModule, LicenseMapperModuleV2, LicenseModule],
+  imports: [
+    LicenseClientModule,
+    LicenseMapperModuleV2,
+    LicenseModule,
+    FeatureFlagModule,
+  ],
   providers: [
     LicenseCollectionResolver,
     PkPassResolver,

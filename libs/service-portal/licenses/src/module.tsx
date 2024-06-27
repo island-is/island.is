@@ -6,9 +6,12 @@ import { LicensePaths } from './lib/paths'
 import { defineMessage } from 'react-intl'
 import { translationLoader } from './screens/Translation.loader'
 
-const LicensesOverview = lazy(() => import('./screens/v1/LicensesOverview'))
+const LicensesOverview = lazy(() => import('./screens/LicensesOverview'))
 const LicenseDetail = lazy(
   () => import('./screens/v1/LicenseDetail/LicenseDetail'),
+)
+const LicenseDetailV2 = lazy(
+  () => import('./screens/v2/LicenseDetail/LicenseDetail'),
 )
 const PassportDetail = lazy(
   () => import('./screens/v1/PassportDetail/PassportDetail'),
@@ -27,6 +30,12 @@ export const licensesModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.licenses),
       loader: translationLoader({ userInfo, ...rest }),
       element: <LicensesOverview />,
+    },
+    {
+      name: 'Skírteini',
+      path: LicensePaths.LicensesDetailV2,
+      enabled: userInfo.scopes.includes(ApiScope.licenses),
+      element: <LicenseDetailV2 />,
     },
     {
       name: 'Skírteini',

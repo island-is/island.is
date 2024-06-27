@@ -1,7 +1,7 @@
 import {
-  GenericLicenseType,
-  GenericUserLicense,
-  GenericUserLicenseError,
+  LicenseServiceV2GenericLicenseType as GenericLicenseType,
+  LicenseServiceV2GenericUserLicense as GenericUserLicense,
+  LicenseServiceV2GenericUserLicenseError as GenericUserLicenseError,
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserProfile } from '@island.is/service-portal/graphql'
@@ -56,11 +56,7 @@ export const LicensesOverviewV2 = () => {
           url: userLicense.license.provider.providerLogo ?? undefined,
         }}
         text={userLicense.payload?.metadata?.subtitle ?? ''}
-        heading={
-          userLicense.license?.name ??
-          userLicense?.payload?.metadata.title ??
-          ''
-        }
+        heading={userLicense.payload?.metadata.name ?? ''}
         headingColor={isPayloadEmpty ? 'currentColor' : undefined}
         borderColor={isPayloadEmpty ? 'blue200' : undefined}
         cta={{
@@ -86,10 +82,18 @@ export const LicensesOverviewV2 = () => {
     )
   }
 
+  const generateLicenseStack = (data: Array<GenericUserLicense>) => (
+    <Box marginTop={[2, 3, 6]}>
+      <Stack component="ul" space={3}>
+        {data.map((license, index) => generateLicense(license, index))}
+      </Stack>
+    </Box>
+  )
+
   const errors: Array<GenericUserLicenseError> =
-    data?.genericLicenseCollection?.errors ?? []
+    data?.licenseServiceV2GenericLicenseCollection?.errors ?? []
   const licenses: Array<GenericUserLicense> =
-    data?.genericLicenseCollection?.licenses ?? []
+    data?.licenseServiceV2GenericLicenseCollection?.licenses ?? []
 
   return (
     <>
@@ -124,15 +128,15 @@ export const LicensesOverviewV2 = () => {
             tabs={[
               {
                 label: formatMessage(m.licenseTabPrimary),
-                content: licenses
-                  .filter((license) => !license.isOwnerChildOfUser)
-                  .map((license, index) => generateLicense(license, index)),
+                content: generateLicenseStack(
+                  licenses.filter((license) => !license.isOwnerChildOfUser),
+                ),
               },
               {
                 label: formatMessage(m.licenseTabSecondary),
-                content: licenses
-                  .filter((license) => license.isOwnerChildOfUser)
-                  .map((license, index) => generateLicense(license, index)),
+                content: generateLicenseStack(
+                  licenses.filter((license) => license.isOwnerChildOfUser),
+                ),
               },
             ]}
           />

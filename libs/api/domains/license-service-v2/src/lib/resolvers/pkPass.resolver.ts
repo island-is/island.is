@@ -9,24 +9,30 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 
 import { UseGuards } from '@nestjs/common'
-import { Args, Directive, Mutation, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Resolver } from '@nestjs/graphql'
 import { GeneratePkPassInput } from '../dto/GeneratePkPass.input'
 import { GenericPkPass } from '../dto/GenericPkPass.dto'
 import { GenericPkPassQrCode } from '../dto/GenericPkPassQrCode.dto'
-import { GenericPkPassVerification } from '../dto/GenericPkPassVerification.dto'
 import { VerifyLicenseBarcodeInput } from '../dto/VerifyLicenseBarcodeInput'
 import { VerifyLicenseBarcodeResult } from '../dto/VerifyLicenseBarcodeResult.dto'
-import { VerifyPkPassInput } from '../dto/VerifyPkPass.input'
-import { LicenseServiceService } from '../licenseService.service'
+import { LicenseServiceV2 } from '../licenseService.service'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
+@FeatureFlag(Features.licensesV2)
 @Resolver(() => GenericPkPass)
-@Audit({ namespace: '@island.is/api/license-service' })
+@Audit({ namespace: '@island.is/api/license-service-v2' })
 export class PkPassResolver {
-  constructor(private readonly licenseServiceService: LicenseServiceService) {}
+  constructor(private readonly licenseServiceService: LicenseServiceV2) {}
 
-  @Mutation(() => GenericPkPass)
+  @Mutation(() => GenericPkPass, {
+    name: 'licenseServiceV2GeneratePkPass',
+  })
   @Audit()
   async generatePkPass(
     @CurrentUser() user: User,
@@ -42,7 +48,9 @@ export class PkPassResolver {
     }
   }
 
-  @Mutation(() => GenericPkPassQrCode)
+  @Mutation(() => GenericPkPassQrCode, {
+    name: 'licenseServiceV2GeneratePkPassQrCode',
+  })
   @Audit()
   async generatePkPassQrCode(
     @CurrentUser() user: User,
@@ -59,24 +67,8 @@ export class PkPassResolver {
   }
 
   @Scopes(ApiScope.internal, ApiScope.licensesVerify)
-  @Mutation(() => GenericPkPassVerification, {
-    deprecationReason:
-      'Should use verifyLicenseBarcode instead of verifyPkPass',
-  })
-  @Directive(
-    '@deprecated(reason: "Should use verifyLicenseBarcode instead of verifyPkPass")',
-  )
-  @Audit()
-  async verifyPkPass(
-    @Args('input')
-    input: VerifyPkPassInput,
-  ): Promise<GenericPkPassVerification> {
-    return this.licenseServiceService.verifyPkPassDeprecated(input.data)
-  }
-
-  @Scopes(ApiScope.internal, ApiScope.licensesVerify)
   @Mutation(() => VerifyLicenseBarcodeResult, {
-    name: 'verifyLicenseBarcode',
+    name: 'licenseServiceV2VerifyLicenseBarcode',
   })
   @Audit()
   async verifyLicenseBarcode(

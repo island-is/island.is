@@ -1,4 +1,3 @@
-import React from 'react'
 import { useParams } from 'react-router-dom'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -15,16 +14,16 @@ import {
 } from '@island.is/island-ui/core'
 import { LinkResolver, UserInfoLine } from '@island.is/service-portal/core'
 import { defineMessage } from 'react-intl'
-import { formatDate } from '../../utils/dateUtils'
-import { m } from '../../lib/messages'
+import { formatDate } from '../../../utils/dateUtils'
+import { m } from '../../../lib/messages'
 import {
   IdentityDocumentModelChild,
   useChildrenPassport,
   usePassport,
 } from '@island.is/service-portal/graphql'
 import * as styles from './PassportDetail.css'
-import { Gender, GenderType } from '../../types/passport.type'
-import { capitalizeEveryWord } from '../../utils/capitalize'
+import { Gender, GenderType } from '../../../types/passport.type'
+import { capitalizeEveryWord } from '../../../utils/capitalize'
 
 const getCurrentPassport = (
   id: string | undefined,

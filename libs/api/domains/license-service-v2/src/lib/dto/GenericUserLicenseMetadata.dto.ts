@@ -4,7 +4,7 @@ import { GenericUserLicenseMetaTag } from './GenericUserLicenseMetaTag.dto'
 import { GenericUserLicenseAlert } from './GenericUserLicenseAlert.dto'
 import { GenericUserLicenseMetadataDescription } from './GenericUserLicenseMetadataDescription.dto'
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericUserLicenseMetadata')
 export class GenericUserLicenseMetadata {
   @Field(() => [GenericUserLicenseMetaLinks], { nullable: true })
   links?: Array<GenericUserLicenseMetaLinks>
@@ -26,6 +26,12 @@ export class GenericUserLicenseMetadata {
 
   @Field(() => GenericUserLicenseMetaTag, { nullable: true })
   displayTag?: GenericUserLicenseMetaTag
+
+  @Field({
+    nullable: true,
+    description: 'Display name of license for the overview',
+  })
+  name?: string
 
   @Field({
     nullable: true,

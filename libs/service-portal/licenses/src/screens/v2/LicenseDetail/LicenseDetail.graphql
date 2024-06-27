@@ -1,5 +1,8 @@
-query GenericLicense($input: GetGenericLicenseInput!, $locale: String!) {
-  genericLicense(input: $input, locale: $locale) {
+query GenericLicense(
+  $input: LicenseServiceV2GetGenericLicenseInput!
+  $locale: String!
+) {
+  licenseServiceV2GenericLicense(input: $input, locale: $locale) {
     __typename
     nationalId
     isOwnerChildOfUser
@@ -83,6 +86,7 @@ query GenericLicense($input: GetGenericLicenseInput!, $locale: String!) {
         licenseId
         licenseNumber
         title
+        name
         description {
           text
           linkInText

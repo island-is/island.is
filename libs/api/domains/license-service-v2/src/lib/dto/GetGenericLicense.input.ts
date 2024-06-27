@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { GenericLicenseType } from '../licenceService.type'
 
-@InputType()
+@InputType('LicenseServiceV2GetGenericLicenseInput')
 export class GetGenericLicenseInput {
   @Field(() => GenericLicenseType)
   licenseType!: GenericLicenseType

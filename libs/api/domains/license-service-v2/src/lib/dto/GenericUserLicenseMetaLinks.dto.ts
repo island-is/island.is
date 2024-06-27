@@ -2,11 +2,11 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { GenericUserLicenseMetaLinksType } from '../licenceService.type'
 
 registerEnumType(GenericUserLicenseMetaLinksType, {
-  name: 'GenericUserLicenseMetaLinksType',
+  name: 'LicenseServiceV2GenericUserLicenseMetaLinksType',
   description: 'Exhaustive list meta link type',
 })
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericUserLicenseMetaLinks')
 export class GenericUserLicenseMetaLinks {
   @Field({ nullable: true })
   label?: string

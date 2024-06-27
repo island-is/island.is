@@ -109,7 +109,6 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
           payload: {
             data,
             rawData: JSON.stringify(t),
-            name: formatMessage(m.drivingLicense),
             metadata: {
               links: [
                 {
@@ -137,6 +136,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
                       }),
                     )
                   : undefined,
+              name: formatMessage(m.drivingLicense),
               title: formatMessage(m.yourDrivingLicense),
               description: [
                 { text: formatMessage(m.yourDrivingLicenseDescription) },

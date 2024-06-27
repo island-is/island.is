@@ -1,8 +1,8 @@
 query GenericLicenseCollection(
-  $input: GetGenericLicensesInput!
+  $input: LicenseServiceV2GetGenericLicensesInput!
   $locale: String!
 ) {
-  genericLicenseCollection(input: $input, locale: $locale) {
+  licenseServiceV2GenericLicenseCollection(input: $input, locale: $locale) {
     licenses {
       __typename
       nationalId
@@ -15,7 +15,6 @@ query GenericLicenseCollection(
           providerName
           providerLogo
         }
-        name
         pkpass
         pkpassVerify
         status
@@ -38,6 +37,7 @@ query GenericLicenseCollection(
             label
           }
           title
+          name
         }
       }
     }

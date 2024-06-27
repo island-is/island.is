@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericPkPassQrCode')
 export class GenericPkPassQrCode {
   @Field()
   pkpassQRCode!: string

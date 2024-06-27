@@ -13,17 +13,26 @@ import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { CreateBarcodeResult } from '../dto/CreateBarcodeResult.dto'
 import { GenericUserLicense } from '../dto/GenericUserLicense.dto'
 import { GetGenericLicenseInput } from '../dto/GetGenericLicense.input'
-import { LicenseServiceService } from '../licenseService.service'
+import { LicenseServiceV2 } from '../licenseService.service'
 import { LicenseError } from '../dto/GenericLicenseError.dto'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@FeatureFlag(Features.licensesV2)
 @Scopes(ApiScope.internal, ApiScope.licenses)
 @Resolver(() => GenericUserLicense)
-@Audit({ namespace: '@island.is/api/license-service' })
+@Audit({ namespace: '@island.is/api/license-service-v2' })
 export class UserLicenseResolver {
-  constructor(private readonly licenseServiceService: LicenseServiceService) {}
+  constructor(private readonly licenseServiceService: LicenseServiceV2) {}
 
-  @Query(() => GenericUserLicense, { nullable: true })
+  @Query(() => GenericUserLicense, {
+    nullable: true,
+    name: 'licenseServiceV2GenericLicense',
+  })
   @Audit()
   async genericLicense(
     @CurrentUser() user: User,

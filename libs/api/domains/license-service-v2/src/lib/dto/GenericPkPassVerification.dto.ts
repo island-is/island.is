@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericPkPassVerificationError')
 export class GenericPkPassVerificationError {
   @Field({
     nullable: true,
@@ -23,7 +23,7 @@ export class GenericPkPassVerificationError {
   data?: string
 }
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericPkPassVerification')
 export class GenericPkPassVerification {
   @Field({
     nullable: true,

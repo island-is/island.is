@@ -91,6 +91,8 @@ export class PassportMapper implements GenericLicenseMapper {
       }
     })
 
+    mappedLicenses.forEach((l) => this.logger.debug(l.type))
+
     return mappedLicenses
   }
 
@@ -98,26 +100,26 @@ export class PassportMapper implements GenericLicenseMapper {
     document: IdentityDocumentChild,
     formatMessage: FormatMessage,
   ): Array<Payload> {
-    if (!document.passports) {
-      return [
-        {
-          data: [],
-          rawData: '',
-          metadata: {
-            title: document.childName ?? '',
-            subtitle: formatMessage(m.noValidPassport),
-            ctaLink: {
-              label: formatMessage(m.apply),
-              value: formatMessage(m.applyPassportUrl),
-            },
-          },
-        },
-      ]
+    if (document.passports?.length) {
+      return (
+        document.passports?.map((p) => this.mapDocument(p, formatMessage)) ?? []
+      )
     }
 
-    return (
-      document.passports?.map((p) => this.mapDocument(p, formatMessage)) ?? []
-    )
+    return [
+      {
+        data: [],
+        metadata: {
+          name: document.childName ?? '',
+          title: document.childName ?? '',
+          subtitle: formatMessage(m.noValidPassport),
+          ctaLink: {
+            label: formatMessage(m.apply),
+            value: formatMessage(m.applyPassportUrl),
+          },
+        },
+      },
+    ]
   }
 
   private mapDocument(
@@ -248,12 +250,13 @@ export class PassportMapper implements GenericLicenseMapper {
         expired: isExpired,
         expireDate: document.expirationDate?.toISOString() ?? undefined,
         displayTag,
+        name: document.verboseType ?? undefined,
         title:
           document.displayFirstName && document.displayLastName
             ? capitalize(
                 document.displayFirstName + ' ' + document.displayLastName,
               )
-            : document.verboseType ?? undefined,
+            : undefined,
         subtitle: formatMessage(m.passportNumberDisplay, {
           arg:
             document.subType && document.number

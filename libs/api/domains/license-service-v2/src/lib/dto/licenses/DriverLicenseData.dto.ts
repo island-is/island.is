@@ -2,7 +2,7 @@ import { DrivingLicenseVerifyExtraData } from '@island.is/clients/license-client
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GenericLicenseType } from '../../licenceService.type'
 
-@ObjectType('LicenseDriverLicenseData')
+@ObjectType('LicenseServiceV2LicenseDriverLicenseData')
 export class DriverLicenseData implements DrivingLicenseVerifyExtraData {
   type!: GenericLicenseType
 

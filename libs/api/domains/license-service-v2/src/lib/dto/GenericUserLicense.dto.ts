@@ -4,7 +4,7 @@ import { GenericLicenseFetch } from './GenericLicenseFetch.dto'
 import { Payload } from './Payload.dto'
 import { CreateBarcodeResult } from './CreateBarcodeResult.dto'
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericUserLicense')
 export class GenericUserLicense {
   @Field({
     description: 'National ID of license owner',

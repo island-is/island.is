@@ -4,11 +4,11 @@ import { GenericUserLicenseMetaLinks } from './GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from './GenericUserLicenseMetaTag.dto'
 
 registerEnumType(GenericLicenseDataFieldType, {
-  name: 'GenericLicenseDataFieldType',
+  name: 'LicenseServiceV2GenericLicenseDataFieldType',
   description: 'Possible types of data fields',
 })
 
-@ObjectType()
+@ObjectType('LicenseServiceV2GenericLicenseDataField')
 export class GenericLicenseDataField {
   @Field(() => GenericLicenseDataFieldType, {
     description: 'Type of data field',

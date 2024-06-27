@@ -12,17 +12,21 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import ReactHtmlParser from 'react-html-parser'
-import * as styles from './LicenseDetail.css'
-import { mapCategory } from '../../utils/dataMapper'
-import LicenseIcon from '../../components/LicenseIcon/LicenseIcon'
+import * as styles from './ExpandableLine.css'
 import AnimateHeight, { Height } from 'react-animate-height'
-import { GenericLicenseDataField } from '@island.is/api/schema'
+import {
+  GenericLicenseDataField,
+  GenericLicenseType,
+  LicenseServiceV2GenericLicenseDataField,
+} from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
-import { GenericLicenseType } from '@island.is/service-portal/graphql'
+import LicenseIcon from '../LicenseIcon/LicenseIcon'
+import { mapCategory } from '../../utils/dataMapper'
+import { LicenseServiceV2GenericLicenseType } from '@island.is/service-portal/graphql'
 
 interface Props {
-  data: GenericLicenseDataField[]
+  data: GenericLicenseDataField[] | LicenseServiceV2GenericLicenseDataField[]
   title: string
   type?: string
   description?: string
@@ -58,7 +62,10 @@ const ExpandableLine: FC<React.PropsWithChildren<Props>> = ({
   const isJSONDate = (str: string) =>
     str && !!str.match(/\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}/)
 
-  const isDriversLicense = type === GenericLicenseType.DriversLicense
+  const isDriversLicense =
+    type ===
+    (GenericLicenseType.DriversLicense ||
+      LicenseServiceV2GenericLicenseType.DriversLicense)
   const dataLenghtThree = data.length === 3
   const columnSpan: ResponsiveProp<GridColumns> =
     data.length > 0

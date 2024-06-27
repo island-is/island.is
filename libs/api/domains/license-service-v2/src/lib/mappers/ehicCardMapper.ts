@@ -96,7 +96,6 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
             payload: {
               data,
               rawData: JSON.stringify(t),
-              name: formatMessage(m.ehicCard),
               metadata: {
                 licenseNumber: t.cardNumber?.toString() ?? '',
                 subtitle: formatMessage(m.licenseNumberVariant, {
@@ -131,6 +130,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                     value: '/umsoknir/evropska-sjukratryggingakortid',
                   },
                 ].filter(isDefined),
+                name: formatMessage(m.ehicCard),
                 title: formatMessage(m.ehicCard),
                 description: [
                   { text: formatMessage(m.ehicDescription) },

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GenericUserLicense } from './GenericUserLicense.dto'
 
-@ObjectType('GenericUserLicenseResponse')
+@ObjectType('LicenseServiceV2GenericUserLicenseResponse')
 export class UserLicensesResponse {
   @Field({
     nullable: true,

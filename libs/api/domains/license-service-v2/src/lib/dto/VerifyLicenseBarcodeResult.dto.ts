@@ -16,7 +16,7 @@ export enum VerifyLicenseBarcodeError {
 }
 
 registerEnumType(VerifyLicenseBarcodeError, {
-  name: 'VerifyLicenseBarcodeError',
+  name: 'LicenseServiceV2VerifyLicenseBarcodeError',
   description: 'Exhaustive list of verify license barcode errors',
 })
 
@@ -27,12 +27,12 @@ export enum VerifyLicenseBarcodeType {
 }
 
 registerEnumType(VerifyLicenseBarcodeType, {
-  name: 'VerifyLicenseBarcodeType',
+  name: 'LicenseServiceV2VerifyLicenseBarcodeType',
   description: 'Exhaustive list of verify license barcode types',
 })
 
 export const VerifyLicenseBarcodeDataUnion = createUnionType({
-  name: 'VerifyLicenseBarcodeDataUnion',
+  name: 'LicenseServiceV2VerifyLicenseBarcodeDataUnion',
   types: () => [DriverLicenseData] as const,
   resolveType: (value) => {
     switch (value.type) {
@@ -45,7 +45,7 @@ export const VerifyLicenseBarcodeDataUnion = createUnionType({
   },
 })
 
-@ObjectType('VerifyLicenseBarcodeResult')
+@ObjectType('LicenseServiceV2VerifyLicenseBarcodeResult')
 export class VerifyLicenseBarcodeResult {
   @Field(() => VerifyLicenseBarcodeDataUnion, {
     nullable: true,

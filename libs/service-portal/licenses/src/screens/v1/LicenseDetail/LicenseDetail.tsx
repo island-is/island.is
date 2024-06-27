@@ -20,10 +20,9 @@ import {
   ErrorScreen,
   m as coreMessages,
 } from '@island.is/service-portal/core'
-import ExpandableLine from './ExpandableLine'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import {
@@ -31,14 +30,15 @@ import {
   GenericUserLicenseMetaLinksType,
   Query,
 } from '@island.is/api/schema'
-import { PkPass } from '../../components/QRCodeModal/PkPass'
+import { PkPass } from '../../../components/QRCodeModal/PkPass'
 import {
   getLicenseDetailHeading,
   getTypeFromPath,
-} from '../../utils/dataMapper'
-import { isExpired } from '../../utils/dateUtils'
+} from '../../../utils/dataMapper'
+import { isExpired } from '../../../utils/dateUtils'
 import isValid from 'date-fns/isValid'
 import { isDefined } from '@island.is/shared/utils'
+import ExpandableLine from '../../../components/ExpandableLine/ExpandableLine'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {

@@ -109,7 +109,6 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
           payload: {
             data,
             rawData: JSON.stringify(t),
-            name: formatMessage(m.heavyMachineryLicense),
             metadata: {
               licenseNumber: t.skirteinisNumer?.toString() ?? '',
               subtitle: formatMessage(m.licenseNumberVariant, {
@@ -121,11 +120,13 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
                 isExpired != undefined
                   ? expiryTag(formatMessage, isExpired)
                   : undefined,
+
+              name: formatMessage(m.heavyMachineryLicense),
+              title: formatMessage(m.yourMachineLicense),
+              description: [
+                { text: formatMessage(m.yourMachineLicenseDescription) },
+              ],
             },
-            title: formatMessage(m.yourMachineLicense),
-            description: [
-              { text: formatMessage(m.yourMachineLicenseDescription) },
-            ],
           },
         }
       })

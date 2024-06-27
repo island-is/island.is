@@ -1,10 +1,10 @@
 import {
-  GenericLicenseDataField,
-  GenericLicenseType,
-  GenericUserLicenseDataFieldTagColor,
-  GenericUserLicenseDataFieldTagType,
-  GenericUserLicenseMetaLinksType,
-  GenericUserLicensePkPassStatus,
+  LicenseServiceV2GenericLicenseDataField as GenericLicenseDataField,
+  LicenseServiceV2GenericLicenseType as GenericLicenseType,
+  LicenseServiceV2GenericUserLicenseDataFieldTagColor as GenericUserLicenseDataFieldTagColor,
+  LicenseServiceV2GenericUserLicenseDataFieldTagType as GenericUserLicenseDataFieldTagType,
+  LicenseServiceV2GenericUserLicenseMetaLinksType as GenericUserLicenseMetaLinksType,
+  LicenseServiceV2GenericUserLicensePkPassStatus as GenericUserLicensePkPassStatus,
 } from '@island.is/api/schema'
 import {
   Box,
@@ -29,9 +29,9 @@ import { isDefined } from '@island.is/shared/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { getTypeFromPath, isLicenseTypePath } from '../../../utils/mapPaths'
-import { useGenericLicenseLazyQuery } from './LicenseDetailV2.generated'
 import { PkPass } from '../../../components/QRCodeModal/PkPass'
-import ExpandableLine from '../../v1/LicenseDetail/ExpandableLine'
+import { useGenericLicenseLazyQuery } from './LicenseDetail.generated'
+import ExpandableLine from '../../../components/ExpandableLine/ExpandableLine'
 
 const getTagColor = (
   color: GenericUserLicenseDataFieldTagColor,
@@ -271,18 +271,18 @@ const LicenseDetail = () => {
     }
   }, [genericLicenseQuery, id, locale, licenseType])
 
-  const { genericLicense = null } = data ?? {}
+  const genericLicense = data?.licenseServiceV2GenericLicense ?? null
 
   return (
     <>
       <IntroHeader
         title={
-          data?.genericLicense?.payload?.metadata?.title ??
+          genericLicense?.payload?.metadata?.title ??
           formatMessage(coreMessages.licenseNavTitle)
         }
         introComponent={
-          data?.genericLicense?.payload?.metadata?.description &&
-          data?.genericLicense?.payload?.metadata?.description
+          genericLicense?.payload?.metadata?.description &&
+          genericLicense?.payload?.metadata?.description
             .map((message, index) => {
               if (!message.linkInText) {
                 return (
@@ -340,7 +340,7 @@ const LicenseDetail = () => {
         ) : undefined}
       </IntroHeader>
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
-      {!error && !loading && !data?.genericLicense && (
+      {!error && !loading && !genericLicense && (
         <Problem
           type="no_data"
           title={formatMessage(coreMessages.noDataFound)}
