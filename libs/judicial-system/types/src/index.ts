@@ -77,6 +77,9 @@ export {
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'
+
+export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+
 export type {
   CrimeScene,
   CrimeSceneMap,
