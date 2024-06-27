@@ -29,6 +29,7 @@ type GivenWhenThen = (
 describe('InternalCaseController - Deliver indictment info to court', () => {
   const user = { id: uuid() } as User
   const caseId = uuid()
+  const courtName = uuid()
   const policeCaseNumber = uuid()
   const policeCaseNumber2 = uuid()
   const courtCaseNumber = uuid()
@@ -46,6 +47,7 @@ describe('InternalCaseController - Deliver indictment info to court', () => {
       ],
       [policeCaseNumber2]: [IndictmentSubtype.THEFT],
     },
+    court: { name: courtName },
     courtCaseNumber,
     eventLogs: [
       { eventType: EventType.CASE_RECEIVED_BY_COURT, created: receivedDate },
@@ -91,8 +93,9 @@ describe('InternalCaseController - Deliver indictment info to court', () => {
         mockCourtService.updateIndictmentCaseWithIndictmentInfo,
       ).toHaveBeenCalledWith(
         user,
-        theCase.id,
-        theCase.courtCaseNumber,
+        caseId,
+        courtName,
+        courtCaseNumber,
         receivedDate,
         indictmentDate,
         policeCaseNumber,

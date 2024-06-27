@@ -23,7 +23,7 @@ import {
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
-import { mapToContentfulLocale, mapToLocale } from './utils'
+import { mapToContentfulLocale, mapToLocale, cleanString } from './utils'
 import {
   CmsService,
   GetTemplateByTemplateId,
@@ -35,11 +35,9 @@ import {
  * These are the properties that can be replaced in the template
  */
 const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
-  'notificationTitle',
-  'notificationBody',
-  'notificationDataCopy',
-  'clickAction',
-  'clickActionWeb',
+  'title',
+  'externalBody',
+  'internalBody',
   'clickActionUrl',
 ]
 
@@ -57,9 +55,6 @@ export class NotificationsService {
     private readonly cmsService: CmsService,
   ) {}
 
-  private cleanString(str: string) {
-    return str.replace(/\s+/g, ' ').trim()
-  }
   async getSenderOrganizationTitle(
     senderId: string,
     locale?: Locale,
@@ -76,7 +71,7 @@ export class NotificationsService {
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
-      item.title = this.cleanString(item.title)
+      item.title = cleanString(item.title)
       return item
     } else {
       this.logger.warn(`No org found for senderid: ${senderId}`)
@@ -130,10 +125,9 @@ export class NotificationsService {
         id: notification.id,
         messageId: notification.messageId,
         senderId: notification.senderId || '',
-        title: formattedTemplate.notificationTitle,
-        body: formattedTemplate.notificationBody,
-        dataCopy: formattedTemplate.notificationDataCopy,
-        clickAction: formattedTemplate.clickAction,
+        title: formattedTemplate.title,
+        externalBody: formattedTemplate.externalBody,
+        internalBody: formattedTemplate.internalBody,
         clickActionUrl: formattedTemplate.clickActionUrl,
         created: notification.created,
         updated: notification.updated,

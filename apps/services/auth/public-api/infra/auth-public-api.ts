@@ -50,6 +50,12 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
       PASSKEY_CORE_RP_NAME: 'Island.is',
       PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
       REDIS_NODES: REDIS_NODE_CONFIG,
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
+      COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:

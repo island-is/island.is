@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
@@ -37,17 +37,17 @@ import * as strings from './DefendantInfo.strings'
 interface Props {
   defendant: Defendant
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   onChange: (updatedDefendant: UpdateDefendantInput) => void
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
   nationalIdImmutable: boolean
 }
 
-const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const DefendantInfo: FC<Props> = (props) => {
   const {
     defendant,
     workingCase,
