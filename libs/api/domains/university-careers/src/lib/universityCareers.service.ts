@@ -32,23 +32,9 @@ const FEATURE_FLAGS: Record<Exclude<UniversityId, 'hi'>, Features> = {
 export class UniversityCareersService {
   constructor(
     private universityCareers: UniversityCareersClientService,
-    private readonly cmsContentfulService: CmsContentfulService,
     private readonly featureFlagService: FeatureFlagService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  private getContentfulOrganizations = async (locale: Locale) => {
-    const universityIds = Object.values(UniversityId)
-    const referenceIds = universityIds.map(
-      (id) => UniversityContentfulReferenceIds[id],
-    )
-
-    //Get all organizations now -> fewer contentful calls
-    return this.cmsContentfulService.getOrganizations({
-      lang: locale,
-      referenceIdentifiers: referenceIds,
-    })
-  }
 
   async getStudentTrackHistory(
     user: User,
