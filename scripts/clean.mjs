@@ -181,30 +181,24 @@ function findAndDelete(baseDir, patternCheck, deleteDirectories = false) {
         return
       }
 
-      if (!dry(`Would delete: ${filePath}`)) {
-        try {
-          log(`Deleting now: ${filePath}`)
-          fs.unlinkSync(filePath)
-        } catch (err) {
-          log(`Failed to delete file: ${filePath}`, err)
-        }
+      if (dry(`Would delete: ${filePath}`)) return
+      try {
+        log(`Deleting now: ${filePath}`)
+        fs.unlinkSync(filePath)
+      } catch (err) {
+        log(`Failed to delete file: ${filePath}`, err)
       }
     })
   }
 
-  if (deleteDirectories && patternCheck(baseDir)) {
-    if (!dry(`Would delete directory: ${baseDir}`)) {
-      try {
-        log(`Deleting directory now: ${baseDir}`)
-        fs.rmSync(baseDir, { recursive: true, force: true })
-      } catch (err) {
-        log(`Failed to delete directory: ${baseDir}`, err)
-      }
-    }
-    return
+  if (!deleteDirectories || !patternCheck(baseDir)) return walkSync(baseDir)
+  if (dry(`Would delete directory: ${baseDir}`)) return
+  try {
+    log(`Deleting directory now: ${baseDir}`)
+    fs.rmSync(baseDir, { recursive: true, force: true })
+  } catch (err) {
+    log(`Failed to delete directory: ${baseDir}`, err)
   }
-
-  walkSync(baseDir)
 }
 
 function cleanGenerated() {
