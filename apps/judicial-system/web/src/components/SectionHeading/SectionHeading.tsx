@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 
 import { Box, ResponsiveProp, Space, Text } from '@island.is/island-ui/core'
 
@@ -13,7 +13,7 @@ interface Props {
   heading?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 }
 
-const SectionHeading: React.FC<React.PropsWithChildren<Props>> = ({
+const SectionHeading: FC<Props> = ({
   title,
   required,
   tooltip,

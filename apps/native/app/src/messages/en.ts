@@ -155,8 +155,8 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.notifications': 'Notifications',
   'home.welcomeText': 'Hi',
+  'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
     'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
   'home.onboardingModule.card2':
