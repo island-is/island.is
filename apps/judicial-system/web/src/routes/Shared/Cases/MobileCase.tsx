@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC, PropsWithChildren } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
@@ -24,9 +24,13 @@ interface CategoryCardProps {
   isLoading?: boolean
 }
 
-export const CategoryCard: React.FC<
-  React.PropsWithChildren<CategoryCardProps>
-> = ({ heading, onClick, tags, children, isLoading = false }) => {
+export const CategoryCard: FC<PropsWithChildren<CategoryCardProps>> = ({
+  heading,
+  onClick,
+  tags,
+  children,
+  isLoading = false,
+}) => {
   const { LoadingIndicator } = useCaseList()
 
   return (
@@ -57,7 +61,7 @@ interface Props {
   isLoading?: boolean
 }
 
-const MobileCase: React.FC<React.PropsWithChildren<Props>> = ({
+const MobileCase: FC<PropsWithChildren<Props>> = ({
   theCase,
   onClick,
   isCourtRole,

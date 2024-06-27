@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -31,7 +31,7 @@ import {
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
-const IndictmentOverview = () => {
+const IndictmentOverview: FC = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
