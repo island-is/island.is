@@ -420,6 +420,7 @@ export const slices = gql`
       url
     }
     dividerOnTop
+    onlyUseOneTitle
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
