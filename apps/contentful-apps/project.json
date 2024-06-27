@@ -97,9 +97,7 @@
     "docker-next": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "echo not implemented"
-        ]
+        "commands": ["echo not implemented"]
       }
     }
   }
