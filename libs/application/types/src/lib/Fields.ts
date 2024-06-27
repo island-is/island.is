@@ -114,6 +114,9 @@ export type TableRepeaterItem = {
       component: 'checkbox'
       large?: boolean
     }
+  | {
+    component: 'nationalIdWithName'
+  }
 )
 
 export type AlertMessageLink = {
