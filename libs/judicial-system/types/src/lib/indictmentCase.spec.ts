@@ -29,7 +29,7 @@ describe('getIndictmentVerdictAppealDeadline', () => {
     const expectedDeadline = new Date('2024-06-01T00:00:00Z')
     expectedDeadline.setDate(expectedDeadline.getDate() + 28)
 
-    expect(result).toBe(expectedDeadline.toISOString())
+    expect(result).toStrictEqual(expectedDeadline)
   })
 
   it('should handle a single valid date', () => {
@@ -38,6 +38,6 @@ describe('getIndictmentVerdictAppealDeadline', () => {
     const expectedDeadline = new Date('2024-07-15T00:00:00Z')
     expectedDeadline.setDate(expectedDeadline.getDate() + 28)
 
-    expect(result).toBe(expectedDeadline.toISOString())
+    expect(result).toStrictEqual(expectedDeadline)
   })
 })
