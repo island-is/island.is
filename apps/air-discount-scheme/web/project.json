@@ -122,6 +122,8 @@
         "{projectRoot}/graphql/possibleTypes.json"
       ]
     },
-    "docker-next": {}
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
   }
 }

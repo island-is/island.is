@@ -40,6 +40,8 @@
       },
       "outputs": ["{options.outputDir}"]
     },
-    "docker-static": {}
+    "docker-static": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    }
   }
 }

@@ -105,7 +105,9 @@
         "cwd": "apps/services/university-gateway"
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {

@@ -101,7 +101,9 @@
         "command": "graphql-codegen --config apps/judicial-system/web/codegen.yml"
       }
     },
-    "docker-next": {},
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
