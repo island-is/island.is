@@ -30,24 +30,20 @@ export class FriggClientService {
   }
 
   async getTypes(user: User): Promise<string[]> {
-    // this.friggApiWithAuth(user).getTypes()
-    const t = await this.friggApiWithAuth(user).getTypes()
-    return t
+    return await this.friggApiWithAuth(user).getTypes()
+
   }
 
   async getAllSchoolsByMunicipality(user: User): Promise<OrganizationModel[]> {
-    return this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
+    return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
   }
 
-  async getUserById(user: User): Promise<UserModel> {
-    console.log('getUserById')
-    try {
-      return this.friggApiWithAuth(user).getUserBySourcedId({
-        nationalId: '1111111119',
+  async getUserById(user: User, ): Promise<UserModel> {
+
+      // TODO: use childs nationalid
+      return await this.friggApiWithAuth(user).getUserBySourcedId({
+        nationalId: user.nationalId,
       })
-    } catch (error) {
-      console.log('error', error)
-      throw error
-    }
+   
   }
 }
