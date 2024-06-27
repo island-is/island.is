@@ -37,11 +37,11 @@ export const InboxModule = React.memo(
     const { getOrganizationLogoUrl } = useOrganizationsStore()
 
     return (
-      <SafeAreaView style={{ marginTop: 16 }}>
+      <SafeAreaView style={{ marginTop: theme.spacing[2] }}>
         <Host>
           <TouchableOpacity
             onPress={() => navigateTo(`/inbox`)}
-            style={{ marginHorizontal: 16 }}
+            style={{ marginHorizontal: theme.spacing[2] }}
           >
             <Heading
               button={

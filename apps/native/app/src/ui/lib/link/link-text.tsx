@@ -1,6 +1,6 @@
 import React from 'react'
 import styled, { useTheme } from 'styled-components/native'
-import { ImageSourcePropType, Text, TextStyle } from 'react-native'
+import { ImageSourcePropType, Text } from 'react-native'
 import { fontByWeight } from '@ui/utils'
 
 const Host = styled.View`
@@ -12,7 +12,7 @@ const Host = styled.View`
 const variants = {
   small: { fontSize: 12, lineHeight: 16, fontWeight: '600' },
   large: { fontSize: 16, lineHeight: 20, fontWeight: '600' },
-}
+} as const
 
 type LinkVariant = keyof typeof variants
 
@@ -24,18 +24,17 @@ interface LinkTextProps {
 
 export function LinkText({ children, variant = 'large' }: LinkTextProps) {
   const theme = useTheme()
-  const styles = (variants as Record<string, TextStyle>)[variant]
-  const fontSize = styles.fontSize ?? 15
-  const variantLineHeight = (styles.lineHeight ?? 1) / (styles.fontSize ?? 1)
-  const lineHeight = fontSize * variantLineHeight ?? styles.lineHeight
-  const fontFamily = fontByWeight(styles.fontWeight || '400')
+  const styles = variants[variant]
+  const variantLineHeight = styles.lineHeight / styles.fontSize
+  const lineHeight = styles.fontSize * variantLineHeight ?? styles.lineHeight
+  const fontFamily = fontByWeight(styles.fontWeight)
 
   return (
     <Host>
       <Text
         style={{
           lineHeight,
-          fontSize,
+          fontSize: styles.fontSize,
           fontFamily,
           color: theme.color.blue400,
           fontWeight: styles.fontWeight,

@@ -33,7 +33,12 @@ export const HelloModule = React.memo(() => {
   }
 
   return (
-    <SafeAreaView style={{ marginHorizontal: 16, marginTop: 16 }}>
+    <SafeAreaView
+      style={{
+        marginHorizontal: theme.spacing[2],
+        marginTop: theme.spacing[2],
+      }}
+    >
       <Host>
         <Typography color={theme.color.purple400} weight="600">
           <FormattedMessage id="home.goodDay" defaultMessage="Góðan dag," />
