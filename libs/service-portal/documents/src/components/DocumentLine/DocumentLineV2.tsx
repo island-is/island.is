@@ -190,6 +190,7 @@ export const DocumentLine: FC<Props> = ({
                 setSelectLine(documentLine.id)
               }
             }}
+            as={asFrame ? 'div' : 'button'}
             avatar={
               (hasAvatarFocus || selected) && !asFrame ? (
                 <Box

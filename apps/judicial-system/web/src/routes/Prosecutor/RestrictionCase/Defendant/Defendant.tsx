@@ -41,7 +41,7 @@ import {
   usePoliceCaseNumbers,
 } from '../../components'
 
-export const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Defendant = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =

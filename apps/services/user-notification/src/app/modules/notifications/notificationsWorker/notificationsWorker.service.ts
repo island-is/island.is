@@ -156,13 +156,13 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         {
           component: 'Heading',
           context: {
-            copy: formattedTemplate.notificationTitle,
+            copy: formattedTemplate.title,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: formattedTemplate.notificationBody,
+            copy: formattedTemplate.externalBody,
           },
         },
         {
@@ -206,9 +206,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         name: fullName,
         address: recipientEmail,
       },
-      subject: formattedTemplate.notificationTitle,
+      subject: formattedTemplate.title,
       template: {
-        title: formattedTemplate.notificationTitle,
+        title: formattedTemplate.title,
         body: generateBody(),
       },
     }

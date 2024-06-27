@@ -28,11 +28,10 @@ const user: User = {
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title ',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
-  clickAction: 'Demo click action {{arg2}}',
-  category: 'Demo category',
+  title: 'Demo title ',
+  externalBody: 'Demo body {{arg1}}',
+  internalBody: 'Demo data copy',
+  clickActionUrl: 'Demo click action {{arg2}}',
   args: ['arg1', 'arg2'],
 }
 
@@ -148,8 +147,8 @@ describe('NotificationsService', () => {
       mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
-    expect(template.notificationBody).toEqual('Demo body hello')
-    expect(template.clickAction).toEqual('Demo click action world')
+    expect(template.externalBody).toEqual('Demo body hello')
+    expect(template.clickActionUrl).toEqual('Demo click action world')
   })
 
   describe('findMany', () => {
