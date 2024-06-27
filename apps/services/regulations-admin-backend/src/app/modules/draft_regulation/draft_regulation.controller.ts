@@ -120,7 +120,7 @@ export class DraftRegulationController {
   })
   async getAll(
     @CurrentUser() user: User,
-    @Param('page') page: number,
+    @Query('page') page: number,
   ): Promise<TaskListType> {
     // managers can see all, creators can only see their own
     const canManage = user.scope.includes(
