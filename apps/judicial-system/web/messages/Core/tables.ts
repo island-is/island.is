@@ -108,4 +108,15 @@ export const tables = defineMessages({
     defaultMessage: 'Frestað',
     description: 'Notaður sem texti þegar mál er frestað.',
   },
+  court: {
+    id: 'judicial.system.core:tables.court',
+    defaultMessage: 'Dómstóll',
+    description: 'Notaður sem titill fyrir dómstóll dálk í lista yfir mál.',
+  },
+  sentencingDate: {
+    id: 'judicial.system.core:tables.sentencing_date',
+    defaultMessage: 'Dómsuppkvaðning',
+    description:
+      'Notaður sem titill fyrir Dómsuppkvaðning dálk í lista yfir mál.',
+  },
 })
