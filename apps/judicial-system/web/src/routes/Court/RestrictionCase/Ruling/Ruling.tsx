@@ -107,7 +107,7 @@ export const getConclusionAutofill = (
       })
 }
 
-export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Ruling = () => {
   const {
     workingCase,
     setWorkingCase,
