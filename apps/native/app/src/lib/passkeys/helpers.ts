@@ -125,13 +125,13 @@ export const addPasskeyAsLoginHint = (
   }
 
   if (url.includes('/minarsidur')) {
-    return `${origin}/minarsidur/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
+    return `${origin}/minarsidur/login?login_hint=passkey:${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
 
   if (url.includes('/umsoknir')) {
-    return `${origin}/umsoknir/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
+    return `${origin}/umsoknir/login?login_hint=passkey:${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
