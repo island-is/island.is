@@ -314,7 +314,7 @@ api:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=2880 -r dd-trace/init'
     REGULATIONS_ADMIN_URL: 'http://web-regulations-admin-backend.regulations-admin.svc.cluster.local'
     SEND_FROM_EMAIL: 'development@island.is'
     SERVERSIDE_FEATURES_ON: ''
@@ -456,9 +456,9 @@ api:
   resources:
     limits:
       cpu: '1200m'
-      memory: '2048Mi'
+      memory: '3200Mi'
     requests:
-      cpu: '350m'
+      cpu: '400m'
       memory: '896Mi'
   secrets:
     ADR_LICENSE_FETCH_TIMEOUT: '/k8s/api/ADR_LICENSE_FETCH_TIMEOUT'
@@ -537,6 +537,7 @@ api:
     SYSLUMENN_USERNAME: '/k8s/api/SYSLUMENN_USERNAME'
     TR_PKPASS_API_KEY: '/k8s/api/TR_PKPASS_API_KEY'
     ULTRAVIOLET_RADIATION_API_KEY: '/k8s/api/ULTRAVIOLET_RADIATION_API_KEY'
+    UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL: '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL'
     UST_PKPASS_API_KEY: '/k8s/api/UST_PKPASS_API_KEY'
     VEHICLES_ALLOW_CO_OWNERS: '/k8s/api/VEHICLES_ALLOW_CO_OWNERS'
     VE_PKPASS_API_KEY: '/k8s/api/VE_PKPASS_API_KEY'
@@ -638,6 +639,7 @@ application-system-api:
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-TEST/GOV/6601241280/MMS-Protected/inna-v1'
+    XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1'
     XROAD_OFFICIAL_JOURNAL_APPLICATION_PATH: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application'

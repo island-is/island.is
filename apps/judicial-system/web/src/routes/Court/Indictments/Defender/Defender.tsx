@@ -23,7 +23,7 @@ import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/va
 import SelectDefender from './SelectDefender'
 import { defender as m } from './Defender.strings'
 
-const HearingArrangements: React.FC<React.PropsWithChildren<unknown>> = () => {
+const HearingArrangements = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()

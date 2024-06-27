@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -24,6 +24,7 @@ import {
 import {
   CaseFile,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -33,7 +34,7 @@ import {
 
 import { strings } from './Summary.strings'
 
-const Summary: React.FC = () => {
+const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -66,7 +67,14 @@ const Summary: React.FC = () => {
     (acc, cf) => {
       if (cf.category === CaseFileCategory.COURT_RECORD) {
         acc[0].push(cf)
-      } else if (cf.category === CaseFileCategory.RULING) {
+      } else if (
+        cf.category === CaseFileCategory.RULING &&
+        workingCase.indictmentRulingDecision &&
+        [
+          CaseIndictmentRulingDecision.RULING,
+          CaseIndictmentRulingDecision.DISMISSAL,
+        ].includes(workingCase.indictmentRulingDecision)
+      ) {
         acc[1].push(cf)
       }
 
