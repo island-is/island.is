@@ -43,7 +43,7 @@ interface UserInfo {
 interface AuthStore extends State {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
-  lockScreenActivatedAt?: number | null
+  lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
   noLockScreenUntilNextAppStateActive: boolean
   isCogitoAuth: boolean

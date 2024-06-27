@@ -347,6 +347,14 @@ export const caseListInclude: Includeable[] = [
     required: false,
     where: { commentType: { [Op.in]: commentTypes } },
   },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: { eventType: { [Op.in]: eventTypes } },
+    order: [['created', 'ASC']],
+    separate: true,
+  },
 ]
 
 export const listOrder: OrderItem[] = [
