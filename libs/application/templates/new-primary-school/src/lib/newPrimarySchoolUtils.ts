@@ -506,3 +506,17 @@ export const getOptionsListByType = async (
     ) ?? []
   )
 }
+
+export const getPronouns = (application: Application) => {
+  const pronouns = [
+    {
+      value: '1',
+      label: 'Hann',
+    },
+    {
+      value: '2',
+      label: 'Hún',
+    },
+  ]
+  return pronouns
+}

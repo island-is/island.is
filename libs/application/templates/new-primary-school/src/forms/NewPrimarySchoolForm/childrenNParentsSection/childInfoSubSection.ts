@@ -13,6 +13,7 @@ import {
   getApplicationExternalData,
   getGenderOptions,
   getSelectedChild,
+  getPronouns,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
@@ -73,10 +74,13 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
-        buildTextField({
-          id: 'childInfo.chosenName',
-          title: newPrimarySchoolMessages.childrenNParents.childInfoChosenName,
+        buildSelectField({
+          id: 'childInfo.pronoun',
+          title: newPrimarySchoolMessages.childrenNParents.pronoun,
+          placeholder:
+            newPrimarySchoolMessages.childrenNParents.pronounPlaceholder,
           width: 'half',
+          options: getPronouns,
         }),
         buildSelectField({
           id: 'childInfo.gender',
