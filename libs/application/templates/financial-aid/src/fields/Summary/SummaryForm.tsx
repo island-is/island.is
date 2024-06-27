@@ -62,7 +62,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
     childrenFiles: UploadFile[],
     income: ApproveOptions,
   ) => {
-    if (childrenFiles.length > 0) {
+    if (childrenFiles?.length > 0) {
       return Routes.CHILDRENFILES
     }
     if (income === ApproveOptions.Yes) {
