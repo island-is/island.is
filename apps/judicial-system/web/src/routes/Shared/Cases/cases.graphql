@@ -94,6 +94,7 @@ query Cases {
     indictmentVerdictAppealDeadline
     indictmentRulingDecision
     indictmentDecision
+    indictmentCompletedDate
     courtSessionType
   }
 }
