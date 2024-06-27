@@ -20,4 +20,4 @@ else
   EXTRA_ARGS=(--affected --base "$BASE" --head "$HEAD")
 fi
 
-npx nx show projects --withTarget="$1" "${EXTRA_ARGS[@]}" --json | jq -r 'join(", ")'
+npx nx show projects --targets="$1" "${EXTRA_ARGS[@]}" --json | jq -r 'join(", ")'
