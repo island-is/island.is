@@ -21,7 +21,7 @@ import { useUserQuery } from './user.generated'
 import { strings } from './ChangeUser.strings'
 import * as styles from '../Users/Users.css'
 
-export const ChangeUser: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const ChangeUser = () => {
   const router = useRouter()
   const id = router.query.id as string // We know it is a string
   const { formatMessage } = useIntl()
