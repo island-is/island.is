@@ -1,19 +1,3 @@
-export const SEARCH_PROPERTIES_QUERY = `
-    query SearchPropertiesQuery($input: SearchForPropertyInput!) {
-      searchForProperty(input: $input) {
-        propertyNumber
-        defaultAddress {
-          display
-        }
-        unitsOfUse {
-          unitsOfUse {
-            explanation
-          }
-        }
-      }
-    }
-  `
-
 export const SEARCH_ALL_PROPERTIES_QUERY = `
     query SearchPropertiesQuery($input: SearchForPropertyInput!) {
       searchForAllProperties(input: $input) {
@@ -52,6 +36,14 @@ export const VALIDATE_MORTGAGE_CERTIFICATE_QUERY = `
         propertyNumber
         exists
         hasKMarking
+      }
+    }
+  `
+
+export const REQUEST_CORRECTION_ON_MORTGAGE_CERTIFICATE_QUERY = `
+    query RequestCorrectionOnMortgageCertificateQuery($input: RequestCorrectionOnMortgageCertificateInput!) {
+      requestCorrectionOnMortgageCertificate(input: $input) {
+        hasSentRequest
       }
     }
   `

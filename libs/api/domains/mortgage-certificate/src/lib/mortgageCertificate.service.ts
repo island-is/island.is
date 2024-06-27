@@ -14,6 +14,7 @@ import {
 } from './mortgageCertificate.types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+// import { Identity } from '@island.is/api/domains/identity'
 
 @Injectable()
 export class MortgageCertificateService {
@@ -40,6 +41,7 @@ export class MortgageCertificateService {
     identityData: Identity,
     userProfileData: UserProfile,
   ): Promise<RequestCorrection> {
+    console.log(propertyNumber, identityData, userProfileData)
     const person: Person = {
       name: identityData?.name,
       ssn: identityData?.nationalId,
@@ -61,6 +63,8 @@ export class MortgageCertificateService {
     const uploadDataName =
       'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
     const uploadDataId = 'VedbokavottordVilla1.0'
+
+    console.log(persons, undefined, extraData, uploadDataName, uploadDataId)
 
     try {
       const res = await this.syslumennService.uploadData(

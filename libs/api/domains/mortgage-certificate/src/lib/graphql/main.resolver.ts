@@ -3,8 +3,12 @@ import { UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { IdsUserGuard, ScopesGuard, Scopes } from '@island.is/auth-nest-tools'
 import { MortgageCertificateService } from '../mortgageCertificate.service'
-import { MortgageCertificateValidationModel } from './models'
+import {
+  MortgageCertificateValidationModel,
+  RequestCorrectionOnMortgageCertificateModel,
+} from './models'
 import { ValidateMortgageCertificateInput } from './dto/validateMortgageCertificate.input'
+import { RequestCorrectionOnMortgageCertificateInput } from './dto/requestCorrectionOnMortgageCertificate.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.internalProcuring)
@@ -20,6 +24,17 @@ export class MainResolver {
   ) {
     return await this.mortgageCertificateService.validateMortgageCertificate(
       input.properties,
+    )
+  }
+
+  @Query(() => RequestCorrectionOnMortgageCertificateModel)
+  async requestCorrectionOnMortgageCertificate(
+    @Args('input') input: RequestCorrectionOnMortgageCertificateInput,
+  ) {
+    return await this.mortgageCertificateService.requestCorrectionOnMortgageCertificate(
+      input.propertyNumber,
+      input.identityData,
+      input.userProfileData,
     )
   }
 }

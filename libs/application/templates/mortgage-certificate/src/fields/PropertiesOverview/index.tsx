@@ -2,31 +2,48 @@ import React, { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { overview } from '../../lib/messages'
-import { AlertMessage, Box, LoadingDots, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  LoadingDots,
+  SkeletonLoader,
+  Text,
+} from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import { getValueViaPath } from '@island.is/application/core'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { MortgageCertificateValidation, SelectedProperty } from '../../shared'
-import { gql, useLazyQuery } from '@apollo/client'
-import { VALIDATE_MORTGAGE_CERTIFICATE_QUERY } from '../../graphql/queries'
+import { gql, useLazyQuery, useMutation } from '@apollo/client'
+import {
+  REQUEST_CORRECTION_ON_MORTGAGE_CERTIFICATE_QUERY,
+  VALIDATE_MORTGAGE_CERTIFICATE_QUERY,
+} from '../../graphql/queries'
+import { getIdentityData, getUserProfileData } from '../../util'
 
 export const validateMortgageCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
 `
+export const requestCorrectionOnMortgageCertificateQuery = gql`
+  ${REQUEST_CORRECTION_ON_MORTGAGE_CERTIFICATE_QUERY}
+`
 
 export const PropertiesOverview: FC<
   React.PropsWithChildren<FieldBaseProps>
-> = ({ application }) => {
-  const { formatMessage } = useLocale()
+> = ({ application, setBeforeSubmitCallback }) => {
+  const { formatMessage, locale } = useLocale()
   const properties = getValueViaPath(
     application.answers,
     'selectedProperties.properties',
     [],
   ) as SelectedProperty[]
-  const userEmail = getValueViaPath(
-    application.externalData,
-    'userProfile.data.email',
-    '',
-  ) as string
+
+  const identityData = getIdentityData(application)
+  const userProfileData = getUserProfileData(application)
+
+  const [errorValidating, setErrorValidating] = useState<boolean>(false)
+  const [errorSendingCorrection, setErrorSendingCorrection] =
+    useState<boolean>(false)
   const [propertiesShown, setPropertiesShown] = useState<
     (SelectedProperty & { exists: boolean; hasKMarking: boolean })[] | undefined
   >(undefined)
@@ -40,11 +57,13 @@ export const PropertiesOverview: FC<
     ) as SelectedProperty[],
   )
 
-  const [runQuery, { loading }] = useLazyQuery(
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+
+  const [runValidationQuery, { loading }] = useLazyQuery(
     validateMortgageCertificateQuery,
     {
-      onCompleted(result) {
-        // setShowSearchError(false)
+      async onCompleted(result) {
+        setErrorValidating(false)
         const res =
           result.validateMortgageCertificate as MortgageCertificateValidation[]
         const newProperties = res.map(
@@ -61,41 +80,167 @@ export const PropertiesOverview: FC<
             }
           },
         )
+
+        const updatedIncorrectPropertiesSent = [] as SelectedProperty[]
+        incorrectPropertiesSent.forEach((property) => {
+          const newProperty = newProperties.find(
+            (p) => p.propertyNumber === property.propertyNumber,
+          )
+          if (
+            newProperty &&
+            (!newProperty.exists || !newProperty.hasKMarking)
+          ) {
+            updatedIncorrectPropertiesSent.push(property)
+          }
+        })
+        console.log(updatedIncorrectPropertiesSent)
+
+        await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: {
+                ...application.answers,
+                incorrectPropertiesSent: updatedIncorrectPropertiesSent,
+              },
+            },
+            locale,
+          },
+        }).then(() => {
+          setIncorrectPropertiesSent(updatedIncorrectPropertiesSent)
+        })
+
         setPropertiesShown(newProperties)
         console.log(result)
-        // setFoundProperties(result.searchForAllProperties)
       },
       onError() {
-        // setShowSearchError(true)
-        // setFoundProperties(undefined)
+        setErrorValidating(true)
       },
     },
   )
 
+  const [runCorrectionQuery, { loading: loadingCorrection }] = useLazyQuery(
+    requestCorrectionOnMortgageCertificateQuery,
+  )
+
   useEffect(() => {
-    runQuery({
+    runValidationQuery({
       variables: {
         input: {
-          // Only call for properties that are potentially valid
-          // and we have not asked Sýslumenn to fix yet
-          properties: properties
-            .filter(({ propertyNumber }) =>
-              incorrectPropertiesSent.length > 0
-                ? incorrectPropertiesSent.find(
-                    (property) => propertyNumber !== property.propertyNumber,
-                  )
-                : true,
-            )
-            .map(({ propertyNumber, propertyType }) => {
-              return {
-                propertyNumber,
-                propertyType,
-              }
-            }),
+          properties: properties.map(({ propertyNumber, propertyType }) => {
+            return {
+              propertyNumber,
+              propertyType,
+            }
+          }),
         },
       },
     })
   }, [])
+
+  useEffect(() => {
+    propertiesShown?.map((property) => {
+      if (
+        property.exists &&
+        !property.hasKMarking &&
+        !incorrectPropertiesSent.find(
+          ({ propertyNumber }) => property.propertyNumber === propertyNumber,
+        )
+      ) {
+        runCorrectionQuery({
+          variables: {
+            input: {
+              propertyNumber: property.propertyNumber,
+              identityData: identityData,
+              userProfileData: userProfileData,
+            },
+          },
+        }).then(async (res) => {
+          console.log('res', res)
+          if (
+            res.data?.requestCorrectionOnMortgageCertificate?.hasSentRequest
+          ) {
+            setErrorSendingCorrection(false)
+            await updateApplication({
+              variables: {
+                input: {
+                  id: application.id,
+                  answers: {
+                    ...application.answers,
+                    incorrectPropertiesSent: incorrectPropertiesSent.concat({
+                      propertyName: property.propertyName,
+                      propertyNumber: property.propertyNumber,
+                      propertyType: property.propertyType,
+                    }),
+                  },
+                },
+                locale,
+              },
+            }).then(() => {
+              setIncorrectPropertiesSent((prevIncorretPropertiesSent) =>
+                prevIncorretPropertiesSent.concat({
+                  propertyName: property.propertyName,
+                  propertyNumber: property.propertyNumber,
+                  propertyType: property.propertyType,
+                }),
+              )
+            })
+          } else {
+            setErrorSendingCorrection(true)
+          }
+        })
+      }
+    })
+  }, [propertiesShown])
+
+  setBeforeSubmitCallback &&
+    setBeforeSubmitCallback(async () => {
+      const properties = propertiesShown
+        ?.filter((property) => property.exists && property.hasKMarking)
+        .map((property) => {
+          return {
+            propertyName: property.propertyName,
+            propertyNumber: property.propertyNumber,
+            propertyType: property.propertyType,
+          }
+        })
+      if (
+        !loading &&
+        !loadingCorrection &&
+        !errorValidating &&
+        !errorSendingCorrection &&
+        properties?.length !== 0
+      ) {
+        return [true, null]
+      }
+      if (
+        !loading &&
+        !loadingCorrection &&
+        !errorValidating &&
+        properties?.length !== 0 &&
+        errorSendingCorrection
+      ) {
+        // If there was no error validating the properties but had problem sending correction
+        // to sýslumenn, then we will update the list of properties on continue, and remove properties that
+        // do not exist and/or have k marking
+        // If all properties were invalid then the user will not be able to continue
+        await updateApplication({
+          variables: {
+            input: {
+              id: application.id,
+              answers: {
+                ...application.answers,
+                selectedProperties: {
+                  properties: properties,
+                },
+              },
+            },
+            locale,
+          },
+        })
+      }
+      return [false, '']
+    })
 
   return (
     <Box paddingTop={1}>
@@ -119,30 +264,76 @@ export const PropertiesOverview: FC<
           )
         })}
       {loading && (
-        <Box display="flex" justifyContent="center" paddingTop={4}>
-          <LoadingDots large />
-        </Box>
+        <SkeletonLoader
+          height={76}
+          repeat={properties.length}
+          space={1}
+          borderRadius="standard"
+        />
       )}
       {!loading &&
         propertiesShown?.map((property, index) => {
           return (
-            !property.hasKMarking &&
-            property.exists && (
+            (!property.hasKMarking || !property.exists) && (
               <Box paddingTop={2} key={`${property.propertyNumber}-${index}`}>
                 <AlertMessage
                   type="warning"
                   title={formatMessage(overview.labels.warningAlertTitle, {
                     propertyName: property.propertyName,
                   })}
-                  message={formatMessage(overview.labels.warningAlertMessage, {
-                    email: userEmail,
-                  })}
+                  message={formatMessage(overview.labels.warningAlertMessage)}
                 />
               </Box>
             )
           )
         })}
-      {/* TODO: Add AlertMessage for all properties in propertiesShown that have exists or hasKMarking as false */}
+      {!loading &&
+        !loadingCorrection &&
+        incorrectPropertiesSent.map((property, index) => {
+          return (
+            <Box paddingTop={2} key={`incorrect-properties-${index}`}>
+              <AlertMessage
+                type="success"
+                title={formatMessage(overview.labels.successAlertTitle, {
+                  propertyName: property.propertyName,
+                })}
+                message={formatMessage(overview.labels.successAlertMessage)}
+              />
+            </Box>
+          )
+        })}
+      {loadingCorrection && (
+        <Box paddingTop={3}>
+          <Text variant="h4" paddingBottom={2}>
+            {formatMessage(overview.labels.fetchingCorrectionMessage)}
+          </Text>
+          <LoadingDots />
+        </Box>
+      )}
+      {!loading &&
+        !loadingCorrection &&
+        (errorValidating || errorSendingCorrection) && (
+          <Box paddingTop={2}>
+            <AlertMessage
+              type="error"
+              title={formatMessage(overview.labels.errorAlertTitle)}
+              action={
+                <Box paddingTop={1}>
+                  <Button
+                    colorScheme="destructive"
+                    iconType="filled"
+                    preTextIconType="filled"
+                    size="small"
+                    variant="primary"
+                    onClick={() => history.go(0)}
+                  >
+                    {formatMessage(overview.labels.errorAlertMessage)}
+                  </Button>
+                </Box>
+              }
+            />
+          </Box>
+        )}
     </Box>
   )
 }

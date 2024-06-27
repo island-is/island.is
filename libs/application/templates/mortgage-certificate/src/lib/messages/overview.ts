@@ -32,20 +32,35 @@ export const overview = {
     warningAlertMessage: {
       id: 'mc.application:overview.labels.warningAlertMessage',
       defaultMessage:
-        'Því miður getum við ekki sótt rafrænt veðbókarvottorð fyrir valda eign þar skráning á viðkomandi eign þarnast uppfærslu. Sýslumanni í því umdæmi sem eignin er í verður send beiðni um lagfæringu, þú munt fá tilkynningu (á netfang) að yfirferð lokinni og getur þá reynt aftur.',
+        'Ekki tókst að sækja rafrænt veðbókarvottorð fyrir valda eign. Beiðni verður send sýslumanni í því umdæmi sem eignin er í. Að lokinni lagfæringu munt þú fá tilynningu í pósthólf þitt á ísland.is og getur þá reynt aftur.',
       description: 'Overview warning alert message ',
     },
     successAlertTitle: {
       id: 'mc.application:overview.labels.successAlertTitle',
       defaultMessage:
-        'Beiðni um lagfæringu á veðbókarvottorði hefur verið send sýslumanni',
+        'Beiðni um lagfæringu á veðbókarvottorð fyrir {propertyName} hefur verið send sýslumanni',
       description: 'Overview success alert message title',
     },
     successAlertMessage: {
       id: 'mc.application:overview.labels.successAlertMessage',
       defaultMessage:
-        'Þú munt fá tilkynningu á netfangið {email} að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína.',
+        'Þú munt fá tilkynningu í pósthólfið þitt að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína.',
       description: 'Overview success alert message ',
+    },
+    errorAlertTitle: {
+      id: 'mc.application:overview.labels.errorAlertTitle',
+      defaultMessage: 'Ekki náðist samband við þjónustu augnablikinu',
+      description: 'Overview error alert message title',
+    },
+    errorAlertMessage: {
+      id: 'mc.application:overview.labels.errorAlertMessage',
+      defaultMessage: 'Vinsamlega reyndu aftur',
+      description: 'Overview error alert message ',
+    },
+    fetchingCorrectionMessage: {
+      id: 'mc.application:overview.labels.fetchingCorrectionMessage',
+      defaultMessage: 'Sendi beiðni um lagfæringu til sýslumanns',
+      description: 'Fetching correction ',
     },
   }),
 }

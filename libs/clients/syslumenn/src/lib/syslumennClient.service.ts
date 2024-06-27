@@ -478,7 +478,7 @@ export class SyslumennService {
         }
       }) ?? []
 
-    console.log('CERTIFICATES: ', certificates)
+    // console.log('CERTIFICATES: ', certificates)
 
     return certificates
   }

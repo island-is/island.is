@@ -1,6 +1,12 @@
 import { z } from 'zod'
 import { PropertyTypes } from './constants'
 
+const Property = z.object({
+  propertyNumber: z.string(),
+  propertyName: z.string(),
+  propertyType: z.string(),
+})
+
 export const MortgageCertificateSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   selectedProperties: z.object({
@@ -12,25 +18,9 @@ export const MortgageCertificateSchema = z.object({
       ])
       .optional(),
     searchStr: z.string().optional(),
-    properties: z
-      .array(
-        z.object({
-          propertyNumber: z.string(),
-          propertyName: z.string(),
-          propertyType: z.string(),
-        }),
-      )
-      .nonempty(),
+    properties: z.array(Property).nonempty(),
   }),
-  incorrectPropertiesSent: z
-    .array(
-      z.object({
-        propertyNumber: z.string(),
-        propertyName: z.string(),
-        propertyType: z.string(),
-      }),
-    )
-    .optional(),
+  incorrectPropertiesSent: z.array(Property).optional(),
 })
 
 export type MortgageCertificate = z.TypeOf<typeof MortgageCertificateSchema>
