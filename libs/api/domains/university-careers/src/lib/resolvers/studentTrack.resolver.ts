@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, ResolveField, Resolver } from '@nestjs/graphql'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Audit } from '@island.is/nest/audit'
 import {
@@ -11,19 +11,17 @@ import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { StudentInfoByUniversityInput } from './dto/studentInfoByUniversity.input'
+import { StudentTrack } from '../models/studentTrack.model'
+import { UniversityCareersService } from '../universityCareers.service'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { StudentInfoByUniversityInput } from '../dto/studentInfoByUniversity.input'
 import { Locale } from '@island.is/shared/types'
-import { StudentTrack } from './models/studentTrack.model'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import { StudentInfoInput } from './dto/studentInfo.input'
-import { UniversityCareersService } from './universityCareers.service'
-import { StudentTrackHistory } from './models/studentTrackHistory.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
-@Resolver(() => StudentTrackHistory)
+@Resolver(() => StudentTrack)
 @Audit({ namespace: '@island.is/api/university-careers' })
-export class UniversityCareersResolver {
+export class StudentTrackResolver {
   constructor(
     private service: UniversityCareersService,
     @Inject(DownloadServiceConfig.KEY)
@@ -32,20 +30,6 @@ export class UniversityCareersResolver {
     >,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
-
-  @Query(() => StudentTrackHistory, {
-    name: 'universityCareersStudentTrackHistory',
-  })
-  @Audit()
-  async studentTrackHistory(
-    @CurrentUser() user: User,
-    @Args('input') input: StudentInfoInput,
-  ): Promise<StudentTrackHistory | null> {
-    return await this.service.getStudentTrackHistory(
-      user,
-      input.locale as Locale,
-    )
-  }
 
   @Query(() => StudentTrack, {
     name: 'universityCareersStudentTrack',
