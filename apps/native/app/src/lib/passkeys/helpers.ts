@@ -118,20 +118,20 @@ export const addPasskeyAsLoginHint = (
     return
   }
 
-  const parsedUrl = new URL(url)
+  const origin = extractProtocolAndDomain(url)
+
+  if (origin.length === 0) {
+    return false
+  }
 
   if (url.includes('/minarsidur')) {
-    return `${
-      parsedUrl.origin
-    }/minarsidur/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
+    return `${origin}/minarsidur/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
 
   if (url.includes('/umsoknir')) {
-    return `${
-      parsedUrl.origin
-    }/umsoknir/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
+    return `${origin}/umsoknir/login?login_hint=${authenticationResponse}&target_link_uri=${encodeURIComponent(
       url,
     )}`
   }
@@ -148,4 +148,15 @@ export const doesUrlSupportPasskey = (url: string): boolean => {
     return true
   }
   return false
+}
+
+function extractProtocolAndDomain(url: string): string {
+  const pattern = /^(https?:\/\/)?(www\.)?([^/:]+)/i
+  const match = url.match(pattern)
+  if (match) {
+    const protocol = match[1] ? match[1] : ''
+    const domain = match[3]
+    return `${protocol}${domain}`
+  }
+  return ''
 }
