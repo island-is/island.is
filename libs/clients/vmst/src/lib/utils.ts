@@ -76,9 +76,9 @@ export const createWrappedFetchWithLogging = (
             // 'paymentInfo',
             'periods',
             // 'phoneNumber',
-            'rightsCode',
-            'status',
-            // 'testData',
+            // 'rightsCode',
+            // 'status',
+            'testData',
           ],
         )
         // Then omit the sensitive sub-attributes
