@@ -84,6 +84,12 @@ export const cases = {
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
       },
+      prisonAdminIndictmentCaseTitle: {
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.prison_admin_indictment_case_title',
+        defaultMessage: 'Mál til fullnustu',
+        description:
+          'Notaður sem titill á málalista yfir mál til fullnustu hjá FMST.',
+      },
     }),
     deleteCaseModal: defineMessages({
       title: {
