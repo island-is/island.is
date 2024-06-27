@@ -35,9 +35,9 @@ type Init = {
   ]
   applicationComment: string
   employers: {
-    email: string
+    email?: string // Modified to be optional
     nationalRegistryId: string
-    approverNationalRegistryId: string
+    approverNationalRegistryId?: string // Modified to be optional
   }[]
   status: string
   rightsCode: string
@@ -56,46 +56,40 @@ export const createWrappedFetchWithLogging = (
   return new Promise((resolve, reject) => {
     fetch(input, init)
       .then(async (response) => {
-        let requestBody = init?.body ? JSON.parse(init?.body as string) : {}
-
         // Filter known sensitive data
         // First pick what we need
-        requestBody = pick(requestBody, [
-          'adoptionDate',
-          // 'applicant',
-          'applicationComment',
-          'applicationFundId',
-          'applicationId',
-          'attachments',
-          'dateOfBirth',
-          // 'email',
-          'employers',
-          'expectedDateOfBirth',
-          'otherParentBlocked',
-          // 'otherParentId',
-          'paymentInfo',
-          'periods',
-          // 'phoneNumber',
-          'rightsCode',
-          'status',
-          // 'testData',
-        ])
+        const requestBody = pick(
+          (init?.body ? JSON.parse(init?.body as string) : {}) as Partial<Init>,
+          [
+            'adoptionDate',
+            // 'applicant',
+            // 'applicationComment',
+            'applicationFundId',
+            'applicationId',
+            // 'attachments',
+            'dateOfBirth',
+            // 'email',
+            'employers',
+            'expectedDateOfBirth',
+            'otherParentBlocked',
+            // 'otherParentId',
+            // 'paymentInfo',
+            'periods',
+            // 'phoneNumber',
+            'rightsCode',
+            'status',
+            // 'testData',
+          ],
+        )
         // Then omit the sensitive sub-attributes
         // requestBody = omit(requestBody, [
         //   'employers.approverNationalRegistryId',
         //   'employers.email',
         //   'paymentInfo.bankAccount',
         // ])
-        requestBody.employers = requestBody.employers.map(
+        requestBody.employers = requestBody.employers?.map(
           (employer: Init['employers'][number]) => {
             return omit(employer, ['email', 'approverNationalRegistryId'])
-          },
-        )
-        requestBody.paymentInfo = omit(requestBody.paymentInfo, ['bankAccount'])
-        // Remove attachmentsBytes
-        requestBody.attachments = requestBody.attachments.map(
-          (attachment: Init['attachments'][number]) => {
-            return omit(attachment, ['attachmentBytes'])
           },
         )
 
