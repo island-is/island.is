@@ -7,14 +7,14 @@ import { defineMessage } from 'react-intl'
 import { translationLoader } from './screens/Translation.loader'
 
 const LicensesOverview = lazy(() => import('./screens/LicensesOverview'))
-const LicenseDetail = lazy(
-  () => import('./screens/v1/LicenseDetail/LicenseDetail'),
+const LicenseDetail = lazy(() =>
+  import('./screens/v1/LicenseDetail/LicenseDetail'),
 )
-const LicenseDetailV2 = lazy(
-  () => import('./screens/v2/LicenseDetail/LicenseDetail'),
+const LicenseDetailV2 = lazy(() =>
+  import('./screens/v2/LicenseDetail/LicenseDetail'),
 )
-const PassportDetail = lazy(
-  () => import('./screens/v1/PassportDetail/PassportDetail'),
+const PassportDetail = lazy(() =>
+  import('./screens/v1/PassportDetail/PassportDetail'),
 )
 
 export const licensesModule: PortalModule = {
