@@ -32,7 +32,6 @@ import {
   CaseListEntry,
   CaseState,
   CaseType,
-  EventType,
   InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
