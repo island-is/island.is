@@ -18,7 +18,7 @@ export class FormDto {
   name!: LanguageType
 
   @ApiProperty()
-  urlName!: String
+  urlName!: string
 
   @ApiProperty()
   invalidationDate?: Date

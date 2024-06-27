@@ -9,7 +9,7 @@ export class FormsListFormDto {
   name!: LanguageType
 
   @ApiProperty()
-  urlName!: String
+  urlName!: string
 
   @ApiProperty()
   invalidationDate?: Date
