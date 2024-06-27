@@ -6,13 +6,13 @@ import path from 'path'
 import { execSync } from 'child_process'
 
 const config = {
-  CLEAN_DRY: process.env.CLEAN_DRY === 'true' || false,
-  CLEAN_CACHES: process.env.CLEAN_CACHES === 'true' || false,
-  CLEAN_YARN: process.env.CLEAN_YARN === 'true' || false,
-  CLEAN_GENERATED: process.env.CLEAN_GENERATED === 'true' || false,
-  CLEAN_NODE_MODULES: process.env.CLEAN_NODE_MODULES === 'true' || false,
-  CLEAN_DIST: process.env.CLEAN_DIST === 'true' || false,
-  CLEAN_ALL: process.env.CLEAN_ALL === 'true' || false,
+  CLEAN_DRY: process.env.CLEAN_DRY === 'true',
+  CLEAN_CACHES: process.env.CLEAN_CACHES === 'true',
+  CLEAN_YARN: process.env.CLEAN_YARN === 'true',
+  CLEAN_GENERATED: process.env.CLEAN_GENERATED === 'true',
+  CLEAN_NODE_MODULES: process.env.CLEAN_NODE_MODULES === 'true',
+  CLEAN_DIST: process.env.CLEAN_DIST === 'true',
+  CLEAN_ALL: process.env.CLEAN_ALL === 'true',
   CLEAN_CACHES_LIST: ['.cache'],
   CLEAN_YARN_IGNORES_LIST: ['patches', 'releases'],
   SEARCH_DIRECTORIES: ['apps', 'libs'],
