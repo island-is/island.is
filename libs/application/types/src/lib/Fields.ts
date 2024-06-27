@@ -115,8 +115,8 @@ export type TableRepeaterItem = {
       large?: boolean
     }
   | {
-    component: 'nationalIdWithName'
-  }
+      component: 'nationalIdWithName'
+    }
 )
 
 export type AlertMessageLink = {
