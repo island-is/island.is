@@ -24,7 +24,10 @@ import {
   ApplicationListAdminResponseDto,
   ApplicationStatistics,
 } from './dto/applicationAdmin.response.dto'
-import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
+import {
+  ApplicationAdminSerializer,
+  ApplicationAdminStatisticsSerializer,
+} from './tools/applicationAdmin.serializer'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -46,6 +49,7 @@ export class AdminController {
   @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
   @Get('admin/applications-statistics')
+  @UseInterceptors(ApplicationAdminStatisticsSerializer)
   @Documentation({
     description: 'Get applications statistics',
     response: {

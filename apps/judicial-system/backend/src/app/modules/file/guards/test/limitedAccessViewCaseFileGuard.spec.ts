@@ -154,7 +154,6 @@ describe('Limited Access View Case File Guard', () => {
         const allowedCaseFileCategories = [
           CaseFileCategory.COURT_RECORD,
           CaseFileCategory.RULING,
-          CaseFileCategory.COVER_LETTER,
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,

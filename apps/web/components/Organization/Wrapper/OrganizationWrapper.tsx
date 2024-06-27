@@ -129,6 +129,7 @@ interface WrapperProps {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  isSubpage?: boolean
 }
 
 const darkThemes = ['hms']
@@ -194,7 +195,7 @@ export const getThemeConfig = (
 
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, isSubpage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
@@ -216,6 +217,36 @@ export const OrganizationHeader: React.FC<
   const logoAltText = organizationPage.organization?.title
     ? organizationLogoAltText
     : organizationLogoAltTextFallback
+
+  const defaultProps: DefaultHeaderProps = {
+    fullWidth: organizationPage.themeProperties.fullWidth ?? false,
+    image: organizationPage.defaultHeaderImage?.url,
+    background: getBackgroundStyle(organizationPage.themeProperties),
+    title: organizationPage.title,
+    logo: organizationPage.organization?.logo?.url,
+    logoHref: linkResolver('organizationpage', [organizationPage.slug]).href,
+    titleColor:
+      (organizationPage.themeProperties
+        .textColor as DefaultHeaderProps['titleColor']) || 'dark400',
+    imagePadding: organizationPage.themeProperties.imagePadding || '20px',
+    imageIsFullHeight:
+      organizationPage.themeProperties.imageIsFullHeight ?? true,
+    imageObjectFit:
+      organizationPage.themeProperties.imageObjectFit === 'cover'
+        ? 'cover'
+        : 'contain',
+    imageObjectPosition:
+      organizationPage.themeProperties.imageObjectPosition === 'left'
+        ? 'left'
+        : organizationPage.themeProperties.imageObjectPosition === 'right'
+        ? 'right'
+        : 'center',
+    logoAltText: logoAltText,
+    titleSectionPaddingLeft: organizationPage.themeProperties
+      .titleSectionPaddingLeft as ResponsiveSpace,
+    mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
+    isSubpage: isSubpage && n('smallerSubpageHeader', false),
+  }
 
   switch (organizationPage.theme) {
     case 'syslumenn':
@@ -396,47 +427,15 @@ export const OrganizationHeader: React.FC<
           logoAltText={logoAltText}
         />
       )
-    default:
+    case 'tryggingastofnun':
       return (
         <DefaultHeader
-          fullWidth={organizationPage.themeProperties.fullWidth ?? false}
-          image={organizationPage.defaultHeaderImage?.url}
-          background={getBackgroundStyle(organizationPage.themeProperties)}
-          title={organizationPage.title}
-          logo={organizationPage.organization?.logo?.url}
-          logoHref={
-            linkResolver('organizationpage', [organizationPage.slug]).href
-          }
-          titleColor={
-            (organizationPage.themeProperties
-              .textColor as DefaultHeaderProps['titleColor']) ?? 'dark400'
-          }
-          imagePadding={organizationPage.themeProperties.imagePadding || '20px'}
-          imageIsFullHeight={
-            organizationPage.themeProperties.imageIsFullHeight ?? true
-          }
-          imageObjectFit={
-            organizationPage.themeProperties.imageObjectFit === 'cover'
-              ? 'cover'
-              : 'contain'
-          }
-          imageObjectPosition={
-            organizationPage.themeProperties.imageObjectPosition === 'left'
-              ? 'left'
-              : organizationPage.themeProperties.imageObjectPosition === 'right'
-              ? 'right'
-              : 'center'
-          }
-          logoAltText={logoAltText}
-          titleSectionPaddingLeft={
-            organizationPage.themeProperties
-              .titleSectionPaddingLeft as ResponsiveSpace
-          }
-          mobileBackground={
-            organizationPage.themeProperties.mobileBackgroundColor
-          }
+          {...defaultProps}
+          customTitleColor={n('tryggingastofnunHeaderTitleColor', '#007339')}
         />
       )
+    default:
+      return <DefaultHeader {...defaultProps} />
   }
 }
 
@@ -916,7 +915,10 @@ export const OrganizationWrapper: React.FC<
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <OrganizationHeader organizationPage={organizationPage} />
+      <OrganizationHeader
+        organizationPage={organizationPage}
+        isSubpage={isSubpage}
+      />
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}

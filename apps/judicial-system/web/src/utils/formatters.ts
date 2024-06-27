@@ -1,3 +1,4 @@
+import { ChangeEvent } from 'react'
 import formatISO from 'date-fns/formatISO'
 import setHours from 'date-fns/setHours'
 import setMinutes from 'date-fns/setMinutes'
@@ -37,7 +38,7 @@ export const replaceTabs = (str: string) =>
   str?.replace(/(?: \t+|\t+ |\t+)/g, ' ')
 
 export const replaceTabsOnChange = (
-  evt: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
 ) => {
   if (evt.target.value.includes('\t')) {
     evt.target.value = replaceTabs(evt.target.value)

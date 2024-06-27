@@ -23,6 +23,10 @@ export class CreateAmountInput implements Amount {
   readonly childrenAidAmount?: number
 
   @Allow()
+  @Field({ nullable: true })
+  readonly decemberAidAmount?: number
+
+  @Allow()
   @Field(() => [CreateDeductionFactorsInput], { nullable: true })
   readonly deductionFactors?: CreateDeductionFactorsInput[]
 

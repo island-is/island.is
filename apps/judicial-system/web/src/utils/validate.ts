@@ -8,8 +8,10 @@ import {
   CaseAppealRulingDecision,
   CaseAppealState,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseType,
   DefenderChoice,
+  IndictmentDecision,
   SessionArrangements,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -413,10 +415,20 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
 export const isSubpoenaStepValid = (
   workingCase: Case,
   courtDate?: string | null,
+  courtRoom?: string | null,
 ): boolean => {
-  return validate([
-    [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
-  ]).isValid
+  return (
+    validate([
+      [
+        courtDate ?? workingCase.arraignmentDate?.date,
+        ['empty', 'date-format'],
+      ],
+      [courtRoom ?? workingCase.arraignmentDate?.location, ['empty']],
+    ]).isValid &&
+    Boolean(
+      workingCase.defendants?.every((defendant) => defendant.subpoenaType),
+    )
+  )
 }
 
 export const isDefenderStepValid = (workingCase: Case): boolean => {
@@ -435,9 +447,46 @@ export const isDefenderStepValid = (workingCase: Case): boolean => {
   return Boolean(workingCase.prosecutor && defendantsAreValid())
 }
 
+const isIndictmentRulingDecisionValid = (workingCase: Case) => {
+  switch (workingCase.indictmentRulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return Boolean(
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        ) &&
+          workingCase.caseFiles?.some(
+            (file) => file.category === CaseFileCategory.RULING,
+          ),
+      )
+    case CaseIndictmentRulingDecision.FINE:
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return Boolean(
+        workingCase.caseFiles?.some(
+          (file) => file.category === CaseFileCategory.COURT_RECORD,
+        ),
+      )
+    default:
+      return false
+  }
+}
+
 export const isConclusionStepValid = (workingCase: Case): boolean => {
-  // TODO: Implement after selected action has been added as a field to the case
-  return true
+  switch (workingCase.indictmentDecision) {
+    case IndictmentDecision.POSTPONING:
+      return Boolean(workingCase.postponedIndefinitelyExplanation)
+    case IndictmentDecision.SCHEDULING:
+      return Boolean(
+        workingCase.courtSessionType && workingCase.courtDate?.date,
+      )
+    case IndictmentDecision.COMPLETING:
+      return isIndictmentRulingDecisionValid(workingCase)
+    case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+    case IndictmentDecision.REDISTRIBUTING:
+      return true
+    default:
+      return false
+  }
 }
 
 export const isAdminUserFormValid = (user: User): boolean => {
@@ -499,13 +548,10 @@ export const isCourtOfAppealWithdrawnCaseStepValid = (
 
 export const isCaseFilesStepValidIndictments = (workingCase: Case): boolean => {
   return Boolean(
-    workingCase.caseFiles?.some(
-      (file) => file.category === CaseFileCategory.COVER_LETTER,
-    ) &&
-      (isTrafficViolationCase(workingCase) ||
-        workingCase.caseFiles?.some(
-          (file) => file.category === CaseFileCategory.INDICTMENT,
-        )) &&
+    (isTrafficViolationCase(workingCase) ||
+      workingCase.caseFiles?.some(
+        (file) => file.category === CaseFileCategory.INDICTMENT,
+      )) &&
       workingCase.caseFiles?.some(
         (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
       ),

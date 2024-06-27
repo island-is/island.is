@@ -21,6 +21,7 @@ import {
   ExistingApplicationApi,
   InstitutionNationalIds,
   Application,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -43,19 +44,27 @@ import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
-  const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+  const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
     application.answers,
     'applicationFor',
     'B-full',
   )
 
-  const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+  const chargeItemCode =
+    applicationFor === 'B-full'
+      ? 'AY110'
+      : applicationFor === BE
+      ? 'AY115'
+      : 'AY114'
 
   if (!chargeItemCode) {
     throw new Error('No selected charge item code')
   }
   return [chargeItemCode]
 }
+
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE]
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -77,6 +86,7 @@ const template: ApplicationTemplate<
       : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

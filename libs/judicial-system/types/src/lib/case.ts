@@ -95,7 +95,6 @@ export enum CaseState {
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
-  MAIN_HEARING = 'MAIN_HEARING',
   WAITING_FOR_CANCELLATION = 'WAITING_FOR_CANCELLATION',
   COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
@@ -109,7 +108,6 @@ export enum IndictmentCaseState {
   WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
   SUBMITTED = CaseState.SUBMITTED,
   RECEIVED = CaseState.RECEIVED,
-  MAIN_HEARING = CaseState.MAIN_HEARING,
   WAITING_FOR_CANCELLATION = CaseState.WAITING_FOR_CANCELLATION,
   COMPLETED = CaseState.COMPLETED,
   DELETED = CaseState.DELETED,
@@ -141,7 +139,6 @@ export enum CaseTransition {
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   RECEIVE = 'RECEIVE',
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
-  REDISTRIBUTE = 'REDISTRIBUTE',
   COMPLETE = 'COMPLETE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
@@ -162,7 +159,6 @@ export enum IndictmentCaseTransition {
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   RECEIVE = CaseTransition.RECEIVE,
   RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
-  REDISTRIBUTE = CaseTransition.REDISTRIBUTE,
   COMPLETE = CaseTransition.COMPLETE,
   DELETE = CaseTransition.DELETE,
 }
@@ -223,6 +219,7 @@ export enum CaseDecision {
 
 export enum IndictmentDecision {
   POSTPONING = 'POSTPONING',
+  SCHEDULING = 'SCHEDULING',
   POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
   COMPLETING = 'COMPLETING',
   REDISTRIBUTING = 'REDISTRIBUTING',
@@ -274,6 +271,30 @@ export enum ServiceRequirement {
   REQUIRED = 'REQUIRED',
   NOT_REQUIRED = 'NOT_REQUIRED',
   NOT_APPLICABLE = 'NOT_APPLICABLE',
+}
+
+export enum CourtSessionType {
+  MAIN_HEARING = 'MAIN_HEARING',
+  OTHER = 'OTHER',
+  APPRAISER_SUMMONS = 'APPRAISER_SUMMONS',
+  VERDICT = 'VERDICT',
+  MAIN_HEARING_CONTINUATION = 'MAIN_HEARING_CONTINUATION',
+  HEARING = 'HEARING',
+  ORAL_ARGUMENTS = 'ORAL_ARGUMENTS',
+  RULING = 'RULING',
+  ARRAIGNMENT = 'ARRAIGNMENT',
+}
+
+export const courtSessionTypeNames = {
+  MAIN_HEARING: 'Aðalmeðferð',
+  OTHER: 'Annað',
+  APPRAISER_SUMMONS: 'Dómkvaðning matsmanna',
+  VERDICT: 'Dómsuppsaga',
+  MAIN_HEARING_CONTINUATION: 'Framhald aðalmeðferðar',
+  HEARING: 'Fyrirtaka',
+  ORAL_ARGUMENTS: 'Munnlegur málflutningur',
+  RULING: 'Uppkvaðning úrskurðar',
+  ARRAIGNMENT: 'Þingfesting',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]
@@ -355,7 +376,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
         ...completedIndictmentCaseStates,
       ].includes(state),
   )
@@ -439,4 +459,25 @@ export const isRequestCaseTransition = (
   return Object.values(RequestCaseTransition).includes(
     transition as RequestCaseTransition,
   )
+}
+
+export type DistrictCourts =
+  | 'Héraðsdómur Reykjavíkur'
+  | 'Héraðsdómur Reykjaness'
+  | 'Héraðsdómur Vesturlands'
+  | 'Héraðsdómur Vestfjarða'
+  | 'Héraðsdómur Norðurlands vestra'
+  | 'Héraðsdómur Norðurlands eystra'
+  | 'Héraðsdómur Austurlands'
+  | 'Héraðsdómur Suðurlands'
+
+export const DistrictCourtLocation: Record<DistrictCourts, string> = {
+  'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
+  'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
+  'Héraðsdómur Vesturlands': 'Bjarnarbraut 8, Borgarnesi',
+  'Héraðsdómur Vestfjarða': 'Hafnarstræti 9, Ísafirði',
+  'Héraðsdómur Norðurlands vestra': 'Skagfirðingabraut 21, Sauðárkróki',
+  'Héraðsdómur Norðurlands eystra': 'Hafnarstræti 107, 4. hæð, Akureyri',
+  'Héraðsdómur Austurlands': 'Lyngás 15, Egilsstöðum',
+  'Héraðsdómur Suðurlands': 'Austurvegur 4, Selfossi',
 }

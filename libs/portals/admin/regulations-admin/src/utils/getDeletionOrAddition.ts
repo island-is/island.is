@@ -152,7 +152,18 @@ export const getDeletionOrAddition = (
 
       // Retrieve the modified text content from the temporary element
       const modifiedTextContent = tempElement?.textContent?.trim()
-      newText = modifiedTextContent ?? ''
+
+      // Remove gr number if there is some more text within the title
+      const modContent = modifiedTextContent ?? ''
+      const match = modContent.match(/^\d+\.\s*gr\.$/)
+      if (match) {
+        // If the string matches the pattern for "{num}. gr.", return it as is
+        newText = modContent
+      } else {
+        // If the string contains more text, extract the text after the pattern
+        const parts = modContent.split(/^\d+\.\s*gr\.\s*/)
+        newText = parts[1] ? parts[1] : modContent
+      }
     } else {
       newText = newTextElement.textContent || ''
     }

@@ -17,6 +17,7 @@ import {
   UnreadNotificationsCountDto,
   UnseenNotificationsCountDto,
 } from '../dto/notification.dto'
+import { CmsService } from '@island.is/clients/cms'
 
 const user: User = {
   nationalId: '1234567890',
@@ -27,11 +28,10 @@ const user: User = {
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title ',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
-  clickAction: 'Demo click action {{arg2}}',
-  category: 'Demo category',
+  title: 'Demo title ',
+  externalBody: 'Demo body {{arg1}}',
+  internalBody: 'Demo data copy',
+  clickActionUrl: 'Demo click action {{arg2}}',
   args: ['arg1', 'arg2'],
 }
 
@@ -61,6 +61,12 @@ describe('NotificationsService', () => {
         {
           provide: getModelToken(Notification),
           useClass: jest.fn(() => ({})),
+        },
+        {
+          provide: CmsService,
+          useValue: {
+            fetchData: jest.fn(),
+          },
         },
       ],
     }).compile()
@@ -132,17 +138,17 @@ describe('NotificationsService', () => {
     expect(counts).toBe(false)
   })
 
-  it('should replace template {{placeholders}} with args', () => {
+  it('should replace template {{placeholders}} with args', async () => {
     mockCreateHnippNotificationDto.args = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
     ]
-    const template = service.formatArguments(
+    const template = await service.formatArguments(
       mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )
-    expect(template.notificationBody).toEqual('Demo body hello')
-    expect(template.clickAction).toEqual('Demo click action world')
+    expect(template.externalBody).toEqual('Demo body hello')
+    expect(template.clickActionUrl).toEqual('Demo click action world')
   })
 
   describe('findMany', () => {

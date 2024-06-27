@@ -94,5 +94,12 @@ export const advert = {
         description: 'Placeholder for the template input',
       },
     }),
+    editor: defineMessages({
+      label: {
+        id: 'ojoi.application:advert.inputs.editor.label',
+        defaultMessage: 'Innihald innsendingar',
+        description: 'Label for the editor input',
+      },
+    }),
   },
 }

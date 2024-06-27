@@ -19,10 +19,9 @@ import Share from 'react-native-share'
 import WebView from 'react-native-webview'
 import styled from 'styled-components/native'
 import {
-  Document,
+  DocumentV2,
   ListDocumentFragmentDoc,
   useGetDocumentQuery,
-  useListDocumentsLazyQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -178,48 +177,44 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
 
-  const doc = useFragment_experimental<Document>({
+  // Check if we have the document in the cache
+  const doc = useFragment_experimental<DocumentV2>({
     fragment: ListDocumentFragmentDoc,
     from: {
-      __typename: 'Document',
+      __typename: 'DocumentV2',
       id: docId,
     },
     returnPartialData: true,
   })
 
-  const [getListDocuments] = useListDocumentsLazyQuery()
+  // Fetch the document to get the content information
   const docRes = useGetDocumentQuery({
     variables: {
       input: {
         id: docId,
       },
     },
+    fetchPolicy: 'no-cache',
   })
 
   const Document = {
-    ...(docRes.data?.getDocument || {}),
-    ...doc.data,
+    ...(doc?.data || {}),
+    ...(docRes.data?.documentV2 || {}),
   }
-
-  useEffect(() => {
-    if (doc.missing) {
-      void getListDocuments({
-        variables: {
-          input: {
-            page: 1,
-            pageSize: 50,
-          },
-        },
-      })
-    }
-  }, [doc])
 
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [touched, setTouched] = useState(false)
-  const hasPdf = Document.fileType?.toLocaleLowerCase() === 'pdf'
-  const isHtml = typeof Document.html === 'string' && Document.html !== ''
+
+  const loading = docRes.loading || !accessToken
+  const fileTypeLoaded = !!Document?.content?.type
+  const hasError = error || docRes.error
+
+  const hasPdf = Document?.content?.type.toLocaleLowerCase() === 'pdf'
+  const isHtml =
+    Document?.content?.type.toLocaleLowerCase() === 'html' &&
+    Document.content?.value !== ''
 
   useConnectivityIndicator({
     componentId,
@@ -247,16 +242,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       )
       setTouched(true)
     }
-    if (buttonId === ButtonRegistry.ShareButton) {
+    if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
         authStore.setState({ noLockScreenUntilNextAppStateActive: true })
       }
       Share.open({
         title: Document.subject!,
         subject: Document.subject!,
-        message: `${Document.senderName!} \n ${Document.subject!}`,
+        message: `${Document.sender!.name!} \n ${Document.subject!}`,
         type: hasPdf ? 'application/pdf' : undefined,
-        url: hasPdf ? `file://${pdfUrl}` : Document.url!,
+        url: hasPdf ? `file://${pdfUrl}` : Document.downloadUrl!,
       })
     }
   }, componentId)
@@ -281,7 +276,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     // Lets mark the document as read
     client.cache.modify({
       id: client.cache.identify({
-        __typename: 'Document',
+        __typename: 'DocumentV2',
         id: Document.id,
       }),
       fields: {
@@ -305,8 +300,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [])
 
-  const loading = docRes.loading || !accessToken
-
   const fadeAnim = useRef(new Animated.Value(0)).current
 
   React.useEffect(() => {
@@ -323,12 +316,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     <>
       <Host>
         <Header
-          title={Document.senderName}
-          date={<FormattedDate value={Document.date} />}
+          title={Document.sender?.name ?? ''}
+          date={
+            Document.publicationDate ? (
+              <FormattedDate value={Document.publicationDate} />
+            ) : undefined
+          }
           message={Document.subject}
-          isLoading={loading}
+          isLoading={loading && !Document.subject}
           hasBorder={false}
-          logo={getOrganizationLogoUrl(Document.senderName!, 75)}
+          logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
         />
       </Host>
       <Border />
@@ -343,42 +340,48 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             opacity: fadeAnim,
           }}
         >
-          {isHtml ? (
-            <WebView
-              source={{ html: Document.html ?? '' }}
-              scalesPageToFit
-              onLoadEnd={() => {
-                setLoaded(true)
-              }}
-            />
-          ) : hasPdf ? (
-            <PdfWrapper>
-              {visible && accessToken && (
-                <PdfViewer
-                  url={Document.url ?? ''}
-                  body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                  onLoaded={(filePath: any) => {
-                    setPdfUrl(filePath)
-                    setLoaded(true)
-                  }}
-                  onError={() => {
-                    setLoaded(true)
-                    setError(true)
-                  }}
-                />
-              )}
-            </PdfWrapper>
-          ) : (
-            <WebView
-              source={{ uri: Document.url! }}
-              onLoadEnd={() => {
-                setLoaded(true)
-              }}
-            />
-          )}
+          {fileTypeLoaded &&
+            !error &&
+            (isHtml ? (
+              <WebView
+                source={{ html: Document.content?.value ?? '' }}
+                scalesPageToFit
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+              />
+            ) : hasPdf ? (
+              <PdfWrapper>
+                {visible && accessToken && (
+                  <PdfViewer
+                    url={`data:application/pdf;base64,${Document.content?.value}`}
+                    body={`documentId=${Document.id}&__accessToken=${accessToken}`}
+                    onLoaded={(filePath: any) => {
+                      setPdfUrl(filePath)
+                      setLoaded(true)
+                    }}
+                    onError={() => {
+                      setLoaded(true)
+                      setError(true)
+                    }}
+                  />
+                )}
+              </PdfWrapper>
+            ) : (
+              <WebView
+                source={{ uri: Document.content?.value ?? '' }}
+                onLoadEnd={() => {
+                  setLoaded(true)
+                }}
+                onError={() => {
+                  setLoaded(true)
+                  setError(true)
+                }}
+              />
+            ))}
         </Animated.View>
 
-        {(!loaded || !accessToken || error) && (
+        {(!loaded || !accessToken || hasError) && (
           <View
             style={[
               StyleSheet.absoluteFill,
@@ -389,7 +392,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               },
             ]}
           >
-            {error ? (
+            {hasError ? (
               <Problem type="error" withContainer />
             ) : (
               <Loader

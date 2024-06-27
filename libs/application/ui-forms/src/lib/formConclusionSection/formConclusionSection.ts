@@ -11,7 +11,7 @@ import { Application, FormText, StaticText } from '@island.is/application/types'
 import { conclusion } from './messages'
 
 type Props = Partial<{
-  alertTitle: StaticText
+  alertTitle: FormText
   alertMessage: FormText
   alertType: 'success' | 'warning' | 'error' | 'info'
   multiFieldTitle: StaticText

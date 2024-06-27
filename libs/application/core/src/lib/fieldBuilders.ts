@@ -194,6 +194,7 @@ export function buildSelectField(
     placeholder,
     onSelect,
     backgroundColor = 'blue',
+    isMulti,
     required,
   } = data
   return {
@@ -205,6 +206,7 @@ export function buildSelectField(
     type: FieldTypes.SELECT,
     component: FieldComponents.SELECT,
     onSelect,
+    isMulti,
     backgroundColor,
   }
 }
@@ -219,6 +221,7 @@ export function buildAsyncSelectField(
     onSelect,
     backgroundColor = 'blue',
     isSearchable,
+    isMulti,
   } = data
 
   return {
@@ -232,6 +235,7 @@ export function buildAsyncSelectField(
     onSelect,
     backgroundColor,
     isSearchable,
+    isMulti,
   }
 }
 
@@ -400,6 +404,7 @@ export function buildKeyValueField(data: {
   divider?: boolean
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
+  paddingBottom?: BoxProps['padding']
 }): KeyValueField {
   const {
     label,
@@ -411,6 +416,7 @@ export function buildKeyValueField(data: {
     divider = false,
     paddingX,
     paddingY,
+    paddingBottom,
   } = data
 
   return {
@@ -429,6 +435,7 @@ export function buildKeyValueField(data: {
     display,
     paddingX,
     paddingY,
+    paddingBottom,
   }
 }
 

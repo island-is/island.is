@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -24,6 +24,7 @@ import {
 import {
   CaseFile,
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   CaseTransition,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -33,7 +34,7 @@ import {
 
 import { strings } from './Summary.strings'
 
-const Summary: React.FC = () => {
+const Summary: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -66,7 +67,14 @@ const Summary: React.FC = () => {
     (acc, cf) => {
       if (cf.category === CaseFileCategory.COURT_RECORD) {
         acc[0].push(cf)
-      } else if (cf.category === CaseFileCategory.RULING) {
+      } else if (
+        cf.category === CaseFileCategory.RULING &&
+        workingCase.indictmentRulingDecision &&
+        [
+          CaseIndictmentRulingDecision.RULING,
+          CaseIndictmentRulingDecision.DISMISSAL,
+        ].includes(workingCase.indictmentRulingDecision)
+      ) {
         acc[1].push(cf)
       }
 
@@ -100,28 +108,25 @@ const Summary: React.FC = () => {
           <InfoCardClosedIndictment />
         </Box>
         <SectionHeading title={formatMessage(strings.caseFiles)} />
-        {rulingFiles.length > 0 && (
+        {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
           <Box marginBottom={5}>
             <Text variant="h4" as="h4">
               {formatMessage(strings.caseFilesSubtitleRuling)}
             </Text>
-            <RenderFiles
-              caseFiles={rulingFiles}
-              workingCase={workingCase}
-              onOpenFile={onOpen}
-            />
-          </Box>
-        )}
-        {courtRecordFiles.length > 0 && (
-          <Box marginBottom={10}>
-            <Text variant="h4" as="h4">
-              {formatMessage(strings.caseFilesSubtitleFine)}
-            </Text>
-            <RenderFiles
-              caseFiles={courtRecordFiles}
-              workingCase={workingCase}
-              onOpenFile={onOpen}
-            />
+            {rulingFiles.length > 0 && (
+              <RenderFiles
+                caseFiles={rulingFiles}
+                workingCase={workingCase}
+                onOpenFile={onOpen}
+              />
+            )}
+            {courtRecordFiles.length > 0 && (
+              <RenderFiles
+                caseFiles={courtRecordFiles}
+                workingCase={workingCase}
+                onOpenFile={onOpen}
+              />
+            )}
           </Box>
         )}
       </FormContentContainer>
