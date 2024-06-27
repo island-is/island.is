@@ -45,7 +45,6 @@ export class InstitutionResolver {
     @Loader(OrganizationLogoByReferenceIdLoader)
     organizationLogoLoader: OrganizationLogoByReferenceIdDataLoader,
   ): Promise<string | undefined> {
-    this.logger.debug('in provider logo resovler')
     if (!license.id) {
       return
     }
