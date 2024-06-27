@@ -153,8 +153,8 @@ export const is = {
   'home.screenTitle': 'Yfirlit',
   'home.applicationsStatus': 'Staða umsókna',
   'home.allApplications': 'Stafrænar umsóknir',
-  'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
+  'home.goodDay': 'Góðan dag,',
   'home.onboardingModule.card1':
     'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
   'home.onboardingModule.card2':
