@@ -23,9 +23,13 @@ const env = {
     SERVERSIDE_FEATURES_ON
 };
 
-
-spawnSync("nx", ["run-many", `--parallel=${MAX_JOBS}`, "--target=test", `--projects=${AFFECTED_JOBS}`], { stdio: "inherit", env });
-
+console.log(`Running tests for ${AFFECTED_JOBS.join(',')} in parallel with ${MAX_JOBS} jobs`);
+const value = spawnSync("nx", ["run-many", `--parallel=${MAX_JOBS}`, "--target=test", `--projects=${AFFECTED_JOBS.join(',')}`], { stdio: "inherit", env, encoding: 'utf-8' });
+if (value.status !== 0) {
+    console.error(value.stderr);
+    console.error("Tests failed");
+}
+process.exit(value.status ?? 0);
 
 function getArrayFromEnv(key) {
     const envValue = process.env[key];
