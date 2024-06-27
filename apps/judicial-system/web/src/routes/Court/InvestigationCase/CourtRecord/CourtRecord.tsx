@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -89,7 +89,7 @@ const getSessionBookingsAutofill = (
     : undefined
 }
 
-const CourtRecord: React.FC = () => {
+const CourtRecord: FC = () => {
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
