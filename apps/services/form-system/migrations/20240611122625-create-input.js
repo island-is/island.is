@@ -44,12 +44,12 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
-          page_id: {
+          screen_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'pages',
+              model: 'screens',
               key: 'id',
             },
           },

@@ -2,7 +2,7 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Section } from './models/section.model'
 import { CreateSectionDto } from './models/dto/createSection.dto'
-import { Page } from '../pages/models/page.model'
+import { Screen } from '../screens/models/screen.model'
 import { Input } from '../inputs/models/input.model'
 import { UpdateSectionDto } from './models/dto/updateSection.dto'
 import { SectionDto } from './models/dto/section.dto'
@@ -23,8 +23,8 @@ export class SectionsService {
     const section = await this.sectionModel.findByPk(id, {
       include: [
         {
-          model: Page,
-          as: 'pages',
+          model: Screen,
+          as: 'screens',
           include: [{ model: Input, as: 'inputs' }],
         },
       ],

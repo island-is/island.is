@@ -47,10 +47,10 @@ export class InputsService {
   }
 
   async create(createInputDto: CreateInputDto): Promise<InputDto> {
-    const { pageId: pageId } = createInputDto
+    const { screenId } = createInputDto
 
     const newInput: Input = await this.inputModel.create({
-      pageId: pageId,
+      screenId: screenId,
     } as Input)
 
     const newInputSettingsDto = await this.inputSettingsService.create(
@@ -93,7 +93,7 @@ export class InputsService {
 
       await input.update({
         displayOrder: i,
-        pageId: inputsDisplayOrderDto[i].pageId,
+        screenId: inputsDisplayOrderDto[i].screenId,
       })
     }
   }

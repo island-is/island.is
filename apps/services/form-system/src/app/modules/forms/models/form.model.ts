@@ -84,7 +84,7 @@ export class Form extends Model<Form> {
     defaultValue: true,
   })
   @ApiProperty()
-  stopProgressOnValidatingPage!: boolean
+  stopProgressOnValidatingScreen!: boolean
 
   @Column({
     type: DataType.JSON,

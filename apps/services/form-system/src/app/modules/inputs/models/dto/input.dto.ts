@@ -7,7 +7,7 @@ export class InputDto {
   id!: string
 
   @ApiProperty()
-  pageId!: string
+  screenId!: string
 
   @ApiProperty({ type: LanguageType })
   name!: LanguageType

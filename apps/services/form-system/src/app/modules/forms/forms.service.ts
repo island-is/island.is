@@ -2,8 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { SectionTypes } from '../../enums/sectionTypes'
 import { FormApplicantDto } from '../applicants/models/dto/formApplicant.dto'
-import { PageDto } from '../pages/models/dto/page.dto'
-import { Page } from '../pages/models/page.model'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { Screen } from '../screens/models/screen.model'
 import { InputSettingsDto } from '../inputSettings/models/dto/inputSettings.dto'
 import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
 import { InputSettings } from '../inputSettings/models/inputSettings.model'
@@ -34,8 +34,8 @@ export class FormsService {
     private readonly formModel: typeof Form,
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
-    @InjectModel(Page)
-    private readonly pageModel: typeof Page,
+    @InjectModel(Screen)
+    private readonly screenModel: typeof Screen,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
     @InjectModel(InputType)
@@ -108,8 +108,8 @@ export class FormsService {
           as: 'sections',
           include: [
             {
-              model: Page,
-              as: 'pages',
+              model: Screen,
+              as: 'screens',
               include: [
                 {
                   model: Input,
@@ -248,12 +248,12 @@ export class FormsService {
       isTranslated: form.isTranslated,
       applicationDaysToRemove: form.applicationDaysToRemove,
       derivedFrom: form.derivedFrom,
-      stopProgressOnValidatingPage: form.stopProgressOnValidatingPage,
+      stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
       completedMessage: form.completedMessage,
       testimonyTypes: [],
       applicants: [],
       sections: [],
-      pages: [],
+      screens: [],
       inputs: [],
     }
 
@@ -287,21 +287,21 @@ export class FormsService {
         isCompleted: section.isCompleted,
         callRuleset: section.callRuleset,
       } as SectionDto)
-      section.pages?.map((page) => {
-        formDto.pages?.push({
-          id: page.id,
+      section.screens?.map((screen) => {
+        formDto.screens?.push({
+          id: screen.id,
           sectionId: section.id,
-          name: page.name,
-          created: page.created,
-          modified: page.modified,
-          displayOrder: page.displayOrder,
-          isHidden: page.isHidden,
-          multiset: page.multiset,
-        } as PageDto)
-        page.inputs?.map((input) => {
+          name: screen.name,
+          created: screen.created,
+          modified: screen.modified,
+          displayOrder: screen.displayOrder,
+          isHidden: screen.isHidden,
+          multiset: screen.multiset,
+        } as ScreenDto)
+        screen.inputs?.map((input) => {
           formDto.inputs?.push({
             id: input.id,
-            pageId: page.id,
+            screenId: screen.id,
             name: input.name,
             created: input.created,
             modified: input.modified,
@@ -342,7 +342,7 @@ export class FormsService {
       formId: form.id,
       sectionType: SectionTypes.INPUT,
       displayOrder: 2,
-      name: { is: 'Innsláttarsíða', en: 'InputPage' },
+      name: { is: 'Innsláttarskjár', en: 'InputScreen' },
     } as Section)
 
     await this.sectionModel.create({
@@ -352,10 +352,10 @@ export class FormsService {
       name: { is: 'Greiðsla', en: 'Payment' },
     } as Section)
 
-    await this.pageModel.create({
+    await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'Síða 1', en: 'Page 1' },
-    } as Page)
+      name: { is: 'Skjár 1', en: 'Screen 1' },
+    } as Screen)
   }
 }

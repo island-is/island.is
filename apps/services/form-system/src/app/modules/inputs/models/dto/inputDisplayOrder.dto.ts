@@ -5,5 +5,5 @@ export class InputDisplayOrderDto {
   id!: string
 
   @ApiProperty()
-  pageId!: string
+  screenId!: string
 }

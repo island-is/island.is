@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
-import { PageDto } from '../../../pages/models/dto/page.dto'
+import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { InputDto } from '../../../inputs/models/dto/input.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { FormTestimonyTypeDto } from '../../../testimonies/models/dto/formTestimonyType.dto'
@@ -39,7 +39,7 @@ export class FormDto {
   derivedFrom!: number
 
   @ApiProperty()
-  stopProgressOnValidatingPage!: boolean
+  stopProgressOnValidatingScreen!: boolean
 
   @ApiProperty({ type: LanguageType })
   completedMessage?: LanguageType
@@ -53,8 +53,8 @@ export class FormDto {
   @ApiProperty({ type: [SectionDto] })
   sections?: SectionDto[]
 
-  @ApiProperty({ type: [PageDto] })
-  pages?: PageDto[]
+  @ApiProperty({ type: [ScreenDto] })
+  screens?: ScreenDto[]
 
   @ApiProperty({ type: [InputDto] })
   inputs?: InputDto[]

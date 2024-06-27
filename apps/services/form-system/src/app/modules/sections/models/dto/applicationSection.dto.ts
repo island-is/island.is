@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { ApplicationPage } from '../../../pages/models/dto/applicationPage.dto'
+import { ApplicationScreen } from '../../../screens/models/dto/applicationScreen.dto'
 
 export class ApplicationSection {
   @ApiProperty()
@@ -21,6 +21,6 @@ export class ApplicationSection {
   @ApiProperty()
   callRuleset!: boolean
 
-  @ApiProperty({ type: [ApplicationPage] })
-  pages!: ApplicationPage[]
+  @ApiProperty({ type: [ApplicationScreen] })
+  screens!: ApplicationScreen[]
 }

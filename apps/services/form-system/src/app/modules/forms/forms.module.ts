@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FormApplicant } from '../applicants/models/formApplicant.model'
-import { Page } from '../pages/models/page.model'
+import { Screen } from '../screens/models/screen.model'
 import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
 import { InputType } from '../inputs/models/inputType.model'
 import { ListType } from '../lists/models/listType.model'
@@ -21,7 +21,7 @@ import { FormMapper } from './models/form.mapper'
       Form,
       FormApplicant,
       Section,
-      Page,
+      Screen,
       Organization,
       InputType,
       TestimonyType,

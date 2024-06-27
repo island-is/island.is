@@ -12,7 +12,7 @@ export class InputMapper {
   ): InputDto {
     const inputDto: InputDto = {
       id: input.id,
-      pageId: input.pageId,
+      screenId: input.screenId,
       name: input.name,
       displayOrder: input.displayOrder,
       description: input.description,

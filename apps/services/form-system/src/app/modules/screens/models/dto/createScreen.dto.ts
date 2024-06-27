@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CreatePageDto {
+export class CreateScreenDto {
   @ApiProperty()
   sectionId!: string
 }

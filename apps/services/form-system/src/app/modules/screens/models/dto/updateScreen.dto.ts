@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 
-export class UpdatePageDto {
+export class UpdateScreenDto {
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 

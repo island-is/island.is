@@ -13,7 +13,7 @@ import {
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { SectionTypes } from '../../../enums/sectionTypes'
 import { Form } from '../../forms/models/form.model'
-import { Page } from '../../pages/models/page.model'
+import { Screen } from '../../screens/models/screen.model'
 
 @Table({ tableName: 'sections' })
 export class Section extends Model<Section> {
@@ -90,9 +90,9 @@ export class Section extends Model<Section> {
   @ApiProperty()
   isCompleted!: boolean
 
-  @HasMany(() => Page)
-  @ApiProperty({ type: [Page] })
-  pages?: Page[]
+  @HasMany(() => Screen)
+  @ApiProperty({ type: [Screen] })
+  screens?: Screen[]
 
   @ForeignKey(() => Form)
   @Column({ type: DataType.STRING, allowNull: false, field: 'form_id' })

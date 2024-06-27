@@ -14,8 +14,8 @@ import { CreationOptional } from 'sequelize'
 import { Input } from '../../inputs/models/input.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 
-@Table({ tableName: 'pages' })
-export class Page extends Model<Page> {
+@Table({ tableName: 'screens' })
+export class Screen extends Model<Screen> {
   @Column({
     type: DataType.UUID,
     allowNull: false,

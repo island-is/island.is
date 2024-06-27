@@ -7,7 +7,7 @@ export class ApplicationInput {
   id!: string
 
   @ApiProperty()
-  pageId!: string
+  screenId!: string
 
   @ApiProperty({ type: LanguageType })
   name!: LanguageType

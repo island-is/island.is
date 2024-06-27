@@ -10,7 +10,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Page } from '../../pages/models/page.model'
+import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { InputType } from './inputType.model'
 import { InputSettings } from '../../inputSettings/models/inputSettings.model'
@@ -74,13 +74,13 @@ export class Input extends Model<Input> {
   @ApiProperty()
   isPartOfMultiset!: boolean
 
-  @ForeignKey(() => Page)
+  @ForeignKey(() => Screen)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'page_id',
+    field: 'screen_id',
   })
-  pageId!: string
+  screenId!: string
 
   @HasOne(() => InputSettings)
   @ApiProperty({ type: InputSettings })

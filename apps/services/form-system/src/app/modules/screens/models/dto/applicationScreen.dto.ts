@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { ApplicationInput } from '../../../inputs/models/dto/applicationInput.dto'
 
-export class ApplicationPage {
+export class ApplicationScreen {
   @ApiProperty()
   id!: string
 

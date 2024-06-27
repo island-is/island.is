@@ -49,7 +49,7 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
-          stop_progress_on_validating_page: {
+          stop_progress_on_validating_screen: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: true,

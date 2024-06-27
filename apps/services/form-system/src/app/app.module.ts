@@ -5,7 +5,7 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { FormsModule } from './modules/forms/forms.module'
-import { PagesModule } from './modules/pages/pages.module'
+import { ScreensModule } from './modules/screens/screens.module'
 import { InputSettingsModule } from './modules/inputSettings/inputSettings.module'
 import { InputsModule } from './modules/inputs/inputs.module'
 import { ListsModule } from './modules/lists/lists.module'
@@ -27,7 +27,7 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     OrganizationsModule,
     FormsModule,
     SectionsModule,
-    PagesModule,
+    ScreensModule,
     InputsModule,
     TestimoniesModule,
     ListsModule,

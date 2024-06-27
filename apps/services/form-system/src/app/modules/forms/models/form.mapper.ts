@@ -17,7 +17,7 @@ export class FormMapper {
         isTranslated: form.isTranslated,
         applicationDaysToRemove: form.applicationDaysToRemove,
         derivedFrom: form.derivedFrom,
-        stopProgressOnValidatingPage: form.stopProgressOnValidatingPage,
+        stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
       } as FormsListFormDto
     })
     const formsListDto: FormsListDto = {
