@@ -47,7 +47,10 @@
       "oneOf": [
         {
           "type": "string",
-          "enum": ["none", "all"]
+          "enum": [
+            "none",
+            "all"
+          ]
         },
         {
           "type": "array",
@@ -104,7 +107,10 @@
           }
         },
         "additionalProperties": false,
-        "required": ["replace", "with"]
+        "required": [
+          "replace",
+          "with"
+        ]
       },
       "default": []
     },
@@ -120,6 +126,7 @@
           "type": "string"
         }
       ],
+      "default": "./tools/executors/node/webpack.config.js",
       "description": "Path to a function which takes a webpack config, context and returns the resulting webpack config. See https://nx.dev/guides/customize-webpack"
     },
     "buildLibsFromSource": {
@@ -136,7 +143,9 @@
       "type": "array",
       "description": "List of TypeScript Compiler Transfomers Plugins.",
       "default": [],
-      "aliases": ["tsPlugins"],
+      "aliases": [
+        "tsPlugins"
+      ],
       "items": {
         "$ref": "#/definitions/transformerPattern"
       }
@@ -163,7 +172,10 @@
       "default": "main.js"
     }
   },
-  "required": ["tsConfig", "main"],
+  "required": [
+    "tsConfig",
+    "main"
+  ],
   "definitions": {
     "assetPattern": {
       "oneOf": [
@@ -191,7 +203,11 @@
             }
           },
           "additionalProperties": false,
-          "required": ["glob", "input", "output"]
+          "required": [
+            "glob",
+            "input",
+            "output"
+          ]
         },
         {
           "type": "string"
@@ -215,7 +231,9 @@
             }
           },
           "additionalProperties": false,
-          "required": ["name"]
+          "required": [
+            "name"
+          ]
         }
       ]
     }
