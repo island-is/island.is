@@ -4,7 +4,6 @@ import {
   ReviewApprovalEnum,
   utils,
 } from '@island.is/application/templates/accident-notification'
-import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
@@ -31,6 +30,9 @@ import {
 import { AccidentNotificationAttachment } from './types/attachments'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
+import { applicationToAccidentReport } from './accodent-notification-v2.utils'
+import { AccidentreportsApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 const SIX_MONTHS_IN_SECONDS_EXPIRES = 6 * 30 * 24 * 60 * 60
 
@@ -42,12 +44,16 @@ export class AccidentNotificationService extends BaseTemplateApiService {
     private accidentConfig: AccidentNotificationConfig,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly attachmentProvider: AccidentNotificationAttachmentProvider,
-    private readonly documentApi: DocumentApi,
+    private readonly accidentReportsApi: AccidentreportsApi,
   ) {
     super(ApplicationTypes.ACCIDENT_NOTIFICATION)
   }
 
-  async submitApplication({ application }: TemplateApiModuleActionProps) {
+  private accidentsReportsApiWithAuth(auth: Auth) {
+    return this.accidentReportsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
     try {
       const requests = attachmentStatusToAttachmentRequests()
 
@@ -57,13 +63,15 @@ export class AccidentNotificationService extends BaseTemplateApiService {
       )
 
       const fileHashList = attachments.map((attachment) => attachment.hash)
-
       const answers = application.answers as AccidentNotificationAnswers
-      const xml = applictionAnswersToXml(answers, attachments)
+      const accidentReport = applicationToAccidentReport(answers)
 
-      const { ihiDocumentID } = await this.documentApi.documentPost({
-        document: { doc: xml, documentType: 801 },
+      const res = await this.accidentsReportsApiWithAuth(
+        auth,
+      ).submitAccidentReport({
+        minarsidurAPIModelsAccidentReportsAccidentReportDTO: accidentReport,
       })
+      const reportId = res.reportId
 
       await this.sharedTemplateAPIService.sendEmail(
         (props) =>
@@ -71,7 +79,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
             props,
             this.accidentConfig.applicationSenderName,
             this.accidentConfig.applicationSenderEmail,
-            ihiDocumentID,
+            reportId ?? undefined,
           ),
         application,
       )
@@ -85,13 +93,17 @@ export class AccidentNotificationService extends BaseTemplateApiService {
 
         await this.sharedTemplateAPIService.assignApplicationThroughEmail(
           (props, assignLink) =>
-            generateAssignReviewerEmail(props, assignLink, ihiDocumentID),
+            generateAssignReviewerEmail(
+              props,
+              assignLink,
+              reportId ?? undefined,
+            ),
           application,
           token,
         )
       }
       return {
-        documentId: ihiDocumentID,
+        documentId: reportId,
         sentDocuments: fileHashList,
       }
     } catch (e) {
@@ -131,18 +143,18 @@ export class AccidentNotificationService extends BaseTemplateApiService {
 
     const documentId = getApplicationDocumentId(application)
 
-    const promises = newAttachments.map((attachment) =>
-      this.sendAttachment(attachment, documentId),
-    )
+    // const promises = newAttachments.map((attachment) =>
+    //   this.sendAttachment(attachment, documentId),
+    // )
 
-    const successfulAttachments = (await Promise.all(promises)).filter(
-      (x) => x !== null,
-    )
+    // const successfulAttachments = (await Promise.all(promises)).filter(
+    //   (x) => x !== null,
+    // )
 
     return {
       sentDocuments: [
         ...getAddAttachmentSentDocumentHashList(application),
-        ...successfulAttachments,
+        // ...successfulAttachments,
       ],
     }
   }
@@ -151,25 +163,25 @@ export class AccidentNotificationService extends BaseTemplateApiService {
    * Sends the attachment to SÍ and returns the document hash on success and null on failure
    * @param attachment attachment to send
    */
-  private async sendAttachment(
-    attachment: AccidentNotificationAttachment,
-    documentId: number,
-  ): Promise<string | null> {
-    try {
-      await this.documentApi.documentDocumentAttachment({
-        documentAttachment: {
-          attachmentBody: attachment.content,
-          attachmentType: attachment.attachmentType,
-          title: attachment.name,
-        },
-        ihiDocumentID: documentId,
-      })
-      return attachment.hash
-    } catch (e) {
-      this.logger.error('Error sending document to SÍ', e)
-      return null
-    }
-  }
+  // private async sendAttachment(
+  //   attachment: AccidentNotificationAttachment,
+  //   documentId: number,
+  // ): Promise<string | null> {
+  //   try {
+  //     // await this.documentApi.documentDocumentAttachment({
+  //     //   documentAttachment: {
+  //     //     attachmentBody: attachment.content,
+  //     //     attachmentType: attachment.attachmentType,
+  //     //     title: attachment.name,
+  //     //   },
+  //     //   ihiDocumentID: documentId,
+  //     // })
+  //     return attachment.hash
+  //   } catch (e) {
+  //     this.logger.error('Error sending document to SÍ', e)
+  //     return null
+  //   }
+  // }
 
   async reviewApplication({ application }: TemplateApiModuleActionProps) {
     const documentId = getApplicationDocumentId(application)
@@ -182,14 +194,14 @@ export class AccidentNotificationService extends BaseTemplateApiService {
     ) as ReviewApprovalEnum
     const reviewComment =
       getValueViaPath(application.answers, 'reviewComment') || ''
-    await this.documentApi.documentSendConfirmation({
-      ihiDocumentID: documentId,
-      confirmationIN: {
-        confirmationType:
-          reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
-        confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
-        objection: reviewComment as string,
-      },
-    })
+    // await this.documentApi.documentSendConfirmation({
+    //   ihiDocumentID: documentId,
+    //   confirmationIN: {
+    //     confirmationType:
+    //       reviewApproval === ReviewApprovalEnum.APPROVED ? 1 : 2,
+    //     confirmationParty: isRepresentativeOfCompanyOrInstitue ? 1 : 2,
+    //     objection: reviewComment as string,
+    //   },
+    // })
   }
 }

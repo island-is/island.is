@@ -3,11 +3,11 @@ import { SharedTemplateAPIModule } from '../../shared'
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { AccidentNotificationService } from './accident-notification.service'
-import { HealthInsuranceV2ClientModule } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
 import { S3 } from 'aws-sdk'
 import { S3Service } from './attachments/s3.service'
+import { RightsPortalClientModule } from '@island.is/clients/icelandic-health-insurance/rights-portal'
 
 const applicationRecipientName =
   process.env.ACCIDENT_NOTIFICATION_APPLICATION_RECIPIENT_NAME ?? ''
@@ -26,7 +26,7 @@ export class AccidentNotificationModule {
       module: AccidentNotificationModule,
       imports: [
         SharedTemplateAPIModule.register(config),
-        HealthInsuranceV2ClientModule,
+        RightsPortalClientModule,
       ],
       providers: [
         {
