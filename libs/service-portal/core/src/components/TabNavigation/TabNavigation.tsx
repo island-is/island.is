@@ -105,7 +105,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                 <Box printHidden className={styles.description}>
                   <TabBar
                     label={formatMessage(activePath.name)}
-                    variant={'alternative'}
+                    variant="alternative"
                     tabs={
                       activePath.children?.map((itemChild, ii) => {
                         const activeChild = itemChild.path
@@ -165,6 +165,7 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
                     <InstitutionPanel
                       loading={loading}
                       linkHref={organization.link ?? ''}
+                      linkLabel={organization.title}
                       img={organization.logo?.url ?? ''}
                       tooltipText={
                         tooltipText ? formatMessage(tooltipText) : ''
