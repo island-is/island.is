@@ -138,12 +138,12 @@ describe('NotificationsService', () => {
     expect(counts).toBe(false)
   })
 
-  it('should replace template {{placeholders}} with args', () => {
+  it('should replace template {{placeholders}} with args', async () => {
     mockCreateHnippNotificationDto.args = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
     ]
-    const template = service.formatArguments(
+    const template = await service.formatArguments(
       mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
     )

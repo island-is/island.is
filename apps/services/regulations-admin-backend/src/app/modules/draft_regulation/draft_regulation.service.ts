@@ -79,6 +79,7 @@ export class DraftRegulationService {
           ['drafting_status', 'ASC'],
           ['fast_track', 'DESC'],
           ['ideal_publish_date', 'ASC'],
+          ['modified', 'DESC'],
           ['created', 'DESC'],
         ],
       })
