@@ -43,14 +43,35 @@ export const Draft: Form = buildForm({
           description: m.listInformationDescription,
           children: [
             buildDescriptionField({
-              id: 'applicantHeader',
-              title: m.applicantHeader,
+              id: 'listHeader',
+              title: m.listHeader,
               titleVariant: 'h3',
+            }),
+            buildTextField({
+              id: 'list.name',
+              title: m.name,
+              width: 'full',
+              readOnly: true,
+              defaultValue: 'Flokkur 1 - Listabókstafur',
+            }),
+            buildTextField({
+              id: 'list.nationalId',
+              title: m.nationalId,
+              width: 'full',
+              readOnly: true,
+              defaultValue: (application: Application) =>
+                formatNationalId(application.applicant),
+            }),
+            buildDescriptionField({
+              id: 'applicantHeader',
+              title: m.applicantActorHeader,
+              titleVariant: 'h3',
+              space: 'containerGutter',
             }),
             buildTextField({
               id: 'applicant.name',
               title: m.name,
-              width: 'full',
+              width: 'half',
               readOnly: true,
               defaultValue: ({ externalData }: Application) => {
                 return externalData.nationalRegistry?.data.fullName
@@ -59,7 +80,7 @@ export const Draft: Form = buildForm({
             buildTextField({
               id: 'applicant.nationalId',
               title: m.nationalId,
-              width: 'full',
+              width: 'half',
               readOnly: true,
               defaultValue: (application: Application) =>
                 formatNationalId(application.applicant),
@@ -130,6 +151,14 @@ export const Draft: Form = buildForm({
               id: 'constituency',
               title: '',
               large: true,
+              defaultValue: [
+                'nordaustur',
+                'nordvestur',
+                'reykjavik',
+                'reykjanes',
+                'sudvestur',
+                'sudaustur',
+              ],
               options: [
                 { value: 'nordaustur', label: 'Norðausturkjördæmi' },
                 { value: 'nordvestur', label: 'Norðvesturkjördæmi' },
@@ -145,7 +174,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'guarantors',
-      title: 'Veljið umsjónar-/ábyrgðaraðila',
+      title: 'Umsjónar-/ábyrgðaraðilar',
       children: [
         buildMultiField({
           id: 'guarantors',
@@ -155,27 +184,52 @@ export const Draft: Form = buildForm({
           children: [
             buildTableRepeaterField({
               id: 'guarantors',
-              title: '',
-              addItemButtonText: 'Bæta við aðila',
+              title: 'Ábyrgðaraðilar',
+              description:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
+              addItemButtonText: 'Bæta við ábyrgðaraðila',
               marginTop: 0,
               fields: {
-                person: {
+                nationalId: {
                   component: 'nationalIdWithName',
-                  label: 'Kennitala',
-                },
-                role: {
-                  component: 'select',
-                  label: 'Hlutverk',
-                  width: 'half',
-                  options: [
-                    { value: 'Ábyrgðaraðili', label: 'Ábyrgðaraðili' },
-                    { value: 'Umsjónaraðili', label: 'Umsjónaraðili' },
-                  ],
                 },
                 constituency: {
                   component: 'select',
                   label: 'Kjördæmi',
-                  width: 'half',
+                  width: 'full',
+                  backgroundColor: 'white',
+                  options: [
+                    {
+                      value: 'Öll kjördæmi',
+                      label: 'Öll kjördæmi',
+                    },
+                  ],
+                },
+              },
+              table: {
+                format: {
+                  nationalId: (value) => formatNationalId(value),
+                },
+                header: ['Kennitala', 'Nafn', 'Kjördæmi'],
+              },
+            }),
+            buildTableRepeaterField({
+              id: 'supervisors',
+              title: 'Umsjónaraðilar',
+              description:
+                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
+              addItemButtonText: 'Bæta við umsjónaraðila',
+              marginTop: 5,
+              fields: {
+                nationalId: {
+                  component: 'nationalIdWithName',
+                },
+                constituency: {
+                  component: 'select',
+                  label: 'Kjördæmi',
+                  width: 'full',
+                  backgroundColor: 'white',
+                  isMulti: true,
                   options: [
                     {
                       value: 'Norðausturkjördæmi',
@@ -185,8 +239,24 @@ export const Draft: Form = buildForm({
                       value: 'Norðvesturkjördæmi',
                       label: 'Norðvesturkjördæmi',
                     },
+                    {
+                      value: 'Reykjavíkurkjördæmi norður',
+                      label: 'Reykjavíkurkjördæmi norður',
+                    },
+                    {
+                      value: 'Reykjavíkurkjördæmi suður',
+                      label: 'Reykjavíkurkjördæmi suður',
+                    },
+                    { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
+                    { value: 'Suðausturkjördæmi', label: 'Suðausturkjördæmi' },
                   ],
                 },
+              },
+              table: {
+                format: {
+                  nationalId: (value) => formatNationalId(value),
+                },
+                header: ['Kennitala', 'Nafn', 'Kjördæmi'],
               },
             }),
           ],
@@ -262,7 +332,7 @@ export const Draft: Form = buildForm({
               component: 'ListsInOverview',
             }),
             buildDescriptionField({
-              id: 'space',
+              id: 'space2',
               title: 'Ábyrgðaraðilar',
               titleVariant: 'h3',
               space: 'gutter',

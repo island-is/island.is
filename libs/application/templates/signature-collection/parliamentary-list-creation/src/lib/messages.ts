@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const m = defineMessages({
   applicationName: {
     id: 'plc.application:applicationName',
-    defaultMessage: 'Alþingiskosningar 2024 - stofna meðmælasöfnun',
+    defaultMessage: 'Alþingiskosningar - stofna meðmælasöfnun',
     description: '',
   },
   institution: {
@@ -20,7 +20,7 @@ export const m = defineMessages({
   },
   introTitle: {
     id: 'plc.application:introTitle',
-    defaultMessage: 'Alþingiskosningar 2024',
+    defaultMessage: 'Alþingiskosningar',
     description: '',
   },
   introDescription: {
@@ -83,7 +83,7 @@ export const m = defineMessages({
   listInformationDescription: {
     id: 'plc.application:listInformationDescription#markdown',
     defaultMessage:
-      'Upplýsingar um frambjóðanda og meðmælalista sem verða stofnaðir.',
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
     description: '',
   },
   information: {
@@ -91,9 +91,14 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: '',
   },
-  applicantHeader: {
-    id: 'plc.application:applicantHeader',
-    defaultMessage: 'Frambjóðandi',
+  listHeader: {
+    id: 'plc.application:listHeader',
+    defaultMessage: 'Framboð',
+    description: '',
+  },
+  applicantActorHeader: {
+    id: 'plc.application:applicantActorHeader',
+    defaultMessage: 'Stofnandi (? - tbd)',
     description: '',
   },
   name: {
@@ -161,7 +166,7 @@ export const m = defineMessages({
   },
   listCardText: {
     id: 'plc.application:listCardText',
-    defaultMessage: 'Alþingiskosningar 2024',
+    defaultMessage: 'Alþingiskosningar',
     description: '',
   },
   createList: {
