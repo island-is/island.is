@@ -21,13 +21,9 @@ const handleNationalIdWithName = (item: Item, values: any) => {
   if (values) {
     values.forEach((value: any, index: string) => {
       if (typeof value[item.id] === 'object') {
-        values[index] = flattenObject(value, item.id)
+        const { [item.id]: nestedObject, ...rest } = value
+        values[index] = { ...nestedObject, ...rest }
       }
     })
   }
-}
-
-const flattenObject = (value: any, id: string) => {
-  const { [id]: nestedObject, ...rest } = value
-  return { ...nestedObject, ...rest }
 }
