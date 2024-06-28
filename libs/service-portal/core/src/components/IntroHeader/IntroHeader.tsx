@@ -5,6 +5,7 @@ import {
   Text,
   LoadingDots,
   GridColumnProps,
+  Box,
 } from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
@@ -53,9 +54,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
           </Text>
         )}
         {props.introComponent && (
-          <Text variant="default" paddingTop={1}>
-            {props.introComponent}
-          </Text>
+          <Box paddingTop={1}>{props.introComponent}</Box>
         )}
         {props.children}
       </GridColumn>
