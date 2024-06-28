@@ -8,7 +8,7 @@ export const checkForCustomMappedComponents = (
   items: Array<Item>,
   values: any,
 ) => {
-  items.forEach((item) => {
+  items.some((item) => {
     if (item.component === 'nationalIdWithName') {
       handleNationalIdWithName(item, values)
     }
