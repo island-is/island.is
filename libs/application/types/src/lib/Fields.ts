@@ -84,7 +84,7 @@ export type TableRepeaterItem = {
             value: string
             tooltip?: StaticText
           }[]
-        | void)
+        | undefined)
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: boolean
