@@ -1,5 +1,6 @@
 import { EinstaklingurMaFrambodInfo, MedmaeliDTO } from '../../gen/fetch'
 import { Area } from './types/area.dto'
+import { Collection } from './types/collection.dto'
 import { ListBase } from './types/list.dto'
 import { Signature } from './types/signature.dto'
 
@@ -7,6 +8,13 @@ export enum ListState {
   Open = 'open',
   Closed = 'closed',
 }
+
+export enum CollectionType {
+  Presidential = 'presidential',
+  General = 'general',
+  Local = 'local',
+}
+
 export interface GetListInput {
   areaId?: string
   nationalId?: string
@@ -29,6 +37,7 @@ export interface CreateListInput {
   collectionId: string
   owner: OwnerInput
   areas?: AreaInput[]
+  collectionType: CollectionType
 }
 
 export interface BulkUploadUser {
@@ -54,6 +63,10 @@ export interface CanSignInput {
   canSignInfo?: EinstaklingurMaFrambodInfo
   activeSignature?: MedmaeliDTO
   signatures?: Signature[]
+}
+
+export interface CollectionTypeInput {
+  type: CollectionType
 }
 
 export enum Requirement {

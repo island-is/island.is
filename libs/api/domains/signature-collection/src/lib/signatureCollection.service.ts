@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { SignatureCollectionSuccess } from './models/success.model'
-import { SignatureCollection } from './models/collection.model'
+import { CollectionType, SignatureCollection } from './models/collection.model'
 import {
   SignatureCollectionList,
   SignatureCollectionSignedList,
@@ -14,6 +14,7 @@ import {
 import { User } from '@island.is/auth-nest-tools'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionTypeInput } from './dto/collectionType.input'
 
 @Injectable()
 export class SignatureCollectionService {
@@ -21,8 +22,12 @@ export class SignatureCollectionService {
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {}
 
-  async currentCollection(): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.currentCollection()
+  async currentCollection(
+    input: SignatureCollectionTypeInput,
+  ): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.currentCollection(
+      input.type,
+    )
   }
 
   async allOpenLists({
@@ -81,8 +86,12 @@ export class SignatureCollectionService {
 
   async signedList(
     user: User,
+    collectionType: CollectionType,
   ): Promise<SignatureCollectionSignedList[] | null> {
-    return await this.signatureCollectionClientService.getSignedList(user)
+    return await this.signatureCollectionClientService.getSignedList(
+      user,
+      collectionType,
+    )
   }
 
   async signatures(
@@ -99,6 +108,7 @@ export class SignatureCollectionService {
     user: User,
     nationalId?: string,
   ): Promise<SignatureCollectionSignee> {
+    console.log(user)
     return await this.signatureCollectionClientService.getSignee(
       user,
       nationalId,

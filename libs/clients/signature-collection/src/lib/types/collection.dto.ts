@@ -2,6 +2,7 @@ import { Area, mapArea } from './area.dto'
 import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
+import { CollectionType } from '../signature-collection.types'
 
 export enum CollectionStatus {
   InitialActive = 'initialActive',
@@ -25,6 +26,26 @@ export interface Collection {
   candidates: Candidate[]
   processed: boolean
   status: CollectionStatus
+  type: CollectionType
+}
+
+const getType = (electionType?: string): CollectionType => {
+  switch (electionType?.toLowerCase()) {
+    case 'forsetakosning':
+      return CollectionType.Presidential
+    case 'alþingiskosning':
+      return CollectionType.General
+    case 'sveitarstjórnarkosninga':
+      return CollectionType.Local
+    default:
+      logger.warn(
+        'Received unknown elecetion type from the national registry.',
+        electionType,
+      )
+      throw new Error(
+        'Received unknown election type from the national registry.',
+      )
+  }
 }
 
 const getStatus = ({
@@ -107,5 +128,6 @@ export const mapCollection = (
     areas: areas.map((area) => mapArea(area)),
     processed,
     status,
+    type: getType(collection.kosningTegund),
   }
 }

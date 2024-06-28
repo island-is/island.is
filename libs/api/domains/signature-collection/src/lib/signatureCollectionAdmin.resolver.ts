@@ -31,6 +31,7 @@ import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
 import { SignatureCollectionCandidateIdInput } from './dto/candidateId.input'
+import { SignatureCollectionTypeInput } from './dto/collectionType.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -49,13 +50,14 @@ export class SignatureCollectionAdminResolver {
   )
   async signatureCollectionAdminCurrent(
     @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionTypeInput,
   ): Promise<SignatureCollection> {
     const isManager = user.scope.includes(
       AdminPortalScope.signatureCollectionManage,
     )
     return isManager
       ? this.signatureCollectionManagerService.currentCollection(user)
-      : this.signatureCollectionService.currentCollection(user)
+      : this.signatureCollectionService.currentCollection(user, input.type)
   }
 
   @Query(() => [SignatureCollectionList])

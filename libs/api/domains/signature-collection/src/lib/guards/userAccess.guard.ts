@@ -6,6 +6,7 @@ import {
   UserAccess,
 } from '../decorators/acessRequirement.decorator'
 import { SignatureCollectionService } from '../signatureCollection.service'
+import { GqlExecutionContext } from '@nestjs/graphql'
 
 @Injectable()
 export class UserAccessGuard implements CanActivate {
@@ -18,6 +19,13 @@ export class UserAccessGuard implements CanActivate {
       BYPASS_AUTH_KEY,
       [context.getHandler(), context.getClass()],
     )
+    const ctx = GqlExecutionContext.create(context)
+    const gqlContext = ctx.getContext()
+
+    // Access the GraphQL query and variables
+    const { variables } = gqlContext.req.body
+    console.log(variables)
+    console.log(variables.input.type)
 
     // if the bypass auth exists and is truthy we bypass auth
     if (bypassAuth) {
@@ -35,8 +43,10 @@ export class UserAccessGuard implements CanActivate {
     }
     const isDelegatedUser = !!user?.actor?.nationalId
     // IsOwner needs signee
+    // get collectionType from request info
     const signee = await this.signatureCollectionService.signee(user)
     request.body = { ...request.body, signee }
+
     // IsOwner decorator not used
     if (!ownerRestriction) {
       return true

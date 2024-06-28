@@ -30,6 +30,7 @@ import { CurrentSignee } from './decorators/signee.decorator'
 import { ApiScope } from '@island.is/auth/scopes'
 import { SignatureCollectionCancelListsInput } from './dto/cencelLists.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
+import { SignatureCollectionTypeInput } from './dto/collectionType.input'
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
@@ -47,8 +48,10 @@ export class SignatureCollectionResolver {
 
   @BypassAuth()
   @Query(() => SignatureCollection)
-  async signatureCollectionCurrent(): Promise<SignatureCollection> {
-    return this.signatureCollectionService.currentCollection()
+  async signatureCollectionCurrent(
+    @Args('input') input: SignatureCollectionTypeInput,
+  ): Promise<SignatureCollection> {
+    return this.signatureCollectionService.currentCollection(input)
   }
 
   @BypassAuth()
@@ -100,8 +103,9 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionSignedList(
     @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionTypeInput,
   ): Promise<SignatureCollectionSignedList[] | null> {
-    return this.signatureCollectionService.signedList(user)
+    return this.signatureCollectionService.signedList(user, input.type)
   }
 
   @Scopes(ApiScope.signatureCollection)
