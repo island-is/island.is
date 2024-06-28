@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-export class CreateListItemDto {
+export class FieldDisplayOrderDto {
   @ApiProperty()
-  fieldId!: string
+  id!: string
 
   @ApiProperty()
-  displayOrder!: number
+  screenId!: string
 }

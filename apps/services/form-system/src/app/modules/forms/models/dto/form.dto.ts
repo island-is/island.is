@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
-import { InputDto } from '../../../inputs/models/dto/input.dto'
+import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { FormTestimonyTypeDto } from '../../../testimonies/models/dto/formTestimonyType.dto'
 import { String } from 'aws-sdk/clients/apigateway'
@@ -56,6 +56,6 @@ export class FormDto {
   @ApiProperty({ type: [ScreenDto] })
   screens?: ScreenDto[]
 
-  @ApiProperty({ type: [InputDto] })
-  inputs?: InputDto[]
+  @ApiProperty({ type: [FieldDto] })
+  fields?: FieldDto[]
 }

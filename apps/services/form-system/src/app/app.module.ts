@@ -6,8 +6,8 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { FormsModule } from './modules/forms/forms.module'
 import { ScreensModule } from './modules/screens/screens.module'
-import { InputSettingsModule } from './modules/inputSettings/inputSettings.module'
-import { InputsModule } from './modules/inputs/inputs.module'
+import { FieldSettingsModule } from './modules/fieldSettings/fieldSettings.module'
+import { FieldsModule } from './modules/fields/fields.module'
 import { ListsModule } from './modules/lists/lists.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
 import { SectionsModule } from './modules/sections/sections.module'
@@ -28,10 +28,10 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     FormsModule,
     SectionsModule,
     ScreensModule,
-    InputsModule,
+    FieldsModule,
     TestimoniesModule,
     ListsModule,
-    InputSettingsModule,
+    FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
   ],

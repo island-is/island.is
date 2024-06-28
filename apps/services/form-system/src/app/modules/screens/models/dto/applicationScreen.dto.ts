@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { ApplicationInput } from '../../../inputs/models/dto/applicationInput.dto'
+import { ApplicationFieldDto } from '../../../fields/models/dto/applicationField.dto'
 
 export class ApplicationScreen {
   @ApiProperty()
@@ -18,6 +18,6 @@ export class ApplicationScreen {
   @ApiProperty()
   multiset!: number
 
-  @ApiProperty({ type: [ApplicationInput] })
-  inputs!: ApplicationInput[]
+  @ApiProperty({ type: [ApplicationFieldDto] })
+  fields!: ApplicationFieldDto[]
 }

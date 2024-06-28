@@ -1,21 +1,21 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { CreationOptional, NonAttribute } from 'sequelize'
 import {
+  BelongsToMany,
   Column,
   CreatedAt,
   DataType,
-  ForeignKey,
   HasMany,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Section } from '../../sections/models/section.model'
-import { CreationOptional } from 'sequelize'
-import { Field } from '../../fields/models/field.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
+import { Organization } from '../../organizations/models/organization.model'
+import { Field } from './field.model'
 
-@Table({ tableName: 'screens' })
-export class Screen extends Model<Screen> {
+@Table({ tableName: 'field_types' })
+export class FieldType extends Model<FieldType> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -26,12 +26,28 @@ export class Screen extends Model<Screen> {
   id!: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    unique: true,
+  })
+  @ApiProperty()
+  type!: string
+
+  @Column({
     type: DataType.JSON,
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   name!: LanguageType
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: false,
+    defaultValue: () => new LanguageType(),
+  })
+  @ApiProperty({ type: LanguageType })
+  description!: LanguageType
 
   @CreatedAt
   @ApiProperty({ type: Date })
@@ -42,38 +58,20 @@ export class Screen extends Model<Screen> {
   modified!: CreationOptional<Date>
 
   @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  })
-  @ApiProperty()
-  displayOrder!: number
-
-  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   })
   @ApiProperty()
-  isHidden!: boolean
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-    defaultValue: 0,
-  })
-  @ApiProperty()
-  multiset!: number
+  isCommon!: boolean
 
   @HasMany(() => Field)
-  @ApiProperty({ type: [Field] })
   fields?: Field[]
 
-  @ForeignKey(() => Section)
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-    field: 'section_id',
+  @BelongsToMany(() => Organization, {
+    through: 'organization_field_types',
+    foreignKey: 'field_type_id',
+    otherKey: 'organization_id',
   })
-  sectionId!: string
+  organizations?: NonAttribute<Organization[]>
 }

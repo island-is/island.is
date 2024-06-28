@@ -1,21 +1,22 @@
 import { ApiProperty } from '@nestjs/swagger'
+import { CreationOptional } from 'sequelize'
 import {
   Column,
   CreatedAt,
   DataType,
   ForeignKey,
-  HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Section } from '../../sections/models/section.model'
-import { CreationOptional } from 'sequelize'
-import { Field } from '../../fields/models/field.model'
+import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
+import { FieldType } from './fieldType.model'
+import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 
-@Table({ tableName: 'screens' })
-export class Screen extends Model<Screen> {
+@Table({ tableName: 'fields' })
+export class Field extends Model<Field> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -50,6 +51,14 @@ export class Screen extends Model<Screen> {
   displayOrder!: number
 
   @Column({
+    type: DataType.JSON,
+    allowNull: false,
+    defaultValue: () => new LanguageType(),
+  })
+  @ApiProperty()
+  description!: LanguageType
+
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
@@ -58,22 +67,32 @@ export class Screen extends Model<Screen> {
   isHidden!: boolean
 
   @Column({
-    type: DataType.INTEGER,
+    type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: 0,
+    defaultValue: false,
   })
   @ApiProperty()
-  multiset!: number
+  isPartOfMultiset!: boolean
 
-  @HasMany(() => Field)
-  @ApiProperty({ type: [Field] })
-  fields?: Field[]
-
-  @ForeignKey(() => Section)
+  @ForeignKey(() => Screen)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'section_id',
+    field: 'screen_id',
   })
-  sectionId!: string
+  screenId!: string
+
+  @HasOne(() => FieldSettings)
+  @ApiProperty({ type: FieldSettings })
+  fieldSettings?: FieldSettings
+
+  @ForeignKey(() => FieldType)
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    defaultValue: 'default',
+    field: 'field_type',
+  })
+  @ApiProperty()
+  fieldType!: string
 }

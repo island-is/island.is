@@ -4,13 +4,13 @@ import { SectionTypes } from '../../enums/sectionTypes'
 import { FormApplicantDto } from '../applicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
-import { InputSettingsDto } from '../inputSettings/models/dto/inputSettings.dto'
-import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
-import { InputSettings } from '../inputSettings/models/inputSettings.model'
-import { InputDto } from '../inputs/models/dto/input.dto'
-import { InputTypeDto } from '../inputs/models/dto/inputType.dto'
-import { Input } from '../inputs/models/input.model'
-import { InputType } from '../inputs/models/inputType.model'
+import { FieldSettingsDto } from '../fieldSettings/models/dto/fieldSettings.dto'
+import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
+import { FieldSettings } from '../fieldSettings/models/fieldSettings.model'
+import { FieldDto } from '../fields/models/dto/field.dto'
+import { FieldTypeDto } from '../fields/models/dto/fieldType.dto'
+import { Field } from '../fields/models/field.model'
+import { FieldType } from '../fields/models/fieldType.model'
 import { ListTypeDto } from '../lists/models/dto/listType.dto'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
@@ -38,11 +38,11 @@ export class FormsService {
     private readonly screenModel: typeof Screen,
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
-    @InjectModel(InputType)
-    private readonly inputTypeModel: typeof InputType,
+    @InjectModel(FieldType)
+    private readonly fieldTypeModel: typeof FieldType,
     @InjectModel(ListType)
     private readonly listTypeModel: typeof ListType,
-    private readonly inputSettingsMapper: InputSettingsMapper,
+    private readonly fieldSettingsMapper: FieldSettingsMapper,
     private readonly formMapper: FormMapper,
   ) {}
 
@@ -112,12 +112,12 @@ export class FormsService {
               as: 'screens',
               include: [
                 {
-                  model: Input,
-                  as: 'inputs',
+                  model: Field,
+                  as: 'fields',
                   include: [
                     {
-                      model: InputSettings,
-                      as: 'inputSettings',
+                      model: FieldSettings,
+                      as: 'fieldSettings',
                       include: [
                         {
                           model: ListItem,
@@ -144,7 +144,7 @@ export class FormsService {
   private async buildFormResponse(form: Form): Promise<FormResponse> {
     const response: FormResponse = {
       form: this.setArrays(form),
-      inputTypes: await this.getInputTypes(form.organizationId),
+      fieldTypes: await this.getFieldTypes(form.organizationId),
       testimonyTypes: await this.getTestimonyTypes(form.organizationId),
       listTypes: await this.getListTypes(form.organizationId),
     }
@@ -177,36 +177,35 @@ export class FormsService {
     return testimonyTypesDto
   }
 
-  private async getInputTypes(organizationId: string): Promise<InputTypeDto[]> {
-    const commonInputTypes = await this.inputTypeModel.findAll({
+  private async getFieldTypes(organizationId: string): Promise<FieldTypeDto[]> {
+    const commonFieldTypes = await this.fieldTypeModel.findAll({
       where: { isCommon: true },
     })
-    const organizationSpecificInputTypes =
+    const organizationSpecificFieldTypes =
       await this.organizationModel.findByPk(organizationId, {
-        include: [InputType],
+        include: [FieldType],
       })
 
-    const organizationInputTypes = commonInputTypes.concat(
-      organizationSpecificInputTypes?.organizationInputTypes as InputType[],
+    const organizationFieldTypes = commonFieldTypes.concat(
+      organizationSpecificFieldTypes?.organizationFieldTypes as FieldType[],
     )
 
-    const inputTypesDto: InputTypeDto[] = []
-    organizationInputTypes.map((inputType) => {
-      inputTypesDto.push({
-        id: inputType.id,
-        type: inputType.type,
-        name: inputType.name,
-        description: inputType.description,
-        isCommon: inputType.isCommon,
-        inputSettings: this.inputSettingsMapper.mapInputTypeToInputSettingsDto(
+    const fieldTypesDto: FieldTypeDto[] = []
+    organizationFieldTypes.map((fieldType) => {
+      fieldTypesDto.push({
+        id: fieldType.id,
+        type: fieldType.type,
+        name: fieldType.name,
+        description: fieldType.description,
+        isCommon: fieldType.isCommon,
+        fieldSettings: this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
           null,
-          inputType.type,
+          fieldType.type,
         ),
-      } as InputTypeDto)
+      } as FieldTypeDto)
     })
 
-    console.log('blalala:', InputSettingsDto)
-    return inputTypesDto
+    return fieldTypesDto
   }
 
   private async getListTypes(organizationId: string): Promise<ListTypeDto[]> {
@@ -254,7 +253,7 @@ export class FormsService {
       applicants: [],
       sections: [],
       screens: [],
-      inputs: [],
+      fields: [],
     }
 
     form.testimonyTypes?.map((testimonyType) => {
@@ -298,24 +297,24 @@ export class FormsService {
           isHidden: screen.isHidden,
           multiset: screen.multiset,
         } as ScreenDto)
-        screen.inputs?.map((input) => {
-          formDto.inputs?.push({
-            id: input.id,
+        screen.fields?.map((field) => {
+          formDto.fields?.push({
+            id: field.id,
             screenId: screen.id,
-            name: input.name,
-            created: input.created,
-            modified: input.modified,
-            displayOrder: input.displayOrder,
-            description: input.description,
-            isHidden: input.isHidden,
-            isPartOfMultiset: input.isPartOfMultiset,
-            inputSettings:
-              this.inputSettingsMapper.mapInputTypeToInputSettingsDto(
-                input.inputSettings,
-                input.inputType,
+            name: field.name,
+            created: field.created,
+            modified: field.modified,
+            displayOrder: field.displayOrder,
+            description: field.description,
+            isHidden: field.isHidden,
+            isPartOfMultiset: field.isPartOfMultiset,
+            fieldSettings:
+              this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
+                field.fieldSettings,
+                field.fieldType,
               ),
-            inputType: input.inputType,
-          } as InputDto)
+            fieldType: field.fieldType,
+          } as FieldDto)
         })
       })
     })
@@ -342,7 +341,7 @@ export class FormsService {
       formId: form.id,
       sectionType: SectionTypes.INPUT,
       displayOrder: 2,
-      name: { is: 'Innsláttarskjár', en: 'InputScreen' },
+      name: { is: 'Kafli', en: 'Section' },
     } as Section)
 
     await this.sectionModel.create({
@@ -355,7 +354,7 @@ export class FormsService {
     await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'Skjár 1', en: 'Screen 1' },
+      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
     } as Screen)
   }
 }

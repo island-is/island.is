@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ListItem } from './models/listItem.model'
 import { ListItemDto } from './models/dto/listItem.dto'
 import { CreateListItemDto } from './models/dto/createListItem.dto'
-import { InputSettingsService } from '../inputSettings/inputSettings.service'
+import { FieldSettingsService } from '../fieldSettings/fieldSettings.service'
 import { ListItemMapper } from './models/listItem.mapper'
 import { UpdateListItemDto } from './models/dto/updateListItem.dto'
 import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisplayOrder.dto'
@@ -13,7 +13,7 @@ export class ListItemsService {
   constructor(
     @InjectModel(ListItem)
     private readonly listItemModel: typeof ListItem,
-    private readonly inputSettingsService: InputSettingsService,
+    private readonly inputSettingsService: FieldSettingsService,
     private listItemMapper: ListItemMapper,
   ) {}
 
@@ -28,12 +28,12 @@ export class ListItemsService {
   }
 
   async create(createListItem: CreateListItemDto): Promise<ListItemDto> {
-    const inputSettings = await this.inputSettingsService.findByInputId(
-      createListItem.inputId,
+    const inputSettings = await this.inputSettingsService.findByFieldId(
+      createListItem.fieldId,
     )
 
     const listItem = await this.listItemModel.create({
-      inputSettingsId: inputSettings.id,
+      fieldSettingsId: inputSettings.id,
       displayOrder: createListItem.displayOrder,
     } as ListItem)
 

@@ -13,7 +13,7 @@ import {
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { ApplicantTypeNameSuggestion } from '../../applicants/models/applicantTypeNameSuggestion.model'
 import { Form } from '../../forms/models/form.model'
-import { InputType } from '../../inputs/models/inputType.model'
+import { FieldType } from '../../fields/models/fieldType.model'
 import { ListType } from '../../lists/models/listType.model'
 import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 
@@ -60,12 +60,12 @@ export class Organization extends Model<Organization> {
   @ApiProperty({ type: [ApplicantTypeNameSuggestion] })
   applicantTypeNameSuggestions?: ApplicantTypeNameSuggestion[]
 
-  @BelongsToMany(() => InputType, {
-    through: 'organization_input_types',
+  @BelongsToMany(() => FieldType, {
+    through: 'organization_field_types',
     foreignKey: 'organization_id',
-    otherKey: 'input_type_id',
+    otherKey: 'field_type_id',
   })
-  organizationInputTypes?: NonAttribute<InputType[]>
+  organizationFieldTypes?: NonAttribute<FieldType[]>
 
   @BelongsToMany(() => TestimonyType, {
     through: 'organization_testimony_types',

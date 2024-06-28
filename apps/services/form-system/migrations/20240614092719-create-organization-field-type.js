@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'list_items',
+        'organization_field_types',
         {
           id: {
             type: Sequelize.UUID,
@@ -22,35 +22,19 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          label: {
-            type: Sequelize.JSON,
-            allowNull: false,
-          },
-          description: {
-            type: Sequelize.JSON,
-            allowNull: true,
-          },
-          value: {
-            type: Sequelize.STRING,
-            allowNull: false,
-            defaultValue: '',
-          },
-          is_selected: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
-          display_order: {
-            type: Sequelize.INTEGER,
-            allowNull: false,
-            defaultValue: 0,
-          },
-          field_settings_id: {
+          organization_id: {
             type: Sequelize.UUID,
-            onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'field_settings',
+              model: 'organizations',
+              key: 'id',
+            },
+          },
+          field_type_id: {
+            type: Sequelize.UUID,
+            allowNull: false,
+            references: {
+              model: 'field_types',
               key: 'id',
             },
           },
@@ -62,7 +46,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('list_items', { transaction: t }),
+      queryInterface.dropTable('organization_field_types', { transaction: t }),
     )
   },
 }

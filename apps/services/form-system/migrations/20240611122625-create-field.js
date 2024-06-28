@@ -4,13 +4,21 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'list_items',
+        'fields',
         {
           id: {
             type: Sequelize.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
+          },
+          name: {
+            type: Sequelize.JSON,
+            allowNull: false,
+          },
+          description: {
+            type: Sequelize.JSON,
+            allowNull: false,
           },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
@@ -22,36 +30,35 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          label: {
-            type: Sequelize.JSON,
+          display_order: {
+            type: Sequelize.INTEGER,
             allowNull: false,
           },
-          description: {
-            type: Sequelize.JSON,
-            allowNull: true,
-          },
-          value: {
-            type: Sequelize.STRING,
-            allowNull: false,
-            defaultValue: '',
-          },
-          is_selected: {
+          is_hidden: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
             defaultValue: false,
           },
-          display_order: {
-            type: Sequelize.INTEGER,
+          is_part_of_multiset: {
+            type: Sequelize.BOOLEAN,
             allowNull: false,
-            defaultValue: 0,
+            defaultValue: false,
           },
-          field_settings_id: {
+          screen_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'field_settings',
+              model: 'screens',
               key: 'id',
+            },
+          },
+          field_type: {
+            type: Sequelize.STRING,
+            allowNull: false,
+            references: {
+              model: 'field_types',
+              key: 'type',
             },
           },
         },
@@ -62,7 +69,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('list_items', { transaction: t }),
+      queryInterface.dropTable('fields', { transaction: t }),
     )
   },
 }

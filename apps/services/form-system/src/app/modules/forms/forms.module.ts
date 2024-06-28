@@ -2,8 +2,8 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { FormApplicant } from '../applicants/models/formApplicant.model'
 import { Screen } from '../screens/models/screen.model'
-import { InputSettingsMapper } from '../inputSettings/models/inputSettings.mapper'
-import { InputType } from '../inputs/models/inputType.model'
+import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
+import { FieldType } from '../fields/models/fieldType.model'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { Section } from '../sections/models/section.model'
@@ -23,13 +23,13 @@ import { FormMapper } from './models/form.mapper'
       Section,
       Screen,
       Organization,
-      InputType,
+      FieldType,
       TestimonyType,
       ListType,
       ListItem,
     ]),
   ],
   controllers: [FormsController],
-  providers: [FormsService, InputSettingsMapper, ListItemMapper, FormMapper],
+  providers: [FormsService, FieldSettingsMapper, ListItemMapper, FormMapper],
 })
 export class FormsModule {}

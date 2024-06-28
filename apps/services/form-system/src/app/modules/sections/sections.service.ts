@@ -3,7 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Section } from './models/section.model'
 import { CreateSectionDto } from './models/dto/createSection.dto'
 import { Screen } from '../screens/models/screen.model'
-import { Input } from '../inputs/models/input.model'
+import { Field } from '../fields/models/field.model'
 import { UpdateSectionDto } from './models/dto/updateSection.dto'
 import { SectionDto } from './models/dto/section.dto'
 import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDisplayOrder.dto'
@@ -25,7 +25,7 @@ export class SectionsService {
         {
           model: Screen,
           as: 'screens',
-          include: [{ model: Input, as: 'inputs' }],
+          include: [{ model: Field, as: 'fields' }],
         },
       ],
     })
