@@ -25,7 +25,7 @@
           ]
         }
       },
-      "outputs": ["{workspaceRoot}/dist/apps/service s/auth/ids-api"]
+      "outputs": ["{workspaceRoot}/dist/apps/services/auth/ids-api"]
     },
     "esbuild": {
       "executor": "./tools/executors/node:build",
