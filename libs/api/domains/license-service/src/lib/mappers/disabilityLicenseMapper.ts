@@ -1,7 +1,10 @@
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { OrorkuSkirteini } from '@island.is/clients/disability-license'
-import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
+import {
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
 import {
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
@@ -12,8 +15,6 @@ import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
 import { formatDate, expiryTag } from '../utils'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
-
-export const LICENSE_NAMESPACE = 'api.license-service'
 
 @Injectable()
 export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {

@@ -4,7 +4,10 @@ import {
   FlattenedAdrDto,
   FlattenedAdrRightsDto,
 } from '@island.is/clients/license-client'
-import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
+import {
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
@@ -15,8 +18,6 @@ import {
   GenericLicenseMapper,
 } from '../licenceService.type'
 import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
-
-export const LICENSE_NAMESPACE = 'api.license-service'
 
 @Injectable()
 export class AdrLicensePayloadMapper implements GenericLicenseMapper {
