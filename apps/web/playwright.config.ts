@@ -37,9 +37,10 @@ export default defineConfig({
   ],
   // Run your local dev server before starting the tests.
   webServer: {
-    command: 'yarn start web',
+    command: 'yarn dev web',
     url: webServerUrl,
     reuseExistingServer: !process.env.CI,
     timeout: 5 * 60 * 1000,
+    stdout: 'pipe',
   },
 })
