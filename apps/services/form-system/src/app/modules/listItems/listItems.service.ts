@@ -13,7 +13,7 @@ export class ListItemsService {
   constructor(
     @InjectModel(ListItem)
     private readonly listItemModel: typeof ListItem,
-    private readonly inputSettingsService: FieldSettingsService,
+    private readonly fieldSettingsService: FieldSettingsService,
     private listItemMapper: ListItemMapper,
   ) {}
 
@@ -28,12 +28,12 @@ export class ListItemsService {
   }
 
   async create(createListItem: CreateListItemDto): Promise<ListItemDto> {
-    const inputSettings = await this.inputSettingsService.findByFieldId(
+    const fieldSettings = await this.fieldSettingsService.findByFieldId(
       createListItem.fieldId,
     )
 
     const listItem = await this.listItemModel.create({
-      fieldSettingsId: inputSettings.id,
+      fieldSettingsId: fieldSettings.id,
       displayOrder: createListItem.displayOrder,
     } as ListItem)
 
