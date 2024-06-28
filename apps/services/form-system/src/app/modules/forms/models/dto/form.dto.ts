@@ -5,7 +5,6 @@ import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { FormTestimonyTypeDto } from '../../../testimonies/models/dto/formTestimonyType.dto'
-import { String } from 'aws-sdk/clients/apigateway'
 
 export class FormDto {
   @ApiProperty()

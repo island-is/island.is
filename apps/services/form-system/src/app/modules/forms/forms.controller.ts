@@ -12,9 +12,6 @@ import { ApiTags } from '@nestjs/swagger'
 import { FormsService } from './forms.service'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormResponse } from './models/dto/form.response.dto'
-import { Form } from './models/form.model'
-import { FormDto } from './models/dto/form.dto'
-import { FormsListFormDto } from './models/dto/formsListForm.dto'
 import { FormsListDto } from './models/dto/formsList.dto'
 
 @ApiTags('forms')
