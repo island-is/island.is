@@ -1,12 +1,9 @@
 import {
   buildForm,
-  buildCustomField,
   buildMultiField,
   buildSection,
   buildMessageWithLinkButtonField,
-  coreMessages,
   buildDescriptionField,
-  buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'

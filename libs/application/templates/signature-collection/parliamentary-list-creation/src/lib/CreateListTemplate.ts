@@ -15,7 +15,6 @@ import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
-import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 
 const WeekLifeCycle: StateLifeCycle = {
