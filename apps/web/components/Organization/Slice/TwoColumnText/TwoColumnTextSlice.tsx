@@ -49,13 +49,17 @@ export const TwoColumnTextSlice: React.FC<
     sliceLabelIds.push(rightId)
   }
 
-  const rightContentCloserToLeftContentMobile =
-    (slice.rightTitle === '' ||
-      slice.rightTitle === undefined ||
-      slice.onlyUseOneTitle) &&
-    slice.leftTitle !== '' &&
-    !slice.leftLink?.url &&
-    isMobile
+  const rightTitleIsSkipped =
+    slice.rightTitle === '' ||
+    slice.rightTitle === undefined ||
+    slice.onlyUseOneTitle
+
+  const leftTitleExist = slice.leftTitle !== ''
+
+  const leftLinkNotExist = !slice.leftLink?.url
+
+  const verticalAlignContentInMobile =
+    rightTitleIsSkipped && leftTitleExist && leftLinkNotExist && isMobile
 
   const ariaLabelledBy = sliceLabelIds.join(' ')
 
@@ -121,7 +125,7 @@ export const TwoColumnTextSlice: React.FC<
             <GridColumn
               span={columnSpan}
               paddingTop={
-                rightContentCloserToLeftContentMobile
+                verticalAlignContentInMobile
                   ? [0, 0, 0, 0]
                   : [2, 2, 2, 0]
               }
@@ -135,7 +139,7 @@ export const TwoColumnTextSlice: React.FC<
               )}
               <Box
                 style={
-                  rightContentCloserToLeftContentMobile
+                  verticalAlignContentInMobile
                     ? { marginTop: '-10px' }
                     : {}
                 }
