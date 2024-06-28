@@ -1,24 +1,21 @@
 import { TableRepeaterItem } from '@island.is/application/types'
 
 type Item = {
-  id: string;
-} & TableRepeaterItem;
+  id: string
+} & TableRepeaterItem
 
 export const checkForCustomMappedComponents = (
   items: Array<Item>,
   values: any,
 ) => {
-  items.forEach((item) => {
+  items.some((item) => {
     if (item.component === 'nationalIdWithName') {
       handleNationalIdWithName(item, values)
     }
   })
 }
 
-const handleNationalIdWithName = (
-  item: Item,
-  values: any,
-) => {
+const handleNationalIdWithName = (item: Item, values: any) => {
   // nationalIdWithName returns an object that we
   // need to extract entries from and add to values
   if (values) {
