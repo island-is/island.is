@@ -1,34 +1,24 @@
 import { TableRepeaterItem } from '@island.is/application/types'
-import { StaticText } from 'static-text'
+
+type Item = {
+  id: string;
+} & TableRepeaterItem;
 
 export const checkForCustomMappedComponents = (
-  items: Array<
-    {
-      id: string
-    } & TableRepeaterItem
-  >,
-  tableRows: Array<string>,
-  tableHeader: Array<StaticText | undefined>,
+  items: Array<Item>,
   values: any,
 ) => {
   items.forEach((item) => {
     if (item.component === 'nationalIdWithName') {
-      handleNationalIdWithName(item, tableRows, tableHeader, values)
+      handleNationalIdWithName(item, values)
     }
   })
 }
 
 const handleNationalIdWithName = (
-  item: {
-    id: string
-  } & TableRepeaterItem,
-  tableRows: Array<string>,
-  tableHeader: Array<StaticText | undefined>,
+  item: Item,
   values: any,
 ) => {
-  // let table account for name that is being lookup up
-  insert(tableRows, item.id, 'name')
-
   // nationalIdWithName returns an object that we
   // need to extract entries from and add to values
   if (values) {
@@ -40,24 +30,7 @@ const handleNationalIdWithName = (
   }
 }
 
-const insert = (
-  array: Array<any>,
-  target: StaticText | undefined,
-  valueToInsert: string,
-) => {
-  const index = array.indexOf(target)
-  if (index !== -1) {
-    array.splice(index + 1, 0, valueToInsert)
-  }
-}
-
 const flattenObject = (value: any, id: string) => {
   const { [id]: nestedObject, ...rest } = value
-  const newObj = { ...nestedObject, ...rest }
-
-  // if the id of the field is other than 'nationalId',
-  // then nationalId does not need to be included in values
-  if (id !== 'nationalId') delete newObj['nationalId']
-
-  return newObj
+  return { ...nestedObject, ...rest }
 }

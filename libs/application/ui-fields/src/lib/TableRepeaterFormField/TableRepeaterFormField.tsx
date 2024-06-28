@@ -88,7 +88,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
-  checkForCustomMappedComponents(tableItems, tableRows, tableHeader, values)
+  checkForCustomMappedComponents(tableItems, values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
