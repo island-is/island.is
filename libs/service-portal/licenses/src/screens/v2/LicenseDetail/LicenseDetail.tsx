@@ -60,7 +60,6 @@ const LicenseDetail = () => {
 
   const genericLicense = data?.licenseServiceV2GenericLicense ?? null
 
-  console.log(licenseType)
   return (
     <>
       <IntroHeader
