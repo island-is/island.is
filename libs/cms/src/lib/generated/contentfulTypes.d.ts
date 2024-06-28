@@ -455,6 +455,9 @@ export interface IBigBulletListFields {
 
   /** Bullets */
   bullets: (IIconBullet | INumberBulletSection)[]
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IBigBulletList extends Entry<IBigBulletListFields> {
