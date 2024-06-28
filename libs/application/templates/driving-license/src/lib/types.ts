@@ -10,6 +10,7 @@ export type ConditionFn = (answer: FormValue) => boolean
 
 export type DrivingLicenseCategory = {
   nr: string
+  validToCode: number
 }
 
 export type DrivingLicense = {

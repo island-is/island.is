@@ -13,14 +13,14 @@ export const menuItems = [
     href: loc[1].href,
     testId: 'subscriptions-btn',
   },
-  // Tölfræði is hidden until PowerBI
   // {
-  //   label: 'Tölfræði',
-  //   href: '/tolfraedi',
+  //   label: loc[2].label,
+  //   href: loc[2].href,
+  //   testId: 'statistics-btn',
   // },
   {
-    label: loc[2].label,
-    href: loc[2].href,
+    label: loc[3].label,
+    href: loc[3].href,
     testId: 'advices-btn',
   },
 ]

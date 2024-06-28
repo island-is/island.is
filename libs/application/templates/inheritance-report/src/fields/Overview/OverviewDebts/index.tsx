@@ -126,10 +126,12 @@ const Debt = ({
         <TopRow title={description} value={propertyValuation ?? ''} />
       )}
       <Box marginLeft={[0, 4]}>
-        <Row
-          title={formatMessage(m.nationalId)}
-          value={formatNationalId(nationalId)}
-        />
+        {nationalId && (
+          <Row
+            title={formatMessage(m.nationalId)}
+            value={formatNationalId(nationalId)}
+          />
+        )}
         <Row title={formatMessage(m.debtsLoanIdentity)} value={assetNumber} />
         <Row title={formatMessage(m.debtType)} value={debtType} />
       </Box>

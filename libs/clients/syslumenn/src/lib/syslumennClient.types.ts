@@ -227,6 +227,7 @@ export type EstateMember = {
   phone?: string
   email?: string
   advocate?: Advocate
+  advocate2?: Advocate
 }
 
 export type InheritanceEstateMember = EstateMember & {
@@ -353,6 +354,18 @@ export interface MasterLicence {
   dateOfPublication?: Date
   profession?: string
   office?: string
+  nationalId?: string
+}
+
+export interface JourneymanLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+}
+
+export interface ProfessionRight {
+  name?: string
+  profession?: string
 }
 
 export interface VehicleRegistration {

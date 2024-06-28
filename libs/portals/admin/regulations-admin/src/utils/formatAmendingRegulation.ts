@@ -16,6 +16,13 @@ const removeRegPrefix = (title: string) => {
   return title
 }
 
+const removeRegNamePrefix = (name: string) => {
+  if (/^0+/.test(name)) {
+    return name.replace(/^0+/, '')
+  }
+  return name
+}
+
 export const formatAmendingRegTitle = (draft: RegDraftForm) => {
   const impactArray = Object.values(draft.impacts)
 
@@ -27,21 +34,22 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
 
     const amendingTitles = amendingArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_AMENDING}` : ''}${item.name.replace(
-          /^0+/,
-          '',
-        )}${removeRegPrefix(item.regTitle)}`,
+        `${i === 0 ? `${PREFIX_AMENDING}` : ''}${removeRegNamePrefix(
+          item.name,
+        )} ${removeRegPrefix(item.regTitle)}`,
     )
 
     const repealTitles = repealArray.map(
       (item, i) =>
-        `${i === 0 ? `${PREFIX_REPEALING}` : ''}${item.name.replace(
-          /^0+/,
-          '',
-        )}${removeRegPrefix(item.regTitle)}`,
+        `${i === 0 ? `${PREFIX_REPEALING}` : ''}${removeRegNamePrefix(
+          item.name,
+        )} ${removeRegPrefix(item.regTitle)}`,
     )
 
-    return PREFIX + [...amendingTitles, ...repealTitles].join(' og ')
+    return (
+      PREFIX +
+      [...amendingTitles, ...repealTitles].join(' og ').replace(/ +(?= )/g, '')
+    )
   }
 
   return PREFIX
@@ -50,13 +58,18 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
 // ----------------------------------------------------------------------
 
 export const formatAmendingRegBody = (
-  regName: string,
+  name: string,
   repeal?: boolean,
   diff?: HTMLText | string | undefined,
+  regTitle?: string,
 ) => {
+  const regName = removeRegNamePrefix(name)
   if (repeal) {
-    const text =
-      `<p>Reglugerð nr. ${regName} ásamt síðari breytingum fellur brott</p>` as HTMLText
+    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '') + ' ' : ''
+    const text = `<p>Reglugerð nr. ${regName} ${title.replace(
+      /\.$/,
+      '',
+    )}fellur brott.</p>` as HTMLText
     const gildistaka =
       `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi</p>` as HTMLText
     return [text, gildistaka]
@@ -104,7 +117,20 @@ export const formatAmendingRegBody = (
       let isNumberList = false
       let isLetterList = false
       if (element.classList.contains('article__title')) {
-        articleTitle = element.innerText
+        const clone = element.cloneNode(true)
+
+        if (clone instanceof Element) {
+          const emElement = clone.querySelector('em')
+          if (emElement) {
+            emElement.parentNode?.removeChild(emElement)
+          }
+
+          const textContent = clone.textContent?.trim() ?? ''
+
+          articleTitle = textContent
+        } else {
+          articleTitle = element.innerText
+        }
         testGroup.title = articleTitle
         isArticleTitle = true
         paragraph = 0 // Reset paragraph count for the new article
@@ -156,16 +182,16 @@ export const formatAmendingRegBody = (
           if (isParagraph) {
             // Paragraph was deleted
             pushHtml =
-              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} fellur brott</p>` as HTMLText
+              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} fellur brott.</p>` as HTMLText
           } else if (isArticleTitle) {
             // Title was deleted
             pushHtml =
-              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} fellur brott</p>` as HTMLText
+              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} fellur brott.</p>` as HTMLText
           } else if (isLetterList || isNumberList) {
             // List was deleted
             pushHtml = `<p>${
               isLetterList ? 'Stafliðir' : 'Töluliðir'
-            } eftir ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} falla brott</p>` as HTMLText
+            } eftir ${paragraph}. mgr. ${articleTitle} ${regNameDisplay} falla brott.</p>` as HTMLText
           } else {
             // We don't know what you deleted, but there was a deletion, and here's the deletelog:
             pushHtml =
@@ -222,11 +248,11 @@ export const formatAmendingRegBody = (
           if (isArticleTitle) {
             // Title was changed
             pushHtml =
-              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isParagraph) {
             // Paragraph was changed
             pushHtml =
-              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isLetterList || isNumberList) {
             // List was changed
             pushHtml =
@@ -249,7 +275,7 @@ export const formatAmendingRegBody = (
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
       additionArray.push([
-        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott</p>` as HTMLText,
+        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
       ])
     } else if (testGroup.isAddition === true) {
       let prevArticleTitle = ''
@@ -286,6 +312,7 @@ export const formatAmendingBodyWithArticlePrefix = (
           item.type === 'repeal' || draftImpactLength > 1 ? item.name : '',
           item.type === 'repeal',
           item.type === 'amend' ? item.diff?.value : undefined,
+          item.regTitle,
         ),
       )
       const flatArray = flatten(impactArray)

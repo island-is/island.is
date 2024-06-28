@@ -140,7 +140,7 @@ import { SyslumennClientConfig } from '@island.is/clients/syslumenn'
 import { HuntingLicenseClientConfig } from '@island.is/clients/hunting-license'
 import { VehiclesClientConfig } from '@island.is/clients/vehicles'
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
-import { CmsModule, PowerBiConfig } from '@island.is/cms'
+import { CmsModule, Form, PowerBiConfig } from '@island.is/cms'
 import { CmsTranslationsModule } from '@island.is/cms-translations'
 import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
@@ -168,6 +168,9 @@ import { DistrictCommissionersLicensesClientConfig } from '@island.is/clients/di
 import { StatisticsClientConfig } from '@island.is/clients/statistics'
 import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/social-insurance-administration'
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
+import { FormSystemClientConfig } from '@island.is/clients/form-system'
+import { FormSystemModule } from '@island.is/api/domains/form-system'
+
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { getConfig } from './environments'
 import { GraphqlOptionsFactory } from './graphql-options.factory'
@@ -190,6 +193,9 @@ import { JudicialSystemSPClientConfig } from '@island.is/clients/judicial-system
 import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
+import { FriggClientConfig } from '@island.is/clients/mms/frigg'
+import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
+import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 
 const environment = getConfig
 
@@ -210,6 +216,7 @@ const environment = getConfig
     AuditModule.forRoot(environment.audit),
     ContentSearchModule,
     ConsultationPortalModule,
+    FormSystemModule,
     CmsModule,
     DrivingLicenseModule,
     DrivingLicenseBookModule,
@@ -320,9 +327,11 @@ const environment = getConfig
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
     LawAndOrderModule,
+    UmbodsmadurSkuldaraModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        FormSystemClientConfig,
         WorkMachinesClientConfig,
         AirDiscountSchemeClientConfig,
         ConsultationPortalClientConfig,
@@ -407,9 +416,8 @@ const environment = getConfig
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
         JudicialSystemSPClientConfig,
-        VmstClientConfig,
         HealthInsuranceV2ClientConfig,
-        CriminalRecordClientConfig,
+        UmbodsmadurSkuldaraClientConfig,
       ],
     }),
   ],

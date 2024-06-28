@@ -45,7 +45,7 @@ import { User } from '../user'
 import { Case } from './models/case.model'
 import { DateLog } from './models/dateLog.model'
 import { ExplanatoryComment } from './models/explanatoryComment.model'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 export const attributes: (keyof Case)[] = [
   'id',
@@ -100,8 +100,10 @@ export const attributes: (keyof Case)[] = [
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
+  'indictmentDecision',
   'indictmentRulingDecision',
   'indictmentHash',
+  'courtSessionType',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -181,7 +183,6 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
         CaseFileCategory.COURT_RECORD,
-        CaseFileCategory.COVER_LETTER,
         CaseFileCategory.INDICTMENT,
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
@@ -222,7 +223,7 @@ export class LimitedAccessCaseService {
   constructor(
     private readonly messageService: MessageService,
     private readonly defendantService: DefendantService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     private readonly awsS3Service: AwsS3Service,
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -441,7 +442,7 @@ export class LimitedAccessCaseService {
     // TODO: speed this up by fetching all files in parallel
     for (const file of caseFilesByCategory) {
       await this.awsS3Service
-        .getObject(theCase.type, theCase.state, file.key)
+        .getObject(theCase.type, file.key)
         .then((content) => filesToZip.push({ data: content, name: file.name }))
         .catch((reason) =>
           // Tolerate failure, but log what happened

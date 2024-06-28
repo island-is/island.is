@@ -1,7 +1,6 @@
 import { uuid } from 'uuidv4'
 
 import {
-  CaseState,
   indictmentCases,
   investigationCases,
   restrictionCases,
@@ -55,7 +54,7 @@ describe('LimitedAccesslimitedAccessFileController - Create presigned post', () 
     'presigned post created for %s case',
     (type) => {
       const caseId = uuid()
-      const theCase = { id: caseId, type, state: CaseState.DRAFT } as Case
+      const theCase = { id: caseId, type } as Case
       const createPresignedPost: CreatePresignedPostDto = {
         fileName: 'test.txt',
         type: 'text/plain',
@@ -65,7 +64,7 @@ describe('LimitedAccesslimitedAccessFileController - Create presigned post', () 
       beforeEach(async () => {
         const mockCreatePresignedPost =
           mockAwsS3Service.createPresignedPost as jest.Mock
-        mockCreatePresignedPost.mockImplementationOnce((_1, _2, key: string) =>
+        mockCreatePresignedPost.mockImplementationOnce((_1, key: string) =>
           Promise.resolve({
             url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
             fields: {
@@ -87,7 +86,6 @@ describe('LimitedAccesslimitedAccessFileController - Create presigned post', () 
       it('should return a presigned post', () => {
         expect(mockAwsS3Service.createPresignedPost).toHaveBeenCalledWith(
           type,
-          CaseState.DRAFT,
           expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
           'text/plain',
         )
@@ -118,7 +116,7 @@ describe('LimitedAccesslimitedAccessFileController - Create presigned post', () 
     'presigned post created for %s case',
     (type) => {
       const caseId = uuid()
-      const theCase = { id: caseId, type, state: CaseState.DRAFT } as Case
+      const theCase = { id: caseId, type } as Case
       const createPresignedPost: CreatePresignedPostDto = {
         fileName: 'test.txt',
         type: 'text/plain',
@@ -128,7 +126,7 @@ describe('LimitedAccesslimitedAccessFileController - Create presigned post', () 
       beforeEach(async () => {
         const mockCreatePresignedPost =
           mockAwsS3Service.createPresignedPost as jest.Mock
-        mockCreatePresignedPost.mockImplementationOnce((_1, _2, key: string) =>
+        mockCreatePresignedPost.mockImplementationOnce((_1, key: string) =>
           Promise.resolve({
             url: 'https://s3.eu-west-1.amazonaws.com/island-is-dev-upload-judicial-system',
             fields: {
@@ -150,7 +148,6 @@ describe('LimitedAccesslimitedAccessFileController - Create presigned post', () 
       it('should return a presigned post', () => {
         expect(mockAwsS3Service.createPresignedPost).toHaveBeenCalledWith(
           type,
-          CaseState.DRAFT,
           expect.stringMatching(new RegExp(`^${caseId}/.{36}/test.txt$`)),
           'text/plain',
         )
