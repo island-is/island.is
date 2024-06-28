@@ -1,25 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger'
 
+import { formatDate } from '@island.is/judicial-system/formatters'
+import { DateType } from '@island.is/judicial-system/types'
+
 import { InternalCaseResponse } from './internal/internalCase.response'
-
-class Items {
-  @ApiProperty({ type: String })
-  label!: string
-
-  @ApiProperty({ type: String })
-  value?: string
-
-  @ApiProperty({ type: String, enum: ['email', 'tel'] })
-  linkType?: 'email' | 'tel'
-}
-
-class Groups {
-  @ApiProperty({ type: String })
-  label!: string
-
-  @ApiProperty({ type: [Items] })
-  items!: Items[]
-}
+import { Groups } from './shared/groups.model'
+import { getTranslations } from './utils/translations.strings'
 
 class IndictmentCaseData {
   @ApiProperty({ type: String })
@@ -40,80 +26,67 @@ export class CaseResponse {
     res: InternalCaseResponse,
     lang?: string,
   ): CaseResponse {
-    const language = lang?.toLowerCase()
+    const t = getTranslations(lang)
     const defendant = res.defendants[0]
+    const subpoenaDateLog = res.dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+    )
+    const subpoenaCreatedDate = subpoenaDateLog?.created.toString() ?? ''
 
     return {
       caseId: res.id,
       data: {
-        caseNumber:
-          language === 'en'
-            ? `Case number ${res.courtCaseNumber}`
-            : `Málsnúmer ${res.courtCaseNumber}`,
+        caseNumber: `${t.caseNumber} ${res.courtCaseNumber}`,
         groups: [
           {
-            label: language === 'en' ? 'Defendant' : 'Varnaraðili',
+            label: t.defendant,
             items: [
-              [language === 'en' ? 'Name' : 'Nafn', defendant.name],
-              [
-                language === 'en' ? 'National ID' : 'Kennitala',
-                defendant.nationalId,
-              ],
-              [
-                language === 'en' ? 'Address' : 'Heimilisfang',
-                defendant.address,
-              ],
+              [t.name, defendant.name],
+              [t.nationalId, defendant.nationalId],
+              [t.address, defendant.address],
+              [t.subpoenaSent, formatDate(subpoenaCreatedDate, 'PP')],
             ].map((item) => ({
               label: item[0] ?? '',
-              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
+              value: item[1] ?? t.notAvailable,
             })),
           },
           {
-            label: language === 'en' ? 'Defender' : 'Verjandi',
+            label: t.defender,
             items: [
-              [language === 'en' ? 'Name' : 'Nafn', defendant.defenderName],
-              [
-                language === 'en' ? 'Email' : 'Netfang',
-                defendant.defenderEmail,
-                'email',
-              ],
-              [
-                language === 'en' ? 'Phone Nr.' : 'Símanúmer',
-                defendant.defenderPhoneNumber,
-                'tel',
-              ],
+              [t.name, defendant.defenderName],
+              [t.email, defendant.defenderEmail, 'email'],
+              [t.phoneNumber, defendant.defenderPhoneNumber, 'tel'],
             ].map((item) => ({
               label: item[0] ?? '',
-              value: item[1] ?? (language === 'en' ? 'N/A' : 'Ekki skráð'),
+              value: item[1] ?? t.notAvailable,
               linkType: item[2] ?? undefined,
             })),
           },
           {
-            label: language === 'en' ? 'Information' : 'Málsupplýsingar',
+            label: t.information,
             items: [
               {
-                label: language === 'en' ? 'Type' : 'Tegund',
-                value: language === 'en' ? 'Indictment' : 'Ákæra',
+                label: t.type,
+                value: t.indictment,
               },
               {
-                label:
-                  language === 'en' ? 'Case number' : 'Málsnúmer héraðsdóms',
+                label: t.courtCaseNumber,
                 value: res.courtCaseNumber,
               },
               {
-                label: language === 'en' ? 'Court' : 'Dómstóll',
+                label: t.court,
                 value: res.court.name,
               },
               {
-                label: language === 'en' ? 'Judge' : 'Dómari',
+                label: t.judge,
                 value: res.judge.name,
               },
               {
-                label: language === 'en' ? 'Institution' : 'Embætti',
+                label: t.institution,
                 value: res.prosecutorsOffice.name,
               },
               {
-                label: language === 'en' ? 'Prosecutor' : 'Ákærandi',
+                label: t.prosecutor,
                 value: res.prosecutor.name,
               },
             ],

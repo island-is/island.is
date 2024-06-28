@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
@@ -56,12 +56,9 @@ export const NameAndEmail = (name?: string | null, email?: string | null) => [
     : []),
 ]
 
-const UniqueDefenders: React.FC<
-  React.PropsWithChildren<UniqueDefendersProps>
-> = (props) => {
+const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
   const { formatMessage } = useIntl()
 
-  const { defenders } = props
   const uniqueDefenders = defenders?.filter(
     (defender, index, self) =>
       index === self.findIndex((d) => d.email === defender.email),
@@ -97,7 +94,7 @@ const UniqueDefenders: React.FC<
   )
 }
 
-const InfoCard: React.FC<Props> = (props) => {
+const InfoCard: FC<Props> = (props) => {
   const {
     courtOfAppealData,
     data,
