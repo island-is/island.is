@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('field_types', [
+    await queryInterface.bulkInsert('field_type', [
       {
         id: '09206657-9a89-4265-b58e-13b220f805a2',
         type: 'default',
@@ -234,6 +234,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('field_types', null, {})
+    await queryInterface.bulkDelete('field_type', null, {})
   },
 }

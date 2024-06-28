@@ -14,7 +14,7 @@ import { CreationOptional } from 'sequelize'
 import { Field } from '../../fields/models/field.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 
-@Table({ tableName: 'screens' })
+@Table({ tableName: 'screen' })
 export class Screen extends Model<Screen> {
   @Column({
     type: DataType.UUID,
@@ -64,6 +64,14 @@ export class Screen extends Model<Screen> {
   })
   @ApiProperty()
   multiset!: number
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  @ApiProperty()
+  callRuleset!: boolean
 
   @HasMany(() => Field)
   @ApiProperty({ type: [Field] })

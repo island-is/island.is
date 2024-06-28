@@ -1,8 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { ApplicationScreen } from '../../../screens/models/dto/applicationScreen.dto'
+import { ApplicationScreenDto } from '../../../screens/models/dto/applicationScreen.dto'
 
-export class ApplicationSection {
+export class ApplicationSectionDto {
   @ApiProperty()
   id!: string
 
@@ -18,9 +18,6 @@ export class ApplicationSection {
   @ApiProperty({ type: LanguageType })
   waitingText?: LanguageType
 
-  @ApiProperty()
-  callRuleset!: boolean
-
-  @ApiProperty({ type: [ApplicationScreen] })
-  screens!: ApplicationScreen[]
+  @ApiProperty({ type: [ApplicationScreenDto] })
+  screens!: ApplicationScreenDto[]
 }

@@ -11,7 +11,7 @@ import { Organization } from '../../organizations/models/organization.model'
 import { FieldType } from './fieldType.model'
 import { CreationOptional } from 'sequelize'
 
-@Table({ tableName: 'organization_field_types' })
+@Table({ tableName: 'organization_field_type' })
 export class OrganizationFieldType extends Model<OrganizationFieldType> {
   @Column({
     type: DataType.UUID,

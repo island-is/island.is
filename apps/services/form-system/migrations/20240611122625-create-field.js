@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'fields',
+        'field',
         {
           id: {
             type: Sequelize.UUID,
@@ -49,7 +49,7 @@ module.exports = {
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'screens',
+              model: 'screen',
               key: 'id',
             },
           },
@@ -57,7 +57,7 @@ module.exports = {
             type: Sequelize.STRING,
             allowNull: false,
             references: {
-              model: 'field_types',
+              model: 'field_type',
               key: 'type',
             },
           },
@@ -69,7 +69,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('fields', { transaction: t }),
+      queryInterface.dropTable('field', { transaction: t }),
     )
   },
 }

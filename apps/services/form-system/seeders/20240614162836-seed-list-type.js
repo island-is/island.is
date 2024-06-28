@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('list_types', [
+    await queryInterface.bulkInsert('list_type', [
       {
         id: '436a7bb6-ce1d-42cd-a759-24774df5acff',
         type: 'municipalities',
@@ -57,6 +57,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('list_types', null, {})
+    await queryInterface.bulkDelete('list_type', null, {})
   },
 }

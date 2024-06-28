@@ -13,7 +13,7 @@ import { Organization } from '../../organizations/models/organization.model'
 import { CreationOptional } from 'sequelize'
 import { ApplicantTypes } from '../../../enums/applicantTypes'
 
-@Table({ tableName: 'applicant_type_name_suggestions' })
+@Table({ tableName: 'applicant_type_name_suggestion' })
 export class ApplicantTypeNameSuggestion extends Model<ApplicantTypeNameSuggestion> {
   @Column({
     type: DataType.UUID,

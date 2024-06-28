@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('organization_testimony_types', [
+    await queryInterface.bulkInsert('organization_testimony_type', [
       {
         id: 'aeac43a3-daf0-4bca-9079-7dffe6121d75',
         created: new Date(),
@@ -49,6 +49,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('organization_testimony_types', null, {})
+    await queryInterface.bulkDelete('organization_testimony_type', null, {})
   },
 }

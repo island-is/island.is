@@ -11,7 +11,7 @@ import {
 import { Organization } from '../../organizations/models/organization.model'
 import { ListType } from './listType.model'
 
-@Table({ tableName: 'organization_list_types' })
+@Table({ tableName: 'organization_list_type' })
 export class OrganizationListType extends Model<OrganizationListType> {
   @Column({
     type: DataType.UUID,

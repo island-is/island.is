@@ -12,7 +12,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { CreationOptional } from 'sequelize'
 import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 
-@Table({ tableName: 'list_items' })
+@Table({ tableName: 'list_item' })
 export class ListItem extends Model<ListItem> {
   @Column({
     type: DataType.UUID,

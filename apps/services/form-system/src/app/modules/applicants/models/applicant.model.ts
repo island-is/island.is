@@ -12,7 +12,7 @@ import {
 import { ApplicantTypes } from '../../../enums/applicantTypes'
 import { Application } from '../../applications/models/application.model'
 
-@Table({ tableName: 'applicants' })
+@Table({ tableName: 'applicant' })
 export class Applicant extends Model<Applicant> {
   @Column({
     type: DataType.UUID,

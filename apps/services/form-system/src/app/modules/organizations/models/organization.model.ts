@@ -17,7 +17,7 @@ import { FieldType } from '../../fields/models/fieldType.model'
 import { ListType } from '../../lists/models/listType.model'
 import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 
-@Table({ tableName: 'organizations' })
+@Table({ tableName: 'organization' })
 export class Organization extends Model<Organization> {
   @Column({
     type: DataType.UUID,
@@ -61,21 +61,21 @@ export class Organization extends Model<Organization> {
   applicantTypeNameSuggestions?: ApplicantTypeNameSuggestion[]
 
   @BelongsToMany(() => FieldType, {
-    through: 'organization_field_types',
+    through: 'organization_field_type',
     foreignKey: 'organization_id',
     otherKey: 'field_type_id',
   })
   organizationFieldTypes?: NonAttribute<FieldType[]>
 
   @BelongsToMany(() => TestimonyType, {
-    through: 'organization_testimony_types',
+    through: 'organization_testimony_type',
     foreignKey: 'organization_id',
     otherKey: 'testimony_type_id',
   })
   organizationTestimonyTypes?: NonAttribute<TestimonyType[]>
 
   @BelongsToMany(() => ListType, {
-    through: 'organization_list_types',
+    through: 'organization_list_type',
     foreignKey: 'organization_id',
     otherKey: 'list_type_id',
   })

@@ -7,7 +7,4 @@ export class UpdateSectionDto {
 
   @ApiProperty({ type: LanguageType })
   waitingText?: LanguageType
-
-  @ApiProperty()
-  callRuleset!: boolean
 }

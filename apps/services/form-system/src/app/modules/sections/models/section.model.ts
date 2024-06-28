@@ -15,7 +15,7 @@ import { SectionTypes } from '../../../enums/sectionTypes'
 import { Form } from '../../forms/models/form.model'
 import { Screen } from '../../screens/models/screen.model'
 
-@Table({ tableName: 'sections' })
+@Table({ tableName: 'section' })
 export class Section extends Model<Section> {
   @Column({
     type: DataType.UUID,
@@ -73,14 +73,6 @@ export class Section extends Model<Section> {
   })
   @ApiProperty()
   isHidden!: boolean
-
-  @Column({
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: false,
-  })
-  @ApiProperty()
-  callRuleset!: boolean
 
   @Column({
     type: DataType.BOOLEAN,

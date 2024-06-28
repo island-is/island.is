@@ -13,7 +13,7 @@ import { CreationOptional, DataTypes, NonAttribute } from 'sequelize'
 import { ListTypes } from '../../../enums/listTypes'
 import { Organization } from '../../organizations/models/organization.model'
 
-@Table({ tableName: 'list_types' })
+@Table({ tableName: 'list_type' })
 export class ListType extends Model<ListType> {
   @Column({
     type: DataType.UUID,
@@ -65,7 +65,7 @@ export class ListType extends Model<ListType> {
   type!: string
 
   @BelongsToMany(() => Organization, {
-    through: 'organization_list_types',
+    through: 'organization_list_type',
     foreignKey: 'list_type_id',
     otherKey: 'organization_id',
   })

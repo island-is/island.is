@@ -11,7 +11,7 @@ import {
 import { Form } from '../../forms/models/form.model'
 import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 
-@Table({ tableName: 'form_testimony_types' })
+@Table({ tableName: 'form_testimony_type' })
 export class FormTestimonyType extends Model<FormTestimonyType> {
   @Column({
     type: DataType.UUID,

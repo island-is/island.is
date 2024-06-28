@@ -15,7 +15,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FieldType } from './fieldType.model'
 import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
 
-@Table({ tableName: 'fields' })
+@Table({ tableName: 'field' })
 export class Field extends Model<Field> {
   @Column({
     type: DataType.UUID,

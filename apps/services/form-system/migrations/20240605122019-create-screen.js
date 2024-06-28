@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'screens',
+        'screen',
         {
           id: {
             type: Sequelize.UUID,
@@ -39,12 +39,17 @@ module.exports = {
             type: Sequelize.INTEGER,
             allowNull: false,
           },
+          call_ruleset: {
+            type: Sequelize.BOOLEAN,
+            allowNull: false,
+            defaultValue: false,
+          },
           section_id: {
             type: Sequelize.UUID,
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'sections',
+              model: 'section',
               key: 'id',
             },
           },
@@ -56,7 +61,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('screens', { transaction: t }),
+      queryInterface.dropTable('screen', { transaction: t }),
     )
   },
 }

@@ -14,7 +14,7 @@ import { TestimonyTypes } from '../../../enums/testimonyTypes'
 import { Organization } from '../../organizations/models/organization.model'
 import { Form } from '../../forms/models/form.model'
 
-@Table({ tableName: 'testimony_types' })
+@Table({ tableName: 'testimony_type' })
 export class TestimonyType extends Model<TestimonyType> {
   @Column({
     type: DataType.UUID,
@@ -58,14 +58,14 @@ export class TestimonyType extends Model<TestimonyType> {
   modified!: CreationOptional<Date>
 
   @BelongsToMany(() => Organization, {
-    through: 'organization_testimony_types',
+    through: 'organization_testimony_type',
     foreignKey: 'testimony_type_id',
     otherKey: 'organization_id',
   })
   organizations?: NonAttribute<Organization[]>
 
   @BelongsToMany(() => Form, {
-    through: 'form_testimony_types',
+    through: 'form_testimony_type',
     foreignKey: 'testimony_type_id',
     otherKey: 'form_id',
   })

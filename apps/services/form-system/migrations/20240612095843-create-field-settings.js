@@ -115,7 +115,7 @@ module.exports = {
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'fields',
+              model: 'field',
               key: 'id',
             },
           },

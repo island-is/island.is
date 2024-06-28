@@ -25,7 +25,14 @@ export class ApplicationsService {
   async create(formUrlName: string): Promise<ApplicationDto> {
     const form: Form = await this.getForm(formUrlName)
 
-    const applicationDto = this.applicationMapper.mapFormToApplicationDto(form)
+    const newApplication: Application = await this.applicationModel.create({
+      formId: form.id,
+    } as Application)
+
+    const applicationDto = this.applicationMapper.mapFormToApplicationDto(
+      form,
+      newApplication,
+    )
     return applicationDto
   }
 

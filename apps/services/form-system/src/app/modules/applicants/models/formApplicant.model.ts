@@ -13,7 +13,7 @@ import { Form } from '../../forms/models/form.model'
 import { CreationOptional } from 'sequelize'
 import { ApplicantTypes } from '../../../enums/applicantTypes'
 
-@Table({ tableName: 'form_applicants' })
+@Table({ tableName: 'form_applicant' })
 export class FormApplicant extends Model<FormApplicant> {
   @Column({
     type: DataType.UUID,

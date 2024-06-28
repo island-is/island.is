@@ -11,7 +11,7 @@ import {
 import { Organization } from '../../organizations/models/organization.model'
 import { TestimonyType } from './testimonyType.model'
 
-@Table({ tableName: 'organization_testimony_types' })
+@Table({ tableName: 'organization_testimony_type' })
 export class OrganizationTestimonyType extends Model<OrganizationTestimonyType> {
   @Column({
     type: DataType.UUID,

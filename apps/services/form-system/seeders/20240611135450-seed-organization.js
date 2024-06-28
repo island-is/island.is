@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('organizations', [
+    await queryInterface.bulkInsert('organization', [
       {
         id: 'a4b0db68-e169-416a-8ad9-e46b73ce2d39',
         name: '{ "is": "Sandbox Ísland ehf.", "en": "Sandbox Iceland ehf." }',
@@ -14,6 +14,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('organizations', null, {})
+    await queryInterface.bulkDelete('organization', null, {})
   },
 }

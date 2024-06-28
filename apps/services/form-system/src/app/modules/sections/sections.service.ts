@@ -51,7 +51,6 @@ export class SectionsService {
 
     section.name = updateSectionDto.name
     section.waitingText = updateSectionDto.waitingText
-    section.callRuleset = updateSectionDto.callRuleset
     section.modified = new Date()
 
     await section.save()
@@ -62,7 +61,6 @@ export class SectionsService {
       sectionType: section.sectionType,
       displayOrder: section.displayOrder,
       waitingText: section.waitingText,
-      callRuleset: section.callRuleset,
     }
 
     return sectionDto

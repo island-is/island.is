@@ -283,7 +283,6 @@ export class FormsService {
         waitingText: section.waitingText,
         isHidden: section.isHidden,
         isCompleted: section.isCompleted,
-        callRuleset: section.callRuleset,
       } as SectionDto)
       section.screens?.map((screen) => {
         formDto.screens?.push({
@@ -295,6 +294,7 @@ export class FormsService {
           displayOrder: screen.displayOrder,
           isHidden: screen.isHidden,
           multiset: screen.multiset,
+          callRuleset: screen.callRuleset,
         } as ScreenDto)
         screen.fields?.map((field) => {
           formDto.fields?.push({

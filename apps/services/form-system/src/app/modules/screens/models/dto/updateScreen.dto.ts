@@ -7,4 +7,7 @@ export class UpdateScreenDto {
 
   @ApiProperty()
   multiset!: number
+
+  @ApiProperty()
+  callRuleset!: boolean
 }

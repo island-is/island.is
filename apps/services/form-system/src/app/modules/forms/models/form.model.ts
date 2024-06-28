@@ -18,7 +18,7 @@ import { FormApplicant } from '../../applicants/models/formApplicant.model'
 import { TestimonyType } from '../../testimonies/models/testimonyType.model'
 import { randomUUID } from 'crypto'
 
-@Table({ tableName: 'forms' })
+@Table({ tableName: 'form' })
 export class Form extends Model<Form> {
   @Column({
     type: DataType.UUID,
@@ -113,7 +113,7 @@ export class Form extends Model<Form> {
   organizationId!: string
 
   @BelongsToMany(() => TestimonyType, {
-    through: 'form_testimony_types',
+    through: 'form_testimony_type',
     foreignKey: 'form_id',
     otherKey: 'testimony_type_id',
   })

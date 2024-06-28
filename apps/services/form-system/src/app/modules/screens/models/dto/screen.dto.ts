@@ -16,4 +16,7 @@ export class ScreenDto {
 
   @ApiProperty()
   multiset!: number
+
+  @ApiProperty()
+  callRuleset!: boolean
 }

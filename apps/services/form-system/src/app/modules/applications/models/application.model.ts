@@ -11,7 +11,7 @@ import {
 } from 'sequelize-typescript'
 import { Form } from '../../forms/models/form.model'
 
-@Table({ tableName: 'applications' })
+@Table({ tableName: 'application' })
 export class Application extends Model<Application> {
   @Column({
     type: DataType.UUID,

@@ -14,7 +14,7 @@ import { LanguageType } from '../../../dataTypes/languageType.model'
 import { Organization } from '../../organizations/models/organization.model'
 import { Field } from './field.model'
 
-@Table({ tableName: 'field_types' })
+@Table({ tableName: 'field_type' })
 export class FieldType extends Model<FieldType> {
   @Column({
     type: DataType.UUID,
@@ -69,7 +69,7 @@ export class FieldType extends Model<FieldType> {
   fields?: Field[]
 
   @BelongsToMany(() => Organization, {
-    through: 'organization_field_types',
+    through: 'organization_field_type',
     foreignKey: 'field_type_id',
     otherKey: 'organization_id',
   })

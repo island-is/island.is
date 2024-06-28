@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { ApplicationFieldDto } from '../../../fields/models/dto/applicationField.dto'
 
-export class ApplicationScreen {
+export class ApplicationScreenDto {
   @ApiProperty()
   id!: string
 
@@ -17,6 +17,9 @@ export class ApplicationScreen {
 
   @ApiProperty()
   multiset!: number
+
+  @ApiProperty()
+  callRuleset!: boolean
 
   @ApiProperty({ type: [ApplicationFieldDto] })
   fields!: ApplicationFieldDto[]

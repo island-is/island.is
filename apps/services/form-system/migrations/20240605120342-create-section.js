@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'sections',
+        'section',
         {
           id: {
             type: Sequelize.UUID,
@@ -49,11 +49,6 @@ module.exports = {
             allowNull: false,
             defaultValue: false,
           },
-          call_ruleset: {
-            type: Sequelize.BOOLEAN,
-            allowNull: false,
-            defaultValue: false,
-          },
           is_completed: {
             type: Sequelize.BOOLEAN,
             allowNull: false,
@@ -64,7 +59,7 @@ module.exports = {
             onDelete: 'CASCADE',
             allowNull: false,
             references: {
-              model: 'forms',
+              model: 'form',
               key: 'id',
             },
           },
@@ -76,7 +71,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('sections', { transaction: t }),
+      queryInterface.dropTable('section', { transaction: t }),
     )
   },
 }
