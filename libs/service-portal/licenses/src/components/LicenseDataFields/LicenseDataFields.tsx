@@ -1,5 +1,6 @@
 import {
   LicenseServiceV2GenericLicenseDataField as GenericLicenseDataField,
+  LicenseServiceV2GenericLicenseDataFieldType,
   LicenseServiceV2GenericUserLicenseDataFieldTagColor,
   LicenseServiceV2GenericUserLicenseDataFieldTagType,
 } from '@island.is/api/schema'
@@ -50,7 +51,8 @@ export const LicenseDataFields = ({
         if (field.hideFromServicePortal) return undefined
         return (
           <Box key={`data-field-${i}`}>
-            {field.type === 'Value' && (
+            {field.type ===
+              LicenseServiceV2GenericLicenseDataFieldType.Value && (
               <>
                 <UserInfoLine
                   title={field.name ?? ''}
@@ -110,7 +112,8 @@ export const LicenseDataFields = ({
                 <Divider />
               </>
             )}
-            {field.type === 'Category' && (
+            {field.type ===
+              LicenseServiceV2GenericLicenseDataFieldType.Category && (
               <ExpandableLine
                 title={
                   field.value
@@ -139,7 +142,8 @@ export const LicenseDataFields = ({
                 />
               </>
             )}
-            {field.type === 'Table' && (
+            {field.type ===
+              LicenseServiceV2GenericLicenseDataFieldType.Table && (
               <>
                 <Text
                   variant="eyebrow"
