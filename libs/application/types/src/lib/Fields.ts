@@ -139,7 +139,7 @@ export type TableRepeaterItem = {
                 value: string
                 tooltip?: StaticText
               }[]
-            | void)
+            | undefined)
       isSearchable?: boolean
     }
   | {
