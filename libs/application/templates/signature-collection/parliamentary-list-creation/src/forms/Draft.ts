@@ -261,6 +261,10 @@ export const Draft: Form = buildForm({
               },
               table: {
                 header: ['Kennitala', 'Nafn', 'Kjördæmi'],
+                rows: ['nationalId', 'name', 'constituency'],
+                format: {
+                  nationalId: (v) => formatNationalId(v),
+                },
               },
             }),
           ],
@@ -381,9 +385,9 @@ export const Draft: Form = buildForm({
                 return (answers.managers as any)
                   .map(
                     (m: any) =>
-                      m.manager.name +
+                      m.name +
                       ' - ' +
-                      formatNationalId(m.manager.nationalId) +
+                      formatNationalId(m.nationalId) +
                       ' - ' +
                       m.constituency,
                   )
@@ -409,9 +413,9 @@ export const Draft: Form = buildForm({
                 return (answers.supervisors as any)
                   .map(
                     (s: any) =>
-                      s.supervisor.ame +
+                      s.name +
                       ' - ' +
-                      formatNationalId(s.supervisor.nationalId) +
+                      formatNationalId(s.nationalId) +
                       ' - ' +
                       s.constituency,
                   )
