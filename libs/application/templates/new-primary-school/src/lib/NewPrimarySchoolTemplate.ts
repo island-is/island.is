@@ -80,7 +80,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 GetTypesApi,
                 OptionsApi,
                 GetSchoolsApi,
-                GetUserApi,
+                // GetUserApi,
               ],
             },
           ],

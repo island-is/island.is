@@ -77,10 +77,10 @@ export const Prerequisites: Form = buildForm({
               provider: OptionsApi,
               title: 'OPtions',
             }),
-            buildDataProviderItem({
-              provider: GetUserApi,
-              title: 'usr',
-            }),
+            // buildDataProviderItem({
+            //   provider: GetUserApi,
+            //   title: 'usr',
+            // }),
             buildDataProviderItem({
               provider: GetSchoolsApi,
               title: 'schools',
