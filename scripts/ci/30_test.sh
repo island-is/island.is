@@ -11,7 +11,7 @@ set -euxo pipefail
 : "${NODE_OPTIONS:=}"
 
 # Default to big old-space, and more options for testing, but allow overriding
-NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn ${NODE_OPTIONS:-}"
+NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 EXTRA_OPTS=""
 
 projects_uncollectible_coverage=(
