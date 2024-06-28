@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage } from '@island.is/island-ui/core'
@@ -19,7 +19,7 @@ import CasesForReview from '../Tables/CasesForReview'
 import CasesReviewComplete from '../Tables/CasesReviewed'
 import * as styles from '../../Shared/Cases/Cases.css'
 
-export const PublicProsecutorCases: React.FC = () => {
+export const PublicProsecutorCases: FC = () => {
   const { formatMessage } = useIntl()
 
   const { data, error, loading } = useCasesQuery({

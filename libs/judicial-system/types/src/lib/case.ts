@@ -273,6 +273,30 @@ export enum ServiceRequirement {
   NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
+export enum CourtSessionType {
+  MAIN_HEARING = 'MAIN_HEARING',
+  OTHER = 'OTHER',
+  APPRAISER_SUMMONS = 'APPRAISER_SUMMONS',
+  VERDICT = 'VERDICT',
+  MAIN_HEARING_CONTINUATION = 'MAIN_HEARING_CONTINUATION',
+  HEARING = 'HEARING',
+  ORAL_ARGUMENTS = 'ORAL_ARGUMENTS',
+  RULING = 'RULING',
+  ARRAIGNMENT = 'ARRAIGNMENT',
+}
+
+export const courtSessionTypeNames = {
+  MAIN_HEARING: 'Aðalmeðferð',
+  OTHER: 'Annað',
+  APPRAISER_SUMMONS: 'Dómkvaðning matsmanna',
+  VERDICT: 'Dómsuppsaga',
+  MAIN_HEARING_CONTINUATION: 'Framhald aðalmeðferðar',
+  HEARING: 'Fyrirtaka',
+  ORAL_ARGUMENTS: 'Munnlegur málflutningur',
+  RULING: 'Uppkvaðning úrskurðar',
+  ARRAIGNMENT: 'Þingfesting',
+}
+
 export const indictmentCases = [CaseType.INDICTMENT]
 
 export const isIndictmentCase = (type?: string | null): boolean => {
