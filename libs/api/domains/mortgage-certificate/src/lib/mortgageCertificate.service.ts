@@ -14,7 +14,6 @@ import {
 } from './mortgageCertificate.types'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-// import { Identity } from '@island.is/api/domains/identity'
 
 @Injectable()
 export class MortgageCertificateService {
