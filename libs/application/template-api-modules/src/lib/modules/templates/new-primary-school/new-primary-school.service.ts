@@ -22,10 +22,6 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return await this.friggClientService.getAllKeyOptions(auth, undefined)
   }
 
-  async getHealth({ auth }: TemplateApiModuleActionProps) {
-    return await this.friggClientService.getHealth(auth)
-  }
-
   async getUserById({ auth }: TemplateApiModuleActionProps) {
     return await this.friggClientService.getUserById(auth)
   }

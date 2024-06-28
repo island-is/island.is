@@ -4,22 +4,11 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import {
-  Configuration,
-  DefaultApi,
-  KeyOptionsManagementApi,
-  SchoolsManagementApi,
-  UsersManagementApi,
-} from '../../gen/fetch'
+import { Configuration, FriggApi } from '../../gen/fetch'
 import { ConfigFactory } from './configFactory'
 import { FriggClientConfig } from './friggClient.config'
 
-export const apiProvider = [
-  KeyOptionsManagementApi,
-  DefaultApi,
-  SchoolsManagementApi,
-  UsersManagementApi,
-].map((apiRecord) => ({
+export const apiProvider = [FriggApi].map((apiRecord) => ({
   provide: apiRecord,
   scope: LazyDuringDevScope,
   useFactory: (

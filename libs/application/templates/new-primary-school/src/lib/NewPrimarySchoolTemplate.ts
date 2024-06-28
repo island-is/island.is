@@ -25,7 +25,6 @@ import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import { getApplicationAnswers } from './newPrimarySchoolUtils'
 import {
-  GetHealthApi,
   GetSchoolsApi,
   GetTypesApi,
   GetUserApi,
@@ -78,11 +77,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
-                /*  GetTypesApi,
-                GetHealthApi,
-                OptionsApi,*/
-                //   GetSchoolsApi,
-                //GetUserApi,
+                GetTypesApi,
+                OptionsApi,
+                GetSchoolsApi,
+                GetUserApi,
               ],
             },
           ],

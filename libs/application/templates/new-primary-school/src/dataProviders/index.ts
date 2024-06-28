@@ -9,12 +9,6 @@ export const GetTypesApi = defineTemplateApi({
   namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
 })
 
-export const GetHealthApi = defineTemplateApi({
-  action: 'getHealth',
-  externalDataId: 'health',
-  namespace: ApplicationTypes.NEW_PRIMARY_SCHOOL,
-})
-
 export const GetUserApi = defineTemplateApi({
   action: 'getUserById',
   externalDataId: 'userInfo',
