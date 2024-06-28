@@ -14,7 +14,8 @@
           "nx esbuild services-auth-ids-api",
           "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
         ],
-        "parallel": false
+        "parallel": false,
+        "outputPath": "dist/apps/services/auth/ids-api"
       },
       "configurations": {
         "production": {
