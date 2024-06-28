@@ -339,7 +339,7 @@ export const Draft: Form = buildForm({
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 3,
-              condition: (answers) => !!(answers.managers as any).length,
+              condition: (answers) => !!(answers.managers as any)?.length,
             }),
             buildKeyValueField({
               label: '',
@@ -368,7 +368,7 @@ export const Draft: Form = buildForm({
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 3,
-              condition: (answers) => !!(answers.supervisors as any).length,
+              condition: (answers) => !!(answers.supervisors as any)?.length,
             }),
             buildKeyValueField({
               label: '',
