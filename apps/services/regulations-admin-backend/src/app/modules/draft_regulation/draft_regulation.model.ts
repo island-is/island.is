@@ -1,4 +1,12 @@
-import { Column, DataType, Model, Table, HasMany } from 'sequelize-typescript'
+import {
+  Column,
+  DataType,
+  Model,
+  Table,
+  HasMany,
+  CreatedAt,
+  UpdatedAt,
+} from 'sequelize-typescript'
 
 import {
   RegulationType,
@@ -94,6 +102,14 @@ export class DraftRegulationModel extends Model {
   })
   @ApiProperty()
   signature_date?: ISODate
+
+  @CreatedAt
+  @ApiProperty()
+  created!: Date
+
+  @UpdatedAt
+  @ApiProperty()
+  modified!: Date
 
   @Column({
     type: DataType.STRING,
