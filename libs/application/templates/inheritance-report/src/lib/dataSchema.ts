@@ -398,15 +398,9 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
+            assetNumber: z.string(),
             propertyValuation: z.string(),
-            debtType: z.enum([
-              DebtTypes.CreditCard,
-              DebtTypes.InsuranceCompany,
-              DebtTypes.Loan,
-              DebtTypes.Overdraft,
-              DebtTypes.PropertyFees,
-            ]),
+            debtType: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -420,39 +414,73 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
-              return nationalId !== '' ||
-                description !== '' ||
-                propertyValuation !== ''
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [description, nationalId, propertyValuation, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(assetNumber)
-                : true
-            },
+                : true,
+
             {
               path: ['assetNumber'],
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
-              return nationalId !== '' ||
-                description !== '' ||
-                assetNumber !== ''
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [description, nationalId, assetNumber, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(propertyValuation)
-                : true
-            },
+                : true,
             {
               path: ['propertyValuation'],
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
-              return nationalId !== '' ||
-                propertyValuation !== '' ||
-                assetNumber !== ''
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [nationalId, propertyValuation, assetNumber, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(description)
-                : true
-            },
+                : true,
             {
               path: ['description'],
+            },
+          )
+          .refine(
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [description, nationalId, propertyValuation, assetNumber].some(
+                (field) => field !== '',
+              )
+                ? isValidString(debtType)
+                : true,
+
+            {
+              path: ['debtType'],
             },
           )
           .array()

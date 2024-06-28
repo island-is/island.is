@@ -46,7 +46,10 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
         )} ${removeRegPrefix(item.regTitle)}`,
     )
 
-    return PREFIX + [...amendingTitles, ...repealTitles].join(' og ')
+    return (
+      PREFIX +
+      [...amendingTitles, ...repealTitles].join(' og ').replace(/ +(?= )/g, '')
+    )
   }
 
   return PREFIX
@@ -62,9 +65,11 @@ export const formatAmendingRegBody = (
 ) => {
   const regName = removeRegNamePrefix(name)
   if (repeal) {
-    const text = `<p>Reglugerð nr. ${regName} ${
-      regTitle ? regTitle.replace(/\.$/, '') + ' ' : ''
-    }fellur brott.</p>` as HTMLText
+    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '') + ' ' : ''
+    const text = `<p>Reglugerð nr. ${regName} ${title.replace(
+      /\.$/,
+      '',
+    )}fellur brott.</p>` as HTMLText
     const gildistaka =
       `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi</p>` as HTMLText
     return [text, gildistaka]
@@ -123,7 +128,6 @@ export const formatAmendingRegBody = (
           const textContent = clone.textContent?.trim() ?? ''
 
           articleTitle = textContent
-          console.log(textContent)
         } else {
           articleTitle = element.innerText
         }
@@ -244,11 +248,11 @@ export const formatAmendingRegBody = (
           if (isArticleTitle) {
             // Title was changed
             pushHtml =
-              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isParagraph) {
             // Paragraph was changed
             pushHtml =
-              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isLetterList || isNumberList) {
             // List was changed
             pushHtml =

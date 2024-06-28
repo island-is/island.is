@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import React, { FC, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -34,7 +34,7 @@ import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-const Processing: React.FC = () => {
+const Processing: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { transitionCase } = useCase()
