@@ -2098,6 +2098,44 @@
         ]
       }
     },
+    "/api/InnsiglaSkjol": {
+      "post": {
+        "tags": [
+          "Syslumenn"
+        ],
+        "operationId": "InnsiglaSkjol_Post",
+        "consumes": [
+          "application/json",
+          "text/json",
+          "application/*+json"
+        ],
+        "parameters": [
+          {
+            "name": "skeyti",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InnsiglaSkjolSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/InnsigludSkjol"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Innsiglun": {
       "post": {
         "tags": [
@@ -5269,6 +5307,40 @@
         },
         "utgafudagur": {
           "type": "string"
+        }
+      }
+    },
+    "InnsigludSkjol": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "skjol": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "InnsiglaSkjolSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skyring": {
+          "type": "string"
+        },
+        "skjol": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },

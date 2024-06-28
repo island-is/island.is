@@ -82,9 +82,9 @@ export const ConfirmationField: FC<
             title={formatMessage(confirmation.labels.incorrectPropertyTitle, {
               propertyName: property.propertyName,
             })}
-            message={formatMessage(confirmation.labels.incorrectPropertyTitle, {
-              email: userEmail,
-            })}
+            message={formatMessage(
+              confirmation.labels.incorrectPropertyMessage,
+            )}
             type="info"
           />
         </Box>

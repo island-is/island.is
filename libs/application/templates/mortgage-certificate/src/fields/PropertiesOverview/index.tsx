@@ -19,7 +19,12 @@ import {
   REQUEST_CORRECTION_ON_MORTGAGE_CERTIFICATE_QUERY,
   VALIDATE_MORTGAGE_CERTIFICATE_QUERY,
 } from '../../graphql/queries'
-import { getIdentityData, getUserProfileData } from '../../util'
+import {
+  concatPropertyList,
+  getIdentityData,
+  getUserProfileData,
+} from '../../util'
+import { useFormContext } from 'react-hook-form'
 
 export const validateMortgageCertificateQuery = gql`
   ${VALIDATE_MORTGAGE_CERTIFICATE_QUERY}
@@ -32,6 +37,7 @@ export const PropertiesOverview: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application, setBeforeSubmitCallback }) => {
   const { formatMessage, locale } = useLocale()
+  const { setValue } = useFormContext()
   const properties = getValueViaPath(
     application.answers,
     'selectedProperties.properties',
@@ -93,8 +99,9 @@ export const PropertiesOverview: FC<
             updatedIncorrectPropertiesSent.push(property)
           }
         })
-        console.log(updatedIncorrectPropertiesSent)
-
+        // We will update here too in case there will be an error from service
+        // so the user cannot pay for it.
+        setValue('incorrectPropertiesSent', updatedIncorrectPropertiesSent)
         await updateApplication({
           variables: {
             input: {
@@ -111,7 +118,6 @@ export const PropertiesOverview: FC<
         })
 
         setPropertiesShown(newProperties)
-        console.log(result)
       },
       onError() {
         setErrorValidating(true)
@@ -156,33 +162,31 @@ export const PropertiesOverview: FC<
             },
           },
         }).then(async (res) => {
-          console.log('res', res)
           if (
             res.data?.requestCorrectionOnMortgageCertificate?.hasSentRequest
           ) {
             setErrorSendingCorrection(false)
+            setValue(
+              'incorrectPropertiesSent',
+              concatPropertyList(incorrectPropertiesSent, property),
+            )
             await updateApplication({
               variables: {
                 input: {
                   id: application.id,
                   answers: {
                     ...application.answers,
-                    incorrectPropertiesSent: incorrectPropertiesSent.concat({
-                      propertyName: property.propertyName,
-                      propertyNumber: property.propertyNumber,
-                      propertyType: property.propertyType,
-                    }),
+                    incorrectPropertiesSent: concatPropertyList(
+                      incorrectPropertiesSent,
+                      property,
+                    ),
                   },
                 },
                 locale,
               },
             }).then(() => {
               setIncorrectPropertiesSent((prevIncorretPropertiesSent) =>
-                prevIncorretPropertiesSent.concat({
-                  propertyName: property.propertyName,
-                  propertyNumber: property.propertyNumber,
-                  propertyType: property.propertyType,
-                }),
+                concatPropertyList(prevIncorretPropertiesSent, property),
               )
             })
           } else {
@@ -224,6 +228,7 @@ export const PropertiesOverview: FC<
         // to sýslumenn, then we will update the list of properties on continue, and remove properties that
         // do not exist and/or have k marking
         // If all properties were invalid then the user will not be able to continue
+        setValue('selectedProperties.properties', properties)
         await updateApplication({
           variables: {
             input: {
@@ -289,6 +294,7 @@ export const PropertiesOverview: FC<
         })}
       {!loading &&
         !loadingCorrection &&
+        !errorSendingCorrection &&
         incorrectPropertiesSent.map((property, index) => {
           return (
             <Box paddingTop={2} key={`incorrect-properties-${index}`}>

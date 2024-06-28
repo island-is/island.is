@@ -65,6 +65,7 @@ import {
   VedbondTegundAndlags,
   Skilabod,
   VedbandayfirlitRegluverkGeneralSvar,
+  InnsigludSkjol,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -246,6 +247,18 @@ export class SyslumennService {
     return (temporaryEventLicences ?? []).map(mapTemporaryEventLicence)
   }
 
+  async sealDocuments(documents: string[]): Promise<InnsigludSkjol> {
+    const { id, api } = await this.createApi()
+    const explination = 'Rafrænt undirritað vottorð'
+    return await api.innsiglaSkjolPost({
+      skeyti: {
+        audkenni: id,
+        skyring: explination,
+        skjol: documents,
+      },
+    })
+  }
+
   async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
     const explination = 'Rafrænt undirritað vottorð'
@@ -385,55 +398,6 @@ export class SyslumennService {
     return mapVehicle(response)
   }
 
-  async getMortgageCertificateOld(
-    propertyNumber: string,
-  ): Promise<MortgageCertificate> {
-    const { id, api } = await this.createApi()
-
-    const res = await api.vedbokarvottordPost({
-      skilabod: {
-        audkenni: id,
-        fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
-      },
-    })
-    const contentBase64 = res.vedbandayfirlitPDFSkra || ''
-
-    const certificate: MortgageCertificate = {
-      contentBase64: contentBase64,
-      apiMessage: res.skilabod,
-    }
-
-    return certificate
-  }
-
-  async validateMortgageCertificateOld(
-    propertyNumber: string,
-  ): Promise<MortgageCertificateValidation> {
-    try {
-      // Note: this function will throw an error if something goes wrong
-      const certificate = await this.getMortgageCertificateOld(propertyNumber)
-
-      const exists = certificate.contentBase64.length !== 0
-      const hasKMarking =
-        exists && certificate.contentBase64 !== 'Precondition Required'
-
-      // Note: we are saving propertyNumber and isFromSearch also in externalData,
-      // since it is not saved in answers if we go from state DRAFT -> DRAFT
-      return {
-        propertyNumber: propertyNumber,
-        exists: exists,
-        hasKMarking: hasKMarking,
-      }
-    } catch (exception) {
-      return {
-        propertyNumber: propertyNumber,
-        exists: false,
-        hasKMarking: false,
-      }
-    }
-  }
-
   async getMortgageCertificate(
     properties: {
       propertyNumber: string
@@ -441,11 +405,6 @@ export class SyslumennService {
     }[],
   ): Promise<MortgageCertificate[]> {
     const { id, api } = await this.createApi()
-
-    properties.map(({ propertyNumber, propertyType }) => {
-      console.log('STUFF', propertyNumber)
-      console.log('AND THINGS', propertyType)
-    })
 
     const res = await api.vedbokarvottord2Post({
       skilabod: {
@@ -464,21 +423,15 @@ export class SyslumennService {
       },
     })
 
-    // console.log('RESSSSS', res)
-
     const certificates: MortgageCertificate[] =
       res.skilabodOgSkra?.map((resultItem) => {
-        // console.log(resultItem.vedbandayfirlitPDFSkra)
         const contentBase64 = resultItem.vedbandayfirlitPDFSkra || ''
-        // console.log('property number', resultItem.fastanumer)
         return {
           contentBase64: contentBase64,
           apiMessage: resultItem.skilabod,
           propertyNumber: resultItem.fastanumer,
         }
       }) ?? []
-
-    // console.log('CERTIFICATES: ', certificates)
 
     return certificates
   }
@@ -496,16 +449,10 @@ export class SyslumennService {
       // Note: we are saving propertyNumber and isFromSearch also in externalData,
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
       return certificates.map((certificate) => {
-        // console.log('Certificate', certificate)
         const exists = certificate.contentBase64.length !== 0
         const hasKMarking =
           exists && certificate.contentBase64 !== 'Precondition Required'
 
-        console.log('Does exist: ', {
-          propertyNumber: certificate.propertyNumber ?? '',
-          exists: exists,
-          hasKMarking: hasKMarking,
-        })
         return {
           propertyNumber: certificate.propertyNumber ?? '',
           exists: exists,
@@ -513,13 +460,7 @@ export class SyslumennService {
         }
       })
     } catch (exception) {
-      return properties.map((property) => {
-        return {
-          propertyNumber: property.propertyNumber,
-          exists: false,
-          hasKMarking: false,
-        }
-      })
+      throw new Error()
     }
   }
 
@@ -580,8 +521,6 @@ export class SyslumennService {
       .catch(() => {
         throw new Error()
       })
-
-    console.log('RES::::', res)
 
     return {
       propertyNumber: res.fastanum,

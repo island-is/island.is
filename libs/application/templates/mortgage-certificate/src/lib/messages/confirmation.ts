@@ -80,7 +80,7 @@ export const confirmation = {
     incorrectPropertyMessage: {
       id: 'mc.application:confirmation.labels.incorrectPropertyMessage',
       defaultMessage:
-        'Þú munt fá tilkynningu á netfangið {email} að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína.',
+        'Þú munt fá tilkynningu í pósthólfið þitt að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína.',
       description: 'Incorrect property message in alert message',
     },
   }),

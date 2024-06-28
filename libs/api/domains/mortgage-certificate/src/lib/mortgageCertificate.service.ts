@@ -41,7 +41,6 @@ export class MortgageCertificateService {
     identityData: Identity,
     userProfileData: UserProfile,
   ): Promise<RequestCorrection> {
-    console.log(propertyNumber, identityData, userProfileData)
     const person: Person = {
       name: identityData?.name,
       ssn: identityData?.nationalId,
@@ -63,8 +62,6 @@ export class MortgageCertificateService {
     const uploadDataName =
       'Umsókn um lagfæringu á veðbókarvottorði frá Ísland.is'
     const uploadDataId = 'VedbokavottordVilla1.0'
-
-    console.log(persons, undefined, extraData, uploadDataName, uploadDataId)
 
     try {
       const res = await this.syslumennService.uploadData(

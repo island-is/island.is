@@ -57,33 +57,42 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
       'selectedProperties.properties',
       [],
     ) as SelectedProperty[]
-    const properties = selectedProperties.map(
-      ({ propertyType, propertyNumber }) => {
+    const incorrectPropertiesSent = getValueViaPath(
+      application.answers,
+      'incorrectPropertiesSent',
+      [],
+    ) as SelectedProperty[]
+    const properties = selectedProperties
+      .filter(
+        (property) =>
+          !incorrectPropertiesSent.find(
+            (p) => p.propertyName === property.propertyName,
+          ),
+      )
+      .map(({ propertyType, propertyNumber }) => {
         return {
           propertyNumber,
           propertyType,
         }
-      },
-    )
+      })
 
     const documents =
       await this.mortgageCertificateService.getMortgageCertificate(properties)
+    const base64List = documents.map((document) => {
+      return document.contentBase64
+    })
 
     // Call sýslumaður to get the document sealed before handing it over to the user
-    const sealedDocuments: MortgageCertificate[] = await Promise.all(
-      documents.map(async (document) => {
-        const sealedDocumentResponse = await this.syslumennService.sealDocument(
-          document.contentBase64,
-        )
-        if (!sealedDocumentResponse?.skjal) {
-          throw new Error('Eitthvað fór úrskeiðis.')
-        }
-        return {
-          contentBase64: sealedDocumentResponse.skjal,
-          propertyNumber: document.propertyNumber,
-        }
-      }),
+    const sealedBase64List = await this.syslumennService.sealDocuments(
+      base64List,
     )
+    const sealedDocuments: MortgageCertificate[] =
+      sealedBase64List.skjol?.map((base64, index) => {
+        return {
+          contentBase64: base64,
+          propertyNumber: documents[index]?.propertyNumber || '',
+        }
+      }) ?? []
 
     // Notify Sýslumaður that person has received the mortgage certificate
     await this.notifySyslumenn(application, documents)
