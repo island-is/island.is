@@ -105,6 +105,7 @@ export type TableRepeaterItem = {
       label: StaticText
       options: { label: StaticText; value: string }[]
       isSearchable?: boolean
+      isMulti?: boolean
     }
   | {
       component: 'radio'
