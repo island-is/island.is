@@ -156,6 +156,11 @@ export const m = defineMessages({
   },
   listOverviewHeader: {
     id: 'plc.application:listOverviewHeader',
+    defaultMessage: 'Upplýsingar um framboð',
+    description: '',
+  },
+  listsOverviewHeader: {
+    id: 'plc.application:listOverviewHeader',
     defaultMessage: 'Upplýsingar um meðmælalista',
     description: '',
   },
