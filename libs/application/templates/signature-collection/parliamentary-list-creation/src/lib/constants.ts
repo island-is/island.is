@@ -20,9 +20,11 @@ export enum ApiActions {
   submitApplication = 'createLists',
 }
 
-export const CountryAreas = [
-  'Sunnlendingafjórðungur',
-  'Vestfirðingafjórðungur',
-  'Norðlendingafjórðungur',
-  'Austfirðingafjórðungur',
+export const Constituencies = [
+  'Norðausturkjördæmi',
+  'Norðvesturkjördæmi',
+  'Reykjavíkurkjördæmi norður',
+  'Reykjavíkurkjördæmi suður',
+  'Suðurkjördæmi',
+  'Suðausturkjördæmi',
 ]

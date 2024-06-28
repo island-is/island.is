@@ -137,7 +137,58 @@ export const m = defineMessages({
     description: '',
   },
 
-  /* Overview */
+  /* Kjördæmi */
+  constituency: {
+    id: 'plc.application:constituency',
+    defaultMessage: 'Kjördæmi',
+    description: '',
+  },
+  selectConstituency: {
+    id: 'plc.application:selectConstituency',
+    defaultMessage: 'Veljið kjördæmi',
+    description: '',
+  },
+  selectConstituencyDescription: {
+    id: 'plc.application:selectConstituencyDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
+  },
+
+  /* Ábyrgðaraðilar */
+  managers: {
+    id: 'plc.application:managers',
+    defaultMessage: 'Ábyrgðaraðilar',
+    description: '',
+  },
+  managersDescription: {
+    id: 'plc.application:managersDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
+  },
+  addManager: {
+    id: 'plc.application:addManager',
+    defaultMessage: 'Bæta við ábyrgðaraðila',
+    description: '',
+  },
+
+  /* Umsjónaraðilar */
+  supervisors: {
+    id: 'plc.application:supervisors',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  supervisorsDescription: {
+    id: 'plc.application:supervisorsDescription',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
+  },
+  addSupervisor: {
+    id: 'plc.application:addSupervisor',
+    defaultMessage: 'Bæta við umsjónaraðila',
+    description: '',
+  },
+
+  /* Yfirlit */
   overview: {
     id: 'plc.application:overview',
     defaultMessage: 'Yfirlit',
@@ -180,7 +231,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  /* Done Screen */
+  /* Listi stofnaður */
   listCreated: {
     id: 'plc.application:listCreated',
     defaultMessage: 'Meðmælalisti stofnaður',
@@ -230,7 +281,7 @@ export const m = defineMessages({
     description: '',
   },
 
-  /* Action Card History logs */
+  /* Action Card logs */
   logListCreated: {
     id: 'plc.application:listCreated',
     defaultMessage: 'Meðmælalisti stofnaður',

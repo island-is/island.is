@@ -19,6 +19,7 @@ import Logo from '../../../assets/Logo'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
+import { Constituencies } from '../lib/constants'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListCreationDraft',
@@ -139,40 +140,22 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'constituency',
-      title: 'Veljið kjördæmi',
+      title: m.selectConstituency,
       children: [
         buildMultiField({
           id: 'constituency',
-          title: 'Veljið kjördæmi',
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          title: m.selectConstituency,
+          description: m.selectConstituencyDescription,
           children: [
             buildCheckboxField({
               id: 'constituency',
               title: '',
               large: true,
-              defaultValue: [
-                'Norðausturkjördæmi',
-                'Norðvesturkjördæmi',
-                'Reykjavíkurkjördæmi norður',
-                'Reykjavíkurkjördæmi suður',
-                'Suðurkjördæmi',
-                'Suðausturkjördæmi',
-              ],
-              options: [
-                { value: 'Norðausturkjördæmi', label: 'Norðausturkjördæmi' },
-                { value: 'Norðvesturkjördæmi', label: 'Norðvesturkjördæmi' },
-                {
-                  value: 'Reykjavíkurkjördæmi norður',
-                  label: 'Reykjavíkurkjördæmi norður',
-                },
-                {
-                  value: 'Reykjavíkurkjördæmi suður',
-                  label: 'Reykjavíkurkjördæmi suður',
-                },
-                { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
-                { value: 'Suðausturkjördæmi', label: 'Suðausturkjördæmi' },
-              ],
+              defaultValue: Constituencies,
+              options: Constituencies.map((constituency) => ({
+                label: constituency,
+                value: constituency,
+              })),
             }),
           ],
         }),
@@ -185,15 +168,13 @@ export const Draft: Form = buildForm({
         buildMultiField({
           id: 'managers',
           title: 'Veljið umsjónar-/ábyrgðaraðila',
-          description:
-            'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+          description: '',
           children: [
             buildTableRepeaterField({
               id: 'managers',
-              title: 'Ábyrgðaraðilar',
-              description:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
-              addItemButtonText: 'Bæta við ábyrgðaraðila',
+              title: m.managers,
+              description: m.managersDescription,
+              addItemButtonText: m.addManager,
               marginTop: 0,
               fields: {
                 manager: {
@@ -201,9 +182,8 @@ export const Draft: Form = buildForm({
                 },
                 constituency: {
                   component: 'select',
-                  label: 'Kjördæmi',
+                  label: m.constituency,
                   width: 'full',
-                  backgroundColor: 'white',
                   options: [
                     {
                       value: 'Öll kjördæmi',
@@ -213,7 +193,7 @@ export const Draft: Form = buildForm({
                 },
               },
               table: {
-                header: ['Kennitala', 'Nafn', 'Kjördæmi'],
+                header: [m.nationalId, m.name, m.constituency],
                 rows: ['nationalId', 'name', 'constituency'],
                 format: {
                   nationalId: (v) => formatNationalId(v),
@@ -222,10 +202,9 @@ export const Draft: Form = buildForm({
             }),
             buildTableRepeaterField({
               id: 'supervisors',
-              title: 'Umsjónaraðilar',
-              description:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
-              addItemButtonText: 'Bæta við umsjónaraðila',
+              title: m.supervisors,
+              description: m.supervisorsDescription,
+              addItemButtonText: m.addSupervisor,
               marginTop: 5,
               fields: {
                 supervisor: {
@@ -233,34 +212,17 @@ export const Draft: Form = buildForm({
                 },
                 constituency: {
                   component: 'select',
-                  label: 'Kjördæmi',
+                  label: m.constituency,
                   width: 'full',
-                  backgroundColor: 'white',
                   isMulti: true,
-                  options: [
-                    {
-                      value: 'Norðausturkjördæmi',
-                      label: 'Norðausturkjördæmi',
-                    },
-                    {
-                      value: 'Norðvesturkjördæmi',
-                      label: 'Norðvesturkjördæmi',
-                    },
-                    {
-                      value: 'Reykjavíkurkjördæmi norður',
-                      label: 'Reykjavíkurkjördæmi norður',
-                    },
-                    {
-                      value: 'Reykjavíkurkjördæmi suður',
-                      label: 'Reykjavíkurkjördæmi suður',
-                    },
-                    { value: 'Suðurkjördæmi', label: 'Suðurkjördæmi' },
-                    { value: 'Suðausturkjördæmi', label: 'Suðausturkjördæmi' },
-                  ],
+                  options: Constituencies.map((constituency) => ({
+                    label: constituency,
+                    value: constituency,
+                  })),
                 },
               },
               table: {
-                header: ['Kennitala', 'Nafn', 'Kjördæmi'],
+                header: [m.nationalId, m.name, m.constituency],
                 rows: ['nationalId', 'name', 'constituency'],
                 format: {
                   nationalId: (v) => formatNationalId(v),
@@ -372,11 +334,12 @@ export const Draft: Form = buildForm({
               space: 'gutter',
             }),
             buildDescriptionField({
-              id: 'tbd',
-              title: 'Ábyrgðaraðilar',
+              id: 'managersHeader',
+              title: m.managers,
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 3,
+              condition: (answers) => !!(answers.managers as any).length,
             }),
             buildKeyValueField({
               label: '',
@@ -400,11 +363,12 @@ export const Draft: Form = buildForm({
               space: 'gutter',
             }),
             buildDescriptionField({
-              id: 'tbd2',
-              title: 'Umsjónaraðilar',
+              id: 'supervisorsHeader',
+              title: m.supervisors,
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 3,
+              condition: (answers) => !!(answers.supervisors as any).length,
             }),
             buildKeyValueField({
               label: '',
