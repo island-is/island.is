@@ -155,8 +155,9 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.notifications': 'Notifications',
+  'home.inbox': 'Latest in inbox',
   'home.welcomeText': 'Hi',
+  'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
     'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
   'home.onboardingModule.card2':
@@ -189,6 +190,8 @@ export const en: TranslatedMessages = {
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
+  'inbox.cardNoInboxDocuments':
+    'When you receive mail in your mailbox, it will appear here.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
