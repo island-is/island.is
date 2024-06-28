@@ -1,4 +1,12 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import React, {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import compareAsc from 'date-fns/compareAsc'
 import formatISO from 'date-fns/formatISO'
@@ -36,7 +44,7 @@ interface Props {
   onSubmit: (updateCase: UpdateCase) => Promise<boolean>
   isSendingNotification: boolean
   isUpdatingCase: boolean
-  setIsModifyingDates: React.Dispatch<React.SetStateAction<boolean>>
+  setIsModifyingDates: Dispatch<SetStateAction<boolean>>
 }
 
 export const createCaseModifiedExplanation = (
@@ -155,7 +163,7 @@ const getModificationSuccessText = (
   })
 }
 
-const ModifyDatesModal: React.FC<React.PropsWithChildren<Props>> = ({
+const ModifyDatesModal: FC<Props> = ({
   workingCase,
   onSubmit,
   isSendingNotification,

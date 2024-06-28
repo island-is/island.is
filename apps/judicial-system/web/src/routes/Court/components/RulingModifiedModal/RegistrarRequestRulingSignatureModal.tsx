@@ -1,3 +1,4 @@
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import RequestRulingSignatureModal from './RequestRulingSignatureModal'
@@ -7,9 +8,7 @@ interface Props {
   onContinue: () => void
 }
 
-const RegistrarRequestRulingSignatureModal: React.FC<Props> = ({
-  onContinue,
-}) => {
+const RegistrarRequestRulingSignatureModal: FC<Props> = ({ onContinue }) => {
   const { formatMessage } = useIntl()
 
   return (

@@ -12,11 +12,10 @@ import { CmsService } from '@island.is/clients/cms'
 
 const mockHnippTemplate: HnippTemplate = {
   templateId: 'HNIPP.DEMO.ID',
-  notificationTitle: 'Demo title',
-  notificationBody: 'Demo body {{arg1}}',
-  notificationDataCopy: 'Demo data copy',
-  clickAction: '//demo/{{arg2}}',
-  category: 'DEMO',
+  title: 'Demo title',
+  externalBody: 'Demo body {{arg1}}',
+  internalBody: 'Demo data copy',
+  clickActionUrl: '//demo/{{arg2}}',
   args: ['arg1', 'arg2'],
 }
 const mockTemplates = [mockHnippTemplate, mockHnippTemplate, mockHnippTemplate]
@@ -82,9 +81,8 @@ describe('MessageProcessorService', () => {
       mockLocale,
     )
     expect(notification.title).toMatch('Demo title')
-    expect(notification.body).toMatch('Demo body hello')
-    expect(notification.category).toMatch('DEMO')
-    expect(notification.appURI).toMatch('//demo/world')
+    expect(notification.externalBody).toMatch('Demo body hello')
+    expect(notification.clickActionUrl).toMatch('//demo/world')
   })
 
   it('should not leak value replacement of template keys to the template cache', async () => {
@@ -112,16 +110,14 @@ describe('MessageProcessorService', () => {
     )
 
     expect(notification1.title).toMatch('Demo title')
-    expect(notification1.body).toMatch('Demo body hello')
-    expect(notification1.category).toMatch('DEMO')
-    expect(notification1.appURI).toMatch('//demo/world')
+    expect(notification1.externalBody).toMatch('Demo body hello')
+    expect(notification1.clickActionUrl).toMatch('//demo/world')
 
     expect(notification2).toMatchObject({
       title: 'Demo title',
-      body: 'Demo body hello2',
-      category: 'DEMO',
-      dataCopy: 'Demo data copy',
-      appURI: '//demo/world2',
+      externalBody: 'Demo body hello2',
+      internalBody: 'Demo data copy',
+      clickActionUrl: '//demo/world2',
     })
   })
 })

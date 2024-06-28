@@ -525,6 +525,11 @@ export const m = defineMessages({
     defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
     description: '',
   },
+  nextStepsDescriptionBEFull: {
+    id: 'dl.application:nextStepsDescriptionBEFull#markdown',
+    defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
+    description: '',
+  },
   congratulationsCertificateTitle: {
     id: 'dl.application:congratulationsCertificateTitle',
     defaultMessage: 'Læknisvottorð',
@@ -728,7 +733,7 @@ export const m = defineMessages({
   },
   applicationForBELicenseTitle: {
     id: 'dl.application:applicationForBELicenseTitle',
-    defaultMessage: 'Kerruréttindi BE',
+    defaultMessage: 'Eftirvagn BE',
     description: 'Option title for selecting to apply for trailer license',
   },
   applicationForBELicenseDescription: {

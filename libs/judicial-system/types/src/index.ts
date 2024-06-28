@@ -74,6 +74,8 @@ export {
   isIndictmentCaseTransition,
   isRequestCaseTransition,
   DistrictCourtLocation,
+  CourtSessionType,
+  courtSessionTypeNames,
 } from './lib/case'
 export type {
   CrimeScene,

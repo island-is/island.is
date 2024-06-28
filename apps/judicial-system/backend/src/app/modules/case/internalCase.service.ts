@@ -67,7 +67,7 @@ import { DateLog } from './models/dateLog.model'
 import { DeliverResponse } from './models/deliver.response'
 import { ExplanatoryComment } from './models/explanatoryComment.model'
 import { caseModuleConfig } from './case.config'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 const caseEncryptionProperties: (keyof Case)[] = [
   'description',
@@ -174,8 +174,8 @@ export class InternalCaseService {
     private readonly defendantService: DefendantService,
     @Inject(forwardRef(() => EventLogService))
     private readonly eventLogService: EventLogService,
-    @Inject(forwardRef(() => PDFService))
-    private readonly pdfService: PDFService,
+    @Inject(forwardRef(() => PdfService))
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -404,7 +404,7 @@ export class InternalCaseService {
           'ASC',
         ],
       ],
-      where: { isArchived: false, archiveFilter },
+      where: archiveFilter,
     })
 
     if (!theCase) {
@@ -588,6 +588,7 @@ export class InternalCaseService {
       .updateIndictmentCaseWithIndictmentInfo(
         user,
         theCase.id,
+        theCase.court?.name,
         theCase.courtCaseNumber,
         theCase.eventLogs?.find(
           (eventLog) => eventLog.eventType === EventType.CASE_RECEIVED_BY_COURT,
@@ -624,9 +625,10 @@ export class InternalCaseService {
     user: TUser,
   ): Promise<DeliverResponse> {
     return this.courtService
-      .updateIndictmentWithDefenderInfo(
+      .updateIndictmentCaseWithDefenderInfo(
         user,
         theCase.id,
+        theCase.court?.name,
         theCase.courtCaseNumber,
         theCase.defendants,
       )
@@ -663,6 +665,7 @@ export class InternalCaseService {
       .updateIndictmentCaseWithAssignedRoles(
         user,
         theCase.id,
+        theCase.court?.name,
         theCase.courtCaseNumber,
         assignedRole,
       )
@@ -1205,6 +1208,7 @@ export class InternalCaseService {
         { model: Institution, as: 'prosecutorsOffice' },
         { model: User, as: 'judge' },
         { model: User, as: 'prosecutor' },
+        { model: DateLog, as: 'dateLogs' },
       ],
       attributes: ['courtCaseNumber', 'id'],
       where: {
