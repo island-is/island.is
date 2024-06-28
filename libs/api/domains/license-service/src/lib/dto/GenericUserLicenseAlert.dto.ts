@@ -2,10 +2,10 @@ import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { AlertType } from '../licenseService.constants'
 
 registerEnumType(AlertType, {
-  name: 'LicenseServiceV2GenericUserLicenseAlertType',
+  name: 'GenericUserLicenseAlertType',
 })
 
-@ObjectType('LicenseServiceV2GenericUserLicenseAlert')
+@ObjectType('GenericUserLicenseAlert')
 export class GenericUserLicenseAlert {
   @Field()
   title!: string

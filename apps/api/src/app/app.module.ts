@@ -50,7 +50,6 @@ import {
 } from '@island.is/api/domains/communications'
 import { IdentityModule } from '@island.is/api/domains/identity'
 import { LicenseServiceModule } from '@island.is/api/domains/license-service'
-import { LicenseServiceModuleV2 } from '@island.is/api/domains/license-service-v2'
 import { OfficialJournalOfIcelandModule } from '@island.is/api/domains/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationModule } from '@island.is/api/domains/official-journal-of-iceland-application'
 import { MortgageCertificateModule } from '@island.is/api/domains/mortgage-certificate'
@@ -234,7 +233,6 @@ const environment = getConfig
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
     LicenseServiceModule,
-    LicenseServiceModuleV2,
     DirectorateOfLabourModule,
     FileUploadModule,
     DocumentModule,

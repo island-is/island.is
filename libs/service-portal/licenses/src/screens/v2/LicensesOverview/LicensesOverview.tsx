@@ -1,7 +1,7 @@
 import {
-  LicenseServiceV2GenericLicenseType as GenericLicenseType,
-  LicenseServiceV2GenericUserLicense as GenericUserLicense,
-  LicenseServiceV2GenericUserLicenseError as GenericUserLicenseError,
+  GenericLicenseType,
+  GenericUserLicense,
+  GenericLicenseError,
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserProfile } from '@island.is/service-portal/graphql'
@@ -25,7 +25,6 @@ export const LicensesOverviewV2 = () => {
   const locale = (userProfile?.locale as Locale) ?? 'is'
 
   const includedTypes = [
-    GenericLicenseType.Passport,
     GenericLicenseType.AdrLicense,
     GenericLicenseType.DisabilityLicense,
     GenericLicenseType.DriversLicense,
@@ -90,10 +89,10 @@ export const LicensesOverviewV2 = () => {
     </Box>
   )
 
-  const errors: Array<GenericUserLicenseError> =
-    data?.licenseServiceV2GenericLicenseCollection?.errors ?? []
+  const errors: Array<GenericLicenseError> =
+    data?.genericLicenseCollection?.errors ?? []
   const licenses: Array<GenericUserLicense> =
-    data?.licenseServiceV2GenericLicenseCollection?.licenses ?? []
+    data?.genericLicenseCollection?.licenses ?? []
 
   return (
     <>

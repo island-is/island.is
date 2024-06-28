@@ -91,8 +91,6 @@ export class PassportMapper implements GenericLicenseMapper {
       }
     })
 
-    mappedLicenses.forEach((l) => this.logger.debug(l.type))
-
     return mappedLicenses
   }
 

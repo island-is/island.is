@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { GenericUserLicenseMetaLinksType } from '../licenceService.type'
 
-@ObjectType('LicenseServiceV2GenericUserLicenseMetadataDescription')
+@ObjectType('GenericUserLicenseMetadataDescription')
 export class GenericUserLicenseMetadataDescription {
   @Field()
   text!: string

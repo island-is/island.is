@@ -3,92 +3,114 @@ import { Locale } from '@island.is/shared/types'
 import {
   GenericLicenseDataField,
   GenericLicenseDataFieldType,
-  GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
 } from '../licenceService.type'
-import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
-import { getLabel } from '../utils/translations'
+import {
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
 import { Staediskortamal } from '@island.is/clients/p-card'
 import { isDefined } from '@island.is/shared/utils'
 import { format } from 'kennitala'
+import { m } from '../messages'
+import { IntlService } from '@island.is/cms-translations'
+import { expiryTag } from '../utils/expiryTag'
+import { formatDate } from '../utils'
 
 @Injectable()
 export class PCardPayloadMapper implements GenericLicenseMapper {
-  parsePayload(
+  constructor(private readonly intlService: IntlService) {}
+  async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-    labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
-    if (!payload) return []
+  ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
+    if (!payload) return Promise.resolve([])
 
     const typedPayload = payload as Array<Staediskortamal>
-    const label = labels?.labels
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
-        const expired = t.gildistimi
-          ? !isAfter(new Date(t.gildistimi.toISOString()), new Date())
-          : null
+    const { formatMessage } = await this.intlService.useIntl(
+      [LICENSE_NAMESPACE],
+      locale,
+    )
 
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         const data: Array<GenericLicenseDataField> = [
           t.nafn
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('name', locale, label),
+                label: formatMessage(m.name),
                 value: t.nafn,
               }
             : null,
           t.kennitala
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('nationalId', locale, label),
+                label: formatMessage(m.nationalId),
                 value: format(t.kennitala),
               }
             : null,
           t.malsnumer
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('cardNumber', locale, label),
+                label: formatMessage(m.cardNumber),
                 value: t.malsnumer,
               }
             : null,
           t.utgafudagur
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('publishedDate', locale, label),
-                value: t.utgafudagur.toISOString(),
+                label: formatMessage(m.publishedDate),
+                value: formatDate(t.utgafudagur),
               }
             : null,
           t.gildistimi
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('validTo', locale, label),
-                value: t.gildistimi.toISOString(),
+                label: formatMessage(m.validTo),
+                value: formatDate(t.gildistimi),
               }
             : null,
           t.utgefandi
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('publisher', locale, label),
+                label: formatMessage(m.publisher),
                 value: t.utgefandi,
               }
             : null,
         ].filter(isDefined)
 
+        const isExpired = t.gildistimi
+          ? !isAfter(new Date(t.gildistimi.toISOString()), new Date())
+          : undefined
+
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.malsnumer?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired,
-            expireDate: t.gildistimi?.toISOString(),
+          licenseName: formatMessage(m.pCard),
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.malsnumer?.toString() ?? '',
+              subtitle: formatMessage(m.licenseNumberVariant, {
+                arg: t.malsnumer?.toString() ?? formatMessage(m.unknown),
+              }),
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: isExpired,
+              expireDate: t.gildistimi?.toISOString(),
+              displayTag:
+                isExpired !== undefined
+                  ? expiryTag(formatMessage, isExpired)
+                  : undefined,
+              name: formatMessage(m.pCard),
+              title: formatMessage(m.yourPCard),
+              description: [{ text: formatMessage(m.yourPCardDescription) }],
+            },
           },
         }
-      },
-    )
+      })
     return mappedPayload
   }
 }

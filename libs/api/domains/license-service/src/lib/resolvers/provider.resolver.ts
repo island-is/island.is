@@ -11,17 +11,11 @@ import {
   OrganizationTitleByReferenceIdLoader,
 } from '@island.is/cms'
 import { Loader } from '@island.is/nest/dataloader'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal, ApiScope.licenses)
-@FeatureFlag(Features.licensesV2)
 @Resolver(() => GenericLicenseProvider)
-@Audit({ namespace: '@island.is/api/license-service-v2' })
+@Audit({ namespace: '@island.is/api/license-service' })
 export class LicenseProviderResolver {
   @ResolveField('providerName', () => String, {
     nullable: true,

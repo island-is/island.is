@@ -53,7 +53,6 @@ export const genericLicense = factory<GenericLicense>({
 export const metadata = factory<GenericUserLicenseMetadata>({
   expired: () => faker.datatype.boolean(),
   licenseNumber: () => faker.datatype.number().toString(),
-  logo: () => faker.image.cats(),
   title: () => title(),
 })
 

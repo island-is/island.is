@@ -1,5 +1,23 @@
 import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
+import { GenericLicenseError } from './dto/GenericLicenseError.dto'
+import { Payload } from './dto/Payload.dto'
+import { GenericUserLicense as GenericUserLicenseModel } from './dto/GenericUserLicense.dto'
+
+export interface GenericLicenseMappedPayloadResponse {
+  licenseName: string
+  payload: Payload
+  type: 'user' | 'child'
+}
+export type LicenseTypeFetchResponse =
+  | {
+      fetchResponseType: 'error'
+      data: GenericLicenseError
+    }
+  | {
+      fetchResponseType: 'licenses'
+      data: Array<GenericUserLicenseModel>
+    }
 
 export enum GenericLicenseType {
   DriversLicense = 'DriversLicense',
@@ -74,8 +92,26 @@ export enum GenericUserLicenseMetaLinksType {
   Download = 'Download',
 }
 
+export enum GenericUserLicenseValidity {
+  Unknown = 'Unknown',
+  Expired = 'Expired',
+  Valid = 'Valid',
+}
+
+export enum GenericUserLicenseDataFieldTagType {
+  'checkmarkCircle',
+  'closeCircle',
+}
+
+export enum GenericUserLicenseDataFieldTagColor {
+  'green',
+  'red',
+  'yellow',
+}
+
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
+  referenceId: string
 }
 
 export type GenericLicenseMetadata = {
@@ -250,7 +286,6 @@ export interface GenericLicenseClient<LicenseType> {
 export interface GenericLicenseMapper {
   parsePayload: (
     payload: Array<unknown>,
-    locale?: Locale,
-    labels?: GenericLicenseLabels,
-  ) => Array<GenericUserLicensePayload>
+    locale: Locale,
+  ) => Promise<Array<GenericLicenseMappedPayloadResponse>>
 }

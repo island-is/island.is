@@ -1,4 +1,4 @@
-import { LicenseServiceV2GenericLicenseType as GenericLicenseType } from '@island.is/api/schema'
+import { GenericLicenseType } from '@island.is/api/schema'
 import { LicensePathType } from '../lib/constants'
 
 export const isLicenseTypePath = (str: string): str is LicensePathType => {

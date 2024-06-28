@@ -12,6 +12,7 @@ import { FirearmLicensePayloadMapper } from '../mappers/firearmLicenseMapper'
 import { MachineLicensePayloadMapper } from '../mappers/machineLicenseMapper'
 import { PCardPayloadMapper } from '../mappers/pCardMapper'
 import { HuntingLicensePayloadMapper } from '../mappers/huntingLicenseMapper'
+import { PassportMapper } from '../mappers/passportMapper'
 
 export const LicenseMapperProvider: FactoryProvider = {
   provide: LICENSE_MAPPER_FACTORY,
@@ -25,6 +26,7 @@ export const LicenseMapperProvider: FactoryProvider = {
       pCard: PCardPayloadMapper,
       ehic: EHICCardPayloadMapper,
       hunting: HuntingLicensePayloadMapper,
+      passport: PassportMapper,
     ) =>
     async (type: GenericLicenseType): Promise<GenericLicenseMapper | null> => {
       switch (type) {
@@ -44,6 +46,8 @@ export const LicenseMapperProvider: FactoryProvider = {
           return pCard
         case GenericLicenseType.Ehic:
           return ehic
+        case GenericLicenseType.Passport:
+          return passport
         default:
           return null
       }
@@ -57,5 +61,6 @@ export const LicenseMapperProvider: FactoryProvider = {
     PCardPayloadMapper,
     EHICCardPayloadMapper,
     HuntingLicensePayloadMapper,
+    PassportMapper,
   ],
 }

@@ -1,8 +1,8 @@
 import {
-  LicenseServiceV2GenericLicenseDataField as GenericLicenseDataField,
-  LicenseServiceV2GenericLicenseDataFieldType,
-  LicenseServiceV2GenericUserLicenseDataFieldTagColor,
-  LicenseServiceV2GenericUserLicenseDataFieldTagType,
+  GenericLicenseDataField,
+  GenericLicenseDataFieldType,
+  GenericUserLicenseDataFieldTagColor,
+  GenericUserLicenseDataFieldTagType,
 } from '@island.is/api/schema'
 import {
   Box,
@@ -17,7 +17,7 @@ import { useState } from 'react'
 import ExpandableLine from '../ExpandableLine/ExpandableLine'
 
 const getTagColor = (
-  color: LicenseServiceV2GenericUserLicenseDataFieldTagColor,
+  color: GenericUserLicenseDataFieldTagColor,
 ): 'red600' | 'yellow600' | 'mint600' | undefined => {
   switch (color) {
     case 'red':
@@ -51,8 +51,7 @@ export const LicenseDataFields = ({
         if (field.hideFromServicePortal) return undefined
         return (
           <Box key={`data-field-${i}`}>
-            {field.type ===
-              LicenseServiceV2GenericLicenseDataFieldType.Value && (
+            {field.type === GenericLicenseDataFieldType.Value && (
               <>
                 <UserInfoLine
                   title={field.name ?? ''}
@@ -88,7 +87,7 @@ export const LicenseDataFields = ({
                                   <Icon
                                     icon={
                                       field.tag.icon ===
-                                      LicenseServiceV2GenericUserLicenseDataFieldTagType.closeCircle
+                                      GenericUserLicenseDataFieldTagType.closeCircle
                                         ? 'closeCircle'
                                         : 'checkmarkCircle'
                                     }
@@ -112,8 +111,7 @@ export const LicenseDataFields = ({
                 <Divider />
               </>
             )}
-            {field.type ===
-              LicenseServiceV2GenericLicenseDataFieldType.Category && (
+            {field.type === GenericLicenseDataFieldType.Category && (
               <ExpandableLine
                 title={
                   field.value
@@ -142,8 +140,7 @@ export const LicenseDataFields = ({
                 />
               </>
             )}
-            {field.type ===
-              LicenseServiceV2GenericLicenseDataFieldType.Table && (
+            {field.type === GenericLicenseDataFieldType.Table && (
               <>
                 <Text
                   variant="eyebrow"

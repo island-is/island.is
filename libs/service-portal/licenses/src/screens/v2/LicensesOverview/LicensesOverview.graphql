@@ -1,12 +1,16 @@
 query GenericLicenseCollection(
-  $input: LicenseServiceV2GetGenericLicensesInput!
+  $input: GetGenericLicensesInput!
   $locale: String!
 ) {
-  licenseServiceV2GenericLicenseCollection(input: $input, locale: $locale) {
+  genericLicenseCollection(input: $input, locale: $locale) {
     licenses {
       __typename
       nationalId
       isOwnerChildOfUser
+      fetch {
+        status
+        updated
+      }
       license {
         type
         provider {
@@ -47,6 +51,10 @@ query GenericLicenseCollection(
       provider {
         id
         providerName
+      }
+      fetch {
+        status
+        updated
       }
       errorCode
       errorMessage

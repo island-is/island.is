@@ -162,9 +162,6 @@
       "@island.is/api/domains/license-service": [
         "libs/api/domains/license-service/src/index.ts"
       ],
-      "@island.is/api/domains/license-service-v2": [
-        "libs/api/domains/license-service-v2/src/index.ts"
-      ],
       "@island.is/api/domains/mortgage-certificate": [
         "libs/api/domains/mortgage-certificate/src/index.ts"
       ],

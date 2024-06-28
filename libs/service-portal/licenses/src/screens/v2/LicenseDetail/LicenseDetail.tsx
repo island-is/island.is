@@ -1,7 +1,7 @@
 import {
-  LicenseServiceV2GenericLicenseType as GenericLicenseType,
-  LicenseServiceV2GenericUserLicenseMetaLinksType as GenericUserLicenseMetaLinksType,
-  LicenseServiceV2GenericUserLicensePkPassStatus as GenericUserLicensePkPassStatus,
+  GenericLicenseType,
+  GenericUserLicenseMetaLinksType,
+  GenericUserLicensePkPassStatus,
 } from '@island.is/api/schema'
 import { AlertMessage, Box, Inline, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -58,7 +58,7 @@ const LicenseDetail = () => {
     }
   }, [genericLicenseQuery, id, locale, licenseType])
 
-  const genericLicense = data?.licenseServiceV2GenericLicense ?? null
+  const genericLicense = data?.genericLicense ?? null
 
   return (
     <>

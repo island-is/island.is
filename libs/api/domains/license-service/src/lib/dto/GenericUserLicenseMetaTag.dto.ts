@@ -5,15 +5,15 @@ import {
 } from '../licenceService.type'
 
 registerEnumType(GenericUserLicenseDataFieldTagType, {
-  name: 'LicenseServiceV2GenericUserLicenseDataFieldTagType',
+  name: 'GenericUserLicenseDataFieldTagType',
   description: 'Exhaustive list of possible tag icons',
 })
 registerEnumType(GenericUserLicenseDataFieldTagColor, {
-  name: 'LicenseServiceV2GenericUserLicenseDataFieldTagColor',
+  name: 'GenericUserLicenseDataFieldTagColor',
   description: 'Exhaustive list of possible tag icon color',
 })
 
-@ObjectType('LicenseServiceV2GenericUserLicenseMetaTag')
+@ObjectType('GenericUserLicenseMetaTag')
 export class GenericUserLicenseMetaTag {
   @Field()
   text!: string
