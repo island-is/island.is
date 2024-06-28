@@ -1,4 +1,4 @@
-import { Controller, Get, Param } from '@nestjs/common'
+import { Controller, Get, Param, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
 import { ApplicationDto } from './models/dto/application.dto'
@@ -12,9 +12,20 @@ export class ApplicationsController {
   @Get()
   @Documentation({
     description: 'Get application preview',
-    response: { status: 200, type: [ApplicationDto] },
+    response: { status: 200, type: ApplicationDto },
   })
   getPreview(@Param('formId') formId: string): ApplicationDto {
     return this.applicationsService.getPreview(formId)
+  }
+
+  @Documentation({
+    description: 'Create new application',
+    response: { status: 200, type: ApplicationDto },
+  })
+  @Post(':formUrlName')
+  async create(
+    @Param('formUrlName') formUrlName: string,
+  ): Promise<ApplicationDto> {
+    return this.applicationsService.create(formUrlName)
   }
 }

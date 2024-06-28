@@ -19,7 +19,7 @@ module.exports = {
           url_name: {
             type: Sequelize.STRING,
             allowNull: false,
-            defaultValue: '',
+            unique: true,
           },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',

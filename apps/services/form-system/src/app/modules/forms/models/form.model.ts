@@ -16,6 +16,7 @@ import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicant } from '../../applicants/models/formApplicant.model'
 import { TestimonyType } from '../../testimonies/models/testimonyType.model'
+import { randomUUID } from 'crypto'
 
 @Table({ tableName: 'forms' })
 export class Form extends Model<Form> {
@@ -39,7 +40,8 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    defaultValue: '',
+    unique: true,
+    defaultValue: randomUUID(),
   })
   urlName!: string
 
