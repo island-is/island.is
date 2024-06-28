@@ -154,6 +154,7 @@ export const is = {
   'home.applicationsStatus': 'Staða umsókna',
   'home.allApplications': 'Stafrænar umsóknir',
   'home.welcomeText': 'Hæ',
+  'home.inbox': 'Nýjast í pósthólfinu',
   'home.goodDay': 'Góðan dag,',
   'home.onboardingModule.card1':
     'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
@@ -187,6 +188,8 @@ export const is = {
   'inbox.markAllAsReadPromptDescription': 'Þessi aðgerð er ekki afturkræf',
   'inbox.markAllAsReadPromptCancel': 'Hætta við',
   'inbox.markAllAsReadPromptConfirm': 'Merkja lesið',
+  'inbox.cardNoInboxDocuments':
+    'Þegar þú færð sendan póst í pósthólfið þá birtist hann hér.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Sía skjöl',

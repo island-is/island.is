@@ -6,6 +6,8 @@ import {
   CaseState,
   CaseType,
   DateType,
+  getIndictmentVerdictAppealDeadline,
+  IndictmentCaseReviewDecision,
   InstitutionType,
   isCourtOfAppealsUser,
   isDefenceUser,
@@ -20,6 +22,7 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { nowFactory } from '../../../factories'
 import { Case } from '../models/case.model'
 
 const canProsecutionUserAccessCase = (
@@ -181,6 +184,28 @@ const canPrisonSystemUserAccessCase = (
 
   // Check case type access
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
+    if (isIndictmentCase(theCase.type)) {
+      const verdictViewDates = theCase.defendants?.map((defendant) =>
+        defendant.verdictViewDate?.toISOString(),
+      )
+
+      const indictmentVerdictAppealDeadline =
+        getIndictmentVerdictAppealDeadline(verdictViewDates)
+
+      if (!indictmentVerdictAppealDeadline) {
+        return false
+      }
+
+      if (
+        theCase.state === CaseState.COMPLETED &&
+        theCase.indictmentReviewDecision ===
+          IndictmentCaseReviewDecision.ACCEPT &&
+        indictmentVerdictAppealDeadline < nowFactory()
+      ) {
+        return true
+      }
+    }
+
     if (
       !isRestrictionCase(theCase.type) &&
       theCase.type !== CaseType.PAROLE_REVOCATION
