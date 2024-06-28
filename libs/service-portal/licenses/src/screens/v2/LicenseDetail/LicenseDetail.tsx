@@ -1,12 +1,9 @@
 import {
-  LicenseServiceV2GenericLicenseDataField as GenericLicenseDataField,
   LicenseServiceV2GenericLicenseType as GenericLicenseType,
-  LicenseServiceV2GenericUserLicenseDataFieldTagColor as GenericUserLicenseDataFieldTagColor,
-  LicenseServiceV2GenericUserLicenseDataFieldTagType as GenericUserLicenseDataFieldTagType,
   LicenseServiceV2GenericUserLicenseMetaLinksType as GenericUserLicenseMetaLinksType,
   LicenseServiceV2GenericUserLicensePkPassStatus as GenericUserLicensePkPassStatus,
 } from '@island.is/api/schema'
-import { AlertMessage, Box, Inline } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Inline, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
@@ -63,6 +60,7 @@ const LicenseDetail = () => {
 
   const genericLicense = data?.licenseServiceV2GenericLicense ?? null
 
+  console.log(licenseType)
   return (
     <>
       <IntroHeader
@@ -76,10 +74,10 @@ const LicenseDetail = () => {
             .map((message, index) => {
               if (!message.linkInText) {
                 return (
-                  <>
+                  <Text key={`intro-header-text-${index}`}>
                     {message.text}
                     <br />
-                  </>
+                  </Text>
                 )
               }
               if (message.linkInText && message.linkIconType) {
@@ -113,32 +111,37 @@ const LicenseDetail = () => {
             />
           </Box>
         ) : undefined}
-        {genericLicense?.payload?.metadata?.links ? (
+        {genericLicense?.payload?.metadata?.links ||
+        (genericLicense?.license.pkpassStatus ===
+          GenericUserLicensePkPassStatus.Available &&
+          licenseType) ? (
           <Box paddingTop={3}>
             <Inline space={1}>
               {genericLicense.license.pkpassStatus ===
                 GenericUserLicensePkPassStatus.Available &&
                 licenseType && <PkPass licenseType={licenseType} />}
-              {genericLicense.payload.metadata.links
-                .map((link, index) => {
-                  if (link.label && link.value && link.type) {
-                    return (
-                      <LinkButton
-                        variant="button"
-                        key={`${type}-license-button-${index}`}
-                        to={link.value}
-                        text={link.label}
-                        icon={
-                          link.type === GenericUserLicenseMetaLinksType.Download
-                            ? 'download'
-                            : 'open'
-                        }
-                      />
-                    )
-                  }
-                  return null
-                })
-                .filter(isDefined)}
+              {genericLicense?.payload?.metadata.links &&
+                genericLicense.payload.metadata.links
+                  .map((link, index) => {
+                    if (link.label && link.value && link.type) {
+                      return (
+                        <LinkButton
+                          variant="button"
+                          key={`${type}-license-button-${index}`}
+                          to={link.value}
+                          text={link.label}
+                          icon={
+                            link.type ===
+                            GenericUserLicenseMetaLinksType.Download
+                              ? 'download'
+                              : 'open'
+                          }
+                        />
+                      )
+                    }
+                    return null
+                  })
+                  .filter(isDefined)}
             </Inline>
           </Box>
         ) : undefined}
