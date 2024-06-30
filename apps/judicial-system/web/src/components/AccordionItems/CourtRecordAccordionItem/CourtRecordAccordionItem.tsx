@@ -8,6 +8,7 @@ import {
   capitalize,
   formatAppeal,
   formatDate,
+  FormatPattern,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
@@ -57,7 +58,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
             ? formatMessage(m.sections.timeAndLocation.textOngoing, {
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
-                  TIME_FORMAT,
+                  FormatPattern.HHmm,
                 ),
               })
             : workingCase.courtStartDate &&
@@ -66,22 +67,37 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
                 new Date(workingCase.courtEndTime),
               )
             ? formatMessage(m.sections.timeAndLocation.textSameDay, {
-                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                courtStartDate: formatDate(
+                  workingCase.courtStartDate,
+                  FormatPattern.dMMMY,
+                ),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
-                  TIME_FORMAT,
+                  FormatPattern.HHmm,
                 ),
-                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtEndTime: formatDate(
+                  workingCase.courtEndTime,
+                  FormatPattern.HHmm,
+                ),
                 courtLocation: workingCase.courtLocation,
               })
             : formatMessage(m.sections.timeAndLocation.text, {
-                courtStartDate: formatDate(workingCase.courtStartDate, 'PPP'),
+                courtStartDate: formatDate(
+                  workingCase.courtStartDate,
+                  FormatPattern.dMMMY,
+                ),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
-                  TIME_FORMAT,
+                  FormatPattern.HHmm,
                 ),
-                courtEndDate: formatDate(workingCase.courtEndTime, 'PPP'),
-                courtEndTime: formatDate(workingCase.courtEndTime, TIME_FORMAT),
+                courtEndDate: formatDate(
+                  workingCase.courtEndTime,
+                  FormatPattern.dMMMY,
+                ),
+                courtEndTime: formatDate(
+                  workingCase.courtEndTime,
+                  FormatPattern.HHmm,
+                ),
                 courtLocation: workingCase.courtLocation,
               })}{' '}
         </Text>

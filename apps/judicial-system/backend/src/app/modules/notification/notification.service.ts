@@ -26,6 +26,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   formatDate,
+  FormatPattern,
   getAppealResultTextByValue,
   getHumanReadableCaseIndictmentRulingDecision,
 } from '@island.is/judicial-system/formatters'
@@ -1226,8 +1227,14 @@ export class NotificationService {
               theCase.id,
             )}">`,
             linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
-            isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+            validToDate: formatDate(
+              theCase.validToDate,
+              FormatPattern.dMMMYHHmm,
+            ),
+            isolationToDate: formatDate(
+              theCase.isolationToDate,
+              FormatPattern.dMMMYHHmm,
+            ),
           })
         : this.formatMessage(notifications.modified.htmlDefender, {
             caseType: theCase.type,
@@ -1242,7 +1249,10 @@ export class NotificationService {
               theCase.id,
             )}">`,
             linkEnd: '</a>',
-            validToDate: formatDate(theCase.validToDate, 'PPPp'),
+            validToDate: formatDate(
+              theCase.validToDate,
+              FormatPattern.dMMMYHHmm,
+            ),
           }),
       theCase.defenderName,
       theCase.defenderEmail,
@@ -1269,8 +1279,11 @@ export class NotificationService {
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
-          validToDate: formatDate(theCase.validToDate, 'PPPp'),
-          isolationToDate: formatDate(theCase.isolationToDate, 'PPPp'),
+          validToDate: formatDate(theCase.validToDate, FormatPattern.dMMMYHHmm),
+          isolationToDate: formatDate(
+            theCase.isolationToDate,
+            FormatPattern.dMMMYHHmm,
+          ),
         })
       : this.formatMessage(notifications.modified.html, {
           caseType: theCase.type,
@@ -1280,7 +1293,7 @@ export class NotificationService {
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
-          validToDate: formatDate(theCase.validToDate, 'PPPp'),
+          validToDate: formatDate(theCase.validToDate, FormatPattern.dMMMYHHmm),
         })
 
     const promises = [
@@ -2030,7 +2043,10 @@ export class NotificationService {
       notifications.caseAppealReceivedByCourt.courtOfAppealsBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        statementDeadline: formatDate(statementDeadline, 'PPPp'),
+        statementDeadline: formatDate(
+          statementDeadline,
+          FormatPattern.dMMMYHHmm,
+        ),
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
@@ -2040,7 +2056,10 @@ export class NotificationService {
       notifications.caseAppealReceivedByCourt.text,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        statementDeadline: formatDate(statementDeadline, 'PPPp'),
+        statementDeadline: formatDate(
+          statementDeadline,
+          FormatPattern.dMMMYHHmm,
+        ),
       },
     )
 
@@ -2058,7 +2077,10 @@ export class NotificationService {
       {
         userHasAccessToRVG: true,
         courtCaseNumber: theCase.courtCaseNumber,
-        statementDeadline: formatDate(statementDeadline, 'PPPp'),
+        statementDeadline: formatDate(
+          statementDeadline,
+          FormatPattern.dMMMYHHmm,
+        ),
         linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
       },
@@ -2083,7 +2105,10 @@ export class NotificationService {
           userHasAccessToRVG: Boolean(url),
           court: theCase.court?.name.replace('dómur', 'dómi'),
           courtCaseNumber: theCase.courtCaseNumber,
-          statementDeadline: formatDate(statementDeadline, 'PPPp'),
+          statementDeadline: formatDate(
+            statementDeadline,
+            FormatPattern.dMMMYHHmm,
+          ),
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',
         },

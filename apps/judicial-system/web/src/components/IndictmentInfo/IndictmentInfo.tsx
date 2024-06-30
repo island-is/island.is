@@ -5,6 +5,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatDate,
+  FormatPattern,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
@@ -53,10 +54,10 @@ const IndictmentInfo: FC<Props> = ({
           {formatMessage(strings.dateAndPlace, {
             dateAndPlace:
               place && date
-                ? `${place} - ${formatDate(date, 'PPP')}`
+                ? `${place} - ${formatDate(date, FormatPattern.dMMMY)}`
                 : place
                 ? `${place}`
-                : `${formatDate(date, 'PPP')}`,
+                : `${formatDate(date, FormatPattern.dMMMY)}`,
           })}
         </Text>
       )}

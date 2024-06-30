@@ -14,7 +14,11 @@ import { motion } from 'framer-motion'
 
 import { Box, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   signedVerdictOverview as m,
@@ -61,8 +65,8 @@ export const createCaseModifiedExplanation = (
     : ''
 
   return `${history}${formatMessage(m.sections.modifyDatesInfo.explanation, {
-    date: capitalize(formatDate(now, 'PPPP', true) || ''),
-    time: formatDate(now, constants.TIME_FORMAT),
+    date: capitalize(formatDate(now, FormatPattern.ddMMYYYY, true) || ''),
+    time: formatDate(now, FormatPattern.HHmm),
     userName: userName ?? '',
     userTitle: userTitle ?? '',
     institutionName: institutionName ?? '',
@@ -100,10 +104,13 @@ const getModificationSuccessText = (
 
   if (workingCase.type === CaseType.TRAVEL_BAN) {
     return formatMessage(m.sections.modifyDatesModal.travelBanSuccessText, {
-      date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
-        'dagur,',
-        'dagsins',
-      )} kl. ${formatDate(modifiedValidToDate?.value, constants.TIME_FORMAT)}`,
+      date: `${formatDate(
+        modifiedValidToDate?.value,
+        FormatPattern.ddMMYYYY,
+      )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+        modifiedValidToDate?.value,
+        FormatPattern.HHmm,
+      )}`,
       userRole,
     })
   } else if (validToDateAndIsolationToDateAreTheSame) {
@@ -111,12 +118,12 @@ const getModificationSuccessText = (
       m.sections.modifyDatesModal.validToDateAndIsolationToDateAreTheSame,
       {
         caseType: workingCase.type,
-        date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
-          'dagur,',
-          'dagsins',
-        )} kl. ${formatDate(
+        date: `${formatDate(
           modifiedValidToDate?.value,
-          constants.TIME_FORMAT,
+          FormatPattern.ddMMYYYY,
+        )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+          modifiedValidToDate?.value,
+          FormatPattern.HHmm,
         )}`,
       },
     )
@@ -126,12 +133,12 @@ const getModificationSuccessText = (
         m.sections.modifyDatesModal.validToDateChanged,
         {
           caseType: workingCase.type,
-          date: `${formatDate(modifiedValidToDate?.value, 'PPPP')?.replace(
-            'dagur,',
-            'dagsins',
-          )} kl. ${formatDate(
+          date: `${formatDate(
             modifiedValidToDate?.value,
-            constants.TIME_FORMAT,
+            FormatPattern.ddMMYYYY,
+          )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+            modifiedValidToDate?.value,
+            FormatPattern.HHmm,
           )}`,
         },
       )
@@ -141,12 +148,12 @@ const getModificationSuccessText = (
       const isolationText = formatMessage(
         m.sections.modifyDatesModal.isolationDateChanged,
         {
-          date: `${formatDate(modifiedIsolationToDate?.value, 'PPPP')?.replace(
-            'dagur,',
-            'dagsins',
-          )} kl. ${formatDate(
+          date: `${formatDate(
             modifiedIsolationToDate?.value,
-            constants.TIME_FORMAT,
+            FormatPattern.ddMMYYYY,
+          )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
+            modifiedIsolationToDate?.value,
+            FormatPattern.HHmm,
           )}`,
         },
       )

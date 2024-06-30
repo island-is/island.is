@@ -5,6 +5,7 @@ import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
   formatDate,
+  FormatPattern,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -22,7 +23,7 @@ const InfoCardActiveIndictment = () => {
       data={[
         {
           title: formatMessage(strings.indictmentCreated),
-          value: formatDate(workingCase.created, 'PP'),
+          value: formatDate(workingCase.created, FormatPattern.dMMMY),
         },
         {
           title: formatMessage(strings.prosecutor),

@@ -15,6 +15,7 @@ import {
   capitalize,
   formatCaseType,
   formatDate,
+  FormatPattern,
 } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -140,7 +141,10 @@ export const Overview = () => {
             <AlertMessage
               title={formatMessage(m.openedByDefenderAlert.title)}
               message={formatMessage(m.openedByDefenderAlert.text, {
-                when: formatDate(workingCase.openedByDefender, 'PPPp'),
+                when: formatDate(
+                  workingCase.openedByDefender,
+                  FormatPattern.dMMMYHHmm,
+                ),
               })}
               type="info"
               testid="alertMessageOpenedByDefender"
@@ -203,11 +207,14 @@ export const Overview = () => {
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
-                    '',
+                  formatDate(
+                    workingCase.requestedCourtDate,
+                    FormatPattern.ddMMYYYY,
+                    true,
+                  ) ?? '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  constants.TIME_FORMAT,
+                  FormatPattern.HHmm,
                 )}`,
               },
               ...(workingCase.registrar
@@ -239,12 +246,12 @@ export const Overview = () => {
                       value: `${capitalize(
                         formatDate(
                           workingCase.arraignmentDate.date,
-                          'PPPP',
+                          FormatPattern.ddMMYYYY,
                           true,
                         ) ?? '',
                       )} kl. ${formatDate(
                         workingCase.arraignmentDate.date,
-                        constants.TIME_FORMAT,
+                        FormatPattern.HHmm,
                       )}`,
                     },
                   ]

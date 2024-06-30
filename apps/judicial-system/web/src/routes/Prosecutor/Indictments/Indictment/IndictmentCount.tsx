@@ -10,7 +10,10 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   CrimeScene,
   offenseSubstances,
@@ -292,7 +295,10 @@ export const getIncidentDescription = (
   if (crimeScene) {
     incidentLocation = crimeScene.place ?? ''
     incidentDate =
-      formatDate(crimeScene.date, 'PPPP')?.replace('dagur,', 'daginn') ?? ''
+      formatDate(crimeScene.date, FormatPattern.ddMMYYYY)?.replace(
+        'dagur,',
+        'daginn',
+      ) ?? ''
   }
 
   const reason = getIncidentDescriptionReason(

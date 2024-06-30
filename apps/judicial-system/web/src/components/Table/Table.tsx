@@ -12,7 +12,10 @@ import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
@@ -155,8 +158,8 @@ const Table: FC<TableProps> = (props) => {
                 <Text fontWeight="medium" variant="small">
                   {`${formatMessage(strings.hearing)} ${formatDate(
                     parseISO(theCase.courtDate),
-                    'd.M.y',
-                  )} kl. ${formatDate(parseISO(theCase.courtDate), 'kk:mm')}`}
+                    FormatPattern.DDMMYYYYHHmm,
+                  )}`}
                 </Text>
               )
             )}

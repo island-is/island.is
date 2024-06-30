@@ -2,7 +2,10 @@ import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   Modal,
   UserContext,
@@ -58,7 +61,11 @@ const ReturnIndictmentModal: FC<Props> = ({
     const prependedReturnedExplanation = `${formatMessage(
       strings.prependedReturnedExplanation,
       {
-        date: formatDate(now, 'PPPp')?.replace('dagur,', 'daginn') ?? '',
+        date:
+          formatDate(now, FormatPattern.dMMMYHHmm)?.replace(
+            'dagur,',
+            'daginn',
+          ) ?? '',
         name: user?.name,
         courtName: workingCase.court?.name,
       },

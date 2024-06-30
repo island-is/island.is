@@ -2,7 +2,10 @@ import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 
 import { Institution } from '../../graphql/schema'
 import InfoCard from './InfoCard'
@@ -27,7 +30,7 @@ const InfoCardCaseScheduled: FC<Props> = (props) => {
           value: (
             <>
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>
-                {formatDate(courtDate, 'PPPp')}
+                {formatDate(courtDate, FormatPattern.dMMMYHHmm)}
               </Text>
               {<Text>{court.name}</Text>}
               <Text>

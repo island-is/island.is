@@ -2,7 +2,6 @@ import React, { FC, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import format from 'date-fns/format'
-import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, LayoutGroup, motion } from 'framer-motion'
 
@@ -11,7 +10,9 @@ import { theme } from '@island.is/island-ui/theme'
 import {
   capitalize,
   displayFirstPlusRemaining,
+  formatDate,
   formatDOB,
+  FormatPattern,
 } from '@island.is/judicial-system/formatters'
 import { isRequestCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
@@ -151,10 +152,10 @@ const ActiveCases: FC<Props> = ({ cases, isDeletingCase, onDeleteCase }) => {
             ) : (
               theCase.courtDate && (
                 <Text fontWeight={'medium'} variant="small">
-                  {`${formatMessage(tableStrings.hearing)} ${format(
+                  {`${formatMessage(tableStrings.hearing)} ${formatDate(
                     parseISO(theCase.courtDate),
-                    'd.M.y',
-                  )} kl. ${format(parseISO(theCase.courtDate), 'kk:mm')}`}
+                    FormatPattern.DDMMYYYYHHmm,
+                  )}`}
                 </Text>
               )
             )}
@@ -306,9 +307,7 @@ const ActiveCases: FC<Props> = ({ cases, isDeletingCase, onDeleteCase }) => {
                   </td>
                   <td className={styles.td}>
                     <Text as="span">
-                      {format(parseISO(c.created ?? ''), 'd.M.y', {
-                        locale: localeIS,
-                      })}
+                      {formatDate(parseISO(c.created ?? ''))}
                     </Text>
                   </td>
                   <td className={styles.td} data-testid="tdTag">

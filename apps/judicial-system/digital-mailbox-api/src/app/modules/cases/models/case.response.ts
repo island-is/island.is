@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { DateType } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -44,7 +47,10 @@ export class CaseResponse {
               [t.name, defendant.name],
               [t.nationalId, defendant.nationalId],
               [t.address, defendant.address],
-              [t.subpoenaSent, formatDate(subpoenaCreatedDate, 'PP')],
+              [
+                t.subpoenaSent,
+                formatDate(subpoenaCreatedDate, FormatPattern.dMMMY),
+              ],
             ].map((item) => ({
               label: item[0] ?? '',
               value: item[1] ?? t.notAvailable,

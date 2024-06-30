@@ -10,7 +10,10 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   isDefenceUser,
   isProsecutionUser,
@@ -150,7 +153,10 @@ const AppealFiles = () => {
                 : formatMessage(strings.appealActorAndDate, {
                     appealedByProsecutor:
                       workingCase.appealedByRole === UserRole.PROSECUTOR,
-                    date: formatDate(workingCase.appealedDate, 'PPPp'),
+                    date: formatDate(
+                      workingCase.appealedDate,
+                      FormatPattern.dMMMYHHmm,
+                    ),
                   })}
             </Text>
           )}

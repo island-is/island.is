@@ -2,7 +2,10 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 
 import { Icon, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { signedDocument } from '@island.is/judicial-system-web/messages'
 
 import * as styles from './SignedDocument.css'
@@ -21,8 +24,8 @@ const SignedDocument = (props: Props) => {
       <div className={styles.textContainer}>
         <Text>
           {formatMessage(signedDocument, {
-            date: formatDate(signingDate, 'dd.MM.yyyy'),
-            time: formatDate(signingDate, 'HH:mm'),
+            date: formatDate(signingDate),
+            time: formatDate(signingDate, FormatPattern.HHmm),
           })}
         </Text>
         <Text variant="small">{signatory}</Text>

@@ -9,7 +9,10 @@ import {
   DEFENDER_STATEMENT_ROUTE,
   STATEMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   isDefenceUser,
   isDistrictCourtUser,
@@ -121,7 +124,10 @@ const useAppealAlertBanner = (
   if (appealState === CaseAppealState.WITHDRAWN) {
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.appealWithdrawnDescription, {
-      appealWithdrawnDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
+      appealWithdrawnDate: formatDate(
+        appealReceivedByCourtDate,
+        FormatPattern.dMMMYHHmm,
+      ),
     })
   }
 
@@ -132,14 +138,14 @@ const useAppealAlertBanner = (
   ) {
     if (appealState === CaseAppealState.COMPLETED) {
       title = formatMessage(strings.appealCompletedTitle, {
-        appealedDate: formatDate(appealCompletedDate, 'PPP'),
+        appealedDate: formatDate(appealCompletedDate, FormatPattern.dMMMY),
       })
       description = getAppealDecision(formatMessage, appealRulingDecision)
     } else {
       title = formatMessage(strings.statementTitle)
       description = formatMessage(strings.statementDeadlineDescription, {
         isStatementDeadlineExpired: isStatementDeadlineExpired || false,
-        statementDeadline: formatDate(statementDeadline, 'PPPp'),
+        statementDeadline: formatDate(statementDeadline, FormatPattern.dMMMY),
       })
     }
   }
@@ -150,7 +156,7 @@ const useAppealAlertBanner = (
     title = formatMessage(strings.statementTitle)
     description = formatMessage(strings.statementDeadlineDescription, {
       isStatementDeadlineExpired: isStatementDeadlineExpired || false,
-      statementDeadline: formatDate(statementDeadline, 'PPPp'),
+      statementDeadline: formatDate(statementDeadline, FormatPattern.dMMMYHHmm),
     })
     // if the current user has already sent a statement, we don't want to display
     // the link to send a statement, instead we want to display the date it was sent
@@ -159,8 +165,8 @@ const useAppealAlertBanner = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.statementSentDescription, {
             statementSentDate: isProsecutionUser(user)
-              ? formatDate(prosecutorStatementDate, 'PPPp')
-              : formatDate(defendantStatementDate, 'PPPp'),
+              ? formatDate(prosecutorStatementDate, FormatPattern.dMMMYHHmm)
+              : formatDate(defendantStatementDate, FormatPattern.dMMMYHHmm),
           })}
         </Text>
       )
@@ -168,7 +174,10 @@ const useAppealAlertBanner = (
       child = (
         <Text variant="small" color="mint800" fontWeight="semiBold">
           {formatMessage(strings.appealReceivedNotificationSent, {
-            appealReceivedDate: formatDate(appealReceivedByCourtDate, 'PPPp'),
+            appealReceivedDate: formatDate(
+              appealReceivedByCourtDate,
+              FormatPattern.dMMMYHHmm,
+            ),
           })}
         </Text>
       )
@@ -188,7 +197,7 @@ const useAppealAlertBanner = (
     }
   } else if (appealState === CaseAppealState.COMPLETED) {
     title = formatMessage(strings.appealCompletedTitle, {
-      appealedDate: formatDate(appealCompletedDate, 'PPP'),
+      appealedDate: formatDate(appealCompletedDate, FormatPattern.dMMMY),
     })
     description = getAppealDecision(formatMessage, appealRulingDecision)
   }
@@ -203,7 +212,7 @@ const useAppealAlertBanner = (
           })
         : formatMessage(strings.statementDescription, {
             appealedByProsecutor: appealedByRole === UserRole.PROSECUTOR,
-            appealDate: formatDate(appealedDate, 'PPPp'),
+            appealDate: formatDate(appealedDate, FormatPattern.dMMMYHHmm),
           })
     if (isProsecutionUser(user) || isDefenceUser(user)) {
       child = hasCurrentUserSentStatement
@@ -211,8 +220,8 @@ const useAppealAlertBanner = (
             <Text variant="small" color="mint800" fontWeight="semiBold">
               {formatMessage(strings.statementSentDescription, {
                 statementSentDate: isProsecutionUser(user)
-                  ? formatDate(prosecutorStatementDate, 'PPPp')
-                  : formatDate(defendantStatementDate, 'PPPp'),
+                  ? formatDate(prosecutorStatementDate, FormatPattern.dMMMYHHmm)
+                  : formatDate(defendantStatementDate, FormatPattern.dMMMYHHmm),
               })}
             </Text>
           ))
@@ -238,7 +247,7 @@ const useAppealAlertBanner = (
   // When case can be appealed
   else if (canBeAppealed) {
     title = formatMessage(strings.appealDeadlineTitle, {
-      appealDeadline: formatDate(appealDeadline, 'PPPp'),
+      appealDeadline: formatDate(appealDeadline, FormatPattern.dMMMYHHmm),
       isAppealDeadlineExpired: isAppealDeadlineExpired,
     })
     child = isAppealDeadlineExpired ? (

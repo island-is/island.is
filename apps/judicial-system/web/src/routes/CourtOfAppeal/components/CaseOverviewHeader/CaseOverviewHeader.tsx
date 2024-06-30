@@ -4,7 +4,10 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messages'
@@ -95,7 +98,7 @@ const CaseOverviewHeader: FC<Props> = (props) => {
                 <AlertMessage
                   message={formatMessage(strings.appealResultOpenedBy, {
                     userRole: event.userRole as UserRole,
-                    when: formatDate(event.created, 'PPPp'),
+                    when: formatDate(event.created, FormatPattern.dMMMYHHmm),
                   })}
                   type="info"
                 />

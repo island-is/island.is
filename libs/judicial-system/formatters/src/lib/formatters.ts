@@ -23,15 +23,28 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
+export enum FormatPattern {
+  DDMMYYYY = 'dd.MM.yyyy',
+  DDMMYYYYHHmm = "dd.MM.yyyy 'kl.' HH:mm",
+  dMMMY = 'PP',
+  dMMMYHHmm = 'PPPp',
+  dMMMM = 'd. MMMM',
+  ddMMYYYY = 'PPPP',
+  ddMMYYYYHHmm = 'PPPPp',
+  HHmm = 'HH:mm',
+  yyyyMMddHHmm = 'yyy-MM-dd HH:mm',
+}
+
 export const formatDate = (
   date: Date | string | undefined | null,
-  formatPattern: string,
+  formatPattern?: FormatPattern,
   shortenDayName?: boolean,
 ): string | undefined => {
   const theDate: Date = getAsDate(date)
 
   if (isValid(theDate)) {
-    const formattedDate = format(theDate, formatPattern, {
+    const pattern = formatPattern || FormatPattern.DDMMYYYY
+    const formattedDate = format(theDate, pattern, {
       locale: is,
     })
 

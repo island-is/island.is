@@ -11,7 +11,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -69,7 +72,10 @@ const Ruling = () => {
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
+            date: formatDate(
+              workingCase.arraignmentDate?.date,
+              FormatPattern.dMMMY,
+            ),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(

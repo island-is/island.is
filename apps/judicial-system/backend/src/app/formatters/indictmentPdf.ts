@@ -6,6 +6,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 import {
   capitalize,
   formatDate,
+  FormatPattern,
   lowercase,
 } from '@island.is/judicial-system/formatters'
 
@@ -120,7 +121,7 @@ export const createIndictment = async (
           lowercase(theCase.prosecutorsOffice?.name)
             .replace('lögreglustjórinn', 'lögreglustjórans')
             .replace('saksóknari', 'saksóknara') ?? '',
-        date: formatDate(nowFactory(), 'PPP'),
+        date: formatDate(nowFactory(), FormatPattern.dMMMY),
       } ?? '',
     ),
   )

@@ -6,6 +6,7 @@ import {
   capitalize,
   formatDate,
   formatDOB,
+  FormatPattern,
 } from '@island.is/judicial-system/formatters'
 import { SessionArrangements } from '@island.is/judicial-system/types'
 
@@ -96,20 +97,29 @@ const constructCustodyNoticePdf = (
   )
   addNormalText(
     doc,
-    `${theCase.court?.name}, ${formatDate(theCase.courtStartDate, 'PPP')}`,
+    `${theCase.court?.name}, ${formatDate(
+      theCase.courtStartDate,
+      FormatPattern.dMMMY,
+    )}`,
     'Helvetica',
   )
   addEmptyLines(doc)
   addNormalText(
     doc,
     `Úrskurður kveðinn upp ${
-      formatDate(theCase.rulingDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+      formatDate(theCase.rulingDate, FormatPattern.dMMMYHHmm)?.replace(
+        ' kl.',
+        ', kl.',
+      ) ?? '?'
     }`,
   )
   addNormalText(
     doc,
     `Úrskurður rennur út ${
-      formatDate(theCase.validToDate, 'PPPp')?.replace(' kl.', ', kl.') ?? '?'
+      formatDate(theCase.validToDate, FormatPattern.dMMMYHHmm)?.replace(
+        ' kl.',
+        ', kl.',
+      ) ?? '?'
     }`,
   )
   addEmptyLines(doc)
@@ -155,7 +165,7 @@ const constructCustodyNoticePdf = (
     )
 
     if (theCase.isCustodyIsolation) {
-      const isolationPeriod = formatDate(theCase.isolationToDate, 'PPPPp')
+      const isolationPeriod = formatDate(theCase.isolationToDate, FormatPattern.ddMMYYYYHHmm)
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
 

@@ -7,6 +7,7 @@ import {
   capitalize,
   formatAppeal,
   formatDate,
+  FormatPattern,
   formatRequestCaseType,
   lowercase,
 } from '@island.is/judicial-system/formatters'
@@ -43,8 +44,8 @@ export const formatCourtEndDate = (
         endDate:
           courtStartDate && isSameDay(courtStartDate, courtEndTime)
             ? 'NONE'
-            : formatDate(courtEndTime, 'd. MMMM'),
-        endTime: formatDate(courtEndTime, 'p'),
+            : formatDate(courtEndTime, FormatPattern.dMMMM),
+        endTime: formatDate(courtEndTime, FormatPattern.HHmm),
       })
     : formatMessage(courtRecord.inSession)
 }
@@ -93,7 +94,7 @@ const constructRestrictionCourtRecordPdf = (
   addNormalJustifiedText(
     doc,
     formatMessage(courtRecord.intro, {
-      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
+      courtDate: formatDate(theCase.courtStartDate, FormatPattern.dMMMY),
       judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
         theCase.judge?.title ?? '?'
       }`,
@@ -106,7 +107,7 @@ const constructRestrictionCourtRecordPdf = (
           )}`
         : '',
       caseNumber: theCase.courtCaseNumber,
-      startTime: formatDate(theCase.courtStartDate, 'p'),
+      startTime: formatDate(theCase.courtStartDate, FormatPattern.HHmm),
     }),
   )
 
@@ -283,7 +284,7 @@ const constructRestrictionCourtRecordPdf = (
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
-          date: formatDate(nowFactory(), 'PPPp'),
+          date: formatDate(nowFactory(), FormatPattern.dMMMYHHmm),
         })
       : undefined,
   )
@@ -339,7 +340,7 @@ const constructInvestigationCourtRecordPdf = (
   addNormalJustifiedText(
     doc,
     formatMessage(courtRecord.intro, {
-      courtDate: formatDate(theCase.courtStartDate, 'PPP'),
+      courtDate: formatDate(theCase.courtStartDate, FormatPattern.dMMMY),
       judgeNameAndTitle: `${theCase.judge?.name ?? '?'} ${
         theCase.judge?.title ?? '?'
       }`,
@@ -352,7 +353,7 @@ const constructInvestigationCourtRecordPdf = (
           )}`
         : '',
       caseNumber: theCase.courtCaseNumber,
-      startTime: formatDate(theCase.courtStartDate, 'p'),
+      startTime: formatDate(theCase.courtStartDate),
     }),
   )
 
@@ -534,7 +535,7 @@ const constructInvestigationCourtRecordPdf = (
       ? formatMessage(courtRecord.smallPrint, {
           actorName: user.name,
           actorInstitution: user.institution?.name || 'NONE',
-          date: formatDate(nowFactory(), 'PPPp'),
+          date: formatDate(nowFactory(), FormatPattern.dMMMYHHmm),
         })
       : undefined,
   )

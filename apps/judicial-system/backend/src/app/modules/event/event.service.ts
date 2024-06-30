@@ -10,6 +10,7 @@ import {
   capitalize,
   formatCaseType,
   formatDate,
+  FormatPattern,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
@@ -133,7 +134,7 @@ export class EventService {
                 : formatDate(
                     DateLog.courtDate(theCase.dateLogs)?.date ??
                       DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                    'Pp',
+                    FormatPattern.DDMMYYYYHHmm,
                   ) ?? 'er ekki skráð'
             }`
           : ''

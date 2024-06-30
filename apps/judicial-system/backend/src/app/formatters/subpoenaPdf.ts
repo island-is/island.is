@@ -2,7 +2,11 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   DateType,
   DistrictCourtLocation,
@@ -55,7 +59,7 @@ export const createSubpoena = (
   if (dateLog) {
     addNormalRightAlignedText(
       doc,
-      `${formatDate(new Date(dateLog.created), 'PPP')}`,
+      `${formatDate(new Date(dateLog.created), FormatPattern.dMMMY)}`,
       'Times-Roman',
     )
   }
@@ -112,7 +116,10 @@ export const createSubpoena = (
     addNormalText(
       doc,
       formatMessage(strings.arraignmentDate, {
-        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPP'),
+        arraignmentDate: formatDate(
+          new Date(arraignmentDate),
+          FormatPattern.dMMMY,
+        ),
       }),
       'Times-Bold',
     )

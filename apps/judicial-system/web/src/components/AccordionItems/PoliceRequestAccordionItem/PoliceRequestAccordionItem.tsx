@@ -7,6 +7,7 @@ import {
   capitalize,
   formatDate,
   formatNationalId,
+  FormatPattern,
   formatRequestCaseType,
 } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
@@ -79,9 +80,10 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
       {workingCase.arrestDate && (
         <AccordionListItem title="Tími handtöku">
           <Text>
-            {`${capitalize(
-              formatDate(workingCase.arrestDate, 'PPPP') ?? '',
-            )} kl. ${formatDate(workingCase.arrestDate, TIME_FORMAT)}`}
+            {capitalize(
+              formatDate(workingCase.arrestDate, FormatPattern.ddMMYYYYHHmm) ??
+                '',
+            )}
           </Text>
         </AccordionListItem>
       )}
@@ -89,10 +91,13 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         <AccordionListItem title={formatMessage(requestCourtDate.heading)}>
           <Text>
             {`${capitalize(
-              formatDate(workingCase.requestedCourtDate, 'PPPP') ?? '',
+              formatDate(
+                workingCase.requestedCourtDate,
+                FormatPattern.ddMMYYYY,
+              ) ?? '',
             )} eftir kl. ${formatDate(
               workingCase.requestedCourtDate,
-              TIME_FORMAT,
+              FormatPattern.HHmm,
             )}`}
           </Text>
         </AccordionListItem>

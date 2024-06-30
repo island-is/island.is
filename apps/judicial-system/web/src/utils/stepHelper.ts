@@ -2,7 +2,10 @@ import addDays from 'date-fns/addDays'
 import parseISO from 'date-fns/parseISO'
 
 import { TagVariant } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   CaseAppealState,
   CaseCustodyRestrictions,
@@ -62,7 +65,7 @@ export const fileSize = (bytes?: number) => {
 
 export const getAppealEndDate = (rulingDate: string) => {
   const appealEndDate = addDays(parseISO(rulingDate), 3)
-  return formatDate(appealEndDate, 'PPPp')
+  return formatDate(appealEndDate, FormatPattern.dMMMYHHmm)
 }
 
 export const isBusiness = (nationalId?: string | null) => {
@@ -83,7 +86,7 @@ export const createCaseResentExplanation = (
     workingCase.caseResentExplanation
       ? `${workingCase.caseResentExplanation}<br/><br/>`
       : ''
-  }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
+  }Krafa endursend ${formatDate(now, FormatPattern.dMMMYHHmm)} - ${explanation}`
 }
 
 export const hasSentNotification = (

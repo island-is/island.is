@@ -7,6 +7,7 @@ import {
   capitalize,
   enumerate,
   formatDate,
+  FormatPattern,
 } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -131,7 +132,10 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
         <Box marginTop={1}>
           <Text as="h5" variant="h5">
             {formatMessage(strings.rulingDate, {
-              rulingDate: `${formatDate(workingCase.rulingDate, 'PPP')}`,
+              rulingDate: `${formatDate(
+                workingCase.rulingDate,
+                FormatPattern.dMMMY,
+              )}`,
             })}
           </Text>
         </Box>

@@ -3,7 +3,10 @@ import { useIntl } from 'react-intl'
 
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { TIME_FORMAT } from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { caseDates } from '@island.is/judicial-system-web/messages'
 import {
   CaseDecision,
@@ -37,10 +40,10 @@ const CaseDates: FC<Props> = (props) => {
           <Text variant="h5">
             {formatMessage(caseDates.restrictionExpired, {
               caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
-              date: `${formatDate(
+              date: formatDate(
                 workingCase.validToDate,
-                'PPP',
-              )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
+                FormatPattern.dMMMYHHmm,
+              ),
             })}
           </Text>
         ) : (
@@ -55,22 +58,19 @@ const CaseDates: FC<Props> = (props) => {
                   caseType: isTravelBan
                     ? CaseType.TRAVEL_BAN
                     : workingCase.type,
-                  date: `${formatDate(
+                  date: formatDate(
                     workingCase.validToDate,
-                    'PPP',
-                  )} kl. ${formatDate(workingCase.validToDate, TIME_FORMAT)}`,
+                    FormatPattern.dMMMYHHmm,
+                  ),
                 })}
               </Text>
               {workingCase.isCustodyIsolation && workingCase.isolationToDate && (
                 <Text variant="h5" as="h5">
                   {formatMessage(caseDates.isolationValidTo, {
-                    date: `${formatDate(
+                    date: formatDate(
                       workingCase.isolationToDate,
-                      'PPP',
-                    )} kl. ${formatDate(
-                      workingCase.isolationToDate,
-                      TIME_FORMAT,
-                    )}`,
+                      FormatPattern.dMMMYHHmm,
+                    ),
                   })}
                 </Text>
               )}

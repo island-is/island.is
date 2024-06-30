@@ -5,7 +5,11 @@ import localeIS from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import { tables } from '@island.is/judicial-system-web/messages'
 import { CourtSessionType } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -37,11 +41,8 @@ const CourtDateWithCourtSessionType: FC<{
         ).substring(0, 3)}
         {'. '}
         {capitalize(
-          format(parseISO(courtDate), 'dd.MM.y', {
-            locale: localeIS,
-          }),
-        ).replace('dagur', 'd.')}{' '}
-        kl. {format(parseISO(courtDate), 'kk:mm')}
+          formatDate(parseISO(courtDate), FormatPattern.ddMMYYYYHHmm, true),
+        )}
       </Text>
     </>
   )
@@ -53,14 +54,12 @@ const SimpleCourtDate: FC<{ courtDate: string }> = ({ courtDate }) => {
       <Text>
         <Box component="span">
           {capitalize(
-            format(parseISO(courtDate), 'EEEE d. LLLL y', {
-              locale: localeIS,
-            }),
-          ).replace('dagur', 'd.')}
+            formatDate(parseISO(courtDate), FormatPattern.ddMMYYYY, true),
+          )}
         </Box>
       </Text>
       <Text as="span" variant="small">
-        kl. {format(parseISO(courtDate), 'kk:mm')}
+        kl. {formatDate(parseISO(courtDate), FormatPattern.HHmm)}
       </Text>
     </>
   )

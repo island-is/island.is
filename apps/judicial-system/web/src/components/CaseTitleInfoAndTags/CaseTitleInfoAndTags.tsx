@@ -2,7 +2,10 @@ import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 
 import {
   CaseAppealDecision,
@@ -50,7 +53,7 @@ const CaseTitleInfoAndTags: FC = () => {
                         workingCase.appealedByRole === UserRole.PROSECUTOR,
                       appealedDate: `${formatDate(
                         workingCase.appealedDate,
-                        'PPPp',
+                        FormatPattern.dMMMYHHmm,
                       )}`,
                     })}
               </Text>
@@ -68,7 +71,7 @@ const CaseTitleInfoAndTags: FC = () => {
                       {
                         appealReceived: formatDate(
                           workingCase.appealReceivedByCourtDate,
-                          'PPPp',
+                          FormatPattern.dMMMYHHmm,
                         ),
                       },
                     )}

@@ -4,7 +4,11 @@ import { useRouter } from 'next/router'
 
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   core,
@@ -82,7 +86,10 @@ export const getDemandsAutofill = (
       isAcceptingCaseDecision(props.parentCaseDecision),
     caseType: props.caseType,
     court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
-    requestedValidToDate: formatDate(props.requestedValidToDate, 'PPPPp')
+    requestedValidToDate: formatDate(
+      props.requestedValidToDate,
+      FormatPattern.ddMMYYYYHHmm,
+    )
       ?.replace('dagur,', 'dagsins')
       ?.replace(' kl.', ', kl.'),
     hasIsolationRequest: props.requestedCustodyRestrictions?.includes(
@@ -204,7 +211,7 @@ export const PoliceDemands = () => {
                   <Text as="span" fontWeight="semiBold">
                     {formatDate(
                       workingCase.parentCase.validToDate,
-                      'PPPPp',
+                      FormatPattern.ddMMYYYYHHmm,
                     )?.replace('dagur,', 'dagsins')}
                   </Text>
                 </Text>

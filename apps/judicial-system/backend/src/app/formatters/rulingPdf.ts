@@ -2,7 +2,11 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../factories'
 import { ruling } from '../messages'
@@ -53,7 +57,10 @@ const constructRulingPdf = (
   setLineGap(doc, 2)
   addMediumHeading(
     doc,
-    `${title} ${formatDate(theCase.rulingDate ?? nowFactory(), 'PPP')}`,
+    `${title} ${formatDate(
+      theCase.rulingDate ?? nowFactory(),
+      FormatPattern.dMMMY,
+    )}`,
   )
   setLineGap(doc, 30)
   addMediumHeading(
