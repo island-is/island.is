@@ -1,8 +1,6 @@
 import React, { FC } from 'react'
-import { Table as T, Checkbox } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { ShipDetail } from '@island.is/api/schema'
-import { useLocale } from '@island.is/localization'
 import { FieldArrayWithId } from 'react-hook-form'
 import { MortgageCertificate } from '../../../../lib/dataSchema'
 import { propertySearch } from '../../../../lib/messages'
@@ -10,7 +8,7 @@ import { SelectedProperty } from '../../../../shared'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
-import { TableHeadText } from './TableHeadText'
+import { CheckboxTable } from '../../../Components/CheckboxTable'
 
 interface ShipTableProps {
   selectHandler: (property: SelectedProperty, index: number) => void
@@ -24,8 +22,7 @@ interface ShipTableProps {
 
 export const ShipTable: FC<
   React.PropsWithChildren<FieldBaseProps & ShipTableProps & ShipDetail>
-> = ({ selectHandler, ship, checkedProperties }) => {
-  const { formatMessage } = useLocale()
+> = ({ selectHandler, ship, checkedProperties, application, field }) => {
   if (!ship) return null
   const {
     shipRegistrationNumber,
@@ -38,105 +35,43 @@ export const ShipTable: FC<
     (property) => property.propertyNumber === shipRegistrationNumber,
   )
   return (
-    <>
-      <T.Head>
-        <T.Row>
-          <T.HeadData></T.HeadData>
-          <T.HeadData>
-            <TableHeadText
-              text={formatMessage(propertySearch.labels.propertyNumber)}
-            />
-          </T.HeadData>
-          <T.HeadData>
-            <TableHeadText
-              text={formatMessage(propertySearch.labels.usageType)}
-            />
-          </T.HeadData>
-          <T.HeadData>
-            <TableHeadText
-              text={formatMessage(propertySearch.labels.bruttoWeightTons)}
-            />
-          </T.HeadData>
-          <T.HeadData>
-            <TableHeadText text={formatMessage(propertySearch.labels.length)} />
-          </T.HeadData>
-          <T.HeadData
-            box={{
-              textAlign: 'right',
-            }}
-          >
-            <TableHeadText
-              text={formatMessage(propertySearch.labels.dateOfRegistration)}
-            />
-          </T.HeadData>
-        </T.Row>
-      </T.Head>
-      <T.Body>
-        {shipRegistrationNumber && (
-          <T.Row key={shipRegistrationNumber}>
-            <T.Data>
-              <Checkbox
-                id={shipRegistrationNumber}
-                name={shipRegistrationNumber}
-                checked={!!isChecked}
-                onChange={() => {
-                  selectHandler(
-                    {
-                      propertyNumber: shipRegistrationNumber,
-                      propertyName: `${shipRegistrationNumber} - ${name} (${usageType})`,
-                      propertyType: '',
-                    },
-                    checkedProperties?.findIndex(
-                      (property) =>
-                        property.propertyNumber === shipRegistrationNumber,
-                    ),
-                  )
-                }}
-              />
-            </T.Data>
-            <T.Data
-              text={{
-                fontWeight: isChecked ? 'semiBold' : 'regular',
-              }}
-            >
-              {shipRegistrationNumber}
-            </T.Data>
-            <T.Data
-              text={{
-                fontWeight: isChecked ? 'semiBold' : 'regular',
-              }}
-            >
-              {usageType}
-            </T.Data>
-            <T.Data
-              text={{
-                fontWeight: isChecked ? 'semiBold' : 'regular',
-              }}
-            >
-              {mainMeasurements?.length}
-            </T.Data>
-            <T.Data
-              text={{
-                fontWeight: isChecked ? 'semiBold' : 'regular',
-              }}
-            >
-              {mainMeasurements?.bruttoWeightTons}
-            </T.Data>
-            <T.Data
-              text={{
-                fontWeight: isChecked ? 'semiBold' : 'regular',
-              }}
-              box={{
-                textAlign: 'right',
-              }}
-            >
-              {format(parseISO(initialRegistrationDate), 'dd.MM.yyyy', {
-                locale: is,
-              })}
-            </T.Data>
-          </T.Row>
-        )}
-      </T.Body>
-    </>
+    <CheckboxTable
+      header={[
+        propertySearch.labels.propertyNumber,
+        propertySearch.labels.usageType,
+        propertySearch.labels.bruttoWeightTons,
+        propertySearch.labels.length,
+        propertySearch.labels.dateOfRegistration,
+      ]}
+      rows={[
+        {
+          row: [
+            shipRegistrationNumber ?? '',
+            usageType ?? '',
+            mainMeasurements?.bruttoWeightTons ?? '',
+            mainMeasurements?.length ?? '',
+            `${format(parseISO(initialRegistrationDate), 'dd.MM.yyyy', {
+              locale: is,
+            })}`,
+          ],
+          propertyNumber: shipRegistrationNumber ?? '',
+          selectHandler: () =>
+            selectHandler(
+              {
+                propertyNumber: shipRegistrationNumber ?? '',
+                propertyName: `${shipRegistrationNumber} - ${name} (${usageType})`,
+                propertyType: '',
+              },
+              checkedProperties?.findIndex(
+                (property) =>
+                  property.propertyNumber === shipRegistrationNumber,
+              ),
+            ),
+          isChecked: !!isChecked,
+        },
+      ]}
+      application={application}
+      field={field}
+    />
   )
 }
