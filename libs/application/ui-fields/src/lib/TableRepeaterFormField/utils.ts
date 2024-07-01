@@ -19,7 +19,10 @@ export const checkForCustomMappedComponents = (
   })
 }
 
-const handleNationalIdWithNameItem = (item: Item, values: Array<Value<object>>) => {
+const handleNationalIdWithNameItem = (
+  item: Item,
+  values: Array<Value<object>>,
+) => {
   if (!values) {
     return
   }
