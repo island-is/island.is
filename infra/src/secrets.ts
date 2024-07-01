@@ -36,6 +36,7 @@ yargs(hideBin(process.argv))
     'get all required secrets from all charts',
     { env: { type: 'string', demand: true, choices: OpsEnvNames } },
     async (p) => {
+      logger.info(`Listing all secrets for env:${p.env}`)
       const services = (
         await Promise.all(
           Object.entries(Charts)
@@ -44,6 +45,7 @@ yargs(hideBin(process.argv))
               chartName: chartName as ChartName,
             }))
             .flatMap(async ({ services, chartName }) => {
+              logger.info(`Getting secrets for ${chartName} in ${p.env}`)
               return Object.values(
                 (
                   await renderHelmServices(
@@ -61,7 +63,8 @@ yargs(hideBin(process.argv))
       const secrets = services.flatMap((s) => {
         return Object.values(s.secrets)
       })
-      logger.debug([...new Set(secrets)].join('\n'))
+      // Actually log to stdout
+      console.log([...new Set(secrets)].join('\n'))
     },
   )
   .command(
