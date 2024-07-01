@@ -627,8 +627,8 @@ export interface SliderField extends BaseField {
   showProgressOverlay?: boolean
   showToolTip?: boolean
   label: {
-    singular: string
-    plural: string
+    singular: FormText
+    plural: FormText
   }
   rangeDates?: {
     start: {
