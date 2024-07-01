@@ -27,6 +27,9 @@ const handleNationalIdWithNameItem = <T>(
     return []
   }
 
+  // nationalIdWithName is a special case where the value is an object
+  // with a nested object inside it. This function will extract the nested
+  // object and merge it with the rest of the values.
   const newValues = values.map((value) => {
     if (typeof value[item.id] === 'object' && value[item.id] !== null) {
       const { [item.id]: nestedObject, ...rest } = value
