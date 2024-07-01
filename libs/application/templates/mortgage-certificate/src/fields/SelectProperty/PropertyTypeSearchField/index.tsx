@@ -1,7 +1,7 @@
 import React, { FC, useEffect, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, LoadingDots, AlertMessage } from '@island.is/island-ui/core'
-import { ManyPropertyDetail, PropertyDetail } from '@island.is/api/schema'
+import { ManyPropertyDetail } from '@island.is/api/schema'
 import { gql, useLazyQuery } from '@apollo/client'
 import { SEARCH_ALL_PROPERTIES_QUERY } from '../../../graphql/queries'
 import { useLocale } from '@island.is/localization'
