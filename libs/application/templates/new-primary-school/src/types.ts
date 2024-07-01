@@ -1,5 +1,7 @@
 import {
   Gender,
+  MembershipOrganizationType,
+  MembershipRole,
   RelationOptions,
   SiblingRelationOptions,
 } from './lib/constants'
@@ -65,4 +67,48 @@ export type Parents = {
 export type SelectOption = {
   label: string
   value: string
+}
+
+export type Agent = {
+  id: string
+  name: string
+  role: string
+  email: string
+  phone: string
+  nationalId: string
+}
+
+export type Membership = {
+  id: string
+  role: MembershipRole
+  beginDate: Date
+  endDate: Date | null
+  organization?: MembershipOrganization
+}
+
+export type MembershipOrganization = {
+  id: string
+  nationalId: string
+  name: string
+  type: MembershipOrganizationType
+}
+
+export type FriggChildInformation = {
+  id: string
+  name: string
+  email: string
+  agents: Agent[]
+  pronouns: string[]
+  nationalId: string
+  gradeLevels: string[]
+  memberships: Membership[]
+  primaryOrgId: object
+  preferredName: object | null
+  address?: {
+    id: string
+    street: string
+    municipality?: object
+    zip: string
+    country?: object
+  }
 }

@@ -1,8 +1,8 @@
-import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
+import { Injectable } from '@nestjs/common'
 import {
-  KeyOption,
   FriggApi,
+  KeyOption,
   OrganizationModel,
   UserModel,
 } from '../../gen/fetch'
@@ -31,10 +31,9 @@ export class FriggClientService {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality()
   }
 
-  async getUserById(user: User): Promise<UserModel> {
-    // TODO: use childs nationalid
+  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
     return await this.friggApiWithAuth(user).getUserBySourcedId({
-      nationalId: user.nationalId,
+      nationalId: childNationalId,
     })
   }
 }

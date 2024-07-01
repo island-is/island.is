@@ -1,9 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { getApplicationAnswers } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
-import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
+import { BaseTemplateApiService } from '../../base-template-api.service'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -22,11 +23,16 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return await this.friggClientService.getAllKeyOptions(auth, undefined)
   }
 
-  async getUserById({ auth }: TemplateApiModuleActionProps) {
-    return await this.friggClientService.getUserById(auth)
-  }
-
   async getAllSchoolsByMunicipality({ auth }: TemplateApiModuleActionProps) {
     return await this.friggClientService.getAllSchoolsByMunicipality(auth)
+  }
+
+  async setChildInformation({
+    auth,
+    application,
+  }: TemplateApiModuleActionProps) {
+    const { childNationalId } = getApplicationAnswers(application.answers)
+
+    return await this.friggClientService.getUserById(auth, childNationalId)
   }
 }
