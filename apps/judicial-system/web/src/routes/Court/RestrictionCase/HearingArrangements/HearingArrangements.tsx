@@ -129,7 +129,7 @@ export const HearingArrangements = () => {
 
   const stepIsValid = isCourtHearingArrangemenstStepValidRC(
     workingCase,
-    courtDate?.date,
+    courtDate,
   )
 
   const isCorrectingRuling = workingCase.notifications?.some(
@@ -173,7 +173,7 @@ export const HearingArrangements = () => {
             <CourtArrangements
               handleCourtDateChange={handleCourtDateChange}
               handleCourtRoomChange={handleCourtRoomChange}
-              courtDate={courtDate}
+              courtDate={workingCase.arraignmentDate}
               courtRoomDisabled={isCorrectingRuling}
               dateTimeDisabled={isCorrectingRuling}
             />
