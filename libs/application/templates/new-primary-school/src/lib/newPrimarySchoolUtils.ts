@@ -10,6 +10,7 @@ import * as kennitala from 'kennitala'
 import {
   Child,
   ChildInformation,
+  FriggChildInformation,
   Parents,
   Person,
   RelativesRow,
@@ -224,6 +225,11 @@ export const getApplicationExternalData = (
     'childrenCustodyInformation.data.otherParent.fullName',
   ) as string
 
+  const childInformation = getValueViaPath(
+    externalData,
+    'childInformation.data',
+  ) as FriggChildInformation
+
   return {
     children,
     applicantName,
@@ -232,6 +238,7 @@ export const getApplicationExternalData = (
     applicantPostalCode,
     applicantCity,
     otherParentName,
+    childInformation,
   }
 }
 

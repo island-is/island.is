@@ -16,20 +16,26 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { Events, ReasonForApplicationOptions, Roles, States } from './constants'
+import {
+  GetKeyOptionsTypesApi,
+  GetSchoolsApi,
+  OptionsApi,
+} from '../dataProviders'
+import {
+  ApiModuleActions,
+  Events,
+  ReasonForApplicationOptions,
+  Roles,
+  States,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages, statesMessages } from './messages'
 import { getApplicationAnswers } from './newPrimarySchoolUtils'
-import {
-  GetSchoolsApi,
-  GetTypesApi,
-  GetUserApi,
-  OptionsApi,
-} from '../dataProviders'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -57,11 +63,16 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.getChildInformation,
+            externalDataId: 'childInformation',
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((val) =>
+                import('../forms/Prerequisites/index').then((val) =>
                   Promise.resolve(val.Prerequisites),
                 ),
               actions: [
@@ -77,10 +88,9 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 ChildrenCustodyInformationApi,
                 NationalRegistryUserApi,
                 UserProfileApi,
-                GetTypesApi,
+                GetKeyOptionsTypesApi,
                 OptionsApi,
                 GetSchoolsApi,
-                // GetUserApi,
               ],
             },
           ],

@@ -51,7 +51,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           },
           {
-            optionsType: OptionsType.ALLERGRY,
+            optionsType: OptionsType.ALLERGY,
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .typeOfAllergiesPlaceholder,

@@ -1,6 +1,50 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/forms": {
+      "post": {
+        "operationId": "submitForm",
+        "parameters": [],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/FormDto" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SuccessModel" }
+              }
+            }
+          }
+        },
+        "tags": ["Frigg"]
+      }
+    },
+    "/forms/types": {
+      "get": {
+        "operationId": "getFormTypes",
+        "summary": "Get list of types of forms",
+        "description": "Get types.",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "type": "array", "items": { "type": "string" } }
+              }
+            }
+          }
+        },
+        "tags": ["Frigg"]
+      }
+    },
     "/keyOptions": {
       "get": {
         "operationId": "getAllKeyOptions",
@@ -33,7 +77,7 @@
     },
     "/keyOptions/types": {
       "get": {
-        "operationId": "getTypes",
+        "operationId": "getKeyOptionsTypes",
         "summary": "Get list of types of key options",
         "description": "Get types.",
         "parameters": [],
@@ -127,6 +171,132 @@
       }
     },
     "schemas": {
+      "AddressDto": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string" },
+          "postCode": { "type": "number" }
+        },
+        "required": ["address", "postCode"]
+      },
+      "UserDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "preferredName": { "type": "string" },
+          "pronouns": { "type": "array", "items": { "type": "string" } },
+          "address": { "$ref": "#/components/schemas/AddressDto" }
+        },
+        "required": [
+          "name",
+          "nationalId",
+          "preferredName",
+          "pronouns",
+          "address"
+        ]
+      },
+      "AgentDto": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string" },
+          "nationalId": { "type": "string" },
+          "preferredName": { "type": "string" },
+          "pronouns": { "type": "array", "items": { "type": "string" } },
+          "address": { "$ref": "#/components/schemas/AddressDto" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "relation": { "type": "string" }
+        },
+        "required": [
+          "name",
+          "nationalId",
+          "preferredName",
+          "pronouns",
+          "address",
+          "email",
+          "phone",
+          "relation"
+        ]
+      },
+      "RegistrationDto": {
+        "type": "object",
+        "properties": {
+          "preRegisteredId": { "type": "string" },
+          "defaultOrg": { "type": "string" },
+          "selectedOrg": { "type": "string" },
+          "requestingMeeting": { "type": "boolean", "default": false },
+          "expectedStartDate": { "format": "date-time", "type": "string" },
+          "reason": { "type": "string" },
+          "movingAbroadCountry": { "type": "string" }
+        },
+        "required": [
+          "preRegisteredId",
+          "defaultOrg",
+          "selectedOrg",
+          "requestingMeeting",
+          "expectedStartDate",
+          "reason",
+          "movingAbroadCountry"
+        ]
+      },
+      "HealthDto": {
+        "type": "object",
+        "properties": {
+          "usesEpipen": { "type": "boolean", "default": false },
+          "allergies": { "type": "array", "items": { "type": "string" } },
+          "intolerances": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["usesEpipen", "allergies", "intolerances"]
+      },
+      "SocialDto": {
+        "type": "object",
+        "properties": {
+          "hasHadSupport": { "type": "boolean", "default": false },
+          "hasDiagnoses": { "type": "boolean", "default": false }
+        },
+        "required": ["hasHadSupport", "hasDiagnoses"]
+      },
+      "LanguageDto": {
+        "type": "object",
+        "properties": {
+          "nativeLanguage": { "type": "string" },
+          "noIcelandic": { "type": "boolean" },
+          "otherLanguages": { "type": "array", "items": { "type": "string" } }
+        },
+        "required": ["nativeLanguage", "noIcelandic", "otherLanguages"]
+      },
+      "FormDto": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "enum": ["registration"] },
+          "user": { "$ref": "#/components/schemas/UserDto" },
+          "agents": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/AgentDto" }
+          },
+          "registration": { "$ref": "#/components/schemas/RegistrationDto" },
+          "health": { "$ref": "#/components/schemas/HealthDto" },
+          "social": { "$ref": "#/components/schemas/SocialDto" },
+          "language": { "$ref": "#/components/schemas/LanguageDto" }
+        },
+        "required": [
+          "type",
+          "user",
+          "agents",
+          "registration",
+          "health",
+          "social",
+          "language"
+        ]
+      },
+      "SuccessModel": {
+        "type": "object",
+        "properties": {
+          "success": { "type": "boolean", "description": "Submission response" }
+        },
+        "required": ["success"]
+      },
       "Value": {
         "type": "object",
         "properties": {

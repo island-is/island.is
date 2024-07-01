@@ -23,7 +23,7 @@ export const Child = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('childrenMultiField')}
+      editAction={() => goToScreen?.('childInfo')}
     >
       <Stack space={2}>
         <GridRow>

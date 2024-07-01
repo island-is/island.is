@@ -16,6 +16,10 @@ export type Events =
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.EDIT }
 
+export enum ApiModuleActions {
+  getChildInformation = 'getChildInformation',
+}
+
 export enum Roles {
   APPLICANT = 'applicant',
 }
@@ -54,7 +58,26 @@ export enum Gender {
 }
 
 export enum OptionsType {
-  ALLERGRY = 'allergy',
+  PRONOUN = 'pronoun',
+  GENDER = 'gender',
   INTOLERANCE = 'intolerence',
   REASON = 'rejectionReason',
+  RELATION = 'relation',
+  ALLERGY = 'allergy',
+}
+
+export enum MembershipRole {
+  Admin = 'admin',
+  Guardian = 'guardian',
+  Parent = 'parent',
+  Principal = 'principal',
+  Relative = 'relative',
+  Student = 'student',
+  Teacher = 'teacher',
+}
+
+export enum MembershipOrganizationType {
+  Municipality = 'municipality',
+  National = 'national',
+  School = 'school',
 }

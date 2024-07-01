@@ -25,7 +25,7 @@ export const AllergiesAndIntolerances = ({
     foodIntolerances,
   } = getApplicationAnswers(application.answers)
 
-  const foodAllergiesFriggOptions = useFriggOptions(OptionsType.ALLERGRY)
+  const foodAllergiesFriggOptions = useFriggOptions(OptionsType.ALLERGY)
   const foodIntolerancesFriggOptions = useFriggOptions(OptionsType.INTOLERANCE)
 
   return (
