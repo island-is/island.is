@@ -1,6 +1,6 @@
 import { uuid } from 'uuidv4'
 
-import { CaseType, User, UserRole } from '@island.is/judicial-system/types'
+import { CaseType, User } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
