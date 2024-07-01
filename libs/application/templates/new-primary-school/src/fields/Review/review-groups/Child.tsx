@@ -7,8 +7,11 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getGenderOptionLabel,
+  getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
+import { OptionsType } from '../../../lib/constants'
 
 export const Child = ({
   application,
@@ -19,6 +22,9 @@ export const Child = ({
   const { childInfo, differentPlaceOfResidence } = getApplicationAnswers(
     application.answers,
   )
+
+  const { pronouns } = childInfo
+  const pronounOptions = useFriggOptions(OptionsType.PRONOUN)
 
   return (
     <ReviewGroup
@@ -64,17 +70,21 @@ export const Child = ({
           </GridColumn>
         </GridRow>
         {(childInfo.gender ||
-          childInfo.chosenName ||
+          childInfo.preferredName ||
+          childInfo.pronouns ||
           differentPlaceOfResidence === YES) && (
           <GridRow rowGap={2}>
-            {childInfo.chosenName && (
+            {childInfo.pronouns?.length > 0 && (
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.childrenNParents
-                      .childInfoChosenName,
+                    newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
                   )}
-                  value={childInfo.chosenName}
+                  value={pronouns
+                    .map((pronoun) =>
+                      getSelectedOptionLabel(pronounOptions, pronoun),
+                    )
+                    .join(', ')}
                 />
               </GridColumn>
             )}
@@ -85,6 +95,17 @@ export const Child = ({
                     newPrimarySchoolMessages.childrenNParents.childInfoGender,
                   )}
                   value={formatMessage(getGenderOptionLabel(childInfo.gender))}
+                />
+              </GridColumn>
+            )}
+            {childInfo.preferredName && (
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.childrenNParents
+                      .childInfoPreferredName,
+                  )}
+                  value={childInfo.preferredName}
                 />
               </GridColumn>
             )}

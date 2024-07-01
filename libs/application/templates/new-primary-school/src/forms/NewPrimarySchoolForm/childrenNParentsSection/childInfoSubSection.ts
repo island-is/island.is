@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildRadioField,
   buildSelectField,
@@ -14,6 +15,7 @@ import {
   getGenderOptions,
   getSelectedChild,
 } from '../../../lib/newPrimarySchoolUtils'
+import { OptionsType } from '../../../lib/constants'
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',
@@ -75,14 +77,20 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
-        buildTextField({
-          id: 'childInfo.chosenName',
-          title: newPrimarySchoolMessages.childrenNParents.childInfoChosenName,
-          width: 'half',
-          defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation.preferredName,
-        }),
+        buildCustomField(
+          {
+            id: 'childInfo.pronouns',
+            title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+            component: 'FriggOptionsAsyncSelectField',
+            width: 'half',
+          },
+          {
+            optionsType: OptionsType.PRONOUN,
+            placeholder:
+              newPrimarySchoolMessages.childrenNParents
+                .childInfoPronounsPlaceholder,
+          },
+        ),
         buildSelectField({
           id: 'childInfo.gender',
           title: newPrimarySchoolMessages.childrenNParents.childInfoGender,
@@ -94,6 +102,14 @@ export const childInfoSubSection = buildSubSection({
           options: getGenderOptions(),
           defaultValue: (application: Application) =>
             formatGender(getSelectedChild(application)?.genderCode),
+        }),
+        buildTextField({
+          id: 'childInfo.preferredName',
+          title:
+            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation.preferredName,
         }),
         buildRadioField({
           id: 'childInfo.differentPlaceOfResidence',
