@@ -61,22 +61,22 @@ export type TableRepeaterFields =
   | 'checkbox'
   | 'date'
 
-export type TableRepeaterOptions = 
-| {
-    label: StaticText
-    value: string
-    tooltip?: StaticText
-  }[]
-| ((
-    application: Application,
-    activeField: Record<string, string>,
-  ) =>
-    | {
-        label: StaticText
-        value: string
-        tooltip?: StaticText
-      }[]
-    | [])
+export type TableRepeaterOptions =
+  | {
+      label: StaticText
+      value: string
+      tooltip?: StaticText
+    }[]
+  | ((
+      application: Application,
+      activeField: Record<string, string>,
+    ) =>
+      | {
+          label: StaticText
+          value: string
+          tooltip?: StaticText
+        }[]
+      | [])
 
 export type TableRepeaterItem = {
   component: TableRepeaterFields
