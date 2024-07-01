@@ -113,18 +113,21 @@ const Summary: FC = () => {
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
 
           {workingCase.indictmentRulingDecision && (
-            <Tag
-              variant={getRulingDecisionTagColor(
-                workingCase.indictmentRulingDecision,
-              )}
-              outlined
-              disabled
-              truncate
-            >
-              {formatMessage(strings.indictmentRulingDecisionTagText, {
-                indictmentRulingDecision: workingCase.indictmentRulingDecision,
-              })}
-            </Tag>
+            <Box marginTop={2}>
+              <Tag
+                variant={getRulingDecisionTagColor(
+                  workingCase.indictmentRulingDecision,
+                )}
+                outlined
+                disabled
+                truncate
+              >
+                {formatMessage(strings.indictmentRulingDecisionTagText, {
+                  indictmentRulingDecision:
+                    workingCase.indictmentRulingDecision,
+                })}
+              </Tag>
+            </Box>
           )}
         </Box>
         <Box component="section" marginBottom={1}>
