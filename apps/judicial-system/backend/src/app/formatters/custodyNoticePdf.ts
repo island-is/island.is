@@ -165,7 +165,10 @@ const constructCustodyNoticePdf = (
     )
 
     if (theCase.isCustodyIsolation) {
-      const isolationPeriod = formatDate(theCase.isolationToDate, FormatPattern.ddMMYYYYHHmm)
+      const isolationPeriod = formatDate(
+        theCase.isolationToDate,
+        FormatPattern.ddMMYYYYHHmm,
+      )
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
 
