@@ -27,7 +27,7 @@ import {
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { NationalIdWithName } from '@island.is/application/ui-components'
-import { Value, handleNationalIdWithNameItem } from './utils'
+import { handleCustomMappedValues } from './utils'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -89,12 +89,7 @@ export const TableRepeaterFormField: FC<Props> = ({
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
   // check for components that might need some custom value mapping
-  let customMappedValues: Array<Value<object>> = []
-  tableItems.forEach((item) => {
-    if (item.component === 'nationalIdWithName') {
-      customMappedValues = handleNationalIdWithNameItem(item, values)
-    }
-  })
+  const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {

@@ -6,6 +6,19 @@ type Item = {
 
 export type Value<T> = { [key: string]: T }
 
+export const handleCustomMappedValues = <T>(
+  tableItems: Array<Item>,
+  values: Array<Value<T>>,
+) => {
+  let customValues: Array<Value<T>> = []
+  tableItems.forEach((item) => {
+    if (item.component === 'nationalIdWithName') {
+      customValues = handleNationalIdWithNameItem(item, values)
+    }
+  })
+  return customValues
+}
+
 export const handleNationalIdWithNameItem = <T>(
   item: Item,
   values: Array<Value<T>>,
