@@ -56,10 +56,10 @@ module.exports = {
           applicant_type: {
             type: Sequelize.ENUM(
               'individual',
-              'individualWithMandateFromIndividual',
-              'individualWithMandateFromLegalEntity',
+              'individualWithDelegationFromIndividual',
+              'individualWithDelegationFromLegalEntity',
               'individualWithProcuration',
-              'individualGivingMandate',
+              'individualGivingDelegation',
               'legalEntity',
             ),
             allowNull: false,

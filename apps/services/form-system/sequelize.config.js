@@ -2,8 +2,8 @@
 module.exports = {
   development: {
     username: 'postgres',
-    password: 'postgres',
-    database: 'form-system',
+    password: 'dev_db',
+    database: 'dev_db',
     host: 'localhost',
     dialect: 'postgres',
     seederStorage: 'sequelize',

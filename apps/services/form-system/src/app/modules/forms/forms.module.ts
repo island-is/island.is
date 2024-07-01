@@ -7,7 +7,7 @@ import { FieldType } from '../fields/models/fieldType.model'
 import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { Section } from '../sections/models/section.model'
-import { TestimonyType } from '../testimonies/models/testimonyType.model'
+import { CertificationType } from '../certifications/models/certificationType.model'
 import { FormsController } from './forms.controller'
 import { FormsService } from './forms.service'
 import { Form } from './models/form.model'
@@ -24,7 +24,7 @@ import { FormMapper } from './models/form.mapper'
       Screen,
       Organization,
       FieldType,
-      TestimonyType,
+      CertificationType,
       ListType,
       ListItem,
     ]),

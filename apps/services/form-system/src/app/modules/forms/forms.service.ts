@@ -15,9 +15,9 @@ import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { FormTestimonyTypeDto } from '../testimonies/models/dto/formTestimonyType.dto'
-import { TestimonyTypeDto } from '../testimonies/models/dto/testimonyType.dto'
-import { TestimonyType } from '../testimonies/models/testimonyType.model'
+import { FormCertificationTypeDto } from '../certifications/models/dto/formCertificationType.dto'
+import { CertificationTypeDto } from '../certifications/models/dto/certificationType.dto'
+import { CertificationType } from '../certifications/models/certificationType.model'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
 import { FormResponse } from './models/dto/form.response.dto'
@@ -144,36 +144,36 @@ export class FormsService {
     const response: FormResponse = {
       form: this.setArrays(form),
       fieldTypes: await this.getFieldTypes(form.organizationId),
-      testimonyTypes: await this.getTestimonyTypes(form.organizationId),
+      certificationTypes: await this.getCertificationTypes(form.organizationId),
       listTypes: await this.getListTypes(form.organizationId),
     }
 
     return response
   }
 
-  private async getTestimonyTypes(
+  private async getCertificationTypes(
     organizationId: string,
-  ): Promise<TestimonyTypeDto[]> {
-    const organizationSpecificTestimonyTypes =
+  ): Promise<CertificationTypeDto[]> {
+    const organizationSpecificCertificationTypes =
       await this.organizationModel.findByPk(organizationId, {
-        include: [TestimonyType],
+        include: [CertificationType],
       })
 
-    const organizationTestimonyTypes =
-      organizationSpecificTestimonyTypes?.organizationTestimonyTypes as TestimonyType[]
+    const organizationCertificationTypes =
+      organizationSpecificCertificationTypes?.organizationCertificationTypes as CertificationType[]
 
-    const testimonyTypesDto: TestimonyTypeDto[] = []
+    const certificationTypesDto: CertificationTypeDto[] = []
 
-    organizationTestimonyTypes?.map((testimonyType) => {
-      testimonyTypesDto.push({
-        id: testimonyType.id,
-        type: testimonyType.type,
-        name: testimonyType.name,
-        description: testimonyType.description,
-      } as TestimonyTypeDto)
+    organizationCertificationTypes?.map((certificationType) => {
+      certificationTypesDto.push({
+        id: certificationType.id,
+        type: certificationType.type,
+        name: certificationType.name,
+        description: certificationType.description,
+      } as CertificationTypeDto)
     })
 
-    return testimonyTypesDto
+    return certificationTypesDto
   }
 
   private async getFieldTypes(organizationId: string): Promise<FieldTypeDto[]> {
@@ -248,20 +248,20 @@ export class FormsService {
       derivedFrom: form.derivedFrom,
       stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
       completedMessage: form.completedMessage,
-      testimonyTypes: [],
+      certificationTypes: [],
       applicants: [],
       sections: [],
       screens: [],
       fields: [],
     }
 
-    form.testimonyTypes?.map((testimonyType) => {
-      formDto.testimonyTypes?.push({
-        id: testimonyType.id,
-        name: testimonyType.name,
-        description: testimonyType.description,
-        type: testimonyType.type,
-      } as FormTestimonyTypeDto)
+    form.certificationTypes?.map((certificationType) => {
+      formDto.certificationTypes?.push({
+        id: certificationType.id,
+        name: certificationType.name,
+        description: certificationType.description,
+        type: certificationType.type,
+      } as FormCertificationTypeDto)
     })
 
     form.applicants?.map((applicant) => {

@@ -15,7 +15,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicant } from '../../applicants/models/formApplicant.model'
-import { TestimonyType } from '../../testimonies/models/testimonyType.model'
+import { CertificationType } from '../../certifications/models/certificationType.model'
 import { randomUUID } from 'crypto'
 
 @Table({ tableName: 'form' })
@@ -112,10 +112,10 @@ export class Form extends Model<Form> {
   })
   organizationId!: string
 
-  @BelongsToMany(() => TestimonyType, {
-    through: 'form_testimony_type',
+  @BelongsToMany(() => CertificationType, {
+    through: 'form_certification_type',
     foreignKey: 'form_id',
-    otherKey: 'testimony_type_id',
+    otherKey: 'certification_type_id',
   })
-  testimonyTypes?: NonAttribute<TestimonyType[]>
+  certificationTypes?: NonAttribute<CertificationType[]>
 }

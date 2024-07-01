@@ -1,4 +1,4 @@
-export const TestimonyTypes = {
+export const CertificationTypes = {
   ESTATE_GUARDIANSHIP_CERTIFICATE_STAMPED:
     'estateGuardianshipCertificateStamped',
   ESTATE_GUARDIANSHIP_CERTIFICATE_UNSTAMPED:

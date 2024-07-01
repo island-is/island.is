@@ -8,11 +8,11 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Form } from '../../forms/models/form.model'
-import { TestimonyType } from '../../testimonies/models/testimonyType.model'
+import { Organization } from '../../organizations/models/organization.model'
+import { CertificationType } from './certificationType.model'
 
-@Table({ tableName: 'form_testimony_type' })
-export class FormTestimonyType extends Model<FormTestimonyType> {
+@Table({ tableName: 'organization_certification_type' })
+export class OrganizationCertificationType extends Model<OrganizationCertificationType> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -27,19 +27,19 @@ export class FormTestimonyType extends Model<FormTestimonyType> {
   @UpdatedAt
   modified!: CreationOptional<Date>
 
-  @ForeignKey(() => Form)
+  @ForeignKey(() => Organization)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'form_id',
+    field: 'organization_id',
   })
-  formId!: string
+  organizationId!: string
 
-  @ForeignKey(() => TestimonyType)
+  @ForeignKey(() => CertificationType)
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    field: 'testimony_type_id',
+    field: 'certification_type_id',
   })
-  testimonyTypeId!: string
+  certificationTypeId!: string
 }

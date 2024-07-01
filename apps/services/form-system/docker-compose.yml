@@ -7,9 +7,9 @@ services:
     networks:
       - local
     environment:
-      - POSTGRES_DB=form-system
+      - POSTGRES_DB=dev_db
       - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_PASSWORD=dev_db
     ports:
       - 5432:5432
 

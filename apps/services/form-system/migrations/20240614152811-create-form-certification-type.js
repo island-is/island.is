@@ -4,7 +4,7 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'organization_testimony_type',
+        'form_certification_type',
         {
           id: {
             type: Sequelize.UUID,
@@ -22,19 +22,19 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          organization_id: {
+          form_id: {
             type: Sequelize.UUID,
             allowNull: false,
             references: {
-              model: 'organization',
+              model: 'form',
               key: 'id',
             },
           },
-          testimony_type_id: {
+          certification_type_id: {
             type: Sequelize.UUID,
             allowNull: false,
             references: {
-              model: 'testimony_type',
+              model: 'certification_type',
               key: 'id',
             },
           },
@@ -46,7 +46,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('organization_testimony_type', {
+      queryInterface.dropTable('form_certification_type', {
         transaction: t,
       }),
     )

@@ -10,12 +10,12 @@ import {
 } from 'sequelize-typescript'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { CreationOptional, DataTypes, NonAttribute } from 'sequelize'
-import { TestimonyTypes } from '../../../enums/testimonyTypes'
+import { CertificationTypes } from '../../../enums/certificationTypes'
 import { Organization } from '../../organizations/models/organization.model'
 import { Form } from '../../forms/models/form.model'
 
-@Table({ tableName: 'testimony_type' })
-export class TestimonyType extends Model<TestimonyType> {
+@Table({ tableName: 'certification_type' })
+export class CertificationType extends Model<CertificationType> {
   @Column({
     type: DataType.UUID,
     allowNull: false,
@@ -44,9 +44,9 @@ export class TestimonyType extends Model<TestimonyType> {
   @Column({
     type: DataTypes.ENUM,
     allowNull: false,
-    values: Object.values(TestimonyTypes),
+    values: Object.values(CertificationTypes),
   })
-  @ApiProperty({ enum: TestimonyTypes })
+  @ApiProperty({ enum: CertificationTypes })
   type!: string
 
   @CreatedAt
@@ -59,14 +59,14 @@ export class TestimonyType extends Model<TestimonyType> {
 
   @BelongsToMany(() => Organization, {
     through: 'organization_testimony_type',
-    foreignKey: 'testimony_type_id',
+    foreignKey: 'certification_type_id',
     otherKey: 'organization_id',
   })
   organizations?: NonAttribute<Organization[]>
 
   @BelongsToMany(() => Form, {
     through: 'form_testimony_type',
-    foreignKey: 'testimony_type_id',
+    foreignKey: 'certification_type_id',
     otherKey: 'form_id',
   })
   forms?: NonAttribute<Form[]>

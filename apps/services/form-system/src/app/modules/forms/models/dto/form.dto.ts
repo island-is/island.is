@@ -4,7 +4,7 @@ import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.d
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
-import { FormTestimonyTypeDto } from '../../../testimonies/models/dto/formTestimonyType.dto'
+import { FormCertificationTypeDto } from '../../../certifications/models/dto/formCertificationType.dto'
 
 export class FormDto {
   @ApiProperty()
@@ -43,8 +43,8 @@ export class FormDto {
   @ApiProperty({ type: LanguageType })
   completedMessage?: LanguageType
 
-  @ApiProperty({ type: [FormTestimonyTypeDto] })
-  testimonyTypes?: FormTestimonyTypeDto[]
+  @ApiProperty({ type: [FormCertificationTypeDto] })
+  certificationTypes?: FormCertificationTypeDto[]
 
   @ApiProperty({ type: [FormApplicantDto] })
   applicants?: FormApplicantDto[]

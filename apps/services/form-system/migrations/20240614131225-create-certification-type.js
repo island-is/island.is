@@ -4,13 +4,21 @@ module.exports = {
   async up(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.createTable(
-        'form_testimony_type',
+        'certification_type',
         {
           id: {
             type: Sequelize.UUID,
             primaryKey: true,
             allowNull: false,
             defaultValue: Sequelize.UUIDV4,
+          },
+          name: {
+            type: Sequelize.JSON,
+            allowNull: false,
+          },
+          description: {
+            type: Sequelize.JSON,
+            allowNull: false,
           },
           created: {
             type: 'TIMESTAMP WITH TIME ZONE',
@@ -22,21 +30,16 @@ module.exports = {
             defaultValue: Sequelize.literal('CURRENT_TIMESTAMP'),
             allowNull: false,
           },
-          form_id: {
-            type: Sequelize.UUID,
+          type: {
+            type: Sequelize.DataTypes.ENUM(
+              'estateGuardianshipCertificateStamped',
+              'estateGuardianshipCertificateUnstamped',
+              'residenceCertificate',
+              'indebtednessCertificate',
+              'criminalRecordStamped',
+              'criminalRecordUnstamped',
+            ),
             allowNull: false,
-            references: {
-              model: 'form',
-              key: 'id',
-            },
-          },
-          testimony_type_id: {
-            type: Sequelize.UUID,
-            allowNull: false,
-            references: {
-              model: 'testimony_type',
-              key: 'id',
-            },
           },
         },
         { transaction: t },
@@ -46,9 +49,7 @@ module.exports = {
 
   async down(queryInterface, Sequelize) {
     return queryInterface.sequelize.transaction((t) =>
-      queryInterface.dropTable('form_testimony_type', {
-        transaction: t,
-      }),
+      queryInterface.dropTable('certification_type', { transaction: t }),
     )
   },
 }

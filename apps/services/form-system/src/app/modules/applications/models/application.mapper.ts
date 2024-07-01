@@ -6,9 +6,11 @@ import { OrganizationDto } from '../../organizations/models/dto/organization.dto
 import { ApplicationSectionDto } from '../../sections/models/dto/applicationSection.dto'
 import { ApplicationScreenDto } from '../../screens/models/dto/applicationScreen.dto'
 import { ApplicationFieldDto } from '../../fields/models/dto/applicationField.dto'
+import { FieldSettingsMapper } from '../../fieldSettings/models/fieldSettings.mapper'
 
 @Injectable()
 export class ApplicationMapper {
+  constructor(private readonly fieldSettingsMapper: FieldSettingsMapper) {}
   mapFormToApplicationDto(
     form: Form,
     application: Application,
@@ -45,7 +47,11 @@ export class ApplicationMapper {
                 description: field.description,
                 isPartOfMultiset: field.isPartOfMultiset,
                 fieldType: field.fieldType,
-                fieldSettings: field.fieldSettings,
+                fieldSettings:
+                  this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
+                    field.fieldSettings,
+                    field.fieldType,
+                  ),
               } as ApplicationFieldDto
             }),
           } as ApplicationScreenDto

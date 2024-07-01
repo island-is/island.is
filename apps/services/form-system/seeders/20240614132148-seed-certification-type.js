@@ -2,7 +2,7 @@
 
 module.exports = {
   async up(queryInterface, Sequelize) {
-    await queryInterface.bulkInsert('testimony_type', [
+    await queryInterface.bulkInsert('certification_type', [
       {
         id: '329e9b75-62a6-41af-a1cb-2052d26ac31b',
         type: 'estateGuardianshipCertificateStamped',
@@ -60,6 +60,6 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.bulkDelete('testimony_type', null, {})
+    await queryInterface.bulkDelete('certification_type', null, {})
   },
 }

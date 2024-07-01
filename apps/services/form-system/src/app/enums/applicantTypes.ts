@@ -1,10 +1,10 @@
 export const ApplicantTypes = {
   INDIVIDUAL: 'individual',
-  iNDIVIDUAL_WITH_MANDATE_FROM_INDIVIDUAL:
-    'individualWithMandateFromIndividual',
-  INDIVIDUAL_WITH_MANDATE_FROM_LEGAL_ENTITY:
-    'individualWithMandateFromLegalEntity',
+  iNDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL:
+    'individualWithDelegationFromIndividual',
+  INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY:
+    'individualWithDelegationFromLegalEntity',
   INDIVIDUAL_WITH_PROCURATION: 'individualWithProcuration',
-  INDIVIDUAL_GIVING_MANDATE: 'individualGivingMandate',
+  INDIVIDUAL_GIVING_DELEGATION: 'individualGivingDelegation',
   LEGAL_ENTITY: 'legalEntity',
 }

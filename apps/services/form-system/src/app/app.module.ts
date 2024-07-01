@@ -11,7 +11,7 @@ import { FieldsModule } from './modules/fields/fields.module'
 import { ListsModule } from './modules/lists/lists.module'
 import { OrganizationsModule } from './modules/organizations/organizations.module'
 import { SectionsModule } from './modules/sections/sections.module'
-import { TestimoniesModule } from './modules/testimonies/testimonies.module'
+import { CertificationsModule } from './modules/certifications/certifications.module'
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
@@ -29,7 +29,7 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     SectionsModule,
     ScreensModule,
     FieldsModule,
-    TestimoniesModule,
+    CertificationsModule,
     ListsModule,
     FieldSettingsModule,
     ListItemsModule,
