@@ -348,9 +348,9 @@ export const Draft: Form = buildForm({
                 return (answers.managers as any)
                   .map(
                     (m: any) =>
-                      m.name +
+                      m.manager.name +
                       ' - ' +
-                      formatNationalId(m.nationalId) +
+                      formatNationalId(m.manager.nationalId) +
                       ' - ' +
                       m.constituency,
                   )
@@ -377,9 +377,9 @@ export const Draft: Form = buildForm({
                 return (answers.supervisors as any)
                   .map(
                     (s: any) =>
-                      s.name +
+                      s.supervisor.name +
                       ' - ' +
-                      formatNationalId(s.nationalId) +
+                      formatNationalId(s.supervisor.nationalId) +
                       ' - ' +
                       s.constituency,
                   )
