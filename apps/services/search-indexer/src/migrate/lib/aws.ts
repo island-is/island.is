@@ -1,4 +1,4 @@
-import AWS from 'aws-sdk'
+import { ES, S3 } from 'aws-sdk'
 import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
@@ -6,9 +6,9 @@ import { logger } from '@island.is/logging'
 import { environment } from '../../environments/environment'
 import { Dictionary } from './dictionary'
 
-AWS.config.update({ region: environment.awsRegion })
-const awsEs = new AWS.ES()
-const s3 = new AWS.S3()
+const commonConfig = { region: environment.awsRegion }
+const awsEs = new ES()
+const s3 = new S3()
 
 const sleep = (sec: number) => {
   return new Promise((resolve) => {
@@ -262,7 +262,7 @@ const checkIfAwsEsPackageExists = async (
 
 /*
 createAwsEsPackages should only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
-We run a remove packages for this version function to handle failed partial updates that might not have associated the package to the domain 
+We run a remove packages for this version function to handle failed partial updates that might not have associated the package to the domain
 */
 export interface AwsEsPackage {
   packageName?: string
