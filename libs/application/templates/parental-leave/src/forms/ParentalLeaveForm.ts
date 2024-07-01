@@ -92,6 +92,8 @@ import {
 
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { useLocale } from '@island.is/localization'
+import { buildSliderField } from '@island.is/application/core'
+import { theme } from '@island.is/island-ui/theme'
 
 export const ParentalLeaveForm: Form = buildForm({
   id: 'ParentalLeaveDraft',
@@ -1296,13 +1298,10 @@ export const ParentalLeaveForm: Form = buildForm({
               },
               component: 'RequestDaysSlider',
             }),
-            buildCustomField({
-              id: 'giveRights.giveDays',
-              childInputIds: [
-                'giveRights.isGivingRights',
-                'giveRights.giveDays',
-              ],
-              title: parentalLeaveFormMessages.shared.transferRightsGiveTitle,
+            buildMultiField({
+              id: 'pruf',
+              title: parentalLeaveFormMessages.shared.theseAreYourRights,
+              description: getRightsDescTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
@@ -1319,7 +1318,52 @@ export const ParentalLeaveForm: Form = buildForm({
                   (hasMultipleBirths === NO || multipleBirthsRequestDays === 0)
                 )
               },
-              component: 'GiveDaysSlider',
+              children: [
+                buildSliderField({
+                  id: 'giveRights.giveDays',
+                  label: {
+                    singular: parentalLeaveFormMessages.shared.day,
+                    plural: parentalLeaveFormMessages.shared.days,
+                  },
+                  min: 1,
+                  max: 45,
+                  step: 1,
+                  defaultValue: 1,
+                  showMinMaxLabels: true,
+                  showToolTip: true,
+                  trackStyle: { gridTemplateRows: 8 },
+                  calculateCellStyle: () => {
+                    return {
+                      background: theme.color.dark200,
+                    }
+                  },
+                }),
+                buildCustomField({
+                  id: 'giveRights.isGivingRights',
+                  childInputIds: ['giveRights.isGivingRights'],
+                  title:
+                    parentalLeaveFormMessages.shared.transferRightsGiveTitle,
+                  condition: (answers, externalData) => {
+                    const canTransferRights =
+                      getSelectedChild(answers, externalData)
+                        ?.parentalRelation === ParentalRelations.primary &&
+                      allowOtherParent(answers)
+
+                    const { hasMultipleBirths } = getApplicationAnswers(answers)
+
+                    const multipleBirthsRequestDays =
+                      getMultipleBirthRequestDays(answers)
+
+                    return (
+                      canTransferRights &&
+                      getApplicationAnswers(answers).isGivingRights === YES &&
+                      (hasMultipleBirths === NO ||
+                        multipleBirthsRequestDays === 0)
+                    )
+                  },
+                  component: 'GiveDaysSlider',
+                }),
+              ],
             }),
           ],
         }),
