@@ -241,19 +241,49 @@ export const TableRepeaterFormField: FC<Props> = ({
                     options,
                     width = 'full',
                     condition,
+                    readonly = false,
                     ...props
                   } = item
                   const isHalfColumn = component !== 'radio' && width === 'half'
-                  const span = isHalfColumn ? '1/2' : '1/1'
+                  const isThirdColumn =
+                    component !== 'radio' && width === 'third'
+                  const span = isHalfColumn
+                    ? '1/2'
+                    : isThirdColumn
+                    ? '1/3'
+                    : '1/1'
                   const Component = componentMapper[component]
                   const id = `${data.id}[${activeIndex}].${itemId}`
                   const activeValues =
                     activeIndex >= 0 && values ? values[activeIndex] : undefined
 
-                  const translatedOptions = options?.map((option) => ({
-                    ...option,
-                    label: formatText(option.label, application, formatMessage),
-                  }))
+                  let translatedOptions: any = []
+                  if (typeof options === 'function') {
+                    translatedOptions = options(application, activeValues)
+                  } else {
+                    translatedOptions = options?.map((option) => ({
+                      ...option,
+                      label: formatText(
+                        option.label,
+                        application,
+                        formatMessage,
+                      ),
+                      ...(option.tooltip && {
+                        tooltip: formatText(
+                          option.tooltip,
+                          application,
+                          formatMessage,
+                        ),
+                      }),
+                    }))
+                  }
+
+                  let Readonly: boolean | undefined
+                  if (typeof readonly === 'function') {
+                    Readonly = readonly(application, activeValues)
+                  } else {
+                    Readonly = readonly
+                  }
 
                   if (condition && !condition(application, activeValues)) {
                     return null
@@ -284,6 +314,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                         split={width === 'half' ? '1/2' : '1/1'}
                         error={getFieldError(itemId)}
                         control={methods.control}
+                        readOnly={Readonly}
                         backgroundColor={backgroundColor}
                         onChange={() => {
                           if (error) {
