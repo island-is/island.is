@@ -304,31 +304,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
     },
-    relativesRelationGrandparent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.grandparent',
-      defaultMessage: 'Afi/amma',
-      description: 'Grandparent',
-    },
-    relativesRelationSibling: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.sibling',
-      defaultMessage: 'Systkini',
-      description: 'Sibling',
-    },
-    relativesRelationStepparent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.stepparent',
-      defaultMessage: 'Stjúpforeldri',
-      description: 'Stepparent',
-    },
-    relativesRelationRelative: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.relative',
-      defaultMessage: 'Frændfólk',
-      description: 'Relative',
-    },
-    relativesRelationFriendOrOther: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.friend.or.other',
-      defaultMessage: 'Vinafólk/annað',
-      description: 'Friend/other',
-    },
     relativesCanPickUpChild: {
       id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
       defaultMessage: 'Má sækja barn í skólann',

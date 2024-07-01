@@ -20,7 +20,6 @@ import {
 import {
   Gender,
   ReasonForApplicationOptions,
-  RelationOptions,
   SiblingRelationOptions,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
@@ -280,37 +279,6 @@ export const hasOtherParent = (
 ): boolean => {
   const otherParent = getOtherParent({ answers, externalData } as Application)
   return !!otherParent
-}
-
-export const getRelationOptions = () => [
-  {
-    value: RelationOptions.GRANDPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparent,
-  },
-  {
-    value: RelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSibling,
-  },
-  {
-    value: RelationOptions.STEPPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationStepparent,
-  },
-  {
-    value: RelationOptions.RELATIVE,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelative,
-  },
-  {
-    value: RelationOptions.FRIEND_OR_OTHER,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationFriendOrOther,
-  },
-]
-
-export const getRelationOptionLabel = (value: RelationOptions) => {
-  const relationOptions = getRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getReasonForApplicationOptions = () => [
