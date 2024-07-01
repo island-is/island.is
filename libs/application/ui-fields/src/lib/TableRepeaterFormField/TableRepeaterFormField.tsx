@@ -26,8 +26,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { checkForCustomMappedComponents } from './utils'
 import { NationalIdWithName } from '@island.is/application/ui-components'
+import { handleCustomMappedValues } from './utils'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -88,7 +88,8 @@ export const TableRepeaterFormField: FC<Props> = ({
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
-  checkForCustomMappedComponents(tableItems, values)
+  // check for components that might need some custom value mapping
+  const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -221,7 +222,12 @@ export const TableRepeaterFormField: FC<Props> = ({
                     </T.Data>
                     {tableRows.map((item, idx) => (
                       <T.Data key={`${item}-${idx}`}>
-                        {formatTableValue(item, values[index])}
+                        {formatTableValue(
+                          item,
+                          customMappedValues.length
+                            ? customMappedValues[index]
+                            : values[index],
+                        )}
                       </T.Data>
                     ))}
                   </T.Row>

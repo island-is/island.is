@@ -4,35 +4,36 @@ type Item = {
   id: string
 } & TableRepeaterItem
 
-interface Value<T> {
-  [key: string]: T
-}
+export type Value<T> = { [key: string]: T }
 
-export const checkForCustomMappedComponents = (
-  items: Array<Item>,
-  values: Array<Value<object>>,
+export const handleCustomMappedValues = <T>(
+  tableItems: Array<Item>,
+  values: Array<Value<T>>,
 ) => {
-  items.some((item) => {
+  let customValues: Array<Value<T>> = []
+  tableItems.forEach((item) => {
     if (item.component === 'nationalIdWithName') {
-      handleNationalIdWithNameItem(item, values)
+      customValues = handleNationalIdWithNameItem(item, values)
     }
   })
+  return customValues
 }
 
-const handleNationalIdWithNameItem = (
+export const handleNationalIdWithNameItem = <T>(
   item: Item,
-  values: Array<Value<object>>,
+  values: Array<Value<T>>,
 ) => {
   if (!values) {
-    return
+    return []
   }
 
-  // nationalIdWithName returns an object that we
-  // need to extract entries from and add to values
-  values.forEach((value: Value<object>, index: number) => {
+  const newValues = values.map((value) => {
     if (typeof value[item.id] === 'object' && value[item.id] !== null) {
       const { [item.id]: nestedObject, ...rest } = value
-      values[index] = { ...nestedObject, ...rest }
+      return { ...nestedObject, ...rest }
     }
+    return value
   })
+
+  return newValues
 }
