@@ -76,10 +76,7 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.validTo),
                   value: licenseInfo.expirationDate ?? '',
-                  tag:
-                    isExpired !== undefined && licenseInfo.expirationDate
-                      ? expiryTag(formatMessage, isExpired)
-                      : undefined,
+                  tag: expiryTag(formatMessage, isExpired),
                 }
               : null,
             licenseInfo.collectorLicenseExpirationDate

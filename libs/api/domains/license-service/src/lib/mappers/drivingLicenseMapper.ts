@@ -68,10 +68,7 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.validTo),
             value: t.dateValidTo ? formatDate(t.dateValidTo) : '',
-            tag:
-              isExpired !== undefined && t.dateValidTo
-                ? expiryTag(formatMessage, isExpired)
-                : undefined,
+            tag: expiryTag(formatMessage, isExpired),
           },
           {
             type: GenericLicenseDataFieldType.Group,

@@ -62,10 +62,7 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.validTo),
             value: t.gildirTil ? formatDate(new Date(t.gildirTil)) : '',
-            tag:
-              isExpired !== undefined && t.gildirTil
-                ? expiryTag(formatMessage, isExpired)
-                : undefined,
+            tag: expiryTag(formatMessage, isExpired),
           },
         ]
 
@@ -97,16 +94,15 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
               licenseId: DEFAULT_LICENSE_ID,
               expired: isExpired,
               expireDate: t.gildirTil ?? undefined,
-              displayTag:
-                isExpired !== undefined && t.gildirTil
-                  ? expiryTag(
-                      formatMessage,
-                      isExpired,
-                      formatMessage(m.validUntil, {
-                        arg: formatDate(new Date(t.gildirTil)),
-                      }),
-                    )
+              displayTag: expiryTag(
+                formatMessage,
+                isExpired,
+                t.gildirTil
+                  ? formatMessage(m.validUntil, {
+                      arg: formatDate(new Date(t.gildirTil)),
+                    })
                   : undefined,
+              ),
               name: formatMessage(m.adrLicense),
               title: formatMessage(m.yourADRLicense),
               description: [

@@ -116,10 +116,7 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
               }),
               licenseId: DEFAULT_LICENSE_ID,
               expired: isExpired,
-              displayTag:
-                isExpired != undefined
-                  ? expiryTag(formatMessage, isExpired)
-                  : undefined,
+              displayTag: expiryTag(formatMessage, isExpired),
               name: formatMessage(m.heavyMachineryLicense),
               title: formatMessage(m.yourMachineLicense),
               description: [

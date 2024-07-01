@@ -77,10 +77,7 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.validTo),
                   value: t.expiryDate ? formatDate(t.expiryDate) : '',
-                  tag:
-                    isExpired !== undefined && t.expiryDate
-                      ? expiryTag(formatMessage, isExpired)
-                      : undefined,
+                  tag: expiryTag(formatMessage, isExpired),
                 }
               : null,
             {
@@ -104,16 +101,13 @@ export class EHICCardPayloadMapper implements GenericLicenseMapper {
                 licenseId: t.cardNumber?.toString() ?? 'default',
                 expired: isExpired,
                 expireDate: t.expiryDate.toISOString(),
-                displayTag:
-                  isExpired !== undefined && t.expiryDate
-                    ? expiryTag(
-                        formatMessage,
-                        isExpired,
-                        formatMessage(m.validUntil, {
-                          arg: formatDate(t.expiryDate),
-                        }),
-                      )
-                    : undefined,
+                displayTag: expiryTag(
+                  formatMessage,
+                  isExpired,
+                  formatMessage(m.validUntil, {
+                    arg: formatDate(t.expiryDate),
+                  }),
+                ),
                 links: [
                   t.hasTempCard && t.tempCardPdf
                     ? {

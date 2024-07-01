@@ -75,10 +75,7 @@ export class DisabilityLicensePayloadMapper implements GenericLicenseMapper {
               licenseId: DEFAULT_LICENSE_ID,
               expired: isExpired,
               expireDate: t.gildirtil?.toISOString() ?? undefined,
-              displayTag:
-                isExpired !== undefined
-                  ? expiryTag(formatMessage, isExpired)
-                  : undefined,
+              displayTag: expiryTag(formatMessage, isExpired),
               name: formatMessage(m.disabilityCard),
               title: formatMessage(m.yourDisabilityLicense),
               description: [

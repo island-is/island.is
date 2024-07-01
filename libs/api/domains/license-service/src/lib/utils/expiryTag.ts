@@ -8,12 +8,22 @@ import {
 
 export const expiryTag = (
   formatMessage: FormatMessage,
-  isExpired: boolean,
+  isExpired?: boolean,
   validityText?: string,
   expiryText?: string,
 ): GenericUserLicenseMetaTag => {
   const expiredText = expiryText ?? formatMessage(m.expired)
   const validText = validityText ?? formatMessage(m.valid)
+
+  if (isExpired === undefined) {
+    return {
+      text: formatMessage(m.unknownStatus),
+      color: 'red',
+      icon: GenericUserLicenseDataFieldTagType.closeCircle,
+      iconColor: GenericUserLicenseDataFieldTagColor.red,
+      iconText: formatMessage(m.unknownStatus),
+    }
+  }
 
   return {
     text: isExpired ? expiredText : validText,

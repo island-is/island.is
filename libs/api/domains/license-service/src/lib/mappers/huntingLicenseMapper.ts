@@ -100,9 +100,6 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
             : undefined,
         ].filter(isDefined)
 
-        this.logger.debug('licesenumber', t.number.toString())
-        this.logger.debug(t.number)
-
         return {
           licenseName: formatMessage(m.huntingCard),
           type: 'user',
@@ -117,15 +114,14 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
               licenseId: DEFAULT_LICENSE_ID,
               expired: !t.isValid,
               expireDate: t.validTo ? t.validTo.toISOString() : undefined,
-              displayTag:
+              displayTag: expiryTag(
+                formatMessage,
+                t.isValid,
                 t.validTo &&
-                expiryTag(
-                  formatMessage,
-                  !t.isValid,
                   formatMessage(m.validUntil, {
                     arg: formatDate(t.validTo),
                   }),
-                ),
+              ),
               links: [
                 {
                   label: formatMessage(m.renewLicense, {

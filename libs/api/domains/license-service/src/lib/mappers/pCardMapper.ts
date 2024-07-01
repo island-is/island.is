@@ -37,6 +37,10 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
 
     const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
       typedPayload.map((t) => {
+        const isExpired = t.gildistimi
+          ? !isAfter(new Date(t.gildistimi.toISOString()), new Date())
+          : undefined
+
         const data: Array<GenericLicenseDataField> = [
           t.nafn
             ? {
@@ -71,6 +75,13 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
                 type: GenericLicenseDataFieldType.Value,
                 label: formatMessage(m.validTo),
                 value: formatDate(t.gildistimi),
+                tag: expiryTag(
+                  formatMessage,
+                  isExpired,
+                  formatMessage(m.validUntil, {
+                    arg: formatDate(t.gildistimi),
+                  }),
+                ),
               }
             : null,
           t.utgefandi
@@ -81,10 +92,6 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
               }
             : null,
         ].filter(isDefined)
-
-        const isExpired = t.gildistimi
-          ? !isAfter(new Date(t.gildistimi.toISOString()), new Date())
-          : undefined
 
         return {
           licenseName: formatMessage(m.pCard),
@@ -100,10 +107,7 @@ export class PCardPayloadMapper implements GenericLicenseMapper {
               licenseId: DEFAULT_LICENSE_ID,
               expired: isExpired,
               expireDate: t.gildistimi?.toISOString(),
-              displayTag:
-                isExpired !== undefined
-                  ? expiryTag(formatMessage, isExpired)
-                  : undefined,
+              displayTag: expiryTag(formatMessage, isExpired),
               name: formatMessage(m.pCard),
               title: formatMessage(m.yourPCard),
               description: [{ text: formatMessage(m.yourPCardDescription) }],

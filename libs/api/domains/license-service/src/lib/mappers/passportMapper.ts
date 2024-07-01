@@ -12,7 +12,6 @@ import { GenericUserLicenseAlert } from '../dto/GenericUserLicenseAlert.dto'
 import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
 import { capitalize } from '../utils/capitalize'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Payload } from '../dto/Payload.dto'
 import { formatDate } from '../utils'
 import {
@@ -33,10 +32,7 @@ const isChildPassport = (
 
 @Injectable()
 export class PassportMapper implements GenericLicenseMapper {
-  constructor(
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly intlService: IntlService,
-  ) {}
+  constructor(private readonly intlService: IntlService) {}
   async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
@@ -56,6 +52,7 @@ export class PassportMapper implements GenericLicenseMapper {
             rawData: '',
             metadata: {
               title: formatMessage(m.passport),
+              name: formatMessage(m.passport),
               subtitle: formatMessage(m.noValidPassport),
               ctaLink: {
                 label: formatMessage(m.apply),
@@ -131,30 +128,27 @@ export class PassportMapper implements GenericLicenseMapper {
       ? document.status.toLowerCase() === 'invalid'
       : undefined
 
-    const displayTag: GenericUserLicenseMetaTag | undefined =
-      isInvalid !== undefined && document.expirationDate
-        ? {
-            text: isInvalid
-              ? formatMessage(m.invalid)
-              : isExpiring
-              ? formatMessage(m.expiresWithin, {
-                  arg: formatMessage(m.sixMonths),
-                })
-              : formatMessage(m.valid),
-            color: isInvalid || isExpiring ? 'red' : 'blue',
-            icon: isInvalid
-              ? GenericUserLicenseDataFieldTagType.closeCircle
-              : GenericUserLicenseDataFieldTagType.checkmarkCircle,
-            iconColor: isInvalid
-              ? GenericUserLicenseDataFieldTagColor.red
-              : isExpiring
-              ? GenericUserLicenseDataFieldTagColor.yellow
-              : GenericUserLicenseDataFieldTagColor.green,
-            iconText: isInvalid
-              ? formatMessage(isLost ? m.lost : m.expired)
-              : formatMessage(m.valid),
-          }
-        : undefined
+    const displayTag: GenericUserLicenseMetaTag | undefined = {
+      text: isInvalid
+        ? formatMessage(m.invalid)
+        : isExpiring
+        ? formatMessage(m.expiresWithin, {
+            arg: formatMessage(m.sixMonths),
+          })
+        : formatMessage(m.valid),
+      color: isInvalid || isExpiring ? 'red' : 'blue',
+      icon: isInvalid
+        ? GenericUserLicenseDataFieldTagType.closeCircle
+        : GenericUserLicenseDataFieldTagType.checkmarkCircle,
+      iconColor: isInvalid
+        ? GenericUserLicenseDataFieldTagColor.red
+        : isExpiring
+        ? GenericUserLicenseDataFieldTagColor.yellow
+        : GenericUserLicenseDataFieldTagColor.green,
+      iconText: isInvalid
+        ? formatMessage(isLost ? m.lost : m.expired)
+        : formatMessage(m.valid),
+    }
 
     const data: Array<GenericLicenseDataField> = [
       document.displayFirstName && document.displayLastName

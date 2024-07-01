@@ -229,6 +229,10 @@ export const m = defineMessages({
     id: 'api.license-service:unknown',
     defaultMessage: 'Óþekkt',
   },
+  unknownStatus: {
+    id: 'api.license-service:unknown-status',
+    defaultMessage: 'Óþekkt staða',
+  },
   licenseInvalid: {
     id: 'api.license-service:license-invalid',
     defaultMessage: '{arg} ógilt',
