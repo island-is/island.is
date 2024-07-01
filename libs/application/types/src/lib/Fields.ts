@@ -61,6 +61,23 @@ export type TableRepeaterFields =
   | 'checkbox'
   | 'date'
 
+export type TableRepeaterOptions = 
+| {
+    label: StaticText
+    value: string
+    tooltip?: StaticText
+  }[]
+| ((
+    application: Application,
+    activeField: Record<string, string>,
+  ) =>
+    | {
+        label: StaticText
+        value: string
+        tooltip?: StaticText
+      }[]
+    | [])
+
 export type TableRepeaterItem = {
   component: TableRepeaterFields
   /**
@@ -69,22 +86,7 @@ export type TableRepeaterItem = {
   displayInTable?: boolean
   label?: StaticText
   placeholder?: StaticText
-  options?:
-    | {
-        label: StaticText
-        value: string
-        tooltip?: StaticText
-      }[]
-    | ((
-        application: Application,
-        activeField: Record<string, string>,
-      ) =>
-        | {
-            label: StaticText
-            value: string
-            tooltip?: StaticText
-          }[]
-        | undefined)
+  options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: boolean
@@ -124,22 +126,7 @@ export type TableRepeaterItem = {
   | {
       component: 'select'
       label: StaticText
-      options?:
-        | {
-            label: StaticText
-            value: string
-            tooltip?: StaticText
-          }[]
-        | ((
-            application: Application,
-            activeField: Record<string, string>,
-          ) =>
-            | {
-                label: StaticText
-                value: string
-                tooltip?: StaticText
-              }[]
-            | undefined)
+      options?: TableRepeaterOptions
       isSearchable?: boolean
     }
   | {
