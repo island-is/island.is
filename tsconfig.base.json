@@ -1080,5 +1080,5 @@
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"]
     }
-  },
+  }
 }

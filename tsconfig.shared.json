@@ -18,7 +18,7 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "baseUrl": ".",
-    "strict": true,
+    "strict": true
   },
   "exclude": ["node_modules", "tmp"]
 }
