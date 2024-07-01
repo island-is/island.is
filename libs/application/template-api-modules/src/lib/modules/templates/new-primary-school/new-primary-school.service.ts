@@ -27,7 +27,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     return await this.friggClientService.getAllSchoolsByMunicipality(auth)
   }
 
-  async setChildInformation({
+  async getChildInformation({
     auth,
     application,
   }: TemplateApiModuleActionProps) {

@@ -21,7 +21,11 @@ import {
 import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import { GetSchoolsApi, GetKeyOptionsTypesApi, OptionsApi } from '../dataProviders'
+import {
+  GetKeyOptionsTypesApi,
+  GetSchoolsApi,
+  OptionsApi,
+} from '../dataProviders'
 import {
   ApiModuleActions,
   Events,
@@ -60,7 +64,7 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
             },
           },
           onExit: defineTemplateApi({
-            action: ApiModuleActions.setChildInformation,
+            action: ApiModuleActions.getChildInformation,
             externalDataId: 'childInformation',
             throwOnError: true,
           }),

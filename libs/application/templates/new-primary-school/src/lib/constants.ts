@@ -17,7 +17,7 @@ export type Events =
   | { type: DefaultEvents.EDIT }
 
 export enum ApiModuleActions {
-  setChildInformation = 'setChildInformation',
+  getChildInformation = 'getChildInformation',
 }
 
 export enum Roles {
