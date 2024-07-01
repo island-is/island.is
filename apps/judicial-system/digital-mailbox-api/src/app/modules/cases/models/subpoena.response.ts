@@ -85,7 +85,7 @@ export class SubpoenaResponse {
               [t.accused, defendantInfo?.name],
               [
                 t.arraignmentDate,
-                formatDate(arraignmentDate, FormatPattern.LONG_DATE_YEAR_TIME),
+                formatDate(arraignmentDate, FormatPattern.SHORT_DATE_YEAR_TIME),
               ],
               [t.location, subpoenaDateLog?.location ?? ''],
               [t.courtCeremony, t.parliamentaryConfirmation],

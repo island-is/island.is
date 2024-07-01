@@ -27,8 +27,8 @@ export enum FormatPattern {
   SHORT_DATE = 'dd.MM', // 01.01
   SHORT_DATE_YEAR = 'dd.MM.yyyy', // 01.01.2024
   SHORT_DATE_YEAR_TIME = "dd.MM.yyyy 'kl.' HH:mm", // 01.01.2024 kl. 10:00
-  LONG_DATE = 'd. MMM', // 1. jan.
-  LONG_DATE_YEAR = 'PP', // 1. jan. 2024
+  LONG_DATE = 'd. MMMM', // 1. janúar.
+  LONG_DATE_YEAR = 'PPP', // 1. janúar 2024
   LONG_DATE_YEAR_TIME = 'PPPp', // 1. janúar 2024 kl. 10:00
   LONG_DAY_DATE_YEAR = 'PPPP', // mánudagur, 1. janúar 2024
   LONG_DAY_DATE_YEAR_TIME = 'PPPPp', // mánudagur, 1. janúar 2024 kl. 10:00
