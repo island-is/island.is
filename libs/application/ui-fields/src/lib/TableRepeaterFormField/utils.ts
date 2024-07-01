@@ -19,7 +19,7 @@ export const handleCustomMappedValues = <T>(
   return customValues
 }
 
-export const handleNationalIdWithNameItem = <T>(
+const handleNationalIdWithNameItem = <T>(
   item: Item,
   values: Array<Value<T>>,
 ) => {
