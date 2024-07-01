@@ -76,12 +76,14 @@ export const is = {
   'settings.usersettings.email': 'Netfang',
   'settings.usersettings.bankinfo': 'Reikningsnúmer',
   'settings.communication.groupTitle': 'Tilkynningar og samskipti',
-  'settings.communication.newDocumentsNotifications':
-    'Fá tilkynningar um ný skjöl',
-  'settings.communication.appUpdatesNotifications':
-    'Fá tilkynningar um nýjungar í appinu',
-  'settings.communication.applicationsNotifications':
-    'Fá tilkynningar um stöðu umsókna',
+  'settings.communication.newNotificationsEmailLabel':
+    'Tilkynningar í tölvupósti',
+  'settings.communication.newNotificationsEmailDescription':
+    'Stofnanir geta sent þér tilkynningu með tölvupósti.',
+  'settings.communication.newNotificationsInAppLabel':
+    'Tilkynningar í Ísland.is appinu',
+  'settings.communication.newNotificationsInAppDescription':
+    'Stofnanir geta sent þér tilkynningu í Ísland.is appið.',
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',

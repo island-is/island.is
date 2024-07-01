@@ -77,12 +77,13 @@ export const en: TranslatedMessages = {
   'settings.usersettings.email': 'Email',
   'settings.usersettings.bankinfo': 'Bank info',
   'settings.communication.groupTitle': 'Notifications and communication',
-  'settings.communication.newDocumentsNotifications':
-    'Get notifications of new documents',
-  'settings.communication.appUpdatesNotifications':
-    'Get notifications about app updates',
-  'settings.communication.applicationsNotifications':
-    'Get notifications about application status updates',
+  'settings.communication.newNotificationsEmailLabel': 'Notifications in email',
+  'settings.communication.newNotificationsEmailDescription':
+    'Government agencies can send you notifications in email.',
+  'settings.communication.newNotificationsInAppLabel':
+    'Notifications in the Island.is app',
+  'settings.communication.newNotificationsInAppDescription':
+    'Government agencies can send you notifications in the Island.is app.',
   'settings.security.privacyTitle': 'Privacy Policy',
   'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
