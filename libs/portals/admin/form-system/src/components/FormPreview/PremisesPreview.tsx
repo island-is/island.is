@@ -1,5 +1,7 @@
 import { FormSystemDocumentType, Maybe } from "@island.is/api/schema"
 import { Box, Checkbox, Icon, Stack, Text } from "@island.is/island-ui/core"
+import { useIntl } from "react-intl"
+import { m } from "../../lib/messages"
 
 
 interface Props {
@@ -7,13 +9,14 @@ interface Props {
 }
 
 export const PremisesPreview = ({ documents }: Props) => {
+  const { formatMessage } = useIntl()
   return (
     <Box
       display="flex"
       flexDirection="column"
     >
       <Stack space={2}>
-        <Text variant="h2">Gagnaöflun</Text>
+        <Text variant="h2">{formatMessage(m.dataFetch)}</Text>
         <Box
           display="flex"
           flexDirection="row"
@@ -24,15 +27,15 @@ export const PremisesPreview = ({ documents }: Props) => {
           <Text
             fontWeight="semiBold"
           >
-            Eftirfarandi gögn verða sótt rafrænt
+            {formatMessage(m.personalInfoFetch)}
           </Text>
         </Box>
       </Stack>
       <Box marginTop={4}>
         <Stack space={3}>
           <Box display="flex" flexDirection="column">
-            <Text fontWeight="semiBold" color="blue600">Mínar upplýsingar á Mínum síðum Ísland.is</Text>
-            <Text>Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.</Text>
+            <Text fontWeight="semiBold" color="blue600">{formatMessage(m.myData)}</Text>
+            <Text>{formatMessage(m.myDataDescription)}</Text>
           </Box>
           {documents?.map(d => (
             <Box display="flex" flexDirection="column">

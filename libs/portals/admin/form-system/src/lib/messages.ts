@@ -421,6 +421,22 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:delete',
     defaultMessage: 'Eyða',
   },
+  dataFetch: {
+    id: 'portals-admin.form-system:data-fetch',
+    defaultMessage: 'Gagnaöflun',
+  },
+  personalInfoFetch: {
+    id: 'portals-admin.form-system:personal-info-fetch',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+  },
+  myData: {
+    id: 'portals-admin.form-system:my-data',
+    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+  },
+  myDataDescription: {
+    id: 'portals-admin.form-system:my-data-description',
+    defaultMessage: 'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+  },
   // Error messages
   invalidEmail: {
     id: 'portals-admin.form-system:invalid-email',
