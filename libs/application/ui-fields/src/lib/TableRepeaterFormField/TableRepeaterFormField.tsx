@@ -82,7 +82,6 @@ export const TableRepeaterFormField: FC<Props> = ({
   const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
   const savedFields = fields.filter((_, index) => index !== activeIndex)
-
   const tableItems = items.filter((x) => x.displayInTable !== false)
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
@@ -96,9 +95,6 @@ export const TableRepeaterFormField: FC<Props> = ({
       customMappedValues = handleNationalIdWithNameItem(item, values)
     }
   })
-
-  console.log('customMappedValues', customMappedValues)
-  console.log('regularValues', values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
