@@ -20,5 +20,10 @@
     "baseUrl": ".",
     "strict": true
   },
-  "exclude": ["node_modules", "tmp"]
+  "exclude": ["node_modules", "tmp"],
+  "references": [
+    {
+      "path": "./tsconfig.base.json"
+    }
+  ]
 }
