@@ -5,7 +5,6 @@ import { z } from 'zod'
 import {
   Gender,
   ReasonForApplicationOptions,
-  RelationOptions,
   SiblingRelationOptions,
 } from './constants'
 import { errorMessages } from './messages'
@@ -69,7 +68,7 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.nativeEnum(RelationOptions),
+        relation: z.string(),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
