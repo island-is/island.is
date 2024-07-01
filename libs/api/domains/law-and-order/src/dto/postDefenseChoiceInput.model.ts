@@ -7,11 +7,11 @@ export class PostDefenseChoiceInput {
   @IsString()
   caseId!: string
 
-  @Field(() => String)
+  @Field()
   @IsString()
   choice!: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   @IsOptional()
   lawyersNationalId?: string
 }
