@@ -37,11 +37,6 @@ export const ConfirmationField: FC<
     'incorrectPropertiesSent',
     [],
   ) as SelectedProperty[]
-  const userEmail = getValueViaPath(
-    application.externalData,
-    'userProfile.data.email',
-    '',
-  ) as string
 
   return (
     <>

@@ -19,6 +19,11 @@ export const overview = {
     },
   }),
   labels: defineMessages({
+    chosenProperties: {
+      id: 'mc.application:overview.labels.chosenProperties',
+      defaultMessage: 'Valdar eignir',
+      description: 'Overview chosen properties label',
+    },
     chosenProperty: {
       id: 'mc.application:overview.labels.chosenProperty',
       defaultMessage: 'Valin eign',

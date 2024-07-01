@@ -25,7 +25,7 @@ export const CheckedProperties: FC<
   return (
     <Box paddingTop={3}>
       <Text variant="h3" paddingBottom={1}>
-        Valdar eignir
+        {formatMessage(overview.labels.chosenProperties)}
       </Text>
       {properties.map((property, index) => {
         return (
