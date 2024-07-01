@@ -1,9 +1,9 @@
-import * as AWS from 'aws-sdk'
+import { SNS, SQS } from 'aws-sdk'
 import { Consumer } from 'sqs-consumer'
 
 import { logger } from '@island.is/logging'
 
-AWS.config.update({ region: 'eu-west-1' })
+const commonConfig = { region: 'eu-west-1' }
 
 const SNS_LOCALSTACK_ENDPOINT = 'http://localhost:4575'
 const SQS_LOCALSTACK_ENDPOINT = 'http://localhost:4576'
@@ -13,12 +13,14 @@ class Channel {
   sqs: AWS.SQS
 
   constructor(production: boolean) {
-    this.sns = new AWS.SNS({
+    this.sns = new SNS({
+      ...commonConfig,
       apiVersion: '2010-03-31',
       endpoint: production ? undefined : SNS_LOCALSTACK_ENDPOINT,
     })
 
-    this.sqs = new AWS.SQS({
+    this.sqs = new SQS({
+      ...commonConfig,
       apiVersion: '2012-11-05',
       endpoint: production ? undefined : SQS_LOCALSTACK_ENDPOINT,
     })

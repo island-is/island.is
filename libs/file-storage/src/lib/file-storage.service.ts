@@ -1,5 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import * as AWS from 'aws-sdk'
+import { S3 } from 'aws-sdk'
 import { uuid } from 'uuidv4'
 import AmazonS3URI from 'amazon-s3-uri'
 import kebabCase from 'lodash/kebabCase'
@@ -11,7 +11,7 @@ const SIGNED_GET_EXPIRES = 10 * 60
 
 @Injectable()
 export class FileStorageService {
-  private s3 = new AWS.S3({ apiVersion: '2006-03-01' })
+  private s3 = new S3({ apiVersion: '2006-03-01' })
 
   constructor(
     @Inject(FileStorageConfig.KEY)

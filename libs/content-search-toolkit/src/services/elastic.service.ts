@@ -1,6 +1,6 @@
 import { Client } from '@elastic/elasticsearch'
 import merge from 'lodash/merge'
-import * as AWS from 'aws-sdk'
+import { config } from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
@@ -392,7 +392,7 @@ export class ElasticService {
     }
 
     return new Client({
-      ...AwsConnector(AWS.config),
+      ...AwsConnector(config),
       node: elastic.node,
     })
   }
