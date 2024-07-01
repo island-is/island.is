@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -35,11 +35,11 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
-export const RenderFiles: React.FC<
-  React.PropsWithChildren<Props & RenderFilesProps>
-> = (props) => {
-  const { caseFiles, onOpenFile, workingCase } = props
-
+export const RenderFiles: FC<Props & RenderFilesProps> = ({
+  caseFiles,
+  onOpenFile,
+  workingCase,
+}) => {
   return (
     <>
       {caseFiles.map((file) => (
@@ -57,10 +57,7 @@ export const RenderFiles: React.FC<
   )
 }
 
-const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const { workingCase } = props
+const IndictmentCaseFilesList: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -71,9 +68,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
 
   const cf = workingCase.caseFiles
 
-  const coverLetters = cf?.filter(
-    (file) => file.category === CaseFileCategory.COVER_LETTER,
-  )
   const indictments = cf?.filter(
     (file) => file.category === CaseFileCategory.INDICTMENT,
   )
@@ -100,18 +94,6 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
   return (
     <>
       <SectionHeading title={formatMessage(strings.title)} />
-      {coverLetters && coverLetters.length > 0 && (
-        <Box marginBottom={5}>
-          <Text variant="h4" as="h4" marginBottom={1}>
-            {formatMessage(caseFiles.coverLetterSection)}
-          </Text>
-          <RenderFiles
-            caseFiles={coverLetters}
-            onOpenFile={onOpen}
-            workingCase={workingCase}
-          />
-        </Box>
-      )}
       {indictments && indictments.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
@@ -204,7 +186,7 @@ const IndictmentCaseFilesList: React.FC<React.PropsWithChildren<Props>> = (
                 policeCaseNumber,
               })}
               pdfType={'caseFilesRecord'}
-              policeCaseNumber={policeCaseNumber}
+              elementId={policeCaseNumber}
               renderAs="row"
             />
           </Box>

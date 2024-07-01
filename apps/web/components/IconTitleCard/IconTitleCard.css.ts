@@ -46,3 +46,30 @@ export const icon = style({
   maxWidth: 65,
   maxHeight: 65,
 })
+
+/* styling for card with the button */
+export const containerBig = style({
+  height: 120,
+  minWidth: 0,
+  minHeight: 0,
+})
+
+export const iconContainerBig = style({
+  display: 'flex',
+  justifyContent: 'center',
+  alignItems: 'center',
+})
+
+export const iconBig = style({
+  objectFit: 'cover',
+  width: '100%',
+  height: 'auto',
+  maxWidth: 65,
+  maxHeight: 65,
+  ...themeUtils.responsiveStyle({
+    md: {
+      maxWidth: 75,
+      maxHeight: 75,
+    },
+  }),
+})
