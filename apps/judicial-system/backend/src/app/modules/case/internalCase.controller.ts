@@ -260,7 +260,7 @@ export class InternalCaseController {
     type: DeliverResponse,
     description: 'Delivers a case files record to court',
   })
-  deliverCaseFilesRecordToCourt(
+  async deliverCaseFilesRecordToCourt(
     @Param('caseId') caseId: string,
     @Param('policeCaseNumber') policeCaseNumber: string,
     @CurrentCase() theCase: Case,
