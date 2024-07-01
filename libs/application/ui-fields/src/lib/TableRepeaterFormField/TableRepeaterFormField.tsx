@@ -26,8 +26,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { checkForCustomMappedComponents } from './utils'
 import { NationalIdWithName } from '@island.is/application/ui-components'
+import { Value, handleNationalIdWithNameItem } from './utils'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -82,13 +82,23 @@ export const TableRepeaterFormField: FC<Props> = ({
   const values = useWatch({ name: data.id, control: methods.control })
   const activeField = activeIndex >= 0 ? fields[activeIndex] : null
   const savedFields = fields.filter((_, index) => index !== activeIndex)
+
   const tableItems = items.filter((x) => x.displayInTable !== false)
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
 
-  checkForCustomMappedComponents(tableItems, values)
+  // check for components that might need some custom value mapping
+  let customMappedValues: Array<Value<object>> = []
+  tableItems.forEach((item) => {
+    if (item.component === 'nationalIdWithName') {
+      customMappedValues = handleNationalIdWithNameItem(item, values)
+    }
+  })
+
+  console.log('customMappedValues', customMappedValues)
+  console.log('regularValues', values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -221,7 +231,12 @@ export const TableRepeaterFormField: FC<Props> = ({
                     </T.Data>
                     {tableRows.map((item, idx) => (
                       <T.Data key={`${item}-${idx}`}>
-                        {formatTableValue(item, values[index])}
+                        {formatTableValue(
+                          item,
+                          customMappedValues.length
+                            ? customMappedValues[index]
+                            : values[index],
+                        )}
                       </T.Data>
                     ))}
                   </T.Row>
