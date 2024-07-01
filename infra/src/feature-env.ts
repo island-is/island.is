@@ -1,5 +1,5 @@
 import yargs from 'yargs'
-import AWS from 'aws-sdk'
+import { S3 } from '@aws-sdk/client-s3';
 import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import {
@@ -51,9 +51,9 @@ const writeToOutput = async (data: string, output?: string) => {
       const config = {
         region: 'eu-west-1',
       }
-      const s3 = new AWS.S3(config)
+      const s3 = new S3(config)
       try {
-        await s3.putObject(objectParams).promise()
+        await s3.putObject(objectParams)
         logger.debug(`Successfully uploaded data to ${output}`)
       } catch (err) {
         logger.debug('Error', err)

@@ -127,7 +127,7 @@ yargs(hideBin(process.argv))
         await Promise.all(
           Parameters.map(({ Name }) =>
             Name
-              ? ssm.deleteParameter({ Name }).promise()
+              ? ssm.deleteParameter({ Name })
               : new Promise((resolve) => resolve(true)),
           ),
         )
