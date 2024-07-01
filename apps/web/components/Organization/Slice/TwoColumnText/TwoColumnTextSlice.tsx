@@ -1,4 +1,5 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
@@ -13,6 +14,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { theme } from '@island.is/island-ui/theme'
 import { BorderAbove } from '@island.is/web/components'
 import { TwoColumnText } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
@@ -28,6 +30,12 @@ export const TwoColumnTextSlice: React.FC<
   React.PropsWithChildren<SliceProps>
 > = ({ slice }) => {
   const { activeLocale } = useI18n()
+  const { width } = useWindowSize()
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    setIsMobile(width < theme.breakpoints.lg)
+  }, [width])
 
   const leftId = 'sliceLeftTitle-' + slice.id
   const rightId = 'sliceRightTitle-' + slice.id
@@ -41,6 +49,18 @@ export const TwoColumnTextSlice: React.FC<
     sliceLabelIds.push(rightId)
   }
 
+  const rightTitleIsSkipped =
+    slice.rightTitle === '' ||
+    slice.rightTitle === undefined ||
+    slice.onlyUseOneTitle
+
+  const leftTitleExist = slice.leftTitle !== ''
+
+  const leftLinkNotExist = !slice.leftLink?.url
+
+  const verticalAlignContentInMobile =
+    rightTitleIsSkipped && leftTitleExist && leftLinkNotExist && isMobile
+
   const ariaLabelledBy = sliceLabelIds.join(' ')
 
   return (
@@ -53,20 +73,25 @@ export const TwoColumnTextSlice: React.FC<
         {slice.dividerOnTop && <BorderAbove />}
         <Box>
           <GridRow>
-            <GridColumn span={columnSpan} hiddenBelow="lg">
+            <GridColumn
+              span={slice.onlyUseOneTitle ? '12/12' : columnSpan}
+              hiddenBelow="lg"
+            >
               {slice.leftTitle && (
                 <Text variant="h2" as="h2" id={leftId}>
                   <Hyphen>{slice.leftTitle}</Hyphen>
                 </Text>
               )}
             </GridColumn>
-            <GridColumn span={columnSpan} hiddenBelow="lg">
-              {slice.rightTitle && (
-                <Text variant="h2" as="h2" id={rightId}>
-                  <Hyphen>{slice.rightTitle}</Hyphen>
-                </Text>
-              )}
-            </GridColumn>
+            {!slice.onlyUseOneTitle && (
+              <GridColumn span={columnSpan} hiddenBelow="lg">
+                {slice.rightTitle && (
+                  <Text variant="h2" as="h2" id={rightId}>
+                    <Hyphen>{slice.rightTitle}</Hyphen>
+                  </Text>
+                )}
+              </GridColumn>
+            )}
           </GridRow>
           <GridRow>
             <GridColumn span={columnSpan}>
@@ -83,42 +108,57 @@ export const TwoColumnTextSlice: React.FC<
                 activeLocale,
               )}
               {slice.leftLink && slice.leftLink.url && (
-                <Link href={slice.leftLink.url}>
-                  <Button
-                    icon="arrowForward"
-                    iconType="filled"
-                    type="button"
-                    variant="text"
-                  >
-                    {slice.leftLink.text}
-                  </Button>
-                </Link>
+                <Box paddingTop={2}>
+                  <Link href={slice.leftLink.url}>
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      type="button"
+                      variant="text"
+                    >
+                      {slice.leftLink.text}
+                    </Button>
+                  </Link>
+                </Box>
               )}
             </GridColumn>
-            <GridColumn span={columnSpan} paddingTop={[4, 4, 4, 0]}>
-              {slice.rightTitle && (
+            <GridColumn
+              span={columnSpan}
+              paddingTop={
+                verticalAlignContentInMobile ? [0, 0, 0, 0] : [2, 2, 2, 0]
+              }
+            >
+              {!slice.onlyUseOneTitle && slice.rightTitle && (
                 <Hidden above="md">
                   <Text variant="h2" as="h2">
                     {slice.rightTitle}
                   </Text>
                 </Hidden>
               )}
-              {webRichText(
-                slice.rightContent as SliceType[],
-                undefined,
-                activeLocale,
-              )}
+              <Box
+                style={
+                  verticalAlignContentInMobile ? { marginTop: '-10px' } : {}
+                }
+              >
+                {webRichText(
+                  slice.rightContent as SliceType[],
+                  undefined,
+                  activeLocale,
+                )}
+              </Box>
               {slice.rightLink && slice.rightLink.url && (
-                <Link href={slice.rightLink.url}>
-                  <Button
-                    icon="arrowForward"
-                    iconType="filled"
-                    type="button"
-                    variant="text"
-                  >
-                    {slice.rightLink.text}
-                  </Button>
-                </Link>
+                <Box paddingTop={2}>
+                  <Link href={slice.rightLink.url}>
+                    <Button
+                      icon="arrowForward"
+                      iconType="filled"
+                      type="button"
+                      variant="text"
+                    >
+                      {slice.rightLink.text}
+                    </Button>
+                  </Link>
+                </Box>
               )}
             </GridColumn>
           </GridRow>
