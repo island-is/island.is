@@ -1,7 +1,11 @@
 // vi: ft=jsonc
 {
   "name": "Devcontainer for island.is",
-  "build": { "dockerfile": "Dockerfile", "context": "../" },
+  "build": {
+    "dockerfile": "Dockerfile",
+    "context": "../",
+    "target": "output-devcontainer"
+  },
   "customizations": {
     "vscode": {
       "extensions": ["dbaeumer.vscode-eslint"]

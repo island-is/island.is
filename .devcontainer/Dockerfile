@@ -14,7 +14,7 @@ SHELL ["/bin/bash", "-o", "pipefail", "-c"]
 RUN addgroup runners && yes '' | adduser --disabled-login runner && adduser runner runners
 # hadolint ignore=DL3008
 RUN \
-  apt-get update &&\
+  apt-get update && \
   apt-get install -y --no-install-recommends git python3 gcc python3 build-essential gcc jq yq && \
   apt-get clean autoclean && rm -rf /var/lib/apt/lists/*
 
@@ -37,9 +37,11 @@ RUN --mount=type=cache,target=./.yarn/cache \
 
 
 
-FROM base-build AS dev
+FROM base-build AS output-devcontainer
 # hadolint ignore=DL3018
-RUN apk add --no-cache zsh
+# RUN apk add --no-cache zsh bash
+# hadolint ignore=DL3008
+RUN apt-get update && apt-get install -y --no-install-recommends zsh bash
 
 WORKDIR /workspaces/island.is
 ENTRYPOINT [ "/bin/zsh" ]
