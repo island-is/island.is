@@ -100,12 +100,18 @@ export const getConclusionAutofill = (
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
             : workingCase.type,
-        validToDate: `${formatDate(validToDate, FormatPattern.ddMMYYYYHHmm)
+        validToDate: `${formatDate(
+          validToDate,
+          FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+        )
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
         isolationEndsBeforeValidToDate,
-        isolationToDate: formatDate(isolationToDate, FormatPattern.ddMMYYYYHHmm)
+        isolationToDate: formatDate(
+          isolationToDate,
+          FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+        )
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),
       })
@@ -148,7 +154,7 @@ export const Ruling = () => {
           introduction: formatMessage(m.sections.introduction.autofill, {
             date: formatDate(
               workingCase.arraignmentDate?.date,
-              FormatPattern.dMMMY,
+              FormatPattern.LONG_DATE_YEAR,
             ),
           }),
           prosecutorDemands: workingCase.demands,

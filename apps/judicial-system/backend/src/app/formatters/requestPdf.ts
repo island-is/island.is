@@ -87,7 +87,7 @@ const constructRestrictionRequestPdf = (
   setLineGap(doc, 8)
   addMediumPlusHeading(
     doc,
-    formatDate(theCase.created, FormatPattern.dMMMY) ?? '',
+    formatDate(theCase.created, FormatPattern.LONG_DATE_YEAR) ?? '',
   )
   setLineGap(doc, 40)
   addMediumPlusHeading(
@@ -256,7 +256,7 @@ const constructInvestigationRequestPdf = (
   setLineGap(doc, 8)
   addMediumPlusHeading(
     doc,
-    formatDate(theCase.created, FormatPattern.dMMMY) ?? '',
+    formatDate(theCase.created, FormatPattern.LONG_DATE_YEAR) ?? '',
   )
   setLineGap(doc, 40)
   addMediumPlusHeading(

@@ -1229,11 +1229,11 @@ export class NotificationService {
             linkEnd: '</a>',
             validToDate: formatDate(
               theCase.validToDate,
-              FormatPattern.dMMMYHHmm,
+              FormatPattern.LONG_DATE_YEAR_TIME,
             ),
             isolationToDate: formatDate(
               theCase.isolationToDate,
-              FormatPattern.dMMMYHHmm,
+              FormatPattern.LONG_DATE_YEAR_TIME,
             ),
           })
         : this.formatMessage(notifications.modified.htmlDefender, {
@@ -1251,7 +1251,7 @@ export class NotificationService {
             linkEnd: '</a>',
             validToDate: formatDate(
               theCase.validToDate,
-              FormatPattern.dMMMYHHmm,
+              FormatPattern.LONG_DATE_YEAR_TIME,
             ),
           }),
       theCase.defenderName,
@@ -1279,10 +1279,13 @@ export class NotificationService {
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
-          validToDate: formatDate(theCase.validToDate, FormatPattern.dMMMYHHmm),
+          validToDate: formatDate(
+            theCase.validToDate,
+            FormatPattern.LONG_DATE_YEAR_TIME,
+          ),
           isolationToDate: formatDate(
             theCase.isolationToDate,
-            FormatPattern.dMMMYHHmm,
+            FormatPattern.LONG_DATE_YEAR_TIME,
           ),
         })
       : this.formatMessage(notifications.modified.html, {
@@ -1293,7 +1296,10 @@ export class NotificationService {
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
-          validToDate: formatDate(theCase.validToDate, FormatPattern.dMMMYHHmm),
+          validToDate: formatDate(
+            theCase.validToDate,
+            FormatPattern.LONG_DATE_YEAR_TIME,
+          ),
         })
 
     const promises = [
@@ -2045,7 +2051,7 @@ export class NotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
         statementDeadline: formatDate(
           statementDeadline,
-          FormatPattern.dMMMYHHmm,
+          FormatPattern.LONG_DATE_YEAR_TIME,
         ),
         linkStart: `<a href="${this.config.clientUrl}${COURT_OF_APPEAL_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -2058,7 +2064,7 @@ export class NotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
         statementDeadline: formatDate(
           statementDeadline,
-          FormatPattern.dMMMYHHmm,
+          FormatPattern.LONG_DATE_YEAR_TIME,
         ),
       },
     )
@@ -2079,7 +2085,7 @@ export class NotificationService {
         courtCaseNumber: theCase.courtCaseNumber,
         statementDeadline: formatDate(
           statementDeadline,
-          FormatPattern.dMMMYHHmm,
+          FormatPattern.LONG_DATE_YEAR_TIME,
         ),
         linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
         linkEnd: '</a>',
@@ -2107,7 +2113,7 @@ export class NotificationService {
           courtCaseNumber: theCase.courtCaseNumber,
           statementDeadline: formatDate(
             statementDeadline,
-            FormatPattern.dMMMYHHmm,
+            FormatPattern.LONG_DATE_YEAR_TIME,
           ),
           linkStart: `<a href="${url}">`,
           linkEnd: '</a>',

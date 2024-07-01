@@ -81,8 +81,10 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
         <AccordionListItem title="Tími handtöku">
           <Text>
             {capitalize(
-              formatDate(workingCase.arrestDate, FormatPattern.ddMMYYYYHHmm) ??
-                '',
+              formatDate(
+                workingCase.arrestDate,
+                FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+              ) ?? '',
             )}
           </Text>
         </AccordionListItem>
@@ -93,11 +95,11 @@ const PoliceRequestAccordionItem: FC<Props> = ({ workingCase }: Props) => {
             {`${capitalize(
               formatDate(
                 workingCase.requestedCourtDate,
-                FormatPattern.ddMMYYYY,
+                FormatPattern.LONG_DAY_DATE_YEAR,
               ) ?? '',
             )} eftir kl. ${formatDate(
               workingCase.requestedCourtDate,
-              FormatPattern.HHmm,
+              FormatPattern.TIME,
             )}`}
           </Text>
         </AccordionListItem>

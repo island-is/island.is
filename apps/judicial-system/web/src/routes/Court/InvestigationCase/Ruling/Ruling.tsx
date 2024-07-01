@@ -74,7 +74,7 @@ const Ruling = () => {
           introduction: formatMessage(m.sections.introduction.autofill, {
             date: formatDate(
               workingCase.arraignmentDate?.date,
-              FormatPattern.dMMMY,
+              FormatPattern.LONG_DATE_YEAR,
             ),
           }),
           prosecutorDemands: workingCase.demands,

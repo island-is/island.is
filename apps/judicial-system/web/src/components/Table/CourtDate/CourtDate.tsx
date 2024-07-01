@@ -41,7 +41,11 @@ const CourtDateWithCourtSessionType: FC<{
         ).substring(0, 3)}
         {'. '}
         {capitalize(
-          formatDate(parseISO(courtDate), FormatPattern.ddMMYYYYHHmm, true),
+          formatDate(
+            parseISO(courtDate),
+            FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+            true,
+          ),
         )}
       </Text>
     </>
@@ -54,12 +58,16 @@ const SimpleCourtDate: FC<{ courtDate: string }> = ({ courtDate }) => {
       <Text>
         <Box component="span">
           {capitalize(
-            formatDate(parseISO(courtDate), FormatPattern.ddMMYYYY, true),
+            formatDate(
+              parseISO(courtDate),
+              FormatPattern.LONG_DAY_DATE_YEAR,
+              true,
+            ),
           )}
         </Box>
       </Text>
       <Text as="span" variant="small">
-        kl. {formatDate(parseISO(courtDate), FormatPattern.HHmm)}
+        kl. {formatDate(parseISO(courtDate), FormatPattern.TIME)}
       </Text>
     </>
   )

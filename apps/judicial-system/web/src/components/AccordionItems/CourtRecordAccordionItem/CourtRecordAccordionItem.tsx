@@ -58,7 +58,7 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
             ? formatMessage(m.sections.timeAndLocation.textOngoing, {
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
-                  FormatPattern.HHmm,
+                  FormatPattern.TIME,
                 ),
               })
             : workingCase.courtStartDate &&
@@ -69,34 +69,34 @@ const CourtRecordAccordionItem: FC<Props> = ({ workingCase }: Props) => {
             ? formatMessage(m.sections.timeAndLocation.textSameDay, {
                 courtStartDate: formatDate(
                   workingCase.courtStartDate,
-                  FormatPattern.dMMMY,
+                  FormatPattern.LONG_DATE_YEAR,
                 ),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
-                  FormatPattern.HHmm,
+                  FormatPattern.TIME,
                 ),
                 courtEndTime: formatDate(
                   workingCase.courtEndTime,
-                  FormatPattern.HHmm,
+                  FormatPattern.TIME,
                 ),
                 courtLocation: workingCase.courtLocation,
               })
             : formatMessage(m.sections.timeAndLocation.text, {
                 courtStartDate: formatDate(
                   workingCase.courtStartDate,
-                  FormatPattern.dMMMY,
+                  FormatPattern.LONG_DATE_YEAR,
                 ),
                 courtStartTime: formatDate(
                   workingCase.courtStartDate,
-                  FormatPattern.HHmm,
+                  FormatPattern.TIME,
                 ),
                 courtEndDate: formatDate(
                   workingCase.courtEndTime,
-                  FormatPattern.dMMMY,
+                  FormatPattern.LONG_DATE_YEAR,
                 ),
                 courtEndTime: formatDate(
                   workingCase.courtEndTime,
-                  FormatPattern.HHmm,
+                  FormatPattern.TIME,
                 ),
                 courtLocation: workingCase.courtLocation,
               })}{' '}

@@ -30,7 +30,7 @@ const InfoCardCaseScheduled: FC<Props> = (props) => {
           value: (
             <>
               <Text variant="eyebrow" marginBottom={1} marginTop={2}>
-                {formatDate(courtDate, FormatPattern.dMMMYHHmm)}
+                {formatDate(courtDate, FormatPattern.LONG_DATE_YEAR_TIME)}
               </Text>
               {<Text>{court.name}</Text>}
               <Text>

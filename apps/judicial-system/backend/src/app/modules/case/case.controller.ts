@@ -232,7 +232,7 @@ export class CaseController {
         ? `${theCase.rulingModifiedHistory}\n\n`
         : ''
       const today = capitalize(
-        formatDate(nowFactory(), FormatPattern.ddMMYYYYHHmm),
+        formatDate(nowFactory(), FormatPattern.LONG_DAY_DATE_YEAR_TIME),
       )
       update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
     }
@@ -258,7 +258,7 @@ export class CaseController {
         ? `${theCase.appealRulingModifiedHistory}\n\n`
         : ''
       const today = capitalize(
-        formatDate(nowFactory(), FormatPattern.ddMMYYYYHHmm),
+        formatDate(nowFactory(), FormatPattern.LONG_DAY_DATE_YEAR_TIME),
       )
       update.appealRulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }

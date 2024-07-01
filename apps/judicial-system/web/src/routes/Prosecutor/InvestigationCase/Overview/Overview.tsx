@@ -143,7 +143,7 @@ export const Overview = () => {
               message={formatMessage(m.openedByDefenderAlert.text, {
                 when: formatDate(
                   workingCase.openedByDefender,
-                  FormatPattern.dMMMYHHmm,
+                  FormatPattern.LONG_DATE_YEAR_TIME,
                 ),
               })}
               type="info"
@@ -209,12 +209,12 @@ export const Overview = () => {
                 value: `${capitalize(
                   formatDate(
                     workingCase.requestedCourtDate,
-                    FormatPattern.ddMMYYYY,
+                    FormatPattern.LONG_DAY_DATE_YEAR,
                     true,
                   ) ?? '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  FormatPattern.HHmm,
+                  FormatPattern.TIME,
                 )}`,
               },
               ...(workingCase.registrar
@@ -246,12 +246,12 @@ export const Overview = () => {
                       value: `${capitalize(
                         formatDate(
                           workingCase.arraignmentDate.date,
-                          FormatPattern.ddMMYYYY,
+                          FormatPattern.LONG_DAY_DATE_YEAR,
                           true,
                         ) ?? '',
                       )} kl. ${formatDate(
                         workingCase.arraignmentDate.date,
-                        FormatPattern.HHmm,
+                        FormatPattern.TIME,
                       )}`,
                     },
                   ]

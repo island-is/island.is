@@ -121,7 +121,7 @@ export const createIndictment = async (
           lowercase(theCase.prosecutorsOffice?.name)
             .replace('lögreglustjórinn', 'lögreglustjórans')
             .replace('saksóknari', 'saksóknara') ?? '',
-        date: formatDate(nowFactory(), FormatPattern.dMMMY),
+        date: formatDate(nowFactory(), FormatPattern.LONG_DATE_YEAR),
       } ?? '',
     ),
   )

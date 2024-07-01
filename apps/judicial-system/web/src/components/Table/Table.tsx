@@ -158,7 +158,7 @@ const Table: FC<TableProps> = (props) => {
                 <Text fontWeight="medium" variant="small">
                   {`${formatMessage(strings.hearing)} ${formatDate(
                     parseISO(theCase.courtDate),
-                    FormatPattern.DDMMYYYYHHmm,
+                    FormatPattern.SHORT_DATE_YEAR_TIME,
                   )}`}
                 </Text>
               )

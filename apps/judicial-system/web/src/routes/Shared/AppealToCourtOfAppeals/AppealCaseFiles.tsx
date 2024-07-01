@@ -155,7 +155,7 @@ const AppealFiles = () => {
                       workingCase.appealedByRole === UserRole.PROSECUTOR,
                     date: formatDate(
                       workingCase.appealedDate,
-                      FormatPattern.dMMMYHHmm,
+                      FormatPattern.LONG_DATE_YEAR_TIME,
                     ),
                   })}
             </Text>

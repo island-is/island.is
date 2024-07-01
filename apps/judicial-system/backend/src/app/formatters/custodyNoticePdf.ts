@@ -99,7 +99,7 @@ const constructCustodyNoticePdf = (
     doc,
     `${theCase.court?.name}, ${formatDate(
       theCase.courtStartDate,
-      FormatPattern.dMMMY,
+      FormatPattern.LONG_DATE_YEAR,
     )}`,
     'Helvetica',
   )
@@ -107,19 +107,19 @@ const constructCustodyNoticePdf = (
   addNormalText(
     doc,
     `Úrskurður kveðinn upp ${
-      formatDate(theCase.rulingDate, FormatPattern.dMMMYHHmm)?.replace(
-        ' kl.',
-        ', kl.',
-      ) ?? '?'
+      formatDate(
+        theCase.rulingDate,
+        FormatPattern.LONG_DATE_YEAR_TIME,
+      )?.replace(' kl.', ', kl.') ?? '?'
     }`,
   )
   addNormalText(
     doc,
     `Úrskurður rennur út ${
-      formatDate(theCase.validToDate, FormatPattern.dMMMYHHmm)?.replace(
-        ' kl.',
-        ', kl.',
-      ) ?? '?'
+      formatDate(
+        theCase.validToDate,
+        FormatPattern.LONG_DATE_YEAR_TIME,
+      )?.replace(' kl.', ', kl.') ?? '?'
     }`,
   )
   addEmptyLines(doc)
@@ -165,7 +165,10 @@ const constructCustodyNoticePdf = (
     )
 
     if (theCase.isCustodyIsolation) {
-      const isolationPeriod = formatDate(theCase.isolationToDate, FormatPattern.ddMMYYYYHHmm)
+      const isolationPeriod = formatDate(
+        theCase.isolationToDate,
+        FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+      )
         ?.replace('dagur,', 'dagsins')
         ?.replace(' kl.', ', kl.')
 

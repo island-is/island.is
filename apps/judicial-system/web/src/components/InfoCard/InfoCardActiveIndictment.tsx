@@ -23,7 +23,7 @@ const InfoCardActiveIndictment = () => {
       data={[
         {
           title: formatMessage(strings.indictmentCreated),
-          value: formatDate(workingCase.created, FormatPattern.dMMMY),
+          value: formatDate(workingCase.created, FormatPattern.LONG_DATE_YEAR),
         },
         {
           title: formatMessage(strings.prosecutor),

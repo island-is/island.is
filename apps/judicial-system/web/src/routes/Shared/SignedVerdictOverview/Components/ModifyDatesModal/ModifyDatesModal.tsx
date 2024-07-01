@@ -65,8 +65,10 @@ export const createCaseModifiedExplanation = (
     : ''
 
   return `${history}${formatMessage(m.sections.modifyDatesInfo.explanation, {
-    date: capitalize(formatDate(now, FormatPattern.ddMMYYYY, true) || ''),
-    time: formatDate(now, FormatPattern.HHmm),
+    date: capitalize(
+      formatDate(now, FormatPattern.LONG_DAY_DATE_YEAR, true) || '',
+    ),
+    time: formatDate(now, FormatPattern.TIME),
     userName: userName ?? '',
     userTitle: userTitle ?? '',
     institutionName: institutionName ?? '',
@@ -106,10 +108,10 @@ const getModificationSuccessText = (
     return formatMessage(m.sections.modifyDatesModal.travelBanSuccessText, {
       date: `${formatDate(
         modifiedValidToDate?.value,
-        FormatPattern.ddMMYYYY,
+        FormatPattern.LONG_DAY_DATE_YEAR,
       )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
         modifiedValidToDate?.value,
-        FormatPattern.HHmm,
+        FormatPattern.TIME,
       )}`,
       userRole,
     })
@@ -120,10 +122,10 @@ const getModificationSuccessText = (
         caseType: workingCase.type,
         date: `${formatDate(
           modifiedValidToDate?.value,
-          FormatPattern.ddMMYYYY,
+          FormatPattern.LONG_DAY_DATE_YEAR,
         )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
           modifiedValidToDate?.value,
-          FormatPattern.HHmm,
+          FormatPattern.TIME,
         )}`,
       },
     )
@@ -135,10 +137,10 @@ const getModificationSuccessText = (
           caseType: workingCase.type,
           date: `${formatDate(
             modifiedValidToDate?.value,
-            FormatPattern.ddMMYYYY,
+            FormatPattern.LONG_DAY_DATE_YEAR,
           )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
             modifiedValidToDate?.value,
-            FormatPattern.HHmm,
+            FormatPattern.TIME,
           )}`,
         },
       )
@@ -150,10 +152,10 @@ const getModificationSuccessText = (
         {
           date: `${formatDate(
             modifiedIsolationToDate?.value,
-            FormatPattern.ddMMYYYY,
+            FormatPattern.LONG_DAY_DATE_YEAR,
           )?.replace('dagur,', 'dagsins')} kl. ${formatDate(
             modifiedIsolationToDate?.value,
-            FormatPattern.HHmm,
+            FormatPattern.TIME,
           )}`,
         },
       )

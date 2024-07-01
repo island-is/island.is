@@ -154,7 +154,7 @@ const ActiveCases: FC<Props> = ({ cases, isDeletingCase, onDeleteCase }) => {
                 <Text fontWeight={'medium'} variant="small">
                   {`${formatMessage(tableStrings.hearing)} ${formatDate(
                     parseISO(theCase.courtDate),
-                    FormatPattern.DDMMYYYYHHmm,
+                    FormatPattern.SHORT_DATE_YEAR_TIME,
                   )}`}
                 </Text>
               )

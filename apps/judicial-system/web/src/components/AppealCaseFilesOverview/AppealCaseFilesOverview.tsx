@@ -142,7 +142,10 @@ const AppealCaseFilesOverview = () => {
                 >
                   <Box className={styles.childContainer}>
                     <Text whiteSpace="nowrap">
-                      {formatDate(file.created, FormatPattern.DDMMYYYYHHmm)}
+                      {formatDate(
+                        file.created,
+                        FormatPattern.SHORT_DATE_YEAR_TIME,
+                      )}
                     </Text>
                     {file.category &&
                       ![

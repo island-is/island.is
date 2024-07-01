@@ -101,7 +101,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
-            FormatPattern.dMMMYHHmm,
+            FormatPattern.LONG_DATE_YEAR_TIME,
           )}. Hægt er að nálgast gögn málsins á <a href="http://localhost:4200/landsrettur/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
@@ -111,7 +111,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
-            FormatPattern.dMMMYHHmm,
+            FormatPattern.LONG_DATE_YEAR_TIME,
           )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
@@ -121,7 +121,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
-            FormatPattern.dMMMYHHmm,
+            FormatPattern.LONG_DATE_YEAR_TIME,
           )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/verjandi/krafa/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
@@ -133,7 +133,7 @@ describe('InternalNotificationController - Send appeal received by court notific
         [prosecutorMobileNumber],
         `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
           getStatementDeadline(receivedDate),
-          FormatPattern.dMMMYHHmm,
+          FormatPattern.LONG_DATE_YEAR_TIME,
         )}. Sjá nánar á rettarvorslugatt.island.is`,
       )
     })
@@ -153,7 +153,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
-            FormatPattern.dMMMYHHmm,
+            FormatPattern.LONG_DATE_YEAR_TIME,
           )}. Hægt er að skila greinargerð og nálgast gögn málsins á <a href="http://localhost:4200/krafa/yfirlit/${caseId}">yfirlitssíðu málsins í Réttarvörslugátt</a>.`,
         }),
       )
@@ -163,7 +163,7 @@ describe('InternalNotificationController - Send appeal received by court notific
           subject: `Upplýsingar vegna kæru í máli ${courtCaseNumber}`,
           html: `Kæra í máli ${courtCaseNumber} hefur borist Landsrétti. Frestur til að skila greinargerð er til ${formatDate(
             getStatementDeadline(receivedDate),
-            FormatPattern.dMMMYHHmm,
+            FormatPattern.LONG_DATE_YEAR_TIME,
           )}. Hægt er að skila greinargerð og nálgast gögn málsins hjá Héraðsdómi Reykjavíkur ef þau hafa ekki þegar verið afhent.`,
         }),
       )

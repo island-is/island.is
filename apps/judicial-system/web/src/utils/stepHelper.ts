@@ -65,7 +65,7 @@ export const fileSize = (bytes?: number) => {
 
 export const getAppealEndDate = (rulingDate: string) => {
   const appealEndDate = addDays(parseISO(rulingDate), 3)
-  return formatDate(appealEndDate, FormatPattern.dMMMYHHmm)
+  return formatDate(appealEndDate, FormatPattern.LONG_DATE_YEAR_TIME)
 }
 
 export const isBusiness = (nationalId?: string | null) => {
@@ -86,7 +86,10 @@ export const createCaseResentExplanation = (
     workingCase.caseResentExplanation
       ? `${workingCase.caseResentExplanation}<br/><br/>`
       : ''
-  }Krafa endursend ${formatDate(now, FormatPattern.dMMMYHHmm)} - ${explanation}`
+  }Krafa endursend ${formatDate(
+    now,
+    FormatPattern.LONG_DATE_YEAR_TIME,
+  )} - ${explanation}`
 }
 
 export const hasSentNotification = (

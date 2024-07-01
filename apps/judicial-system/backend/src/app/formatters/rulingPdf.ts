@@ -59,7 +59,7 @@ const constructRulingPdf = (
     doc,
     `${title} ${formatDate(
       theCase.rulingDate ?? nowFactory(),
-      FormatPattern.dMMMY,
+      FormatPattern.LONG_DATE_YEAR,
     )}`,
   )
   setLineGap(doc, 30)

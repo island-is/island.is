@@ -42,7 +42,7 @@ const CaseDates: FC<Props> = (props) => {
               caseType: isTravelBan ? CaseType.TRAVEL_BAN : workingCase.type,
               date: formatDate(
                 workingCase.validToDate,
-                FormatPattern.dMMMYHHmm,
+                FormatPattern.LONG_DATE_YEAR_TIME,
               ),
             })}
           </Text>
@@ -60,7 +60,7 @@ const CaseDates: FC<Props> = (props) => {
                     : workingCase.type,
                   date: formatDate(
                     workingCase.validToDate,
-                    FormatPattern.dMMMYHHmm,
+                    FormatPattern.LONG_DATE_YEAR_TIME,
                   ),
                 })}
               </Text>
@@ -69,7 +69,7 @@ const CaseDates: FC<Props> = (props) => {
                   {formatMessage(caseDates.isolationValidTo, {
                     date: formatDate(
                       workingCase.isolationToDate,
-                      FormatPattern.dMMMYHHmm,
+                      FormatPattern.LONG_DATE_YEAR_TIME,
                     ),
                   })}
                 </Text>

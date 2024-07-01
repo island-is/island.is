@@ -20,7 +20,7 @@ const RulingDateLabel: FC<Props> = ({ rulingDate }) => {
   return (
     <Text as="h5" variant="h5">
       {formatMessage(strings.text, {
-        courtEndTime: formatDate(rulingDate, FormatPattern.dMMMYHHmm),
+        courtEndTime: formatDate(rulingDate, FormatPattern.LONG_DATE_YEAR_TIME),
       })}
     </Text>
   )

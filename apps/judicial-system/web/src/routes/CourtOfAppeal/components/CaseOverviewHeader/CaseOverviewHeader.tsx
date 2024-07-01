@@ -98,7 +98,10 @@ const CaseOverviewHeader: FC<Props> = (props) => {
                 <AlertMessage
                   message={formatMessage(strings.appealResultOpenedBy, {
                     userRole: event.userRole as UserRole,
-                    when: formatDate(event.created, FormatPattern.dMMMYHHmm),
+                    when: formatDate(
+                      event.created,
+                      FormatPattern.LONG_DATE_YEAR_TIME,
+                    ),
                   })}
                   type="info"
                 />

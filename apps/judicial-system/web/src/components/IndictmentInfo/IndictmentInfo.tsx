@@ -54,10 +54,10 @@ const IndictmentInfo: FC<Props> = ({
           {formatMessage(strings.dateAndPlace, {
             dateAndPlace:
               place && date
-                ? `${place} - ${formatDate(date, FormatPattern.dMMMY)}`
+                ? `${place} - ${formatDate(date, FormatPattern.LONG_DATE_YEAR)}`
                 : place
                 ? `${place}`
-                : `${formatDate(date, FormatPattern.dMMMY)}`,
+                : `${formatDate(date, FormatPattern.LONG_DATE_YEAR)}`,
           })}
         </Text>
       )}

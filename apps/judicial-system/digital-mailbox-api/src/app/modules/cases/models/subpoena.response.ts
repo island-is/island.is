@@ -76,13 +76,16 @@ export class SubpoenaResponse {
           {
             label: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
             items: [
-              [t.date, formatDate(subpoenaCreatedDate, FormatPattern.dMMMY)],
+              [
+                t.date,
+                formatDate(subpoenaCreatedDate, FormatPattern.LONG_DATE_YEAR),
+              ],
               [t.institution, 'Lögreglustjórinn á höfuðborgarsvæðinu'],
               [t.prosecutor, internalCase.prosecutor?.name],
               [t.accused, defendantInfo?.name],
               [
                 t.arraignmentDate,
-                formatDate(arraignmentDate, FormatPattern.dMMMYHHmm),
+                formatDate(arraignmentDate, FormatPattern.LONG_DATE_YEAR_TIME),
               ],
               [t.location, subpoenaDateLog?.location ?? ''],
               [t.courtCeremony, t.parliamentaryConfirmation],

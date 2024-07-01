@@ -201,7 +201,7 @@ export const Users = () => {
                     {user.latestLogin
                       ? `${formatDate(
                           user.latestLogin,
-                          FormatPattern.yyyyMMddHHmm,
+                          FormatPattern.SHORT_YEAR_DATE_TIME,
                         )} - ${user.loginCount}`
                       : ''}
                   </Text>

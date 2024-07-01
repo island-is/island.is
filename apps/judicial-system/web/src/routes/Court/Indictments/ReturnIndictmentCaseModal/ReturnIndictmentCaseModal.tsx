@@ -62,7 +62,7 @@ const ReturnIndictmentModal: FC<Props> = ({
       strings.prependedReturnedExplanation,
       {
         date:
-          formatDate(now, FormatPattern.dMMMYHHmm)?.replace(
+          formatDate(now, FormatPattern.LONG_DATE_YEAR_TIME)?.replace(
             'dagur,',
             'daginn',
           ) ?? '',

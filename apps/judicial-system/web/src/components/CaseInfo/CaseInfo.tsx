@@ -134,7 +134,7 @@ export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
             {formatMessage(strings.rulingDate, {
               rulingDate: `${formatDate(
                 workingCase.rulingDate,
-                FormatPattern.dMMMY,
+                FormatPattern.LONG_DATE_YEAR,
               )}`,
             })}
           </Text>

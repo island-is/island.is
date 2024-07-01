@@ -295,7 +295,7 @@ export const getIncidentDescription = (
   if (crimeScene) {
     incidentLocation = crimeScene.place ?? ''
     incidentDate =
-      formatDate(crimeScene.date, FormatPattern.ddMMYYYY)?.replace(
+      formatDate(crimeScene.date, FormatPattern.LONG_DAY_DATE_YEAR)?.replace(
         'dagur,',
         'daginn',
       ) ?? ''

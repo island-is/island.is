@@ -49,7 +49,7 @@ export class CaseResponse {
               [t.address, defendant.address],
               [
                 t.subpoenaSent,
-                formatDate(subpoenaCreatedDate, FormatPattern.dMMMY),
+                formatDate(subpoenaCreatedDate, FormatPattern.LONG_DATE_YEAR),
               ],
             ].map((item) => ({
               label: item[0] ?? '',

@@ -93,7 +93,7 @@ const Overview = () => {
                 {
                   when: formatDate(
                     workingCase.openedByDefender,
-                    FormatPattern.dMMMYHHmm,
+                    FormatPattern.LONG_DATE_YEAR_TIME,
                   ),
                 },
               )}
@@ -137,12 +137,12 @@ const Overview = () => {
                 value: `${capitalize(
                   formatDate(
                     workingCase.requestedCourtDate,
-                    FormatPattern.ddMMYYYY,
+                    FormatPattern.LONG_DAY_DATE_YEAR,
                     true,
                   ) ?? '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  FormatPattern.HHmm,
+                  FormatPattern.TIME,
                 )}`,
               },
               {

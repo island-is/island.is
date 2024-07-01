@@ -134,7 +134,7 @@ export class EventService {
                 : formatDate(
                     DateLog.courtDate(theCase.dateLogs)?.date ??
                       DateLog.arraignmentDate(theCase.dateLogs)?.date,
-                    FormatPattern.DDMMYYYYHHmm,
+                    FormatPattern.SHORT_DATE_YEAR_TIME,
                   ) ?? 'er ekki skráð'
             }`
           : ''

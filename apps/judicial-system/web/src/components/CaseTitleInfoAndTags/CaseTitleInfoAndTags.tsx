@@ -53,7 +53,7 @@ const CaseTitleInfoAndTags: FC = () => {
                         workingCase.appealedByRole === UserRole.PROSECUTOR,
                       appealedDate: `${formatDate(
                         workingCase.appealedDate,
-                        FormatPattern.dMMMYHHmm,
+                        FormatPattern.LONG_DATE_YEAR_TIME,
                       )}`,
                     })}
               </Text>
@@ -71,7 +71,7 @@ const CaseTitleInfoAndTags: FC = () => {
                       {
                         appealReceived: formatDate(
                           workingCase.appealReceivedByCourtDate,
-                          FormatPattern.dMMMYHHmm,
+                          FormatPattern.LONG_DATE_YEAR_TIME,
                         ),
                       },
                     )}

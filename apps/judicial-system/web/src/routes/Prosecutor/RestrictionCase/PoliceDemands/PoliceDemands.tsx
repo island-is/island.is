@@ -88,7 +88,7 @@ export const getDemandsAutofill = (
     court: props.courtName?.replace('Héraðsdómur', 'Héraðsdóms'),
     requestedValidToDate: formatDate(
       props.requestedValidToDate,
-      FormatPattern.ddMMYYYYHHmm,
+      FormatPattern.LONG_DAY_DATE_YEAR_TIME,
     )
       ?.replace('dagur,', 'dagsins')
       ?.replace(' kl.', ', kl.'),
@@ -211,7 +211,7 @@ export const PoliceDemands = () => {
                   <Text as="span" fontWeight="semiBold">
                     {formatDate(
                       workingCase.parentCase.validToDate,
-                      FormatPattern.ddMMYYYYHHmm,
+                      FormatPattern.LONG_DAY_DATE_YEAR_TIME,
                     )?.replace('dagur,', 'dagsins')}
                   </Text>
                 </Text>

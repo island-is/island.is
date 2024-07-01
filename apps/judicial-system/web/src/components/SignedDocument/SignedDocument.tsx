@@ -25,7 +25,7 @@ const SignedDocument = (props: Props) => {
         <Text>
           {formatMessage(signedDocument, {
             date: formatDate(signingDate),
-            time: formatDate(signingDate, FormatPattern.HHmm),
+            time: formatDate(signingDate, FormatPattern.TIME),
           })}
         </Text>
         <Text variant="small">{signatory}</Text>
