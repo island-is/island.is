@@ -8,7 +8,11 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { GetSchoolsApi, GetTypesApi, OptionsApi } from '../../dataProviders'
+import {
+  GetKeyOptionsTypesApi,
+  GetSchoolsApi,
+  OptionsApi,
+} from '../../dataProviders'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 
 export const externalDataSubSection = buildSubSection({
@@ -38,8 +42,8 @@ export const externalDataSubSection = buildSubSection({
           subTitle: newPrimarySchoolMessages.pre.userProfileInformationSubTitle,
         }),
         buildDataProviderItem({
-          provider: GetTypesApi,
-          title: 'Type',
+          provider: GetKeyOptionsTypesApi,
+          title: 'KeyOptionsTypes',
         }),
         buildDataProviderItem({
           provider: OptionsApi,
@@ -47,7 +51,7 @@ export const externalDataSubSection = buildSubSection({
         }),
         buildDataProviderItem({
           provider: GetSchoolsApi,
-          title: 'schools',
+          title: 'Schools',
         }),
       ],
     }),

@@ -77,7 +77,7 @@
     },
     "/keyOptions/types": {
       "get": {
-        "operationId": "getTypes",
+        "operationId": "getKeyOptionsTypes",
         "summary": "Get list of types of key options",
         "description": "Get types.",
         "parameters": [],
