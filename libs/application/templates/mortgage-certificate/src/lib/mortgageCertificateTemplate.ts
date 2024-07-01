@@ -147,7 +147,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
