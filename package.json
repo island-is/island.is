@@ -315,6 +315,7 @@
     "@anatine/esbuild-decorators": "0.2.4",
     "@anatine/esbuildnx": "0.2.0",
     "@anev/ts-mountebank": "^1.6.0",
+    "@aws-sdk/client-ssm": "3.606.0",
     "@babel/core": "7.22.5",
     "@babel/plugin-proposal-decorators": "7.22.5",
     "@babel/plugin-transform-class-properties": "7.22.5",
