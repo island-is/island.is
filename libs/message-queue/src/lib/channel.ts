@@ -1,5 +1,6 @@
 import { SNS, SQS } from 'aws-sdk'
 import { Consumer } from 'sqs-consumer'
+import { Message } from '@aws-sdk/client-sqs'
 
 import { logger } from '@island.is/logging'
 
@@ -74,14 +75,14 @@ class Channel {
     logger.info(`Set queue ${dlQueueId} as dead letter queue for ${queueId}`)
   }
 
-  async bindQueue<RoutingKey>({
+  async bindQueue<K>({
     queueId,
     exchangeId,
     routingKeys = [],
   }: {
     queueId: string
     exchangeId: string
-    routingKeys?: RoutingKey[]
+    routingKeys?: K[]
   }) {
     const { QueueArn } = await this.getQueueAttributes({
       queueId,
@@ -138,25 +139,24 @@ class Channel {
     return SubscriptionArn
   }
 
-  consume<Message, RoutingKey>({
+  consume<M, K>({
     queueId,
     messageHandler,
     errorHandler,
   }: {
     queueId: string
-    messageHandler: (message: Message, routingKey: RoutingKey) => Promise<void>
+    messageHandler: (message: M, routingKey: K) => Promise<void>
     errorHandler?: (error: any) => void // eslint-disable-line  @typescript-eslint/no-explicit-any
   }) {
     const parseMessage = (
-      sqsMessage: AWS.SQS.Types.Message,
+      sqsMessage: Message,
     ): {
-      message: Message
-      routingKey: RoutingKey
+      message: M
+      routingKey: K
     } => {
       if (!sqsMessage.Body) {
-        throw new Error(
-          `No Body found on sqs message ${JSON.stringify(sqsMessage)}`,
-        )
+        logger.error(`No Body found on sqs message!`, sqsMessage)
+        throw new Error(`No Body found on sqs message!`)
       }
       const parsedBody = JSON.parse(sqsMessage.Body)
       const { Message, MessageAttributes } = parsedBody
@@ -204,14 +204,14 @@ class Channel {
     return consumer
   }
 
-  async publish<Message, RoutingKey extends string>({
+  async publish<M, K extends string>({
     exchangeId,
     message,
     routingKey = undefined,
   }: {
     exchangeId: string
-    message: Message
-    routingKey?: RoutingKey
+    message: M
+    routingKey?: K
   }) {
     const params: AWS.SNS.Types.PublishInput = {
       Message: JSON.stringify(message),
