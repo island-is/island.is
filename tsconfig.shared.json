@@ -11,15 +11,8 @@
     "importHelpers": true,
     "target": "es2015",
     "module": "esnext",
-    "typeRoots": [
-      "node_modules/@types",
-      "libs/shared/types/src/lib"
-    ],
-    "lib": [
-      "es2019",
-      "dom",
-      "dom.iterable"
-    ],
+    "typeRoots": ["node_modules/@types", "libs/shared/types/src/lib"],
+    "lib": ["es2019", "dom", "dom.iterable"],
     "skipLibCheck": true,
     "skipDefaultLibCheck": true,
     "allowSyntheticDefaultImports": true,
@@ -27,10 +20,7 @@
     "baseUrl": ".",
     "strict": true
   },
-  "exclude": [
-    "node_modules",
-    "tmp"
-  ],
+  "exclude": ["node_modules", "tmp"],
   "references": [
     {
       "path": "./tsconfig.base.json"
