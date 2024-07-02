@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApplicantTypes } from '../../../../enums/applicantTypes'
 
 export class ApplicationApplicantDto {
@@ -11,7 +11,7 @@ export class ApplicationApplicantDto {
   @ApiProperty({ type: Date })
   modified!: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   lastLogin?: Date
 
   @ApiProperty()

@@ -1,60 +1,60 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 export class UpdateFieldSettingsDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   minValue?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxValue?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   minLength?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxLength?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   minDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxDate?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   minAmount?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxAmount?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   year?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   hasLink?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   url?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   buttonText?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   hasPropertyInput?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   hasPropertyList?: boolean
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   listType?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   fileTypes?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   fileMaxSize?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxFiles?: number
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   timeInterval?: string
 }

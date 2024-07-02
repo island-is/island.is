@@ -1,26 +1,26 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { ApplicationSectionDto } from '../../../sections/models/dto/applicationSection.dto'
 import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
 
 export class ApplicationDto {
-  @ApiProperty()
+  @ApiPropertyOptional()
   applicationId?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: OrganizationDto })
   organization?: OrganizationDto
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   formId?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional()
   formUrlName?: string
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: Date })
   created?: Date
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: Date })
   modified?: Date
 
-  @ApiProperty({ type: [ApplicationSectionDto] })
+  @ApiPropertyOptional({ type: [ApplicationSectionDto] })
   sections?: ApplicationSectionDto[]
 }

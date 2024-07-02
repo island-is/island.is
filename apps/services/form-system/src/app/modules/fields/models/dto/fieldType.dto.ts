@@ -1,12 +1,13 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldSettingsDto } from '../../../fieldSettings/models/dto/fieldSettings.dto'
+import { FieldTypes } from '../../../../enums/fieldTypes'
 
 export class FieldTypeDto {
   @ApiProperty()
   id!: string
 
-  @ApiProperty()
+  @ApiProperty({ enum: FieldTypes })
   type!: string
 
   @ApiProperty({ type: LanguageType })
@@ -18,6 +19,6 @@ export class FieldTypeDto {
   @ApiProperty()
   isCommon!: boolean
 
-  @ApiProperty({ type: FieldSettingsDto })
+  @ApiPropertyOptional({ type: FieldSettingsDto })
   fieldSettings?: FieldSettingsDto
 }

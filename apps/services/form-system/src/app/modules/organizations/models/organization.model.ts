@@ -33,7 +33,7 @@ export class Organization extends Model<Organization> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @CreatedAt

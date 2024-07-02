@@ -29,7 +29,7 @@ export class ListType extends Model<ListType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @Column({
@@ -37,7 +37,7 @@ export class ListType extends Model<ListType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
   @Column({

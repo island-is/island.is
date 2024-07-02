@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FormApplicantDto } from '../../../applicants/models/dto/formApplicant.dto'
 import { ScreenDto } from '../../../screens/models/dto/screen.dto'
@@ -19,13 +19,13 @@ export class FormDto {
   @ApiProperty()
   urlName!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
   @ApiProperty()
@@ -40,21 +40,21 @@ export class FormDto {
   @ApiProperty()
   stopProgressOnValidatingScreen!: boolean
 
-  @ApiProperty({ type: LanguageType })
+  @ApiPropertyOptional({ type: LanguageType })
   completedMessage?: LanguageType
 
-  @ApiProperty({ type: [FormCertificationTypeDto] })
+  @ApiPropertyOptional({ type: [FormCertificationTypeDto] })
   certificationTypes?: FormCertificationTypeDto[]
 
-  @ApiProperty({ type: [FormApplicantDto] })
+  @ApiPropertyOptional({ type: [FormApplicantDto] })
   applicants?: FormApplicantDto[]
 
-  @ApiProperty({ type: [SectionDto] })
+  @ApiPropertyOptional({ type: [SectionDto] })
   sections?: SectionDto[]
 
-  @ApiProperty({ type: [ScreenDto] })
+  @ApiPropertyOptional({ type: [ScreenDto] })
   screens?: ScreenDto[]
 
-  @ApiProperty({ type: [FieldDto] })
+  @ApiPropertyOptional({ type: [FieldDto] })
   fields?: FieldDto[]
 }

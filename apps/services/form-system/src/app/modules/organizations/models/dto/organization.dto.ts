@@ -3,7 +3,7 @@ import { Organization } from '../organization.model'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class OrganizationDto {
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @ApiProperty()

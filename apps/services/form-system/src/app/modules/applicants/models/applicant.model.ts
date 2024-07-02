@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CreationOptional } from 'sequelize'
 import {
   Column,
@@ -35,7 +35,7 @@ export class Applicant extends Model<Applicant> {
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   lastLogin?: Date
 
   @Column({

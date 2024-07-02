@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { UpdateFieldSettingsDto } from '../../../fieldSettings/models/dto/updateFieldSettings.dto'
+import { FieldTypes } from '../../../../enums/fieldTypes'
 
 export class UpdateFieldDto {
   @ApiProperty({ type: LanguageType })
@@ -15,6 +16,6 @@ export class UpdateFieldDto {
   @ApiProperty({ type: UpdateFieldSettingsDto })
   fieldSettings?: UpdateFieldSettingsDto
 
-  @ApiProperty()
+  @ApiProperty({ enum: FieldTypes })
   fieldType!: string
 }

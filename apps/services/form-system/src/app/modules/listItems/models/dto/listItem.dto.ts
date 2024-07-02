@@ -1,14 +1,14 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class ListItemDto {
   @ApiProperty()
   id!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   label!: LanguageType
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: LanguageType })
   description?: LanguageType
 
   @ApiProperty()

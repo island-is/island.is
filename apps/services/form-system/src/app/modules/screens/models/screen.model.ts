@@ -30,7 +30,7 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @CreatedAt

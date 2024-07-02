@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -36,7 +36,7 @@ export class ListItem extends Model<ListItem> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   label!: LanguageType
 
   @Column({
@@ -44,7 +44,7 @@ export class ListItem extends Model<ListItem> {
     allowNull: true,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiPropertyOptional({ type: LanguageType })
   description?: LanguageType
 
   @Column({

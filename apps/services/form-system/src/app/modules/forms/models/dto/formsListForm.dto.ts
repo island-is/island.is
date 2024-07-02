@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class FormsListFormDto {
@@ -11,13 +11,13 @@ export class FormsListFormDto {
   @ApiProperty()
   urlName!: string
 
-  @ApiProperty()
+  @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   created!: Date
 
-  @ApiProperty()
+  @ApiProperty({ type: Date })
   modified!: Date
 
   @ApiProperty()

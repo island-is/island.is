@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { CertificationTypes } from '../../../../enums/certificationTypes'
 
 export class FormCertificationTypeDto {
   @ApiProperty()
@@ -11,6 +12,6 @@ export class FormCertificationTypeDto {
   @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
-  @ApiProperty()
+  @ApiProperty({ enum: CertificationTypes })
   type!: string
 }

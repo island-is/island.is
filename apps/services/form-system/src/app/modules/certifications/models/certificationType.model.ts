@@ -30,7 +30,7 @@ export class CertificationType extends Model<CertificationType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @Column({
@@ -38,7 +38,7 @@ export class CertificationType extends Model<CertificationType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
   @Column({

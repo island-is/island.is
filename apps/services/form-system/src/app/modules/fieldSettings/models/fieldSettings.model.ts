@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CreationOptional } from 'sequelize'
 import {
   Column,
@@ -38,102 +38,102 @@ export class FieldSettings extends Model<FieldSettings> {
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   minValue?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxValue?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   minLength?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxLength?: number | null
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   minDate?: Date | null
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxDate?: Date | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   minAmount?: string | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxAmount?: string | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   year?: number | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   hasLink?: boolean | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   url?: string | null
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   buttonText?: string | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   hasPropertyInput?: boolean | null
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   hasPropertyList?: boolean | null
 
   @HasMany(() => ListItem)
-  @ApiProperty({ type: [ListItem] })
+  @ApiPropertyOptional({ type: [ListItem] })
   list?: ListItem[] | null
 
   @Column({
@@ -141,28 +141,28 @@ export class FieldSettings extends Model<FieldSettings> {
     allowNull: true,
     values: Object.values(ListTypes),
   })
-  @ApiProperty({ enum: ListTypes })
+  @ApiPropertyOptional({ enum: ListTypes })
   listType?: string | null
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   fileTypes?: string | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   fileMaxSize?: number | null
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  @ApiProperty()
+  @ApiPropertyOptional()
   maxFiles?: number | null
 
   @Column({
@@ -170,7 +170,7 @@ export class FieldSettings extends Model<FieldSettings> {
     allowNull: true,
     values: Object.values(TimeIntervals),
   })
-  @ApiProperty({ enum: TimeIntervals })
+  @ApiPropertyOptional({ enum: TimeIntervals })
   timeInterval?: string | null
 
   @ForeignKey(() => Field)

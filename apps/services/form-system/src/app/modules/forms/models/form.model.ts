@@ -11,7 +11,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Section } from '../../sections/models/section.model'
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicant } from '../../applicants/models/formApplicant.model'
@@ -46,7 +46,7 @@ export class Form extends Model<Form> {
   urlName!: string
 
   @Column
-  @ApiProperty()
+  @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
 
   @CreatedAt
@@ -93,7 +93,7 @@ export class Form extends Model<Form> {
     allowNull: true,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
+  @ApiPropertyOptional({ type: LanguageType })
   completedMessage?: LanguageType
 
   @HasMany(() => Section)
@@ -101,7 +101,7 @@ export class Form extends Model<Form> {
   sections!: Section[]
 
   @HasMany(() => FormApplicant)
-  @ApiProperty({ type: [FormApplicant] })
+  @ApiPropertyOptional({ type: [FormApplicant] })
   applicants?: FormApplicant[]
 
   @ForeignKey(() => Organization)

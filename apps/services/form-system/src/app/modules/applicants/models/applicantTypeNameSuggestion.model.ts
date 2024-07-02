@@ -37,7 +37,7 @@ export class ApplicantTypeNameSuggestion extends Model<ApplicantTypeNameSuggesti
     allowNull: false,
     defaultValue: () => new LanguageType().toString(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   nameSuggestion!: LanguageType
 
   @Column({

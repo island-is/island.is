@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { SectionTypes } from '../../../../enums/sectionTypes'
 
 export class SectionDto {
   @ApiProperty()
@@ -8,12 +9,12 @@ export class SectionDto {
   @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
-  @ApiProperty()
+  @ApiProperty({ enum: SectionTypes })
   sectionType!: string
 
   @ApiProperty()
   displayOrder!: number
 
-  @ApiProperty({ type: LanguageType })
+  @ApiPropertyOptional({ type: LanguageType })
   waitingText?: LanguageType
 }

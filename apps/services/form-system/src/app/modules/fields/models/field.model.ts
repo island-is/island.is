@@ -1,4 +1,4 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CreationOptional } from 'sequelize'
 import {
   Column,
@@ -31,7 +31,7 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @CreatedAt
@@ -55,7 +55,7 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty()
+  @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
   @Column({
@@ -83,7 +83,7 @@ export class Field extends Model<Field> {
   screenId!: string
 
   @HasOne(() => FieldSettings)
-  @ApiProperty({ type: FieldSettings })
+  @ApiPropertyOptional({ type: FieldSettings })
   fieldSettings?: FieldSettings
 
   @ForeignKey(() => FieldType)
