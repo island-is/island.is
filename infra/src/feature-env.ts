@@ -1,5 +1,5 @@
 import yargs from 'yargs'
-import { S3 } from '@aws-sdk/client-s3';
+import { S3 } from '@aws-sdk/client-s3'
 import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import {
