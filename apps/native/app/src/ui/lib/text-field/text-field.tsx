@@ -35,7 +35,7 @@ const Label = styled.Text`
   margin-bottom: 4px;
 `
 
-const Input = styled.TextInput`
+const Input = styled(TextInput)`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;

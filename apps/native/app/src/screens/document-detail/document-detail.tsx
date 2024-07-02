@@ -5,14 +5,12 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, StyleSheet, View } from 'react-native'
 import {
-  Navigation,
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
@@ -28,10 +26,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
-import {
-  ButtonRegistry,
-  ComponentRegistry,
-} from '../../utils/component-registry'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -205,7 +200,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
-  const [touched, setTouched] = useState(false)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -232,7 +226,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         Document.id!,
         // true,
       )
-      setTouched(true)
     }
     if (buttonId === ButtonRegistry.DocumentStarButton) {
       toggleAction(
@@ -240,7 +233,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         Document.id!,
         // true,
       )
-      setTouched(true)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
@@ -260,20 +252,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(true)
   })
 
-  useNavigationComponentDidDisappear(() => {
-    setVisible(false)
-    if (hasPdf) {
-      setLoaded(false)
-    }
-    if (touched) {
-      Navigation.updateProps(ComponentRegistry.InboxScreen, {
-        refresh: Math.random(),
-      })
-    }
-  })
-
   useEffect(() => {
-    // Lets mark the document as read
+    // Let's mark the document as read
     client.cache.modify({
       id: client.cache.identify({
         __typename: 'DocumentV2',

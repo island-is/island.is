@@ -79,7 +79,9 @@ export function applyDynamicColorSupport() {
   // uses this function in the final step of processing styles.
   StyleSheet.create = (style) => {
     if ('generated' in style) {
-      style.generated = parseDynamicStyleValues(style.generated)
+      ;(style as { generated: any }).generated = parseDynamicStyleValues(
+        style.generated,
+      )
     }
     return (StyleSheet as PatchedStyleSheet)._create(style)
   }

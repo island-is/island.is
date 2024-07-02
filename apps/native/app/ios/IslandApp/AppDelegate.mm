@@ -1,6 +1,5 @@
 #import "AppDelegate.h"
 
-#import <React/RCTAppSetupUtils.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTLinkingManager.h>
 #import <React/RCTConvert.h>
@@ -15,27 +14,20 @@
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {
-  BOOL enableTM = NO;
-#if RCT_NEW_ARCH_ENABLED
-  enableTM = self.turboModuleEnabled;
-#endif
-
-  RCTAppSetupPrepareApp(application, enableTM);
-
   [FIRApp configure];
-  
+
   UIWindow *window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-  if (@available(iOS 13.0, *)) {
+  if (@available(iOS 13.4, *)) {
       window.backgroundColor = [UIColor systemBackgroundColor];
   } else {
       window.backgroundColor = [UIColor whiteColor];
   }
   [window makeKeyWindow];
-  
-  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];  
+
+  RCTBridge *bridge = [[RCTBridge alloc] initWithDelegate:self launchOptions:launchOptions];
 
   [ReactNativeNavigation bootstrapWithBridge:bridge];
-  
+
   return YES;
 }
 
@@ -45,21 +37,16 @@
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
+  return [self bundleURL];
+}
+
+- (NSURL *)bundleURL
+{
 #if DEBUG
   return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
 #else
   return [CodePush bundleURL];
 #endif
-}
-
-/// This method controls whether the `concurrentRoot`feature of React18 is turned on or off.
-///
-/// @see: https://reactjs.org/blog/2022/03/29/react-v18.html
-/// @note: This requires to be rendering on Fabric (i.e. on the New Architecture).
-/// @return: `true` if the `concurrentRoot` feature is enabled. Otherwise, it returns `false`.
-- (BOOL)concurrentRootEnabled
-{
-  return true;
 }
 
 - (void)application:(UIApplication *)application performActionForShortcutItem:(UIApplicationShortcutItem *)shortcutItem completionHandler:(void (^)(BOOL succeeded)) completionHandler {
@@ -94,4 +81,10 @@
                    continueUserActivity:userActivity
                      restorationHandler:restorationHandler];
 }
+
+- (BOOL)bridgelessEnabled
+{
+ return NO;
+}
+
 @end

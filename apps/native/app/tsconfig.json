@@ -8,8 +8,7 @@
       "@ui/*": ["src/ui/*"],
       "@island.is/application/types": ["../../libs/application/types/src"],
       "@island.is/application/types/*": ["../../libs/application/types/src/*"]
-    },
-    "types": ["@types/styled-components-react-native"]
+    }
   },
   "exclude": [
     "**/*.stories.tsx",
