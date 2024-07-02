@@ -908,6 +908,12 @@
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"
       ],
+      "@island.is/libs/portals/form-system": [
+        "libs/portals/form-system/src/index.ts"
+      ],
+      "@island.is/libs/portals/form-system/ui": [
+        "libs/portals/form-system/ui/src/index.ts"
+      ],
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
