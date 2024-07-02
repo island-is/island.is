@@ -29,7 +29,9 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -1015,10 +1017,32 @@ export class Case extends Model {
   indictmentReviewDecision?: IndictmentCaseReviewDecision
 
   /**********
+   * The judge's pending decision in indictment cases - example: POSTPONING
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(IndictmentDecision),
+  })
+  @ApiPropertyOptional({ enum: IndictmentDecision })
+  indictmentDecision?: IndictmentDecision
+
+  /**********
    * The md5 hash of the confirmed generated indictment
    * Only used for traffic violation cases
    **********/
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
+
+  /**********
+   * The court session type in indictment cases - example: MAIN_HEARING
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CourtSessionType),
+  })
+  @ApiPropertyOptional({ enum: CourtSessionType })
+  courtSessionType?: CourtSessionType
 }

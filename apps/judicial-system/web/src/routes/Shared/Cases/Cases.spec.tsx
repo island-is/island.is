@@ -7,18 +7,15 @@ import { UserProvider } from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   CaseState,
-  CaseType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   mockJudgeQuery,
-  mockPrisonUserQuery,
   mockProsecutorQuery,
 } from '@island.is/judicial-system-web/src/utils/mocks'
 import { LocaleProvider } from '@island.is/localization'
 
 import Cases from './Cases'
 import { CasesDocument } from './cases.generated'
-import { PrisonCasesDocument } from './prisonCases.generated'
 
 import '@testing-library/jest-dom'
 
@@ -183,42 +180,6 @@ const mockCourtCasesQuery = [
   },
 ]
 
-const mockPrisonUserCasesQuery = [
-  {
-    request: {
-      query: PrisonCasesDocument,
-    },
-    result: {
-      data: {
-        cases: [
-          {
-            id: 'test_id_1',
-            type: CaseType.CUSTODY,
-            created: '2020-05-16T19:50:08.033Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            state: CaseState.ACCEPTED,
-            policeCaseNumbers: ['008-2020-X'],
-            defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
-            isValidToDateInThePast: true,
-            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
-          },
-          {
-            id: 'test_id_2',
-            type: CaseType.CUSTODY,
-            created: '2020-05-16T19:50:08.033Z',
-            modified: '2020-09-16T19:51:39.466Z',
-            state: CaseState.ACCEPTED,
-            policeCaseNumbers: ['008-2020-X'],
-            defendants: [{ nationalId: '012345-6789', name: 'Mikki Refur' }],
-            isValidToDateInThePast: false,
-            rulingSignatureDate: '2020-09-16T19:51:39.466Z',
-          },
-        ],
-      },
-    },
-  },
-]
-
 jest.mock('next/router', () => ({
   useRouter() {
     return {
@@ -289,27 +250,6 @@ describe('Cases', () => {
   })
 
   describe('Court users', () => {
-    test('should list all cases that do not have status NEW (never returned from the server), DELETED, ACCEPTED or REJECTED in a active cases table', async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockCourtCasesQuery, ...mockJudgeQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      expect(
-        await waitFor(
-          () => screen.getAllByTestId('custody-cases-table-row').length,
-        ),
-      ).toEqual(4)
-    })
-
     test('should display the judge logo', async () => {
       render(
         <MockedProvider
@@ -364,27 +304,6 @@ describe('Cases', () => {
       expect(
         await waitFor(() => screen.queryByLabelText('Viltu eyða drögum?')),
       ).not.toBeInTheDocument()
-    })
-  })
-
-  describe('Prison users', () => {
-    test('should list active and past cases in separate tables based on validToDate', async () => {
-      render(
-        <MockedProvider
-          mocks={[...mockPrisonUserCasesQuery, ...mockPrisonUserQuery]}
-          addTypename={false}
-        >
-          <UserProvider authenticated={true}>
-            <LocaleProvider locale="is" messages={{}}>
-              <Cases />
-            </LocaleProvider>
-          </UserProvider>
-        </MockedProvider>,
-      )
-
-      await waitFor(() => {
-        expect(screen.getAllByRole('table').length).toEqual(2)
-      })
     })
   })
 

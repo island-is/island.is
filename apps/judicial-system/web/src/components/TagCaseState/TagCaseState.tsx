@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Tag, TagVariant } from '@island.is/island-ui/core'
-import { isInvestigationCase } from '@island.is/judicial-system/types'
+import {
+  isIndictmentCase,
+  isInvestigationCase,
+} from '@island.is/judicial-system/types'
 import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  IndictmentDecision,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
@@ -25,6 +29,7 @@ interface Props {
     state?: CaseState | null,
     indictmentReviewer?: User | null, // TODO: Refactor so we have a more generalized interface for the info passed in to the component
   ) => { color: TagVariant; text: string }
+  indictmentDecision?: IndictmentDecision | null
 }
 
 export const mapIndictmentCaseStateToTagVariant = (
@@ -53,6 +58,7 @@ export const mapCaseStateToTagVariant = (
   scheduledDate?: string | null,
   isCourtRole?: boolean,
   indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
+  indictmentDecision?: IndictmentDecision | null,
 ): { color: TagVariant; text: string } => {
   switch (state) {
     case CaseState.NEW:
@@ -65,13 +71,26 @@ export const mapCaseStateToTagVariant = (
         text: formatMessage(isCourtRole ? strings.new : strings.sent),
       }
     case CaseState.RECEIVED:
+      switch (indictmentDecision) {
+        case IndictmentDecision.POSTPONING:
+        case IndictmentDecision.SCHEDULING:
+        case IndictmentDecision.COMPLETING:
+          return { color: 'mint', text: formatMessage(strings.scheduled) }
+        case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+          return {
+            color: 'mint',
+            text: formatMessage(strings.postponedUntilVerdict),
+          }
+        case IndictmentDecision.REDISTRIBUTING:
+          return { color: 'blue', text: formatMessage(strings.reassignment) }
+      }
+
       return scheduledDate
         ? { color: 'mint', text: formatMessage(strings.scheduled) }
         : { color: 'blueberry', text: formatMessage(strings.received) }
-    case CaseState.MAIN_HEARING:
-      return { color: 'blue', text: formatMessage(strings.reassignment) }
+
     case CaseState.ACCEPTED:
-      return isValidToDateInThePast
+      return isIndictmentCase(caseType) || isValidToDateInThePast
         ? { color: 'darkerBlue', text: formatMessage(strings.inactive) }
         : {
             color: 'blue',
@@ -88,12 +107,17 @@ export const mapCaseStateToTagVariant = (
         color: 'darkerBlue',
         text: formatMessage(strings.completed, { indictmentRulingDecision }),
       }
+    case CaseState.WAITING_FOR_CANCELLATION:
+      return {
+        color: 'rose',
+        text: formatMessage(strings.recalled),
+      }
     default:
       return { color: 'white', text: formatMessage(strings.unknown) }
   }
 }
 
-const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
+const TagCaseState: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const {
     caseState,
@@ -104,7 +128,8 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
     indictmentReviewer,
     indictmentRulingDecision,
     customMapCaseStateToTag,
-  } = Props
+    indictmentDecision,
+  } = props
 
   const tagVariant = customMapCaseStateToTag
     ? customMapCaseStateToTag(formatMessage, caseState, indictmentReviewer)
@@ -116,6 +141,7 @@ const TagCaseState: React.FC<React.PropsWithChildren<Props>> = (Props) => {
         courtDate,
         isCourtRole,
         indictmentRulingDecision,
+        indictmentDecision,
       )
 
   if (!tagVariant) return null

@@ -8219,7 +8219,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@dnd-kit/core@npm:^6.0.8":
+"@dnd-kit/core@npm:6.1.0, @dnd-kit/core@npm:^6.0.8":
   version: 6.1.0
   resolution: "@dnd-kit/core@npm:6.1.0"
   dependencies:
@@ -8243,6 +8243,19 @@ __metadata:
     "@dnd-kit/core": ^6.0.6
     react: ">=16.8.0"
   checksum: cd31715aac81baa2398558dc7c877a483d1c4c41cdb2f466557fdc41bb742db5cd1b34b3b84332b94ac4a2835e7e5a0e28c64e621936e976399788f1dd029ea4
+  languageName: node
+  linkType: hard
+
+"@dnd-kit/sortable@npm:8.0.0":
+  version: 8.0.0
+  resolution: "@dnd-kit/sortable@npm:8.0.0"
+  dependencies:
+    "@dnd-kit/utilities": ^3.2.2
+    tslib: ^2.0.0
+  peerDependencies:
+    "@dnd-kit/core": ^6.1.0
+    react: ">=16.8.0"
+  checksum: 26589fd23c18d930a949489b232a7345c0bee4abb6be91d3673232bc79085f13cb5d82087c2068edbc51cbdd3d47c2fe386bada92dc7f2d0dcde13d6be379daa
   languageName: node
   linkType: hard
 
@@ -10622,6 +10635,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@hexagon/base64@npm:^1.1.27":
+  version: 1.1.28
+  resolution: "@hexagon/base64@npm:1.1.28"
+  checksum: b2c99863ec1401c61cf127603928c4194ecc434728b1522c3a892ff2adacb4aca853f5770628e5305d7f360a518f68740073a289706220ad7711c3b4b0a19f66
+  languageName: node
+  linkType: hard
+
 "@hookform/error-message@npm:2.0.1":
   version: 2.0.1
   resolution: "@hookform/error-message@npm:2.0.1"
@@ -10776,7 +10796,7 @@ __metadata:
     react-dom: 18.2.0
     react-intl: 5.20.12
     react-native: 0.71.1
-    react-native-app-auth: 6.4.3
+    react-native-app-auth: 7.2.0
     react-native-blob-util: 0.16.4
     react-native-code-push: 7.1.0
     react-native-device-info: 10.3.0
@@ -10788,9 +10808,11 @@ __metadata:
     react-native-mmkv-storage: 0.9.1
     react-native-navigation: 7.32.1
     react-native-navigation-hooks: 6.3.0
+    react-native-passkey: 2.1.1
     react-native-passkit-wallet: 0.1.6
     react-native-pdf: 6.6.2
     react-native-quick-actions: 0.3.13
+    react-native-quick-base64: 2.1.2
     react-native-share: 7.1.1
     react-native-spotlight-search: 2.0.0
     react-native-svg: 15.1.0
@@ -10802,9 +10824,9 @@ __metadata:
   languageName: unknown
   linkType: soft
 
-"@island.is/regulations-tools@npm:0.8.1":
-  version: 0.8.1
-  resolution: "@island.is/regulations-tools@npm:0.8.1"
+"@island.is/regulations-tools@npm:0.9.0":
+  version: 0.9.0
+  resolution: "@island.is/regulations-tools@npm:0.9.0"
   dependencies:
     "@hugsmidjan/htmldiff-js": ^1.3.0
     "@hugsmidjan/qj": ^4.10.2
@@ -10818,7 +10840,7 @@ __metadata:
   peerDependencies:
     react: ">=16.8 <20"
     react-dom: ">=16.8 <20"
-  checksum: bdf33c19b3b69e1661c08befb5ab1d578b4aa3923da22bef6665a8f1890ba3b46895d0a919b6f110ef25d8f84757050187ccd014c8bfefc0c2866cbc7764608e
+  checksum: 9d4950e590721f78c60644ee7f2c16dfb132960c9383e71cce3dbe9037b8e734c6e8609eb44a623e843ec13187759efd45245078ba4e9c60d456068378a28e62
   languageName: node
   linkType: hard
 
@@ -11533,6 +11555,13 @@ __metadata:
   version: 2.0.4
   resolution: "@leichtgewicht/ip-codec@npm:2.0.4"
   checksum: 468de1f04d33de6d300892683d7c8aecbf96d1e2c5fe084f95f816e50a054d45b7c1ebfb141a1447d844b86a948733f6eebd92234da8581c84a1ad4de2946a2d
+  languageName: node
+  linkType: hard
+
+"@levischuck/tiny-cbor@npm:^0.2.2":
+  version: 0.2.2
+  resolution: "@levischuck/tiny-cbor@npm:0.2.2"
+  checksum: e8011eeaa317e280c3dd543e63c1c92a8f0db6fb9635dd47fce2b0128bef5bdb001c5ba0e99edbd0fd1c1ecbc4e5f360d6351c3beb85dec1e55ff51b7afd186c
   languageName: node
   linkType: hard
 
@@ -13218,6 +13247,41 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@peculiar/asn1-android@npm:^2.3.10":
+  version: 2.3.10
+  resolution: "@peculiar/asn1-android@npm:2.3.10"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    asn1js: ^3.0.5
+    tslib: ^2.6.2
+  checksum: 882a1b5129c9ad99abf7e8bc1b4373c454af1f8921e571a638e0ec27e77327703db0cb669cd13bc71f4c8e2e7f39e344d6c6741405184148ea1e3bd4b9d5fb59
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-ecc@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-ecc@npm:2.3.8"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    "@peculiar/asn1-x509": ^2.3.8
+    asn1js: ^3.0.5
+    tslib: ^2.6.2
+  checksum: c7db2004a03f88c35fcd21957c8c15bfbf29c137a636bbc35d51dcebbc287ec253762e127d50197f0b5910600e3641a738c8ca756a15741fc09272272b0303f4
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-rsa@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-rsa@npm:2.3.8"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    "@peculiar/asn1-x509": ^2.3.8
+    asn1js: ^3.0.5
+    tslib: ^2.6.2
+  checksum: d9bf0f143686b475d3cc9f9b7d948826dc8c8764bc865697705351278541f0bf31a8f788ec8ff8bf6e4150b04aa65b20853bda45d77e4abbac717d7019e6fd56
+  languageName: node
+  linkType: hard
+
 "@peculiar/asn1-schema@npm:^2.1.6":
   version: 2.3.0
   resolution: "@peculiar/asn1-schema@npm:2.3.0"
@@ -13226,6 +13290,30 @@ __metadata:
     pvtsutils: ^1.3.2
     tslib: ^2.4.0
   checksum: aa510c68de83be94a8d0e96ca1f7c92d2bd790867eed887c0db32d6b2fc49c5dd9d8269648e9665686ba9b2fd8469324c61e04fed50f7aad3f68a0ca0e1cde4b
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-schema@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-schema@npm:2.3.8"
+  dependencies:
+    asn1js: ^3.0.5
+    pvtsutils: ^1.3.5
+    tslib: ^2.6.2
+  checksum: 1f4dd421f1411df8bc52bca12b1cef710434c13ff0a8b5746ede42b10d62b5ad06a3925c4a6db53102aaf1e589947539a6955fa8554a9b8ebb1ffa38b0155a24
+  languageName: node
+  linkType: hard
+
+"@peculiar/asn1-x509@npm:^2.3.8":
+  version: 2.3.8
+  resolution: "@peculiar/asn1-x509@npm:2.3.8"
+  dependencies:
+    "@peculiar/asn1-schema": ^2.3.8
+    asn1js: ^3.0.5
+    ipaddr.js: ^2.1.0
+    pvtsutils: ^1.3.5
+    tslib: ^2.6.2
+  checksum: 23856e5d024298447afca55bd68d19a7440c0ae076437aee5ced26a0fa2e4efa3e0e4a354fa6ee9968d62ac21ee1c2186fc427942bacfc824d3a3a4d2e80d14b
   languageName: node
   linkType: hard
 
@@ -14800,6 +14888,30 @@ __metadata:
   version: 2.0.0
   resolution: "@sideway/pinpoint@npm:2.0.0"
   checksum: 0f4491e5897fcf5bf02c46f5c359c56a314e90ba243f42f0c100437935daa2488f20482f0f77186bd6bf43345095a95d8143ecf8b1f4d876a7bc0806aba9c3d2
+  languageName: node
+  linkType: hard
+
+"@simplewebauthn/server@npm:10.0.0":
+  version: 10.0.0
+  resolution: "@simplewebauthn/server@npm:10.0.0"
+  dependencies:
+    "@hexagon/base64": ^1.1.27
+    "@levischuck/tiny-cbor": ^0.2.2
+    "@peculiar/asn1-android": ^2.3.10
+    "@peculiar/asn1-ecc": ^2.3.8
+    "@peculiar/asn1-rsa": ^2.3.8
+    "@peculiar/asn1-schema": ^2.3.8
+    "@peculiar/asn1-x509": ^2.3.8
+    "@simplewebauthn/types": ^10.0.0
+    cross-fetch: ^4.0.0
+  checksum: 259d4b9548c4e86e80bf1d7bbda3a070adc42f78e82e147dfd96edfb01605863c7f1f4d20fb1aec61ce82359cbe2ff4b85c925464bc976706da96a21aa0a2a04
+  languageName: node
+  linkType: hard
+
+"@simplewebauthn/types@npm:^10.0.0":
+  version: 10.0.0
+  resolution: "@simplewebauthn/types@npm:10.0.0"
+  checksum: 77dfae2d90a4a6e64aa60e8d1e4f7bcf09e583adb6590a8d1e4fe1aefae0e4fac7db32907e76ee934bf8df665400143dabe39133cab3961dbbf5b10677183174
   languageName: node
   linkType: hard
 
@@ -25462,6 +25574,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cross-fetch@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "cross-fetch@npm:4.0.0"
+  dependencies:
+    node-fetch: ^2.6.12
+  checksum: ecca4f37ffa0e8283e7a8a590926b66713a7ef7892757aa36c2d20ffa27b0ac5c60dcf453119c809abe5923fc0bae3702a4d896bfb406ef1077b0d0018213e24
+  languageName: node
+  linkType: hard
+
 "cross-inspect@npm:1.0.0":
   version: 1.0.0
   resolution: "cross-inspect@npm:1.0.0"
@@ -34162,6 +34283,8 @@ __metadata:
     "@contentful/rich-text-react-renderer": 15.16.5
     "@contentful/rich-text-types": 16.2.0
     "@datadog/browser-rum": 4.36.0
+    "@dnd-kit/core": 6.1.0
+    "@dnd-kit/sortable": 8.0.0
     "@elastic/elasticsearch": 7.7.1
     "@formatjs/cli": 4.2.27
     "@formatjs/intl-datetimeformat": 4.1.6
@@ -34178,7 +34301,7 @@ __metadata:
     "@graphql-codegen/typescript-react-apollo": 3.3.3
     "@graphql-codegen/typescript-resolvers": 2.7.3
     "@hookform/error-message": 2.0.1
-    "@island.is/regulations-tools": 0.8.1
+    "@island.is/regulations-tools": 0.9.0
     "@keyv/redis": 2.6.1
     "@livechat/widget-core": 1.3.2
     "@nestjs/apollo": 10.1.0
@@ -34215,6 +34338,7 @@ __metadata:
     "@playwright/test": 1.29
     "@react-pdf/renderer": ^3.1.9
     "@rehooks/component-size": 1.0.3
+    "@simplewebauthn/server": 10.0.0
     "@sindresorhus/slugify": 1.0.0
     "@statoscope/webpack-plugin": 5.20.1
     "@storybook/addon-a11y": 7.4.1
@@ -43693,6 +43817,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"pvtsutils@npm:^1.3.5":
+  version: 1.3.5
+  resolution: "pvtsutils@npm:1.3.5"
+  dependencies:
+    tslib: ^2.6.1
+  checksum: e734516b3cb26086c18bd9c012fefe818928a5073178842ab7e62885a090f1dd7bda9c7bb8cd317167502cb8ec86c0b1b0ccd71dac7ab469382a4518157b0d12
+  languageName: node
+  linkType: hard
+
 "pvutils@npm:^1.1.3":
   version: 1.1.3
   resolution: "pvutils@npm:1.1.3"
@@ -44420,15 +44553,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-app-auth@npm:6.4.3":
-  version: 6.4.3
-  resolution: "react-native-app-auth@npm:6.4.3"
+"react-native-app-auth@npm:7.2.0":
+  version: 7.2.0
+  resolution: "react-native-app-auth@npm:7.2.0"
   dependencies:
     invariant: 2.2.4
     react-native-base64: 0.0.2
   peerDependencies:
     react-native: ">=0.63.0"
-  checksum: 5edf1e3b390d4feafa7d1f7c2488564c130ef9625283e83e803d896832494da121e032d61b2be062ed1be8bb0506e7176c8b3fdd30c0dd3152aa6ae1b97e3a32
+  checksum: 68f6a5343210041ec8bf0018b12007c8c3700473d6a46f2a543b935190141b002d6beb0b451531cf35d0c51fd920f73d7a02ec99868b912ca1a5bd618cf987d7
   languageName: node
   linkType: hard
 
@@ -44609,6 +44742,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-native-passkey@npm:2.1.1":
+  version: 2.1.1
+  resolution: "react-native-passkey@npm:2.1.1"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 80631e1548cea8cc172a263cdd90079ff2db525c5e728d554fc8f50a61382556114eb17984371e4514e23c94adb66b4a0b9f5fe5ac5ff752501fad0adbd8cd31
+  languageName: node
+  linkType: hard
+
 "react-native-passkit-wallet@npm:0.1.6":
   version: 0.1.6
   resolution: "react-native-passkit-wallet@npm:0.1.6"
@@ -44630,6 +44773,18 @@ __metadata:
   version: 0.3.13
   resolution: "react-native-quick-actions@npm:0.3.13"
   checksum: c3d52043d26ce8fd7b95d8158d8b03e4d00463fc60c96e5b8f1b7817b62e8683c758ff665e4e42ece75d3e299c680432937ed5774e28aedf2fe52f02937fa812
+  languageName: node
+  linkType: hard
+
+"react-native-quick-base64@npm:2.1.2":
+  version: 2.1.2
+  resolution: "react-native-quick-base64@npm:2.1.2"
+  dependencies:
+    base64-js: ^1.5.1
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 46f3b26f48b26978686b0c043336220d681e6a02af5abcf3eb4ab7b9216251d1eb2fac5c559e984d963e93f54bd9f323651daac09762196815558abbd551729b
   languageName: node
   linkType: hard
 
@@ -50497,7 +50652,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:2.6.2":
+"tslib@npm:2.6.2, tslib@npm:^2.6.1, tslib@npm:^2.6.2":
   version: 2.6.2
   resolution: "tslib@npm:2.6.2"
   checksum: 329ea56123005922f39642318e3d1f0f8265d1e7fcb92c633e0809521da75eeaca28d2cf96d7248229deb40e5c19adf408259f4b9640afd20d13aecc1430f3ad

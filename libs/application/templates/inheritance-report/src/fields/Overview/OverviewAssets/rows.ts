@@ -15,7 +15,9 @@ import { format as formatNationalId } from 'kennitala'
 import { PREPAID_INHERITANCE } from '../../../lib/constants'
 
 export const getRealEstateDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.realEstate?.data
+  const values = (
+    answers.assets as unknown as EstateAssets
+  )?.realEstate?.data?.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -215,7 +217,9 @@ export const getStocksDataRow = (answers: FormValue): RowType[] => {
 }
 
 export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
-  const values = (answers.assets as unknown as EstateAssets)?.bankAccounts?.data
+  const values = (
+    answers.assets as unknown as EstateAssets
+  )?.bankAccounts?.data.filter((item) => item.enabled)
 
   const data = (values ?? []).map((item) => {
     const propertyValuation = roundedValueToNumber(item.propertyValuation)
@@ -254,6 +258,7 @@ export const getBankAccountsDataRow = (answers: FormValue): RowType[] => {
 
 export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
   const values = (answers.assets as unknown as EstateAssets)?.otherAssets?.data
+  const isPrePaid = answers.applicationFor === PREPAID_INHERITANCE
 
   const data = (values ?? []).map((item) => {
     const value = roundedValueToNumber(item.value)
@@ -274,7 +279,6 @@ export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
     }
 
     return {
-      title: item.info,
       value: formatCurrency(String(value)),
       items,
     }

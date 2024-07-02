@@ -54,7 +54,12 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
       'B-full',
     )
 
-    const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+    const chargeItemCode =
+      applicationFor === 'B-full'
+        ? 'AY110'
+        : applicationFor === 'BE'
+        ? 'AY115'
+        : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
@@ -192,10 +197,21 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         },
       )
     } else if (applicationFor === 'BE') {
+      const instructorSSN = getValueViaPath<string>(
+        answers,
+        'drivingInstructor',
+      )
+      const email = getValueViaPath<string>(answers, 'email')
+      const phone = getValueViaPath<string>(answers, 'phone')
       return this.drivingLicenseService.applyForBELicense(
         nationalId,
         auth.authorization,
-        jurisdictionId as number,
+        {
+          jurisdiction: jurisdictionId as number,
+          instructorSSN: instructorSSN ?? '',
+          primaryPhoneNumber: phone ?? '',
+          studentEmail: email ?? '',
+        },
       )
     }
 

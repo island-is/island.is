@@ -27,6 +27,8 @@ query DefenderCases($input: CaseListQueryInput) {
     initialRulingDate
     rulingDate
     postponedIndefinitelyExplanation
+    indictmentDecision
     indictmentRulingDecision
+    courtSessionType
   }
 }

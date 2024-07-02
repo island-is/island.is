@@ -34,6 +34,12 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                 'currentLicense.data',
               ) ?? { categories: null }
 
+              const age =
+                getValueViaPath<number>(
+                  app.externalData,
+                  'nationalRegistry.data.age',
+                ) ?? 0
+
               const fakeData = getValueViaPath<DrivingLicenseFakeData>(
                 app.answers,
                 'fakeData',
@@ -41,7 +47,16 @@ export const sectionApplicationFor = (allowBELicense = false) =>
               if (fakeData?.useFakeData === 'yes') {
                 currentLicense = fakeData.currentLicense ?? null
                 categories =
-                  fakeData.currentLicense === 'full' ? [{ nr: 'B' }] : null
+                  fakeData.currentLicense === 'temp'
+                    ? [{ nr: 'B', validToCode: 8 }]
+                    : fakeData.currentLicense === 'full'
+                    ? [{ nr: 'B', validToCode: 9 }]
+                    : fakeData.currentLicense === 'BE'
+                    ? [
+                        { nr: 'B', validToCode: 9 },
+                        { nr: 'BE', validToCode: 9 },
+                      ]
+                    : []
               }
 
               let options = [
@@ -68,7 +83,12 @@ export const sectionApplicationFor = (allowBELicense = false) =>
                   value: BE,
                   disabled:
                     !currentLicense ||
-                    !categories?.some((c) => c.nr.toUpperCase() === 'B'),
+                    age < 18 ||
+                    categories?.some((c) => c.nr.toUpperCase() === 'BE') ||
+                    // validToCode === 8 is temporary license and should not be applicable for BE
+                    !categories?.some(
+                      (c) => c.nr.toUpperCase() === 'B' && c.validToCode !== 8,
+                    ),
                 })
               }
 

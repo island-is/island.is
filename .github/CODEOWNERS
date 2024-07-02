@@ -51,7 +51,7 @@
 /libs/application/template-api-modules/src/lib/modules/templates/driving-learners-permit/                @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission              @island-is/juni
 /libs/api/domains/driving-license/                                                                       @island-is/juni
-/libs/api/domains/education/                                                                             @island-is/juni @island-is/hugsmidjan
+/libs/api/domains/education/                                                                             @island-is/juni @island-is/hugsmidjan @island-is/deloitte
 /libs/application/templates/estate/                                                                      @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/estate                                  @island-is/juni
 /libs/application/templates/general-petition/                                                            @island-is/juni
@@ -259,6 +259,9 @@ codemagic.yaml                                                                  
 /libs/api/domains/ship-registry/                                                                         @island-is/stefna
 /libs/clients/administration-of-occupational-safety-and-health/                                          @island-is/stefna
 /libs/api/domains/administration-of-occupational-safety-and-health/                                      @island-is/stefna
+/libs/clients/ultraviolet-radiation/                                                                     @island-is/stefna
+/libs/clients/ums-cost-of-living-calculator/                                                             @island-is/stefna
+/libs/api/domains/umbodsmadur-skuldara/                                                                  @island-is/stefna
 
 /libs/island-ui/                                                                                         @island-is/island-ui
 
@@ -278,6 +281,9 @@ codemagic.yaml                                                                  
 /libs/application/templates/car-recycling/                                                               @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                          @island-is/deloitte
 /libs/clients/car-recycling/                                                                             @island-is/deloitte
+/libs/application/templates/new-primary-school/                                                          @island-is/deloitte
+/libs/application/template-api-modules/src/lib/modules/templates/new-primary-school/                     @island-is/deloitte
+/libs/clients/mms/frigg                                                                                  @island-is/deloitte
 
 /apps/services/auth/ids-api/                                                                             @island-is/fuglar @island-is/aranja
 /apps/services/auth/admin-api/                                                                           @island-is/fuglar @island-is/aranja
@@ -311,6 +317,9 @@ codemagic.yaml                                                                  
 /libs/application/templates/no-debt-certificate/                                                         @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/no-debt-certificate/                    @island-is/origo
 
+/libs/application/templates/id-card/                                                                     @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/id-card/                                @island-is/origo
+
 /libs/clients/charge-fjs-v2/                                                                             @island-is/origo
 /libs/clients/vehicle-service-fjs-v1/                                                                    @island-is/origo
 
@@ -339,6 +348,10 @@ codemagic.yaml                                                                  
 
 /libs/application/templates/healthcare-license-certificate/                                              @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/healthcare-license-certificate/         @island-is/origo
+
+
+/libs/application/templates/healthcare-work-permit/                                                      @island-is/origo
+/libs/application/template-api-modules/src/lib/modules/templates/healthcare-work-permit/                 @island-is/origo
 
 /libs/application/templates/energy-funds/                                                                @island-is/origo
 /libs/application/template-api-modules/src/lib/modules/templates/energy-funds/                           @island-is/origo

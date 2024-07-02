@@ -21,7 +21,6 @@ describe(' FormShell', () => {
     id: '12315151515',
     assignees: [],
     typeId: ApplicationTypes.PARENTAL_LEAVE,
-    attachments: {},
     externalData: {},
     answers: {},
     applicant,
@@ -29,6 +28,7 @@ describe(' FormShell', () => {
     modified: new Date(),
     created: new Date(),
     status: ApplicationStatus.IN_PROGRESS,
+    applicantActors: [],
   }
   const form: Form = buildForm({
     id: 'ParentalLeaveForm',

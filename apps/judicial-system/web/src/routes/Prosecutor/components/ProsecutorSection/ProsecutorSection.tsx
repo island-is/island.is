@@ -10,7 +10,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 
-const ProsecutorSection: React.FC<React.PropsWithChildren<unknown>> = () => {
+const ProsecutorSection = () => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { updateCase } = useCase()
 

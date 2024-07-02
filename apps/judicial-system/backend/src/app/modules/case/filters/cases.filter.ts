@@ -1,4 +1,4 @@
-import { Op, WhereOptions } from 'sequelize'
+import { Op, Sequelize, WhereOptions } from 'sequelize'
 
 import { ForbiddenException } from '@nestjs/common'
 
@@ -10,6 +10,7 @@ import {
   CaseState,
   CaseType,
   DateType,
+  IndictmentCaseReviewDecision,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -33,8 +34,8 @@ const getProsecutionUserCasesQueryFilter = (user: User): WhereOptions => {
         CaseState.DRAFT,
         CaseState.WAITING_FOR_CONFIRMATION,
         CaseState.SUBMITTED,
+        CaseState.WAITING_FOR_CANCELLATION,
         CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
         CaseState.ACCEPTED,
         CaseState.REJECTED,
         CaseState.DISMISSED,
@@ -100,8 +101,8 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
       {
         state: [
           CaseState.SUBMITTED,
+          CaseState.WAITING_FOR_CANCELLATION,
           CaseState.RECEIVED,
-          CaseState.MAIN_HEARING,
           CaseState.COMPLETED,
         ],
       },
@@ -130,8 +131,8 @@ const getDistrictCourtUserCasesQueryFilter = (user: User): WhereOptions => {
             {
               state: [
                 CaseState.SUBMITTED,
+                CaseState.WAITING_FOR_CANCELLATION,
                 CaseState.RECEIVED,
-                CaseState.MAIN_HEARING,
                 CaseState.COMPLETED,
               ],
             },
@@ -170,22 +171,46 @@ const getAppealsCourtUserCasesQueryFilter = (): WhereOptions => {
 }
 
 const getPrisonSystemStaffUserCasesQueryFilter = (user: User): WhereOptions => {
-  const options: WhereOptions = [
-    { isArchived: false },
-    { state: CaseState.ACCEPTED },
-  ]
+  const options: WhereOptions = [{ isArchived: false }]
 
   if (user.institution?.type === InstitutionType.PRISON_ADMIN) {
     options.push({
-      type: [
-        CaseType.CUSTODY,
-        CaseType.ADMISSION_TO_FACILITY,
-        CaseType.PAROLE_REVOCATION,
-        CaseType.TRAVEL_BAN,
+      [Op.or]: [
+        {
+          [Op.and]: [
+            { state: CaseState.ACCEPTED },
+            {
+              type: [
+                CaseType.CUSTODY,
+                CaseType.ADMISSION_TO_FACILITY,
+                CaseType.PAROLE_REVOCATION,
+                CaseType.TRAVEL_BAN,
+              ],
+            },
+          ],
+        },
+        {
+          [Op.and]: [
+            {
+              type: CaseType.INDICTMENT,
+              state: CaseState.COMPLETED,
+              indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+              id: {
+                [Op.notIn]: Sequelize.literal(`
+                        (SELECT "case_id"
+                          FROM "defendant"
+                          WHERE "defendant"."verdict_view_date" IS NULL
+                          OR "defendant"."verdict_view_date" > NOW() - INTERVAL '28 days')
+                        `),
+              },
+            },
+          ],
+        },
       ],
     })
   } else {
     options.push(
+      { state: CaseState.ACCEPTED },
       {
         type: [
           CaseType.CUSTODY,
@@ -249,8 +274,8 @@ const getDefenceUserCasesQueryFilter = (user: User): WhereOptions => {
             { type: indictmentCases },
             {
               state: [
+                CaseState.WAITING_FOR_CANCELLATION,
                 CaseState.RECEIVED,
-                CaseState.MAIN_HEARING,
                 CaseState.COMPLETED,
               ],
             },

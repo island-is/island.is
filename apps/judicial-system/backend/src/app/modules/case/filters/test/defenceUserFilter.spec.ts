@@ -22,9 +22,9 @@ describe.each(defenceRoles)('defence user %s', (role) => {
     `r-case type %s`,
     (type) => {
       const accessibleCaseStates = [
+        CaseState.WAITING_FOR_CANCELLATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
         ...completedCaseStates,
       ]
 
@@ -171,8 +171,8 @@ describe.each(defenceRoles)('defence user %s', (role) => {
 
   describe.each(indictmentCases)(`s-case type %s`, (type) => {
     const accessibleCaseStates = [
+      CaseState.WAITING_FOR_CANCELLATION,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       ...completedCaseStates,
     ]
 

@@ -420,6 +420,7 @@ export const slices = gql`
       url
     }
     dividerOnTop
+    onlyUseOneTitle
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -847,6 +848,7 @@ export const slices = gql`
     displayChangeYearOverYear
     numberBoxDate
     reduceAndRoundValue
+    displayTimestamp
   }
 
   fragment GenericListFields on GenericList {
@@ -854,24 +856,15 @@ export const slices = gql`
     id
     searchInputPlaceholder
     itemType
-    firstPageListItemResponse {
-      input {
-        genericListId
-        lang
-        page
-        queryString
-        size
-      }
-      items {
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
         id
-        date
         title
         slug
-        cardIntro {
-          ...HtmlFields
-        }
       }
-      total
     }
   }
 

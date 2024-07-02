@@ -27,7 +27,9 @@ import {
   CaseLegalProvisions,
   CaseType,
   CourtDocument,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
+  IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
@@ -496,4 +498,14 @@ export class UpdateCaseDto {
   @IsEnum(IndictmentCaseReviewDecision)
   @ApiPropertyOptional({ enum: IndictmentCaseReviewDecision })
   readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @IsOptional()
+  @IsEnum(IndictmentDecision)
+  @ApiPropertyOptional({ enum: IndictmentDecision })
+  readonly indictmentDecision?: IndictmentDecision
+
+  @IsOptional()
+  @IsEnum(CourtSessionType)
+  @ApiPropertyOptional({ enum: CourtSessionType })
+  readonly courtSessionType?: CourtSessionType
 }

@@ -54,7 +54,7 @@ export const is = {
   'onboarding.pinKeypad.accessibilityLabel.faceId': 'Nota andlitsauðkenningu',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Eyða staf',
 
-  // peronal info screen
+  // personal info screen
   'personalInfo.screenTitle': 'Persónuupplýsingar',
 
   // user
@@ -90,6 +90,17 @@ export const is = {
   'settings.security.useBiometricsLabel': 'Nota {biometricType}',
   'settings.security.useBiometricsDescription':
     'Þannig sleppur þú við að nota PIN-númerið',
+  'settings.security.createPasskeyLabel': 'Búa til aðgangslykil',
+  'settings.security.createPasskeyDescription':
+    'Til að skrá þig inn sjálfkrafa á Ísland.is í þessu tæki',
+  'settings.security.removePasskeyLabel': 'Eyða aðgangslykli',
+  'settings.security.removePasskeyDescription':
+    'Með því að eyða aðgangslykli sleppur þú að skrá þig inn sjálfkrafa á Ísland.is',
+  'settings.security.removePasskeyPromptTitle': 'Viltu eyða aðgangslykli?',
+  'settings.security.removePasskeyPromptDescription':
+    'Með því að eyða aðgangslykli getur þú ekki skráð þig sjálfkrafa á Ísland.is',
+  'settings.security.removePasskeyButton': 'Eyða',
+  'settings.security.removePasskeyCancelButton': 'Hætta við',
   'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
   'settings.security.appLockTimeoutDescription':
     'Tíminn þar til skjálæsing fer í gang',
@@ -142,8 +153,9 @@ export const is = {
   'home.screenTitle': 'Yfirlit',
   'home.applicationsStatus': 'Staða umsókna',
   'home.allApplications': 'Stafrænar umsóknir',
-  'home.notifications': 'Tilkynningar',
   'home.welcomeText': 'Hæ',
+  'home.inbox': 'Nýjast í pósthólfinu',
+  'home.goodDay': 'Góðan dag,',
   'home.onboardingModule.card1':
     'Nú sérð þú upplýsingar um ökutæki, fasteignir og fjölskyldu þína í appinu til viðbótar við skjöl og skírteini.',
   'home.onboardingModule.card2':
@@ -168,10 +180,16 @@ export const is = {
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
     'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
-  'inbox.filterButtonTitle': 'Opna síu',
+  'inbox.filterButtonTitle': 'Sía',
   'inbox.filterOpenedTagTitle': 'Ólesið',
   'inbox.filterArchivedTagTitle': 'Geymsla',
   'inbox.filterStarredTagTitle': 'Stjörnumerkt',
+  'inbox.markAllAsReadPromptTitle': 'Viltu merkja öll skjöl sem lesin?',
+  'inbox.markAllAsReadPromptDescription': 'Þessi aðgerð er ekki afturkræf',
+  'inbox.markAllAsReadPromptCancel': 'Hætta við',
+  'inbox.markAllAsReadPromptConfirm': 'Merkja lesið',
+  'inbox.cardNoInboxDocuments':
+    'Þegar þú færð sendan póst í pósthólfið þá birtist hann hér.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Sía skjöl',
@@ -411,6 +429,9 @@ export const is = {
   'notifications.markAllAsRead': 'Merkja allt lesið',
   'notifications.settings': 'Mínar stillingar',
   'notifications.errorUnknown': 'Villa kom upp við að sækja tilkynningar',
+  'notifications.emptyListTitle': 'Engar tilkynningar',
+  'notifications.emptyListDescription':
+    'Þegar þú færð sendar tilkynningar þá birtast þær hér.',
 
   // applications screen
   'applications.title': 'Umsóknir',
@@ -516,4 +537,15 @@ export const is = {
     'Ef þú telur þig eiga gögn sem ættu að birtast hér, vinsamlegast hafðu samband við þjónustuaðila.',
   'problem.offline.title': 'Samband næst ekki',
   'problem.offline.message': 'Villa kom upp í samskiptum við þjónustuaðila',
+
+  // passkeys
+  'passkeys.headingTitle': 'Innskrá með Ísland.is appinu',
+  'passkeys.openUrlHeadingSubtitle':
+    'Þú ert að fara að opna Ísland.is í vafra. Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
+  'passkeys.headingSubtitle':
+    'Viltu búa til aðgangslykil til að skrá þig inn sjálfkrafa með appinu?',
+  'passkeys.createButton': 'Búa til aðgangslykil',
+  'passkeys.skipButton': 'Sleppa',
+  'passkeys.errorRegistering': 'Villa',
+  'passkeys.errorRegisteringMessage': 'Tókst ekki að búa til aðgangslykil',
 }

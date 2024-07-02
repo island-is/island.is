@@ -19,7 +19,10 @@ import {
   PageTitle,
   useIndictmentsLawsBroken,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseState,
+  IndictmentDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
@@ -32,8 +35,8 @@ const IndictmentOverview = () => {
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
-  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
+  const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -52,18 +55,24 @@ const IndictmentOverview = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
-          <Box component="section" marginBottom={5}>
-            <InfoCardCaseScheduledIndictment
-              court={workingCase.court}
-              courtDate={latestDate.date}
-              courtRoom={latestDate.location}
-              postponedIndefinitelyExplanation={
-                workingCase.postponedIndefinitelyExplanation
-              }
-            />
-          </Box>
-        )}
+        {workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduledIndictment
+                court={workingCase.court}
+                indictmentDecision={workingCase.indictmentDecision}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
+                courtSessionType={workingCase.courtSessionType}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
         </Box>

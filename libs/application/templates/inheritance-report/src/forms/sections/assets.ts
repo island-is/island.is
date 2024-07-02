@@ -5,14 +5,19 @@ import {
   buildSection,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import {
   getEstateDataFromApplication,
   shouldShowDeceasedShareField,
 } from '../../lib/utils/helpers'
-import { Application, YES } from '@island.is/application/types'
-import { ESTATE_INHERITANCE, PREPAID_INHERITANCE } from '../../lib/constants'
+import { Application, FormValue, YES } from '@island.is/application/types'
+import {
+  ESTATE_INHERITANCE,
+  PREPAID_INHERITANCE,
+  PrePaidInheritanceOptions,
+} from '../../lib/constants'
 
 export const assets = buildSection({
   id: 'estateProperties',
@@ -22,8 +27,10 @@ export const assets = buildSection({
       id: 'realEstate',
       title: m.realEstate,
       condition: (answers) => {
-        return (answers as any).applicationFor === PREPAID_INHERITANCE
-          ? (answers as any).prepaidInheritance?.realEstate[0] === YES
+        return answers.applicationFor === PREPAID_INHERITANCE
+          ? !!getValueViaPath<string>(answers, 'prepaidInheritance')?.includes(
+              PrePaidInheritanceOptions.REAL_ESTATE,
+            )
           : true
       },
       children: [
@@ -32,15 +39,16 @@ export const assets = buildSection({
           title: m.propertiesTitle,
           description: (application) =>
             application.answers.applicationFor === PREPAID_INHERITANCE
-              ? m.propertiesDescriptionPrePaid
-              : m.propertiesDescription.defaultMessage +
-                ' ' +
-                m.continueWithoutAssets.defaultMessage,
+              ? m.propertiesDescriptionPrePaidAssets
+              : m.propertiesDescriptionAssets,
           children: [
             buildDescriptionField({
               id: 'realEstateTitle',
               title: m.realEstate,
-              description: m.realEstateDescription,
+              description: (application) =>
+                application.answers.applicationFor === PREPAID_INHERITANCE
+                  ? m.realEstateDescriptionPrePaid
+                  : m.realEstateDescription,
               titleVariant: 'h3',
             }),
             buildDescriptionField({
@@ -55,8 +63,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.realEstate.data',
-                doesNotRequireAnswer: true,
-                component: 'AssetsRepeater',
+                component: 'EstateAndVehiclesRepeater',
               },
               {
                 fields: [
@@ -104,16 +111,13 @@ export const assets = buildSection({
       id: 'inventory',
       title: m.inventoryTitle,
       condition: (answers) => {
-        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+        return answers.applicationFor !== PREPAID_INHERITANCE
       },
       children: [
         buildMultiField({
           id: 'inventory',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutInventory.defaultMessage,
+          description: m.propertiesDescriptionInventory,
           children: [
             buildDescriptionField({
               id: 'inventoryTitle',
@@ -153,7 +157,6 @@ export const assets = buildSection({
                 title: '',
                 condition: shouldShowDeceasedShareField,
                 id: 'assets.inventory',
-                doesNotRequireAnswer: true,
                 width: 'full',
                 component: 'DeceasedShareField',
               },
@@ -170,16 +173,13 @@ export const assets = buildSection({
       id: 'assets.vehicles',
       title: m.vehicles,
       condition: (answers) => {
-        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+        return answers.applicationFor !== PREPAID_INHERITANCE
       },
       children: [
         buildMultiField({
           id: 'vehicles',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutVehicles.defaultMessage,
+          description: m.propertiesDescriptionVehicles,
           children: [
             buildDescriptionField({
               id: 'vehiclesTitle',
@@ -199,8 +199,7 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.vehicles.data',
-                doesNotRequireAnswer: true,
-                component: 'AssetsRepeater',
+                component: 'EstateAndVehiclesRepeater',
               },
               {
                 fields: [
@@ -241,16 +240,13 @@ export const assets = buildSection({
       id: 'assets.guns',
       title: m.guns,
       condition: (answers) => {
-        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+        return answers.applicationFor !== PREPAID_INHERITANCE
       },
       children: [
         buildMultiField({
           id: 'guns',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutGuns.defaultMessage,
+          description: m.propertiesDescriptionGuns,
           children: [
             buildDescriptionField({
               id: 'gunsTitle',
@@ -270,7 +266,6 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.guns.data',
-                doesNotRequireAnswer: true,
                 component: 'ReportFieldsRepeater',
               },
               {
@@ -307,16 +302,13 @@ export const assets = buildSection({
       id: 'estateBankInfo',
       title: m.estateBankInfo,
       condition: (answers) => {
-        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+        return answers.applicationFor !== PREPAID_INHERITANCE
       },
       children: [
         buildMultiField({
           id: 'estateBankInfo',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutBankAccounts.defaultMessage,
+          description: m.propertiesDescriptionBankAccounts,
           children: [
             buildDescriptionField({
               id: 'estateBankInfoTitle',
@@ -337,7 +329,6 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.bankAccounts.data',
                 component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [
@@ -396,16 +387,13 @@ export const assets = buildSection({
       id: 'claims',
       title: m.claimsTitle,
       condition: (answers) => {
-        return (answers as any).applicationFor !== PREPAID_INHERITANCE
+        return answers.applicationFor !== PREPAID_INHERITANCE
       },
       children: [
         buildMultiField({
           id: 'claims',
           title: m.propertiesTitle,
-          description:
-            m.propertiesDescription.defaultMessage +
-            ' ' +
-            m.continueWithoutClaims.defaultMessage,
+          description: m.propertiesDescriptionClaims,
           children: [
             buildDescriptionField({
               id: 'claimsTitle',
@@ -422,7 +410,6 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.claims.data',
                 component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [
@@ -458,8 +445,10 @@ export const assets = buildSection({
       id: 'stocks',
       title: m.stocksTitle,
       condition: (answers) => {
-        return (answers as any).applicationFor === PREPAID_INHERITANCE
-          ? (answers as any).prepaidInheritance?.stocks[0] === YES
+        return answers.applicationFor === PREPAID_INHERITANCE
+          ? !!getValueViaPath<string>(answers, 'prepaidInheritance')?.includes(
+              PrePaidInheritanceOptions.STOCKS,
+            )
           : true
       },
       children: [
@@ -468,10 +457,8 @@ export const assets = buildSection({
           title: m.propertiesTitle,
           description: (application) =>
             application.answers.applicationFor === PREPAID_INHERITANCE
-              ? m.propertiesDescriptionPrePaid
-              : m.propertiesDescription.defaultMessage +
-                ' ' +
-                m.continueWithoutBankAccounts.defaultMessage,
+              ? m.propertiesDescriptionPrePaidStocks
+              : m.propertiesDescriptionStocks,
           children: [
             buildDescriptionField({
               id: 'stocksTitle',
@@ -491,13 +478,13 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.stocks.data',
                 component: 'ReportFieldsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [
                   {
                     title: m.stocksOrganization,
                     id: 'description',
+                    required: true,
                   },
                   {
                     title: m.stocksNationalId,
@@ -546,8 +533,10 @@ export const assets = buildSection({
           ? m.moneyTitlePrePaid
           : m.moneyTitle,
       condition: (answers) => {
-        return (answers as any).applicationFor === PREPAID_INHERITANCE
-          ? (answers as any).prepaidInheritance?.money[0] === YES
+        return answers.applicationFor === PREPAID_INHERITANCE
+          ? !!getValueViaPath<string>(answers, 'prepaidInheritance')?.includes(
+              PrePaidInheritanceOptions.MONEY,
+            )
           : true
       },
       children: [
@@ -556,10 +545,8 @@ export const assets = buildSection({
           title: m.propertiesTitle,
           description: (application) =>
             application.answers.applicationFor === PREPAID_INHERITANCE
-              ? m.propertiesDescriptionPrePaid
-              : m.propertiesDescription.defaultMessage +
-                ' ' +
-                m.continueWithoutBankAccounts.defaultMessage,
+              ? m.propertiesDescriptionPrePaidMoney
+              : m.propertiesDescriptionMoney,
           children: [
             buildDescriptionField({
               id: 'moneyTitle',
@@ -589,6 +576,8 @@ export const assets = buildSection({
               },
               rows: 4,
               maxLength: 1800,
+              condition: (answers: FormValue) =>
+                answers.applicationFor === ESTATE_INHERITANCE,
             }),
             buildTextField({
               id: 'assets.money.value',
@@ -612,7 +601,6 @@ export const assets = buildSection({
                 title: '',
                 condition: shouldShowDeceasedShareField,
                 id: 'assets.money',
-                doesNotRequireAnswer: true,
                 width: 'full',
                 component: 'DeceasedShareField',
               },
@@ -629,8 +617,10 @@ export const assets = buildSection({
       id: 'otherAssets',
       title: m.otherAssetsTitle,
       condition: (answers) => {
-        return (answers as any).applicationFor === PREPAID_INHERITANCE
-          ? (answers as any).prepaidInheritance?.other[0] === YES
+        return answers.applicationFor === PREPAID_INHERITANCE
+          ? !!getValueViaPath<string>(answers, 'prepaidInheritance')?.includes(
+              PrePaidInheritanceOptions.OTHER_ASSETS,
+            )
           : true
       },
       children: [
@@ -639,15 +629,16 @@ export const assets = buildSection({
           title: m.propertiesTitle,
           description: (application) =>
             application.answers.applicationFor === PREPAID_INHERITANCE
-              ? m.propertiesDescriptionPrePaid
-              : m.propertiesDescription.defaultMessage +
-                ' ' +
-                m.continueWithoutBankAccounts.defaultMessage,
+              ? m.propertiesDescriptionPrePaidOtherAssets
+              : m.propertiesDescriptionOtherAssets,
           children: [
             buildDescriptionField({
               id: 'otherAssetsTitle',
               title: m.otherAssetsTitle,
-              description: m.otherAssetsDescription,
+              description: (application) =>
+                application.answers.applicationFor === PREPAID_INHERITANCE
+                  ? m.otherAssetsDescriptionPrePaid
+                  : m.otherAssetsDescription,
               titleVariant: 'h3',
             }),
             buildDescriptionField({
@@ -659,7 +650,6 @@ export const assets = buildSection({
                 title: '',
                 id: 'assets.otherAssets.data',
                 component: 'OtherAssetsRepeater',
-                doesNotRequireAnswer: true,
               },
               {
                 fields: [

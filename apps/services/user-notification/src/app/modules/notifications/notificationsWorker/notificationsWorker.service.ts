@@ -39,7 +39,7 @@ const WORK_ENDING_HOUR = 23 // 11 PM
 type HandleNotification = {
   profile: {
     nationalId: string
-    email?: string
+    email?: string | null
     documentNotifications: boolean
     emailNotifications: boolean
     locale?: string
@@ -156,13 +156,13 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         {
           component: 'Heading',
           context: {
-            copy: formattedTemplate.notificationTitle,
+            copy: formattedTemplate.title,
           },
         },
         {
           component: 'Copy',
           context: {
-            copy: formattedTemplate.notificationBody,
+            copy: formattedTemplate.externalBody,
           },
         },
         {
@@ -206,9 +206,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         name: fullName,
         address: recipientEmail,
       },
-      subject: formattedTemplate.notificationTitle,
+      subject: formattedTemplate.title,
       template: {
-        title: formattedTemplate.notificationTitle,
+        title: formattedTemplate.title,
         body: generateBody(),
       },
     }
@@ -260,13 +260,15 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
 
     const isEnglish = profile.locale === 'en'
 
-    const formattedTemplate = this.notificationsService.formatArguments(
+    const formattedTemplate = await this.notificationsService.formatArguments(
       message.args,
       // We need to shallow copy the template here so that the
       // in-memory cache is not modified.
       {
         ...template,
       },
+      message?.senderId,
+      profile.locale as Locale,
     )
 
     try {

@@ -68,6 +68,13 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.ASK_FOR_CANCELLATION,
+    {
+      fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
+      to: { state: IndictmentCaseState.WAITING_FOR_CANCELLATION },
+    },
+  ],
+  [
     IndictmentCaseTransition.RECEIVE,
     {
       fromStates: [IndictmentCaseState.SUBMITTED],
@@ -82,16 +89,12 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
-    IndictmentCaseTransition.REDISTRIBUTE,
-    {
-      fromStates: [IndictmentCaseState.RECEIVED],
-      to: { state: IndictmentCaseState.MAIN_HEARING },
-    },
-  ],
-  [
     IndictmentCaseTransition.COMPLETE,
     {
-      fromStates: [IndictmentCaseState.RECEIVED],
+      fromStates: [
+        IndictmentCaseState.WAITING_FOR_CANCELLATION,
+        IndictmentCaseState.RECEIVED,
+      ],
       to: { state: IndictmentCaseState.COMPLETED },
     },
   ],

@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 
 import type { User } from '@island.is/judicial-system/types'
 import {
@@ -11,6 +11,7 @@ import {
   courtOfAppealsRoles,
   DateType,
   districtCourtRoles,
+  IndictmentCaseReviewDecision,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -47,8 +48,8 @@ describe('getCasesQueryFilter', () => {
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
@@ -106,8 +107,8 @@ describe('getCasesQueryFilter', () => {
             CaseState.DRAFT,
             CaseState.WAITING_FOR_CONFIRMATION,
             CaseState.SUBMITTED,
+            CaseState.WAITING_FOR_CANCELLATION,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             CaseState.ACCEPTED,
             CaseState.REJECTED,
             CaseState.DISMISSED,
@@ -181,8 +182,8 @@ describe('getCasesQueryFilter', () => {
                   {
                     state: [
                       CaseState.SUBMITTED,
+                      CaseState.WAITING_FOR_CANCELLATION,
                       CaseState.RECEIVED,
-                      CaseState.MAIN_HEARING,
                       CaseState.COMPLETED,
                     ],
                   },
@@ -228,8 +229,8 @@ describe('getCasesQueryFilter', () => {
           {
             state: [
               CaseState.SUBMITTED,
+              CaseState.WAITING_FOR_CANCELLATION,
               CaseState.RECEIVED,
-              CaseState.MAIN_HEARING,
               CaseState.COMPLETED,
             ],
           },
@@ -366,13 +367,38 @@ describe('getCasesQueryFilter', () => {
     expect(res).toStrictEqual({
       [Op.and]: [
         { isArchived: false },
-        { state: CaseState.ACCEPTED },
         {
-          type: [
-            CaseType.CUSTODY,
-            CaseType.ADMISSION_TO_FACILITY,
-            CaseType.PAROLE_REVOCATION,
-            CaseType.TRAVEL_BAN,
+          [Op.or]: [
+            {
+              [Op.and]: [
+                { state: CaseState.ACCEPTED },
+                {
+                  type: [
+                    CaseType.CUSTODY,
+                    CaseType.ADMISSION_TO_FACILITY,
+                    CaseType.PAROLE_REVOCATION,
+                    CaseType.TRAVEL_BAN,
+                  ],
+                },
+              ],
+            },
+            {
+              [Op.and]: [
+                {
+                  type: CaseType.INDICTMENT,
+                  state: CaseState.COMPLETED,
+                  indictmentReviewDecision: IndictmentCaseReviewDecision.ACCEPT,
+                  id: {
+                    [Op.notIn]: Sequelize.literal(`
+                        (SELECT "case_id"
+                          FROM "defendant"
+                          WHERE "defendant"."verdict_view_date" IS NULL
+                          OR "defendant"."verdict_view_date" > NOW() - INTERVAL '28 days')
+                        `),
+                  },
+                },
+              ],
+            },
           ],
         },
       ],
@@ -431,8 +457,8 @@ describe('getCasesQueryFilter', () => {
                 { type: indictmentCases },
                 {
                   state: [
+                    CaseState.WAITING_FOR_CANCELLATION,
                     CaseState.RECEIVED,
-                    CaseState.MAIN_HEARING,
                     ...completedIndictmentCaseStates,
                   ],
                 },

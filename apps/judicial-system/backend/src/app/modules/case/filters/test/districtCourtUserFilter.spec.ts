@@ -39,6 +39,7 @@ const continueFromCaseState = (user: User, type: string, state: string) => {
 const continueFromIndictmentType = (user: User, type: string) => {
   const accessibleCaseStates = [
     CaseState.SUBMITTED,
+    CaseState.WAITING_FOR_CANCELLATION,
     CaseState.RECEIVED,
     CaseState.COMPLETED,
   ]

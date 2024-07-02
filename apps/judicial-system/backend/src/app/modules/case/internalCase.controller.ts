@@ -13,7 +13,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   messageEndpoint,
   MessageType,
@@ -26,6 +25,7 @@ import {
 
 import { CaseEvent, EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
+import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -148,6 +148,111 @@ export class InternalCaseController {
   @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
   @Post(
     `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_INFO]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers indictment info to court when case is received',
+  })
+  deliverIndictmentInfoToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the indictment info for case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentInfoToCourt(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_DEFENDER]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers indictment case defender info to court',
+  })
+  deliverIndictmentDefenderInfoToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the indictment defender info for case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentDefenderInfoToCourt(
+      theCase,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES]
+    }/:nationalId`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers assigned roles in indictment case to court',
+  })
+  deliverIndictmentAssignedRoleToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverDto,
+    @Param('nationalId') nationalId: string,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the assigned roles of indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentAssignedRolesToCourt(
+      theCase,
+      deliverDto.user,
+      nationalId,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[
+        MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE
+      ]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an indictment cancellation notice to court',
+  })
+  deliverIndictmentCancellationNoticeToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverCancellationNoticeDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the cancellation notice for indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentCancellationNoticeToCourt(
+      theCase,
+      deliverDto.withCourtCaseNumber,
+      deliverDto.user,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
       messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD]
     }/:policeCaseNumber`,
   )
@@ -175,37 +280,6 @@ export class InternalCaseController {
       theCase,
       policeCaseNumber,
       deliverDto.user,
-    )
-  }
-
-  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
-  @Post(
-    `case/:caseId/${
-      messageEndpoint[MessageType.ARCHIVING_CASE_FILES_RECORD]
-    }/:policeCaseNumber`,
-  )
-  @ApiOkResponse({
-    type: DeliverResponse,
-    description: 'Archives a case files record',
-  })
-  async archiveCaseFilesRecord(
-    @Param('caseId') caseId: string,
-    @Param('policeCaseNumber') policeCaseNumber: string,
-    @CurrentCase() theCase: Case,
-  ): Promise<DeliverResponse> {
-    this.logger.debug(
-      `Archiving the case files record for case ${caseId} and police case ${policeCaseNumber}`,
-    )
-
-    if (!theCase.policeCaseNumbers.includes(policeCaseNumber)) {
-      throw new BadRequestException(
-        `Case ${caseId} does not include police case number ${policeCaseNumber}`,
-      )
-    }
-
-    return this.internalCaseService.archiveCaseFilesRecord(
-      theCase,
-      policeCaseNumber,
     )
   }
 
