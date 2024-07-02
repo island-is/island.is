@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, PropsWithChildren, useContext } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -25,7 +25,7 @@ interface Props {
   queryParameters?: string
 }
 
-const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
+const PdfButton: FC<PropsWithChildren<Props>> = ({
   caseId,
   title,
   pdfType,

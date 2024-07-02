@@ -347,6 +347,14 @@ export const caseListInclude: Includeable[] = [
     required: false,
     where: { commentType: { [Op.in]: commentTypes } },
   },
+  {
+    model: EventLog,
+    as: 'eventLogs',
+    required: false,
+    where: { eventType: { [Op.in]: eventTypes } },
+    order: [['created', 'ASC']],
+    separate: true,
+  },
 ]
 
 export const listOrder: OrderItem[] = [
@@ -694,6 +702,15 @@ export class CaseService {
       })
     }
 
+    if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
+        user,
+        caseId: theCase.id,
+        body: { withCourtCaseNumber: false },
+      })
+    }
+
     return this.messageService.sendMessagesToQueue(messages)
   }
 
@@ -839,7 +856,10 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private getRevokeMessages(user: TUser, theCase: Case): CaseMessage[] {
+  private getRevokeNotificationMessages(
+    user: TUser,
+    theCase: Case,
+  ): CaseMessage[] {
     return [
       {
         type: MessageType.NOTIFICATION,
@@ -855,7 +875,7 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     return this.messageService.sendMessagesToQueue(
-      this.getRevokeMessages(user, theCase),
+      this.getRevokeNotificationMessages(user, theCase),
     )
   }
 
@@ -863,9 +883,18 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getRevokeMessages(user, theCase),
-    )
+    const messages = this.getRevokeNotificationMessages(user, theCase)
+
+    if (theCase.courtCaseNumber) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
+        user,
+        caseId: theCase.id,
+        body: { withCourtCaseNumber: true },
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForAppealedCaseToQueue(
@@ -1398,7 +1427,20 @@ export class CaseService {
     }
   }
 
-  handleEventLogs(
+  private constructEventLogDTO(
+    eventType: EventType,
+    theCase: Case,
+    user: TUser,
+  ) {
+    return {
+      eventType,
+      caseId: theCase.id,
+      nationalId: user.nationalId,
+      userRole: user.role,
+    }
+  }
+
+  private handleEventLogs(
     theCase: Case,
     update: UpdateCase,
     user: TUser,
@@ -1408,30 +1450,38 @@ export class CaseService {
       update.state === CaseState.RECEIVED &&
       theCase.state === CaseState.SUBMITTED
     ) {
-      return this.eventLogService.create(
-        {
-          eventType: EventType.CASE_RECEIVED_BY_COURT,
-          caseId: theCase.id,
-          nationalId: user.nationalId,
-          userRole: user.role,
-        },
-        transaction,
+      const eventLogDTO = this.constructEventLogDTO(
+        EventType.CASE_RECEIVED_BY_COURT,
+        theCase,
+        user,
       )
+
+      return this.eventLogService.create(eventLogDTO, transaction)
     }
-    if (
-      isIndictmentCase(theCase.type) &&
-      update.state === CaseState.SUBMITTED &&
-      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
-    ) {
-      return this.eventLogService.create(
-        {
-          eventType: EventType.INDICTMENT_CONFIRMED,
-          caseId: theCase.id,
-          nationalId: user.nationalId,
-          userRole: user.role,
-        },
-        transaction,
-      )
+
+    if (isIndictmentCase(theCase.type)) {
+      if (
+        update.state === CaseState.SUBMITTED &&
+        theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+      ) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.INDICTMENT_CONFIRMED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
+
+      if (update.state === CaseState.COMPLETED) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.INDICTMENT_COMPLETED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
     }
   }
 

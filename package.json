@@ -21,7 +21,7 @@
     "deploy": "nx deploy",
     "test": "nx test",
     "lint": "nx lint",
-    "clean": "./scripts/clean.sh",
+    "clean": "node ./scripts/clean.mjs",
     "dev-services": "nx dev-services",
     "dev": "nx dev",
     "dev-init": "nx dev-init",
