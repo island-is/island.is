@@ -97,3 +97,7 @@ apps/**/index.html
 .next
 
 .nx/
+
+
+# E2E outputs
+playwright-report/
