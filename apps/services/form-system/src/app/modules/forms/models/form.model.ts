@@ -43,7 +43,7 @@ export class Form extends Model<Form> {
     unique: true,
     defaultValue: randomUUID(),
   })
-  urlName!: string
+  slug!: string
 
   @Column
   @ApiPropertyOptional({ type: Date })

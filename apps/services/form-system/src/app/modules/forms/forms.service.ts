@@ -239,7 +239,7 @@ export class FormsService {
       id: form.id,
       organizationId: form.organizationId,
       name: form.name,
-      urlName: form.urlName,
+      slug: form.slug,
       invalidationDate: form.invalidationDate,
       created: form.created,
       modified: form.modified,

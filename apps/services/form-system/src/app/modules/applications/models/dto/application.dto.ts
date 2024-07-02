@@ -13,7 +13,7 @@ export class ApplicationDto {
   formId?: string
 
   @ApiPropertyOptional()
-  formUrlName?: string
+  slug?: string
 
   @ApiPropertyOptional({ type: Date })
   created?: Date

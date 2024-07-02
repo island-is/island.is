@@ -10,7 +10,7 @@ export class FormMapper {
       return {
         id: form.id,
         name: form.name,
-        urlName: form.urlName,
+        slug: form.slug,
         invalidationDate: form.invalidationDate,
         created: form.created,
         modified: form.modified,

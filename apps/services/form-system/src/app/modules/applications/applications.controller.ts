@@ -22,10 +22,8 @@ export class ApplicationsController {
     description: 'Create new application',
     response: { status: 200, type: ApplicationDto },
   })
-  @Post(':formUrlName')
-  async create(
-    @Param('formUrlName') formUrlName: string,
-  ): Promise<ApplicationDto> {
-    return this.applicationsService.create(formUrlName)
+  @Post(':slug')
+  async create(@Param('slug') slug: string): Promise<ApplicationDto> {
+    return this.applicationsService.create(slug)
   }
 }

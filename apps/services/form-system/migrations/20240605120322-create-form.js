@@ -16,7 +16,7 @@ module.exports = {
             type: Sequelize.JSON,
             allowNull: false,
           },
-          url_name: {
+          slug: {
             type: Sequelize.STRING,
             allowNull: false,
             unique: true,

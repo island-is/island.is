@@ -22,8 +22,8 @@ export class ApplicationsService {
     private readonly applicationMapper: ApplicationMapper,
   ) {}
 
-  async create(formUrlName: string): Promise<ApplicationDto> {
-    const form: Form = await this.getForm(formUrlName)
+  async create(slug: string): Promise<ApplicationDto> {
+    const form: Form = await this.getForm(slug)
 
     const newApplication: Application = await this.applicationModel.create({
       formId: form.id,
@@ -40,10 +40,9 @@ export class ApplicationsService {
     return new ApplicationDto()
   }
 
-  private async getForm(urlName: string): Promise<Form> {
-    console.log('urlName', urlName)
+  private async getForm(slug: string): Promise<Form> {
     const form = await this.formModel.findOne({
-      where: { urlName: urlName },
+      where: { slug: slug },
       include: [
         {
           model: Section,
@@ -93,7 +92,7 @@ export class ApplicationsService {
     })
 
     if (!form) {
-      throw new NotFoundException(`Form with urlName '${urlName}' not found`)
+      throw new NotFoundException(`Form with slug '${slug}' not found`)
     }
 
     return form

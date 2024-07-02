@@ -18,7 +18,7 @@ export class ApplicationMapper {
     const applicationDto: ApplicationDto = {
       applicationId: application.id,
       formId: form.id,
-      formUrlName: form.urlName,
+      slug: form.slug,
       organization: new OrganizationDto(),
       sections: [],
     }
