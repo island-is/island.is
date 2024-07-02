@@ -6,12 +6,10 @@ import { runCommand } from './cache/_utils.mjs'
 const APP = process.argv[2]
 const data = JSON.parse(await runCommand(`yarn nx show project ${APP}`))
 const {
-  targets: {
-    build,
-  },
+  targets: { build },
 } = data
 
-const options = build?.options ?? {};
+const options = build?.options ?? {}
 let output = build?.outputs?.[0] ?? options.outputPath
 
 if (!output) {
@@ -21,6 +19,6 @@ if (!output) {
 for (const [key, value] of Object.entries(options)) {
   output = output.replaceAll(`{options.${key}}`, value)
 }
-output = output.replaceAll(`{workspaceRoot}/`, '');
+output = output.replaceAll(`{workspaceRoot}/`, '')
 
 console.log(output)
