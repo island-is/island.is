@@ -4,7 +4,11 @@ import {
   MedmaelalistarApi,
   MedmaelasofnunApi,
 } from '../../gen/fetch'
-import { CanCreateInput, GetListInput } from './signature-collection.types'
+import {
+  CanCreateInput,
+  CollectionType,
+  GetListInput,
+} from './signature-collection.types'
 import {
   Collection,
   CollectionStatus,
@@ -21,7 +25,7 @@ type CandidateApi = FrambodApi | AdminCandidateApi
 
 @Injectable()
 export class SignatureCollectionSharedClientService {
-  async currentCollection(api: CollectionApi): Promise<Collection> {
+  async currentCollections(api: CollectionApi): Promise<Collection[]> {
     // includeInactive: false will return collections as active until electionday for collection has passed
     const res = await api.medmaelasofnunGet({
       includeInactive: true,
@@ -35,8 +39,22 @@ export class SignatureCollectionSharedClientService {
             collection?.isSignatureCollection &&
             collection.startTime < new Date(),
         ) as Collection[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))[0]
+    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
 
+    if (!current) {
+      throw new Error('No current collection')
+    }
+    return current
+  }
+
+  async currentCollection(
+    api: CollectionApi,
+    type: CollectionType,
+  ): Promise<Collection> {
+    const collections = await this.currentCollections(api)
+    const current = collections.filter(
+      (collection) => collection.type === type,
+    )[0]
     if (!current) {
       throw new Error('No current collection')
     }

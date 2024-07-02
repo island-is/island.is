@@ -7,6 +7,7 @@ import {
   SignatureCollectionClientService,
   ReasonKey,
   OwnerInput,
+  CollectionType,
 } from '@island.is/clients/signature-collection'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { ProviderErrorReason } from '@island.is/shared/problem'
@@ -44,6 +45,7 @@ export class SignatureListCreationService extends BaseTemplateApiService {
       {
         collectionId,
         owner,
+        collectionType: CollectionType.Presidential, //TODO: Haukur revisit
       },
       auth,
     )
@@ -94,6 +96,8 @@ export class SignatureListCreationService extends BaseTemplateApiService {
   }
 
   async currentCollection() {
-    return await this.signatureCollectionClientService.currentCollection()
+    return await this.signatureCollectionClientService.currentCollection(
+      CollectionType.Presidential,
+    ) //TODO: Haukur revisit
   }
 }

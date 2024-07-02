@@ -12,6 +12,8 @@ import {
   ReasonKey,
   CanCreateInput,
   CanSignInput,
+  CollectionType,
+  CollectionTypeInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
 import { List, SignedList, mapList, mapListBase } from './types/list.dto'
@@ -38,8 +40,12 @@ export class SignatureCollectionClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(): Promise<Collection> {
-    return await this.sharedService.currentCollection(this.collectionsApi)
+  async currentCollection(type: CollectionType): Promise<Collection> {
+    return await this.sharedService.currentCollection(this.collectionsApi, type)
+  }
+
+  async currentCollections(): Promise<Collection[]> {
+    return await this.sharedService.currentCollections(this.collectionsApi)
   }
 
   async getLists(input: GetListInput, auth?: Auth): Promise<List[]> {
@@ -68,29 +74,29 @@ export class SignatureCollectionClientService {
     )
   }
 
-  async getAreas(collectionId?: string) {
-    if (!collectionId) {
-      const { id } = await this.currentCollection()
-      collectionId = id
-    }
-    const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
-      iD: parseInt(collectionId),
-    })
-    return areas.map((area) => ({
-      id: area.id ?? 0,
-      name: area.nafn ?? '',
-    }))
-  }
+  // async getAreas(collectionId?: string) {
+  //   if (!collectionId) {
+  //     const { id } = await this.currentCollection()
+  //     collectionId = id
+  //   }
+  //   const areas = await this.collectionsApi.medmaelasofnunIDSvaediGet({
+  //     iD: parseInt(collectionId),
+  //   })
+  //   return areas.map((area) => ({
+  //     id: area.id ?? 0,
+  //     name: area.nafn ?? '',
+  //   }))
+  // }
 
   async createLists(
-    { collectionId, owner, areas }: CreateListInput,
+    { collectionId, owner, areas, collectionType }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
     const {
       id,
       isActive,
       areas: collectionAreas,
-    } = await this.currentCollection()
+    } = await this.currentCollection(collectionType)
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
       throw new Error('Collection is not open')
@@ -168,15 +174,23 @@ export class SignatureCollectionClientService {
   }
 
   async removeLists(
-    { collectionId, listIds }: { collectionId: string; listIds?: string[] },
+    {
+      collectionId,
+      listIds,
+    }: {
+      collectionId: string
+      listIds?: string[]
+    },
     auth: User,
   ): Promise<Success> {
-    const { id, isPresidential, isActive } = await this.currentCollection()
+    const currentCollections = await this.currentCollections()
     const { ownedLists, candidate } = await this.getSignee(auth)
     const { nationalId } = auth
     if (candidate?.nationalId !== nationalId || !candidate.id) {
       return { success: false, reasons: [ReasonKey.NotOwner] }
     }
+    const { id, isActive, isPresidential } =
+      currentCollections.find((c) => c.id === collectionId) ?? {}
     // Lists can only be removed from current collection if it is open
     if (id !== collectionId || !isActive) {
       return { success: false, reasons: [ReasonKey.CollectionNotOpen] }
@@ -214,9 +228,12 @@ export class SignatureCollectionClientService {
     return { success: true }
   }
 
-  async getSignedList(auth: User): Promise<SignedList[] | null> {
+  async getSignedList(
+    auth: User,
+    collectionType: CollectionType,
+  ): Promise<SignedList[] | null> {
     const { signatures } = await this.getSignee(auth)
-    const { endTime } = await this.currentCollection()
+    const { endTime } = await this.currentCollection(collectionType)
     if (!signatures) {
       return null
     }
@@ -268,7 +285,7 @@ export class SignatureCollectionClientService {
   }
 
   async getSignee(auth: User, nationalId?: string): Promise<Signee> {
-    const collection = await this.currentCollection()
+    const collection = await this.currentCollection(CollectionType.Presidential) //TODO: Haukur fix
     const { id, isPresidential, isActive, areas } = collection
     const user = await this.getApiWithAuth(
       this.collectionsApi,
