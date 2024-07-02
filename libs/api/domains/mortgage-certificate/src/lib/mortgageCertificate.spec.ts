@@ -48,29 +48,27 @@ describe('MortgageCertificateService', () => {
 
   describe('getMortgageCertificate', () => {
     it('should return a result', async () => {
-      const response = await service.getMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_OK,
-      )
+      const response = await service.getMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
 
-      expect(response.contentBase64).toBeTruthy()
+      expect(response[0].contentBase64).toBeTruthy()
     })
   })
 
   describe('validateMortgageCertificate', () => {
     it('exists should be true', async () => {
-      const res = await service.validateMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_OK,
-        undefined,
-      )
-      expect(res.exists).toStrictEqual(true)
+      const res = await service.validateMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
+      expect(res[0].exists).toStrictEqual(true)
     })
 
     it('hasKMarking should be true', async () => {
-      const res = await service.validateMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_OK,
-        undefined,
-      )
-      expect(res.hasKMarking).toStrictEqual(true)
+      const res = await service.validateMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
+      expect(res[0].hasKMarking).toStrictEqual(true)
     })
   })
 })

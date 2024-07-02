@@ -1,6 +1,6 @@
 import { rest } from 'msw'
 
-export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
+export const MOCK_PROPERTY_NUMBER_OK = '2003292'
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
