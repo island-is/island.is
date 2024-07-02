@@ -173,6 +173,7 @@ export const slices = gql`
         }
       }
     }
+    dividerOnTop
   }
 
   fragment FaqListFields on FaqList {
