@@ -517,6 +517,10 @@ export const NavigationTree: FC<
               />
             )
 
+            if (active && !activeAccordion) {
+              toggleAccordion(accordionId)
+            }
+
             return (
               <li key={index} className={styles.listItem} role="menuitem">
                 {/*Note: Need to review usage (e.g. PortalNavigation) if we change the rendered element to something other than FocusableBox.*/}
