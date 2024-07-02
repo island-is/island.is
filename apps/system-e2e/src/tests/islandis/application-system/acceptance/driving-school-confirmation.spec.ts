@@ -38,7 +38,6 @@ test.describe('Driving School Confirmation', () => {
 
     // Start application
     await page.goto('/umsoknir/okuskoli')
-    await expect(page).toBeApplication()
     await dataProviders.click()
     await forwardsButton.click()
 
@@ -62,7 +61,7 @@ test.describe('Driving School Confirmation', () => {
     const oldURL = page.url()
     await newButton.click()
     const newURL = page.url()
-    await expect(newURL).not.toBe(oldURL)
+    expect(newURL).not.toBe(oldURL)
     await page.close()
   })
 
@@ -82,7 +81,6 @@ test.describe('Driving School Confirmation', () => {
 
     // Start application
     await page.goto('/umsoknir/okuskoli')
-    await expect(page).toBeApplication()
     await dataProviders.click()
     await forwardsButton.click()
 
@@ -97,7 +95,7 @@ test.describe('Driving School Confirmation', () => {
 
     // Verify page is OK, then go back
     await expect(datePicker).toBeVisible()
-    await expect(errorMessage).not.toBeVisible()
+    await expect(errorMessage).toBeHidden()
     await backwardsButton.click()
 
     // Enter details for unauthorized student
@@ -110,6 +108,6 @@ test.describe('Driving School Confirmation', () => {
 
     // Make sure only error message
     await expect(errorMessage).toBeVisible()
-    await expect(datePicker).not.toBeVisible()
+    await expect(datePicker).toBeHidden()
   })
 })

@@ -1,8 +1,6 @@
 import { test, BrowserContext, expect } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
-import { label } from '../../../../support/i18n'
-import { messages } from '@island.is/service-portal/health/messages'
 import { disableI18n } from '../../../../support/disablers'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
@@ -51,7 +49,7 @@ test.describe('MS - Health', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/heilsa/tannlaeknar'))
 
       const title = page.getByRole('link', {
-        name: label(messages.changeRegistration),
+        name: 'Breyta skráningu',
       })
 
       await expect(title).toBeVisible()
@@ -61,14 +59,14 @@ test.describe('MS - Health', () => {
       await row.hover()
 
       const save = page.getByRole('button', {
-        name: label(messages.healthRegistrationSave),
+        name: 'Vista',
       })
 
       await expect(save).toBeVisible()
       await save.click()
 
       const agreeButton = page.getByRole('button', {
-        name: label(messages.healthRegisterModalAccept),
+        name: 'Já, ég vil færa mig',
       })
 
       await expect(agreeButton).toBeVisible()
@@ -107,7 +105,7 @@ test.describe('MS - Health', () => {
       await page.goto(icelandicAndNoPopupUrl('/minarsidur/heilsa/heilsugaesla'))
 
       const title = page.getByRole('link', {
-        name: label(messages.changeRegistration),
+        name: 'Breyta skráningu',
       })
 
       await expect(title).toBeVisible()
@@ -121,14 +119,14 @@ test.describe('MS - Health', () => {
       await row.hover()
 
       const save = page.getByRole('button', {
-        name: label(messages.healthRegistrationSave),
+        name: 'Vista',
       })
 
       await expect(save).toBeVisible()
       await save.click()
 
       const agreeButton = page.getByRole('button', {
-        name: label(messages.healthRegisterModalAccept),
+        name: 'Já',
       })
 
       await expect(agreeButton).toBeVisible()
