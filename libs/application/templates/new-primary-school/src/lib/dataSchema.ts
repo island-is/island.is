@@ -3,12 +3,10 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
-  FoodAllergiesOptions,
-  FoodIntolerancesOptions,
+  Gender,
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
-  Gender,
 } from './constants'
 import { errorMessages } from './messages'
 
@@ -160,10 +158,8 @@ export const dataSchema = z.object({
     .object({
       hasFoodAllergies: z.array(z.string()),
       hasFoodIntolerances: z.array(z.string()),
-      foodAllergies: z.array(z.nativeEnum(FoodAllergiesOptions)).optional(),
-      foodIntolerances: z
-        .array(z.nativeEnum(FoodIntolerancesOptions))
-        .optional(),
+      foodAllergies: z.array(z.string()).optional(),
+      foodIntolerances: z.array(z.string()).optional(),
       isUsingEpiPen: z.array(z.string()),
     })
     .refine(

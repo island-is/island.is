@@ -16,13 +16,12 @@ export type Events =
   | { type: DefaultEvents.ASSIGN }
   | { type: DefaultEvents.EDIT }
 
-export enum Roles {
-  APPLICANT = 'applicant',
+export enum ApiModuleActions {
+  getChildInformation = 'getChildInformation',
 }
 
-export type Option = {
-  value: string
-  label: string
+export enum Roles {
+  APPLICANT = 'applicant',
 }
 
 export enum RelationOptions {
@@ -52,22 +51,6 @@ export enum SiblingRelationOptions {
   STEP_SIBLING = 'stepSibling',
 }
 
-export enum FoodAllergiesOptions {
-  EGG_ALLERGY = 'eggAllergy',
-  FISH_ALLERGY = 'fishAllergy',
-  PENUT_ALLERGY = 'peanutAllergy',
-  WHEAT_ALLERGY = 'wheatAllergy',
-  MILK_ALLERGY = 'milkAllergy',
-  OTHER = 'other',
-}
-
-export enum FoodIntolerancesOptions {
-  LACTOSE_INTOLERANCE = 'lactoseIntolerance',
-  GLUTEN_INTOLERANCE = 'glutenIntolerance',
-  MSG_INTOLERANCE = 'msgIntolerance',
-  OTHER = 'other',
-}
-
 export enum Gender {
   FEMALE = 'FEMALE',
   MALE = 'MALE',
@@ -75,7 +58,26 @@ export enum Gender {
 }
 
 export enum OptionsType {
-  ALLERGRY = 'allergy',
+  PRONOUN = 'pronoun',
+  GENDER = 'gender',
   INTOLERANCE = 'intolerence',
   REASON = 'rejectionReason',
+  RELATION = 'relation',
+  ALLERGY = 'allergy',
+}
+
+export enum MembershipRole {
+  Admin = 'admin',
+  Guardian = 'guardian',
+  Parent = 'parent',
+  Principal = 'principal',
+  Relative = 'relative',
+  Student = 'student',
+  Teacher = 'teacher',
+}
+
+export enum MembershipOrganizationType {
+  Municipality = 'municipality',
+  National = 'national',
+  School = 'school',
 }

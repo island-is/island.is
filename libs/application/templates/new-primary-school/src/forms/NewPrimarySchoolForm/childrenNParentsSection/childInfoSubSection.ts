@@ -30,7 +30,8 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.fullName,
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application)?.fullName,
+            getApplicationExternalData(application.externalData)
+              .childInformation.name,
         }),
         buildTextField({
           id: 'childInfo.nationalId',
@@ -39,7 +40,8 @@ export const childInfoSubSection = buildSubSection({
           format: '######-####',
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application)?.nationalId,
+            getApplicationExternalData(application.externalData)
+              .childInformation.nationalId,
         }),
         buildTextField({
           id: 'childInfo.address.streetAddress',
@@ -77,6 +79,9 @@ export const childInfoSubSection = buildSubSection({
           id: 'childInfo.chosenName',
           title: newPrimarySchoolMessages.childrenNParents.childInfoChosenName,
           width: 'half',
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation.preferredName,
         }),
         buildSelectField({
           id: 'childInfo.gender',
