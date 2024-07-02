@@ -182,7 +182,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
               item.active &&
               item.accordion &&
               item.items?.some((child) => child.active),
-          )} `,
+          )}`,
         ]
       }
 
