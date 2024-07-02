@@ -144,10 +144,10 @@ class Channel {
   }: {
     queueId: string
     messageHandler: (message: M, routingKey: K) => Promise<void>
-    errorHandler?: (error: any) => void // eslint-disable-line  @typescript-eslint/no-explicit-any
+    errorHandler?: (error: unknown) => void
   }) {
     const parseMessage = (
-      sqsMessage: SQS.Message,
+      sqsMessage: Message,
     ): {
       message: M
       routingKey: K
