@@ -1,4 +1,4 @@
-import { ES, S3 } from 'aws-sdk'
+import { ES, S3, config } from 'aws-sdk'
 import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
@@ -6,7 +6,7 @@ import { logger } from '@island.is/logging'
 import { environment } from '../../environments/environment'
 import { Dictionary } from './dictionary'
 
-const commonConfig = { region: environment.awsRegion }
+config.update({ region: environment.awsRegion })
 const awsEs = new ES()
 const s3 = new S3()
 
