@@ -39,7 +39,8 @@ export type ChildInformation = {
     city: string
   }
   gender: Gender
-  chosenName: string
+  preferredName: string
+  pronouns: string[]
   differentPlaceOfResidence: string
   placeOfResidence?: {
     streetAddress: string

@@ -7,8 +7,11 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getGenderOptionLabel,
+  getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
+import { OptionsType } from '../../../lib/constants'
 
 export const Child = ({
   application,
@@ -19,6 +22,8 @@ export const Child = ({
   const { childInfo, differentPlaceOfResidence } = getApplicationAnswers(
     application.answers,
   )
+
+  const pronounOptions = useFriggOptions(OptionsType.PRONOUN)
 
   return (
     <ReviewGroup
@@ -64,17 +69,18 @@ export const Child = ({
           </GridColumn>
         </GridRow>
         {(childInfo.gender ||
-          childInfo.chosenName ||
+          childInfo.preferredName ||
+          childInfo.pronouns ||
           differentPlaceOfResidence === YES) && (
           <GridRow rowGap={2}>
-            {childInfo.chosenName && (
+            {childInfo.preferredName && (
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
                     newPrimarySchoolMessages.childrenNParents
-                      .childInfoChosenName,
+                      .childInfoPreferredName,
                   )}
-                  value={childInfo.chosenName}
+                  value={childInfo.preferredName}
                 />
               </GridColumn>
             )}
@@ -85,6 +91,20 @@ export const Child = ({
                     newPrimarySchoolMessages.childrenNParents.childInfoGender,
                   )}
                   value={formatMessage(getGenderOptionLabel(childInfo.gender))}
+                />
+              </GridColumn>
+            )}
+            {childInfo.pronouns?.length > 0 && (
+              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+                  )}
+                  value={childInfo.pronouns
+                    .map((pronoun) =>
+                      getSelectedOptionLabel(pronounOptions, pronoun),
+                    )
+                    .join(', ')}
                 />
               </GridColumn>
             )}

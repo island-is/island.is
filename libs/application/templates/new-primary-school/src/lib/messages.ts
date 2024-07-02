@@ -215,10 +215,20 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
       description: 'Check that the information is correct before proceeding.',
     },
-    childInfoChosenName: {
-      id: 'dess.nps.application:childrenNParents.child.info.chosen.name',
+    childInfoPreferredName: {
+      id: 'dess.nps.application:childrenNParents.child.info.preferred.name',
       defaultMessage: 'Valið nafn',
       description: 'Preferred name',
+    },
+    childInfoPronouns: {
+      id: 'dess.nps.application:childrenNParents.child.info.pronouns',
+      defaultMessage: 'Fornafn',
+      description: 'Pronoun',
+    },
+    childInfoPronounsPlaceholder: {
+      id: 'dess.nps.application:childrenNParents.child.info.pronouns.placeholder',
+      defaultMessage: 'Veldu fornafn',
+      description: 'Choose pronoun',
     },
     childInfoGender: {
       id: 'dess.nps.application:childrenNParents.child.info.gender',

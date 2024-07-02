@@ -1,4 +1,5 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildRadioField,
   buildSelectField,
@@ -14,6 +15,7 @@ import {
   getGenderOptions,
   getSelectedChild,
 } from '../../../lib/newPrimarySchoolUtils'
+import { OptionsType } from '../../../lib/constants'
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',
@@ -76,8 +78,9 @@ export const childInfoSubSection = buildSubSection({
             getApplicationExternalData(application.externalData).applicantCity,
         }),
         buildTextField({
-          id: 'childInfo.chosenName',
-          title: newPrimarySchoolMessages.childrenNParents.childInfoChosenName,
+          id: 'childInfo.preferredName',
+          title:
+            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
           width: 'half',
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
@@ -95,6 +98,19 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             formatGender(getSelectedChild(application)?.genderCode),
         }),
+        buildCustomField(
+          {
+            id: 'childInfo.pronouns',
+            title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+            component: 'FriggOptionsAsyncSelectField',
+          },
+          {
+            optionsType: OptionsType.PRONOUN,
+            placeholder:
+              newPrimarySchoolMessages.childrenNParents
+                .childInfoPronounsPlaceholder,
+          },
+        ),
         buildRadioField({
           id: 'childInfo.differentPlaceOfResidence',
           title:
