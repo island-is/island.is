@@ -1,0 +1,89 @@
+fragment baseModel on BaseModel {
+  id
+  version
+  whenCreated
+  whenModified
+}
+
+query passTemplates {
+  passTemplates {
+    data {
+      id
+      name
+    }
+  }
+}
+
+mutation voidPass(
+  $passTemplateId: String!
+  $values: [PassInputFieldValueDataInput!]!
+) {
+  voidUniquePass(passTemplateId: $passTemplateId, values: $values)
+}
+
+mutation unvoidPass($id: String!) {
+  unvoidPass(id: $id)
+}
+
+mutation deletePass(
+  $passTemplateId: String!
+  $values: [PassInputFieldValueDataInput!]!
+) {
+  deleteUniquePass(passTemplateId: $passTemplateId, values: $values)
+}
+
+mutation updateStatusOnPassWithDynamicBarcode(
+  $dynamicBarcodeData: DynamicBarcodeDataInput!
+) {
+  updateStatusOnPassWithDynamicBarcode(
+    dynamicBarcodeData: $dynamicBarcodeData
+  ) {
+    ...baseModel
+    status
+    inputFieldValues {
+      passInputField {
+        deleted
+        format
+        isExternalAuthField
+        label
+        mandatory
+        type
+        unique
+        identifier
+        ...baseModel
+      }
+      ...baseModel
+      value
+    }
+  }
+}
+
+mutation upsertPass($inputData: PassDataInput!) {
+  upsertPass(data: $inputData) {
+    distributionUrl
+    deliveryPageUrl
+    distributionQRCode
+    expirationDate
+    ...baseModel
+  }
+}
+
+mutation updatePass(
+  $passTemplateId: String!
+  $expirationDate: String
+  $thumbnail: ImageDataInput
+  $values: [PassInputFieldValueDataInput!]
+) {
+  updatePass(
+    expirationDate: $expirationDate
+    passTemplateId: $passTemplateId
+    thumbnail: $thumbnail
+    values: $values
+  ) {
+    distributionUrl
+    deliveryPageUrl
+    distributionQRCode
+    expirationDate
+    ...baseModel
+  }
+}
