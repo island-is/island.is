@@ -10,6 +10,7 @@ import {
   formatCaseType,
   formatDate,
   formatNationalId,
+  FormatPattern,
   getSupportedCaseCustodyRestrictions,
   laws,
   readableIndictmentSubtypes,
@@ -105,15 +106,15 @@ export const formatCourtHeadsUpSmsNotification = (
 
   const arrestDateText = arrestDate
     ? formatMessage(notifications.courtHeadsUp.arrestDateText, {
-        date: formatDate(arrestDate, 'P'),
-        time: formatDate(arrestDate, 'p'),
+        date: formatDate(arrestDate),
+        time: formatDate(arrestDate, FormatPattern.TIME),
       })
     : undefined
 
   const requestedCourtDateText = requestedCourtDate
     ? formatMessage(notifications.courtHeadsUp.requestedCourtDateText, {
-        date: formatDate(requestedCourtDate, 'P'),
-        time: formatDate(requestedCourtDate, 'p'),
+        date: formatDate(requestedCourtDate),
+        time: formatDate(requestedCourtDate, FormatPattern.TIME),
       })
     : undefined
 
@@ -248,7 +249,10 @@ export const formatPostponedCourtDateEmailNotification = (
   const body = formatMessage(notifications.postponedCourtDateEmail.body, {
     courtName: theCase.court?.name ?? '',
     courtCaseNumber: theCase.courtCaseNumber,
-    courtDate: formatDate(courtDate.date, 'PPPp')?.replace(' kl.', ', kl.'),
+    courtDate: formatDate(
+      courtDate.date,
+      FormatPattern.LONG_DATE_YEAR_TIME,
+    )?.replace(' kl.', ', kl.'),
     courtRoomText,
     judgeText,
     hasAccessToRvg: Boolean(overviewUrl),
@@ -287,7 +291,10 @@ export const formatProsecutorCourtDateEmailNotification = (
   const courtDateText = formatMessage(cf.courtDate, {
     isIndictment: isIndictmentCase(type),
     courtDate: courtDate
-      ? formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
+      ? formatDate(courtDate, FormatPattern.LONG_DATE_YEAR_TIME)?.replace(
+          ' kl.',
+          ', kl.',
+        )
       : 'NONE',
   })
   const courtRoomText = formatMessage(notifications.courtRoom, {
@@ -353,7 +360,7 @@ export const formatPrisonCourtDateEmailNotification = (
     notifications.prisonCourtDateEmail.courtDateText,
     {
       courtDate: courtDate
-        ? formatDate(courtDate, 'PPPPp')
+        ? formatDate(courtDate, FormatPattern.LONG_DAY_DATE_YEAR_TIME)
             ?.replace('dagur,', 'daginn')
             ?.replace(' kl.', ', kl.')
         : 'NONE',
@@ -363,7 +370,10 @@ export const formatPrisonCourtDateEmailNotification = (
     notifications.prisonCourtDateEmail.requestedValidToDateText,
     {
       requestedValidToDate: requestedValidToDate
-        ? formatDate(requestedValidToDate, 'PPPPp')
+        ? formatDate(
+            requestedValidToDate,
+            FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+          )
             ?.replace('dagur,', 'dagsins')
             ?.replace(' kl.', ', kl.')
         : 'NONE',
@@ -420,7 +430,7 @@ export const formatDefenderCourtDateEmailNotification = (
   })
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
-      ? formatDate(courtDate, 'PPPPp')
+      ? formatDate(courtDate, FormatPattern.LONG_DAY_DATE_YEAR_TIME)
           ?.replace('dagur,', 'daginn')
           ?.replace(' kl.', ', kl.')
       : 'NONE',
@@ -517,13 +527,13 @@ export const formatCourtRevokedSmsNotification = (
   // Court date
   const courtDateText = courtDate
     ? formatMessage(notifications.courtRevoked.courtDate, {
-        date: formatDate(courtDate, 'P'),
-        time: formatDate(courtDate, 'p'),
+        date: formatDate(courtDate),
+        time: formatDate(courtDate, FormatPattern.TIME),
       })
     : requestedCourtDate
     ? formatMessage(notifications.courtRevoked.requestedCourtDate, {
-        date: formatDate(requestedCourtDate, 'P'),
-        time: formatDate(requestedCourtDate, 'p'),
+        date: formatDate(requestedCourtDate),
+        time: formatDate(requestedCourtDate, FormatPattern.TIME),
       })
     : undefined
   const courtRevokedText = isInvestigationCase(type)
@@ -551,7 +561,7 @@ export const formatPrisonRevokedEmailNotification = (
   const courtText = formatMessage(cf.court, { court })?.replace('dómur', 'dóms')
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
-      ? formatDate(courtDate, 'PPPPp')
+      ? formatDate(courtDate, FormatPattern.LONG_DAY_DATE_YEAR_TIME)
           ?.replace('dagur,', 'daginn')
           ?.replace(' kl.', ', kl.')
       : 'NONE',
@@ -589,7 +599,7 @@ export const formatDefenderRevokedEmailNotification = (
   }).replace('dómur', 'dómi')
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
-      ? formatDate(courtDate, 'PPPPp')
+      ? formatDate(courtDate, FormatPattern.LONG_DAY_DATE_YEAR_TIME)
           ?.replace('dagur,', 'daginn')
           ?.replace(' kl.', ', kl.')
       : 'NONE',

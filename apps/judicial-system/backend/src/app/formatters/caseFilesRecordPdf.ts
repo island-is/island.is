@@ -157,10 +157,7 @@ export const createCaseFilesRecord = async (
             : ''
         }${
           theCase.crimeScenes[policeCaseNumber].date
-            ? formatDate(
-                theCase.crimeScenes[policeCaseNumber].date,
-                'dd.MM.yyyy',
-              )
+            ? formatDate(theCase.crimeScenes[policeCaseNumber].date)
             : ''
         }`,
         textFontSize,
@@ -217,16 +214,12 @@ export const createCaseFilesRecord = async (
         pageNumber: pageReference.pageNumber,
         pageLink: pageReference.pageLink,
       })
-      pdfDocument.addText(
-        formatDate(pageReference.date, 'dd.MM.yyyy') ?? '',
-        textFontSize,
-        {
-          pageLink: pageReference.pageLink,
-          newLine: false,
-          position: { x: pageDateIndent },
-          marginTop: 1,
-        },
-      )
+      pdfDocument.addText(formatDate(pageReference.date) ?? '', textFontSize, {
+        pageLink: pageReference.pageLink,
+        newLine: false,
+        position: { x: pageDateIndent },
+        marginTop: 1,
+      })
 
       const nameChunks =
         pageReference.name.length > 40

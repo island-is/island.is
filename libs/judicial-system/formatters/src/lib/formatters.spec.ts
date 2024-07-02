@@ -14,6 +14,7 @@ import {
   formatDOB,
   formatGender,
   formatNationalId,
+  FormatPattern,
   formatPhoneNumber,
   indictmentSubtypes,
   readableIndictmentSubtypes,
@@ -27,7 +28,7 @@ describe('formatDate', () => {
     const date2 = undefined
 
     // Act
-    const time2 = formatDate(date2, Constants.TIME_FORMAT)
+    const time2 = formatDate(date2, FormatPattern.TIME)
 
     // Assert
     expect(time2).toBeUndefined()
@@ -39,8 +40,8 @@ describe('formatDate', () => {
     const date2 = '2020-09-23T23:36:57.287Z'
 
     // Act
-    const time = formatDate(date, Constants.TIME_FORMAT)
-    const time2 = formatDate(date2, Constants.TIME_FORMAT)
+    const time = formatDate(date, FormatPattern.TIME)
+    const time2 = formatDate(date2, FormatPattern.TIME)
 
     // Assert
     expect(time).toEqual('09:36')
@@ -52,7 +53,11 @@ describe('formatDate', () => {
     const date = '2020-09-10T09:36:57.287Z'
 
     // Act
-    const formattedDate = formatDate(date, 'PPPP', true)
+    const formattedDate = formatDate(
+      date,
+      FormatPattern.LONG_DAY_DATE_YEAR,
+      true,
+    )
 
     // Assert
     expect(formattedDate).toEqual('fimmtud. 10. september 2020')

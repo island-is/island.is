@@ -14,6 +14,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import {
   formatDate,
   formatNationalId,
+  FormatPattern,
 } from '@island.is/judicial-system/formatters'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -200,9 +201,10 @@ export const Users = () => {
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">
                     {user.latestLogin
-                      ? `${formatDate(user.latestLogin, 'yyy-MM-dd HH:mm')} - ${
-                          user.loginCount
-                        }`
+                      ? `${formatDate(
+                          user.latestLogin,
+                          FormatPattern.SHORT_YEAR_DATE_TIME,
+                        )} - ${user.loginCount}`
                       : ''}
                   </Text>
                 </Box>

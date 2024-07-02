@@ -40,7 +40,7 @@ describe('getDurationDate', () => {
       rulingDate,
     )
 
-    expect(res).toBe('4.9.2022 - 13.9.2022')
+    expect(res).toBe('04.09.2022 - 13.09.2022')
   })
 
   test('should fallback to use validToDate', () => {

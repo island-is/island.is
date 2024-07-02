@@ -95,7 +95,7 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
                 {
                   cell: (row) => (
-                    <Text>{formatDate(row.indictmentAppealDeadline, 'P')}</Text>
+                    <Text>{formatDate(row.indictmentAppealDeadline)}</Text>
                   ),
                 },
               ]}

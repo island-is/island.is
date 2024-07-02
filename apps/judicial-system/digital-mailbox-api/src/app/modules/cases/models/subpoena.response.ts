@@ -3,6 +3,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import {
   formatDate,
   formatNationalId,
+  FormatPattern,
 } from '@island.is/judicial-system/formatters'
 import { DateType, DefenderChoice } from '@island.is/judicial-system/types'
 
@@ -75,13 +76,16 @@ export class SubpoenaResponse {
           {
             label: `${t.caseNumber} ${internalCase.courtCaseNumber}`,
             items: [
-              [t.date, formatDate(subpoenaCreatedDate, 'PP')],
+              [
+                t.date,
+                formatDate(subpoenaCreatedDate, FormatPattern.LONG_DATE_YEAR),
+              ],
               [t.institution, 'Lögreglustjórinn á höfuðborgarsvæðinu'],
               [t.prosecutor, internalCase.prosecutor?.name],
               [t.accused, defendantInfo?.name],
               [
                 t.arraignmentDate,
-                formatDate(arraignmentDate, "d.M.yyyy 'kl.' HH:mm"),
+                formatDate(arraignmentDate, FormatPattern.SHORT_DATE_YEAR_TIME),
               ],
               [t.location, subpoenaDateLog?.location ?? ''],
               [t.courtCeremony, t.parliamentaryConfirmation],

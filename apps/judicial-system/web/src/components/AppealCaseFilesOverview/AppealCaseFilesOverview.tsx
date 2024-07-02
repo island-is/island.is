@@ -5,7 +5,10 @@ import router from 'next/router'
 
 import { Box, Button, IconMapIcon, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isCourtOfAppealsUser,
@@ -139,10 +142,10 @@ const AppealCaseFilesOverview = () => {
                 >
                   <Box className={styles.childContainer}>
                     <Text whiteSpace="nowrap">
-                      {`${formatDate(file.created, 'dd.MM.y')} kl. ${formatDate(
+                      {formatDate(
                         file.created,
-                        constants.TIME_FORMAT,
-                      )}`}
+                        FormatPattern.SHORT_DATE_YEAR_TIME,
+                      )}
                     </Text>
                     {file.category &&
                       ![
