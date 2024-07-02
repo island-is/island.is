@@ -1,0 +1,30 @@
+diff --git a/src/executors/build/build.impl.ts b/src/executors/build/build.impl.ts
+index f544215a99f2db1c84b1f8d99141aa93ee986819..933e3652a660fb1d016d76f9cb859021909b93ee 100644
+--- a/src/executors/build/build.impl.ts
++++ b/src/executors/build/build.impl.ts
+@@ -3,6 +3,7 @@ import { ExecutorContext, readJsonFile } from '@nx/devkit';
+ import { normalizeBuildOptions } from '../../utils/normalize-options';
+ import { pathExistsSync } from 'fs-extra';
+ import { build, BuildFailure, BuildOptions, BuildResult } from 'esbuild';
++import ddPlugin from "dd-trace/esbuild"
+ import { spawn } from 'child_process';
+ import { esbuildDecorators } from '@anatine/esbuild-decorators';
+ import { gray, green, red, yellow } from 'chalk';
+@@ -74,6 +75,7 @@ export function buildExecutor(
+     watch: options.watch || false,
+     absWorkingDir: options.root,
+     plugins: [
++      ddPlugin,
+       esbuildDecorators({
+         cwd: options.root,
+       }),
+@@ -283,7 +285,8 @@ function runBuild(
+     const cwd = watchDir || options.absWorkingDir || process.cwd();
+     // We will use the org watch settings with node-watch for better refresh performance
+     const { watch: buildWatch, ...opts } = options;
+-
++    opts.external = opts.external || [];
++    opts.exteranl = [...opts.external, "@datadog/native-metrics"]
+     build(opts)
+       .then((buildResult) => {
+         subscriber.next({ buildResult, buildFailure: null });
