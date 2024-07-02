@@ -28,5 +28,5 @@ apps/financial-aid/api.graphql
 # Shared
 libs/shared/webpack
 
-# Ingoring tsconfig.base.json so changes to `paths` don't affect all projects
+# Ignoring tsconfig.base.json so changes to `paths` don't affect all projects
 tsconfig.base.json
