@@ -518,7 +518,7 @@ export const NavigationTree: FC<
               nextLevel <= MAX_LEVELS &&
               accordion
             )
-            const accordionId = `${level} -${index}`
+            const accordionId = `${level}-${index}`
             const activeAccordion = activeAccordions.includes(accordionId)
             const labelId = `${baseId}-title-${accordionId}`
             const ariaId = `${baseId}-tree-${accordionId}`
