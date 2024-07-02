@@ -170,7 +170,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
         reject(`Error: Process exited with code ${code}`)
         return
       }
-      resolve(void 0)
+      resolve(outputChunks.join('\n'))
     })
 
     childProcess.on('error', (error) => {
