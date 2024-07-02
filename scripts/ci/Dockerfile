@@ -5,6 +5,10 @@ ARG NODE_IMAGE_TAG
 FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} as deps
 
 RUN apk add -U git
+# Bash needed in e.g. build script for systeme-e2e
+RUN apk add --update --no-cache \
+  python3 build-base gcc bash \
+  && ln -sf /usr/bin/python3 /usr/bin/python
 
 WORKDIR /build
 
@@ -12,7 +16,6 @@ WORKDIR /build
 ADD package.json yarn.lock .yarnrc.yml ./
 ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -22,7 +25,16 @@ RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-ADD . .
+COPY LICENSE/ LICENSE/
+COPY tools/ tools/
+COPY scripts/ scripts/
+COPY infra/ infra/
+COPY charts/ charts/
+COPY .yarn/ .yarn/
+# Copy all files in the root
+COPY *.* .*.* ./
+COPY libs/ libs/
+COPY apps/ apps/
 
 FROM src as builder
 ARG APP
@@ -130,7 +142,10 @@ FROM mcr.microsoft.com/playwright:v${PLAYWRIGHT_VERSION}-focal as playwright-bas
 
 FROM playwright-base as output-playwright
 # TODO: remove awscli dependency (157 MB extra)
-RUN apt-get update -y && apt-get install -y zip awscli && apt-get purge
+RUN apt-get update -y \
+  && apt-get install -y zip awscli \
+  && apt-get purge
+
 
 ARG APP_HOME
 ARG APP_DIST_HOME
@@ -138,20 +153,16 @@ ARG APP_DIST_HOME
 WORKDIR ${APP_DIST_HOME}
 
 COPY --from=builder /build/${APP_DIST_HOME} .
-COPY ${APP_HOME}/package.json .
-RUN chown -R pwuser:pwuser .
 
-USER pwuser
-ADD .yarnrc.yml ./
-RUN mkdir ./.yarn
-COPY .yarn/releases ./.yarn/releases
-RUN yarn install
+RUN npm install
 
 ENV PLAYWRIGHT_BROWSER=chromium
-RUN yarn playwright install ${PLAYWRIGHT_BROWSER}
+RUN npx playwright install ${PLAYWRIGHT_BROWSER}
 
-COPY --chown=pwuser:pwuser ${APP_HOME}/entrypoint.sh .
+COPY ${APP_HOME}/entrypoint.sh .
 
+USER pwuser
+RUN chown -R pwuser:pwuser .
 ENTRYPOINT ["./entrypoint.sh"]
 
 
