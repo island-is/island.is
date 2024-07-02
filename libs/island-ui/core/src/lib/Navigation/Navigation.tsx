@@ -494,7 +494,7 @@ export const NavigationTree: FC<
         <Box
           component="ul"
           role="menu"
-          {...(id && { id: `navigation - tree - ${id} ` })}
+          {...(id && { id: `navigation-tree-${id}` })}
           {...(labelId && { 'aria-labelledby': labelId })}
           className={cn(styles.ul, styles.level[level])}
           style={{
@@ -520,8 +520,8 @@ export const NavigationTree: FC<
             )
             const accordionId = `${level} -${index} `
             const activeAccordion = activeAccordions.includes(accordionId)
-            const labelId = `${baseId} -title - ${accordionId} `
-            const ariaId = `${baseId} -tree - ${accordionId} `
+            const labelId = `${baseId}-title-${accordionId} `
+            const ariaId = `${baseId}-tree-${accordionId} `
 
             const nextLevelTree = (
               <NavigationTree
@@ -571,7 +571,7 @@ export const NavigationTree: FC<
                           })}
                         >
                           <Text
-                            id={`navigation - title - ${accordionId}${
+                            id={`navigation-title-${accordionId}${
                               id ? `-${id}` : ''
                             } `}
                             as="span"
