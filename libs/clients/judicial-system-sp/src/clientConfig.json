@@ -410,6 +410,17 @@
         },
         "required": ["caseId", "data"]
       },
+      "SubpoenaData": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Groups" }
+          }
+        },
+        "required": ["title", "groups"]
+      },
       "DefenderInfo": {
         "type": "object",
         "properties": {
@@ -422,10 +433,16 @@
         "type": "object",
         "properties": {
           "caseId": { "type": "string" },
+          "data": { "$ref": "#/components/schemas/SubpoenaData" },
           "defenderInfo": { "$ref": "#/components/schemas/DefenderInfo" },
           "acceptCompensationClaim": { "type": "boolean" }
         },
-        "required": ["caseId", "defenderInfo", "acceptCompensationClaim"]
+        "required": [
+          "caseId",
+          "data",
+          "defenderInfo",
+          "acceptCompensationClaim"
+        ]
       },
       "UpdateSubpoenaDto": {
         "type": "object",
