@@ -77,20 +77,15 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData).applicantCity,
         }),
-        buildCustomField(
-          {
-            id: 'childInfo.pronouns',
-            title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
-            component: 'FriggOptionsAsyncSelectField',
-            width: 'half',
-          },
-          {
-            optionsType: OptionsType.PRONOUN,
-            placeholder:
-              newPrimarySchoolMessages.childrenNParents
-                .childInfoPronounsPlaceholder,
-          },
-        ),
+        buildTextField({
+          id: 'childInfo.preferredName',
+          title:
+            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
+          width: 'half',
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation.preferredName,
+        }),
         buildSelectField({
           id: 'childInfo.gender',
           title: newPrimarySchoolMessages.childrenNParents.childInfoGender,
@@ -103,14 +98,19 @@ export const childInfoSubSection = buildSubSection({
           defaultValue: (application: Application) =>
             formatGender(getSelectedChild(application)?.genderCode),
         }),
-        buildTextField({
-          id: 'childInfo.preferredName',
-          title:
-            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
-          defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation.preferredName,
-        }),
+        buildCustomField(
+          {
+            id: 'childInfo.pronouns',
+            title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+            component: 'FriggOptionsAsyncSelectField',
+          },
+          {
+            optionsType: OptionsType.PRONOUN,
+            placeholder:
+              newPrimarySchoolMessages.childrenNParents
+                .childInfoPronounsPlaceholder,
+          },
+        ),
         buildRadioField({
           id: 'childInfo.differentPlaceOfResidence',
           title:

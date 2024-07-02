@@ -23,7 +23,6 @@ export const Child = ({
     application.answers,
   )
 
-  const { pronouns } = childInfo
   const pronounOptions = useFriggOptions(OptionsType.PRONOUN)
 
   return (
@@ -74,17 +73,14 @@ export const Child = ({
           childInfo.pronouns ||
           differentPlaceOfResidence === YES) && (
           <GridRow rowGap={2}>
-            {childInfo.pronouns?.length > 0 && (
+            {childInfo.preferredName && (
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+                    newPrimarySchoolMessages.childrenNParents
+                      .childInfoPreferredName,
                   )}
-                  value={pronouns
-                    .map((pronoun) =>
-                      getSelectedOptionLabel(pronounOptions, pronoun),
-                    )
-                    .join(', ')}
+                  value={childInfo.preferredName}
                 />
               </GridColumn>
             )}
@@ -98,14 +94,17 @@ export const Child = ({
                 />
               </GridColumn>
             )}
-            {childInfo.preferredName && (
-              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+            {childInfo.pronouns?.length > 0 && (
+              <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
                 <DataValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.childrenNParents
-                      .childInfoPreferredName,
+                    newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
                   )}
-                  value={childInfo.preferredName}
+                  value={childInfo.pronouns
+                    .map((pronoun) =>
+                      getSelectedOptionLabel(pronounOptions, pronoun),
+                    )
+                    .join(', ')}
                 />
               </GridColumn>
             )}
