@@ -60,7 +60,10 @@ export const HearingArrangements = () => {
 
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate?.date && workingCase.requestedCourtDate) {
-      handleCourtDateChange(new Date(workingCase.requestedCourtDate))
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        arraignmentDate: { date: theCase.requestedCourtDate },
+      }))
     }
 
     setAndSendCaseToServer(
@@ -89,12 +92,7 @@ export const HearingArrangements = () => {
       workingCase,
       setWorkingCase,
     )
-  }, [
-    handleCourtDateChange,
-    setAndSendCaseToServer,
-    setWorkingCase,
-    workingCase,
-  ])
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
 
   useOnceOn(isCaseUpToDate, initialize)
 
