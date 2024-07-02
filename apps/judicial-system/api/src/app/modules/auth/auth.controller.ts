@@ -22,11 +22,13 @@ import {
   DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
   IDS_ID_TOKEN,
+  PRISON_CASES_ROUTE,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
   InstitutionType,
+  isPrisonSystemUser,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -241,6 +243,8 @@ export class AuthController {
             ? DEFENDER_CASES_ROUTE
             : user.institution?.type === InstitutionType.COURT_OF_APPEALS
             ? COURT_OF_APPEAL_CASES_ROUTE
+            : isPrisonSystemUser(user)
+            ? PRISON_CASES_ROUTE
             : CASES_ROUTE,
       }
     } else {
