@@ -281,11 +281,18 @@ describe('SyslumennService', () => {
       expect(res[0].hasKMarking).toStrictEqual(false)
     })
 
-    it('exists should be false', async () => {
-      const res = await service.validateMortgageCertificate([
-        { propertyNumber: MOCK_PROPERTY_NUMBER_NOT_EXISTS, propertyType: '0' },
-      ])
-      expect(res[0].exists).toStrictEqual(false)
+    it('should throw an error', async () => {
+      return await service
+        .validateMortgageCertificate([
+          {
+            propertyNumber: MOCK_PROPERTY_NUMBER_NOT_EXISTS,
+            propertyType: '0',
+          },
+        ])
+        .catch((e) => {
+          expect(e).toBeTruthy()
+          expect.assertions(1)
+        })
     })
   })
 })
