@@ -1,1 +1,1 @@
-export * from './lib/libs/portals/form-system/ui'
+export * from './screens'

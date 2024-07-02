@@ -1,8 +1,9 @@
 {
-  "name": "form-system/ui",
+  "name": "form-system-ui",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/form-system/ui/src",
   "projectType": "library",
+  "tags": [],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -11,8 +12,26 @@
       ],
       "options": {
         "lintFilePatterns": [
-          "libs/portals/form-system/ui/**/*.ts"
+          "libs/portals/form-system/ui/**/*.{ts,tsx,js,jsx}"
         ]
+      }
+    },
+    "build": {
+      "executor": "@nx/vite:build",
+      "outputs": [
+        "{options.outputPath}"
+      ],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/libs/portals/form-system/ui"
+      },
+      "configurations": {
+        "development": {
+          "mode": "development"
+        },
+        "production": {
+          "mode": "production"
+        }
       }
     },
     "test": {
@@ -31,6 +50,5 @@
         }
       }
     }
-  },
-  "tags": []
+  }
 }

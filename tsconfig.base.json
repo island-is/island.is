@@ -861,6 +861,9 @@
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
       "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
+      "@island.is/form-system/graphql": [
+        "libs/portals/form-system/graphql/src/index.ts"
+      ],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -911,9 +914,6 @@
       "@island.is/libs/portals/form-system": [
         "libs/portals/form-system/src/index.ts"
       ],
-      "@island.is/libs/portals/form-system/ui": [
-        "libs/portals/form-system/ui/src/index.ts"
-      ],
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
       "@island.is/message-queue": ["libs/message-queue/src/index.ts"],
@@ -960,6 +960,9 @@
         "libs/portals/admin/signature-collection/src/index.ts"
       ],
       "@island.is/portals/core": ["libs/portals/core/src/index.ts"],
+      "@island.is/form-system/ui": [
+        "libs/portals/form-system/ui/src/index.ts"
+      ],
       "@island.is/portals/shared-modules/delegations": [
         "libs/portals/shared-modules/delegations/src/index.ts"
       ],
