@@ -25,7 +25,7 @@ import {
   MONTHS,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
-export function getApplicationAnswers(answers: Application['answers']) {
+export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
     answers,
     'applicantInfo.phonenumber',
@@ -117,9 +117,9 @@ export function getApplicationAnswers(answers: Application['answers']) {
   }
 }
 
-export function getApplicationExternalData(
+export const getApplicationExternalData = (
   externalData: Application['externalData'],
-) {
+) => {
   const cohabitants = getValueViaPath(
     externalData,
     'nationalRegistryCohabitants.data',
@@ -136,14 +136,36 @@ export function getApplicationExternalData(
     'nationalRegistry.data.nationalId',
   ) as string
 
+  const applicantAddress = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.streetAddress',
+  ) as string
+
+  const applicantPostalCode = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.postalCode',
+  ) as string
+
+  const applicantLocality = getValueViaPath(
+    externalData,
+    'nationalRegistry.data.address.locality',
+  ) as string
+
+  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+
   const bankInfo = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
   ) as BankInfo
 
-  const email = getValueViaPath(
+  const userProfileEmail = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationApplicant.data.emailAddress',
+    'userProfile.data.email',
+  ) as string
+
+  const userProfilePhoneNumber = getValueViaPath(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
   ) as string
 
   const currencies = getValueViaPath(
@@ -180,8 +202,13 @@ export function getApplicationExternalData(
     cohabitants,
     applicantName,
     applicantNationalId,
+    applicantAddress,
+    applicantPostalCode,
+    applicantLocality,
+    applicantMunicipality,
     bankInfo,
-    email,
+    userProfileEmail,
+    userProfilePhoneNumber,
     currencies,
     isEligible,
     spouseName,
@@ -191,9 +218,9 @@ export function getApplicationExternalData(
   }
 }
 
-export function isExistsCohabitantOlderThan25(
+export const isExistsCohabitantOlderThan25 = (
   externalData: Application['externalData'],
-) {
+) => {
   const { cohabitants, applicantNationalId } =
     getApplicationExternalData(externalData)
 
@@ -209,7 +236,7 @@ export function isExistsCohabitantOlderThan25(
   return isOlderThan25
 }
 
-export function getAttachments(application: Application) {
+export const getAttachments = (application: Application) => {
   const getAttachmentDetails = (
     attachmentsArr: FileType[] | undefined,
     attachmentType: AttachmentTypes,
@@ -267,7 +294,7 @@ export function getAttachments(application: Application) {
 
 // returns available years. Available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableYears() {
+export const getAvailableYears = () => {
   const today = new Date()
   const twoYearsBackInTime = subYears(
     today.setMonth(today.getMonth() + 1),
@@ -288,7 +315,7 @@ export function getAvailableYears() {
 
 // returns available months for selected year, since available period is
 // 2 years back in time and 6 months in the future.
-export function getAvailableMonths(selectedYear: string) {
+export const getAvailableMonths = (selectedYear: string) => {
   if (!selectedYear) return []
 
   const twoYearsBackInTime = subYears(new Date(), 2)

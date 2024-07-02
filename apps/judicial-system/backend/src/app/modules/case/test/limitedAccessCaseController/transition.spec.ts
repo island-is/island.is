@@ -10,6 +10,8 @@ import {
   CaseFileState,
   CaseState,
   CaseTransition,
+  CaseType,
+  NotificationType,
 } from '@island.is/judicial-system/types'
 
 import { createTestingCaseModule } from '../createTestingCaseModule'
@@ -97,7 +99,13 @@ describe('LimitedAccessCaseController - Transition', () => {
         then.result = await limitedAccessCaseController.transition(
           caseId,
           user,
-          { id: caseId, state, caseFiles, appealState } as Case,
+          {
+            id: caseId,
+            type: CaseType.EXPULSION_FROM_HOME,
+            state,
+            caseFiles,
+            appealState,
+          } as Case,
           { transition },
         )
       } catch (error) {
@@ -140,27 +148,28 @@ describe('LimitedAccessCaseController - Transition', () => {
       it('should queue a notification message', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: defenderAppealBriefId,
+            elementId: defenderAppealBriefId,
           },
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: defenderAppealBriefCaseFileId1,
+            elementId: defenderAppealBriefCaseFileId1,
           },
           {
-            type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
             user,
             caseId,
-            caseFileId: defenderAppealBriefCaseFileId2,
+            elementId: defenderAppealBriefCaseFileId2,
           },
           {
-            type: MessageType.SEND_APPEAL_TO_COURT_OF_APPEALS_NOTIFICATION,
+            type: MessageType.NOTIFICATION,
             user,
             caseId,
+            body: { type: NotificationType.APPEAL_TO_COURT_OF_APPEALS },
           },
         ])
       })
@@ -206,9 +215,10 @@ describe('LimitedAccessCaseController - Transition', () => {
       it('should queue a notification message', () => {
         expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
           {
-            type: MessageType.SEND_APPEAL_WITHDRAWN_NOTIFICATION,
+            type: MessageType.NOTIFICATION,
             user,
             caseId,
+            body: { type: NotificationType.APPEAL_WITHDRAWN },
           },
         ])
       })

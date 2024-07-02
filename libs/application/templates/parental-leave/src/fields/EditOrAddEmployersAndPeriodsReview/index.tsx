@@ -11,6 +11,7 @@ import { useLocale } from '@island.is/localization'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Periods from './review-groups/Periods'
 import Employers from './review-groups/Employers'
+import Attachments from './review-groups/Attachments'
 import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import { YES } from '../../constants'
 
@@ -23,7 +24,9 @@ const EditOrAddEmployersAndPeriodsReview: FC<
   React.PropsWithChildren<ReviewScreenProps>
 > = ({ application, goToScreen }) => {
   const { formatMessage } = useLocale()
-  const { addEmployer, addPeriods } = getApplicationAnswers(application.answers)
+  const { addEmployer, addPeriods, changeEmployerFile } = getApplicationAnswers(
+    application.answers,
+  )
 
   const childProps = {
     application,
@@ -75,6 +78,7 @@ const EditOrAddEmployersAndPeriodsReview: FC<
       )}
       <Employers {...childProps} />
       <Periods {...childProps} />
+      {changeEmployerFile && <Attachments {...childProps} />}
     </>
   )
 }

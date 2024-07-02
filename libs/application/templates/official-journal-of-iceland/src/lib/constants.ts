@@ -16,6 +16,7 @@ export const MINIMUM_WEEKDAYS = 10
 
 export enum Routes {
   TEST = 'test',
+  COMMENTS = 'comments',
   REQUIREMENTS = 'requirements',
   ADVERT = 'advert',
   SIGNATURE = 'signature',
@@ -105,7 +106,6 @@ export const INITIAL_ANSWERS = {
   },
   [Routes.PUBLISHING]: {
     date: '',
-    fastTrack: '',
     contentCategories: [],
     communicationChannels: [],
     message: '',

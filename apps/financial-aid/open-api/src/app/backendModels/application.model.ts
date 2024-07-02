@@ -16,6 +16,7 @@ import { ApplicationState } from '@island.is/financial-aid/shared/lib'
 import {
   AmountBackendModel,
   ApplicationFileBackendModel,
+  ChildrenBackendModel,
   DirectTaxPaymentBackendModel,
   StaffBackendModel,
 } from './index'
@@ -171,7 +172,7 @@ export class ApplicationBackendModel extends Model {
   spouseEmail?: string
 
   @HasMany(() => AmountBackendModel, 'applicationId')
-  @ApiProperty({ type: AmountBackendModel, nullable: true })
+  @ApiProperty({ type: () => AmountBackendModel, nullable: true })
   amount?: AmountBackendModel
 
   @Column({
@@ -224,6 +225,17 @@ export class ApplicationBackendModel extends Model {
   navSuccess?: boolean
 
   @HasMany(() => DirectTaxPaymentBackendModel, 'applicationId')
-  @ApiProperty({ type: DirectTaxPaymentBackendModel, isArray: true })
+  @ApiProperty({ type: () => DirectTaxPaymentBackendModel, isArray: true })
   directTaxPayments!: DirectTaxPaymentBackendModel[]
+
+  @HasMany(() => ChildrenBackendModel, 'applicationId')
+  @ApiProperty({ type: ChildrenBackendModel, isArray: true })
+  children?: ChildrenBackendModel[]
+
+  @Column({
+    type: DataType.TEXT,
+    allowNull: true,
+  })
+  @ApiProperty()
+  childrenComment?: string
 }

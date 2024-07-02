@@ -89,6 +89,10 @@ paths:
                           type: 'string'
                         externalUrlEn:
                           type: 'string'
+                        applicationUrlIs:
+                          type: 'string'
+                        applicationUrlEn:
+                          type: 'string'
                         modeOfDelivery:
                           type: 'array'
                           items:
@@ -109,6 +113,10 @@ paths:
                           type: 'string'
                         costInformationEn:
                           type: 'string'
+                        mustPickExamVenue:
+                          type: 'boolean'
+                        canApplyOnHaskolanam:
+                          type: 'boolean'
                         extraApplicationSettings:
                           type: 'object'
                           properties:
@@ -143,6 +151,8 @@ paths:
                               type: 'string'
                               format: 'date-time'
                             nafnleynd:
+                              type: 'string'
+                            thridja_stigsnam_leyft:
                               type: 'string'
                         extraApplicationFields:
                           type: 'array'
@@ -469,6 +479,45 @@ paths:
                     description: 'Application ID'
       tags:
         - 'Application'
+  /applications/attachments/{guid}:
+    post:
+      parameters:
+        - name: guid
+          required: true
+          in: path
+          allowEmptyValue: false
+          description: Application ID
+          schema:
+            type: string
+            format: uuid
+      summary: Submit an applications accompanying documents
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                attachment:
+                  type: string
+                  format: binary
+                attachmentKey:
+                  $ref: '#/components/schemas/AttachmentKey'
+      responses:
+        '200':
+          description: Successful submission
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    description: Attachment ID
+        '400':
+          description: Bad Request - No application with given ID
+      tags:
+        - Application
   /openapi.yaml:
     get:
       operationId: 'InfraController_openapi'
@@ -565,6 +614,23 @@ components:
         - 'universityId'
         - 'programId'
         - 'modeOfDelivery'
+    AttachmentKey:
+      type: string
+      enum:
+        - cv
+        - markmid
+        - rannsoknaraaetlun
+        - namsaaetlun
+        - rannsoknarverkefni
+        - profskirteini
+        - profskirteini2
+        - profskirteini3
+        - onnur_skjol
+        - kynningarbref
+        - ferilsskra
+        - leyfisbref
+        - portofolio
+        - sakavottord
     UpdateApplicationDto:
       type: 'object'
       properties:

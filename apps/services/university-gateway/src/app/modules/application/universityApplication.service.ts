@@ -89,6 +89,11 @@ export class UniversityApplicationService {
       )
     }
 
+    const allAttachments = applicationDto.educationList
+      .map((x) => x.degreeAttachments)
+      .filter((y) => !!y)
+      .flat()
+
     // Wrap answers in obj that can be sent to libs/clients for universities
     const applicationObj: IApplication = {
       id: applicationDto.applicationId,
@@ -113,8 +118,10 @@ export class UniversityApplicationService {
       },
       preferredLanguage: applicationDto.preferredLanguage,
       educationList: applicationDto.educationList,
+      educationOption: applicationDto.educationOption,
       workExperienceList: applicationDto.workExperienceList,
       extraFieldList: applicationDto.extraFieldList,
+      attachments: allAttachments,
     }
 
     // Create application in our DB
@@ -126,7 +133,7 @@ export class UniversityApplicationService {
         programId: program.id,
         programModeOfDeliveryId: programModeOfDelivery.id,
         status: ApplicationStatus.IN_REVIEW,
-        externalId: 'testid123',
+        externalId: 'testid124',
       })
     ).id
 
@@ -137,6 +144,11 @@ export class UniversityApplicationService {
         applicationExternalId =
           await this.reykjavikUniversityClient.createApplication(applicationObj)
       } catch (e) {
+        await this.applicationModel.destroy({
+          where: {
+            id: applicationDto.applicationId,
+          },
+        })
         throw new Error(
           `Failed to create application in Reykjavik University DB`,
         )
@@ -151,8 +163,13 @@ export class UniversityApplicationService {
         )
         applicationExternalId = response.id
       } catch (e) {
+        await this.applicationModel.destroy({
+          where: {
+            id: applicationDto.applicationId,
+          },
+        })
         throw new Error(
-          `Failed to create application in University of Iceland DB`,
+          `Failed to create application in University of Iceland DB - ${e}`,
         )
       }
     }

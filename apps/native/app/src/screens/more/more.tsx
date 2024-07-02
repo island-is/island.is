@@ -12,6 +12,7 @@ import airplaneIcon from '../../assets/icons/airplane.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
 import { formatNationalId } from '../../lib/format-national-id'
 import { useAuthStore } from '../../stores/auth-store'
@@ -19,7 +20,8 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
 const Row = styled.View`
-  margin-top: 16px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
   margin-left: -${({ theme }) => theme.spacing[2]}px;
   margin-right: -${({ theme }) => theme.spacing[2]}px;
   flex-direction: column;
@@ -69,10 +71,16 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
 
   useNavigationOptions(componentId)
+  useConnectivityIndicator({ componentId, rightButtons: getRightButtons() })
+
   return (
     <>
       <ScrollView
-        style={{ flex: 1, paddingHorizontal: 16, paddingVertical: 16 }}
+        style={{
+          flex: 1,
+          paddingHorizontal: 16,
+          paddingVertical: 16,
+        }}
       >
         <SafeAreaView>
           <UserCard

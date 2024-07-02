@@ -27,6 +27,8 @@ interface ProjectWrapperProps {
   projectPage: ProjectPage
   breadcrumbItems: BreadCrumbItem[]
   sidebarNavigationTitle: string
+  backLink?: { url: string; text: string }
+  isSubpage?: boolean
 }
 
 export const ProjectWrapper: React.FC<
@@ -38,6 +40,7 @@ export const ProjectWrapper: React.FC<
   breadcrumbItems,
   sidebarNavigationTitle,
   children,
+  isSubpage,
 }) => {
   const router = useRouter()
 
@@ -102,7 +105,7 @@ export const ProjectWrapper: React.FC<
   return (
     <>
       <ProjectChatPanel projectPage={projectPage} />
-      <ProjectHeader projectPage={projectPage} />
+      <ProjectHeader projectPage={projectPage} isSubpage={isSubpage} />
       {withSidebar ? (
         <SidebarLayout
           isSticky={true}

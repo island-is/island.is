@@ -28,6 +28,12 @@ import {
   WorkMachines,
   SignatureCollection,
   ArborgWorkpoint,
+  Inna,
+  OfficialJournalOfIceland,
+  OfficialJournalOfIcelandApplication,
+  VehiclesMileage,
+  UniversityCareers,
+  Frigg,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -76,7 +82,7 @@ export const workerSetup =
           local: 'http://localhost:4200/umsoknir',
         },
       })
-      .xroad(Base, Client, Payment, EHIC, WorkMachines)
+      .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:
           '/k8s/application-system/api/IDENTITY_SERVER_CLIENT_SECRET',
@@ -263,6 +269,8 @@ export const serviceSetup = (services: {
       Properties,
       RskCompanyInfo,
       VehicleServiceFjsV1,
+      Inna,
+      VehiclesMileage,
       TransportAuthority,
       Vehicles,
       Passports,
@@ -273,6 +281,10 @@ export const serviceSetup = (services: {
       SignatureCollection,
       WorkMachines,
       ArborgWorkpoint,
+      OfficialJournalOfIceland,
+      OfficialJournalOfIcelandApplication,
+      UniversityCareers,
+      Frigg,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',

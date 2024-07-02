@@ -14,6 +14,7 @@ import {
   UserProfileApi,
   JurisdictionApi,
   InstitutionNationalIds,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -53,6 +54,9 @@ const getCodes = (application: Application) => {
   return [chargeItemCode]
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE_DUPLICATE]
+
 const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -61,6 +65,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

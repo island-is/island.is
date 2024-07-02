@@ -39,6 +39,7 @@ import {
 } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { webRichText } from '@island.is/web/utils/richText'
 
@@ -94,6 +95,7 @@ const SubPage: Screen<SubPageProps> = ({
     singleSupportQNA?.id,
   )
   useLocalLinkTypeResolver()
+  const { activeLocale } = useI18n()
 
   const organizationSlug = organization?.slug
   const question = singleSupportQNA
@@ -101,6 +103,11 @@ const SubPage: Screen<SubPageProps> = ({
   const institutionSlug = getSlugPart(Router.asPath, locale === 'is' ? 2 : 3)
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
+
+  const institutionSlugBelongsToTryggingastofnun =
+    institutionSlug.includes('tryggingastofnun') ||
+    institutionSlug.includes('social-insurance-administration')
+
   // Already filtered by category, simply
   const categoryDescription = supportQNAs[0]?.category?.description ?? ''
   const categoryTitle = supportQNAs[0]?.category?.title
@@ -177,7 +184,9 @@ const SubPage: Screen<SubPageProps> = ({
       smallBackground
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
       pageData={serviceWebPage}
     >
@@ -384,26 +393,28 @@ const SubPage: Screen<SubPageProps> = ({
                 </GridRow>
               </GridContainer>
 
-              <Box marginTop={[10, 10, 20]}>
-                <ContactBanner
-                  slug={institutionSlug}
-                  cantFindWhatYouAreLookingForText={o(
-                    'cantFindWhatYouAreLookingForText',
-                    n(
+              {!institutionSlugBelongsToTryggingastofnun && (
+                <Box marginTop={[10, 10, 20]}>
+                  <ContactBanner
+                    slug={institutionSlug}
+                    cantFindWhatYouAreLookingForText={o(
                       'cantFindWhatYouAreLookingForText',
-                      'Finnurðu ekki það sem þig vantar?',
-                    ),
-                  )}
-                  contactUsText={o(
-                    'contactUsText',
-                    n('contactUsText', 'Hafa samband'),
-                  )}
-                  howCanWeHelpText={o(
-                    'howCanWeHelpText',
-                    n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
-                  )}
-                />
-              </Box>
+                      n(
+                        'cantFindWhatYouAreLookingForText',
+                        'Finnurðu ekki það sem þig vantar?',
+                      ),
+                    )}
+                    contactUsText={o(
+                      'contactUsText',
+                      n('contactUsText', 'Hafa samband'),
+                    )}
+                    howCanWeHelpText={o(
+                      'howCanWeHelpText',
+                      n('howCanWeHelpText', 'Hvernig getum við aðstoðað?'),
+                    )}
+                  />
+                </Box>
+              )}
             </GridColumn>
           </GridRow>
         </GridContainer>

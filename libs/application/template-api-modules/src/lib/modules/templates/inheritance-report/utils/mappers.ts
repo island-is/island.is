@@ -16,6 +16,9 @@ const initialMapper = <T>(element: T) => {
     enabled: true,
     propertyValuation: '0',
     share: '0',
+    deceasedShare: '0',
+    deceasedShareEnabled: [],
+    deceasedShareAmount: 0,
   }
 }
 
@@ -40,6 +43,13 @@ const estateMemberMapper = (element: EstateMember) => {
     advocate: element.advocate
       ? {
           ...element.advocate,
+          phone: '',
+          email: '',
+        }
+      : undefined,
+    advocate2: element.advocate2
+      ? {
+          ...element.advocate2,
           phone: '',
           email: '',
         }
@@ -85,9 +95,29 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
 
 export const expandAnswers = (
   answers: InheritanceReportSchema,
-): InheritanceReportSchema => {
+): Omit<InheritanceReportSchema, 'estateSelectionInfo'> & {
+  caseNumber: string
+} => {
   return {
+    applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
+    prePaidApplicant: answers.prePaidApplicant,
+    prepaidInheritance: answers.prepaidInheritance,
+    executors: {
+      executor: {
+        email: '',
+        phone: '',
+        name: '',
+        nationalId: '',
+      },
+      spouse: {
+        email: '',
+        phone: '',
+        name: '',
+        nationalId: '',
+      },
+      includeSpouse: undefined,
+    },
     approveExternalData: answers.approveExternalData,
     assets: {
       assetsTotal: answers.assets.assetsTotal ?? 0,
@@ -98,6 +128,9 @@ export const expandAnswers = (
             propertyValuation: account.propertyValuation ?? '',
             exchangeRateOrInterest: account.exchangeRateOrInterest ?? '',
             foreignBankAccount: account?.foreignBankAccount ?? [],
+            deceasedShare: account.deceasedShare ?? '',
+            deceasedShareEnabled: account.deceasedShareEnabled ?? [],
+            deceasedShareAmount: account.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.bankAccounts?.total ?? 0,
@@ -108,6 +141,9 @@ export const expandAnswers = (
             assetNumber: claim.assetNumber ?? '',
             description: claim.description ?? '',
             propertyValuation: claim.propertyValuation ?? '',
+            deceasedShare: claim.deceasedShare ?? '',
+            deceasedShareEnabled: claim.deceasedShareEnabled ?? [],
+            deceasedShareAmount: claim.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.claims?.total ?? 0,
@@ -118,6 +154,9 @@ export const expandAnswers = (
             assetNumber: gun.assetNumber ?? '',
             description: gun.description ?? '',
             propertyValuation: gun.propertyValuation ?? '',
+            deceasedShare: gun.deceasedShare ?? '',
+            deceasedShareEnabled: gun.deceasedShareEnabled ?? [],
+            deceasedShareAmount: gun.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.guns?.total ?? 0,
@@ -125,16 +164,26 @@ export const expandAnswers = (
       inventory: {
         info: answers.assets.inventory?.info ?? '',
         value: answers.assets.inventory?.value ?? '',
+        deceasedShare: answers.assets.inventory?.deceasedShare ?? '',
+        deceasedShareEnabled:
+          answers.assets.inventory?.deceasedShareEnabled ?? [],
+        deceasedShareAmount: answers.assets.inventory?.deceasedShareAmount ?? 0,
       },
       money: {
         info: answers.assets.money?.info ?? '',
         value: answers.assets.money?.value ?? '',
+        deceasedShare: answers.assets.money?.deceasedShare ?? '',
+        deceasedShareEnabled: answers.assets.money?.deceasedShareEnabled ?? [],
+        deceasedShareAmount: answers.assets.money?.deceasedShareAmount ?? 0,
       },
       otherAssets: {
         data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
           return {
             info: otherAsset?.info ?? '',
             value: otherAsset?.value ?? '',
+            deceasedShare: otherAsset?.deceasedShare ?? '',
+            deceasedShareEnabled: otherAsset?.deceasedShareEnabled ?? [],
+            deceasedShareAmount: otherAsset?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.otherAssets?.total ?? 0,
@@ -142,10 +191,14 @@ export const expandAnswers = (
       realEstate: {
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
           return {
-            assetNumber: realEstate.assetNumber ?? '',
+            assetNumber:
+              realEstate.assetNumber.replace('-', '').replace(/\D/g, '') ?? '',
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
             share: realEstate.share ?? '0',
+            deceasedShare: realEstate.deceasedShare ?? '0',
+            deceasedShareEnabled: realEstate.deceasedShareEnabled ?? [],
+            deceasedShareAmount: realEstate.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.realEstate?.total ?? 0,
@@ -158,6 +211,9 @@ export const expandAnswers = (
             description: stock.description ?? '',
             exchangeRateOrInterest: stock.exchangeRateOrInterest ?? '',
             value: stock.value ?? '',
+            deceasedShare: stock?.deceasedShare ?? '',
+            deceasedShareEnabled: stock?.deceasedShareEnabled ?? [],
+            deceasedShareAmount: stock?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.stocks?.total ?? 0,
@@ -168,54 +224,35 @@ export const expandAnswers = (
             assetNumber: vehicle.assetNumber ?? '',
             description: vehicle.description ?? '',
             propertyValuation: vehicle.propertyValuation ?? '',
+            deceasedShare: vehicle.deceasedShare ?? '0',
+            deceasedShareEnabled: vehicle.deceasedShareEnabled ?? [],
+            deceasedShareAmount: vehicle?.deceasedShareAmount ?? 0,
           }
         }),
         total: answers.assets.vehicles?.total ?? 0,
       },
     },
-    business: {
-      businessAssets: {
-        data: (answers.business.businessAssets?.data ?? []).map((asset) => {
-          return {
-            description: asset.description ?? '',
-            propertyValuation: asset.propertyValuation ?? '',
-            assetType: asset.assetType ?? '',
-            assetNumber: asset.assetNumber ?? '',
-          }
-        }),
-        total: answers.business.businessAssets?.total ?? 0,
-      },
-      businessDebts: {
-        data: (answers.business.businessDebts?.data ?? []).map((debt) => {
-          return {
-            assetNumber: debt.assetNumber ?? '',
-            description: debt.description ?? '',
-            propertyValuation: debt.propertyValuation ?? 0,
-            nationalId: debt.nationalId ?? '',
-          }
-        }),
-        total: answers.business.businessDebts?.total ?? 0,
-      },
-      businessTotal: answers.business.businessTotal ?? 0,
-    },
+    caseNumber: answers.estateInfoSelection,
     confirmAction: answers.confirmAction,
     debts: {
-      debtsTotal: answers.debts.debtsTotal ?? 0,
+      debtsTotal: answers?.debts?.debtsTotal ?? 0,
       domesticAndForeignDebts: {
-        data: (answers.debts.domesticAndForeignDebts?.data ?? []).map(
+        data: (answers.debts?.domesticAndForeignDebts?.data ?? []).map(
           (debt) => {
             return {
               assetNumber: debt.assetNumber ?? '',
               propertyValuation: debt.propertyValuation ?? 0,
               description: debt.description ?? '',
               nationalId: debt.nationalId ?? '',
+              debtType: debt.debtType ?? '',
             }
           },
         ),
-        total: answers.debts.domesticAndForeignDebts?.total ?? 0,
+        total: answers.debts?.domesticAndForeignDebts?.total ?? 0,
       },
-      publicCharges: (answers.debts.publicCharges ?? 0).toString(),
+      publicCharges: (answers.debts?.publicCharges ?? 0).toString(),
     },
+    estateInfoSelection: answers.estateInfoSelection,
     funeralCost: {
       build: answers?.funeralCost?.build ?? '',
       cremation: answers?.funeralCost?.cremation ?? '',
@@ -266,5 +303,21 @@ export const expandAnswers = (
     },
     totalDeduction: answers.totalDeduction ?? 0,
     heirsAdditionalInfo: answers.heirsAdditionalInfo ?? '',
+
+    total: answers.total ?? 0,
+    debtsTotal: answers.debtsTotal ?? 0,
+    shareTotal: answers.shareTotal ?? 0,
+    netTotal: answers.netTotal ?? 0,
+    spouseTotal: answers.spouseTotal ?? 0,
+    estateTotal: answers.estateTotal ?? 0,
+    netPropertyForExchange: answers.netPropertyForExchange ?? 0,
+    customShare: {
+      hasCustomSpouseSharePercentage:
+        answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
+      customSpouseSharePercentage:
+        answers?.customShare?.customSpouseSharePercentage ?? '50',
+      deceasedWasMarried: answers?.customShare?.deceasedWasMarried ?? '',
+      deceasedHadAssets: answers?.customShare?.deceasedHadAssets ?? '',
+    },
   }
 }

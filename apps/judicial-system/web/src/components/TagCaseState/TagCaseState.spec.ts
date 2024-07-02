@@ -2,12 +2,14 @@ import { createIntl } from 'react-intl'
 
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
+  CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { mapCaseStateToTagVariant } from './TagCaseState'
-import { tagCaseState as m } from './TagCaseState.strings'
+import { strings } from './TagCaseState.strings'
 
 const formatMessage = createIntl({
   locale: 'is-IS',
@@ -21,6 +23,8 @@ describe('mapCaseStateToTagVariant', () => {
     caseType: CaseType,
     isValidToDateInThePast?: boolean,
     courtDate?: string,
+    indictmendRulingDecision?: CaseIndictmentRulingDecision | null,
+    indictmentDecision?: IndictmentDecision | null,
   ) =>
     mapCaseStateToTagVariant(
       formatMessage,
@@ -29,16 +33,18 @@ describe('mapCaseStateToTagVariant', () => {
       isValidToDateInThePast,
       courtDate,
       isCourtRole,
+      indictmendRulingDecision,
+      indictmentDecision,
     )
 
   test('should return draft state', () => {
     expect(fn(CaseState.NEW, false, CaseType.CUSTODY)).toEqual({
       color: 'red',
-      text: m.draft.defaultMessage,
+      text: strings.draft.defaultMessage,
     })
     expect(fn(CaseState.DRAFT, false, CaseType.CUSTODY)).toEqual({
       color: 'red',
-      text: m.draft.defaultMessage,
+      text: strings.draft.defaultMessage,
     })
   })
 
@@ -52,7 +58,7 @@ describe('mapCaseStateToTagVariant', () => {
   test('should return sent state', () => {
     expect(fn(CaseState.SUBMITTED, false, CaseType.CUSTODY)).toEqual({
       color: 'purple',
-      text: m.sent.defaultMessage,
+      text: strings.sent.defaultMessage,
     })
   })
 
@@ -61,7 +67,7 @@ describe('mapCaseStateToTagVariant', () => {
       fn(CaseState.RECEIVED, false, CaseType.CUSTODY, false, '2020-01-01'),
     ).toEqual({
       color: 'mint',
-      text: m.scheduled.defaultMessage,
+      text: strings.scheduled.defaultMessage,
     })
   })
 
@@ -75,40 +81,187 @@ describe('mapCaseStateToTagVariant', () => {
   test('should return active state', () => {
     expect(fn(CaseState.ACCEPTED, false, CaseType.CUSTODY, false)).toEqual({
       color: 'blue',
-      text: m.active.defaultMessage,
+      text: strings.active.defaultMessage,
     })
 
-    expect(fn(CaseState.ACCEPTED, false, CaseType.INDICTMENT)).toEqual({
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.RULING,
+      ),
+    ).toEqual({
       color: 'darkerBlue',
-      text: m.inactive.defaultMessage,
+      text: 'Dómur',
+    })
+
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.FINE,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Viðurlagaákvörðun',
+    })
+
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.DISMISSAL,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Frávísun',
+    })
+
+    expect(
+      fn(
+        CaseState.COMPLETED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        CaseIndictmentRulingDecision.CANCELLATION,
+      ),
+    ).toEqual({
+      color: 'darkerBlue',
+      text: 'Niðurfelling',
+    })
+
+    expect(fn(CaseState.COMPLETED, false, CaseType.INDICTMENT)).toEqual({
+      color: 'darkerBlue',
+      text: 'Lokið',
     })
   })
 
   test('should return inactive state', () => {
     expect(fn(CaseState.ACCEPTED, false, CaseType.CUSTODY, true)).toEqual({
       color: 'darkerBlue',
-      text: m.inactive.defaultMessage,
+      text: strings.inactive.defaultMessage,
     })
   })
 
   test('should return rejected state', () => {
     expect(fn(CaseState.REJECTED, false, CaseType.CUSTODY)).toEqual({
       color: 'rose',
-      text: m.rejected.defaultMessage,
+      text: strings.rejected.defaultMessage,
     })
   })
 
   test('should return dismissed state', () => {
     expect(fn(CaseState.DISMISSED, false, CaseType.CUSTODY)).toEqual({
       color: 'dark',
-      text: m.dismissed.defaultMessage,
+      text: strings.dismissed.defaultMessage,
     })
   })
 
   test('should return unknown state', () => {
     expect(fn('testing' as CaseState, false, CaseType.CUSTODY)).toEqual({
       color: 'white',
-      text: m.unknown.defaultMessage,
+      text: strings.unknown.defaultMessage,
     })
+  })
+
+  test('should return reassignment state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        undefined,
+        null,
+        IndictmentDecision.REDISTRIBUTING,
+      ),
+    ).toEqual({
+      color: 'blue',
+      text: strings.reassignment.defaultMessage,
+    })
+  })
+
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.POSTPONING_UNTIL_VERDICT,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.postponedUntilVerdict.defaultMessage,
+    })
+  })
+
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.POSTPONING,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.scheduled.defaultMessage,
+    })
+  })
+
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.SCHEDULING,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.scheduled.defaultMessage,
+    })
+  })
+
+  test('should return postponed until verdict state', () => {
+    expect(
+      fn(
+        CaseState.RECEIVED,
+        false,
+        CaseType.INDICTMENT,
+        false,
+        '2020-01-01',
+        null,
+        IndictmentDecision.COMPLETING,
+      ),
+    ).toEqual({
+      color: 'mint',
+      text: strings.scheduled.defaultMessage,
+    })
+  })
+
+  test('should return revoked state', () => {
+    expect(
+      fn(CaseState.WAITING_FOR_CANCELLATION, false, CaseType.INDICTMENT),
+    ).toEqual({ color: 'rose', text: strings.recalled.defaultMessage })
   })
 })

@@ -24,9 +24,9 @@ import {
   useUpdateVehicleMileageMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/useBrowser'
 import { MileageCell } from './components/mileage-cell'
-import { useTheme } from 'styled-components'
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -53,8 +53,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
   title?: { type: string; year: string; color: string }
 }> = ({ componentId, id, title }) => {
   useNavigationOptions(componentId)
+
   const intl = useIntl()
   const dynamicColor = useDynamicColor()
+  const { openBrowser } = useBrowser()
   const [input, setInput] = useState('')
   const info = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
@@ -67,7 +69,6 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     },
   })
   const res = useGetVehicleMileageQuery({
-    fetchPolicy: 'cache-and-network',
     variables: {
       input: {
         permno: id,
@@ -252,6 +253,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         }
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={res.loading && !!res.data}
       />
       <FlatList
         data={data}

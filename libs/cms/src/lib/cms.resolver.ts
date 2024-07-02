@@ -111,6 +111,12 @@ import { FeaturedEvents } from './models/featuredEvents.model'
 import { GraphQLJSONObject } from 'graphql-type-json'
 import { CustomPage } from './models/customPage.model'
 import { GetCustomPageInput } from './dto/getCustomPage.input'
+import { GenericListItemResponse } from './models/genericListItemResponse.model'
+import { GetGenericListItemsInput } from './dto/getGenericListItems.input'
+import { GenericList } from './models/genericList.model'
+import { GetCustomSubpageInput } from './dto/getCustomSubpage.input'
+import { GetGenericListItemBySlugInput } from './dto/getGenericListItemBySlug.input'
+import { GenericListItem } from './models/genericListItem.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -359,10 +365,10 @@ export class CmsResolver {
 
   @CacheControl(defaultCache)
   @Query(() => [LifeEventPage])
-  getLifeEvents(
+  getLifeEventsForOverview(
     @Args('input') input: GetLifeEventsInput,
   ): Promise<LifeEventPage[]> {
-    return this.cmsContentfulService.getLifeEvents(input.lang)
+    return this.cmsContentfulService.getLifeEventsForOverview(input.lang)
   }
 
   @CacheControl(defaultCache)
@@ -646,6 +652,30 @@ export class CmsResolver {
     @Args('input') input: GetCustomPageInput,
   ): Promise<CustomPage | null> {
     return this.cmsElasticsearchService.getCustomPage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => CustomPage, { nullable: true })
+  async getCustomSubpage(
+    @Args('input') input: GetCustomSubpageInput,
+  ): Promise<CustomPage | null> {
+    return this.cmsElasticsearchService.getCustomSubpage(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => GenericListItemResponse, { nullable: true })
+  getGenericListItems(
+    @Args('input') input: GetGenericListItemsInput,
+  ): Promise<GenericListItemResponse> {
+    return this.cmsElasticsearchService.getGenericListItems(input)
+  }
+
+  @CacheControl(defaultCache)
+  @Query(() => GenericListItem, { nullable: true })
+  getGenericListItemBySlug(
+    @Args('input') input: GetGenericListItemBySlugInput,
+  ): Promise<GenericListItem | null> {
+    return this.cmsElasticsearchService.getGenericListItemBySlug(input)
   }
 }
 

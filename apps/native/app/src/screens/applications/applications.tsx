@@ -21,7 +21,8 @@ import {
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { openBrowser } from '../../lib/rn-island'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
@@ -75,8 +76,9 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const { openBrowser } = useBrowser()
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
 
@@ -94,6 +96,13 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    refetching,
+    queryResult: [applicationsRes, res],
+  })
+
   const data = useMemo<ListItem[]>(() => {
     if (!res.data && res.loading) {
       return Array.from({ length: 8 }).map((_, id) => ({
@@ -102,13 +111,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       }))
     }
 
-    if (!res.loading && res.data) {
-      const articles = [
-        ...(res?.data?.searchResults?.items ?? []),
-      ] as SearchArticleFragmentFragment[]
-      return articles.sort((a, b) => a.title.localeCompare(b.title))
-    }
-    return []
+    const articles = [
+      ...(res?.data?.searchResults?.items ?? []),
+    ] as SearchArticleFragmentFragment[]
+
+    return articles.sort((a, b) => a.title.localeCompare(b.title))
   }, [res.data, res.loading])
 
   const renderItem = useCallback(
@@ -140,6 +147,18 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   })
 
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
+
+  const onRefresh = useCallback(async () => {
+    setRefetching(true)
+
+    try {
+      await res.refetch()
+    } catch (e) {
+      // noop
+    } finally {
+      setRefetching(false)
+    }
+  }, [applicationsRes])
 
   return (
     <>
@@ -193,25 +212,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           </View>
         }
         refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => {
-              setLoading(true)
-              try {
-                res
-                  ?.refetch?.()
-                  ?.then(() => {
-                    setLoading(false)
-                  })
-                  .catch(() => {
-                    setLoading(false)
-                  })
-              } catch (err) {
-                // noop
-                setLoading(false)
-              }
-            }}
-          />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
       />
       <BottomTabsIndicator index={3} total={5} />

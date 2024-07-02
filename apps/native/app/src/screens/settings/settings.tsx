@@ -1,4 +1,4 @@
-import messaging from '@react-native-firebase/messaging'
+import { useApolloClient } from '@apollo/client'
 import {
   Alert,
   NavigationBarSheet,
@@ -10,11 +10,11 @@ import { authenticateAsync } from 'expo-local-authentication'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  Alert as RNAlert,
   Image,
   Linking,
   Platform,
   Pressable,
-  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -28,12 +28,13 @@ import {
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import editIcon from '../../assets/icons/edit.png'
+import chevronForward from '../../ui/assets/icons/chevron-forward.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
-import { client } from '../../graphql/client'
 import {
   UpdateProfileDocument,
   UpdateProfileMutation,
   UpdateProfileMutationVariables,
+  useDeletePasskeyMutation,
   useGetProfileQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -49,6 +50,7 @@ import { ComponentRegistry } from '../../utils/component-registry'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -62,6 +64,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
+  const client = useApolloClient()
   const intl = useIntl()
   const theme = useTheme()
   const {
@@ -75,14 +78,15 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     useBiometrics,
     setUseBiometrics,
     appLockTimeout,
+    hasCreatedPasskey,
   } = usePreferencesStore()
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
-  const [pushToken, setPushToken] = useState('loading...')
   const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
+  const isPasskeyEnabled = useFeatureFlag('isPasskeyEnabled', false)
 
   const onLogoutPress = async () => {
     await authStore.getState().logout()
@@ -93,10 +97,42 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   }
 
   const userProfile = useGetProfileQuery()
+  const [deletePasskey] = useDeletePasskeyMutation()
 
   const [documentNotifications, setDocumentNotifications] = useState(
     userProfile.data?.getUserProfile?.documentNotifications,
   )
+
+  const onRemovePasskeyPress = () => {
+    return RNAlert.alert(
+      intl.formatMessage({ id: 'settings.security.removePasskeyPromptTitle' }),
+      intl.formatMessage({
+        id: 'settings.security.removePasskeyPromptDescription',
+      }),
+      [
+        {
+          text: intl.formatMessage({
+            id: 'settings.security.removePasskeyCancelButton',
+          }),
+          style: 'cancel',
+        },
+        {
+          text: intl.formatMessage({
+            id: 'settings.security.removePasskeyButton',
+          }),
+          style: 'destructive',
+          onPress: async () => {
+            preferencesStore.setState({
+              hasCreatedPasskey: false,
+              hasOnboardedPasskeys: false,
+              lastUsedPasskey: 0,
+            })
+            await deletePasskey()
+          },
+        },
+      ],
+    )
+  }
 
   const onLanguagePress = () => {
     showPicker({
@@ -125,10 +161,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         setLoadingCP(false)
         setLocalPackage(p)
       })
-      messaging()
-        .getToken()
-        .then((token) => setPushToken(token))
-        .catch(() => setPushToken('no token in simulator'))
     }, 330)
   }, [])
 
@@ -171,6 +203,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         title={intl.formatMessage({ id: 'setting.screenTitle' })}
         onClosePress={() => Navigation.dismissModal(componentId)}
         style={{ marginHorizontal: 16 }}
+        showLoading={userProfile.loading && !!userProfile.data}
       />
       <ScrollView style={{ flex: 1 }} testID={testIDs.USER_SCREEN_SETTINGS}>
         <Alert
@@ -395,6 +428,12 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               subtitle={intl.formatMessage({
                 id: 'settings.security.changePinDescription',
               })}
+              accessory={
+                <Image
+                  source={chevronForward}
+                  style={{ width: 24, height: 24 }}
+                />
+              }
             />
           </PressableHighlight>
           <TableViewCell
@@ -451,6 +490,34 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               />
             }
           />
+          {isPasskeyEnabled && (
+            <PressableHighlight
+              onPress={() => {
+                hasCreatedPasskey
+                  ? onRemovePasskeyPress()
+                  : navigateTo('/passkey')
+              }}
+            >
+              <TableViewCell
+                title={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyLabel'
+                    : 'settings.security.createPasskeyLabel',
+                })}
+                subtitle={intl.formatMessage({
+                  id: hasCreatedPasskey
+                    ? 'settings.security.removePasskeyDescription'
+                    : 'settings.security.createPasskeyDescription',
+                })}
+                accessory={
+                  <Image
+                    source={chevronForward}
+                    style={{ width: 24, height: 24 }}
+                  />
+                }
+              />
+            </PressableHighlight>
+          )}
           <PressableHighlight
             onPress={() => {
               showPicker({
@@ -525,6 +592,12 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               subtitle={intl.formatMessage({
                 id: 'settings.security.privacySubTitle',
               })}
+              accessory={
+                <Image
+                  source={chevronForward}
+                  style={{ width: 24, height: 24 }}
+                />
+              }
             />
           </PressableHighlight>
         </TableViewGroup>

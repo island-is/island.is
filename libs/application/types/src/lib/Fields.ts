@@ -60,6 +60,16 @@ export type TableRepeaterFields =
   | 'radio'
   | 'checkbox'
   | 'date'
+  | 'nationalIdWithName'
+
+type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
+
+type TableRepeaterOptions =
+  | RepeaterOption[]
+  | ((
+      application: Application,
+      activeField: Record<string, string>,
+    ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
   component: TableRepeaterFields
@@ -69,15 +79,21 @@ export type TableRepeaterItem = {
   displayInTable?: boolean
   label?: StaticText
   placeholder?: StaticText
-  options?: { label: StaticText; value: string }[]
+  options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
-  width?: 'half' | 'full'
+  width?: 'half' | 'full' | 'third'
   required?: boolean
   condition?: (
     application: Application,
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  readonly?:
+    | boolean
+    | ((
+        application: Application,
+        activeField?: Record<string, string>,
+      ) => boolean)
 } & (
   | {
       component: 'input'
@@ -88,6 +104,7 @@ export type TableRepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
+      suffix?: string
     }
   | {
       component: 'date'
@@ -102,8 +119,8 @@ export type TableRepeaterItem = {
   | {
       component: 'select'
       label: StaticText
-      options: { label: StaticText; value: string }[]
       isSearchable?: boolean
+      isMulti?: boolean
     }
   | {
       component: 'radio'
@@ -112,6 +129,9 @@ export type TableRepeaterItem = {
   | {
       component: 'checkbox'
       large?: boolean
+    }
+  | {
+      component: 'nationalIdWithName'
     }
 )
 
@@ -232,13 +252,14 @@ export interface CheckboxField extends BaseField {
   required?: boolean
   backgroundColor?: InputBackgroundColor
   onSelect?: ((s: string[]) => void) | undefined
+  spacing?: 0 | 1 | 2
 }
 
 export interface DateField extends BaseField {
   readonly type: FieldTypes.DATE
   placeholder?: FormText
   component: FieldComponents.DATE
-  maxDate?: Date
+  maxDate?: MaybeWithApplicationAndField<Date>
   minDate?: MaybeWithApplicationAndField<Date>
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
@@ -278,6 +299,7 @@ export interface SelectField extends BaseField {
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor
   required?: boolean
+  isMulti?: boolean
 }
 
 export interface CompanySearchField extends BaseField {
@@ -300,6 +322,7 @@ export interface AsyncSelectField extends BaseField {
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
   required?: boolean
+  isMulti?: boolean
 }
 
 export interface TextField extends BaseField {
@@ -351,6 +374,10 @@ export interface FileUploadField extends BaseField {
    */
   readonly maxSize?: number
   readonly maxSizeErrorText?: FormText
+  /**
+   * Defaults to 100MB
+   */
+  readonly totalMaxSize?: number
   readonly forImageUpload?: boolean
 }
 
@@ -377,6 +404,7 @@ export interface KeyValueField extends BaseField {
   divider?: boolean
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
+  paddingBottom?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -500,10 +528,17 @@ export type TableRepeaterField = BaseField & {
   saveItemButtonText?: StaticText
   getStaticTableData?: (application: Application) => Record<string, string>[]
   removeButtonTooltipText?: StaticText
+  editButtonTooltipText?: StaticText
+  editField?: boolean
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
   fields: Record<string, TableRepeaterItem>
+  /**
+   * Maximum rows that can be added to the table.
+   * When the maximum is reached, the button to add a new row is disabled.
+   */
+  maxRows?: number
   table?: {
     /**
      * List of strings to render,
@@ -515,7 +550,7 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string>
+    format?: Record<string, (value: string) => string | StaticText>
   }
 }
 export interface FindVehicleField extends BaseField {

@@ -1,4 +1,4 @@
-import React, { ReactNode, useCallback, useContext, useState } from 'react'
+import React, { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { AnimatePresence } from 'framer-motion'
@@ -57,7 +57,6 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import {
-  CaseAppealDecision,
   CaseAppealState,
   CaseDecision,
   CaseState,
@@ -175,7 +174,7 @@ type availableModals =
   | 'ConfirmStatementAfterDeadline'
   | 'AppealReceived'
 
-export const SignedVerdictOverview: React.FC = () => {
+export const SignedVerdictOverview: FC = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -419,8 +418,7 @@ export const SignedVerdictOverview: React.FC = () => {
   const shouldDisplayAlertBanner =
     (workingCase.hasBeenAppealed &&
       (isProsecutionUser(user) || isDistrictCourtUser(user))) ||
-    (isProsecutionUser(user) &&
-      workingCase.prosecutorAppealDecision === CaseAppealDecision.POSTPONE) ||
+    (isProsecutionUser(user) && workingCase.canProsecutorAppeal) ||
     workingCase.appealState === CaseAppealState.COMPLETED
 
   return (

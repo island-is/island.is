@@ -33,12 +33,14 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  InfoCardCaseScheduled,
   PageHeader,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
@@ -102,7 +104,17 @@ const Overview = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
-
+        {workingCase.state === CaseState.RECEIVED &&
+          workingCase.arraignmentDate?.date &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

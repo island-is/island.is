@@ -131,7 +131,7 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },
-  [ApplicationTypes.OPERATING_LCENSE]: {
+  [ApplicationTypes.OPERATING_LICENSE]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },
@@ -207,11 +207,11 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.URVINNSLUSJODUR,
     slug: InstitutionTypes.URVINNSLUSJODUR,
   },
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },
@@ -224,6 +224,10 @@ export const institutionMapper = {
     slug: InstitutionTypes.ORKUSTOFNUN,
   },
   [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    nationalId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
+    slug: InstitutionTypes.EMBAETTI_LANDLAEKNIS,
+  },
+  [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: {
     nationalId: InstitutionNationalIds.EMBAETTI_LANDLAEKNIS,
     slug: InstitutionTypes.EMBAETTI_LANDLAEKNIS,
   },
@@ -266,5 +270,21 @@ export const institutionMapper = {
   [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
     nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
     slug: InstitutionTypes.DOMSMALARADUNEYTID,
+  },
+  [ApplicationTypes.ID_CARD]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+  },
+  [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
+    nationalId: InstitutionNationalIds.SJUKRATRYGGINGAR_ISLANDS,
+    slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
+  },
+  [ApplicationTypes.STREET_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
+  },
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
+    nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+    slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
   },
 }

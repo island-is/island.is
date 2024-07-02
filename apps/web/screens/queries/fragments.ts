@@ -395,6 +395,9 @@ export const slices = gql`
       text
       url
     }
+    introText {
+      ...HtmlFields
+    }
   }
 
   fragment TwoColumnTextFields on TwoColumnText {
@@ -417,6 +420,7 @@ export const slices = gql`
       url
     }
     dividerOnTop
+    onlyUseOneTitle
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -830,6 +834,7 @@ export const slices = gql`
     xAxisFormat
     xAxisValueType
     customStyleConfig
+    reduceAndRoundValue
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {
@@ -842,6 +847,25 @@ export const slices = gql`
     displayChangeMonthOverMonth
     displayChangeYearOverYear
     numberBoxDate
+    reduceAndRoundValue
+    displayTimestamp
+  }
+
+  fragment GenericListFields on GenericList {
+    __typename
+    id
+    searchInputPlaceholder
+    itemType
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
   }
 
   fragment BaseSlices on Slice {
@@ -887,6 +911,7 @@ export const slices = gql`
     ...ChartFields
     ...ChartNumberBoxFields
     ...FeaturedEventsFields
+    ...GenericListFields
   }
 
   fragment AllSlices on Slice {

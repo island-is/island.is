@@ -1,14 +1,4 @@
-import {
-  Box,
-  Divider,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Select,
-  SkeletonLoader,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
@@ -18,7 +8,6 @@ import {
   amountFormat,
   m as coreMessages,
 } from '@island.is/service-portal/core'
-import { useEffect, useMemo, useState } from 'react'
 import { m } from '../../lib/messages'
 import { useGetPreviousPaymentsQuery } from './PaymentPlan.generated'
 import { PaymentGroupTable } from '../../components'
@@ -29,26 +18,6 @@ const PaymentPlan = () => {
 
   const { data, loading, error } = useGetPreviousPaymentsQuery()
 
-  const yearOptions = useMemo(() => {
-    const years = data?.socialInsurancePayments?.paymentYears ?? []
-    return years.map((y) => ({ value: y, label: y.toString() }))
-  }, [data?.socialInsurancePayments?.paymentYears])
-
-  const [selectedYear, setSelectedYear] = useState<{
-    value: number
-    label: string
-  }>()
-
-  useEffect(() => {
-    if (!yearOptions.length || selectedYear) {
-      return
-    }
-    setSelectedYear(yearOptions[0])
-    return
-  }, [yearOptions, selectedYear])
-
-  const noPaymentHistory = yearOptions?.length === 0
-
   return (
     <Box>
       <IntroHeader
@@ -56,7 +25,6 @@ const PaymentPlan = () => {
         intro={formatMessage(
           coreMessages.socialInsuranceMaintenanceDescription,
         )}
-        fixedImgWidth
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
@@ -81,7 +49,7 @@ const PaymentPlan = () => {
                 content={
                   data?.socialInsurancePayments?.nextPayment
                     ? amountFormat(data?.socialInsurancePayments?.nextPayment)
-                    : ''
+                    : ' 0 kr.'
                 }
                 loading={loading}
               />
@@ -93,7 +61,7 @@ const PaymentPlan = () => {
                     ? amountFormat(
                         data?.socialInsurancePayments?.previousPayment,
                       )
-                    : ''
+                    : ' 0 kr.'
                 }
                 loading={loading}
               />
@@ -104,44 +72,7 @@ const PaymentPlan = () => {
               {formatMessage(coreMessages.period)}
             </Text>
 
-            {noPaymentHistory && !loading && (
-              <Problem
-                type="no_data"
-                noBorder={false}
-                title={formatMessage(m.noPaymentHistoryFound)}
-                message={formatMessage(coreMessages.noDataFoundDetail)}
-              />
-            )}
-            {noPaymentHistory && loading && (
-              <Box printHidden marginBottom={3}>
-                <SkeletonLoader height={48} width={226} />
-              </Box>
-            )}
-            {selectedYear && (
-              <Box printHidden marginBottom={3}>
-                <GridContainer>
-                  <GridRow alignItems="flexEnd">
-                    <GridColumn span={'3/8'}>
-                      <Select
-                        backgroundColor="blue"
-                        size="xs"
-                        options={yearOptions}
-                        label={formatMessage(coreMessages.year)}
-                        onChange={(ev) => {
-                          if (ev?.value) {
-                            setSelectedYear(ev)
-                          }
-                        }}
-                        value={selectedYear}
-                      />
-                    </GridColumn>
-                  </GridRow>
-                </GridContainer>
-              </Box>
-            )}
-            {!noPaymentHistory && !loading && (
-              <PaymentGroupTable selectedYear={selectedYear?.value} />
-            )}
+            <PaymentGroupTable />
           </Box>
           <Box>
             <Text variant="small" marginTop={5} marginBottom={2}>

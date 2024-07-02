@@ -9,6 +9,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../../../guards'
 import { CaseController } from '../../case.controller'
 
@@ -21,7 +22,7 @@ describe('CaseController - Get all rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(10)
+    expect(rules).toHaveLength(11)
     expect(rules).toContain(prosecutorRule)
     expect(rules).toContain(prosecutorRepresentativeRule)
     expect(rules).toContain(districtCourtJudgeRule)
@@ -32,5 +33,6 @@ describe('CaseController - Get all rules', () => {
     expect(rules).toContain(courtOfAppealsAssistantRule)
     expect(rules).toContain(prisonSystemStaffRule)
     expect(rules).toContain(defenderRule)
+    expect(rules).toContain(publicProsecutorStaffRule)
   })
 })

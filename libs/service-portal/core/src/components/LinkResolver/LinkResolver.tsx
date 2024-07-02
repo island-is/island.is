@@ -9,7 +9,9 @@ interface Props {
   children?: ReactNode
   className?: string
   href: string
+  label?: string
   skipOutboundTrack?: boolean
+  callback?: () => void
 }
 
 export const LinkResolver = ({
@@ -17,6 +19,7 @@ export const LinkResolver = ({
   children,
   className,
   skipOutboundTrack,
+  callback,
 }: Props) => {
   const { pathname } = useLocation()
   const routes = useRoutes()
@@ -32,13 +35,19 @@ export const LinkResolver = ({
           [`${className}`]: className,
         })}
         onClick={
-          skipOutboundTrack
-            ? undefined
-            : () =>
-                servicePortalOutboundLink({
-                  url: formatPlausiblePathToParams(pathname, routePaths).url,
-                  outboundUrl: href,
-                })
+          !skipOutboundTrack || callback
+            ? () => {
+                if (!skipOutboundTrack) {
+                  servicePortalOutboundLink({
+                    url: formatPlausiblePathToParams(pathname, routePaths).url,
+                    outboundUrl: href,
+                  })
+                }
+                if (callback) {
+                  callback()
+                }
+              }
+            : undefined
         }
       >
         {children}
@@ -51,6 +60,7 @@ export const LinkResolver = ({
         [`${className}`]: className,
       })}
       to={href}
+      onClick={callback}
     >
       {children}
     </Link>

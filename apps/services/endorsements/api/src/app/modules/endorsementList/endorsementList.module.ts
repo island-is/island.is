@@ -7,11 +7,11 @@ import { Endorsement } from '../endorsement/models/endorsement.model'
 
 import { environment } from '../../../environments'
 import { EmailModule } from '@island.is/email-service'
-import { NationalRegistryClientModule } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 
 @Module({
   imports: [
-    NationalRegistryClientModule,
+    NationalRegistryV3ClientModule,
     SequelizeModule.forFeature([EndorsementList, Endorsement]),
     EmailModule.register(environment.emailOptions),
   ],

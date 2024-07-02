@@ -116,6 +116,21 @@ export function setupRoutes() {
     })
   })
 
+  addRoute('/passkey', async (passProps) => {
+    Navigation.showModal({
+      stack: {
+        children: [
+          {
+            component: {
+              name: ComponentRegistry.PasskeyScreen,
+              passProps,
+            },
+          },
+        ],
+      },
+    })
+  })
+
   addRoute('/settings', async (passProps) => {
     Navigation.showModal({
       stack: {
@@ -279,24 +294,10 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/notification/:id', (passProps) => {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: ComponentRegistry.NotificationDetailScreen,
-              passProps,
-            },
-          },
-        ],
-      },
-    })
-  })
-
   addRoute(
     '/wallet/:passId',
     async ({ passId, fromId, toId, item, ...rest }: any) => {
+      await Navigation.dismissAllModals()
       selectTab(1)
       await Navigation.popToRoot(StackRegistry.WalletStack)
       Navigation.push(StackRegistry.WalletStack, {
@@ -307,19 +308,6 @@ export function setupRoutes() {
             item,
             ...rest,
           },
-          options: {
-            animations: {
-              push: {
-                sharedElementTransitions: [
-                  {
-                    fromId,
-                    toId,
-                    interpolation: { type: 'spring' },
-                  },
-                ],
-              },
-            },
-          },
         },
       })
     },
@@ -329,6 +317,7 @@ export function setupRoutes() {
     '/walletpassport/:passId',
     async ({ passId, fromId, toId, ...rest }: any) => {
       selectTab(1)
+      await Navigation.dismissAllModals()
       await Navigation.popToRoot(StackRegistry.WalletStack)
       Navigation.push(StackRegistry.WalletStack, {
         component: {
@@ -336,19 +325,6 @@ export function setupRoutes() {
           passProps: {
             id: passId,
             ...rest,
-          },
-          options: {
-            animations: {
-              push: {
-                sharedElementTransitions: [
-                  {
-                    fromId,
-                    toId,
-                    interpolation: { type: 'spring' },
-                  },
-                ],
-              },
-            },
           },
         },
       })

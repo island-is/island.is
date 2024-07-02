@@ -57,7 +57,7 @@ export class LicenseServiceResolver {
     })
   }
 
-  @Query(() => GenericUserLicense)
+  @Query(() => GenericUserLicense, { nullable: true })
   @Audit()
   async genericLicense(
     @CurrentUser() user: User,
@@ -105,13 +105,10 @@ export class LicenseServiceResolver {
   @Audit()
   async generatePkPass(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPass> {
     const pkpassUrl = await this.licenseServiceService.generatePkPassUrl(
       user,
-      locale,
       input.licenseType,
     )
 
@@ -124,13 +121,10 @@ export class LicenseServiceResolver {
   @Audit()
   async generatePkPassQrCode(
     @CurrentUser() user: User,
-    @Args('locale', { type: () => String, nullable: true })
-    locale: Locale = 'is',
     @Args('input') input: GeneratePkPassInput,
   ): Promise<GenericPkPassQrCode> {
     const pkpassQRCode = await this.licenseServiceService.generatePkPassQRCode(
       user,
-      locale,
       input.licenseType,
     )
 

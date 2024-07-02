@@ -3,10 +3,10 @@ import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
 
 import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   AuditedAction,
@@ -88,9 +88,9 @@ export class AuthController {
 
   @Get('login')
   login(
-    @Res() res: Response,
     @Query('redirectRoute') redirectRoute: string,
     @Query('nationalId') nationalId: string,
+    @Res() res: Response,
   ) {
     this.logger.debug('Received login request')
 

@@ -124,7 +124,7 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                       <Input
                         label={formatMessage(m.name)}
                         name={formatMessage(m.name)}
-                        value={userData?.nationalRegistryUser?.fullName}
+                        value={userData?.nationalRegistryPerson?.fullName}
                         readOnly
                       />
                     </Box>
@@ -140,9 +140,20 @@ const SignPetitionView: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                           },
                         ]}
                       />
-                      <Text variant="eyebrow">
-                        {formatMessage(m.hideNameText)}
-                      </Text>
+                      <Box
+                        hidden={showName}
+                        marginBottom={[0, 4]}
+                        paddingLeft={[0, 5]}
+                      >
+                        <Text variant="eyebrow">
+                          {formatMessage(m.hideNameInfoText)}
+                        </Text>
+                      </Box>
+                      <Box paddingLeft={[0, 5]}>
+                        <Text variant="eyebrow">
+                          {formatMessage(m.hideNameText)}
+                        </Text>
+                      </Box>
                     </Box>
                   </Box>
                 </GridColumn>

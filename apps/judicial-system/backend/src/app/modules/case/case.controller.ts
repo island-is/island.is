@@ -62,6 +62,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import { CaseEvent, EventService } from '../event'
 import { UserService } from '../user'
@@ -91,15 +92,15 @@ import {
   prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
+  publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
-import { TransitionInterceptor } from './interceptors/transition.interceptor'
 import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -108,7 +109,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -159,6 +160,7 @@ export class CaseController {
     courtOfAppealsJudgeUpdateRule,
     courtOfAppealsRegistrarUpdateRule,
     courtOfAppealsAssistantUpdateRule,
+    publicProsecutorStaffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -257,7 +259,6 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthGuard, CaseExistsGuard, RolesGuard, CaseWriteGuard)
-  @UseInterceptors(TransitionInterceptor)
   @RolesRules(
     prosecutorTransitionRule,
     prosecutorRepresentativeTransitionRule,
@@ -283,6 +284,7 @@ export class CaseController {
 
     const states = transitionCase(
       transition.transition,
+      theCase.type,
       theCase.state,
       theCase.appealState,
     )
@@ -293,7 +295,6 @@ export class CaseController {
       case CaseTransition.DELETE:
         update.parentCaseId = null
         break
-
       case CaseTransition.SUBMIT:
         if (isIndictmentCase(theCase.type)) {
           if (!user.canConfirmIndictment) {
@@ -301,14 +302,14 @@ export class CaseController {
               `User ${user.id} does not have permission to confirm indictments`,
             )
           }
-          if (theCase.indictmentDeniedExplanation) {
-            update.indictmentDeniedExplanation = ''
-          }
+
+          update.indictmentDeniedExplanation = null
         }
         break
       case CaseTransition.ACCEPT:
       case CaseTransition.REJECT:
       case CaseTransition.DISMISS:
+      case CaseTransition.COMPLETE:
         update.rulingDate = isIndictmentCase(theCase.type)
           ? nowFactory()
           : theCase.courtEndTime
@@ -329,12 +330,12 @@ export class CaseController {
             ...update,
             ...transitionCase(
               CaseTransition.APPEAL,
+              theCase.type,
               states.state ?? theCase.state,
               states.appealState ?? theCase.appealState,
             ),
           }
         }
-
         break
       case CaseTransition.REOPEN:
         update.rulingDate = null
@@ -392,6 +393,20 @@ export class CaseController {
             `User ${user.id} does not have permission to reject indictments`,
           )
         }
+        break
+      case CaseTransition.ASK_FOR_CONFIRMATION:
+        update.indictmentReturnedExplanation = null
+        break
+      case CaseTransition.RETURN_INDICTMENT:
+        update.courtCaseNumber = null
+        update.indictmentHash = null
+        break
+      case CaseTransition.ASK_FOR_CANCELLATION:
+        if (theCase.indictmentDecision) {
+          throw new ForbiddenException(
+            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(
@@ -414,6 +429,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -440,6 +456,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,

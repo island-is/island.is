@@ -9,6 +9,7 @@ import {
 } from '@island.is/judicial-system/consts'
 import {
   CaseType,
+  DateType,
   NotificationType,
   User,
 } from '@island.is/judicial-system/types'
@@ -54,9 +55,6 @@ describe('InternalNotificationController - Send defender assigned notifications'
     mockEmailService = emailService
     mockConfig = notificationConfig
     mockNotificationModel = notificationModel
-
-    const mockFindAll = mockNotificationModel.findAll as jest.Mock
-    mockFindAll.mockResolvedValue([])
 
     givenWhenThen = async (
       caseId: string,
@@ -240,16 +238,21 @@ describe('InternalNotificationController - Send defender assigned notifications'
     beforeEach(async () => {
       const mockCreate = mockNotificationModel.create as jest.Mock
       mockCreate.mockResolvedValueOnce({} as Notification)
-      const mockFindAll = mockNotificationModel.findAll as jest.Mock
-      mockFindAll.mockResolvedValueOnce([
-        {
-          caseId,
-          type: notificationDto.type,
-          recipients: [{ address: defendant.defenderEmail, success: true }],
-        } as Notification,
-      ])
 
-      then = await givenWhenThen(caseId, theCase, notificationDto)
+      then = await givenWhenThen(
+        caseId,
+        {
+          ...theCase,
+          notifications: [
+            {
+              caseId,
+              type: notificationDto.type,
+              recipients: [{ address: defendant.defenderEmail, success: true }],
+            },
+          ],
+        } as Case,
+        notificationDto,
+      )
     })
 
     it('should return notification was not sent', () => {
@@ -357,7 +360,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
       defenderNationalId: '1234567890',
-      courtDate: new Date(),
+      dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
     beforeEach(async () => {
@@ -403,7 +406,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       courtCaseNumber: 'R-123/2022',
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
-      courtDate: new Date(),
+      dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
     beforeEach(async () => {
@@ -449,7 +452,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
       courtCaseNumber: 'R-123/2022',
       defenderEmail: 'recipient@gmail.com',
       defenderName: 'John Doe',
-      courtDate: new Date(),
+      dateLogs: [{ date: new Date(), dateType: DateType.ARRAIGNMENT_DATE }],
     } as Case
 
     beforeEach(async () => {

@@ -1,10 +1,12 @@
 export { Feature } from './lib/feature'
 
-export { Gender } from './lib/defendant'
-
+export { Gender, DefenderChoice, SubpoenaType } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
+export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
+export { DateType } from './lib/dateLog'
+export { CommentType } from './lib/comment'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
 
@@ -12,6 +14,8 @@ export {
   UserRole,
   prosecutionRoles,
   isProsecutionUser,
+  publicProsecutorRoles,
+  isPublicProsecutorUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,
@@ -22,6 +26,7 @@ export {
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPublicProsecutor,
 } from './lib/user'
 export type { User } from './lib/user'
 
@@ -30,34 +35,56 @@ export {
   CaseType,
   IndictmentSubtype,
   CaseState,
+  IndictmentCaseState,
+  CaseAppealState,
+  RequestCaseState,
   CaseTransition,
+  IndictmentCaseTransition,
+  RequestCaseTransition,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
   DefendantPlea,
+  ServiceRequirement,
   SessionArrangements,
+  indictmentCases,
   restrictionCases,
   investigationCases,
-  indictmentCases,
+  IndictmentCaseReviewDecision,
+  IndictmentDecision,
   isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
+  isRequestCase,
   isAcceptingCaseDecision,
   isTrafficViolationCase,
+  completedRequestCaseStates,
+  completedIndictmentCaseStates,
   completedCaseStates,
   isCompletedCase,
-  CaseAppealState,
+  hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
   prosecutorCanSelectDefenderForInvestigationCase,
+  isIndictmentCaseState,
+  isRequestCaseState,
+  isIndictmentCaseTransition,
+  isRequestCaseTransition,
+  DistrictCourtLocation,
+  CourtSessionType,
+  courtSessionTypeNames,
 } from './lib/case'
+
+export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+
 export type {
   CrimeScene,
   CrimeSceneMap,
+  DistrictCourts,
   IndictmentSubtypeMap,
-  IndictmentConfirmation,
 } from './lib/case'
 
 export {

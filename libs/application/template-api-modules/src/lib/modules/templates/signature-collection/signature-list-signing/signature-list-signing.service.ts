@@ -7,7 +7,7 @@ import {
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { errorMessages } from '@island.is/application/templates/signature-collection/signature-list-signing'
+import { errorMessages } from '@island.is/application/templates/signature-collection/presidential-list-signing'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 
 @Injectable()
@@ -15,7 +15,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
   ) {
-    super(ApplicationTypes.SIGNATURE_LIST_SIGNING)
+    super(ApplicationTypes.PRESIDENTIAL_LIST_SIGNING)
   }
 
   async signList({ auth, application }: TemplateApiModuleActionProps) {
@@ -74,7 +74,7 @@ export class SignatureListSigningService extends BaseTemplateApiService {
 
     if (!areaId) {
       // If no area user will be stopped by can sign above
-      return null
+      return new TemplateApiError(errorMessages.areaId, 400)
     }
     const ownerId = application.answers.initialQuery as string
     // Check if user got correct ownerId, if not user has to pick list

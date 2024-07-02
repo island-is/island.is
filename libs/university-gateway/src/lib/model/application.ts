@@ -12,6 +12,8 @@ export interface IApplication {
   educationList: IApplicationEducation[]
   workExperienceList: IApplicationWorkExperience[]
   extraFieldList: IApplicationExtraFields[]
+  educationOption?: string
+  attachments?: Array<IApplicationAttachment | undefined>
 }
 
 export interface IApplicationApplicant {
@@ -31,13 +33,25 @@ export interface IApplicationApplicant {
 }
 
 export interface IApplicationEducation {
-  schoolName: string
-  degree: string
+  schoolName?: string
+  degree?: string
+  degreeName?: string
+  degreeCountry?: string
+  finishedUnits?: string
+  degreeStartDate?: string
+  degreeEndDate?: string
+  moreDetails?: string
 }
 
 export interface IApplicationWorkExperience {
   company: string
   jobTitle: string
+}
+
+export interface IApplicationAttachment {
+  fileName: string
+  fileType: string
+  blob: Blob
 }
 
 export interface IApplicationExtraFields {

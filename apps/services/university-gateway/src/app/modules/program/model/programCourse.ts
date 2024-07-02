@@ -13,7 +13,6 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { Course } from '../../course/model/course'
 import { Program } from './program'
 import { CourseSeason, Requirement } from '@island.is/university-gateway'
 import {
@@ -49,21 +48,6 @@ export class ProgramCourse extends Model<
   @ApiHideProperty()
   @BelongsTo(() => Program, 'programId')
   program?: Program
-
-  @ApiHideProperty()
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ForeignKey(() => Course)
-  courseId!: string
-
-  @ApiProperty({
-    description: 'Course details',
-    type: Course,
-  })
-  @BelongsTo(() => Course, 'courseId')
-  details?: Course
 
   @ApiProperty({
     description: 'Whether the course is required or not',

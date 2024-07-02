@@ -45,7 +45,7 @@ import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system
 import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
-const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealRuling = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -243,8 +243,10 @@ const CourtOfAppealRuling: React.FC<React.PropsWithChildren<unknown>> = () => {
               workingCase.state === CaseState.ACCEPTED &&
               (workingCase.decision === CaseDecision.ACCEPTING ||
                 workingCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
-              workingCase.appealRulingDecision ===
-                CaseAppealRulingDecision.CHANGED && (
+              (workingCase.appealRulingDecision ===
+                CaseAppealRulingDecision.CHANGED ||
+                workingCase.appealRulingDecision ===
+                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY) && (
                 <RestrictionLength
                   workingCase={workingCase}
                   handleIsolationChange={(

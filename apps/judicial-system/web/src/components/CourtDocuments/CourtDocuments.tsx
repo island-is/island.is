@@ -30,8 +30,7 @@ interface Props {
   setWorkingCase: Dispatch<React.SetStateAction<Case>>
 }
 
-const CourtDocuments: FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase } = props
+const CourtDocuments: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, isUpdatingCase } = useCase()
   const [submittedByMenuIsOpen, setSubmittedByMenuIsOpen] = useState<number>(-1)

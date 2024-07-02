@@ -19,6 +19,11 @@ export enum OtherPropertiesEnum {
   ASSETS_ABROAD = 'assetsAbroad',
 }
 
+export type DeceasedShare = {
+  deceasedShare: string
+  deceasedShareEnabled: string[]
+}
+
 export type Asset = Partial<EstateAsset & { initial: boolean; dummy?: boolean }>
 
 export type Answers = {
@@ -104,43 +109,52 @@ export interface Guns {
   total: number
 }
 
-export interface GunsData {
+export interface GunsData extends DeceasedShare {
   assetNumber: string
   description: string
   propertyValuation: string
   taxFreeInheritance: number
 }
 
-export interface Money {
+export interface Money extends DeceasedShare {
   info: string
   value: string
 }
 
-export interface ClaimsData {
+export interface ClaimsData extends DeceasedShare {
   value: string
+  propertyValuation: string
+  description: string
   issuer: string
   nationalId: string
   taxFreeInheritance: number
 }
+
 export interface Claims {
   data: ClaimsData[]
   total: number
 }
 
-export interface StocksData {
+export interface StocksData extends DeceasedShare {
   value: string
+  assetNumber: string
+  description: string
+  propertyValuation: string
+  amount: string
   faceValue: string
   nationalId: string
   organization: string
   rateOfExchange: string
+  exchangeRateOrInterest: string
   taxFreeInheritance: number
 }
+
 export interface Stocks {
   data: StocksData[]
   total: number
 }
 
-export interface VehiclesData {
+export interface VehiclesData extends DeceasedShare {
   assetNumber: string
   description: string
   propertyValuation: string
@@ -153,17 +167,19 @@ export interface Vehicles {
   total: number
 }
 
-export interface Inventory {
+export interface Inventory extends DeceasedShare {
   info: string
   value: string
 }
 
-export interface RealEstateData {
+export interface RealEstateData extends DeceasedShare {
   share: string
   assetNumber: string
   description: string
   propertyValuation: string
   taxFreeInheritance: number
+  enabled?: boolean
+  initial?: boolean
 }
 
 export interface RealEstate {
@@ -172,7 +188,7 @@ export interface RealEstate {
   total: number
 }
 
-export interface OtherAssetsData {
+export interface OtherAssetsData extends DeceasedShare {
   info: string
   value: string
   taxFreeInheritance: number
@@ -182,12 +198,14 @@ export interface OtherAssets {
   total: number
 }
 
-export interface BankAccountsData {
+export interface BankAccountsData extends DeceasedShare {
   exchangeRateOrInterest: string
   propertyNumber: string
+  assetNumber: string
   propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
+  enabled?: boolean
 }
 
 export interface BankAccounts {
@@ -195,12 +213,12 @@ export interface BankAccounts {
   total: number
 }
 
-export interface AllDebts {
-  balance: string
+export interface Debt {
+  assetNumber: string
   nationalId: string
-  creditorName: string
-  loanIdentity: string
-  taxFreeInheritance: number
+  description: string
+  propertyValuation: string
+  debtType: string
 }
 
 export interface ApplicationDebts {
@@ -217,7 +235,7 @@ interface DomesticAndForeignDebtsData {
 }
 
 interface DomesticAndForeignDebts {
-  data: DomesticAndForeignDebtsData[]
+  data: Debt[]
   total: number
 }
 
@@ -256,6 +274,7 @@ export enum RelationEnum {
   REPRESENTATIVE = 'representative',
   HEIR = 'heir',
   EXCHANGEMANAGER = 'exchangeManager',
+  GRANTOR = 'grantor',
 }
 
 export interface EstateMember {
@@ -277,3 +296,12 @@ export interface EstateMember {
 }
 
 export const heirAgeValidation = 'heirAgeValidation'
+
+export enum DebtTypes {
+  Overdraft = 'Yfirdráttur',
+  CreditCard = 'Kreditkort',
+  Loan = 'Lán',
+  InsuranceCompany = 'Tryggingafélag',
+  PropertyFees = 'Fastagjöld',
+  OtherDebts = 'Aðrar skuldir',
+}

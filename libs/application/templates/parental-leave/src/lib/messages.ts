@@ -206,9 +206,9 @@ export const parentalLeaveFormMessages = {
     otherParentDescription: {
       id: 'pl.application:otherParent.description',
       defaultMessage:
-        'Skráður maki í þjóðskrá er valinn sjálfkrafa. Finnist ekki maki í þjóðskrá getur þú haldið áfram án skráningar, skráð þig sem einstætt foreldri eða skráð hitt foreldrið handvirkt.',
+        'Enginn maki fannst í Þjóðskrá. Þú getur haldið áfram án skráningar, skráð þig sem einstætt foreldri eða skráð hitt foreldrið handvirkt.',
       description:
-        'Your spouse according to Registers Iceland is preselected. If no spouse is found, you can continue without registration, register as a single parent or register the other parent manually.',
+        'No spouse was found in the National Registry. You can continue without registration, register as a single parent or register the other parent manually.',
     },
     otherParentTitle: {
       id: 'pl.application:otherParent.title',
@@ -248,8 +248,10 @@ export const parentalLeaveFormMessages = {
     },
     otherParentSpouse: {
       id: 'pl.application:otherParent.spouse',
-      defaultMessage: 'Hitt foreldrið er {spouseName} (kt. {spouseId})',
-      description: `The other parent is {spouseName} (kt. {spouseId})`,
+      defaultMessage:
+        'Hérna eru upplýsingar um maka/sambúðaraðila. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá.',
+      description:
+        'Here is information about spouses/partners. Note that if the following information is not correct, it must be changed in the National Registry.',
     },
     otherParentEmailSubSection: {
       id: 'pl.application:otherParentEmail.subSection',
@@ -910,6 +912,26 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Engar breytingar fundust.',
       description: 'No changes were found.',
     },
+    deletePeriod: {
+      id: 'pl.application:delete.period',
+      defaultMessage: 'Eyða tímabili',
+      description: 'Delete period',
+    },
+    periodPaid: {
+      id: 'pl.application:period.paid',
+      defaultMessage: 'Búið að greiða',
+      description: 'Paid',
+    },
+    periodInProgress: {
+      id: 'pl.application:period.in.progress',
+      defaultMessage: 'Tímabil í gangi, ekki hægt að breyta',
+      description: 'Period in progress, unable to edit',
+    },
+    additionalInformationSection: {
+      id: 'pl.application:additional.information.section',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional Information',
+    },
   }),
 
   selectChild: defineMessages({
@@ -1075,6 +1097,23 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:applicant.english',
       defaultMessage: 'Enska',
       description: 'english',
+    },
+    commentSection: {
+      id: 'pl.application:applicant.comment.section',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    commentDescription: {
+      id: 'pl.application:applicant.comment.description',
+      defaultMessage:
+        'Hafir þú einhverja athugasemd skildu hana eftir hér. Athugið að athugasemdir takmarkast við 250 stafabil. Ef nauðsyn krefur getur þú hlaðið upp skjali með lengri athugasemdum á skjánum hér á undan.',
+      description:
+        'Please leave any additional comments below. Note that comments are limited to 250 characters. If needed, please upload a document with longer comments on the previous screen.',
+    },
+    commentPlaceholder: {
+      id: 'pl.application:applicant.comment.placeholder',
+      defaultMessage: 'Skrifaðu athugasemd hér',
+      description: 'Your comment',
     },
   }),
 
@@ -1550,6 +1589,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Eyða vinnuveitanda',
       description: 'Remove employer',
     },
+    editEmployer: {
+      id: 'pl.application:employer.editEmployer',
+      defaultMessage: 'Breyta vinnuveitanda',
+      description: 'Edit employer',
+    },
   }),
 
   selfEmployed: defineMessages({
@@ -1575,8 +1619,28 @@ export const parentalLeaveFormMessages = {
         'Sjálfstætt starfandi foreldri þarf að skila staðfestingu á lækkun á reiknuðu endurgjaldi ef við á (fæst hjá RSK).',
       description: 'Description for the attachement required for self employed',
     },
+  }),
+
+  fileUpload: defineMessages({
+    additionalAttachmentTitle: {
+      id: 'pl.application:fileUpload.new.employer.attachment.title',
+      defaultMessage: 'Fylgiskjöl nýr vinnuveitandi',
+      description: 'Attachments for new employer',
+    },
+    additionalAttachmentDescription: {
+      id: 'pl.application:fileUpload.new.employer.attachment.description',
+      defaultMessage:
+        'Ef þú ert að skipta um vinnuveitanda þarf að skila inn starfslokavottorði frá fyrri vinnuveitanda því til staðfestingar. Vinsamlegast hlaðið skjalinu upp hér að neðan.',
+      description:
+        'If you are changing your employer you must submit a document from your previous employer confirming this. Please upload the document below.',
+    },
+    additionalDocumentsEditSubmit: {
+      id: 'pl.application:fileUpload.additionalDocumentsEditSubmit',
+      defaultMessage: 'Senda inn',
+      description: 'Submit',
+    },
     attachmentButton: {
-      id: 'pl.application:selfEmployed.attachment.button',
+      id: 'pl.application:fileUpload.attachment.button',
       defaultMessage: 'Veldu skjal',
       description: 'Button copy for the self employed attachement',
     },
@@ -1591,7 +1655,7 @@ export const parentalLeaveFormMessages = {
       description: 'Accepted documents with the following extensions: .pdf',
     },
     attachmentMaxSizeError: {
-      id: 'pl.application:selfEmployed.attachment.maxSizeError',
+      id: 'pl.application:fileUpload.attachment.maxSizeError',
       defaultMessage: 'Hámark 2 MB á skrá',
       description: 'Max 2 MB per file',
     },
@@ -1869,6 +1933,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Tímabilinu {index} - {ratio}%',
       description: 'Period copy',
     },
+    vmstPeriod: {
+      id: 'pl.application:review.vmst.period',
+      defaultMessage: 'Greiðslutímabil {index} - {ratio}%',
+      description: 'Payment period {index} - {ratio}%',
+    },
     periodActualDob: {
       id: 'pl.application:review.period.actual.dob',
       defaultMessage: 'Raunverulegum fæðingardegi - {duration} mánuðir',
@@ -2089,6 +2158,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: `Þeir sem hafa farið í tæknifrjóvgun þurfa að skila inn skjali því til staðfestingar frá Livio. Athugaðu að skjalið þarf að vera á .pdf formi`,
       description: `Those who have undergone artificial insemination must submit a document to confirm this from Livio. Note that the document needs to be on .pdf format`,
     },
+    changeEmployerTitle: {
+      id: 'pl.application:attachmentscreen.changeEmployer',
+      defaultMessage: `Staðfesting vegna nýs vinnuveitanda`,
+      description: `Confirmation of new employer`,
+    },
     parentWithoutBirthParentTitle: {
       id: 'pl.application:attachmentscreen.parent.without.birth.parent.title',
       defaultMessage: 'Staðfesting',
@@ -2166,42 +2240,22 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Þú getur ekki sótt um ennþá.',
       description: 'You can not apply yet.',
     },
-    residenceGrantPeriodDescriptionLineOne: {
-      id: 'pl.application:residence.grant.period.description.line.one',
-      defaultMessage:
-        'Heimilt er að greiða dvalarkostnað barnshafandi foreldris fjarri heimili 14 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
-      description:
-        'It is permitted to pay the expenses of a pregnant parent´s stay away from home 14 days before the expected date of birth and until the birth',
-    },
-    residenceGrantPeriodDescriptionLineTwo: {
-      id: 'pl.application:residence.grant.period.description.line.two',
-      defaultMessage:
-        'Ef um fjölburameðgöngu er að ræða er heimilt að byrja að greiða dvalarkostnað 28 dögum fyrir áætlaðan fæðingardag og fram að fæðingu',
-      description:
-        'In the case of a multiple pregnancy, it is permitted to start paying accommodation expenses 28 days before the expected date of birth and until the birth',
-    },
-
     residenceGrantApplyTitle: {
       id: 'pl.application:residence.grant.apply.title',
       defaultMessage: 'Sækja um dvalarstyrk',
       description: 'Apply for residence grant',
     },
-    residenceGrantApplyHeader: {
-      id: 'pl.application:residence.grant.apply.header',
-      defaultMessage: 'Tímabil dvalarstyrks',
-      description: 'Period of residency',
-    },
     residenceGrantAttachmentTitle: {
       id: 'pl.application:residence.grant.attachment.title',
-      defaultMessage: 'Vottorð um dvalarstyrk',
-      description: 'A residence grant certificate',
+      defaultMessage: 'Vottorð vegna dvalarstyrks',
+      description: 'Residence grant medical certificate',
     },
     residenceGrantAttachmentDescription: {
       id: 'pl.application:residence.grant.attachment.description',
       defaultMessage:
-        'Til að sækja um dvalarstyrk þarf að senda inn vottorð þess sérfræðilæknis sem annast hefur foreldrið. Vottorð um dvalarstyrk skal berast á því formi sem aðgengilegt er í Sögukerfi heilbrigðisstofnana. Á vottorðinu þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að viðkomandi foreldri sé nauðsynlegt að hans mati að dvelja fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag barns. Einnig þarf að koma fram á vottorðinu hvort að foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Athugaðu að skjalið þarf að vera á .pdf formi.',
+        'Til að sækja um dvalarstyrk þarf að senda inn vottorð sérfræðilæknis sem annast hefur barnshafandi foreldrið. Vottorðið skal berast á því formi sem aðgengilegt er í sjúkraskrárkerfi heilbrigðisstofnana. Þar þarf að koma fram rökstuðningur sérfræðilæknis fyrir því að nauðsynlegt hafi verið að foreldrið dvaldi fjarri heimili sínu í tiltekinn tíma fyrir áætlaðan fæðingardag s.s. vegna fjarlægðar, færðar, óveðurs, verkfalls eða áhættumeðgöngu. Einnig þarf að koma fram á vottorðinu hvort foreldrið hafi dvalið á sjúkrahúsi eða heilbrigðisstofnun á því tímabili. Vinnumálastofnun þarf að berast frumrit af vottorðinu með undirskrift læknis. Styrkurinn er greiddur eftir á. Athugaðu að skjalið þarf að vera á .pdf formi.',
       description:
-        'When applying for a residence grant, a certificate from the parent’s specialist doctor needs to be submitted with the application. A residence grant certificate shall be submitted using the form available in the health care history system. The certificate must stipulate the specialist doctor’s reasoning for the necessity of the relevant parent to live far from her home for a certain amount of time before the expected date of delivery. The certificate must also stipulate information about whether the parent has stayed in a hospital or a health institute during that period. The original certificate must be submitted with a doctor’s signature. Note that the document needs to be on .pdf format.',
+        'To apply for a residence grant, a medical certificate from the birthing parent’s specialist doctor needs to be submitted. The medical certificate must be one that is available in the medical record system. The certificate must stipulate the specialist’s reasoning for the necessity of the birthing parent to live away from their home for a certain amount of time before the expected date of delivery, such as, distance, bad weather, strike action or pregnancy risk factors. The certificate must also include information regarding whether the parent stayed in a hospital or a health institute during this period. The original certificate must be submitted with a doctor’s signature. The grant is paid retroactively. Note that the document needs to be on .pdf format.',
     },
     residenceGrantOpen: {
       id: 'pl.application:residence.grant.open',
@@ -2223,13 +2277,11 @@ export const parentalLeaveFormMessages = {
       defaultMessage: 'Ekki senda inn',
       description: 'Reject',
     },
-
     residenceGrantSelectPeriodSubmitDescription: {
       id: 'pl.application:residence.grant.select.period.submit.description',
       defaultMessage: 'Sendu inn umsókn til að sækja um dvalarstyrk',
       description: 'Send in you application to apply for residence grant',
     },
-
     residenceGrantApplicationSendInformation: {
       id: 'pl.application:residence.grant.application.send.information',
       defaultMessage:
@@ -2760,6 +2812,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Vinnuveitandi krefst aðgerða vegna umsóknar þinnar.',
     description: 'Description of the state - employerAction',
   },
+  employerActionDeleteChanges: {
+    id: 'pl.application:employerAction.delete.changes',
+    defaultMessage: 'Umsækjandi eyddi ósamþykktu tímabili.',
+    description: 'Applicant deleted unapproved period.',
+  },
 
   vinnumalastofnunApprovalTitle: {
     id: 'pl.application:vinnumalastofnunApproval.title',
@@ -2891,6 +2948,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Þú ert að sækja um dvalarstyrk.',
     description: 'You are applying for a residence grant',
   },
+  residenceGrantSubmitted: {
+    id: 'pl.application:residence.grant.submitted',
+    defaultMessage: 'Umsækjandi sótti um dvalarstyrk.',
+    description: 'Applicant applied for residence grant',
+  },
 
   otherParentRequestApprovalTitle: {
     id: 'pl.application:otherParentRequestApproval.title',
@@ -2950,6 +3012,12 @@ export const statesMessages = defineMessages({
     description: 'The employer has approved the dates',
   },
 
+  employerApprovalApprovePeriodHistoryLogMessage: {
+    id: 'pl.application:employerApproval.approve.period.historyLogMessage',
+    defaultMessage: 'Vinnuveitandi hefur samþykkt dagsetningar',
+    description: 'The employer has approved the dates',
+  },
+
   vinnumalastofnunApprovalApproveHistoryLogMessage: {
     id: 'pl.application:vinnumalastofnunApproval.approve.historyLogMessage',
     defaultMessage: 'Vinnumálastofnun hefur samþykkt umsóknina',
@@ -2977,11 +3045,6 @@ export const statesMessages = defineMessages({
     id: 'pl.application:editOrAddPeriods.submit.historyLogMessage',
     defaultMessage: 'Vinnuveitanda og tímabili breytt eða bætt við umsókn',
     description: 'Employer and period edited or added to application',
-  },
-  editOrAddPeriodsAbortHistoryLogMessage: {
-    id: 'pl.application:editOrAddPeriods.abort.historyLogMessage',
-    defaultMessage: 'Hætti við breytingar',
-    description: 'Changes aborted',
   },
 
   approvedClosedHistoryLogMessage: {

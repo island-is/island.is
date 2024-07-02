@@ -14,7 +14,10 @@ import {
   QualityPhotoApi,
   ExistingApplicationApi,
 } from '@island.is/application/types'
-import { SyslumadurPaymentCatalogApi } from '../../dataProviders'
+import {
+  GlassesCheckApi,
+  SyslumadurPaymentCatalogApi,
+} from '../../dataProviders'
 export const sectionExternalData = buildSubSection({
   id: 'externalData',
   title: m.externalDataSection,
@@ -39,6 +42,11 @@ export const sectionExternalData = buildSubSection({
           provider: CurrentLicenseApi,
           title: m.infoFromLicenseRegistry,
           subTitle: m.confirmationStatusOfEligability,
+        }),
+        buildDataProviderItem({
+          provider: GlassesCheckApi,
+          title: '',
+          subTitle: '',
         }),
         buildDataProviderItem({
           provider: QualityPhotoApi,

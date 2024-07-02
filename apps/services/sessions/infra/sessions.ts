@@ -1,4 +1,3 @@
-import { PersistentVolumeClaim } from '../../../../infra/src/dsl/types/input-types'
 import { service, ServiceBuilder } from '../../../../infra/src/dsl/dsl'
 
 const namespace = 'services-sessions'
@@ -83,4 +82,35 @@ export const workerSetup = (): ServiceBuilder<'services-sessions-worker'> =>
         prod: 'https://innskra.island.is',
       },
       REDIS_USE_SSL: 'true',
+    })
+
+const cleanupId = 'services-sessions-cleanup'
+// run daily at 3am
+const extraAttributes = { schedule: '0 3 * * *' }
+
+export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
+  service(cleanupId)
+    .namespace(namespace)
+    .image(imageName)
+    .command('node')
+    .args('main.js', '--job=cleanup')
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '512Mi',
+      },
+      requests: {
+        cpu: '100m',
+        memory: '256Mi',
+      },
+    })
+    .db({
+      name: 'services-sessions',
+      extensions: ['uuid-ossp'],
+      readOnly: false,
+    })
+    .extraAttributes({
+      dev: extraAttributes,
+      staging: extraAttributes,
+      prod: extraAttributes,
     })

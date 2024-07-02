@@ -114,12 +114,13 @@ export class FileController {
   })
   async createCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(theCase, createFile)
+    return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
   @UseGuards(
@@ -176,12 +177,13 @@ export class FileController {
   })
   deleteCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(caseFile)
+    return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 
   @UseGuards(
@@ -207,7 +209,7 @@ export class FileController {
   ): Promise<UploadFileToCourtResponse> {
     this.logger.debug(`Uploading file ${fileId} of case ${caseId} to court`)
 
-    return this.fileService.uploadCaseFileToCourt(caseFile, theCase, user)
+    return this.fileService.uploadCaseFileToCourt(theCase, caseFile, user)
   }
 
   @UseGuards(

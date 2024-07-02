@@ -50,7 +50,6 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 import { GET_UNIVERSITY_GATEWAY_UNIVERSITIES } from '../queries/UniversityGateway'
-import { useSetZIndexOnHeader } from './useSetZIndexOnHeader'
 import * as styles from './UniversitySearch.css'
 
 interface UniversitySubPageProps {
@@ -70,7 +69,6 @@ const UniversitySubPage: Screen<UniversitySubPageProps> = ({
   const n = useNamespace(namespace)
   const router = useRouter()
   const { activeLocale } = useI18n()
-  useSetZIndexOnHeader()
   const [sortedUniversities, setSortedUniversities] = useState<
     UniversityGatewayUniversity[]
   >([])
@@ -119,13 +117,7 @@ const UniversitySubPage: Screen<UniversitySubPageProps> = ({
           >
             {webRichText(
               subpage?.description as SliceType[],
-              {
-                renderComponent: {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              },
+              undefined,
               activeLocale,
             )}
           </GridColumn>
@@ -357,7 +349,6 @@ const renderSlices = (
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderAnchorPagesAsProfileCards: true,
-                latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
@@ -374,7 +365,6 @@ const renderSlices = (
             marginBottom={index === slices.length - 1 ? 5 : 0}
             params={{
               renderAnchorPagesAsProfileCards: true,
-              latestNewsSliceBackground: 'white',
               forceTitleSectionHorizontalPadding: 'true',
             }}
           />

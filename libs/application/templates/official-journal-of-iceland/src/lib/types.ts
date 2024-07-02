@@ -2,9 +2,9 @@ import { Application, FieldBaseProps } from '@island.is/application/types'
 import { type answerSchemas } from './dataSchema'
 import { INSTITUTION_INDEX, MEMBER_INDEX, Routes } from './constants'
 import {
-  MinistryOfJusticeAdvert,
-  MinistryOfJusticeAdvertEntity,
-  MinistryOfJusticePaging,
+  OfficialJournalOfIcelandAdvert,
+  OfficialJournalOfIcelandAdvertEntity,
+  OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
 
 export const InputFields = {
@@ -96,9 +96,7 @@ export type CommitteeSignatureState = NonNullable<
 export enum TemplateApiActions {
   departments = 'departments',
   types = 'types',
-  submitApplication = 'submitApplication',
-  validateAdvert = 'validateAdvert',
-  cancelApplication = 'cancelApplication',
+  postApplication = 'postApplication',
 }
 
 export type NestedType<T> = {
@@ -126,7 +124,7 @@ export interface ExternalData {
     status: StatusProvider
   }
   submitApplication: {
-    data: { application: MinistryOfJusticeAdvert }
+    data: { application: OfficialJournalOfIcelandAdvert }
     date: string
     status: StatusProvider
   }
@@ -140,6 +138,8 @@ export type OJOIApplication = Override<
   }
 >
 
+export type Answers = OJOIApplication['answers']
+
 export type OJOIFieldBaseProps = Override<
   FieldBaseProps,
   {
@@ -149,15 +149,15 @@ export type OJOIFieldBaseProps = Override<
 >
 
 export type CreateParentKey<Key extends string> =
-  `ministryOfJustice${Capitalize<Key>}`
+  `officialJournalOfIceland${Capitalize<Key>}`
 
-export type MinistryOfJusticeGraphqlResponse<
+export type OfficialJournalOfIcelandGraphqlResponse<
   Key extends string,
-  Value = MinistryOfJusticeAdvertEntity[],
+  Value = OfficialJournalOfIcelandAdvertEntity[],
 > = {
   [key in CreateParentKey<Key>]: {
     [key in Key]: Value
   } & {
-    paging: MinistryOfJusticePaging
+    paging: OfficialJournalOfIcelandPaging
   }
 }

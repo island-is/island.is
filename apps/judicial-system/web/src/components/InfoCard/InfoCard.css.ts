@@ -3,6 +3,7 @@ import { style } from '@vanilla-extract/css'
 import { theme } from '@island.is/island-ui/theme'
 
 export const infoCardContainer = style({
+  position: 'relative',
   background: theme.color.blue100,
   borderRadius: theme.border.radius.large,
 })
@@ -22,7 +23,7 @@ export const infoCardDataContainer = style({
   },
 })
 
-export const infoCardCourtOfAppealDataContainer = style({
+export const infoCardAdditionalSectionContainer = style({
   display: 'grid',
   gap: theme.spacing[2],
   borderTop: `2px solid ${theme.color.blue200}`,
@@ -31,17 +32,6 @@ export const infoCardCourtOfAppealDataContainer = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       gridTemplateColumns: '1fr 1fr',
-    },
-  },
-})
-
-export const infoCardDefendant = style({
-  display: 'flex',
-  flexDirection: 'column',
-
-  '@media': {
-    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
-      display: 'block',
     },
   },
 })

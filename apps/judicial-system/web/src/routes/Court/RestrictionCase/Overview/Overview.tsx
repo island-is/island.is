@@ -31,13 +31,17 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  InfoCardCaseScheduled,
   PageHeader,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
-import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseLegalProvisions,
+  CaseState,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
   useCourtUpload,
@@ -46,7 +50,7 @@ import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-w
 
 import { DraftConclusionModal } from '../../components'
 
-export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const JudgeOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -105,6 +109,17 @@ export const JudgeOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <CourtCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.RECEIVED &&
+          workingCase.arraignmentDate?.date &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[

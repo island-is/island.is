@@ -89,6 +89,20 @@ describe('CaseController - Extend', () => {
     const requestProsecutorOnlySession = false
     const prosecutorOnlySessionRequest = 'The prosecutors wants an exclusive'
     const rulingDate = randomDate()
+    const defendantOne = {
+      nationalId: '0000000000',
+      name: 'Thing 1',
+      gender: Gender.MALE,
+      address: 'House 1',
+      citizenship: 'Citizenship 1',
+    }
+    const defendantTwo = {
+      nationalId: '0000001111',
+      name: 'Thing 2',
+      gender: Gender.FEMALE,
+      address: 'House 2',
+      citizenship: 'Citizenship 2',
+    }
     const theCase = {
       id: caseId,
       origin,
@@ -111,9 +125,15 @@ describe('CaseController - Extend', () => {
       requestProsecutorOnlySession,
       prosecutorOnlySessionRequest,
       rulingDate,
+      defendants: [defendantOne, defendantTwo],
     } as Case
+    const extendedCaseId = uuid()
+    const extendedCase = { id: extendedCaseId }
 
     beforeEach(async () => {
+      const mockCreate = mockCaseModel.create as jest.Mock
+      mockCreate.mockResolvedValueOnce(extendedCase)
+
       await givenWhenThen(caseId, user, theCase)
     })
 
@@ -122,6 +142,7 @@ describe('CaseController - Extend', () => {
         {
           origin,
           type,
+          state: CaseState.NEW,
           description,
           policeCaseNumbers,
           defenderName,
@@ -147,130 +168,6 @@ describe('CaseController - Extend', () => {
         },
         { transaction },
       )
-    })
-  })
-
-  describe('extended case extended', () => {
-    const userId = uuid()
-    const prosecutorsOfficeId = uuid()
-    const user = {
-      id: userId,
-      institution: { id: prosecutorsOfficeId },
-    } as TUser
-    const caseId = uuid()
-    const origin = randomEnum(CaseOrigin)
-    const type = CaseType.CUSTODY
-    const description = 'Some details'
-    const policeCaseNumbers = ['007-2021-777']
-    const defenderName = 'John Doe'
-    const defenderNationalId = '0000000009'
-    const defenderEmail = 'john@dummy.is'
-    const defenderPhoneNumber = '1234567'
-    const leadInvestigator = 'The Boss'
-    const courtId = uuid()
-    const translator = 'Bob Smith'
-    const lawsBroken = 'Broken laws'
-    const legalBasis = 'Legal basis for custody'
-    const legalProvisions = [CaseLegalProvisions._100_1]
-    const requestedCustodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
-    const caseFacts = 'This happened'
-    const legalArguments = 'This is why custody is needed'
-    const requestProsecutorOnlySession = false
-    const prosecutorOnlySessionRequest = 'The prosecutors wants an exclusive'
-    const initialRulingDate = randomDate()
-    const theCase = {
-      id: caseId,
-      origin,
-      type,
-      description,
-      policeCaseNumbers,
-      defenderName,
-      defenderNationalId,
-      defenderEmail,
-      defenderPhoneNumber,
-      leadInvestigator,
-      courtId,
-      translator,
-      lawsBroken,
-      legalBasis,
-      legalProvisions,
-      requestedCustodyRestrictions,
-      caseFacts,
-      legalArguments,
-      requestProsecutorOnlySession,
-      prosecutorOnlySessionRequest,
-      initialRulingDate,
-    } as Case
-
-    beforeEach(async () => {
-      await givenWhenThen(caseId, user, theCase)
-    })
-
-    it('should extend case', () => {
-      expect(mockCaseModel.create).toHaveBeenCalledWith(
-        {
-          origin,
-          type,
-          description,
-          policeCaseNumbers,
-          defenderName,
-          defenderNationalId,
-          defenderEmail,
-          defenderPhoneNumber,
-          leadInvestigator,
-          courtId,
-          translator,
-          lawsBroken,
-          legalBasis,
-          legalProvisions,
-          requestedCustodyRestrictions,
-          caseFacts,
-          legalArguments,
-          requestProsecutorOnlySession,
-          prosecutorOnlySessionRequest,
-          creatingProsecutorId: userId,
-          prosecutorId: userId,
-          parentCaseId: caseId,
-          initialRulingDate,
-          prosecutorsOfficeId,
-        },
-        { transaction },
-      )
-    })
-  })
-
-  describe('copy defendants', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const defendantOne = {
-      nationalId: '0000000000',
-      name: 'Thing 1',
-      gender: Gender.MALE,
-      address: 'House 1',
-      citizenship: 'Citizenship 1',
-    }
-    const defendantTwo = {
-      nationalId: '0000001111',
-      name: 'Thing 2',
-      gender: Gender.FEMALE,
-      address: 'House 2',
-      citizenship: 'Citizenship 2',
-    }
-    const theCase = {
-      id: caseId,
-      defendants: [defendantOne, defendantTwo],
-    } as Case
-    const extendedCaseId = uuid()
-    const extendedCase = { id: extendedCaseId }
-
-    beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(extendedCase)
-
-      await givenWhenThen(caseId, user, theCase)
-    })
-
-    it('should copy defendants', () => {
       expect(mockDefendantService.createForNewCase).toHaveBeenCalledTimes(2)
       expect(mockDefendantService.createForNewCase).toHaveBeenCalledWith(
         extendedCaseId,
@@ -282,24 +179,6 @@ describe('CaseController - Extend', () => {
         defendantTwo,
         transaction,
       )
-    })
-  })
-
-  describe('case lookup', () => {
-    const user = {} as TUser
-    const caseId = uuid()
-    const theCase = { id: caseId } as Case
-    const extendedCaseId = uuid()
-    const extendedCase = { id: extendedCaseId }
-
-    beforeEach(async () => {
-      const mockCreate = mockCaseModel.create as jest.Mock
-      mockCreate.mockResolvedValueOnce(extendedCase)
-
-      await givenWhenThen(caseId, user, theCase)
-    })
-
-    it('should lookup the newly extended case', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         include,
         order,
@@ -335,8 +214,100 @@ describe('CaseController - Extend', () => {
     })
   })
 
+  describe('extended case extended', () => {
+    const userId = uuid()
+    const prosecutorsOfficeId = uuid()
+    const user = {
+      id: userId,
+      institution: { id: prosecutorsOfficeId },
+    } as TUser
+    const caseId = uuid()
+    const origin = randomEnum(CaseOrigin)
+    const type = CaseType.CUSTODY
+    const description = 'Some details'
+    const policeCaseNumbers = ['007-2021-777']
+    const defenderName = 'John Doe'
+    const defenderNationalId = '0000000009'
+    const defenderEmail = 'john@dummy.is'
+    const defenderPhoneNumber = '1234567'
+    const leadInvestigator = 'The Boss'
+    const courtId = uuid()
+    const translator = 'Bob Smith'
+    const lawsBroken = 'Broken laws'
+    const legalBasis = 'Legal basis for custody'
+    const legalProvisions = [CaseLegalProvisions._100_1]
+    const requestedCustodyRestrictions = [CaseCustodyRestrictions.ISOLATION]
+    const caseFacts = 'This happened'
+    const legalArguments = 'This is why custody is needed'
+    const requestProsecutorOnlySession = false
+    const prosecutorOnlySessionRequest = 'The prosecutors wants an exclusive'
+    const initialRulingDate = randomDate()
+    const theCase = {
+      id: caseId,
+      origin,
+      type,
+      state: CaseState.NEW,
+      description,
+      policeCaseNumbers,
+      defenderName,
+      defenderNationalId,
+      defenderEmail,
+      defenderPhoneNumber,
+      leadInvestigator,
+      courtId,
+      translator,
+      lawsBroken,
+      legalBasis,
+      legalProvisions,
+      requestedCustodyRestrictions,
+      caseFacts,
+      legalArguments,
+      requestProsecutorOnlySession,
+      prosecutorOnlySessionRequest,
+      initialRulingDate,
+      parentCaseId: uuid(),
+    } as Case
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase)
+    })
+
+    it('should extend case', () => {
+      expect(mockCaseModel.create).toHaveBeenCalledWith(
+        {
+          origin,
+          type,
+          state: CaseState.NEW,
+          description,
+          policeCaseNumbers,
+          defenderName,
+          defenderNationalId,
+          defenderEmail,
+          defenderPhoneNumber,
+          leadInvestigator,
+          courtId,
+          translator,
+          lawsBroken,
+          legalBasis,
+          legalProvisions,
+          requestedCustodyRestrictions,
+          caseFacts,
+          legalArguments,
+          requestProsecutorOnlySession,
+          prosecutorOnlySessionRequest,
+          creatingProsecutorId: userId,
+          prosecutorId: userId,
+          parentCaseId: caseId,
+          initialRulingDate,
+          prosecutorsOfficeId,
+        },
+        { transaction },
+      )
+    })
+  })
+
   describe('case creation fails', () => {
-    const user = {} as TUser
+    const user = { id: uuid() } as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     let then: Then
@@ -355,7 +326,7 @@ describe('CaseController - Extend', () => {
   })
 
   describe('defendant creation fails', () => {
-    const user = {} as TUser
+    const user = { id: uuid() } as TUser
     const caseId = uuid()
     const theCase = { id: caseId, defendants: [{}] } as Case
     const extendedCaseId = uuid()
@@ -379,7 +350,7 @@ describe('CaseController - Extend', () => {
   })
 
   describe('case lookup fails', () => {
-    const user = {} as TUser
+    const user = { id: uuid() } as TUser
     const caseId = uuid()
     const theCase = { id: caseId } as Case
     const extendedCaseId = uuid()

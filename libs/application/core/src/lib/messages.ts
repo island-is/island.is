@@ -220,6 +220,11 @@ export const coreMessages = defineMessages({
     defaultMessage: 'Eyða færslu',
     description: 'Delete field text',
   },
+  editFieldText: {
+    id: 'application.system:core.edit.field.text',
+    defaultMessage: 'Breyta færslu',
+    description: 'Edit field text',
+  },
   deleteApplicationDialogTitle: {
     id: 'application.system:delete.application.dialog.title',
     defaultMessage: 'Eyða umsókn',
@@ -348,6 +353,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage:
       'Skráin er of stór. Hægt er að hlaða inn skrám sem eru {maxSizeInMb}MB eða minni.',
     description: 'Error message when file size exceeds max size limit',
+  },
+  fileMaxSumSizeLimitExceeded: {
+    id: 'application.system:core.error.file.maxSizeLimitSumExceeded',
+    defaultMessage:
+      'Skrárnar eru samtals of stórar. Hægt er að hlaða inn skrám sem eru samtals {maxSizeInMb}MB eða minni.',
+    description: 'Error message when sum of file sizes exceeds max size limit',
   },
   fileInvalidExtension: {
     id: 'application.system:core.error.file.invalidExtension',
@@ -545,6 +556,11 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með íslenskt ríkisfang',
     description: 'You do not have a domicile in Iceland',
   },
+  nationalRegistryCitizenshipNotWithinEES: {
+    id: 'application.system:core.fetch.data.nationalRegistryCitizenshipNotWithinEES',
+    defaultMessage: 'Þú ert ekki með ríkisfang innan EES',
+    description: 'You do not have citizenship with EES',
+  },
   nationalRegistryAgeNotValid: {
     id: 'application.system:core.fetch.data.nationalRegistryAgeNotValid',
     defaultMessage: 'Þú hefur ekki náð tilskyldum aldri fyrir þessa umsókn',
@@ -618,6 +634,18 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Þú ert ekki með skráðan bankareikning',
     description: 'No bank account error',
   },
+  noEmailFound: {
+    id: 'application.system:core.fetch.data.noEmailError',
+    defaultMessage: 'Ekkert netfang skráð',
+    description: 'No email address registered',
+  },
+  noEmailFoundDescription: {
+    id: 'application.system:core.fetch.data.noEmailError.description#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð netfang hjá Ísland.is. Vinsamlegast skráðu það [hér]({link}).',
+    description:
+      'You do not have a registered email address at Ísland.is. Please register an email address here .',
+  },
   machinesEmptyListDefault: {
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',
     defaultMessage: 'Ekki fundust nein tæki',
@@ -643,6 +671,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.nationalRegistryMinAgeNotFulfilled',
     defaultMessage: 'Lágmarksaldur er {minAge} ára',
     description: 'Min age not fulfilled error',
+  },
+  idCardApplicationRequirementsNotMet: {
+    id: 'application.system:core.fetch.data.idCardApplicationRequirementsNotMet',
+    defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir umsókn um nafnskírteini',
+    description: 'Requirements for id card application not met',
   },
 })
 
@@ -816,6 +849,24 @@ export const coreErrorScreenMessages = defineMessages({
   badSubjectDescription: {
     id: 'application.system:core.errorScreen.badSubjectDescription#markdown',
     defaultMessage: `* Þú hefur ekki rétt umboð til að opna þessa umsóknartegund`,
+    description:
+      'Error screen description when user has a bad subject error after checking delegations',
+  },
+  prunedTitle: {
+    id: 'application.system:core.errorScreen.prunedTitle',
+    defaultMessage: 'Umsóknin er runnin út',
+    description:
+      'Error screen title when the application has been pruned and is not editable',
+  },
+  prunedSubTitle: {
+    id: 'application.system:core.errorScreen.prunedSubTitle',
+    defaultMessage: 'Umsóknin hefur runnið út og er ekki lengur aðgengileg',
+    description:
+      'Error screen subtitle when the application has been pruned and is not editable',
+  },
+  prunedDescription: {
+    id: 'application.system:core.errorScreen.prunedDescription#markdown',
+    defaultMessage: `* Öllum persónugögnum var eytt þegar umsóknin rann út\n* Ef klára á umsókn af þessu tagi þarf að stofna nýja`,
     description:
       'Error screen description when user has a bad subject error after checking delegations',
   },

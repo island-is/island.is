@@ -2,6 +2,7 @@ import {
   buildCustomField,
   buildDescriptionField,
   buildDividerField,
+  buildFileUploadField,
   buildKeyValueField,
   buildMultiField,
   buildSection,
@@ -12,117 +13,58 @@ import {
 import { formatCurrency } from '@island.is/application/ui-components'
 import { InheritanceReport } from '../../lib/dataSchema'
 import { m } from '../../lib/messages'
-import { valueToNumber } from '../../lib/utils/helpers'
-import { YES } from '../../lib/constants'
+import {
+  roundedValueToNumber,
+  shouldShowCustomSpouseShare,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 
 export const heirs = buildSection({
   id: 'heirs',
   title: m.propertyForExchangeAndHeirs,
   children: [
     buildSubSection({
-      id: 'spouse',
-      title: m.deceasedSeparateProperty,
-      children: [
-        buildMultiField({
-          id: 'spouse',
-          title: m.deceasedSeparateProperty,
-          description: m.spousesShareDescription,
-          children: [
-            buildCustomField({
-              title: '',
-              id: 'spouse',
-              doesNotRequireAnswer: false,
-              component: 'SpouseEstateShare',
-              childInputIds: [
-                'spouse.spouseTotalSeparateProperty',
-                'spouse.spouseTotalDeduction',
-              ],
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSubSection({
       id: 'propertyForExchange',
-      title: m.propertyForExchangeAndHeirs,
+      title: m.propertyForExchangeAlternative,
       children: [
         buildMultiField({
           id: 'propertyForExchange',
-          title: m.propertyForExchange,
+          title: m.propertyForExchangeAlternative,
+          description: m.assetsToShareDescription,
           children: [
-            buildKeyValueField({
-              label: m.netProperty,
-              display: 'flex',
-              value: ({ answers }) => {
-                return formatCurrency(
-                  String(
-                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-                      Number(
-                        getValueViaPath(answers, 'business.businessTotal'),
-                      ),
-                  ),
-                )
-              },
+            buildDescriptionField({
+              id: 'total',
+              title: '',
             }),
             buildDescriptionField({
-              id: 'space',
+              id: 'debtsTotal',
               title: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.totalDeduction,
-              display: 'flex',
-              value: ({ answers }) => {
-                const spouseTotalDeduction = valueToNumber(
-                  getValueViaPath(answers, 'spouse.spouseTotalDeduction'),
-                )
-
-                return formatCurrency(String(spouseTotalDeduction ?? '0'))
-              },
             }),
             buildDescriptionField({
-              id: 'space1',
+              id: 'shareTotal',
               title: '',
-              space: 'gutter',
             }),
-            buildDividerField({}),
-            buildKeyValueField({
-              label: m.netPropertyForExchange,
-              display: 'flex',
-              value: ({ answers }) => {
-                const spouseTotalDeduction = valueToNumber(
-                  getValueViaPath(answers, 'spouse.spouseTotalDeduction'),
-                )
-                const spouseTotalSeparateProperty = valueToNumber(
-                  getValueViaPath(
-                    answers,
-                    'spouse.spouseTotalSeparateProperty',
-                  ),
-                )
-
-                const wasInCohabitation =
-                  getValueViaPath(answers, 'spouse.wasInCohabitation') === YES
-                const hadSeparateProperty =
-                  getValueViaPath(answers, 'spouse.hadSeparateProperty') === YES
-
-                const deductionValue = !wasInCohabitation
-                  ? 0
-                  : !hadSeparateProperty
-                  ? spouseTotalDeduction
-                  : spouseTotalSeparateProperty
-
-                return formatCurrency(
-                  String(
-                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-                      Number(
-                        getValueViaPath(answers, 'business.businessTotal'),
-                      ) -
-                      deductionValue,
-                  ),
-                )
-              },
+            buildDescriptionField({
+              id: 'netTotal',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'spouseTotal',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'estateTotal',
+              title: '',
+            }),
+            buildDescriptionField({
+              id: 'netPropertyForExchange',
+              title: '',
+            }),
+            buildCustomField({
+              title: '',
+              id: 'share',
+              doesNotRequireAnswer: true,
+              component: 'CalculateShare',
             }),
           ],
         }),
@@ -150,45 +92,44 @@ export const heirs = buildSection({
                 title: '',
                 id: 'heirs.data',
                 doesNotRequireAnswer: true,
-                component: 'HeirsAndPartitionRepeater',
+                component: 'HeirsRepeater',
               },
               {
                 customFields: [
                   {
-                    title: m.heirsRelation.defaultMessage,
+                    title: m.heirsRelation,
                     id: 'relation',
                   },
                   {
-                    // sectionTitle: m.heirShare,
-                    title: m.heirsInheritanceRate.defaultMessage,
+                    title: m.heirsInheritanceRate,
                     id: 'heirsPercentage',
                   },
                   {
-                    title: m.taxFreeInheritance.defaultMessage,
-                    id: 'taxFreeInheritance',
-                    readOnly: true,
-                    currency: true,
-                  },
-                  {
-                    title: m.inheritanceAmount.defaultMessage,
+                    title: m.inheritanceAmount,
                     id: 'inheritance',
                     readOnly: true,
                     currency: true,
                   },
                   {
-                    title: m.taxableInheritance.defaultMessage,
+                    title: m.taxFreeInheritance,
+                    id: 'taxFreeInheritance',
+                    readOnly: true,
+                    currency: true,
+                  },
+                  {
+                    title: m.taxableInheritance,
                     id: 'taxableInheritance',
                     readOnly: true,
                     currency: true,
                   },
                   {
-                    title: m.inheritanceTax.defaultMessage,
+                    title: m.inheritanceTax,
                     id: 'inheritanceTax',
                     readOnly: true,
                     currency: true,
                   },
                 ],
-                repeaterButtonText: m.addHeir.defaultMessage,
+                repeaterButtonText: m.addHeir,
                 sumField: 'heirsPercentage',
               },
             ),
@@ -205,12 +146,50 @@ export const heirs = buildSection({
           title: m.heirAdditionalInfo,
           description: m.heirAdditionalInfoDescription,
           children: [
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFiles',
+              title: m.info,
+              titleVariant: 'h5',
+              marginBottom: 'smallGutter',
+            }),
             buildTextField({
               id: 'heirsAdditionalInfo',
-              title: m.info,
+              title: '',
               placeholder: m.infoPlaceholder,
               variant: 'textarea',
-              rows: 7,
+              rows: 4,
+              maxLength: 1800,
+            }),
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFilesPrivateTitle',
+              title: m.fileUploadPrivateTransfer,
+              description: m.uploadPrivateTransferUserGuidelines,
+              titleVariant: 'h5',
+              space: 'containerGutter',
+              marginBottom: 'smallGutter',
+            }),
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoPrivateTransferFiles',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.uploadPrivateTransferDescription,
+              uploadMultiple: false,
+              title: '',
+              uploadHeader: '',
+            }),
+            buildDescriptionField({
+              id: 'heirsAdditionalInfoFilesOtherDocumentsTitle',
+              title: m.fileUploadOtherDocuments,
+              description: m.uploadOtherDocumentsUserGuidelines,
+              titleVariant: 'h5',
+              space: 'containerGutter',
+              marginBottom: 'smallGutter',
+            }),
+            buildFileUploadField({
+              id: 'heirsAdditionalInfoFilesOtherDocuments',
+              uploadAccept: '.pdf, .doc, .docx, .jpg, .jpeg, .png, .xls, .xlsx',
+              uploadDescription: m.uploadOtherDocumentsDescription,
+              title: '',
+              uploadHeader: '',
             }),
           ],
         }),
@@ -222,7 +201,8 @@ export const heirs = buildSection({
       children: [
         buildMultiField({
           id: 'heirsOverview',
-          title: m.overview,
+          title: m.overviewHeirsTitle,
+          description: m.overviewHeirsDescription,
           children: [
             buildDividerField({}),
             buildDescriptionField({
@@ -233,36 +213,22 @@ export const heirs = buildSection({
               marginBottom: 'gutter',
             }),
             buildKeyValueField({
-              label: m.netProperty,
+              label: m.totalDeduction,
               display: 'flex',
+              condition: shouldShowCustomSpouseShare,
               value: ({ answers }) =>
                 formatCurrency(
                   String(
-                    (getValueViaPath<number>(answers, 'assets.assetsTotal') ||
-                      0) -
-                      (getValueViaPath<number>(answers, 'debts.debtsTotal') ||
-                        0) +
-                      (getValueViaPath<number>(
-                        answers,
-                        'business.businessTotal',
-                      ) || 0),
+                    roundedValueToNumber(
+                      getValueViaPath<number>(answers, 'spouseTotal'),
+                    ),
                   ),
                 ),
             }),
             buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'gutter',
-            }),
-            buildKeyValueField({
-              label: m.totalDeduction,
-              display: 'flex',
-              value: ({ answers }) =>
-                formatCurrency(String(Number(answers.totalDeduction ?? '0'))),
-            }),
-            buildDescriptionField({
               id: 'space1',
               title: '',
+              condition: shouldShowCustomSpouseShare,
               space: 'gutter',
             }),
             buildKeyValueField({
@@ -271,12 +237,12 @@ export const heirs = buildSection({
               value: ({ answers }) => {
                 return formatCurrency(
                   String(
-                    Number(getValueViaPath(answers, 'assets.assetsTotal')) -
-                      Number(getValueViaPath(answers, 'debts.debtsTotal')) +
-                      Number(
-                        getValueViaPath(answers, 'business.businessTotal'),
-                      ) -
-                      Number(getValueViaPath(answers, 'totalDeduction') ?? '0'),
+                    roundedValueToNumber(
+                      getValueViaPath<number>(
+                        answers,
+                        'netPropertyForExchange',
+                      ),
+                    ),
                   ),
                 )
               },
@@ -293,7 +259,7 @@ export const heirs = buildSection({
               title: '',
               id: 'overviewHeirs',
               doesNotRequireAnswer: true,
-              component: 'HeirsOverview',
+              component: 'OverviewHeirs',
             }),
             buildDividerField({}),
             buildDescriptionField({
@@ -397,6 +363,36 @@ export const heirs = buildSection({
               label: m.info,
               value: ({ answers }) =>
                 getValueViaPath<string>(answers, 'heirsAdditionalInfo'),
+            }),
+            buildDescriptionField({
+              id: 'heirs_space5',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadPrivateTransfer,
+              value: ({ answers }) => {
+                const file = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoPrivateTransferFiles',
+                )?.[0]
+                return file?.name ?? ''
+              },
+            }),
+            buildDescriptionField({
+              id: 'heirs_space6',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.fileUploadOtherDocuments,
+              value: ({ answers }) => {
+                const files = getValueViaPath<any>(
+                  answers,
+                  'heirsAdditionalInfoFilesOtherDocuments',
+                )
+                return files.map((file: any) => file.name).join(', ')
+              },
             }),
             buildCustomField({
               title: '',

@@ -2,26 +2,54 @@ import { style } from '@vanilla-extract/css'
 
 import { themeUtils } from '@island.is/island-ui/theme'
 
-export const headerBg = style({
-  position: 'relative',
-  ...themeUtils.responsiveStyle({
-    xs: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      height: 340,
-    },
-    md: {
-      display: 'block',
-      justifyContent: 'unset',
-      alignItems: 'unset',
-      height: 340,
-    },
-    lg: {
-      height: 444,
-    },
-  }),
-})
+const icelandicBackgroundImageUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/3zIrIJoZVenDqJ25f9rTKS/58a2aea4b30b97fd3fa26bbd298b0815/haskolanam_banner_is.svg'
+
+const englishBackgroundImageUrl =
+  'https://images.ctfassets.net/8k0h54kbe6bj/3zIrIJoZVenDqJ25f9rTKS/42b81a706e747767a85d7acbbe3897d8/haskolanam_banner_en.svg'
+
+const generateHeaderBackgroundStyle = (backgroundImageUrl: string) =>
+  style({
+    position: 'relative',
+    ...themeUtils.responsiveStyle({
+      xs: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: 340,
+        background:
+          'linear-gradient(90deg, #C1EDDF 0%, #FDE1AD 79%) center/cover',
+      },
+      md: {
+        display: 'block',
+        justifyContent: 'unset',
+        alignItems: 'unset',
+        height: 340,
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '992px',
+        backgroundPosition: 'center',
+      },
+      lg: {
+        height: 444,
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'unset',
+        backgroundPosition: 'center',
+      },
+      xl: {
+        backgroundImage: `url(${backgroundImageUrl})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: '1440px',
+        backgroundPosition: 'center',
+      },
+    }),
+  })
+
+export const headerBg = {
+  is: generateHeaderBackgroundStyle(icelandicBackgroundImageUrl),
+  en: generateHeaderBackgroundStyle(englishBackgroundImageUrl),
+}
 
 export const iconCircle = style({
   height: 136,

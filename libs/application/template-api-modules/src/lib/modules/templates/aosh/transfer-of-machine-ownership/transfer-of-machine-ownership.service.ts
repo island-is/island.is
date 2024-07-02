@@ -27,7 +27,6 @@ import { generateApplicationRejectedEmail } from './emailGenerators/applicationR
 import { generateApplicationRejectedSms } from './smsGenerators/applicationRejectedSms'
 import {
   ChangeMachineOwner,
-  MachineDto,
   MachinesWithTotalCount,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
@@ -63,6 +62,7 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
+                'ownerChange',
               )
             }
             return machine
@@ -77,26 +77,9 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   async submitApplication({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<void> {
-    // Validate payment
-    // Make sure a paymentUrl was created
-    const { paymentUrl } = application.externalData.createCharge.data as {
-      paymentUrl: string
-    }
-    if (!paymentUrl) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
-
-    // Make sure payment is fulfilled (has been paid)
-    const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
-    if (!payment?.fulfilled) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
+    await this.handlePayment({ application, auth, currentUserLocale })
 
     // Confirm owner change in AOSH
     const answers = application.answers as TransferOfMachineOwnershipAnswers
@@ -141,9 +124,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               generateApplicationSubmittedEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending email about submit application to ${recipientList[i].email}`,
+              e,
             )
           })
       }
@@ -155,9 +139,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               generateApplicationSubmittedSms(application, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending sms about submit application to ${recipientList[i].phone}`,
+              e,
             )
           })
       }
@@ -166,32 +151,22 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   async initReview({
     application,
     auth,
+    currentUserLocale,
   }: TemplateApiModuleActionProps): Promise<Array<EmailRecipient>> {
-    // 1. Validate payment
-
-    // 1a. Make sure a paymentUrl was created
-    const { paymentUrl, id: paymentId } = application.externalData.createCharge
-      .data as {
-      paymentUrl: string
-      id: string
-    }
-
-    if (!paymentUrl) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
-
-    // 1b. Make sure payment is fulfilled (has been paid)
-    const payment: { fulfilled: boolean } | undefined =
-      await this.sharedTemplateAPIService.getPaymentStatus(auth, application.id)
-    if (!payment?.fulfilled) {
-      throw new Error(
-        'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
-      )
-    }
-
     const answers = application.answers as TransferOfMachineOwnershipAnswers
+
+    if (
+      answers.machine.paymentRequiredForOwnerChange &&
+      application.state === 'draft'
+    ) {
+      return []
+    }
+    const paymentId = await this.handlePayment({
+      application,
+      auth,
+      currentUserLocale,
+    })
+
     const machineId = answers.machine.id || answers.pickMachine.id
     if (!machineId) {
       throw new Error('Ekki er búið að velja vél')
@@ -221,9 +196,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
             (props) => generateRequestReviewEmail(props, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending email about initReview to ${recipientList[i].email}`,
+              e,
             )
           })
       }
@@ -235,9 +211,10 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
               generateRequestReviewSms(application, options, recipientList[i]),
             application,
           )
-          .catch(() => {
+          .catch((e) => {
             this.logger.error(
               `Error sending sms about initReview to ${recipientList[i].phone}`,
+              e,
             )
           })
       }
@@ -245,6 +222,46 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
 
     return recipientList
   }
+
+  private async handlePayment({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string | null> {
+    const answers = application.answers as TransferOfMachineOwnershipAnswers
+
+    if (answers.machine.paymentRequiredForOwnerChange) {
+      // 1. Validate payment
+
+      // 1a. Make sure a paymentUrl was created
+
+      const { paymentUrl = '', id: paymentId = '' } = (application.externalData
+        ?.createCharge?.data ?? {}) as {
+        paymentUrl: string
+        id: string
+      }
+
+      if (!paymentUrl) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
+
+      // 1b. Make sure payment is fulfilled (has been paid)
+      const payment: { fulfilled: boolean } | undefined =
+        await this.sharedTemplateAPIService.getPaymentStatus(
+          auth,
+          application.id,
+        )
+      if (!payment?.fulfilled) {
+        throw new Error(
+          'Ekki er búið að staðfesta greiðslu, hinkraðu þar til greiðslan er staðfest.',
+        )
+      }
+      return paymentId
+    }
+    return null
+  }
+
   async rejectApplication({
     application,
     auth,

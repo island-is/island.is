@@ -85,6 +85,11 @@ export const m = defineMessages({
     defaultMessage: 'Frambjóðandi',
     description: '',
   },
+  nationalId: {
+    id: 'admin-portal.signature-collection:nationalId',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
   clearFilter: {
     id: 'admin-portal.signature-collection:clearFilter',
     defaultMessage: 'Hreinsa',
@@ -446,6 +451,33 @@ export const m = defineMessages({
   unsignFromListSuccess: {
     id: 'admin-portal.signature-collection:unsignFromListSuccess',
     defaultMessage: 'Tókst að taka aðila af lista',
+    description: '',
+  },
+
+  // Review candidates
+  reviewCandidatesModalDescription: {
+    id: 'admin-portal.signature-collection:reviewCandidatesModalDescription',
+    defaultMessage: 'Fara yfir lista af frambjóðendum',
+    description: '',
+  },
+  removeCandidateFromListModalDescription: {
+    id: 'admin-portal.signature-collection:removeCandidateFromListModalDescription',
+    defaultMessage: 'Loka lista fyrir frambjóðanda',
+    description: '',
+  },
+  confirmRemoveCandidateFromList: {
+    id: 'admin-portal.signature-collection:confirmRemoveCandidateFromList',
+    defaultMessage: 'Ertu viss um að þú viljir loka lista fyrir frambjóðanda',
+    description: '',
+  },
+  removeCandidateFromListButton: {
+    id: 'admin-portal.signature-collection:removeCandidateFromListButton',
+    defaultMessage: 'Já, loka lista',
+    description: '',
+  },
+  removeCandidateFromList: {
+    id: 'admin-portal.signature-collection:removeCandidateFromList',
+    defaultMessage: 'Loka lista',
     description: '',
   },
 })

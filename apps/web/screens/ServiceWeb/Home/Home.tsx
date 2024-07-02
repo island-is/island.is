@@ -38,6 +38,7 @@ import {
 } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
 
@@ -81,6 +82,7 @@ const Home: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   const o = useNamespace(organizationNamespace)
   const { linkResolver } = useLinkResolver()
+  const { activeLocale } = useI18n()
 
   useContentfulId(organization?.id)
   useLocalLinkTypeResolver()
@@ -89,6 +91,10 @@ const Home: Screen<HomeProps> = ({
 
   const institutionSlugBelongsToMannaudstorg =
     institutionSlug.includes('mannaudstorg')
+
+  const institutionSlugBelongsToTryggingastofnun =
+    institutionSlug.includes('tryggingastofnun') ||
+    institutionSlug.includes('social-insurance-administration')
 
   const organizationTitle = (organization && organization.title) || 'Ísland.is'
   const headerTitle = institutionSlugBelongsToMannaudstorg
@@ -131,7 +137,9 @@ const Home: Screen<HomeProps> = ({
       searchTitle={searchTitle}
       searchPlaceholder={o(
         'serviceWebSearchPlaceholder',
-        'Leitaðu á þjónustuvefnum',
+        activeLocale === 'is'
+          ? 'Leitaðu á þjónustuvefnum'
+          : 'Search the service web',
       )}
       showLogoTitle={!institutionSlugBelongsToMannaudstorg}
       indexableBySearchEngine={institutionSlugBelongsToMannaudstorg}
@@ -269,43 +277,44 @@ const Home: Screen<HomeProps> = ({
                     </GridRow>
                   </GridContainer>
                 </Box>
-
-                <Box marginY={[7, 10, 10]}>
-                  <GridContainer>
-                    <GridRow>
-                      <GridColumn
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        offset={[null, null, null, '1/12']}
-                        span={['12/12', '12/12', '12/12', '10/12']}
-                      >
-                        <Box marginY={[2, 2, 4]}>
-                          <ContactBanner
-                            slug={institutionSlug}
-                            cantFindWhatYouAreLookingForText={o(
-                              'cantFindWhatYouAreLookingForText',
-                              n(
+                {!institutionSlugBelongsToTryggingastofnun && (
+                  <Box marginY={[7, 10, 10]}>
+                    <GridContainer>
+                      <GridRow>
+                        <GridColumn
+                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                          // @ts-ignore make web strict
+                          offset={[null, null, null, '1/12']}
+                          span={['12/12', '12/12', '12/12', '10/12']}
+                        >
+                          <Box marginY={[2, 2, 4]}>
+                            <ContactBanner
+                              slug={institutionSlug}
+                              cantFindWhatYouAreLookingForText={o(
                                 'cantFindWhatYouAreLookingForText',
-                                'Finnurðu ekki það sem þig vantar?',
-                              ),
-                            )}
-                            contactUsText={o(
-                              'contactUsText',
-                              n('contactUsText', 'Hafa samband'),
-                            )}
-                            howCanWeHelpText={o(
-                              'howCanWeHelpText',
-                              n(
+                                n(
+                                  'cantFindWhatYouAreLookingForText',
+                                  'Finnurðu ekki það sem þig vantar?',
+                                ),
+                              )}
+                              contactUsText={o(
+                                'contactUsText',
+                                n('contactUsText', 'Hafa samband'),
+                              )}
+                              howCanWeHelpText={o(
                                 'howCanWeHelpText',
-                                'Hvernig getum við aðstoðað?',
-                              ),
-                            )}
-                          />
-                        </Box>
-                      </GridColumn>
-                    </GridRow>
-                  </GridContainer>
-                </Box>
+                                n(
+                                  'howCanWeHelpText',
+                                  'Hvernig getum við aðstoðað?',
+                                ),
+                              )}
+                            />
+                          </Box>
+                        </GridColumn>
+                      </GridRow>
+                    </GridContainer>
+                  </Box>
+                )}
               </>
             )
           }}

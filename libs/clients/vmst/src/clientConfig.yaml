@@ -433,6 +433,8 @@ components:
           type: string
         firstPeriodStart:
           type: string
+        days:
+          type: string
     ApplicationRights:
       type: object
       additionalProperties: false
@@ -548,6 +550,9 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/Period'
+        applicationComment:
+          type: string
+          nullable: true
         employers:
           type: array
           items:
@@ -666,6 +671,9 @@ components:
           type: string
           minLength: 1
         nationalRegistryId:
+          type: string
+          minLength: 1
+        approverNationalRegistryId:
           type: string
           minLength: 1
     Attachment:

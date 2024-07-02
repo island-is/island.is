@@ -3,6 +3,7 @@ import { uuid } from 'uuidv4'
 import {
   CaseState,
   completedCaseStates,
+  DateType,
   defenceRoles,
   indictmentCases,
   investigationCases,
@@ -21,6 +22,7 @@ describe.each(defenceRoles)('defence user %s', (role) => {
     `r-case type %s`,
     (type) => {
       const accessibleCaseStates = [
+        CaseState.WAITING_FOR_CANCELLATION,
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
         ...completedCaseStates,
@@ -105,7 +107,9 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             state: CaseState.RECEIVED,
             requestSharedWithDefender:
               RequestSharedWithDefender.READY_FOR_COURT,
-            courtDate: new Date(),
+            dateLogs: [
+              { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
+            ],
           } as Case
 
           verifyNoAccess(theCase, user)
@@ -128,7 +132,9 @@ describe.each(defenceRoles)('defence user %s', (role) => {
             type,
             state: CaseState.RECEIVED,
             defenderNationalId: user.nationalId,
-            courtDate: new Date(),
+            dateLogs: [
+              { dateType: DateType.ARRAIGNMENT_DATE, date: new Date() },
+            ],
           } as Case
 
           verifyFullAccess(theCase, user)
@@ -164,7 +170,11 @@ describe.each(defenceRoles)('defence user %s', (role) => {
   )
 
   describe.each(indictmentCases)(`s-case type %s`, (type) => {
-    const accessibleCaseStates = [CaseState.RECEIVED, ...completedCaseStates]
+    const accessibleCaseStates = [
+      CaseState.WAITING_FOR_CANCELLATION,
+      CaseState.RECEIVED,
+      ...completedCaseStates,
+    ]
 
     describe.each(
       Object.values(CaseState).filter(

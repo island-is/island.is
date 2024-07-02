@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useMemo } from 'react'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 
 import {
   Box,
@@ -57,16 +58,21 @@ const OrganizationHomePage: Screen<HomeProps> = ({
   const n = useNamespace(namespace)
   useContentfulId(organizationPage?.id)
   const { linkResolver } = useLinkResolver()
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  const router = useRouter()
+
+  const pathWithoutHash = router.asPath.split('#')[0]
+
   const navList: NavigationItem[] =
     organizationPage?.menuLinks.map(({ primaryLink, childrenLinks }) => ({
-      title: primaryLink?.text,
-      href: primaryLink?.url,
-      active: false,
+      title: primaryLink?.text ?? '',
+      href: primaryLink?.url ?? '',
+      active:
+        primaryLink?.url === pathWithoutHash ||
+        childrenLinks.some((link) => link.url === pathWithoutHash),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
+        active: url === pathWithoutHash,
       })),
     })) ?? []
 
@@ -207,10 +213,6 @@ const OrganizationHomePage: Screen<HomeProps> = ({
             slug={organizationPage.slug}
             fullWidth={true}
             params={{
-              latestNewsSliceBackground:
-                organizationPage.theme === 'landing_page'
-                  ? 'white'
-                  : 'purple100',
               latestNewsSliceColorVariant:
                 organizationPage.theme === 'landing_page' ? 'blue' : 'default',
             }}

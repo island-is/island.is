@@ -329,14 +329,14 @@ export const m = defineMessages({
       'Sorry, we are unable to download an electronic mortgage certificate for the selected property as the listing of the property in question needs updating. The district commissioner of the property in which the property is located will be sent a request for repairs, you will be notified (by email) after the inspection and can then try again.',
   },
   propertyErrorCertificateSheriffTitle: {
-    id: 'mc.application:property.certificateErrorMessage',
+    id: 'mc.application:property.certificateErrorSheriffTitle',
     defaultMessage:
       'Beiðni um lagfæringu á veðbókarvottorði hefur verið send sýslumanni',
     description:
       'A request for correction of the mortgage certificate has been sent to the district commissioner',
   },
   propertyErrorCertificateSheriffMessage: {
-    id: 'mc.application:property.certificateErrorMessage',
+    id: 'mc.application:property.certificateErrorSheriffMessage',
     defaultMessage:
       'Þú munt fá tilkynningu á netfangið [netfang] að yfirferð lokinni og getur þá reynt aftur og klárað umsóknina þína.',
     description:
@@ -356,12 +356,12 @@ export const m = defineMessages({
   },
 
   propertyCertificateError: {
-    id: 'mc.application:property.searchInfoLink',
+    id: 'mc.application:property.certificateError',
     defaultMessage: 'Ekki gekk að sækja vottorð fyrir þessa eign',
     description: 'Failed to fetch certificate for this property',
   },
   propertyCertificateErrorContactSheriff: {
-    id: 'mc.application:property.searchInfoLink',
+    id: 'mc.application:property.certificateErrorContactSheriff',
     defaultMessage:
       'Vinsamlega hafðu samband við sýslumann, það er búið að senda inn beiðni um leiðréttingu',
     description:

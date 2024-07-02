@@ -1,7 +1,13 @@
-import { IsBoolean, IsObject, IsOptional, IsString } from 'class-validator'
+import {
+  IsBoolean,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { ApiProperty } from '@nestjs/swagger'
-import type { Aid } from '@island.is/financial-aid/shared/lib'
+import type { Aid, ChildrenAid } from '@island.is/financial-aid/shared/lib'
 
 export class UpdateMunicipalityDto {
   @IsOptional()
@@ -48,6 +54,16 @@ export class UpdateMunicipalityDto {
   @IsString()
   @ApiProperty()
   navPassword?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiProperty()
+  childrenAid?: ChildrenAid
+
+  @IsOptional()
+  @IsNumber()
+  @ApiProperty()
+  readonly decemberCompensation?: number
 
   @IsString()
   @ApiProperty()

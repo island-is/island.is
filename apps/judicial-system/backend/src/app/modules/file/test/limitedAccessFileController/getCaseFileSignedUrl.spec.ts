@@ -2,6 +2,8 @@ import { uuid } from 'uuidv4'
 
 import { NotFoundException } from '@nestjs/common'
 
+import { CaseType } from '@island.is/judicial-system/types'
+
 import { createTestingFileModule } from '../createTestingFileModule'
 
 import { AwsS3Service } from '../../../aws-s3'
@@ -53,33 +55,36 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
   describe('AWS S3 existance check', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `uploads/${uuid()}/${uuid()}/test.txt`
+    const key = `${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
-    const theCase = {} as Case
-    let mockObjectExists: jest.Mock
+    const theCase = {
+      id: caseId,
+      type: CaseType.INTERNET_USAGE,
+    } as Case
 
     beforeEach(async () => {
-      mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
-
       await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should check if the file exists in AWS S3', () => {
-      expect(mockObjectExists).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.objectExists).toHaveBeenCalledWith(
+        theCase.type,
+        key,
+      )
     })
   })
 
   describe('AWS S3 get signed url', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `uploads/${uuid()}/${uuid()}/test.txt`
+    const key = `${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
-    const theCase = {} as Case
-
-    let mockGetSignedUrl: jest.Mock
+    const theCase = {
+      id: uuid(),
+      type: CaseType.PHONE_TAPPING,
+    } as Case
 
     beforeEach(async () => {
-      mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
 
@@ -87,31 +92,35 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     })
 
     it('should get signed url from AWS S3', () => {
-      expect(mockGetSignedUrl).toHaveBeenCalledWith(key)
+      expect(mockAwsS3Service.getSignedUrl).toHaveBeenCalledWith(
+        theCase.type,
+        key,
+        undefined,
+      )
     })
   })
 
   describe('signed url created', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `uploads/${uuid()}/${uuid()}/test.txt`
+    const key = `${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const theCase = {} as Case
 
-    const signedUrl = {} as SignedUrl
+    const url = uuid()
     let then: Then
 
     beforeEach(async () => {
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(true)
       const mockGetSignedUrl = mockAwsS3Service.getSignedUrl as jest.Mock
-      mockGetSignedUrl.mockResolvedValueOnce(signedUrl)
+      mockGetSignedUrl.mockResolvedValueOnce(url)
 
       then = await givenWhenThen(caseId, theCase, fileId, caseFile)
     })
 
     it('should return the signed url', () => {
-      expect(then.result).toBe(signedUrl)
+      expect(then.result).toEqual({ url })
     })
   })
 
@@ -129,24 +138,19 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
 
     it('should throw not found exceptoin', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
-        `File ${fileId} does not exists in AWS S3`,
-      )
+      expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
     })
   })
 
   describe('file not found in AWS S3', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `uploads/${uuid()}/${uuid()}/test.txt`
+    const key = `${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const theCase = {} as Case
-
-    let mockUpdate: jest.Mock
     let then: Then
 
     beforeEach(async () => {
-      mockUpdate = mockFileModel.update as jest.Mock
       const mockObjectExists = mockAwsS3Service.objectExists as jest.Mock
       mockObjectExists.mockResolvedValueOnce(false)
 
@@ -154,7 +158,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
     })
 
     it('should remove the key', () => {
-      expect(mockUpdate).toHaveBeenCalledWith(
+      expect(mockFileModel.update).toHaveBeenCalledWith(
         { key: null },
         { where: { id: fileId } },
       )
@@ -162,16 +166,14 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
 
     it('should throw not found exceptoin', () => {
       expect(then.error).toBeInstanceOf(NotFoundException)
-      expect(then.error.message).toBe(
-        `File ${fileId} does not exists in AWS S3`,
-      )
+      expect(then.error.message).toBe(`File ${fileId} does not exist in AWS S3`)
     })
   })
 
   describe('remote existance check fails', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `uploads/${uuid()}/${uuid()}/test.txt`
+    const key = `${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const theCase = {} as Case
 
@@ -193,7 +195,7 @@ describe('LimitedAccessFileController - Get case file signed url', () => {
   describe('signed url creation fails', () => {
     const caseId = uuid()
     const fileId = uuid()
-    const key = `uploads/${uuid()}/${uuid()}/test.txt`
+    const key = `${uuid()}/${uuid()}/test.txt`
     const caseFile = { id: fileId, key } as CaseFile
     const theCase = {} as Case
 

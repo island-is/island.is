@@ -342,7 +342,6 @@ const LicenseDetail = () => {
   useNamespaces('sp.license')
   const { formatMessage } = useLocale()
   const { data: userProfile } = useUserProfile()
-  const { pathname } = useLocation()
   const locale = userProfile?.locale ?? 'is'
   const { type, id } = useParams() as UseParams
   const licenseType = type ? getTypeFromPath(type) : undefined
@@ -404,7 +403,6 @@ const LicenseDetail = () => {
             flexDirection={['column', 'row']}
             alignItems={['flexStart', 'center']}
             marginBottom={2}
-            columnGap={2}
             rowGap={2}
           >
             {!expired &&

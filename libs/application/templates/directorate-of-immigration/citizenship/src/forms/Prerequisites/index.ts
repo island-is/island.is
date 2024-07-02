@@ -22,14 +22,11 @@ import {
   NationalRegistryBirthplaceApi,
   NationalRegistryParentsApi,
   NationalRegistrySpouseDetailsApi,
-  CurrentCountryOfResidenceListApi,
-  CurrentPassportItemApi,
-  CurrentStayAbroadListApi,
-  ResidenceConditionInfoApi,
   ResidenceInIcelandLastChangeDateApi,
-  TravelDocumentTypesApi,
   UserProfileApi,
   UtlendingastofnunPaymentCatalogApi,
+  TravelDocumentTypesApi,
+  ApplicantInformationApi,
 } from '../../dataProviders'
 
 export const Prerequisites: Form = buildForm({
@@ -94,7 +91,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.directorateOfImmigration.subTitle,
             }),
             buildDataProviderItem({
-              provider: ResidenceConditionInfoApi,
+              provider: ApplicantInformationApi,
               title: '',
             }),
             buildDataProviderItem({
@@ -106,18 +103,6 @@ export const Prerequisites: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              provider: CurrentCountryOfResidenceListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CurrentStayAbroadListApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: CurrentPassportItemApi,
-              title: '',
-            }),
-            buildDataProviderItem({
               provider: ResidenceInIcelandLastChangeDateApi,
               title: '',
             }),
@@ -126,8 +111,8 @@ export const Prerequisites: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
-              pageTitle: externalData.dataProvider.subTitle2,
-              title: '',
+              title: externalData.nationalCommissionerOfPolice.title,
+              subTitle: externalData.nationalCommissionerOfPolice.subTitle,
             }),
             buildDataProviderItem({
               id: 'meansOfSupport',
@@ -135,12 +120,12 @@ export const Prerequisites: Form = buildForm({
               subTitle: externalData.icelandRevenueAndCustoms.subTitle,
             }),
             buildDataProviderItem({
-              title: externalData.nationalRegistry2.title,
-              subTitle: externalData.nationalRegistry2.subTitle,
+              title: externalData.creditInfo.title,
+              subTitle: externalData.creditInfo.subTitle,
             }),
             buildDataProviderItem({
-              title: externalData.nationalCommissionerOfPolice.title,
-              subTitle: externalData.nationalCommissionerOfPolice.subTitle,
+              title: externalData.educationServices.title,
+              subTitle: externalData.educationServices.subTitle,
             }),
           ],
         }),

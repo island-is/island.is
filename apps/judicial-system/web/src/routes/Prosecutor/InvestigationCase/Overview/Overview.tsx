@@ -33,6 +33,7 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  InfoCardCaseScheduled,
   Modal,
   PageHeader,
   PageLayout,
@@ -51,7 +52,7 @@ import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Overview = () => {
   const router = useRouter()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -152,6 +153,17 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.RECEIVED &&
+          workingCase.arraignmentDate?.date &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
@@ -220,14 +232,18 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 title: formatMessage(core.caseType),
                 value: capitalize(formatCaseType(workingCase.type)),
               },
-              ...(workingCase.courtDate
+              ...(workingCase.arraignmentDate?.date
                 ? [
                     {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
-                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                        formatDate(
+                          workingCase.arraignmentDate.date,
+                          'PPPP',
+                          true,
+                        ) ?? '',
                       )} kl. ${formatDate(
-                        workingCase.courtDate,
+                        workingCase.arraignmentDate.date,
                         constants.TIME_FORMAT,
                       )}`,
                     },

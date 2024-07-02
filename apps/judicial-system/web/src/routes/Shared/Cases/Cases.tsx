@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { AnimatePresence, motion } from 'framer-motion'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -10,6 +9,7 @@ import {
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
+  isPublicProsecutor,
 } from '@island.is/judicial-system/types'
 import {
   core,
@@ -20,15 +20,14 @@ import {
 import {
   ContextMenu,
   Logo,
+  Modal,
   PageHeader,
   SectionHeading,
   SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  PastCasesTable,
-  TableSkeleton,
-} from '@island.is/judicial-system-web/src/components/Table'
+import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
+import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -38,17 +37,22 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAssignmentTable/CasesAwaitingAssignmentTable'
+import CasesInProgressTable from '../../Court/components/CasesInProgressTable/CasesInProgressTable'
+import CasesAwaitingConfirmationTable from '../../Prosecutor/components/CasesAwaitingConfirmationTable/CasesAwaitingConfirmationTable'
+import CasesAwaitingReview from '../../PublicProsecutor/Tables/CasesAwaitingReview'
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-const CreateCaseButton: React.FC<
-  React.PropsWithChildren<{
-    user: User
-  }>
-> = ({ user }) => {
+interface CreateCaseButtonProps {
+  user: User
+}
+
+const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
+  const { user } = props
   const { formatMessage } = useIntl()
 
   const items = useMemo(() => {
@@ -96,13 +100,14 @@ const CreateCaseButton: React.FC<
   )
 }
 
-export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Cases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const [isFiltering, setIsFiltering] = useState<boolean>(false)
-
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
+
+  const [isFiltering, setIsFiltering] = useState<boolean>(false)
+  const [modalVisible, setVisibleModal] = useState<string>()
 
   const { data, error, loading, refetch } = useCasesQuery({
     fetchPolicy: 'no-cache',
@@ -121,41 +126,83 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [isFiltering])
 
-  const [casesAwaitingConfirmation, allActiveCases, allPastCases] =
-    useMemo(() => {
-      if (!resCases) {
-        return [[], [], []]
+  const [
+    casesAwaitingConfirmation,
+    allActiveCases,
+    allPastCases,
+    casesAwaitingAssignment,
+    casesAwaitingReview,
+  ] = useMemo(() => {
+    if (!resCases) {
+      return [[], [], [], [], []]
+    }
+
+    const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
+      resCases.filter(predicate)
+
+    const casesAwaitingConfirmation = filterCases(
+      (c) => c.state === CaseState.WAITING_FOR_CONFIRMATION,
+    )
+
+    const casesAwaitingAssignment = filterCases(
+      (c) =>
+        isIndictmentCase(c.type) &&
+        c.state !== CaseState.WAITING_FOR_CANCELLATION &&
+        !c.judge,
+    )
+
+    const casesAwaitingReview = filterCases(
+      (c) =>
+        c.indictmentReviewer?.id === user?.id && !c.indictmentReviewDecision,
+    )
+
+    const activeCases = filterCases((c) => {
+      if (
+        c.state === CaseState.DELETED ||
+        c.state === CaseState.WAITING_FOR_CONFIRMATION ||
+        (isDistrictCourtUser(user) && casesAwaitingAssignment.includes(c))
+      ) {
+        return false
       }
 
-      const filterCases = (predicate: (c: CaseListEntry) => boolean) =>
-        resCases.filter(predicate)
-
-      const casesAwaitingConfirmation = filterCases(
-        (c) => c.state === CaseState.WAITING_FOR_CONFIRMATION,
-      )
-
-      const activeCases = filterCases((c) => {
-        if (
-          c.state === CaseState.DELETED ||
-          c.state === CaseState.WAITING_FOR_CONFIRMATION
-        ) {
-          return false
-        }
-        if (isIndictmentCase(c.type) || !isDistrictCourtUser(user)) {
+      if (isDistrictCourtUser(user)) {
+        if (isIndictmentCase(c.type)) {
           return !isCompletedCase(c.state)
         } else {
           return !(isCompletedCase(c.state) && c.rulingSignatureDate)
         }
-      })
+      }
 
-      const pastCases = filterCases((c) => !activeCases.includes(c))
+      if (isProsecutionUser(user)) {
+        if (isIndictmentCase(c.type)) {
+          return !(
+            isCompletedCase(c.state) ||
+            c.state === CaseState.WAITING_FOR_CANCELLATION
+          )
+        } else {
+          return !isCompletedCase(c.state)
+        }
+      }
 
-      return [
-        casesAwaitingConfirmation as CaseListEntry[],
-        activeCases as CaseListEntry[],
-        pastCases as CaseListEntry[],
-      ]
-    }, [resCases, user])
+      // This componenet is only used for prosecution and district court users
+      return false
+    })
+
+    const pastCases = filterCases(
+      (c) =>
+        !activeCases.includes(c) &&
+        !casesAwaitingAssignment.includes(c) &&
+        !casesAwaitingReview.includes(c),
+    )
+
+    return [
+      casesAwaitingConfirmation as CaseListEntry[],
+      activeCases as CaseListEntry[],
+      pastCases as CaseListEntry[],
+      casesAwaitingAssignment as CaseListEntry[],
+      casesAwaitingReview as CaseListEntry[],
+    ]
+  }, [resCases, user])
 
   const {
     filter,
@@ -169,132 +216,164 @@ export const Cases: React.FC<React.PropsWithChildren<unknown>> = () => {
     if (
       caseToDelete.state === CaseState.NEW ||
       caseToDelete.state === CaseState.DRAFT ||
+      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION ||
       caseToDelete.state === CaseState.SUBMITTED ||
-      caseToDelete.state === CaseState.RECEIVED ||
-      caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
+      caseToDelete.state === CaseState.RECEIVED
     ) {
       await transitionCase(caseToDelete.id, CaseTransition.DELETE)
       refetch()
     }
   }
 
+  const handlePrimaryButtonClick = async () => {
+    const caseToDelete = [...allActiveCases, ...casesAwaitingConfirmation].find(
+      (c) => c.id === modalVisible,
+    )
+
+    if (!caseToDelete) {
+      return
+    }
+
+    await deleteCase(caseToDelete)
+    setVisibleModal(undefined)
+  }
+
+  const handleSecondaryButtonClick = () => {
+    setVisibleModal(undefined)
+  }
+
   return (
-    <SharedPageLayout>
-      <PageHeader title={formatMessage(titles.shared.cases)} />
-      <div className={styles.logoContainer}>
-        <Logo />
-        {user && isProsecutionUser(user) ? (
-          <CreateCaseButton user={user} />
-        ) : null}
-      </div>
-      <Box marginBottom={[2, 2, 5]} className={styles.filterContainer}>
-        <Select
-          name="filter-cases"
-          options={filterOptions}
-          label={formatMessage(m.filter.label)}
-          onChange={(value) => {
-            setIsFiltering(true)
-            setFilter(value as FilterOption)
-          }}
-          value={filter}
-        />
-      </Box>
-      {error ? (
-        <div
-          className={styles.infoContainer}
-          data-testid="custody-requests-error"
-        >
-          <AlertMessage
-            title={formatMessage(errors.failedToFetchDataFromDbTitle)}
-            message={formatMessage(errors.failedToFetchDataFromDbMessage)}
-            type="error"
-          />
+    <>
+      <SharedPageLayout>
+        <PageHeader title={formatMessage(titles.shared.cases)} />
+        <div className={styles.logoContainer}>
+          <Logo />
+          {user && isProsecutionUser(user) ? (
+            <CreateCaseButton user={user} />
+          ) : null}
         </div>
-      ) : (
-        <>
-          {isProsecutionUser(user) && (
-            <>
-              <SectionHeading
-                title={formatMessage(
-                  m.activeRequests.casesAwaitingConfirmationTitle,
-                )}
-              />
-              <AnimatePresence initial={false}>
-                <Box marginBottom={[5, 5, 12]}>
-                  {loading || isFiltering ? (
-                    <TableSkeleton />
-                  ) : casesAwaitingConfirmation.length > 0 ? (
-                    <ActiveCases
+        <Box marginBottom={[2, 2, 5]} className={styles.filterContainer}>
+          <Select
+            name="filter-cases"
+            options={filterOptions}
+            label={formatMessage(m.filter.label)}
+            onChange={(value) => {
+              setIsFiltering(true)
+              setFilter(value as FilterOption)
+            }}
+            value={filter}
+          />
+        </Box>
+        {error ? (
+          <div
+            className={styles.infoContainer}
+            data-testid="custody-requests-error"
+          >
+            <AlertMessage
+              title={formatMessage(errors.failedToFetchDataFromDbTitle)}
+              message={formatMessage(errors.failedToFetchDataFromDbMessage)}
+              type="error"
+            />
+          </div>
+        ) : (
+          <>
+            {isProsecutionUser(user) && (
+              <>
+                {filter.value !== 'INVESTIGATION' && (
+                  <>
+                    <CasesAwaitingConfirmationTable
+                      loading={loading}
+                      isFiltering={isFiltering}
                       cases={casesAwaitingConfirmation}
+                      onContextMenuDeleteClick={setVisibleModal}
+                    />
+                    {isPublicProsecutor(user) && (
+                      <CasesAwaitingReview
+                        loading={loading}
+                        cases={casesAwaitingReview}
+                      />
+                    )}
+                  </>
+                )}
+                <SectionHeading title={formatMessage(m.activeRequests.title)} />
+                <TableWrapper loading={loading || isFiltering}>
+                  {activeCases.length > 0 ? (
+                    <ActiveCases
+                      cases={activeCases}
                       isDeletingCase={
                         isTransitioningCase || isSendingNotification
                       }
                       onDeleteCase={deleteCase}
-                      caseState={CaseState.WAITING_FOR_CONFIRMATION}
                     />
                   ) : (
-                    <motion.div
-                      className={styles.infoContainer}
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      exit={{ opacity: 0 }}
-                    >
+                    <div className={styles.infoContainer}>
                       <AlertMessage
                         type="info"
                         title={formatMessage(
-                          m.activeRequests
-                            .casesAwaitingConfirmationInfoContainerTitle,
+                          m.activeRequests.infoContainerTitle,
                         )}
                         message={formatMessage(
-                          m.activeRequests
-                            .casesAwaitingConfirmationInfoContainerText,
+                          m.activeRequests.infoContainerText,
                         )}
                       />
-                    </motion.div>
+                    </div>
                   )}
-                </Box>
-              </AnimatePresence>
-            </>
-          )}
-          <SectionHeading title={formatMessage(m.activeRequests.title)} />
-          <Box marginBottom={[5, 5, 12]}>
-            {loading || isFiltering ? (
-              <TableSkeleton />
-            ) : activeCases.length > 0 ? (
-              <ActiveCases
-                cases={activeCases}
-                isDeletingCase={isTransitioningCase || isSendingNotification}
-                onDeleteCase={deleteCase}
+                </TableWrapper>
+              </>
+            )}
+            {isDistrictCourtUser(user) && (
+              <>
+                {filter.value !== 'INVESTIGATION' && (
+                  <CasesAwaitingAssignmentTable
+                    cases={casesAwaitingAssignment}
+                    loading={loading || isFiltering}
+                    isFiltering={isFiltering}
+                  />
+                )}
+                <CasesInProgressTable
+                  loading={loading}
+                  isFiltering={isFiltering}
+                  cases={activeCases}
+                  refetch={refetch}
+                />
+              </>
+            )}
+            <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
+            {loading || pastCases.length > 0 ? (
+              <PastCasesTable
+                cases={pastCases}
+                loading={loading || isFiltering}
+                testid="pastCasesTable"
               />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage
                   type="info"
-                  title={formatMessage(m.activeRequests.infoContainerTitle)}
-                  message={formatMessage(m.activeRequests.infoContainerText)}
+                  title={formatMessage(m.pastRequests.infoContainerTitle)}
+                  message={formatMessage(m.pastRequests.infoContainerText)}
                 />
               </div>
             )}
-          </Box>
-          <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
-          {loading || pastCases.length > 0 ? (
-            <PastCasesTable
-              cases={pastCases}
-              loading={loading || isFiltering}
-              testid="pastCasesTable"
-            />
-          ) : (
-            <div className={styles.infoContainer}>
-              <AlertMessage
-                type="info"
-                title={formatMessage(m.pastRequests.infoContainerTitle)}
-                message={formatMessage(m.pastRequests.infoContainerText)}
-              />
-            </div>
+          </>
+        )}
+      </SharedPageLayout>
+      {modalVisible !== undefined && (
+        <Modal
+          title={formatMessage(m.activeRequests.deleteCaseModal.title)}
+          text={formatMessage(m.activeRequests.deleteCaseModal.text)}
+          onPrimaryButtonClick={handlePrimaryButtonClick}
+          onSecondaryButtonClick={handleSecondaryButtonClick}
+          primaryButtonText={formatMessage(
+            m.activeRequests.deleteCaseModal.primaryButtonText,
           )}
-        </>
+          primaryButtonColorScheme="destructive"
+          secondaryButtonText={formatMessage(
+            m.activeRequests.deleteCaseModal.secondaryButtonText,
+          )}
+          isPrimaryButtonLoading={isTransitioningCase || isSendingNotification}
+        />
       )}
-    </SharedPageLayout>
+    </>
   )
 }
 

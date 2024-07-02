@@ -8,6 +8,7 @@ query DefenderCases($input: CaseListQueryInput) {
     courtCaseNumber
     validToDate
     policeCaseNumbers
+    courtDate
     parentCaseId
     appealCaseNumber
     appealState
@@ -21,9 +22,13 @@ query DefenderCases($input: CaseListQueryInput) {
       nationalId
       name
       noNationalId
-      defendantWaivesRightToCounsel
+      defenderChoice
     }
     initialRulingDate
     rulingDate
+    postponedIndefinitelyExplanation
+    indictmentDecision
+    indictmentRulingDecision
+    courtSessionType
   }
 }

@@ -12,6 +12,7 @@ import { m } from '../lib/messages'
 import {
   extraInfo,
   files,
+  firearmApplicant,
   inheritance,
   properties,
   testament,
@@ -58,6 +59,7 @@ export const done: Form = buildForm({
             ...theDeceased,
             ...theAnnouncer,
             ...testament,
+            ...firearmApplicant,
             ...inheritance,
             ...properties,
             ...files,

@@ -49,6 +49,7 @@ export const AdditionalEstateMember = ({
   const relationWithApplicantField = `${fieldIndex}.relationWithApplicant`
   const dateOfBirthField = `${fieldIndex}.dateOfBirth`
   const foreignCitizenshipField = `${fieldIndex}.foreignCitizenship`
+  const noContactInfoField = `${fieldIndex}.noContactInfo`
   const initialField = `${fieldIndex}.initial`
   const enabledField = `${fieldIndex}.enabled`
   const phoneField = `${fieldIndex}.phone`
@@ -70,9 +71,9 @@ export const AdditionalEstateMember = ({
   const currentEstateMember = values?.estate?.estateMembers?.[index]
 
   const hasForeignCitizenship =
-    currentEstateMember?.foreignCitizenship?.[0] === 'Yes'
+    currentEstateMember?.foreignCitizenship?.[0] === YES
   const birthDate = currentEstateMember?.dateOfBirth
-
+  const noContactInfo = currentEstateMember?.noContactInfo?.[0] === YES
   const memberAge =
     hasForeignCitizenship && birthDate
       ? intervalToDuration({ start: new Date(birthDate), end: new Date() })
@@ -180,7 +181,7 @@ export const AdditionalEstateMember = ({
             options={relationOptions}
             error={error?.relation}
             backgroundColor="blue"
-            required
+            required={!field.initial}
           />
         </GridColumn>
         {application.answers.selectedEstate ===
@@ -209,7 +210,7 @@ export const AdditionalEstateMember = ({
                 defaultValue={field.email || ''}
                 backgroundColor="blue"
                 error={error?.email}
-                required
+                required={!noContactInfo}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -221,7 +222,7 @@ export const AdditionalEstateMember = ({
                 backgroundColor="blue"
                 format={'###-####'}
                 error={error?.phone}
-                required
+                required={!noContactInfo}
               />
             </GridColumn>
           </>
@@ -293,25 +294,54 @@ export const AdditionalEstateMember = ({
             </GridRow>
           </Box>
         )}
-      <GridColumn span="1/1" paddingBottom={2}>
-        <Box width="half">
-          <CheckboxController
-            key={foreignCitizenshipField}
-            id={foreignCitizenshipField}
-            name={foreignCitizenshipField}
-            defaultValue={field?.foreignCitizenship || []}
-            options={[
-              {
-                label: formatMessage(m.inheritanceForeignCitizenshipLabel),
-                value: YES,
-              },
-            ]}
-            onSelect={(val) => {
-              setValue(foreignCitizenshipField, val)
-            }}
-          />
-        </Box>
-      </GridColumn>
+      <GridRow>
+        <GridColumn
+          span={
+            selectedEstate === EstateTypes.estateWithoutAssets
+              ? ['1/1', '1/2']
+              : '1/1'
+          }
+          paddingBottom={2}
+        >
+          <Box width="half">
+            <CheckboxController
+              key={foreignCitizenshipField}
+              id={foreignCitizenshipField}
+              name={foreignCitizenshipField}
+              defaultValue={field?.foreignCitizenship || []}
+              options={[
+                {
+                  label: formatMessage(m.inheritanceForeignCitizenshipLabel),
+                  value: YES,
+                },
+              ]}
+              onSelect={(val) => {
+                setValue(foreignCitizenshipField, val)
+              }}
+            />
+          </Box>
+        </GridColumn>
+        {selectedEstate === EstateTypes.estateWithoutAssets && (
+          <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+            <Box width="half">
+              <CheckboxController
+                id={noContactInfoField}
+                name={noContactInfoField}
+                defaultValue={[]}
+                options={[
+                  {
+                    label: formatMessage(m.noContactInfo),
+                    value: YES,
+                  },
+                ]}
+                onSelect={(val) => {
+                  setValue(noContactInfoField, val)
+                }}
+              />
+            </Box>
+          </GridColumn>
+        )}
+      </GridRow>
     </Box>
   )
 }
