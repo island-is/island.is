@@ -6,7 +6,10 @@ const { exec } = require('./utils')
  * Because get-files-touched-by.sh cannot get files from nx cache
  * we skip the cache on PR and Push pipelines
  */
-const skipCache = process.argv && process.argv[2] === '--skip-cache'
+const skipCache =
+  process.argv.includes('--skip-cache') ||
+  process.argv.includes('--skip-nx-cache')
+console.log('skipCache: ', skipCache)
 
 /**
  * We need to create this file manually with a dummy content because
@@ -19,32 +22,42 @@ const SCHEMA_PATH = 'libs/api/schema/src/lib/schema.ts'
  */
 const TARGETS = ['codegen/backend-schema', 'codegen/frontend-client']
 
-const fileExists = async (path) =>
-  !!(await promisify(stat)(path).catch((_) => false))
+/**
+ * Promisified versions of fs methods.
+ */
+const statAsync = promisify(stat)
+const writeFileAsync = promisify(writeFile)
+
+const fileExists = async (path) => {
+  try {
+    await statAsync(path)
+    return true
+  } catch {
+    return false
+  }
+}
 
 const main = async () => {
-  const schemaExists = await fileExists(SCHEMA_PATH)
+  try {
+    const schemaExists = await fileExists(SCHEMA_PATH)
+    if (!schemaExists) {
+      await writeFileAsync(SCHEMA_PATH, 'export default () => {};')
+    }
 
-  if (!schemaExists) {
-    await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
-  }
-
-  for (const target of TARGETS) {
-    console.log(`--> Running command for ${target}\n`)
-
-    try {
+    for (const target of TARGETS) {
+      console.log(`--> Running command for ${target}`)
       await exec(
-        `nx run-many --target=${target} --all --parallel --maxParallel=6 $NX_OPTIONS`,
+        `yarn nx run-many --target=${target} --parallel=6 --nx-bail=true $NX_OPTIONS ${
+          skipCache ? '--skip-nx-cache' : ''
+        }`,
         {
-          env: skipCache
-            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
-            : process.env,
+          env: process.env,
         },
       )
-    } catch (err) {
-      console.error(`Error running command: ${err.message}`)
-      process.exit(err.code || 1)
     }
+  } catch (err) {
+    console.error(`Error running command: ${err}`)
+    process.exit(1)
   }
 }
 
