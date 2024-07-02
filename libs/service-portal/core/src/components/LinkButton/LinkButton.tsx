@@ -44,8 +44,8 @@ export const LinkButton = ({
           size="small"
           variant="text"
           unfocusable
-          icon={isExternal ? 'open' : undefined}
-          iconType={isExternal ? 'outline' : undefined}
+          icon={isExternal ? 'open' : icon}
+          iconType="outline"
         >
           {text}
         </Button>

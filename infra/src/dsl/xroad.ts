@@ -840,6 +840,17 @@ export const UniversityGatewayReykjavikUniversity = new XroadConf({
   },
 })
 
+export const JudicialSystemServicePortal = new XroadConf({
+  env: {
+    XROAD_JUDICIAL_SYSTEM_SP_PATH: {
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      staging:
+        'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS-GOV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+    },
+  },
+})
+
 export const SocialInsuranceAdministration = new XroadConf({
   env: {
     XROAD_TR_PATH: {
@@ -866,6 +877,17 @@ export const OfficialJournalOfIceland = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal',
       prod: 'IS/GOV/10014/DMR-Protected/official-journal',
+    },
+  },
+})
+
+export const LawAndOrder = new XroadConf({
+  env: {
+    XROAD_LAW_AND_ORDER_PATH: {
+      dev: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      staging:
+        'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
+      prod: 'IS-GOV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
     },
   },
 })

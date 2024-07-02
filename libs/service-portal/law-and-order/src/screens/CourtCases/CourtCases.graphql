@@ -1,0 +1,14 @@
+query GetCourtCases($input: LawAndOrderCourtCasesInput!) {
+  lawAndOrderCourtCasesList(input: $input) {
+    items {
+      id
+      caseNumber
+      caseNumberTitle
+      type
+      state {
+        title
+      }
+      acknowledged
+    }
+  }
+}
