@@ -46,16 +46,12 @@ export class ElasticService {
     logger.info('Bulk insert', services)
 
     if (services.length) {
-      const bulk: Array<any> = []
-      services.forEach((service) => {
-        bulk.push({
-          index: {
-            _index: this.indexName,
-            _id: service.id,
-          },
-        })
-        bulk.push(service)
-      })
+      const bulk = services.map((service) => ({
+        index: {
+          _index: this.indexName,
+          _id: service.id,
+        },
+      }))
 
       await this.client.bulk({
         body: bulk,
