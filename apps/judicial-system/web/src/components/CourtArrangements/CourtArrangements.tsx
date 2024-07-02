@@ -69,7 +69,7 @@ export const useCourtArrangements = (
     if (date && valid) {
       const courtDateHasChanged = Boolean(
         original?.[1]?.date &&
-          compareAsc(date, new Date(original?.[1].date)) !== 0 &&
+          compareAsc(date, new Date(original[1].date)) !== 0 &&
           hasSentNotification(
             NotificationType.COURT_DATE,
             workingCase.notifications,
