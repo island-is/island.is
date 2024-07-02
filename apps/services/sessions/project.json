@@ -32,6 +32,7 @@
       },
       "configurations": {
         "production": {
+          "outputPath": "dist/apps/services/sessions",
           "optimization": true,
           "extractLicenses": true,
           "inspect": false
