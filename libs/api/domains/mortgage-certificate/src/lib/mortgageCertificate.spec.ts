@@ -10,6 +10,7 @@ import {
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -34,7 +35,14 @@ describe('MortgageCertificateService', () => {
         SyslumennClientModule,
         ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
-      providers: [MortgageCertificateService, SyslumennService],
+      providers: [
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        MortgageCertificateService,
+        SyslumennService,
+      ],
     }).compile()
 
     service = module.get(MortgageCertificateService)

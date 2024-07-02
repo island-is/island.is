@@ -14,7 +14,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { conclusionMessages } from '@island.is/application/ui-forms'
 import * as styles from './PdfLinkButtonFormField.css'
 
 interface Props extends FieldBaseProps {
@@ -64,7 +63,7 @@ export const PdfLinkButtonFormField: FC<React.PropsWithChildren<Props>> = ({
           >
             <Button icon="download" iconType="outline" variant="text">
               {formatText(
-                conclusionMessages.pdfLinkButtonField.downloadButtonTitle,
+                field.downloadButtonTitle || '',
                 application,
                 formatMessage,
               )}
