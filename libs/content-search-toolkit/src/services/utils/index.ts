@@ -6,7 +6,7 @@
  *
  * Filter the HUMONGOUS documents in an error object
  */
-export const filterDoc = function filterDoc<T extends Record<string, unknown>>(
+export const filterDoc = function filterDoc<T extends object>(
   node: T,
   visited: Set<T> = new Set(),
   letterLimit = 10000,
@@ -26,7 +26,7 @@ export const filterDoc = function filterDoc<T extends Record<string, unknown>>(
       continue
     } else if (
       typeof value === 'object' &&
-      filterDoc(value as Record<string, unknown>, visited, letterLimit)
+      filterDoc(value as T, visited, letterLimit)
     ) {
       deleted = true
     }
