@@ -1,3 +1,4 @@
+import { AccidentNotificationAttachment } from './types/attachments'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   AccidentDetailsV2,
@@ -31,6 +32,7 @@ import {
 
 export const applicationToAccidentReport = (
   answers: AccidentNotificationAnswers,
+  attachments: Array<AccidentNotificationAttachment>,
 ): MinarsidurAPIModelsAccidentReportsAccidentReportDTO => {
   return {
     reporter: getReporter(answers),
@@ -38,27 +40,8 @@ export const applicationToAccidentReport = (
     accident: getAccident(answers),
     employer: getEmployer(answers),
     club: getClub(answers),
-    // attachments: null, //getAttachments(answers),
+    attachments: getAttachments(attachments),
   }
-}
-
-const dummyAccident = {
-  type: 6,
-  subtype: 1,
-  datetime: new Date(),
-  description: '',
-  symptoms: '',
-  dateTimeOfDoctorVisit: new Date(),
-  fatal: false,
-  automobile: false,
-  location: 1,
-  locationDescription: '',
-  atHome: {
-    address: 'Bakkastígur 5',
-    city: 'Reykjavík',
-    postcode: '101',
-    comment: null,
-  },
 }
 
 const whoIsTheNotificationForToDTO = (who: WhoIsTheNotificationForEnum) => {
@@ -81,12 +64,12 @@ const whoIsTheNotificationForToDTO = (who: WhoIsTheNotificationForEnum) => {
   return MinarsidurAPIModelsAccidentReportsReporterDTOReporterReportingFor.NUMBER_1
 }
 
-  /*
-   * type can be 4: Íþróttaslys, 6: Vinnuslys, 7: Heimilistrygging, 8: Björgunarmenn, 9: Nemendur við iðnnám
-   *
-   * type 6 can have the subtypes 1. Almenn vinna á landi, 2. Vinna sjómanna, 3. Atvinnumennska í íþróttum, 4. Vinna við landbúnað
-   * type 9 can have the subtypes 5. Starfsnám, 6. Verknám við háskóla, 7. Iðnám í löggildum iðngreinum
-   */
+/*
+ * type can be 4: Íþróttaslys, 6: Vinnuslys, 7: Heimilistrygging, 8: Björgunarmenn, 9: Nemendur við iðnnám
+ *
+ * type 6 can have the subtypes 1. Almenn vinna á landi, 2. Vinna sjómanna, 3. Atvinnumennska í íþróttum, 4. Vinna við landbúnað
+ * type 9 can have the subtypes 5. Starfsnám, 6. Verknám við háskóla, 7. Iðnám í löggildum iðngreinum
+ */
 const accidentTypeToDTO = (
   answers: AccidentNotificationAnswers,
 ): { type: number; subtype?: number } => {
@@ -268,8 +251,8 @@ const getAccident = (
   const accidentLocation = locationToDTO(answers)
 
   return {
-    type: accidentType.type,
-    subtype: accidentType.subtype,
+    type: null ?? accidentType.type,
+    subtype: null ?? accidentType.subtype,
     datetime: accidentDetails.dateOfAccident
       ? new Date(accidentDetails.dateOfAccident)
       : new Date(),
@@ -379,12 +362,19 @@ const getClub = (
 }
 
 const getAttachments = (
-  answers: AccidentNotificationAnswers,
+  attachments: Array<AccidentNotificationAttachment>,
 ): Array<MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentDTO> => {
-  return [
-    {
-      type: MinarsidurAPIModelsAccidentReportsAccidentReportAttachmentType.NUMBER_1,
-      document: { fileName: 'fileName', contentType: 'jpeg', data: 'datadata' },
-    },
-  ]
+  const mappedFiles = attachments.map((attachment) => {
+    const contentType = attachment.name.split('.').pop()
+    return {
+      type: attachment.attachmentType === 4 ? 2 : attachment.attachmentType, // Hack since additional files are not supported yet...
+      document: {
+        fileName: attachment.name,
+        contentType: contentType ?? undefined,
+        data: attachment.content,
+      },
+    }
+  })
+
+  return mappedFiles
 }

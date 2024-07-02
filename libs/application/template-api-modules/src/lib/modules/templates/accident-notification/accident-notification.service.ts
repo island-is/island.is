@@ -64,7 +64,7 @@ export class AccidentNotificationService extends BaseTemplateApiService {
 
       const fileHashList = attachments.map((attachment) => attachment.hash)
       const answers = application.answers as AccidentNotificationAnswers
-      const accidentReport = applicationToAccidentReport(answers)
+      const accidentReport = applicationToAccidentReport(answers, attachments)
 
       const res = await this.accidentsReportsApiWithAuth(
         auth,

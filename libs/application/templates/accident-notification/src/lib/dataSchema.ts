@@ -125,6 +125,12 @@ export const AccidentNotificationSchema = z.object({
         // .refine((v) => v.length > 0, { params: error.requiredFile }),
       })
       .optional(),
+    policeReportFile: z
+      .object({
+        file: z.array(FileSchema),
+        // .refine((v) => v.length > 0, { params: error.requiredFile }),
+      })
+      .optional(),
     deathCertificateFile: z
       .object({
         file: z.array(FileSchema),
