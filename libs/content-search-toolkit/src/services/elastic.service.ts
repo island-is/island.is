@@ -37,7 +37,7 @@ import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
 import { filterDoc, getValidBulkRequestChunk } from './utils'
 
-type RequestBodyType<T = Record<string, any>> = T | string | Buffer
+type RequestBodyType<T = Record<string, unknown>> = T | string | Buffer
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
 
 const { elastic } = environment
@@ -269,7 +269,7 @@ export class ElasticService {
   async getTagAggregation(index: string, query: TagAggregationInput) {
     const requestBody = tagAggregationQuery(query)
     const data = await this.findByQuery<
-      SearchResponse<any, TagAggregationResponse>,
+      SearchResponse<unknown, TagAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
@@ -278,7 +278,7 @@ export class ElasticService {
   async getTypeAggregation(index: string, query: TypeAggregationInput) {
     const requestBody = typeAggregationQuery(query)
     const data = await this.findByQuery<
-      SearchResponse<any, TypeAggregationResponse>,
+      SearchResponse<unknown, TypeAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
@@ -287,7 +287,7 @@ export class ElasticService {
   async getDateAggregation(index: string, query: DateAggregationInput) {
     const requestBody = dateAggregationQuery(query)
     const data = await this.findByQuery<
-      SearchResponse<any, DateAggregationResponse>,
+      SearchResponse<unknown, DateAggregationResponse>,
       typeof requestBody
     >(index, requestBody)
     return data.body
@@ -398,13 +398,13 @@ export class ElasticService {
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static handleError(message: string, context: any, error: Error): never {
+  static handleError(message: string, context: unknown, error: Error): never {
     ElasticService.logError(message, context, error)
     throw error
   }
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  static logError(message: string, context: any, error: any) {
+  static logError(message: string, context: unknown, error: any) {
     const errorCtx = {
       error: {
         message: error.message,
