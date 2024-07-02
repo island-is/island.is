@@ -188,7 +188,15 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         },
       })
       .catch((err) => {
-        RNAlert.alert('Villa', err.message)
+        console.error(err)
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorDescription',
+          }),
+        )
       })
   }
 
@@ -212,7 +220,15 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         },
       })
       .catch((err) => {
-        RNAlert.alert('Villa', err.message)
+        console.error(err)
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorDescription',
+          }),
+        )
       })
   }
 
@@ -660,23 +676,39 @@ export const SettingsScreen: NavigationFunctionComponent = ({
                   switch (status) {
                     case CodePush.SyncStatus.UP_TO_DATE:
                       return RNAlert.alert(
-                        'Up to date',
-                        'The app is up to date',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpToDateTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpToDate',
+                        }),
                       )
                     case CodePush.SyncStatus.UPDATE_INSTALLED:
                       return RNAlert.alert(
-                        'Update installed',
-                        'The app has been updated',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateInstalledTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateInstalledDescription',
+                        }),
                       )
                     case CodePush.SyncStatus.UPDATE_IGNORED:
                       return RNAlert.alert(
-                        'Update cancelled',
-                        'The update was cancelled',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateCancelledTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateCancelledDescription',
+                        }),
                       )
                     case CodePush.SyncStatus.UNKNOWN_ERROR:
                       return RNAlert.alert(
-                        'Unknown error',
-                        'An unknown error occurred',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateErrorTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateErrorDescription',
+                        }),
                       )
                   }
                 },

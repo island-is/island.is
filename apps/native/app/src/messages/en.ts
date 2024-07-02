@@ -80,6 +80,9 @@ export const en: TranslatedMessages = {
   'settings.communication.newNotificationsEmailLabel': 'Notifications in email',
   'settings.communication.newNotificationsEmailDescription':
     'Government agencies can send you notifications in email.',
+  'settings.communication.newNotificationsErrorTitle': 'Error',
+  'settings.communication.newNotificationsErrorDescription':
+    'Failed to update settings',
   'settings.communication.newNotificationsInAppLabel':
     'Notifications in the Island.is app',
   'settings.communication.newNotificationsInAppDescription':
@@ -114,6 +117,15 @@ export const en: TranslatedMessages = {
   'settings.about.codePushLabel': 'Updates',
   'settings.about.codePushLoading': 'Loading...',
   'settings.about.codePushUpToDate': 'The app is up to date',
+  'settings.about.codePushUpToDateTitle': 'Up to date',
+  'settings.about.codePushUpdateCancelledTitle': 'Update cancelled',
+  'settings.about.codePushUpdateCancelledDescription':
+    'The update was cancelled',
+  'settings.about.codePushUpdateInstalledTitle': 'Update installed',
+  'settings.about.codePushUpdateInstalledDescription':
+    'The app has been updated',
+  'settings.about.codePushUpdateErrorTitle': 'Unknown error',
+  'settings.about.codePushUpdateErrorDescription': 'An unknown error occurred',
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',

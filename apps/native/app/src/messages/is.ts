@@ -80,6 +80,9 @@ export const is = {
     'Tilkynningar í tölvupósti',
   'settings.communication.newNotificationsEmailDescription':
     'Stofnanir geta sent þér tilkynningu með tölvupósti.',
+  'settings.communication.newNotificationsErrorTitle': 'Villa',
+  'settings.communication.newNotificationsErrorDescription':
+    'Ekki tókst að uppfæra stillingar',
   'settings.communication.newNotificationsInAppLabel':
     'Tilkynningar í Ísland.is appinu',
   'settings.communication.newNotificationsInAppDescription':
@@ -113,6 +116,16 @@ export const is = {
   'settings.about.codePushLabel': 'Uppfærsla',
   'settings.about.codePushLoading': 'Hleð...',
   'settings.about.codePushUpToDate': 'Appið er uppfært',
+  'settings.about.codePushUpToDateTitle': 'Uppfært',
+  'settings.about.codePushUpdateCancelledTitle': 'Hætt við uppfærslu',
+  'settings.about.codePushUpdateCancelledDescription':
+    'Það var hætt við uppfærslu',
+  'settings.about.codePushUpdateInstalledTitle': 'Uppfærsla tókst',
+  'settings.about.codePushUpdateInstalledDescription':
+    'Appið hefur verið uppfært',
+  'settings.about.codePushUpdateErrorTitle': 'Villa',
+  'settings.about.codePushUpdateErrorDescription':
+    'Villa kom upp við uppfærslu',
 
   // user: personal info
   'user.natreg.infoBox': 'Þín skráning í Þjóðskrá Íslands',
