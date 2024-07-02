@@ -177,7 +177,7 @@ export const Navigation: FC<React.PropsWithChildren<NavigationProps>> = ({
       if (initialActivePathIndex > 0) {
         //first level only
         return [
-          `1 -${items?.findIndex(
+          `1-${items?.findIndex(
             (item) =>
               item.active &&
               item.accordion &&
@@ -518,6 +518,7 @@ export const NavigationTree: FC<
               nextLevel <= MAX_LEVELS &&
               accordion
             )
+            console.log(activeAccordions)
             const accordionId = `${level}-${index}`
             const activeAccordion = activeAccordions.includes(accordionId)
             const labelId = `${baseId}-title-${accordionId}`
