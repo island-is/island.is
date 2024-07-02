@@ -26,6 +26,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { NationalIdWithName } from '@island.is/application/ui-components'
+import { handleCustomMappedValues } from './utils'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -37,6 +39,7 @@ const componentMapper = {
   checkbox: CheckboxController,
   date: DatePickerController,
   radio: RadioController,
+  nationalIdWithName: NationalIdWithName,
 }
 
 export const TableRepeaterFormField: FC<Props> = ({
@@ -84,6 +87,9 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const staticData = getStaticTableData?.(application)
   const canAddItem = maxRows ? savedFields.length < maxRows : true
+
+  // check for components that might need some custom value mapping
+  const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -216,7 +222,12 @@ export const TableRepeaterFormField: FC<Props> = ({
                     </T.Data>
                     {tableRows.map((item, idx) => (
                       <T.Data key={`${item}-${idx}`}>
-                        {formatTableValue(item, values[index])}
+                        {formatTableValue(
+                          item,
+                          customMappedValues.length
+                            ? customMappedValues[index]
+                            : values[index],
+                        )}
                       </T.Data>
                     ))}
                   </T.Row>
@@ -321,6 +332,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                             methods.clearErrors(id)
                           }
                         }}
+                        application={application}
                         {...props}
                       />
                     </GridColumn>
