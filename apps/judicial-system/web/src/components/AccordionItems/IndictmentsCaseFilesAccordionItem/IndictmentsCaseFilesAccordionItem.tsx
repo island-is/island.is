@@ -221,9 +221,14 @@ const CaseFile: FC<CaseFileProps> = (props) => {
       dragListener={false}
       dragControls={controls}
       onPointerDown={(evt) => {
-        controls.start(evt)
         // Prevents text selection when dragging
         evt.preventDefault()
+
+        if (caseFile.isHeading || caseFile.isDivider) {
+          return
+        }
+
+        controls.start(evt)
       }}
     >
       {caseFile.isHeading &&
