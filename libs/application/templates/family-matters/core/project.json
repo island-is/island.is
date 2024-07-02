@@ -3,16 +3,11 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/family-matters/core/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/family-matters/core/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

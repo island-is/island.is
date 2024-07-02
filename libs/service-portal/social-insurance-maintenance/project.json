@@ -2,22 +2,16 @@
   "name": "service-portal-social-insurance-maintenance",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/social-insurance-maintenance/src",
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/service-portal/social-insurance-maintenance/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/service-portal/social-insurance-maintenance/jest.config.js",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/social-insurance-maintenance/jest.config.js"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/service-portal/social-insurance-maintenance"

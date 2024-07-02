@@ -24,8 +24,11 @@ interface AlertProps {
   title?: string
   message?: string
   style?: any
+
   onClose?(): void
+
   onClosed?(): void
+
   visible?: boolean
   hideIcon?: boolean
   sharedAnimatedValue?: any
@@ -171,7 +174,7 @@ export function Alert({
   const variant = variantStyles[type]
 
   useEffect(() => {
-    if (typeof hidden !== undefined) {
+    if (typeof hidden !== 'undefined') {
       LayoutAnimation.configureNext(
         LayoutAnimation.Presets.easeInEaseOut,
         () => {

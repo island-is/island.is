@@ -2,20 +2,17 @@
   "name": "clients-sessions",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/sessions/src",
+  "tags": ["scope:client", "lib:client"],
+  "implicitDependencies": ["services-sessions"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/sessions/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/sessions"],
       "options": {
-        "jestConfig": "libs/clients/sessions/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/sessions/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -25,7 +22,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["services-sessions"],
-  "tags": ["scope:client", "lib:client"]
+  }
 }

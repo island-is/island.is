@@ -3,21 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/rsk/relationships/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/rsk/relationships/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/rsk/relationships"],
       "options": {
-        "jestConfig": "libs/clients/rsk/relationships/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/rsk/relationships/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -37,6 +32,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

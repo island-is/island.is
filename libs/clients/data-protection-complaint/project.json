@@ -3,14 +3,10 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/data-protection-complaint/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/data-protection-complaint/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
@@ -25,10 +21,8 @@
         "{workspaceRoot}/coverage/libs/clients/data-protection-complaint"
       ],
       "options": {
-        "jestConfig": "libs/clients/data-protection-complaint/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/data-protection-complaint/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

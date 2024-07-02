@@ -20,7 +20,10 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'

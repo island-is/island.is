@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/passports/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/passports/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/passports"],
       "options": {
-        "jestConfig": "libs/clients/passports/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/passports/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -42,6 +39,5 @@
         "{projectRoot}/src/clientConfig.json"
       ]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

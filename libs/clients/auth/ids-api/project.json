@@ -2,20 +2,16 @@
   "name": "clients-auth-ids-api",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/ids-api/src",
+  "tags": ["scope:client", "lib:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/auth/ids-api/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/ids-api"],
       "options": {
-        "jestConfig": "libs/clients/auth/ids-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/auth/ids-api/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -31,6 +27,5 @@
         "{projectRoot}/src/clientConfig.yaml"
       ]
     }
-  },
-  "tags": ["scope:client", "lib:client"]
+  }
 }

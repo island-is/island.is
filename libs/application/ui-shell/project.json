@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/ui-shell/src",
   "projectType": "library",
+  "tags": ["scope:application-system-web", "lib:application-system-web"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/application/ui-shell/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/ui-shell/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/ui-shell/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/ui-shell"]
     },
@@ -25,6 +22,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/ui-shell/src/{lib,components}/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:application-system-web", "lib:application-system-web"]
+  }
 }

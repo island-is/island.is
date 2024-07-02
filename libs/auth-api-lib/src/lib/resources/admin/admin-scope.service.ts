@@ -25,7 +25,7 @@ import { TranslatedValueDto } from '../../translation/dto/translated-value.dto'
 import { TranslationService } from '../../translation/translation.service'
 import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScopeDelegationType } from '../models/api-scope-delegation-type.model'
 
 /**

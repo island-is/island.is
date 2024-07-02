@@ -3,22 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/mocking/src",
   "projectType": "library",
+  "tags": ["lib:js", "scope:js"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/shared/mocking/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/mocking/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/mocking/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/shared/mocking"]
     }
-  },
-  "tags": ["lib:js", "scope:js"]
+  }
 }

@@ -3,21 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/car-recycling/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/car-recycling/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/car-recycling/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/car-recycling/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/car-recycling"
@@ -29,6 +24,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/car-recycling/src/lib/messages.ts"
       }
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }

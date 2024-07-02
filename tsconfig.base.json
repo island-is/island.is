@@ -2,7 +2,6 @@
   "extends": "./tsconfig.shared.json",
   "compilerOptions": {
     "paths": {
-      "*": ["libs/shared/types/src/lib/*"],
       "@island.is/air-discount-scheme-web/*": [
         "apps/air-discount-scheme/web/*"
       ],

@@ -61,7 +61,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
   const vehicleInformation = data?.getPublicVehicleSearch
 
   const vehicleWasNotFound =
-    vehicleInformation === null || typeof vehicleInformation === undefined
+    vehicleInformation === null || typeof vehicleInformation === 'undefined'
 
   const handleSearch = (value: string) => {
     const updatedQuery = { ...router.query }

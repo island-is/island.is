@@ -25,7 +25,7 @@ import {
   StaticTextObject,
   SubSection,
 } from '@island.is/application/types'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
 const containsArray = (obj: RecordObject) => {
   let contains = false
@@ -131,6 +131,7 @@ export function getSectionsInForm(
   })
   return sections
 }
+
 export function getSubSectionsInSection(
   section: Section,
   answers: FormValue,
@@ -281,7 +282,7 @@ export function formatAndParseAsHTML(
   text: FormText,
   application: Application,
   formatMessage: MessageFormatter,
-): React.ReactElement[] {
+) {
   return HtmlParser(formatText(text, application, formatMessage))
 }
 

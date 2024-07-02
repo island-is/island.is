@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/next-ids-auth/src",
   "projectType": "library",
+  "tags": ["lib:react-next", "scope:react-next"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/next-ids-auth/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/next-ids-auth/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/next-ids-auth/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/next-ids-auth"]
     }
-  },
-  "tags": ["lib:react-next", "scope:react-next"]
+  }
 }

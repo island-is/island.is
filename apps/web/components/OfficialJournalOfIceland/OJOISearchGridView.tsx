@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 import { Stack } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'

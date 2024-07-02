@@ -3,21 +3,17 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/residence-history/src",
   "projectType": "library",
+  "tags": ["lib:js", "scope:js"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/residence-history/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/residence-history"],
       "options": {
-        "jestConfig": "libs/residence-history/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/residence-history/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:js", "scope:js"]
+  }
 }

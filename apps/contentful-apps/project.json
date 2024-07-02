@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/contentful-apps",
   "projectType": "application",
+  "tags": ["scope:react-next"],
   "targets": {
     "build": {
       "executor": "@nx/next:build",
@@ -29,7 +30,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/contentful-apps/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -86,18 +88,14 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/contentful-apps"],
       "options": {
-        "jestConfig": "apps/contentful-apps/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/contentful-apps/jest.config.ts"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/contentful-apps/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
-    "docker-next": {}
-  },
-  "tags": ["scope:react-next"]
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
 }

@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/auth-admin-web",
   "projectType": "application",
+  "tags": ["scope:react-next"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,7 +31,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/auth-admin-web/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -84,20 +86,17 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/auth-admin-web/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/auth-admin-web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/auth-admin-web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/auth-admin-web"]
     },
-    "docker-next": {}
-  },
-  "tags": ["scope:react-next"]
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
 }

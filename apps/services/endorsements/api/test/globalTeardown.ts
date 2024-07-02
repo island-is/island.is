@@ -8,7 +8,7 @@ import { stopPostgres } from '@island.is/testing/containers'
 
 export default async () => {
   execSync(
-    'yarn nx run services-endorsements-api:seed/undo --env test --seed 20210505212921-e2e-tests.js',
+    'cross-env NODE_ENV=test yarn nx run services-endorsements-api:seed/undo --seed 20210505212921-e2e-tests.js',
   )
   await stopPostgres()
 }

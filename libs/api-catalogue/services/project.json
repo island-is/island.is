@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api-catalogue/services/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/api-catalogue/services/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api-catalogue/services/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api-catalogue/services/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api-catalogue/services"]
     },
@@ -30,6 +27,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }

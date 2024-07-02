@@ -1,5 +1,6 @@
 import { useState } from 'react'
-import { Box, Button, Flex, Table } from '@contentful/f36-components'
+import { Box, Button, Flex } from '@contentful/f36-components'
+import { Table } from '@contentful/f36-table'
 
 import { CONTENTFUL_ENVIRONMENT } from '../../constants'
 import { FileData } from './utils'

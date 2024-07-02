@@ -3,21 +3,17 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/api/core/src",
   "projectType": "library",
+  "tags": ["lib:application-system-api", "scope:application-system-api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/application/api/core/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/application/api/core"],
       "options": {
-        "jestConfig": "libs/application/api/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/api/core/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:application-system-api", "scope:application-system-api"]
+  }
 }

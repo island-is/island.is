@@ -3,14 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/air-discount-scheme/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/api/domains/air-discount-scheme/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -18,8 +14,7 @@
         "{workspaceRoot}/coverage/libs/api/domains/air-discount-scheme"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/air-discount-scheme/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/air-discount-scheme/jest.config.ts"
       }
     },
     "dev-init": {
@@ -44,6 +39,5 @@
         "parallel": true
       }
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

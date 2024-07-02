@@ -72,9 +72,6 @@ export const Select = <
       })}
       data-testid={`creatable-select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <CreatableReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
@@ -138,9 +135,6 @@ export const Select = <
       })}
       data-testid={`select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <ReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}

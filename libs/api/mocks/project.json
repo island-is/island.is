@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/mocks/src",
   "projectType": "library",
+  "tags": ["lib:dom", "scope:dom"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/api/mocks/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/mocks/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/mocks/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api/mocks"]
     },
@@ -28,6 +25,5 @@
         ]
       }
     }
-  },
-  "tags": ["lib:dom", "scope:dom"]
+  }
 }

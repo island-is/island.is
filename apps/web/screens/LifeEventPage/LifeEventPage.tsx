@@ -1,5 +1,5 @@
 import React, { useMemo, useRef } from 'react'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import { parseAsBoolean } from 'next-usequerystate'

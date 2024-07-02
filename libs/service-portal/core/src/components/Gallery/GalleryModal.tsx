@@ -157,7 +157,7 @@ export const GalleryModal: FC<Props> = ({
                 return (
                   <FocusableBox
                     key={i}
-                    ref={(el) => (imageRefs.current[i] = el)}
+                    ref={(el) => (imageRefs.current[i] = el) as any}
                     component="button"
                     color="blueberry"
                     aria-selected={activeItem === i}

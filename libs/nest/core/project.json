@@ -2,22 +2,17 @@
   "name": "nest-core",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/nest/core/src",
+  "tags": ["lib:nest", "scope:nest"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/nest/core/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/nest/core"],
       "options": {
-        "jestConfig": "libs/nest/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/nest/core/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }

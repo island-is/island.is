@@ -4,6 +4,7 @@
   "sourceRoot": "apps/github-actions-cache/src",
   "projectType": "application",
   "prefix": "github-actions-cache",
+  "tags": ["scope:node"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -29,20 +30,17 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/github-actions-cache/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/github-actions-cache"],
       "options": {
-        "jestConfig": "apps/github-actions-cache/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/github-actions-cache/jest.config.ts"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:node"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

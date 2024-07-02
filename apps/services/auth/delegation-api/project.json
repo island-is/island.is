@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/auth/delegation-api/src",
   "projectType": "application",
+  "tags": ["scope:auth-api"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -28,18 +29,13 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["apps/services/auth/delegation-api/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/delegation-api"],
       "options": {
         "jestConfig": "apps/services/auth/delegation-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       }
     },
@@ -50,7 +46,8 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:auth-api"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

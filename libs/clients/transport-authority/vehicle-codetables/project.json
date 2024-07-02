@@ -3,15 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/transport-authority/vehicle-codetables/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/transport-authority/vehicle-codetables/**/*.ts"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -19,8 +14,7 @@
         "{workspaceRoot}/coverage/libs/clients/transport-authority/vehicle-codetables"
       ],
       "options": {
-        "jestConfig": "libs/clients/transport-authority/vehicle-codetables/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/transport-authority/vehicle-codetables/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -41,6 +35,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

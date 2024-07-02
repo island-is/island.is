@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/middlewares/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/middlewares/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/middlewares"],
       "options": {
-        "jestConfig": "libs/clients/middlewares/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/middlewares/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

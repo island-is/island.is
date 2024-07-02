@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import slugify from '@sindresorhus/slugify'
 

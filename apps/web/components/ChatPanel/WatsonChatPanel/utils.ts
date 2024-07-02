@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { uuid } from 'uuidv4'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
 

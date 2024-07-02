@@ -3,14 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/login-service/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/login-service/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -18,8 +14,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/login-service"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/login-service/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/login-service/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -28,6 +23,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/login-service/src/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }
