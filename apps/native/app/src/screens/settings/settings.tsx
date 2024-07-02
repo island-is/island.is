@@ -103,6 +103,10 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     userProfile.data?.getUserProfile?.documentNotifications,
   )
 
+  const [emailNotifications, setEmailNotifications] = useState(
+    !!userProfile.data?.getUserProfile?.canNudge,
+  )
+
   const onRemovePasskeyPress = () => {
     return RNAlert.alert(
       intl.formatMessage({ id: 'settings.security.removePasskeyPromptTitle' }),
@@ -188,11 +192,36 @@ export const SettingsScreen: NavigationFunctionComponent = ({
       })
   }
 
+  function updateEmailNotifications(value: boolean) {
+    client
+      .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
+        mutation: UpdateProfileDocument,
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              getUserProfile: (existing) => {
+                return { ...existing, ...data?.updateProfile }
+              },
+            },
+          })
+        },
+        variables: {
+          input: {
+            canNudge: value,
+          },
+        },
+      })
+      .catch((err) => {
+        RNAlert.alert('Villa', err.message)
+      })
+  }
+
   useEffect(() => {
     if (userProfile) {
       setDocumentNotifications(
         userProfile.data?.getUserProfile?.documentNotifications,
       )
+      setEmailNotifications(!!userProfile.data?.getUserProfile?.canNudge)
     }
   }, [userProfile])
 
@@ -298,7 +327,33 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         >
           <TableViewCell
             title={intl.formatMessage({
-              id: 'settings.communication.newDocumentsNotifications',
+              id: 'settings.communication.newNotificationsEmailLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsEmailDescription',
+            })}
+            accessory={
+              <Switch
+                onValueChange={(value) => {
+                  updateEmailNotifications(value)
+                  setEmailNotifications(value)
+                }}
+                disabled={userProfile.loading && !userProfile.data}
+                value={emailNotifications}
+                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400,
+                }}
+              />
+            }
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppDescription',
             })}
             accessory={
               <Switch
@@ -316,20 +371,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               />
             }
           />
-          {/* <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.appUpdatesNotifications',
-              })}
-              accessory={<PreferencesSwitch name="notificationsAppUpdates" />}
-            />
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.applicationsNotifications',
-              })}
-              accessory={
-                <PreferencesSwitch name="notificationsApplicationStatusUpdates" />
-              }
-            /> */}
         </TableViewGroup>
         <TableViewGroup
           header={intl.formatMessage({

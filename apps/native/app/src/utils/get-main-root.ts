@@ -16,7 +16,7 @@ export const getRightButtons = ({
 } = {}): OptionsTopBarButton[] => {
   const iconBackground = {
     color: 'transparent',
-    cornerRadius: 8,
+    cornerRadius: 4,
     width: theme.spacing[4],
     height: theme.spacing[4],
   }

@@ -24,6 +24,7 @@ interface ApplicationsModuleProps {
   loading: boolean
   componentId: string
   hideAction?: boolean
+  hideSeeAllButton?: boolean
 }
 
 export const ApplicationsModule = React.memo(
@@ -32,6 +33,7 @@ export const ApplicationsModule = React.memo(
     loading,
     componentId,
     hideAction,
+    hideSeeAllButton = false,
   }: ApplicationsModuleProps) => {
     const intl = useIntl()
     const count = applications.length
@@ -72,18 +74,12 @@ export const ApplicationsModule = React.memo(
       />
     ))
 
-    // The RN types are not up-to-date with these props which seem to have been added in RN 71.
-    const imageProps = {
-      height: 90,
-      width: 42,
-    }
-
     return (
       <SafeAreaView style={{ marginHorizontal: 16 }}>
         <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
           <Heading
             button={
-              count === 0 ? null : (
+              count === 0 || hideSeeAllButton ? null : (
                 <TouchableOpacity
                   onPress={() => navigateTo('/applications')}
                   style={{
@@ -115,7 +111,7 @@ export const ApplicationsModule = React.memo(
                   <Image
                     source={leJobss3}
                     resizeMode="contain"
-                    {...imageProps}
+                    style={{ height: 87, width: 69 }}
                   />
                 }
                 link={
