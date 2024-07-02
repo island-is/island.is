@@ -2,21 +2,21 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class GenericPkPassVerificationError {
-  @Field(() => String, {
+  @Field({
     nullable: true,
     description:
       'pkpass verification error code, depandant on origination service, "0" for unknown error',
   })
   status?: string
 
-  @Field(() => String, {
+  @Field({
     nullable: true,
     description:
       'pkpass verification error message, depandant on origination service',
   })
   message?: string
 
-  @Field(() => String, {
+  @Field({
     nullable: true,
     description: 'Optional data related to the error',
   })
@@ -25,7 +25,7 @@ export class GenericPkPassVerificationError {
 
 @ObjectType()
 export class GenericPkPassVerification {
-  @Field(() => String, {
+  @Field({
     nullable: true,
     description: 'Optional data related to the pkpass verification',
   })

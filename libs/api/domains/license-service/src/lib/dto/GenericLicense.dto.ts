@@ -1,4 +1,4 @@
-import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
+import { Field, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 import {
   GenericLicenseType,
   GenericUserLicensePkPassStatus,
@@ -33,7 +33,11 @@ export class GenericLicense {
   })
   provider!: GenericLicenseProvider
 
-  @Field({ description: 'Display name of license' })
+  @Field({
+    description: 'Display name of license',
+    deprecationReason: 'Moved to metadata for each payload',
+    nullable: true,
+  })
   name?: string
 
   @Field({ description: 'Does the license support pkpass?' })
@@ -42,11 +46,13 @@ export class GenericLicense {
   @Field({ description: 'Does the license support verification of pkpass?' })
   pkpassVerify!: boolean
 
-  @Field({
+  @Field(() => Int, {
     description:
       'How long the data about the license should be treated as fresh',
+    nullable: true,
+    deprecationReason: 'Unclear if this is used, will revert if necessary',
   })
-  timeout!: number
+  timeout?: number
 
   @Field(() => GenericUserLicenseStatus, { description: 'Status of license' })
   status!: GenericUserLicenseStatus

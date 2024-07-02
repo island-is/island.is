@@ -1,10 +1,11 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import {
   GridColumn,
   GridRow,
   Text,
   LoadingDots,
   GridColumnProps,
+  Box,
 } from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
@@ -41,7 +42,6 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   if (props.loading) {
     return <LoadingDots />
   }
-
   return (
     <GridRow marginBottom={marginBottom ?? 4}>
       <GridColumn span={props.span ? props.span : columnSpan}>
@@ -54,9 +54,7 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
           </Text>
         )}
         {props.introComponent && (
-          <Text variant="default" paddingTop={1}>
-            {props.introComponent}
-          </Text>
+          <Box paddingTop={1}>{props.introComponent}</Box>
         )}
         {props.children}
       </GridColumn>

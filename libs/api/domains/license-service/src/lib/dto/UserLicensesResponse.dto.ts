@@ -3,7 +3,10 @@ import { GenericUserLicense } from './GenericUserLicense.dto'
 
 @ObjectType()
 export class UserLicensesResponse {
-  @Field({ description: 'National ID of licenses owner' })
+  @Field({
+    description: 'National ID of licenses owner',
+    deprecationReason: 'Unnecessary',
+  })
   nationalId!: string
 
   @Field(() => [GenericUserLicense], {
