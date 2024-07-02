@@ -10,7 +10,7 @@ import { logger } from '@island.is/logging'
 
 const { elastic } = environment
 
-type RequestBodyType<T = Record<string, any>> = T | string | Buffer
+type RequestBodyType<T = Record<string, unknown>> = T | string | Buffer
 
 @Injectable()
 export class ElasticService {
