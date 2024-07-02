@@ -10,8 +10,6 @@ export const handleCustomMappedValues = <T>(
   tableItems: Array<Item>,
   values: Array<Value<T>>,
 ) => {
-  let customValues: Array<Value<T>> = []
-
   // Iterate over tableItems and handle items with nationalIdWithName component
   return tableItems.reduce((acc, item) => {
     if (item.component === 'nationalIdWithName') {
@@ -25,7 +23,7 @@ const handleNationalIdWithNameItem = <T>(
   item: Item,
   values: Array<Value<T>>,
 ) => {
-  if (!values || values.length === 0) {
+  if (!values?.length) {
     return []
   }
 
