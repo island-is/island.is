@@ -138,7 +138,6 @@ describe('CaseController - Create', () => {
           origin: CaseOrigin.RVG,
           creatingProsecutorId: userId,
           prosecutorId: userId,
-          courtId,
           prosecutorsOfficeId,
         },
         { transaction },
