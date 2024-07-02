@@ -63,7 +63,7 @@ export const SingleLicenseCard = ({
       dataTestId={dataTestId}
     >
       <Hidden below="sm">
-        <img className={styles.image} src={img} alt={title} />
+        <img className={styles.image} src={img} alt="" />
       </Hidden>
       <Box
         display="flex"

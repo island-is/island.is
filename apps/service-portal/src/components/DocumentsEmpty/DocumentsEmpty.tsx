@@ -38,7 +38,7 @@ export const DocumentsEmpty = ({ hasDelegationAccess }: Props) => {
                 ? './assets/images/nodata.svg'
                 : './assets/images/jobsGrid.svg'
             }
-            alt="No access"
+            alt=""
             className={styles.img}
           />
         }

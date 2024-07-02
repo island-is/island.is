@@ -263,6 +263,7 @@ const FinanceTransactions = () => {
                 title={formatMessage(m.noData)}
                 message={formatMessage(m.noTransactionFound)}
                 imgSrc="./assets/images/sofa.svg"
+                imgAlt=""
               />
             )}
             {recordsDataArray.length > 0 ? (
