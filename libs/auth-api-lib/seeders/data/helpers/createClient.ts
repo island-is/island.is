@@ -2,6 +2,7 @@ import { QueryInterface } from 'sequelize'
 import { getCurrentEnvValue, ValueOrEnved } from './env'
 import { DbClient } from './types'
 import { safeBulkInsert } from './safeBulkInsert'
+import { getDelegationTypes } from './createScope'
 
 type GrantType =
   | 'authorization_code'
@@ -129,6 +130,37 @@ export const createClient =
       [client],
       () => `creating client "${client.client_id}"`,
     )
+
+    const delegationTypes = getDelegationTypes({
+      legalGuardians: options.supportDelegations,
+      procuringHolders: options.supportDelegations,
+      custom: options.supportDelegations,
+    })
+
+    if (delegationTypes.length) {
+      // fetch all personal representative delegation types
+      const personalRepresentativeDelegationTypes = await queryInterface
+        .sequelize.query(`
+        SELECT * FROM delegation_type
+        WHERE id LIKE 'PersonalRepresentative:%'`)
+
+      delegationTypes.push(
+        ...(personalRepresentativeDelegationTypes[0]?.map(
+          (type: { id: string }) => type.id,
+        ) ?? []),
+      )
+
+      await safeBulkInsert(
+        queryInterface,
+        'client_delegation_types',
+        delegationTypes.map((type) => ({
+          client_id: client.client_id,
+          delegation_type: type,
+        })),
+        ({ delegation_type }) =>
+          `linking delegation type "${delegation_type}" to "${client.client_id}"`,
+      )
+    }
 
     if (grantTypes.length) {
       await safeBulkInsert(
