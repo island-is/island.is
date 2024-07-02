@@ -1,6 +1,6 @@
 import Channel from './channel'
 
-const mockReturn = (fn: Function) => jest.fn().mockReturnValue({ promise: fn })
+const mockReturn = (fn: jest.Func) => jest.fn().mockReturnValue({ promise: fn })
 
 const mockReturnPromise = (obj: object) =>
   mockReturn(() => Promise.resolve(obj))

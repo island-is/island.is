@@ -9,6 +9,7 @@ export default async () => {
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(global as any).__localstack__ = lc
 
   process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(4566)}`

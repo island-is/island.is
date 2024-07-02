@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
-import * as AWS from 'aws-sdk'
+import { config } from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
@@ -161,7 +161,7 @@ export class ElasticService {
     }
 
     return new Client({
-      ...AwsConnector(AWS.config),
+      ...AwsConnector(config),
       node: elastic.node,
     })
   }

@@ -1,6 +1,6 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import * as AWS from 'aws-sdk'
+import { STS } from 'aws-sdk'
 import aws4 from 'aws4'
 import util from 'util'
 import fs from 'fs'
@@ -41,7 +41,7 @@ export class KibanaService {
     body,
     headers,
   }: ApiParams): Promise<object> {
-    const sts = new AWS.STS()
+    const sts = new STS()
     const token = await readFile(awsWebIdentityTokenFile as string)
 
     const { Credentials } = await sts
