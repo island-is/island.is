@@ -14,7 +14,7 @@ import {
 } from '@island.is/application/ui-components'
 import { infer as zinfer } from 'zod'
 import { estateSchema } from '../../lib/dataSchema'
-import { EstateTypes } from '../../lib/constants'
+import { EstateTypes, YES } from '../../lib/constants'
 import { customCurrencyFormat } from '../../lib/utils'
 import { getSumFromAnswers } from '../../utils/getSumFromAnswers'
 import { getMarketValueShare } from '../../utils/getMarketValueShare'
@@ -462,6 +462,15 @@ export const overviewAssetsAndDebts = [
     title: m.debtsTitle,
     titleVariant: 'h3',
     space: 'gutter',
+    condition: (answers) => {
+      const hasDebt =
+        getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
+      const estateWithoutAssetsSelected =
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+
+      return estateWithoutAssetsSelected ? hasDebt : true
+    },
   }),
   buildCustomField(
     {
@@ -469,6 +478,16 @@ export const overviewAssetsAndDebts = [
       id: 'debtsCards',
       component: 'Cards',
       doesNotRequireAnswer: true,
+      condition: (answers) => {
+        const hasDebt =
+          getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') ===
+          YES
+        const estateWithoutAssetsSelected =
+          getValueViaPath(answers, 'selectedEstate') ===
+          EstateTypes.estateWithoutAssets
+
+        return estateWithoutAssetsSelected ? hasDebt : true
+      },
     },
     {
       cards: ({ answers }: Application) =>
@@ -491,9 +510,33 @@ export const overviewAssetsAndDebts = [
     title: m.total,
     description: ({ answers }: Application) =>
       getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
-    condition: (answers) =>
-      !!getSumFromAnswers<EstateSchema['debts']>(answers, 'debts', 'balance'),
+    condition: (answers) => {
+      const hasSum = !!getSumFromAnswers<EstateSchema['debts']>(
+        answers,
+        'debts',
+        'balance',
+      )
+
+      const hasDebt =
+        getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
+      const estateWithoutAssetsSelected =
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+
+      return estateWithoutAssetsSelected ? hasSum && hasDebt : true
+    },
+
     titleVariant: 'h4',
   }),
-  buildDividerField({}),
+  buildDividerField({
+    condition: (answers) => {
+      const hasDebt =
+        getValueViaPath(answers, 'estateWithoutAssets.estateDebtsExist') === YES
+      const estateWithoutAssetsSelected =
+        getValueViaPath(answers, 'selectedEstate') ===
+        EstateTypes.estateWithoutAssets
+
+      return estateWithoutAssetsSelected ? hasDebt : true
+    },
+  }),
 ]
