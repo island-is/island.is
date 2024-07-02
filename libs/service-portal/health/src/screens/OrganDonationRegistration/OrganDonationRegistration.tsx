@@ -96,7 +96,7 @@ const OrganDonationRegistration = () => {
                   <Box>
                     <Stack space={2}>
                       <Controller
-                        name="organ-donation-radio-buttons"
+                        name="selectedChoice"
                         control={control as Control<any, string>}
                         render={({ field: { value, onChange } }) => (
                           <Stack space={2}>
@@ -143,7 +143,7 @@ const OrganDonationRegistration = () => {
                                                 <Box marginY="smallGutter">
                                                   <InputController
                                                     id="organ-donation-limitation"
-                                                    name="organ-donation-limitation"
+                                                    name="selectedLimitations"
                                                     textarea
                                                     label={formatMessage(
                                                       m.organRegistrationOtherLabel,
