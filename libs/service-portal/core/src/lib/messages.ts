@@ -1551,4 +1551,8 @@ export const m = defineMessages({
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
   },
+  submit: {
+    id: 'service.portal:submit',
+    defaultMessage: 'Staðfesta',
+  },
 })

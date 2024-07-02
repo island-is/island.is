@@ -54,6 +54,14 @@ const PaymentParticipation = lazy(() =>
 )
 const PaymentOverview = lazy(() => import('./screens/Payments/PaymentOverview'))
 
+const OrganDonation = lazy(() =>
+  import('./screens/OrganDonation/OrganDonation'),
+)
+
+const OrganDonationRegistration = lazy(() =>
+  import('./screens/OrganDonationRegistration/OrganDonationRegistration'),
+)
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
@@ -188,6 +196,18 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthDentistRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <DentistRegistration />,
+    },
+    {
+      name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonation,
+      enabled: true, //userInfo.scopes.includes(ApiScope.meDetails), // TODO: Change to correct scope!
+      element: <OrganDonation />,
+    },
+    {
+      name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonationRegistration,
+      enabled: true, //userInfo.scopes.includes(), // TODO: Change to correct scope!
+      element: <OrganDonationRegistration />,
     },
   ],
 }

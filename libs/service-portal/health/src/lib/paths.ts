@@ -3,6 +3,9 @@ export enum HealthPaths {
 
   HealthOverview = '/heilsa/yfirlit',
 
+  HealthOrganDonation = '/heilsa/liffaeragjof',
+  HealthOrganDonationRegistration = '/heilsa/liffaeragjof/skraning',
+
   HealthTherapies = '/heilsa/thjalfun',
   HealthTherapiesPhysical = '/heilsa/thjalfun/sjukrathjalfun',
   HealthTherapiesSpeech = '/heilsa/thjalfun/talthjalfun',
