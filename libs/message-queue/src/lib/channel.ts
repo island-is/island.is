@@ -147,7 +147,7 @@ class Channel {
     errorHandler?: (error: any) => void // eslint-disable-line  @typescript-eslint/no-explicit-any
   }) {
     const parseMessage = (
-      sqsMessage: Message,
+      sqsMessage: SQS.Message,
     ): {
       message: M
       routingKey: K
