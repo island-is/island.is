@@ -11,22 +11,27 @@ export const handleCustomMappedValues = <T>(
   values: Array<Value<T>>,
 ) => {
   let customValues: Array<Value<T>> = []
-  tableItems.forEach((item) => {
+
+  // Iterate over tableItems and handle items with nationalIdWithName component
+  return tableItems.reduce((acc, item) => {
     if (item.component === 'nationalIdWithName') {
-      customValues = handleNationalIdWithNameItem(item, values)
+      return handleNationalIdWithNameItem(item, values)
     }
-  })
-  return customValues
+    return acc
+  }, [] as Array<Value<T>>)
 }
 
-export const handleNationalIdWithNameItem = <T>(
+const handleNationalIdWithNameItem = <T>(
   item: Item,
   values: Array<Value<T>>,
 ) => {
-  if (!values) {
+  if (!values || values.length === 0) {
     return []
   }
 
+  // nationalIdWithName is a special case where the value is an object
+  // with a nested object inside it. This function will extract the nested
+  // object and merge it with the rest of the values.
   const newValues = values.map((value) => {
     if (typeof value[item.id] === 'object' && value[item.id] !== null) {
       const { [item.id]: nestedObject, ...rest } = value
