@@ -28,7 +28,6 @@ let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
-    console.log('URL', url)
     Linking.canOpenURL(url).then((supported) => {
       if (supported) {
         evaluateUrl(url)
