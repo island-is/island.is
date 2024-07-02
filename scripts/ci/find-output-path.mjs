@@ -4,6 +4,9 @@
 import { runCommand } from './cache/_utils.mjs'
 
 const APP = process.argv[2]
+if (!APP) {
+  throw new Error('APP not provided')
+}
 const data = JSON.parse(await runCommand(`yarn nx show project ${APP}`))
 const {
   targets: { build },
