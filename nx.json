@@ -15,6 +15,9 @@
           "codegen/backend-client",
           "codegen/backend-schema",
           "codegen/frontend-client",
+          "codegen/bootstrap",
+          "codegen/backend-post",
+          "codegen",
           "generateDevIndexHTML"
         ],
         "cacheDirectory": ".cache/nx",
@@ -114,19 +117,42 @@
       "inputs": ["default", "^production", "{workspaceRoot}/jest.preset.js"]
     },
     "codegen/backend-client": {
-      "dependsOn": ["^codegen/backend-client", "^codegen/backend-schema"],
+      "dependsOn": [
+        "^codegen/backend-client",
+        "^codegen/backend-schema",
+        {
+          "target": "codegen/bootstrap",
+          "projects": "codegen-bootstrap",
+          "params": "ignore"
+        }
+      ],
       "inputs": ["schema-files"]
     },
     "codegen/backend-schema": {
       "dependsOn": [
         "codegen/backend-client",
         "^codegen/backend-client",
-        "^codegen/backend-schema"
+        "^codegen/backend-schema",
+        {
+          "target": "codegen/bootstrap",
+          "projects": "codegen-bootstrap"
+        }
       ],
-      "inputs": ["default", "^production"]
+      "inputs": [
+        "default",
+        "^production",
+        "!{projectRoot}/**/schema.{ts,tsx}",
+        "!{projectRoot}/**/fragmentTypes.json",
+        "!{projectRoot}/**/*.generated.ts"
+      ]
     },
     "codegen/frontend-client": {
-      "dependsOn": ["codegen/backend-schema"],
+      "dependsOn": [
+        {
+          "target": "codegen/backend-post",
+          "projects": "codegen-backend-post"
+        }
+      ],
       "inputs": ["graphql-files"],
       "outputs": [
         "{projectRoot}/**/schema.{ts,tsx}",

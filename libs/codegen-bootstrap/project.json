@@ -1,0 +1,34 @@
+{
+  "name": "codegen-bootstrap",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/codegen-bootstrap/src",
+  "projectType": "library",
+  "targets": {
+    "codegen/bootstrap": {
+      "executor": "nx:run-commands",
+      "options": {
+        "inputs": [
+          "{projectRoot}/src/*",
+          {
+            "externalDependencies": []
+          }
+        ],
+        "outputs": ["libs/api/schema/src/lib/schema.ts"],
+        "commands": [
+          {
+            "command": "node libs/codegen-bootstrap/src/codegen-bootstrap.mjs"
+          }
+        ]
+      }
+    },
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "dependsOn": [],
+      "options": {
+        "lintFilePatterns": ["libs/codegen-bootstrap/**/*.mjs"]
+      }
+    }
+  },
+  "tags": ["lib:js", "scope:node"]
+}

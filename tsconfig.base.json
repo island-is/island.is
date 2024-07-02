@@ -809,6 +809,8 @@
       "@island.is/cms-translations/test": [
         "libs/cms-translations/src/test/index.ts"
       ],
+      "@island.is/codegen-bootstrap": ["libs/codegen-bootstrap/src/index.ts"],
+      "@island.is/codegen-post": ["libs/codegen-post/src/index.ts"],
       "@island.is/consultation-portal/*": ["apps/consultation-portal/*"],
       "@island.is/content-search-index-manager": [
         "libs/content-search-index-manager/src/index.ts"
@@ -1078,7 +1080,8 @@
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/web/component*": ["apps/web/component*/real.ts"]
+      "@island.is/web/component*": ["apps/web/component*/real.ts"],
+      "codegen-backend-post": ["libs/codegen-backend-post/src/index.ts"]
     }
   }
 }
