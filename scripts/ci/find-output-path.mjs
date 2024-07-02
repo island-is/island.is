@@ -12,7 +12,7 @@ const {
   },
 } = data
 
-let output = outputs?.[0] ?? options.outputPath;
+let output = outputs?.[0] ?? options.outputPath
 
 for (const [key, value] of Object.entries(options)) {
   output = output.replace(`{options.${key}}`, value)
