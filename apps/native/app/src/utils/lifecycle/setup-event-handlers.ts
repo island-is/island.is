@@ -11,7 +11,6 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
-import { notificationsStore } from '../../stores/notifications-store'
 import { offlineStore } from '../../stores/offline-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
@@ -84,11 +83,7 @@ export function setupEventHandlers() {
   })
 
   AppState.addEventListener('change', (status: AppStateStatus) => {
-    const {
-      lockScreenComponentId,
-      lockScreenActivatedAt,
-      noLockScreenUntilNextAppStateActive,
-    } = authStore.getState()
+    const { noLockScreenUntilNextAppStateActive } = authStore.getState()
     const { appLockTimeout } = preferencesStore.getState()
 
     if (!skipAppLock()) {
@@ -96,27 +91,28 @@ export function setupEventHandlers() {
         authStore.setState({ noLockScreenUntilNextAppStateActive: false })
         return
       }
+      clearTimeout(backgroundAppLockTimeout)
 
       if (status === 'background' || status === 'inactive') {
         // Add a small delay for those accidental backgrounds in iOS
-        // and to prevent the lock screen from showing up on Android when react-native-vision-camera is used.
         backgroundAppLockTimeout = setTimeout(() => {
-          const { lockScreenComponentId } = authStore.getState()
-          if (!lockScreenComponentId) {
+          const { lockScreenComponentId, lockScreenActivatedAt } =
+            authStore.getState()
+
+          if (!lockScreenComponentId && !lockScreenActivatedAt) {
             showAppLockOverlay({ status })
-          } else {
+          } else if (lockScreenComponentId) {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
         }, 100)
       }
 
       if (status === 'active') {
-        clearTimeout(backgroundAppLockTimeout)
-
+        const { lockScreenComponentId, lockScreenActivatedAt } =
+          authStore.getState()
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
-            lockScreenActivatedAt !== null &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
             hideAppLockOverlay(lockScreenComponentId)

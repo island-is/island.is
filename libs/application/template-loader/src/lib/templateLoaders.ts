@@ -129,13 +129,13 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.CAR_RECYCLING]: () =>
     import('@island.is/application/templates/car-recycling'),
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: () =>
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: () =>
     import(
-      '@island.is/application/templates/signature-collection/signature-list-creation'
+      '@island.is/application/templates/signature-collection/presidential-list-creation'
     ),
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: () =>
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: () =>
     import(
-      '@island.is/application/templates/signature-collection/signature-list-signing'
+      '@island.is/application/templates/signature-collection/presidential-list-signing'
     ),
   [ApplicationTypes.CITIZENSHIP]: () =>
     import(

@@ -25,7 +25,7 @@ import {
 
 import * as strings from './CaseFiles.strings'
 
-const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CaseFiles = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()

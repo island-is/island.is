@@ -13,10 +13,10 @@ import {
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
-import leJobss4 from '../../assets/illustrations/le-jobs-s4.png'
+import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import { Application } from '../../graphql/types/schema'
 import { navigateTo } from '../../lib/deep-linking'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationUrl } from '../../utils/applications-utils'
 
 interface ApplicationsModuleProps {
@@ -35,6 +35,7 @@ export const ApplicationsModule = React.memo(
   }: ApplicationsModuleProps) => {
     const intl = useIntl()
     const count = applications.length
+    const { openBrowser } = useBrowser()
 
     const children = applications.slice(0, 5).map((application) => (
       <StatusCard
@@ -82,18 +83,20 @@ export const ApplicationsModule = React.memo(
         <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
           <Heading
             button={
-              <TouchableOpacity
-                onPress={() => navigateTo('/applications')}
-                style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
-                }}
-              >
-                <Typography weight="400" color={blue400}>
-                  {intl.formatMessage({ id: 'button.seeAll' })}
-                </Typography>
-                <ChevronRight />
-              </TouchableOpacity>
+              count === 0 ? null : (
+                <TouchableOpacity
+                  onPress={() => navigateTo('/applications')}
+                  style={{
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography weight="400" color={blue400}>
+                    {intl.formatMessage({ id: 'button.seeAll' })}
+                  </Typography>
+                  <ChevronRight />
+                </TouchableOpacity>
+              )
             }
           >
             {intl.formatMessage({ id: 'home.applicationsStatus' })}
@@ -110,7 +113,7 @@ export const ApplicationsModule = React.memo(
                 })}
                 image={
                   <Image
-                    source={leJobss4}
+                    source={leJobss3}
                     resizeMode="contain"
                     {...imageProps}
                   />
@@ -120,7 +123,7 @@ export const ApplicationsModule = React.memo(
                     <TouchableOpacity
                       onPress={() => navigateTo(`/applications`)}
                     >
-                      <LinkText>
+                      <LinkText variant="small">
                         {intl.formatMessage({
                           id: 'applicationStatusCard.seeMoreApplications',
                         })}

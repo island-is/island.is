@@ -17,6 +17,7 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
@@ -34,6 +35,7 @@ import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
         IdsClientConfig,
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
+        CompanyRegistryConfig,
         XRoadConfig,
         FeatureFlagConfig,
       ],

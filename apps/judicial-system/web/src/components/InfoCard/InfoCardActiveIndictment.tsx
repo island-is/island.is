@@ -13,9 +13,7 @@ import { FormContext } from '../FormProvider/FormProvider'
 import InfoCard, { NameAndEmail } from './InfoCard'
 import { strings } from './InfoCardIndictment.strings'
 
-const InfoCardActiveIndictment: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const InfoCardActiveIndictment = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
