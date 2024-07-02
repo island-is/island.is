@@ -11,6 +11,8 @@ export const CheckboxPreview = ({ currentItem }: Props) => {
       name="checkbox"
       label={currentItem?.name?.is ?? ''}
       checked={currentItem?.inputSettings?.checked ?? false}
+      // eslint-disable-next-line @typescript-eslint/no-empty-function
+      onChange={() => {}}
     />
   )
 }

@@ -23,6 +23,8 @@ export const BaseInput = () => {
     focus,
     inputTypes,
     updateActiveItem,
+    translate,
+    translationButtons,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
@@ -99,6 +101,10 @@ export const BaseInput = () => {
             }
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+            buttons={translationButtons(
+              currentItem?.name?.is ?? '',
+              'CHANGE_NAME',
+            )}
           />
         </Column>
       </Row>
@@ -146,6 +152,10 @@ export const BaseInput = () => {
                     },
                   })
                 }
+                buttons={translationButtons(
+                  currentItem?.description?.is ?? '',
+                  'CHANGE_DESCRIPTION',
+                )}
               />
             </Column>
           </Row>
@@ -157,7 +167,7 @@ export const BaseInput = () => {
           <Checkbox
             label={formatMessage(m.required)}
             checked={currentItem.isRequired ?? false}
-            onChange={(e) =>
+            onChange={() =>
               controlDispatch({
                 type: 'CHANGE_IS_REQUIRED',
                 payload: {

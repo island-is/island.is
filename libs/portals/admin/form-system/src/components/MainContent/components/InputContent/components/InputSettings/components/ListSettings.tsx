@@ -16,38 +16,61 @@ import { m } from '../../../../../../../lib/messages'
 const predeterminedLists = [
   {
     label: 'Sveitarfélög',
-    value: 'Sveitarfelog',
+    value: 0,
   },
   {
     label: 'Lönd',
-    value: 'Lond',
+    value: 1,
   },
   {
     label: 'Póstnúmer',
-    value: 'Postnumer',
+    value: 2,
   },
   {
     label: 'Iðngreinarmeistara',
-    value: 'Idngreinarmeistara',
+    value: 3,
+  },
+  {
+    label: 'Skráningarflokkar',
+    value: 4,
   },
 ]
 
 export const ListSettings = () => {
-  const { control, setInListBuilder } = useContext(ControlContext)
+  const { control, setInListBuilder, controlDispatch, updateActiveItem } =
+    useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
   const [radio, setRadio] = useState([true, false, false])
 
   const radioHandler = (index: number) => {
-    if (!radio[index])
-      setRadio((prev) =>
-        prev.map((_, i) => {
-          return index === i
-        }),
-      )
+    setRadio((prev) =>
+      prev.map((_, i) => {
+        return index === i
+      }),
+    )
   }
 
   const { formatMessage } = useIntl()
+  const listTypes = [
+    'sveitarfelog',
+    'lond',
+    'postnumer',
+    'idngreinarMeistara',
+    'skraningarflokkar',
+  ]
+  const getListType = (index: number) => listTypes[index] || 'customList'
+
+  const onClickRadioHandler = (index: number) => {
+    radioHandler(index)
+    controlDispatch({
+      type: 'SET_LIST_TYPE',
+      payload: {
+        listType: index === 0 ? 'customList' : 'other',
+        update: updateActiveItem,
+      },
+    })
+  }
 
   return (
     <Stack space={2}>
@@ -55,9 +78,11 @@ export const ListSettings = () => {
         <>
           <Row>
             <Column>
-              <Box onClick={() => radioHandler(0)}>
+              <Box onClick={() => onClickRadioHandler(0)}>
                 <RadioButton
                   label={formatMessage(m.customList)}
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
+                  onChange={() => {}}
                   checked={radio[0]}
                 />
               </Box>
@@ -65,18 +90,24 @@ export const ListSettings = () => {
           </Row>
           <Row>
             <Column>
-              <RadioButton
-                label={formatMessage(m.predeterminedLists)}
-                checked={radio[1]}
-              />
+              <Box onClick={() => onClickRadioHandler(1)}>
+                <RadioButton
+                  label={formatMessage(m.predeterminedLists)}
+                  // eslint-disable-next-line @typescript-eslint/no-empty-function
+                  onChange={() => {}}
+                  checked={radio[1]}
+                />
+              </Box>
             </Column>
           </Row>
         </>
       )}
       {radio[0] && (
-        <Button variant="ghost" onClick={() => setInListBuilder(true)}>
-          {formatMessage(m.listBuilder)}
-        </Button>
+        <Column span="5/10">
+          <Button variant="ghost" onClick={() => setInListBuilder(true)}>
+            {formatMessage(m.listBuilder)}
+          </Button>
+        </Column>
       )}
       {radio[1] && (
         <Column span="5/10">
@@ -86,6 +117,16 @@ export const ListSettings = () => {
             label={formatMessage(m.predeterminedLists)}
             options={predeterminedLists}
             backgroundColor="blue"
+            onChange={(option) => {
+              const listType = getListType(option?.value as number)
+              controlDispatch({
+                type: 'SET_LIST_TYPE',
+                payload: {
+                  listType: listType,
+                  update: updateActiveItem,
+                },
+              })
+            }}
           />
         </Column>
       )}

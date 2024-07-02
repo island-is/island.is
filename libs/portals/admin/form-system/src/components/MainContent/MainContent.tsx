@@ -19,8 +19,14 @@ import { useIntl } from 'react-intl'
 import { m } from '../../lib/messages'
 
 export const MainContent = () => {
-  const { control, controlDispatch, updateActiveItem, setFocus, focus } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    updateActiveItem,
+    setFocus,
+    focus,
+    translationButtons,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
@@ -81,6 +87,10 @@ export const MainContent = () => {
                 }
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                buttons={translationButtons(
+                  activeItem?.data?.name?.is ?? '',
+                  'CHANGE_NAME',
+                )}
               />
             </Column>
           </Row>

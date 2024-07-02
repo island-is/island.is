@@ -1,12 +1,12 @@
-import { Query, Args, Resolver } from '@nestjs/graphql'
+import { Query, Args, Resolver, Mutation } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
 import { FormSystemService } from './services.service'
-import { List } from '../../models/services.model'
-import { GetPropertyInput } from '../../dto/services.input'
+import { List, Translation } from '../../models/services.model'
+import { GetPropertyInput, GetTranslationInput } from '../../dto/services.input'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 
@@ -59,5 +59,16 @@ export class FormSystemServicesResolver {
     @CurrentUser() user: User,
   ): Promise<List> {
     return this.formSystemServices.getProperty(user, input)
+  }
+
+  @Mutation(() => Translation, {
+    name: 'formSystemGetTranslation',
+  })
+  async getTranslation(
+    @Args('input', { type: () => GetTranslationInput })
+    input: GetTranslationInput,
+    @CurrentUser() user: User,
+  ): Promise<Translation> {
+    return this.formSystemServices.getTranslation(user, input)
   }
 }

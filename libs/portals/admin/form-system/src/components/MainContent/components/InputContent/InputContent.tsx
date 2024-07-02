@@ -18,7 +18,7 @@ export const InputContent = () => {
     <Stack space={2}>
       <BaseInput />
       <InputSettings />
-      <Preview data={currentItem} />
+      {currentItem.type !== 'Default' && <Preview data={currentItem} />}
     </Stack>
   )
 }
