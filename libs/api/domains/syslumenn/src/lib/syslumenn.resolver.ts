@@ -34,6 +34,7 @@ import { RegistryPerson } from './models/registryPerson'
 import { GetRegistryPersonInput } from './dto/getRegistryPerson.input'
 import { JourneymanLicencesResponse } from './models/journeymanLicence'
 import { ProfessionRightsResponse } from './models/professionRights'
+import { ManyPropertyDetail } from './models/manyPropertyDetail'
 
 const cacheTime = process.env.CACHE_TIME || 300
 
@@ -166,6 +167,17 @@ export class SyslumennResolver {
     @Args('input') input: SearchForPropertyInput,
   ): Promise<PropertyDetail> {
     return this.syslumennService.getPropertyDetails(input.propertyNumber)
+  }
+
+  @Query(() => ManyPropertyDetail, { nullable: true })
+  @Scopes(ApiScope.assets)
+  searchForAllProperties(
+    @Args('input') input: SearchForPropertyInput,
+  ): Promise<ManyPropertyDetail> {
+    return this.syslumennService.getAllPropertyDetails(
+      input.propertyNumber,
+      input.propertyType ?? '0',
+    )
   }
 
   @Directive(cacheControlDirective())

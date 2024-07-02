@@ -67,6 +67,7 @@ You can create a PdfLinkButtonFormField using the following function `buildPdfLi
         setViewPdfFile: (file: { base64: string; filename: string }) => {
           console.log('Display PDF using <PDFViewer />')
         },
+        viewPdfFile: true
     })`)}
 
 />
@@ -98,6 +99,7 @@ The previous configuration object will result in the following component:
         setViewPdfFile: () => {
           console.log('Display PDF using <PDFViewer />')
         },
+        viewPdfFile: true,
       }}
     />
   </Story>

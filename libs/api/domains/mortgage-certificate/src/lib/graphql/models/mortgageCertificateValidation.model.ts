@@ -8,9 +8,6 @@ export class MortgageCertificateValidationModel
   @Field()
   propertyNumber!: string
 
-  @Field({ nullable: true })
-  isFromSearch?: boolean
-
   @Field()
   exists!: boolean
 

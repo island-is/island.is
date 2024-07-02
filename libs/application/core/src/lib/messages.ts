@@ -291,6 +291,11 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
   },
+  defaultDownloadButtonTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
+    defaultMessage: 'Hlaða niður skjali',
+    description: 'Button label to download file',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
