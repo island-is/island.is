@@ -8,8 +8,7 @@ DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 source "$DIR"/_common.sh
 
 APP_HOME=$(yarn nx show project $APP | jq ".root" -r)
-# APP_DIST_HOME=$(yarn nx show project $APP | jq ".targets.build.outputs[0]" -r | sed "s|{workspaceRoot}/||")
-APP_DIST_HOME="dist/${APP_HOME}"
+APP_DIST_HOME=$(node "$DIR"/find-output-path.mjs)
 DOCKERFILE=${1:-Dockerfile}
 TARGET=${TARGET:-${2:-'<You need to set a target (e.g. output-local, output-jest)>'}}
 ACTION=${3:-docker_build}
