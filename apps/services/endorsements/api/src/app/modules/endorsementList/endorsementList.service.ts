@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
@@ -76,8 +76,28 @@ export class EndorsementListService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
+      orderOption: [
+        ['endorsementCounter', 'DESC'],
+        ['counter', 'DESC'],
+      ],
       where: where,
+      attributes: {
+        include: [
+          [
+            Sequelize.fn('COUNT', Sequelize.col('endorsements.id')),
+            'endorsementCounter',
+          ],
+        ],
+      },
+      include: [
+        {
+          model: Endorsement,
+          required: false, // Required false for left outer join so that counts come for 0 as well
+          duplicating: false,
+          attributes: [],
+        },
+      ],
+      group: ['EndorsementList.id'],
     })
   }
 

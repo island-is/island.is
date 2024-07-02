@@ -39,4 +39,7 @@ export class EndorsementList {
 
   @Field({ nullable: true })
   owner?: string
+
+  @Field({ nullable: true })
+  endorsementCounter?: number
 }
