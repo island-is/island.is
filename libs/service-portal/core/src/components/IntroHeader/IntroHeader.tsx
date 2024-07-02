@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import { ReactNode } from 'react'
 import {
   GridColumn,
   GridRow,
@@ -15,6 +15,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { ISLANDIS_SLUG } from '../../utils/constants'
 import { m } from '../../lib/messages'
+import { DynamicTitle } from '../DynamicTitle/DynamicTitle'
 
 interface Props {
   serviceProviderSlug?: OrganizationSlugType
@@ -43,45 +44,48 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   }
 
   return (
-    <GridRow marginBottom={marginBottom ?? 4}>
-      <GridColumn span={props.span ? props.span : columnSpan}>
-        <Text variant="h3" as={props.isSubheading ? 'h2' : 'h1'}>
-          {formatMessage(props.title)}
-        </Text>
-        {props.intro && (
-          <Text variant="default" paddingTop={1}>
-            {formatMessage(props.intro)}
+    <>
+      <DynamicTitle title={formatMessage(props.title)} />
+      <GridRow marginBottom={marginBottom ?? 4}>
+        <GridColumn span={props.span ? props.span : columnSpan}>
+          <Text variant="h3" as={props.isSubheading ? 'h2' : 'h1'}>
+            {formatMessage(props.title)}
           </Text>
-        )}
-        {props.introComponent && (
-          <Text variant="default" paddingTop={1}>
-            {props.introComponent}
-          </Text>
-        )}
-        {props.children}
-      </GridColumn>
-      {!isMobile && props.serviceProviderSlug && organization && (
-        <GridColumn span={'2/8'} offset={'1/8'}>
-          <InstitutionPanel
-            loading={loading}
-            linkHref={organization.link ?? ''}
-            linkLabel={
-              organization.title
-                ? formatMessage(m.readMoreAbout, {
-                    arg: organization.title,
-                  })
-                : ''
-            }
-            img={organization.logo?.url ?? ''}
-            imgContainerDisplay={isMobile ? 'block' : 'flex'}
-            isSvg={organization.logo?.contentType === 'image/svg+xml'}
-            tooltipText={props.serviceProviderTooltip}
-            backgroundColor={props.backgroundColor}
-            tooltipVariant={props.tooltipVariant ?? 'light'}
-          />
+          {props.intro && (
+            <Text variant="default" paddingTop={1}>
+              {formatMessage(props.intro)}
+            </Text>
+          )}
+          {props.introComponent && (
+            <Text variant="default" paddingTop={1}>
+              {props.introComponent}
+            </Text>
+          )}
+          {props.children}
         </GridColumn>
-      )}
-    </GridRow>
+        {!isMobile && props.serviceProviderSlug && organization && (
+          <GridColumn span={'2/8'} offset={'1/8'}>
+            <InstitutionPanel
+              loading={loading}
+              linkHref={organization.link ?? ''}
+              linkLabel={
+                organization.title
+                  ? formatMessage(m.readMoreAbout, {
+                      arg: organization.title,
+                    })
+                  : ''
+              }
+              img={organization.logo?.url ?? ''}
+              imgContainerDisplay={isMobile ? 'block' : 'flex'}
+              isSvg={organization.logo?.contentType === 'image/svg+xml'}
+              tooltipText={props.serviceProviderTooltip}
+              backgroundColor={props.backgroundColor}
+              tooltipVariant={props.tooltipVariant ?? 'light'}
+            />
+          </GridColumn>
+        )}
+      </GridRow>
+    </>
   )
 }
 

@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import {
   Box,
   Button,
@@ -53,6 +54,11 @@ const Petitions = () => {
       return new Date() >= new Date(list?.closedDate)
     },
   ) as EndorsementList[]
+
+  // Changing the document title dynamically
+  useEffect(() => {
+    document.title = `${formatMessage(m.title)} - Mínar síður - Ísland.is`
+  }, [])
 
   return (
     <>

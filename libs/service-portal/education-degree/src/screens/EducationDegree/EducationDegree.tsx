@@ -9,7 +9,7 @@ import {
 } from '@island.is/service-portal/core'
 import { DegreeCards } from './components/DegreeCards'
 
-function EducationDegree() {
+const EducationDegree = function () {
   useNamespaces('sp.education-degree')
 
   return (

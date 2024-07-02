@@ -13,8 +13,7 @@ import {
   useGetPaginatedDentistsQuery,
   useRegisterDentistMutation,
 } from './DentistRegistration.generated'
-import { m } from '@island.is/service-portal/core'
-import { IntroHeader } from '@island.is/portals/core'
+import { m, IntroHeader } from '@island.is/service-portal/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { messages } from '../../lib/messages'
 import { useEffect, useRef, useState } from 'react'

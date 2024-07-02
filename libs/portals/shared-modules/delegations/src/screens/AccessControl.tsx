@@ -1,4 +1,4 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useLocation } from 'react-use'
 import { Box, Button, GridColumn, Tabs } from '@island.is/island-ui/core'
@@ -24,6 +24,13 @@ const AccessControl = () => {
   const { basePath } = usePortalMeta()
   const DELEGATIONS_INCOMING_PATH = `${basePath}${DelegationPaths.DelegationsIncoming}`
   const isDelegationIncoming = location.pathname === DELEGATIONS_INCOMING_PATH
+
+  // Chance the document title dynamically
+  useEffect(() => {
+    document.title = `${formatMessage(
+      m.accessControl,
+    )} - Mínar síður - Ísland.is`
+  }, [])
 
   const tabChangeHandler = (id: string) => {
     const url =
