@@ -18342,12 +18342,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/nodemailer@npm:6.4.1":
-  version: 6.4.1
-  resolution: "@types/nodemailer@npm:6.4.1"
+"@types/nodemailer@npm:6.4.15":
+  version: 6.4.15
+  resolution: "@types/nodemailer@npm:6.4.15"
   dependencies:
     "@types/node": "*"
-  checksum: 58239d1996c0f7f5f7a9373e575e1889c7757af30064803efc2032f87d4be7a62cb87df401b8ed060f919af9606bbb7470450a44b46a53ff12041e7fac8acb8a
+  checksum: f6f9a2f8a669703ecc3ca6359c12345b16f6b2e5691b93c406b9af7de639c02092ec00133526e6fecd8c60d884890a7cd0f967d8e64bedab46d5c3d8be0882d7
   languageName: node
   linkType: hard
 
@@ -34378,7 +34378,7 @@ __metadata:
     "@types/mailparser": 3.4.0
     "@types/memoizee": 0.4.5
     "@types/node": 18.14.2
-    "@types/nodemailer": 6.4.1
+    "@types/nodemailer": 6.4.15
     "@types/opossum": 4.1.1
     "@types/passport-jwt": 3.0.8
     "@types/pdfkit": 0.11.2
@@ -34543,7 +34543,7 @@ __metadata:
     node-fetch: 2.6.7
     node-gyp: 9.1.0
     node-html-markdown: 1.3.0
-    nodemailer: 6.7.2
+    nodemailer: 6.9.13
     nx: 16.9.0
     oidc-client-ts: 2.4.0
     openapi3-ts: 2.0.0
@@ -40769,17 +40769,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"nodemailer@npm:6.7.2, nodemailer@npm:^6.4.16":
-  version: 6.7.2
-  resolution: "nodemailer@npm:6.7.2"
-  checksum: 3c37a40928448e2f5118a9f2f016c7a4f32228d0e6b7cc7d1834b8001374cc77280dc077a83239420f6daea4c898d9a1f336dfc2273bb7eddaf51a36bd126f72
-  languageName: node
-  linkType: hard
-
 "nodemailer@npm:6.7.3":
   version: 6.7.3
   resolution: "nodemailer@npm:6.7.3"
   checksum: b94d099f00f25666fc96a7cb498045e7428045b8cc0245ce10522190fd513b586d6e31305afd019f6878f1540d14d169d0dbe2e1f77385795c7054912d822ec0
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:6.9.13":
+  version: 6.9.13
+  resolution: "nodemailer@npm:6.9.13"
+  checksum: 1b591ef480be2ff69480127cbff819e6593b1ef263b6f920e1a4e83e40280582daf7a14a809ef92f9828e2a70bdb3ce22b11924e209f2afe4975f9ff37e08e9d
+  languageName: node
+  linkType: hard
+
+"nodemailer@npm:^6.4.16":
+  version: 6.7.2
+  resolution: "nodemailer@npm:6.7.2"
+  checksum: 3c37a40928448e2f5118a9f2f016c7a4f32228d0e6b7cc7d1834b8001374cc77280dc077a83239420f6daea4c898d9a1f336dfc2273bb7eddaf51a36bd126f72
   languageName: node
   linkType: hard
 
