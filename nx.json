@@ -99,7 +99,7 @@
   "targetDefaults": {
     "build": {
       "dependsOn": ["^build"],
-      "inputs": ["production", "^production"]
+      "inputs": ["production", "^production", "nodeVersion"]
     },
     "e2e": {
       "inputs": ["default", "^production"]
@@ -137,6 +137,7 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "nodeVersion": [{ "runtime": "node --version" }],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
