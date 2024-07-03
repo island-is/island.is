@@ -31,6 +31,7 @@ export class EventLogResolver {
     this.logger.debug(`Creating event log for case ${input.caseId}`)
 
     const res = await backendApi.createEventLog(input, user.role)
+
     return res.ok
   }
 }
