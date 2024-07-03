@@ -1,6 +1,6 @@
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 import { LinkV2, Table as T, Text } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
