@@ -51,8 +51,12 @@ callbacks.jwt = async function jwt(token, user) {
     !token.isRefreshTokenExpired
   ) {
     try {
-      ;[token.accessToken, token.refreshToken] =
-        await TokenService.refreshAccessToken(token.refreshToken)
+      const [accessToken, refreshToken] = await TokenService.refreshAccessToken(
+        token.refreshToken,
+      )
+
+      token.accessToken = accessToken
+      token.refreshToken = refreshToken
     } catch (error) {
       console.warn('Error refreshing access token.', error)
       // We don't know the refresh token lifetime, so we use the error response to check if it had expired
