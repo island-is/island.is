@@ -1,5 +1,5 @@
 {
-  "name": "form-system/graphql",
+  "name": "form-system-graphql",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/form-system/graphql/src",
   "projectType": "library",

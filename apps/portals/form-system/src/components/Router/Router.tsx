@@ -1,10 +1,10 @@
-import { useLocale } from "@island.is/localization"
-import { useAuth } from "@island.is/auth/react"
-import { useRef } from "react"
-import { RouterProvider, createBrowserRouter } from "react-router-dom"
+import { useLocale } from '@island.is/localization'
+import { useAuth } from '@island.is/auth/react'
+import { useRef } from 'react'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import { LoadingScreen } from '@island.is/react/components'
-import { m } from "../../lib/messages"
-import { BASE_PATH, routes } from "../../lib/routes"
+import { m } from '../../lib/messages'
+import { BASE_PATH, routes } from '../../lib/routes'
 
 export const Router = () => {
   const { formatMessage } = useLocale()
@@ -17,7 +17,7 @@ export const Router = () => {
 
   if (!router.current) {
     router.current = createBrowserRouter(routes, {
-      basename: BASE_PATH
+      basename: BASE_PATH,
     })
   }
 

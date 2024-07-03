@@ -7,7 +7,6 @@ import { AuthProvider } from '@island.is/auth/react'
 import { BASE_PATH } from '../lib/routes'
 import { Router } from '../components/Router/Router'
 
-
 export const App = () => (
   <ApolloProvider client={initializeClient(environment.baseApiUrl)}>
     <LocaleProvider locale={defaultLanguage} messages={{}}>
