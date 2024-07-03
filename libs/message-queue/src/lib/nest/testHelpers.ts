@@ -5,6 +5,7 @@ import {
   ListQueuesCommand,
   SQSClient,
 } from '@aws-sdk/client-sqs'
+import { logger } from '@island.is/logging'
 
 if (!process.env.SQS_ENDPOINT) {
   throw new Error('sqs endpoint not set')
@@ -34,14 +35,20 @@ export const makeQueueConfig = (config: Partial<Queue> = {}): Queue => ({
 })
 
 export const deleteQueues = async (): Promise<void> => {
+  logger.info(`Deleting queues with prefix ${testQueuePrefix}`)
+  logger.debug('Getting SQS client with config', { clientConfig })
   const client = new SQSClient(clientConfig)
+  logger.debug('Getting list of queues', { client })
   const { QueueUrls: urls = [] } = await client.send(
     new ListQueuesCommand({ QueueNamePrefix: testQueuePrefix }),
   )
 
+  logger.debug('Deleting queues', { urls })
   await Promise.all(
     urls.map(async (url) => {
+      logger.debug('Deleting queue', { url })
       await client.send(new DeleteQueueCommand({ QueueUrl: url }))
     }),
   )
+  logger.debug('Done deleting queues')
 }
