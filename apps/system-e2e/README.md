@@ -193,9 +193,11 @@ You will need a few things to set up your test so it can run with mountebank.
 
 Now that you are set up. You need to run a couple of commands.
 
+- Navigate to `/infra`
 - In your terminal run `yarn cli render-local-env --service=service-portal --service=api` .
   - This would show you commands how to start the mocking for `service-portal` and `api`. Replace with the services you want to test.
 - In the output you will see a docker output it will look something like this: `docker run -it --rm -p ...` copy that line and run in a new terminal window. Now your Mountebank impostor should be running.
+- Open a new terminal tab within the island.is root.
 - Now start your services, but make sure your services ports have been replaced by the ports provided by Mountebank. In this examples case that would be `XROAD_BASE_PATH=http://localhost:9388 yarn start api`
 - Run the test with Playwright and you should see your mocked data replace the API's data.
 

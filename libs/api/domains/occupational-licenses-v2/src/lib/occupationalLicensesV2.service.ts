@@ -69,7 +69,6 @@ export class OccupationalLicensesV2Service {
             }
             return {
               licenseId: addLicenseTypePrefix(l.id, 'DistrictCommissioners'),
-              licenseNumber: l.id,
               type: LicenseType.DISTRICT_COMMISSIONERS,
               issuer: l.issuerId,
               issuerTitle: l.issuerTitle,
@@ -110,7 +109,6 @@ export class OccupationalLicensesV2Service {
         ),
         type: LicenseType.DISTRICT_COMMISSIONERS,
         licenseHolderName: license.holderName,
-        licenseNumber: license.licenseInfo.id,
         issuer: license.licenseInfo.issuerId,
         profession: license.licenseInfo.title,
         dateOfBirth: info(user.nationalId).birthday,
@@ -283,7 +281,6 @@ export class OccupationalLicensesV2Service {
     const issuer: OrganizationSlugType = 'haskoli-islands'
     return {
       licenseId: addLicenseTypePrefix(data.id, 'Education'),
-      licenseNumber: data.id,
       type: LicenseType.EDUCATION,
       issuer,
       issuerTitle: data.issuer,
