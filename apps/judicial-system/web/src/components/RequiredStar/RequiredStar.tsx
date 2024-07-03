@@ -2,7 +2,7 @@ import React from 'react'
 
 import * as styles from './RequiredStar.css'
 
-const RequiredStar: React.FC = () => {
+const RequiredStar = () => {
   return <span className={styles.requiredStar}>*</span>
 }
 

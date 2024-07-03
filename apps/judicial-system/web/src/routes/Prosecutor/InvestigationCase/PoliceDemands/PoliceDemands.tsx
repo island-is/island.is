@@ -43,7 +43,7 @@ export const formatInstitutionName = (name?: string | null) => {
   return ''
 }
 
-const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
+const PoliceDemands = () => {
   const {
     workingCase,
     setWorkingCase,
