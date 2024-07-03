@@ -160,10 +160,11 @@ export const richText: RichText = (
         marginBottom={[5, 5, 5, 6]}
         marginTop={[5, 5, 5, 6]}
       >
-        {/**
-         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-         // @ts-ignore make web strict */}
-        {renderComponent[slice.__typename]?.(slice, locale)}
+        {
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          renderComponent[slice.__typename]?.(slice)
+        }
       </Box>
     )
   })

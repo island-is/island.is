@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/information/src",
   "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/service-portal/information/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/information"],
       "options": {
-        "jestConfig": "libs/service-portal/information/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/information/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -33,6 +28,5 @@
         "command": "graphql-codegen --config libs/service-portal/information/codegen.yml"
       }
     }
-  },
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+  }
 }
