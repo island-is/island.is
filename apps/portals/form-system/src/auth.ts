@@ -16,7 +16,7 @@ if (userMocked) {
     redirectPathSilent: '/silent/signin-oidc',
     switchUserRedirectUrl: '/',
     authority: environment.identityServer.authority,
-    client_id: '@admin.island.is/web', // TODO: Change this to the correct client id
+    client_id: '@island.is/web',
     scope: ['openid', 'profile'],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',
