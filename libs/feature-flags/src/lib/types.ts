@@ -9,7 +9,7 @@ import { ServerSideFeature } from './features'
 
 export interface FeatureFlagUser {
   id: string
-  attributes?: { [key: string]: string }
+  attributes: { [key: string]: string }
 }
 
 export interface FeatureFlagClient {

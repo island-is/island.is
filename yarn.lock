@@ -12084,7 +12084,7 @@ __metadata:
     babel-jest: ^29.2.1
     babel-loader: ^8.3.0
     babel-plugin-formatjs: 10.3.9
-    configcat-js: 7.0.0
+    configcat-js: 9.5.0
     dynamic-color: 0.3.0
     expo: 47.0.13
     expo-barcode-scanner: 12.1.0
@@ -26156,43 +26156,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"configcat-common@npm:^7.0.1":
-  version: 7.0.1
-  resolution: "configcat-common@npm:7.0.1"
+"configcat-common@npm:9.3.0":
+  version: 9.3.0
+  resolution: "configcat-common@npm:9.3.0"
   dependencies:
     tslib: ^2.4.1
-  checksum: b3030ac170f95160e2338455a3e72c2170b9e5a373e06d0854694887a90b5ec25eb6a5a7f18d57df1e1c45f9fbc25edce7076520f060f3e66465fa01211e5c51
+  checksum: ad853cfc629376ef7197937489b0f097d2d2c614a7e05c47933310d751ec3b1eba22561d9e254702216e8343e626c8770bce4568932542f8267694b8f94685e3
   languageName: node
   linkType: hard
 
-"configcat-js@npm:7.0.0":
-  version: 7.0.0
-  resolution: "configcat-js@npm:7.0.0"
+"configcat-js@npm:9.5.0":
+  version: 9.5.0
+  resolution: "configcat-js@npm:9.5.0"
   dependencies:
-    configcat-common: ^7.0.1
+    configcat-common: 9.3.0
     tslib: ^2.4.1
-  checksum: 62bf244c29e8907de7132946d17a8ef3064e040e7aabe4e7800bbc5a48e5106a7e6d6df2bb37810b47b74bb285de96e73c4ea0d4afb840622cbf722fb4003d1b
+  checksum: 804935f8f361036fb7d2806a40929dbbfa77e9efec7cbb4ef7154dd0ae4b9909f83695152d0610cf7b50718544e9f13df3b5a55a8a439695c0df8f508a2819b3
   languageName: node
   linkType: hard
 
-"configcat-js@npm:7.0.1":
-  version: 7.0.1
-  resolution: "configcat-js@npm:7.0.1"
+"configcat-node@npm:11.3.0":
+  version: 11.3.0
+  resolution: "configcat-node@npm:11.3.0"
   dependencies:
-    configcat-common: ^7.0.1
-    tslib: ^2.4.1
-  checksum: d939087d08ce1df769f2545e06ac7f38b68dc59ced7d7276357f11d6263a31bafcacc4972b60280db7954448db43842d2e61194881f52669b515e84fcf47a87d
-  languageName: node
-  linkType: hard
-
-"configcat-node@npm:9.1.1":
-  version: 9.1.1
-  resolution: "configcat-node@npm:9.1.1"
-  dependencies:
-    configcat-common: ^7.0.1
+    configcat-common: 9.3.0
     tslib: ^2.4.1
     tunnel: 0.0.6
-  checksum: 7c2950c67c9f018a2195533bb4c788e7cc8a4ba228347c6e474cab55c8db302e28b2f4edcce7369ab67f0b88af6b754581384dc7929970336c629362281fe6ef
+  checksum: 3b3fbe8c08e327dcd94c7c70c64dae6781ba76554916dbc7bea4f85e79d26f87c4a8bed161777025be9b886c12027a384d5254f24672af2c04df1f344a71f9c9
   languageName: node
   linkType: hard
 
@@ -36094,8 +36084,8 @@ __metadata:
     class-transformer: 0.5.1
     class-validator: 0.14.0
     classnames: 2.2.6
-    configcat-js: 7.0.1
-    configcat-node: 9.1.1
+    configcat-js: 9.5.0
+    configcat-node: 11.3.0
     contentful: 8.2.0
     contentful-cli: 1.5.14
     contentful-management: 10.12.0
