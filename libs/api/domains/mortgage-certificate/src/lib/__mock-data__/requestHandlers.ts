@@ -52,14 +52,13 @@ export const requestHandlers = [
           skilabodOgSkra: [{ vedbandayfirlitPDFSkra: 'c29tZWNvbnRlbnQ=' }],
         }),
       )
-    } else {
-      return res(
-        ctx.status(200),
-        ctx.json({
-          skilabodOgSkra: [{ vedbandayfirlitPDFSkra: '' }],
-        }),
-      )
     }
+    return res(
+      ctx.status(200),
+      ctx.json({
+        skilabodOgSkra: [{ vedbandayfirlitPDFSkra: '' }],
+      }),
+    )
   }),
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))

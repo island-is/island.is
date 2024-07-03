@@ -65,7 +65,7 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const properties = selectedProperties
       .filter(
         (property) =>
-          !incorrectPropertiesSent.find(
+          !incorrectPropertiesSent.some(
             (p) => p.propertyName === property.propertyName,
           ),
       )
@@ -78,21 +78,18 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
 
     const documents =
       await this.mortgageCertificateService.getMortgageCertificate(properties)
-    const base64List = documents.map((document) => {
-      return document.contentBase64
-    })
+    const base64List = documents.map((document) => document.contentBase64)
 
     // Call sýslumaður to get the document sealed before handing it over to the user
     const sealedBase64List = await this.syslumennService.sealDocuments(
       base64List,
     )
-    const sealedDocuments: MortgageCertificate[] =
-      sealedBase64List.skjol?.map((base64, index) => {
-        return {
-          contentBase64: base64,
-          propertyNumber: documents[index]?.propertyNumber || '',
-        }
-      }) ?? []
+    const sealedDocuments: MortgageCertificate[] = (
+      sealedBase64List.skjol ?? []
+    ).map((base64, index) => ({
+      contentBase64: base64,
+      propertyNumber: documents[index]?.propertyNumber || '',
+    }))
 
     // Notify Sýslumaður that person has received the mortgage certificate
     await this.notifySyslumenn(application, documents)
@@ -122,12 +119,10 @@ export class MortgageCertificateSubmissionService extends BaseTemplateApiService
     const persons: Person[] = [person]
 
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
-    const attachments: Attachment[] = documents.map((document) => {
-      return {
-        name: `vedbokarvottord_${document.propertyNumber}_${identityData?.nationalId}_${dateStr}.pdf`,
-        content: document.contentBase64,
-      }
-    })
+    const attachments: Attachment[] = documents.map((document) => ({
+      name: `vedbokarvottord_${document.propertyNumber}_${identityData?.nationalId}_${dateStr}.pdf`,
+      content: document.contentBase64,
+    }))
 
     const extraData: { [key: string]: string } = {
       propertyNumber: documents

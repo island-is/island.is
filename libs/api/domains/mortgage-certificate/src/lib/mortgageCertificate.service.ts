@@ -78,6 +78,9 @@ export class MortgageCertificateService {
       this.logger.error(
         'Error sending mortgage certificate to Sýslumenn',
         error,
+        propertyNumber,
+        identityData,
+        userProfileData,
       )
       return {
         hasSentRequest: false,

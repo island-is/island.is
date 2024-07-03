@@ -1,5 +1,4 @@
 import { AlertMessage, Button, Text } from '@island.is/island-ui/core'
-
 import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { formatText, getValueViaPath } from '@island.is/application/core'
@@ -72,7 +71,7 @@ export const ConfirmationField: FC<
 
       {/** Will only be visible if there are any incorrectPropertiesSent data */}
       {incorrectPropertiesSent.map((property) => (
-        <Box paddingBottom={3}>
+        <Box paddingBottom={3} key={`confirm-${property.propertyNumber}`}>
           <AlertMessage
             title={formatMessage(confirmation.labels.incorrectPropertyTitle, {
               propertyName: property.propertyName,

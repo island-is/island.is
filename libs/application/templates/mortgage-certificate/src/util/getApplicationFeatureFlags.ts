@@ -13,22 +13,13 @@ export const getApplicationFeatureFlags = async (
     MortgageCertificateFeatureFlags.ALLOW_VEHICLE,
   ]
 
-  return (
-    await Promise.all(
-      featureFlags.map(async (key: MortgageCertificateFeatureFlags) => {
-        return { key, value: !!(await client.getValue(key, false)) }
-      }),
-    )
-  ).reduce(
-    (
-      acc,
-      { key, value }: { key: MortgageCertificateFeatureFlags; value: boolean },
-    ) => {
-      return {
-        ...acc,
-        [key]: value,
-      }
-    },
-    {} as Record<MortgageCertificateFeatureFlags, boolean>,
+  const results = await Promise.all(
+    featureFlags.map(async (key: MortgageCertificateFeatureFlags) => {
+      return { key, value: !!(await client.getValue(key, false)) }
+    }),
   )
+  return results.reduce((acc, { key, value }) => {
+    acc[key] = value
+    return acc
+  }, {} as Record<MortgageCertificateFeatureFlags, boolean>)
 }

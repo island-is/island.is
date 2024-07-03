@@ -197,55 +197,54 @@ export const PropertiesOverview: FC<
     })
   }, [propertiesShown])
 
-  setBeforeSubmitCallback &&
-    setBeforeSubmitCallback(async () => {
-      const properties = propertiesShown
-        ?.filter((property) => property.exists && property.hasKMarking)
-        .map((property) => {
-          return {
-            propertyName: property.propertyName,
-            propertyNumber: property.propertyNumber,
-            propertyType: property.propertyType,
-          }
-        })
-      if (
-        !loading &&
-        !loadingCorrection &&
-        !errorValidating &&
-        !errorSendingCorrection &&
-        properties?.length !== 0
-      ) {
-        return [true, null]
-      }
-      if (
-        !loading &&
-        !loadingCorrection &&
-        !errorValidating &&
-        properties?.length !== 0 &&
-        errorSendingCorrection
-      ) {
-        // If there was no error validating the properties but had problem sending correction
-        // to sýslumenn, then we will update the list of properties on continue, and remove properties that
-        // do not exist and/or have k marking
-        // If all properties were invalid then the user will not be able to continue
-        setValue('selectedProperties.properties', properties)
-        await updateApplication({
-          variables: {
-            input: {
-              id: application.id,
-              answers: {
-                ...application.answers,
-                selectedProperties: {
-                  properties: properties,
-                },
+  setBeforeSubmitCallback?.(async () => {
+    const properties = propertiesShown
+      ?.filter((property) => property.exists && property.hasKMarking)
+      .map((property) => {
+        return {
+          propertyName: property.propertyName,
+          propertyNumber: property.propertyNumber,
+          propertyType: property.propertyType,
+        }
+      })
+    if (
+      !loading &&
+      !loadingCorrection &&
+      !errorValidating &&
+      !errorSendingCorrection &&
+      properties?.length !== 0
+    ) {
+      return [true, null]
+    }
+    if (
+      !loading &&
+      !loadingCorrection &&
+      !errorValidating &&
+      properties?.length !== 0 &&
+      errorSendingCorrection
+    ) {
+      // If there was no error validating the properties but had problem sending correction
+      // to sýslumenn, then we will update the list of properties on continue, and remove properties that
+      // do not exist and/or have k marking
+      // If all properties were invalid then the user will not be able to continue
+      setValue('selectedProperties.properties', properties)
+      await updateApplication({
+        variables: {
+          input: {
+            id: application.id,
+            answers: {
+              ...application.answers,
+              selectedProperties: {
+                properties: properties,
               },
             },
-            locale,
           },
-        })
-      }
-      return [false, '']
-    })
+          locale,
+        },
+      })
+    }
+    return [false, '']
+  })
 
   return (
     <Box paddingTop={1}>

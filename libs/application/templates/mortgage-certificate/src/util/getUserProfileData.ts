@@ -9,6 +9,11 @@ export const getUserProfileData = (
     application.externalData,
     'userProfile.data',
   ) as UserProfileData
+
+  if (!userProfileData) {
+    throw new Error('User profile data is missing from the application')
+  }
+
   return {
     email: userProfileData.email,
     mobilePhoneNumber: userProfileData.mobilePhoneNumber,

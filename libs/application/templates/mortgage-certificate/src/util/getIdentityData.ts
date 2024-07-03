@@ -7,6 +7,11 @@ export const getIdentityData = (application: Application): IdentityData => {
     application.externalData,
     'identity.data',
   ) as IdentityData
+
+  if (!identityData) {
+    throw new Error('Identity data is missing from the application')
+  }
+
   return {
     nationalId: identityData.nationalId,
     name: identityData.name,

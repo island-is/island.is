@@ -31,7 +31,7 @@ export const ShipTable: FC<
     initialRegistrationDate,
     mainMeasurements,
   } = ship
-  const isChecked = checkedProperties?.find(
+  const isChecked = checkedProperties?.some(
     (property) => property.propertyNumber === shipRegistrationNumber,
   )
   return (

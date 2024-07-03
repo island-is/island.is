@@ -20,25 +20,29 @@ export const SelectProperty: FC<
   const { application, field, errors } = props
   const { control } = useFormContext<MortgageCertificate>()
   const { formatMessage } = useLocale()
+  const initialPropertyType = getValueViaPath(
+    application.answers,
+    `${field.id}.propertyType`,
+  ) as PropertyTypes
   const [propertyType, setPropertyType] = useState<PropertyTypes | undefined>(
-    getValueViaPath(
-      application.answers,
-      `${field.id}.propertyType`,
-    ) as PropertyTypes,
+    initialPropertyType,
   )
   const { fields, append, remove } = useFieldArray({
     name: 'selectedProperties.properties',
     control,
   })
 
-  const handleAddProperty = (property: SelectedProperty, index: number) =>
-    index >= 0
-      ? handleRemoveProperty(index)
-      : append({
-          propertyNumber: property.propertyNumber,
-          propertyName: property.propertyName,
-          propertyType: propertyType?.toString() ?? '',
-        })
+  const handleAddProperty = (property: SelectedProperty, index: number) => {
+    if (index >= 0) {
+      handleRemoveProperty(index)
+    } else {
+      append({
+        propertyNumber: property.propertyNumber,
+        propertyName: property.propertyName,
+        propertyType: propertyType?.toString() ?? '',
+      })
+    }
+  }
 
   const handleRemoveProperty = (index: number) => remove(index)
 
