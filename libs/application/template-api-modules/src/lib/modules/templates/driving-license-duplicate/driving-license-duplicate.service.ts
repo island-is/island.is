@@ -8,6 +8,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
@@ -17,6 +18,23 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.DRIVING_LICENSE_DUPLICATE)
+  }
+
+  async canGetNewDuplicate({ auth }: TemplateApiModuleActionProps) {
+    const can = await this.drivingLicenseService.canGetNewDuplicate({
+      token: auth.authorization,
+    })
+    if (!can.canGetNewDuplicate) {
+      throw new TemplateApiError(
+        {
+          title: 'Ökuskírteini hæfir ekki umsókn um samrit',
+          description: '',
+          summary: can.summary,
+          defaultMessage: '',
+        },
+        400,
+      )
+    }
   }
 
   async submitApplication({

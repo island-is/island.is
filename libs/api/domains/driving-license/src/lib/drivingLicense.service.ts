@@ -14,6 +14,7 @@ import {
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
+  DrivinglicenseDuplicateValidityStatus,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -382,6 +383,47 @@ export class DrivingLicenseService {
       studentSSN,
       token,
     })
+  }
+
+  async canGetNewDuplicate(params: {
+    token: string
+  }): Promise<DrivinglicenseDuplicateValidityStatus> {
+    const { token } = params
+    const license = await this.drivingLicenseApi.getCurrentLicense({
+      token,
+    })
+
+    if (license.comments?.some((comment) => comment?.nr == '400')) {
+      return {
+        canGetNewDuplicate: false,
+        summary:
+          'Tákntala 400 fannst á ökuskírteini. Vinsamlegast hafðu samband við Sýslumann',
+      }
+    }
+    console.log(
+      '🚀 ~ DrivingLicenseService ~ canGetNewDuplicate ~ license:',
+      license,
+    )
+
+    const in_six_months = new Date(
+      new Date(Date.now()).setMonth(new Date().getMonth() + 6),
+    )
+
+    license.categories?.forEach((category) => {
+      if (category.expires === null || category.expires < in_six_months) {
+        return {
+          canGetNewDuplicate: false,
+          summary:
+            'Ökuskírteini útrunnið eða rennur út eftir 6 mánuði fyrir ' +
+            category.name,
+        }
+      }
+    })
+
+    return {
+      canGetNewDuplicate: true,
+      summary: '',
+    }
   }
 
   async drivingLicenseDuplicateSubmission(params: {

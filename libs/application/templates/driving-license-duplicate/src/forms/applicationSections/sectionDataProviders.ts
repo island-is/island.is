@@ -11,7 +11,10 @@ import {
   QualitySignatureApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { SyslumadurPaymentCatalogApi } from '../../dataProviders'
+import {
+  DuplicateEligibilityApi,
+  SyslumadurPaymentCatalogApi,
+} from '../../dataProviders'
 
 export const sectionDataProviders = buildExternalDataProvider({
   id: 'approveExternalData',
@@ -47,6 +50,11 @@ export const sectionDataProviders = buildExternalDataProvider({
     }),
     buildDataProviderItem({
       provider: CurrentLicenseApi,
+      title: '',
+      subTitle: '',
+    }),
+    buildDataProviderItem({
+      provider: DuplicateEligibilityApi,
       title: '',
       subTitle: '',
     }),
