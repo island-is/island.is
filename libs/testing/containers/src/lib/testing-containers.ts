@@ -8,6 +8,7 @@ export const startPostgres = async () => {
   postgresContainer = await new GenericContainer(
     'public.ecr.aws/docker/library/postgres:15.3-alpine',
   )
+    .withName(`postgres-${Math.random().toString(16).slice(2, 8)}`)
     .withEnv('POSTGRES_DB', name)
     .withEnv('POSTGRES_USER', name)
     .withEnv('POSTGRES_PASSWORD', name)
@@ -36,6 +37,7 @@ export const startRedisCluster = async () => {
   redisClusterContainer = await new GenericContainer(
     'public.ecr.aws/bitnami/redis-cluster:5.0.14',
   )
+    .withName(`redis-cluster-${Math.random().toString(16).slice(2, 8)}`)
     .withEnv('IP', '0.0.0.0')
     .withExposedPorts(...ports)
     .start()
@@ -43,4 +45,23 @@ export const startRedisCluster = async () => {
 
 export const stopRedis = () => {
   redisClusterContainer.stop()
+}
+
+export const startSQS = async () => {
+  const lc = await new GenericContainer(
+    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.11.1`,
+  )
+    .withName(`localstack-sqs-${Math.random().toString(16).slice(2, 8)}`)
+    .withEnv('SERVICES', 'sqs')
+    .withExposedPorts(4566)
+    .withWaitStrategy(Wait.forLogMessage('Ready.'))
+    .start()
+
+  ;(global as any).__localstack__ = lc
+
+  process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(4566)}`
+}
+
+export const stopSQS = async () => {
+  ;(global as any).__localstack__.stop()
 }

@@ -1,5 +1,5 @@
-import { StartedTestContainer } from 'testcontainers'
+import { stopSQS } from '@island.is/testing/containers'
 
 export default async () => {
-  await ((global as any).__localstack__ as StartedTestContainer).stop()
+  await stopSQS()
 }

@@ -1,5 +1,5 @@
 import { CreateQueueCommand, SQSClient } from '@aws-sdk/client-sqs'
-import { GenericContainer, Wait } from 'testcontainers'
+import { startSQS } from '@island.is/testing/containers'
 import { register } from 'tsconfig-paths'
 
 import { environment } from './environment'
@@ -8,20 +8,6 @@ import { environment } from './environment'
 const tsConfig = require(`../${require('../tsconfig.json').extends}`)
 register({ baseUrl: './', paths: tsConfig.compilerOptions.paths })
 import { startPostgres } from '@island.is/testing/containers'
-
-const startSQS = async () => {
-  const lc = await new GenericContainer(
-    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.11.1`,
-  )
-    .withEnv('SERVICES', 'sqs')
-    .withExposedPorts(4566)
-    .withWaitStrategy(Wait.forLogMessage('Ready.'))
-    .start()
-  // eslint-disable-next-line
-  ;(global as any).__localstack__ = lc
-
-  process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(4566)}`
-}
 
 const setupSqsQueue = async () => {
   try {
