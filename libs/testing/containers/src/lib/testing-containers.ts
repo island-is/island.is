@@ -49,7 +49,7 @@ export const stopRedis = () => {
 
 export const startSQS = async () => {
   const lc = await new GenericContainer(
-    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:0.11.1`,
+    `${process.env.DOCKER_REGISTRY ?? ''}localstack/localstack:3`,
   )
     .withName(`localstack-sqs-${Math.random().toString(16).slice(2, 8)}`)
     .withEnv('SERVICES', 'sqs')
