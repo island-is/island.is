@@ -24,9 +24,11 @@ import {
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes } from '../util'
+import { getApplicationFeatureFlags, getChargeItemCodes } from '../util'
 import { MortgageCertificateSchema } from './dataSchema'
 import { application } from './messages'
+import { FeatureFlagClient } from '@island.is/feature-flags'
+import { MortgageCertificateFeatureFlags } from '../util/getApplicationFeatureFlags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -110,10 +112,19 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/MortgageCertificateForm').then((module) =>
-                  Promise.resolve(module.MortgageCertificateForm),
-                ),
+              formLoader: async ({ featureFlagClient }) => {
+                const featureFlags = await getApplicationFeatureFlags(
+                  featureFlagClient as FeatureFlagClient,
+                )
+                const getForm = await import(
+                  '../forms/MortgageCertificateForm'
+                ).then((val) => val.MortgageCertificateForm)
+
+                return getForm(
+                  featureFlags[MortgageCertificateFeatureFlags.ALLOW_SHIP],
+                  featureFlags[MortgageCertificateFeatureFlags.ALLOW_VEHICLE],
+                )
+              },
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,

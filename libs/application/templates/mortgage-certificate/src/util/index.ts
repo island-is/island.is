@@ -2,11 +2,11 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application, StaticText } from '@island.is/application/types'
 import { ChargeItemCode } from '@island.is/shared/constants'
 import { SelectedProperty } from '../shared'
-import debounce from 'lodash/debounce'
 
 export { getIdentityData } from './getIdentityData'
 export { getUserProfileData } from './getUserProfileData'
 export { concatPropertyList } from './concatPropertyList'
+export { getApplicationFeatureFlags } from './getApplicationFeatureFlags'
 
 export const getChargeItemCodes = (application: Application): Array<string> => {
   return getChargeItemCodesAndExtraLabel(application).map(

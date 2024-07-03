@@ -12,9 +12,13 @@ import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { error } from '../../lib/messages'
 import { SelectedProperty } from '../../shared'
 
-export const SelectProperty: FC<React.PropsWithChildren<FieldBaseProps>> = (
-  props,
-) => {
+export const SelectProperty: FC<
+  React.PropsWithChildren<FieldBaseProps> & {
+    field: { props: { allowVehicle: boolean; allowShip: boolean } }
+  }
+> = (props) => {
+  const { allowVehicle, allowShip } = props.field.props
+  console.log('flags: ', allowShip, allowVehicle)
   const { application, field, errors } = props
   const { control } = useFormContext<MortgageCertificate>()
   const { formatMessage } = useLocale()
