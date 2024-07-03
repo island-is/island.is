@@ -17,8 +17,6 @@ export const SelectProperty: FC<
     field: { props: { allowVehicle: boolean; allowShip: boolean } }
   }
 > = (props) => {
-  const { allowVehicle, allowShip } = props.field.props
-  console.log('flags: ', allowShip, allowVehicle)
   const { application, field, errors } = props
   const { control } = useFormContext<MortgageCertificate>()
   const { formatMessage } = useLocale()
