@@ -57,15 +57,18 @@ export const startSQS = async () => {
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(global as any).__localstack__ = lc
 
   process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(4566)}`
 }
 
 export const stopSQS = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   ;(global as any).__localstack__.stop()
 }
 
 export const stopLocalstack = async () => {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await ((global as any).__localstack__ as StartedTestContainer).stop()
 }
