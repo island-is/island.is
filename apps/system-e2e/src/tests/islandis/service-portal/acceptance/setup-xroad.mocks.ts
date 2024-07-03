@@ -14,11 +14,11 @@ export const setupXroadMocks = async () => {
 
   /** Xroad mocks */
   await Promise.all([
-    loadAssetsXroadMocks(),
-    loadHealthInsuranceXroadMocks(),
-    loadSocialInsuranceXroadMocks(),
-    loadLicensesXroadMocks(),
-    loadOccupationalLicensesXroadMocks(),
+    loadAssetsXroadMocks().catch((error) => ({ error })),
+    loadHealthInsuranceXroadMocks().catch((error) => ({ error })),
+    loadSocialInsuranceXroadMocks().catch((error) => ({ error })),
+    loadLicensesXroadMocks().catch((error) => ({ error })),
+    loadOccupationalLicensesXroadMocks().catch((error) => ({ error })),
   ])
 
   const { envs } = getEnvVariables(Base.getEnv(), 'system-e2e', env)

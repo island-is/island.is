@@ -50,7 +50,7 @@ type availableModals =
   | 'ConfirmAppealAfterDeadline'
   | 'ConfirmStatementAfterDeadline'
 
-export const CaseOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const CaseOverview = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
