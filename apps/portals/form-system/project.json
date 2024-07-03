@@ -12,8 +12,9 @@
         "compiler": "babel",
         "outputPath": "dist/apps/portals/form-system",
         "index": "apps/portals/form-system/src/index.html",
-        "baseHref": "/",
+        "baseHref": "/form/",
         "main": "apps/portals/form-system/src/main.tsx",
+        "polyfills": "apps/portals/form-system/src/polyfills.ts",
         "tsConfig": "apps/portals/form-system/tsconfig.app.json",
         "assets": [
           "apps/portals/form-system/src/favicon.ico",
@@ -21,16 +22,9 @@
         ],
         "styles": ["apps/portals/form-system/src/styles.scss"],
         "scripts": [],
-        "isolatedConfig": true,
         "webpackConfig": "apps/portals/form-system/webpack.config.js"
       },
       "configurations": {
-        "development": {
-          "extractLicenses": false,
-          "optimization": false,
-          "sourceMap": true,
-          "vendorChunk": true
-        },
         "production": {
           "fileReplacements": [
             {
@@ -45,7 +39,21 @@
           "extractLicenses": true,
           "vendorChunk": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
+    },
+    "generateDevIndexHTML": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "node scripts/dockerfile-assets/bash/extract-environment.js apps/portals/form-system/src"
+        ]
+      },
+      "outputs": ["{workspaceRoot}/apps/portals/form-system/src/index.html"]
     },
     "serve": {
       "executor": "@nx/webpack:dev-server",
@@ -62,7 +70,12 @@
           "buildTarget": "portals-form-system:build:production",
           "hmr": false
         }
-      }
+      },
+      "dependsOn": [
+        {
+          "target": "generateDevIndexHTML"
+        }
+      ]
     },
     "lint": {
       "executor": "@nx/linter:eslint",

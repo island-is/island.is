@@ -16,7 +16,9 @@ const devConfig = {
 const prodConfig = {
   production: true,
   baseApiUrl: '',
-  identityServer: {},
+  identityServer: {
+    authority: getStaticEnv('SI_PUBLIC_IDENTITY_SERVER_ISSUER_URL'),
+  },
   featureFlagSdkKey: '',
   DD_RUM_CLIENT_TOKEN: 'unknown',
   DD_RUM_APPLICATION_ID: 'unknown',
@@ -25,6 +27,6 @@ const prodConfig = {
 }
 
 export default getStaticEnv('PROD_MODE') === 'true' ||
-  process.env.NODE_ENV === 'production'
+process.env.NODE_ENV === 'production'
   ? prodConfig
   : devConfig
