@@ -83,7 +83,7 @@ export const filterOptionsForUser = (
       user?.role === UserRole.PROSECUTOR_REPRESENTATIVE ||
       user?.role === UserRole.DISTRICT_COURT_ASSISTANT
     ) {
-      return option.value !== 'INVESTIGATION'
+      return option.value !== 'INVESTIGATION' && option.value !== 'INDICTMENT'
     }
 
     return true
