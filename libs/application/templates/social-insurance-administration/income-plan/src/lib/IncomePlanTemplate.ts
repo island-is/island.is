@@ -223,7 +223,8 @@ const IncomePlanTemplate: ApplicationTemplate<
               )
               set(answers, `incomePlanTable[${i}].currency`, 'IKR')
               set(answers, `incomePlanTable[${i}].income`, 'yearly')
-              set( // eigum eftir að fá þetta til baka úr þjónustunni
+              set(
+                // eigum eftir að fá þetta til baka úr þjónustunni
                 answers,
                 `incomePlanTable[${i}].incomeCategories`,
                 'Atvinnutekjur',

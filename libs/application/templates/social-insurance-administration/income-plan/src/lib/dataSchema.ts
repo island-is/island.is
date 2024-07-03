@@ -16,21 +16,27 @@ export const dataSchema = z.object({
       })
       .refine(
         ({ income, currency, incomePerYear }) =>
-          income === RatioType.YEARLY && currency === ISK ? !!incomePerYear : true,
+          income === RatioType.YEARLY && currency === ISK
+            ? !!incomePerYear
+            : true,
         {
           path: ['incomePerYear'],
         },
       )
       .refine(
         ({ income, currency, equalIncomePerMonth }) =>
-          income === RatioType.MONTHLY && currency === ISK ? !!equalIncomePerMonth : true,
+          income === RatioType.MONTHLY && currency === ISK
+            ? !!equalIncomePerMonth
+            : true,
         {
           path: ['equalIncomePerMonth'],
         },
       )
       .refine(
         ({ income, currency, equalForeignIncomePerMonth }) =>
-          income === RatioType.MONTHLY && currency !== ISK ? !!equalForeignIncomePerMonth : true,
+          income === RatioType.MONTHLY && currency !== ISK
+            ? !!equalForeignIncomePerMonth
+            : true,
         {
           path: ['equalForeignIncomePerMonth'],
         },
