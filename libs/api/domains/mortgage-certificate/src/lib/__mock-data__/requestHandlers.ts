@@ -1,6 +1,32 @@
 import { rest } from 'msw'
+import { Identity, UserProfile } from '../mortgageCertificate.types'
 
 export const MOCK_PROPERTY_NUMBER_OK = '2003292'
+
+export const MockIdentityData: Identity = {
+  nationalId: 'string',
+  name: 'string',
+  address: {
+    streetAddress: 'string',
+    city: 'string',
+    postalCode: 'string',
+  },
+}
+
+export const MockUserProfileData: UserProfile = {
+  email: 'string',
+  mobilePhoneNumber: 'string',
+}
+
+const DATA_UPLOAD: {
+  skilabod: string
+  audkenni: string
+  malsnumer: string
+} = {
+  skilabod: 'Gögn móttekin',
+  audkenni: 'string',
+  malsnumer: 'string',
+}
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
@@ -34,5 +60,8 @@ export const requestHandlers = [
         }),
       )
     }
+  }),
+  rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
+    return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),
 ]

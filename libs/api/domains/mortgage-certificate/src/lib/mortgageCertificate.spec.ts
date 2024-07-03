@@ -6,6 +6,8 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   MOCK_PROPERTY_NUMBER_OK,
+  MockIdentityData,
+  MockUserProfileData,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
@@ -77,6 +79,17 @@ describe('MortgageCertificateService', () => {
         { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
       ])
       expect(res[0].hasKMarking).toStrictEqual(true)
+    })
+  })
+
+  describe('requestCorrectionOnMortgageCertificate', () => {
+    it('hasSentRequest should be true', async () => {
+      const res = await service.requestCorrectionOnMortgageCertificate(
+        MOCK_PROPERTY_NUMBER_OK,
+        MockIdentityData,
+        MockUserProfileData,
+      )
+      expect(res.hasSentRequest).toStrictEqual(true)
     })
   })
 })

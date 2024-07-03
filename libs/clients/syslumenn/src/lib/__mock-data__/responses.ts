@@ -170,7 +170,7 @@ export const DATA_UPLOAD: Skilabod = {
 
 export const VEDBANDAYFIRLRIT_REGLUVERKI_RESPONSE: VedbandayfirlitRegluverkGeneralSvar =
   {
-    fastanum: 'string',
+    fastanum: '135791',
     tegundEignar: '0',
     fasteign: [
       {

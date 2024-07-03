@@ -295,4 +295,11 @@ describe('SyslumennService', () => {
         })
     })
   })
+
+  describe('getAllPropertyDetails', () => {
+    it('property real estate address should exist', async () => {
+      const response = await service.getAllPropertyDetails('135791', '0')
+      expect(response.propertyNumber).toStrictEqual('135791')
+    })
+  })
 })
