@@ -1,6 +1,11 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
-import { categorizedIncomeTypes, incomePlanRow, withholdingTax } from '../types'
+import {
+  categorizedIncomeTypes,
+  incomePlanRow,
+  withholdingTax,
+  latestIncomePlan,
+} from '../types'
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
@@ -21,10 +26,16 @@ export const getApplicationExternalData = (
     'socaialInsuranceAdministrationWithholdingTax.data',
   ) as withholdingTax
 
+  const latestIncomePlan = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationLatestIncomePlan.data',
+  ) as latestIncomePlan
+
   return {
     categorizedIncomeTypes,
     currencies,
     withholdingTax,
+    latestIncomePlan,
   }
 }
 
@@ -63,9 +74,10 @@ export const getCategoriesOptions = (externalData: ExternalData) => {
 
 export const getTypesOptions = (
   externalData: ExternalData,
-  categoryName: string,
+  categoryName: string | undefined,
 ) => {
   const { categorizedIncomeTypes } = getApplicationExternalData(externalData)
+  if (categoryName === undefined) return []
 
   return categorizedIncomeTypes
     .filter((item) => item.categoryName === categoryName)

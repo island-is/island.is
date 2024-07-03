@@ -52,7 +52,7 @@ export const incomePlanFormMessage: MessageDir = {
     description: {
       id: 'ip.application:income.plan.description',
       defaultMessage:
-        'Hér er tillaga að tekjuáætlun. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í nýjasta skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
+        'Hér er tillaga að tekjuáætlun. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í nýjasta skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn. Tekjur á ári eru sýndar í þeim gjaldmiðli sem þær voru greiddar í.',
       description: 'english translation',
     },
     registerIncome: {
@@ -115,10 +115,20 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Tekjur á ári',
       description: 'Income per year',
     },
+    foreignIncomePerYear: {
+      id: 'pp.application:foreign.income.per.year',
+      defaultMessage: 'Erlendar tekjur á ári',
+      description: 'Foreign income per year',
+    },
     equalIncomePerMonth: {
       id: 'pp.application:equal.income.per.month',
       defaultMessage: 'Jafnar tekjur á mánuði',
       description: 'Equal income per month',
+    },
+    equalForeignIncomePerMonth: {
+      id: 'pp.application:equal.foreign.income.per.month',
+      defaultMessage: 'Erlendar tekjur á mánuði',
+      description: 'Foreign income per month',
     },
     monthlyDistributionOfIncome: {
       id: 'pp.application:monthly.distribution.of.income',

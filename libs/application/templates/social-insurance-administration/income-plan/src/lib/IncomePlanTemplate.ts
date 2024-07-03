@@ -52,7 +52,7 @@ const IncomePlanTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
-        exit: ['setWithholdingTaxInTable'],
+        exit: ['populateIncomeTable'],
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
@@ -184,42 +184,65 @@ const IncomePlanTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
-      setWithholdingTaxInTable: assign((context) => {
+      populateIncomeTable: assign((context) => {
         const { application } = context
         const { answers } = application
-        const { withholdingTax } = getApplicationExternalData(
+        const { withholdingTax, latestIncomePlan } = getApplicationExternalData(
           application.externalData,
         )
 
-        withholdingTax &&
-          withholdingTax.incomeTypes?.map((income, i) => {
-            set(answers, `incomePlanTable[${i}].incomeTypes`, income.incomeType)
+        if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
+          latestIncomePlan.incomeTypeLines.map((income, i) => {
+            set(answers, `incomePlanTable[${i}].incomeTypes`, income.name)
             set(
               answers,
               `incomePlanTable[${i}].incomePerYear`,
-              String(income.total),
+              String(income.totalSum),
             )
-            set(answers, `incomePlanTable[${i}].currency`, 'IKR')
-            set(answers, `incomePlanTable[${i}].income`, 'yearly')
-            set(
-              answers,
-              `incomePlanTable[${i}].incomeCategories`,
-              'Atvinnutekjur',
-            )
-
-            set(answers, `incomePlanTable[${i}].january`, income.january)
-            set(answers, `incomePlanTable[${i}].february`, income.february)
-            set(answers, `incomePlanTable[${i}].march`, income.march)
-            set(answers, `incomePlanTable[${i}].april`, income.april)
-            set(answers, `incomePlanTable[${i}].may`, income.may)
-            set(answers, `incomePlanTable[${i}].june`, income.june)
-            set(answers, `incomePlanTable[${i}].july`, income.july)
-            set(answers, `incomePlanTable[${i}].august`, income.august)
-            set(answers, `incomePlanTable[${i}].september`, income.september)
-            set(answers, `incomePlanTable[${i}].october`, income.october)
-            set(answers, `incomePlanTable[${i}].november`, income.november)
-            set(answers, `incomePlanTable[${i}].december`, income.december)
+            set(answers, `incomePlanTable[${i}].currency`, income.currency)
+            set(answers, `incomePlanTable[${i}].income`, 'yearly') // er þetta ok?
+            // vantar að fá sent til baka category
+            // set(
+            //   answers,
+            //   `incomePlanTable[${i}].incomeCategories`,
+            //   'Atvinnutekjur',
+            // )
           })
+        } else {
+          withholdingTax &&
+            withholdingTax.incomeTypes?.map((income, i) => {
+              set(
+                answers,
+                `incomePlanTable[${i}].incomeTypes`,
+                income.incomeType,
+              )
+              set(
+                answers,
+                `incomePlanTable[${i}].incomePerYear`,
+                String(income.total),
+              )
+              set(answers, `incomePlanTable[${i}].currency`, 'IKR')
+              set(answers, `incomePlanTable[${i}].income`, 'yearly')
+              set( // eigum eftir að fá þetta til baka úr þjónustunni
+                answers,
+                `incomePlanTable[${i}].incomeCategories`,
+                'Atvinnutekjur',
+              )
+
+              set(answers, `incomePlanTable[${i}].january`, income.january)
+              set(answers, `incomePlanTable[${i}].february`, income.february)
+              set(answers, `incomePlanTable[${i}].march`, income.march)
+              set(answers, `incomePlanTable[${i}].april`, income.april)
+              set(answers, `incomePlanTable[${i}].may`, income.may)
+              set(answers, `incomePlanTable[${i}].june`, income.june)
+              set(answers, `incomePlanTable[${i}].july`, income.july)
+              set(answers, `incomePlanTable[${i}].august`, income.august)
+              set(answers, `incomePlanTable[${i}].september`, income.september)
+              set(answers, `incomePlanTable[${i}].october`, income.october)
+              set(answers, `incomePlanTable[${i}].november`, income.november)
+              set(answers, `incomePlanTable[${i}].december`, income.december)
+            })
+        }
 
         return context
       }),

@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { RatioType } from './constants'
+import { ISK, RatioType } from './constants'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -11,20 +11,28 @@ export const dataSchema = z.object({
         income: z.enum([RatioType.YEARLY, RatioType.MONTHLY]),
         incomePerYear: z.string().optional(),
         equalIncomePerMonth: z.string().optional(),
+        equalForeignIncomePerMonth: z.string().optional(),
         currency: z.string(),
       })
       .refine(
-        ({ income, incomePerYear }) =>
-          income === RatioType.YEARLY ? !!incomePerYear : true,
+        ({ income, currency, incomePerYear }) =>
+          income === RatioType.YEARLY && currency === ISK ? !!incomePerYear : true,
         {
           path: ['incomePerYear'],
         },
       )
       .refine(
-        ({ income, equalIncomePerMonth }) =>
-          income === RatioType.MONTHLY ? !!equalIncomePerMonth : true,
+        ({ income, currency, equalIncomePerMonth }) =>
+          income === RatioType.MONTHLY && currency === ISK ? !!equalIncomePerMonth : true,
         {
           path: ['equalIncomePerMonth'],
+        },
+      )
+      .refine(
+        ({ income, currency, equalForeignIncomePerMonth }) =>
+          income === RatioType.MONTHLY && currency !== ISK ? !!equalForeignIncomePerMonth : true,
+        {
+          path: ['equalForeignIncomePerMonth'],
         },
       ),
   ),

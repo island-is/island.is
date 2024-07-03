@@ -93,12 +93,28 @@ export const IncomePlanForm: Form = buildForm({
                   width: 'half',
                   isSearchable: true,
                   options: (application, activeField) => {
-                    if (activeField?.incomeCategories !== undefined) {
-                      return getTypesOptions(
-                        application.externalData,
-                        activeField.incomeCategories,
-                      )
-                    }
+                    return getTypesOptions(
+                      application.externalData,
+                      activeField?.incomeCategories,
+                    )
+                  },
+                },
+                currency: {
+                  component: 'select',
+                  label: incomePlanFormMessage.incomePlan.currency,
+                  placeholder: incomePlanFormMessage.incomePlan.selectCurrency,
+                  isSearchable: true,
+                  options: (application, activeField) => {
+                    const { currencies } = getApplicationExternalData(
+                      application.externalData,
+                    )
+
+                    const hideISKCurrency =
+                      activeField?.incomeTypes === FOREIGN_BASIC_PENSION
+                        ? ISK
+                        : ''
+
+                    return getCurrencies(currencies, hideISKCurrency)
                   },
                 },
                 income: {
@@ -116,6 +132,37 @@ export const IncomePlanForm: Form = buildForm({
                     },
                   ],
                 },
+                equalForeignIncomePerMonth: {
+                  component: 'input',
+                  label:
+                    incomePlanFormMessage.incomePlan.equalForeignIncomePerMonth,
+                  width: 'half',
+                  type: 'number',
+                  displayInTable: false,
+                  currency: true,
+                  suffix: '',
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.currency !== ISK
+                    )
+                  },
+                },
+                equalIncomePerMonth: {
+                  component: 'input',
+                  label: incomePlanFormMessage.incomePlan.equalIncomePerMonth,
+                  width: 'half',
+                  type: 'number',
+                  displayInTable: false,
+                  currency: true,
+                  suffix: '',
+                  condition: (_, activeField) => {
+                    return (
+                      activeField?.income === RatioType.MONTHLY &&
+                      activeField?.currency === ISK
+                    )
+                  },
+                },
                 incomePerYear: {
                   component: 'input',
                   label: incomePlanFormMessage.incomePlan.incomePerYear,
@@ -131,42 +178,6 @@ export const IncomePlanForm: Form = buildForm({
                       activeField?.income === RatioType.YEARLY ||
                       activeField?.income === RatioType.MONTHLY
                     )
-                  },
-                },
-                currency: {
-                  component: 'select',
-                  label: incomePlanFormMessage.incomePlan.currency,
-                  placeholder: incomePlanFormMessage.incomePlan.selectCurrency,
-                  width: 'half',
-                  isSearchable: true,
-                  condition: (_, activeField) => {
-                    return (
-                      activeField?.income === RatioType.YEARLY ||
-                      activeField?.income === RatioType.MONTHLY
-                    )
-                  },
-                  options: (application, activeField) => {
-                    const { currencies } = getApplicationExternalData(
-                      application.externalData,
-                    )
-
-                    const hideISKCurrency =
-                      activeField?.incomeTypes === FOREIGN_BASIC_PENSION
-                        ? ISK
-                        : ''
-
-                    return getCurrencies(currencies, hideISKCurrency)
-                  },
-                },
-                equalIncomePerMonth: {
-                  component: 'input',
-                  label: incomePlanFormMessage.incomePlan.equalIncomePerMonth,
-                  type: 'number',
-                  displayInTable: false,
-                  currency: true,
-                  suffix: '',
-                  condition: (_, activeField) => {
-                    return activeField?.income === RatioType.MONTHLY
                   },
                 },
                 unevenIncomePerYear: {
@@ -391,6 +402,12 @@ export const IncomePlanForm: Form = buildForm({
                   incomePerYear: (value) =>
                     value && formatCurrencyWithoutSuffix(value),
                 },
+                header: [
+                  incomePlanFormMessage.incomePlan.incomeType,
+                  incomePlanFormMessage.incomePlan.incomePerYear,
+                  incomePlanFormMessage.incomePlan.currency,
+                ],
+                rows: ['incomeTypes', 'incomePerYear', 'currency'],
               },
             }),
           ],

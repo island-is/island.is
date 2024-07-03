@@ -34,3 +34,17 @@ export interface incomePlanRow {
   incomePerYear: string
   currency: string
 }
+
+export interface latestIncomePlan {
+  year: string
+  origin: string
+  status: string
+  incomeTypeLines: incomeType[]
+  registrationDate: string
+}
+
+interface incomeType {
+  name: string
+  currency: string
+  totalSum: number
+}
