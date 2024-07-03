@@ -30,7 +30,7 @@ import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
 
-const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealResult = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [modalVisible, setModalVisible] = React.useState<modalTypes>('none')

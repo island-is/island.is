@@ -69,6 +69,7 @@ const IndictmentOverview = () => {
                 postponedIndefinitelyExplanation={
                   workingCase.postponedIndefinitelyExplanation
                 }
+                courtSessionType={workingCase.courtSessionType}
               />
             </Box>
           )}

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 
 import {
   isPrisonSystemUser,
@@ -10,7 +10,7 @@ import PublicProsecutorCases from '../../PublicProsecutor/Cases/PublicProsecutor
 import Cases from './Cases'
 import PrisonCases from './PrisonCases'
 
-export const AllCases: React.FC = () => {
+export const AllCases: FC = () => {
   const { user } = useContext(UserContext)
 
   if (isPrisonSystemUser(user)) {

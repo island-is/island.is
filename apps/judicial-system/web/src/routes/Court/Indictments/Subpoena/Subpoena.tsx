@@ -100,11 +100,7 @@ const Subpoena: FC = () => {
     ],
   )
 
-  const stepIsValid = isSubpoenaStepValid(
-    workingCase,
-    courtDate?.date,
-    courtDate?.location,
-  )
+  const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
   return (
     <PageLayout
@@ -183,7 +179,7 @@ const Subpoena: FC = () => {
           <CourtArrangements
             handleCourtDateChange={handleCourtDateChange}
             handleCourtRoomChange={handleCourtRoomChange}
-            courtDate={courtDate}
+            courtDate={workingCase.arraignmentDate}
             dateTimeDisabled={isArraignmentDone}
             courtRoomDisabled={isArraignmentDone}
             courtRoomRequired
