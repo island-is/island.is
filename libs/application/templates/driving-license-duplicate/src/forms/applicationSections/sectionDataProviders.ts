@@ -39,6 +39,11 @@ export const sectionDataProviders = buildExternalDataProvider({
       subTitle: '',
     }),
     buildDataProviderItem({
+      provider: DuplicateEligibilityApi,
+      title: '',
+      subTitle: '',
+    }),
+    buildDataProviderItem({
       provider: UserProfileApi,
       title: m.dataCollectionUserProfileTitle,
       subTitle: m.dataCollectionUserProfileSubtitle,
@@ -50,11 +55,6 @@ export const sectionDataProviders = buildExternalDataProvider({
     }),
     buildDataProviderItem({
       provider: CurrentLicenseApi,
-      title: '',
-      subTitle: '',
-    }),
-    buildDataProviderItem({
-      provider: DuplicateEligibilityApi,
       title: '',
       subTitle: '',
     }),

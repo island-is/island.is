@@ -24,6 +24,7 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     const can = await this.drivingLicenseService.canGetNewDuplicate({
       token: auth.authorization,
     })
+    console.log(JSON.stringify(can))
     if (!can.canGetNewDuplicate) {
       throw new TemplateApiError(
         {

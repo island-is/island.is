@@ -400,25 +400,32 @@ export class DrivingLicenseService {
           'Tákntala 400 fannst á ökuskírteini. Vinsamlegast hafðu samband við Sýslumann',
       }
     }
-    console.log(
-      '🚀 ~ DrivingLicenseService ~ canGetNewDuplicate ~ license:',
-      license,
-    )
 
     const in_six_months = new Date(
       new Date(Date.now()).setMonth(new Date().getMonth() + 6),
     )
 
-    license.categories?.forEach((category) => {
-      if (category.expires === null || category.expires < in_six_months) {
+    for (const category of license.categories) {
+      if (category.expires === null) {
         return {
           canGetNewDuplicate: false,
           summary:
-            'Ökuskírteini útrunnið eða rennur út eftir 6 mánuði fyrir ' +
-            category.name,
+            'Ökuskírteini vantar skráningu fyrir því hvenær það rennur út fyrir: ' +
+            category.name +
+            '. Vinsamlegast hafðu samband við Sýslumann',
         }
       }
-    })
+
+      if (category.expires < in_six_months) {
+        return {
+          canGetNewDuplicate: false,
+          summary:
+            'Ökuskírteini útrunnið eða rennur út á næstu 6 mánuðum fyrir: ' +
+            category.name +
+            '. Vinsamlegast hafðu samband við Sýslumann',
+        }
+      }
+    }
 
     return {
       canGetNewDuplicate: true,
