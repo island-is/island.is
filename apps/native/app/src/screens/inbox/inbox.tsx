@@ -52,7 +52,7 @@ type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
   | (DocumentV2 & { type: undefined })
 
-const DEFAULT_PAGE_SIZE = 50
+const DEFAULT_PAGE_SIZE = 12
 
 const LoadingWrapper = styled.View`
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
