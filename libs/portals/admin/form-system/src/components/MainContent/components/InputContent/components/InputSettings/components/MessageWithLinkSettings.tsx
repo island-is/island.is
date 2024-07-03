@@ -12,8 +12,14 @@ import { useIntl } from 'react-intl'
 import { m } from '../../../../../../../lib/messages'
 
 export const MessageWithLinkSettings = () => {
-  const { control, controlDispatch, focus, setFocus, updateActiveItem } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    focus,
+    setFocus,
+    updateActiveItem,
+    translationButtons,
+  } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemInput
   const { inputSettings } = currentItem
   const { formatMessage } = useIntl()
@@ -78,6 +84,10 @@ export const MessageWithLinkSettings = () => {
                 }
                 onFocus={(e) => setFocus(e.target.value)}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                buttons={translationButtons(
+                  inputSettings?.buttonText?.is ?? '',
+                  'SET_MESSAGE_WITH_LINK_SETTINGS',
+                )}
               />
             </Column>
           </Row>

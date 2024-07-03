@@ -82,7 +82,7 @@ type ChangeActions =
   | { type: 'CHANGE_INVALIDATION_DATE'; payload: { value: Date } }
   | {
       type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP'
-      payload: { value: boolean }
+      payload: { value: boolean; update: (updatedForm: FormSystemForm) => void }
     }
   | { type: 'CHANGE_FORM_SETTINGS'; payload: { newForm: FormSystemForm } }
   | {
@@ -154,6 +154,13 @@ type InputSettingsActions =
       }
     }
   | { type: 'ADD_LIST_ITEM' }
+  | {
+      type: 'SET_LIST_TYPE'
+      payload: {
+        listType: string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
 
 export type ControlAction =
   | ActiveItemActions
@@ -435,13 +442,15 @@ export const controlReducer = (
       }
     }
     case 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP': {
-      return {
+      const updatedState = {
         ...state,
         form: {
           ...form,
           stopProgressOnValidatingStep: action.payload.value,
         },
       }
+      action.payload.update({ ...updatedState.form })
+      return updatedState
     }
     case 'TOGGLE_DEPENDENCY': {
       const { activeId, itemId, update } = action.payload
@@ -704,6 +713,31 @@ export const controlReducer = (
             }
             return l
           }),
+        },
+      }
+      update({ type: 'Input', data: newInput })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Input',
+          data: newInput,
+        },
+        form: {
+          ...form,
+          inputsList: inputs?.map((i) =>
+            i?.guid === input.guid ? newInput : i,
+          ),
+        },
+      }
+    }
+    case 'SET_LIST_TYPE': {
+      const input = activeItem.data as FormSystemInput
+      const { listType, update } = action.payload
+      const newInput = {
+        ...input,
+        inputSettings: {
+          ...input.inputSettings,
+          listType: listType,
         },
       }
       update({ type: 'Input', data: newInput })
