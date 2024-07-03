@@ -3,14 +3,10 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/adr-and-machine-license/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/adr-and-machine-license/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "update-openapi-document": {
       "executor": "nx:run-commands",
@@ -30,8 +26,7 @@
         "{workspaceRoot}/coverage/libs/clients/adr-and-machine-license"
       ],
       "options": {
-        "jestConfig": "libs/clients/adr-and-machine-license/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/adr-and-machine-license/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -41,6 +36,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }
