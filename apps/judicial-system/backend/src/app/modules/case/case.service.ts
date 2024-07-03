@@ -702,6 +702,15 @@ export class CaseService {
       })
     }
 
+    if (theCase.state === CaseState.WAITING_FOR_CANCELLATION) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
+        user,
+        caseId: theCase.id,
+        body: { withCourtCaseNumber: false },
+      })
+    }
+
     return this.messageService.sendMessagesToQueue(messages)
   }
 
@@ -847,7 +856,10 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private getRevokeMessages(user: TUser, theCase: Case): CaseMessage[] {
+  private getRevokeNotificationMessages(
+    user: TUser,
+    theCase: Case,
+  ): CaseMessage[] {
     return [
       {
         type: MessageType.NOTIFICATION,
@@ -863,7 +875,7 @@ export class CaseService {
     user: TUser,
   ): Promise<void> {
     return this.messageService.sendMessagesToQueue(
-      this.getRevokeMessages(user, theCase),
+      this.getRevokeNotificationMessages(user, theCase),
     )
   }
 
@@ -871,9 +883,18 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    return this.messageService.sendMessagesToQueue(
-      this.getRevokeMessages(user, theCase),
-    )
+    const messages = this.getRevokeNotificationMessages(user, theCase)
+
+    if (theCase.courtCaseNumber) {
+      messages.push({
+        type: MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE,
+        user,
+        caseId: theCase.id,
+        body: { withCourtCaseNumber: true },
+      })
+    }
+
+    return this.messageService.sendMessagesToQueue(messages)
   }
 
   private async addMessagesForAppealedCaseToQueue(
