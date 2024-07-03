@@ -401,7 +401,7 @@ export class DrivingLicenseService {
       }
     }
 
-    const in_six_months = new Date(
+    const inSixMonths = new Date(
       new Date(Date.now()).setMonth(new Date().getMonth() + 6),
     )
 
@@ -416,7 +416,7 @@ export class DrivingLicenseService {
         }
       }
 
-      if (category.expires < in_six_months) {
+      if (category.expires < inSixMonths) {
         return {
           canGetNewDuplicate: false,
           summary:
