@@ -3,21 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/estate/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/estate/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/estate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/estate/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/templates/estate"]
     },
@@ -27,6 +22,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/estate/src/lib/messages.ts"
       }
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }

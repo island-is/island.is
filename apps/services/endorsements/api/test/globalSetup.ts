@@ -8,8 +8,10 @@ import { startPostgres } from '@island.is/testing/containers'
 
 export default async () => {
   await startPostgres()
-  execSync('yarn nx run services-endorsements-api:migrate --env test')
   execSync(
-    'yarn nx run services-endorsements-api:seed --env test --seed 20210505212921-e2e-tests.js',
+    'cross-env NODE_ENV=test yarn nx run services-endorsements-api:migrate',
+  )
+  execSync(
+    'cross-env NODE_ENV=test yarn nx run services-endorsements-api:seed --seed 20210505212921-e2e-tests.js',
   )
 }

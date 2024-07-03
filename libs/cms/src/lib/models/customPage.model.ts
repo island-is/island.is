@@ -1,5 +1,5 @@
 import { GraphQLJSONObject } from 'graphql-type-json'
-import type { SystemMetadata } from 'api-cms-domain'
+import type { SystemMetadata } from '@island.is/shared/types'
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
