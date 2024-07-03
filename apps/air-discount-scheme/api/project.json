@@ -4,6 +4,7 @@
   "sourceRoot": "apps/air-discount-scheme/api/src",
   "projectType": "application",
   "prefix": "air-discount-scheme-api",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -31,18 +32,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/air-discount-scheme/api/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/air-discount-scheme/api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/air-discount-scheme/api/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/api"]
     },
@@ -53,7 +48,8 @@
       },
       "outputs": ["{projectRoot}/src/api.graphql"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

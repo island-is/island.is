@@ -45,8 +45,9 @@ import {
   getCustodyNoticePdfAsString,
   getRequestPdfAsBuffer,
   getRequestPdfAsString,
+  stripHtmlTags,
 } from '../../formatters'
-import { courtUpload } from '../../messages'
+import { courtUpload, notifications } from '../../messages'
 import { AwsS3Service } from '../aws-s3'
 import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
@@ -679,6 +680,46 @@ export class InternalCaseService {
         return { delivered: false }
       })
   }
+
+  async deliverIndictmentCancellationNoticeToCourt(
+    theCase: Case,
+    withCourtCaseNumber: boolean,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    return this.courtService
+      .updateIndictmentCaseWithCancellationNotice(
+        user,
+        theCase.id,
+        theCase.court?.name,
+        theCase.courtCaseNumber,
+        this.formatMessage(notifications.courtRevokedIndictmentEmail.subject, {
+          courtCaseNumber:
+            (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+        }),
+        stripHtmlTags(
+          `${this.formatMessage(
+            notifications.courtRevokedIndictmentEmail.body,
+            {
+              prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
+              courtCaseNumber:
+                (withCourtCaseNumber && theCase.courtCaseNumber) || 'NONE',
+            },
+          )} ${this.formatMessage(notifications.emailTail)}`,
+        ),
+      )
+      .then(() => ({ delivered: true }))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to update indictment case ${theCase.id} with cancellation notice`,
+          { reason },
+        )
+
+        return { delivered: false }
+      })
+  }
+
   async deliverCaseFilesRecordToCourt(
     theCase: Case,
     policeCaseNumber: string,

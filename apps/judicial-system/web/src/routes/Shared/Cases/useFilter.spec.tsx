@@ -1,4 +1,5 @@
 import {
+  CaseListEntry,
   CaseType,
   User,
   UserRole,
@@ -71,18 +72,18 @@ describe('useFilter - filterOptionsForUser', () => {
 describe('useFilter - filterCases', () => {
   test('should return all cases', async () => {
     const user = {} as User
-    const cases = [{ id: '1' }, { id: '2' }] as Case[]
+    const cases = [{ id: '1' }, { id: '2' }] as CaseListEntry[]
 
     const result = filterCases('ALL_CASES', cases, user)
     expect(result.length).toBe(2)
   })
 
-  test('should return indicitment cases', async () => {
+  test('should return indictment cases', async () => {
     const user = {} as User
     const cases = [
       { id: '1' },
       { id: '2', type: CaseType.INDICTMENT },
-    ] as Case[]
+    ] as CaseListEntry[]
 
     const result = filterCases('INDICTMENT', cases, user)
     expect(result.length).toBe(1)
@@ -96,7 +97,7 @@ describe('useFilter - filterCases', () => {
     const cases = [
       { id: '1', type: CaseType.CUSTODY },
       { id: '2', type: CaseType.INDICTMENT },
-    ] as Case[]
+    ] as CaseListEntry[]
 
     const result = filterCases('INVESTIGATION', cases, user)
     expect(result.length).toBe(1)
@@ -118,7 +119,7 @@ describe('useFilter - filterCases', () => {
       { id: '7', judge: otherUser },
       { id: '8', registrar: otherUser },
       { id: '9', creatingProsecutor: otherUser },
-    ] as Case[]
+    ] as CaseListEntry[]
 
     const result = filterCases('MY_CASES', cases, user)
     expect(result.length).toBe(4)

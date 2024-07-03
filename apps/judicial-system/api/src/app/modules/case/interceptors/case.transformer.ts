@@ -1,12 +1,15 @@
 import {
   CaseAppealDecision,
   CaseType,
+  EventType,
+  getIndictmentVerdictAppealDeadline,
   getStatementDeadline,
   isIndictmentCase,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { Case } from '../models/case.model'
 
 const getDays = (days: number) => days * 24 * 60 * 60 * 1000
@@ -26,6 +29,7 @@ interface IndictmentInfo {
   indictmentAppealDeadline?: string
   indictmentVerdictViewedByAll?: boolean
   indictmentVerdictAppealDeadline?: string
+  indictmentCompletedDate?: string
 }
 
 const isAppealableDecision = (decision?: CaseAppealDecision | null) => {
@@ -100,6 +104,7 @@ export const getIndictmentInfo = (
   rulingDate?: string,
   caseType?: CaseType,
   defendants?: Defendant[],
+  eventLog?: EventLog[],
 ): IndictmentInfo => {
   const indictmentInfo: IndictmentInfo = {}
 
@@ -117,22 +122,18 @@ export const getIndictmentInfo = (
       (defendant) => defendant.verdictViewDate,
     )
 
-    if (!verdictViewDates || verdictViewDates?.some((date) => !date)) {
-      indictmentInfo.indictmentVerdictViewedByAll = false
-    } else {
-      indictmentInfo.indictmentVerdictViewedByAll = true
-      const newestViewDate = verdictViewDates
-        ?.filter((date): date is string => date !== undefined)
-        .map((date) => new Date(date))
-        .reduce(
-          (newest, current) => (current > newest ? current : newest),
-          new Date(0),
-        )
-      const expiryDate = new Date(newestViewDate.getTime())
-      expiryDate.setDate(newestViewDate.getDate() + 28)
+    const verdictAppealDeadline =
+      getIndictmentVerdictAppealDeadline(verdictViewDates)
+    indictmentInfo.indictmentVerdictAppealDeadline = verdictAppealDeadline
+      ? verdictAppealDeadline.toISOString()
+      : undefined
 
-      indictmentInfo.indictmentVerdictAppealDeadline = expiryDate.toISOString()
-    }
+    indictmentInfo.indictmentVerdictViewedByAll =
+      indictmentInfo.indictmentVerdictAppealDeadline ? true : false
+
+    indictmentInfo.indictmentCompletedDate = eventLog
+      ?.find((log) => log.eventType === EventType.INDICTMENT_COMPLETED)
+      ?.created?.toString()
   }
 
   return indictmentInfo
@@ -167,6 +168,7 @@ export const transformCase = (theCase: Case): Case => {
     theCase.rulingDate,
     theCase.type,
     theCase.defendants,
+    theCase.eventLogs,
   )
   const defendants = getDefendantsInfo(theCase.defendants, theCase.type)
 
