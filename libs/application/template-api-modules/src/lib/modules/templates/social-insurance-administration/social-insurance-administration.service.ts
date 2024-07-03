@@ -511,6 +511,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
+    console.log('--> application ', application)
     if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
       const { applicationType } = getOAPApplicationAnswers(application.answers)
 

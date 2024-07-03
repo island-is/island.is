@@ -18,6 +18,7 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationChildrenApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
@@ -90,6 +91,10 @@ export const PrerequisitesForm: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
               title: '',
             }),
           ],
