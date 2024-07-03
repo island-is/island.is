@@ -19,6 +19,7 @@ export const routes: RouteObject[] = [
       },
       {
         path: '/:slug',
+        // Forms screen where a new form is created if the user has not created a form before, otherwise the user sees a list of formerly created forms with the option to create a new one
       },
       {
         path: '/:slug/:id'
