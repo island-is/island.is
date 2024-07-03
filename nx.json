@@ -137,6 +137,7 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
+    "nodeVersion": [{ "runtime": "node --version" }],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
@@ -146,6 +147,7 @@
     ],
     "production": [
       "default",
+      "nodeVersion",
       "!{projectRoot}/.eslintrc.json",
       "!{projectRoot}/.storybook/**/*",
       "!{projectRoot}/**/*.stories.@(js|jsx|ts|tsx|mdx)",
