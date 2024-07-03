@@ -65,3 +65,7 @@ export const startSQS = async () => {
 export const stopSQS = async () => {
   ;(global as any).__localstack__.stop()
 }
+
+export const stopLocalstack = async () => {
+  await ((global as any).__localstack__ as StartedTestContainer).stop()
+}
