@@ -653,12 +653,12 @@ export class InternalCaseService {
       theCase.judge?.nationalId === nationalId
         ? {
             name: theCase.judge?.name,
-            role: UserRole.DISTRICT_COURT_JUDGE,
+            role: theCase.judge?.role,
           }
         : theCase.registrar?.nationalId === nationalId
         ? {
             name: theCase.registrar?.name,
-            role: UserRole.DISTRICT_COURT_REGISTRAR,
+            role: theCase.registrar?.role,
           }
         : {}
 
