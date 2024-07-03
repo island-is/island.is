@@ -56,7 +56,10 @@ const HearingArrangements = () => {
 
   const initialize = useCallback(() => {
     if (!workingCase.arraignmentDate && workingCase.requestedCourtDate) {
-      handleCourtDateChange(new Date(workingCase.requestedCourtDate))
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        arraignmentDate: { date: theCase.requestedCourtDate },
+      }))
     }
 
     setAndSendCaseToServer(
@@ -70,12 +73,7 @@ const HearingArrangements = () => {
       workingCase,
       setWorkingCase,
     )
-  }, [
-    handleCourtDateChange,
-    setAndSendCaseToServer,
-    setWorkingCase,
-    workingCase,
-  ])
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
 
   useOnceOn(isCaseUpToDate, initialize)
 
@@ -110,7 +108,7 @@ const HearingArrangements = () => {
 
   const stepIsValid = isCourtHearingArrangementsStepValidIC(
     workingCase,
-    courtDate?.date,
+    courtDate,
   )
 
   const isCorrectingRuling = workingCase.notifications?.some(
@@ -304,7 +302,7 @@ const HearingArrangements = () => {
               <CourtArrangements
                 handleCourtDateChange={handleCourtDateChange}
                 handleCourtRoomChange={handleCourtRoomChange}
-                courtDate={courtDate}
+                courtDate={workingCase.arraignmentDate}
                 courtRoomDisabled={isCorrectingRuling}
                 dateTimeDisabled={isCorrectingRuling}
               />
