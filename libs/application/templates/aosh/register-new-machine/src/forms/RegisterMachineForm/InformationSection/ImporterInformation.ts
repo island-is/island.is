@@ -4,9 +4,13 @@ import {
   buildSubSection,
   //   buildDescriptionField,
   buildPhoneField,
+  buildDescriptionField,
+  buildRadioField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
+import { Answer, NO, YES } from '@island.is/application/types'
+import { NewMachineAnswers } from '../../..'
 
 export const ImporterInformationSubSection = buildSubSection({
   id: 'importerInformation',
@@ -17,11 +21,6 @@ export const ImporterInformationSubSection = buildSubSection({
       title: information.labels.importer.title,
       description: information.labels.importer.description,
       children: [
-        // buildDescriptionField({
-        //   id: 'importerInformation.mainSeller',
-        //   title: information.labels.importer.subtitle,
-        //   titleVariant: 'h5',
-        // }),
         buildTextField({
           id: 'importerInformation.name',
           title: information.labels.importer.name,
@@ -70,6 +69,88 @@ export const ImporterInformationSubSection = buildSubSection({
           variant: 'email',
           defaultValue: (application: Application) =>
             application.externalData?.userProfile?.data?.email,
+        }),
+        buildRadioField({
+          id: 'importerInformation.isOwnerOtherThanImporter',
+          title: information.labels.importer.isOwnerOtherThenImporter,
+          width: 'half',
+          space: 'gutter',
+          options: [
+            {
+              value: YES,
+              label: information.labels.radioButtons.radioOptionYes,
+            },
+            {
+              value: NO,
+              label: information.labels.radioButtons.radioOptionNo,
+            },
+          ],
+        }),
+        buildTextField({
+          id: 'importerInformation.otherOwnerName',
+          title: information.labels.otherOwner.name,
+          condition: (answer: Answer) => {
+            const answers = answer as NewMachineAnswers
+            return (
+              answers?.importerInformation.isOwnerOtherThanImporter &&
+              answers?.importerInformation.isOwnerOtherThanImporter !== YES
+            )
+          },
+        }),
+        buildTextField({
+          id: 'importerInformation.otherOwnerNationalId',
+          title: information.labels.otherOwner.nationalId,
+          condition: (answer: Answer) => {
+            const answers = answer as NewMachineAnswers
+            return (
+              answers?.importerInformation.isOwnerOtherThanImporter &&
+              answers?.importerInformation.isOwnerOtherThanImporter !== YES
+            )
+          },
+        }),
+        buildTextField({
+          id: 'importerInformation.otherOwnerAddress',
+          title: information.labels.otherOwner.address,
+          condition: (answer: Answer) => {
+            const answers = answer as NewMachineAnswers
+            return (
+              answers?.importerInformation.isOwnerOtherThanImporter &&
+              answers?.importerInformation.isOwnerOtherThanImporter !== YES
+            )
+          },
+        }),
+        buildTextField({
+          id: 'importerInformation.otherOwnerPostCode',
+          title: information.labels.otherOwner.postCode,
+          condition: (answer: Answer) => {
+            const answers = answer as NewMachineAnswers
+            return (
+              answers?.importerInformation.isOwnerOtherThanImporter &&
+              answers?.importerInformation.isOwnerOtherThanImporter !== YES
+            )
+          },
+        }),
+        buildTextField({
+          id: 'importerInformation.otherOwnerPhoneNumber',
+          title: information.labels.otherOwner.phone,
+          condition: (answer: Answer) => {
+            const answers = answer as NewMachineAnswers
+            return (
+              answers?.importerInformation.isOwnerOtherThanImporter &&
+              answers?.importerInformation.isOwnerOtherThanImporter !== YES
+            )
+          },
+        }),
+        buildTextField({
+          id: 'importerInformation.otherOwnerEmail',
+          title: information.labels.otherOwner.email,
+          condition: (answer: Answer) => {
+            const answers = answer as NewMachineAnswers
+            return (
+              answers?.importerInformation.isOwnerOtherThanImporter &&
+              answers?.importerInformation.isOwnerOtherThanImporter !== YES
+            )
+          },
         }),
       ],
     }),

@@ -1,4 +1,15 @@
+import { NO, YES } from '@island.is/application/types'
 import { z } from 'zod'
+
+const ImporterSchema = z.object({
+  name: z.string(),
+  nationalId: z.string(),
+  address: z.string(),
+  postCode: z.string(),
+  phone: z.string(),
+  email: z.string(),
+  isOwnerOtherThanImporter: z.enum([YES, NO]),
+})
 
 export const NewMachineAnswersSchema = z.object({
   machine: z.object({
@@ -11,10 +22,7 @@ export const NewMachineAnswersSchema = z.object({
     regNumber: z.string().optional(),
     ownerNumber: z.string().optional(),
   }),
-  pickMachine: z.object({
-    index: z.string().optional(),
-    id: z.string().min(1),
-  }),
+  importerInformation: ImporterSchema,
   deregister: z.object({
     date: z.string(),
     status: z.enum(['Temporary', 'Permanent']),
