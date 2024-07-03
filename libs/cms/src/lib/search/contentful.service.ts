@@ -20,7 +20,7 @@ import {
   ElasticsearchIndexLocale,
   getElasticsearchIndex,
 } from '@island.is/content-search-index-manager'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 type SyncCollection = ContentfulSyncCollection & {
   nextPageToken?: string
