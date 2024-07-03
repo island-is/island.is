@@ -3,13 +3,10 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/transport-authority/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/api/domains/transport-authority/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -17,10 +14,8 @@
         "{workspaceRoot}/coverage/libs/api/domains/transport-authority"
       ],
       "options": {
-        "jestConfig": "libs/api/domains/transport-authority/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/transport-authority/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

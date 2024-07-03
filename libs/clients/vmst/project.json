@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/vmst/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/vmst/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/vmst/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/vmst/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/clients/vmst"]
     },
@@ -26,6 +23,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }
