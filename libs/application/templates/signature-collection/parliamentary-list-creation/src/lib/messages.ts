@@ -287,4 +287,16 @@ export const m = defineMessages({
     defaultMessage: 'Meðmælalisti stofnaður',
     description: '',
   },
+
+  /* Validation error messages */
+  constituencyValidationError: {
+    id: 'plc.application:constituencyValidationError',
+    defaultMessage: 'Velja þarf að minnsta kosti eitt kjördæmi',
+    description: '',
+  },
+  nationalIdValidationError: {
+    id: 'plc.application:managerValidationError',
+    defaultMessage: 'Ógilt kennitala',
+    description: '',
+  },
 })
