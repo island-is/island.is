@@ -259,7 +259,8 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
         String(highestMileage),
         'number-pad',
       )
-    } else if (isAndroid) {
+    }
+    if (isAndroid) {
       await showAndroidPrompt(
         intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
         undefined,
