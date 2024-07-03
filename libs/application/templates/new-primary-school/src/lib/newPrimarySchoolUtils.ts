@@ -1,3 +1,4 @@
+import { ApolloClient } from '@apollo/client'
 import { NO, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
@@ -7,6 +8,10 @@ import {
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
+import {
+  friggOptionsQuery,
+  friggSchoolsByMunicipalityQuery,
+} from '../graphql/queries'
 import {
   Child,
   ChildInformation,
@@ -18,16 +23,17 @@ import {
   SiblingsRow,
 } from '../types'
 import {
+  FriggOptionsQuery,
+  FriggOptionsQueryVariables,
+  FriggSchoolsByMunicipalityQuery,
+} from '../types/schema'
+import {
   Gender,
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
-
-import { ApolloClient } from '@apollo/client'
-import { friggOptionsQuery } from '../graphql/queries'
-import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -138,6 +144,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'schools.newSchool.school',
   ) as string
 
+  const newSchoolHiddenInput = getValueViaPath(
+    answers,
+    'schools.newSchool.hiddenInput',
+  ) as string
+
   const photographyConsent = getValueViaPath(
     answers,
     'photography.photographyConsent',
@@ -176,13 +187,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     developmentalAssessment,
     specialSupport,
     requestMeeting,
-    photographyConsent,
-    photoSchoolPublication,
-    photoMediaPublication,
-
     startDate,
     schoolMunicipality,
     selectedSchool,
+    newSchoolHiddenInput,
+    photographyConsent,
+    photoSchoolPublication,
+    photoMediaPublication,
   }
 }
 
@@ -230,6 +241,11 @@ export const getApplicationExternalData = (
     'childInformation.data',
   ) as FriggChildInformation
 
+  const childGradeLevel = getValueViaPath(
+    externalData,
+    'childInformation.data.gradeLevels[0]',
+  ) as string
+
   return {
     children,
     applicantName,
@@ -239,6 +255,7 @@ export const getApplicationExternalData = (
     applicantCity,
     otherParentName,
     childInformation,
+    childGradeLevel,
   }
 }
 
@@ -445,7 +462,10 @@ export const getOptionsListByType = async (
   return (
     data?.friggOptions?.flatMap(({ options }) =>
       options.flatMap(({ value, key }) => {
-        const content = value.find(({ language }) => language === lang)?.content
+        let content = value.find(({ language }) => language === lang)?.content
+        if (!content) {
+          content = value.find(({ language }) => language === 'is')?.content
+        }
         return { value: key ?? '', label: content ?? '' }
       }),
     ) ?? []
@@ -461,4 +481,59 @@ export const getSelectedOptionLabel = (
   }
 
   return options.find((option) => option.value === key)?.label
+}
+
+export const getMunicipalityOptions = async (
+  apolloClient: ApolloClient<object>,
+) => {
+  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+    query: friggSchoolsByMunicipalityQuery,
+  })
+
+  return (
+    data?.friggSchoolsByMunicipality?.map((municipality) => ({
+      value: municipality.name,
+      label: municipality.name,
+    })) ?? []
+  )
+}
+
+export const getSchoolsByMunicipalityOptions = async (
+  apolloClient: ApolloClient<object>,
+  application: Application,
+) => {
+  const { schoolMunicipality } = getApplicationAnswers(application.answers)
+  const { childGradeLevel } = getApplicationExternalData(
+    application.externalData,
+  )
+
+  const { data } = await apolloClient.query<FriggSchoolsByMunicipalityQuery>({
+    query: friggSchoolsByMunicipalityQuery,
+  })
+
+  return (
+    data?.friggSchoolsByMunicipality
+      ?.find(({ name }) => name === schoolMunicipality)
+      ?.children?.filter((school) =>
+        school.gradeLevels?.includes(childGradeLevel),
+      )
+      ?.map((school) => ({ value: school.name, label: school.name })) ?? []
+  )
+}
+
+export const formatGrade = (gradeLevel: string, lang: Locale) => {
+  let grade = gradeLevel
+  if (gradeLevel[0] === '0') {
+    grade = gradeLevel[1]
+  }
+  switch (grade) {
+    case '1':
+      return lang === 'en' ? `${grade}st` : grade
+    case '2':
+      return lang === 'en' ? `${grade}nd` : grade
+    case '3':
+      return lang === 'en' ? `${grade}rd` : grade
+    default:
+      return lang === 'en' ? `${grade}th` : grade
+  }
 }

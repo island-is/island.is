@@ -714,7 +714,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Overview',
     },
     overviewTitle: {
-      id: 'dess.nps.application:confirmation.overview.title',
+      id: 'dess.nps.application:overview.title',
       defaultMessage: 'Yfirlit',
       description: 'Overview',
     },
@@ -770,24 +770,29 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Uses an epinephrine pen',
     },
     schoolTitle: {
-      id: 'dess.nps.application:review.school.title',
+      id: 'dess.nps.application:overview.school.title',
       defaultMessage: 'Upplýsingar um skóla',
       description: 'Information about school',
     },
     currentSchool: {
-      id: 'dess.nps.application:confirm.current.school',
+      id: 'dess.nps.application:overview.current.school',
       defaultMessage: 'Núverandi skóli',
       description: 'Current school',
     },
     selectedSchool: {
-      id: 'dess.nps.application:confirm.selected.school',
+      id: 'dess.nps.application:overview.selected.school',
       defaultMessage: 'Valinn skóli',
       description: 'Selected school',
     },
-    class: {
-      id: 'dess.nps.application:confirm.class',
+    grade: {
+      id: 'dess.nps.application:overview.grade',
       defaultMessage: 'Bekkur',
-      description: 'Class',
+      description: 'Grade',
+    },
+    currentGrade: {
+      id: 'dess.nps.application:overview.current.grade',
+      defaultMessage: '{grade}. bekkur',
+      description: '{grade} grade',
     },
   }),
 

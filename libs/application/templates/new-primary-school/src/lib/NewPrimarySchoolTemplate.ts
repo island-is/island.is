@@ -21,11 +21,7 @@ import {
 import { Features } from '@island.is/feature-flags'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
-import {
-  GetKeyOptionsTypesApi,
-  GetSchoolsApi,
-  OptionsApi,
-} from '../dataProviders'
+import { GetKeyOptionsTypesApi, OptionsApi } from '../dataProviders'
 import {
   ApiModuleActions,
   Events,
@@ -90,7 +86,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
                 UserProfileApi,
                 GetKeyOptionsTypesApi,
                 OptionsApi,
-                GetSchoolsApi,
               ],
             },
           ],
