@@ -137,7 +137,11 @@
   },
   "namedInputs": {
     "default": ["{projectRoot}/**/*", "sharedGlobals"],
-    "nodeVersion": [{ "runtime": "node --version" }],
+    "nodeVersion": [
+      {
+        "runtime": "node --version"
+      }
+    ],
     "sharedGlobals": [
       "{workspaceRoot}/eslint-local-rules.js",
       "{workspaceRoot}/nx.json",
