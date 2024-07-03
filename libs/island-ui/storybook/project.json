@@ -3,13 +3,12 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/island-ui/storybook/src",
   "projectType": "library",
+  "tags": ["lib:react", "scope:react"],
+  "implicitDependencies": ["island-ui-core", "application-ui-fields"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/island-ui/storybook/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "serve": {
       "executor": "@nx/storybook:storybook",
@@ -27,7 +26,7 @@
       "executor": "@nx/storybook:build",
       "options": {
         "configDir": "libs/island-ui/storybook/config",
-        "outputDir": "dist/storybook/island-ui"
+        "outputDir": "dist/libs/island-ui/storybook"
       },
       "configurations": {
         "ci": {
@@ -41,8 +40,8 @@
       },
       "outputs": ["{options.outputDir}"]
     },
-    "docker-static": {}
-  },
-  "tags": ["lib:react", "scope:react"],
-  "implicitDependencies": ["island-ui-core", "application-ui-fields"]
+    "docker-static": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-static`"
+    }
+  }
 }
