@@ -3,20 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/core/src",
   "projectType": "library",
+  "tags": ["lib:portals", "scope:portals"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/portals/core/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/portals/core"],
       "options": {
-        "jestConfig": "libs/portals/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/core/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -25,6 +21,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/portals/core/src/{screens,components,lib}/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["lib:portals", "scope:portals"]
+  }
 }

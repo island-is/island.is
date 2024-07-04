@@ -6,18 +6,13 @@
   "tags": ["lib:application-system", "scope:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/application/testing/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/application/testing"],
       "options": {
-        "jestConfig": "libs/application/testing/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/testing/jest.config.ts"
       }
     }
   }
