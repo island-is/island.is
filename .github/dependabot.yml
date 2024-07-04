@@ -26,7 +26,7 @@ updates:
       - dependencies
 
   - package-ecosystem: npm
-    directory: /scripts/ci/cache
+    directory: /scripts/ci/actions
     schedule:
       interval: daily
     labels:

@@ -101,7 +101,7 @@ export const caches = [
     },
     init: async (path) => {
       console.log(`Generating files to ${path} - THIS WILL TAKE A LOT OF TIME`)
-      const script = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
+      const script = resolve(ROOT, 'scripts/ci/actions/generate-files.sh')
       await runCommand(`${script}`, ROOT)
     },
   },

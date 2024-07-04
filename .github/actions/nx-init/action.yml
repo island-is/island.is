@@ -25,5 +25,15 @@ runs:
     with:
       github-token: ${{ inputs.github-token }}
       enable-cache: 'node_modules'
+  - name: Permission flag
+    shell: bash
+    run: |
+      cd scripts/ci/actions
+      yarn install --immutable
+      node permission-action.mjs
+      echo $TEST_EVERYTHING
+  - name: License audit
+    shell: bash
+    run: yarn run license-audit
   - name: Derive appropriate SHAs for base and head for `nx affected` commands
     uses: nrwl/nx-set-shas@v4
