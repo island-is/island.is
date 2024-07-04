@@ -1,5 +1,9 @@
-// eslint-disable-next-line @nx/enforce-module-boundaries
-import { stopLocalstack } from '../../testing/containers/src'
+import { register } from 'tsconfig-paths'
+
+// eslint-disable-next-line @typescript-eslint/no-var-requires
+const tsConfig = require(`../${require('../tsconfig.json').extends}`)
+register({ baseUrl: './', paths: tsConfig.compilerOptions.paths })
+import { stopLocalstack } from '@island.is/testing/containers'
 
 export default async () => {
   await stopLocalstack()
