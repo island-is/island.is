@@ -27,7 +27,9 @@ export type Operation = {
 export enum CATEGORIES {
   RESTURANT_TWO = 'Flokkur II',
   RESTURANT_THREE = 'Flokkur III',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   HOTEL = 'Flokkur II',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   HOTEL_FOOD = 'Flokkur III',
   HOTEL_ALCOHOL = 'Flokkur IV',
 }
