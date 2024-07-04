@@ -451,7 +451,9 @@ export class SyslumennService {
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
       return certificates.map(mapPropertyCertificate)
     } catch (exception) {
-      throw new Error()
+      throw new Error(
+        `Validation failed for properties: ${JSON.stringify(properties)}`,
+      )
     }
   }
 
@@ -467,7 +469,9 @@ export class SyslumennService {
         },
       })
       .catch(() => {
-        throw new Error()
+        throw new Error(
+          `Failed to get propertyDetail for property number: ${propertyNumber}`,
+        )
       })
 
     const fasteign = res.fasteign?.length ? res.fasteign[0] : undefined
@@ -510,7 +514,9 @@ export class SyslumennService {
         },
       })
       .catch(() => {
-        throw new Error()
+        throw new Error(
+          `Failed to get all properties for property number: ${propertyNumber}`,
+        )
       })
 
     return {
