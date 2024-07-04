@@ -48,7 +48,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
 
       - name: Check node version
         run: |
@@ -181,7 +181,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
 
       - name: Get cache
         id: get-cache
@@ -225,7 +225,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
 
       - name: Get cache
         id: get-cache
@@ -251,7 +251,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -299,7 +299,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
 
       - name: Get cache
         id: get-cache
@@ -340,7 +340,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -371,7 +371,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache

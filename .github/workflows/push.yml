@@ -174,7 +174,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
 
       - name: Check node version
         run: |
@@ -433,7 +433,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
 
       - name: Get cache
         id: get-cache
@@ -487,7 +487,7 @@ jobs:
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
-        run: corepack enable
+        run: npm install -g yarn
         if: steps.gather.outcome == 'success'
 
       - name: Get cache
