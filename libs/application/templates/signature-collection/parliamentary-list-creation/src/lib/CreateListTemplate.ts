@@ -1,5 +1,6 @@
 import {
   Application,
+  ApplicationConfigurations,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
@@ -32,6 +33,10 @@ const createListTemplate: ApplicationTemplate<
   institution: m.institution,
   featureFlag: Features.ParliamentaryElectionApplication,
   dataSchema,
+  translationNamespaces: [
+    ApplicationConfigurations[ApplicationTypes.PARLIAMENTARY_LIST_CREATION]
+      .translation,
+  ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
