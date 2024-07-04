@@ -4,7 +4,7 @@ export const information = {
   general: defineMessages({
     sectionTitle: {
       id: 'aosh.rnm.information:general.sectionTitle',
-      defaultMessage: 'Nýskráning tækis {value}',
+      defaultMessage: 'Upplýsingar',
       description: `Application's name`,
     },
   }),
