@@ -52,7 +52,7 @@ export async function commitUnstagedChanges({ user, message }) {
   await runCommand(['git', 'config', 'user.email', email])
   await runCommand(['git', 'add', '-A'])
   await runCommand(['git', 'commit', '-m', message])
-  await runCommand(['git', 'push'])
+     await runCommand(['git', 'push', `HEAD:${prBranch}`])
 }
 
 export async function getCurrentBranch() {
