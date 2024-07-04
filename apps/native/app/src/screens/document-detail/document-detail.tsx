@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, StyleSheet, View } from 'react-native'
 import {
-  Navigation,
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
@@ -28,10 +27,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
-import {
-  ButtonRegistry,
-  ComponentRegistry,
-} from '../../utils/component-registry'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -205,7 +201,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
-  const [touched, setTouched] = useState(false)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
