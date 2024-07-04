@@ -84,6 +84,7 @@ import {
   courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
+  districtCourtJudgeSignRulingRule,
   districtCourtJudgeTransitionRule,
   districtCourtJudgeUpdateRule,
   districtCourtRegistrarTransitionRule,
@@ -297,12 +298,6 @@ export class CaseController {
         break
       case CaseTransition.SUBMIT:
         if (isIndictmentCase(theCase.type)) {
-          if (!user.canConfirmIndictment) {
-            throw new ForbiddenException(
-              `User ${user.id} does not have permission to confirm indictments`,
-            )
-          }
-
           update.indictmentDeniedExplanation = null
         }
         break
@@ -385,13 +380,6 @@ export class CaseController {
           theCase.appealState === CaseAppealState.RECEIVED
         ) {
           update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
-        }
-        break
-      case CaseTransition.DENY_INDICTMENT:
-        if (!user.canConfirmIndictment) {
-          throw new ForbiddenException(
-            `User ${user.id} does not have permission to reject indictments`,
-          )
         }
         break
       case CaseTransition.ASK_FOR_CONFIRMATION:
@@ -777,7 +765,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(districtCourtJudgeSignRulingRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -789,12 +777,6 @@ export class CaseController {
     @CurrentCase() theCase: Case,
   ): Promise<SigningServiceResponse> {
     this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
-
-    if (user.id !== theCase.judgeId) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
-    }
 
     return this.caseService.requestRulingSignature(theCase).catch((error) => {
       if (error instanceof DokobitError) {
@@ -820,7 +802,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(districtCourtJudgeSignRulingRule)
   @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -834,12 +816,6 @@ export class CaseController {
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
-
-    if (user.id !== theCase.judgeId) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
-    }
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,

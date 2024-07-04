@@ -23,4 +23,10 @@ export const strings = defineMessages({
     defaultMessage: 'Verjandi',
     description: 'Notað til að birta titil á verjanda í ákæru.',
   },
+  noDefenderAssigned: {
+    id: 'judicial.system.core:info_card.defendant_info.no_defender_assigned',
+    defaultMessage: 'Ekki skráður',
+    description:
+      'Notað til að láta vita að enginn verjandi er skráður í ákæru.',
+  },
 })
