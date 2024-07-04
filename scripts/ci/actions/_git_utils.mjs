@@ -41,18 +41,12 @@ export async function commitUnstagedChanges({ user, message }) {
   const repoUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`
   await runCommand(['git', 'remote', 'set-url', 'origin', repoUrl])
 
-  if (currentBranch === 'HEAD') {
-    // This is a detached HEAD, we need to checkout prBranch
-    await runCommand(['git', 'checkout', prBranch])
-  }
-  if ((await getCurrentBranch()) !== prBranch) {
-    throw new Error(`Invalid branch`)
-  }
+  
   await runCommand(['git', 'config', 'user.name', name])
   await runCommand(['git', 'config', 'user.email', email])
   await runCommand(['git', 'add', '-A'])
   await runCommand(['git', 'commit', '-m', message])
-     await runCommand(['git', 'push', `HEAD:${prBranch}`])
+     await runCommand(['git', 'push'])
 }
 
 export async function getCurrentBranch() {
