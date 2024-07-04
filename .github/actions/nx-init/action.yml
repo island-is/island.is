@@ -4,12 +4,7 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
-  head-ref:
-    description: 'The head ref'
-    required: true
-  base-ref:
-    description: 'The base ref'
-    required: true
+
 runs:
   using: 'composite'
   steps:
@@ -27,6 +22,8 @@ runs:
       enable-cache: 'node_modules'
   - name: Permission flag
     shell: bash
+    env:
+      GITHUB_TOKEN: ${{ inputs.github-token }}
     run: |
       cd scripts/ci/actions
       yarn install --immutable

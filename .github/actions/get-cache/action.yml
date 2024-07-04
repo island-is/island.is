@@ -20,7 +20,7 @@ runs:
     - name: Adding required env vars
       uses: actions/github-script@v7
       env:
-        github-token: ${{ inputs.GITHUB_TOKEN }}
+        github-token: ${{ inputs.github-token }}
       with:
         script: |
           core.exportVariable('ACTIONS_CACHE_URL', 'https://cache.dev01.devland.is/')
@@ -33,6 +33,7 @@ runs:
         _CACHE_KEYS: ${{ inputs.keys }}
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         NODE_OPTIONS: --max-old-space-size=8192
+        github-token: ${{ inputs.github-token }}
       run: |
         # This is because of a weird bug where Github would write as root to .cache
         export COREPACK_HOME=/github/home/.corepack-cache
