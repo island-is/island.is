@@ -11,7 +11,7 @@ import { ROOT } from './_common.mjs';
 
 const canWrite = isPR;
 const action = canWrite ? 'write' : 'check';
-
+info(`Running format:${action} for all projects.`);
 try {
     await runCommand(`yarn nx format:${action} --all`, ROOT);
 } catch (error) {
