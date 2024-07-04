@@ -351,27 +351,6 @@ export const InboxScreen: NavigationFunctionComponent<{
     }
   }, [])
 
-  const onRefresh = useCallback(() => {
-    try {
-      if (loadingTimeout.current) {
-        clearTimeout(loadingTimeout.current)
-      }
-      setRefetching(true)
-      res
-        .refetch()
-        .then(() => {
-          ;(loadingTimeout as any).current = setTimeout(() => {
-            setRefetching(false)
-          }, 1331)
-        })
-        .catch(() => {
-          setRefetching(false)
-        })
-    } catch (err) {
-      setRefetching(false)
-    }
-  }, [])
-
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => {
       if (item.type === 'skeleton') {
