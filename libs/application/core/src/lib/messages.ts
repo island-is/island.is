@@ -507,7 +507,7 @@ export const coreErrorMessages = defineMessages({
     description: 'Driving License duplicate entry validation error',
   },
   drivingLicenseDuplicateEntryValidationSign400Error: {
-    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationError',
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationSign400Error',
     defaultMessage: 'Ógild tákntala, 400, fannst á ökuskírteini',
     description:
       'Driving License duplicate entry validation error for sign (is: tákntala)',
