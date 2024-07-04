@@ -71,6 +71,8 @@ import {
   VehicleDetail,
   RealEstateDetail,
   ShipDetail,
+  MortgageCertificateValidation,
+  MortgageCertificate,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -124,6 +126,20 @@ export const mapShipResponse = (response: Skip): ShipDetail => {
       bruttoWeightTons:
         response.mainMeasurements?.bruttoWeightTons?.toString() ?? '',
     },
+  }
+}
+
+export const mapPropertyCertificate = (
+  certificate: MortgageCertificate,
+): MortgageCertificateValidation => {
+  const exists = certificate.contentBase64.length !== 0
+  const hasKMarking =
+    exists && certificate.contentBase64 !== 'Precondition Required'
+
+  return {
+    propertyNumber: certificate.propertyNumber ?? '',
+    exists: exists,
+    hasKMarking: hasKMarking,
   }
 }
 

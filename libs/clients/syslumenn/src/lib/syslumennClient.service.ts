@@ -55,6 +55,7 @@ import {
   mapVehicleResponse,
   mapRealEstateResponse,
   mapShipResponse,
+  mapPropertyCertificate,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -249,11 +250,11 @@ export class SyslumennService {
 
   async sealDocuments(documents: string[]): Promise<InnsigludSkjol> {
     const { id, api } = await this.createApi()
-    const explination = 'Rafrænt undirritað vottorð'
+    const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglaSkjolPost({
       skeyti: {
         audkenni: id,
-        skyring: explination,
+        skyring: explanation,
         skjol: documents,
       },
     })
@@ -261,11 +262,11 @@ export class SyslumennService {
 
   async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
-    const explination = 'Rafrænt undirritað vottorð'
+    const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
       skeyti: {
         audkenni: id,
-        skyring: explination,
+        skyring: explanation,
         skjal: document,
       },
     })
@@ -448,17 +449,7 @@ export class SyslumennService {
 
       // Note: we are saving propertyNumber and isFromSearch also in externalData,
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
-      return certificates.map((certificate) => {
-        const exists = certificate.contentBase64.length !== 0
-        const hasKMarking =
-          exists && certificate.contentBase64 !== 'Precondition Required'
-
-        return {
-          propertyNumber: certificate.propertyNumber ?? '',
-          exists: exists,
-          hasKMarking: hasKMarking,
-        }
-      })
+      return certificates.map(mapPropertyCertificate)
     } catch (exception) {
       throw new Error()
     }
