@@ -86,10 +86,11 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             </Text>
           </Box>
         )}
-        {defendant.defenderName && displayDefenderInfo && (
+        {displayDefenderInfo && (
           <Box display="flex" key={defendant.defenderName} role="paragraph">
             <Text as="span">{`${formatMessage(strings.defender)}: ${
-              defendant.defenderName
+              defendant.defenderName ??
+              formatMessage(strings.noDefenderAssigned)
             }`}</Text>
             {defendant.defenderEmail && (
               <>
