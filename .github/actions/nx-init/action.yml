@@ -4,6 +4,9 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
+  dirtybot-token:
+    description: 'Dirtybot token'
+    required: true
 outputs:
   test-everything:
     description: 'Whether to test everything'
@@ -34,6 +37,7 @@ runs:
     env:
       BASE: ${{ steps.setSHAs.outputs.base }}
       HEAD: ${{ steps.setSHAs.outputs.head }}
+      DIRTYBOT_TOKEN: ${{ inputs.dirtybot-token }}
       GITHUB_TOKEN: ${{ inputs.github-token }}
     run: |
       cd scripts/ci/actions

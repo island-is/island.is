@@ -1,16 +1,18 @@
 // @ts-check
 import { info } from "console";
 import { runCommand } from "./_utils.mjs";
-import { prBranch } from "./_pr_utils.mjs";
+import { DIRTYBOT_TOKEN, GITHUB_TOKEN, owner, prBranch, repo } from "./_pr_utils.mjs";
 
 const GITHUB_ACTION_USER = {
     name: 'github-actions[bot]',
     email: 'github-actions[bot]@users.noreply.github.com',
+    token: GITHUB_TOKEN
 };
 
 const DIRTYBOT_USER = {
     name: 'andes-it',
     email: 'builders@andes.is',
+    token: DIRTYBOT_TOKEN
 };
 
 
@@ -28,10 +30,15 @@ export async function getUnstagedChanges() {
  * @returns {Promise<void>} - A promise that resolves when the commit is complete.
  */
 export async function commitUnstagedChanges({ user, message }) {
-    const { name, email } = user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER;
+    const { name, email, token } = user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER;
     const currentBranch = await getCurrentBranch();
-    info(`Committing unstaged changes to branch ${currentBranch}`);
-    info(`prBranch: ${prBranch}`);
+    const repoUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`;
+    await runCommand(["git", "remote", "set-url", "origin", repoUrl]);
+
+    if (currentBranch === "HEAD") {
+        // This is a detached HEAD, we need to checkout prBranch
+        await runCommand(["git", "checkout", prBranch]);
+    }
     await runCommand(["git", "config", "user.name",name]);
     await runCommand(["git", "config", "user.email", email]);
     await runCommand(["git", "add", "-A"]);
@@ -42,8 +49,5 @@ export async function commitUnstagedChanges({ user, message }) {
 
 export async function getCurrentBranch() {
     const value = (await runCommand('git rev-parse --abbrev-ref HEAD')).trim();
-    if (value === 'HEAD') {
-        return (await runCommand('git rev-parse HEAD')).trim();
-    }
     return value;
 }
