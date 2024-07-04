@@ -245,6 +245,7 @@ export const ServicePortalDocumentsV2 = () => {
                     totalPages={totalPages}
                     renderLink={(page, className, children) => (
                       <button
+                        type="button"
                         className={className}
                         onClick={handlePageChange.bind(null, page)}
                         aria-label={formatMessage(messages.goToPage, { page })}
