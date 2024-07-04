@@ -39,6 +39,9 @@ export async function commitUnstagedChanges({ user, message }) {
         // This is a detached HEAD, we need to checkout prBranch
         await runCommand(["git", "checkout", prBranch]);
     }
+    if (await getCurrentBranch() !== prBranch) {
+        throw new Error(`Invalid branch`);
+    }
     await runCommand(["git", "config", "user.name",name]);
     await runCommand(["git", "config", "user.email", email]);
     await runCommand(["git", "add", "-A"]);
