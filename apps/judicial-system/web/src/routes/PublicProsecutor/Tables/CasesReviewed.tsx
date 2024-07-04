@@ -75,7 +75,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.reviewDecision) },
                 { title: formatMessage(tables.verdictViewState) },

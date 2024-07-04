@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box, AlertMessage } from '@island.is/island-ui/core'
+import { Text, Box, AlertMessage, UploadFile } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
   estimatedBreakDown,
@@ -40,7 +40,6 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
-
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const aidAmount = useMemo(() => {
@@ -58,6 +57,20 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const showAlertMessageAboutChildrenAid =
     externalData.childrenCustodyInformation.data.length > 0 &&
     externalData.municipality.data?.childrenAid !== ChildrenAid.NOTDEFINED
+
+  const findFilesRouteFrom = (
+    childrenFiles: UploadFile[],
+    income: ApproveOptions,
+  ) => {
+    if (childrenFiles?.length > 0) {
+      return Routes.CHILDRENFILES
+    }
+    if (income === ApproveOptions.Yes) {
+      return Routes.INCOMEFILES
+    }
+
+    return Routes.TAXRETURNFILES
+  }
 
   return (
     <>
@@ -159,11 +172,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <Files
-        route={
-          answers.income === ApproveOptions.Yes
-            ? Routes.INCOMEFILES
-            : Routes.TAXRETURNFILES
-        }
+        route={findFilesRouteFrom(answers.childrenFiles, answers.income)}
         goToScreen={goToScreen}
         personalTaxReturn={
           externalData.taxData?.data?.municipalitiesPersonalTaxReturn
@@ -171,6 +180,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         }
         taxFiles={answers.taxReturnFiles ?? []}
         incomeFiles={answers.incomeFiles ?? []}
+        childrenFiles={answers.childrenFiles ?? []}
         applicationId={id}
       />
 

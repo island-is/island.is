@@ -3,6 +3,7 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/reference-next-app",
   "projectType": "application",
+  "tags": ["scope:react-next"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,7 +31,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/reference-next-app/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -84,16 +86,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/reference-next-app/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/reference-next-app/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/reference-next-app/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/reference-next-app"]
     },
@@ -103,6 +101,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/reference-next-app/{screens,pages,components}/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:react-next"]
+  }
 }

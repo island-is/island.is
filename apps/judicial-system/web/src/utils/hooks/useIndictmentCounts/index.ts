@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
@@ -102,7 +102,7 @@ const useIndictmentCounts = () => {
     (
       indictmentCountId: string,
       update: UpdateIndictmentCount,
-      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       setWorkingCase((prevWorkingCase) => {
         if (!prevWorkingCase.indictmentCounts) {

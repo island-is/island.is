@@ -29,6 +29,7 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
@@ -1033,4 +1034,15 @@ export class Case extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   indictmentHash?: string
+
+  /**********
+   * The court session type in indictment cases - example: MAIN_HEARING
+   **********/
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(CourtSessionType),
+  })
+  @ApiPropertyOptional({ enum: CourtSessionType })
+  courtSessionType?: CourtSessionType
 }

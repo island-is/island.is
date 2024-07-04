@@ -26,7 +26,7 @@ import { mInformationNotifications } from '../../lib/messages'
 import { ActionCard, CardLoader } from '@island.is/service-portal/core'
 import { Problem } from '@island.is/react-spa/shared'
 import { InformationPaths } from '../../lib/paths'
-import { resolveLink } from '../../utils/notificationLinkResolver'
+import { COAT_OF_ARMS, resolveLink } from '../../utils/notificationLinkResolver'
 
 const DEFAULT_PAGE_SIZE = 5
 
@@ -161,15 +161,11 @@ const UserNotifications = () => {
                     },
                   }),
               }}
-              image={
-                item.sender?.logoUrl
-                  ? {
-                      type: 'circle',
-                      url: item.sender.logoUrl,
-                      active: !item.metadata.read,
-                    }
-                  : undefined
-              }
+              image={{
+                type: 'circle',
+                url: item.sender?.logoUrl ?? COAT_OF_ARMS,
+                active: !item.metadata.read,
+              }}
               key={item.notificationId}
             />
           ))}
