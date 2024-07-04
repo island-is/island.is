@@ -51,10 +51,11 @@ export enum SiblingRelationOptions {
   STEP_SIBLING = 'stepSibling',
 }
 
+// Mapping Þjóðskrá gender to Júní data
 export enum Gender {
-  FEMALE = 'FEMALE',
-  MALE = 'MALE',
-  OTHER = 'OTHER',
+  FEMALE = 'kvk',
+  MALE = 'kk',
+  OTHER = 'other',
 }
 
 export enum OptionsType {

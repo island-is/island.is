@@ -16,6 +16,7 @@ type FriggOptionsAsyncSelectFieldProps = {
     props: {
       optionsType: OptionsType
       placeholder: FormText
+      isMulti?: boolean
     }
   }
 }
@@ -25,6 +26,7 @@ const FriggOptionsAsyncSelectField: FC<
 > = ({ error, field, application }) => {
   const { lang } = useLocale()
   const { title, props } = field
+  const { isMulti = true } = props
 
   return (
     <AsyncSelectFormField
@@ -37,6 +39,7 @@ const FriggOptionsAsyncSelectField: FC<
         id: field.id,
         title,
         placeholder: props.placeholder,
+        defaultValue: field.defaultValue,
         loadingError: coreErrorMessages.failedDataProvider,
         loadOptions: async ({ apolloClient }) => {
           return await getOptionsListByType(
@@ -45,7 +48,7 @@ const FriggOptionsAsyncSelectField: FC<
             lang,
           )
         },
-        isMulti: true,
+        isMulti,
         backgroundColor: 'blue',
       }}
     />

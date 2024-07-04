@@ -6,7 +6,6 @@ import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getGenderOptionLabel,
   getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
@@ -23,6 +22,7 @@ export const Child = ({
     application.answers,
   )
 
+  const genderOptions = useFriggOptions(OptionsType.GENDER)
   const pronounOptions = useFriggOptions(OptionsType.PRONOUN)
 
   return (
@@ -90,7 +90,10 @@ export const Child = ({
                   label={formatMessage(
                     newPrimarySchoolMessages.childrenNParents.childInfoGender,
                   )}
-                  value={formatMessage(getGenderOptionLabel(childInfo.gender))}
+                  value={getSelectedOptionLabel(
+                    genderOptions,
+                    childInfo.gender,
+                  )}
                 />
               </GridColumn>
             )}

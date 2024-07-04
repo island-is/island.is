@@ -3,7 +3,6 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
-  Gender,
   ReasonForApplicationOptions,
   RelationOptions,
   SiblingRelationOptions,
@@ -26,7 +25,7 @@ export const dataSchema = z.object({
   childNationalId: z.string().min(1),
   childInfo: z
     .object({
-      gender: z.nativeEnum(Gender).optional(),
+      gender: z.array(z.string()).optional(),
       differentPlaceOfResidence: z.enum([YES, NO]),
       placeOfResidence: z
         .object({

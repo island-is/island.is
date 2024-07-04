@@ -389,21 +389,6 @@ export const getSiblingRelationOptionLabel = (
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
-export const getGenderOptions = () => [
-  {
-    value: Gender.MALE,
-    label: newPrimarySchoolMessages.shared.male,
-  },
-  {
-    value: Gender.FEMALE,
-    label: newPrimarySchoolMessages.shared.female,
-  },
-  {
-    value: Gender.OTHER,
-    label: newPrimarySchoolMessages.shared.otherGender,
-  },
-]
-
 export const formatGender = (genderCode?: string): Gender | undefined => {
   switch (genderCode) {
     case '1':
@@ -418,11 +403,6 @@ export const formatGender = (genderCode?: string): Gender | undefined => {
     default:
       return undefined
   }
-}
-
-export const getGenderOptionLabel = (value: Gender) => {
-  const genderOptions = getGenderOptions()
-  return genderOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getOptionsListByType = async (

@@ -2,7 +2,6 @@ import {
   buildCustomField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
@@ -12,7 +11,6 @@ import {
   formatGender,
   getApplicationAnswers,
   getApplicationExternalData,
-  getGenderOptions,
   getSelectedChild,
 } from '../../../lib/newPrimarySchoolUtils'
 import { OptionsType } from '../../../lib/constants'
@@ -86,18 +84,23 @@ export const childInfoSubSection = buildSubSection({
             getApplicationExternalData(application.externalData)
               .childInformation.preferredName,
         }),
-        buildSelectField({
-          id: 'childInfo.gender',
-          title: newPrimarySchoolMessages.childrenNParents.childInfoGender,
-          placeholder:
-            newPrimarySchoolMessages.childrenNParents
-              .childInfoGenderPlaceholder,
-          width: 'half',
-          // TODO: Nota gögn fá Júní
-          options: getGenderOptions(),
-          defaultValue: (application: Application) =>
-            formatGender(getSelectedChild(application)?.genderCode),
-        }),
+        buildCustomField(
+          {
+            id: 'childInfo.gender',
+            title: newPrimarySchoolMessages.childrenNParents.childInfoGender,
+            width: 'half',
+            component: 'FriggOptionsAsyncSelectField',
+            defaultValue: (application: Application) =>
+              formatGender(getSelectedChild(application)?.genderCode),
+          },
+          {
+            placeholder:
+              newPrimarySchoolMessages.childrenNParents
+                .childInfoGenderPlaceholder,
+            optionsType: OptionsType.GENDER,
+            isMulti: false,
+          },
+        ),
         buildCustomField(
           {
             id: 'childInfo.pronouns',
