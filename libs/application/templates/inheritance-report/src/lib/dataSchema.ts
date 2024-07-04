@@ -12,6 +12,7 @@ import { NO, YES } from '@island.is/application/core'
 import {
   ESTATE_INHERITANCE,
   PREPAID_INHERITANCE,
+  PrePaidInheritanceOptions,
   RelationSpouse,
 } from './constants'
 import { DebtTypes } from '../types'
@@ -133,6 +134,15 @@ export const inheritanceReportSchema = z.object({
     relation: z.string(),
   }),
 
+  /* prePaid inheritance applicant */
+  prePaidApplicant: z.object({
+    email: z.string().email(),
+    phone: z.string().refine((v) => isValidPhoneNumber(v)),
+    name: z.string(),
+    nationalId: z.string().refine((v) => kennitala.isValid(v)),
+    relation: z.string(),
+  }),
+
   /* prePaid inheritance executor */
   executors: z
     .object({
@@ -140,11 +150,15 @@ export const inheritanceReportSchema = z.object({
       executor: z.object({
         email: z.string().email(),
         phone: z.string().refine((v) => isValidPhoneNumber(v)),
+        name: z.string(),
+        nationalId: z.string().refine((v) => kennitala.isValid(v)),
       }),
       spouse: z
         .object({
           email: z.string().optional(),
           phone: z.string().optional(),
+          name: z.string(),
+          nationalId: z.string().refine((v) => kennitala.isValid(v)),
         })
         .optional(),
     })
@@ -174,6 +188,14 @@ export const inheritanceReportSchema = z.object({
     ),
 
   applicationFor: z.enum([ESTATE_INHERITANCE, PREPAID_INHERITANCE]),
+  prepaidInheritance: z.array(
+    z.enum([
+      PrePaidInheritanceOptions.REAL_ESTATE,
+      PrePaidInheritanceOptions.STOCKS,
+      PrePaidInheritanceOptions.MONEY,
+      PrePaidInheritanceOptions.OTHER_ASSETS,
+    ]),
+  ),
 
   /* assets */
   assets: z.object({
@@ -376,15 +398,9 @@ export const inheritanceReportSchema = z.object({
           .object({
             description: z.string(),
             nationalId: z.string(),
-            assetNumber: z.string(), //.refine((v) => validateDebtBankAccount(v)),
+            assetNumber: z.string(),
             propertyValuation: z.string(),
-            debtType: z.enum([
-              DebtTypes.CreditCard,
-              DebtTypes.InsuranceCompany,
-              DebtTypes.Loan,
-              DebtTypes.Overdraft,
-              DebtTypes.PropertyFees,
-            ]),
+            debtType: z.string(),
           })
           .refine(
             ({ nationalId }) => {
@@ -398,39 +414,73 @@ export const inheritanceReportSchema = z.object({
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
-              return nationalId !== '' ||
-                description !== '' ||
-                propertyValuation !== ''
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [description, nationalId, propertyValuation, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(assetNumber)
-                : true
-            },
+                : true,
+
             {
               path: ['assetNumber'],
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
-              return nationalId !== '' ||
-                description !== '' ||
-                assetNumber !== ''
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [description, nationalId, assetNumber, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(propertyValuation)
-                : true
-            },
+                : true,
             {
               path: ['propertyValuation'],
             },
           )
           .refine(
-            ({ description, nationalId, propertyValuation, assetNumber }) => {
-              return nationalId !== '' ||
-                propertyValuation !== '' ||
-                assetNumber !== ''
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [nationalId, propertyValuation, assetNumber, debtType].some(
+                (field) => field !== '',
+              )
                 ? isValidString(description)
-                : true
-            },
+                : true,
             {
               path: ['description'],
+            },
+          )
+          .refine(
+            ({
+              description,
+              nationalId,
+              propertyValuation,
+              assetNumber,
+              debtType,
+            }) =>
+              [description, nationalId, propertyValuation, assetNumber].some(
+                (field) => field !== '',
+              )
+                ? isValidString(debtType)
+                : true,
+
+            {
+              path: ['debtType'],
             },
           )
           .array()
@@ -505,6 +555,15 @@ export const inheritanceReportSchema = z.object({
         inheritanceTax: z.string(),
         // Málsvari
         advocate: z
+          .object({
+            name: z.string().optional(),
+            nationalId: z.string().optional(),
+            phone: z.string().optional(),
+            email: z.string().optional(),
+          })
+          .optional(),
+        // Málsvari 2
+        advocate2: z
           .object({
             name: z.string().optional(),
             nationalId: z.string().optional(),

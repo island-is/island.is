@@ -1596,6 +1596,9 @@ export interface IGenericListItemFields {
 
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
+
+  /** Asset */
+  asset?: Asset | undefined
 }
 
 /** An item that belongs to a generic list */
@@ -4566,6 +4569,9 @@ export interface ITimelineEvent extends Entry<ITimelineEventFields> {
 export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
+
+  /** Only use one title */
+  onlyUseOneTitle?: boolean | undefined
 
   /** Left Content */
   leftContent?: Document | undefined

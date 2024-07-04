@@ -265,5 +265,8 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadline
     indictmentDecision
+    indictmentReviewDecision
+    indictmentCompletedDate
+    courtSessionType
   }
 }

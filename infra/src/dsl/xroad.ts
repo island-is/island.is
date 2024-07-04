@@ -467,9 +467,9 @@ export const NationalRegistryAuthB2C = new XroadConf({
 export const Passports = new XroadConf({
   env: {
     XROAD_PASSPORT_LICENSE_PATH: {
-      dev: 'IS-DEV/GOV/10001/SKRA-Protected/Forskraning-V1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Forskraning-V1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Forskraning-V1',
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Forskraning-V1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Forskraning-V1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Forskraning-V1',
     },
   },
 })
@@ -876,6 +876,16 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       staging: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       prod: 'IS/GOV/10014/DMR-Protected/official-journal-application',
+    },
+  },
+})
+
+export const Frigg = new XroadConf({
+  env: {
+    XROAD_MMS_FRIGG_PATH: {
+      dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      staging: 'IS-DEV/GOV/10066/MMS-Protected/frigg-api',
+      prod: 'IS/GOV/10066/MMS-Protected/frigg-api',
     },
   },
 })

@@ -31,6 +31,7 @@ export class CaseListInterceptor implements NestInterceptor {
             theCase.rulingDate,
             theCase.type,
             theCase.defendants,
+            theCase.eventLogs,
           )
           return {
             ...theCase,

@@ -13,6 +13,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   NationalRegistryIndividual,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { m } from './messages'
 import { Events, States, Roles, ApiActions } from './constants'
@@ -29,6 +30,9 @@ import {
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
+
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENTS_INAO]
 
 const FinancialStatementInaoApplication: ApplicationTemplate<
   ApplicationContext,
@@ -56,6 +60,7 @@ const FinancialStatementInaoApplication: ApplicationTemplate<
   },
   institution: m.institutionName,
   dataSchema,
+  translationNamespaces: [configuration.translation],
   featureFlag: Features.financialStatementInao,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {

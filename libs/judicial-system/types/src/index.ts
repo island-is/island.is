@@ -74,7 +74,12 @@ export {
   isIndictmentCaseTransition,
   isRequestCaseTransition,
   DistrictCourtLocation,
+  CourtSessionType,
+  courtSessionTypeNames,
 } from './lib/case'
+
+export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+
 export type {
   CrimeScene,
   CrimeSceneMap,

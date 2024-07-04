@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -29,15 +29,12 @@ interface DefendantInfoProps {
   defendantInfoActionButton?: DefendantInfoActionButton
 }
 
-export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
-  props,
-) => {
-  const {
-    defendant,
-    displayDefenderInfo,
-    displayAppealExpirationInfo,
-    defendantInfoActionButton,
-  } = props
+export const DefendantInfo: FC<DefendantInfoProps> = ({
+  defendant,
+  displayDefenderInfo,
+  displayAppealExpirationInfo,
+  defendantInfoActionButton,
+}) => {
   const { formatMessage } = useIntl()
 
   const getAppealExpirationInfo = (viewDate?: string) => {
@@ -88,10 +85,11 @@ export const DefendantInfo: FC<PropsWithChildren<DefendantInfoProps>> = (
           </Box>
         )}
 
-        {defendant.defenderName && displayDefenderInfo && (
+        {displayDefenderInfo && (
           <Box display="flex" key={defendant.defenderName} role="paragraph">
             <Text as="span">{`${formatMessage(strings.defender)}: ${
-              defendant.defenderName
+              defendant.defenderName ??
+              formatMessage(strings.noDefenderAssigned)
             }`}</Text>
             {defendant.defenderEmail && (
               <>
