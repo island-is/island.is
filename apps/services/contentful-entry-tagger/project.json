@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/contentful-entry-tagger/src",
   "projectType": "application",
   "prefix": "services-contentful-entry-tagger",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -29,12 +30,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/contentful-entry-tagger/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -42,11 +38,11 @@
         "{workspaceRoot}/coverage/apps/services/contentful-entry-tagger"
       ],
       "options": {
-        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/contentful-entry-tagger/jest.config.ts"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }
