@@ -4,7 +4,13 @@ inputs:
   github-token:
     description: 'GitHub token'
     required: true
-
+outputs:
+  test-everything:
+    description: 'Whether to test everything'
+    value: ${{ steps.permission-flag.outputs.test-everything }}
+  keys:
+    description: 'Keys'
+    value: ${{ steps.get-cache.outputs.keys }}
 runs:
   using: 'composite'
   steps:

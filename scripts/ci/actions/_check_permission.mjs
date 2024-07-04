@@ -1,17 +1,19 @@
 // @ts-check
-import { setFailed, info } from '@actions/core';
+import { info } from '@actions/core';
 import { graphql } from '@octokit/graphql';
+import { GITHUB_TOKEN, owner, repo } from './_pr_utils.mjs';
 
+const DEFAULT_VALUES = { owner, repo, token: GITHUB_TOKEN };
 /**
  * Checks the permission for a user on a repository.
+ * @param {string} username - The username to check permission for.
  * @param {Object} options - The options object.
  * @param {string} options.owner - The owner of the repository.
  * @param {string} options.repo - The name of the repository.
- * @param {string} options.username - The username to check permission for.
  * @param {string} options.token - The GitHub token to use for the request.
  * @returns {Promise<boolean>} - A promise that resolves when the permission check is complete.
  */
-export async function checkPermission({ owner, repo, username, token }) {
+export async function checkPermission(username, { owner, repo,token } = DEFAULT_VALUES) {
     const graphqlWithAuth = graphql.defaults({
         headers: {
             authorization: `token ${token}`,

@@ -4,33 +4,17 @@
 
 // @ts-check
 import { setOutput, setFailed, info } from '@actions/core';
-import { context, getOctokit } from '@actions/github';
 import { checkPermission } from "./_check_permission.mjs";
+import { findLabelOwner, hasLabel, isPR } from './_pr_utils.mjs';
 
-const token = process.env.GITHUB_TOKEN;
-if (!token) {
-    setFailed('GITHUB_TOKEN is required');
-    process.exit(1);
-}
+const TEST_EVERYTHING_LABEL = 'test everything';
 
-const octokit = getOctokit(token);
-
-if (!context.payload.pull_request) {
+if (!isPR) {
     info('This is not a pull request. Skipping check.');
     process.exit(0);
 }
 
-const { owner, repo } = context.repo;
-const pull_number = context.payload.pull_request.number;
-
-const { data: prData } = await octokit.rest.pulls.get({
-    owner,
-    repo,
-    pull_number,
-});
-
-const hasTestEverythingLabel = prData.labels.some(label => label.name === 'test everything');
-
+const hasTestEverythingLabel = await hasLabel(TEST_EVERYTHING_LABEL);
 if (!hasTestEverythingLabel) {
     info('The "test everything" label is not set. Skipping check.');
     setTestEverything(false);
@@ -38,24 +22,17 @@ if (!hasTestEverythingLabel) {
 }
 
 info('The "test everything" label is set. Proceeding with permission check.');
-
-const username = context.payload.pull_request.user.login;
-
-const hasPermission = await checkPermission({
-    owner,
-    repo,
-    username,
-    token,
-});
+const labelOwner = await findLabelOwner(TEST_EVERYTHING_LABEL);
+const hasPermission = await checkPermission(labelOwner);
 
 if (hasPermission) {
-    info(`User ${username} has sufficient permissions.`);
+    info(`User ${labelOwner} has sufficient permissions.`);
     setTestEverything(true);
     process.exit(0);
 }
 
 setTestEverything(false);
-setFailed(`User ${username} does not have sufficient permissions.`);
+setFailed(`User ${labelOwner} does not have sufficient permissions.`);
 
 
 /**
@@ -63,5 +40,5 @@ setFailed(`User ${username} does not have sufficient permissions.`);
  * @param {boolean} value - The value to set. Should be a boolean.
  */
 function setTestEverything(value = false) {
-    setOutput('TEST_EVERYTHING', value.toString())
+    setOutput('test-everything', value.toString())
 }
