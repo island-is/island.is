@@ -352,14 +352,16 @@ export const Draft: Form = buildForm({
               doesNotRequireAnswer: true,
               title: '',
               items: ({ answers }) => {
-                return (answers.constituency as string[]).map((c: string, index: number) => ({
-                  heading: 'Flokkur 1 - ' + c,
-                  progressMeter: {
-                    currentProgress: 0,
-                    maxProgress: 350,
-                    withLabel: true,
-                  },
-                }))
+                return (answers.constituency as string[]).map(
+                  (c: string, index: number) => ({
+                    heading: 'Flokkur 1 - ' + c,
+                    progressMeter: {
+                      currentProgress: 0,
+                      maxProgress: 350,
+                      withLabel: true,
+                    },
+                  }),
+                )
               },
             }),
             buildDescriptionField({
