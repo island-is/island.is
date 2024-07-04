@@ -50,7 +50,7 @@ export const strings = defineMessages({
   },
   indictmentReviewedDateTitle: {
     id: 'judicial.system.core:info_card_indictment.indictment_reviewed_date_title',
-    defaultMessage: 'Dagsetning',
+    defaultMessage: 'Dagsetning áritunar',
     description: 'Notaður sem titill á "Dagsetning" hluta af yfirliti ákæru.',
   },
 })

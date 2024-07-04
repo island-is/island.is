@@ -13,8 +13,13 @@ import {
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
+  RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { EventType } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileCategory,
+  EventType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
+import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './IndictmentOverview.strings'
 
@@ -22,6 +27,10 @@ const IndictmentOverview = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const router = useRouter()
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const indictmentReviewedDate = workingCase.eventLogs?.find(
     (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
@@ -63,10 +72,26 @@ const IndictmentOverview = () => {
             </Text>
           </Box>
         )}
-        <InfoCardClosedIndictment
-          displayVerdictViewDate
-          indictmentReviewedDate={indictmentReviewedDate}
-        />
+        <Box marginBottom={5}>
+          <InfoCardClosedIndictment
+            displayVerdictViewDate
+            indictmentReviewedDate={indictmentReviewedDate}
+          />
+        </Box>
+        <Box marginBottom={10}>
+          <Text variant="h4" as="h4" marginBottom={1}>
+            {formatMessage(strings.verdictTitle)}
+          </Text>
+          <RenderFiles
+            workingCase={workingCase}
+            onOpenFile={onOpen}
+            caseFiles={
+              workingCase.caseFiles?.filter(
+                (file) => file.category === CaseFileCategory.RULING,
+              ) || []
+            }
+          />
+        </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter previousUrl={constants.PRISON_CASES_ROUTE} hideNextButton />

@@ -8,7 +8,7 @@ export const strings = defineMessages({
   },
   title: {
     id: 'judicial.system.core:indictment_overview.title',
-    defaultMessage: 'Máli lokið',
+    defaultMessage: 'Dómur til fullnustu',
     description: 'Notaður sem titill á yfirliti ákæru fyrir fangelsi',
   },
   indictmentCompletedTitle: {
@@ -20,5 +20,10 @@ export const strings = defineMessages({
     id: 'judicial.system.core:indictment_overview.info_card_defendants_title',
     defaultMessage: 'Dómfelld{count, plural, one {i} other {u}}',
     description: 'Titill á upplýsingakorti um dómfelldu',
+  },
+  verdictTitle: {
+    id: 'judicial.system.core:indictment_overview.verdict_title',
+    defaultMessage: 'Dómur',
+    description: 'Titill á Dómur hluta',
   },
 })
