@@ -338,6 +338,8 @@ export const InboxScreen: NavigationFunctionComponent<{
         clearTimeout(loadingTimeout.current)
       }
       setRefetching(true)
+      // Reset page to 1 when refreshing
+      pageRef.current = 1
       res
         .refetch()
         .then(() => {
