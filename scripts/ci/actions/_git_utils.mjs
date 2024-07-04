@@ -12,9 +12,9 @@ const DIRTYBOT_USER = {
 };
 
 
-export async function hasUnstagedChanges() {
-    const values = (await runCommand('git diff --stat')).trim();
-    return !!values;
+export async function unstagedChanges() {
+    const values = (await runCommand('git diff --stat')).trim().split('\n');
+    return !!values === false ? false : values;
 }
 
 /**
@@ -25,11 +25,11 @@ export async function hasUnstagedChanges() {
  * @param {string} options.message - The commit message.
  * @returns {Promise<void>} - A promise that resolves when the commit is complete.
  */
-export async function commitUnstagedChanges({ user, message: action }) {
+export async function commitUnstagedChanges({ user, message }) {
     const {name, email} = user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER;
     await runCommand(["git", "config", "user.name",name]);
     await runCommand(["git", "config", "user.email", email]);
     await runCommand(["git", "add", "-A"]);
-    await runCommand(["git", "commit", "-m", "chore: format files"]);
+    await runCommand(["git", "commit", "-m", message]);
     // await runCommand(["git", "push"]);
 }

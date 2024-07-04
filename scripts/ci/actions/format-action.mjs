@@ -11,9 +11,11 @@ import { ROOT } from './_common.mjs';
 
 const canWrite = isPR;
 const action = canWrite ? 'write' : 'check';
+
 info(`Running format:${action} for all projects.`);
+let files = [];
 try {
-    await runCommand(`yarn nx format:${action} --all`, ROOT);
+    files = (await runCommand(`yarn nx format:${action} --all`, ROOT)).split('\n');
 } catch (error) {
     // Ignore errors.
     if (!canWrite) {
@@ -22,10 +24,11 @@ try {
     }
 }
 
-if (canWrite) {
-    const shouldWrite = await hasUnstagedChanges();
-    if (shouldWrite) {
-        info("Unstaged changes found. Committing changes.");
+if (canWrite && files.length > 0) {
+    info(`The following files were formatted:\n${files.join('\n')}`)
+    const unstagedChanges = await hasUnstagedChanges();
+    if (unstagedChanges) {
+        info(`Unstaged changes found:\n${unstagedChanges.join('\n')} Committing changes.`);
         await commitUnstagedChanges({ user: 'dirtybot', message: 'chore: format files' });
         setFailed('Unstaged changes for formatting were committed.');
         process.exit(1);
