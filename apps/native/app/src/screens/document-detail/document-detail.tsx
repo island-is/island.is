@@ -227,20 +227,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.DocumentArchiveButton) {
-      toggleAction(
-        Document.archived ? 'unarchive' : 'archive',
-        Document.id!,
-        // true,
-      )
-      setTouched(true)
+      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id!)
     }
     if (buttonId === ButtonRegistry.DocumentStarButton) {
       toggleAction(
         Document.bookmarked ? 'unbookmark' : 'bookmark',
         Document.id!,
-        // true,
       )
-      setTouched(true)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
@@ -264,11 +257,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(false)
     if (hasPdf) {
       setLoaded(false)
-    }
-    if (touched) {
-      Navigation.updateProps(ComponentRegistry.InboxScreen, {
-        refresh: Math.random(),
-      })
     }
   })
 
