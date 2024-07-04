@@ -4,11 +4,9 @@ import * as nationalId from 'kennitala'
 
 const nationalIdAndName = z.object({
   name: z.string(),
-  nationalId: z
-    .string()
-    .refine((v) => nationalId.isPerson(v), {
-      params: m.nationalIdValidationError,
-    }),
+  nationalId: z.string().refine((v) => nationalId.isPerson(v), {
+    params: m.nationalIdValidationError,
+  }),
 })
 
 export const dataSchema = z.object({
@@ -36,11 +34,9 @@ export const dataSchema = z.object({
   managers: z.array(
     z.object({
       manager: nationalIdAndName,
-      constituency: z
-        .string()
-        .refine((v) => v.length >= 1, {
-          params: m.constituencyValidationError,
-        }),
+      constituency: z.string().refine((v) => v.length >= 1, {
+        params: m.constituencyValidationError,
+      }),
     }),
   ),
 
@@ -48,11 +44,9 @@ export const dataSchema = z.object({
   supervisors: z.array(
     z.object({
       supervisor: nationalIdAndName,
-      constituency: z
-        .array(z.string())
-        .refine((v) => v.length >= 1, {
-          params: m.constituencyValidationError,
-        }),
+      constituency: z.array(z.string()).refine((v) => v.length >= 1, {
+        params: m.constituencyValidationError,
+      }),
     }),
   ),
 })
