@@ -1,4 +1,4 @@
-import { Box, Divider, Stack, Text, Button } from '@island.is/island-ui/core'
+import { Box, Divider, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Problem } from '@island.is/react-spa/shared'
 import {
