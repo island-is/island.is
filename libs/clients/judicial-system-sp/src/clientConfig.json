@@ -424,7 +424,10 @@
       "DefenderInfo": {
         "type": "object",
         "properties": {
-          "defenderChoice": { "type": "number", "enum": [] },
+          "defenderChoice": {
+            "type": "string",
+            "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
+          },
           "defenderName": { "type": "string" }
         },
         "required": ["defenderChoice", "defenderName"]

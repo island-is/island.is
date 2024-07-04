@@ -11,6 +11,7 @@ import {
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Locale } from 'locale'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class JudicialSystemSPClientService {
@@ -39,53 +40,32 @@ export class JudicialSystemSPClientService {
   }
 
   async getCase(id: string, user: User, locale: Locale) {
-    let singleCase
-    try {
-      singleCase = await this.casesApiWithAuth(user).caseControllerGetCase({
+    return this.casesApiWithAuth(user)
+      .caseControllerGetCase({
         caseId: id,
         locale: locale as CaseControllerGetCaseLocaleEnum,
       })
-    } catch (error) {
-      this.logger.error('Failed getting single case for user', error)
-    }
-
-    return singleCase
+      .catch(handle404)
   }
 
   async getLawyers(user: User, locale: Locale) {
-    let lawyers
-    try {
-      lawyers = await this.defenderApiWithAuth(
-        user,
-      ).defenderControllerGetLawyers()
-    } catch (error) {
-      this.logger.warn('Failed getting lawyers list', error)
-    }
-    return lawyers
+    return this.defenderApiWithAuth(user)
+      .defenderControllerGetLawyers()
+      .catch(handle404)
   }
 
   async getSubpoena(id: string, user: User, locale: Locale) {
-    let subpoena
-    try {
-      subpoena = await this.casesApiWithAuth(user).caseControllerGetSubpoena({
+    return this.casesApiWithAuth(user)
+      .caseControllerGetSubpoena({
         caseId: id,
         locale: locale as CaseControllerGetSubpoenaLocaleEnum,
       })
-    } catch (error) {
-      this.logger.warn('Failed getting subpoena for user', error)
-    }
-    return subpoena
+      .catch(handle404)
   }
 
   async patchSubpoena(input: CaseControllerUpdateSubpoenaRequest, user: User) {
-    let response
-    try {
-      response = await this.casesApiWithAuth(user).caseControllerUpdateSubpoena(
-        input,
-      )
-    } catch (error) {
-      this.logger.error('Failed updating subpoena information')
-    }
-    return response
+    return this.casesApiWithAuth(user)
+      .caseControllerUpdateSubpoena(input)
+      .catch(handle404)
   }
 }
