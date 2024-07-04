@@ -24,6 +24,6 @@ runs:
     uses: ./.github/actions/get-cache
     with:
       github-token: ${{ inputs.github-token }}
-      enable-cache: 'node-modules'
+      enable-cache: 'node_modules'
   - name: Derive appropriate SHAs for base and head for `nx affected` commands
     uses: nrwl/nx-set-shas@v4
