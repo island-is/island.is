@@ -92,13 +92,14 @@ export class SubpoenaResponse {
       },
 
       defenderInfo: defendantInfo?.defenderChoice
-              defenderChoice: defendantInfo?.defenderChoice,
-              defenderName:
-                !waivedRight && hasDefender
-                  ? defendantInfo?.defenderName
-                  : undefined,
-            }
-          : undefined,
+        ? {
+            defenderChoice: defendantInfo?.defenderChoice,
+            defenderName:
+              !waivedRight && hasDefender
+                ? defendantInfo?.defenderName
+                : undefined,
+          }
+        : undefined,
       acceptCompensationClaim: defendantInfo?.acceptCompensationClaim,
     }
   }
