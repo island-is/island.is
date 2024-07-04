@@ -36,5 +36,5 @@ if (canWrite && files.length > 0) {
     info("No unstaged changes found.");
     process.exit(0);
 }
-
-
+info("File formatting check complete.")
+process.exit(0);
