@@ -1,8 +1,9 @@
 {
   "tasksRunnerOptions": {
     "default": {
-      "runner": "nx/tasks-runners/default",
+      "runner": "nx-cloud",
       "options": {
+        "accessToken": "NDM0ZmJmMDEtYmYwOC00MjkxLWFlMWEtM2U0ZmNkOGI0OTUwfHJlYWQ=",
         "cacheableOperations": [
           "build",
           "lint",

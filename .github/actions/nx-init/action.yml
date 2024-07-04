@@ -1,0 +1,29 @@
+name: "Init Nx Cloud"
+description: "Action to initialize Nx Cloud"
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  head-ref:
+    description: 'The head ref'
+    required: true
+  base-ref:
+    description: 'The base ref'
+    required: true
+runs:
+  using: 'composite'
+  steps:
+  - uses: actions/setup-node@v4
+    with:
+        node-version-file: 'package.json'
+  - name: Install yarn
+    shell: bash
+    run: corepack enable
+  - name: Get cache
+    id: get-cache
+    uses: ./.github/actions/get-cache
+    with:
+      github-token: ${{ inputs.github-token }}
+      enable-cache: 'node-modules'
+  - name: Derive appropriate SHAs for base and head for `nx affected` commands
+    uses: nrwl/nx-set-shas@v4
