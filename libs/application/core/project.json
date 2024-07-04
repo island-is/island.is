@@ -3,19 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/core/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/application/core/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/core/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/core/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/core"]
     },
@@ -25,6 +22,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/core/src/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }

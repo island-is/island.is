@@ -100,4 +100,16 @@ export const messages = defineMessages({
     id: 'sp.documents:select-all',
     defaultMessage: 'Velja allt',
   },
+  successArchiveMulti: {
+    id: 'sp.documents:success-archive-messages',
+    defaultMessage: 'Skjöl sett í geymslu',
+  },
+  successArchive: {
+    id: 'sp.documents:success-archive-message',
+    defaultMessage: 'Skjal sett í geymslu',
+  },
+  successUnarchive: {
+    id: 'sp.documents:success-unarchive-message',
+    defaultMessage: 'Skjal tekið úr geymslu',
+  },
 })
