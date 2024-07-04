@@ -6,7 +6,5 @@ register({ baseUrl: './', paths: tsConfig.compilerOptions.paths })
 import { stopLocalstack, stopPostgres } from '@island.is/testing/containers'
 
 export default async () => {
-  await stopLocalstack()
-
-  await stopPostgres()
+  await Promise.all([stopLocalstack(), stopPostgres()])
 }
