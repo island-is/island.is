@@ -49,7 +49,7 @@ export interface TeachingRightsStatus {
 
 export interface DrivinglicenseDuplicateValidityStatus {
   canGetNewDuplicate: boolean
-  summary: string
+  meta: string
 }
 
 export interface StudentQueryInput {

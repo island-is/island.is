@@ -9,6 +9,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { coreErrorMessages } from '@island.is/application/core'
 
 @Injectable()
 export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
@@ -21,15 +22,27 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
   }
 
   async canGetNewDuplicate({ auth }: TemplateApiModuleActionProps) {
-    const can = await this.drivingLicenseService.canGetNewDuplicate({
-      token: auth.authorization,
-    })
+    const can = await this.drivingLicenseService.canGetNewDuplicate(
+      auth.authorization,
+    )
     if (!can.canGetNewDuplicate) {
+      let summary =
+        coreErrorMessages.drivingLicenseDuplicateEntryValidationSign400Error
+      if (can.meta) {
+        summary =
+          coreErrorMessages.drivingLicenseDuplicateEntryValidationExpiredCategoryLicenseError
+      }
       throw new TemplateApiError(
         {
-          title: 'Ökuskírteini hæfir ekki umsókn um samrit',
+          title:
+            coreErrorMessages.drivingLicenseDuplicateEntryValidationErrorTitle,
           description: '',
-          summary: can.summary,
+          summary: {
+            ...summary,
+            values: {
+              categoryName: can.meta,
+            },
+          },
           defaultMessage: '',
         },
         400,

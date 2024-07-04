@@ -45,6 +45,7 @@ import {
 import { info } from 'kennitala'
 import { computeCountryResidence } from '@island.is/residence-history'
 import { Jurisdiction } from './graphql/models'
+import addMonths from 'date-fns/addMonths'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -385,10 +386,9 @@ export class DrivingLicenseService {
     })
   }
 
-  async canGetNewDuplicate(params: {
-    token: string
-  }): Promise<DrivinglicenseDuplicateValidityStatus> {
-    const { token } = params
+  async canGetNewDuplicate(
+    token: string,
+  ): Promise<DrivinglicenseDuplicateValidityStatus> {
     const license = await this.drivingLicenseApi.getCurrentLicense({
       token,
     })
@@ -396,40 +396,38 @@ export class DrivingLicenseService {
     if (license.comments?.some((comment) => comment?.nr == '400')) {
       return {
         canGetNewDuplicate: false,
-        summary:
-          'Tákntala 400 fannst á ökuskírteini. Vinsamlegast hafðu samband við Sýslumann',
+        meta: '',
       }
     }
 
-    const inSixMonths = new Date(
-      new Date(Date.now()).setMonth(new Date().getMonth() + 6),
-    )
+    const inSixMonths = addMonths(new Date(), 6)
 
-    for (const category of license.categories) {
+    for (const category of license.categories ?? []) {
       if (category.expires === null) {
+        // Technically this will result in the wrong error message
+        // towards the user, however, contacting the registry
+        // with the category information should result in the error
+        // being discovered anyway. We log it here for good measure though.
+        this.logger.warn(`${LOGTAG} Category has no expiration date`, {
+          category: category.name,
+        })
         return {
           canGetNewDuplicate: false,
-          summary:
-            'Ökuskírteini vantar skráningu fyrir því hvenær það rennur út fyrir: ' +
-            category.name +
-            '. Vinsamlegast hafðu samband við Sýslumann',
+          meta: category.name,
         }
       }
 
       if (category.expires < inSixMonths) {
         return {
           canGetNewDuplicate: false,
-          summary:
-            'Ökuskírteini útrunnið eða rennur út á næstu 6 mánuðum fyrir: ' +
-            category.name +
-            '. Vinsamlegast hafðu samband við Sýslumann',
+          meta: category.name,
         }
       }
     }
 
     return {
       canGetNewDuplicate: true,
-      summary: '',
+      meta: '',
     }
   }
 
