@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { PaymentApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
+import {
+  PaymentsOverviewApi,
+  PaymentsCopaymentApi,
+} from '@island.is/clients/icelandic-health-insurance/rights-portal'
 import { CopaymentStatus } from './models/copaymentStatus.model'
 import { CopaymentPeriod } from './models/copaymentPeriod.model'
 import { CopaymentBill } from './models/copaymentBill.model'
@@ -23,26 +26,25 @@ export type PaymentResponse<T> = {
 
 @Injectable()
 export class PaymentService {
-  constructor(private readonly api: PaymentApi) {}
+  constructor(
+    private readonly coPaymentApi: PaymentsCopaymentApi,
+    private readonly overviewApi: PaymentsOverviewApi,
+  ) {}
 
-  async getCopaymentStatus(
-    user: User,
-  ): Promise<PaymentResponse<CopaymentStatus>> {
-    try {
-      const data = await this.api
-        .withMiddleware(new AuthMiddleware(user as Auth))
-        .getCopaymentStatus()
-        .catch(handle404)
+  async getCopaymentStatus(user: User): Promise<CopaymentStatus | null> {
+    const data = await this.coPaymentApi
+      .withMiddleware(new AuthMiddleware(user as Auth))
+      .getCopaymentStatus()
+      .catch(handle404)
 
-      return {
-        items: data ? [data] : [],
-        errors: [],
-      }
-    } catch (error) {
-      return {
-        items: [],
-        errors: [{ status: PaymentErrorStatus.INTERNAL_SERVICE_ERROR }],
-      }
+    return {
+      insuranceStatus: {
+        display: data?.insuranceStatus?.display ?? undefined,
+        code: data?.insuranceStatus?.code ?? undefined,
+      },
+      maximumMonthlyPayment: data?.maximumMonthlyPayment ?? undefined,
+      maximumPayment: data?.maximumPayment ?? undefined,
+      basePayment: data?.basePayment ?? undefined,
     }
   }
 
@@ -51,7 +53,7 @@ export class PaymentService {
     input: CopaymentPeriodInput,
   ): Promise<PaymentResponse<CopaymentPeriod>> {
     try {
-      const data = await this.api
+      const data = await this.coPaymentApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getCopaymentPeriods(input)
         .catch(handle404)
@@ -73,7 +75,7 @@ export class PaymentService {
     input: CopaymentBillsInput,
   ): Promise<PaymentResponse<CopaymentBill>> {
     try {
-      const data = await this.api
+      const data = await this.coPaymentApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getCopaymentBills(input)
         .catch(handle404)
@@ -94,7 +96,7 @@ export class PaymentService {
     user: User,
   ): Promise<PaymentResponse<PaymentOverviewServiceType>> {
     try {
-      const data = await this.api
+      const data = await this.overviewApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getPaymentsOverviewServiceTypes()
         .catch(handle404)
@@ -116,7 +118,7 @@ export class PaymentService {
     input: PaymentOverviewInput,
   ): Promise<PaymentResponse<PaymentOverview>> {
     try {
-      const data = await this.api
+      const data = await this.overviewApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getPaymentsOverview(input)
         .catch(handle404)
@@ -138,7 +140,7 @@ export class PaymentService {
     input: PaymentOverviewDocumentInput,
   ): Promise<PaymentResponse<PaymentOverviewDocument>> {
     try {
-      const data = await this.api
+      const data = await this.overviewApi
         .withMiddleware(new AuthMiddleware(user as Auth))
         .getPaymentsOverviewDocument(input)
         .catch(handle404)

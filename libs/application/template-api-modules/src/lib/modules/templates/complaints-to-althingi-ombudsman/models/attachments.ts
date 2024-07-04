@@ -6,6 +6,6 @@ export interface Attachment {
 
 export enum AttachmentType {
   COMPLAINT = 'Kvörtun',
-  OTHER = 'Other',
+  OTHER = 'Fylgiskjal',
   POWEROFATTORNEY = 'Umboð',
 }

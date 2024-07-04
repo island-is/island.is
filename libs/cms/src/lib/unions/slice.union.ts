@@ -32,7 +32,6 @@ import {
   IForm,
   IStepper,
   IGraphCard,
-  ILifeEventPageListSlice,
   IAnchorPageList,
   ISidebarCard,
   IPowerBiSlice,
@@ -46,6 +45,8 @@ import {
   IChart,
   IChartComponent,
   IChartNumberBox,
+  IFeaturedEvents,
+  IGenericList,
 } from '../generated/contentfulTypes'
 import { Image, mapImage } from '../models/image.model'
 import { Asset, mapAsset } from '../models/asset.model'
@@ -134,9 +135,13 @@ import {
   ChartNumberBox,
   mapChartNumberBox,
 } from '../models/chartNumberBox.model'
-import { LifeEventPageListSlice } from '../models/lifeEventPageList.model'
+import {
+  FeaturedEvents,
+  mapFeaturedEvents,
+} from '../models/featuredEvents.model'
+import { GenericList, mapGenericList } from '../models/genericList.model'
 
-type SliceTypes =
+export type SliceTypes =
   | ITimeline
   | ISectionHeading
   | ICard
@@ -167,7 +172,6 @@ type SliceTypes =
   | IForm
   | IStepper
   | IGraphCard
-  | ILifeEventPageListSlice
   | IAnchorPageList
   | ISidebarCard
   | IPowerBiSlice
@@ -180,6 +184,8 @@ type SliceTypes =
   | IChart
   | IChartComponent
   | IChartNumberBox
+  | IFeaturedEvents
+  | IGenericList
 
 export const SliceUnion = createUnionType({
   name: 'Slice',
@@ -217,7 +223,6 @@ export const SliceUnion = createUnionType({
     Form,
     Stepper,
     GraphCard,
-    LifeEventPageListSlice,
     AnchorPageListSlice,
     SidebarCard,
     PowerBiSlice,
@@ -230,6 +235,8 @@ export const SliceUnion = createUnionType({
     Chart,
     ChartComponent,
     ChartNumberBox,
+    FeaturedEvents,
+    GenericList,
   ],
   resolveType: (document) => document.typename, // typename is appended to request on indexing
 })
@@ -297,8 +304,6 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapStepper(slice as IStepper)
     case 'graphCard':
       return mapGraphCard(slice as IGraphCard)
-    case 'lifeEventPageListSlice':
-      return mapAnchorPageListSlice(slice as ILifeEventPageListSlice)
     case 'anchorPageList':
       return mapAnchorPageListSlice(slice as IAnchorPageList)
     case 'sidebarCard':
@@ -323,6 +328,10 @@ export const mapSliceUnion = (slice: SliceTypes): typeof SliceUnion => {
       return mapChartComponent(slice as IChartComponent)
     case 'chartNumberBox':
       return mapChartNumberBox(slice as IChartNumberBox)
+    case 'featuredEvents':
+      return mapFeaturedEvents(slice as IFeaturedEvents)
+    case 'genericList':
+      return mapGenericList(slice as IGenericList)
     default:
       throw new ApolloError(`Can not convert to slice: ${contentType}`)
   }

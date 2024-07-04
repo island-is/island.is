@@ -1,3 +1,5 @@
+import { useEffect, useState } from 'react'
+
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -6,11 +8,11 @@ import {
   GridRow,
   Text,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { FooterItem } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { webRichText } from '@island.is/web/utils/richText'
 import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './IcelandicNaturalDisasterInsuranceFooter.css'
 
@@ -25,10 +27,14 @@ const IcelandicNaturalDisasterInsuranceFooter = ({
 }: IcelandicNaturalDisasterInsuranceFooterProps) => {
   const n = useNamespace(namespace)
   const { width } = useWindowSize()
-  const shouldWrap = width < theme.breakpoints.xl
+  const [shouldWrap, setShouldWrap] = useState(false)
+
+  useEffect(() => {
+    setShouldWrap(width < theme.breakpoints.xl)
+  }, [width])
 
   return (
-    <footer className={styles.footer} aria-labelledby="nti-footer">
+    <footer className={styles.footer}>
       <GridContainer>
         <GridRow>
           <GridColumn>

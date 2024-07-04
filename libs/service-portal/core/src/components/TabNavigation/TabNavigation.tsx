@@ -1,14 +1,21 @@
-import { useEffect, useState } from 'react'
-import { PortalNavigationItem } from '@island.is/portals/core'
-import { Box, FocusableBox, Select } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
+import {
+  Box,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Select,
+  Text,
+} from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import cn from 'classnames'
+import { useLocale } from '@island.is/localization'
+import { PortalNavigationItem } from '@island.is/portals/core'
+import { useOrganization } from '@island.is/service-portal/graphql'
+import { useMemo } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useWindowSize } from 'react-use'
-import { SubTabItem } from './SubTabItem'
+import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
 import * as styles from './TabNavigation.css'
-import LinkResolver from '../LinkResolver/LinkResolver'
+import { TabBar } from './TabBar'
 
 interface Props {
   pathname?: string
@@ -16,51 +23,62 @@ interface Props {
   items: PortalNavigationItem[]
 }
 
+interface ActivePath extends PortalNavigationItem {
+  activeChild?: PortalNavigationItem
+}
+
 export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
   const { formatMessage } = useLocale()
-  const [activeItem, setActiveItem] = useState<
-    PortalNavigationItem | undefined
-  >()
-  const [activeItemChildren, setActiveItemChildren] = useState<
-    PortalNavigationItem[] | undefined
-  >()
+
   const navigate = useNavigate()
   const { width } = useWindowSize()
 
-  useEffect(() => {
-    const activeItem = items.filter((itm) => itm.active)?.[0] ?? undefined
-    setActiveItem(activeItem)
-    setActiveItemChildren(
-      activeItem?.children?.filter((itm) => itm.active && !itm.navHide),
-    )
+  const activePath: ActivePath | undefined = useMemo(() => {
+    const active = items?.find((i) => i.active)
+    if (!active) {
+      //default to first one
+      return items[0]
+    }
+    return {
+      ...active,
+      activeChild: active?.children?.find((c) => c.active),
+    }
   }, [items])
 
   const tabChangeHandler = (id?: string) => {
-    if (id && id !== pathname) {
+    if (id && pathname && !(id === pathname || id === activePath.path)) {
       navigate(id)
     }
   }
 
+  const { data: organization, loading } = useOrganization(
+    activePath?.activeChild?.serviceProvider ?? activePath.serviceProvider,
+  )
+
+  const descriptionText =
+    activePath.activeChild?.description ?? activePath?.description
+
+  const tooltipText =
+    activePath.activeChild?.serviceProviderTooltip ??
+    activePath.serviceProviderTooltip
+
   const isMobile = width < theme.breakpoints.md
+
   return (
     <>
-      <Box className={styles.tabList}>
-        {items?.map((item, index) => (
-          <FocusableBox
-            component={LinkResolver}
-            key={index}
-            id={item.path}
-            justifyContent="center"
-            className={cn(styles.tab, {
-              [styles.tabSelected]: item.active,
-            })}
-            href={item.path}
-          >
-            {formatMessage(item.name)}
-          </FocusableBox>
-        ))}
-      </Box>
-      {activeItem && activeItem.path && isMobile && (
+      <TabBar
+        aria-label={label}
+        tabs={items?.map((item, index) => {
+          const active = item.path === activePath.path
+          return {
+            id: `tab-item-${index}`,
+            active: active,
+            onClick: () => tabChangeHandler(item.path),
+            name: formatMessage(item.name),
+          }
+        })}
+      />
+      {activePath.path && isMobile && (
         <Box className={styles.select}>
           <Select
             size="sm"
@@ -72,52 +90,93 @@ export const TabNavigation: React.FC<Props> = ({ items, pathname, label }) => {
               value: item.path,
             }))}
             defaultValue={{
-              value: activeItem.path,
-              label: formatMessage(activeItem.name),
+              value: activePath.path,
+              label: formatMessage(activePath.name),
             }}
             isSearchable={false}
           />
         </Box>
       )}
-      {activeItem && activeItemChildren?.length ? (
-        <Box
-          display="flex"
-          flexDirection="row"
-          marginTop={5}
-          marginBottom={[2, 1, 0]}
-        >
-          <SubTabItem
-            colorScheme={
-              activeItemChildren.filter((item) => item.active).length === 0
-                ? 'default'
-                : 'light'
-            }
-            title={formatMessage(activeItem.name)}
-            onClick={
-              activeItem.path
-                ? () => tabChangeHandler(activeItem.path)
-                : undefined
-            }
-            marginLeft={0}
-          />
-          {activeItemChildren?.map((itemChild, ii) => (
-            <SubTabItem
-              key={`subnav-${ii}`}
-              onClick={
-                itemChild.path
-                  ? () => tabChangeHandler(itemChild.path)
-                  : undefined
-              }
-              title={formatMessage(itemChild.name)}
-              colorScheme={
-                itemChild.active && activeItem.path !== itemChild.path
-                  ? 'default'
-                  : 'light'
-              }
-            />
-          ))}
-        </Box>
-      ) : null}
+      <Box marginTop={[0, 0, 2, 4, 4]}>
+        <GridContainer>
+          <GridRow>
+            {(!!activePath.description || !!activePath.children?.length) && (
+              <GridColumn span="6/8">
+                <Box printHidden className={styles.description}>
+                  <TabBar
+                    label={formatMessage(activePath.name)}
+                    variant={'alternative'}
+                    tabs={
+                      activePath.children?.map((itemChild, ii) => {
+                        const activeChild = itemChild.path
+                          ? itemChild?.path === pathname
+                          : false
+
+                        return {
+                          id: `subnav-item-${ii}`,
+                          active: activeChild,
+                          onClick: () => tabChangeHandler(itemChild.path),
+                          name: formatMessage(itemChild.name),
+                        }
+                      }) ?? []
+                    }
+                  />
+                  {activePath.children && activePath.name && isMobile && (
+                    <Box className={styles.select}>
+                      <Select
+                        size="sm"
+                        name={formatMessage(activePath.name)}
+                        label={formatMessage(activePath.name)}
+                        onChange={(opt) => tabChangeHandler(opt?.value)}
+                        options={activePath.children.map((itemChild) => ({
+                          label: formatMessage(itemChild.name),
+                          value: itemChild.path,
+                        }))}
+                        defaultValue={{
+                          label: formatMessage(activePath.children[0].name),
+                          value: activePath.children[0].path,
+                        }}
+                        isSearchable={false}
+                      />
+                    </Box>
+                  )}
+                  {descriptionText && (
+                    <Box>
+                      <Text marginBottom={4}>
+                        {formatMessage(descriptionText, {
+                          br: (
+                            <>
+                              <br />
+                              <br />
+                            </>
+                          ),
+                        })}
+                      </Text>
+                    </Box>
+                  )}
+                </Box>
+              </GridColumn>
+            )}
+            {(activePath.displayServiceProviderLogo ||
+              activePath?.displayServiceProviderLogo) &&
+              !isMobile && (
+                <GridColumn span="1/8" offset="1/8">
+                  {organization?.logo && (
+                    <InstitutionPanel
+                      loading={loading}
+                      linkHref={organization.link ?? ''}
+                      img={organization.logo?.url ?? ''}
+                      tooltipText={
+                        tooltipText ? formatMessage(tooltipText) : ''
+                      }
+                      imgContainerDisplay={isMobile ? 'block' : 'flex'}
+                    />
+                  )}
+                </GridColumn>
+              )}
+          </GridRow>
+        </GridContainer>
+      </Box>
     </>
   )
 }

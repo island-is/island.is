@@ -1,7 +1,7 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
 import { FC, useState } from 'react'
-import { Box, CategoryCard, SkeletonLoader } from '@island.is/island-ui/core'
+import { ActionCard, Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { VehiclesCurrentVehicle } from '../../shared'
 import { information } from '../../lib/messages'
 import { SelectController } from '@island.is/shared/form-fields'
@@ -75,10 +75,11 @@ export const VehicleSelectField: FC<
         ) : (
           <Box>
             {selectedVehicle && (
-              <CategoryCard
-                colorScheme="blue"
+              <ActionCard
+                backgroundColor={'blue'}
                 heading={selectedVehicle.make || ''}
                 text={`${selectedVehicle.color} - ${selectedVehicle.permno}`}
+                focused={true}
               />
             )}
           </Box>

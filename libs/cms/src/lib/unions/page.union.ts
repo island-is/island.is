@@ -35,7 +35,7 @@ import {
   OrganizationSubpage,
 } from '../models/organizationSubpage.model'
 import { mapProjectPage, ProjectPage } from '../models/projectPage.model'
-import { LifeEventPage } from '../models/lifeEventPage.model'
+import { LifeEventPage, mapLifeEventPage } from '../models/lifeEventPage.model'
 
 export type PageTypes =
   | IArticle
@@ -78,7 +78,7 @@ export const mapPageUnion = (page: PageTypes): typeof PageUnion => {
       return mapSubArticle(page as ISubArticle)
     }
     case 'lifeEventPage': {
-      return mapAnchorPage(page as ILifeEventPage)
+      return mapLifeEventPage(page as ILifeEventPage)
     }
     case 'anchorPage': {
       return mapAnchorPage(page as IAnchorPage)

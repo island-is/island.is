@@ -16,7 +16,9 @@ export class LinkSyncService implements CmsSyncProvider<ILink> {
   }
 
   doMapping(entries: ILink[]) {
-    logger.info('Mapping links', { count: entries.length })
+    if (entries.length > 0) {
+      logger.info('Mapping links', { count: entries.length })
+    }
 
     return entries
       .map<MappedData | boolean>((entry) => {

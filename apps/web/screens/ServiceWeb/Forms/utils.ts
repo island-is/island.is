@@ -85,6 +85,15 @@ export enum DirectorateOfImmigrationCategories {
   ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
 }
 
+export enum FiskistofaCategories {
+  STRANDVEIDAR = '6vPorSHCBf4o22rhbHedHR',
+  VEIDILEYFI = '5QmuK7Ns1wgpEUWTetbLGb',
+  AFLASKRANING = '4D5Fhl2YedrTOJ7PTMYeo0',
+  FISKVEIDAR = '5i5oQMp8r2oE43bYNPeZig',
+  UTFLUTNINGUR = '6sE8R2mNldfv9ZEHGv5FA',
+  VEIDIHEIMILDIR = '1agbWJCHTDVfVR4yQZPaEK',
+}
+
 export const filterSupportCategories = (
   supportCategories: SupportCategory[] | undefined,
   slug: string,
@@ -92,7 +101,11 @@ export const filterSupportCategories = (
   locale: string,
   namespace: Record<string, string> | undefined,
 ) => {
-  if (slug === 'sjukratryggingar' || slug === 'icelandic-health-insurance') {
+  if (
+    slug === 'sjukratryggingar' ||
+    slug === 'icelandic-health-insurance' ||
+    slug === 'iceland-health'
+  ) {
     return supportCategories
       ?.filter(
         (c) =>
@@ -203,6 +216,57 @@ export const filterSupportCategories = (
               : 'Assisted voluntary return'),
         },
       ])
+  }
+
+  if (slug === 'samgongustofa' || slug === 'transport-authority') {
+    return [
+      {
+        id: 'umferd',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'umferd',
+        title:
+          namespace?.['transportAuthorityTraffic'] ||
+          (locale === 'is' ? 'Umferð' : 'Traffic'),
+      },
+      {
+        id: 'flug',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'flug',
+        title:
+          namespace?.['transportAuthorityFlight'] ||
+          (locale === 'is' ? 'Flug' : 'Flight'),
+      },
+      {
+        id: 'siglingar',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'siglingar',
+        title:
+          namespace?.['transportAuthoritySailing'] ||
+          (locale === 'is' ? 'Siglingar' : 'Sailing'),
+      },
+      {
+        id: 'annad',
+        importance: 0,
+        __typename: 'SupportCategory',
+        description: '',
+        organization: organization,
+        slug: 'annad',
+        title:
+          namespace?.['transportAuthorityOther'] ||
+          (locale === 'is'
+            ? 'Önnur þjónusta Samgöngustofu'
+            : 'Other services of Transport Authority'),
+      },
+    ]
   }
 
   return supportCategories

@@ -37,6 +37,7 @@ import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
   CaseAppealRulingDecision,
+  CaseAppealState,
   CaseDecision,
   CaseState,
   CaseTransition,
@@ -61,6 +62,7 @@ import {
   prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
 import { CaseEvent, EventService } from '../event'
 import { UserService } from '../user'
@@ -82,6 +84,7 @@ import {
   courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
+  districtCourtJudgeSignRulingRule,
   districtCourtJudgeTransitionRule,
   districtCourtJudgeUpdateRule,
   districtCourtRegistrarTransitionRule,
@@ -90,6 +93,7 @@ import {
   prosecutorRepresentativeUpdateRule,
   prosecutorTransitionRule,
   prosecutorUpdateRule,
+  publicProsecutorStaffUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
@@ -97,7 +101,7 @@ import { Case } from './models/case.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('cases')
@@ -106,7 +110,7 @@ export class CaseController {
     private readonly caseService: CaseService,
     private readonly userService: UserService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -157,6 +161,7 @@ export class CaseController {
     courtOfAppealsJudgeUpdateRule,
     courtOfAppealsRegistrarUpdateRule,
     courtOfAppealsAssistantUpdateRule,
+    publicProsecutorStaffUpdateRule,
   )
   @Patch('case/:caseId')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -175,13 +180,8 @@ export class CaseController {
       await this.validateAssignedUser(
         update.prosecutorId,
         [UserRole.PROSECUTOR],
-        theCase.creatingProsecutor?.institutionId,
+        theCase.prosecutorsOfficeId,
       )
-
-      // If the case was created via xRoad, then there may not have been a creating prosecutor
-      if (!theCase.creatingProsecutor) {
-        update.creatingProsecutorId = update.prosecutorId
-      }
     }
 
     if (update.judgeId) {
@@ -285,6 +285,7 @@ export class CaseController {
 
     const states = transitionCase(
       transition.transition,
+      theCase.type,
       theCase.state,
       theCase.appealState,
     )
@@ -295,9 +296,15 @@ export class CaseController {
       case CaseTransition.DELETE:
         update.parentCaseId = null
         break
+      case CaseTransition.SUBMIT:
+        if (isIndictmentCase(theCase.type)) {
+          update.indictmentDeniedExplanation = null
+        }
+        break
       case CaseTransition.ACCEPT:
       case CaseTransition.REJECT:
       case CaseTransition.DISMISS:
+      case CaseTransition.COMPLETE:
         update.rulingDate = isIndictmentCase(theCase.type)
           ? nowFactory()
           : theCase.courtEndTime
@@ -318,16 +325,15 @@ export class CaseController {
             ...update,
             ...transitionCase(
               CaseTransition.APPEAL,
+              theCase.type,
               states.state ?? theCase.state,
               states.appealState ?? theCase.appealState,
             ),
           }
         }
-
         break
       case CaseTransition.REOPEN:
         update.rulingDate = null
-        update.rulingSignatureDate = null
         update.courtRecordSignatoryId = null
         update.courtRecordSignatureDate = null
         break
@@ -343,17 +349,52 @@ export class CaseController {
       case CaseTransition.COMPLETE_APPEAL:
         if (
           isRestrictionCase(theCase.type) &&
-          (theCase.decision === CaseDecision.ACCEPTING ||
-            theCase.decision === CaseDecision.ACCEPTING_PARTIALLY) &&
           theCase.state === CaseState.ACCEPTED &&
-          theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED
+          (theCase.decision === CaseDecision.ACCEPTING ||
+            theCase.decision === CaseDecision.ACCEPTING_PARTIALLY)
         ) {
-          // The court of appeals has modified the ruling of a restriction case
-          update.validToDate = theCase.appealValidToDate
-          update.isCustodyIsolation = theCase.isAppealCustodyIsolation
-          update.isolationToDate = theCase.appealIsolationToDate
+          if (
+            theCase.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
+            theCase.appealRulingDecision ===
+              CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY
+          ) {
+            // The court of appeals has modified the ruling of a restriction case
+            update.validToDate = theCase.appealValidToDate
+            update.isCustodyIsolation = theCase.isAppealCustodyIsolation
+            update.isolationToDate = theCase.appealIsolationToDate
+          } else if (
+            theCase.appealRulingDecision === CaseAppealRulingDecision.REPEAL
+          ) {
+            // The court of appeals has repealed the ruling of a restriction case
+            update.validToDate = nowFactory()
+          }
         }
         break
+      case CaseTransition.WITHDRAW_APPEAL:
+        // We only want to set the appeal ruling decision if the
+        // case has already been received.
+        // Otherwise the court of appeals never knew of the appeal in
+        // the first place so it remains withdrawn without a decision.
+        if (
+          !theCase.appealRulingDecision &&
+          theCase.appealState === CaseAppealState.RECEIVED
+        ) {
+          update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
+        }
+        break
+      case CaseTransition.ASK_FOR_CONFIRMATION:
+        update.indictmentReturnedExplanation = null
+        break
+      case CaseTransition.RETURN_INDICTMENT:
+        update.courtCaseNumber = null
+        update.indictmentHash = null
+        break
+      case CaseTransition.ASK_FOR_CANCELLATION:
+        if (theCase.indictmentDecision) {
+          throw new ForbiddenException(
+            `Cannot ask for cancellation of an indictment that is already in progress at the district court`,
+          )
+        }
     }
 
     const updatedCase = await this.caseService.update(
@@ -376,6 +417,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -402,6 +444,7 @@ export class CaseController {
   @RolesRules(
     prosecutorRule,
     prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
@@ -722,7 +765,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(districtCourtJudgeSignRulingRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -734,12 +777,6 @@ export class CaseController {
     @CurrentCase() theCase: Case,
   ): Promise<SigningServiceResponse> {
     this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
-
-    if (user.id !== theCase.judgeId) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
-    }
 
     return this.caseService.requestRulingSignature(theCase).catch((error) => {
       if (error instanceof DokobitError) {
@@ -765,7 +802,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeRule)
+  @RolesRules(districtCourtJudgeSignRulingRule)
   @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -779,12 +816,6 @@ export class CaseController {
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
-
-    if (user.id !== theCase.judgeId) {
-      throw new ForbiddenException(
-        'A ruling must be signed by the assigned judge',
-      )
-    }
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,

@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
-import { useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -17,43 +16,38 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
-import { Loading } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
-  Institution,
+  Loading,
+  PageHeader,
+} from '@island.is/judicial-system-web/src/components'
+import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import {
-  InstitutionsQuery,
-  UsersQuery,
-} from '@island.is/judicial-system-web/src/utils/mutations'
+import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
 
-interface UserData {
-  users: User[]
-}
-interface InstitutionData {
-  institutions: Institution[]
-}
-
-export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Users = () => {
   const router = useRouter()
   const [selectedInstitution, setSelectedInstitution] = useState<string>()
   const { formatMessage } = useIntl()
-  const { data, error, loading } = useQuery<UserData>(UsersQuery, {
+  const {
+    allInstitutions,
+    loading: institutionsLoading,
+    loaded: institutionsLoaded,
+  } = useInstitution()
+  const {
+    data: usersData,
+    error: usersError,
+    loading: usersLoading,
+  } = useUsersQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const { data: rawInstitutions, loading: loadingInstitutions } =
-    useQuery<InstitutionData>(InstitutionsQuery, {
-      fetchPolicy: 'no-cache',
-      errorPolicy: 'all',
-    })
-
-  const users = data?.users.filter((u) => {
+  const users = usersData?.users?.filter((u) => {
     return selectedInstitution
       ? u.institution?.id === selectedInstitution
       : true
@@ -63,7 +57,7 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
     router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
-  const userRoleToString = (userRole: UserRole) => {
+  const userRoleToString = (userRole?: UserRole | null) => {
     switch (userRole) {
       case UserRole.PROSECUTOR:
         return 'Saksóknari'
@@ -80,6 +74,10 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
+      case UserRole.PUBLIC_PROSECUTOR_STAFF:
+        return 'Skrifstofa'
+      default:
+        return 'Óþekkt'
     }
   }
 
@@ -109,12 +107,14 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <Select
             name="institutions"
             options={
-              rawInstitutions?.institutions.map((i) => {
-                return { label: i.name, value: i.id }
-              }) || []
+              institutionsLoaded
+                ? allInstitutions.map((i) => {
+                    return { label: i.name ?? '', value: i.id }
+                  })
+                : []
             }
             placeholder="Veldu stofnun"
-            isDisabled={loadingInstitutions}
+            isDisabled={institutionsLoading}
             onChange={(selectedOption) =>
               setSelectedInstitution(selectedOption?.value)
             }
@@ -156,6 +156,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
               </Box>
               <Box component="th" paddingY={2} paddingX={3}>
                 <Text as="span" fontWeight="regular">
+                  Getur staðfest ákærur
+                </Text>
+              </Box>
+              <Box component="th" paddingY={2} paddingX={3}>
+                <Text as="span" fontWeight="regular">
                   Innskráningar
                 </Text>
               </Box>
@@ -189,6 +194,11 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
                 </Box>
                 <Box component="td" paddingX={3} paddingY={2}>
                   <Text as="span">
+                    {user.canConfirmIndictment ? 'Já' : 'Nei'}
+                  </Text>
+                </Box>
+                <Box component="td" paddingX={3} paddingY={2}>
+                  <Text as="span">
                     {user.latestLogin
                       ? `${formatDate(user.latestLogin, 'yyy-MM-dd HH:mm')} - ${
                           user.loginCount
@@ -205,16 +215,16 @@ export const Users: React.FC<React.PropsWithChildren<unknown>> = () => {
           <AlertMessage
             type="info"
             title="Enginn notandi fannst"
-            message="Vinsamlegast veldur aðra stofnun"
+            message="Vinsamlegast veldu aðra stofnun"
           />
         </Box>
       )}
-      {loading && (
+      {(institutionsLoading || usersLoading) && (
         <Box width="full">
           <Loading />
         </Box>
       )}
-      {error && (
+      {usersError && (
         <div data-testid="users-error">
           <AlertMessage
             title={formatMessage(errors.failedToFetchDataFromDbTitle)}

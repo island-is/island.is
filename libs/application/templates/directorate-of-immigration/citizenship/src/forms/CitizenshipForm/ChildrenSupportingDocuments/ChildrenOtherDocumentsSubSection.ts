@@ -4,6 +4,7 @@ import {
   buildDescriptionField,
   buildCustomField,
   buildFileUploadField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { supportingDocuments } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
@@ -14,7 +15,7 @@ import {
   getSelectedCustodyChildren,
 } from '../../../utils'
 import { Routes } from '../../../lib/constants'
-import { MIN_AGE_WRITTEN_CONSENT } from '../../../shared'
+import { FILE_TYPES_ALLOWED, MIN_AGE_WRITTEN_CONSENT } from '../../../shared'
 
 const FILE_SIZE_LIMIT = 10000000
 
@@ -61,6 +62,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               supportingDocuments.labels.otherDocumentsChildren
                 .birthCertificate,
             introduction: '',
+            uploadAccept: FILE_TYPES_ALLOWED,
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren
@@ -75,6 +77,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
             title:
               supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
             introduction: '',
+            uploadAccept: FILE_TYPES_ALLOWED,
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren.writtenConsent,
@@ -98,6 +101,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               supportingDocuments.labels.otherDocumentsChildren
                 .otherParentConsent,
             introduction: '',
+            uploadAccept: FILE_TYPES_ALLOWED,
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren
@@ -119,7 +123,13 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               const hasOtherParent =
                 thisChild && !!thisChild.otherParent ? true : false
 
-              return hasOtherParent
+              const customAddedParent = getValueViaPath(
+                answers,
+                `selectedChildrenExtraData[${index}].otherParentName`,
+                '',
+              ) as string
+
+              return hasOtherParent || !!customAddedParent
             },
           }),
           buildFileUploadField({
@@ -128,6 +138,7 @@ export const ChildrenOtherDocumentsSubSection = (index: number) =>
               supportingDocuments.labels.otherDocumentsChildren
                 .custodyDocuments,
             introduction: '',
+            uploadAccept: FILE_TYPES_ALLOWED,
             maxSize: FILE_SIZE_LIMIT,
             uploadHeader:
               supportingDocuments.labels.otherDocumentsChildren

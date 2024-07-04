@@ -1,35 +1,35 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
-import format from 'date-fns/format'
-import localeIS from 'date-fns/locale/is'
-import parseISO from 'date-fns/parseISO'
-import router from 'next/router'
+import { AnimatePresence } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
-import {
-  DEFENDER_INDICTMENT_ROUTE,
-  DEFENDER_ROUTE,
-} from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  ContextMenu,
   TagAppealState,
   TagCaseState,
+  useWithdrawAppealMenuOption,
+  WithdrawAppealContextMenuModal,
 } from '@island.is/judicial-system-web/src/components'
+import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
+import IconButton from '@island.is/judicial-system-web/src/components/IconButton/IconButton'
 import {
   ColumnCaseType,
   CourtCaseNumber,
+  CourtDate,
   CreatedDate,
   DefendantInfo,
   getDurationDate,
   SortButton,
   TableSkeleton,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCaseListEntry as CaseListEntry } from '@island.is/judicial-system-web/src/types'
-import { useSortCases } from '@island.is/judicial-system-web/src/utils/hooks'
+import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useCaseList,
+  useSortCases,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import * as styles from './DefenderCasesTable.css'
 
@@ -39,19 +39,23 @@ interface Props {
   loading?: boolean
 }
 
-export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+export const DefenderCasesTable: FC<Props> = ({
+  cases,
+  showingCompletedCases,
+  loading,
+}) => {
   const { formatMessage } = useIntl()
-  const { cases, showingCompletedCases, loading } = props
   const { sortedData, requestSort, getClassNamesFor, isActiveColumn } =
-    useSortCases('createdAt', 'descending', cases)
+    useSortCases('created', 'descending', cases)
+  const { isOpeningCaseId, LoadingIndicator, showLoading, handleOpenCase } =
+    useCaseList()
 
-  const handleRowClick = (id: string, type: CaseType) => {
-    isIndictmentCase(type)
-      ? router.push(`${DEFENDER_INDICTMENT_ROUTE}/${id}`)
-      : router.push(`${DEFENDER_ROUTE}/${id}`)
-  }
+  const {
+    withdrawAppealMenuOption,
+    caseToWithdraw,
+    setCaseToWithdraw,
+    shouldDisplayWithdrawAppealOption,
+  } = useWithdrawAppealMenuOption()
 
   return (
     <Box marginBottom={7}>
@@ -71,10 +75,10 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   title={capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   )}
-                  onClick={() => requestSort('defendant')}
-                  sortAsc={getClassNamesFor('defendant') === 'ascending'}
-                  sortDes={getClassNamesFor('defendant') === 'descending'}
-                  isActive={isActiveColumn('defendant')}
+                  onClick={() => requestSort('defendants')}
+                  sortAsc={getClassNamesFor('defendants') === 'ascending'}
+                  sortDes={getClassNamesFor('defendants') === 'descending'}
+                  isActive={isActiveColumn('defendants')}
                   dataTestid="accusedNameSortButton"
                 />
               </th>
@@ -88,13 +92,12 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   title={capitalize(
                     formatMessage(tables.created, { suffix: 'i' }),
                   )}
-                  onClick={() => requestSort('createdAt')}
-                  sortAsc={getClassNamesFor('createdAt') === 'ascending'}
-                  sortDes={getClassNamesFor('createdAt') === 'descending'}
-                  isActive={isActiveColumn('createdAt')}
+                  onClick={() => requestSort('created')}
+                  sortAsc={getClassNamesFor('created') === 'ascending'}
+                  sortDes={getClassNamesFor('created') === 'descending'}
+                  isActive={isActiveColumn('created')}
                 />
               </th>
-
               <th className={cn(styles.th, styles.largeColumn)}>
                 <Text as="span" fontWeight="regular">
                   {formatMessage(tables.state)}
@@ -113,49 +116,54 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   </Text>
                 </th>
               )}
+              <th></th>
             </tr>
           </thead>
-
           <tbody>
-            {sortedData?.map((c: CaseListEntry) => (
+            {sortedData?.map((column: CaseListEntry) => (
               <tr
                 className={cn(styles.tableRowContainer)}
-                key={c.id}
-                onClick={() => handleRowClick(c.id, c.type)}
+                key={column.id}
+                onClick={() => handleOpenCase(column.id)}
               >
                 <td className={styles.td}>
                   <CourtCaseNumber
-                    courtCaseNumber={c.courtCaseNumber}
-                    policeCaseNumbers={c.policeCaseNumbers}
-                    appealCaseNumber={c.appealCaseNumber}
+                    courtCaseNumber={column.courtCaseNumber}
+                    policeCaseNumbers={column.policeCaseNumbers}
+                    appealCaseNumber={column.appealCaseNumber}
                   />
                 </td>
                 <td className={cn(styles.td)}>
-                  <DefendantInfo defendants={c.defendants} />
+                  <DefendantInfo defendants={column.defendants} />
                 </td>
                 <td className={styles.td}>
                   <ColumnCaseType
-                    type={c.type}
-                    decision={c.decision}
-                    parentCaseId={c.parentCaseId}
+                    type={column.type}
+                    decision={column.decision}
+                    parentCaseId={column.parentCaseId}
                   />
                 </td>
                 <td className={cn(styles.td)}>
-                  <CreatedDate created={c.created} />
+                  <CreatedDate created={column.created} />
                 </td>
                 <td className={styles.td} data-testid="tdTag">
-                  <Box marginRight={1} marginBottom={1}>
+                  <Box
+                    marginRight={column.appealState ? 1 : 0}
+                    marginBottom={column.appealState ? 1 : 0}
+                  >
                     <TagCaseState
-                      caseState={c.state}
-                      caseType={c.type}
-                      isValidToDateInThePast={c.isValidToDateInThePast}
-                      courtDate={c.courtDate}
+                      caseState={column.state}
+                      caseType={column.type}
+                      isValidToDateInThePast={column.isValidToDateInThePast}
+                      courtDate={column.courtDate}
+                      indictmentDecision={column.indictmentDecision}
+                      indictmentRulingDecision={column.indictmentRulingDecision}
                     />
                   </Box>
-                  {c.appealState && (
+                  {column.appealState && (
                     <TagAppealState
-                      appealState={c.appealState}
-                      appealRulingDecision={c.appealRulingDecision}
+                      appealState={column.appealState}
+                      appealRulingDecision={column.appealRulingDecision}
                     />
                   )}
                 </td>
@@ -163,37 +171,68 @@ export const DefenderCasesTable: React.FC<React.PropsWithChildren<Props>> = (
                   <td className={styles.td}>
                     <Text>
                       {getDurationDate(
-                        c.state,
-                        c.validToDate,
-                        c.initialRulingDate,
-                        c.rulingDate,
+                        column.state,
+                        column.validToDate,
+                        column.initialRulingDate,
+                        column.rulingDate,
                       )}
                     </Text>
                   </td>
                 ) : (
                   <td className={styles.td}>
-                    {c.courtDate && (
-                      <>
-                        <Text>
-                          <Box component="span" className={styles.blockColumn}>
-                            {capitalize(
-                              format(parseISO(c.courtDate), 'EEEE d. LLLL y', {
-                                locale: localeIS,
-                              }),
-                            ).replace('dagur', 'd.')}
-                          </Box>
-                        </Text>
-                        <Text as="span" variant="small">
-                          kl. {format(parseISO(c.courtDate), 'kk:mm')}
-                        </Text>
-                      </>
-                    )}
+                    <CourtDate
+                      courtDate={column.courtDate}
+                      postponedIndefinitelyExplanation={
+                        column.postponedIndefinitelyExplanation
+                      }
+                      courtSessionType={column.courtSessionType}
+                    />
                   </td>
                 )}
+                <td>
+                  <AnimatePresence>
+                    {isOpeningCaseId === column.id && showLoading ? (
+                      <LoadingIndicator />
+                    ) : (
+                      <Box>
+                        <ContextMenu
+                          items={[
+                            {
+                              title: formatMessage(contextMenu.openInNewTab),
+                              onClick: () => handleOpenCase(column.id, true),
+                              icon: 'open',
+                            },
+                            ...(shouldDisplayWithdrawAppealOption(column)
+                              ? [withdrawAppealMenuOption(column.id)]
+                              : []),
+                          ]}
+                          menuLabel="Opna valmöguleika á máli"
+                          disclosure={
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                              }}
+                              disabled={false}
+                            />
+                          }
+                        />
+                      </Box>
+                    )}
+                  </AnimatePresence>
+                </td>
               </tr>
             ))}
           </tbody>
         </table>
+      )}
+      {caseToWithdraw && (
+        <WithdrawAppealContextMenuModal
+          caseId={caseToWithdraw}
+          cases={cases}
+          onClose={() => setCaseToWithdraw(undefined)}
+        />
       )}
     </Box>
   )

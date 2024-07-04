@@ -1,4 +1,6 @@
 import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import { Locale } from '@island.is/shared/types'
 
 // Takes in date on format 'yyymmdd' and returns Date object
 export const dateParse = (startDate: string) => {
@@ -8,12 +10,35 @@ export const dateParse = (startDate: string) => {
   return new Date(year, month - 1, day)
 }
 
-// Takes in date string or date
-export const formatDate = (date?: string | Date | null) => {
+export const isDateAfterToday = (date: Date | string | undefined) => {
+  if (!date) {
+    return null
+  }
+
+  let argDate: Date
+  if (typeof date === 'string') {
+    const tmpDate = new Date(date)
+    if (!isNaN(tmpDate.getTime())) {
+      argDate = tmpDate
+    } else {
+      return null
+    }
+  } else {
+    argDate = date
+  }
+
+  return argDate > new Date()
+}
+
+// Takes in date string or date, with optional format
+export const formatDate = (
+  date?: string | Date | null,
+  dateFormat?: string,
+) => {
   if (!date) return ''
   const arg = date instanceof Date ? date : new Date(date)
   try {
-    return format(arg, 'dd.MM.yyyy')
+    return format(arg, dateFormat ?? 'dd.MM.yyyy')
   } catch {
     return date instanceof Date ? date.toDateString() : date
   }
@@ -43,4 +68,16 @@ export const icelandLocalTime = (date?: string) => {
   })
 
   return formattedTime
+}
+
+export const displayMonthOrYear = (date: string, l: Locale) => {
+  const locale = l === 'is' ? is : undefined
+  try {
+    if (date.includes('-')) {
+      return format(new Date(date), 'MMMM yyyy', { locale })
+    }
+    return format(new Date(date), 'yyyy', { locale })
+  } catch {
+    return date
+  }
 }

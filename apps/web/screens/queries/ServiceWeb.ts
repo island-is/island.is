@@ -8,6 +8,22 @@ export const GET_SERVICE_WEB_PAGE_QUERY = gql`
       slices {
         ...AllSlices
       }
+      contactFormDisclaimer {
+        ...HtmlFields
+      }
+      footerItems {
+        title
+        content {
+          ...HtmlFields
+        }
+        serviceWebContent {
+          ...HtmlFields
+        }
+        link {
+          text
+          url
+        }
+      }
     }
   }
   ${slices}

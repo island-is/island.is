@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { Gender, MaritalStatus } from '../types'
+import { Gender, MaritalStatus, NationalIdType } from '../types'
 import { Birthplace } from './birthplace.model'
 import { Citizenship } from './citizenship.model'
 import { Spouse } from './spouse.model'
@@ -19,6 +19,9 @@ export class Person extends PersonBase {
   @Field(() => Gender, { nullable: true })
   gender?: Gender
 
+  @Field(() => NationalIdType, { nullable: true })
+  nationalIdType?: string | null
+
   @Field(() => Boolean, { nullable: true })
   exceptionFromDirectMarketing?: boolean | null
 
@@ -34,6 +37,9 @@ export class Person extends PersonBase {
   @Field(() => [ChildCustody], { nullable: true })
   childCustody?: Array<ChildCustody> | null
 
+  @Field(() => [ChildCustody], { nullable: true })
+  biologicalChildren?: Array<ChildCustody> | null
+
   @Field(() => Birthplace, { nullable: true })
   birthplace?: Birthplace | null
 
@@ -48,6 +54,12 @@ export class Person extends PersonBase {
 
   @Field(() => Spouse, { nullable: true })
   spouse?: Spouse | null
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'Unique string. Can be used for URLs.',
+  })
+  baseId?: string | null
 
   //DEPRECATED USER PROPERTIES
 

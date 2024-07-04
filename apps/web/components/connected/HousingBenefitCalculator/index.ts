@@ -6,3 +6,10 @@ export const HousingBenefitCalculator = dynamic(
     ssr: false,
   },
 )
+
+export const SpecificHousingBenefitSupportCalculator = dynamic(
+  () => import('./SpecificHousingBenefitSupportCalculator'),
+  {
+    ssr: true,
+  },
+)

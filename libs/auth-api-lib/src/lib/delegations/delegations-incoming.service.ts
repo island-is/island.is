@@ -9,11 +9,12 @@ import { DelegationDTOMapper } from './delegation-dto.mapper'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
-import { DelegationType } from './types/delegationType'
 import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
 import { ApiScope } from '../resources/models/api-scope.model'
 import { WhereOptions } from 'sequelize'
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
+import { DelegationsIndexService } from './delegations-index.service'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -37,7 +38,7 @@ export type ApiScopeInfo = Pick<
 
 interface FindAvailableInput {
   user: User
-  delegationTypes?: DelegationType[]
+  delegationTypes?: AuthDelegationType[]
   requestedScopes?: string[]
   otherUser?: string
 }
@@ -60,6 +61,7 @@ export class DelegationsIncomingService {
     private delegationsIncomingCustomService: DelegationsIncomingCustomService,
     private delegationsIncomingRepresentativeService: DelegationsIncomingRepresentativeService,
     private delegationsIncomingWardService: DelegationsIncomingWardService,
+    private delegationsIndexService: DelegationsIndexService,
   ) {}
 
   async findAllValid(
@@ -73,6 +75,9 @@ export class DelegationsIncomingService {
       )
     }
 
+    // Index incoming delegations
+    void this.delegationsIndexService.indexDelegations(user)
+
     const delegationPromises = []
 
     delegationPromises.push(
@@ -84,14 +89,16 @@ export class DelegationsIncomingService {
     )
 
     delegationPromises.push(
-      this.delegationsIncomingCustomService.findAllValidIncoming(
-        user,
+      this.delegationsIncomingCustomService.findAllValidIncoming({
+        nationalId: user.nationalId,
         domainName,
-      ),
+      }),
     )
 
     delegationPromises.push(
-      this.delegationsIncomingRepresentativeService.findAllIncoming(user),
+      this.delegationsIncomingRepresentativeService.findAllIncoming({
+        nationalId: user.nationalId,
+      }),
     )
 
     const delegationSets = await Promise.all(delegationPromises)
@@ -121,7 +128,7 @@ export class DelegationsIncomingService {
     const delegationPromises = []
 
     if (
-      this.isRequested(DelegationType.LegalGuardian, delegationTypes) &&
+      this.isRequested(AuthDelegationType.LegalGuardian, delegationTypes) &&
       (!client || client.supportsLegalGuardians)
     ) {
       delegationPromises.push(
@@ -138,7 +145,7 @@ export class DelegationsIncomingService {
     }
 
     if (
-      this.isRequested(DelegationType.ProcurationHolder, delegationTypes) &&
+      this.isRequested(AuthDelegationType.ProcurationHolder, delegationTypes) &&
       (!client || client.supportsProcuringHolders)
     ) {
       delegationPromises.push(
@@ -155,7 +162,7 @@ export class DelegationsIncomingService {
     }
 
     if (
-      this.isRequested(DelegationType.Custom, delegationTypes) &&
+      this.isRequested(AuthDelegationType.Custom, delegationTypes) &&
       (!client || client.supportsCustomDelegation)
     ) {
       delegationPromises.push(
@@ -169,18 +176,18 @@ export class DelegationsIncomingService {
 
     if (
       this.isRequested(
-        DelegationType.PersonalRepresentative,
+        AuthDelegationType.PersonalRepresentative,
         delegationTypes,
       ) &&
       (!client || client.supportsPersonalRepresentatives)
     ) {
       delegationPromises.push(
         this.delegationsIncomingRepresentativeService
-          .findAllIncoming(
-            user,
+          .findAllIncoming({
+            nationalId: user.nationalId,
             clientAllowedApiScopes,
-            client?.requireApiScopes,
-          )
+            requireApiScopes: client?.requireApiScopes,
+          })
           .then((ds) =>
             ds.map((d) => DelegationDTOMapper.toMergedDelegationDTO(d)),
           ),
@@ -219,8 +226,8 @@ export class DelegationsIncomingService {
   }
 
   private isRequested(
-    type: DelegationType,
-    delegationTypes?: DelegationType[],
+    type: AuthDelegationType,
+    delegationTypes?: AuthDelegationType[],
   ): boolean {
     const hasDelegationTypeFilter =
       delegationTypes && delegationTypes.length > 0

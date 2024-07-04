@@ -5,17 +5,11 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { PaymentService } from './payment.service'
 import { ApiScope } from '@island.is/auth/scopes'
-import { CopaymentStatusResponse } from './models/copaymentStatus.response'
 import { CopaymentPeriodResponse } from './models/copaymentPeriods.response'
 import { CopaymentBillsInput } from './dto/copaymentBills.input'
 import { CopaymentBillResponse } from './models/copaymentBill.response'
@@ -27,11 +21,10 @@ import { PaymentOverviewServiceTypeResponse } from './models/paymentOverviewServ
 import { CopaymentPeriodInput } from './dto/copaymentPeriod.input'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import { ConfigType } from '@nestjs/config'
+import { CopaymentStatus } from './models/copaymentStatus.model'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
-@FeatureFlag(Features.servicePortalHealthPaymentPages)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/payment' })
 export class PaymentResolver {
   constructor(
@@ -40,21 +33,22 @@ export class PaymentResolver {
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
-  @Query(() => CopaymentStatusResponse, {
+  @Query(() => CopaymentStatus, {
     name: 'rightsPortalCopaymentStatus',
+    nullable: true,
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getCopaymentStatus(
     @CurrentUser() user: User,
-  ): Promise<CopaymentStatusResponse> {
-    return await this.service.getCopaymentStatus(user)
+  ): Promise<CopaymentStatus | null> {
+    return this.service.getCopaymentStatus(user)
   }
 
   @Query(() => CopaymentPeriodResponse, {
     name: 'rightsPortalCopaymentPeriods',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getCopaymentPeriods(
     @CurrentUser() user: User,
@@ -66,7 +60,7 @@ export class PaymentResolver {
   @Query(() => CopaymentBillResponse, {
     name: 'rightsPortalCopaymentBills',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getCopaymentBills(
     @CurrentUser() user: User,
@@ -78,7 +72,7 @@ export class PaymentResolver {
   @Query(() => PaymentOverviewServiceTypeResponse, {
     name: 'rightsPortalPaymentOverviewServiceTypes',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getPaymentOverviewServiceTypes(
     @CurrentUser() user: User,
@@ -89,7 +83,7 @@ export class PaymentResolver {
   @Query(() => PaymentOverviewResponse, {
     name: 'rightsPortalPaymentOverview',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getPaymentOverview(
     @CurrentUser() user: User,
@@ -114,7 +108,7 @@ export class PaymentResolver {
   @Query(() => PaymentOverviewDocumentResponse, {
     name: 'rightsPortalPaymentOverviewDocument',
   })
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthPayments)
   @Audit()
   async getPaymentOverviewDocument(
     @CurrentUser() user: User,

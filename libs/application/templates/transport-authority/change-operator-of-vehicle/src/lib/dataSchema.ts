@@ -1,5 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { VehicleMileage } from '../shared'
+import { error } from './messages'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -97,9 +99,35 @@ export const ChangeOperatorOfVehicleSchema = z.object({
   }),
   owner: UserInformationSchema,
   ownerCoOwner: z.array(UserInformationSchema),
-  vehicle: z.object({
-    plate: z.string(),
-  }),
+  vehicleMileage: z
+    .object({
+      isRequired: z.boolean().optional(),
+      mileageReading: z.string().optional(),
+      value: z.string().optional(),
+    })
+    .refine(
+      (x: VehicleMileage) => {
+        if (x.isRequired) {
+          return (
+            (x.value !== undefined &&
+              x.value !== '' &&
+              parseInt(x.value?.split(' ')[0]) > 0 &&
+              x.mileageReading === undefined) ||
+            Number(x.value) >= Number(x.mileageReading)
+          )
+        } else {
+          return (
+            x.value === undefined ||
+            x.value === '' ||
+            parseInt(x.value?.split(' ')[0]) >= 0
+          )
+        }
+      },
+      {
+        path: ['value'],
+        message: error.invalidMileage.defaultMessage,
+      },
+    ),
   operators: z.array(OperatorInformationSchema),
   oldOperators: z.array(OldOperatorInformationSchema),
   mainOperator: z.object({

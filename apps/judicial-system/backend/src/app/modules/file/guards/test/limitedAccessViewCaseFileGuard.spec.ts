@@ -62,7 +62,9 @@ describe('Limited Access View Case File Guard', () => {
             CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
             CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
             CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+            CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
             CaseFileCategory.APPEAL_RULING,
+            CaseFileCategory.APPEAL_COURT_RECORD,
           ]
 
           describe.each(allowedCaseFileCategories)(
@@ -148,11 +150,10 @@ describe('Limited Access View Case File Guard', () => {
     )
 
     describe.each(indictmentCases)('for %s cases', (type) => {
-      describe.each(completedCaseStates)('in state %s', (state) => {
+      describe.each(Object.values(CaseState))('in state %s', (state) => {
         const allowedCaseFileCategories = [
           CaseFileCategory.COURT_RECORD,
           CaseFileCategory.RULING,
-          CaseFileCategory.COVER_LETTER,
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
@@ -205,36 +206,6 @@ describe('Limited Access View Case File Guard', () => {
             )
           })
         })
-      })
-
-      describe.each(
-        Object.keys(CaseState).filter(
-          (state) => !completedCaseStates.includes(state as CaseState),
-        ),
-      )('in state %s', (state) => {
-        describe.each(Object.keys(CaseFileCategory))(
-          'a defender can not view %s',
-          (category) => {
-            let then: Then
-
-            beforeEach(() => {
-              mockRequest.mockImplementationOnce(() => ({
-                user: { role: UserRole.DEFENDER },
-                case: { type, state },
-                caseFile: { category },
-              }))
-
-              then = givenWhenThen()
-            })
-
-            it('should throw ForbiddenException', () => {
-              expect(then.error).toBeInstanceOf(ForbiddenException)
-              expect(then.error.message).toBe(
-                `Forbidden for ${UserRole.DEFENDER}`,
-              )
-            })
-          },
-        )
       })
     })
   })

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -7,17 +7,15 @@ import {
   Box,
   UploadedFile,
 } from '@island.is/island-ui/core'
-import { CaseFile } from '@island.is/judicial-system/types'
+import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { parentCaseFiles as m } from './ParentCaseFiles.strings'
 
 interface Props {
-  files?: CaseFile[]
+  files?: CaseFile[] | null
 }
 
-const ParentCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
-  files,
-}) => {
+const ParentCaseFiles: FC<Props> = ({ files }) => {
   const { formatMessage } = useIntl()
 
   if (!files || files.length < 1) {
@@ -35,7 +33,13 @@ const ParentCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
           {files.map((file, index) => (
             <Box key={`${file.id}-${index}`} marginTop={3}>
               <UploadedFile
-                file={{ ...file, name: `${index + 1}. ${file.name}` }}
+                file={{
+                  ...file,
+                  name: `${index + 1}. ${file.name}`,
+                  type: file.type ?? undefined,
+                  key: file.key ?? undefined,
+                  size: file.size ?? undefined,
+                }}
                 showFileSize
                 hideIcons
                 defaultBackgroundColor={{

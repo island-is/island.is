@@ -9,11 +9,6 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { HealthCenterService } from './healthCenter.service'
 import { PaginatedHealthCentersResponse } from './models/healthCenter.model'
 import { HealthCenterHistoryInput } from './dto/healthCenterHistory.input'
@@ -23,14 +18,12 @@ import { HealthCenterRegisterInput } from './dto/healthCenterTransfer.input'
 import { HealthCenterDoctorsInput } from './dto/healthCenterDoctors.input'
 import { HealthCenterDoctors } from './models/healthCenterDoctors.model'
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/health-center' })
 export class HealthCenterResolver {
   constructor(private readonly service: HealthCenterService) {}
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => HealthCenterRegistrationHistory, {
     name: 'rightsPortalHealthCenterRegistrationHistory',
     nullable: true,
@@ -51,8 +44,7 @@ export class HealthCenterResolver {
     )
   }
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => [HealthCenterDoctors], {
     name: 'rightsPortalHealthCenterDoctors',
     nullable: true,
@@ -65,8 +57,7 @@ export class HealthCenterResolver {
     return this.service.getHealthCenterDoctors(user, input)
   }
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Query(() => PaginatedHealthCentersResponse, {
     name: 'rightsPortalPaginatedHealthCenters',
     nullable: true,
@@ -76,7 +67,7 @@ export class HealthCenterResolver {
     return this.service.getHealthCenters(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthHealthcare)
   @Mutation(() => HealthCenterRegisterResponse, {
     name: 'rightsPortalRegisterHealthCenter',
   })

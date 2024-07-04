@@ -468,6 +468,15 @@ export const m = defineMessages({
     id: 'ap.ids-admin:supports-token-exchange',
     defaultMessage: 'Supports token exchange grant',
   },
+  singleSession: {
+    id: 'ap.ids-admin:single-session',
+    defaultMessage: 'Single session client',
+  },
+  singleSessionDescription: {
+    id: 'ap.ids-admin:single-session-description',
+    defaultMessage:
+      'Only allow users to have one active session in this client at a time. When a user signs in, previously created refresh tokens for that user and client will be disabled.',
+  },
   supportsTokenExchangeDescription: {
     id: 'ap.ids-admin:supports-token-exchange-description',
     defaultMessage:
@@ -757,7 +766,8 @@ export const m = defineMessages({
   },
   isAccessControlledDescription: {
     id: 'ap.ids-admin:is-access-controlled-description',
-    defaultMessage: 'Only allow specific national ids',
+    defaultMessage:
+      'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
   },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
@@ -765,7 +775,8 @@ export const m = defineMessages({
   },
   grantToAuthenticatedUserDescription: {
     id: 'ap.ids-admin:grant-to-authenticated-user-description',
-    defaultMessage: 'Should the authenticated user get this scope',
+    defaultMessage:
+      'Should the authenticated individual get this scope (uncheck if only delegated users should be allowed).',
   },
   grantToProcuringHolders: {
     id: 'ap.ids-admin:grant-to-procuring-holders',
@@ -843,5 +854,122 @@ export const m = defineMessages({
   typeNotFoundMessage: {
     id: 'ap.ids-admin:type-not-found-message',
     defaultMessage: 'It may have been removed or moved',
+  },
+  additionalSettingsLabel: {
+    id: 'ap.ids-admin:additional-settings-label',
+    defaultMessage: 'Additional settings',
+  },
+  clientDelegationProviderDelegationdbName: {
+    id: 'ap.ids-admin:client-delegation-provider-custom-name',
+    defaultMessage: 'Island.is',
+  },
+  clientDelegationProviderDelegationdbDescription: {
+    id: 'ap.ids-admin:client-delegation-provider-custom-description',
+    defaultMessage:
+      'Allow users to sign into this application with custom delegations managed on Mínar síður Ísland.is.',
+  },
+  clientDelegationTypeCustomName: {
+    id: 'ap.ids-admin:client-delegation-type-custom-name',
+    defaultMessage: 'Custom delegations',
+  },
+  clientDelegationTypeCustomDescription: {
+    id: 'ap.ids-admin:client-delegation-type-custom-description',
+    defaultMessage:
+      'The application must request permissions which support custom delegations. The user must have a valid custom delegation with one of these permissions.',
+  },
+  clientDelegationProviderFyrirtaekjaskraName: {
+    id: 'ap.ids-admin:client-delegation-provider-procuration-holder-name',
+    defaultMessage: 'Company registry',
+  },
+  clientDelegationProviderFyrirtaekjaskraDescription: {
+    id: 'ap.ids-admin:client-delegation-provider-procuration-holder-description',
+    defaultMessage:
+      'Allow users to sign into this application as legal entities according to roles managed by the company registry of Iceland.',
+  },
+  clientDelegationTypeProcurationHolderName: {
+    id: 'ap.ids-admin:client-delegation-type-procuration-holder-name',
+    defaultMessage: 'Procuration holder',
+  },
+  clientDelegationProviderThjodskraName: {
+    id: 'ap.ids-admin:client-delegation-provider-tjodskra-name',
+    defaultMessage: 'National registry',
+  },
+  clientDelegationProviderThjodskraDescription: {
+    id: 'ap.ids-admin:client-delegation-provider-tjodskra-description',
+    defaultMessage:
+      'Allow users to sign into this application as children which they are legal guardians of according to the Registers Iceland.',
+  },
+  clientDelegationTypeLegalGuardianName: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-name',
+    defaultMessage: 'Legal guardian',
+  },
+  clientDelegationTypeLegalGuardianDescription: {
+    id: 'ap.ids-admin:client-delegation-type-legal-guardian-description',
+    defaultMessage: 'Legal guardian of children 18 years and younger.',
+  },
+  clientDelegationProviderTalsmannagrunnurName: {
+    id: 'ap.ids-admin:client-delegation-provider-talsmannagrunnur-name',
+    defaultMessage: 'Personal representatives',
+  },
+  clientDelegationProviderTalsmannagrunnurDescription: {
+    id: 'ap.ids-admin:client-delegation-provider-talsmannagrunnur-description',
+    defaultMessage:
+      'Allow users to sign into this application on behalf of disabled individuals according to permissions on an active personal representation contract at the Ministry of Social Affairs and Labour.',
+  },
+  clientDelegationTypePersonalRepresentativepostholfName: {
+    id: 'ap.ids-admin:client-delegation-type-personal-representative-postholf-name',
+    defaultMessage: 'Documents (ísl. pósthólf)',
+  },
+  apiScopeDelegationProviderDelegationdbName: {
+    id: 'ap.ids-admin:client-delegation-provider-custom-name',
+    defaultMessage: 'Island.is',
+  },
+  apiScopeDelegationTypeCustomName: {
+    id: 'ap.ids-admin:client-delegation-type-custom-name',
+    defaultMessage: 'Custom delegations',
+  },
+  apiScopeDelegationTypeCustomDescription: {
+    id: 'ap.ids-admin:client-delegation-type-custom-description',
+    defaultMessage:
+      'Should users be able to grant other users custom delegation for this permission.',
+  },
+  apiScopeDelegationProviderFyrirtaekjaskraName: {
+    id: 'ap.ids-admin:api-scope-delegation-provider-procuration-holder-name',
+    defaultMessage: 'Company registry',
+  },
+  apiScopeDelegationTypeProcurationHolderName: {
+    id: 'ap.ids-admin:api-scope-delegation-type-procuration-holder-name',
+    defaultMessage: 'Procuration holder',
+  },
+  apiScopeDelegationTypeProcurationHolderDescription: {
+    id: 'ap.ids-admin:api-scope-delegation-type-procuration-holder-description',
+    defaultMessage:
+      'Should procuring holders automatically get this permission for their organisations',
+  },
+  apiScopeDelegationProviderThjodskraName: {
+    id: 'ap.ids-admin:api-scope-delegation-provider-tjodskra-name',
+    defaultMessage: 'National registry',
+  },
+  apiScopeDelegationTypeLegalGuardianName: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-name',
+    defaultMessage: 'Legal guardian',
+  },
+  apiScopeDelegationTypeLegalGuardianDescription: {
+    id: 'ap.ids-admin:api-scope-delegation-type-legal-guardian-description',
+    defaultMessage:
+      'Should legal guardians automatically get this permission for their wards, 18 and younger.',
+  },
+  apiScopeDelegationProviderTalsmannagrunnurName: {
+    id: 'ap.ids-admin:api-scope-delegation-provider-talsmannagrunnur-name',
+    defaultMessage: 'Personal representatives',
+  },
+  apiScopeDelegationTypePersonalRepresentativepostholfName: {
+    id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-postholf-name',
+    defaultMessage: 'Documents (ísl. pósthólf)',
+  },
+  apiScopeDelegationTypePersonalRepresentativepostholfDescription: {
+    id: 'ap.ids-admin:api-scope-delegation-type-personal-representative-postholf-description',
+    defaultMessage:
+      'Should personal representatives automatically get this permission for their clients',
   },
 })

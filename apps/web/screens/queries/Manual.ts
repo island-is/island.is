@@ -17,6 +17,14 @@ export const GET_SINGLE_MANUAL_QUERY = gql`
       id
       title
       slug
+      category {
+        title
+        slug
+      }
+      group {
+        title
+        slug
+      }
       info {
         ...AllSlices
         ${nestedFields}

@@ -3,22 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/form-fields/src",
   "projectType": "library",
+  "tags": ["lib:react-spa", "scope:react-spa", "TODO:splitUp"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/shared/form-fields/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/form-fields/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/form-fields/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/shared/form-fields"]
     }
-  },
-  "tags": ["lib:react-spa", "scope:react-spa", "TODO:splitUp"]
+  }
 }

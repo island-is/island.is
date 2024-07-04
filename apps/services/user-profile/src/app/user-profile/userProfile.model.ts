@@ -111,4 +111,19 @@ export class UserProfile extends Model {
   })
   @ApiProperty()
   lastNudge?: Date
+
+  @Column({
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+    allowNull: true,
+  })
+  @ApiProperty()
+  emailNotifications!: boolean
+
+  @Column({
+    type: DataType.DATE,
+    allowNull: true,
+  })
+  @ApiProperty()
+  nextNudge?: Date
 }

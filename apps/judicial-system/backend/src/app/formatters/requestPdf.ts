@@ -4,7 +4,7 @@ import { FormatMessage } from '@island.is/cms-translations'
 
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
@@ -33,10 +33,10 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-function constructRestrictionRequestPdf(
+const constructRestrictionRequestPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -67,11 +67,7 @@ function constructRestrictionRequestPdf(
 
   setTitle(doc, title)
 
-  if (
-    theCase.creatingProsecutor?.institution?.name?.startsWith(
-      'Lögreglustjórinn',
-    )
-  ) {
+  if (theCase.prosecutorsOffice?.name?.startsWith('Lögreglustjórinn')) {
     addPoliceStar(doc)
     addEmptyLines(doc, 5)
   } else {
@@ -82,8 +78,7 @@ function constructRestrictionRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.creatingProsecutor?.institution?.name ??
-      formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -213,10 +208,10 @@ function constructRestrictionRequestPdf(
   )
 }
 
-function constructInvestigationRequestPdf(
+const constructInvestigationRequestPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -238,11 +233,7 @@ function constructInvestigationRequestPdf(
 
   setTitle(doc, title)
 
-  if (
-    theCase.creatingProsecutor?.institution?.name?.startsWith(
-      'Lögreglustjórinn',
-    )
-  ) {
+  if (theCase.prosecutorsOffice?.name?.startsWith('Lögreglustjórinn')) {
     addPoliceStar(doc)
     addEmptyLines(doc, 5)
   } else {
@@ -253,8 +244,7 @@ function constructInvestigationRequestPdf(
   setLineGap(doc, 4)
   addLargeHeading(
     doc,
-    theCase.creatingProsecutor?.institution?.name ??
-      formatMessage(m.noDistrict),
+    theCase.prosecutorsOffice?.name ?? formatMessage(m.noDistrict),
     'Times-Bold',
   )
   setLineGap(doc, 24)
@@ -338,7 +328,7 @@ function constructInvestigationRequestPdf(
     capitalize(
       theCase.type === CaseType.OTHER
         ? formatMessage(core.caseType.investigate)
-        : caseTypes[theCase.type],
+        : formatCaseType(theCase.type),
     ),
     'Times-Roman',
   )
@@ -416,27 +406,27 @@ function constructInvestigationRequestPdf(
   )
 }
 
-function constructRequestPdf(
+const constructRequestPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return isRestrictionCase(theCase.type)
     ? constructRestrictionRequestPdf(theCase, formatMessage)
     : constructInvestigationRequestPdf(theCase, formatMessage)
 }
 
-export function getRequestPdfAsString(
+export const getRequestPdfAsString = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<string> {
+): Promise<string> => {
   return constructRequestPdf(theCase, formatMessage).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export function getRequestPdfAsBuffer(
+export const getRequestPdfAsBuffer = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return constructRequestPdf(theCase, formatMessage)
 }

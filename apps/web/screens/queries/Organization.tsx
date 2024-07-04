@@ -226,9 +226,16 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
       themeProperties {
         gradientStartColor
         gradientEndColor
+        useGradientColor
         backgroundColor
-        darkText
+        textColor
         fullWidth
+        imagePadding
+        imageIsFullHeight
+        imageObjectFit
+        imageObjectPosition
+        titleSectionPaddingLeft
+        mobileBackgroundColor
       }
       externalLinks {
         text
@@ -247,6 +254,7 @@ export const GET_ORGANIZATION_SUBPAGE_QUERY = gql`
       slug
       signLanguageVideo {
         url
+        thumbnailImageUrl
       }
       description {
         ...AllSlices

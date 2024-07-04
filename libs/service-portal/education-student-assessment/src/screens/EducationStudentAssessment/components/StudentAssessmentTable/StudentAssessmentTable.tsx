@@ -11,11 +11,12 @@ import {
   TextProps,
 } from '@island.is/island-ui/core'
 import {
-  EmptyState,
   IntroHeader,
   MENNTAMALASTOFNUN_SLUG,
   m,
 } from '@island.is/service-portal/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Problem } from '@island.is/react-spa/shared'
 
 const EducationExamResultQuery = gql`
   query EducationExamResultQuery($familyIndex: Int!) {
@@ -83,15 +84,18 @@ type UseParams = {
 }
 
 const StudentAssessmentTable = () => {
+  useNamespaces('sp.education-career')
   const { familyIndex } = useParams() as UseParams
-  const { data, loading: queryLoading } = useQuery<Query>(
-    EducationExamResultQuery,
-    {
-      variables: {
-        familyIndex: parseInt(familyIndex, 10),
-      },
+  const { formatMessage } = useLocale()
+  const {
+    data,
+    loading: queryLoading,
+    error,
+  } = useQuery<Query>(EducationExamResultQuery, {
+    variables: {
+      familyIndex: parseInt(familyIndex, 10),
     },
-  )
+  })
 
   if (queryLoading) {
     return <LoadingTemplate />
@@ -108,6 +112,17 @@ const StudentAssessmentTable = () => {
               'Hér birtast einkunnir þínar og barna þinna úr samræmdum prófum frá árinu 2020 sem sóttar eru til Menntamálastofnunar. Unnið er að því að því að koma öllum einkunnum úr menntakerfi Íslands á einn stað.',
           }}
           serviceProviderSlug={MENNTAMALASTOFNUN_SLUG}
+          serviceProviderTooltip={formatMessage(m.mmsTooltip)}
+        />
+      )}
+      {error && !queryLoading && <Problem error={error} noBorder={false} />}
+      {!error && !queryLoading && !data?.educationExamResult.grades.length && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
         />
       )}
       {data?.educationExamResult.grades.map((studentAssessment, index) => (
@@ -229,12 +244,6 @@ const StudentAssessmentTable = () => {
           </T.Table>
         </Box>
       ))}
-
-      {data?.educationExamResult.grades.length === 0 && (
-        <Box marginTop={[0, 8]}>
-          <EmptyState title={m.noDataFound} />
-        </Box>
-      )}
     </>
   )
 }

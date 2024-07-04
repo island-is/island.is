@@ -1,17 +1,13 @@
-import { Field, ObjectType } from '@nestjs/graphql'
-
-import type { SignatureConfirmationResponse as TSignatureConfirmationResponse } from '@island.is/judicial-system/types'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class SignatureConfirmationResponse
-  implements TSignatureConfirmationResponse
-{
-  @Field()
+export class SignatureConfirmationResponse {
+  @Field(() => Boolean)
   documentSigned!: boolean
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   code?: number
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   message?: string
 }

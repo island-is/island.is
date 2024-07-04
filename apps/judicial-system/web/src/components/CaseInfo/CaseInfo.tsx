@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
@@ -9,7 +9,7 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import {
-  completedCaseStates,
+  isCompletedCase,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -21,11 +21,11 @@ import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { strings } from './CaseInfo.strings'
 
-const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
-  policeCaseNumbers,
-}) => (
+const PoliceCaseNumbersTags: FC<{
+  policeCaseNumbers?: string[] | null
+}> = ({ policeCaseNumbers }) => (
   <Box display="flex" flexWrap="wrap">
-    {policeCaseNumbers.map((policeCaseNumber, index) => (
+    {policeCaseNumbers?.map((policeCaseNumber, index) => (
       <Box marginTop={1} marginRight={1} key={`${policeCaseNumber}-${index}`}>
         <Tag disabled>{policeCaseNumber}</Tag>
       </Box>
@@ -33,9 +33,7 @@ const PoliceCaseNumbersTags: React.FC<{ policeCaseNumbers: string[] }> = ({
   </Box>
 )
 
-const Entry: React.FC<
-  React.PropsWithChildren<{ label: string; value: string }>
-> = ({ label, value }) => {
+const Entry: FC<{ label: string; value: string }> = ({ label, value }) => {
   return (
     <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
       {`${label}: ${value}`}
@@ -46,7 +44,7 @@ const Entry: React.FC<
 export const getDefendantLabel = (
   formatMessage: IntlShape['formatMessage'],
   defendants: Defendant[],
-  type: CaseType,
+  type?: CaseType | null,
 ) => {
   if (!isIndictmentCase(type)) {
     return formatMessage(core.defendant, {
@@ -67,9 +65,7 @@ interface Props {
   workingCase: Case
 }
 
-const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
-  workingCase,
-}) => {
+export const Defendants: FC<Props> = ({ workingCase }) => {
   const { defendants, type } = workingCase
   const { formatMessage } = useIntl()
 
@@ -86,9 +82,20 @@ const Defendants: React.FC<React.PropsWithChildren<Props>> = ({
   )
 }
 
-export const ProsecutorCaseInfo: React.FC<
-  React.PropsWithChildren<Props & { hideCourt?: boolean }>
-> = ({ workingCase, hideCourt = false }) => {
+export const Prosecutor: FC<Props> = ({ workingCase }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <Entry
+      label={formatMessage(core.prosecutor)}
+      value={workingCase.prosecutorsOffice?.name ?? ''}
+    />
+  )
+}
+
+export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
+  workingCase,
+  hideCourt = false,
+}) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
 
@@ -105,25 +112,22 @@ export const ProsecutorCaseInfo: React.FC<
   )
 }
 
-export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
-  workingCase,
-}) => {
-  const { courtCaseNumber, prosecutor } = workingCase
+export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
 
   return (
     <Box component="section" marginBottom={5}>
-      {courtCaseNumber && (
+      {workingCase.courtCaseNumber && (
         <Box marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
-              caseNumber: courtCaseNumber,
+              caseNumber: workingCase.courtCaseNumber,
             })}
           </Text>
         </Box>
       )}
       {isIndictmentCase(workingCase.type) &&
-      completedCaseStates.includes(workingCase.state) ? (
+      isCompletedCase(workingCase.state) ? (
         <Box marginTop={1}>
           <Text as="h5" variant="h5">
             {formatMessage(strings.rulingDate, {
@@ -133,10 +137,10 @@ export const CourtCaseInfo: React.FC<React.PropsWithChildren<Props>> = ({
         </Box>
       ) : (
         <>
-          {prosecutor?.institution?.name && (
+          {workingCase.prosecutorsOffice?.name && (
             <Entry
               label={formatMessage(core.prosecutor)}
-              value={prosecutor.institution.name}
+              value={workingCase.prosecutorsOffice.name}
             />
           )}
           <Defendants workingCase={workingCase} />

@@ -1,0 +1,20 @@
+fragment OrganizationFragment on Organization {
+  id
+  title
+  shortTitle
+  description
+  slug
+  tag {
+    id
+    title
+  }
+  logo {
+    id
+    url
+    title
+    contentType
+    width
+    height
+  }
+  link
+}

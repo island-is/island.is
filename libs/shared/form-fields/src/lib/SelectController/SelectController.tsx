@@ -3,8 +3,9 @@ import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
 
 import { Select, Option, InputBackgroundColor } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
+import { MultiValue, SingleValue } from 'react-select'
 
-interface SelectControllerProps<Value> {
+interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   error?: string
   id: string
   defaultValue?: Value
@@ -13,14 +14,20 @@ interface SelectControllerProps<Value> {
   label: string
   options?: Option<Value>[]
   placeholder?: string
-  onSelect?: (s: Option<Value>, onChange: (t: unknown) => void) => void
+  onSelect?: (
+    s: IsMulti extends true ? MultiValue<Option<Value>> : Option<Value>,
+    onChange: (t: unknown) => void,
+  ) => void
   backgroundColor?: InputBackgroundColor
   isSearchable?: boolean
+  isMulti?: IsMulti
   required?: boolean
   rules?: RegisterOptions
+  size?: 'xs' | 'sm' | 'md'
+  internalKey?: string
 }
 
-export const SelectController = <Value,>({
+export const SelectController = <Value, IsMulti extends boolean = false>({
   error,
   defaultValue,
   disabled = false,
@@ -32,11 +39,31 @@ export const SelectController = <Value,>({
   onSelect,
   backgroundColor,
   isSearchable,
+  isMulti,
   dataTestId,
   required = false,
   rules,
-}: SelectControllerProps<Value> & TestSupport) => {
+  size,
+  internalKey,
+}: SelectControllerProps<Value, IsMulti> & TestSupport) => {
   const { clearErrors } = useFormContext()
+
+  const isMultiValue = (
+    value: MultiValue<Option<Value>> | SingleValue<Option<Value>>,
+  ): value is MultiValue<Option<Value>> => {
+    return Array.isArray(value)
+  }
+
+  const getValue = (value: Value | Value[]) => {
+    if (Array.isArray(value)) {
+      return value
+        .map((v) => options.find((option) => option.value === v))
+        .filter(Boolean) as Option<Value>[]
+    }
+
+    return options.find((option) => option.value === value)
+  }
+
   return (
     <Controller
       {...(defaultValue !== undefined && { defaultValue })}
@@ -44,6 +71,7 @@ export const SelectController = <Value,>({
       rules={rules}
       render={({ field: { onChange, value } }) => (
         <Select
+          key={internalKey}
           required={required}
           backgroundColor={backgroundColor}
           hasError={error !== undefined}
@@ -55,15 +83,24 @@ export const SelectController = <Value,>({
           label={label}
           dataTestId={dataTestId}
           placeholder={placeholder}
-          value={options.find((option) => option.value === value)}
+          value={getValue(value)}
           isSearchable={isSearchable}
+          isMulti={isMulti}
+          size={size}
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore make web strict
           onChange={(newVal) => {
             clearErrors(id)
 
-            onChange(newVal?.value)
+            if (isMultiValue(newVal)) {
+              onChange(newVal.map((v) => v.value))
+            } else {
+              onChange(newVal?.value)
+            }
+
             if (onSelect && newVal) {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+              // @ts-ignore make web strict
               onSelect(newVal, onChange)
             }
           }}

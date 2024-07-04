@@ -233,7 +233,7 @@ export const AdviceForm = ({ case: _case, refetchAdvices }: Props) => {
         </Inline>
         <Text variant="small">{date}</Text>
       </Inline>
-      <Text variant="h3" marginTop={1}>
+      <Text as="h3" variant="h3" marginTop={1}>
         {loc.card.title}
       </Text>
 

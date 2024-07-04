@@ -7,7 +7,6 @@ import {
   GridContainer,
   GridColumn,
   GridRow,
-  Button,
   SkeletonLoader,
   Checkbox,
   toast,
@@ -18,7 +17,6 @@ import {
 } from '@island.is/service-portal/graphql'
 import {
   GoBack,
-  ServicePortalPath,
   formatPlausiblePathToParams,
   m,
   useScrollTopOnUpdate,
@@ -30,7 +28,7 @@ import {
 } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { documentsSearchDocumentsInitialized } from '@island.is/plausible'
-import { useLocation } from 'react-router-dom'
+import { useLoaderData, useLocation, useNavigate } from 'react-router-dom'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
 import isAfter from 'date-fns/isAfter'
 import differenceInYears from 'date-fns/differenceInYears'
@@ -52,14 +50,17 @@ import {
   useDocumentSendersQuery,
   useDocumentTypesQuery,
 } from './DocumentExtra.generated'
+import { DocumentsPaths } from '../../lib/paths'
 
-const pageSize = 10
+export const pageSize = 10
 
 export const ServicePortalDocuments = () => {
   useNamespaces('sp.documents')
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const [page, setPage] = useState(1)
+  const navigate = useNavigate()
+  const loaderNumber = useLoaderData() as number
+  const [page, setPage] = useState(loaderNumber)
   const [selectedLines, setSelectedLines] = useState<Array<string>>([])
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
   const [docLoading, setDocLoading] = useState(false)
@@ -274,9 +275,7 @@ export const ServicePortalDocuments = () => {
       }))
       if (!searchInteractionEventSent) {
         documentsSearchDocumentsInitialized(
-          formatPlausiblePathToParams(
-            ServicePortalPath.ElectronicDocumentsRoot,
-          ),
+          formatPlausiblePathToParams(DocumentsPaths.ElectronicDocumentsRoot),
         )
         setSearchInteractionEventSent(true)
       }
@@ -289,7 +288,12 @@ export const ServicePortalDocuments = () => {
     }
   })
 
-  useKeyDown('Escape', () => setActiveDocument(null))
+  useKeyDown('Escape', () => {
+    setActiveDocument(null)
+    navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+      replace: true,
+    })
+  })
 
   const debouncedResults = useMemo(() => {
     return debounce(handleSearchChange, 500)
@@ -325,7 +329,15 @@ export const ServicePortalDocuments = () => {
                 color="blue400"
                 fontWeight="semiBold"
               >
-                {formatMessage(m.documents)}
+                <button
+                  onClick={() =>
+                    navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+                      replace: true,
+                    })
+                  }
+                >
+                  {formatMessage(m.documents)}
+                </button>
               </Text>
             </Box>
           </Box>
@@ -403,6 +415,14 @@ export const ServicePortalDocuments = () => {
                         },
                       },
                     })
+                      .then(() => {
+                        toast.success(
+                          formatMessage(messages.successArchiveMulti),
+                        )
+                      })
+                      .catch((e) => {
+                        toast.error(formatMessage(m.errorTitle))
+                      })
                   }
                   onFav={() =>
                     bulkMailAction({
@@ -410,6 +430,17 @@ export const ServicePortalDocuments = () => {
                         input: {
                           messageIds: selectedLines,
                           action: 'bookmark',
+                          status: true,
+                        },
+                      },
+                    })
+                  }
+                  onRead={() =>
+                    bulkMailAction({
+                      variables: {
+                        input: {
+                          messageIds: selectedLines,
+                          action: 'read',
                           status: true,
                         },
                       },
@@ -503,7 +534,12 @@ export const ServicePortalDocuments = () => {
             category={categoriesAvailable.find(
               (i) => i.id === activeDocument?.categoryId,
             )}
-            onPressBack={() => setActiveDocument(null)}
+            onPressBack={() => {
+              setActiveDocument(null)
+              navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+                replace: true,
+              })
+            }}
             onRefetch={() => {
               if (refetch) {
                 refetch({

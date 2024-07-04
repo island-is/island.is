@@ -1,4 +1,4 @@
-import Error404 from '../screens/Error404/Error404'
+import { Error404 } from '../components'
 
 export const Index = () => {
   return <Error404 />

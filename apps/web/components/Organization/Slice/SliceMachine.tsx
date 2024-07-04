@@ -1,5 +1,6 @@
-import { Slice } from '@island.is/web/graphql/schema'
 import dynamic from 'next/dynamic'
+
+import { SectionWithImage, SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
@@ -8,11 +9,17 @@ import {
   ResponsiveSpace,
 } from '@island.is/island-ui/core'
 import {
-  RichText,
   EmailSignup,
+  GenericList,
+  RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
+import {
+  GenericList as GenericListSchema,
+  Slice,
+} from '@island.is/web/graphql/schema'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
+
 import { FeaturedSupportQNAs } from '../../FeaturedSupportQNAs'
 
 const DistrictsSlice = dynamic(() =>
@@ -142,7 +149,6 @@ const renderSlice = (
       return <EventSlice slice={slice} />
     case 'LatestNewsSlice':
       return <LatestNewsSlice slice={slice} slug={slug} {...params} />
-    case 'LifeEventPageListSlice':
     case 'AnchorPageListSlice':
       return (
         <AnchorPageListSlice slice={slice} namespace={namespace} {...params} />
@@ -166,6 +172,26 @@ const renderSlice = (
           {...params}
         />
       )
+    case 'SectionWithImage':
+      return (
+        <SectionWithImage
+          title={slice.title}
+          content={slice.content as SliceType[]}
+          image={slice.image ?? undefined}
+          contain={true}
+        />
+      )
+    case 'GenericList':
+      return (
+        <GenericList
+          id={slice.id}
+          searchInputPlaceholder={
+            (slice as GenericListSchema).searchInputPlaceholder
+          }
+          itemType={(slice as GenericListSchema).itemType}
+          filterTags={(slice as GenericListSchema).filterTags}
+        />
+      )
     default:
       return <RichText body={[slice]} />
   }
@@ -178,14 +204,13 @@ export const SliceMachine = ({
   slug = '',
   marginBottom = 0,
   params,
-  paddingBottom = 6,
   wrapWithGridContainer = false,
 }: SliceMachineProps) => {
   return !fullWidth ? (
     <GridContainer>
-      <GridRow marginBottom={marginBottom}>
+      <GridRow>
         <GridColumn
-          paddingBottom={paddingBottom}
+          paddingBottom={0}
           span={
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict

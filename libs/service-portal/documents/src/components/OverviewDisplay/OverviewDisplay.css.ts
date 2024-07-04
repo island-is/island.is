@@ -3,12 +3,11 @@ import { globalStyle, style } from '@vanilla-extract/css'
 import { SERVICE_PORTAL_HEADER_HEIGHT_SM as hheight } from '@island.is/service-portal/constants'
 
 export const modalBase = style({
-  width: '100vw',
+  width: '100%',
   height: `calc(100vh - ${hheight}px)`,
   background: theme.color.white,
-  position: 'absolute',
+  position: 'relative',
   top: 'calc(-0.5rem + 1px)',
-  left: '-1rem',
   zIndex: 100,
 })
 
@@ -41,4 +40,34 @@ globalStyle(`${modalHeader} button`, {
   padding: '0.5rem',
   height: 40,
   width: 40,
+})
+
+export const reveal = style({
+  position: 'absolute',
+  bottom: 20,
+  right: 20,
+  padding: 10,
+  background: theme.color.dark400,
+  color: theme.color.white,
+  borderRadius: theme.border.radius.large,
+  opacity: 0,
+  borderWidth: 1,
+  outline: 0,
+  textDecoration: 'none',
+  borderStyle: 'solid',
+  borderColor: theme.color.blue200,
+  overflow: 'hidden',
+  zIndex: 1,
+  '@media': {
+    [`screen and (max-width: 991px)`]: {
+      borderRadius: 0,
+      border: 'none',
+    },
+  },
+  transition: 'transform 150ms ease',
+  transform: `translateY(calc(100% + 20px))`,
+  ':focus-within': {
+    transform: `translateY(0)`,
+    opacity: 1,
+  },
 })

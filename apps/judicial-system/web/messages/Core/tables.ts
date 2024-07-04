@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 
 export const tables = defineMessages({
   caseNumber: {
-    id: 'judicial.system.core:tables.case_number',
-    defaultMessage: 'Málsnr.',
+    id: 'judicial.system.core:tables.case_number_v1',
+    defaultMessage: 'Málsnúmer',
     description: 'Notaður sem titill fyrir málsnúmer dálk í lista yfir mál.',
   },
   type: {
@@ -41,6 +41,11 @@ export const tables = defineMessages({
     defaultMessage: 'Lokið',
     description: 'Notað sem merki þegar mál í stöðu "Lokið" í málalista',
   },
+  withdrawnTag: {
+    id: 'judicial.system.core:tables.withdrawn_tag',
+    defaultMessage: 'Afturkallað',
+    description: 'Notað sem merki þegar mál í stöðu "Afturkallað" í málalista',
+  },
   completedCasesTitle: {
     id: 'judicial.system.core:tables.completed_cases_title',
     defaultMessage: 'Afgreidd mál',
@@ -71,5 +76,47 @@ export const tables = defineMessages({
     id: 'judicial.system.core:tables.filter_investigation_case_label',
     defaultMessage: 'Rannsóknarmál',
     description: 'Notaður sem titill fyrir Rannsóknarmál í síun.',
+  },
+  prosecutor: {
+    id: 'judicial.system.core:tables.prosecutor',
+    defaultMessage: 'Sækjandi',
+    description: 'Notaður sem titill fyrir sækjanda í málalista.',
+  },
+  prosecutorName: {
+    id: 'judicial.system.core:tables.prosecutor_name',
+    defaultMessage: 'Saksóknari',
+    description: 'Notaður sem titill fyrir saksóknara í málalista.',
+  },
+  deadline: {
+    id: 'judicial.system.core:tables.deadline',
+    defaultMessage: 'Frestur',
+    description: 'Notaður sem titill fyrir frestur dálk í lista yfir mál.',
+  },
+  reviewDecision: {
+    id: 'judicial.system.core:tables.review_decision',
+    defaultMessage: 'Ákvörðun',
+    description: 'Notaður sem titill fyrir ákvörðun dálk í lista yfir mál.',
+  },
+  verdictViewState: {
+    id: 'judicial.system.core:tables.verdict_view_state',
+    defaultMessage: 'Birtingarstaða',
+    description:
+      'Notaður sem titill fyrir birtingarstaða dálk í lista yfir mál.',
+  },
+  postponed: {
+    id: 'judicial.system.core:tables.postponed',
+    defaultMessage: 'Frestað',
+    description: 'Notaður sem texti þegar mál er frestað.',
+  },
+  court: {
+    id: 'judicial.system.core:tables.court',
+    defaultMessage: 'Dómstóll',
+    description: 'Notaður sem titill fyrir dómstóll dálk í lista yfir mál.',
+  },
+  sentencingDate: {
+    id: 'judicial.system.core:tables.sentencing_date',
+    defaultMessage: 'Dómsuppkvaðning',
+    description:
+      'Notaður sem titill fyrir Dómsuppkvaðning dálk í lista yfir mál.',
   },
 })

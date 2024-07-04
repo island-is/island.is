@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
@@ -24,8 +24,7 @@ interface Props {
   setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
 }
 
-const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase } = props
+const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { setAndSendCaseToServer, updateCase } = useCase()
   const [checkedAccusedRadio, setCheckedAccusedRadio] =
@@ -211,7 +210,6 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   'accusedAppealAnnouncement',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }
@@ -386,7 +384,6 @@ const AppealSections: React.FC<React.PropsWithChildren<Props>> = (props) => {
                   'prosecutorAppealAnnouncement',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

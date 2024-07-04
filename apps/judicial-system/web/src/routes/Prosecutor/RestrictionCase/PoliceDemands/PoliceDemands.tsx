@@ -5,10 +5,7 @@ import { useRouter } from 'next/router'
 import { Box, Checkbox, Input, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import {
-  CaseDecision,
-  isAcceptingCaseDecision,
-} from '@island.is/judicial-system/types'
+import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   core,
   rcDemands,
@@ -22,12 +19,14 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseCustodyRestrictions,
+  CaseDecision,
   CaseType,
   Defendant,
   Gender,
@@ -39,14 +38,12 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
+  UpdateCase,
   useCase,
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  autofillEntry,
-  formatDateForServer,
-} from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   legalProvisions,
   travelBanProvisions,
@@ -61,11 +58,11 @@ import * as styles from './PoliceDemands.css'
 
 export interface DemandsAutofillProps {
   defendant: Defendant
-  caseType: CaseType
-  requestedValidToDate?: string | Date
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  parentCaseDecision?: CaseDecision
-  courtName?: string
+  caseType?: CaseType | null
+  requestedValidToDate?: string | Date | null
+  requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null
+  parentCaseDecision?: CaseDecision | null
+  courtName?: string | null
 }
 
 export const getDemandsAutofill = (
@@ -94,7 +91,7 @@ export const getDemandsAutofill = (
   })
 }
 
-export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const PoliceDemands = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -143,10 +140,10 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
 
   const onDemandsChange = React.useCallback(
     (
-      entry: autofillEntry,
-      caseType: CaseType,
-      requestedValidToDate: Date | string | undefined,
-      requestedCustodyRestrictions: CaseCustodyRestrictions[] | undefined,
+      entry: UpdateCase,
+      caseType?: CaseType | null,
+      requestedValidToDate?: Date | string | null,
+      requestedCustodyRestrictions?: CaseCustodyRestrictions[] | null,
     ) => {
       setAndSendCaseToServer(
         [
@@ -196,12 +193,10 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcDemands.sections.demands.heading)}
-            </Text>
-            {workingCase.parentCase && (
-              <Box marginTop={1}>
+          <SectionHeading
+            title={formatMessage(rcDemands.sections.demands.heading)}
+            description={
+              workingCase.parentCase ? (
                 <Text>
                   {formatMessage(rcDemands.sections.demands.pastRestriction, {
                     caseType: workingCase.type,
@@ -213,9 +208,9 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     )?.replace('dagur,', 'dagsins')}
                   </Text>
                 </Text>
-              </Box>
-            )}
-          </Box>
+              ) : undefined
+            }
+          />
           <BlueBox>
             <Box
               marginBottom={workingCase.type !== CaseType.TRAVEL_BAN ? 2 : 0}
@@ -243,6 +238,7 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                 }}
                 required
                 blueBox={false}
+                defaultTime="16:00"
               />
             </Box>
             {workingCase.type !== CaseType.TRAVEL_BAN && (
@@ -311,11 +307,9 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         {workingCase.defendants && workingCase.defendants.length > 0 && (
           <Box component="section" marginBottom={7}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(rcDemands.sections.lawsBroken.heading)}
-              </Text>
-            </Box>
+            <SectionHeading
+              title={formatMessage(rcDemands.sections.lawsBroken.heading)}
+            />
             <Input
               data-testid="lawsBroken"
               name="lawsBroken"
@@ -338,7 +332,6 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'lawsBroken',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   lawsBrokenErrorMessage,
                   setLawsBrokenErrorMessage,
@@ -362,14 +355,10 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Box>
         )}
         <Box component="section" marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(rcDemands.sections.legalBasis.heading)}{' '}
-              <Text as="span" color={'red600'} fontWeight="semiBold">
-                *
-              </Text>
-            </Text>
-          </Box>
+          <SectionHeading
+            title={formatMessage(rcDemands.sections.legalBasis.heading)}
+            required
+          />
           <BlueBox>
             <Box marginBottom={2}>
               <CheckboxList
@@ -406,7 +395,6 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'legalBasis',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }
@@ -433,24 +421,20 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
             data-testid="custodyRestrictions"
           >
             <Box marginBottom={3}>
-              <Box marginBottom={1}>
-                <Text as="h3" variant="h3">
-                  {formatMessage(
-                    rcDemands.sections.custodyRestrictions.headingV2,
-                    {
-                      caseType: workingCase.type,
-                    },
-                  )}
-                </Text>
-              </Box>
-              <Text>
-                {formatMessage(
+              <SectionHeading
+                title={formatMessage(
+                  rcDemands.sections.custodyRestrictions.headingV2,
+                  {
+                    caseType: workingCase.type,
+                  },
+                )}
+                description={formatMessage(
                   rcDemands.sections.custodyRestrictions.subHeadingV2,
                   {
                     caseType: workingCase.type,
                   },
                 )}
-              </Text>
+              />
             </Box>
             <BlueBox>
               <CheckboxList
@@ -475,24 +459,20 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
             marginBottom={4}
             data-testid="travelBanRestrictions"
           >
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(
-                  rcDemands.sections.custodyRestrictions.headingV2,
-                  {
-                    caseType: workingCase.type,
-                  },
-                )}
-              </Text>
-              <Text>
-                {formatMessage(
-                  rcDemands.sections.custodyRestrictions.subHeadingV2,
-                  {
-                    caseType: workingCase.type,
-                  },
-                )}
-              </Text>
-            </Box>
+            <SectionHeading
+              title={formatMessage(
+                rcDemands.sections.custodyRestrictions.headingV2,
+                {
+                  caseType: workingCase.type,
+                },
+              )}
+              description={formatMessage(
+                rcDemands.sections.custodyRestrictions.subHeadingV2,
+                {
+                  caseType: workingCase.type,
+                },
+              )}
+            />
             <BlueBox>
               <Box marginBottom={3}>
                 <CheckboxList
@@ -525,7 +505,6 @@ export const PoliceDemands: React.FC<React.PropsWithChildren<unknown>> = () => {
                     'requestedOtherRestrictions',
                     event.target.value,
                     [],
-                    workingCase,
                     setWorkingCase,
                   )
                 }

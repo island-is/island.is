@@ -1,9 +1,9 @@
 import { Module } from '@nestjs/common'
 import { HealthDirectorateClientService } from './healthDirectorateClient.service'
-import { HealthDirectorateApiProvider } from './apiProvider'
+import { exportedApis } from './apiConfiguration'
 
 @Module({
-  providers: [HealthDirectorateApiProvider, HealthDirectorateClientService],
+  providers: [HealthDirectorateClientService, ...exportedApis],
   exports: [HealthDirectorateClientService],
 })
 export class HealthDirectorateClientModule {}

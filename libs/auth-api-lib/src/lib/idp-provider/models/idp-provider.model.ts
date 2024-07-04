@@ -37,7 +37,7 @@ export class IdpProvider extends Model {
   helptext!: string
 
   @Column({
-    type: DataType.NUMBER,
+    type: DataType.INTEGER,
     allowNull: false,
   })
   @ApiProperty()

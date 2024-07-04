@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -27,10 +27,10 @@ import {
   FormContext,
   FormFooter,
   HideableText,
+  PageHeader,
   PageLayout,
   PdfButton,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseType,
   SessionArrangements,
@@ -41,11 +41,11 @@ import {
   validateAndSendToServer,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
+  formatDateForServer,
   useCase,
   useDeb,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import {
   isCourtRecordStepValidIC,
   Validation,
@@ -89,7 +89,7 @@ const getSessionBookingsAutofill = (
     : undefined
 }
 
-const CourtRecord = () => {
+const CourtRecord: FC = () => {
   const { setAndSendCaseToServer, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const {
@@ -157,11 +157,12 @@ const CourtRecord = () => {
         }
       }
     }
+
     setAndSendCaseToServer(
       [
         {
-          courtStartDate: workingCase.courtDate,
-          courtLocation: workingCase.court
+          courtStartDate: workingCase.arraignmentDate?.date,
+          courtLocation: workingCase.court?.name
             ? `í ${
                 workingCase.court.name.indexOf('dómur') > -1
                   ? workingCase.court.name.replace('dómur', 'dómi')
@@ -276,7 +277,6 @@ const CourtRecord = () => {
                   'courtLocation',
                   event.target.value,
                   ['empty'],
-                  workingCase,
                   setWorkingCase,
                   courtLocationEM,
                   setCourtLocationEM,
@@ -330,7 +330,6 @@ const CourtRecord = () => {
                 'courtAttendees',
                 event.target.value,
                 [],
-                workingCase,
                 setWorkingCase,
               )
             }
@@ -371,7 +370,6 @@ const CourtRecord = () => {
                   'sessionBookings',
                   event.target.value,
                   sessionBookingValidation,
-                  workingCase,
                   setWorkingCase,
                   sessionBookingsErrorMessage,
                   setSessionBookingsMessage,
@@ -434,7 +432,6 @@ const CourtRecord = () => {
                   'endOfSessionBookings',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }
@@ -459,43 +456,44 @@ const CourtRecord = () => {
               {formatMessage(m.sections.endOfSessionTitle)}
             </Text>
           </Box>
-          <GridContainer>
-            <GridRow>
-              <GridColumn>
-                <DateTime
-                  name="courtEndTime"
-                  datepickerLabel={formatMessage(
-                    m.sections.courtEndTime.dateLabel,
-                  )}
-                  timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
-                  minDate={
-                    workingCase.courtStartDate
-                      ? new Date(workingCase.courtStartDate)
-                      : undefined
-                  }
-                  maxDate={new Date()}
-                  selectedDate={workingCase.courtEndTime}
-                  onChange={(date: Date | undefined, valid: boolean) => {
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          courtEndTime:
-                            date && valid
-                              ? formatDateForServer(date)
-                              : undefined,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
-                  blueBox={false}
-                  required
-                />
-              </GridColumn>
-            </GridRow>
-          </GridContainer>
+          <BlueBox>
+            <GridContainer>
+              <GridRow>
+                <GridColumn>
+                  <DateTime
+                    name="courtEndTime"
+                    datepickerLabel={formatMessage(
+                      m.sections.courtEndTime.dateLabel,
+                    )}
+                    timeLabel={formatMessage(m.sections.courtEndTime.timeLabel)}
+                    minDate={
+                      workingCase.courtStartDate
+                        ? new Date(workingCase.courtStartDate)
+                        : undefined
+                    }
+                    maxDate={new Date()}
+                    selectedDate={workingCase.courtEndTime}
+                    onChange={(date: Date | undefined, valid: boolean) => {
+                      if (date && valid) {
+                        setAndSendCaseToServer(
+                          [
+                            {
+                              courtEndTime: formatDateForServer(date),
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
+                      }
+                    }}
+                    blueBox={false}
+                    required
+                  />
+                </GridColumn>
+              </GridRow>
+            </GridContainer>
+          </BlueBox>
         </Box>
         <Box marginBottom={10}>
           <PdfButton

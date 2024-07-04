@@ -1,15 +1,12 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
 # compiled output
-/dist
-/tmp
-/out-tsc
+dist/
+tmp/
+out-tsc/
 **/tsconfig.tsbuildinfo
 infra/mountebank-imposter-config.json
 infra/helm/**/*.tgz
-# Contentful extensions
-libs/contentful-extensions/translation/build
-libs/contentful-extensions/translation/.cache
 
 # dependencies
 node_modules/
@@ -32,6 +29,7 @@ TODO
 *.todo
 .env
 .env.*
+!.env.podman
 .envrc.*
 .nvmrc
 .node-version
@@ -41,6 +39,7 @@ TODO
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+*.code-workspace
 
 # misc
 /.sass-cache
@@ -71,7 +70,7 @@ libs/localization/messages.json
 
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
 /generated_files.tar.gz
-openapi.yaml
+*openapi.yaml
 api.graphql
 schema.d.ts
 schema.tsx

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 import { InstitutionType } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -9,14 +9,12 @@ import PoliceStar from './PoliceStar'
 import * as styles from './Logo.css'
 
 interface Props {
-  defaultInstitution?: string
+  defaultInstitution?: string | null
 }
 
-const Logo: React.FC<React.PropsWithChildren<Props>> = ({
-  defaultInstitution = '',
-}) => {
+const Logo: FC<Props> = ({ defaultInstitution = '' }) => {
   const { user } = useContext(UserContext)
-  const institutionName = user?.institution?.name ?? defaultInstitution
+  const institutionName = user?.institution?.name ?? defaultInstitution ?? ''
   const institutionNameArr = institutionName.split(' ')
   const institutionNameFirstHalf = institutionNameArr.slice(
     0,
@@ -37,7 +35,7 @@ const Logo: React.FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box display="flex">
-      <Box marginRight={2} marginBottom={[0, 0, 1, 0]}>
+      <Box marginRight={2}>
         {isPolice ? <PoliceStar /> : <LandWightsLogo />}
       </Box>
       <p className={styles.logoText}>

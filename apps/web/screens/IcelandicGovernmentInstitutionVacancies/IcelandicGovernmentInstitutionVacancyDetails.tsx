@@ -15,6 +15,7 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
+  CustomPageUniqueIdentifier,
   GetIcelandicGovernmentInstitutionVacancyDetailsQuery,
   GetIcelandicGovernmentInstitutionVacancyDetailsQueryVariables,
   GetNamespaceQuery,
@@ -28,6 +29,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
+import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
@@ -129,6 +131,17 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
 
   const ogTitlePostfix = n('ogTitlePrefixForDetailsPage', ' | Ísland.is')
 
+  const getSocialImageUrl = (url: string | undefined | null) => {
+    const isSvg = url ? url.trim().toLocaleLowerCase().endsWith('svg') : false
+
+    return isSvg
+      ? n(
+          'ogImageUrl',
+          'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+        )
+      : url
+  }
+
   return (
     <Box>
       <HeadWithSocialSharing
@@ -137,7 +150,7 @@ const IcelandicGovernmentInstitutionVacancyDetails: Screen<
           vacancy?.plainTextIntro ?? '',
           VACANCY_INTRO_MAX_LENGTH,
         )}
-        imageUrl={n('ogDetailsImageUrl', vacancy?.logoUrl)}
+        imageUrl={getSocialImageUrl(vacancy?.logoUrl) ?? ''}
       >
         <meta name="robots" content="noindex, nofollow" />
       </HeadWithSocialSharing>
@@ -387,15 +400,15 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  if (namespace['display404']) {
-    throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
-  }
-
   return {
     vacancy,
     namespace,
-    customAlertBanner: namespace['customAlertBanner'],
   }
 }
 
-export default withMainLayout(IcelandicGovernmentInstitutionVacancyDetails)
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.Vacancies,
+    IcelandicGovernmentInstitutionVacancyDetails,
+  ),
+)

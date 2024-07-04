@@ -1,6 +1,6 @@
-import {bundleId, isTestingApp} from '../config';
+import { bundleId, isTestingApp } from '../config'
 
-const prefix = bundleId;
+const prefix = bundleId
 
 export const ComponentRegistry = {
   // dev screens
@@ -22,12 +22,12 @@ export const ComponentRegistry = {
   WalletPassportScreen: `${prefix}.screens.WalletPassport`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   NotificationsScreen: `${prefix}.screens.Notifications`,
-  NotificationDetailScreen: `${prefix}.screens.NotificationDetail`,
   WebViewScreen: `${prefix}.screens.WebViewScreen`,
   LicenseScannerScreen: `${prefix}.screens.LicenseScannerScreen`,
   LicenseScanDetailScreen: `${prefix}.screens.LicenseScanDetailScreen`,
   VehiclesScreen: `${prefix}.screens.VehiclesScreen`,
   VehicleDetailScreen: `${prefix}.screens.VehicleDetailScreen`,
+  VehicleMileageScreen: `${prefix}.screens.VehicleMileageScreen`,
   AssetsOverviewScreen: `${prefix}.screens.AssetsOverviewScreen`,
   AssetsDetailScreen: `${prefix}.screens.AssetsDetailScreen`,
   MoreScreen: `${prefix}.screens.MoreScreen`,
@@ -42,9 +42,19 @@ export const ComponentRegistry = {
   FinanceScreen: `${prefix}.screens.FinanceScreen`,
   FinanceStatusDetailScreen: `${prefix}.screens.FinanceStatusDetailScreen`,
   InboxFilterScreen: `${prefix}.screens.InboxFilterScreen`,
-};
+  AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
+
+  // custom navigation icons
+  OfflineIcon: `${prefix}.navigation.OfflineIcon`,
+
+  // overlays
+  OfflineBanner: `${prefix}.overlay.OfflineBanner`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
+}
 
 export const ButtonRegistry = {
+  LoadingButton: `${prefix}.button.LoadingButton`,
+  OfflineButton: `${prefix}.button.OfflineButton`,
   SettingsButton: `${prefix}.button.SettingsButton`,
   // to do remove this unused user button
   UserButton: `${prefix}.button.UserButton`,
@@ -54,7 +64,7 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
-};
+}
 
 export const StackRegistry = {
   LoginStack: `${prefix}.stack.LoginStack`,
@@ -64,6 +74,6 @@ export const StackRegistry = {
   LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,
   MoreStack: `${prefix}.stack.MoreStack`,
   ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
-};
+}
 
-export const MainBottomTabs = `${prefix}.bottomTabs.MainBottomTabs`;
+export const MainBottomTabs = `${prefix}.bottomTabs.MainBottomTabs`

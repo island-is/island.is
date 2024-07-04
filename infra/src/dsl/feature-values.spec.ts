@@ -74,7 +74,7 @@ describe('Feature-deployment support', () => {
           paths: ['/'],
         },
       })
-      .postgres()
+      .db()
 
     dev = getEnvironment()
     const services1 = await getFeatureAffectedServices(
@@ -94,8 +94,9 @@ describe('Feature-deployment support', () => {
       DB_NAME: 'feature_feature_A_graphql',
       DB_HOST: 'a',
       DB_REPLICAS_HOST: 'a',
-      NODE_OPTIONS: '--max-old-space-size=230',
+      NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init',
       SERVERSIDE_FEATURES_ON: '',
+      LOG_LEVEL: 'info',
       DB_EXTENSIONS: 'foo',
     })
   })

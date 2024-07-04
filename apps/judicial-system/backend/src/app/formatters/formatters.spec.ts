@@ -1,7 +1,7 @@
 import { FormatMessage } from '@island.is/cms-translations'
 import { createTestIntl } from '@island.is/cms-translations/test'
 
-import { caseTypes } from '@island.is/judicial-system/formatters'
+import { formatCaseType } from '@island.is/judicial-system/formatters'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -46,6 +46,7 @@ export const makeProsecutor = (): User => {
     role: UserRole.PROSECUTOR,
     active: true,
     title: 'aðstoðarsaksóknari',
+    canConfirmIndictment: true,
     institution: {
       id: '',
       created: '',
@@ -475,7 +476,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
     const res = fn(policeCaseNumbers, type, court, overviewUrl)
 
     // Assert
-    expect(res.subject).toBe(`Krafa um ${caseTypes[type]} send`)
+    expect(res.subject).toBe(`Krafa um ${formatCaseType(type)} send`)
     expect(res.body).toBe(
       `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
     )
@@ -493,7 +494,7 @@ describe('formatProsecutorReadyForCourtEmailNotification', () => {
 
     // Assert
     expect(res.subject).toBe(
-      `Krafa um rannsóknarheimild send (${caseTypes[type]})`,
+      `Krafa um rannsóknarheimild send (${formatCaseType(type)})`,
     )
     expect(res.body).toBe(
       `Þú hefur sent kröfu á Héraðsdóm Reykjavíkur vegna LÖKE máls 007-2022-01. Skjalið er aðgengilegt undir <a href="https://rettarvorslugatt.island.is/test/overview">málinu í Réttarvörslugátt</a>.`,
@@ -1665,7 +1666,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um gæsluvarðhald sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
+      'Krafa um gæsluvarðhald sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 000000-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda/talsmann í málinu.',
     )
   })
 
@@ -1691,7 +1692,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um farbann sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
+      'Krafa um farbann sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda/talsmann í málinu.',
     )
   })
 
@@ -1717,7 +1718,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um vistun á viðeigandi stofnun sem taka átti fyrir hjá ótilgreindum dómstóli á ótilgreindum tíma, hefur verið afturkölluð.<br /><br />Sakborningur: Nafn ekki skráð, kt. ekki skráð.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
+      'Krafa um vistun á viðeigandi stofnun sem taka átti fyrir hjá ótilgreindum dómstóli á ótilgreindum tíma, hefur verið afturkölluð.<br /><br />Sakborningur: Nafn ekki skráð, kt. ekki skráð.<br /><br />Dómstóllinn hafði skráð þig sem verjanda/talsmann í málinu.',
     )
   })
 
@@ -1743,7 +1744,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild (rof bankaleyndar) sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
+      'Krafa um rannsóknarheimild (rof bankaleyndar) sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, kt. 111100-1111.<br /><br />Dómstóllinn hafði skráð þig sem verjanda/talsmann í málinu.',
     )
   })
 
@@ -1769,33 +1770,7 @@ describe('formatDefenderRevokedEmailNotification', () => {
 
     // Assert
     expect(res).toBe(
-      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
-    )
-  })
-
-  test('should format revoked notification for indictments', () => {
-    // Arrange
-    const type = CaseType.INDICTMENT
-    const defendantNationalId = '01.01.2022'
-    const defendantName = 'Gaui Glæpon'
-    const defendantNoNationalId = true
-    const court = 'Héraðsdómur Þingvalla'
-    const courtDate = new Date('2021-01-24T08:15')
-
-    // Act
-    const res = formatDefenderRevokedEmailNotification(
-      formatMessage,
-      type,
-      defendantNationalId,
-      defendantName,
-      defendantNoNationalId,
-      court,
-      courtDate,
-    )
-
-    // Assert
-    expect(res).toBe(
-      'Ákæra sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda í málinu.',
+      'Krafa um rannsóknarheimild sem taka átti fyrir hjá Héraðsdómi Þingvalla sunnudaginn 24. janúar 2021, kl. 08:15, hefur verið afturkölluð.<br /><br />Sakborningur: Gaui Glæpon, fd. 01.01.2022.<br /><br />Dómstóllinn hafði skráð þig sem verjanda/talsmann í málinu.',
     )
   })
 })

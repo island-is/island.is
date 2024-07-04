@@ -73,7 +73,7 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
   }
 
   return (
-    <Box marginTop={[2, 3, 6]}>
+    <Box component="ul" marginTop={[2, 3, 6]}>
       {isLoading && (
         <Box marginBottom={2}>
           <CardLoader />
@@ -85,7 +85,7 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
           .filter((license) => license.license.status === 'HasLicense')
           .map((license, index) => {
             return (
-              <Box marginBottom={3} key={index}>
+              <Box component="li" marginBottom={3} key={index}>
                 <ActionCard
                   image={{
                     type: 'image',
@@ -101,7 +101,9 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
                   )}
                   cta={{
                     label: formatMessage(m.seeDetails),
-                    url: getPathFromType(license.license.type),
+                    url: `${getPathFromType(license.license.type)}/${
+                      license.payload?.metadata.licenseId
+                    }`,
                     variant: 'text',
                   }}
                   tag={

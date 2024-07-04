@@ -151,15 +151,23 @@ export interface DistrictCommissionerAgencies {
 }
 
 export interface Person {
-  name: string
+  name?: string
   ssn: string
   phoneNumber?: string
   email?: string
-  homeAddress: string
-  postalCode: string
-  city: string
+  homeAddress?: string
+  postalCode?: string
+  city?: string
   signed: boolean
   type: number
+}
+
+export interface RegistryPerson {
+  name: string
+  nationalId: string
+  address: string
+  postalCode: string
+  city: string
 }
 
 export interface Attachment {
@@ -214,10 +222,16 @@ export type EstateMember = {
   relation: string
   relationWithApplicant?: string
   dateOfBirth?: string
+  noContactInfo?: ('Yes' | 'No')[]
   enabled?: boolean
   phone?: string
   email?: string
   advocate?: Advocate
+  advocate2?: Advocate
+}
+
+export type InheritanceEstateMember = EstateMember & {
+  address?: string
 }
 
 export type EstateAsset = {
@@ -226,6 +240,13 @@ export type EstateAsset = {
   share: number
   enabled?: boolean
   marketValue?: string
+}
+
+export type AvailableSettlements = {
+  estateWithoutAssets: string
+  officialDivision: string
+  permitForUndividedEstate: string
+  divisionOfEstateByHeirs: string
 }
 
 export interface EstateRegistrant extends EstateCommon {
@@ -261,6 +282,52 @@ interface EstateCommon {
 
 export interface EstateInfo extends EstateCommon {
   addressOfDeceased: string
+  availableSettlements?: AvailableSettlements
+}
+
+export interface InheritanceTax {
+  validFrom: Date
+  inheritanceTax: number
+  taxExemptionLimit: number
+}
+
+export interface InheritanceReportAsset {
+  description?: string
+  assetNumber?: string
+  share: number
+  propertyValuation?: string
+  debtType?: DebtTypes
+  amount: string
+  exchangeRateOrInterest: string
+}
+
+export interface InheritanceReportInfo {
+  assets: Array<InheritanceReportAsset>
+  vehicles: Array<InheritanceReportAsset>
+  ships: Array<InheritanceReportAsset>
+  cash: Array<InheritanceReportAsset>
+  flyers: Array<InheritanceReportAsset>
+  otherAssets: Array<InheritanceReportAsset>
+  stocks: Array<InheritanceReportAsset>
+  bankAccounts: Array<InheritanceReportAsset>
+  depositsAndMoney: Array<InheritanceReportAsset>
+  guns: Array<InheritanceReportAsset>
+  sharesAndClaims: Array<InheritanceReportAsset>
+  funeralCosts: Array<InheritanceReportAsset>
+  officialFees: Array<InheritanceReportAsset>
+  otherDebts: Array<InheritanceReportAsset>
+  assetsInBusiness: Array<InheritanceReportAsset>
+  debtsInBusiness: Array<InheritanceReportAsset>
+  heirs: Array<EstateMember>
+  caseNumber?: string
+  dateOfDeath?: Date
+  will?: string
+  settlement?: boolean
+  knowledgeOfOtherWill?: boolean
+  nationalId?: string
+  addressOfDeceased?: string
+  nameOfDeceased?: string
+  inheritanceTax?: InheritanceTax
 }
 
 // Copied from propertyDetails in @island.is/api/domains/assets. Only properties in use
@@ -287,4 +354,31 @@ export interface MasterLicence {
   dateOfPublication?: Date
   profession?: string
   office?: string
+  nationalId?: string
+}
+
+export interface JourneymanLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+}
+
+export interface ProfessionRight {
+  name?: string
+  profession?: string
+}
+
+export interface VehicleRegistration {
+  modelName?: string
+  manufacturer?: string
+  licensePlate?: string
+  color?: string
+}
+
+export enum DebtTypes {
+  Overdraft = 'overdraft',
+  CreditCard = 'creditCard',
+  Loan = 'loan',
+  InsuranceCompany = 'insuranceCompany',
+  PropertyFees = 'propertyFees',
 }

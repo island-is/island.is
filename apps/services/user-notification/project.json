@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/user-notification/src",
   "projectType": "application",
   "prefix": "services-user-notification",
+  "tags": ["scope:nest"],
   "targets": {
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -18,7 +19,29 @@
         "outputPath": "dist/apps/services/user-notification",
         "main": "apps/services/user-notification/src/main.ts",
         "tsConfig": "apps/services/user-notification/tsconfig.app.json",
-        "assets": ["apps/services/user-notification/src/assets"]
+        "assets": [
+          "apps/services/user-notification/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/user-notification/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/user-notification",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/user-notification",
+            "output": "./"
+          },
+          {
+            "glob": "*",
+            "input": "libs/email-service/src/tools/design",
+            "output": "./email-service-assets"
+          }
+        ]
       },
       "configurations": {
         "production": {
@@ -47,20 +70,21 @@
         "args": ["--job", "worker"]
       }
     },
-    "lint": {
-      "executor": "@nx/linter:eslint",
+    "cleanup": {
+      "executor": "@nx/js:node",
       "options": {
-        "lintFilePatterns": [
-          "apps/services/user-notification/**/*.{ts,tsx,js,jsx}"
-        ]
+        "buildTarget": "services-user-notification:build",
+        "args": ["--job", "cleanup"]
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/services/user-notification"],
       "options": {
-        "jestConfig": "apps/services/user-notification/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/user-notification/jest.config.ts"
       }
     },
     "dev-services": {
@@ -77,7 +101,39 @@
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "migrate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli db:migrate",
+        "cwd": "apps/services/user-notification/"
+      }
+    },
+    "migrate/generate": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "../../../node_modules/.bin/sequelize-cli migration:generate --name $(whoami)",
+        "cwd": "apps/services/user-notification/"
+      }
+    },
+    "dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-user-notification:dev-services",
+          "yarn nx run services-user-notification:migrate"
+        ],
+        "parallel": false
+      }
+    },
+    "dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["yarn start services-user-notification"],
+        "parallel": true
+      }
+    },
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

@@ -10,6 +10,7 @@ export enum GenericLicenseType {
   DisabilityLicense = 'DisabilityLicense',
   PCard = 'PCard',
   Ehic = 'Ehic',
+  Passport = 'Passport',
 }
 
 /**
@@ -18,14 +19,18 @@ export enum GenericLicenseType {
  * */
 export enum GenericLicenseOrganizationSlug {
   DriversLicense = 'rikislogreglustjori',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   FirearmLicense = 'rikislogreglustjori',
   HuntingLicense = 'umhverfisstofnun',
   AdrLicense = 'vinnueftirlitid',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
   PCard = 'syslumenn',
   EHIC = 'sjukratryggingar-islands',
+  Passport = 'thjodskra-islands',
 }
+
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
 export enum GenericLicenseProviderId {
@@ -35,6 +40,7 @@ export enum GenericLicenseProviderId {
   SocialInsuranceAdministration = 'SocialInsuranceAdministration', // Tryggingastofnun
   DistrictCommissioners = 'DistrictCommissioners', // Sýslumenn
   IcelandicHealthInsurance = 'IcelandicHealthInsurance', // Sjúkratryggingar Íslands
+  RegistersIceland = 'RegistersIceland', // Þjóðskrá
 }
 
 export type GenericLicenseProviderIdType = keyof typeof GenericLicenseProviderId
@@ -73,13 +79,6 @@ export enum GenericUserLicenseMetaLinksType {
 
 export type GenericLicenseProvider = {
   id: GenericLicenseProviderId
-
-  // TODO(osk) should these be here? or be resolved by client via contentful?
-  // Commented out until talked about, to limit scope of v1
-  /*
-  name: string
-  logo?: string
-  */
 }
 
 export type GenericLicenseMetadata = {
@@ -89,16 +88,6 @@ export type GenericLicenseMetadata = {
   pkpassVerify: boolean
   timeout: number
   orgSlug?: GenericLicenseOrganizationSlug
-
-  // TODO(osk) should these be here? or be resolved by client via contentful?
-  // Commented out until talked about, to limit scope of v1
-  /*
-  title: string
-  ordering: number
-  backgroundImage?: string
-  applicationUrl?: string
-  detailUrl?: string
-  */
 }
 
 export type GenericLicenseOrgdata = {
@@ -112,7 +101,7 @@ export type GenericLicenseDataField = {
   label?: string
   value?: string
   description?: string
-  //if any functionality comes attached to said data field, f.x. renewLicense
+  // if any functionality comes attached to said data field, f.x. renewLicense
   link?: GenericUserLicenseMetaLinks
   hideFromServicePortal?: boolean
   fields?: Array<GenericLicenseDataField>
@@ -127,6 +116,7 @@ export type GenericUserLicenseMetaLinks = {
 
 export type GenericUserLicenseMetadata = {
   links?: GenericUserLicenseMetaLinks[]
+  licenseId?: string
   licenseNumber: string
   expired: boolean | null
   expireDate?: string
@@ -144,11 +134,11 @@ export type GenericLicenseUserdata = {
 }
 
 export type GenericLicenseFetchResult = {
-  data: unknown
+  data: Array<unknown>
   fetch: GenericLicenseFetch
 }
 
-// Bit of an awkward type, it contains data from any external API, but we don't know if it's
+// A bit of an awkward type, it contains data from any external API, but we don't know if it's
 // too narrow or not until we bring in more licenses
 export type GenericLicenseUserdataExternal = {
   status: GenericUserLicenseStatus
@@ -185,11 +175,6 @@ export type GenericUserLicense = {
   payload?: GenericUserLicensePayload
 }
 
-export type GenericLicensePkPassResult = {
-  valid?: boolean
-  url?: string
-}
-
 export type PkPassVerificationError = {
   /**
    * Generic placeholder for a status code, could be the HTTP status code, code
@@ -215,17 +200,6 @@ export type PassTemplateIds = {
   machineLicense: string
   disabilityLicense: string
   drivingLicense: string
-}
-
-export type PkPassVerificationData = {
-  id?: string
-  validFrom?: string
-  expirationDate?: string
-  expirationTime?: string
-  status?: string
-  whenCreated?: string
-  whenModified?: string
-  alreadyPaid?: boolean
 }
 
 export type PkPassVerification = {
@@ -278,16 +252,8 @@ export interface GenericLicenseClient<LicenseType> {
 
 export interface GenericLicenseMapper {
   parsePayload: (
-    payload?: unknown,
+    payload: Array<unknown>,
     locale?: Locale,
     labels?: GenericLicenseLabels,
-  ) => GenericUserLicensePayload | null
+  ) => Array<GenericUserLicensePayload>
 }
-
-export const DRIVING_LICENSE_FACTORY = 'driving_license_factory'
-
-export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
-
-export const GENERIC_LICENSE_FACTORY = 'generic_license_factory'
-
-export const CONFIG_PROVIDER = 'config_provider'

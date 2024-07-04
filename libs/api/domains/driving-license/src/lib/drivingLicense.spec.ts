@@ -24,6 +24,11 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import ResidenceHistory from '../lib/__mock-data__/residenceHistory.json'
 import { ConfigModule } from '@island.is/nest/config'
 
+import isLeapYear from 'date-fns/isLeapYear'
+import { DrivingLicenseCategory } from './drivingLicense.type'
+
+const daysOfResidency = isLeapYear(new Date()) ? 366 : 365
+
 startMocking(requestHandlers)
 describe('DrivingLicenseService', () => {
   let service: DrivingLicenseService
@@ -292,7 +297,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
-            daysOfResidency: 365,
+            daysOfResidency,
             requirementMet: true,
           },
           {
@@ -315,7 +320,7 @@ describe('DrivingLicenseService', () => {
         requirements: [
           {
             key: 'LocalResidency',
-            daysOfResidency: 365,
+            daysOfResidency,
             requirementMet: true,
           },
           {
@@ -348,7 +353,7 @@ describe('DrivingLicenseService', () => {
           },
           {
             key: 'CurrentLocalResidency',
-            daysOfResidency: 365,
+            daysOfResidency,
             requirementMet: true,
           },
           {
@@ -388,6 +393,7 @@ describe('DrivingLicenseService', () => {
         jurisdictionId: 11,
         needsToPresentHealthCertificate: false,
         needsToPresentQualityPhoto: false,
+        licenseCategory: DrivingLicenseCategory.B,
       })
 
       expect(response).toStrictEqual({
@@ -404,6 +410,7 @@ describe('DrivingLicenseService', () => {
           jurisdictionId: 11,
           needsToPresentHealthCertificate: false,
           needsToPresentQualityPhoto: true,
+          licenseCategory: DrivingLicenseCategory.B,
         })
         .catch((e) => expect(e).toBeTruthy())
     })

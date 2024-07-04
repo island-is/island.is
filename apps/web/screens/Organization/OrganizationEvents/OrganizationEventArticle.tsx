@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
-import type { Locale } from 'locale'
+import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
@@ -123,7 +123,7 @@ const EventInformationBox = ({
           event.location?.streetAddress) && (
           <Box display="flex" flexWrap="nowrap" columnGap={ICON_TEXT_SPACE}>
             <Box>
-              <Icon color="blue400" icon="home" type="outline" />
+              <Icon color="blue400" icon="location" type="outline" />
             </Box>
             <EventLocation location={event.location} />
           </Box>
@@ -229,6 +229,7 @@ const OrganizationEventArticle: Screen<OrganizationEventArticleProps> = ({
                   url={event.video.url}
                   locale={locale}
                   title={event.video.title}
+                  thumbnailImageUrl={event.video.thumbnailImageUrl}
                 />
               </GridColumn>
             )}

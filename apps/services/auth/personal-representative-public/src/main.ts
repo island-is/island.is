@@ -8,4 +8,7 @@ bootstrap({
   name: 'personal-representative-public',
   openApi,
   port: environment.port,
+  healthCheck: {
+    database: true,
+  },
 })

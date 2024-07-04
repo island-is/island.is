@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -10,12 +10,12 @@ import {
 import { displayCaseType } from '@island.is/judicial-system-web/src/routes/Shared/Cases/utils'
 
 interface Props {
-  type: CaseType
-  decision?: CaseDecision
-  parentCaseId?: string
+  type?: CaseType | null
+  decision?: CaseDecision | null
+  parentCaseId?: string | null
 }
 
-const ColumnCaseType: React.FC<Props> = ({ type, decision, parentCaseId }) => {
+const ColumnCaseType: FC<Props> = ({ type, decision, parentCaseId }) => {
   const { formatMessage } = useIntl()
 
   return (

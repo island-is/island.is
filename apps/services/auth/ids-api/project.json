@@ -4,12 +4,12 @@
   "sourceRoot": "apps/services/auth/ids-api/src",
   "projectType": "application",
   "prefix": "ids-api",
+  "tags": ["scope:auth-api"],
   "generators": {},
   "targets": {
     "build": {
       "executor": "nx:run-commands",
       "options": {
-        "outputPath": "dist/apps/services/auth/ids-api",
         "commands": [
           "nx esbuild services-auth-ids-api",
           "tsc --build libs/auth-api-lib/seeders/data/tsconfig.json"
@@ -72,22 +72,30 @@
         "buildTarget": "services-auth-ids-api:esbuild"
       }
     },
-    "lint": {
-      "executor": "@nx/linter:eslint",
+    "cleanup": {
+      "executor": "@nx/js:node",
       "options": {
-        "lintFilePatterns": ["apps/services/auth/ids-api/**/*.{ts,tsx,js,jsx}"]
+        "buildTarget": "services-auth-ids-api:esbuild",
+        "buildTargetOptions": {
+          "outputPath": "dist/apps/services/auth/ids-api/cleanup"
+        },
+        "args": ["--job", "cleanup"]
       }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/auth/ids-api/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
@@ -106,14 +114,21 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "sequelize-cli db:migrate",
-        "cwd": "libs/auth-api-lib"
+        "cwd": "{workspaceRoot}/libs/auth-api-lib"
       }
     },
     "migrate/generate": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "sequelize-cli migration:generate --name $(whoami)",
+        "command": "sequelize-cli migration:generate",
         "cwd": "libs/auth-api-lib"
+      }
+    },
+    "migrate/undo": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "sequelize-cli db:migrate:undo",
+        "cwd": "{workspaceRoot}/libs/auth-api-lib"
       }
     },
     "seed": {
@@ -126,7 +141,40 @@
         "parallel": false,
         "cwd": "libs/auth-api-lib"
       }
+    },
+    "ids-get-secrets": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn get-secrets services-auth-ids-api services-user-profile services-sessions"
+        ],
+        "parallel": false
+      }
+    },
+    "ids-dev-init": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn nx run services-auth-ids-api:dev-services",
+          "yarn nx run services-user-profile:dev-services",
+          "echo \"Waiting for databases to start...\" && sleep 4",
+          "yarn nx run services-auth-ids-api:migrate",
+          "yarn nx run services-auth-ids-api:seed",
+          "yarn nx run services-user-profile:migrate",
+          "yarn nx run services-user-profile:seed"
+        ],
+        "parallel": false
+      }
+    },
+    "ids-dev": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "IDENTITY_SERVER_ISSUER_URL=https://localhost:5001 NODE_TLS_REJECT_UNAUTHORIZED=0 yarn start services-auth-ids-api",
+          "IDENTITY_SERVER_ISSUER_URL=https://localhost:5001 NODE_TLS_REJECT_UNAUTHORIZED=0 yarn start services-user-profile"
+        ],
+        "parallel": true
+      }
     }
-  },
-  "tags": ["scope:auth-api"]
+  }
 }

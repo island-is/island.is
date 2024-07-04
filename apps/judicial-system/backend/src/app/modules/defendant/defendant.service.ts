@@ -11,13 +11,18 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
 import type { User } from '@island.is/judicial-system/types'
-import { CaseState, CaseType } from '@island.is/judicial-system/types'
+import {
+  CaseState,
+  CaseType,
+  NotificationType,
+} from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
@@ -40,9 +45,10 @@ export class DefendantService {
     user: User,
   ): CaseMessage {
     return {
-      type: MessageType.SEND_DEFENDANTS_NOT_UPDATED_AT_COURT_NOTIFICATION,
+      type: MessageType.NOTIFICATION,
       user,
       caseId: theCase.id,
+      body: { type: NotificationType.DEFENDANTS_NOT_UPDATED_AT_COURT },
     }
   }
 
@@ -51,10 +57,10 @@ export class DefendantService {
     user: User,
   ): CaseMessage {
     const message = {
-      type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+      type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
       user,
       caseId: defendant.caseId,
-      defendantId: defendant.id,
+      elementId: defendant.id,
     }
 
     return message
@@ -186,6 +192,37 @@ export class DefendantService {
         ])
       }
     }
+
+    return updatedDefendant
+  }
+
+  async updateByNationalId(
+    caseId: string,
+    defendantNationalId: string,
+    update: UpdateDefendantDto,
+  ): Promise<Defendant> {
+    const formattedNationalId = formatNationalId(defendantNationalId)
+
+    const [numberOfAffectedRows, defendants] = await this.defendantModel.update(
+      update,
+      {
+        where: {
+          caseId,
+          [Op.or]: [
+            { national_id: formattedNationalId },
+            { national_id: defendantNationalId },
+          ],
+        },
+        returning: true,
+      },
+    )
+
+    const updatedDefendant = this.getUpdatedDefendant(
+      numberOfAffectedRows,
+      defendants,
+      defendants[0].id,
+      caseId,
+    )
 
     return updatedDefendant
   }

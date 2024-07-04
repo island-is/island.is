@@ -90,10 +90,10 @@ describe('DefendantController - Create', () => {
     it('should queue messages', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
-          type: MessageType.DELIVER_DEFENDANT_TO_COURT,
+          type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
           user,
           caseId,
-          defendantId,
+          elementId: defendantId,
         },
       ])
     })

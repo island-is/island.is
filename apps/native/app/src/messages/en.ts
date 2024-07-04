@@ -1,4 +1,4 @@
-import {TranslatedMessages} from './index';
+import { TranslatedMessages } from './index'
 
 export const en: TranslatedMessages = {
   // login
@@ -14,6 +14,11 @@ export const en: TranslatedMessages = {
   'login.networkErrorTitle': 'Network error',
   'login.networkErrorMessage':
     '\nCould not contact the login service.\n\nPlease check your device internet connection or try again later.',
+  'login.expiredTitle': 'Session expired',
+  'login.expiredScopesMessage':
+    'Updated permissions required, please login again.',
+  'login.expiredMissingUserMessage':
+    'Could not fetch user information, please login again.',
 
   // app lock
   'applock.title': 'Enter a 4-digit PIN',
@@ -50,7 +55,7 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
 
-  // peronal info screen
+  // personal info screen
   'personalInfo.screenTitle': 'Personal info',
 
   // user
@@ -86,6 +91,18 @@ export const en: TranslatedMessages = {
   'settings.security.useBiometricsLabel': 'Use {biometricType}',
   'settings.security.useBiometricsDescription':
     'With {biometricType} you don’t need to enter PIN',
+  'settings.security.createPasskeyLabel': 'Create a passkey',
+  'settings.security.createPasskeyDescription':
+    'To automatically sign in to Island.is through the app in this device',
+  'settings.security.removePasskeyLabel': 'Delete passkey',
+  'settings.security.removePasskeyDescription':
+    'By deleting your passkey you skip signing in automatically to Island.is with the app',
+  'settings.security.removePasskeyPromptTitle':
+    'Do you want to delete the passkey?',
+  'settings.security.removePasskeyPromptDescription':
+    'By deleting your passkey you can not sign in automatically to Island.is with the app',
+  'settings.security.removePasskeyButton': 'Delete',
+  'settings.security.removePasskeyCancelButton': 'Cancel',
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
@@ -132,13 +149,15 @@ export const en: TranslatedMessages = {
   }`,
   'user.natreg.citizenship': 'Citizenship',
   'user.natreg.religion': 'Religion',
+  'user.natreg.settingsButton': 'Go to settings',
 
   // Home
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.notifications': 'Notifications',
+  'home.inbox': 'Latest in inbox',
   'home.welcomeText': 'Hi',
+  'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
     'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
   'home.onboardingModule.card2':
@@ -147,6 +166,10 @@ export const en: TranslatedMessages = {
     'If you have comments or suggestions about something that is missing or that could be improved, feel free to contact us via email at',
   'home.onboardingModule.card4':
     'We encourage our users to read Digital Iceland’s privacy policy on',
+  'home.vehicleModule.summary':
+    'Enter mileage of electric and plug-in hybrid vehicles',
+  'home.vehicleModule.button': 'My vehicles',
+  'button.seeAll': 'See all',
 
   // inbox
   'inbox.screenTitle': 'Inbox',
@@ -159,10 +182,16 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-  'inbox.filterButtonTitle': 'Open filter',
+  'inbox.filterButtonTitle': 'Filter',
   'inbox.filterOpenedTagTitle': 'Unread',
   'inbox.filterArchivedTagTitle': 'Archived',
   'inbox.filterStarredTagTitle': 'Starred',
+  'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
+  'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
+  'inbox.markAllAsReadPromptCancel': 'Cancel',
+  'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
+  'inbox.cardNoInboxDocuments':
+    'When you receive mail in your mailbox, it will appear here.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
@@ -173,6 +202,7 @@ export const en: TranslatedMessages = {
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
+  'documentDetail.errorUnknown': 'Error occurred while loading document',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -215,16 +245,16 @@ export const en: TranslatedMessages = {
   'licenseScanner.helperMessage': 'Point device at barcode',
   'licenseScanner.awaitingPermission': 'Asking for camera permissions',
   'licenseScanner.noCameraAccess': 'Camera not available',
+  'licenseScanner.errorUnknown': 'Unknown error',
+  'licenseScanner.invalidBarcode': 'Invalid barcode',
+  'licenseScanner.errorNetwork': 'Network error',
   'licenseScannerDetail.driverLicenseNumber': 'Driver license number',
-  'licenseScannerDetail.invalidBarcode': 'Invalid barcode',
   'licenseScannerResult.androidHelp':
     'Press button below the license to get updated barcode.',
   'licenseScannerResult.iosHelp':
     'Press three-dot button below the license. Next, refresh the screen by pulling down from the center to update the barcode.',
 
   // license scan detail
-  'licenseScanDetail.errorUnknown': 'Unknown error',
-  'licenseScanDetail.errorNetwork': 'Network error',
   'licenseScanDetail.errorCodeMessage': `{
     errorCode,
     select,
@@ -257,12 +287,18 @@ export const en: TranslatedMessages = {
   'licenseDetail.pcard.alert.title': 'Remember the parking card!',
   'licenseDetail.pcard.alert.description':
     'This summary is not valid as a parking card.',
+  'licenseDetail.ehic.alert.title': 'Remember the card!',
+  'licenseDetail.ehic.alert.description':
+    'This summary is not valid as a European Health Insurance card.',
 
   // notifications
   'notifications.screenTitle': 'Notifications',
-
-  // notification detail
-  'notificationDetail.screenTitle': 'Notification',
+  'notifications.markAllAsRead': 'Mark all as read',
+  'notifications.settings': 'My settings',
+  'notifications.errorUnknown': 'Error occurred while loading notifications',
+  'notifications.emptyListTitle': 'No notifications',
+  'notifications.emptyListDescription':
+    'When you receive notifications, they will appear here.',
 
   // profile
   'profile.screenTitle': 'More',
@@ -272,12 +308,15 @@ export const en: TranslatedMessages = {
   'profile.vehicles': 'Vehicles',
   'profile.assets': 'Assets',
   'profile.finance': 'Finance',
+  'profile.airDiscount': 'Air discount scheme',
 
   // vehicles
   'vehicles.screenTitle': 'Vehicles',
   'vehicles.emptyListTitle': 'No vehicles found for the user',
   'vehicles.emptyListDescription':
     'Vehicles registered to you will appear here.',
+  'vehicles.nextInspectionLabel': 'Next inspection {date}',
+  'vehicles.mileageRequired': 'Kilometre fee',
 
   // vehicles detail
   'vehicleDetail.regno': 'Registration number',
@@ -303,6 +342,29 @@ export const en: TranslatedMessages = {
   'vehicleDetail.totalWeight': 'Maximum weight',
   'vehicleDetail.capacityWeight': 'Road train weight',
   'vehicleDetail.odometer': 'Odometer',
+  'vehicleDetail.noInfo': 'No information received',
+
+  // vehicle mileage
+  'vehicle.mileage.errorTitle': 'Error',
+  'vehicle.mileage.errorMileageInputTooLow': 'Mileage input too low',
+  'vehicle.mileage.errorMileageInputTooHigh': 'Mileage input too high',
+  'vehicle.mileage.errorFailedToUpdate':
+    'Update mileage seems to have failed. Please try again later.',
+  'vehicle.mileage.successTitle': 'Mileage updated',
+  'vehicle.mileage.successMessage': 'Mileage has been updated',
+  'vehicle.mileage.promptEditTitle': 'Edit mileage',
+  'vehicle.mileage.promptEditButton': 'Edit',
+  'vehicle.mileage.promptCancelButton': 'Cancel',
+  'vehicle.mileage.inputPlaceholder': 'Enter current mileage',
+  'vehicle.mileage.inputLabel': 'Mileage',
+  'vehicle.mileage.inputSubmitButton': 'Submit',
+  'vehicle.mileage.registerIntervalCopy':
+    'Mileage can only be recorded once every 30 days',
+  'vehicle.mileage.youAreNotAllowedCopy':
+    'Only the main owner or custodian of an credit institution owned vehicle can record the mileage status',
+  'vehicle.mileage.moreInformationCopy': 'See more information at Ísland.is',
+  'vehicle.mileage.historyTitle': 'Mileage history',
+  'vehicle.mileage.editRecordButton': 'Edit mileage',
 
   // assets overview
   'assetsOvervies.screenTitle': 'Assets',
@@ -437,4 +499,54 @@ export const en: TranslatedMessages = {
   'edit.confirm.inputlabel': 'Security number',
   'edit.cancel.button': 'Cancel',
   'edit.confirm.button': 'Confirm',
-};
+
+  // air discount
+  'airDiscount.screenTitle': 'Air discount scheme',
+  'airDiscount.headingTitle': 'Lower airfares with Air Discount Scheme',
+  'airDiscount.headingSubtitle':
+    'Each individual is entitled to lower fares on up to three round trips to and from Reykjavík per year (six flights). By using the Loftbrú discount you are acknowledging that you have read the Air Discount scheme terms and conditions.',
+  'airDiscount.tosLinkText': 'Terms and conditions',
+  'airDiscount.alertTitle': 'Attention',
+  'airDiscount.alertDescription':
+    'Code gets renewed after 1 usage\n(expires in 24 hours)',
+  'airDiscount.myRights': 'My benefits',
+  'airDiscount.remainingFares': 'Remaining fares {remaining} of {total}',
+  'airDiscount.copyDiscountCode': 'Copy code',
+  'airDiscount.bulletPointDiscount':
+    'Each discount amounts to 40% of the airfare.',
+  'airDiscount.bulletPointUsage':
+    "Code enables a discount when booking on airline's booking engine.",
+  'airDiscount.activeConnectionCodes': 'Active codes for connecting flights',
+  'airDiscount.flight': 'Flight path: {flight}',
+  'airDiscount.validTo': 'Valid to: {date} {time}',
+  'airDiscount.airfaresUsage': 'Usage in the current season',
+  'airDiscount.emptyListTitle': 'No benefits',
+  'airDiscount.emptyListDescription':
+    'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+
+  // offline
+  'offline.title': 'No internet connection',
+  'offline.message': 'Information has not been updated.',
+
+  // problem
+  'problem.error.tag': 'Error',
+  'problem.error.title': 'Service is temporarily down',
+  'problem.error.message': 'Please try again later',
+  'problem.noData.title': 'No data',
+  'problem.noData.message':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'problem.offline.title': 'No internet connection',
+  'problem.offline.message':
+    'An error occurred while communicating with the service provider',
+
+  // passkeys
+  'passkeys.headingTitle': 'Sign in with Island.is app',
+  'passkeys.openUrlHeadingSubtitle':
+    'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.headingSubtitle':
+    'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.createButton': 'Create a passkey',
+  'passkeys.skipButton': 'Skip',
+  'passkeys.errorRegistering': 'Error',
+  'passkeys.errorRegisteringMessage': 'Could not create a passkey',
+}

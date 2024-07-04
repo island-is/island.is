@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import { login, titles } from '@island.is/judicial-system-web/messages'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
+import { PageHeader } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { LoginErrorCodes } from '@island.is/judicial-system-web/src/types'
 
@@ -40,7 +40,14 @@ const Login = () => {
             message={formatMessage(login.error.unAuthorized.message)}
           />
         )
-
+      case LoginErrorCodes.DEPRECATED_LOGIN:
+        return (
+          <AlertMessage
+            type="warning"
+            title={formatMessage(login.error.deprecatedLogin.title)}
+            message={formatMessage(login.error.deprecatedLogin.message)}
+          />
+        )
       default:
         return null
     }

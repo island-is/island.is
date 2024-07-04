@@ -1,7 +1,9 @@
 export class IslyklarUpsertDto {
-  nationalId: string
+  nationalId!: string
 
   email?: string
 
   phoneNumber?: string
+
+  canNudge?: boolean
 }

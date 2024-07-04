@@ -31,8 +31,10 @@ interface Props {
   setIsLoading: React.Dispatch<React.SetStateAction<boolean>>
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
-  applicationCreated: string
+  applicationAppliedDate: string
   applicationMunicipality: Municipality
+  decemberCompensation: number
+  hasApplicantChildren?: boolean
 }
 
 const StateModal = ({
@@ -44,11 +46,13 @@ const StateModal = ({
   setIsLoading,
   homeCircumstances,
   familyStatus,
-  applicationCreated,
+  applicationAppliedDate,
   applicationMunicipality,
+  hasApplicantChildren = false,
+  decemberCompensation,
 }: Props) => {
+  const appliedMonth = new Date(applicationAppliedDate).getMonth()
   const [selected, setSelected] = useState<ApplicationState | undefined>()
-
   const changeApplicationState = useApplicationState()
 
   const saveStateApplication = async (
@@ -64,8 +68,9 @@ const StateModal = ({
 
     await changeApplicationState(
       applicationId,
-      state,
       eventTypeFromApplicationState[state],
+      state,
+      undefined,
       rejection,
       comment,
       amount,
@@ -100,7 +105,7 @@ const StateModal = ({
     },
     {
       state: ApplicationState.DATANEEDED,
-      modalHeader: 'Vantar gögn',
+      modalHeader: 'Vantar upplýsingar',
     },
   ]
 
@@ -161,11 +166,11 @@ const StateModal = ({
             }
             saveStateApplication(applicationId, selected, undefined, comment)
           }}
-          headline="Skrifaðu hvaða gögn vantar"
+          headline="Skrifaðu hvaða upplýsingar og/eða gögn vantar"
           submitButtonText="Senda á umsækjanda"
-          errorMessage="Þú þarft að gera grein fyrir hvaða gögn vanti í umsóknina"
-          prefixText="Til þess að hægt sé að meta umsóknina þarft þú að senda okkur"
-          postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+          defaultErrorMessage="Þú þarft að gera grein fyrir hvaða upplýsingar og/eða gögn vantar í umsóknina"
+          prefixText="Til þess að hægt sé að ljúka afgreiðslu umsóknarinnar þurfa eftirfarandi upplýsingar að liggja fyrir."
+          postfixText="Upplýsingarnar sendir þú inn á stöðusíðu umsóknarinnar."
           municipalityEmail={applicationMunicipality?.email}
         />
         <AcceptModal
@@ -188,6 +193,9 @@ const StateModal = ({
           homeCircumstances={homeCircumstances}
           familyStatus={familyStatus}
           applicationMunicipality={applicationMunicipality}
+          hasApplicantChildren={hasApplicantChildren}
+          decemberCompensation={decemberCompensation}
+          appliedMonth={appliedMonth}
         />
         <EmailFormatInputModal
           onCancel={onClickCancel}
@@ -201,11 +209,11 @@ const StateModal = ({
           }}
           headline="Skrifaðu ástæðu synjunar"
           submitButtonText="Synja og senda á umsækjanda"
-          errorMessage="Þú þarft að greina frá ástæðu synjunar"
+          defaultErrorMessage="Þú þarft að greina frá ástæðu synjunar"
           prefixText={`Umsókn þinni um fjárhagsaðstoð í ${getMonth(
-            new Date(applicationCreated).getMonth(),
-          )} hefur verið synjað`}
-          postfixText="Þú getur kynnt þér nánar reglur um fjárhagsaðstoð."
+            appliedMonth,
+          )} hefur verið synjað.`}
+          postfixText="Frekari upplýsingar um fjárhagsaðstoð má finna í reglunum hér fyrir neðan."
           municipalityEmail={applicationMunicipality?.email}
         />
       </Box>

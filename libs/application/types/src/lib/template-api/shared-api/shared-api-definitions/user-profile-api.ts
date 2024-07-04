@@ -7,4 +7,6 @@ export const UserProfileApi = defineTemplateApi({
 
 export interface UserProfileParameters {
   catchMock?: boolean
+  validateBankInformation?: boolean
+  validateEmail?: boolean
 }

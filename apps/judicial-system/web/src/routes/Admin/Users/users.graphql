@@ -1,0 +1,25 @@
+query Users {
+  users {
+    id
+    created
+    modified
+    name
+    nationalId
+    mobileNumber
+    role
+    title
+    email
+    institution {
+      id
+      created
+      modified
+      type
+      name
+      active
+    }
+    active
+    canConfirmIndictment
+    latestLogin
+    loginCount
+  }
+}

@@ -4,7 +4,6 @@ import router from 'next/router'
 
 import { AlertMessage, Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { NotificationType } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtArrangements,
@@ -14,28 +13,26 @@ import {
   FormContext,
   FormFooter,
   Modal,
+  PageHeader,
   PageLayout,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
 import {
   CaseCustodyRestrictions,
   CaseType,
+  NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
   useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isCourtHearingArrangemenstStepValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { rcHearingArrangements as m } from './HearingArrangements.strings'
 
-export const HearingArrangements: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export const HearingArrangements = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -55,14 +52,18 @@ export const HearingArrangements: React.FC<
   const { formatMessage } = useIntl()
   const {
     courtDate,
-    setCourtDate,
     courtDateHasChanged,
     handleCourtDateChange,
-  } = useCourtArrangements(workingCase)
+    handleCourtRoomChange,
+    sendCourtDateToServer,
+  } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
 
   const initialize = useCallback(() => {
-    if (!workingCase.courtDate) {
-      setCourtDate(workingCase.requestedCourtDate)
+    if (!workingCase.arraignmentDate?.date && workingCase.requestedCourtDate) {
+      setWorkingCase((theCase) => ({
+        ...theCase,
+        arraignmentDate: { date: theCase.requestedCourtDate },
+      }))
     }
 
     setAndSendCaseToServer(
@@ -91,24 +92,13 @@ export const HearingArrangements: React.FC<
       workingCase,
       setWorkingCase,
     )
-  }, [setAndSendCaseToServer, setCourtDate, setWorkingCase, workingCase])
+  }, [setAndSendCaseToServer, setWorkingCase, workingCase])
 
   useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      await setAndSendCaseToServer(
-        [
-          {
-            courtDate: courtDate
-              ? formatDateForServer(new Date(courtDate))
-              : undefined,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      await sendCourtDateToServer()
 
       const isCorrectingRuling = workingCase.notifications?.some(
         (notification) => notification.type === NotificationType.RULING,
@@ -119,7 +109,7 @@ export const HearingArrangements: React.FC<
         (hasSentNotification(
           NotificationType.COURT_DATE,
           workingCase.notifications,
-        ) &&
+        ).hasSent &&
           !courtDateHasChanged)
       ) {
         router.push(`${destination}/${workingCase.id}`)
@@ -128,10 +118,9 @@ export const HearingArrangements: React.FC<
       }
     },
     [
-      workingCase,
-      setAndSendCaseToServer,
-      courtDate,
-      setWorkingCase,
+      sendCourtDateToServer,
+      workingCase.notifications,
+      workingCase.id,
       courtDateHasChanged,
     ],
   )
@@ -139,6 +128,10 @@ export const HearingArrangements: React.FC<
   const stepIsValid = isCourtHearingArrangemenstStepValidRC(
     workingCase,
     courtDate,
+  )
+
+  const isCorrectingRuling = workingCase.notifications?.some(
+    (notification) => notification.type === NotificationType.RULING,
   )
 
   return (
@@ -176,10 +169,11 @@ export const HearingArrangements: React.FC<
           </Box>
           <Box marginBottom={3}>
             <CourtArrangements
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
               handleCourtDateChange={handleCourtDateChange}
-              selectedCourtDate={courtDate}
+              handleCourtRoomChange={handleCourtRoomChange}
+              courtDate={workingCase.arraignmentDate}
+              courtRoomDisabled={isCorrectingRuling}
+              dateTimeDisabled={isCorrectingRuling}
             />
           </Box>
         </Box>

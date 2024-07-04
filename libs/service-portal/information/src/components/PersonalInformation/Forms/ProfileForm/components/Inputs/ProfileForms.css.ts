@@ -41,7 +41,7 @@ export const formContainer = style({
 })
 
 export const codeInput = style({
-  maxWidth: 210,
+  maxWidth: 100,
 })
 
 export const codeButton = style({
@@ -72,6 +72,17 @@ export const countryCodeInput = style({
       maxWidth: '120px',
     },
   }),
+})
+
+export const errorMessage = style({
+  color: theme.color.red600,
+  fontWeight: theme.typography.medium,
+  fontSize: 14,
+  marginTop: theme.spacing[1],
+})
+
+export const notVerifiedContainer = style({
+  maxWidth: 400,
 })
 
 globalStyle(`${hb} input, ${bank} input`, {

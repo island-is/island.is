@@ -75,7 +75,7 @@ const HeilbrigdisstofnunNordurlandsFooter = ({
 }: HeilbrigdisstofnunNordurlandsFooterProps) => {
   const n = useNamespace(namespace)
   return (
-    <footer aria-labelledby="heilbrigdisstofnun-nordurlands-footer">
+    <footer>
       <div className={styles.container}>
         <GridContainer>
           <GridColumn className={styles.mainColumn}>

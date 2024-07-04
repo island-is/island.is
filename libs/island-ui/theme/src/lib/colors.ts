@@ -17,6 +17,7 @@ export const red200 = '#ffccdc'
 export const red100 = '#fff2f6'
 
 export const white = '#ffffff'
+export const black = '#000000'
 
 // Support colors
 export const blueberry600 = '#24268e'

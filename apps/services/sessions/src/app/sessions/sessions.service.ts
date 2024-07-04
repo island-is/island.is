@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import ip3country from 'ip3country'
 import addDays from 'date-fns/addDays'
-import { lookup } from 'geoip-lite'
 import { Op, WhereOptions } from 'sequelize'
 import uaParser from 'ua-parser-js'
 
@@ -12,6 +12,7 @@ import { CreateSessionDto } from './create-session.dto'
 import { Session } from './session.model'
 import { SessionsQueryDto } from './sessions-query.dto'
 import { SessionsResultDto } from './sessions-result.dto'
+import { USER_AGENT_MAX_LENGTH } from './constants'
 
 @Injectable()
 export class SessionsService {
@@ -86,7 +87,7 @@ export class SessionsService {
   }
 
   create(session: CreateSessionDto): Promise<Session> {
-    const { id, sessionId, ...rest } = session
+    const { id, sessionId, userAgent, ...rest } = session
 
     // Todo: Remove this when we have migrated IDS to use sessionId
     const sid = sessionId || id
@@ -97,8 +98,9 @@ export class SessionsService {
 
     return this.sessionModel.create({
       ...rest,
+      userAgent: userAgent.substring(0, USER_AGENT_MAX_LENGTH),
       sessionId: sid,
-      device: this.formatUserAgent(session.userAgent),
+      device: this.formatUserAgent(userAgent),
       ipLocation: this.formatIp(session.ip),
     })
   }
@@ -113,8 +115,7 @@ export class SessionsService {
       : undefined
   }
 
-  private formatIp(ip: string): string | undefined {
-    const geoLocation = lookup(ip)
-    return geoLocation?.country ?? undefined
+  private formatIp = (ip: string): string | undefined => {
+    return ip3country.lookupStr(ip) ?? undefined
   }
 }

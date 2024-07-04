@@ -19,8 +19,15 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
-import { ApplicationListAdminResponseDto } from './dto/applicationAdmin.response.dto'
-import { ApplicationAdminSerializer } from './tools/applicationAdmin.serializer'
+import {
+  ApplicationAdminPaginatedResponse,
+  ApplicationListAdminResponseDto,
+  ApplicationStatistics,
+} from './dto/applicationAdmin.response.dto'
+import {
+  ApplicationAdminSerializer,
+  ApplicationAdminStatisticsSerializer,
+} from './tools/applicationAdmin.serializer'
 
 @UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
 @ApiTags('applications')
@@ -39,7 +46,42 @@ export class AdminController {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
   ) {}
 
-  @Scopes(AdminPortalScope.applicationSystem)
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
+  @BypassDelegation()
+  @Get('admin/applications-statistics')
+  @UseInterceptors(ApplicationAdminStatisticsSerializer)
+  @Documentation({
+    description: 'Get applications statistics',
+    response: {
+      status: 200,
+      type: [ApplicationStatistics],
+    },
+    request: {
+      query: {
+        startDate: {
+          type: 'string',
+          required: true,
+          description: 'Start date for the statistics',
+        },
+        endDate: {
+          type: 'string',
+          required: true,
+          description: 'End date for the statistics',
+        },
+      },
+    },
+  })
+  async getCountByTypeIdAndStatus(
+    @Query('startDate') startDate: string,
+    @Query('endDate') endDate: string,
+  ) {
+    return this.applicationService.getApplicationCountByTypeIdAndStatus(
+      startDate,
+      endDate,
+    )
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemAdmin)
   @BypassDelegation()
   @Get('admin/:nationalId/applications')
   @UseInterceptors(ApplicationAdminSerializer)
@@ -88,6 +130,83 @@ export class AdminController {
       typeId,
       status,
       nationalId,
+      true, // Show pruned applications
+    )
+  }
+
+  @Scopes(AdminPortalScope.applicationSystemInstitution)
+  @BypassDelegation()
+  @Get('admin/institution/:nationalId/applications/:page/:count')
+  @UseInterceptors(ApplicationAdminSerializer)
+  @Audit<ApplicationAdminPaginatedResponse>({
+    resources: (apps) => apps.rows.map((app) => app.id),
+  })
+  @Documentation({
+    description: 'Get applications for a specific institution',
+    response: {
+      status: 200,
+      type: ApplicationAdminPaginatedResponse,
+    },
+    request: {
+      params: {
+        nationalId: {
+          type: 'string',
+          required: true,
+          description: `To get the applications for a specific institution's national id.`,
+        },
+        page: {
+          type: 'number',
+          required: true,
+          description: `The page to fetch`,
+        },
+        count: {
+          type: 'number',
+          required: true,
+          description: `Number of items to fetch`,
+        },
+      },
+      query: {
+        status: {
+          type: 'string',
+          required: false,
+          description:
+            'To filter applications by status. Comma-separated for multiple values.',
+        },
+        applicantNationalId: {
+          type: 'string',
+          required: false,
+          description: 'To filter applications by applicant nationalId.',
+        },
+        from: {
+          type: 'string',
+          required: false,
+          description: 'Only return results created after specified date',
+        },
+        to: {
+          type: 'string',
+          required: false,
+          description: 'Only return results cerated before specified date',
+        },
+      },
+    },
+  })
+  async findAllInstitutionAdmin(
+    @Param('nationalId') nationalId: string,
+    @Param('page') page: number,
+    @Param('count') count: number,
+    @Query('status') status?: string,
+    @Query('applicantNationalId') applicantNationalId?: string,
+    @Query('from') from?: string,
+    @Query('to') to?: string,
+  ) {
+    return this.applicationService.findAllByInstitutionAndFilters(
+      nationalId,
+      page ?? 1,
+      count ?? 12,
+      status,
+      applicantNationalId,
+      from,
+      to,
     )
   }
 }

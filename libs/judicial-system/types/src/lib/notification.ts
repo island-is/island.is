@@ -2,7 +2,7 @@ export enum NotificationType {
   HEADS_UP = 'HEADS_UP',
   READY_FOR_COURT = 'READY_FOR_COURT',
   RECEIVED_BY_COURT = 'RECEIVED_BY_COURT',
-  COURT_DATE = 'COURT_DATE',
+  COURT_DATE = 'COURT_DATE', // TODO: Rename to ARRAIGNMENT_DATE at some point?
   RULING = 'RULING',
   MODIFIED = 'MODIFIED',
   REVOKED = 'REVOKED',
@@ -13,25 +13,8 @@ export enum NotificationType {
   APPEAL_STATEMENT = 'APPEAL_STATEMENT',
   APPEAL_COMPLETED = 'APPEAL_COMPLETED',
   APPEAL_JUDGES_ASSIGNED = 'APPEAL_JUDGES_ASSIGNED',
-}
-
-export interface Recipient {
-  success: boolean
-  address?: string
-}
-
-export interface Notification {
-  id: string
-  created: string
-  caseId: string
-  type: NotificationType
-  recipients: Recipient[]
-}
-
-export interface SendNotification {
-  type: NotificationType
-}
-
-export interface SendNotificationResponse {
-  notificationSent: boolean
+  APPEAL_CASE_FILES_UPDATED = 'APPEAL_CASE_FILES_UPDATED',
+  APPEAL_WITHDRAWN = 'APPEAL_WITHDRAWN',
+  INDICTMENT_DENIED = 'INDICTMENT_DENIED',
+  INDICTMENT_RETURNED = 'INDICTMENT_RETURNED',
 }

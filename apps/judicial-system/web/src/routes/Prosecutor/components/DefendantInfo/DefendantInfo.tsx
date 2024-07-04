@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
@@ -29,7 +29,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
-import useNationalRegistry from '@island.is/judicial-system-web/src/utils/hooks/useNationalRegistry'
+import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as strings from './DefendantInfo.strings'
@@ -37,17 +37,17 @@ import * as strings from './DefendantInfo.strings'
 interface Props {
   defendant: Defendant
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   onChange: (updatedDefendant: UpdateDefendantInput) => void
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   onDelete?: (defendant: Defendant) => Promise<void>
   nationalIdImmutable: boolean
 }
 
-const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
+const DefendantInfo: FC<Props> = (props) => {
   const {
     defendant,
     workingCase,
@@ -110,7 +110,9 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         address: personData.items[0].permanent_address.street?.nominative,
       })
     }
-  }, [defendant.id, onChange, personData, personError, workingCase.id])
+    // We only want this to run when a lookup is done in the national registry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [personData, personError])
 
   useEffect(() => {
     if (businessError || (businessData && businessData.items?.length === 0)) {
@@ -133,7 +135,9 @@ const DefendantInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
         citizenship: undefined,
       })
     }
-  }, [businessData, businessError, defendant.id, onChange, workingCase.id])
+    // We only want this to run when a lookup is done in the national registry.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [businessData, businessError])
 
   return (
     <BlueBox>

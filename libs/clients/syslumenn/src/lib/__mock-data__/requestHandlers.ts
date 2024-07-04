@@ -1,4 +1,4 @@
-import { VedbandayfirlitSkeyti } from '../../../gen/fetch'
+import { ThjodskraSkeyti, VedbandayfirlitSkeyti } from '../../../gen/fetch'
 import { rest } from 'msw'
 import { AssetType } from '../syslumennClient.types'
 import {
@@ -20,6 +20,7 @@ import {
   BROKERS,
   ALCOHOL_LICENCES,
   TEMPORARY_EVENT_LICENCES,
+  DEPARTED_REGISTRY_PERSON_RESPONSE,
 } from './responses'
 
 export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
@@ -138,6 +139,16 @@ export const requestHandlers = [
       }
     },
   ),
+  rest.post(url('/api/LeitaAdKennitoluIThjodskra'), (req, res, ctx) => {
+    const body = req.body as ThjodskraSkeyti
+    const success = body?.kennitala === '0101302399'
+
+    if (success) {
+      return res(ctx.status(200), ctx.json(DEPARTED_REGISTRY_PERSON_RESPONSE))
+    } else {
+      return res(ctx.status(404))
+    }
+  }),
   rest.post(url('/api/v1/SyslMottakaGogn'), (req, res, ctx) => {
     return res(ctx.status(200), ctx.json(DATA_UPLOAD))
   }),

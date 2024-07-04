@@ -1,4 +1,4 @@
-import { Box, Text, Icon } from '@island.is/island-ui/core'
+import { Box, Text, Icon, Hidden } from '@island.is/island-ui/core'
 import * as styles from './QuantityCounter.css'
 
 type Props = {
@@ -16,25 +16,29 @@ export const QuantityCounter: React.FC<Props> = ({
 }) => {
   return (
     <Box className={styles.quantityCounterWrapper}>
-      <button
-        disabled={quantity <= MININUM_VALUE}
-        className={styles.quantityCounterButton}
-        onClick={handleDecrement}
-      >
-        <Icon
-          color={quantity <= MININUM_VALUE ? 'blue300' : 'blue400'}
-          size="small"
-          icon="remove"
-          type="outline"
-        ></Icon>
-      </button>
+      <Hidden print>
+        <button
+          disabled={quantity <= MININUM_VALUE}
+          className={styles.quantityCounterButton}
+          onClick={handleDecrement}
+        >
+          <Icon
+            color={quantity <= MININUM_VALUE ? 'blue300' : 'blue400'}
+            size="small"
+            icon="remove"
+            type="outline"
+          ></Icon>
+        </button>
+      </Hidden>
       <Text variant="default">{quantity}</Text>
-      <button
-        className={styles.quantityCounterButton}
-        onClick={handleIncrement}
-      >
-        <Icon color="blue400" size="small" icon="add" type="outline"></Icon>
-      </button>
+      <Hidden print>
+        <button
+          className={styles.quantityCounterButton}
+          onClick={handleIncrement}
+        >
+          <Icon color="blue400" size="small" icon="add" type="outline"></Icon>
+        </button>
+      </Hidden>
     </Box>
   )
 }

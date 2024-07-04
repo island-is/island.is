@@ -1,12 +1,11 @@
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
-import { ForbiddenException } from '@nestjs/common'
-
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
   CaseOrigin,
+  NotificationType,
   User,
 } from '@island.is/judicial-system/types'
 
@@ -18,7 +17,7 @@ import { AwsS3Service } from '../../../aws-s3'
 import { Case } from '../../models/case.model'
 import { SignatureConfirmationResponse } from '../../models/signatureConfirmation.response'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: SignatureConfirmationResponse
@@ -64,8 +63,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
-    const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-    mockPutObject.mockResolvedValue(uuid())
+    const mockPutGeneratedObject =
+      mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
+    mockPutGeneratedObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
     const mockPostMessageToQueue =
@@ -124,26 +124,20 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should set the ruling date', () => {
+    it('should return success', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-    })
-
-    it('should return success', () => {
-      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
-          type: MessageType.DELIVER_CASE_FILE_TO_COURT,
+          type: MessageType.NOTIFICATION,
           user,
           caseId,
-          caseFileId,
+          body: { type: NotificationType.RULING },
         },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -166,21 +160,21 @@ describe('CaseController - Get ruling signature confirmation', () => {
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
 
-    it('should set the ruling date', () => {
+    it('should set the ruling signature date', () => {
       expect(mockCaseModel.update).toHaveBeenCalledWith(
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-    })
-
-    it('should return success', () => {
-      expect(mockAwsS3Service.putObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.RULING },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])
       expect(then.result).toEqual({ documentSigned: true })
     })
@@ -205,33 +199,17 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     it('should return success', () => {
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        { type: MessageType.DELIVER_SIGNED_RULING_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_CONCLUSION_TO_COURT, user, caseId },
-        { type: MessageType.SEND_RULING_NOTIFICATION, user, caseId },
-        { type: MessageType.DELIVER_COURT_RECORD_TO_COURT, user, caseId },
-        { type: MessageType.DELIVER_CASE_TO_POLICE, user, caseId },
+        { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.RULING },
+        },
+        { type: MessageType.DELIVERY_TO_POLICE_SIGNED_RULING, user, caseId },
       ])
     })
   })
-
-  describe('user is not the assigned judge', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, judgeId: uuid() } as Case
-    const documentToken = uuid()
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(caseId, user, theCase, documentToken)
-    })
-
-    it('should throw ForbiddenException', () => {
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe(
-        'A ruling must be signed by the assigned judge',
-      )
-    })
-  })
-
   describe('database update fails', () => {
     const caseId = uuid()
     const theCase = {
@@ -265,8 +243,9 @@ describe('CaseController - Get ruling signature confirmation', () => {
     let then: Then
 
     beforeEach(async () => {
-      const mockPutObject = mockAwsS3Service.putObject as jest.Mock
-      mockPutObject.mockRejectedValueOnce(new Error('Some error'))
+      const mockPutGeneratedObject =
+        mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
+      mockPutGeneratedObject.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)
     })
@@ -275,7 +254,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
       expect(then.result.documentSigned).toBe(false)
       expect(then.result.message).toBeTruthy()
       expect(then.result.code).toBeUndefined()
-
       expect(mockCaseModel.update).not.toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()
     })

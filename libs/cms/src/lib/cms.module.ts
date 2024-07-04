@@ -7,6 +7,7 @@ import {
   ArticleResolver,
   LatestNewsSliceResolver,
   FeaturedArticlesResolver,
+  FeaturedEventsResolver,
   FeaturedSupportQNAsResolver,
   PowerBiSliceResolver,
   LatestEventsSliceResolver,
@@ -15,9 +16,15 @@ import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
 import { CmsElasticsearchService } from './cms.elasticsearch.service'
 import { CmsHealthIndicator } from './cms.health'
-import { OrganizationLogoLoader } from './loaders/organizationLogo.loader'
+import { OrganizationLogoByNationalIdLoader } from './loaders/organizationLogoByNationalId.loader'
+import { OrganizationLogoByReferenceIdLoader } from './loaders/organizationLogoByReferenceId.loader'
+import { OrganizationLogoByTitleLoader } from './loaders/organizationLogoByTitle.loader'
+import { OrganizationTitleByReferenceIdLoader } from './loaders/organizationTitleByKey.loader'
+import { OrganizationLinkByReferenceIdLoader } from './loaders/organizationLinkByKey.loader'
 import { PowerBiService } from './powerbi.service'
 import { PowerBiConfig } from './powerbi.config'
+import { OrganizationLinkEnByReferenceIdLoader } from './loaders/organizationLinkEnByKey.loader'
+import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTitleEnByKey.loader'
 
 @Module({
   imports: [HttpModule, TerminusModule, PowerBiConfig.registerOptional()],
@@ -31,8 +38,15 @@ import { PowerBiConfig } from './powerbi.config'
     CmsHealthIndicator,
     LatestNewsSliceResolver,
     FeaturedArticlesResolver,
+    FeaturedEventsResolver,
     FeaturedSupportQNAsResolver,
-    OrganizationLogoLoader,
+    OrganizationLogoByNationalIdLoader,
+    OrganizationLogoByReferenceIdLoader,
+    OrganizationLogoByTitleLoader,
+    OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
+    OrganizationTitleByReferenceIdLoader,
+    OrganizationTitleEnByReferenceIdLoader,
     PowerBiService,
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
@@ -41,7 +55,12 @@ import { PowerBiConfig } from './powerbi.config'
     ContentfulRepository,
     CmsHealthIndicator,
     CmsContentfulService,
-    OrganizationLogoLoader,
+    OrganizationLogoByNationalIdLoader,
+    OrganizationLogoByReferenceIdLoader,
+    OrganizationLogoByTitleLoader,
+    OrganizationLinkByReferenceIdLoader,
+    OrganizationLinkEnByReferenceIdLoader,
+    OrganizationTitleByReferenceIdLoader,
     CmsElasticsearchService,
   ],
 })

@@ -21,11 +21,7 @@ interface TypeResolverResponse {
   slug?: string[]
 }
 
-export type LinkType =
-  | keyof typeof routesTemplate
-  | 'linkurl'
-  | 'link'
-  | 'lifeeventpage'
+export type LinkType = keyof typeof routesTemplate | 'linkurl' | 'link'
 
 /*
 The order here matters for type resolution, arrange overlapping types from most specific to least specific for correct type resolution
@@ -67,6 +63,10 @@ export const routesTemplate = {
     is: '/flokkur/[slug]',
     en: '/en/category/[slug]',
   },
+  articlegroup: {
+    is: '/flokkur/[slug]#[subgroupSlug]',
+    en: '/en/category/[slug]#[subgroupSlug]',
+  },
   news: {
     is: '/frett/[slug]',
     en: '/en/news/[slug]',
@@ -83,6 +83,10 @@ export const routesTemplate = {
     is: '/handbaekur/[slug]/breytingasaga',
     en: '/en/manuals/[slug]/changelog',
   },
+  manualchapteritem: {
+    is: '/handbaekur/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+    en: '/en/manuals/[slug]/[chapterSlug]?selectedItemId=[chapterItemId]',
+  },
   manualchapter: {
     is: '/handbaekur/[slug]/[chapterSlug]',
     en: '/en/manuals/[slug]/[chapterSlug]',
@@ -94,6 +98,14 @@ export const routesTemplate = {
   vacancydetails: {
     is: '/starfatorg/[id]',
     en: '',
+  },
+  pensioncalculatorresults: {
+    is: '/s/tryggingastofnun/reiknivel/nidurstodur',
+    en: '/en/o/social-insurance-administration/calculator/results',
+  },
+  pensioncalculator: {
+    is: '/s/tryggingastofnun/reiknivel',
+    en: '/en/o/social-insurance-administration/calculator',
   },
   digitalicelandservices: {
     is: '/s/stafraent-island/thjonustur',
@@ -175,11 +187,19 @@ export const routesTemplate = {
     is: '/v/[slug]',
     en: '/en/p/[slug]',
   },
+  organizationsubpagelistitem: {
+    is: '/s/[organization]/[slug]/[listItemSlug]',
+    en: '/en/o/[organization]/[slug]/[listItemSlug]',
+  },
+  projectsubpagelistitem: {
+    is: '/v/[project]/[slug]/[listItemSlug]',
+    en: '/en/p/[project]/[slug]/[listItemSlug]',
+  },
   lifeevents: {
     is: '/lifsvidburdir',
     en: '/en/life-events',
   },
-  anchorpage: {
+  lifeeventpage: {
     is: '/lifsvidburdir/[slug]',
     en: '/en/life-events/[slug]',
   },
@@ -197,6 +217,22 @@ export const routesTemplate = {
   },
   regulationshome: {
     is: '/reglugerdir',
+    en: '',
+  },
+  ojoiadvert: {
+    is: '/stjornartidindi/nr/[number]',
+    en: '',
+  },
+  ojoisearch: {
+    is: '/stjornartidindi/leit',
+    en: '',
+  },
+  ojoicategories: {
+    is: '/stjornartidindi/malaflokkar',
+    en: '',
+  },
+  ojoihome: {
+    is: '/stjornartidindi',
     en: '',
   },
   login: {
@@ -238,6 +274,30 @@ export const routesTemplate = {
   article: {
     is: '/[slug]',
     en: '/en/[slug]',
+  },
+  universitysearchdetails: {
+    is: '/haskolanam/[id]',
+    en: '/en/university-studies/[id]',
+  },
+  universitysearchcomparison: {
+    is: '/haskolanam/samanburdur',
+    en: '/en/university-studies/comparison',
+  },
+  universitysearch: {
+    is: '/haskolanam/leit',
+    en: '/en/university-studies/search',
+  },
+  universitysub: {
+    is: '/haskolanam/upplysingar/[subSlug]',
+    en: '/en/university-studies/info/[subSlug]',
+  },
+  universitylandingpage: {
+    is: '/haskolanam',
+    en: '/en/university-studies',
+  },
+  oskalistithjodarinnar: {
+    is: '/oskalisti-thjodarinnar',
+    en: '',
   },
   homepage: {
     is: '/',
@@ -310,15 +370,10 @@ export const linkResolver = (
   The __typename fields seem to have case issues, that will be addressed at a later time
   We also guard against accidental passing of nully values. ??
   */
-  let type = linkType?.toLowerCase() as
+  const type = linkType?.toLowerCase() as
     | LinkResolverInput['linkType']
     | undefined
     | null
-
-  // Temporarily reassign life event pages to anchor pages
-  if (type === 'lifeeventpage') {
-    type = 'anchorpage'
-  }
 
   // special case for external url resolution
   if (type === 'linkurl') {

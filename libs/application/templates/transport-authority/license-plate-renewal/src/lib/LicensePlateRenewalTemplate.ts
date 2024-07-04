@@ -27,10 +27,10 @@ import {
   MyPlateOwnershipsApi,
 } from '../dataProviders'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes, getExtraData } from '../utils'
+import { isPaymentRequired } from '../utils/isPaymentRequired'
 
 const determineMessageFromApplicationAnswers = (application: Application) => {
   const regno = getValueViaPath(
@@ -62,7 +62,6 @@ const template: ApplicationTemplate<
     },
     {
       type: AuthDelegationType.Custom,
-      featureFlag: Features.transportAuthorityApplicationsCustomDelegation,
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
@@ -85,11 +84,15 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
-          onExit: defineTemplateApi({
-            action: ApiActions.validateApplication,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiActions.validateApplication,
+            }),
+            defineTemplateApi({
+              action: ApiActions.submitApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -115,7 +118,16 @@ const template: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: { target: States.PAYMENT },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.PAYMENT,
+              cond: (application) => isPaymentRequired(application),
+            },
+            {
+              target: States.COMPLETED,
+              cond: (application) => !isPaymentRequired(application),
+            },
+          ],
         },
       },
       [States.PAYMENT]: buildPaymentState({
@@ -134,7 +146,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {

@@ -43,6 +43,7 @@ export class VehicleOperatorsClient {
     auth: User,
     permno: string,
     operators: Operator[] | null,
+    mileage?: number | null,
   ): Promise<OperatorChangeValidation> {
     let errorList: ReturnTypeMessage[] | undefined
 
@@ -62,6 +63,7 @@ export class VehicleOperatorsClient {
           permno: permno,
           startDate: new Date(),
           reportingPersonIdNumber: auth.nationalId,
+          mileage: mileage,
           operators: operators.map((operator) => ({
             personIdNumber: operator.ssn || '',
             mainOperator: operator.isMainOperator ? 1 : 0,
@@ -109,6 +111,7 @@ export class VehicleOperatorsClient {
     auth: User,
     permno: string,
     operators: Operator[],
+    mileage?: number | null,
   ): Promise<void> {
     if (operators.length === 0) {
       await this.operatorsApiWithAuth(auth).closeWithoutcontractPost({
@@ -129,6 +132,7 @@ export class VehicleOperatorsClient {
           startDate: new Date(),
           reportingPersonIdNumber: auth.nationalId,
           onlyRunFlexibleWarning: false,
+          mileage: mileage,
           operators: operators.map((operator) => ({
             personIdNumber: operator.ssn || '',
             mainOperator: operator.isMainOperator ? 1 : 0,

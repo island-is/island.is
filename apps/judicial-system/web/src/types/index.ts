@@ -1,41 +1,9 @@
+import { CourtDocument, SubstanceMap } from '@island.is/judicial-system/types'
 import {
   Case,
   CaseListEntry,
-  CreateCase,
-  SubstanceMap,
-  UpdateCase,
-} from '@island.is/judicial-system/types'
-import {
-  CaseAppealDecision,
-  CaseAppealRulingDecision,
-  CaseAppealState,
-  CaseCustodyRestrictions,
-  CaseDecision,
-  CaseLegalProvisions,
-  CaseOrigin,
-  CaseType,
-  Defendant,
-  EventLog,
   IndictmentCount,
-  Institution,
-  RequestSharedWithDefender,
-  SessionArrangements,
-  User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-
-export enum AppealDecisionRole {
-  PROSECUTOR = 'PROSECUTOR',
-  ACCUSED = 'ACCUSED',
-}
-
-export enum IndictmentsCourtSubsections {
-  JUDGE_OVERVIEW = 0,
-  RECEPTION_AND_ASSIGNMENT = 1,
-  SUBPEONA = 2,
-  PROSECUTOR_AND_DEFENDER = 3,
-  COURT_RECORD = 4,
-}
 
 export type ReactSelectOption = {
   label: string
@@ -47,26 +15,15 @@ export enum LoginErrorCodes {
   UNAUTHORIZED = 'innskraning-ekki-notandi',
   UNAUTHENTICATED = 'innskraning-utrunnin',
   LOGIN_FAILED = 'innskraning-ogild',
+  DEPRECATED_LOGIN = 'innskraning-gomul',
 }
 
 export type directionType = 'ascending' | 'descending'
-export type sortableTableColumn = 'defendant' | 'createdAt' | 'courtDate'
+export type sortableTableColumn = keyof CaseListEntry
 
 export interface SortConfig {
   column: sortableTableColumn
   direction: directionType
-}
-
-export interface CaseData {
-  case?: TempCase
-}
-
-export interface LimitedAccessCaseData {
-  limitedAccessCase?: Case
-}
-
-export interface UserData {
-  users: User[]
 }
 
 interface NationalRegistryPerson {
@@ -208,110 +165,24 @@ export interface NationalRegistryResponseBusiness {
   error?: string
 }
 
-export interface Lawyer {
-  name: string
-  practice: string
-  email: string
-  phoneNr: string
-  nationalId: string
-}
-
 /**
  * We are in the process of stopping using the Case type and
  * using the generated Case type from /graphql/schema.tsx instead.
  * We use this type so that we don't have to migrate all the code
  * at once and this type will be removed when we are done.
  */
-
 export interface TempIndictmentCount
   extends Omit<IndictmentCount, 'substances'> {
-  substances?: SubstanceMap
+  substances?: SubstanceMap | null
 }
 
 export interface TempCase
   extends Omit<
     Case,
-    | 'origin'
-    | 'sharedWithProsecutorsOffice'
-    | 'court'
-    | 'courtDocuments'
-    | 'parentCase'
-    | 'childCase'
-    | 'type'
-    | 'indictmentCounts'
-    | 'sessionArrangements'
-    | 'appealState'
-    | 'appealedByRole'
-    | 'appealRulingDecision'
-    | 'defendants'
-    | 'requestedCustodyRestrictions'
-    | 'legalProvisions'
-    | 'accusedAppealDecision'
-    | 'prosecutorAppealDecision'
-    | 'requestSharedWithDefender'
-    | 'eventLogs'
-    | 'decision'
+    'courtDocuments' | 'parentCase' | 'childCase' | 'indictmentCounts'
   > {
-  origin: CaseOrigin
-  sharedWithProsecutorsOffice?: Institution
-  court?: Institution
-  courtDocuments?: CourtDocument[]
-  parentCase?: TempCase
-  childCase?: TempCase
-  type: CaseType
-  indictmentCounts?: TempIndictmentCount[]
-  sessionArrangements?: SessionArrangements
-  appealState?: CaseAppealState
-  appealedByRole?: UserRole
-  appealRulingDecision?: CaseAppealRulingDecision
-  defendants?: Defendant[]
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  legalProvisions?: CaseLegalProvisions[]
-  accusedAppealDecision?: CaseAppealDecision
-  prosecutorAppealDecision?: CaseAppealDecision
-  requestSharedWithDefender?: RequestSharedWithDefender
-  eventLogs?: EventLog[]
-  decision?: CaseDecision
-}
-
-export interface TempUpdateCase
-  extends Omit<
-    UpdateCase,
-    | 'courtDocuments'
-    | 'type'
-    | 'sessionArrangements'
-    | 'appealState'
-    | 'appealRulingDecision'
-    | 'defendants'
-    | 'requestSharedWithDefender'
-  > {
-  courtDocuments?: CourtDocument[]
-  type?: CaseType
-  sessionArrangements?: SessionArrangements
-  appealState?: CaseAppealState
-  appealRulingDecision?: CaseAppealRulingDecision
-  defendants?: Defendant[]
-  requestSharedWithDefender?: RequestSharedWithDefender
-}
-
-export interface TempCreateCase
-  extends Omit<CreateCase, 'type' | 'requestSharedWithDefender'> {
-  type: CaseType
-  requestSharedWithDefender?: RequestSharedWithDefender
-}
-
-export interface TempCaseListEntry
-  extends Omit<
-    CaseListEntry,
-    'type' | 'appealState' | 'appealCaseNumber' | 'appealRulingDecision'
-  > {
-  type: CaseType
-  appealState?: CaseAppealState
-  appealCaseNumber?: string
-  appealRulingDecision?: CaseAppealRulingDecision
-}
-
-export interface CourtDocument {
-  name: string
-  submittedBy: UserRole
+  courtDocuments?: CourtDocument[] | null
+  parentCase?: TempCase | null
+  childCase?: TempCase | null
+  indictmentCounts?: TempIndictmentCount[] | null
 }

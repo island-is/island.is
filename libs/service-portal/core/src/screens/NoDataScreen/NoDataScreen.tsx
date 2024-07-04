@@ -11,10 +11,9 @@ import {
 } from '@island.is/island-ui/core'
 import * as styles from '../ErrorScreen/ErrorScreen.css'
 import { Link } from 'react-router-dom'
-import { ServicePortalPath } from '../../lib/navigation/paths'
 
 interface ButtonType {
-  link?: ServicePortalPath | string
+  link?: string
   onClick?: () => void
   icon?: Pick<IconProps, 'icon' | 'type'>
   type: 'internal' | 'external' | 'click'

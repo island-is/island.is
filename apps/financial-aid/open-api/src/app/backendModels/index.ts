@@ -1,0 +1,7 @@
+export { StaffBackendModel } from './staff.model'
+export { ApplicationFileBackendModel } from './file.model'
+export { DeductionFactorsBackendModel } from './deductionFactors.model'
+export { ApplicationBackendModel } from './application.model'
+export { AmountBackendModel } from './amount.model'
+export { DirectTaxPaymentBackendModel } from './directTaxPayment.model'
+export { ChildrenBackendModel } from './children.model'

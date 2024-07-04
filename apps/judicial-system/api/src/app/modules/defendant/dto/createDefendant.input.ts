@@ -1,36 +1,42 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
-import type { CreateDefendant, Gender } from '@island.is/judicial-system/types'
+import { Gender } from '@island.is/judicial-system/types'
 
 @InputType()
-export class CreateDefendantInput implements CreateDefendant {
+export class CreateDefendantInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly caseId!: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
   readonly noNationalId?: boolean
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly name?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @Field(() => Gender, { nullable: true })
   readonly gender?: Gender
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly address?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly citizenship?: string
 }

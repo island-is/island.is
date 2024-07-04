@@ -3,12 +3,14 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import {
   DelegationConfig,
+  PasskeysCoreConfig,
   SequelizeConfigService,
 } from '@island.is/auth-api-lib'
 import { AuthModule } from '@island.is/auth-nest-tools'
-import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
-import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 import { AuditModule } from '@island.is/nest/audit'
 import {
@@ -23,12 +25,14 @@ import { environment } from '../environments'
 import { ClientsModule } from './clients/clients.module'
 import { DelegationsModule } from './delegations/delegations.module'
 import { GrantsModule } from './grants/grants.module'
+import { LoginRestrictionsModule } from './login-restrictions/login-restrictions.module'
 import { NotificationsModule } from './notifications/notifications.module'
 import { PermissionsModule } from './permissions/permissions.module'
 import { ResourcesModule } from './resources/resources.module'
 import { TranslationModule } from './translation/translation.module'
 import { UserProfileModule } from './user-profile/user-profile.module'
 import { UsersModule } from './users/users.module'
+import { PasskeysModule } from './passkeys/passkeys.module'
 
 @Module({
   imports: [
@@ -47,6 +51,8 @@ import { UsersModule } from './users/users.module'
     PermissionsModule,
     UserProfileModule,
     NotificationsModule,
+    LoginRestrictionsModule,
+    PasskeysModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -58,6 +64,8 @@ import { UsersModule } from './users/users.module'
         RskRelationshipsClientConfig,
         UserProfileClientConfig,
         XRoadConfig,
+        PasskeysCoreConfig,
+        NationalRegistryV3ClientConfig,
       ],
     }),
   ],

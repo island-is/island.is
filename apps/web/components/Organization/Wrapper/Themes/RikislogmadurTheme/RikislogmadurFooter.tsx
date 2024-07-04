@@ -1,4 +1,6 @@
+import { ReactNode } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
+
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -13,7 +15,6 @@ import { FooterItem } from '@island.is/web/graphql/schema'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './RikislogmadurFooter.css'
-import { ReactNode } from 'react'
 
 interface RikislogmadurFooterProps {
   footerItems: FooterItem[]
@@ -27,7 +28,7 @@ const RikislogmadurFooter = ({
   title,
 }: RikislogmadurFooterProps) => {
   return (
-    <footer className={styles.container} aria-labelledby="rikislogmadur-footer">
+    <footer className={styles.container}>
       <GridContainer>
         <Box className={styles.firstRow}>
           {!!logo && <img width={80} height={80} src={logo} alt="" />}

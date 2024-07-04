@@ -1,83 +1,19 @@
 import * as React from 'react'
-import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
+import { forwardRef } from 'react'
 import { Button as ReaButton } from 'reakit/Button'
-import { As } from 'reakit-utils/types'
 import cn from 'classnames'
-
 import { Box } from '../Box/Box'
 import * as styles from './Button.css'
 import { Icon } from '../IconRC/Icon'
-import { Icon as IconType, Type } from '../IconRC/iconMap'
+import type { IconProps } from '../IconRC/types'
 import { TestSupport } from '@island.is/island-ui/utils'
+import type { ButtonProps, ButtonTypes } from './types'
 
-// TODO: refine types, ex. if circle is true there should be no children. and filter variants with conditional types
-
-type NativeButtonProps = AllHTMLAttributes<HTMLButtonElement>
-
-type PrimaryButtonType = {
-  variant?: 'primary'
-  colorScheme?: keyof typeof styles.colors.primary
-  circle?: boolean
-}
-
-type GhostButtonType = {
-  variant?: 'ghost'
-  colorScheme?: keyof typeof styles.colors.ghost
-  circle?: boolean
-}
-
-type TextButtonType = {
-  variant?: 'text'
-  colorScheme?: keyof typeof styles.colors.text
-  circle?: never
-}
-
-type UtilityButtonType = {
-  variant?: 'utility'
-  colorScheme?: keyof typeof styles.colors.utility
-  circle?: never
-}
-
-export type ButtonSizes = Exclude<
-  keyof typeof styles.size,
-  'utility' | 'textSmall'
->
-
-export type ButtonTypes =
-  | PrimaryButtonType
-  | GhostButtonType
-  | TextButtonType
-  | UtilityButtonType
-
-export interface ButtonProps {
-  id?: NativeButtonProps['id']
-  onClick?: NativeButtonProps['onClick']
-  onFocus?: NativeButtonProps['onFocus']
-  onBlur?: NativeButtonProps['onBlur']
-  children?: ReactNode
-  size?: ButtonSizes
-  disabled?: boolean
-  unfocusable?: boolean
-  fluid?: boolean
-  icon?: IconType
-  iconType?: Type
-  preTextIcon?: IconType
-  preTextIconType?: Type
-  type?: NativeButtonProps['type']
-  lang?: string
-  loading?: boolean
-  nowrap?: boolean
-  title?: string
-  inline?: boolean
-  name?: string
-  value?: string
-  as?: As
-  truncate?: boolean
-}
+export type ButtonBaseProps = ButtonProps & ButtonTypes
 
 export const Button = forwardRef<
   HTMLButtonElement,
-  ButtonProps & ButtonTypes & TestSupport
+  ButtonBaseProps & TestSupport
 >(
   (
     {
@@ -176,16 +112,16 @@ export const Button = forwardRef<
 )
 
 type ButtonIconProps = {
-  icon: ButtonProps['icon']
-  type: ButtonProps['iconType']
+  icon: IconProps['icon']
+  type: IconProps['type']
   transparent?: boolean
   preText?: boolean
 }
 
 const ButtonIcon = ({ icon, type, transparent, preText }: ButtonIconProps) => (
   <Icon
-    icon={icon!}
-    type={type!}
+    icon={icon}
+    type={type}
     color={transparent ? 'transparent' : 'currentColor'}
     className={cn(
       styles.icon,

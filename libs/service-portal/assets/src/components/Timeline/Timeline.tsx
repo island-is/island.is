@@ -1,13 +1,15 @@
-import React, { FC, ReactElement } from 'react'
+import { FC, ReactElement } from 'react'
 import cn from 'classnames'
 import * as styles from './Timeline.css'
 import {
   Box,
+  BoxProps,
   Column,
   Columns,
   Stack,
   Text,
   Tooltip,
+  UseBoxStylesProps,
 } from '@island.is/island-ui/core'
 import differenceInCalendarDays from 'date-fns/differenceInCalendarDays'
 import { ProgressBar, useIsMobile } from '@island.is/service-portal/core'
@@ -19,6 +21,7 @@ interface Props {
   minDate?: Date | null
   className?: string
   tooltipText?: string
+  box?: Omit<UseBoxStylesProps, 'component'>
 }
 export const Timeline: FC<Props> = ({
   children,
@@ -27,6 +30,7 @@ export const Timeline: FC<Props> = ({
   minDate,
   className,
   tooltipText,
+  box,
 }) => {
   const { isMobile } = useIsMobile()
 
@@ -38,19 +42,19 @@ export const Timeline: FC<Props> = ({
   let currentProgress = 0
 
   if (maxDate && minDate) {
-    const dateDifferenceStart = differenceInCalendarDays(
-      today,
-      minDate instanceof Date ? minDate : new Date(minDate),
-    )
     const dateDifferenceEnd = differenceInCalendarDays(
       maxDate instanceof Date ? maxDate : new Date(maxDate),
       today,
     )
-    currentProgress = (dateDifferenceStart + 1) / (dateDifferenceEnd + 1)
+    const dateDifference = differenceInCalendarDays(
+      maxDate instanceof Date ? maxDate : new Date(maxDate),
+      minDate instanceof Date ? minDate : new Date(minDate),
+    )
+    currentProgress = (dateDifference - dateDifferenceEnd) / dateDifference
   }
 
   return (
-    <Box>
+    <Box {...box}>
       {title && (
         <Text marginBottom={2} variant="eyebrow" color="purple400">
           {title}

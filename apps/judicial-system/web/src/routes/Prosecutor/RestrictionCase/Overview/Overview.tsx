@@ -13,11 +13,6 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseState,
-  CaseTransition,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
   core,
   errors,
   laws,
@@ -36,6 +31,7 @@ import {
   FormContext,
   FormFooter,
   InfoCard,
+  InfoCardCaseScheduled,
   Modal,
   PageHeader,
   PageLayout,
@@ -43,14 +39,20 @@ import {
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseLegalProvisions } from '@island.is/judicial-system-web/src/graphql/schema'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import {
+  CaseLegalProvisions,
+  CaseState,
+  CaseTransition,
+  NotificationType,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { formatRequestedCustodyRestrictions } from '@island.is/judicial-system-web/src/utils/restrictions'
 import { createCaseResentExplanation } from '@island.is/judicial-system-web/src/utils/stepHelper'
 
 import * as styles from './Overview.css'
 
-export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Overview = () => {
   const [modal, setModal] = useState<
     'noModal' | 'caseResubmitModal' | 'caseSubmittedModal'
   >('noModal')
@@ -154,12 +156,23 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        {workingCase.state === CaseState.RECEIVED &&
+          workingCase.arraignmentDate?.date &&
+          workingCase.court && (
+            <Box component="section" marginBottom={5}>
+              <InfoCardCaseScheduled
+                court={workingCase.court}
+                courtDate={workingCase.arraignmentDate.date}
+                courtRoom={workingCase.arraignmentDate.location}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           <InfoCard
             data={[
               {
                 title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers.map((n) => (
+                value: workingCase.policeCaseNumbers?.map((n) => (
                   <Text key={n}>{n}</Text>
                 )),
               },
@@ -177,13 +190,16 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
               },
               {
                 title: formatMessage(core.prosecutor),
-                value: `${workingCase.creatingProsecutor?.institution?.name}`,
+                value: `${workingCase.prosecutorsOffice?.name}`,
               },
               ...(workingCase.judge
                 ? [
                     {
                       title: formatMessage(core.judge),
-                      value: workingCase.judge.name,
+                      value: NameAndEmail(
+                        workingCase.judge?.name,
+                        workingCase.judge?.email,
+                      ),
                     },
                   ]
                 : []),
@@ -201,13 +217,19 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                 ? [
                     {
                       title: formatMessage(core.registrar),
-                      value: workingCase.registrar.name,
+                      value: NameAndEmail(
+                        workingCase.registrar?.name,
+                        workingCase.registrar?.email,
+                      ),
                     },
                   ]
                 : []),
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: workingCase.prosecutor?.name,
+                value: NameAndEmail(
+                  workingCase.prosecutor?.name,
+                  workingCase.prosecutor?.email,
+                ),
               },
               {
                 title: workingCase.parentCase
@@ -235,14 +257,18 @@ export const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
                     )}`
                   : 'Var ekki skráður',
               },
-              ...(workingCase.courtDate
+              ...(workingCase.arraignmentDate?.date
                 ? [
                     {
                       title: formatMessage(core.confirmedCourtDate),
                       value: `${capitalize(
-                        formatDate(workingCase.courtDate, 'PPPP', true) ?? '',
+                        formatDate(
+                          workingCase.arraignmentDate.date,
+                          'PPPP',
+                          true,
+                        ) ?? '',
                       )} kl. ${formatDate(
-                        workingCase.courtDate,
+                        workingCase.arraignmentDate.date,
                         constants.TIME_FORMAT,
                       )}`,
                     },

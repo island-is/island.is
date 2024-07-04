@@ -8,8 +8,8 @@ import { signedDocument } from '@island.is/judicial-system-web/messages'
 import * as styles from './SignedDocument.css'
 
 interface Props {
-  signatory?: string
-  signingDate?: string
+  signatory?: string | null
+  signingDate?: string | null
 }
 
 const SignedDocument = (props: Props) => {

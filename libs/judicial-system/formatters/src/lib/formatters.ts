@@ -5,7 +5,9 @@ import _uniq from 'lodash/uniq'
 
 import {
   CaseAppealDecision,
+  CaseAppealRulingDecision,
   CaseCustodyRestrictions,
+  CaseIndictmentRulingDecision,
   CaseType,
   Gender,
   IndictmentSubtype,
@@ -21,11 +23,11 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
-export function formatDate(
-  date: Date | string | undefined,
+export const formatDate = (
+  date: Date | string | undefined | null,
   formatPattern: string,
   shortenDayName?: boolean,
-): string | undefined {
+): string | undefined => {
   const theDate: Date = getAsDate(date)
 
   if (isValid(theDate)) {
@@ -44,7 +46,7 @@ export function formatDate(
 }
 
 // Credit: https://dzone.com/articles/capitalize-first-letter-string-javascript
-export const capitalize = (text?: string): string => {
+export const capitalize = (text?: string | null): string => {
   if (!text) {
     return ''
   }
@@ -60,8 +62,13 @@ export const lowercase = (text?: string): string => {
   return text.charAt(0).toLowerCase() + text.slice(1)
 }
 
-export const formatNationalId = (nationalId: string): string => {
+export const formatNationalId = (nationalId?: string | null): string => {
+  if (!nationalId) {
+    return ''
+  }
+
   const regex = new RegExp(/^\d{10}$/)
+
   if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
   } else {
@@ -69,7 +76,7 @@ export const formatNationalId = (nationalId: string): string => {
   }
 }
 
-export const formatPhoneNumber = (phoneNumber?: string) => {
+export const formatPhoneNumber = (phoneNumber?: string | null) => {
   if (!phoneNumber) {
     return
   }
@@ -88,12 +95,30 @@ export const laws = {
   _95_1_C: 'c-lið 1. mgr. 95. gr. sml.',
   _95_1_D: 'd-lið 1. mgr. 95. gr. sml.',
   _95_2: '2. mgr. 95. gr. sml.',
+  _97_1: '1. mgr. 97. gr. sml.',
   _99_1_B: 'b-lið 1. mgr. 99. gr. sml.',
   _100_1: '1. mgr. 100. gr. sml.',
 }
 
+export const getHumanReadableCaseIndictmentRulingDecision = (
+  rulingDecision?: CaseIndictmentRulingDecision,
+) => {
+  switch (rulingDecision) {
+    case CaseIndictmentRulingDecision.RULING:
+      return 'Dómur'
+    case CaseIndictmentRulingDecision.FINE:
+      return 'Viðurlagaákvörðun'
+    case CaseIndictmentRulingDecision.DISMISSAL:
+      return 'Frávísun'
+    case CaseIndictmentRulingDecision.CANCELLATION:
+      return 'Niðurfelling máls'
+    default:
+      return 'Ekki skráð'
+  }
+}
+
 type CaseTypes = { [c in CaseType]: string }
-export const caseTypes: CaseTypes = {
+const caseTypes: CaseTypes = {
   // Indicitment cases
   INDICTMENT: 'ákæra',
   // Restriction cases
@@ -121,6 +146,14 @@ export const caseTypes: CaseTypes = {
   OTHER: 'annað',
 }
 
+export const formatCaseType = (type?: CaseType | null): string => {
+  if (!type) {
+    return 'óþekkt'
+  }
+
+  return caseTypes[type]
+}
+
 type IndictmentSubtypes = { [c in IndictmentSubtype]: string }
 export const indictmentSubtypes: IndictmentSubtypes = {
   ALCOHOL_LAWS: 'áfengislagabrot',
@@ -129,6 +162,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   LEGAL_ENFORCEMENT_LAWS: 'brot gegn lögreglulögum',
   POLICE_REGULATIONS: 'brot gegn lögreglusamþykkt',
   INTIMATE_RELATIONS: 'brot í nánu sambandi',
+  ANIMAL_PROTECTION: 'brot á lögum um dýravernd',
+  FOREIGN_NATIONALS: 'brot á lögum um útlendinga',
   PUBLIC_SERVICE_VIOLATION: 'brot í opinberu starfi',
   PROPERTY_DAMAGE: 'eignaspjöll',
   NARCOTICS_OFFENSE: 'fíkniefnalagabrot',
@@ -145,6 +180,8 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   MINOR_ASSAULT: 'líkamsárás - minniháttar',
   AGGRAVATED_ASSAULT: 'líkamsárás - sérlega hættuleg',
   ASSAULT_LEADING_TO_DEATH: 'líkamsárás sem leiðir til dauða',
+  BODILY_INJURY: 'líkamsmeiðingar',
+  MEDICINES_OFFENSE: 'lyfjalög',
   MURDER: 'manndráp',
   RAPE: 'nauðgun',
   UTILITY_THEFT: 'nytjastuldur',
@@ -157,6 +194,29 @@ export const indictmentSubtypes: IndictmentSubtypes = {
   TRAFFIC_VIOLATION: 'umferðarlagabrot',
   WEPONS_VIOLATION: 'vopnalagabrot',
   THEFT: 'þjófnaður',
+}
+
+export const getAppealResultTextByValue = (
+  value?: CaseAppealRulingDecision | null,
+) => {
+  switch (value) {
+    case CaseAppealRulingDecision.ACCEPTING:
+      return 'Staðfest'
+    case CaseAppealRulingDecision.REPEAL:
+      return 'Fellt úr gildi'
+    case CaseAppealRulingDecision.CHANGED:
+    case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+      return 'Breytt'
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+    case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+      return 'Frávísun'
+    case CaseAppealRulingDecision.REMAND:
+      return 'Heimvísun'
+    case CaseAppealRulingDecision.DISCONTINUED:
+      return 'Niðurfellt'
+    default:
+      return 'Niðurstaða'
+  }
 }
 
 export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
@@ -184,7 +244,7 @@ export const getShortRestrictionByValue = (value: CaseCustodyRestrictions) => {
  * @param values list of strings to enumerate
  * @param endWord the word before last value is enumerated
  */
-export function enumerate(values: string[], endWord: string): string {
+export const enumerate = (values: string[], endWord: string): string => {
   return values.join(', ').replace(/, ([^,]*)$/, ` ${endWord} $1`)
 }
 
@@ -206,9 +266,9 @@ const supportedCaseCustodyRestrictions: SupportedCaseCustodyRestriction[] = [
   { id: 'f', type: CaseCustodyRestrictions.WORKBAN },
 ]
 
-export function getSupportedCaseCustodyRestrictions(
-  requestedRestrictions?: CaseCustodyRestrictions[],
-): SupportedCaseCustodyRestriction[] {
+export const getSupportedCaseCustodyRestrictions = (
+  requestedRestrictions?: CaseCustodyRestrictions[] | null,
+): SupportedCaseCustodyRestriction[] => {
   const restrictions = supportedCaseCustodyRestrictions.filter((restriction) =>
     requestedRestrictions?.includes(restriction.type),
   )
@@ -220,7 +280,7 @@ export function getSupportedCaseCustodyRestrictions(
   return restrictions.sort((a, b) => (a.id > b.id ? 1 : -1))
 }
 
-export function formatGender(gender?: Gender): string {
+export const formatGender = (gender?: Gender): string => {
   switch (gender) {
     case Gender.MALE:
       return 'Karl'
@@ -232,10 +292,10 @@ export function formatGender(gender?: Gender): string {
   }
 }
 
-export function formatAppeal(
-  appealDecision: CaseAppealDecision | undefined,
+export const formatAppeal = (
+  appealDecision: CaseAppealDecision | undefined | null,
   stakeholder: string,
-): string {
+): string => {
   const isMultipleDefendants = stakeholder.slice(-2) === 'ar'
 
   switch (appealDecision) {
@@ -260,7 +320,11 @@ export function formatAppeal(
   }
 }
 
-export function formatRequestCaseType(type: string): string {
+export const formatRequestCaseType = (type?: string | null): string => {
+  if (!type) {
+    return 'óþekkt'
+  }
+
   const caseType = type as CaseType
 
   return isRestrictionCase(caseType) ||
@@ -268,7 +332,7 @@ export function formatRequestCaseType(type: string): string {
     caseType === CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME ||
     caseType === CaseType.EXPULSION_FROM_HOME ||
     caseType === CaseType.PSYCHIATRIC_EXAMINATION
-    ? caseTypes[caseType]
+    ? formatCaseType(caseType)
     : 'rannsóknarheimild'
 }
 
@@ -309,10 +373,10 @@ export const splitStringByComma = (str?: string): string[] => {
 }
 
 export const readableIndictmentSubtypes = (
-  policeCaseNumbers: string[],
+  policeCaseNumbers?: string[] | null,
   rawIndictmentSubtypes?: IndictmentSubtypeMap,
 ): string[] => {
-  if (!rawIndictmentSubtypes) {
+  if (!policeCaseNumbers || !rawIndictmentSubtypes) {
     return []
   }
 

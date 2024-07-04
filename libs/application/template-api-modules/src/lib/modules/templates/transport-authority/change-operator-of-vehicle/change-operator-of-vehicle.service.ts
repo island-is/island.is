@@ -24,6 +24,10 @@ import {
   VehicleServiceFjsV1Client,
 } from '@island.is/clients/vehicle-service-fjs-v1'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import {
+  MileageReadingApi,
+  MileageReadingDto,
+} from '@island.is/clients/vehicles-mileage'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import {
@@ -40,6 +44,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
+import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
@@ -47,10 +52,12 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
+    private readonly vehicleCodetablesClient: VehicleCodetablesClient,
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private readonly vehicleOwnerChangeClient: VehicleOwnerChangeClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
+    private readonly mileageReadingApi: MileageReadingApi,
   ) {
     super(ApplicationTypes.CHANGE_OPERATOR_OF_VEHICLE)
   }
@@ -59,9 +66,31 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
+  private mileageReadingApiWithAuth(auth: Auth) {
+    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
   async getCurrentVehiclesWithOperatorChangeChecks({
     auth,
   }: TemplateApiModuleActionProps) {
+    const countResult =
+      (
+        await this.vehiclesApiWithAuth(
+          auth,
+        ).currentvehicleswithmileageandinspGet({
+          showOwned: true,
+          showCoowned: false,
+          showOperated: false,
+          page: 1,
+          pageSize: 1,
+        })
+      ).totalRecords || 0
+    if (countResult && countResult > 20) {
+      return {
+        totalRecords: countResult,
+        vehicles: [],
+      }
+    }
     const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
       persidNo: auth.nationalId,
       showOwned: true,
@@ -80,40 +109,52 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
       )
     }
 
-    return await Promise.all(
-      result?.map(async (vehicle) => {
-        let validation: OperatorChangeValidation | undefined
-        let debtStatus: VehicleDebtStatus | undefined
+    return {
+      totalRecords: countResult,
+      vehicles: await Promise.all(
+        result?.map(async (vehicle) => {
+          let validation: OperatorChangeValidation | undefined
+          let debtStatus: VehicleDebtStatus | undefined
+          let mileageReadings: MileageReadingDto[] | undefined
 
-        // Only validate if fewer than 5 items
-        if (result.length <= 5) {
-          // Get debt status
-          debtStatus =
-            await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+          // Only validate if fewer than 5 items
+          if (result.length <= 5) {
+            // Get debt status
+            debtStatus =
+              await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
+                auth,
+                vehicle.permno || '',
+              )
+
+            // Get validation
+            validation =
+              await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
+                auth,
+                vehicle.permno || '',
+              )
+            mileageReadings = await this.mileageReadingApiWithAuth(
               auth,
-              vehicle.permno || '',
-            )
+            ).getMileageReading({ permno: vehicle.permno || '' })
+          }
 
-          // Get validation
-          validation =
-            await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
-              auth,
-              vehicle.permno || '',
-            )
-        }
+          const electricFuelCodes =
+            this.vehicleCodetablesClient.getElectricFueldCodes()
 
-        return {
-          permno: vehicle.permno || undefined,
-          make: vehicle.make || undefined,
-          color: vehicle.color || undefined,
-          role: vehicle.role || undefined,
-          isDebtLess: debtStatus?.isDebtLess,
-          validationErrorMessages: validation?.hasError
-            ? validation.errorMessages
-            : null,
-        }
-      }),
-    )
+          return {
+            permno: vehicle.permno || undefined,
+            make: vehicle.make || undefined,
+            color: vehicle.color || undefined,
+            role: vehicle.role || undefined,
+            requireMileage: electricFuelCodes.includes(vehicle.fuelCode || ''),
+            mileageReading: (mileageReadings?.[0]?.mileage ?? '').toString(),
+            isDebtLess: debtStatus?.isDebtLess,
+            validationErrorMessages: validation?.hasError
+              ? validation.errorMessages
+              : null,
+          }
+        }),
+      ),
+    }
   }
 
   async validateApplication({
@@ -143,11 +184,14 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
+    const mileage = answers?.vehicleMileage?.value
+
     const result =
       await this.vehicleOperatorsClient.validateAllForOperatorChange(
         auth,
         permno,
         operators,
+        mileage ? Number(mileage) || 0 : null,
       )
 
     // If we get any error messages, we will just throw an error with a default title
@@ -354,7 +398,14 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
           : true,
     }))
 
-    await this.vehicleOperatorsClient.saveOperators(auth, permno, operators)
+    const mileage = answers?.vehicleMileage?.value
+
+    await this.vehicleOperatorsClient.saveOperators(
+      auth,
+      permno,
+      operators,
+      mileage ? Number(mileage) || 0 : null,
+    )
 
     // 3. Notify everyone in the process that the application has successfully been submitted
 

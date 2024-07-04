@@ -8,7 +8,7 @@ import {
   User,
 } from '@island.is/judicial-system/types'
 
-import { Case } from '../..'
+import { Case } from '../../models/case.model'
 import { verifyNoAccess, verifyReadAccess } from './verify'
 
 describe.each(prisonSystemRoles)('prison system user %s', (role) => {

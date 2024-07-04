@@ -41,6 +41,15 @@ export enum ApplicationFiltersEnum {
   MYCASES = 'MyCases',
 }
 
+export enum ApplicationHeaderSortByEnum {
+  NAME = 'name',
+  STATE = 'state',
+  MODIFIED = 'modified',
+  CREATED = 'created',
+  STAFF = 'staff',
+  APPLIEDDATE = 'appliedDate',
+}
+
 export enum ApplicationStateUrl {
   NEW = 'New',
   INPROGRESS = 'InProgress',
@@ -59,6 +68,7 @@ export enum ApplicationEventType {
   FILEUPLOAD = 'FileUpload',
   SPOUSEFILEUPLOAD = 'SpouseFileUpload',
   ASSIGNCASE = 'AssignCase',
+  DATECHANGED = 'DateChanged',
 }
 
 export enum FileType {
@@ -66,6 +76,7 @@ export enum FileType {
   INCOME = 'Income',
   OTHER = 'Other',
   SPOUSEFILES = 'SpouseFiles',
+  CHILDRENFILES = 'ChildrenFiles',
 }
 
 export enum StaffRole {
@@ -109,4 +120,15 @@ export enum AidName {
   WITHOTHERS = 'withOthers',
   LIVESWITHPARENTS = 'livesWithParents',
   UNKNOWN = 'unknown',
+}
+
+export enum FilterType {
+  APPLICATIONSTATE = 'applicationState',
+  STAFF = 'staff',
+}
+
+export enum ChildrenAid {
+  NOTDEFINED = 'NotDefined',
+  INSTITUTION = 'Institution',
+  APPLICANT = 'Applicant',
 }

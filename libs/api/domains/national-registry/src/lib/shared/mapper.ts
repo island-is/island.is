@@ -1,4 +1,17 @@
-import { Gender, MaritalStatus } from './types'
+import { Gender, MaritalStatus, NationalIdType } from './types'
+
+export const mapNationalIdType = (nationalIdType: number): NationalIdType => {
+  switch (nationalIdType) {
+    case 1:
+      return NationalIdType.NATIONAL_REGISTRY_NATIONAL_ID
+    case 2:
+      return NationalIdType.SYSTEM_NATIONAL_ID
+    case 3:
+      return NationalIdType.DECEASED
+    default:
+      return NationalIdType.UNKNOWN
+  }
+}
 
 export const mapGender = (genderIndex: string): Gender => {
   switch (genderIndex) {

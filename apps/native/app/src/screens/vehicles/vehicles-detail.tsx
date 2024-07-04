@@ -1,31 +1,37 @@
-import React from 'react';
-import {useIntl} from 'react-intl';
-import {ScrollView, View, Text} from 'react-native';
-import {testIDs} from '../../utils/test-ids';
-import {Navigation, NavigationFunctionComponent} from 'react-native-navigation';
-import {Input, InputRow, NavigationBarSheet} from '@ui';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {GET_USERS_VEHICLE_DETAIL} from '../../graphql/queries/get-users-vehicles-detail';
-import {useQuery} from '@apollo/client';
-import {client} from '../../graphql/client';
+import { Button, Divider, Input, InputRow } from '@ui'
+import React from 'react'
+import { useIntl } from 'react-intl'
+import { ScrollView, Text, View } from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { useGetVehicleQuery } from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { navigateTo } from '../../lib/deep-linking'
+import { testIDs } from '../../utils/test-ids'
 
-const {getNavigationOptions, useNavigationOptions} =
+const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
-      visible: false,
+      visible: true,
     },
-  }));
+  }))
 
 export const VehicleDetailScreen: NavigationFunctionComponent<{
-  title?: string;
-  id: string;
-}> = ({componentId, title, id}) => {
-  useNavigationOptions(componentId);
-  const intl = useIntl();
+  title?: string
+  id: string
+}> = ({ componentId, title, id }) => {
+  useNavigationOptions(componentId)
 
-  const {data, loading, error} = useQuery(GET_USERS_VEHICLE_DETAIL, {
-    client,
-    fetchPolicy: 'cache-first',
+  const intl = useIntl()
+
+  // Get feature flag for mileage
+  const isMileageEnabled = useFeatureFlag(
+    'isServicePortalVehicleMileagePageEnabled',
+    false,
+  )
+
+  const { data, loading, error } = useGetVehicleQuery({
     variables: {
       input: {
         regno: '',
@@ -33,51 +39,60 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         vin: '',
       },
     },
-  });
+  })
 
-  const {mainInfo, basicInfo, registrationInfo, inspectionInfo, technicalInfo} =
-    data?.vehiclesDetail || {};
+  useConnectivityIndicator({
+    componentId,
+    queryResult: { data, loading },
+  })
 
-  const isError = !!error;
-  const noInfo = data?.vehiclesDetail === null;
+  const {
+    mainInfo,
+    basicInfo,
+    registrationInfo,
+    inspectionInfo,
+    technicalInfo,
+  } = data?.vehiclesDetail || {}
+
+  const isError = !!error
+  const noInfo = data?.vehiclesDetail === null
+  const isMileageRequired =
+    mainInfo?.requiresMileageRegistration && isMileageEnabled
 
   if (noInfo && !loading) {
     return (
-      <View style={{flex: 1, alignItems: 'center', justifyContent: 'center'}}>
-        <Text>Engin gögn bárust</Text>
+      <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
+        <Text>
+          {intl.formatMessage({
+            id: 'vehicleDetail.noInfo',
+          })}
+        </Text>
       </View>
-    );
+    )
   }
 
+  const inputLoading = loading && !data
+
   return (
-    <View style={{flex: 1}} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
-      <NavigationBarSheet
-        componentId={componentId}
-        title={title ? title : `${mainInfo?.model} ${mainInfo?.subModel}`}
-        onClosePress={() => Navigation.dismissModal(componentId)}
-        style={{marginHorizontal: 16}}
-      />
-      <ScrollView style={{flex: 1}}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_VEHICLE_DETAIL}>
+      <ScrollView style={{ flex: 1 }}>
         <View>
           <InputRow>
             <Input
-              loading={loading}
-              error={isError}
-              label={intl.formatMessage({id: 'vehicleDetail.regno'})}
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.regno' })}
               value={mainInfo?.regno}
             />
             <Input
-              loading={loading}
-              error={isError}
-              label={intl.formatMessage({id: 'vehicleDetail.permno'})}
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.permno' })}
               value={basicInfo?.permno}
             />
           </InputRow>
           <InputRow>
             <Input
-              loading={loading}
-              error={isError}
-              label={intl.formatMessage({id: 'vehicleDetail.firstReg'})}
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.firstReg' })}
               value={
                 registrationInfo?.firstRegistrationDate
                   ? intl.formatDate(
@@ -87,19 +102,18 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               }
             />
             <Input
-              loading={loading}
-              error={isError}
-              label={intl.formatMessage({id: 'vehicleDetail.color'})}
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.color' })}
               value={registrationInfo?.color}
             />
           </InputRow>
           <InputRow>
             <Input
-              loading={loading}
-              error={isError}
+              loading={inputLoading}
               label={intl.formatMessage({
                 id: 'vehicleDetail.nextInspectionDate',
               })}
+              noBorder
               value={
                 inspectionInfo?.nextInspectionDate
                   ? intl.formatDate(
@@ -110,26 +124,51 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             />
             {inspectionInfo?.odometer && (
               <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({id: 'vehicleDetail.odometer'})}
-                value={`${inspectionInfo?.odometer} km`}
+                noBorder
+                loading={inputLoading}
+                label={intl.formatMessage({ id: 'vehicleDetail.odometer' })}
+                value={
+                  data?.vehiclesDetail?.lastMileage?.mileage
+                    ? `${intl.formatNumber(
+                        parseInt(
+                          data?.vehiclesDetail?.lastMileage?.mileage,
+                          10,
+                        ),
+                      )} km`
+                    : '-'
+                }
               />
             )}
           </InputRow>
 
+          {isMileageRequired && (
+            <Button
+              title={intl.formatMessage({ id: 'vehicle.mileage.inputLabel' })}
+              onPress={() => {
+                navigateTo(`/vehicle-mileage/`, {
+                  id,
+                  title: {
+                    type: title,
+                    year: basicInfo?.year,
+                    color: registrationInfo?.color,
+                  },
+                })
+              }}
+              style={{ marginHorizontal: 16 }}
+            />
+          )}
+          <Divider spacing={2} />
+
           <InputRow>
             <Input
-              loading={loading}
-              error={isError}
-              label={intl.formatMessage({id: 'vehicleDetail.vehicleWeight'})}
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.vehicleWeight' })}
               value={`${technicalInfo?.vehicleWeight} kg`}
             />
             {technicalInfo?.totalWeight ? (
               <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({id: 'vehicleDetail.totalWeight'})}
+                loading={inputLoading}
+                label={intl.formatMessage({ id: 'vehicleDetail.totalWeight' })}
                 value={`${technicalInfo?.totalWeight ?? '-'} kg`}
               />
             ) : null}
@@ -137,19 +176,24 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
 
           <InputRow>
             <Input
-              loading={loading}
-              error={isError}
-              label={intl.formatMessage({id: 'vehicleDetail.insured'})}
+              loading={inputLoading}
+              label={intl.formatMessage({ id: 'vehicleDetail.insured' })}
               value={intl.formatMessage(
-                {id: 'vehicleDetail.insuredValue'},
-                {isInsured: inspectionInfo?.insuranceStatus},
+                { id: 'vehicleDetail.insuredValue' },
+                { isInsured: inspectionInfo?.insuranceStatus },
               )}
             />
             <Input
-              loading={loading}
-              error={isError}
-              label={intl.formatMessage({id: 'vehicleDetail.unpaidVehicleFee'})}
-              value={`${inspectionInfo?.carTax} kr.`}
+              loading={inputLoading}
+              label={intl.formatMessage({
+                id: 'vehicleDetail.unpaidVehicleFee',
+              })}
+              value={
+                typeof inspectionInfo?.carTax === 'undefined' ||
+                inspectionInfo?.carTax === null
+                  ? '-'
+                  : `${inspectionInfo?.carTax} kr.`
+              }
             />
           </InputRow>
 
@@ -157,8 +201,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             <InputRow>
               {mainInfo?.trailerWithBrakesWeight ? (
                 <Input
-                  loading={loading}
-                  error={isError}
+                  loading={inputLoading}
                   label={intl.formatMessage({
                     id: 'vehicleDetail.trailerWithBrakes',
                   })}
@@ -167,8 +210,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
               ) : null}
               {mainInfo?.trailerWithoutBrakesWeight ? (
                 <Input
-                  loading={loading}
-                  error={isError}
+                  loading={inputLoading}
                   label={intl.formatMessage({
                     id: 'vehicleDetail.trailerWithoutBrakes',
                   })}
@@ -181,17 +223,17 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
           <InputRow>
             {technicalInfo?.capacityWeight ? (
               <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({id: 'vehicleDetail.capacityWeight'})}
+                loading={inputLoading}
+                label={intl.formatMessage({
+                  id: 'vehicleDetail.capacityWeight',
+                })}
                 value={`${technicalInfo?.capacityWeight ?? '-'} kg`}
               />
             ) : null}
             {mainInfo?.co2 ? (
               <Input
-                loading={loading}
-                error={isError}
-                label={intl.formatMessage({id: 'vehicleDetail.nedc'})}
+                loading={inputLoading}
+                label={intl.formatMessage({ id: 'vehicleDetail.nedc' })}
                 value={`${mainInfo?.co2 ?? 0} g/km`}
               />
             ) : null}
@@ -199,7 +241,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
         </View>
       </ScrollView>
     </View>
-  );
-};
+  )
+}
 
-VehicleDetailScreen.options = getNavigationOptions;
+VehicleDetailScreen.options = getNavigationOptions

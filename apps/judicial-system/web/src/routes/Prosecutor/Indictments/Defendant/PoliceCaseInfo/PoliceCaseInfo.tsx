@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 
@@ -30,6 +30,7 @@ import { policeCaseInfo } from './PoliceCaseInfo.strings'
 interface Props {
   index: number
   policeCaseNumbers: string[]
+  policeCaseNumberPrefix?: string | null
   subtypes?: IndictmentSubtype[]
   crimeScene?: CrimeScene
   setPoliceCase: (
@@ -49,23 +50,25 @@ interface Props {
       crimeScene?: CrimeScene
     },
   ) => void
+  updateIndictmentCount: (
+    policeCaseNumber: string,
+    crimeScene: CrimeScene,
+  ) => void
   policeCaseNumberImmutable: boolean
 }
 
-export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const {
-    index,
-    policeCaseNumbers,
-    subtypes,
-    crimeScene,
-    setPoliceCase,
-    deletePoliceCase,
-    updatePoliceCase,
-    policeCaseNumberImmutable = false,
-  } = props
-
+export const PoliceCaseInfo: FC<Props> = ({
+  index,
+  policeCaseNumbers,
+  policeCaseNumberPrefix,
+  subtypes,
+  crimeScene,
+  setPoliceCase,
+  deletePoliceCase,
+  updatePoliceCase,
+  policeCaseNumberImmutable = false,
+  updateIndictmentCount,
+}) => {
   const { formatMessage } = useIntl()
 
   const { user } = useContext(UserContext)
@@ -185,7 +188,10 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
             placeholder={formatMessage(
               policeCaseInfo.policeCaseNumberPlaceholder,
               {
-                prefix: user?.institution?.policeCaseNumberPrefix ?? '',
+                prefix:
+                  policeCaseNumberPrefix ??
+                  user?.institution?.policeCaseNumberPrefix ??
+                  '',
                 year: new Date().getFullYear(),
               },
             )}
@@ -253,8 +259,12 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
               crimeScene: { ...crimeScene, place: event.target.value },
             })
           }}
-          onBlur={() => {
+          onBlur={(event) => {
             updatePoliceCase()
+            updateIndictmentCount(policeCaseNumbers[index], {
+              ...crimeScene,
+              place: event.target.value,
+            })
           }}
         />
       </Box>
@@ -268,6 +278,11 @@ export const PoliceCaseInfo: React.FC<React.PropsWithChildren<Props>> = (
           if (date && valid) {
             updatePoliceCase(index, {
               crimeScene: { ...crimeScene, date: date },
+            })
+
+            updateIndictmentCount(policeCaseNumbers[index], {
+              ...crimeScene,
+              date: date,
             })
           }
         }}

@@ -1,4 +1,4 @@
-import { VehiclesVehicle } from '@island.is/api/schema'
+import { VehicleListed } from '@island.is/api/schema'
 import { useLocale } from '@island.is/localization'
 import React, { FC, useEffect, useState } from 'react'
 import { formatDate } from '@island.is/service-portal/core'
@@ -9,7 +9,7 @@ import { AssetsPaths } from '../lib/paths'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 interface Props {
-  vehicle: VehiclesVehicle
+  vehicle: VehicleListed
 }
 
 export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
@@ -39,23 +39,23 @@ export const VehicleCard: FC<React.PropsWithChildren<Props>> = ({
   }
   const year = vehicle.modelYear ? '(' + vehicle.modelYear + ')' : ''
 
-  const heading = vehicle.type + ' ' + year
+  const heading = vehicle.make + ' ' + year
   const plate = vehicle.regno || vehicle.permno || ''
-  const text = vehicle.color ? vehicle.color + ' - ' + plate : plate
+  const text = vehicle.colorName ? vehicle.colorName + ' - ' + plate : plate
 
   return (
     <ActionCard
       heading={heading}
       text={text}
       tag={
-        vehicle?.nextInspection?.nextInspectionDate
+        vehicle?.nextMainInspection
           ? {
               label: `${formatMessage(
                 vehicleMessage.nextAnyInspection,
-              )} ${formatDate(vehicle.nextInspection.nextInspectionDate)}`,
+              )} ${formatDate(vehicle.nextMainInspection)}`,
               variant:
                 differenceInMonths(
-                  new Date(vehicle.nextInspection.nextInspectionDate),
+                  new Date(vehicle.nextMainInspection),
                   new Date(),
                 ) > 0
                   ? 'blue'

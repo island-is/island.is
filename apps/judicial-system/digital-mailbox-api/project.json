@@ -1,0 +1,53 @@
+{
+  "name": "judicial-system-digital-mailbox-api",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/judicial-system/digital-mailbox-api/src",
+  "projectType": "application",
+  "prefix": "judicial-system-digital-mailbox-api",
+  "tags": ["scope:judicial-system-api"],
+  "generators": {},
+  "targets": {
+    "build": {
+      "executor": "./tools/executors/node:build",
+      "options": {
+        "outputPath": "dist/apps/judicial-system/digital-mailbox-api",
+        "main": "apps/judicial-system/digital-mailbox-api/src/main.ts",
+        "tsConfig": "apps/judicial-system/digital-mailbox-api/tsconfig.app.json",
+        "assets": [],
+        "maxWorkers": 2
+      },
+      "configurations": {
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "judicial-system-digital-mailbox-api:build"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "options": {
+        "jestConfig": "apps/judicial-system/digital-mailbox-api/jest.config.ts"
+      }
+    },
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/judicial-system/digital-mailbox-api/tsconfig.app.json apps/judicial-system/digital-mailbox-api/src/buildOpenApi.ts"
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
+    },
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
+}

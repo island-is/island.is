@@ -24,19 +24,6 @@ export const caseFiles = defineMessages({
     description:
       'Notaður sem skýring fyrir "LOKE" gagnapakkann á síðunni Rannsóknargögn.',
   },
-  descriptionHeading: {
-    id: 'judicial.system.core:case_files.description_heading',
-    defaultMessage: 'Meðferð gagna',
-    description:
-      'Notaður sem titill fyrir "meðferð gagna" hlutann á síðunni Rannsóknargögn',
-  },
-  descriptionList: {
-    id: 'judicial.system.core:case_files.description_list#markdown',
-    defaultMessage:
-      '- Hér er hægt að hlaða upp rannsóknargögnum til að sýna dómara.\\n\\n- Gögnin eru eingöngu aðgengileg dómara í málinu og aðgengi að þeim lokast þegar dómari hefur úrskurðað.\\n\\n- Gögnin verða ekki lögð fyrir eða flutt í málakerfi dómstóls nema annar hvor aðilinn kæri úrskurðinn.',
-    description:
-      'Listi yfir það hvernig rannsóknargögn eru geymd og hver hefur aðgang að þeim.',
-  },
   filesHeading: {
     id: 'judicial.system.core:case_files.files_heading',
     defaultMessage: 'Rannsóknargögn',

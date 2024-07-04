@@ -24,6 +24,9 @@ export class AidOrNutrition {
   @Field({ nullable: true })
   maxUnitRefund?: string
 
+  @Field({ nullable: true })
+  maxMonthlyAmount?: number
+
   @Field(() => Refund)
   refund!: Refund
 

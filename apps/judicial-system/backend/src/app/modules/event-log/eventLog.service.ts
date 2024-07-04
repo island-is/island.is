@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
@@ -6,14 +7,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { EventType } from '@island.is/judicial-system/types'
+
 import { CreateEventLogDto } from './dto/createEventLog.dto'
 import { EventLog } from './models/eventLog.model'
 
-const allowMultiple = [
-  'LOGIN',
-  'LOGIN_UNAUTHORIZED',
-  'LOGIN_BYPASS',
-  'LOGIN_BYPASS_UNAUTHORIZED',
+const allowMultiple: EventType[] = [
+  EventType.LOGIN,
+  EventType.LOGIN_UNAUTHORIZED,
+  EventType.LOGIN_BYPASS,
+  EventType.LOGIN_BYPASS_UNAUTHORIZED,
+  EventType.INDICTMENT_CONFIRMED,
 ]
 
 @Injectable()
@@ -25,7 +29,10 @@ export class EventLogService {
     private readonly logger: Logger,
   ) {}
 
-  async create(event: CreateEventLogDto): Promise<void> {
+  async create(
+    event: CreateEventLogDto,
+    transaction?: Transaction,
+  ): Promise<void> {
     const { eventType, caseId, userRole, nationalId } = event
 
     if (!allowMultiple.includes(event.eventType)) {
@@ -43,13 +50,12 @@ export class EventLogService {
     }
 
     try {
-      await this.eventLogModel.create({
-        eventType,
-        caseId,
-        nationalId,
-        userRole,
-      })
+      await this.eventLogModel.create(
+        { eventType, caseId, nationalId, userRole },
+        { transaction },
+      )
     } catch (error) {
+      // Tolerate failure but log error
       this.logger.error('Failed to create event log', error)
     }
   }

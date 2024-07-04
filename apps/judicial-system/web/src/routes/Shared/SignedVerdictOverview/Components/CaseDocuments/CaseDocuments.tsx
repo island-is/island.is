@@ -1,11 +1,10 @@
-import { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { FetchResult, MutationFunctionOptions } from '@apollo/client'
 
 import { Exact } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import {
-  CaseState,
   isAcceptingCaseDecision,
   isDistrictCourtUser,
   isInvestigationCase,
@@ -25,17 +24,18 @@ import {
 import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
 import {
   CaseDecision,
+  CaseState,
   CaseType,
   RequestSignatureInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { RequestCourtRecordSignatureMutation } from '../../requestCourtRecordSignature.generated'
 
-function showCustodyNotice(
-  type: CaseType,
-  state: CaseState,
-  decision?: CaseDecision,
-) {
+const showCustodyNotice = (
+  type?: CaseType | null,
+  state?: CaseState | null,
+  decision?: CaseDecision | null,
+) => {
   return (
     (type === CaseType.CUSTODY || type === CaseType.ADMISSION_TO_FACILITY) &&
     state === CaseState.ACCEPTED &&
@@ -68,7 +68,7 @@ interface Props {
   ) => Promise<FetchResult<RequestRulingSignatureMutation>>
 }
 
-const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
+const CaseDocuments: FC<Props> = ({
   isRequestingCourtRecordSignature,
   handleRequestCourtRecordSignature,
   isRequestingRulingSignature,
@@ -81,7 +81,7 @@ const CaseDocuments: React.FC<React.PropsWithChildren<Props>> = ({
 
   return (
     <Box marginBottom={10}>
-      <Text as="h3" variant="h3" marginBottom={3}>
+      <Text as="h3" variant="h3" marginBottom={1}>
         {formatMessage(m.caseDocuments)}
       </Text>
       <Box marginBottom={2}>

@@ -1,8 +1,13 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { formatDate, m } from '@island.is/service-portal/core'
+import {
+  DownloadFileButtons,
+  formatDate,
+  m,
+} from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
 import { RightsPortalHealthCenterRecord } from '@island.is/api/schema'
+import { exportHealthCenterFile } from '../../utils/FileBreakdown'
 
 interface Props {
   history: Array<RightsPortalHealthCenterRecord>
@@ -68,6 +73,20 @@ const HistoryTable = ({ history }: Props) => {
           ))}
         </T.Body>
       </T.Table>
+      <DownloadFileButtons
+        BoxProps={{
+          paddingTop: 2,
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'flexEnd',
+        }}
+        buttons={[
+          {
+            text: formatMessage(m.getAsExcel),
+            onClick: () => exportHealthCenterFile(history ?? [], 'xlsx'),
+          },
+        ]}
+      />
     </Box>
   )
 }

@@ -28,10 +28,7 @@ const LandskjorstjornFooter = ({
 }: LandskjorstjornFooterProps) => {
   const n = useNamespace(namespace)
   return (
-    <footer
-      className={styles.container}
-      aria-labelledby="landskjorstjorn-footer"
-    >
+    <footer className={styles.container}>
       <GridContainer>
         <GridRow>
           <GridColumn>

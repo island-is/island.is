@@ -14,6 +14,7 @@ import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { ISLANDIS_SLUG } from '../../utils/constants'
+import { m } from '../../lib/messages'
 
 interface Props {
   serviceProviderSlug?: OrganizationSlugType
@@ -59,13 +60,21 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
         )}
         {props.children}
       </GridColumn>
-      {!isMobile && organization && (
+      {!isMobile && props.serviceProviderSlug && organization && (
         <GridColumn span={'2/8'} offset={'1/8'}>
           <InstitutionPanel
             loading={loading}
             linkHref={organization.link ?? ''}
+            linkLabel={
+              organization.title
+                ? formatMessage(m.readMoreAbout, {
+                    arg: organization.title,
+                  })
+                : ''
+            }
             img={organization.logo?.url ?? ''}
             imgContainerDisplay={isMobile ? 'block' : 'flex'}
+            isSvg={organization.logo?.contentType === 'image/svg+xml'}
             tooltipText={props.serviceProviderTooltip}
             backgroundColor={props.backgroundColor}
             tooltipVariant={props.tooltipVariant ?? 'light'}

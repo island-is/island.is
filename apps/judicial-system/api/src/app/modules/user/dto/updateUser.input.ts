@@ -1,40 +1,44 @@
 import { Allow } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
-import type { UpdateUser, UserRole } from '@island.is/judicial-system/types'
+import { UserRole } from '@island.is/judicial-system/types'
 
 @InputType()
-export class UpdateUserInput implements UpdateUser {
+export class UpdateUserInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly id!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly name?: string
+  @Field(() => String)
+  readonly name!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly title?: string
+  @Field(() => String)
+  readonly title!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly mobileNumber?: string
+  @Field(() => String)
+  readonly mobileNumber!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly email?: string
+  @Field(() => String)
+  readonly email!: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
-  readonly role?: UserRole
+  @Field(() => UserRole)
+  readonly role!: UserRole
 
   @Allow()
-  @Field({ nullable: true })
-  readonly institutionId?: string
+  @Field(() => ID)
+  readonly institutionId!: string
 
   @Allow()
-  @Field({ nullable: true })
-  readonly active?: boolean
+  @Field(() => Boolean)
+  readonly active!: boolean
+
+  @Allow()
+  @Field(() => Boolean)
+  readonly canConfirmIndictment!: boolean
 }

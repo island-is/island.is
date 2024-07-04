@@ -1,11 +1,13 @@
-import React, { useCallback, useMemo } from 'react'
+import React, { FC, useCallback, useMemo } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { DateTime } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
-import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { formatDateForServer } from '@island.is/judicial-system-web/src/utils/hooks/useCase'
+import {
+  formatDateForServer,
+  useCase,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
@@ -13,8 +15,7 @@ interface Props {
   title: string
 }
 
-const ArrestDate: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { title, workingCase, setWorkingCase } = props
+const ArrestDate: FC<Props> = ({ title, workingCase, setWorkingCase }) => {
   const { setAndSendCaseToServer } = useCase()
 
   const onChange = useCallback(

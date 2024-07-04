@@ -13,6 +13,7 @@ import {
   GridContainer,
   GridRow,
   Hidden,
+  Hyphen,
   Inline,
   Pagination,
   Stack,
@@ -27,6 +28,7 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
+  CustomPageUniqueIdentifier,
   GetIcelandicGovernmentInstitutionVacanciesQuery,
   GetIcelandicGovernmentInstitutionVacanciesQueryVariables,
   GetNamespaceQuery,
@@ -39,6 +41,7 @@ import { withMainLayout } from '@island.is/web/layouts/main'
 import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 
+import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import { extractFilterTags } from '../Organization/PublishedMaterial/utils'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCIES } from '../queries/IcelandicGovernmentInstitutionVacancies'
@@ -560,7 +563,7 @@ const IcelandicGovernmentInstitutionVacanciesList: Screen<
                               </Text>
                               <Box className="rs_read">
                                 <Text color="blue400" variant="h3">
-                                  {vacancy.title}
+                                  <Hyphen>{vacancy.title ?? ''}</Hyphen>
                                 </Text>
                               </Box>
                               <Box className="rs_read">
@@ -694,10 +697,6 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  if (namespace['display404']) {
-    throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
-  }
-
   const vacanciesResponse = await apolloClient.query<
     GetIcelandicGovernmentInstitutionVacanciesQuery,
     GetIcelandicGovernmentInstitutionVacanciesQueryVariables
@@ -714,10 +713,15 @@ IcelandicGovernmentInstitutionVacanciesList.getProps = async ({
   return {
     vacancies,
     namespace,
-    customAlertBanner: namespace['customAlertBanner'],
   }
 }
 
-export default withMainLayout(IcelandicGovernmentInstitutionVacanciesList, {
-  footerVersion: 'organization',
-})
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.Vacancies,
+    IcelandicGovernmentInstitutionVacanciesList,
+  ),
+  {
+    footerVersion: 'organization',
+  },
+)

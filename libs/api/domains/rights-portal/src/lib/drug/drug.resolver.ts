@@ -9,11 +9,6 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { DrugService } from './drug.service'
 import { DrugPeriod } from './models/drugPeroid.model'
 import { DrugBill } from './models/drugBill.model'
@@ -28,14 +23,12 @@ import { DrugCertificate } from './models/drugCertificate.model'
 import { DrugCertificateInput } from './dto/drugCertificate.input'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
-@FeatureFlag(Features.servicePortalHealthMedicinePages)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/drug' })
 export class DrugResolver {
   constructor(private readonly drugService: DrugService) {}
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugPeriod], {
     name: 'rightsPortalDrugPeriods',
   })
@@ -44,7 +37,7 @@ export class DrugResolver {
     return this.drugService.getPeriods(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugBill], {
     name: 'rightsPortalDrugBills',
   })
@@ -56,7 +49,7 @@ export class DrugResolver {
     return this.drugService.getBills(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugBillLine], {
     name: 'rightsPortalDrugBillLines',
   })
@@ -68,7 +61,7 @@ export class DrugResolver {
     return this.drugService.getBillLines(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => PaginatedDrugResponse, {
     name: 'rightsPortalDrugs',
   })
@@ -80,7 +73,7 @@ export class DrugResolver {
     return this.drugService.getDrugs(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Mutation(() => DrugCalculatorResponse, {
     name: 'rightsPortalDrugsCalculator',
   })
@@ -92,7 +85,7 @@ export class DrugResolver {
     return this.drugService.getCalculations(user, input)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => [DrugCertificate], {
     name: 'rightsPortalDrugCertificates',
   })
@@ -101,7 +94,7 @@ export class DrugResolver {
     return this.drugService.getCertificates(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthMedicines)
   @Query(() => DrugCertificate, {
     name: 'rightsPortalGetCertificateById',
   })

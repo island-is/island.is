@@ -12,6 +12,7 @@ export const container = style({
   textDecoration: 'none',
   maxWidth: '100%',
   border: '1px solid transparent',
+  whiteSpace: 'nowrap',
 })
 
 export const hyphenate = style({
@@ -169,4 +170,8 @@ export const focusable = style({
 
 export const disabled = style({
   cursor: 'default',
+})
+
+export const whiteBackground = style({
+  background: 'white',
 })

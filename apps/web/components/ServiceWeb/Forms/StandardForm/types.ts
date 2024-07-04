@@ -1,6 +1,12 @@
-import type { SjukratryggingarCategories } from '@island.is/web/screens/ServiceWeb/Forms/utils'
+import type {
+  FiskistofaCategories,
+  SjukratryggingarCategories,
+} from '@island.is/web/screens/ServiceWeb/Forms/utils'
 
-export type CategoryId = SyslumennCategories | SjukratryggingarCategories
+export type CategoryId =
+  | SyslumennCategories
+  | SjukratryggingarCategories
+  | FiskistofaCategories
 
 export enum SyslumennCategories {
   FJOLSKYLDUMAL = '4vQ4htPOAZvzcXBcjx06SH',

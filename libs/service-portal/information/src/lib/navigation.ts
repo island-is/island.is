@@ -14,52 +14,79 @@ export const informationNavigation: PortalNavigationItem = {
     {
       name: m.myInfo,
       path: InformationPaths.MyInfoRootOverview,
+      children: [
+        {
+          name: m.detailInfo,
+          navHide: true,
+          path: InformationPaths.UserInfo,
+        },
+        {
+          name: m.familySpouse,
+          navHide: true,
+          path: InformationPaths.Spouse,
+        },
+        {
+          name: m.familyChild,
+          navHide: true,
+          path: InformationPaths.BioChild,
+        },
+        {
+          name: m.familyChild,
+          navHide: true,
+          path: InformationPaths.ChildCustody,
+        },
+      ],
     },
     {
       name: m.mySettings,
       path: InformationPaths.Settings,
-    },
-    {
-      name: m.detailInfo,
-      navHide: true,
-      path: InformationPaths.UserInfo,
-    },
-    {
-      name: m.familySpouse,
-      navHide: true,
-      path: InformationPaths.Spouse,
-    },
-    {
-      name: m.familyChild,
-      navHide: true,
-      path: InformationPaths.Child,
-    },
-    {
-      name: m.petitions,
-      path: PetitionPaths.Petitions,
       children: [
         {
-          name: m.viewPetition,
-          navHide: true,
-          path: PetitionPaths.PetitionList,
+          name: m.mySettingsInformation,
+          path: InformationPaths.Settings,
         },
         {
-          name: m.viewPetition,
-          navHide: true,
-          path: PetitionPaths.PetitionListOwned,
+          name: m.mySettingsNotifications,
+          path: InformationPaths.SettingsNotifications,
         },
       ],
     },
     {
-      name: m.signatureCollectionLists,
-      path: SignatureCollectionPaths.Lists,
+      name: m.lists,
+      path: InformationPaths.Lists,
       children: [
         {
-          name: m.viewSignatureList,
-          navHide: true,
-          path: SignatureCollectionPaths.ViewList,
+          name: m.signatureCollectionLists,
+          path: SignatureCollectionPaths.SignatureCollectionLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.ViewList,
+            },
+          ],
+        },
+        {
+          name: m.generalPetitions,
+          path: PetitionPaths.Petitions,
+          children: [
+            {
+              name: m.viewPetition,
+              navHide: true,
+              path: PetitionPaths.PetitionList,
+            },
+            {
+              name: m.viewPetition,
+              navHide: true,
+              path: PetitionPaths.PetitionListOwned,
+            },
+          ],
         },
       ],
+    },
+    {
+      name: m.notifications,
+      path: InformationPaths.Notifications,
     },
   ],
   description: m.userInfoDescription,

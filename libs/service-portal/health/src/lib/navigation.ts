@@ -11,12 +11,17 @@ export const healthNavigation: PortalNavigationItem = {
   },
   children: [
     {
-      name: m.overview,
+      name: m.health,
+      navHide: true,
       path: HealthPaths.HealthRoot,
     },
     {
+      name: messages.overviewTitle,
+      path: HealthPaths.HealthOverview,
+    },
+    {
       name: m.therapies,
-      path: HealthPaths.HealthTherapiesPhysical,
+      path: HealthPaths.HealthTherapies,
       children: [
         {
           name: messages.physicalTherapy,
@@ -37,7 +42,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.payments,
-      path: HealthPaths.HealthPaymentParticipation,
+      path: HealthPaths.HealthPayments,
       children: [
         {
           name: messages.paymentParticipation,
@@ -79,7 +84,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: messages.medicineTitle,
-      path: HealthPaths.HealthMedicinePurchase,
+      path: HealthPaths.HealthMedicine,
       children: [
         {
           name: messages.medicinePurchaseTitle,

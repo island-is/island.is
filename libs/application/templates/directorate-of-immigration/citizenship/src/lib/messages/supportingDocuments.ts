@@ -104,7 +104,7 @@ export const supportingDocuments = {
         description: 'Other documents description',
       },
       title: {
-        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.title',
+        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.title#markdown',
         defaultMessage: 'Vinsamlegast hlaðið inn eftirfarandi fylgigögnum.',
         description: 'Other documents title',
       },
@@ -143,6 +143,11 @@ export const supportingDocuments = {
         id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.icelandicTest',
         defaultMessage: 'Staðfesting á íslenskuprófi eða gögn vegna undanþágu',
         description: 'Icelandic test title',
+      },
+      criminalRecord: {
+        id: 'doi.cs.application:supportingDocuments.labels.otherDocuments.criminalRecord',
+        defaultMessage: 'Sakavottorð',
+        description: 'Criminal record title',
       },
     }),
     otherDocumentsChildren: defineMessages({

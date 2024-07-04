@@ -1,45 +1,44 @@
+import { getValueViaPath } from '@island.is/application/core'
+import {
+  ChildInformation,
+  ChildInformationWithoutRights,
+  NO,
+  ParentalRelations,
+  PregnancyStatus,
+  States,
+  YES,
+  calculateRemainingNumberOfDays,
+  getApplicationExternalData,
+  getSelectedChild,
+  parentalLeaveFormMessages,
+} from '@island.is/application/templates/parental-leave'
 import {
   Application,
   CustomTemplateFindQuery,
   YesOrNo,
 } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  ParentalLeave,
+  ParentalLeaveApi,
+  Right as ParentalLeaveEntitlement,
+  PregnancyApi,
+} from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
-import {
-  States,
-  YES,
-  NO,
-  calculateRemainingNumberOfDays,
-  parentalLeaveFormMessages,
-  getSelectedChild,
-  ParentalRelations,
-  ChildInformation,
-  ChildrenAndExistingApplications,
-  ChildrenWithoutRightsAndExistingApplications,
-  PregnancyStatus,
-  getApplicationExternalData,
-} from '@island.is/application/templates/parental-leave'
-import {
-  PregnancyApi,
-  ParentalLeaveApi,
-  ParentalLeave,
-  Right as ParentalLeaveEntitlement,
-} from '@island.is/clients/vmst'
-import format from 'date-fns/format'
-import formatISO from 'date-fns/formatISO'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
+import format from 'date-fns/format'
+import formatISO from 'date-fns/formatISO'
 import {
   applicationsToChildInformation,
-  getChildrenAndExistingApplications,
+  getChildren,
   getChildrenFromMockData,
 } from './children-utils'
 
-import { TemplateApiError } from '@island.is/nest/problem'
 import { ApplicationService as ApplicationApiService } from '@island.is/application/api/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class ChildrenService {
@@ -56,7 +55,7 @@ export class ChildrenService {
   async provideChildren(
     application: Application,
     nationalId: string,
-  ): Promise<ChildrenAndExistingApplications> {
+  ): Promise<{ children: ChildInformation[] }> {
     const customTemplateFindQuery =
       this.applicationApiService.customTemplateFindQuery(
         application.typeId,
@@ -73,19 +72,20 @@ export class ChildrenService {
     const parentalLeavesAndPregnancyStatus =
       await this.queryParentalLeavesAndPregnancyStatus(nationalId)
 
-    const { children, existingApplications } =
-      await this.childrenAndExistingApplications(
-        application,
-        customTemplateFindQuery,
-        parentalLeavesAndPregnancyStatus.getPregnancyStatus,
-      )
+    const children = await this.childrenAndExistingApplications(
+      application,
+      customTemplateFindQuery,
+      parentalLeavesAndPregnancyStatus.getPregnancyStatus,
+    )
 
     const childrenResult: ChildInformation[] = []
 
     for (const child of children) {
       const parentalLeavesEntitlements =
         await this.getParentalLeavesEntitlements(
-          new Date(child.expectedDateOfBirth),
+          child.expectedDateOfBirth === ''
+            ? new Date(child.adoptionDate!)
+            : new Date(child.expectedDateOfBirth),
           nationalId,
         )
 
@@ -133,19 +133,8 @@ export class ChildrenService {
       })
     }
 
-    if (children.length <= 0 && existingApplications.length <= 0) {
-      // Instead of throwing error, ask applicant questions
-      // foster care or father without mother
-
-      return {
-        children: [],
-        existingApplications: [],
-      }
-    }
-
     return {
       children: childrenResult,
-      existingApplications,
     }
   }
 
@@ -213,14 +202,6 @@ export class ChildrenService {
       true,
     )
 
-    // Enable if you want to add ExistingApplications to mockData
-    // const { children: child, existingApplications } =
-    //   await this.childrenAndExistingApplications(
-    //     application,
-    //     customTemplateFindQuery,
-    //     null,
-    //   )
-
     const children: ChildInformation[] = []
 
     for (const child of childrenWhereOtherParent) {
@@ -264,7 +245,6 @@ export class ChildrenService {
 
     return {
       children,
-      existingApplications: [],
     }
   }
 
@@ -272,7 +252,7 @@ export class ChildrenService {
     application: Application,
     customTemplateFindQuery: CustomTemplateFindQuery,
     pregnancyStatus?: PregnancyStatus | null,
-  ): Promise<ChildrenWithoutRightsAndExistingApplications> {
+  ): Promise<ChildInformationWithoutRights[]> {
     // Applications where this parent is applicant
     const applicationsWhereApplicant = (
       await customTemplateFindQuery({
@@ -331,7 +311,7 @@ export class ChildrenService {
         return true
       })
 
-    return getChildrenAndExistingApplications(
+    return getChildren(
       applicationsWhereApplicant,
       applicationsWhereOtherParentHasApplied,
       pregnancyStatus,

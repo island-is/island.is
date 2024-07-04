@@ -1,18 +1,26 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Type } from 'class-transformer'
 import {
-  IsString,
-  IsOptional,
   IsArray,
   IsDateString,
+  IsOptional,
+  IsString,
   ValidateNested,
 } from 'class-validator'
-import { DelegationType } from '../types/delegationType'
+
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
+
+import { PersonalRepresentativeRightTypeDTO } from '../../personal-representative/dto/personal-representative-right-type.dto'
 import {
   DelegationScopeDTO,
   UpdateDelegationScopeDTO,
 } from './delegation-scope.dto'
+import { DelegationTypeDto } from './delegation-type.dto'
 
+/** @deprecated - use AuthDelegationProvider from @island.is/shared/types instead */
 export enum DelegationProvider {
   NationalRegistry = 'thjodskra',
   CompanyRegistry = 'fyrirtaekjaskra',
@@ -46,11 +54,14 @@ export class DelegationDTO {
   @ApiPropertyOptional({ nullable: true, type: Date })
   validTo?: Date | null
 
-  @ApiProperty({ enum: DelegationType, enumName: 'DelegationType' })
-  type!: DelegationType
+  @ApiProperty({ enum: AuthDelegationType, enumName: 'AuthDelegationType' })
+  type!: AuthDelegationType
 
-  @ApiProperty({ enum: DelegationProvider, enumName: 'DelegationProvider' })
-  provider!: DelegationProvider
+  @ApiProperty({
+    enum: AuthDelegationProvider,
+    enumName: 'AuthDelegationProvider',
+  })
+  provider!: AuthDelegationProvider
 
   @IsOptional()
   @ApiPropertyOptional({ type: [DelegationScopeDTO] })
@@ -60,15 +71,12 @@ export class DelegationDTO {
   @IsString()
   @ApiPropertyOptional({ type: String, nullable: true })
   domainName?: string | null
-}
 
-export class UpdateDelegationDTO {
-  @ApiPropertyOptional({ type: [UpdateDelegationScopeDTO] })
-  @Type(() => UpdateDelegationScopeDTO)
-  @ValidateNested({ each: true })
-  @IsOptional()
-  @IsArray()
-  scopes?: UpdateDelegationScopeDTO[]
+  // This property is only used in delegation index
+  rights?: PersonalRepresentativeRightTypeDTO[]
+
+  // This property is only used in delegation index
+  prDelegationType?: DelegationTypeDto[]
 }
 
 export class PatchDelegationDTO {

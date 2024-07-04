@@ -5,10 +5,8 @@ export const serviceSetup =
     return service('services-auth-personal-representative-public')
       .namespace('personal-representative')
       .image('services-auth-personal-representative-public')
-      .postgres({
-        username: 'servicesauth',
+      .db({
         name: 'servicesauth',
-        passwordSecret: '/k8s/services-auth/api/DB_PASSWORD',
       })
       .env({
         IDENTITY_SERVER_ISSUER_URL: {
@@ -38,16 +36,16 @@ export const serviceSetup =
           public: true,
         },
       })
-      .readiness('/liveness')
+      .readiness('/health/check')
       .liveness('/liveness')
       .resources({
         limits: {
           cpu: '400m',
-          memory: '256Mi',
+          memory: '512Mi',
         },
         requests: {
           cpu: '100m',
-          memory: '192Mi',
+          memory: '256Mi',
         },
       })
       .replicaCount({

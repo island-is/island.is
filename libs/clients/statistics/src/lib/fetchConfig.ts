@@ -1,6 +1,9 @@
 import { caching } from 'cache-manager'
 
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import {
+  buildCacheControl,
+  createEnhancedFetch,
+} from '@island.is/clients/middlewares'
 import { createRedisCacheManager } from '@island.is/cache'
 import { StatisticsClientConfig } from './statistics.config'
 import { ConfigType } from '@island.is/nest/config'
@@ -29,6 +32,13 @@ const fetchFactory = async (
     name: 'clients-statistics',
     cache: {
       cacheManager: await getCacheManager(config),
+      overrideCacheControl: () =>
+        buildCacheControl({
+          maxAge: config.redis.cacheTtl / 1000, // cacheTtl is in milliseconds
+          staleWhileRevalidate: 3600 * 24 * 14, // 14 days
+          staleIfError: 3600 * 24 * 30, // 1 month
+          public: true,
+        }),
     },
   })
 

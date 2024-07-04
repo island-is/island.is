@@ -1,1 +1,5 @@
-export { PoliceService } from './police.service'
+export {
+  PoliceDocumentType,
+  PoliceDocument,
+  PoliceService,
+} from './police.service'

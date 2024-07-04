@@ -3,16 +3,19 @@ import { ApiProperty } from '@nestjs/swagger'
 export class HnippTemplate {
   @ApiProperty({ example: 'HNIPP.POSTHOLF.NEW_DOCUMENT' })
   templateId!: string
+
   @ApiProperty({ example: 'New document' })
-  notificationTitle!: string
+  title!: string
+
   @ApiProperty({ example: 'New document from {{organization}}' })
-  notificationBody!: string
+  externalBody!: string
+
   @ApiProperty({ example: 'Some extra text ...' })
-  notificationDataCopy?: string
-  @ApiProperty({ example: '//inbox/{{documentId}}' })
-  clickAction?: string
-  @ApiProperty({ example: 'NEW_DOCUMENT' })
-  category?: string
+  internalBody?: string
+
+  @ApiProperty({ example: 'https://island.is/minarsidur/postholf' })
+  clickActionUrl!: string
+
   @ApiProperty({ example: ['arg1', 'arg2'] })
   args!: string[]
 }

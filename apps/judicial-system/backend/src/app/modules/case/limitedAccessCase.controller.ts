@@ -28,8 +28,10 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  CaseAppealRulingDecision,
   CaseAppealState,
   CaseState,
+  CaseTransition,
   CaseType,
   indictmentCases,
   investigationCases,
@@ -58,7 +60,7 @@ import {
   LimitedAccessCaseService,
   LimitedAccessUpdateCase,
 } from './limitedAccessCase.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Controller('api')
 @ApiTags('limited access cases')
@@ -66,7 +68,7 @@ export class LimitedAccessCaseController {
   constructor(
     private readonly limitedAccessCaseService: LimitedAccessCaseService,
     private readonly eventService: EventService,
-    private readonly pdfService: PDFService,
+    private readonly pdfService: PdfService,
 
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
@@ -157,12 +159,21 @@ export class LimitedAccessCaseController {
 
     const update: LimitedAccessUpdateCase = transitionCase(
       transition.transition,
+      theCase.type,
       theCase.state,
       theCase.appealState,
     )
 
     if (update.appealState === CaseAppealState.APPEALED) {
       update.accusedPostponedAppealDate = nowFactory()
+    }
+
+    if (
+      transition.transition === CaseTransition.WITHDRAW_APPEAL &&
+      !theCase.appealRulingDecision &&
+      theCase.appealState === CaseAppealState.RECEIVED
+    ) {
+      update.appealRulingDecision = CaseAppealRulingDecision.DISCONTINUED
     }
 
     const updatedCase = await this.limitedAccessCaseService.update(

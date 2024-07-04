@@ -10,6 +10,7 @@ import { ContentfulService } from './contentful.service'
 import { ArticleSyncService } from './importers/article.service'
 import { CmsSyncService } from './cmsSync.service'
 import { AnchorPageSyncService } from './importers/anchorPage.service'
+import { LifeEventPageSyncService } from './importers/lifeEventPage.service'
 import { ArticleCategorySyncService } from './importers/articleCategory.service'
 import { NewsSyncService } from './importers/news.service'
 import { AdgerdirPageSyncService } from './importers/adgerdirPage'
@@ -28,6 +29,8 @@ import { ServiceWebPageSyncService } from './importers/serviceWebPage.service'
 import { EventSyncService } from './importers/event.service'
 import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
+import { CustomPageSyncService } from './importers/customPage.service'
+import { GenericListItemSyncService } from './importers/genericListItem.service'
 
 @Module({
   imports: [
@@ -44,6 +47,7 @@ import { ManualChapterItemSyncService } from './importers/manualChapterItem.serv
     ArticleSyncService,
     SubArticleSyncService,
     AnchorPageSyncService,
+    LifeEventPageSyncService,
     ArticleCategorySyncService,
     NewsSyncService,
     AdgerdirPageSyncService,
@@ -61,6 +65,8 @@ import { ManualChapterItemSyncService } from './importers/manualChapterItem.serv
     EventSyncService,
     ManualSyncService,
     ManualChapterItemSyncService,
+    CustomPageSyncService,
+    GenericListItemSyncService,
   ],
   exports: [CmsSyncService],
 })

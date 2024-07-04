@@ -2,10 +2,12 @@ version: '3.3'
 
 services:
   db_sessions:
-    image: public.ecr.aws/docker/library/postgres:11.14-alpine
+    image: public.ecr.aws/docker/library/postgres:15.3-alpine
     container_name: db_sessions
     networks:
       - local
+    volumes:
+      - ./local-db/:/docker-entrypoint-initdb.d/:Z
     environment:
       - POSTGRES_DB=dev_db
       - POSTGRES_USER=dev_db

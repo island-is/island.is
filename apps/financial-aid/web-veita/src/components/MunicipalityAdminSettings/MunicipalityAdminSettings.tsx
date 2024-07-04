@@ -1,125 +1,70 @@
-import React, { useContext, useState } from 'react'
+import React from 'react'
 import {
   Text,
   Box,
   Input,
   Button,
-  toast,
   ToastContainer,
   Checkbox,
+  RadioButton,
 } from '@island.is/island-ui/core'
 
 import {
-  Aid,
   AidName,
+  ApiKeysForMunicipality,
+  ChildrenAid,
   Municipality,
-  scrollToId,
 } from '@island.is/financial-aid/shared/lib'
-import { useMutation } from '@apollo/client'
-import { UpdateMunicipalityMutation } from '@island.is/financial-aid-web/veita/graphql'
-import omit from 'lodash/omit'
 import MunicipalityNumberInput from './MunicipalityNumberInput/MunicipalityNumberInput'
-import { SelectedMunicipality } from '@island.is/financial-aid-web/veita/src/components'
-import { AdminContext } from '@island.is/financial-aid-web/veita/src/components/AdminProvider/AdminProvider'
+import {
+  PercentageInput,
+  SelectedMunicipality,
+} from '@island.is/financial-aid-web/veita/src/components'
+import useCurrentMunicipalityState from '@island.is/financial-aid-web/veita/src/utils/useCurrentMunicipalityState'
+import ApiKeysSettings from './ApiKeysSettings/ApiKeysSettings'
+import ApiKeyInfo from './ApiKeysSettings/ApiKeysInfo'
+import { useErrorInSettings } from '../../utils/useErrorInSettings'
 
 interface Props {
   currentMunicipality: Municipality
 }
-const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
-  const [state, setState] = useState(currentMunicipality)
 
-  const [hasNavError, setHasNavError] = useState(false)
-  const [hasAidError, setHasAidError] = useState(false)
-  const [updateMunicipalityMutation, { loading }] = useMutation(
-    UpdateMunicipalityMutation,
-  )
-  const { setMunicipality } = useContext(AdminContext)
+const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
+  const { state, setState, loading, updateMunicipality } =
+    useCurrentMunicipalityState({
+      municipality: currentMunicipality,
+    })
+
+  const { apiKeyInfo, municipalityId } = state
 
   const INDIVIDUAL = 'individual'
   const COHABITATION = 'cohabitation'
   const aidNames = Object.values(AidName).map(String)
 
-  const errorCheckAid = (aid: Aid, prefix: string, scrollToError: boolean) => {
-    const firstErrorAid = Object.entries(aid).find(
-      (a) => aidNames.includes(a[0]) && a[1] <= 0,
-    )
-
-    if (firstErrorAid === undefined) {
-      return false
-    }
-
-    setHasAidError(true)
-    if (scrollToError) {
-      scrollToId(`${prefix}${firstErrorAid[0]}`)
-    }
-    return true
-  }
-
-  const errorCheckNav = () => {
-    if (
-      state.usingNav &&
-      (!state.navUrl || !state.navUsername || !state.navPassword)
-    ) {
-      setHasNavError(true)
-      scrollToId('navSettings')
-      return true
-    }
-
-    return false
-  }
+  const {
+    hasNavError,
+    hasAidError,
+    hasDecemberCompensationError,
+    errorCheckNav,
+    errorCheckAid,
+    errorCheckDecemberCompensation,
+    aidChangeHandler,
+    navChangeHandler,
+  } = useErrorInSettings(aidNames)
 
   const submit = () => {
-    const errorNav = errorCheckNav()
+    const errorNav = errorCheckNav(state)
     const errorAid =
       errorCheckAid(state.individualAid, INDIVIDUAL, !errorNav) ||
       errorCheckAid(state.cohabitationAid, COHABITATION, !errorNav)
+    const errorDesember = errorCheckDecemberCompensation(
+      state.decemberCompensation,
+    )
 
-    if (errorNav || errorAid) {
+    if (errorNav || errorAid || errorDesember) {
       return
     }
     updateMunicipality()
-  }
-
-  const aidChangeHandler = (update: () => void) => {
-    setHasAidError(false)
-    update()
-  }
-
-  const navChangeHandler = (update: () => void) => {
-    setHasNavError(false)
-    update()
-  }
-
-  const updateMunicipality = async () => {
-    await updateMunicipalityMutation({
-      variables: {
-        input: {
-          individualAid: omit(state.individualAid, ['__typename']),
-          cohabitationAid: omit(state.cohabitationAid, ['__typename']),
-          homepage: state.homepage,
-          rulesHomepage: state.rulesHomepage,
-          email: state.email,
-          municipalityId: state.municipalityId,
-          usingNav: state.usingNav,
-          navUrl: state.navUrl
-            ? `${state.navUrl}${state.navUrl.endsWith('/') ? '' : '/'}`
-            : state.navUrl,
-          navUsername: state.navUsername,
-          navPassword: state.navPassword,
-        },
-      },
-    })
-      .then((res) => {
-        if (setMunicipality) {
-          setMunicipality(res.data.updateMunicipality)
-          toast.success('Það tókst að uppfæra sveitarfélagið')
-        }
-      })
-      .catch(() => {
-        toast.error(
-          'Ekki tókst að uppfæra sveitarfélagið, vinsamlega reynið aftur síðar',
-        )
-      })
   }
 
   //This is because of animation on select doesnt work stand alone
@@ -136,7 +81,7 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       ),
     },
     {
-      headline: 'Tenging við ytri kerfi',
+      headline: 'Tenging við Navision',
       component: (
         <>
           <Box marginBottom={3} id="navSettings">
@@ -280,6 +225,28 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
       ),
     },
     {
+      headline: 'Desember uppbót',
+      smallText: 'Prósenta af grunnupphæð',
+      component: (
+        <PercentageInput
+          id={`input-desember`}
+          name={`decemberCompensation`}
+          label="Desember uppbót"
+          value={state.decemberCompensation.toString()}
+          hasError={
+            hasDecemberCompensationError && state.decemberCompensation === 0
+          }
+          errorMessage={'Desember uppbót þarf að vera hærri en 0'}
+          onUpdate={(value) =>
+            setState({
+              ...state,
+              decemberCompensation: value,
+            })
+          }
+        />
+      ),
+    },
+    {
       headline: 'Einstaklingar',
       component: Object.entries(state.individualAid).map(
         (aid) =>
@@ -335,10 +302,19 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
 
   return (
     <Box marginTop={[5, 10, 15]} marginBottom={[5, 10, 15]}>
-      <Box className={`contentUp`}>
-        <Text as="h1" variant="h1" marginBottom={[2, 2, 7]}>
+      <Box
+        className={`contentUp`}
+        marginBottom={[2, 2, 7]}
+        display="flex"
+        justifyContent="spaceBetween"
+      >
+        <Text as="h1" variant="h1">
           Sveitarfélagsstillingar
         </Text>
+
+        <Button loading={loading} onClick={submit} icon="checkmark">
+          Vista stillingar
+        </Button>
       </Box>
 
       <Box className={`contentUp delay-25`}>
@@ -361,12 +337,29 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           )
         })}
       </Box>
+      <Box className={`contentUp`}>
+        <Box marginBottom={[2, 2, 7]} id="apiKeySettings">
+          <Box display="flex" justifyContent="spaceBetween" alignItems="center">
+            <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+              Tenging við ytri kerfi
+            </Text>
+            <ApiKeysSettings
+              apiKeyInfo={apiKeyInfo}
+              code={municipalityId}
+              setCurrentState={(ApiKeyInfo: ApiKeysForMunicipality) =>
+                setState({ ...state, apiKeyInfo: ApiKeyInfo })
+              }
+            />
+          </Box>
+          <ApiKeyInfo apiKeyInfo={apiKeyInfo} />
+        </Box>
+      </Box>
 
       {EmailSiteAidContent.map((el, index) => {
         return (
           <Box
             marginBottom={[2, 2, 7]}
-            className={`contentUp`}
+            className={`contentUp delay-25`}
             style={{ animationDelay: index * 10 + 30 + 'ms' }}
             key={`EmailSiteAidContent-${index}`}
           >
@@ -383,6 +376,50 @@ const MunicipalityAdminSettings = ({ currentMunicipality }: Props) => {
           </Box>
         )
       })}
+
+      <Box marginBottom={[2, 2, 7]} id="childrenAid" className={`contentUp`}>
+        <Text as="h3" variant="h3" marginBottom={[2, 2, 3]} color="dark300">
+          Börn
+        </Text>
+        <Box
+          display="flex"
+          alignItems="center"
+          width="full"
+          columnGap={3}
+          rowGap={3}
+          flexWrap={'wrap'}
+        >
+          <Box flexGrow={1}>
+            <RadioButton
+              name="children-aid-institution"
+              label="Styrkur greiddur til stofnunar"
+              value={ChildrenAid.INSTITUTION}
+              checked={state.childrenAid === ChildrenAid.INSTITUTION}
+              onChange={() => {
+                setState({ ...state, childrenAid: ChildrenAid.INSTITUTION })
+              }}
+              backgroundColor="blue"
+              large
+            />
+          </Box>
+          <Box flexGrow={1}>
+            <RadioButton
+              name="children-aid-applicant"
+              label="Styrkur greiddur til umsækjanda"
+              value={ChildrenAid.APPLICANT}
+              checked={state.childrenAid === ChildrenAid.APPLICANT}
+              onChange={() => {
+                setState({
+                  ...state,
+                  childrenAid: ChildrenAid.APPLICANT,
+                })
+              }}
+              backgroundColor="blue"
+              large
+            />
+          </Box>
+        </Box>
+      </Box>
 
       <Box display="flex" justifyContent="flexEnd">
         <Button loading={loading} onClick={submit} icon="checkmark">

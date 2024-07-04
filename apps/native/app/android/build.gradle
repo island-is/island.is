@@ -6,7 +6,9 @@ buildscript {
         minSdkVersion = 21
         compileSdkVersion = 34
         targetSdkVersion = 33
-        kotlinVersion = "1.8.10"
+        // Issues with kotlinVersion >= 1.7.10:
+        // https://github.com/expo/expo/issues/20821
+        kotlinVersion = "1.7.10"
 
         // React Native Navigation
         RNNKotlinVersion = kotlinVersion
@@ -49,5 +51,10 @@ allprojects {
         }
         google()
         maven { url 'https://www.jitpack.io' }
+    }
+}
+configurations.all {
+    resolutionStrategy {
+        force 'androidx.core:core-ktx:1.6.0'
     }
 }

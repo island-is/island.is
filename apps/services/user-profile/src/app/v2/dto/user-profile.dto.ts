@@ -1,6 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   IsBoolean,
+  IsDate,
   IsEmail,
   IsEnum,
   IsOptional,
@@ -12,45 +13,69 @@ import { Locale } from '../../user-profile/types/localeTypes'
 export class UserProfileDto {
   @ApiProperty()
   @IsString()
-  readonly nationalId: string
+  readonly nationalId!: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: () => String,
+    nullable: true,
+  })
   @IsOptional()
   @IsEmail()
-  readonly email?: string
+  readonly email?: string | null
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: () => String,
+    nullable: true,
+  })
   @IsOptional()
   @IsString()
-  readonly mobilePhoneNumber?: string
+  readonly mobilePhoneNumber?: string | null
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ enum: Locale, type: () => Locale, nullable: true })
   @IsOptional()
   @IsEnum(Locale)
-  readonly locale?: Locale
+  readonly locale?: Locale | null
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly mobilePhoneNumberVerified?: boolean
+  readonly mobilePhoneNumberVerified!: boolean
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly emailVerified?: boolean
+  readonly emailVerified!: boolean
 
-  @ApiPropertyOptional()
-  @IsOptional()
+  @ApiProperty()
   @IsBoolean()
-  readonly documentNotifications?: boolean
+  readonly documentNotifications!: boolean
 
   @ApiPropertyOptional()
   @IsOptional()
   @IsString()
   readonly profileImageUrl?: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({
+    type: () => Boolean,
+    nullable: true,
+  })
   @IsOptional()
   @IsBoolean()
   readonly needsNudge?: boolean | null
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsDate()
+  readonly lastNudge?: Date
+
+  @ApiPropertyOptional()
+  @IsOptional()
+  @IsDate()
+  readonly nextNudge?: Date
+
+  @ApiProperty()
+  @IsBoolean()
+  emailNotifications!: boolean
+
+  @ApiProperty()
+  @IsBoolean()
+  readonly isRestricted?: boolean
 }

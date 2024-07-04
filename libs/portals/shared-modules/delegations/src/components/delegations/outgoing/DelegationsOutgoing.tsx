@@ -16,6 +16,7 @@ import { DomainOption, useDomains } from '../../../hooks/useDomains/useDomains'
 import { useAuthDelegationsOutgoingQuery } from './DelegationsOutgoing.generated'
 import { AuthCustomDelegationOutgoing } from '../../../types/customDelegation'
 import { ALL_DOMAINS } from '../../../constants/domain'
+import { m } from '../../../lib/messages'
 
 const prepareDomainName = (domainName: string | null) =>
   domainName === ALL_DOMAINS ? null : domainName
@@ -95,7 +96,10 @@ export const DelegationsOutgoing = () => {
           ) : error && (!delegations || delegations.length === 0) ? (
             <Problem error={error} />
           ) : delegations.length === 0 ? (
-            <DelegationsEmptyState />
+            <DelegationsEmptyState
+              message={formatMessage(m.noOutgoingDelegations)}
+              imageAlt={formatMessage(m.noDelegationsImageAlt)}
+            />
           ) : (
             <Stack space={3}>
               {filteredDelegations.map(

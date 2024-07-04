@@ -1,28 +1,37 @@
-import { Allow, ArrayMinSize, IsArray, IsString } from 'class-validator'
+import {
+  Allow,
+  ArrayMinSize,
+  IsArray,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 import { GraphQLJSONObject } from 'graphql-type-json'
 
 import { Field, InputType } from '@nestjs/graphql'
 
 import type {
-  CaseType,
-  CreateCase,
   CrimeSceneMap,
   IndictmentSubtypeMap,
+} from '@island.is/judicial-system/types'
+import {
+  CaseType,
   RequestSharedWithDefender,
 } from '@island.is/judicial-system/types'
 
 @InputType()
-export class CreateCaseInput implements CreateCase {
+export class CreateCaseInput {
   @Allow()
-  @Field(() => String)
+  @Field(() => CaseType)
   readonly type!: CaseType
 
   @Allow()
+  @IsOptional()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly description?: string
 
   @Allow()
@@ -33,30 +42,37 @@ export class CreateCaseInput implements CreateCase {
   readonly policeCaseNumbers!: string[]
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderName?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderNationalId?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderEmail?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field(() => String, { nullable: true })
+  @IsOptional()
+  @Field(() => RequestSharedWithDefender, { nullable: true })
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly leadInvestigator?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
 }

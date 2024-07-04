@@ -1,6 +1,6 @@
-import {configure, getStorybookUI} from '@storybook/react-native';
-import React from 'react';
-import {Platform} from 'react-native';
+import { configure, getStorybookUI } from '@storybook/react-native'
+import React from 'react'
+import { Platform } from 'react-native'
 
 configure(() => {
   // require('../../../../island-ui/src/lib/button/button.stories')
@@ -24,17 +24,17 @@ configure(() => {
   // require('../../../../island-ui/src/lib/skeleton/skeleton.stories')
   // require('../../../../island-ui/src/lib/link/link.stories')
   // require('../../../../island-ui/src/lib/scan-result-card/scan-result-card.stories')
-}, module);
+}, module)
 
 export const StorybookUI = getStorybookUI({
   host: Platform.OS === 'android' ? '10.0.2.2' : '0.0.0.0',
   // eslint-disable-next-line @typescript-eslint/no-var-requires
   asyncStorage: require('@react-native-community/async-storage').default,
-});
+})
 
 export const StorybookScreen = () => {
-  return <StorybookUI />;
-};
+  return <StorybookUI />
+}
 
 StorybookScreen.options = {
   topBar: {
@@ -42,4 +42,4 @@ StorybookScreen.options = {
       text: 'Storybook',
     },
   },
-};
+}

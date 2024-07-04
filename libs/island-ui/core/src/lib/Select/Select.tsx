@@ -15,6 +15,8 @@ import {
   Placeholder,
   SingleValue,
   ValueContainer,
+  MultiValue,
+  MultiValueLabel,
   customStyles,
 } from './Components'
 import { Option as OptionType, SelectProps } from './Select.types'
@@ -41,6 +43,8 @@ export const Select = <
   icon = 'chevronDown',
   isSearchable = true,
   isCreatable = false,
+  isMulti,
+  closeMenuOnSelect = !isMulti,
   size = 'md',
   backgroundColor = 'white',
   required,
@@ -68,9 +72,6 @@ export const Select = <
       })}
       data-testid={`creatable-select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <CreatableReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
@@ -92,6 +93,8 @@ export const Select = <
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
         isSearchable={isSearchable}
+        isMulti={isMulti}
+        closeMenuOnSelect={closeMenuOnSelect}
         size={size}
         required={required}
         formatGroupLabel={formatGroupLabel}
@@ -109,6 +112,8 @@ export const Select = <
           IndicatorsContainer,
           Menu,
           Option,
+          MultiValue,
+          MultiValueLabel,
         }}
         isClearable
         backspaceRemovesValue
@@ -130,9 +135,6 @@ export const Select = <
       })}
       data-testid={`select-${name}`}
     >
-      {/**
-       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict*/}
       <ReactSelect<OptionType<Value>, IsMulti, Group>
         instanceId={id}
         aria-labelledby={id}
@@ -150,6 +152,8 @@ export const Select = <
         dataTestId={dataTestId}
         icon={icon}
         placeholder={placeholder}
+        isMulti={isMulti}
+        closeMenuOnSelect={closeMenuOnSelect}
         defaultValue={defaultValue}
         isOptionDisabled={(option) => !!option.disabled}
         hasError={hasError}
@@ -168,6 +172,8 @@ export const Select = <
           IndicatorsContainer,
           Menu,
           Option,
+          MultiValue,
+          MultiValueLabel,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}

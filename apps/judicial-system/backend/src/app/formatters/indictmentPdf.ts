@@ -15,15 +15,17 @@ import { Case } from '../modules/case'
 import {
   addEmptyLines,
   addGiganticHeading,
+  addIndictmentConfirmation,
   addNormalPlusCenteredText,
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
+  IndictmentConfirmation,
   setTitle,
 } from './pdfHelpers'
 
 // Credit: https://stackoverflow.com/a/41358305
-function roman(num: number) {
+const roman = (num: number) => {
   const roman: { [key: string]: number } = {
     M: 1000,
     CM: 900,
@@ -54,6 +56,7 @@ function roman(num: number) {
 export const createIndictment = async (
   theCase: Case,
   formatMessage: FormatMessage,
+  confirmation?: IndictmentConfirmation,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
@@ -74,6 +77,12 @@ export const createIndictment = async (
   const heading = formatMessage(indictment.heading)
 
   setTitle(doc, title)
+
+  if (confirmation) {
+    addIndictmentConfirmation(doc, confirmation)
+  }
+
+  addEmptyLines(doc, 6, doc.page.margins.left)
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
@@ -108,7 +117,7 @@ export const createIndictment = async (
       indictment.signature,
       {
         prosecutorsOfficeName:
-          lowercase(theCase.creatingProsecutor?.institution?.name)
+          lowercase(theCase.prosecutorsOffice?.name)
             .replace('lögreglustjórinn', 'lögreglustjórans')
             .replace('saksóknari', 'saksóknara') ?? '',
         date: formatDate(nowFactory(), 'PPP'),

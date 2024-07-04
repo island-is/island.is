@@ -1,21 +1,19 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
-
-import type { PoliceCaseFile as TPoliceCaseFile } from '@island.is/judicial-system/types'
+import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class PoliceCaseFile implements TPoliceCaseFile {
+export class PoliceCaseFile {
   @Field(() => ID)
   readonly id!: string
 
-  @Field()
+  @Field(() => String)
   readonly name!: string
 
-  @Field()
+  @Field(() => String)
   readonly policeCaseNumber!: string
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   readonly chapter?: number
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly displayDate?: string
 }

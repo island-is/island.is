@@ -9,11 +9,6 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
 import { DentistService } from './dentist.service'
 import { DentistRegistration } from './models/registration.model'
 import { DentistBillsInput } from './dto/bills.input'
@@ -24,14 +19,12 @@ import { DentistsInput } from './dto/dentist.input'
 import { DentistRegisterResponse } from './models/registerResponse.model'
 
 @Resolver()
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
-@FeatureFlag(Features.servicePortalHealthRightsModule)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/dentist' })
 export class DentistResolver {
   constructor(private readonly service: DentistService) {}
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => DentistRegistration, {
     name: 'rightsPortalUserDentistRegistration',
     nullable: true,
@@ -52,8 +45,7 @@ export class DentistResolver {
     )
   }
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => DentistStatus, {
     name: 'rightsPortalDentistStatus',
     nullable: true,
@@ -63,8 +55,7 @@ export class DentistResolver {
     return this.service.getDentistStatus(user)
   }
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => DentistStatus, {
     name: 'rightsPortalCurrentDentist',
     nullable: true,
@@ -74,7 +65,7 @@ export class DentistResolver {
     return this.service.getDentistStatus(user)
   }
 
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Mutation(() => DentistRegisterResponse, {
     name: 'rightsPortalRegisterDentist',
   })
@@ -86,8 +77,7 @@ export class DentistResolver {
     return this.service.registerDentist(user, input.id)
   }
 
-  @FeatureFlag(Features.servicePortalHealthCenterDentistPage)
-  @Scopes(ApiScope.health)
+  @Scopes(ApiScope.healthDentists)
   @Query(() => PaginatedDentistsResponse, {
     name: 'rightsPortalPaginatedDentists',
     nullable: true,

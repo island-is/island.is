@@ -12,15 +12,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import { indictmentCases } from '@island.is/judicial-system/types'
-
 import {
-  Case,
-  CaseExistsGuard,
-  CaseHasExistedGuard,
-  CaseTypeGuard,
-  CurrentCase,
-} from '../case'
+  messageEndpoint,
+  MessageType,
+} from '@island.is/judicial-system/message'
+
+import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { DeliverDto } from './dto/deliver.dto'
 import { CurrentCaseFile } from './guards/caseFile.decorator'
 import { CaseFileExistsGuard } from './guards/caseFileExists.guard'
@@ -29,7 +26,7 @@ import { CaseFile } from './models/file.model'
 import { FileService } from './file.service'
 
 @UseGuards(TokenGuard)
-@Controller('api/internal/case/:caseId/file/:fileId')
+@Controller('api/internal/case/:caseId')
 @ApiTags('internal files')
 export class InternalFileController {
   constructor(
@@ -38,7 +35,7 @@ export class InternalFileController {
   ) {}
 
   @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
-  @Post('deliverToCourt')
+  @Post(`${messageEndpoint[MessageType.DELIVERY_TO_COURT_CASE_FILE]}/:fileId`)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Delivers a case file to court',
@@ -53,33 +50,39 @@ export class InternalFileController {
     this.logger.debug(`Delivering file ${fileId} of case ${caseId} to court`)
 
     const { success } = await this.fileService.uploadCaseFileToCourt(
-      caseFile,
       theCase,
+      caseFile,
       deliverDto.user,
     )
 
     return { delivered: success }
   }
 
-  @UseGuards(
-    CaseHasExistedGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseFileExistsGuard,
+  @UseGuards(CaseExistsGuard, CaseFileExistsGuard)
+  @Post(
+    `${
+      messageEndpoint[MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE]
+    }/:fileId`,
   )
-  @Post('archive')
   @ApiCreatedResponse({
     type: DeliverResponse,
-    description: 'Archives a case file',
+    description: 'Delivers a case file to court of appeals',
   })
-  async archiveCaseFile(
+  deliverCaseFileToCourtOfAppeals(
     @Param('caseId') caseId: string,
     @Param('fileId') fileId: string,
+    @CurrentCase() theCase: Case,
     @CurrentCaseFile() caseFile: CaseFile,
+    @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
-    this.logger.debug(`Archiving file ${fileId} of case ${caseId}`)
+    this.logger.debug(
+      `Delivering file ${fileId} of case ${caseId} to court of appeals`,
+    )
 
-    const success = await this.fileService.archive(caseFile)
-
-    return { delivered: success }
+    return this.fileService.deliverCaseFileToCourtOfAppeals(
+      theCase,
+      caseFile,
+      deliverDto.user,
+    )
   }
 }

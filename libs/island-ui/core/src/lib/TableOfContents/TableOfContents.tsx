@@ -25,7 +25,7 @@ export const TableOfContents: FC<React.PropsWithChildren<Props>> = ({
     borderColor="blue200"
   >
     <Stack space={1}>
-      <Text variant="h5" as="h5">
+      <Text variant="h5" as="h2">
         {tableOfContentsTitle}
       </Text>
       {headings.map(({ headingTitle, headingId }, id) => (

@@ -20,9 +20,12 @@ export const dataCollection = buildSection({
       checkboxLabel: m.dataCollectionCheckbox,
       dataProviders: [
         buildDataProviderItem({
-          //provider: TBD,
           title: m.deceasedInfoProviderTitle,
           subTitle: m.deceasedInfoProviderSubtitle,
+        }),
+        buildDataProviderItem({
+          title: m.financialInformationProviderTitle,
+          subTitle: m.financialInformationProviderSubtitle,
         }),
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
@@ -30,19 +33,9 @@ export const dataCollection = buildSection({
           subTitle: m.personalInfoProviderSubtitle,
         }),
         buildDataProviderItem({
-          //provider: TBD,
-          title: m.financialInformationProviderTitle,
-          subTitle: m.financialInformationProviderSubtitle,
-        }),
-        buildDataProviderItem({
           provider: UserProfileApi,
           title: m.settingsInfoProviderTitle,
           subTitle: m.settingsInfoProviderSubtitle,
-        }),
-        buildDataProviderItem({
-          //TODO: provider: TBD,
-          title: m.funeralExpensesTitle,
-          subTitle: m.funeralExpensesSubtitle,
         }),
       ],
     }),

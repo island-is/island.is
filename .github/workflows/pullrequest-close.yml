@@ -1,4 +1,4 @@
-name: Destroy feature deployment
+name: PR close
 
 on:
   pull_request:

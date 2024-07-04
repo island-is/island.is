@@ -1,60 +1,93 @@
-import {useQuery} from '@apollo/client';
 import {
-  dynamicColor,
-  Field,
-  FieldCard,
-  FieldGroup,
-  FieldLabel,
-  FieldRow,
   Alert as InfoAlert,
-  LicenceCard,
-  LicenseCardType,
-} from '@ui';
-import React from 'react';
+  dynamicColor,
+  LICENSE_CARD_ROW_GAP,
+  LicenseCard,
+} from '@ui'
+import * as FileSystem from 'expo-file-system'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
+import { useIntl } from 'react-intl'
 import {
+  ActivityIndicator,
+  Alert,
+  Animated,
   Button,
+  Easing,
+  Linking,
+  NativeModules,
   Platform,
   SafeAreaView,
   View,
-  ActivityIndicator,
-  NativeModules,
-  Linking,
-  Alert,
-} from 'react-native';
-import {NavigationFunctionComponent} from 'react-native-navigation';
-import PassKit, {AddPassButton} from 'react-native-passkit-wallet';
-import * as FileSystem from 'expo-file-system';
-import styled, {useTheme} from 'styled-components/native';
-import {client} from '../../graphql/client';
-import {
-  IGenericLicenseDataField,
-  GenericUserLicensePkPassStatus,
-  IGenericUserLicense,
-} from '../../graphql/fragments/license.fragment';
-import {GENERATE_PKPASS_MUTATION} from '../../graphql/queries/generate-pkpass.mutation';
+} from 'react-native'
+import { NavigationFunctionComponent } from 'react-native-navigation'
+import PassKit, { AddPassButton } from 'react-native-passkit-wallet'
+import styled, { useTheme } from 'styled-components/native'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   GenericLicenseType,
-  GetGenericLicenseInput,
-  GetLicenseResponse,
-  GET_GENERIC_LICENSE_QUERY,
-} from '../../graphql/queries/get-license.query';
-import {createNavigationOptionHooks} from '../../hooks/create-navigation-option-hooks';
-import {LicenseStatus} from '../../types/license-type';
-import {useState} from 'react';
-import {useIntl} from 'react-intl';
+  GenericUserLicense,
+  GenericUserLicensePkPassStatus,
+  useGeneratePkPassMutation,
+  useGetLicenseQuery,
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { isAndroid, isIos } from '../../utils/devices'
+import { screenWidth } from '../../utils/dimensions'
+import { FieldRender } from './components/field-render'
 
-const Information = styled.ScrollView`
+const INFORMATION_BASE_TOP_SPACING = 70
+
+const getImageFromRawData = (rawData: string) => {
+  try {
+    const parsedData: { photo?: { image?: string } } = JSON.parse(rawData)
+
+    return parsedData?.photo?.image
+  } catch (e) {
+    return undefined
+  }
+}
+
+const Information = styled.ScrollView<{ topSpacing?: number }>`
   flex: 1;
-  background-color: ${dynamicColor(({theme}) => ({
+  background-color: ${dynamicColor(({ theme }) => ({
     dark: theme.shades.dark.shade100,
     light: theme.color.blue100,
   }))};
   border-top-left-radius: 16px;
   border-top-right-radius: 16px;
-  margin-top: -70px;
-  padding-top: 70px;
+  margin-top: -${INFORMATION_BASE_TOP_SPACING}px;
+  padding-top: ${({ topSpacing = 0 }) =>
+    topSpacing + INFORMATION_BASE_TOP_SPACING}px;
   z-index: 10;
-`;
+`
+
+const LicenseCardWrapper = styled(SafeAreaView)`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+`
+
+const ButtonWrapper = styled(SafeAreaView)<{ floating?: boolean }>`
+  margin-left: ${({ theme }) => theme.spacing[2]}px;
+  margin-right: ${({ theme }) => theme.spacing[2]}px;
+
+  ${({ floating, theme }) =>
+    floating &&
+    `
+    position: absolute;
+    bottom: ${theme.spacing[2]}px;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    `}
+`
+
 const LoadingOverlay = styled.View`
   flex: 1;
   justify-content: center;
@@ -67,21 +100,21 @@ const LoadingOverlay = styled.View`
   z-index: 999;
 
   background-color: #000;
-  opacity: 0.25;
+  opacity: ${({ theme }) => (theme.isDark ? 0.6 : 0.4)};
   width: 100%;
   height: 100%;
-`;
+`
 
 const Spacer = styled.View`
   height: 150px;
-`;
+`
 
-const {useNavigationOptions, getNavigationOptions} =
+const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl) => ({
       topBar: {
         title: {
-          text: intl.formatMessage({id: 'walletPass.screenTitle'}),
+          text: intl.formatMessage({ id: 'walletPass.screenTitle' }),
         },
         noBorder: true,
       },
@@ -95,138 +128,85 @@ const {useNavigationOptions, getNavigationOptions} =
         drawBehind: true,
       },
     },
-  );
-
-const FieldRender = ({data, level = 1, licenseType}: any) => {
-  return (
-    <>
-      {(data || []).map(
-        (
-          {type, name, label, value, fields}: IGenericLicenseDataField,
-          i: number,
-        ) => {
-          const key = `field-${type}-${i}`;
-
-          switch (type) {
-            case 'Value':
-              if (level === 1) {
-                return (
-                  <FieldGroup key={key}>
-                    <FieldRow>
-                      <Field
-                        size={i === 0 ? 'large' : 'small'}
-                        label={label}
-                        value={value}
-                      />
-                    </FieldRow>
-                  </FieldGroup>
-                );
-              } else {
-                return <Field key={key} label={label} value={value} compact />;
-              }
-
-            case 'Group':
-              if (label) {
-                return (
-                  <View key={key} style={{marginTop: 24, paddingBottom: 4}}>
-                    <FieldLabel>{label}</FieldLabel>
-                    {FieldRender({
-                      data: fields,
-                      level: 2,
-                      licenseType: licenseType,
-                    })}
-                  </View>
-                );
-              }
-              return (
-                <FieldGroup key={key}>
-                  <FieldRow>
-                    {FieldRender({
-                      data: fields,
-                      level: 2,
-                      licenseType: licenseType,
-                    })}
-                  </FieldRow>
-                </FieldGroup>
-              );
-
-            case 'Category':
-              return (
-                <FieldCard
-                  key={key}
-                  code={name}
-                  title={label}
-                  type={licenseType}
-                  hasFields={!!fields}>
-                  <FieldRow>
-                    {FieldRender({
-                      data: fields,
-                      level: 3,
-                      licenseType: licenseType,
-                    })}
-                  </FieldRow>
-                </FieldCard>
-              );
-
-            default:
-              return <Field key={key} label={label} value={value} />;
-          }
-        },
-      )}
-    </>
-  );
-};
+  )
 
 export const WalletPassScreen: NavigationFunctionComponent<{
-  id: string;
-  item?: any;
-  cardHeight?: number;
-}> = ({id, item, componentId, cardHeight = 140}) => {
-  useNavigationOptions(componentId);
-  const theme = useTheme();
-  const intl = useIntl();
-  const licenseRes = useQuery<GetLicenseResponse, GetGenericLicenseInput>(
-    GET_GENERIC_LICENSE_QUERY,
-    {
-      client,
-      variables: {
-        input: {
-          licenseType: item?.license?.type,
-        },
+  id: string
+  item?: GenericUserLicense
+  cardHeight?: number
+}> = ({ id, item, componentId, cardHeight = 140 }) => {
+  useNavigationOptions(componentId)
+  useConnectivityIndicator({ componentId })
+  const theme = useTheme()
+  const intl = useIntl()
+  const [addingToWallet, setAddingToWallet] = useState(false)
+  const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
+  const fadeInAnim = useRef(new Animated.Value(0)).current
+
+  const [generatePkPass] = useGeneratePkPassMutation()
+  const res = useGetLicenseQuery({
+    fetchPolicy: 'network-only',
+    variables: {
+      input: {
+        licenseType: item?.license.type ?? id,
       },
     },
-  );
+  })
 
-  const [addingToWallet, setAddingToWallet] = useState(false);
+  const data = res.data?.genericLicense ?? item
+  const fields = data?.payload?.data ?? []
+  const pkPassAllowed =
+    data?.license?.pkpass &&
+    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available
+  const allowLicenseBarcode =
+    isBarcodeEnabled && pkPassAllowed && !data?.payload?.metadata?.expired
+  const licenseType = data?.license?.type
+  const barcodeWidth =
+    screenWidth - theme.spacing[4] * 2 - theme.spacing.smallGutter * 2
+  const barcodeHeight = barcodeWidth / 3
+  const updated = data?.fetch?.updated
 
-  const data: IGenericUserLicense = {
-    ...item,
-    ...licenseRes.data?.genericLicense,
-  };
+  const fadeIn = () => {
+    Animated.timing(fadeInAnim, {
+      toValue: 1,
+      duration: 200,
+      useNativeDriver: true,
+      delay: 300,
+      easing: Easing.in(Easing.ease),
+    }).start()
+  }
+
+  useEffect(() => {
+    if (pkPassAllowed && !isBarcodeEnabled) {
+      fadeIn()
+    }
+  }, [pkPassAllowed, isBarcodeEnabled])
 
   const onAddPkPass = async () => {
-    const {canAddPasses, addPass} = Platform.select({
+    const { canAddPasses, addPass } = Platform.select({
       ios: PassKit,
       android: NativeModules.IslandModule,
-    });
+    })
 
-    const canAddPass = await canAddPasses();
+    const canAddPass = await canAddPasses()
 
-    if (canAddPass || Platform.OS === 'android') {
+    if (canAddPass || isAndroid) {
       try {
-        setAddingToWallet(true);
-        const {data} = await client.mutate({
-          mutation: GENERATE_PKPASS_MUTATION,
+        setAddingToWallet(true)
+        const { data } = await generatePkPass({
           variables: {
             input: {
-              licenseType: item?.license?.type,
+              licenseType: item?.license?.type ?? '',
             },
           },
-        });
-        if (Platform.OS === 'android') {
+        })
+        if (!data?.generatePkPass.pkpassUrl) {
+          throw Error('Failed to generate pkpass')
+        }
+        if (isAndroid) {
           const pkPassUri =
             // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-            FileSystem.documentDirectory! + Date.now() + '.pkpass';
+            FileSystem.documentDirectory! + Date.now() + '.pkpass'
 
           await FileSystem.downloadAsync(
             data.generatePkPass.pkpassUrl,
@@ -237,48 +217,48 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                   'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1',
               },
             },
-          );
+          )
           const pkPassContentUri = await FileSystem.getContentUriAsync(
             pkPassUri,
-          );
+          )
 
           addPass(pkPassContentUri, 'com.snjallveskid').catch(() => {
             if (!canAddPass) {
               Alert.alert(
                 'Villa',
                 'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
-              );
+              )
             } else {
-              Alert.alert('Villa', 'Failed to fetch or add pass');
+              Alert.alert('Villa', 'Failed to fetch or add pass')
             }
-          });
-          setAddingToWallet(false);
-          return;
+          })
+          setAddingToWallet(false)
+          return
         }
         const res = await fetch(data.generatePkPass.pkpassUrl, {
           headers: {
             'User-Agent':
               'Mozilla/5.0 (iPhone; CPU iPhone OS 15_6_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.6 Mobile/15E148 Safari/604.1',
           },
-        });
-        const blob = await res.blob();
-        const reader = new FileReader();
-        reader.readAsDataURL(blob);
+        })
+        const blob = await res.blob()
+        const reader = new FileReader()
+        reader.readAsDataURL(blob)
         reader.onloadend = () => {
-          const passData = reader.result?.toString();
+          const passData = reader.result?.toString()
           if (passData) {
             if (passData.includes('text/html')) {
-              throw new Error('Pass has expired');
+              throw new Error('Pass has expired')
             }
-            addPass(passData.substr(41), 'com.snjallveskid');
+            addPass(passData.substring(41), 'com.snjallveskid')
           }
-          setAddingToWallet(false);
-        };
+          setAddingToWallet(false)
+        }
       } catch (err) {
         if (!canAddPass) {
           Alert.alert(
             'You cannot add passes. Please make sure you have Smartwallet installed on your device.',
-          );
+          )
         } else {
           Alert.alert(
             intl.formatMessage({
@@ -307,116 +287,169 @@ export const WalletPassScreen: NavigationFunctionComponent<{
                   },
                 ]
               : [],
-          );
+          )
         }
-        setAddingToWallet(false);
-        console.error(err);
+        setAddingToWallet(false)
+        console.error(err)
       }
     } else {
-      Alert.alert('You cannot add passes on this device');
+      Alert.alert('You cannot add passes on this device')
     }
-  };
+  }
 
-  const fields = data?.payload?.data ?? [];
-  const hasPkpass = data?.license?.pkpass;
-  const hasValidPkpass =
-    data?.license?.pkpassStatus === GenericUserLicensePkPassStatus.Available;
-  // this is coming soon.. disable add button if not true.
-  // const hasValidatedPkpass = data?.license?.pkpassValidation;
+  const expirationTimeCallback = useCallback(() => {
+    void res.refetch()
+  }, [])
+
+  const getExpirationTime = () => {
+    const expiresIn = data?.barcode?.expiresIn
+
+    if (expiresIn) {
+      const expDt = new Date()
+      // We subtract 7 seconds from the expiry time to make sure the barcode is still valid when switching to a new barcode
+      // The default expiration time is 60 seconds from the server
+      expDt.setSeconds(expDt.getSeconds() + expiresIn - 7)
+
+      return expDt
+    }
+  }
+
+  const { loading } = res
+
+  const informationTopSpacing =
+    allowLicenseBarcode && ((loading && !data?.barcode) || data?.barcode)
+      ? barcodeHeight + LICENSE_CARD_ROW_GAP
+      : 0
+
+  const renderButtons = () => {
+    if (isIos) {
+      return (
+        <AddPassButton
+          style={{ height: 52 }}
+          addPassButtonStyle={
+            theme.isDark
+              ? PassKit.AddPassButtonStyle.blackOutline
+              : PassKit.AddPassButtonStyle.black
+          }
+          onPress={onAddPkPass}
+        />
+      )
+    }
+
+    return (
+      <Button title="Add to Wallet" onPress={onAddPkPass} color="#111111" />
+    )
+  }
+
+  // If we don't have an item we want to return a loading spinner for the whole screen to prevent showing the wrong license while fetching
+  if (loading && !item) {
+    return (
+      <ActivityIndicator
+        size="large"
+        color="#0061FF"
+        style={{ marginTop: theme.spacing[4] }}
+      />
+    )
+  }
 
   return (
-    <View style={{flex: 1}}>
-      <View style={{height: cardHeight}} />
-      <Information contentInset={{bottom: 162}}>
-        <SafeAreaView style={{marginHorizontal: 16}}>
-          {/* Show info alert if PCard */}
-          {data?.license?.type === GenericLicenseType.PCard && (
-            <View style={{paddingTop: 24}}>
+    <View style={{ flex: 1 }}>
+      <View style={{ height: cardHeight }} />
+      <LicenseCardWrapper>
+        <LicenseCard
+          nativeID={`license-${licenseType}_destination`}
+          type={licenseType}
+          logo={
+            isBarcodeEnabled &&
+            data?.license?.type === GenericLicenseType.DriversLicense
+              ? getImageFromRawData(data?.payload?.rawData)
+              : undefined
+          }
+          date={updated ? new Date(Number(updated)) : undefined}
+          status={!data?.payload?.metadata?.expired ? 'VALID' : 'NOT_VALID'}
+          {...(allowLicenseBarcode && {
+            barcode: {
+              value: data?.barcode?.token,
+              loading: loading && !data?.barcode,
+              expirationTimeCallback,
+              expirationTime: getExpirationTime(),
+              width: barcodeWidth,
+              height: barcodeHeight,
+            },
+          })}
+        />
+      </LicenseCardWrapper>
+      <Information
+        contentInset={{ bottom: 162 }}
+        topSpacing={informationTopSpacing}
+      >
+        <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
+          {/* Show info alert if PCard or Ehic */}
+          {(licenseType === GenericLicenseType.PCard ||
+            licenseType === GenericLicenseType.Ehic) && (
+            <View
+              style={{
+                paddingTop: theme.spacing[3],
+              }}
+            >
               <InfoAlert
                 title={intl.formatMessage({
-                  id: 'licenseDetail.pcard.alert.title',
+                  id:
+                    licenseType === GenericLicenseType.PCard
+                      ? 'licenseDetail.pcard.alert.title'
+                      : 'licenseDetail.ehic.alert.title',
                 })}
                 message={intl.formatMessage({
-                  id: 'licenseDetail.pcard.alert.description',
+                  id:
+                    licenseType === GenericLicenseType.PCard
+                      ? 'licenseDetail.pcard.alert.description'
+                      : 'licenseDetail.ehic.alert.description',
                 })}
                 type="info"
                 hasBorder
               />
             </View>
           )}
-          {!data?.payload?.data && licenseRes.loading ? (
+          {!data?.payload?.data && loading ? (
             <ActivityIndicator
               size="large"
               color="#0061FF"
-              style={{marginTop: 32}}
+              style={{ marginTop: theme.spacing[4] }}
             />
           ) : (
-            <FieldRender data={fields} licenseType={data?.license?.type} />
+            <FieldRender data={fields} licenseType={licenseType} />
           )}
         </SafeAreaView>
-        {Platform.OS === 'android' && <Spacer />}
+
+        {pkPassAllowed && isBarcodeEnabled && (
+          <ButtonWrapper>{renderButtons()}</ButtonWrapper>
+        )}
+        {isAndroid && <Spacer />}
       </Information>
-      <SafeAreaView
-        style={{
-          marginTop: 16,
-          marginHorizontal: 16,
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 100,
-        }}>
-        <LicenceCard
-          nativeID={`license-${data?.license?.type}_destination`}
-          type={data?.license?.type as LicenseCardType}
-          date={new Date(Number(data?.fetch?.updated))}
-          status={
-            !data.payload?.metadata?.expired
-              ? LicenseStatus.VALID
-              : LicenseStatus.NOT_VALID
-          }
-        />
-      </SafeAreaView>
-      {hasPkpass && hasValidPkpass && (
-        <SafeAreaView
-          style={{
-            position: 'absolute',
-            bottom: 24,
-            left: 0,
-            right: 0,
-            marginHorizontal: 16,
-            zIndex: 100,
-          }}>
-          {Platform.OS === 'ios' ? (
-            <AddPassButton
-              style={{height: 52}}
-              addPassButtonStyle={
-                theme.isDark
-                  ? PassKit.AddPassButtonStyle.blackOutline
-                  : PassKit.AddPassButtonStyle.black
-              }
-              onPress={onAddPkPass}
-            />
-          ) : (
-            <Button
-              title="Add to Wallet"
-              onPress={onAddPkPass}
-              color="#111111"
-            />
-          )}
-        </SafeAreaView>
+      {/*
+          Remove once isBarcodeEnabled will be removed. This is only temporary.
+          The reason for the animation is to avoid rendering flicker.
+          The component will on first render the isBarcodeEnabled flag to be false and then set it to true after Configcat has fetched the flag.
+       */}
+      {pkPassAllowed && !isBarcodeEnabled && (
+        <ButtonWrapper floating>
+          <Animated.View style={{ opacity: fadeInAnim }}>
+            {renderButtons()}
+          </Animated.View>
+        </ButtonWrapper>
       )}
+
       {addingToWallet && (
         <LoadingOverlay>
           <ActivityIndicator
             size="large"
-            color="#0061FF"
-            style={{marginTop: 32}}
+            color={theme.color.white}
+            style={{ marginTop: theme.spacing[4] }}
           />
         </LoadingOverlay>
       )}
     </View>
-  );
-};
+  )
+}
 
-WalletPassScreen.options = getNavigationOptions;
+WalletPassScreen.options = getNavigationOptions

@@ -1,7 +1,7 @@
-import {Platform} from 'react-native';
-import {Options} from 'react-native-navigation';
-import {preferencesStore} from '../stores/preferences-store';
-import {getThemeWithPreferences} from './get-theme-with-preferences';
+import { Platform } from 'react-native'
+import { Options } from 'react-native-navigation'
+import { preferencesStore } from '../stores/preferences-store'
+import { getThemeWithPreferences } from './get-theme-with-preferences'
 
 export function getDefaultOptions(
   theme = getThemeWithPreferences(preferencesStore.getState()),
@@ -21,6 +21,7 @@ export function getDefaultOptions(
       title: {
         fontFamily: 'IBMPlexSans-SemiBold',
         fontSize: 19,
+        color: theme.shade.foreground,
       },
       largeTitle: {
         fontFamily: 'IBMPlexSans-SemiBold',
@@ -68,7 +69,7 @@ export function getDefaultOptions(
     bottomTabs: {
       animateTabSelection: false,
       elevation: 0,
-      borderWidth: 0,
+      borderWidth: Platform.OS === 'android' ? 0 : undefined,
       hideShadow: true,
       titleDisplayMode: 'alwaysShow',
       ...(Platform.OS === 'android'
@@ -77,5 +78,5 @@ export function getDefaultOptions(
           }
         : {}),
     },
-  };
+  }
 }

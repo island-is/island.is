@@ -16,6 +16,9 @@ export class ProjectSubpage {
   @Field()
   title!: string
 
+  @Field(() => String, { nullable: true })
+  shortTitle?: string
+
   @Field()
   slug!: string
 
@@ -41,7 +44,8 @@ export const mapProjectSubpage = ({
 }: IProjectSubpage): ProjectSubpage => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
+  shortTitle: fields.shortTitle || fields.title,
+  slug: (fields.slug ?? '').trim(),
   content: fields.content
     ? mapDocument(fields.content, sys.id + ':content')
     : [],

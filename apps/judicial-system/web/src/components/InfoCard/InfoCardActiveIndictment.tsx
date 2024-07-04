@@ -4,36 +4,36 @@ import { useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
-  caseTypes,
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { isIndictmentCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import InfoCard from './InfoCard'
-import { infoCardActiveIndictment as m } from './InfoCard.strings'
+import InfoCard, { NameAndEmail } from './InfoCard'
+import { strings } from './InfoCardIndictment.strings'
 
-const InfoCardActiveIndictment: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const InfoCardActiveIndictment = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
+
   return (
     <InfoCard
       data={[
         {
-          title: formatMessage(m.indictmentCreated),
+          title: formatMessage(strings.indictmentCreated),
           value: formatDate(workingCase.created, 'PP'),
         },
         {
-          title: formatMessage(m.prosecutor),
-          value: `${workingCase.prosecutor?.name}`,
+          title: formatMessage(strings.prosecutor),
+          value: NameAndEmail(
+            workingCase.prosecutor?.name,
+            workingCase.prosecutor?.email,
+          ),
         },
         {
           title: formatMessage(core.policeCaseNumber),
-          value: workingCase.policeCaseNumbers.map((n) => (
+          value: workingCase.policeCaseNumbers?.map((n) => (
             <Text key={n}>{n}</Text>
           )),
         },
@@ -42,8 +42,8 @@ const InfoCardActiveIndictment: React.FC<
           value: workingCase.court?.name,
         },
         {
-          title: formatMessage(m.offence),
-          value: isIndictmentCase(workingCase.type) ? (
+          title: formatMessage(strings.offence),
+          value: (
             <>
               {readableIndictmentSubtypes(
                 workingCase.policeCaseNumbers,
@@ -52,8 +52,6 @@ const InfoCardActiveIndictment: React.FC<
                 <Text key={`${subtype}-${index}`}>{capitalize(subtype)}</Text>
               ))}
             </>
-          ) : (
-            caseTypes[workingCase.type]
           ),
         },
       ]}

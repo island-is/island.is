@@ -1,3 +1,4 @@
+import { Base64 } from 'js-base64'
 import { uuid } from 'uuidv4'
 
 import {
@@ -15,8 +16,7 @@ import {
   getRequestPdfAsString,
 } from '../../../../formatters'
 import { randomDate } from '../../../../test'
-import { AwsS3Service } from '../../../aws-s3'
-import { PoliceService } from '../../../police'
+import { PoliceDocumentType, PoliceService } from '../../../police'
 import { Case } from '../../models/case.model'
 import { DeliverResponse } from '../../models/deliver.response'
 
@@ -35,15 +35,13 @@ describe('InternalCaseController - Deliver case to police', () => {
   const userId = uuid()
   const user = { id: userId } as User
 
-  let mockAwsS3Service: AwsS3Service
   let mockPoliceService: PoliceService
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { awsS3Service, policeService, internalCaseController } =
+    const { policeService, internalCaseController } =
       await createTestingCaseModule()
 
-    mockAwsS3Service = awsS3Service
     mockPoliceService = policeService
 
     const mockGetRequest = getRequestPdfAsString as jest.Mock
@@ -52,8 +50,6 @@ describe('InternalCaseController - Deliver case to police', () => {
     mockGetCourtRecord.mockRejectedValue(new Error('Some error'))
     const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
     mockGetCustodyNotice.mockRejectedValue(new Error('Some error'))
-    const mockGetObject = awsS3Service.getObject as jest.Mock
-    mockGetObject.mockRejectedValue(new Error('Some error'))
     const mockUpdatePoliceCase = mockPoliceService.updatePoliceCase as jest.Mock
     mockUpdatePoliceCase.mockRejectedValue(new Error('Some error'))
 
@@ -74,6 +70,7 @@ describe('InternalCaseController - Deliver case to police', () => {
     const caseType = CaseType.CUSTODY
     const caseState = CaseState.ACCEPTED
     const policeCaseNumber = uuid()
+    const courtCaseNumber = uuid()
     const defendantNationalId = '0123456789'
     const validToDate = randomDate()
     const caseConclusion = 'test conclusion'
@@ -83,13 +80,13 @@ describe('InternalCaseController - Deliver case to police', () => {
       type: caseType,
       state: caseState,
       policeCaseNumbers: [policeCaseNumber],
+      courtCaseNumber,
       defendants: [{ nationalId: defendantNationalId }],
       validToDate,
       conclusion: caseConclusion,
     } as Case
     const requestPdf = 'test request'
     const courtRecordPdf = 'test court record'
-    const rulingPdf = 'test ruling'
     const custodyNoticePdf = 'test custody notice'
 
     let then: Then
@@ -101,14 +98,13 @@ describe('InternalCaseController - Deliver case to police', () => {
       mockGetCourtRecord.mockResolvedValueOnce(courtRecordPdf)
       const mockGetCustodyNotice = getCustodyNoticePdfAsString as jest.Mock
       mockGetCustodyNotice.mockResolvedValueOnce(custodyNoticePdf)
-      const mockGetObject = mockAwsS3Service.getObject as jest.Mock
-      mockGetObject.mockResolvedValueOnce(rulingPdf)
       const mockUpdatePoliceCase =
         mockPoliceService.updatePoliceCase as jest.Mock
       mockUpdatePoliceCase.mockResolvedValueOnce(true)
 
       then = await givenWhenThen(caseId, theCase)
     })
+
     it('should update the police case', async () => {
       expect(getRequestPdfAsString).toHaveBeenCalledWith(
         theCase,
@@ -117,9 +113,6 @@ describe('InternalCaseController - Deliver case to police', () => {
       expect(getCourtRecordPdfAsString).toHaveBeenCalledWith(
         theCase,
         expect.any(Function),
-      )
-      expect(mockAwsS3Service.getObject).toHaveBeenCalledWith(
-        `generated/${caseId}/ruling.pdf`,
       )
       expect(getCustodyNoticePdfAsString).toHaveBeenCalledWith(
         theCase,
@@ -131,14 +124,24 @@ describe('InternalCaseController - Deliver case to police', () => {
         caseType,
         caseState,
         policeCaseNumber,
+        courtCaseNumber,
         defendantNationalId,
         validToDate,
         caseConclusion,
-        requestPdf,
-        courtRecordPdf,
-        rulingPdf,
-        custodyNoticePdf,
-        undefined,
+        [
+          {
+            type: PoliceDocumentType.RVKR,
+            courtDocument: Base64.btoa(requestPdf),
+          },
+          {
+            type: PoliceDocumentType.RVTB,
+            courtDocument: Base64.btoa(courtRecordPdf),
+          },
+          {
+            type: PoliceDocumentType.RVVI,
+            courtDocument: Base64.btoa(custodyNoticePdf),
+          },
+        ],
       )
       expect(then.result.delivered).toEqual(true)
     })

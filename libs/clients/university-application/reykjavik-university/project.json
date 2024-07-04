@@ -1,0 +1,30 @@
+{
+  "name": "clients-university-application-reykjavik-university",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/university-application/reykjavik-university/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/clients/university-application/reykjavik-university"
+      ],
+      "options": {
+        "jestConfig": "libs/clients/university-application/reykjavik-university/jest.config.ts"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/university-application/reykjavik-university/gen/fetch -i libs/clients/university-application/reykjavik-university/src/clientConfig.json --additional-properties=enumPropertyNaming=original"
+        ]
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}

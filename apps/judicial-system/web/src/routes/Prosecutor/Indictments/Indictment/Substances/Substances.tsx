@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Select } from '@island.is/island-ui/core'
@@ -11,7 +11,7 @@ import {
   ReactSelectOption,
   TempIndictmentCount as TIndictmentCount,
 } from '@island.is/judicial-system-web/src/types'
-import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks/useIndictmentCounts'
+import { UpdateIndictmentCount } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { Substance } from '../Substance/Substance'
 import { substances as strings } from './Substances.strings'
@@ -24,13 +24,11 @@ interface Props {
   onChange: (updatedIndictmentCount: UpdateIndictmentCount) => void
 }
 
-export const Substances: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    indictmentCount,
-    indictmentCountOffenseType,
-
-    onChange,
-  } = props
+export const Substances: FC<Props> = ({
+  indictmentCount,
+  indictmentCountOffenseType,
+  onChange,
+}) => {
   const { formatMessage } = useIntl()
 
   const getSubstanceOptions = useMemo(

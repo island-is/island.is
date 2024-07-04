@@ -6,23 +6,25 @@ import {
   InternalServerErrorException,
 } from '@nestjs/common'
 
-import {
-  CaseState,
-  completedCaseStates,
-} from '@island.is/judicial-system/types'
+import { CaseState, isCompletedCase } from '@island.is/judicial-system/types'
+
+import { Case } from '../models/case.model'
 
 @Injectable()
 export class CaseReceivedGuard implements CanActivate {
   canActivate(context: ExecutionContext): boolean {
     const request = context.switchToHttp().getRequest()
 
-    const theCase = request.case
+    const theCase: Case = request.case
 
     if (!theCase) {
       throw new InternalServerErrorException('Missing case')
     }
 
-    if (![CaseState.RECEIVED, ...completedCaseStates].includes(theCase.state)) {
+    if (
+      theCase.state !== CaseState.RECEIVED &&
+      !isCompletedCase(theCase.state)
+    ) {
       throw new ForbiddenException('Forbidden for unreceived cases')
     }
 

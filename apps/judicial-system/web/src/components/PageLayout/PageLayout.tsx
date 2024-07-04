@@ -1,4 +1,4 @@
-import React, { ReactNode, useContext, useEffect } from 'react'
+import React, { FC, PropsWithChildren, ReactNode, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -28,9 +28,9 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
+import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { useSections } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { stepValidationsType } from '../../utils/formHelper'
-import useSections from '../../utils/hooks/useSections'
 import Logo from '../Logo/Logo'
 import Skeleton from '../Skeleton/Skeleton'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -54,8 +54,8 @@ interface SectionProps {
   activeSubSection?: number
 }
 
-const SubsectionChild: React.FC<
-  React.PropsWithChildren<{
+const SubsectionChild: FC<
+  PropsWithChildren<{
     isActive: boolean
   }>
 > = ({ isActive, children }) => (
@@ -66,11 +66,12 @@ const SubsectionChild: React.FC<
   </Box>
 )
 
-const DisplaySection: React.FC<React.PropsWithChildren<SectionProps>> = (
-  props,
-) => {
-  const { section, index, activeSection, activeSubSection } = props
-
+const DisplaySection: FC<SectionProps> = ({
+  section,
+  index,
+  activeSection,
+  activeSubSection,
+}) => {
   return (
     <Section
       section={section.name}
@@ -122,7 +123,7 @@ interface SidePanelProps {
   isValid?: boolean
 }
 
-const SidePanel: React.FC<React.PropsWithChildren<SidePanelProps>> = ({
+const SidePanel: FC<SidePanelProps> = ({
   user,
   isValid,
   onNavigationTo,
@@ -183,7 +184,7 @@ interface PageProps {
   isValid?: boolean
 }
 
-const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
+const PageLayout: FC<PropsWithChildren<PageProps>> = ({
   workingCase,
   children,
   isLoading,
@@ -193,10 +194,6 @@ const PageLayout: React.FC<React.PropsWithChildren<PageProps>> = ({
 }) => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [])
 
   return isLoading ? (
     <Skeleton />

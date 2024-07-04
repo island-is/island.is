@@ -19,12 +19,14 @@ import {
   SPOUSE,
   ParentalRelations,
   ADOPTION,
+  States,
+  FileType,
 } from '../constants'
 import { ChildInformation } from '../dataProviders/Children/types'
 import {
   formatIsk,
   getAvailableRightsInMonths,
-  getExpectedDateOfBirthOrAdoptionDate,
+  getExpectedDateOfBirthOrAdoptionDateOrBirthDate,
   getSelectedChild,
   getTransferredDays,
   getOtherParentId,
@@ -53,14 +55,15 @@ import {
   isFosterCareAndAdoption,
   residentGrantIsOpenForApplication,
   setTestBirthAndExpectedDate,
+  getActionName,
 } from './parentalLeaveUtils'
 import { PersonInformation } from '../types'
 
-function buildApplication(data?: {
+const buildApplication = (data?: {
   answers?: FormValue
   externalData?: ExternalData
   state?: string
-}): Application {
+}): Application => {
   const { answers = {}, externalData = {}, state = 'draft' } = data ?? {}
 
   return {
@@ -79,7 +82,7 @@ function buildApplication(data?: {
   }
 }
 
-function buildField(): Field {
+const buildField = (): Field => {
   return {
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,
@@ -89,10 +92,27 @@ function buildField(): Field {
   }
 }
 
-describe('getExpectedDateOfBirthOrAdoptionDate', () => {
+let id = 0
+const createApplicationBase = (): Application => ({
+  answers: {},
+  applicant: '',
+  assignees: [],
+  attachments: {},
+  created: new Date(),
+  modified: new Date(),
+  applicantActors: [],
+  externalData: {},
+  id: (id++).toString(),
+  state: '',
+  typeId: ApplicationTypes.PARENTAL_LEAVE,
+  name: '',
+  status: ApplicationStatus.IN_PROGRESS,
+})
+
+describe('getExpectedDateOfBirthOrAdoptionDateOrBirthDate', () => {
   it('should return undefined when no child is found', () => {
     const application = buildApplication()
-    const res = getExpectedDateOfBirthOrAdoptionDate(application)
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toBeUndefined()
   })
@@ -122,9 +142,49 @@ describe('getExpectedDateOfBirthOrAdoptionDate', () => {
       },
     })
 
-    const res = getExpectedDateOfBirthOrAdoptionDate(application)
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(application)
 
     expect(res).toEqual('2021-05-17')
+  })
+
+  it('should return the selected child DOB', () => {
+    const application = buildApplication({
+      answers: {
+        selectedChild: 0,
+      },
+      externalData: {
+        children: {
+          data: {
+            children: [
+              {
+                hasRights: true,
+                remainingDays: 180,
+                transferredDays: undefined, // Transferred days are only defined for secondary parents
+                parentalRelation: ParentalRelations.primary,
+                expectedDateOfBirth: '2021-05-17',
+              },
+            ],
+            existingApplications: [],
+          },
+          date: new Date(),
+          status: 'success',
+        },
+        dateOfBirth: {
+          data: {
+            dateOfBirth: '2021-05-10',
+          },
+          date: new Date(),
+          status: 'success',
+        },
+      },
+    })
+
+    const res = getExpectedDateOfBirthOrAdoptionDateOrBirthDate(
+      application,
+      true,
+    )
+
+    expect(res).toEqual('2021-05-10')
   })
 })
 
@@ -1137,7 +1197,6 @@ describe('getApplicationExternalData', () => {
         children: {
           data: {
             children: 'Mock child',
-            existingApplications: 'Mock application',
           },
           date: new Date(),
           status: 'success',
@@ -1167,9 +1226,7 @@ describe('getApplicationExternalData', () => {
       children: 'Mock child',
       dataProvider: {
         children: 'Mock child',
-        existingApplications: 'Mock application',
       },
-      existingApplications: 'Mock application',
       navId: '',
       userEmail: 'mock@email.is',
       userPhoneNumber: 'Mock number',
@@ -1314,23 +1371,6 @@ describe('getOtherParentId', () => {
 })
 
 describe('getOtherParentName', () => {
-  let id = 0
-  const createApplicationBase = (): Application => ({
-    answers: {},
-    applicant: '',
-    assignees: [],
-    attachments: {},
-    created: new Date(),
-    modified: new Date(),
-    applicantActors: [],
-    externalData: {},
-    id: (id++).toString(),
-    state: '',
-    typeId: ApplicationTypes.PARENTAL_LEAVE,
-    name: '',
-    status: ApplicationStatus.IN_PROGRESS,
-  })
-
   let application: Application
   beforeEach(() => {
     application = createApplicationBase()
@@ -1543,3 +1583,71 @@ test.each([
     expect(residentGrantIsOpenForApplication(date.birthDate)).toBe(expected)
   },
 )
+
+describe('getActionName', () => {
+  let application: Application
+  beforeEach(() => {
+    application = createApplicationBase()
+  })
+
+  it('should return FileType.EMPDOCPER if changeEmployerFile, changeEmployer and changePeriods', () => {
+    set(application, 'answers.fileUpload.changeEmployerFile', [
+      { name: 'file1.pdf', key: 'Key1' },
+    ])
+    set(application, 'answers.changeEmployer', true)
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.EMPDOCPER)
+  })
+
+  it('should return FileType.PERIOD if changePeriods', () => {
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.PERIOD)
+  })
+
+  it('should return FileType.EMPLOYER if changeEmployer', () => {
+    set(application, 'answers.changeEmployer', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.EMPLOYER)
+  })
+
+  it('should return FileType.EMPPER if changePeriods & changeEmployer', () => {
+    set(application, 'answers.changeEmployer', true)
+    set(application, 'answers.changePeriods', true)
+
+    application.state = States.EDIT_OR_ADD_EMPLOYERS_AND_PERIODS
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.EMPPER)
+  })
+
+  it('should return FileType.DOCUMENT if state is ADDITIONAL_DOCUMENTS_REQUIRED', () => {
+    application.state = application.state = States.ADDITIONAL_DOCUMENTS_REQUIRED
+
+    const result = getActionName(application)
+
+    expect(result).toBe(FileType.DOCUMENT)
+  })
+
+  it('should return undefined if no conditions met', () => {
+    application.state = application.state = States.CLOSED
+
+    const result = getActionName(application)
+
+    expect(result).toBeUndefined()
+  })
+})

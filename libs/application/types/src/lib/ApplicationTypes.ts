@@ -31,7 +31,7 @@ export enum ApplicationTypes {
   MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
-  OPERATING_LCENSE = 'OperatingLicense',
+  OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
@@ -47,9 +47,29 @@ export enum ApplicationTypes {
   DRIVING_LICENSE_BOOK_UPDATE_INSTRUCTOR = 'DrivingLicenseBookUpdateInstructor',
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
-  SIGNATURE_LIST_CREATION = 'SignatureListCreation',
-  SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  OLD_AGE_PENSION = 'OldAgePension',
+  HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
+  CAR_RECYCLING = 'CarRecycling',
+  PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
+  PRESIDENTIAL_LIST_SIGNING = 'PresidentialListSigning',
   CITIZENSHIP = 'Citizenship',
+  ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
+  ENERGY_FUNDS = 'EnergyFunds',
+  HEALTHCARE_LICENSE_CERTIFICATE = 'HealthcareLicenseCertificate',
+  HEALTHCARE_WORK_PERMIT = 'HealthcareWorkPermit',
+  PENSION_SUPPLEMENT = 'PensionSupplement',
+  TRANSFER_OF_MACHINE_OWNERSHIP = 'TransferOfMachineOwnership',
+  UNIVERSITY = 'University',
+  HOME_SUPPORT = 'HomeSupport',
+  CHANGE_MACHINE_SUPERVISOR = 'ChangeMachineSupervisor',
+  DEREGISTER_MACHINE = 'DeregisterMachine',
+  GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
+  REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
+  OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
+  ID_CARD = 'IdCard',
+  HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
+  STREET_REGISTRATION = 'StreetRegistration',
+  NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
 }
 
 export const ApplicationConfigurations = {
@@ -79,7 +99,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.PARENTAL_LEAVE]: {
     slug: 'faedingarorlof',
-    translation: 'pl.application',
+    translation: ['pl.application', 'uiForms.application'],
   },
   [ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING]: {
     slug: 'skjalaveita',
@@ -90,11 +110,11 @@ export const ApplicationConfigurations = {
     translation: 'hi.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    slug: 'breytt-logheimili-barns',
+    slug: 'breytt-logheimili-barns-old',
     translation: 'crc.application',
   },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
-    slug: 'breytt-logheimili-barns-v2',
+    slug: 'breytt-logheimili-barns',
     translation: 'crc.application',
   },
   [ApplicationTypes.DATA_PROTECTION_AUTHORITY_COMPLAINT]: {
@@ -123,7 +143,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.COMPLAINTS_TO_ALTHINGI_OMBUDSMAN]: {
     slug: 'kvortun-til-umbodsmanns-althingis',
-    translation: 'ctao.application',
+    translation: ['ctao.application', 'uiForms.application'],
   },
   [ApplicationTypes.ACCIDENT_NOTIFICATION]: {
     slug: 'slysatilkynning',
@@ -185,7 +205,7 @@ export const ApplicationConfigurations = {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
   },
-  [ApplicationTypes.OPERATING_LCENSE]: {
+  [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
     translation: 'ol.application',
   },
@@ -245,16 +265,100 @@ export const ApplicationConfigurations = {
     slug: 'evropska-sjukratryggingakortid',
     translation: 'ehic.application',
   },
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
-    slug: 'medmaelalisti',
+  [ApplicationTypes.OLD_AGE_PENSION]: {
+    slug: 'ellilifeyrir',
+    translation: ['oap.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
+    slug: 'heimilisuppbot',
+    translation: ['hs.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CAR_RECYCLING]: {
+    slug: 'skilavottord',
+    translation: 'rf.cr.application',
+  },
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: {
+    slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
-    slug: 'maela-med-lista',
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: {
+    slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
-    translation: 'doi.cs.application',
+    translation: ['doi.cs.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.ADDITIONAL_SUPPORT_FOR_THE_ELDERLY]: {
+    slug: 'felagslegur-vidbotarstudningur',
+    translation: [
+      'asfte.application',
+      'sia.application',
+      'uiForms.application',
+    ],
+  },
+  [ApplicationTypes.ENERGY_FUNDS]: {
+    slug: 'rafbila-styrkur',
+    translation: 'ef.application',
+  },
+  [ApplicationTypes.HEALTHCARE_LICENSE_CERTIFICATE]: {
+    slug: 'starfsleyfis-vottord',
+    translation: 'hlc.application',
+  },
+  [ApplicationTypes.HEALTHCARE_WORK_PERMIT]: {
+    slug: 'starfsleyfis-umsokn',
+    translation: 'hwp.application',
+  },
+  [ApplicationTypes.PENSION_SUPPLEMENT]: {
+    slug: 'uppbot-a-lifeyri',
+    translation: ['ul.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.TRANSFER_OF_MACHINE_OWNERSHIP]: {
+    slug: 'eigendaskipti-taekis',
+    translation: 'aosh.tmo.application',
+  },
+  [ApplicationTypes.HOME_SUPPORT]: {
+    slug: 'heimastudningur',
+    translation: ['hst.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.CHANGE_MACHINE_SUPERVISOR]: {
+    slug: 'umradaskipti-taekis',
+    translation: 'aosh.cms.application',
+  },
+  [ApplicationTypes.UNIVERSITY]: {
+    slug: 'haskolanam',
+    translation: 'uni.application',
+  },
+  [ApplicationTypes.DEREGISTER_MACHINE]: {
+    slug: 'afskraning-taekis',
+    translation: 'aosh.drm.application',
+  },
+  [ApplicationTypes.GRINDAVIK_HOUSING_BUYOUT]: {
+    slug: 'kaup-a-ibudarhusnaedi-i-grindavik',
+    translation: ['ghb.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.REQUEST_INSPECTION_FOR_MACHINE]: {
+    slug: 'beidni-um-skodun-taekis',
+    translation: 'aosh.rifm.application',
+  },
+  [ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND]: {
+    slug: 'stjornartidindi',
+    translation: 'ojoi.application',
+  },
+  [ApplicationTypes.ID_CARD]: {
+    slug: 'nafnskirteini',
+    translation: 'id.application',
+  },
+  [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
+    slug: 'tryggingaryfirlysing',
+    translation: ['hid.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.STREET_REGISTRATION]: {
+    slug: 'gotuskraning-taekis',
+    translation: 'sr.application',
+  },
+  [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
+    slug: 'nyr-grunnskoli',
+    translation: ['dess.nps.application', 'uiForms.application'],
   },
 }

@@ -16,9 +16,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
 
-const ProsecutorSectionHeightenedSecurity: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const ProsecutorSectionHeightenedSecurity = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
 
@@ -27,20 +25,20 @@ const ProsecutorSectionHeightenedSecurity: React.FC<
   const [substituteProsecutorId, setSubstituteProsecutor] = useState<string>()
   const [isProsecutorAccessModalVisible, setIsProsecutorAccessModalVisible] =
     useState<boolean>(false)
-  const { setAndSendCaseToServer } = useCase()
+  const { setAndSendCaseToServer, updateCase } = useCase()
 
   const setProsecutor = async (prosecutorId: string) => {
     if (workingCase) {
-      return setAndSendCaseToServer(
-        [
-          {
-            prosecutorId: prosecutorId,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      const updatedCase = await updateCase(workingCase.id, {
+        prosecutorId: prosecutorId,
+      })
+
+      const prosecutor = updatedCase?.prosecutor
+
+      setWorkingCase((prevWorkingCase) => ({
+        ...prevWorkingCase,
+        prosecutor,
+      }))
     }
   }
 
@@ -48,7 +46,6 @@ const ProsecutorSectionHeightenedSecurity: React.FC<
     if (!workingCase) {
       return false
     }
-
     const isRemovingCaseAccessFromSelf =
       user?.id !== workingCase.creatingProsecutor?.id
 
@@ -60,7 +57,6 @@ const ProsecutorSectionHeightenedSecurity: React.FC<
     }
 
     setProsecutor(prosecutorId)
-
     return true
   }
 
@@ -79,7 +75,7 @@ const ProsecutorSectionHeightenedSecurity: React.FC<
             user?.id !== workingCase.creatingProsecutor?.id &&
             user?.id !== workingCase.prosecutor?.id
           }
-          checked={workingCase.isHeightenedSecurityLevel}
+          checked={Boolean(workingCase.isHeightenedSecurityLevel)}
           onChange={(event) =>
             setAndSendCaseToServer(
               [

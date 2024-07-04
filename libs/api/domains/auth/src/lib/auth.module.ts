@@ -10,17 +10,7 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { ApiScopeLoader } from './loaders/apiScope.loader'
 import { ClientLoader } from './loaders/client.loader'
 import { DomainLoader } from './loaders/domain.loader'
-import {
-  ApiScopeResolver,
-  ClientResolver,
-  ConsentResolver,
-  CustomDelegationResolver,
-  DelegationResolver,
-  DelegationScopeResolver,
-  DomainResolver,
-  MergedDelegationResolver,
-} from './resolvers'
-import { ConsentTenantsResolver } from './resolvers/consentTenants.resolver'
+
 import { ActorDelegationsService } from './services/actorDelegations.service'
 import { ApiScopeService } from './services/apiScope.service'
 import { ClientsService } from './services/clients.service'
@@ -28,6 +18,19 @@ import { ConsentService } from './services/consent.service'
 import { ConsentTenantsService } from './services/consentTenants.service'
 import { DomainService } from './services/domain.service'
 import { MeDelegationsService } from './services/meDelegations.service'
+import { LoginRestrictionResolver } from './resolvers/loginRestriction.resolver'
+import { LoginRestrictionService } from './services/loginRestriction.service'
+import { ConsentTenantsResolver } from './resolvers/consentTenants.resolver'
+import { DelegationResolver } from './resolvers/delegation.resolver'
+import { CustomDelegationResolver } from './resolvers/customDelegation.resolver'
+import { MergedDelegationResolver } from './resolvers/mergedDelegation.resolver'
+import { DelegationScopeResolver } from './resolvers/delegationScope.resolver'
+import { ApiScopeResolver } from './resolvers/apiScope.resolver'
+import { DomainResolver } from './resolvers/domain.resolver'
+import { ClientResolver } from './resolvers/client.resolver'
+import { ConsentResolver } from './resolvers/consent.resolver'
+import { PasskeyResolver } from './resolvers/passkey.resolver'
+import { PasskeyService } from './services/passkey.service'
 
 @Module({
   providers: [
@@ -51,6 +54,10 @@ import { MeDelegationsService } from './services/meDelegations.service'
     ConsentService,
     ConsentTenantsResolver,
     ConsentTenantsService,
+    LoginRestrictionResolver,
+    LoginRestrictionService,
+    PasskeyService,
+    PasskeyResolver,
   ],
   imports: [
     AuthPublicApiClientModule,

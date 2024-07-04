@@ -9,7 +9,7 @@ import { useEligibility } from './useEligibility'
 export const EligibilitySummary: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ application }) => {
-  const { eligibility, loading, error } = useEligibility(application.answers)
+  const { eligibility, loading, error } = useEligibility(application)
 
   const { setValue } = useFormContext()
 
@@ -33,7 +33,7 @@ export const EligibilitySummary: FC<
         display={['block', 'block', 'block', 'flex']}
         justifyContent="spaceBetween"
       ></Box>
-      <Box marginTop={7} marginBottom={8}>
+      <Box marginTop={3} marginBottom={8}>
         {requirements.map((requirement, i) => {
           return (
             <ReviewSection

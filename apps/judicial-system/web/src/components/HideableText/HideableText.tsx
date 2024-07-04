@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Icon, Text, Tooltip } from '@island.is/island-ui/core'
@@ -8,13 +8,16 @@ import * as styles from './HideableText.css'
 interface Props {
   text: string
   onToggleVisibility: (isVisible: boolean) => void
-  isHidden?: boolean
+  isHidden?: boolean | null
   tooltip?: string
 }
 
-const HideableText: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { text, onToggleVisibility, tooltip, isHidden } = props
-
+const HideableText: FC<Props> = ({
+  text,
+  onToggleVisibility,
+  tooltip,
+  isHidden,
+}) => {
   const renderVisibilityButton = () => (
     <button
       className={styles.eyeButton}
@@ -42,7 +45,10 @@ const HideableText: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
   return (
     <div className={styles.hideableTextContainer}>
-      <Text strikethrough={isHidden} color={isHidden ? 'dark300' : 'dark400'}>
+      <Text
+        strikethrough={Boolean(isHidden)}
+        color={isHidden ? 'dark300' : 'dark400'}
+      >
         {text}
       </Text>
       {tooltip ? (

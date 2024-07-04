@@ -1,35 +1,40 @@
 import jwt from 'jsonwebtoken'
-import { join } from 'path'
 import get from 'lodash/get'
+import { join } from 'path'
 
 import {
-  ParentalLeave,
-  Period,
-  Union,
-  PensionFund,
-  Attachment,
-  Employer,
-} from '@island.is/clients/vmst'
-import { Application } from '@island.is/application/types'
-import {
-  getSelectedChild,
-  getApplicationAnswers,
-  getSpouse,
-  ParentalRelations,
-  YES,
+  ADOPTION,
   Period as AnswerPeriod,
-  getApplicationExternalData,
-  getOtherParentId,
-  applicantIsMale,
-  PARENTAL_LEAVE,
+  ChildInformation,
+  Languages,
+  NO,
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
-  NO,
-  formatBankInfo,
+  PARENTAL_LEAVE,
   PERMANENT_FOSTER_CARE,
-  ChildInformation,
-  ADOPTION,
+  ParentalRelations,
+  YES,
+  applicantIsMale,
+  formatBankInfo,
+  getActionName,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getOtherParentId,
+  getSelectedChild,
+  getSpouse,
 } from '@island.is/application/templates/parental-leave'
+import {
+  Application,
+  ApplicationWithAttachments,
+} from '@island.is/application/types'
+import {
+  Attachment,
+  Employer,
+  ParentalLeave,
+  PensionFund,
+  Period,
+  Union,
+} from '@island.is/clients/vmst'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 import { apiConstants } from './constants'
@@ -85,8 +90,12 @@ export const getEmployer = (
   application: Application,
   isSelfEmployed = false,
 ): Employer[] => {
-  const { applicantEmail, employers, employerNationalRegistryId } =
-    getApplicationAnswers(application.answers)
+  const {
+    applicantEmail,
+    employers,
+    employerNationalRegistryId,
+    employerReviewerNationalRegistryId,
+  } = getApplicationAnswers(application.answers)
 
   if (isSelfEmployed) {
     return [
@@ -101,6 +110,8 @@ export const getEmployer = (
     email: e.email,
     nationalRegistryId:
       e.companyNationalRegistryId ?? employerNationalRegistryId ?? '',
+    approverNationalRegistryId:
+      e.reviewerNationalRegistryId ?? employerReviewerNationalRegistryId ?? '',
   }))
 }
 
@@ -112,7 +123,9 @@ export const getPensionFund = (
     ? 'payments.privatePensionFund'
     : 'payments.pensionFund'
 
-  const { applicationType } = getApplicationAnswers(application.answers)
+  const { applicationType, usePrivatePensionFund } = getApplicationAnswers(
+    application.answers,
+  )
 
   const value =
     applicationType === PARENTAL_LEAVE
@@ -122,7 +135,7 @@ export const getPensionFund = (
   if (isPrivate) {
     return {
       id:
-        applicationType === PARENTAL_LEAVE
+        applicationType === PARENTAL_LEAVE && usePrivatePensionFund === YES
           ? typeof value === 'string'
             ? value
             : apiConstants.pensionFunds.noPrivatePensionFundId
@@ -144,10 +157,13 @@ export const getPensionFund = (
 }
 
 export const getPrivatePensionFundRatio = (application: Application) => {
-  const { privatePensionFundPercentage, applicationType } =
-    getApplicationAnswers(application.answers)
+  const {
+    privatePensionFundPercentage,
+    applicationType,
+    usePrivatePensionFund,
+  } = getApplicationAnswers(application.answers)
   const privatePensionFundRatio: number =
-    applicationType === PARENTAL_LEAVE
+    applicationType === PARENTAL_LEAVE && usePrivatePensionFund === YES
       ? Number(privatePensionFundPercentage) || 0
       : 0
 
@@ -352,6 +368,8 @@ export const transformApplicationToParentalLeaveDTO = (
     | 'document'
     | 'empper'
     | 'employer'
+    | 'empdoc'
+    | 'empdocper'
     | undefined,
 ): ParentalLeave => {
   const selectedChild = getSelectedChild(
@@ -365,6 +383,7 @@ export const transformApplicationToParentalLeaveDTO = (
 
   const {
     union,
+    useUnion,
     bank,
     applicationType,
     multipleBirths,
@@ -372,6 +391,8 @@ export const transformApplicationToParentalLeaveDTO = (
     isReceivingUnemploymentBenefits,
     employerLastSixMonths,
     language,
+    otherParentRightOfAccess,
+    comment,
   } = getApplicationAnswers(application.answers)
 
   const { applicationFundId } = getApplicationExternalData(
@@ -413,7 +434,7 @@ export const transformApplicationToParentalLeaveDTO = (
       union: {
         // If a union is not selected then use the default 'no union' value
         id:
-          applicationType === PARENTAL_LEAVE
+          applicationType === PARENTAL_LEAVE && useUnion === YES
             ? union ?? apiConstants.unions.noUnion
             : apiConstants.unions.noUnion,
         name: '',
@@ -423,6 +444,7 @@ export const transformApplicationToParentalLeaveDTO = (
       privatePensionFundRatio: getPrivatePensionFundRatio(application),
     },
     periods,
+    applicationComment: comment,
     employers:
       (applicationType === PARENTAL_LEAVE && !receivingUnemploymentBenefits) ||
       ((applicationType === PARENTAL_GRANT ||
@@ -439,7 +461,8 @@ export const transformApplicationToParentalLeaveDTO = (
         ? multipleBirths.toString()
         : undefined,
     type,
-    language,
+    language: language === Languages.EN ? language : undefined, // Only send language if EN
+    otherParentBlocked: otherParentRightOfAccess === NO ? true : false,
   }
 }
 
@@ -481,4 +504,42 @@ export const isDateInTheFuture = (date: string) => {
   const now = new Date().toISOString()
   if (date > now) return true
   return false
+}
+
+export const getType = (application: ApplicationWithAttachments) => {
+  const { actionName } = getApplicationAnswers(application.answers)
+
+  // Check if we can get the the action name. Used when valiating application
+  const tmpActionName = getActionName(application)
+
+  if (tmpActionName) {
+    return tmpActionName
+  }
+
+  if (
+    actionName === 'document' ||
+    actionName === 'documentPeriod' ||
+    actionName === 'period' ||
+    actionName === 'empper' ||
+    actionName === 'employer' ||
+    actionName === 'empdoc' ||
+    actionName === 'empdocper'
+  ) {
+    return actionName
+  }
+
+  return undefined
+}
+
+export const getFromDate = (
+  isFirstPeriod: boolean,
+  isActualDateOfBirth: boolean,
+  useLength: string,
+  period: AnswerPeriod,
+) => {
+  return isFirstPeriod && isActualDateOfBirth && useLength === YES
+    ? apiConstants.actualDateOfBirthMonths
+    : isFirstPeriod && isActualDateOfBirth
+    ? apiConstants.actualDateOfBirth
+    : period.startDate
 }

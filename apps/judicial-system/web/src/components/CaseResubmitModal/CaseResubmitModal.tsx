@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { FC, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -14,21 +14,21 @@ interface Props {
   onClose: () => void
   onContinue: (explanation: string) => void
 }
-export function getCaseResubmittedText(
+export const getCaseResubmittedText = (
   formatMessage: IntlShape['formatMessage'],
   workingCase: Case,
-) {
+) => {
   return formatMessage(strings.text, {
     requestSharedWithDefender:
       (workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.COURT_DATE &&
-        Boolean(workingCase.courtDate)) ||
+        Boolean(workingCase.arraignmentDate?.date)) ||
       workingCase.requestSharedWithDefender ===
         RequestSharedWithDefender.READY_FOR_COURT,
   })
 }
 
-const CaseResubmitModal: React.FC<React.PropsWithChildren<Props>> = ({
+const CaseResubmitModal: FC<Props> = ({
   workingCase,
   isLoading,
   onClose,

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -17,13 +17,18 @@ import RulingDateLabel from '../RulingDateLabel/RulingDateLabel'
 import { UserContext } from '../UserProvider/UserProvider'
 import { CaseTitleInfoAndTags as strings } from './CaseTitleInfoAndTags.strings'
 
-const CaseTitleInfoAndTags: React.FC = () => {
+const CaseTitleInfoAndTags: FC = () => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
   return (
-    <Box display="flex" justifyContent="spaceBetween" marginBottom={3}>
+    <Box
+      display="flex"
+      justifyContent="spaceBetween"
+      flexDirection={['columnReverse', 'columnReverse', 'columnReverse', 'row']}
+      marginBottom={3}
+    >
       <Box>
         <OverviewHeader />
         {workingCase.rulingDate && (
@@ -73,7 +78,12 @@ const CaseTitleInfoAndTags: React.FC = () => {
           </>
         )}
       </Box>
-      <Box display="flex" flexDirection="column">
+      <Box
+        display="flex"
+        flexDirection="column"
+        marginLeft={[0, 0, 0, 1]}
+        marginBottom={[1, 1, 1, 0]}
+      >
         <RestrictionTags workingCase={workingCase} />
       </Box>
     </Box>

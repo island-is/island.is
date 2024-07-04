@@ -1,45 +1,21 @@
 export { Feature } from './lib/feature'
 
-export { Gender } from './lib/defendant'
-export type {
-  Defendant,
-  CreateDefendant,
-  UpdateDefendant,
-  DeleteDefendantResponse,
-} from './lib/defendant'
-
+export { Gender, DefenderChoice, SubpoenaType } from './lib/defendant'
 export { InstitutionType } from './lib/institution'
-export type { Institution } from './lib/institution'
 export { NotificationType } from './lib/notification'
-export type {
-  Recipient,
-  Notification,
-  SendNotification,
-  SendNotificationResponse,
-} from './lib/notification'
-export type { EventLog } from './lib/eventLog'
+export type { Institution } from './lib/institution'
 export { EventType } from './lib/eventLog'
+export { DateType } from './lib/dateLog'
+export { CommentType } from './lib/comment'
 
 export { CaseFileState, CaseFileCategory } from './lib/file'
-
-export type {
-  PresignedPost,
-  CreatePresignedPost,
-  DeleteFile,
-  DeleteFileResponse,
-  GetSignedUrl,
-  SignedUrl,
-  UploadFileToCourt,
-  UploadFileToCourtResponse,
-  CaseFile,
-  UpdateFile,
-  CreateFile,
-} from './lib/file'
 
 export {
   UserRole,
   prosecutionRoles,
   isProsecutionUser,
+  publicProsecutorRoles,
+  isPublicProsecutorUser,
   districtCourtRoles,
   isDistrictCourtUser,
   courtOfAppealsRoles,
@@ -50,57 +26,66 @@ export {
   isDefenceUser,
   isAdminUser,
   isCoreUser,
+  isPublicProsecutor,
 } from './lib/user'
-export type { User, CreateUser, UpdateUser } from './lib/user'
+export type { User } from './lib/user'
 
 export {
   CaseOrigin,
   CaseType,
   IndictmentSubtype,
   CaseState,
+  IndictmentCaseState,
+  CaseAppealState,
+  RequestCaseState,
   CaseTransition,
+  IndictmentCaseTransition,
+  RequestCaseTransition,
   CaseLegalProvisions,
   CaseCustodyRestrictions,
   CaseAppealDecision,
   CaseDecision,
   CaseAppealRulingDecision,
+  CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
-  canDefenderViewRequest,
+  DefendantPlea,
+  ServiceRequirement,
   SessionArrangements,
+  indictmentCases,
   restrictionCases,
   investigationCases,
-  indictmentCases,
+  IndictmentCaseReviewDecision,
+  IndictmentDecision,
   isIndictmentCase,
   isRestrictionCase,
   isInvestigationCase,
+  isRequestCase,
   isAcceptingCaseDecision,
+  isTrafficViolationCase,
+  completedRequestCaseStates,
+  completedIndictmentCaseStates,
   completedCaseStates,
-  hasCaseBeenAppealed,
-  CaseAppealState,
-  getAppealInfo,
+  isCompletedCase,
+  hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
-  getAppealedDate,
-  defenderCaseFileCategoriesForIndictmentCases,
-  defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
-} from './lib/case'
-export type {
-  Case,
-  CaseListEntry,
-  CrimeScene,
-  CrimeSceneMap,
-  IndictmentSubtypeMap,
-  CreateCase,
-  UpdateCase,
-  TransitionCase,
-  RequestSignatureResponse,
-  SignatureConfirmationResponse,
+  prosecutorCanSelectDefenderForInvestigationCase,
+  isIndictmentCaseState,
+  isRequestCaseState,
+  isIndictmentCaseTransition,
+  isRequestCaseTransition,
+  DistrictCourtLocation,
+  CourtSessionType,
+  courtSessionTypeNames,
 } from './lib/case'
 
+export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+
 export type {
-  PoliceCaseFile,
-  UploadPoliceCaseFile,
-  UploadPoliceCaseFileResponse,
-} from './lib/policeFile'
+  CrimeScene,
+  CrimeSceneMap,
+  DistrictCourts,
+  IndictmentSubtypeMap,
+} from './lib/case'
 
 export {
   IndictmentCountOffense,
@@ -108,7 +93,7 @@ export {
   offenseSubstances,
 } from './lib/indictmentCount'
 
-export { type LawyerFull, type Lawyer, mapToLawyer } from './lib/defender'
+export { type Lawyer, mapToLawyer } from './lib/defender'
 
 export type { SubstanceMap } from './lib/indictmentCount'
 

@@ -1,23 +1,23 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Int } from '@nestjs/graphql'
 import { InsuranceStatus } from './insuranceStatus.model'
 
 @ObjectType('RightsPortalInsuranceOverview')
 export class InsuranceOverview {
-  @Field(() => Boolean, { nullable: true })
-  isInsured?: boolean | null
+  @Field()
+  isInsured!: boolean
 
-  @Field(() => String, { nullable: true })
-  explanation?: string | null
-
-  @Field(() => Date, { nullable: true })
-  updated?: Date | null
+  @Field({ nullable: true })
+  explanation?: string
 
   @Field(() => Date, { nullable: true })
-  from?: Date | null
+  from?: Date
 
   @Field(() => InsuranceStatus, { nullable: true })
   status?: InsuranceStatus
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   maximumPayment?: number | null
+
+  @Field(() => Date, { nullable: true })
+  ehicCardExpiryDate?: Date
 }

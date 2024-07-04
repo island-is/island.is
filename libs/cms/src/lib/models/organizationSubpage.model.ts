@@ -20,6 +20,9 @@ export class OrganizationSubpage {
   @Field()
   title!: string
 
+  @Field(() => String, { nullable: true })
+  shortTitle?: string
+
   @Field()
   slug!: string
 
@@ -63,12 +66,14 @@ export const mapOrganizationSubpage = ({
 }: IOrganizationSubpage): OrganizationSubpage => ({
   id: sys.id,
   title: fields.title ?? '',
-  slug: fields.slug ?? '',
-  url: [fields.organizationPage?.fields?.slug, fields.slug],
+  shortTitle: fields.shortTitle || fields.title,
+  slug: (fields.slug ?? '').trim(),
+  url: [fields.organizationPage?.fields?.slug ?? '', fields.slug ?? ''],
   intro: fields.intro ?? '',
-  description: fields.description
-    ? mapDocument(fields.description, sys.id + ':content')
-    : [],
+  description:
+    fields.description && fields.sliceCustomRenderer !== 'SliceTableOfContents'
+      ? mapDocument(fields.description, sys.id + ':content')
+      : [],
   links: (fields.links ?? []).map(mapLink),
   slices: (fields.slices ?? []).map(safelyMapSliceUnion).filter(Boolean),
   showTableOfContents: fields.showTableOfContents ?? false,

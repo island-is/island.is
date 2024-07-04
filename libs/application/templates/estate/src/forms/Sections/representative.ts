@@ -24,6 +24,7 @@ export const representative = buildSection({
           },
           {
             requiredNationalId: false,
+            alertWhenUnder18: true,
           },
         ),
         buildPhoneField({

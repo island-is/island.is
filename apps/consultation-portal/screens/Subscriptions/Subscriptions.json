@@ -29,7 +29,7 @@
     },
     "loginActionCard": {
       "heading": "Skrá áskrift",
-      "text": "Þú verður að vera skráð(ur) inn á island.is til þess að geta skráð þig í eða úr áskrift.",
+      "text": "Þú þarft að skrá þig inn á island.is til þess að geta skráð þig í eða úr áskrift.",
       "buttonLabel": "Skrá mig inn"
     },
     "setEmailActionCard": {

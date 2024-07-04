@@ -13,7 +13,7 @@ import { DefendantService } from '../../../defendant'
 import { User } from '../../../user'
 import { Case } from '../../models/case.model'
 
-jest.mock('../../../factories')
+jest.mock('../../../../factories')
 
 interface Then {
   result: User
@@ -26,6 +26,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
   const date = randomDate()
   const defenderId = uuid()
   const defenderNationalId = '1234567890'
+  const formattedDefenderNationalId = '123456-7890'
   const defenderName = 'John Doe'
   const defenderPhoneNumber = '1234567'
   const defenderEmail = 'dummy@dummy.dy'
@@ -74,7 +75,10 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
     it('should look for defender', () => {
       expect(mockCaseModel.findOne).toHaveBeenCalledWith({
         where: {
-          defenderNationalId,
+          [Op.or]: [
+            { defenderNationalId: formattedDefenderNationalId },
+            { defenderNationalId: defenderNationalId },
+          ],
           state: { [Op.not]: CaseState.DELETED },
           isArchived: false,
         },
@@ -118,6 +122,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         email: defenderEmail,
         role: UserRole.DEFENDER,
         active: true,
+        canConfirmIndictment: false,
       })
     })
   })
@@ -150,6 +155,7 @@ describe('LimitedAccessCaseController - Find defender by national id', () => {
         email: defenderEmail,
         role: UserRole.DEFENDER,
         active: true,
+        canConfirmIndictment: false,
       })
     })
   })

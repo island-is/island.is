@@ -1,10 +1,6 @@
-import type { CourtDocument } from './courtDocument'
-import type { Defendant } from './defendant'
-import { EventLog } from './eventLog'
-import { type CaseFile, CaseFileCategory } from './file'
-import type { Institution } from './institution'
-import type { Notification } from './notification'
-import { type User, UserRole } from './user'
+import flatten from 'lodash/flatten'
+
+import { CaseFileCategory } from './file'
 
 export enum CaseOrigin {
   UNKNOWN = 'UNKNOWN',
@@ -42,20 +38,24 @@ export enum CaseType {
 export enum IndictmentSubtype {
   AGGRAVATED_ASSAULT = 'AGGRAVATED_ASSAULT',
   ALCOHOL_LAWS = 'ALCOHOL_LAWS',
+  ANIMAL_PROTECTION = 'ANIMAL_PROTECTION',
   ASSAULT_LEADING_TO_DEATH = 'ASSAULT_LEADING_TO_DEATH',
   ATTEMPTED_MURDER = 'ATTEMPTED_MURDER',
+  BODILY_INJURY = 'BODILY_INJURY',
   BREAKING_AND_ENTERING = 'BREAKING_AND_ENTERING',
   CHILD_PROTECTION_LAWS = 'CHILD_PROTECTION_LAWS',
   COVER_UP = 'COVER_UP',
   CUSTOMS_VIOLATION = 'CUSTOMS_VIOLATION',
   DOMESTIC_VIOLENCE = 'DOMESTIC_VIOLENCE',
   EMBEZZLEMENT = 'EMBEZZLEMENT',
+  FOREIGN_NATIONALS = 'FOREIGN_NATIONALS',
   FRAUD = 'FRAUD',
   INDECENT_EXPOSURE = 'INDECENT_EXPOSURE',
   INTIMATE_RELATIONS = 'INTIMATE_RELATIONS',
   LEGAL_ENFORCEMENT_LAWS = 'LEGAL_ENFORCEMENT_LAWS',
   LOOTING = 'LOOTING',
   MAJOR_ASSAULT = 'MAJOR_ASSAULT',
+  MEDICINES_OFFENSE = 'MEDICINES_OFFENSE',
   MINOR_ASSAULT = 'MINOR_ASSAULT',
   MONEY_LAUNDERING = 'MONEY_LAUNDERING',
   MURDER = 'MURDER',
@@ -92,33 +92,91 @@ export interface CrimeSceneMap {
 export enum CaseState {
   NEW = 'NEW',
   DRAFT = 'DRAFT',
+  WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
+  WAITING_FOR_CANCELLATION = 'WAITING_FOR_CANCELLATION',
+  COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
   REJECTED = 'REJECTED',
-  DELETED = 'DELETED',
   DISMISSED = 'DISMISSED',
+  DELETED = 'DELETED',
+}
+
+export enum IndictmentCaseState {
+  DRAFT = CaseState.DRAFT,
+  WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  WAITING_FOR_CANCELLATION = CaseState.WAITING_FOR_CANCELLATION,
+  COMPLETED = CaseState.COMPLETED,
+  DELETED = CaseState.DELETED,
+}
+
+export enum RequestCaseState {
+  NEW = CaseState.NEW,
+  DRAFT = CaseState.DRAFT,
+  SUBMITTED = CaseState.SUBMITTED,
+  RECEIVED = CaseState.RECEIVED,
+  ACCEPTED = CaseState.ACCEPTED,
+  REJECTED = CaseState.REJECTED,
+  DISMISSED = CaseState.DISMISSED,
+  DELETED = CaseState.DELETED,
 }
 
 export enum CaseAppealState {
   APPEALED = 'APPEALED',
   RECEIVED = 'RECEIVED',
   COMPLETED = 'COMPLETED',
+  WITHDRAWN = 'WITHDRAWN',
 }
 
 export enum CaseTransition {
   OPEN = 'OPEN',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
+  DENY_INDICTMENT = 'DENY_INDICTMENT',
   SUBMIT = 'SUBMIT',
+  ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   RECEIVE = 'RECEIVE',
+  RETURN_INDICTMENT = 'RETURN_INDICTMENT',
+  COMPLETE = 'COMPLETE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
-  DELETE = 'DELETE',
   DISMISS = 'DISMISS',
+  DELETE = 'DELETE',
   REOPEN = 'REOPEN',
   APPEAL = 'APPEAL',
   RECEIVE_APPEAL = 'RECEIVE_APPEAL',
   COMPLETE_APPEAL = 'COMPLETE_APPEAL',
   REOPEN_APPEAL = 'REOPEN_APPEAL',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+}
+
+export enum IndictmentCaseTransition {
+  ASK_FOR_CONFIRMATION = CaseTransition.ASK_FOR_CONFIRMATION,
+  DENY_INDICTMENT = CaseTransition.DENY_INDICTMENT,
+  SUBMIT = CaseTransition.SUBMIT,
+  ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
+  RECEIVE = CaseTransition.RECEIVE,
+  RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
+  COMPLETE = CaseTransition.COMPLETE,
+  DELETE = CaseTransition.DELETE,
+}
+
+export enum RequestCaseTransition {
+  OPEN = CaseTransition.OPEN,
+  SUBMIT = CaseTransition.SUBMIT,
+  RECEIVE = CaseTransition.RECEIVE,
+  ACCEPT = CaseTransition.ACCEPT,
+  REJECT = CaseTransition.REJECT,
+  DISMISS = CaseTransition.DISMISS,
+  DELETE = CaseTransition.DELETE,
+  REOPEN = CaseTransition.REOPEN,
+  APPEAL = CaseTransition.APPEAL,
+  RECEIVE_APPEAL = CaseTransition.RECEIVE_APPEAL,
+  COMPLETE_APPEAL = CaseTransition.COMPLETE_APPEAL,
+  REOPEN_APPEAL = CaseTransition.REOPEN_APPEAL,
+  WITHDRAW_APPEAL = CaseTransition.WITHDRAW_APPEAL,
 }
 
 /* eslint-disable @typescript-eslint/naming-convention */
@@ -128,6 +186,7 @@ export enum CaseLegalProvisions {
   _95_1_C = '_95_1_C', // c-lið 1. mgr. 95. gr.
   _95_1_D = '_95_1_D', // d-lið 1. mgr. 95. gr.
   _95_2 = '_95_2', // 2. mgr. 95. gr.
+  _97_1 = '_97_1', // 1. mgr. 97. gr. sml.
   _99_1_B = '_99_1_B', // b-lið 1. mgr. 99. gr.
   _100_1 = '_100_1', // 1. mgr. 100. gr. sml.
 }
@@ -158,13 +217,35 @@ export enum CaseDecision {
   DISMISSING = 'DISMISSING',
 }
 
+export enum IndictmentDecision {
+  POSTPONING = 'POSTPONING',
+  SCHEDULING = 'SCHEDULING',
+  POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
+  COMPLETING = 'COMPLETING',
+  REDISTRIBUTING = 'REDISTRIBUTING',
+}
+
 export enum CaseAppealRulingDecision {
   ACCEPTING = 'ACCEPTING',
   REPEAL = 'REPEAL',
   CHANGED = 'CHANGED',
+  CHANGED_SIGNIFICANTLY = 'CHANGED_SIGNIFICANTLY',
   DISMISSED_FROM_COURT_OF_APPEAL = 'DISMISSED_FROM_COURT_OF_APPEAL',
   DISMISSED_FROM_COURT = 'DISMISSED_FROM_COURT',
   REMAND = 'REMAND',
+  DISCONTINUED = 'DISCONTINUED',
+}
+
+export enum CaseIndictmentRulingDecision {
+  RULING = 'RULING',
+  FINE = 'FINE',
+  DISMISSAL = 'DISMISSAL',
+  CANCELLATION = 'CANCELLATION',
+}
+
+export enum IndictmentCaseReviewDecision {
+  APPEAL = 'APPEAL',
+  ACCEPT = 'ACCEPT',
 }
 
 export enum SessionArrangements {
@@ -176,280 +257,61 @@ export enum SessionArrangements {
 
 export enum RequestSharedWithDefender {
   READY_FOR_COURT = 'READY_FOR_COURT',
-  COURT_DATE = 'COURT_DATE',
+  COURT_DATE = 'COURT_DATE', // TODO: Rename to ARRAIGNMENT_DATE at some point
   NOT_SHARED = 'NOT_SHARED',
 }
 
-export interface Case {
-  id: string
-  created: string
-  modified: string
-  origin: CaseOrigin
-  type: CaseType
-  indictmentSubtypes?: IndictmentSubtypeMap
-  description?: string
-  state: CaseState
-  policeCaseNumbers: string[]
-  defendants?: Defendant[]
-  defenderName?: string
-  defenderNationalId?: string
-  defenderEmail?: string
-  defenderPhoneNumber?: string
-  isHeightenedSecurityLevel?: boolean
-  court?: Institution
-  leadInvestigator?: string
-  arrestDate?: string
-  requestedCourtDate?: string
-  translator?: string
-  requestedValidToDate?: string
-  demands?: string
-  lawsBroken?: string
-  legalBasis?: string
-  legalProvisions?: CaseLegalProvisions[]
-  requestedCustodyRestrictions?: CaseCustodyRestrictions[]
-  requestedOtherRestrictions?: string
-  caseFacts?: string
-  legalArguments?: string
-  requestProsecutorOnlySession?: boolean
-  prosecutorOnlySessionRequest?: string
-  comments?: string
-  caseFilesComments?: string
-  creatingProsecutor?: User
-  prosecutor?: User
-  sharedWithProsecutorsOffice?: Institution
-  courtCaseNumber?: string
-  sessionArrangements?: SessionArrangements
-  courtDate?: string
-  courtLocation?: string
-  courtRoom?: string
-  courtStartDate?: string
-  courtEndTime?: string
-  isClosedCourtHidden?: boolean
-  courtAttendees?: string
-  prosecutorDemands?: string
-  courtDocuments?: CourtDocument[]
-  sessionBookings?: string
-  courtCaseFacts?: string
-  introduction?: string
-  courtLegalArguments?: string
-  ruling?: string
-  decision?: CaseDecision
-  validToDate?: string
-  isValidToDateInThePast?: boolean
-  isCustodyIsolation?: boolean
-  isolationToDate?: string
-  conclusion?: string
-  endOfSessionBookings?: string
-  accusedAppealDecision?: CaseAppealDecision
-  accusedAppealAnnouncement?: string
-  prosecutorAppealDecision?: CaseAppealDecision
-  prosecutorAppealAnnouncement?: string
-  accusedPostponedAppealDate?: string
-  prosecutorPostponedAppealDate?: string
-  isAppealDeadlineExpired?: boolean
-  isAppealGracePeriodExpired?: boolean
-  rulingDate?: string
-  rulingSignatureDate?: string
-  initialRulingDate?: string
-  registrar?: User
-  judge?: User
-  courtRecordSignatory?: User
-  courtRecordSignatureDate?: string
-  parentCase?: Case
-  childCase?: Case
-  notifications?: Notification[]
-  caseFiles?: CaseFile[]
-  caseModifiedExplanation?: string
-  rulingModifiedHistory?: string
-  caseResentExplanation?: string
-  openedByDefender?: string
-  defendantWaivesRightToCounsel?: boolean
-  crimeScenes?: CrimeSceneMap
-  indictmentIntroduction?: string
-  requestDriversLicenseSuspension?: boolean
-  appealState?: CaseAppealState
-  isStatementDeadlineExpired?: boolean
-  canBeAppealed?: boolean
-  hasBeenAppealed?: boolean
-  appealDeadline?: string
-  appealedByRole?: UserRole
-  appealedDate?: string
-  statementDeadline?: string
-  prosecutorStatementDate?: string
-  defendantStatementDate?: string
-  appealCaseNumber?: string
-  appealAssistant?: User
-  appealJudge1?: User
-  appealJudge2?: User
-  appealJudge3?: User
-  appealReceivedByCourtDate?: string
-  appealConclusion?: string
-  appealRulingDecision?: CaseAppealRulingDecision
-  appealRulingModifiedHistory?: string
-  requestSharedWithDefender?: RequestSharedWithDefender
-  eventLogs?: EventLog[]
-  appealValidToDate?: string
-  isAppealCustodyIsolation?: boolean
-  appealIsolationToDate?: string
+export enum DefendantPlea {
+  GUILTY = 'GUILTY',
+  NOT_GUILTY = 'NOT_GUILTY',
+  NO_PLEA = 'NO_PLEA',
 }
 
-export interface CaseListEntry
-  extends Pick<
-    Case,
-    | 'id'
-    | 'created'
-    | 'policeCaseNumbers'
-    | 'state'
-    | 'type'
-    | 'defendants'
-    | 'courtCaseNumber'
-    | 'decision'
-    | 'validToDate'
-    | 'isValidToDateInThePast'
-    | 'courtDate'
-    | 'initialRulingDate'
-    | 'rulingDate'
-    | 'rulingSignatureDate'
-    | 'courtEndTime'
-    | 'prosecutorAppealDecision'
-    | 'accusedAppealDecision'
-    | 'prosecutorPostponedAppealDate'
-    | 'accusedPostponedAppealDate'
-    | 'judge'
-    | 'prosecutor'
-    | 'registrar'
-    | 'creatingProsecutor'
-    | 'appealState'
-    | 'appealedDate'
-    | 'appealCaseNumber'
-    | 'appealRulingDecision'
-  > {
-  parentCaseId?: string
+export enum ServiceRequirement {
+  REQUIRED = 'REQUIRED',
+  NOT_REQUIRED = 'NOT_REQUIRED',
+  NOT_APPLICABLE = 'NOT_APPLICABLE',
 }
 
-export type CreateCase = Pick<
-  Case,
-  | 'type'
-  | 'indictmentSubtypes'
-  | 'description'
-  | 'policeCaseNumbers'
-  | 'defenderName'
-  | 'defenderNationalId'
-  | 'defenderEmail'
-  | 'defenderPhoneNumber'
-  | 'leadInvestigator'
-  | 'crimeScenes'
-  | 'requestSharedWithDefender'
->
-
-export interface UpdateCase
-  extends Pick<
-    Case,
-    | 'indictmentSubtypes'
-    | 'description'
-    | 'defenderName'
-    | 'defenderNationalId'
-    | 'defenderEmail'
-    | 'defenderPhoneNumber'
-    | 'isHeightenedSecurityLevel'
-    | 'leadInvestigator'
-    | 'arrestDate'
-    | 'requestedCourtDate'
-    | 'translator'
-    | 'requestedValidToDate'
-    | 'demands'
-    | 'lawsBroken'
-    | 'legalBasis'
-    | 'legalProvisions'
-    | 'requestedCustodyRestrictions'
-    | 'requestedOtherRestrictions'
-    | 'caseFacts'
-    | 'legalArguments'
-    | 'requestProsecutorOnlySession'
-    | 'prosecutorOnlySessionRequest'
-    | 'comments'
-    | 'caseFilesComments'
-    | 'courtCaseNumber'
-    | 'sessionArrangements'
-    | 'courtDate'
-    | 'courtLocation'
-    | 'courtRoom'
-    | 'courtStartDate'
-    | 'courtEndTime'
-    | 'isClosedCourtHidden'
-    | 'courtAttendees'
-    | 'prosecutorDemands'
-    | 'courtDocuments'
-    | 'sessionBookings'
-    | 'courtCaseFacts'
-    | 'introduction'
-    | 'courtLegalArguments'
-    | 'ruling'
-    | 'decision'
-    | 'validToDate'
-    | 'isCustodyIsolation'
-    | 'isolationToDate'
-    | 'conclusion'
-    | 'endOfSessionBookings'
-    | 'accusedAppealDecision'
-    | 'accusedAppealAnnouncement'
-    | 'prosecutorAppealDecision'
-    | 'prosecutorAppealAnnouncement'
-    | 'caseModifiedExplanation'
-    | 'rulingModifiedHistory'
-    | 'caseResentExplanation'
-    | 'openedByDefender'
-    | 'defendantWaivesRightToCounsel'
-    | 'crimeScenes'
-    | 'indictmentIntroduction'
-    | 'requestDriversLicenseSuspension'
-    | 'appealState'
-    | 'prosecutorStatementDate'
-    | 'defendantStatementDate'
-    | 'appealCaseNumber'
-    | 'appealConclusion'
-    | 'appealRulingDecision'
-    | 'appealRulingModifiedHistory'
-    | 'requestSharedWithDefender'
-    | 'appealValidToDate'
-    | 'isAppealCustodyIsolation'
-    | 'appealIsolationToDate'
-  > {
-  type?: CaseType
-  policeCaseNumbers?: string[]
-  courtId?: string
-  prosecutorId?: string
-  sharedWithProsecutorsOfficeId?: string | null
-  registrarId?: string | null
-  judgeId?: string
-  appealAssistantId?: string
-  appealJudge1Id?: string
-  appealJudge2Id?: string
-  appealJudge3Id?: string
+export enum CourtSessionType {
+  MAIN_HEARING = 'MAIN_HEARING',
+  OTHER = 'OTHER',
+  APPRAISER_SUMMONS = 'APPRAISER_SUMMONS',
+  VERDICT = 'VERDICT',
+  MAIN_HEARING_CONTINUATION = 'MAIN_HEARING_CONTINUATION',
+  HEARING = 'HEARING',
+  ORAL_ARGUMENTS = 'ORAL_ARGUMENTS',
+  RULING = 'RULING',
+  ARRAIGNMENT = 'ARRAIGNMENT',
 }
 
-export interface TransitionCase {
-  transition: CaseTransition
-}
-
-export interface RequestSignatureResponse {
-  controlCode: string
-  documentToken: string
-}
-
-export interface SignatureConfirmationResponse {
-  documentSigned: boolean
-  code?: number
-  message?: string
+export const courtSessionTypeNames = {
+  MAIN_HEARING: 'Aðalmeðferð',
+  OTHER: 'Annað',
+  APPRAISER_SUMMONS: 'Dómkvaðning matsmanna',
+  VERDICT: 'Dómsuppsaga',
+  MAIN_HEARING_CONTINUATION: 'Framhald aðalmeðferðar',
+  HEARING: 'Fyrirtaka',
+  ORAL_ARGUMENTS: 'Munnlegur málflutningur',
+  RULING: 'Uppkvaðning úrskurðar',
+  ARRAIGNMENT: 'Þingfesting',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]
+
+export const isIndictmentCase = (type?: string | null): boolean => {
+  return Boolean(type) && indictmentCases.includes(type as CaseType)
+}
 
 export const restrictionCases = [
   CaseType.ADMISSION_TO_FACILITY,
   CaseType.CUSTODY,
   CaseType.TRAVEL_BAN,
 ]
+
+export const isRestrictionCase = (type?: CaseType | null): boolean => {
+  return Boolean(type && restrictionCases.includes(type))
+}
 
 export const investigationCases = [
   CaseType.AUTOPSY,
@@ -471,155 +333,151 @@ export const investigationCases = [
   CaseType.VIDEO_RECORDING_EQUIPMENT,
 ]
 
-export const defenderCaseFileCategoriesForRestrictionAndInvestigationCases = [
-  CaseFileCategory.PROSECUTOR_APPEAL_BRIEF,
-  CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
-  CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-  CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-  CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-  CaseFileCategory.APPEAL_RULING,
-]
-
-export const defenderCaseFileCategoriesForIndictmentCases = [
-  CaseFileCategory.COURT_RECORD,
-  CaseFileCategory.RULING,
-  CaseFileCategory.COVER_LETTER,
-  CaseFileCategory.INDICTMENT,
-  CaseFileCategory.CRIMINAL_RECORD,
-  CaseFileCategory.COST_BREAKDOWN,
-  CaseFileCategory.CASE_FILE,
-]
-
-export function isIndictmentCase(type: string): boolean {
-  const caseType = type as CaseType
-  return indictmentCases.includes(caseType)
+export const isInvestigationCase = (type?: CaseType | null): boolean => {
+  return Boolean(type && investigationCases.includes(type))
 }
 
-export function isRestrictionCase(type: string): boolean {
-  const caseType = type as CaseType
-  return restrictionCases.includes(caseType)
+export const isRequestCase = (type?: CaseType | null): boolean => {
+  return Boolean(type && (isRestrictionCase(type) || isInvestigationCase(type)))
 }
-
-export function isInvestigationCase(type: string): boolean {
-  const caseType = type as CaseType
-  return investigationCases.includes(caseType)
-}
-
-export function isAcceptingCaseDecision(decision?: CaseDecision): boolean {
-  return Boolean(decision && acceptedCaseDecisions.includes(decision))
-}
-
-export const completedCaseStates = [
-  CaseState.ACCEPTED,
-  CaseState.REJECTED,
-  CaseState.DISMISSED,
-]
 
 export const acceptedCaseDecisions = [
   CaseDecision.ACCEPTING,
   CaseDecision.ACCEPTING_PARTIALLY,
 ]
 
-const RequestSharedWithDefenderAllowedStates: {
-  [key in RequestSharedWithDefender]: CaseState[]
-} = {
-  [RequestSharedWithDefender.READY_FOR_COURT]: [
-    CaseState.SUBMITTED,
-    CaseState.RECEIVED,
-    ...completedCaseStates,
-  ],
-  [RequestSharedWithDefender.COURT_DATE]: [
-    CaseState.RECEIVED,
-    ...completedCaseStates,
-  ],
-  [RequestSharedWithDefender.NOT_SHARED]: completedCaseStates,
+export const isAcceptingCaseDecision = (
+  decision?: CaseDecision | null,
+): boolean => {
+  return Boolean(decision && acceptedCaseDecisions.includes(decision))
 }
 
-export function canDefenderViewRequest(theCase: Case) {
-  const { requestSharedWithDefender, state, courtDate } = theCase
+export const completedRequestCaseStates = [
+  CaseState.ACCEPTED,
+  CaseState.REJECTED,
+  CaseState.DISMISSED,
+]
 
-  if (!requestSharedWithDefender) {
+export const completedIndictmentCaseStates = [CaseState.COMPLETED]
+
+export const completedCaseStates = completedRequestCaseStates.concat(
+  completedIndictmentCaseStates,
+)
+
+export const isCompletedCase = (state?: CaseState | null): boolean => {
+  return Boolean(state && completedCaseStates.includes(state))
+}
+
+export const hasIndictmentCaseBeenSubmittedToCourt = (
+  state?: CaseState | null,
+): boolean => {
+  return Boolean(
+    state &&
+      [
+        CaseState.SUBMITTED,
+        CaseState.RECEIVED,
+        ...completedIndictmentCaseStates,
+      ].includes(state),
+  )
+}
+
+export const isTrafficViolationCase = (theCase: {
+  type?: CaseType | null
+  indictmentSubtypes?: IndictmentSubtypeMap
+  caseFiles?: { category?: CaseFileCategory | null }[] | null
+}): boolean => {
+  if (
+    theCase.type !== CaseType.INDICTMENT ||
+    !theCase.indictmentSubtypes ||
+    theCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.INDICTMENT,
+    )
+  ) {
     return false
   }
 
-  const allowedStates =
-    RequestSharedWithDefenderAllowedStates[requestSharedWithDefender]
+  const flatIndictmentSubtypes = flatten(
+    Object.values(theCase.indictmentSubtypes),
+  )
 
   return (
-    allowedStates?.includes(state) &&
-    (requestSharedWithDefender !== RequestSharedWithDefender.COURT_DATE ||
-      Boolean(courtDate))
-  )
-}
-
-export function hasCaseBeenAppealed(theCase: Case): boolean {
-  return (
-    completedCaseStates.includes(theCase.state) &&
-    (theCase.accusedAppealDecision === CaseAppealDecision.APPEAL ||
-      theCase.prosecutorAppealDecision === CaseAppealDecision.APPEAL ||
-      Boolean(theCase.accusedPostponedAppealDate) ||
-      Boolean(theCase.prosecutorPostponedAppealDate))
-  )
-}
-
-export function getAppealInfo(theCase: Case): Case {
-  const {
-    rulingDate,
-    appealState,
-    accusedAppealDecision,
-    prosecutorAppealDecision,
-    prosecutorPostponedAppealDate,
-    accusedPostponedAppealDate,
-    appealReceivedByCourtDate,
-  } = theCase
-
-  const appealInfo = {} as Case
-
-  if (!rulingDate) return appealInfo
-
-  appealInfo.canBeAppealed = Boolean(
-    !appealState &&
-      (accusedAppealDecision === CaseAppealDecision.POSTPONE ||
-        prosecutorAppealDecision === CaseAppealDecision.POSTPONE),
-  )
-
-  appealInfo.hasBeenAppealed = Boolean(appealState)
-
-  appealInfo.appealedByRole = prosecutorPostponedAppealDate
-    ? UserRole.PROSECUTOR
-    : accusedPostponedAppealDate
-    ? UserRole.DEFENDER
-    : undefined
-
-  appealInfo.appealedDate =
-    appealInfo.appealedByRole === UserRole.PROSECUTOR
-      ? prosecutorPostponedAppealDate ?? undefined
-      : accusedPostponedAppealDate ?? undefined
-
-  const theRulingDate = new Date(rulingDate)
-  appealInfo.appealDeadline = new Date(
-    theRulingDate.setDate(theRulingDate.getDate() + 3),
-  ).toISOString()
-
-  if (appealReceivedByCourtDate) {
-    appealInfo.statementDeadline = getStatementDeadline(
-      new Date(appealReceivedByCourtDate),
+    flatIndictmentSubtypes.length > 0 &&
+    flatIndictmentSubtypes.every(
+      (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
     )
-  }
-
-  return appealInfo
+  )
 }
 
-export function getStatementDeadline(appealReceived: Date) {
+export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
 }
 
-export function getAppealedDate(
-  prosecutorPostponedAppealDate?: string,
-  accusedPostponedAppealDate?: string,
-): string | undefined {
-  return prosecutorPostponedAppealDate ?? accusedPostponedAppealDate
+export const prosecutorCanSelectDefenderForInvestigationCase = (
+  type?: CaseType | null,
+): boolean => {
+  return Boolean(
+    type &&
+      [
+        CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
+        CaseType.EXPULSION_FROM_HOME,
+        CaseType.PAROLE_REVOCATION,
+        CaseType.PSYCHIATRIC_EXAMINATION,
+        CaseType.RESTRAINING_ORDER,
+        CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
+        CaseType.OTHER,
+      ].includes(type),
+  )
+}
+
+export const isIndictmentCaseState = (
+  state: string,
+): state is IndictmentCaseState => {
+  return Object.values(IndictmentCaseState).includes(
+    state as IndictmentCaseState,
+  )
+}
+
+export const isRequestCaseState = (
+  state: string,
+): state is RequestCaseState => {
+  return Object.values(RequestCaseState).includes(state as RequestCaseState)
+}
+
+export const isIndictmentCaseTransition = (
+  transition: string,
+): transition is IndictmentCaseTransition => {
+  return Object.values(IndictmentCaseTransition).includes(
+    transition as IndictmentCaseTransition,
+  )
+}
+
+export const isRequestCaseTransition = (
+  transition: string,
+): transition is RequestCaseTransition => {
+  return Object.values(RequestCaseTransition).includes(
+    transition as RequestCaseTransition,
+  )
+}
+
+export type DistrictCourts =
+  | 'Héraðsdómur Reykjavíkur'
+  | 'Héraðsdómur Reykjaness'
+  | 'Héraðsdómur Vesturlands'
+  | 'Héraðsdómur Vestfjarða'
+  | 'Héraðsdómur Norðurlands vestra'
+  | 'Héraðsdómur Norðurlands eystra'
+  | 'Héraðsdómur Austurlands'
+  | 'Héraðsdómur Suðurlands'
+
+export const DistrictCourtLocation: Record<DistrictCourts, string> = {
+  'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
+  'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
+  'Héraðsdómur Vesturlands': 'Bjarnarbraut 8, Borgarnesi',
+  'Héraðsdómur Vestfjarða': 'Hafnarstræti 9, Ísafirði',
+  'Héraðsdómur Norðurlands vestra': 'Skagfirðingabraut 21, Sauðárkróki',
+  'Héraðsdómur Norðurlands eystra': 'Hafnarstræti 107, 4. hæð, Akureyri',
+  'Héraðsdómur Austurlands': 'Lyngás 15, Egilsstöðum',
+  'Héraðsdómur Suðurlands': 'Austurvegur 4, Selfossi',
 }

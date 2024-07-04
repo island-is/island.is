@@ -37,7 +37,7 @@ import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useRouter } from 'next/router'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { webRichText } from '@island.is/web/utils/richText'
 import { useI18n } from '@island.is/web/i18n'
@@ -203,21 +203,7 @@ export const AnchorPage: Screen<AnchorPageProps> = ({
                   />
                 </Box>
                 <Box className="rs_read" paddingTop={[3, 3, 4]}>
-                  {webRichText(
-                    content as SliceType[],
-                    {
-                      renderComponent: {
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        Form: (form) => (
-                          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                          // @ts-ignore make web strict
-                          <Form form={form} namespace={namespace} />
-                        ),
-                      },
-                    },
-                    activeLocale,
-                  )}
+                  {webRichText(content as SliceType[], undefined, activeLocale)}
                 </Box>
               </GridColumn>
             </GridRow>

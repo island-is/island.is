@@ -1,57 +1,60 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-import type {
-  CaseFile as TCaseFile,
+import {
   CaseFileCategory,
   CaseFileState,
 } from '@island.is/judicial-system/types'
 
+registerEnumType(CaseFileCategory, { name: 'CaseFileCategory' })
+registerEnumType(CaseFileState, { name: 'CaseFileState' })
+
 @ObjectType()
-export class CaseFile implements TCaseFile {
+export class CaseFile {
   @Field(() => ID)
   readonly id!: string
-  @Field()
-  readonly created!: string
-
-  @Field()
-  readonly modified!: string
-
-  @Field()
-  readonly caseId!: string
-
-  @Field()
-  readonly name!: string
-
-  @Field()
-  readonly type!: string
 
   @Field(() => String, { nullable: true })
+  readonly created?: string
+
+  @Field(() => String, { nullable: true })
+  readonly modified?: string
+
+  @Field(() => ID, { nullable: true })
+  readonly caseId?: string
+
+  @Field(() => String, { nullable: true })
+  readonly name?: string
+
+  @Field(() => String, { nullable: true })
+  readonly type?: string
+
+  @Field(() => CaseFileCategory, { nullable: true })
   readonly category?: CaseFileCategory
 
-  @Field(() => String)
-  readonly state!: CaseFileState
+  @Field(() => CaseFileState, { nullable: true })
+  readonly state?: CaseFileState
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly key?: string
 
-  @Field()
-  readonly size!: number
+  @Field(() => Int, { nullable: true })
+  readonly size?: number
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeCaseNumber?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly userGeneratedFilename?: string
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   readonly chapter?: number
 
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   readonly orderWithinChapter?: number
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly displayDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly policeFileId?: string
 }

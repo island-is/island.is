@@ -147,7 +147,7 @@ export const GalleryModal: FC<Props> = ({
           paddingLeft={1}
           paddingRight={1}
         >
-          <Swiper width={70}>
+          <Swiper itemWidth={70}>
             {thumbnailsArray
               .map((thumbnail, i) => {
                 if (!thumbnail) {
@@ -157,7 +157,7 @@ export const GalleryModal: FC<Props> = ({
                 return (
                   <FocusableBox
                     key={i}
-                    ref={(el) => (imageRefs.current[i] = el)}
+                    ref={(el) => (imageRefs.current[i] = el) as any}
                     component="button"
                     color="blueberry"
                     aria-selected={activeItem === i}

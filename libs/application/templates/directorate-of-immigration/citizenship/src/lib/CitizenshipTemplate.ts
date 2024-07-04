@@ -29,13 +29,10 @@ import {
   NationalRegistrySpouseDetailsApi,
   NationalRegistryIndividualApi,
   NationalRegistryBirthplaceApi,
-  ResidenceConditionInfoApi,
   ResidenceInIcelandLastChangeDateApi,
   CountriesApi,
   TravelDocumentTypesApi,
-  CurrentCountryOfResidenceListApi,
-  CurrentStayAbroadListApi,
-  CurrentPassportItemApi,
+  ApplicantInformationApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItemCodes } from '../utils'
@@ -48,7 +45,7 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.CITIZENSHIP,
   name: applicationMessage.name,
   institution: applicationMessage.institutionName,
-  translationNamespaces: [ApplicationConfigurations.Citizenship.translation],
+  translationNamespaces: ApplicationConfigurations.Citizenship.translation,
   dataSchema: CitizenshipSchema,
   featureFlag: Features.citizenship,
   stateMachineConfig: {
@@ -70,7 +67,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.1,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -95,14 +91,11 @@ const template: ApplicationTemplate<
                 NationalRegistryParentsApi,
                 ChildrenCustodyInformationApi,
                 UserProfileApi,
-                ResidenceConditionInfoApi,
                 ResidenceInIcelandLastChangeDateApi,
                 CountriesApi,
-                TravelDocumentTypesApi,
-                CurrentCountryOfResidenceListApi,
-                CurrentStayAbroadListApi,
-                CurrentPassportItemApi,
                 UtlendingastofnunPaymentCatalogApi,
+                ApplicantInformationApi,
+                TravelDocumentTypesApi,
               ],
             },
           ],
@@ -127,7 +120,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: pruneAfterDays(1),
           onExit: defineTemplateApi({
             action: ApiActions.validateApplication,
@@ -163,7 +155,6 @@ const template: ApplicationTemplate<
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {

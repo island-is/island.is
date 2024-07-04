@@ -6,6 +6,7 @@ import {
   NationalRegistrySpouse,
   NationalRegistryParameters,
   NationalRegistryBirthplace,
+  NationalRegistryResidenceHistory,
   ChildrenCustodyInformationParameters,
   NationalRegistryParent,
   NationalRegistryMaritalTitle,
@@ -16,6 +17,7 @@ import { NationalRegistryClientService } from '@island.is/clients/national-regis
 import { AssetsXRoadService } from '@island.is/api/domains/assets'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
+import { EES } from './EES'
 
 @Injectable()
 export class NationalRegistryService extends BaseTemplateApiService {
@@ -31,7 +33,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
     params,
   }: TemplateApiModuleActionProps<NationalRegistryParameters>): Promise<NationalRegistryIndividual | null> {
     const individual = await this.getIndividual(auth.nationalId)
-
     //Check if individual is found in national registry
     if (!individual) {
       throw new TemplateApiError(
@@ -47,7 +48,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
     // Case when parent can apply for custody child without fulfilling some requirements
     if (params?.allowPassOnChild) {
       const children = await this.nationalRegistryApi.getCustodyChildren(auth)
-      this.validateChildren(params, children)
+      await this.validateChildren(params, children)
     }
 
     // Validate individual
@@ -72,6 +73,10 @@ export class NationalRegistryService extends BaseTemplateApiService {
     if (params?.ageToValidate && !isChild) {
       this.validateAge(params, individual)
     }
+
+    if (params?.citizenshipWithinEES) {
+      this.validateCitizenshipWithinEES(individual)
+    }
   }
 
   private async validateChildren(
@@ -83,6 +88,22 @@ export class NationalRegistryService extends BaseTemplateApiService {
       if (individual) {
         this.validateIndividual(individual, true, params)
       }
+    }
+  }
+
+  private validateCitizenshipWithinEES(individual: NationalRegistryIndividual) {
+    const isWithinEES = EES.some(
+      (country) => country.alpha2Code === individual.citizenship?.code,
+    )
+    if (!isWithinEES) {
+      // If individuals citizenship is not within EES
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCitizenshipNotWithinEES,
+          summary: coreErrorMessages.nationalRegistryCitizenshipNotWithinEES,
+        },
+        400,
+      )
     }
   }
 
@@ -210,6 +231,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           code: cohabitionCodeValue?.code,
           description: cohabitionCodeValue?.description,
         },
+        birthDate: person.birthdate,
       }
     )
   }
@@ -455,5 +477,89 @@ export class NationalRegistryService extends BaseTemplateApiService {
         municipalityCode: birthplace.municipalityNumber,
       }
     )
+  }
+
+  async getCurrentResidence({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<NationalRegistryResidenceHistory | null> {
+    const residency: NationalRegistryResidenceHistory | null =
+      await this.nationalRegistryApi.getCurrentResidence(auth.nationalId)
+
+    if (!residency) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
+    return residency
+  }
+
+  async getResidenceHistory({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<
+    NationalRegistryResidenceHistory[] | null
+  > {
+    const residenceHistory: NationalRegistryResidenceHistory[] | null =
+      await this.nationalRegistryApi.getResidenceHistory(auth.nationalId)
+
+    if (!residenceHistory) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+          summary: coreErrorMessages.nationalRegistryResidenceHistoryMissing,
+        },
+        404,
+      )
+    }
+
+    return residenceHistory
+  }
+
+  async getCohabitants({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<string[] | null> {
+    const cohabitants: string[] | null =
+      await this.nationalRegistryApi.getCohabitants(auth.nationalId)
+
+    if (!cohabitants) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCohabitantsMissing,
+          summary: coreErrorMessages.nationalRegistryCohabitantsMissing,
+        },
+        404,
+      )
+    }
+
+    return cohabitants
+  }
+
+  async getCohabitantsDetailed(
+    props: TemplateApiModuleActionProps,
+  ): Promise<(NationalRegistryIndividual | null)[]> {
+    const cohabitants = await this.getCohabitants(props)
+
+    if (!cohabitants) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.nationalRegistryCohabitantsMissing,
+          summary: coreErrorMessages.nationalRegistryCohabitantsMissing,
+        },
+        404,
+      )
+    }
+
+    const cohabitantsDetails = await Promise.all(
+      cohabitants.map(async (cohabitant) => {
+        const individual = await this.getIndividual(cohabitant)
+        return individual
+      }),
+    )
+
+    return cohabitantsDetails
   }
 }

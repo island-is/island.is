@@ -1,0 +1,17 @@
+fragment identityDocumentFragment on IdentityDocumentModel {
+  number
+  type
+  verboseType
+  subType
+  status
+  issuingDate
+  expirationDate
+  displayFirstName
+  displayLastName
+  mrzFirstName
+  mrzLastName
+  sex
+  numberWithType
+  expiryStatus
+  expiresWithinNoticeTime
+}

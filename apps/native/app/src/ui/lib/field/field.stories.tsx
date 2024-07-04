@@ -1,37 +1,37 @@
-import {withKnobs, text} from '@storybook/addon-knobs';
-import {storiesOf} from '@storybook/react-native';
-import React from 'react';
-import {SafeAreaView, View} from 'react-native';
-import {Field} from './field';
-import {FieldCard} from './field-card';
-import {FieldGroup} from './field-group';
-import {FieldLabel} from './field-label';
-import {FieldRow} from './field-row';
+import { text, withKnobs } from '@storybook/addon-knobs'
+import { storiesOf } from '@storybook/react-native'
+import React from 'react'
+import { SafeAreaView, View } from 'react-native'
+import { Field } from './field'
+import { FieldCard } from './field-card'
+import { FieldGroup } from './field-group'
+import { FieldLabel } from './field-label'
+import { FieldRow } from './field-row'
 
-const CenterView = ({children}: any) => (
-  <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+const CenterView = ({ children }: any) => (
+  <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
     {children}
   </View>
-);
+)
 
 storiesOf('Field', module)
-  .addDecorator(getStory => <CenterView>{getStory()}</CenterView>)
+  .addDecorator((getStory) => <CenterView>{getStory()}</CenterView>)
   .addDecorator(withKnobs)
   .add('Compact', () => {
-    const label = text('Field Label', '1. Eiginnafn');
-    const value = text('Field Value', 'Svanur');
-    return <Field compact size="large" label={label} value={value} />;
+    const label = text('Field Label', '1. Eiginnafn')
+    const value = text('Field Value', 'Svanur')
+    return <Field compact size="large" label={label} value={value} />
   })
   .add('2 Compact In Row', () => {
     return (
-      <View style={{width: '100%', paddingHorizontal: 16}}>
+      <View style={{ width: '100%', paddingHorizontal: 16 }}>
         <FieldRow>
           <Field
             compact
             size="large"
             label="2. Eiginnafn"
             value="Svanur"
-            style={{marginRight: 8}}
+            style={{ marginRight: 8 }}
           />
           <Field
             compact
@@ -41,11 +41,11 @@ storiesOf('Field', module)
           />
         </FieldRow>
       </View>
-    );
+    )
   })
   .add('3 In Group', () => {
     return (
-      <View style={{width: '100%', paddingHorizontal: 16}}>
+      <View style={{ width: '100%', paddingHorizontal: 16 }}>
         <FieldGroup>
           <FieldRow>
             <Field label="4a. Útgáfudagur" value="12.03.1990" />
@@ -54,11 +54,11 @@ storiesOf('Field', module)
           </FieldRow>
         </FieldGroup>
       </View>
-    );
+    )
   })
   .add('Card', () => {
     return (
-      <View style={{paddingHorizontal: 16, width: '100%'}}>
+      <View style={{ paddingHorizontal: 16, width: '100%' }}>
         <FieldCard code="B" title="Fólksbíll" type="DriversLicense">
           <FieldRow>
             <Field label="Útgáfudagur" value="12.03.1990" />
@@ -66,12 +66,12 @@ storiesOf('Field', module)
           </FieldRow>
         </FieldCard>
       </View>
-    );
+    )
   })
   .add('Full Example', () => {
     return (
-      <View style={{width: '100%'}}>
-        <SafeAreaView style={{marginHorizontal: 16}}>
+      <View style={{ width: '100%' }}>
+        <SafeAreaView style={{ marginHorizontal: 16 }}>
           <FieldGroup>
             <FieldRow>
               <Field
@@ -79,7 +79,7 @@ storiesOf('Field', module)
                 size="large"
                 label="2. Eiginnafn"
                 value="Svanur"
-                style={{marginRight: 8}}
+                style={{ marginRight: 8 }}
               />
               <Field
                 compact
@@ -97,7 +97,7 @@ storiesOf('Field', module)
               <Field label="5. Númer" value="36001475" />
             </FieldRow>
           </FieldGroup>
-          <View style={{marginTop: 24, paddingBottom: 4}}>
+          <View style={{ marginTop: 24, paddingBottom: 4 }}>
             <FieldLabel>9. Réttindaflokkar</FieldLabel>
             <FieldCard code="B" title="Fólksbíll" type="DriversLicense">
               <FieldRow>
@@ -114,5 +114,5 @@ storiesOf('Field', module)
           </View>
         </SafeAreaView>
       </View>
-    );
-  });
+    )
+  })

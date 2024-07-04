@@ -12,6 +12,8 @@ import {
   buildRedirectToServicePortalField,
   buildSelectField,
   buildPhoneField,
+  buildHiddenInput,
+  buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
 import {
   Comparators,
@@ -41,8 +43,6 @@ export const ExampleForm: Form = buildForm({
           title: m.introField,
           description: (application) => ({
             ...m.introIntroduction,
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore
             values: { name: application.answers.name },
           }),
         }),
@@ -52,7 +52,20 @@ export const ExampleForm: Form = buildForm({
           children: [
             buildTextField({
               id: 'person.name',
-              title: m.name,
+              title: m.personName,
+            }),
+            buildHiddenInput({
+              id: 'person.someHiddenInputRequired',
+              defaultValue: () => {
+                return 'validAnswer'
+              },
+            }),
+            buildHiddenInputWithWatchedValue({
+              id: 'person.someHiddenInputWatchedRequired',
+              watchValue: 'person.name',
+              valueModifier: (watchedValue: any) => {
+                return watchedValue + 'Valid'
+              },
             }),
             buildTextField({
               id: 'person.nationalId',

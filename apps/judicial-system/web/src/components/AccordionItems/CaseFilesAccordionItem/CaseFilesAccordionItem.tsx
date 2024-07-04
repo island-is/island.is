@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { Dispatch, FC, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -21,13 +21,11 @@ import { UploadStateMessage } from './UploadStateMessage'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   user: User
 }
 
-const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
+const CaseFilesAccordionItem: FC<Props> = (props) => {
   const { workingCase, setWorkingCase, user } = props
 
   const { formatMessage } = useIntl()
@@ -39,7 +37,7 @@ const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
   const canCaseFilesBeOpened = () => {
     const canProsecutorOpen =
       isProsecutionUser(user) &&
-      user.institution?.id === workingCase.creatingProsecutor?.institution?.id
+      user.institution?.id === workingCase.prosecutorsOffice?.id
 
     return (
       canProsecutorOpen ||
@@ -102,7 +100,7 @@ const CaseFilesAccordionItem: React.FC<React.PropsWithChildren<Props>> = (
         caseId={workingCase.id}
         files={caseFiles}
         canOpenFiles={canCaseFilesBeOpened()}
-        hideIcons={isProsecutionUser(user)}
+        hideIcons={!isDistrictCourtUser(user)}
         handleRetryClick={(id: string) =>
           uploadFilesToCourt([
             caseFiles[caseFiles.findIndex((file) => file.id === id)],

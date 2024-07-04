@@ -6,6 +6,9 @@ export enum AuthScope {
   adminPersonalRepresentative = '@island.is/auth/personal-representative-admin',
   publicPersonalRepresentative = '@island.is/auth/personal-representative-public',
   consents = '@island.is/auth/consents',
+  delegationIndexWrite = '@island.is/auth/delegations/index:system-write',
+  delegationIndex = '@island.is/auth/delegations/index:system',
+  passkeys = '@island.is/auth/passkeys',
 }
 
 export const delegationScopes = [

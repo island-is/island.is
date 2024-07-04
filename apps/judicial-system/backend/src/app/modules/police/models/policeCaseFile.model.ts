@@ -1,20 +1,19 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import type { PoliceCaseFile as TPoliceCaseFile } from '@island.is/judicial-system/types'
-
-export class PoliceCaseFile implements TPoliceCaseFile {
-  @ApiProperty()
+export class PoliceCaseFile {
+  @ApiProperty({ type: String })
   id!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   name!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: String })
   policeCaseNumber!: string
 
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Number })
   chapter?: number
 
-  @ApiPropertyOptional()
+  // TODO: Make this a Date and transform data coming from LÖKE
+  @ApiPropertyOptional({ type: String })
   displayDate?: string
 }

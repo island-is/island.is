@@ -1,4 +1,5 @@
-import { User } from '@island.is/auth-nest-tools'
+import { User, Auth } from '@island.is/auth-nest-tools'
+import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   DefaultApi,
@@ -11,18 +12,20 @@ import { handle404 } from '@island.is/clients/middlewares'
 export class InnaClientService {
   constructor(private readonly innaApi: DefaultApi) {}
 
-  getPeriods = (user: User): Promise<InlineResponse2001 | null> =>
-    this.innaApi
-      .periodsSsnGet({
-        ssn: user.nationalId,
+  private getInnaWithAuth(auth: Auth) {
+    return this.innaApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  getPeriods = (auth: User): Promise<InlineResponse2001 | null> =>
+    this.getInnaWithAuth(auth)
+      .periodsGet({
         locale: 'is',
       })
       .catch(handle404)
 
-  getDiplomas = (user: User): Promise<InlineResponse200 | null> =>
-    this.innaApi
-      .diplomainfolistSsnGet({
-        ssn: user.nationalId,
+  getDiplomas = (auth: User): Promise<InlineResponse200 | null> =>
+    this.getInnaWithAuth(auth)
+      .diplomainfolistGet({
         locale: 'is',
       })
       .catch(handle404)

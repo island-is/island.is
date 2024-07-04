@@ -34,17 +34,17 @@ export const dataProvider = defineMessages({
   userProfileSubTitle: {
     id: 'ctao.application:dataProvider.userProfileSubTitle',
     defaultMessage:
-      'Símanúmer, netfang. Upplýsingar um símanúmer eða netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
+      'Símanúmer, netfang. Upplýsingar um símanúmer og netfang er hægt að uppfæra á vefsíðu island.is ef þess þarf.',
     description: 'User Profile Subtitle',
   },
   notificationTitle: {
     id: 'ctao.application:dataProvider.notificationTitle',
-    defaultMessage: 'Samþykki fyrir tilkynningar',
+    defaultMessage: 'Samþykki fyrir tilkynningum',
     description: 'Approval of notifications',
   },
   notificationSubTitle: {
     id: 'ctao.application:dataProvider.notificationSubTitle',
-    defaultMessage: 'Send verða til þín skilaboð um stöðu mála osfrv.',
+    defaultMessage: 'Þér verða send skilaboð um stöðu mála o.s.frv.',
     description:
       'Notifications will be sent regarding the status of your application',
   },

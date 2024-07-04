@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
@@ -8,7 +8,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { BlueBox, TimeInputField } from '../../components'
-import { dateTime as strings } from './DateTime.strings'
+import { strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 
 interface Props {
@@ -18,7 +18,7 @@ interface Props {
   timeLabel?: string
   minDate?: Date
   maxDate?: Date
-  selectedDate?: Date | string
+  selectedDate?: Date | string | null
   disabled?: boolean
   required?: boolean
   blueBox?: boolean
@@ -26,27 +26,28 @@ interface Props {
   backgroundColor?: 'blue' | 'white'
   size?: 'sm' | 'md'
   dateOnly?: boolean
+  defaultTime?: string
   onChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const {
-    name,
-    datepickerLabel = 'Veldu dagsetningu',
-    datepickerPlaceholder = 'Veldu dagsetningu',
-    minDate,
-    maxDate,
-    selectedDate,
-    timeLabel,
-    disabled,
-    required = false,
-    blueBox = true,
-    locked = false,
-    backgroundColor = 'white',
-    size = 'md',
-    dateOnly = false,
-    onChange,
-  } = props
+const DateTime: FC<Props> = ({
+  name,
+  datepickerLabel = 'Veldu dagsetningu',
+  datepickerPlaceholder = 'Veldu dagsetningu',
+  minDate,
+  maxDate,
+  selectedDate,
+  timeLabel,
+  disabled,
+  required = false,
+  blueBox = true,
+  locked = false,
+  backgroundColor = 'white',
+  size = 'md',
+  dateOnly = false,
+  defaultTime = '',
+  onChange,
+}) => {
   const { formatMessage } = useIntl()
 
   const getTimeFromDate = (date: Date | undefined): string =>
@@ -57,7 +58,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
           .padStart(2, '0')}`
       : ''
 
-  const date = (d: Date | string | undefined) => {
+  const date = (d: Date | string | undefined | null) => {
     return d ? new Date(d) : undefined
   }
 
@@ -90,7 +91,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
 
     return (
       (required && date !== undefined && timeIsValid) ||
-      (required === false && date === undefined) ||
+      (!required && date === undefined) ||
       (date !== undefined && timeIsValid)
     )
   }
@@ -100,33 +101,36 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
       return
     }
 
-    const correctTime = date === null ? undefined : date
+    const newDate = date === null ? undefined : date
 
-    setCurrentDate(correctTime)
+    setCurrentDate(newDate)
 
-    if (required && correctTime === undefined) {
+    if (required && newDate === undefined) {
       setDatepickerErrorMessage('Reitur má ekki vera tómur')
     } else {
       setDatepickerErrorMessage(undefined)
     }
 
-    sendToParent(correctTime, currentTime)
+    sendToParent(
+      newDate,
+      !currentDate && defaultTime ? defaultTime : currentTime,
+    )
   }
 
   const onTimeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const time = event.target.value
+    const newTime = event.target.value
 
-    setCurrentTime(time)
+    setCurrentTime(newTime)
 
     const validations: Validation[] = ['empty', 'time-format']
 
-    const timeValidation = validate([[time, validations]])
+    const timeValidation = validate([[newTime, validations]])
 
     if (timeValidation.isValid) {
       setTimeErrorMessage(undefined)
     }
 
-    sendToParent(currentDate, time)
+    sendToParent(currentDate, newTime)
   }
 
   const onTimeBlur = (event: React.FocusEvent<HTMLInputElement>) => {
@@ -182,7 +186,7 @@ const DateTime: React.FC<React.PropsWithChildren<Props>> = (props) => {
           icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
           minDate={minDate}
           maxDate={maxDate}
-          selected={selectedDate ? new Date(selectedDate) : undefined}
+          selected={currentDate ? new Date(currentDate) : undefined}
           disabled={disabled || locked}
           handleCloseCalendar={onCalendarClose}
           required={required}

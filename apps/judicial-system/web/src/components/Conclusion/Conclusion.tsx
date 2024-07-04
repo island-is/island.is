@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 
@@ -6,13 +6,11 @@ import BlueBox from '../BlueBox/BlueBox'
 
 interface Props {
   title: string
-  conclusionText?: string
-  judgeName?: string
+  conclusionText?: string | null
+  judgeName?: string | null
 }
 
-const Conclusion: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { conclusionText, judgeName, title } = props
-
+const Conclusion: FC<Props> = ({ conclusionText, judgeName, title }) => {
   return conclusionText ? (
     <BlueBox>
       <Box marginBottom={2} textAlign="center">

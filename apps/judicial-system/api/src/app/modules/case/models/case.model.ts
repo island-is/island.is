@@ -3,7 +3,6 @@ import { GraphQLJSONObject } from 'graphql-type-json'
 import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 
 import type {
-  Case as TCase,
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
@@ -13,112 +12,134 @@ import {
   CaseAppealState,
   CaseCustodyRestrictions,
   CaseDecision,
+  CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseOrigin,
   CaseState,
   CaseType,
   CourtDocument,
+  CourtSessionType,
+  IndictmentCaseReviewDecision,
+  IndictmentDecision,
   RequestSharedWithDefender,
   SessionArrangements,
   UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { EventLog } from './eventLog.model'
 import { Notification } from './notification.model'
 
-registerEnumType(CaseType, { name: 'CaseType' })
-registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
-registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
-registerEnumType(UserRole, { name: 'UserRole' })
-registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
-registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
-registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
-registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
+registerEnumType(CaseType, { name: 'CaseType' })
+registerEnumType(CaseState, { name: 'CaseState' })
 registerEnumType(RequestSharedWithDefender, {
-  name: 'requestSharedWithDefender',
+  name: 'RequestSharedWithDefender',
 })
+registerEnumType(CaseLegalProvisions, { name: 'CaseLegalProvisions' })
+registerEnumType(CaseCustodyRestrictions, { name: 'CaseCustodyRestrictions' })
+registerEnumType(SessionArrangements, { name: 'SessionArrangements' })
+registerEnumType(CaseDecision, { name: 'CaseDecision' })
+registerEnumType(CaseAppealDecision, { name: 'CaseAppealDecision' })
+registerEnumType(CaseAppealState, { name: 'CaseAppealState' })
+registerEnumType(CaseAppealRulingDecision, { name: 'CaseAppealRulingDecision' })
+registerEnumType(CaseIndictmentRulingDecision, {
+  name: 'CaseIndictmentRulingDecision',
+})
+registerEnumType(IndictmentCaseReviewDecision, {
+  name: 'IndictmentCaseReviewDecision',
+})
+registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
+registerEnumType(CourtSessionType, { name: 'CourtSessionType' })
 
 @ObjectType()
-export class Case implements TCase {
+class DateLog {
+  @Field(() => String, { nullable: true })
+  readonly date?: string
+
+  @Field(() => String, { nullable: true })
+  readonly location?: string
+}
+
+@ObjectType()
+export class Case {
   @Field(() => ID)
   readonly id!: string
 
-  @Field()
-  readonly modified!: string
+  @Field(() => String, { nullable: true })
+  readonly modified?: string
 
-  @Field()
-  readonly created!: string
+  @Field(() => String, { nullable: true })
+  readonly created?: string
 
-  @Field(() => CaseOrigin)
-  readonly origin!: CaseOrigin
+  @Field(() => CaseOrigin, { nullable: true })
+  readonly origin?: CaseOrigin
 
-  @Field(() => CaseType)
-  readonly type!: CaseType
+  @Field(() => CaseType, { nullable: true })
+  readonly type?: CaseType
 
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly indictmentSubtypes?: IndictmentSubtypeMap
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly description?: string
 
-  @Field(() => String)
-  readonly state!: CaseState
+  @Field(() => CaseState, { nullable: true })
+  readonly state?: CaseState
 
-  @Field(() => [String])
-  readonly policeCaseNumbers!: string[]
+  @Field(() => [String], { nullable: true })
+  readonly policeCaseNumbers?: string[]
 
   @Field(() => [Defendant], { nullable: true })
   readonly defendants?: Defendant[]
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderName?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderNationalId?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderEmail?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
   @Field(() => RequestSharedWithDefender, { nullable: true })
   readonly requestSharedWithDefender?: RequestSharedWithDefender
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   isHeightenedSecurityLevel?: boolean
 
   @Field(() => Institution, { nullable: true })
   readonly court?: Institution
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly leadInvestigator?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly arrestDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly requestedCourtDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly translator?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly requestedValidToDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly demands?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly lawsBroken?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly legalBasis?: string
 
   @Field(() => [CaseLegalProvisions], { nullable: true })
@@ -127,25 +148,25 @@ export class Case implements TCase {
   @Field(() => [CaseCustodyRestrictions], { nullable: true })
   readonly requestedCustodyRestrictions?: CaseCustodyRestrictions[]
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly requestedOtherRestrictions?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly caseFacts?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly legalArguments?: string
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly requestProsecutorOnlySession?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly prosecutorOnlySessionRequest?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly comments?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly caseFilesComments?: string
 
   @Field(() => User, { nullable: true })
@@ -157,106 +178,106 @@ export class Case implements TCase {
   @Field(() => Institution, { nullable: true })
   readonly sharedWithProsecutorsOffice?: Institution
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly courtCaseNumber?: string
 
   @Field(() => SessionArrangements, { nullable: true })
   readonly sessionArrangements?: SessionArrangements
 
-  @Field({ nullable: true })
-  readonly courtDate?: string
+  @Field(() => DateLog, { nullable: true })
+  readonly arraignmentDate?: DateLog
 
-  @Field({ nullable: true })
+  @Field(() => DateLog, { nullable: true })
+  readonly courtDate?: DateLog
+
+  @Field(() => String, { nullable: true })
   readonly courtLocation?: string
 
-  @Field({ nullable: true })
-  readonly courtRoom?: string
-
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly courtStartDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly courtEndTime?: string
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isClosedCourtHidden?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly courtAttendees?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly prosecutorDemands?: string
 
   @Field(() => [GraphQLJSONObject], { nullable: true })
   readonly courtDocuments?: CourtDocument[]
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly sessionBookings?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly courtCaseFacts?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly introduction?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly courtLegalArguments?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly ruling?: string
 
-  @Field(() => String, { nullable: true })
+  @Field(() => CaseDecision, { nullable: true })
   readonly decision?: CaseDecision
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly validToDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isValidToDateInThePast?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isCustodyIsolation?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly isolationToDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly conclusion?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly endOfSessionBookings?: string
 
   @Field(() => CaseAppealDecision, { nullable: true })
   readonly accusedAppealDecision?: CaseAppealDecision
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly accusedAppealAnnouncement?: string
 
   @Field(() => CaseAppealDecision, { nullable: true })
   readonly prosecutorAppealDecision?: CaseAppealDecision
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly prosecutorAppealAnnouncement?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly accusedPostponedAppealDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly prosecutorPostponedAppealDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isAppealDeadlineExpired?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isAppealGracePeriodExpired?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly rulingDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly rulingSignatureDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly initialRulingDate?: string
 
   @Field(() => User, { nullable: true })
@@ -268,7 +289,7 @@ export class Case implements TCase {
   @Field(() => User, { nullable: true })
   readonly courtRecordSignatory?: User
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly courtRecordSignatureDate?: string
 
   @Field(() => Case, { nullable: true })
@@ -283,16 +304,16 @@ export class Case implements TCase {
   @Field(() => [CaseFile], { nullable: true })
   readonly caseFiles?: CaseFile[]
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly caseModifiedExplanation?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly rulingModifiedHistory?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly caseResentExplanation?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly openedByDefender?: string
 
   @Field(() => Boolean, { nullable: true })
@@ -301,7 +322,7 @@ export class Case implements TCase {
   @Field(() => GraphQLJSONObject, { nullable: true })
   readonly crimeScenes?: CrimeSceneMap
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly indictmentIntroduction?: string
 
   @Field(() => [IndictmentCount], { nullable: true })
@@ -316,40 +337,46 @@ export class Case implements TCase {
   @Field(() => Boolean, { nullable: true })
   readonly isStatementDeadlineExpired?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly statementDeadline?: string
 
   @Field(() => Boolean, { nullable: true })
   readonly canBeAppealed?: boolean
 
   @Field(() => Boolean, { nullable: true })
+  readonly canProsecutorAppeal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  readonly canDefenderAppeal?: boolean
+
+  @Field(() => Boolean, { nullable: true })
   readonly hasBeenAppealed?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealDeadline?: string
 
   @Field(() => UserRole, { nullable: true })
   readonly appealedByRole?: UserRole
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealedDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly prosecutorStatementDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly defendantStatementDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealReceivedByCourtDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealConclusion?: string
 
   @Field(() => CaseAppealRulingDecision, { nullable: true })
   readonly appealRulingDecision?: CaseAppealRulingDecision
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealCaseNumber?: string
 
   @Field(() => User, { nullable: true })
@@ -364,18 +391,60 @@ export class Case implements TCase {
   @Field(() => User, { nullable: true })
   readonly appealJudge3?: User
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealRulingModifiedHistory?: string
 
   @Field(() => [EventLog], { nullable: true })
   readonly eventLogs?: EventLog[]
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealValidToDate?: string
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   readonly isAppealCustodyIsolation?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealIsolationToDate?: string
+
+  @Field(() => [UserRole], { nullable: true })
+  readonly requestAppealRulingNotToBePublished?: UserRole[]
+
+  @Field(() => Institution, { nullable: true })
+  readonly prosecutorsOffice?: Institution
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentDeniedExplanation?: string
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentReturnedExplanation?: string
+
+  @Field(() => String, { nullable: true })
+  readonly postponedIndefinitelyExplanation?: string
+
+  @Field(() => CaseIndictmentRulingDecision, { nullable: true })
+  readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @Field(() => User, { nullable: true })
+  readonly indictmentReviewer?: User
+
+  @Field(() => IndictmentCaseReviewDecision, { nullable: true })
+  readonly indictmentReviewDecision?: IndictmentCaseReviewDecision
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentAppealDeadline?: string
+
+  @Field(() => Boolean, { nullable: true })
+  readonly indictmentVerdictViewedByAll?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentVerdictAppealDeadline?: string
+
+  @Field(() => IndictmentDecision, { nullable: true })
+  readonly indictmentDecision?: IndictmentDecision
+
+  @Field(() => CourtSessionType, { nullable: true })
+  readonly courtSessionType?: CourtSessionType
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentCompletedDate?: string
 }

@@ -2,20 +2,16 @@
   "name": "clients-health-directorate",
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/health-directorate/src",
+  "tags": ["scope:client", "lib:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/health-directorate/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/health-directorate"],
       "options": {
-        "jestConfig": "libs/clients/health-directorate/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/health-directorate/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -36,6 +32,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client"]
+  }
 }

@@ -58,7 +58,7 @@ export const sellerSubSection = buildSubSection({
           format: '###-####',
           required: true,
           defaultValue: (application: Application) =>
-            application.externalData?.userProfile?.data?.phone,
+            application.externalData?.userProfile?.data?.mobilePhoneNumber,
         }),
         buildCustomField({
           id: 'sellerCoOwner',

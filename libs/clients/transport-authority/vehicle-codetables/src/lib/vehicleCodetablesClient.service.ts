@@ -19,7 +19,7 @@ export class VehicleCodetablesClient {
   }
 
   public async getPlateTypes(): Promise<PlateType[]> {
-    const result = await this.codetablesApi.platetypesAllGet({
+    const result = await this.codetablesApi.platetypesGet({
       apiVersion: '2.0',
       apiVersion2: '2.0',
     })
@@ -30,5 +30,16 @@ export class VehicleCodetablesClient {
       plateHeight: item.plateHeight,
       plateWidth: item.plateWidth,
     }))
+  }
+
+  public getElectricFueldCodes(): string[] {
+    return [
+      '3', // Rafmagn
+      '5', // Vetni
+      'D', // Bensín /Raf.tengill
+      'E', // Dísel /Raf.tengill
+      'F', // Vetni /Rafmagn
+      'G', // Vetni/ Raf.tengill
+    ]
   }
 }

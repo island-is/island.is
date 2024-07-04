@@ -62,6 +62,7 @@ describe('UserController - Get by national id', () => {
         email: '',
         role: UserRole.ADMIN,
         active: true,
+        canConfirmIndictment: false,
       })
     })
   })
@@ -73,14 +74,14 @@ describe('UserController - Get by national id', () => {
 
     beforeEach(async () => {
       const mockFindOne = mockUserModel.findOne as jest.Mock
-      mockFindOne.mockReturnValueOnce(user)
+      mockFindOne.mockResolvedValueOnce(user)
 
       then = await givenWhenThen(nationalId)
     })
 
     it('should return the user', () => {
       expect(mockUserModel.findOne).toHaveBeenCalledWith({
-        where: { nationalId },
+        where: { nationalId, active: true },
         include: [{ model: Institution, as: 'institution' }],
       })
       expect(then.result).toBe(user)

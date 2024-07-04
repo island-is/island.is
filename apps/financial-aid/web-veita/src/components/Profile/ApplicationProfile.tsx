@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react'
+import React, { useState, useMemo, useContext } from 'react'
 import cn from 'classnames'
 import format from 'date-fns/format'
 
@@ -27,12 +27,15 @@ import {
   CommentSection,
   ApplicationHeader,
   FilesListWithHeaderContainer,
+  RejectionCommentModal,
+  AppliedMonthModal,
 } from '@island.is/financial-aid-web/veita/src/components'
 
 import {
   getApplicant,
   getApplicantMoreInfo,
   getApplicantSpouse,
+  getChildrenInfo,
   getDirectTaxPayments,
   getNationalRegistryInfo,
 } from '@island.is/financial-aid-web/veita/src/utils/applicationHelper'
@@ -61,6 +64,11 @@ const ApplicationProfile = ({
   applicationMunicipality,
 }: ApplicationProps) => {
   const [isStateModalVisible, setStateModalVisible] = useState(false)
+  const [appliedMonthModalVisible, setAppliedMonthModalVisible] =
+    useState(false)
+
+  const [isRejectedReasonModalVisible, setRejectedReasonModalVisible] =
+    useState(false)
 
   const [calculationsModal, setCalculationsModal] = useState<CalculationsModal>(
     {
@@ -82,15 +90,19 @@ const ApplicationProfile = ({
 
   const applicationInfo: ApplicationProfileInfo[] = [
     {
-      title: 'Tímabil',
-      content:
-        getMonth(new Date(application.created).getMonth()) +
-        format(new Date(application.created), ' y'),
-    },
-    {
-      title: 'Sótt um',
+      title: 'Dagsetning umsóknar',
       content: format(new Date(application.created), 'dd.MM.y  · kk:mm'),
     },
+    {
+      title: 'Fyrir tímabilið',
+      content:
+        getMonth(new Date(application.appliedDate).getMonth()) +
+        format(new Date(application.appliedDate), ' y'),
+      onclick: () => {
+        setAppliedMonthModalVisible(true)
+      },
+    },
+
     aidAmount
       ? {
           title: 'Áætluð aðstoð',
@@ -121,9 +133,11 @@ const ApplicationProfile = ({
     applicationInfo.push({
       title: 'Aðstoð synjað',
       content: application?.rejection
-        ? application?.rejection
+        ? 'Ástæða synjunar'
         : 'enginn ástæða gefin',
-      fullWidth: true,
+      onclick: () => {
+        setRejectedReasonModalVisible(true)
+      },
     })
   }
 
@@ -134,6 +148,8 @@ const ApplicationProfile = ({
   const applicantMoreInfo = getApplicantMoreInfo(application)
 
   const nationalRegistryInfo = getNationalRegistryInfo(application)
+
+  const childrenInfo = getChildrenInfo(application)
 
   const modalInfo = getAidAmountModalInfo(
     calculationsModal.type,
@@ -200,17 +216,11 @@ const ApplicationProfile = ({
         />
 
         <CollapsibleProfileUnit
-          heading="Upplýsingar um staðgreiðslu"
-          info={getDirectTaxPayments(applicantDirectPayments)}
-          className={`contentUp delay-75`}
+          heading="Þjóðskrá"
+          info={nationalRegistryInfo}
+          className={`contentUp delay-125`}
           isPrint={isPrint}
-        >
-          {getDirectTaxPaymentsContent(
-            applicantDirectPayments,
-            application.hasFetchedDirectTaxPayment,
-            application.created,
-          )}
-        </CollapsibleProfileUnit>
+        />
 
         {showSpouseData[application.familyStatus] && (
           <>
@@ -236,16 +246,31 @@ const ApplicationProfile = ({
           </>
         )}
 
+        {childrenInfo?.length > 0 && (
+          <CollapsibleProfileUnit
+            heading="Börn"
+            info={childrenInfo}
+            className={`contentUp delay-125`}
+            isPrint={isPrint}
+          />
+        )}
+
+        <CollapsibleProfileUnit
+          heading="Upplýsingar um staðgreiðslu"
+          info={getDirectTaxPayments(applicantDirectPayments)}
+          className={`contentUp delay-75`}
+          isPrint={isPrint}
+        >
+          {getDirectTaxPaymentsContent(
+            applicantDirectPayments,
+            application.hasFetchedDirectTaxPayment,
+            application.created,
+          )}
+        </CollapsibleProfileUnit>
+
         <CollapsibleProfileUnit
           heading="Umsóknarferli"
           info={applicantMoreInfo}
-          className={`contentUp delay-125`}
-          isPrint={isPrint}
-        />
-
-        <CollapsibleProfileUnit
-          heading="Þjóðskrá"
-          info={nationalRegistryInfo}
           className={`contentUp delay-125`}
           isPrint={isPrint}
         />
@@ -256,6 +281,7 @@ const ApplicationProfile = ({
 
         {!isPrint && (
           <CommentSection
+            applicationId={application.id}
             className={`contentUp delay-125 ${styles.widthAlmostFull}`}
             setApplication={setApplication}
           />
@@ -280,8 +306,12 @@ const ApplicationProfile = ({
           homeCircumstances={application.homeCircumstances}
           familyStatus={application.familyStatus}
           setIsLoading={setIsLoading}
-          applicationCreated={application.created}
+          applicationAppliedDate={application.appliedDate}
           applicationMunicipality={applicationMunicipality}
+          hasApplicantChildren={
+            !application?.children || application?.children.length > 0
+          }
+          decemberCompensation={applicationMunicipality.decemberCompensation}
         />
       )}
 
@@ -292,6 +322,26 @@ const ApplicationProfile = ({
         onVisibilityChange={() => {
           setCalculationsModal({ ...calculationsModal, visible: false })
         }}
+      />
+
+      <RejectionCommentModal
+        isVisible={isRejectedReasonModalVisible}
+        onVisibilityChange={(visability) => {
+          setRejectedReasonModalVisible(visability)
+        }}
+        reason={application.rejection ?? ''}
+      />
+
+      <AppliedMonthModal
+        headline="Velja mánuð"
+        isVisible={appliedMonthModalVisible}
+        onVisibilityChange={(isVisibleBoolean) => {
+          setAppliedMonthModalVisible(isVisibleBoolean)
+        }}
+        appliedDate={application.appliedDate}
+        createdDate={application.created}
+        applicationId={application.id}
+        setApplication={setApplication}
       />
     </>
   )
@@ -313,11 +363,15 @@ export const getDirectTaxPaymentsContent = (
         />
       )
     case directPaymentsArr.length === 0 && hasFetchedPayments:
-      return <Text marginBottom={4}>Engin staðgreiðsla</Text>
+      return (
+        <Text marginBottom={4}>
+          Engar upplýsingar um staðgreiðslu fundust hjá Skattinum
+        </Text>
+      )
     case directPaymentsArr.length === 0 && !hasFetchedPayments:
       return (
         <Text marginBottom={4} color="red400">
-          Ekki tókst að sækja staðgreiðslu
+          Villa kom upp við að sækja staðgreiðslu frá Skattinum
         </Text>
       )
   }

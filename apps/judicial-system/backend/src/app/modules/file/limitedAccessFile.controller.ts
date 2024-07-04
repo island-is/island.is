@@ -14,10 +14,12 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CurrentHttpUser,
   JwtAuthGuard,
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
+import type { User } from '@island.is/judicial-system/types'
 import {
   investigationCases,
   restrictionCases,
@@ -45,12 +47,7 @@ import { PresignedPost } from './models/presignedPost.model'
 import { SignedUrl } from './models/signedUrl.model'
 import { FileService } from './file.service'
 
-@UseGuards(
-  JwtAuthGuard,
-  RolesGuard,
-  LimitedAccessCaseExistsGuard,
-  CaseCompletedGuard,
-)
+@UseGuards(JwtAuthGuard, RolesGuard, LimitedAccessCaseExistsGuard)
 @Controller('api/case/:caseId/limitedAccess')
 @ApiTags('files')
 export class LimitedAccessFileController {
@@ -62,6 +59,7 @@ export class LimitedAccessFileController {
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
+    CaseCompletedGuard,
   )
   @RolesRules(defenderRule)
   @Post('file/url')
@@ -82,6 +80,7 @@ export class LimitedAccessFileController {
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
+    CaseCompletedGuard,
     LimitedAccessWriteCaseFileGuard,
   )
   @RolesRules(defenderRule)
@@ -90,14 +89,15 @@ export class LimitedAccessFileController {
     type: CaseFile,
     description: 'Creates a new case file',
   })
-  async createCaseFile(
+  createCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
     @Body() createFile: CreateFileDto,
   ): Promise<CaseFile> {
     this.logger.debug(`Creating a file for case ${caseId}`)
 
-    return this.fileService.createCaseFile(theCase, createFile)
+    return this.fileService.createCaseFile(theCase, createFile, user)
   }
 
   @UseGuards(CaseReadGuard, CaseFileExistsGuard, LimitedAccessViewCaseFileGuard)
@@ -109,6 +109,7 @@ export class LimitedAccessFileController {
   })
   getCaseFileSignedUrl(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<SignedUrl> {
@@ -116,12 +117,13 @@ export class LimitedAccessFileController {
       `Getting a signed url for file ${fileId} of case ${caseId}`,
     )
 
-    return this.fileService.getCaseFileSignedUrl(caseFile)
+    return this.fileService.getCaseFileSignedUrl(theCase, caseFile)
   }
 
   @UseGuards(
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
+    CaseCompletedGuard,
     CaseFileExistsGuard,
     LimitedAccessWriteCaseFileGuard,
   )
@@ -133,11 +135,12 @@ export class LimitedAccessFileController {
   })
   deleteCaseFile(
     @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
     @Param('fileId') fileId: string,
     @CurrentCaseFile() caseFile: CaseFile,
   ): Promise<DeleteFileResponse> {
     this.logger.debug(`Deleting file ${fileId} of case ${caseId}`)
 
-    return this.fileService.deleteCaseFile(caseFile)
+    return this.fileService.deleteCaseFile(theCase, caseFile)
   }
 }

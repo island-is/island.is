@@ -1,5 +1,6 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
+import { useState } from 'react'
 
 interface PetitionListResponse {
   endorsementSystemGetGeneralPetitionLists: any
@@ -54,21 +55,73 @@ const GetGeneralPetitionListEndorsements = gql`
 `
 
 export const useGetPetitionLists = () => {
-  const { data: endorsementListsResponse } = useQuery<PetitionListResponse>(
+  const [pagination, setPagination] = useState({ after: '', before: '' })
+  const { data, loading, error, fetchMore } = useQuery<PetitionListResponse>(
     GetGeneralPetitionLists,
     {
       variables: {
         input: {
-          limit: 20,
+          tags: 'generalPetition',
+          after: pagination.after,
+          before: pagination.before,
+          limit: 10,
         },
       },
-      pollInterval: 20000,
     },
   )
 
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionLists ?? []
-  )
+  const loadNextPage = () => {
+    if (data?.endorsementSystemGetGeneralPetitionLists.pageInfo.hasNextPage) {
+      setPagination({
+        ...pagination,
+        after: data.endorsementSystemGetGeneralPetitionLists.pageInfo.endCursor,
+        before: '',
+      })
+      fetchMore({
+        variables: {
+          input: {
+            tags: 'generalPetition',
+            limit: 10,
+            after:
+              data.endorsementSystemGetGeneralPetitionLists.pageInfo.endCursor,
+          },
+        },
+      })
+    }
+  }
+
+  const loadPreviousPage = () => {
+    if (
+      data?.endorsementSystemGetGeneralPetitionLists.pageInfo.hasPreviousPage
+    ) {
+      setPagination({
+        ...pagination,
+        after: '',
+        before:
+          data.endorsementSystemGetGeneralPetitionLists.pageInfo.startCursor,
+      })
+      fetchMore({
+        variables: {
+          input: {
+            tags: 'generalPetition',
+            limit: 10,
+            before:
+              data.endorsementSystemGetGeneralPetitionLists.pageInfo
+                .startCursor,
+          },
+        },
+      })
+    }
+  }
+
+  return {
+    data: data?.endorsementSystemGetGeneralPetitionLists?.data ?? [],
+    loading,
+    error,
+    loadNextPage,
+    loadPreviousPage,
+    pageInfo: data?.endorsementSystemGetGeneralPetitionLists.pageInfo,
+  }
 }
 
 export const useGetPetitionListEndorsements = (listId: string) => {

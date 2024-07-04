@@ -1,0 +1,34 @@
+query DefenderCases($input: CaseListQueryInput) {
+  cases(input: $input) {
+    id
+    created
+    type
+    decision
+    state
+    courtCaseNumber
+    validToDate
+    policeCaseNumbers
+    courtDate
+    parentCaseId
+    appealCaseNumber
+    appealState
+    appealRulingDecision
+    accusedPostponedAppealDate
+    defendants {
+      id
+      created
+      modified
+      caseId
+      nationalId
+      name
+      noNationalId
+      defenderChoice
+    }
+    initialRulingDate
+    rulingDate
+    postponedIndefinitelyExplanation
+    indictmentDecision
+    indictmentRulingDecision
+    courtSessionType
+  }
+}

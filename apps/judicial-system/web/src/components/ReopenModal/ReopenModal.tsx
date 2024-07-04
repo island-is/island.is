@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
@@ -8,7 +8,6 @@ import {
   RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
-  CaseTransition,
   isCourtOfAppealsUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -17,6 +16,7 @@ import {
   Modal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './ReopenModal.strings'
@@ -25,7 +25,7 @@ interface Props {
   onClose: () => void
 }
 
-const ReopenModal: React.FC<React.PropsWithChildren<Props>> = ({ onClose }) => {
+const ReopenModal: FC<Props> = ({ onClose }) => {
   const { formatMessage } = useIntl()
   const router = useRouter()
   const { workingCase } = useContext(FormContext)

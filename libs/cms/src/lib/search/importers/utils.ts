@@ -1,5 +1,6 @@
 import flatten from 'lodash/flatten'
 import type { CONTENT_TYPE } from '../../generated/contentfulTypes'
+import type { SliceUnion } from '../../unions/slice.union'
 
 export const createTerms = (termStrings: string[]): string[] => {
   const singleWords = termStrings.map((termString = '') => {
@@ -15,6 +16,7 @@ export const createTerms = (termStrings: string[]): string[] => {
 export const extractStringsFromObject = (
   contentObject: object,
   maxDepth = 100,
+  minimumWordCountToBeIncluded = 4,
 ): string => {
   // we have reached the max depth in the object
   if (maxDepth === 0) {
@@ -24,20 +26,37 @@ export const extractStringsFromObject = (
     if (Array.isArray(content)) {
       // lets extract string from nested arrays
       return (
-        contentString + extractStringsFromObject({ ...content }, maxDepth - 1)
+        contentString +
+        extractStringsFromObject(
+          { ...content },
+          maxDepth - 1,
+          minimumWordCountToBeIncluded,
+        )
       )
     } else if (content && typeof content === 'object') {
       // lets extract string from nested objects
-      return contentString + extractStringsFromObject(content, maxDepth - 1)
+      return (
+        contentString +
+        extractStringsFromObject(
+          content,
+          maxDepth - 1,
+          minimumWordCountToBeIncluded,
+        )
+      )
     } else if (typeof content === 'string') {
       try {
         const parsedContent = JSON.parse(content)
         return (
-          contentString + extractStringsFromObject(parsedContent, maxDepth - 1)
+          contentString +
+          extractStringsFromObject(
+            parsedContent,
+            maxDepth - 1,
+            minimumWordCountToBeIncluded,
+          )
         )
       } catch (e) {
-        // we only consider string of more than 3 words valid content strings
-        if (content.split(/\s+/).length > 3) {
+        // only include strings that are at least of a minimum word count length
+        if (content.split(/\s+/).length >= minimumWordCountToBeIncluded) {
           return `${contentString} ${content}`
         }
       }
@@ -177,4 +196,24 @@ export const removeEntryHyperlinkFields = (node: any) => {
       removeEntryHyperlinkFields(contentNode)
     }
   }
+}
+
+export const pruneNonSearchableSliceUnionFields = (
+  slice: typeof SliceUnion,
+) => {
+  if ((slice as { typename?: string })?.typename === 'ConnectedComponent') {
+    return {
+      ...slice,
+      json: {},
+      configJson: {},
+    }
+  }
+  if ((slice as { typename?: string })?.typename === 'EmailSignup') {
+    return {
+      ...slice,
+      configuration: {},
+      translations: {},
+    }
+  }
+  return slice
 }

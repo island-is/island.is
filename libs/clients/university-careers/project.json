@@ -1,0 +1,54 @@
+{
+  "name": "clients-university-careers",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/university-careers/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/clients/university-careers/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10055/Holar-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/lib/clients/holar-university/clientConfig.yaml",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10056/LBHI-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/lib/clients/agricultural-university-of-iceland/clientConfig.yaml",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10057/Bifrost-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/lib/clients/bifrost-university/clientConfig.yaml",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10010/HI-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/lib/clients/university-of-iceland/clientConfig.yaml",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10054/UNAK-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/lib/clients/university-of-akureyri/clientConfig.yaml",
+          "curl -H \"X-Road-Client: $XROAD_CLIENT_ID\" http://localhost:8081/r1/IS-DEV/EDU/10049/LHI-Protected/getOpenAPI?serviceCode=brautskraning-v1 > src/lib/clients/iceland-university-of-the-arts/clientConfig.yaml",
+          "prettier --write src/lib/clients/agricultural-university-of-iceland/clientConfig.yaml",
+          "prettier --write src/lib/clients/holar-university/clientConfig.yaml",
+          "prettier --write src/lib/clients/bifrost-university/clientConfig.yaml",
+          "prettier --write src/lib/clients/university-of-akureyri/clientConfig.yaml",
+          "prettier --write src/lib/clients/university-of-iceland/clientConfig.yaml",
+          "prettier --write src/lib/clients/iceland-university-of-the-arts/clientConfig.yaml"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/university-careers"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/gen/fetch -i libs/clients/university-careers/src/lib/clients/agricultural-university-of-iceland/clientConfig.yaml",
+          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/holar-university/gen/fetch -i libs/clients/university-careers/src/lib/clients/holar-university/clientConfig.yaml",
+          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/bifrost-university/gen/fetch -i libs/clients/university-careers/src/lib/clients/bifrost-university/clientConfig.yaml",
+          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/university-of-akureyri/gen/fetch -i libs/clients/university-careers/src/lib/clients/university-of-akureyri/clientConfig.yaml",
+          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/university-of-iceland/gen/fetch -i libs/clients/university-careers/src/lib/clients/university-of-iceland/clientConfig.yaml",
+          "yarn openapi-generator -o libs/clients/university-careers/src/lib/clients/iceland-university-of-the-arts/gen/fetch -i libs/clients/university-careers/src/lib/clients/iceland-university-of-the-arts/clientConfig.yaml"
+        ]
+      },
+      "outputs": ["{projectRoot}/**/gen/fetch"]
+    }
+  }
+}

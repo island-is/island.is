@@ -5,40 +5,31 @@ import { Injectable } from '@nestjs/common'
 
 import { ProblemError } from '@island.is/nest/problem'
 
-import type {
-  Case,
-  CaseFile,
-  CaseListEntry,
-  CreateCase,
-  CreateDefendant,
-  CreateFile,
-  CreatePresignedPost,
-  CreateUser,
-  Defendant,
-  DeleteDefendantResponse,
-  DeleteFileResponse,
-  Institution,
-  Notification,
-  PoliceCaseFile,
-  PresignedPost,
-  RequestSignatureResponse,
-  SendNotification,
-  SendNotificationResponse,
-  SignatureConfirmationResponse,
-  SignedUrl,
-  TransitionCase,
-  UpdateCase,
-  UpdateDefendant,
-  UpdateFile,
-  UpdateUser,
-  UploadFileToCourtResponse,
-  UploadPoliceCaseFile,
-  UploadPoliceCaseFileResponse,
-  User,
+import {
+  CommentType,
+  DateType,
+  type User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
-import { UpdateFilesResponse } from '../modules/file'
+import {
+  Case,
+  RequestSignatureResponse,
+  SendNotificationResponse,
+  SignatureConfirmationResponse,
+} from '../modules/case'
+import { CaseListEntry } from '../modules/case-list'
+import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
+import { CreateEventLogInput } from '../modules/event-log'
+import {
+  CaseFile,
+  DeleteFileResponse,
+  PresignedPost,
+  SignedUrl,
+  UpdateFilesResponse,
+  UploadFileToCourtResponse,
+} from '../modules/file'
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,
@@ -46,7 +37,12 @@ import {
   IndictmentCount,
   UpdateIndictmentCountInput,
 } from '../modules/indictment-count'
-import { PoliceCaseInfo } from '../modules/police'
+import { Institution } from '../modules/institution'
+import {
+  PoliceCaseFile,
+  PoliceCaseInfo,
+  UploadPoliceCaseFileResponse,
+} from '../modules/police'
 
 @Injectable()
 export class BackendApi extends DataSource<{ req: Request }> {
@@ -63,13 +59,14 @@ export class BackendApi extends DataSource<{ req: Request }> {
   private async callBackend<TResult>(
     route: string,
     options: RequestInit,
+    transformer?: (data: unknown) => TResult,
   ): Promise<TResult> {
     return fetch(`${environment.backend.url}/api/${route}`, options).then(
       async (res) => {
         const response = await res.json()
 
         if (res.ok) {
-          return response
+          return transformer ? transformer(response) : response
         }
 
         throw new ProblemError(response)
@@ -77,31 +74,85 @@ export class BackendApi extends DataSource<{ req: Request }> {
     )
   }
 
-  private get<TResult>(route: string): Promise<TResult> {
-    return this.callBackend<TResult>(route, { headers: this.headers })
+  private get<TResult>(
+    route: string,
+    transformer?: (data: unknown) => TResult,
+  ): Promise<TResult> {
+    return this.callBackend<TResult>(
+      route,
+      { headers: this.headers },
+      transformer,
+    )
   }
 
-  private post<TBody, TResult>(route: string, body?: TBody): Promise<TResult> {
-    return this.callBackend<TResult>(route, {
-      method: 'POST',
-      body: JSON.stringify(body),
-      headers: this.headers,
-    })
+  private post<TBody, TResult>(
+    route: string,
+    body?: TBody,
+    transformer?: (data: unknown) => TResult,
+  ): Promise<TResult> {
+    return this.callBackend<TResult>(
+      route,
+      { method: 'POST', body: JSON.stringify(body), headers: this.headers },
+      transformer,
+    )
   }
 
-  private patch<TBody, TResult>(route: string, body: TBody): Promise<TResult> {
-    return this.callBackend<TResult>(route, {
-      method: 'PATCH',
-      body: JSON.stringify(body),
-      headers: this.headers,
-    })
+  private put<TBody, TResult>(
+    route: string,
+    body: TBody,
+    transformer?: (data: unknown) => TResult,
+  ): Promise<TResult> {
+    return this.callBackend<TResult>(
+      route,
+      { method: 'PUT', body: JSON.stringify(body), headers: this.headers },
+      transformer,
+    )
   }
 
-  private delete<TResult>(route: string): Promise<TResult> {
-    return this.callBackend<TResult>(route, {
-      method: 'DELETE',
-      headers: this.headers,
-    })
+  private patch<TBody, TResult>(
+    route: string,
+    body: TBody,
+    transformer?: (data: unknown) => TResult,
+  ): Promise<TResult> {
+    return this.callBackend<TResult>(
+      route,
+      { method: 'PATCH', body: JSON.stringify(body), headers: this.headers },
+      transformer,
+    )
+  }
+
+  private delete<TResult>(
+    route: string,
+    transformer?: (data: unknown) => TResult,
+  ): Promise<TResult> {
+    return this.callBackend<TResult>(
+      route,
+      { method: 'DELETE', headers: this.headers },
+      transformer,
+    )
+  }
+
+  // Find a way to get types from the backend
+  private caseTransformer<Case>(data: unknown): Case {
+    const theCase = data as Case & {
+      dateLogs?: { dateType: DateType; date: string }[]
+      explanatoryComments?: { commentType: CommentType; comment: string }[]
+    }
+
+    return {
+      ...theCase,
+      arraignmentDate: theCase.dateLogs?.find(
+        (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+      ),
+      courtDate: theCase.dateLogs?.find(
+        (dateLog) => dateLog.dateType === DateType.COURT_DATE,
+      ),
+      postponedIndefinitelyExplanation: theCase.explanatoryComments?.find(
+        (comment) =>
+          comment.commentType ===
+          CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+      )?.comment,
+    }
   }
 
   getInstitutions(): Promise<Institution[]> {
@@ -116,12 +167,12 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get(`user/${id}`)
   }
 
-  createUser(createUser: CreateUser): Promise<User> {
+  createUser(createUser: unknown): Promise<User> {
     return this.post('user', createUser)
   }
 
-  updateUser(id: string, updateUser: UpdateUser): Promise<User> {
-    return this.patch(`user/${id}`, updateUser)
+  updateUser(id: string, updateUser: unknown): Promise<User> {
+    return this.put(`user/${id}`, updateUser)
   }
 
   getCases(): Promise<CaseListEntry[]> {
@@ -129,19 +180,27 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   getCase(id: string): Promise<Case> {
-    return this.get(`case/${id}`)
+    return this.get<Case>(`case/${id}`, this.caseTransformer)
   }
 
-  createCase(createCase: CreateCase): Promise<Case> {
-    return this.post('case', createCase)
+  createCase(createCase: unknown): Promise<Case> {
+    return this.post<unknown, Case>('case', createCase, this.caseTransformer)
   }
 
-  updateCase(id: string, updateCase: UpdateCase): Promise<Case> {
-    return this.patch(`case/${id}`, updateCase)
+  updateCase(id: string, updateCase: unknown): Promise<Case> {
+    return this.patch<unknown, Case>(
+      `case/${id}`,
+      updateCase,
+      this.caseTransformer,
+    )
   }
 
-  transitionCase(id: string, transitionCase: TransitionCase): Promise<Case> {
-    return this.patch(`case/${id}/state`, transitionCase)
+  transitionCase(id: string, transitionCase: unknown): Promise<Case> {
+    return this.patch<unknown, Case>(
+      `case/${id}/state`,
+      transitionCase,
+      this.caseTransformer,
+    )
   }
 
   requestCourtRecordSignature(id: string): Promise<RequestSignatureResponse> {
@@ -172,31 +231,35 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   sendNotification(
     id: string,
-    sendNotification: SendNotification,
+    sendNotification: unknown,
   ): Promise<SendNotificationResponse> {
     return this.post(`case/${id}/notification`, sendNotification)
   }
 
   extendCase(id: string): Promise<Case> {
-    return this.post(`case/${id}/extend`)
+    return this.post<unknown, Case>(
+      `case/${id}/extend`,
+      undefined,
+      this.caseTransformer,
+    )
   }
 
   createCourtCase(id: string): Promise<Case> {
-    return this.post(`case/${id}/court`)
-  }
-
-  getCaseNotifications(id: string): Promise<Notification[]> {
-    return this.get(`case/${id}/notifications`)
+    return this.post<unknown, Case>(
+      `case/${id}/court`,
+      undefined,
+      this.caseTransformer,
+    )
   }
 
   createCasePresignedPost(
     id: string,
-    createPresignedPost: CreatePresignedPost,
+    createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
   }
 
-  createCaseFile(id: string, createFile: CreateFile): Promise<CaseFile> {
+  createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
     return this.post(`case/${id}/file`, createFile)
   }
 
@@ -217,12 +280,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   async updateFiles(
     caseId: string,
-    updates: UpdateFile[],
+    updates: unknown[],
   ): Promise<UpdateFilesResponse> {
-    const caseFiles: CaseFile[] = await this.patch<
-      { files: UpdateFile[] },
-      CaseFile[]
-    >(`case/${caseId}/files`, { files: updates })
+    const caseFiles: CaseFile[] = await this.patch(`case/${caseId}/files`, {
+      files: updates,
+    })
     return { caseFiles }
   }
 
@@ -236,14 +298,14 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   uploadPoliceFile(
     caseId: string,
-    uploadPoliceCaseFile: UploadPoliceCaseFile,
+    uploadPoliceCaseFile: unknown,
   ): Promise<UploadPoliceCaseFileResponse> {
     return this.post(`case/${caseId}/policeFile`, uploadPoliceCaseFile)
   }
 
   createDefendant(
     caseId: string,
-    createDefendant: CreateDefendant,
+    createDefendant: unknown,
   ): Promise<Defendant> {
     return this.post(`case/${caseId}/defendant`, createDefendant)
   }
@@ -251,7 +313,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
   updateDefendant(
     caseId: string,
     defendantId: string,
-    updateDefendant: UpdateDefendant,
+    updateDefendant: unknown,
   ): Promise<Defendant> {
     return this.patch(
       `case/${caseId}/defendant/${defendantId}`,
@@ -294,30 +356,38 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   limitedAccessGetCase(id: string): Promise<Case> {
-    return this.get(`case/${id}/limitedAccess`)
+    return this.get<Case>(`case/${id}/limitedAccess`, this.caseTransformer)
   }
 
-  limitedAccessUpdateCase(id: string, updateCase: UpdateCase): Promise<Case> {
-    return this.patch(`case/${id}/limitedAccess`, updateCase)
+  limitedAccessUpdateCase(id: string, updateCase: unknown): Promise<Case> {
+    return this.patch<unknown, Case>(
+      `case/${id}/limitedAccess`,
+      updateCase,
+      this.caseTransformer,
+    )
   }
 
   limitedAccessTransitionCase(
     id: string,
-    transitionCase: TransitionCase,
+    transitionCase: unknown,
   ): Promise<Case> {
-    return this.patch(`case/${id}/limitedAccess/state`, transitionCase)
+    return this.patch<unknown, Case>(
+      `case/${id}/limitedAccess/state`,
+      transitionCase,
+      this.caseTransformer,
+    )
   }
 
   limitedAccessCreateCasePresignedPost(
     id: string,
-    createPresignedPost: CreatePresignedPost,
+    createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/limitedAccess/file/url`, createPresignedPost)
   }
 
   limitedAccessCreateCaseFile(
     id: string,
-    createFile: CreateFile,
+    createFile: unknown,
   ): Promise<CaseFile> {
     return this.post(`case/${id}/limitedAccess/file`, createFile)
   }
@@ -338,6 +408,20 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   limitedAccessGetAllFiles(caseId: string): Promise<Buffer> {
     return this.get(`case/${caseId}/limitedAccess/files/all`)
+  }
+
+  createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
+    return fetch(`${environment.backend.url}/api/eventLog/event`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${environment.auth.secretToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...eventLog,
+        userRole,
+      }),
+    })
   }
 }
 

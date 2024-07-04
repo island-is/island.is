@@ -3,7 +3,7 @@ import { IntlProvider } from 'react-intl'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
-import DateTime from '@island.is/judicial-system-web/src/components/DateTime/DateTime'
+import { DateTime } from '@island.is/judicial-system-web/src/components'
 
 describe('DateTime component', () => {
   test('Should return a valid date and time', async () => {

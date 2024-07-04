@@ -71,25 +71,43 @@ export class AdminPatchClientDto {
     description: 'Only super users can update this value.',
   })
   @IsOptional()
+  @IsArray()
+  addedDelegationTypes?: string[]
+
+  @ApiPropertyOptional({
+    description: 'Only super users can update this value.',
+  })
+  @IsOptional()
+  @IsArray()
+  removedDelegationTypes?: string[]
+
+  @ApiPropertyOptional({
+    deprecated: true,
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+  })
+  @IsOptional()
   @IsBoolean()
   supportsCustomDelegation?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
   supportsLegalGuardians?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
   supportsProcuringHolders?: boolean
 
   @ApiPropertyOptional({
-    description: 'Only super users can update this value.',
+    description: 'Use addedDelegationTypes or removedDelegationTypes instead',
+    deprecated: true,
   })
   @IsOptional()
   @IsBoolean()
@@ -146,6 +164,13 @@ export class AdminPatchClientDto {
   accessTokenLifetime?: number
 
   @ApiPropertyOptional({
+    description: 'Only super users can update this value.',
+  })
+  @IsOptional()
+  @IsBoolean()
+  singleSession?: boolean
+
+  @ApiPropertyOptional({
     description:
       'Dictionary of custom claims added to access tokens. Only super users can update this value.',
     type: [AdminClientClaimDto],
@@ -175,19 +200,22 @@ export class AdminPatchClientDto {
   })
   @IsOptional()
   contactEmail?: string
+
+  @ApiPropertyOptional({
+    description: 'Array of allowed acr values for the client.',
+    example: '[eidas-loa-high]',
+  })
+  @IsOptional()
+  allowedAcr?: string[]
 }
 
 export const superUserFields = [
-  'supportsCustomDelegation',
-  'supportsLegalGuardians',
-  'supportsProcuringHolders',
-  'supportsPersonalRepresentatives',
-  'promptDelegations',
-  'requireApiScopes',
   'requireConsent',
   'allowOfflineAccess',
   'requirePkce',
   'supportTokenExchange',
   'accessTokenLifetime',
   'customClaims',
+  'singleSession',
+  'allowedAcr',
 ]

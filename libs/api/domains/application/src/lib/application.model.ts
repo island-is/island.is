@@ -9,6 +9,7 @@ import {
   ApplicationResponseDtoStatusEnum,
   ApplicationResponseDtoTypeIdEnum,
 } from '../../gen/fetch'
+import { PageInfoDto } from '@island.is/nest/pagination'
 
 registerEnumType(ApplicationResponseDtoTypeIdEnum, {
   name: 'ApplicationResponseDtoTypeIdEnum',
@@ -128,6 +129,36 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
+}
+
+@ObjectType()
+export class ApplicationStatistics {
+  @Field(() => String)
+  typeid!: string
+
+  @Field(() => Number)
+  count!: number
+
+  @Field(() => Number)
+  draft!: number
+
+  @Field(() => Number)
+  inprogress!: number
+
+  @Field(() => Number)
+  completed!: number
+
+  @Field(() => Number)
+  rejected!: number
+
+  @Field(() => Number)
+  approved!: number
+
+  @Field(() => String)
+  name?: string
 }
 
 @ObjectType()
@@ -149,6 +180,12 @@ export class ApplicationAdmin {
 
   @Field(() => [String])
   applicantActors!: string[]
+
+  @Field(() => Date, { nullable: true })
+  pruneAt?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
 
   @Field(() => String)
   state!: string
@@ -176,6 +213,14 @@ export class ApplicationAdmin {
 
   @Field(() => String, { nullable: true })
   paymentStatus?: string
+}
+
+@ObjectType()
+export class ApplicationAdminPaginatedResponse {
+  @Field(() => [ApplicationAdmin])
+  rows!: ApplicationAdmin[]
+  @Field(() => Number)
+  count!: number
 }
 
 @ObjectType()

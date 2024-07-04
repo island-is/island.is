@@ -1,0 +1,100 @@
+query Cases {
+  cases {
+    id
+    created
+    type
+    decision
+    state
+    courtCaseNumber
+    accusedAppealDecision
+    prosecutorAppealDecision
+    accusedPostponedAppealDate
+    prosecutorPostponedAppealDate
+    courtEndTime
+    validToDate
+    policeCaseNumbers
+    parentCaseId
+    appealCaseNumber
+    appealState
+    appealRulingDecision
+    defendants {
+      id
+      created
+      modified
+      caseId
+      nationalId
+      name
+      noNationalId
+      defenderChoice
+      verdictViewDate
+    }
+    courtDate
+    isValidToDateInThePast
+    initialRulingDate
+    rulingDate
+    rulingSignatureDate
+    judge {
+      id
+      created
+      modified
+      nationalId
+      name
+      title
+      mobileNumber
+      email
+      role
+      active
+    }
+    prosecutor {
+      id
+      created
+      modified
+      nationalId
+      name
+      title
+      mobileNumber
+      email
+      role
+      active
+      canConfirmIndictment
+    }
+    registrar {
+      id
+      created
+      modified
+      nationalId
+      name
+      title
+      mobileNumber
+      email
+      role
+      active
+    }
+    creatingProsecutor {
+      id
+      created
+      modified
+      nationalId
+      name
+      title
+      mobileNumber
+      email
+      role
+      active
+      canConfirmIndictment
+    }
+    postponedIndefinitelyExplanation
+    indictmentReviewer {
+      id
+      name
+    }
+    indictmentReviewDecision
+    indictmentAppealDeadline
+    indictmentVerdictViewedByAll
+    indictmentVerdictAppealDeadline
+    indictmentRulingDecision
+    indictmentDecision
+    indictmentCompletedDate
+    courtSessionType
+  }
+}

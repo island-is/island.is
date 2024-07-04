@@ -38,13 +38,13 @@ jobs:
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           # ENVS=("dev" "staging")
-          ENVS=("dev" "staging" "prod")
+          ENVS=("dev" "staging")
           if [[ $GIT_BRANCH =~ ^release\/ ]]; then
             echo "Adding prod environments to test set"
             ENVS+=("prod")
           fi
           ENVS_JSON=$(printf '%s\n' "${ENVS[@]}" | jq -R . | jq -s . | tr -d '[:space:]')
-          echo "::set-output name=ENVS::{\"env\":$ENVS_JSON}"
+          echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
     runs-on: ec2-runners
@@ -52,18 +52,18 @@ jobs:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
     timeout-minutes: 5
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
         if: ${{ github.event_name == 'pull_request' }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
-      - uses: actions/checkout@v3
-        if: ${{ github.ref == 'ref/heads/main' }}
+      - uses: actions/checkout@v4
+        if: ${{ github.event_name != 'pull_request' }}
 
-      - uses: actions/setup-node@v3
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Setup yarn
         run: npm install -g yarn
@@ -94,7 +94,7 @@ jobs:
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          ./infra/scripts/generate-chart-values.sh
+          yarn --cwd infra charts
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:
@@ -108,10 +108,10 @@ jobs:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version-file: 'package.json'
 
       - name: Cache for NodeJS dependencies
         id: node-modules

@@ -42,16 +42,27 @@ export class ClientEnvironment {
   @Field(() => RefreshTokenExpiration)
   refreshTokenExpiration!: RefreshTokenExpiration
 
-  @Field(() => Boolean)
+  @Field(() => [String], { nullable: true })
+  supportedDelegationTypes?: string[]
+
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsCustomDelegation!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsLegalGuardians!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsProcuringHolders!: boolean
 
-  @Field(() => Boolean)
+  @Field(() => Boolean, {
+    deprecationReason: 'Use supportedDelegationTypes instead',
+  })
   supportsPersonalRepresentatives!: boolean
 
   @Field(() => Boolean)
@@ -68,6 +79,9 @@ export class ClientEnvironment {
 
   @Field(() => Boolean)
   requirePkce!: boolean
+
+  @Field(() => Boolean)
+  singleSession!: boolean
 
   @Field(() => Boolean)
   supportTokenExchange!: boolean

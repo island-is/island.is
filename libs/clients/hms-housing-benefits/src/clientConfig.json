@@ -1,0 +1,327 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "HusbotAPI",
+    "description": "HusbotAPI gives overview of payments for housing benefits.",
+    "version": "v1"
+  },
+  "paths": {
+    "/api/v{version}/Payment/paymenthistory": {
+      "post": {
+        "tags": ["Payment"],
+        "summary": "Retrieves information about payment history for all payments for logged in individual in the Husbot system with pagination.",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "Date from which the payment history is retrieved",
+            "style": "form",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "Date to which the payment history is retrieved",
+            "style": "form",
+            "schema": { "type": "string", "format": "date-time" }
+          },
+          {
+            "name": "pageNumber",
+            "in": "query",
+            "description": "The number of page",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "pageSize",
+            "in": "query",
+            "description": "Limits the number of results in a request.",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "paymentOrigin",
+            "in": "query",
+            "description": "Origin of payment, e.g.standard payments(Húsbót) or special payments(Sérstakar). 0= Both, 1= Almennar, 2=Sérstakar",
+            "style": "form",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "month",
+            "in": "query",
+            "description": "Payment for rental month.",
+            "style": "form",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "payments",
+            "in": "query",
+            "description": "Show payments only if true, else also show final settlements.",
+            "style": "form",
+            "schema": { "type": "boolean" }
+          },
+          {
+            "name": "version",
+            "in": "path",
+            "required": true,
+            "style": "simple",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsReturnModelPaginationResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsReturnModelPaginationResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PaymentsReturnModelPaginationResponse"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/NoContent" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NoContent" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/NoContent" }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/NotFound" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/NotFound" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/NotFound" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": { "$ref": "#/components/schemas/BadRequest" }
+              },
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/BadRequest" }
+              },
+              "text/json": {
+                "schema": { "$ref": "#/components/schemas/BadRequest" }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "BadRequest": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NoContent": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "NotFound": {
+        "type": "object",
+        "properties": {
+          "statusCode": {
+            "type": "integer",
+            "format": "int32",
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PageInfo": {
+        "type": "object",
+        "properties": {
+          "hasPreviousPage": { "type": "boolean" },
+          "hasNextPage": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
+      "PaymentsReturnModel": {
+        "type": "object",
+        "properties": {
+          "nr": {
+            "type": "integer",
+            "description": "Payment Number from Housing benefit System.",
+            "format": "int32"
+          },
+          "kennitala": {
+            "type": "string",
+            "description": "SSN of the person receiving the Housing Benefits payments.",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of the person receiving the Housing Benefits payments.",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Application adress.",
+            "nullable": true
+          },
+          "noDays": {
+            "type": "integer",
+            "description": "Number of days within a rental month.",
+            "format": "int32"
+          },
+          "dateCalculation": {
+            "type": "string",
+            "description": "Date of calculation of payments done in the Housing Benefit System.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "month": {
+            "type": "string",
+            "description": "Payment for rental month.",
+            "nullable": true
+          },
+          "dateTransfer": {
+            "type": "string",
+            "description": "Date of payment transfer to account.",
+            "format": "date-time",
+            "nullable": true
+          },
+          "transactionType": {
+            "type": "string",
+            "description": "Type of transaction e.g. G(payment) K(claim) and L(FinalSettlement).",
+            "nullable": true
+          },
+          "calculationType": {
+            "type": "string",
+            "description": "Type of calculation e.g. \"Claim paid\", \"re-calculation\" , \"Final Settlement\", \"Calculation\".",
+            "nullable": true
+          },
+          "paymentActual": {
+            "type": "integer",
+            "description": "Actual payment.",
+            "format": "int32"
+          },
+          "bankAccountMerged": {
+            "type": "string",
+            "description": "Bank account of the person receiving payment.",
+            "nullable": true
+          },
+          "paidOfDebt": {
+            "type": "number",
+            "description": "Amount paid of Debt.",
+            "format": "double",
+            "nullable": true
+          },
+          "paymentBeforeDebt": {
+            "type": "number",
+            "description": "Payment before Debt.",
+            "format": "double"
+          },
+          "benefit": {
+            "type": "number",
+            "description": "Basis for Benefit Rights.",
+            "format": "double",
+            "nullable": true
+          },
+          "reductionIncome": {
+            "type": "number",
+            "description": "Reduction due to applicant income.",
+            "format": "double",
+            "nullable": true
+          },
+          "reductionAssets": {
+            "type": "number",
+            "description": "Reduction due to applicant assest.",
+            "format": "double",
+            "nullable": true
+          },
+          "reductionHousingCost": {
+            "type": "number",
+            "description": "Reduction due to applicant housing cost.",
+            "format": "double",
+            "nullable": true
+          },
+          "totalIncome": {
+            "type": "integer",
+            "description": "Total income of applicant.",
+            "format": "int32",
+            "nullable": true
+          },
+          "remainDebt": {
+            "type": "integer",
+            "description": "Total debt.",
+            "format": "int32",
+            "nullable": true
+          },
+          "paymentOrigin": {
+            "type": "integer",
+            "description": "Origin of payment, e.g. special payments(Sérstakar) or standard payments(Húsbót).",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Payment Number from Housing benefit System."
+      },
+      "PaymentsReturnModelPaginationResponse": {
+        "type": "object",
+        "properties": {
+          "data": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/PaymentsReturnModel" },
+            "nullable": true
+          },
+          "pageInfo": { "$ref": "#/components/schemas/PageInfo" },
+          "totalCount": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "Bearer": {
+        "type": "apiKey",
+        "description": "JWT Authorization header using the Bearer scheme. \r\n\r\n Enter 'Bearer' [space] and then your token in the text input below.\r\n\r\nExample: \"Bearer 1safsfsdfdfd\"",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  },
+  "security": [{ "Bearer": [] }]
+}

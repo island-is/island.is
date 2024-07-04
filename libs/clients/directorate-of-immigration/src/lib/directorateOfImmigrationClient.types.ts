@@ -4,6 +4,7 @@ export interface CitizenshipApplication {
     otherParentNationalId?: string
     otherParentBirtDate?: Date
     otherParentName?: string
+    citizenship?: string
   }[]
   isFormerIcelandicCitizen: boolean
   givenName?: string | null
@@ -17,7 +18,7 @@ export interface CitizenshipApplication {
   citizenshipCode?: string | null
   residenceInIcelandLastChangeDate?: Date | null
   birthCountry?: string | null
-  maritalStatusCode?: string
+  maritalStatus?: string
   dateOfMaritalStatus?: Date | null
   spouse?: {
     nationalId: string
@@ -34,6 +35,8 @@ export interface CitizenshipApplication {
   }[]
   countriesOfResidence: {
     countryId: string
+    dateFrom?: Date
+    dateTo?: Date
   }[]
   staysAbroad: {
     countryId: string

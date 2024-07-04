@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { useWindowSize } from 'react-use'
 import cn from 'classnames'
@@ -28,13 +28,37 @@ interface Props {
   nextButtonColorScheme?: ButtonTypes['colorScheme']
   onNextButtonClick?: () => void
   hideNextButton?: boolean
+  actionButtonText?: string
+  actionButtonColorScheme?: 'destructive'
+  actionButtonIsDisabled?: boolean
+  onActionButtonClick?: () => void
+  hideActionButton?: boolean
   infoBoxText?: string
 }
 
-const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
+const FormFooter: FC<React.PropsWithChildren<Props>> = ({
+  previousUrl,
+  previousIsDisabled,
+  previousButtonText,
+  nextUrl,
+  nextIsDisabled,
+  nextIsLoading,
+  nextButtonText,
+  nextButtonIcon,
+  nextButtonColorScheme,
+  onNextButtonClick,
+  hideNextButton,
+  actionButtonText,
+  actionButtonColorScheme,
+  actionButtonIsDisabled,
+  onActionButtonClick,
+  hideActionButton,
+  infoBoxText,
+}) => {
   const { formatMessage } = useIntl()
   const { width } = useWindowSize()
   const isMobile = width <= theme.breakpoints.md
+  const isTablet = width <= theme.breakpoints.lg && width > theme.breakpoints.md
 
   return (
     <Box
@@ -48,47 +72,60 @@ const FormFooter: React.FC<React.PropsWithChildren<Props>> = (props: Props) => {
       <Box className={styles.button}>
         <Button
           variant="ghost"
-          disabled={props.previousIsDisabled}
+          disabled={previousIsDisabled}
           onClick={() => {
-            router.push(props.previousUrl ?? '')
+            router.push(previousUrl ?? '')
           }}
           icon={isMobile ? 'arrowBack' : undefined}
           circle={isMobile}
-          aria-label={props.previousButtonText || formatMessage(core.back)}
+          aria-label={previousButtonText || formatMessage(core.back)}
           data-testid="previousButton"
           fluid
         >
-          {!isMobile && (props.previousButtonText || formatMessage(core.back))}
+          {!isMobile && (previousButtonText || formatMessage(core.back))}
         </Button>
       </Box>
-      {(!props.hideNextButton || props.infoBoxText) && (
+      {!hideActionButton && actionButtonText && (
+        <Box className={cn(styles.button, styles.actionButton)}>
+          <Button
+            onClick={onActionButtonClick}
+            variant="ghost"
+            colorScheme={actionButtonColorScheme ?? 'destructive'}
+            disabled={actionButtonIsDisabled}
+            fluid={isTablet}
+          >
+            {actionButtonText}
+          </Button>
+        </Box>
+      )}
+      {(!hideNextButton || infoBoxText) && (
         <Box
           display="flex"
           justifyContent="flexEnd"
           className={cn(styles.button, styles.continueButton)}
         >
-          {!props.hideNextButton && (
+          {!hideNextButton && (
             <Button
               data-testid="continueButton"
-              icon={props.nextButtonIcon}
-              disabled={props.nextIsDisabled}
-              colorScheme={props.nextButtonColorScheme ?? 'default'}
-              loading={props.nextIsLoading}
+              icon={nextButtonIcon}
+              disabled={nextIsDisabled}
+              colorScheme={nextButtonColorScheme ?? 'default'}
+              loading={nextIsLoading}
               onClick={() => {
-                if (props.onNextButtonClick) {
-                  props.onNextButtonClick()
-                } else if (props.nextUrl) {
-                  router.push(props.nextUrl)
+                if (onNextButtonClick) {
+                  onNextButtonClick()
+                } else if (nextUrl) {
+                  router.push(nextUrl)
                 }
               }}
               fluid
             >
-              {props.nextButtonText ?? formatMessage(core.continue)}
+              {nextButtonText ?? formatMessage(core.continue)}
             </Button>
           )}
-          {props.infoBoxText && (
+          {infoBoxText && (
             <div className={styles.infoBoxContainer}>
-              <InfoBox text={props.infoBoxText} />
+              <InfoBox text={infoBoxText} />
             </div>
           )}
         </Box>

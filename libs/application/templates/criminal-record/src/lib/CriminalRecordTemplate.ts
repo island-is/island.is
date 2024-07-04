@@ -21,7 +21,6 @@ import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import {
-  NationalRegistryUserApi,
   UserProfileApi,
   SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
@@ -62,7 +61,6 @@ const template: ApplicationTemplate<
               },
             ],
           },
-          progress: 0.25,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -80,7 +78,6 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
                 CriminalRecordApi,
@@ -96,12 +93,17 @@ const template: ApplicationTemplate<
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItemCodes: getChargeItemCodes,
         submitTarget: States.COMPLETED,
+        onExit: [
+          defineTemplateApi({
+            action: ApiActions.submitApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+          }),
+        ],
       }),
       [States.COMPLETED]: {
         meta: {
           name: 'Completed',
           status: 'completed',
-          progress: 1,
           lifecycle: pruneAfterDays(3 * 30),
           actionCard: {
             tag: {
@@ -116,10 +118,6 @@ const template: ApplicationTemplate<
           onEntry: [
             VerifyPaymentApi.configure({
               order: 0,
-            }),
-            defineTemplateApi({
-              action: ApiActions.getCriminalRecord,
-              order: 1,
             }),
           ],
           roles: [

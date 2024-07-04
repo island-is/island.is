@@ -1,12 +1,13 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
-import { FormContext } from '@island.is/judicial-system-web/src/components'
-import SelectableList, {
+import {
+  FormContext,
   Item,
-} from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
+  SelectableList,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseOrigin,
   PoliceCaseFile,
@@ -42,7 +43,7 @@ interface Props {
   policeCaseFiles?: PoliceCaseFilesData
 }
 
-const PoliceCaseFiles: React.FC<React.PropsWithChildren<Props>> = ({
+const PoliceCaseFiles: FC<Props> = ({
   onUpload,
   policeCaseFileList,
   policeCaseFiles,

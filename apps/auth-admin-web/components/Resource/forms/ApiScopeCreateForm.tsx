@@ -254,7 +254,6 @@ const ApiScopeCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                     {...register('apiScope.domainName', {
                       required: true,
                     })}
-                    placeholder={localization.fields['domainName'].placeholder}
                     title={localization.fields['domainName'].helpText}
                   >
                     {domains.map((domain: Domain) => {
@@ -449,186 +448,16 @@ const ApiScopeCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                 <section className="api-scope__section">
                   <h3>{localization.sections['delegations'].title}</h3>
 
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="apiScope.grantToAuthenticatedUser"
-                      className="api-scope-form__label"
+                  <p className="client__label">
+                    You can manage these settings in the new IDS Admin on{' '}
+                    <a
+                      href="https://island.is/stjornbord/innskraningarkerfi"
+                      target="_blank"
+                      rel="noreferrer"
                     >
-                      {localization.fields['grantToAuthenticatedUser'].label}
-                    </label>
-                    <input
-                      id="apiScope.grantToAuthenticatedUser"
-                      {...register('apiScope.grantToAuthenticatedUser')}
-                      type="checkbox"
-                      defaultChecked={props.apiScope.grantToAuthenticatedUser}
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToAuthenticatedUser'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToAuthenticatedUser'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="apiScope.grantToLegalGuardians"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['grantToLegalGuardians'].label}
-                    </label>
-                    <input
-                      id="apiScope.grantToLegalGuardians"
-                      {...register('apiScope.grantToLegalGuardians')}
-                      type="checkbox"
-                      defaultChecked={props.apiScope.grantToLegalGuardians}
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToLegalGuardians'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToLegalGuardians'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="apiScope.grantToProcuringHolders"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['grantToProcuringHolders'].label}
-                    </label>
-                    <input
-                      id="apiScope.grantToProcuringHolders"
-                      {...register('apiScope.grantToProcuringHolders')}
-                      type="checkbox"
-                      defaultChecked={props.apiScope.grantToProcuringHolders}
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToProcuringHolders'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToProcuringHolders'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="apiScope.grantToPersonalRepresentatives"
-                      className="api-scope-form__label"
-                    >
-                      {
-                        localization.fields['grantToPersonalRepresentatives']
-                          .label
-                      }
-                    </label>
-                    <input
-                      id="apiScope.grantToPersonalRepresentatives"
-                      {...register('apiScope.grantToPersonalRepresentatives')}
-                      type="checkbox"
-                      defaultChecked={
-                        props.apiScope.grantToPersonalRepresentatives
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['grantToPersonalRepresentatives']
-                          .helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['grantToPersonalRepresentatives']
-                          .helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="apiScope.allowExplicitDelegationGrant"
-                      className="api-scope-form__label"
-                    >
-                      {
-                        localization.fields['allowExplicitDelegationGrant']
-                          .label
-                      }
-                    </label>
-                    <input
-                      id="apiScope.allowExplicitDelegationGrant"
-                      {...register('apiScope.allowExplicitDelegationGrant')}
-                      type="checkbox"
-                      defaultChecked={
-                        props.apiScope.allowExplicitDelegationGrant
-                      }
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['allowExplicitDelegationGrant']
-                          .helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['allowExplicitDelegationGrant']
-                          .helpText
-                      }
-                    />
-                  </div>
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="apiScope.automaticDelegationGrant"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['automaticDelegationGrant'].label}
-                    </label>
-                    <input
-                      id="apiScope.automaticDelegationGrant"
-                      {...register('apiScope.automaticDelegationGrant')}
-                      type="checkbox"
-                      defaultChecked={props.apiScope.automaticDelegationGrant}
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['automaticDelegationGrant'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['automaticDelegationGrant'].helpText
-                      }
-                    />
-                  </div>
-
-                  <div className="api-scope-form__container__checkbox__field">
-                    <label
-                      htmlFor="apiScope.alsoForDelegatedUser"
-                      className="api-scope-form__label"
-                    >
-                      {localization.fields['alsoForDelegatedUser'].label}
-                    </label>
-                    <input
-                      id="apiScope.alsoForDelegatedUser"
-                      {...register('apiScope.alsoForDelegatedUser')}
-                      type="checkbox"
-                      defaultChecked={props.apiScope.alsoForDelegatedUser}
-                      className="api-scope-form__checkbox"
-                      title={
-                        localization.fields['alsoForDelegatedUser'].helpText
-                      }
-                    />
-                    <HelpBox
-                      helpText={
-                        localization.fields['alsoForDelegatedUser'].helpText
-                      }
-                    />
-                  </div>
+                      https://island.is/stjornbord/innskraningarkerfi
+                    </a>
+                  </p>
                 </section>
 
                 <div className="api-scope-form__buttons__container">

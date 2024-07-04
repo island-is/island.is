@@ -37,7 +37,7 @@ export class PersonalRepresentativeRightTypeService {
     })
   }
 
-  /** Get's all personal repreasentative right types and count by searchstring */
+  /** Gets all personal representative right types and count by search string */
   async findMany(
     searchString: string,
     query: PaginationDto,

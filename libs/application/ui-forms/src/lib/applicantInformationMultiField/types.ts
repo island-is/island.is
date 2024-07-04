@@ -1,3 +1,4 @@
+import { FormText } from '@island.is/application/types'
 export interface ApplicantInformationInterface {
   externalData: {
     // new dataprovider
@@ -24,10 +25,19 @@ export interface ApplicantInformationInterface {
         }
       }
     }
+    // user profile
+    userProfile?: {
+      data?: {
+        email?: string
+        mobilePhoneNumber?: string
+      }
+    }
   }
 }
 
 export type applicantInformationProps = {
   phoneRequired?: boolean
   emailRequired?: boolean
+  emailDisabled?: boolean
+  applicantInformationDescription?: FormText
 }

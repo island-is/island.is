@@ -7,14 +7,21 @@ import {
   Delegation,
   DelegationDTO,
   DelegationDTOMapper,
+  DelegationProviderModel,
   DelegationScope,
-  DelegationType,
+  DelegationTypeModel,
   MergedDelegationDTO,
   PersonalRepresentative,
+  PersonalRepresentativeDelegationTypeModel,
   PersonalRepresentativeRight,
   PersonalRepresentativeRightType,
   PersonalRepresentativeType,
 } from '@island.is/auth-api-lib'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+  getPersonalRepresentativeDelegationType,
+} from '@island.is/shared/types'
 import { AuthScope } from '@island.is/auth/scopes'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
@@ -57,10 +64,10 @@ const swapNames = (
   return delegation
 }
 
-function updateDelegationFromNameToPersonName(
+const updateDelegationFromNameToPersonName = (
   delegations: MergedDelegationDTO[] | MergedDelegationDTO,
   nationalRegistryUsers: NationalRegistryClientPerson[],
-) {
+) => {
   if (Array.isArray(delegations)) {
     return delegations.map((delegation) =>
       swapNames(delegation, nationalRegistryUsers),
@@ -288,7 +295,7 @@ describe('ActorDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
         )
 
         // Assert
@@ -316,7 +323,7 @@ describe('ActorDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${DelegationType.Custom}&otherUser=${mockDelegations.incoming.fromNationalId}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&otherUser=${mockDelegations.incoming.fromNationalId}`,
         )
 
         // Assert
@@ -337,7 +344,7 @@ describe('ActorDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${DelegationType.Custom}&otherUser=${unrelatedNationalId}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&otherUser=${unrelatedNationalId}`,
         )
 
         // Assert
@@ -372,7 +379,7 @@ describe('ActorDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
         )
 
         // Assert
@@ -425,7 +432,7 @@ describe('ActorDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
         )
 
         // Assert
@@ -458,7 +465,7 @@ describe('ActorDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
         )
 
         // Assert
@@ -506,7 +513,7 @@ describe('ActorDelegationsController', () => {
 
         // Act
         const res = await server.get(
-          `${path}${query}&delegationTypes=${DelegationType.ProcurationHolder}`,
+          `${path}${query}&delegationTypes=${AuthDelegationType.ProcurationHolder}`,
         )
 
         // Assert
@@ -626,19 +633,19 @@ describe('ActorDelegationsController', () => {
         it('should return a legal guardian delegation since the type is included in the delegationTypes filter', async () => {
           // Act
           const res = await server.get(
-            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}`,
+            `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.LegalGuardian}`,
           )
 
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0].types[0]).toEqual(DelegationType.LegalGuardian)
+          expect(res.body[0].types[0]).toEqual(AuthDelegationType.LegalGuardian)
         })
 
         it('should not return a legal guardian delegation since the type is not included in the delegationTypes filter', async () => {
           // Act
           const res = await server.get(
-            `${path}${query}&delegationTypes=${DelegationType.Custom}`,
+            `${path}${query}&delegationTypes=${AuthDelegationType.Custom}`,
           )
 
           // Assert
@@ -707,19 +714,21 @@ describe('ActorDelegationsController', () => {
         it('should return a procuring holder delegation since the type is included in the delegationTypes filter', async () => {
           // Act
           const res = await server.get(
-            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.ProcurationHolder}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+            `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.ProcurationHolder}&delegationTypes=${AuthDelegationType.PersonalRepresentative}`,
           )
 
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
-          expect(res.body[0].types[0]).toEqual(DelegationType.ProcurationHolder)
+          expect(res.body[0].types[0]).toEqual(
+            AuthDelegationType.ProcurationHolder,
+          )
         })
 
         it('should not return a procuring holder delegation since the type is not included in the delegationTypes filter', async () => {
           // Act
           const res = await server.get(
-            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+            `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.LegalGuardian}&delegationTypes=${AuthDelegationType.PersonalRepresentative}`,
           )
 
           // Assert
@@ -733,6 +742,9 @@ describe('ActorDelegationsController', () => {
         let prRightsModel: typeof PersonalRepresentativeRight
         let prRightTypeModel: typeof PersonalRepresentativeRightType
         let prTypeModel: typeof PersonalRepresentativeType
+        let delegationTypeModel: typeof DelegationTypeModel
+        let delegationProviderModel: typeof DelegationProviderModel
+        let prDelegationTypeModel: typeof PersonalRepresentativeDelegationTypeModel
 
         beforeAll(async () => {
           prTypeModel = app.get<typeof PersonalRepresentativeType>(
@@ -747,6 +759,15 @@ describe('ActorDelegationsController', () => {
           prRightsModel = app.get<typeof PersonalRepresentativeRight>(
             'PersonalRepresentativeRightRepository',
           )
+          delegationTypeModel = app.get<typeof DelegationTypeModel>(
+            getModelToken(DelegationTypeModel),
+          )
+          delegationProviderModel = app.get<typeof DelegationProviderModel>(
+            getModelToken(DelegationProviderModel),
+          )
+          prDelegationTypeModel = app.get<
+            typeof PersonalRepresentativeDelegationTypeModel
+          >(getModelToken(PersonalRepresentativeDelegationTypeModel))
 
           const prType = await prTypeModel.create({
             code: 'prTypeCode',
@@ -762,13 +783,32 @@ describe('ActorDelegationsController', () => {
             externalUserId: '1',
           })
 
+          const dp = await delegationProviderModel.create({
+            id: AuthDelegationProvider.PersonalRepresentativeRegistry,
+            name: 'Talsmannagrunnur',
+            description: 'Talsmannagrunnur',
+          })
+
+          const dt = await delegationTypeModel.create({
+            id: getPersonalRepresentativeDelegationType('prRightType'),
+            providerId: dp.id,
+            name: `Personal Representative: prRightType`,
+            description: `Personal representative delegation type for right type prRightType`,
+          })
+
           const prRightType = await prRightTypeModel.create({
             code: 'prRightType',
             description: 'prRightTypeDescription',
           })
 
-          await prRightsModel.create({
+          const prr = await prRightsModel.create({
             rightTypeCode: prRightType.code,
+            personalRepresentativeId: pr.id,
+          })
+
+          await prDelegationTypeModel.create({
+            id: prr.id,
+            delegationTypeId: dt.id,
             personalRepresentativeId: pr.id,
           })
         })
@@ -813,7 +853,7 @@ describe('ActorDelegationsController', () => {
           it('should have the delegation type claim of PersonalRepresentative', () => {
             expect(
               body.some(
-                (d) => d.types[0] === DelegationType.PersonalRepresentative,
+                (d) => d.types[0] === AuthDelegationType.PersonalRepresentative,
               ),
             ).toBeTruthy()
           })
@@ -837,21 +877,21 @@ describe('ActorDelegationsController', () => {
         it('should return a personal representative delegation since the type is included in the delegationTypes filter', async () => {
           // Act
           const res = await server.get(
-            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.ProcurationHolder}&delegationTypes=${DelegationType.PersonalRepresentative}`,
+            `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.ProcurationHolder}&delegationTypes=${AuthDelegationType.PersonalRepresentative}`,
           )
 
           // Assert
           expect(res.status).toEqual(200)
           expect(res.body).toHaveLength(1)
           expect(res.body[0].types[0]).toEqual(
-            DelegationType.PersonalRepresentative,
+            AuthDelegationType.PersonalRepresentative,
           )
         })
 
         it('should not return a personal representative delegation since the type is not included in the delegationTypes filter', async () => {
           // Act
           const res = await server.get(
-            `${path}${query}&delegationTypes=${DelegationType.Custom}&delegationTypes=${DelegationType.LegalGuardian}&delegationTypes=${DelegationType.ProcurationHolder}`,
+            `${path}${query}&delegationTypes=${AuthDelegationType.Custom}&delegationTypes=${AuthDelegationType.LegalGuardian}&delegationTypes=${AuthDelegationType.ProcurationHolder}`,
           )
 
           // Assert
@@ -879,6 +919,24 @@ describe('ActorDelegationsController', () => {
             force: true,
           })
           await prTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await prDelegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationTypeModel.destroy({
+            where: {},
+            cascade: true,
+            truncate: true,
+            force: true,
+          })
+          await delegationProviderModel.destroy({
             where: {},
             cascade: true,
             truncate: true,

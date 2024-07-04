@@ -1,20 +1,15 @@
 import addDays from 'date-fns/addDays'
 import parseISO from 'date-fns/parseISO'
-import flatten from 'lodash/flatten'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseFileCategory,
-  IndictmentSubtype,
-  Notification,
-  NotificationType,
-} from '@island.is/judicial-system/types'
-import {
   CaseAppealState,
   CaseCustodyRestrictions,
-  CaseType,
+  DefendantPlea,
   Gender,
+  Notification,
+  NotificationType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
@@ -58,8 +53,11 @@ export const getRestrictionTagVariant = (
   }
 }
 
-export const kb = (bytes?: number) => {
-  return bytes ? Math.ceil(bytes / 1024) : ''
+export const fileSize = (bytes?: number) => {
+  if (!bytes) return ''
+
+  const kb = Math.ceil(bytes / 1024)
+  return kb >= 10000 ? `${kb.toString().substring(0, 2)}MB` : `${kb}KB`
 }
 
 export const getAppealEndDate = (rulingDate: string) => {
@@ -88,38 +86,12 @@ export const createCaseResentExplanation = (
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
 }
 
-export const isTrafficViolationCase = (workingCase: Case): boolean => {
-  if (
-    !workingCase.indictmentSubtypes ||
-    workingCase.type !== CaseType.INDICTMENT
-  ) {
-    return false
-  }
-
-  const flatIndictmentSubtypes = flatten(
-    Object.values(workingCase.indictmentSubtypes),
-  )
-
-  return Boolean(
-    !(
-      workingCase.caseFiles &&
-      workingCase.caseFiles.find(
-        (file) => file.category === CaseFileCategory.INDICTMENT,
-      )
-    ) &&
-      flatIndictmentSubtypes.length > 0 &&
-      flatIndictmentSubtypes.every(
-        (val) => val === IndictmentSubtype.TRAFFIC_VIOLATION,
-      ),
-  )
-}
-
 export const hasSentNotification = (
   notificationType: NotificationType,
-  notifications?: Notification[],
+  notifications?: Notification[] | null,
 ) => {
   if (!notifications || notifications.length === 0) {
-    return false
+    return { hasSent: false, date: null }
   }
 
   const notificationsOfType = notifications.filter(
@@ -127,20 +99,51 @@ export const hasSentNotification = (
   )
 
   if (notificationsOfType.length === 0) {
-    return false
+    return { hasSent: false, date: null }
   }
 
-  return notificationsOfType[0].recipients.some(
-    (recipient) => recipient.success,
-  )
+  return {
+    hasSent: Boolean(
+      notificationsOfType[0].recipients?.some((recipient) => recipient.success),
+    ),
+    date: notificationsOfType[0].created,
+  }
 }
 
 export const isReopenedCOACase = (
-  appealState?: CaseAppealState,
-  notifications?: Notification[],
+  appealState?: CaseAppealState | null,
+  notifications?: Notification[] | null,
 ): boolean => {
   return (
     appealState !== CaseAppealState.COMPLETED &&
     hasSentNotification(NotificationType.APPEAL_COMPLETED, notifications)
+      .hasSent
+  )
+}
+
+export const getDefendantPleaText = (
+  defendantName?: string | null,
+  defendantPlea?: DefendantPlea,
+) => {
+  switch (defendantPlea) {
+    case DefendantPlea.GUILTY:
+      return `${defendantName} - Játar sök`
+    case DefendantPlea.NOT_GUILTY:
+      return `${defendantName} - Neitar sök`
+    case DefendantPlea.NO_PLEA:
+      return `${defendantName} - Tjáir sig ekki / óljóst`
+    default:
+      return ''
+  }
+}
+
+export const shouldUseAppealWithdrawnRoutes = (theCase: Case): boolean => {
+  return (
+    theCase.appealState === CaseAppealState.WITHDRAWN &&
+    (!theCase.appealAssistant ||
+      !theCase.appealCaseNumber ||
+      !theCase.appealJudge1 ||
+      !theCase.appealJudge2 ||
+      !theCase.appealJudge3)
   )
 }

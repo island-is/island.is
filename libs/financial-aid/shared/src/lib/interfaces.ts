@@ -9,6 +9,8 @@ import {
   FamilyStatus,
   AidType,
   UserType,
+  ApplicationHeaderSortByEnum,
+  ChildrenAid,
 } from './enums'
 
 export interface GetSignedUrl {
@@ -32,6 +34,19 @@ export interface CreateFilesResponse {
   files?: ApplicationFile[]
 }
 
+export interface CreateMunicipalityApiUser {
+  name: string
+  municipalityCode: string
+  apiKey: string
+}
+export interface MunicipalityApiUser {
+  id: string
+  name: string
+  municipalityCode: string
+  apiKey: string
+  created: string
+  modified: string
+}
 export interface Staff {
   id: string
   nationalId: string
@@ -70,11 +85,13 @@ export interface Amount {
   applicationId?: string
   aidAmount: number
   income?: number
+  childrenAidAmount?: number
   personalTaxCredit: number
   spousePersonalTaxCredit?: number
   tax: number
   finalAmount: number
   deductionFactors?: DeductionFactors[]
+  decemberAidAmount?: number
 }
 
 export interface DeductionFactors {
@@ -114,6 +131,7 @@ export interface Address {
 }
 
 export interface UpdateApplication {
+  applied?: string
   state?: ApplicationState
   event: ApplicationEventType
   rejection?: string
@@ -150,10 +168,49 @@ export interface ApplicationEvent {
   emailSent?: boolean
 }
 
+export interface CreateChildren {
+  applicationId: string
+  nationalId: string
+  name: string
+  school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
+}
+
+export interface Children {
+  nationalId: string
+  name: string
+  school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
+}
+
+export interface ApplicationChildren {
+  id: string
+  created: string
+  modified: string
+  applicationId: string
+  nationalId: string
+  name: string
+  school?: string
+  livesWithApplicant: boolean
+  livesWithBothParents: boolean
+}
+
 export interface UpdateAdmin {
   id: string
   name: string
   municipalityIds: string[]
+}
+export interface UpdatedApiKeysForMunicipality {
+  name: string
+  id: string
+}
+export interface ApiKeysForMunicipality {
+  name: string
+  apiKey: string
+  municipalityCode: string
+  id: string
 }
 
 export interface Municipality {
@@ -163,6 +220,7 @@ export interface Municipality {
   municipalityId: string
   individualAid: Aid
   cohabitationAid: Aid
+  childrenAid: ChildrenAid
   homepage?: string
   email?: string
   rulesHomepage?: string
@@ -173,6 +231,8 @@ export interface Municipality {
   navUrl?: string
   navUsername?: string
   navPassword?: string
+  apiKeyInfo?: ApiKeysForMunicipality
+  decemberCompensation: number
 }
 
 export interface UpdateMunicipalityActivity {
@@ -218,6 +278,7 @@ export interface CreateApplication {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  childrenComment?: string
   state?: ApplicationState
   files: CreateApplicationFile[]
   amount?: number
@@ -275,6 +336,7 @@ export interface Application {
   id: string
   created: string
   modified: string
+  appliedDate: string
   nationalId: string
   name: string
   phoneNumber?: string
@@ -292,6 +354,7 @@ export interface Application {
   homeCircumstancesCustom?: string
   studentCustom?: string
   formComment?: string
+  childrenComment?: string
   spouseFormComment?: string
   state: ApplicationState
   files?: ApplicationFile[]
@@ -299,6 +362,7 @@ export interface Application {
   rejection?: string
   staff?: Staff
   applicationEvents?: ApplicationEvent[]
+  children?: ApplicationChildren[]
   amount?: Amount
   spouseNationalId?: string
   spouseEmail?: string
@@ -363,9 +427,11 @@ export interface ServiceCenter {
   active?: boolean
   link?: string
 }
-
+export interface SortableTableHeaderProps {
+  sortBy: ApplicationHeaderSortByEnum
+  title: string
+}
 export interface TableHeadersProps {
-  filterBy?: string
   title: string
 }
 
@@ -398,7 +464,13 @@ export interface ApplicationProfileInfo {
   fullWidth?: boolean
 }
 
+export interface StaffList {
+  name: string
+  nationalId: string
+}
 export interface ApplicationPagination {
   applications: Application[]
   totalCount: number
+  staffList: StaffList[]
+  minDateCreated?: string
 }

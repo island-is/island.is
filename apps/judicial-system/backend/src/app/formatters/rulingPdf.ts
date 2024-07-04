@@ -20,10 +20,10 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-function constructRulingPdf(
+const constructRulingPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -71,7 +71,7 @@ function constructRulingPdf(
   addNormalJustifiedText(
     doc,
     `${formatMessage(ruling.prosecutorIs)} ${
-      theCase.creatingProsecutor?.institution?.name ?? ruling.missingDistrict
+      theCase.prosecutorsOffice?.name ?? ruling.missingDistrict
     }.`,
   )
   addNormalJustifiedText(
@@ -161,18 +161,18 @@ function constructRulingPdf(
   )
 }
 
-export function getRulingPdfAsString(
+export const getRulingPdfAsString = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<string> {
+): Promise<string> => {
   return constructRulingPdf(theCase, formatMessage).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export function getRulingPdfAsBuffer(
+export const getRulingPdfAsBuffer = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return constructRulingPdf(theCase, formatMessage)
 }

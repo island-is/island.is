@@ -20,7 +20,6 @@ describe('DelegationsController', () => {
   let factory: FixtureFactory
   let nationalRegistryApi: NationalRegistryClientService
   let rskApi: RskRelationshipsClient
-
   beforeAll(async () => {
     app = await setupWithAuth({
       user: user,
@@ -38,7 +37,6 @@ describe('DelegationsController', () => {
           name: faker.name.findName(),
         }),
       )
-
     rskApi = app.get(RskRelationshipsClient)
 
     factory = new FixtureFactory(app)
@@ -98,9 +96,9 @@ describe('DelegationsController', () => {
 
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(testCase.expectedFrom.length)
-        expect(res.body.map((d: DelegationDTO) => d.fromNationalId)).toEqual(
-          testCase.expectedFrom,
-        )
+        expect(
+          res.body.map((d: DelegationDTO) => d.fromNationalId).sort(),
+        ).toEqual(testCase.expectedFrom.sort())
       })
     },
   )

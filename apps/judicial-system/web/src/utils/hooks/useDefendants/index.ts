@@ -1,4 +1,4 @@
-import React, { SetStateAction, useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
@@ -10,9 +10,9 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
-import { useCreateDefendantMutation } from './createDefendantt.generated'
-import { useDeleteDefendantMutation } from './deleteDefendantt.generated'
-import { useUpdateDefendantMutation } from './updateDefendantt.generated'
+import { useCreateDefendantMutation } from './createDefendant.generated'
+import { useDeleteDefendantMutation } from './deleteDefendant.generated'
+import { useUpdateDefendantMutation } from './updateDefendant.generated'
 
 const useDefendants = () => {
   const { formatMessage } = useIntl()
@@ -86,24 +86,24 @@ const useDefendants = () => {
   const updateDefendantState = useCallback(
     (
       update: UpdateDefendantInput,
-      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
-      setWorkingCase((theCase: Case) => {
-        if (!theCase.defendants) {
-          return theCase
+      setWorkingCase((prevWorkingCase: Case) => {
+        if (!prevWorkingCase.defendants) {
+          return prevWorkingCase
         }
-        const indexOfDefendantToUpdate = theCase.defendants.findIndex(
+        const indexOfDefendantToUpdate = prevWorkingCase.defendants.findIndex(
           (defendant) => defendant.id === update.defendantId,
         )
 
-        const newDefendants = [...theCase.defendants]
+        const newDefendants = [...prevWorkingCase.defendants]
 
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
           ...update,
         } as Defendant
 
-        return { ...theCase, defendants: newDefendants }
+        return { ...prevWorkingCase, defendants: newDefendants }
       })
     },
     [],
@@ -111,10 +111,8 @@ const useDefendants = () => {
 
   const setAndSendDefendantToServer = useCallback(
     (
-      caseId: string,
-      defendantId: string,
       update: UpdateDefendantInput,
-      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       updateDefendantState(update, setWorkingCase)
       updateDefendant(update)

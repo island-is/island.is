@@ -616,13 +616,13 @@ export const ComplaintForm: Form = buildForm({
       alertTitle: confirmation.labels.alertTitle,
       expandableHeader: confirmation.labels.expandableHeader,
       expandableDescription: confirmation.labels.description,
-      s3FileKey: (application) => {
+      conclusionLinkS3FileKey: (application) => {
         const submitData = application.externalData
           .sendApplication as SubmittedApplicationData
 
         return submitData.data?.applicationPdfKey ?? ''
       },
-      buttonText: confirmation.labels.pdfLink,
+      conclusionLinkLabel: confirmation.labels.pdfLink,
     }),
   ],
 })

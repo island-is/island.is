@@ -1,13 +1,19 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, InputFileUpload, Text } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  InputFileUpload,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseFileCategory,
   isDefenceUser,
+  isProsecutionUser,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -17,12 +23,14 @@ import {
   Modal,
   PageHeader,
   PageLayout,
+  RulingDateLabel,
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import {
   CaseAppealDecision,
+  CaseFileCategory,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -39,18 +47,17 @@ const Statement = () => {
   const { isUpdatingCase, updateCase } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
-  const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const { id } = router.query
+  const [visibleModal, setVisibleModal] = useState<'STATEMENT_SENT'>()
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
+    someFilesError,
     addUploadFiles,
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
-    workingCase.id,
-  )
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
 
   const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -66,10 +73,45 @@ const Statement = () => {
       : constants.SIGNED_VERDICT_OVERVIEW_ROUTE
   }/${id}`
 
-  const isStepValid =
-    uploadFiles.some(
-      (file) => file.category === appealStatementType && file.status === 'done',
-    ) && allFilesUploaded
+  const handleNextButtonClick = useCallback(async () => {
+    const allSucceeded = await handleUpload(
+      uploadFiles.filter((file) => file.percent === 0),
+      updateUploadFile,
+    )
+
+    if (!allSucceeded) {
+      return
+    }
+
+    const updated = await updateCase(
+      workingCase.id,
+      isDefenceUser(user)
+        ? { defendantStatementDate: new Date().toISOString() }
+        : { prosecutorStatementDate: new Date().toISOString() },
+    )
+
+    if (updated) {
+      setVisibleModal('STATEMENT_SENT')
+    }
+  }, [
+    handleUpload,
+    updateCase,
+    updateUploadFile,
+    uploadFiles,
+    user,
+    workingCase.id,
+  ])
+
+  const handleRemoveFile = (file: UploadFile) => {
+    if (file.key) {
+      handleRemove(file, removeUploadFile)
+    } else {
+      removeUploadFile(file)
+    }
+  }
+  const handleChange = (files: File[], type: CaseFileCategory) => {
+    addUploadFiles(files, type, 'done')
+  }
 
   return (
     <PageLayout workingCase={workingCase} isLoading={false} notFound={false}>
@@ -111,7 +153,6 @@ const Statement = () => {
             </Text>
           )}
         </Box>
-
         {user && (
           <>
             <Box component="section" marginBottom={5}>
@@ -129,23 +170,25 @@ const Statement = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                onChange={(files) =>
-                  handleUpload(
-                    addUploadFiles(files, appealStatementType),
-                    updateUploadFile,
-                  )
-                }
-                onRemove={(file) => handleRemove(file, removeUploadFile)}
-                onRetry={(file) => handleRetry(file, updateUploadFile)}
+                onChange={(files) => handleChange(files, appealStatementType)}
+                onRemove={(file) => handleRemoveFile(file)}
+                hideIcons={!allFilesDoneOrError}
+                disabled={!allFilesDoneOrError}
               />
             </Box>
-            <Box component="section" marginBottom={10}>
+            <Box
+              component="section"
+              marginBottom={isProsecutionUser(user) ? 5 : 10}
+            >
               <SectionHeading
                 title={formatMessage(strings.uploadStatementCaseFilesTitle)}
                 marginBottom={1}
               />
-              <Text marginBottom={3}>
+              <Text marginBottom={3} whiteSpace="pre">
                 {formatMessage(strings.uploadStatementCaseFilesSubtitle)}
+                {'\n'}
+                {!isDefenceUser(user) &&
+                  `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
               </Text>
               <InputFileUpload
                 fileList={uploadFiles.filter(
@@ -157,32 +200,33 @@ const Statement = () => {
                   fileEndings: '.pdf',
                 })}
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-                onChange={(files) =>
-                  handleUpload(
-                    addUploadFiles(files, appealCaseFilesType),
-                    updateUploadFile,
-                  )
-                }
-                onRemove={(file) => handleRemove(file, removeUploadFile)}
-                onRetry={(file) => handleRetry(file, updateUploadFile)}
+                onChange={(files) => handleChange(files, appealCaseFilesType)}
+                onRemove={(file) => handleRemoveFile(file)}
+                hideIcons={!allFilesDoneOrError}
+                disabled={!allFilesDoneOrError}
               />
             </Box>
+            {isProsecutionUser(user) && (
+              <Box component="section" marginBottom={10}>
+                <RequestAppealRulingNotToBePublishedCheckbox />
+              </Box>
+            )}
           </>
         )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousUrl}
-          onNextButtonClick={async () => {
-            const update = isDefenceUser(user)
-              ? { defendantStatementDate: new Date().toISOString() }
-              : { prosecutorStatementDate: new Date().toISOString() }
-            await updateCase(workingCase.id, update)
-            setVisibleModal('STATEMENT_SENT')
-          }}
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          nextIsDisabled={!isStepValid || isUpdatingCase}
+          onNextButtonClick={handleNextButtonClick}
+          nextButtonText={formatMessage(
+            someFilesError
+              ? strings.uploadFailedNextButtonText
+              : strings.nextButtonText,
+          )}
+          nextIsDisabled={uploadFiles.length === 0 || isUpdatingCase}
+          nextIsLoading={!allFilesDoneOrError || isUpdatingCase}
           nextButtonIcon={undefined}
+          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />
       </FormContentContainer>
       {visibleModal === 'STATEMENT_SENT' && (

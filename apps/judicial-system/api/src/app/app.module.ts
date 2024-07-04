@@ -14,14 +14,15 @@ import { SharedAuthModule } from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
-import { CaseListModule } from './modules/caseList/caseList.module'
-import { defenderModuleConfig } from './modules/defender/defender.config'
 import {
   AuthModule,
   authModuleConfig,
+  CaseListModule,
   CaseModule,
   DefendantModule,
   DefenderModule,
+  defenderModuleConfig,
+  EventLogModule,
   FeatureModule,
   featureModuleConfig,
   FileModule,
@@ -67,6 +68,7 @@ const autoSchemaFile = environment.production
     FeatureModule,
     CmsTranslationsModule,
     PoliceModule,
+    EventLogModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,

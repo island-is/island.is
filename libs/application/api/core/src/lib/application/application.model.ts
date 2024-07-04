@@ -11,6 +11,7 @@ import {
   ApplicationTypes,
   ApplicationStatus,
 } from '@island.is/application/types'
+import { Expose } from 'class-transformer'
 
 @Table({
   tableName: 'application',
@@ -149,4 +150,47 @@ export class Application extends Model {
   })
   @ApiProperty()
   draftTotalSteps!: number
+}
+
+export class ApplicationPaginatedResponse {
+  @ApiProperty({ type: [Application] })
+  @Expose()
+  rows!: Application[]
+  @ApiProperty()
+  @Expose()
+  count!: number
+}
+
+export class ApplicationsStatistics {
+  @ApiProperty()
+  @Expose()
+  typeid!: string
+
+  @ApiProperty()
+  @Expose()
+  count!: number
+
+  @ApiProperty()
+  @Expose()
+  draft!: number
+
+  @ApiProperty()
+  @Expose()
+  inprogress!: number
+
+  @ApiProperty()
+  @Expose()
+  completed!: number
+
+  @ApiProperty()
+  @Expose()
+  rejected!: number
+
+  @ApiProperty()
+  @Expose()
+  approved!: number
+
+  @ApiProperty()
+  @Expose()
+  name?: string
 }

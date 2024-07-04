@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, PropsWithChildren, useContext } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'
@@ -8,7 +8,7 @@ import * as styles from './PdfButton.css'
 
 interface Props {
   caseId: string
-  title: string
+  title?: string | null
   pdfType?:
     | 'ruling'
     | 'caseFilesRecord'
@@ -16,13 +16,16 @@ interface Props {
     | 'request'
     | 'custodyNotice'
     | 'indictment'
+    | 'subpoena'
+
   disabled?: boolean
   renderAs?: 'button' | 'row'
   handleClick?: () => void
-  policeCaseNumber?: string // Only used if pdfType ends with caseFilesRecord
+  elementId?: string
+  queryParameters?: string
 }
 
-const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
+const PdfButton: FC<PropsWithChildren<Props>> = ({
   caseId,
   title,
   pdfType,
@@ -30,16 +33,16 @@ const PdfButton: React.FC<React.PropsWithChildren<Props>> = ({
   renderAs = 'button',
   children,
   handleClick, // Overwrites the default onClick handler
-  policeCaseNumber,
+  elementId,
+  queryParameters,
 }) => {
   const { limitedAccess } = useContext(UserContext)
 
   const handlePdfClick = async () => {
     const prefix = limitedAccess ? 'limitedAccess/' : ''
-    const postfix = pdfType?.endsWith('caseFilesRecord')
-      ? `/${policeCaseNumber}`
-      : ''
-    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}`
+    const postfix = elementId ? `/${elementId}` : ''
+    const query = queryParameters ? `?${queryParameters}` : ''
+    const url = `${api.apiUrl}/api/case/${caseId}/${prefix}${pdfType}${postfix}${query}`
 
     window.open(url, '_blank')
   }

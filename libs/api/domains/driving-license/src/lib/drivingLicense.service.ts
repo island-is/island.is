@@ -8,12 +8,12 @@ import {
   NewDrivingAssessmentResult,
   RequirementKey,
   ApplicationEligibility,
-  DrivingLicenseCategory,
   QualityPhotoResult,
   DrivingLicenseApplicationType,
   NewTemporaryDrivingLicenseInput,
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
+  NewBEDrivingLicenseInput,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -24,6 +24,7 @@ import {
   DrivingLicenseApi,
   TeacherV4,
   PostTemporaryLicenseWithHealthDeclaration as HealthDeclaration,
+  DriverLicenseWithoutImages,
 } from '@island.is/clients/driving-license'
 import {
   BLACKLISTED_JURISDICTION,
@@ -62,6 +63,20 @@ export class DrivingLicenseService {
     } catch (e) {
       return this.handleGetLicenseError(e)
     }
+  }
+
+  async getAllDriverLicenses(
+    token: string,
+  ): Promise<DriverLicenseWithoutImages[]> {
+    const drivingLicesnes = await this.drivingLicenseApi
+      .getAllDriverLicenses(token)
+      .catch((e) => {
+        this.logger.warn(`Error fetching all driver licenses`, {
+          error: e,
+          category: LOGTAG,
+        })
+      })
+    return drivingLicesnes ?? []
   }
 
   async legacyGetDrivingLicense(
@@ -338,10 +353,15 @@ export class DrivingLicenseService {
     }
   }
 
-  async canApplyFor(type: 'B-full' | 'B-temp', token: string) {
+  async canApplyFor(type: 'B-full' | 'B-temp' | 'BE', token: string) {
     if (type === 'B-full') {
       return this.drivingLicenseApi.getCanApplyForCategoryFull({
         category: 'B',
+        token,
+      })
+    } else if (type === 'BE') {
+      return this.drivingLicenseApi.getCanApplyForCategoryFull({
+        category: 'BE',
         token,
       })
     } else if (type === 'B-temp') {
@@ -422,13 +442,33 @@ export class DrivingLicenseService {
     input: NewDrivingLicenseInput,
   ): Promise<NewDrivingLicenseResult> {
     const response = await this.drivingLicenseApi.postCreateDrivingLicenseFull({
-      category: DrivingLicenseCategory.B,
+      category: input.licenseCategory,
       jurisdictionId: input.jurisdictionId,
       willBringHealthCertificate: input.needsToPresentHealthCertificate,
       nationalIdApplicant: nationalId,
       willBringQualityPhoto: input.needsToPresentQualityPhoto,
       sendLicenseInMail: false,
       sendLicenseToAddress: '',
+    })
+
+    return {
+      success: response,
+      errorMessage: null,
+    }
+  }
+
+  async applyForBELicense(
+    nationalId: User['nationalId'],
+    auth: User['authorization'],
+    input: NewBEDrivingLicenseInput,
+  ): Promise<NewDrivingLicenseResult> {
+    const response = await this.drivingLicenseApi.postApplyForBELicense({
+      nationalIdApplicant: nationalId,
+      token: auth,
+      jurisdictionId: input.jurisdiction,
+      instructorSSN: input.instructorSSN,
+      email: input.studentEmail,
+      phoneNumber: input.primaryPhoneNumber,
     })
 
     return {

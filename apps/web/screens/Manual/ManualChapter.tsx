@@ -1,4 +1,5 @@
-import { useMemo } from 'react'
+import { useEffect, useMemo, useRef } from 'react'
+import { useQueryState } from 'next-usequerystate'
 import { BLOCKS } from '@contentful/rich-text-types'
 
 import { SliceType } from '@island.is/island-ui/contentful'
@@ -71,6 +72,9 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
   const n = useNamespace(namespace)
   const { activeLocale } = useI18n()
 
+  const [selectedItemId, setSelectedItemId] = useQueryState('selectedItemId')
+  const initialScrollHasHappened = useRef(false)
+
   useLocalLinkTypeResolver()
   useContentfulId(manual?.id, manualChapter?.id)
 
@@ -78,6 +82,14 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
     'manualChapterItemTableOfContentsTitle',
     activeLocale === 'is' ? 'Efni kaflans' : 'Chapter content',
   ) as string
+
+  useEffect(() => {
+    if (!selectedItemId || initialScrollHasHappened.current) {
+      return
+    }
+    scrollTo(selectedItemId, { smooth: true, marginTop: 64 })
+    initialScrollHasHappened.current = true
+  }, [selectedItemId])
 
   return (
     <ManualWrapper
@@ -117,6 +129,15 @@ const ManualChapter: ManualScreen = ({ manual, manualChapter, namespace }) => {
                 key={item.id}
                 id={item.id}
                 label={item.title}
+                expanded={item.id === selectedItemId}
+                onToggle={(expanded) => {
+                  initialScrollHasHappened.current = true
+                  if (expanded) {
+                    setSelectedItemId(item.id)
+                  } else if (selectedItemId === item.id) {
+                    setSelectedItemId(null)
+                  }
+                }}
               >
                 <Box paddingTop={2}>
                   <ChapterItemTableOfContents

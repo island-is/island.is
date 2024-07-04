@@ -3,11 +3,11 @@ import {
   buildCheckboxField,
   buildRadioField,
   buildSubSection,
-  hasYes,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { NO, YES } from '../../lib/constants'
-import { B_TEMP } from '../../shared/constants'
+import { B_TEMP, NO, YES } from '../../lib/constants'
+
 import { isApplicationForCondition } from '../../lib/utils'
 
 export const subSectionOtherCountry = buildSubSection({
@@ -17,35 +17,35 @@ export const subSectionOtherCountry = buildSubSection({
   children: [
     buildMultiField({
       id: 'info',
-      title: m.drivingLicenseInOtherCountry,
-      space: 1,
+      title: m.foreignDrivingLicense,
+      description: m.drivingLicenseInOtherCountry,
       children: [
         buildRadioField({
-          id: 'drivingLicenseInOtherCountry',
+          id: 'otherCountry.drivingLicenseInOtherCountry',
           backgroundColor: 'white',
           title: '',
           width: 'half',
-          space: 0,
           largeButtons: true,
           options: [
             {
               label: m.no,
-              subLabel: '',
               value: NO,
             },
             {
               label: m.yes,
-              subLabel: '',
               value: YES,
             },
           ],
         }),
         buildCheckboxField({
-          id: 'drivingLicenseDeprivedOrRestrictedInOtherCountry',
+          id: 'otherCountry.drivingLicenseDeprivedOrRestrictedInOtherCountry',
           backgroundColor: 'white',
           title: '',
           condition: (answers) =>
-            hasYes(answers?.drivingLicenseInOtherCountry || []),
+            getValueViaPath(
+              answers,
+              'otherCountry.drivingLicenseInOtherCountry',
+            ) === YES,
           options: [
             {
               value: NO,

@@ -18,14 +18,13 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  MarkdownWrapper,
+  Item,
+  PageHeader,
   PageLayout,
   ParentCaseFiles,
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
-import PageHeader from '@island.is/judicial-system-web/src/components/PageHeader/PageHeader'
-import { Item } from '@island.is/judicial-system-web/src/components/SelectableList/SelectableList'
 import { CaseOrigin } from '@island.is/judicial-system-web/src/graphql/schema'
 import { removeTabsValidateAndSet } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
@@ -42,17 +41,17 @@ import {
   PoliceCaseFiles,
   PoliceCaseFilesData,
 } from '../../components'
-import { useGetPoliceCaseFilesQuery } from './getPoliceCaseFiles.generated'
+import { usePoliceCaseFilesQuery } from './policeCaseFiles.generated'
 import { caseFiles as strings } from './CaseFiles.strings'
 
-export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const CaseFiles = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const {
     data: policeData,
     loading: policeDataLoading,
     error: policeDataError,
-  } = useGetPoliceCaseFilesQuery({
+  } = usePoliceCaseFilesQuery({
     variables: { input: { caseId: workingCase.id } },
     skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
@@ -60,14 +59,15 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
   })
   const router = useRouter()
   const { formatMessage } = useIntl()
-  const [isUploading, setIsUploading] = useState<boolean>(false)
+  const [isUploadingPoliceCaseFiles, setIsUploadingPoliceCaseFiles] =
+    useState<boolean>(false)
   const [policeCaseFileList, setPoliceCaseFileList] = useState<
     PoliceCaseFileCheck[]
   >([])
   const [policeCaseFiles, setPoliceCaseFiles] = useState<PoliceCaseFilesData>()
   const {
     uploadFiles,
-    allFilesUploaded,
+    allFilesDoneOrError,
     addUploadFile,
     addUploadFiles,
     updateUploadFile,
@@ -133,7 +133,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
     }
   }, [uploadFiles, formatMessage])
 
-  const stepIsValid = !isUploading && allFilesUploaded
+  const stepIsValid = !isUploadingPoliceCaseFiles && allFilesDoneOrError
   const handleNavigationTo = (destination: string) =>
     router.push(`${destination}/${workingCase.id}`)
 
@@ -165,11 +165,11 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
       return
     }
 
-    setIsUploading(true)
+    setIsUploadingPoliceCaseFiles(true)
 
     await handleUploadFromPolice(filesToUpload, uploadPoliceCaseFileCallback)
 
-    setIsUploading(false)
+    setIsUploadingPoliceCaseFiles(false)
   }
 
   const removeFileCB = (file: TUploadFile) => {
@@ -204,17 +204,6 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <ParentCaseFiles files={workingCase.parentCase?.caseFiles} />
-        <Box marginBottom={5}>
-          <Box marginBottom={3}>
-            <Text as="h3" variant="h3">
-              {formatMessage(strings.descriptionHeading)}
-            </Text>
-          </Box>
-          <MarkdownWrapper
-            markdown={formatMessage(strings.descriptionList)}
-            textProps={{ marginBottom: 0 }}
-          />
-        </Box>
         <SectionHeading
           title={formatMessage(strings.policeCaseFilesHeading)}
           description={formatMessage(strings.policeCaseFilesIntroduction)}
@@ -244,7 +233,7 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
               onRemove={(file) => handleRemove(file, removeFileCB)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
-              disabled={isUploading}
+              disabled={isUploadingPoliceCaseFiles}
               showFileSize
             />
           </ContentBlock>
@@ -271,7 +260,6 @@ export const CaseFiles: React.FC<React.PropsWithChildren<unknown>> = () => {
                   'caseFilesComments',
                   event.target.value,
                   [],
-                  workingCase,
                   setWorkingCase,
                 )
               }

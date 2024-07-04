@@ -1,5 +1,5 @@
 import { useLocale } from '@island.is/localization'
-import { Box } from '@island.is/island-ui/core'
+import { Box, Hidden } from '@island.is/island-ui/core'
 import {
   IntroHeader,
   SJUKRATRYGGINGAR_SLUG,
@@ -7,6 +7,7 @@ import {
 } from '@island.is/service-portal/core'
 import { messages as m } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
+import { SECTION_GAP } from '../constants'
 
 export const MedicineWrapper = ({
   children,
@@ -25,15 +26,19 @@ export const MedicineWrapper = ({
         serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
         serviceProviderTooltip={formatMessage(m.healthTooltip)}
       />
-      <TabNavigation
-        label={formatMessage(m.medicineTitle)}
-        pathname={pathname}
-        items={
-          healthNavigation.children?.find((itm) => itm.name === m.medicineTitle)
-            ?.children ?? []
-        }
-      />
-      <Box paddingY={4}>{children}</Box>
+
+      <Hidden print={true}>
+        <TabNavigation
+          label={formatMessage(m.medicineTitle)}
+          pathname={pathname}
+          items={
+            healthNavigation.children?.find(
+              (itm) => itm.name === m.medicineTitle,
+            )?.children ?? []
+          }
+        />
+      </Hidden>
+      <Box paddingY={SECTION_GAP}>{children}</Box>
     </Box>
   )
 }

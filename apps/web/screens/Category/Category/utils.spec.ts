@@ -30,7 +30,7 @@ describe('Update hash array', () => {
   })
 
   it('should return array with id', () => {
-    const hashArr = []
+    const hashArr: string[] = []
     const updatedHashArray = [categoryId]
     expect(updateHashArray(hashArr, categoryId)).toEqual(updatedHashArray)
   })

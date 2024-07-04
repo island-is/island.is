@@ -1,7 +1,6 @@
-import { Organization } from '@island.is/web/graphql/schema'
-
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { OrganizationFooter, ServiceWebFooter } from '@island.is/web/components'
+import { Organization } from '@island.is/web/graphql/schema'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface DynamicFooterProps {
   organization: Organization
@@ -24,13 +23,13 @@ export const DynamicFooter = ({
 
   const contactLink = linkResolver('servicewebcontact', [slug]).href
 
-  return organization.footerItems?.length > 0 ? (
+  return organization?.footerItems?.length > 0 ? (
     <OrganizationFooter organizations={[organization]} />
   ) : (
     <ServiceWebFooter
-      title={organization.title}
-      logoSrc={organization.logo?.url}
-      phone={organization.phone}
+      title={organization?.title ?? ''}
+      logoSrc={organization?.logo?.url}
+      phone={organization?.phone}
       contactLink={contactLink}
       namespace={namespace}
     />

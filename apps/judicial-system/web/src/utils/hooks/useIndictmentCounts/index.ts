@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
@@ -17,7 +17,7 @@ export interface UpdateIndictmentCount
     UpdateIndictmentCountInput,
     'caseId' | 'indictmentCountId' | 'substances'
   > {
-  substances?: SubstanceMap
+  substances?: SubstanceMap | null
 }
 
 const useIndictmentCounts = () => {
@@ -102,25 +102,26 @@ const useIndictmentCounts = () => {
     (
       indictmentCountId: string,
       update: UpdateIndictmentCount,
-      setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
-      setWorkingCase((theCase) => {
-        if (!theCase.indictmentCounts) {
-          return theCase
+      setWorkingCase((prevWorkingCase) => {
+        if (!prevWorkingCase.indictmentCounts) {
+          return prevWorkingCase
         }
 
-        const indictmentCountIndexToUpdate = theCase.indictmentCounts.findIndex(
-          (indictmentCount) => indictmentCount.id === indictmentCountId,
-        )
+        const indictmentCountIndexToUpdate =
+          prevWorkingCase.indictmentCounts.findIndex(
+            (indictmentCount) => indictmentCount.id === indictmentCountId,
+          )
 
-        const newIndictmentCounts = [...theCase.indictmentCounts]
+        const newIndictmentCounts = [...prevWorkingCase.indictmentCounts]
 
         newIndictmentCounts[indictmentCountIndexToUpdate] = {
           ...newIndictmentCounts[indictmentCountIndexToUpdate],
           ...update,
         }
 
-        return { ...theCase, indictmentCounts: newIndictmentCounts }
+        return { ...prevWorkingCase, indictmentCounts: newIndictmentCounts }
       })
     },
     [],

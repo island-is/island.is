@@ -9,8 +9,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-// TODO Find a way to import from case index file
-import { Case } from '../../case/models/case.model'
+import { Case } from './case.model'
 
 @Table({
   tableName: 'case_archive',
@@ -23,27 +22,20 @@ export class CaseArchive extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @ApiProperty({
-    type: DataType.DATE,
-  })
+  @Column({ type: DataType.DATE })
+  @ApiProperty({ type: Date })
   created!: Date
 
   @ForeignKey(() => Case)
-  @Column({
-    type: DataType.UUID,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.UUID, allowNull: false })
+  @ApiProperty({ type: String })
   caseId!: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: false,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.TEXT, allowNull: false })
+  @ApiProperty({ type: String })
   archive!: string
 }

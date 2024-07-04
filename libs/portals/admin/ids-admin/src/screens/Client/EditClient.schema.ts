@@ -92,14 +92,18 @@ export const schema = {
           ? AuthAdminRefreshTokenExpiration.Sliding
           : AuthAdminRefreshTokenExpiration.Absolute
       }),
-      slidingRefreshTokenLifetime: z.string().transform((s) => {
-        return Number(s)
+      slidingRefreshTokenLifetime: z.optional(z.string()).transform((s) => {
+        return typeof s === 'string' && s.length > 0 ? Number(s) : undefined
       }),
     })
     .merge(defaultEnvironmentSchema)
     .refine(
       (data) => {
-        if (data.refreshTokenExpiration) {
+        if (
+          data.refreshTokenExpiration ===
+            AuthAdminRefreshTokenExpiration.Sliding &&
+          data.slidingRefreshTokenLifetime !== undefined
+        ) {
           return checkIfStringIsPositiveNumber(
             data.slidingRefreshTokenLifetime.toString(),
           )
@@ -152,12 +156,10 @@ export const schema = {
     }),
   [ClientFormTypes.delegations]: z
     .object({
-      supportsProcuringHolders: booleanCheckbox,
-      supportsLegalGuardians: booleanCheckbox,
       promptDelegations: booleanCheckbox,
-      supportsPersonalRepresentatives: booleanCheckbox,
-      supportsCustomDelegation: booleanCheckbox,
       requireApiScopes: booleanCheckbox,
+      removedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
+      addedDelegationTypes: zfd.repeatable(z.optional(z.array(z.string()))),
     })
     .merge(defaultEnvironmentSchema),
   [ClientFormTypes.advancedSettings]: z
@@ -166,6 +168,7 @@ export const schema = {
       allowOfflineAccess: booleanCheckbox,
       supportTokenExchange: booleanCheckbox,
       requireConsent: booleanCheckbox,
+      singleSession: booleanCheckbox,
       accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {

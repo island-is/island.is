@@ -224,12 +224,13 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
 
       // We're simply tracking the `discount_id_${uuid}` access key to the cache
       // along with the explicit discount code as key
       const uuid = cacheManagerSpy.mock.calls[0][0]
-      const discountCode = result?.discountCode
+      const discountCode = result?.at(0)?.discountCode
       expect(cacheManagerSpy.mock.calls[1][1]).toBe(uuid)
       expect(cacheManagerSpy.mock.calls[2][1]).toBe(uuid)
       expect(cacheManagerSpy.mock.calls[3][1]).toBe(discountCode)
@@ -251,6 +252,7 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
       expect(explicitCodeSpy).toBeCalledTimes(1)
     })
@@ -267,6 +269,7 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
       expect(result).toBe(null)
     })
@@ -295,9 +298,10 @@ describe('DiscountService', () => {
         comment,
         numberOfDaysUntilExpiration,
         unConnectedFlights,
+        false,
       )
 
-      expect(result?.user?.postalcode).toBe(600)
+      expect(result?.at(0)?.user?.postalcode).toBe(600)
     })
   })
 

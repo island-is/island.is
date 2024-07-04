@@ -8,13 +8,15 @@ import type { ConfigType } from '@island.is/nest/config'
 
 import {
   capitalize,
-  caseTypes,
+  formatCaseType,
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { isIndictmentCase } from '@island.is/judicial-system/types'
 
-import { Case } from '../case'
+import { type Case } from '../case'
+import { DateLog } from '../case/models/dateLog.model'
+import { ExplanatoryComment } from '../case/models/explanatoryComment.model'
 import { eventModuleConfig } from './event.config'
 
 const errorEmojis = [
@@ -40,15 +42,16 @@ const caseEvent = {
   CREATE_XRD: ':new: Mál stofnað í gegnum Strauminn',
   EXTEND: ':recycle: Mál framlengt',
   OPEN: ':unlock: Opnað fyrir dómstól',
+  ASK_FOR_CONFIRMATION: ':question: Beðið um staðfestingu',
   SUBMIT: ':mailbox_with_mail: Sent',
   RESUBMIT: ':mailbox_with_mail: Sent aftur',
   RECEIVE: ':eyes: Móttekið',
   ACCEPT: ':white_check_mark: Samþykkt',
-  ACCEPT_INDICTMENT: ':white_check_mark: Lokið',
   REJECT: ':negative_squared_cross_mark: Hafnað',
+  DISMISS: ':woman-shrugging: Vísað frá',
+  COMPLETE: ':white_check_mark: Lokið',
   DELETE: ':fire: Afturkallað',
   SCHEDULE_COURT_DATE: ':timer_clock: Fyrirtökutíma úthlutað',
-  DISMISS: ':woman-shrugging: Vísað frá',
   ARCHIVE: ':file_cabinet: Sett í geymslu',
   REOPEN: ':construction: Opnað aftur',
   APPEAL: ':judge: Kæra',
@@ -62,11 +65,11 @@ export enum CaseEvent {
   CREATE_XRD = 'CREATE_XRD',
   EXTEND = 'EXTEND',
   OPEN = 'OPEN',
+  ASK_FOR_CONFIRMATION = 'ASK_FOR_CONFIRMATION',
   SUBMIT = 'SUBMIT',
   RESUBMIT = 'RESUBMIT',
   RECEIVE = 'RECEIVE',
   ACCEPT = 'ACCEPT',
-  ACCEPT_INDICTMENT = 'ACCEPT_INDICTMENT',
   REJECT = 'REJECT',
   DELETE = 'DELETE',
   SCHEDULE_COURT_DATE = 'SCHEDULE_COURT_DATE',
@@ -94,11 +97,10 @@ export class EventService {
         return
       }
 
-      const title =
-        event === CaseEvent.ACCEPT && isIndictmentCase(theCase.type)
-          ? caseEvent[CaseEvent.ACCEPT_INDICTMENT]
-          : `${caseEvent[event]}${eventOnly ? ' - aðgerð ekki framkvæmd' : ''}`
-      const typeText = `${capitalize(caseTypes[theCase.type])}${
+      const title = `${caseEvent[event]}${
+        eventOnly ? ' - aðgerð ekki framkvæmd' : ''
+      }`
+      const typeText = `${capitalize(formatCaseType(theCase.type))}${
         isIndictmentCase(theCase.type)
           ? `:(${readableIndictmentSubtypes(
               theCase.policeCaseNumbers,
@@ -107,9 +109,7 @@ export class EventService {
           : ''
       } *${theCase.id}*`
       const prosecutionText = `${
-        theCase.creatingProsecutor?.institution
-          ? `${theCase.creatingProsecutor?.institution?.name} `
-          : ''
+        theCase.prosecutorsOffice ? `${theCase.prosecutorsOffice.name} ` : ''
       }*${theCase.policeCaseNumbers.join(', ')}*`
       const courtText = theCase.court
         ? `\n>${theCase.court.name} ${
@@ -126,7 +126,15 @@ export class EventService {
             }\n>Dómritari ${
               theCase.registrar?.name ?? 'er ekki skráður'
             }\n>Fyrirtaka ${
-              formatDate(theCase.courtDate, 'Pp') ?? 'er ekki skráð'
+              ExplanatoryComment.postponedIndefinitelyExplanation(
+                theCase.explanatoryComments,
+              )
+                ? 'ekki ákveðin'
+                : formatDate(
+                    DateLog.courtDate(theCase.dateLogs)?.date ??
+                      DateLog.arraignmentDate(theCase.dateLogs)?.date,
+                    'Pp',
+                  ) ?? 'er ekki skráð'
             }`
           : ''
 
@@ -139,7 +147,7 @@ export class EventService {
               type: 'section',
               text: {
                 type: 'mrkdwn',
-                text: `*${title}*\n>${typeText}\n>${prosecutionText}>${courtText}${courtOfAppealsText}${extraText}`,
+                text: `*${title}*\n>${typeText}\n>${prosecutionText}${courtText}${courtOfAppealsText}${extraText}`,
               },
             },
           ],
@@ -156,7 +164,7 @@ export class EventService {
 
   postErrorEvent(
     message: string,
-    info: { [key: string]: string | boolean | undefined },
+    info: { [key: string]: string | boolean | Date | undefined },
     reason: Error,
   ) {
     try {

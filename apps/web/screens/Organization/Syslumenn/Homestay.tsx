@@ -1,5 +1,8 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import { useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   Button,
@@ -10,7 +13,12 @@ import {
   NavigationItem,
   Text,
 } from '@island.is/island-ui/core'
-import { withMainLayout } from '@island.is/web/layouts/main'
+import { theme } from '@island.is/island-ui/theme'
+import {
+  OrganizationWrapper,
+  SyslumennListCsvExport,
+  Webreader,
+} from '@island.is/web/components'
 import {
   ContentLanguage,
   Query,
@@ -19,27 +27,21 @@ import {
   QueryGetOrganizationPageArgs,
   QueryGetOrganizationSubpageArgs,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { webRichText } from '@island.is/web/utils/richText'
+import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
+
+import { Screen } from '../../../types'
 import {
   GET_HOMESTAYS_QUERY,
   GET_NAMESPACE_QUERY,
   GET_ORGANIZATION_PAGE_QUERY,
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../../queries'
-import { Screen } from '../../../types'
-import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import {
-  OrganizationWrapper,
-  SyslumennListCsvExport,
-  Webreader,
-} from '@island.is/web/components'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { theme } from '@island.is/island-ui/theme'
-import { SliceType } from '@island.is/island-ui/contentful'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { useRouter } from 'next/router'
-import { webRichText } from '@island.is/web/utils/richText'
-import { safelyExtractPathnameFromUrl } from '@island.is/web/utils/safelyExtractPathnameFromUrl'
 
 const PAGE_SIZE = 10
 const CSV_COLUMN_SEPARATOR = ','
@@ -164,7 +166,9 @@ const Homestay: Screen<HomestayProps> = ({
       showReadSpeaker={false}
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore make web strict
-      pageFeaturedImage={subpage?.featuredImage}
+      pageFeaturedImage={
+        subpage?.featuredImage ?? organizationPage?.featuredImage
+      }
       breadcrumbItems={[
         {
           title: 'Ísland.is',

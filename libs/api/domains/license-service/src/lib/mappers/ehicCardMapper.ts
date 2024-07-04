@@ -17,86 +17,95 @@ import { EhicCardResponse } from '@island.is/clients/license-client'
 @Injectable()
 export class EHICCardPayloadMapper implements GenericLicenseMapper {
   parsePayload(
-    payload?: unknown,
+    payload: Array<unknown>,
     locale: Locale = 'is',
     labels?: GenericLicenseLabels,
-  ): GenericUserLicensePayload | null {
-    const typedPayload = payload as EhicCardResponse
+  ): Array<GenericUserLicensePayload> {
+    if (!payload) return []
 
-    if (!typedPayload || !typedPayload.expiryDate) return null
-
-    const expired = typedPayload.expiryDate
-      ? !isAfter(new Date(typedPayload.expiryDate?.toISOString()), new Date())
-      : null
-
+    const typedPayload = payload as Array<EhicCardResponse>
     const label = labels?.labels
-    const data: Array<GenericLicenseDataField> = [
-      typedPayload.cardHolderName
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('fullName', locale, label),
-            value: typedPayload.cardHolderName ?? '',
-          }
-        : null,
-      typedPayload.cardHolderNationalId
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('nationalId', locale, label),
-            value: typedPayload.cardHolderNationalId
-              ? format(typedPayload.cardHolderNationalId)
-              : '',
-          }
-        : null,
-      typedPayload.cardNumber
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('cardNumber', locale, label),
-            value: typedPayload.cardNumber,
-          }
-        : null,
-      typedPayload.issued
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('publishedDate', locale, label),
-            value: typedPayload.issued.toISOString(),
-          }
-        : null,
-      typedPayload.expiryDate
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: getLabel('validTo', locale, label),
-            value: typedPayload.expiryDate.toISOString(),
-          }
-        : null,
-      {
-        type: GenericLicenseDataFieldType.Value,
-        label: getLabel('publisher', locale, label),
-        value: 'Sjúkratryggingar',
-      },
-    ].filter(isDefined)
 
-    return {
-      data,
-      rawData: JSON.stringify(typedPayload),
-      metadata: {
-        licenseNumber: typedPayload.cardNumber?.toString() ?? '',
-        expired,
-        expireDate: typedPayload.expiryDate.toISOString(),
-        links: [
-          typedPayload.hasTempCard && typedPayload.tempCardPdf
+    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload
+      .map((t) => {
+        if (!t || !t.expiryDate) return null
+
+        const expired = t.expiryDate
+          ? !isAfter(new Date(t.expiryDate?.toISOString()), new Date())
+          : null
+
+        const data: Array<GenericLicenseDataField> = [
+          t.cardHolderName
             ? {
-                label: getLabel('downloadCard', locale, label),
-                value: getDocument(typedPayload.tempCardPdf, 'pdf'),
-                type: GenericUserLicenseMetaLinksType.Download,
-                name: `EHIC_${new Date().toISOString().split('T')[0]}.pdf`,
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('fullName', locale, label),
+                value: t.cardHolderName ?? '',
               }
-            : undefined,
+            : null,
+          t.cardHolderNationalId
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('nationalId', locale, label),
+                value: t.cardHolderNationalId
+                  ? format(t.cardHolderNationalId)
+                  : '',
+              }
+            : null,
+          t.cardNumber
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('cardNumber', locale, label),
+                value: t.cardNumber,
+              }
+            : null,
+          t.issued
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('publishedDate', locale, label),
+                value: t.issued.toISOString(),
+              }
+            : null,
+          t.expiryDate
+            ? {
+                type: GenericLicenseDataFieldType.Value,
+                label: getLabel('validTo', locale, label),
+                value: t.expiryDate.toISOString(),
+              }
+            : null,
           {
-            label: getLabel('applyForNewCard', locale, label),
-            value: '/umsoknir/evropska-sjukratryggingakortid',
+            type: GenericLicenseDataFieldType.Value,
+            label: getLabel('publisher', locale, label),
+            value: 'Sjúkratryggingar',
           },
-        ].filter(isDefined),
-      },
-    }
+        ].filter(isDefined)
+
+        return {
+          data,
+          rawData: JSON.stringify(t),
+          metadata: {
+            licenseNumber: t.cardNumber?.toString() ?? '',
+            licenseId: t.cardNumber?.toString() ?? 'default',
+            expired,
+            expireDate: t.expiryDate.toISOString(),
+            links: [
+              t.hasTempCard && t.tempCardPdf
+                ? {
+                    label: getLabel('downloadCard', locale, label),
+                    value: getDocument(t.tempCardPdf, 'pdf'),
+                    type: GenericUserLicenseMetaLinksType.Download,
+                    name: `EHIC_${new Date().toISOString().split('T')[0]}.pdf`,
+                  }
+                : undefined,
+              {
+                label: getLabel('applyForNewCard', locale, label),
+                value: '/umsoknir/evropska-sjukratryggingakortid',
+              },
+            ].filter(isDefined),
+          },
+        }
+      })
+      .filter(isDefined)
+
+    return mappedPayload
   }
 }

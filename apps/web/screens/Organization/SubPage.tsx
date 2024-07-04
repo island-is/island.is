@@ -1,30 +1,30 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
-import { FC, useMemo } from 'react'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
+  BreadCrumbItem,
   GridColumn,
   GridContainer,
   GridRow,
   Link,
   NavigationItem,
   Stack,
-  TableOfContents,
   Text,
 } from '@island.is/island-ui/core'
 import {
-  Form,
   getThemeConfig,
   OrganizationWrapper,
   SignLanguageButton,
   SliceDropdown,
   SliceMachine,
+  SliceTableOfContents,
+  TOC,
   Webreader,
 } from '@island.is/web/components'
+import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   Query,
@@ -36,7 +36,6 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { scrollTo } from '@island.is/web/hooks/useScrollSpy'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { CustomNextError } from '@island.is/web/units/errors'
@@ -50,44 +49,15 @@ import {
   GET_ORGANIZATION_SUBPAGE_QUERY,
 } from '../queries'
 
-interface SubPageProps {
+export interface SubPageProps {
   organizationPage: Query['getOrganizationPage']
   subpage: Query['getOrganizationSubpage']
   namespace: Record<string, string>
   locale: Locale
-}
-
-const TOC: FC<React.PropsWithChildren<{ slices: Slice[]; title: string }>> = ({
-  slices,
-  title,
-}) => {
-  const navigation = useMemo(
-    () =>
-      slices
-        .map((slice) => ({
-          id: slice.id,
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          text: slice['title'] ?? slice['leftTitle'] ?? '',
-        }))
-        .filter((item) => !!item.text),
-    [slices],
-  )
-  if (navigation.length === 0) {
-    return null
-  }
-  return (
-    <Box marginY={2}>
-      <TableOfContents
-        tableOfContentsTitle={title}
-        headings={navigation.map(({ id, text }) => ({
-          headingTitle: text,
-          headingId: id,
-        }))}
-        onClick={(id) => scrollTo(id, { smooth: true })}
-      />
-    </Box>
-  )
+  customContent?: React.ReactNode
+  backLink?: { text: string; url: string }
+  customBreadcrumbItems?: BreadCrumbItem[]
+  customContentfulIds?: (string | undefined)[]
 }
 
 const SubPage: Screen<SubPageProps> = ({
@@ -95,6 +65,10 @@ const SubPage: Screen<SubPageProps> = ({
   subpage,
   namespace,
   locale,
+  customContent,
+  customBreadcrumbItems,
+  customContentfulIds,
+  backLink,
 }) => {
   const router = useRouter()
   const { activeLocale } = useI18n()
@@ -102,7 +76,11 @@ const SubPage: Screen<SubPageProps> = ({
   const n = useNamespace(namespace)
   const { linkResolver } = useLinkResolver()
 
-  useContentfulId(organizationPage?.id, subpage?.id)
+  const contentfulIds = customContentfulIds
+    ? customContentfulIds
+    : [organizationPage?.id, subpage?.id]
+
+  useContentfulId(...contentfulIds)
 
   const pathWithoutHash = router.asPath.split('#')[0]
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -125,12 +103,14 @@ const SubPage: Screen<SubPageProps> = ({
   const content = (
     <>
       {subpage?.showTableOfContents && (
-        <TOC
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          slices={subpage.slices}
-          title={n('navigationTitle', 'Efnisyfirlit')}
-        />
+        <Box marginY={2}>
+          <TOC
+            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+            // @ts-ignore make web strict
+            slices={subpage.slices}
+            title={n('navigationTitle', 'Efnisyfirlit')}
+          />
+        </Box>
       )}
       <GridRow className="rs_read">
         {subpage?.description && subpage.description.length > 0 && (
@@ -140,13 +120,7 @@ const SubPage: Screen<SubPageProps> = ({
           >
             {webRichText(
               subpage?.description as SliceType[],
-              {
-                renderComponent: {
-                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  // @ts-ignore make web strict
-                  Form: (slice) => <Form form={slice} namespace={namespace} />,
-                },
-              },
+              undefined,
               activeLocale,
             )}
           </GridColumn>
@@ -157,6 +131,7 @@ const SubPage: Screen<SubPageProps> = ({
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
             // @ts-ignore make web strict
             offset={[null, null, '1/12']}
+            paddingBottom={3}
           >
             <Stack space={2}>
               {subpage?.links?.map((link) => (
@@ -187,20 +162,25 @@ const SubPage: Screen<SubPageProps> = ({
       pageFeaturedImage={
         subpage?.featuredImage ?? organizationPage?.featuredImage
       }
-      breadcrumbItems={[
-        {
-          title: 'Ísland.is',
-          href: linkResolver('homepage', [], locale).href,
-        },
-        {
-          title: organizationPage?.title ?? '',
-          href: linkResolver(
-            'organizationpage',
-            [organizationPage?.slug ?? ''],
-            locale,
-          ).href,
-        },
-      ]}
+      backLink={backLink}
+      breadcrumbItems={
+        customBreadcrumbItems
+          ? customBreadcrumbItems
+          : [
+              {
+                title: 'Ísland.is',
+                href: linkResolver('homepage', [], locale).href,
+              },
+              {
+                title: organizationPage?.title ?? '',
+                href: linkResolver(
+                  'organizationpage',
+                  [organizationPage?.slug ?? ''],
+                  locale,
+                ).href,
+              },
+            ]
+      }
       navigationData={{
         title: n('navigationTitle', 'Efnisyfirlit'),
         items: navList,
@@ -219,73 +199,84 @@ const SubPage: Screen<SubPageProps> = ({
                       subpage?.links?.length ? '7/12' : '12/12',
                     ]}
                   >
-                    <Box className="rs_read" marginBottom={2}>
-                      <Text variant="h1" as="h1">
-                        {subpage?.title}
-                      </Text>
-                    </Box>
-                    <Box
-                      display="flex"
-                      alignItems="center"
-                      columnGap={2}
-                      rowGap={2}
-                      marginBottom={3}
-                      flexWrap="wrap"
-                    >
-                      <Webreader
-                        marginTop={0}
-                        marginBottom={0}
-                        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                        // @ts-ignore make web strict
-                        readId={null}
-                        readClass="rs_read"
-                      />
-                      {subpage?.signLanguageVideo?.url && (
-                        <SignLanguageButton
-                          videoUrl={subpage.signLanguageVideo.url}
-                          content={
-                            <>
-                              <Box className="rs_read" marginBottom={2}>
-                                <Text variant="h2">{subpage.title}</Text>
-                              </Box>
-                              {content}
-                              {renderSlices(
-                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                                // @ts-ignore make web strict
-                                subpage.slices,
-                                subpage.sliceCustomRenderer,
-                                subpage.sliceExtraText,
-                                namespace,
-                                organizationPage?.slug,
-                              )}
-                            </>
-                          }
-                        />
-                      )}
-                    </Box>
+                    {customContent ? (
+                      customContent
+                    ) : (
+                      <>
+                        <Box className="rs_read" marginBottom={2}>
+                          <Text variant="h1" as="h1">
+                            {subpage?.title}
+                          </Text>
+                        </Box>
+                        <Box
+                          display="flex"
+                          alignItems="center"
+                          columnGap={2}
+                          rowGap={2}
+                          marginBottom={3}
+                          flexWrap="wrap"
+                        >
+                          <Webreader
+                            marginTop={0}
+                            marginBottom={0}
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            // @ts-ignore make web strict
+                            readId={null}
+                            readClass="rs_read"
+                          />
+                          {subpage?.signLanguageVideo?.url && (
+                            <SignLanguageButton
+                              videoUrl={subpage.signLanguageVideo.url}
+                              videoThumbnailImageUrl={
+                                subpage.signLanguageVideo.thumbnailImageUrl
+                              }
+                              content={
+                                <>
+                                  <Box className="rs_read" marginBottom={2}>
+                                    <Text variant="h2">{subpage.title}</Text>
+                                  </Box>
+                                  {content}
+                                  {renderSlices(
+                                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                    // @ts-ignore make web strict
+                                    subpage.slices,
+                                    subpage.sliceCustomRenderer,
+                                    subpage.sliceExtraText,
+                                    namespace,
+                                    organizationPage?.slug,
+                                  )}
+                                </>
+                              }
+                            />
+                          )}
+                        </Box>
+                      </>
+                    )}
                   </GridColumn>
                 </GridRow>
-                {content}
+                {!customContent && content}
               </GridContainer>
             </GridColumn>
           </GridRow>
         </Box>
       </GridContainer>
-      {renderSlices(
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.slices,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceCustomRenderer,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        subpage.sliceExtraText,
-        namespace,
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
-        organizationPage.slug,
-      )}
+      <Stack space={SLICE_SPACING}>
+        {renderSlices(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.slices,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceCustomRenderer,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          subpage.sliceExtraText,
+          namespace,
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore make web strict
+          organizationPage.slug,
+        )}
+      </Stack>
     </OrganizationWrapper>
   )
 }
@@ -300,12 +291,11 @@ const renderSlices = (
   switch (renderType) {
     case 'SliceDropdown':
       return <SliceDropdown slices={slices} sliceExtraText={extraText} />
+    case 'SliceTableOfContents':
+      return <SliceTableOfContents slices={slices} sliceExtraText={extraText} />
     default:
       return slices.map((slice, index) => {
-        if (
-          slice.__typename === 'AnchorPageListSlice' ||
-          slice.__typename === 'LifeEventPageListSlice'
-        ) {
+        if (slice.__typename === 'AnchorPageListSlice') {
           return (
             <SliceMachine
               key={slice.id}
@@ -315,7 +305,6 @@ const renderSlices = (
               marginBottom={index === slices.length - 1 ? 5 : 0}
               params={{
                 renderAnchorPagesAsProfileCards: true,
-                latestNewsSliceBackground: 'white',
                 forceTitleSectionHorizontalPadding: 'true',
               }}
               fullWidth={true}
@@ -332,7 +321,6 @@ const renderSlices = (
             marginBottom={index === slices.length - 1 ? 5 : 0}
             params={{
               renderAnchorPagesAsProfileCards: true,
-              latestNewsSliceBackground: 'white',
               forceTitleSectionHorizontalPadding: 'true',
             }}
           />

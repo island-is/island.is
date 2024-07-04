@@ -189,9 +189,13 @@ export class TemplateApiActionRunner {
     const { title, summary } = getErrorReasonIfPresent(problem.errorReason)
 
     const reason = {
-      summary: isTranslationObject(summary)
-        ? this.formatMessage(summary)
-        : summary,
+      summary:
+        isTranslationObject(summary) && typeof summary === 'object'
+          ? this.formatMessage(
+              summary,
+              'values' in summary ? summary.values : undefined,
+            )
+          : summary,
       title: isTranslationObject(title) ? this.formatMessage(title) : title,
     }
 

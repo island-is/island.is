@@ -1,22 +1,20 @@
+import { SetStateAction } from 'react'
 import compareAsc from 'date-fns/compareAsc'
 
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  TempCase as Case,
-  TempUpdateCase as UpdateCase,
-} from '@island.is/judicial-system-web/src/types'
+import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { replaceTabs } from './formatters'
+import { UpdateCase } from './hooks'
 import * as validations from './validate'
 
 export const removeTabsValidateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<Case>) => void,
   errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
   if (value.includes('\t')) {
     value = replaceTabs(value)
@@ -26,8 +24,7 @@ export const removeTabsValidateAndSet = (
     field,
     value,
     validations,
-    theCase,
-    setCase,
+    setWorkingCase,
     errorMessage,
     setErrorMessage,
   )
@@ -37,7 +34,7 @@ export const removeErrorMessageIfValid = (
   validationsToRun: validations.Validation[],
   value: string,
   errorMessage?: string,
-  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
+  errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
   const isValid = validations.validate([[value, validationsToRun]]).isValid
 
@@ -49,7 +46,7 @@ export const removeErrorMessageIfValid = (
 export const validateAndSetErrorMessage = (
   validationsToRun: validations.Validation[],
   value: string,
-  errorMessageSetter?: (value: React.SetStateAction<string>) => void,
+  errorMessageSetter?: (value: SetStateAction<string>) => void,
 ) => {
   const validation = validations.validate([[value, validationsToRun]])
 
@@ -63,17 +60,16 @@ export const validateAndSet = (
   field: keyof UpdateCase,
   value: string,
   validations: validations.Validation[],
-  theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<Case>) => void,
   errorMessage?: string,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
   removeErrorMessageIfValid(validations, value, errorMessage, setErrorMessage)
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: value,
-  })
+  }))
 }
 
 export const validateAndSendToServer = (
@@ -82,7 +78,7 @@ export const validateAndSendToServer = (
   validations: validations.Validation[],
   theCase: Case,
   updateCase: (id: string, updateCase: UpdateCase) => void,
-  setErrorMessage?: (value: React.SetStateAction<string>) => void,
+  setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
   validateAndSetErrorMessage(validations, value, setErrorMessage)
 
@@ -94,7 +90,7 @@ export const validateAndSendToServer = (
 /**If entry is included in values then it is removed
  * otherwise it is appended
  */
-export function toggleInArray<T>(values: T[] | undefined, entry: T) {
+export const toggleInArray = <T>(values: T[] | undefined | null, entry: T) => {
   if (!values) return [entry]
 
   return values.includes(entry)
@@ -106,7 +102,7 @@ export const setCheckboxAndSendToServer = (
   field: keyof UpdateCase,
   value: string,
   theCase: Case,
-  setCase: (value: React.SetStateAction<Case>) => void,
+  setWorkingCase: (value: SetStateAction<Case>) => void,
   updateCase: (id: string, updateCase: UpdateCase) => void,
 ) => {
   const checks = theCase[field as keyof Case]
@@ -119,10 +115,10 @@ export const setCheckboxAndSendToServer = (
     checks.splice(checks.indexOf(value), 1)
   }
 
-  setCase({
-    ...theCase,
+  setWorkingCase((prevWorkingCase) => ({
+    ...prevWorkingCase,
     [field]: checks,
-  })
+  }))
 
   if (theCase.id !== '') {
     updateCase(theCase.id, { [field]: checks })
@@ -142,6 +138,7 @@ export const hasDateChanged = (
 }
 
 export type stepValidationsType = {
+  [constants.CASES_ROUTE]: () => boolean
   [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
@@ -168,7 +165,7 @@ export type stepValidationsType = {
   [constants.INDICTMENTS_CASE_FILE_ROUTE]: () => boolean
   [constants.INDICTMENTS_PROCESSING_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
     theCase: Case,
   ) => boolean
@@ -195,8 +192,9 @@ export type stepValidationsType = {
   ) => boolean
   [constants.INDICTMENTS_SUBPOENA_ROUTE]: (theCase: Case) => boolean
   [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) => boolean
-  [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => boolean
-  [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => boolean
+  [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) => boolean
+  [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => boolean
+  [constants.INDICTMENTS_SUMMARY_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => boolean
   [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.COURT_OF_APPEAL_RULING_ROUTE]: (theCase: Case) => boolean
@@ -206,6 +204,7 @@ export type stepValidationsType = {
 
 export const stepValidations = (): stepValidationsType => {
   return {
+    [constants.CASES_ROUTE]: () => true,
     [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
     [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>
@@ -249,7 +248,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isProcessingStepValidIndictments(theCase),
     [constants.INDICTMENTS_TRAFFIC_VIOLATION_ROUTE]: (theCase: Case) =>
       validations.isTrafficViolationStepValidIndictments(theCase),
-    [constants.INDICTMENTS_CASE_FILES_ROUTE]: () => true,
+    [constants.INDICTMENTS_CASE_FILES_ROUTE]: (theCase) =>
+      validations.isCaseFilesStepValidIndictments(theCase),
+    [constants.INDICTMENTS_SUMMARY_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_RECEPTION_AND_ASSIGNMENT_ROUTE]: (
       theCase: Case,
     ) => validations.isReceptionAndAssignmentStepValid(theCase),
@@ -281,8 +282,9 @@ export const stepValidations = (): stepValidationsType => {
       validations.isSubpoenaStepValid(theCase),
     [constants.INDICTMENTS_DEFENDER_ROUTE]: (theCase: Case) =>
       validations.isDefenderStepValid(theCase),
-    [constants.INDICTMENTS_COURT_RECORD_ROUTE]: () => true,
-    [constants.CLOSED_INDICTMENT_OVERVIEW_ROUTE]: () => true,
+    [constants.INDICTMENTS_CONCLUSION_ROUTE]: (theCase: Case) =>
+      validations.isConclusionStepValid(theCase),
+    [constants.INDICTMENTS_COURT_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_OVERVIEW_ROUTE]: () => true,
     [constants.COURT_OF_APPEAL_CASE_ROUTE]: (theCase: Case) =>
       validations.isCourtOfAppealCaseStepValid(theCase),
@@ -301,15 +303,12 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
     steps.includes(key),
   )
 
-  if (
-    stepsToCheck.every(([, validationFn]) => validationFn(theCase) === true)
-  ) {
+  if (stepsToCheck.every(([, validationFn]) => validationFn(theCase))) {
     return steps[steps.length - 1]
   }
 
   const [key] =
-    stepsToCheck.find(([, validationFn]) => validationFn(theCase) === false) ||
-    []
+    stepsToCheck.find(([, validationFn]) => !validationFn(theCase)) ?? []
 
   return key
 }

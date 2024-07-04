@@ -8,8 +8,12 @@ import {
   Table as T,
   Button,
   Select,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import {
+  DownloadFileButtons,
   UserInfoLine,
   amountFormat,
   formSubmit,
@@ -18,7 +22,7 @@ import {
 import { messages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { SECTION_GAP } from '../Medicine/constants'
+import { CONTENT_GAP, SECTION_GAP } from '../Medicine/constants'
 import * as styles from './Payments.css'
 import {
   useGetPaymentOverviewLazyQuery,
@@ -29,9 +33,11 @@ import { isDefined } from '@island.is/shared/utils'
 import { RightsPortalPaymentOverview } from '@island.is/api/schema'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 import { HealthPaths } from '../../lib/paths'
+import { exportPaymentOverviewFile } from '../../utils/FileBreakdown'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const PaymentOverview = () => {
-  const { formatMessage, formatDateFns } = useLocale()
+  const { formatMessage, formatDateFns, lang } = useLocale()
 
   const [startDate, setStartDate] = useState<Date>(
     sub(new Date(), { years: 3 }),
@@ -74,8 +80,8 @@ export const PaymentOverview = () => {
     lazyOverviewQuery({
       variables: {
         input: {
-          dateFrom: formatDateFns(startDate, 'MM.dd.yyyy'),
-          dateTo: formatDateFns(endDate, 'MM.dd.yyyy'),
+          dateFrom: startDate,
+          dateTo: endDate,
           serviceTypeCode: selectedOptionId ?? '',
         },
       },
@@ -94,11 +100,7 @@ export const PaymentOverview = () => {
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentOverview}>
       {error ? (
-        <AlertMessage
-          type="error"
-          title={formatMessage(m.errorTitle)}
-          message={formatMessage(messages.errorFetchPaymentInfo)}
-        />
+        <Problem noBorder={false} error={error} />
       ) : loading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (
@@ -122,121 +124,164 @@ export const PaymentOverview = () => {
             </Stack>
           </Box>
 
-          <Box>
-            <Text marginBottom={2} variant="h5">
-              {formatMessage(messages.invoices)}
-            </Text>
-            <Box
-              marginBottom={SECTION_GAP}
-              display="flex"
-              flexDirection="column"
-              rowGap={2}
-            >
-              <Box display="flex" columnGap={2}>
-                <DatePicker
-                  size="xs"
-                  label={formatMessage(m.dateFrom)}
-                  placeholderText={formatMessage(m.chooseDate)}
-                  handleChange={(date) => setStartDate(date)}
-                  selected={startDate}
-                />
-                <DatePicker
-                  size="xs"
-                  label={formatMessage(m.dateTo)}
-                  placeholderText={formatMessage(m.chooseDate)}
-                  handleChange={(date) => setEndDate(date)}
-                  selected={endDate}
-                />
-              </Box>
-              {!!options?.length && (
-                <Box display="flex" alignItems="center" columnGap={2}>
-                  <Select
-                    value={
-                      selectedOptionId
-                        ? options?.find((opt) => opt.value === selectedOptionId)
-                        : options[0]
-                    }
-                    size="sm"
-                    name="service"
-                    options={options}
-                    onChange={(opt) => setSelectedOptionId(opt?.value ?? null)}
+          <Stack space={[CONTENT_GAP, SECTION_GAP]}>
+            <Text variant="h5">{formatMessage(messages.invoices)}</Text>
+            <GridContainer>
+              <GridRow
+                marginBottom={CONTENT_GAP}
+                direction={['column', 'column', 'column', 'row']}
+              >
+                <GridColumn
+                  span={['6/8', '6/8', '6/8', '4/8']}
+                  paddingBottom={[CONTENT_GAP, CONTENT_GAP, CONTENT_GAP, 0]}
+                >
+                  <DatePicker
+                    size="xs"
+                    label={formatMessage(m.dateFrom)}
+                    placeholderText={formatMessage(m.chooseDate)}
+                    handleChange={(date) => setStartDate(date)}
+                    backgroundColor="blue"
+                    selected={startDate}
+                    locale={lang}
                   />
-                  <Button size="medium" onClick={() => onFetchBills()}>
-                    Sækja
-                  </Button>
-                </Box>
+                </GridColumn>
+                <GridColumn span={['6/8', '6/8', '6/8', '4/8']}>
+                  <DatePicker
+                    size="xs"
+                    label={formatMessage(m.dateTo)}
+                    placeholderText={formatMessage(m.chooseDate)}
+                    handleChange={(date) => setEndDate(date)}
+                    backgroundColor="blue"
+                    selected={endDate}
+                    locale={lang}
+                  />
+                </GridColumn>
+              </GridRow>
+              {!!options?.length && (
+                <GridRow direction="row" alignItems={['flexStart', 'flexEnd']}>
+                  <GridColumn
+                    span={['7/8', '7/8', '5/8']}
+                    paddingBottom={[CONTENT_GAP, CONTENT_GAP, 0]}
+                  >
+                    <Select
+                      value={
+                        selectedOptionId
+                          ? options?.find(
+                              (opt) => opt.value === selectedOptionId,
+                            )
+                          : options[0]
+                      }
+                      label={formatMessage(messages.typeofService)}
+                      size="xs"
+                      name="service"
+                      options={options}
+                      backgroundColor="blue"
+                      onChange={(opt) =>
+                        setSelectedOptionId(opt?.value ?? null)
+                      }
+                    />
+                  </GridColumn>
+                  <GridColumn span={['4/8', '4/8', '3/8']}>
+                    <Button fluid size="medium" onClick={() => onFetchBills()}>
+                      {formatMessage(m.get)}
+                    </Button>
+                  </GridColumn>
+                </GridRow>
               )}
-            </Box>
-            <Box marginBottom={SECTION_GAP}>
+            </GridContainer>
+            <Box>
               {overviewError ? (
-                <AlertMessage
-                  type="error"
-                  title={formatMessage(m.errorTitle)}
-                  message={formatMessage(messages.errorFetchPaymentInfo)}
-                />
+                <Problem error={error} noBorder={false} />
               ) : overviewLoading ? (
                 <SkeletonLoader space={2} repeat={3} height={24} />
               ) : overview?.bills?.length ? (
-                <T.Table>
-                  <T.Head>
-                    <tr className={styles.tableRowStyle}>
-                      <T.HeadData>{formatMessage(m.date)}</T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.typeofService)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.totalPayment)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.insuranceShare)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(messages.paymentDocument)}
-                      </T.HeadData>
-                    </tr>
-                  </T.Head>
-                  <T.Body>
-                    {overview?.bills?.map((item, index) => {
-                      return (
-                        <tr key={index} className={styles.tableRowStyle}>
-                          <T.Data>
-                            {item.date &&
-                              formatDateFns(item.date, 'dd.MM.yyyy')}
-                          </T.Data>
-                          <T.Data>{item.serviceType?.name}</T.Data>
-                          <T.Data>{amountFormat(item.totalAmount ?? 0)}</T.Data>
-                          <T.Data>
-                            {amountFormat(item.insuranceAmount ?? 0)}
-                          </T.Data>
-                          <T.Data>
-                            <Button
-                              iconType="outline"
-                              onClick={() =>
-                                item.downloadUrl
-                                  ? onFetchDocument(item?.downloadUrl)
-                                  : undefined
-                              }
-                              variant="text"
-                              icon="open"
-                              size="small"
-                            >
-                              {formatMessage(messages.fetchDocument)}
-                            </Button>
-                          </T.Data>
-                        </tr>
-                      )
-                    })}
-                  </T.Body>
-                </T.Table>
+                <>
+                  <T.Table>
+                    <T.Head>
+                      <tr className={styles.tableRowStyle}>
+                        <T.HeadData>{formatMessage(m.date)}</T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.typeofService)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.totalPayment)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.insuranceShare)}
+                        </T.HeadData>
+                        <T.HeadData>
+                          {formatMessage(messages.paymentDocument)}
+                        </T.HeadData>
+                      </tr>
+                    </T.Head>
+                    <T.Body>
+                      {overview?.bills?.map((item, index) => {
+                        return (
+                          <tr key={index} className={styles.tableRowStyle}>
+                            <T.Data>
+                              {item.date &&
+                                formatDateFns(item.date, 'dd.MM.yyyy')}
+                            </T.Data>
+                            <T.Data>{item.serviceType?.name}</T.Data>
+                            <T.Data>
+                              {amountFormat(item.totalAmount ?? 0)}
+                            </T.Data>
+                            <T.Data>
+                              {amountFormat(item.insuranceAmount ?? 0)}
+                            </T.Data>
+                            <T.Data>
+                              <Button
+                                iconType="outline"
+                                onClick={() =>
+                                  item.downloadUrl
+                                    ? onFetchDocument(item?.downloadUrl)
+                                    : undefined
+                                }
+                                variant="text"
+                                icon="open"
+                                size="small"
+                              >
+                                {formatMessage(messages.fetchDocument)}
+                              </Button>
+                            </T.Data>
+                          </tr>
+                        )
+                      })}
+                    </T.Body>
+                  </T.Table>
+                  <DownloadFileButtons
+                    BoxProps={{
+                      paddingTop: 2,
+                      display: 'flex',
+                      flexDirection: 'row',
+                      justifyContent: 'flexEnd',
+                    }}
+                    buttons={[
+                      {
+                        text: formatMessage(m.getAsExcel),
+                        onClick: () =>
+                          exportPaymentOverviewFile(
+                            overview?.bills ?? [],
+                            'xlsx',
+                          ),
+                      },
+                    ]}
+                  />
+                </>
               ) : (
-                <AlertMessage
-                  type="warning"
-                  title={formatMessage(m.noData)}
-                  message={formatMessage(m.noDataFound)}
-                />
+                <Box marginTop={2}>
+                  <Problem
+                    type="no_data"
+                    title={formatMessage(messages.searchResultsEmpty)}
+                    message={formatMessage(messages.searchResultsEmptyDetail)}
+                    titleSize="h3"
+                    noBorder={false}
+                    tag={undefined}
+                  />
+                </Box>
               )}
             </Box>
-          </Box>
+          </Stack>
         </Box>
       )}
     </PaymentsWrapper>

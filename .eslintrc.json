@@ -10,7 +10,7 @@
           "error",
           {
             "enforceBuildableLibDependency": true,
-            "allow": [],
+            "allow": ["infra/src/dsl/"],
             "depConstraints": [
               {
                 "sourceTag": "*",
@@ -123,6 +123,16 @@
                 ]
               },
               {
+                "sourceTag": "scope:license",
+                "onlyDependOnLibsWithTags": [
+                  "lib:nest",
+                  "lib:node",
+                  "lib:js",
+                  "lib:client",
+                  "lib:license"
+                ]
+              },
+              {
                 "sourceTag": "scope:judicial-system-api",
                 "onlyDependOnLibsWithTags": [
                   "lib:judicial-system-api",
@@ -217,6 +227,8 @@
             "skipTemplates": true
           }
         ],
+        "prefer-arrow-callback": "warn",
+        "func-style": ["warn", "expression"],
         "local-rules/require-reduce-defaults": "error",
         "local-rules/disallow-kennitalas": "warn",
         "local-rules/no-async-module-init": "error"
@@ -306,13 +318,17 @@
           {
             "allowSingleExtends": true
           }
-        ]
+        ],
+        "no-extra-semi": "off"
       }
     },
     {
       "files": ["*.js", "*.jsx"],
       "extends": ["plugin:@nx/javascript"],
-      "rules": {}
+      "rules": {
+        "@typescript-eslint/no-extra-semi": "error",
+        "no-extra-semi": "off"
+      }
     },
     {
       "files": ["schema.d.ts"],

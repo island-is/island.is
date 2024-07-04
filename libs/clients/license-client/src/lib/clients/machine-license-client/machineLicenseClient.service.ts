@@ -16,20 +16,23 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import {
   LicenseClient,
   LicensePkPassAvailability,
-  PkPassVerification,
+  LicenseType,
   PkPassVerificationInputData,
   Result,
+  VerifyPkPassResult,
 } from '../../licenseClient.type'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'machinelicense-service'
 
 @Injectable()
-export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
+export class MachineLicenseClient
+  implements LicenseClient<LicenseType.MachineLicense>
+{
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private machineApi: VinnuvelaApi,
@@ -37,6 +40,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
   ) {}
 
   clientSupportsPkPass = true
+  type = LicenseType.MachineLicense
 
   private checkLicenseValidityForPkPass(
     licenseInfo: VinnuvelaDto,
@@ -94,12 +98,34 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
     }
   }
 
-  licenseIsValidForPkPass(payload: unknown): LicensePkPassAvailability {
-    return this.checkLicenseValidityForPkPass(payload as VinnuvelaDto)
+  licenseIsValidForPkPass(
+    payload: unknown,
+  ): Promise<LicensePkPassAvailability> {
+    if (typeof payload === 'string') {
+      let jsonLicense: VinnuvelaDto
+      try {
+        jsonLicense = JSON.parse(payload)
+      } catch (e) {
+        this.logger.warn('Invalid raw data', { error: e, LOG_CATEGORY })
+        return Promise.resolve(LicensePkPassAvailability.Unknown)
+      }
+      return Promise.resolve(this.checkLicenseValidityForPkPass(jsonLicense))
+    }
+    return Promise.resolve(
+      this.checkLicenseValidityForPkPass(payload as VinnuvelaDto),
+    )
   }
 
-  async getLicense(user: User): Promise<Result<VinnuvelaDto | null>> {
+  async getLicenses(user: User): Promise<Result<Array<VinnuvelaDto>>> {
     const licenseData = await this.fetchLicense(user)
+
+    if (licenseData.ok) {
+      return {
+        ok: true,
+        data: licenseData.data ? [licenseData.data] : [],
+      }
+    }
+
     return licenseData
   }
 
@@ -145,7 +171,7 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
       }
     }
 
-    const valid = this.licenseIsValidForPkPass(license.data)
+    const valid = await this.licenseIsValidForPkPass(license.data)
 
     if (!valid) {
       return {
@@ -228,7 +254,10 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
       data: res.data.distributionUrl,
     }
   }
-  async verifyPkPass(data: string): Promise<Result<PkPassVerification>> {
+
+  async verifyPkPass(
+    data: string,
+  ): Promise<Result<VerifyPkPassResult<LicenseType.MachineLicense>>> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
@@ -244,7 +273,9 @@ export class MachineLicenseClient implements LicenseClient<VinnuvelaDto> {
 
     return {
       ok: true,
-      data: result.data,
+      data: {
+        valid: result.data.valid,
+      },
     }
   }
 }

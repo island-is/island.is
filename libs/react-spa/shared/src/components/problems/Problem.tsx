@@ -62,12 +62,12 @@ interface NoDataProps extends ProblemBaseProps {
 }
 
 type ProblemProps = InternalServiceErrorProps | NotFoundProps | NoDataProps
-
 export const Problem = ({
   type = ProblemTypes.internalServiceError,
-  size = 'large',
+  size,
   error,
   title,
+  titleSize,
   message,
   tag,
   imgSrc,
@@ -113,7 +113,7 @@ export const Problem = ({
           return (
             <ThirdPartyServiceError
               organizationSlug={organizationSlug}
-              size={size}
+              size={size ?? 'small'}
               dataTestId={dataTestId}
               expand={expand}
             />
@@ -124,7 +124,7 @@ export const Problem = ({
       return (
         <InternalServiceError
           {...defaultProps}
-          size={size}
+          size={size ?? 'large'}
           tag={tag ?? formatMessage(m.error)}
         />
       )
@@ -133,7 +133,14 @@ export const Problem = ({
       return <NotFound {...defaultProps} tag={tag ?? formatMessage(m.error)} />
 
     case ProblemTypes.noData:
-      return <NoData {...defaultProps} size={size} tag={tag} />
+      return (
+        <NoData
+          {...defaultProps}
+          size={size ?? 'large'}
+          tag={tag}
+          titleSize={titleSize}
+        />
+      )
 
     default:
       return <ProblemTemplate {...fallbackProps} />
