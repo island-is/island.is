@@ -256,7 +256,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   useEffect(() => {
-    // Lets mark the document as read
+    // Lets mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
         __typename: 'DocumentV2',
@@ -264,6 +264,18 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       }),
       fields: {
         opened: () => true,
+      },
+    })
+
+    client.cache.modify({
+      fields: {
+        documentsV2: (existing) => {
+          return {
+            ...existing,
+            unreadCount:
+              existing.unreadCount > 0 ? existing.unreadCount - 1 : 0,
+          }
+        },
       },
     })
   }, [Document.id])
