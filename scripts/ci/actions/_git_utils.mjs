@@ -12,7 +12,7 @@ const DIRTYBOT_USER = {
 };
 
 
-export async function unstagedChanges() {
+export async function getUnstagedChanges() {
     const values = (await runCommand('git diff --stat')).trim().split('\n');
     return !!values === false ? false : values;
 }
