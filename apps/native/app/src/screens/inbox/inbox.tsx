@@ -44,6 +44,7 @@ import { ComponentRegistry } from '../../utils/component-registry'
 import { testIDs } from '../../utils/test-ids'
 import { isAndroid } from '../../utils/devices'
 import { InboxCard } from '@ui/lib/card/inbox-card'
+import { useApolloClient } from '@apollo/client'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -175,6 +176,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
+  const client = useApolloClient()
   const [query, setQuery] = useState('')
   const [loadingMore, setLoadingMore] = useState(false)
   const queryString = useThrottleState(query)
@@ -206,10 +208,29 @@ export const InboxScreen: NavigationFunctionComponent<{
 
   const [markAllAsRead, { loading: markAllAsReadLoading }] =
     useMarkAllDocumentsAsReadMutation({
-      onCompleted: (data) => {
-        if (data.documentsV2MarkAllAsRead?.success) {
-          // TODO mark all items in cache as read?
-          res.refetch()
+      onCompleted: (result) => {
+        if (result.documentsV2MarkAllAsRead?.success) {
+          // If all documents are successfully marked as read, update cache to reflect that
+          for (const document of res.data?.documentsV2?.data || []) {
+            client.cache.modify({
+              id: client.cache.identify(document),
+              fields: {
+                opened: () => true,
+              },
+            })
+          }
+
+          // Set unread count to 0 so red badge disappears
+          client.cache.modify({
+            fields: {
+              documentsV2: (existing) => {
+                return {
+                  ...existing,
+                  unreadCount: 0,
+                }
+              },
+            },
+          })
         }
       },
     })
