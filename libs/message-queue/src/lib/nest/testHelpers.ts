@@ -36,7 +36,10 @@ export const makeQueueConfig = (config: Partial<Queue> = {}): Queue => ({
 
 export const deleteQueues = async (): Promise<void> => {
   logger.info(`Deleting queues with prefix ${testQueuePrefix}`)
-  logger.debug('Getting SQS client with config', { clientConfig })
+  logger.debug('Getting SQS client with config', {
+    ...clientConfig,
+    credentials: undefined,
+  })
   const client = new SQSClient(clientConfig)
   logger.debug('Getting list of queues', { client })
   const { QueueUrls: urls = [] } = await client.send(
