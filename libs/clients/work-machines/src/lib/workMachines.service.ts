@@ -1,24 +1,6 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
-import {
-  ApiMachineRequestInspectionPostRequest,
-  ApiMachineStatusChangePostRequest,
-  ApiMachinesGetRequest,
-  ExcelRequest,
-  GetMachineRequest,
-  MachineCategoryApi,
-  MachineHateoasDto,
-  MachineInspectionRequestCreateDto,
-  MachineOwnerChangeApi,
-  MachineRequestInspectionApi,
-  MachineStatusChangeApi,
-  MachineStreetRegistrationApi,
-  MachineStreetRegistrationCreateDto,
-  MachineSupervisorChangeApi,
-  MachinesApi,
-  MachinesDocumentApi,
-  MachinesFriendlyHateaosDto,
-} from '../../gen/fetch'
+
 import {
   MachineDto,
   ChangeMachineOwner,
@@ -33,6 +15,25 @@ import {
 } from './workMachines.utils'
 import { CustomMachineApi } from './providers'
 import { handle404 } from '@island.is/clients/middlewares'
+import {
+  MachinesApi,
+  MachinesDocumentApi,
+  MachineOwnerChangeApi,
+  MachineCategoryApi,
+  MachineSupervisorChangeApi,
+  MachineStatusChangeApi,
+  MachineStreetRegistrationApi,
+  MachineRequestInspectionApi,
+  ApiMachinesGetRequest,
+  MachinesFriendlyHateaosDto,
+  GetMachineRequest,
+  MachineHateoasDto,
+  ExcelRequest,
+  MachineFriendlyDto,
+  ApiMachineStatusChangePostRequest,
+  MachineStreetRegistrationCreateDto,
+  MachineInspectionRequestCreateDto,
+} from '../../gen/fetch'
 
 @Injectable()
 export class WorkMachinesClientService {
@@ -101,15 +102,18 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
-  async getMachines(auth: User): Promise<MachinesWithTotalCount> {
+  async getMachines(
+    auth: User,
+    onlyOwned = true,
+  ): Promise<MachinesWithTotalCount> {
     const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
-      onlyShowOwnedMachines: true,
+      onlyShowOwnedMachines: onlyOwned,
       pageSize: 20,
       pageNumber: 1,
     })
     return {
       machines:
-        result?.value?.map((machine) => {
+        result?.value?.map((machine: MachineFriendlyDto) => {
           return {
             id: machine.id,
             type: machine.type || '',

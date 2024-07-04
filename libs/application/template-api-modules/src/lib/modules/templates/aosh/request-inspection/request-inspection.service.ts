@@ -28,7 +28,7 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
   async getMachines({
     auth,
   }: TemplateApiModuleActionProps): Promise<MachinesWithTotalCount> {
-    const result = await this.workMachineClientService.getMachines(auth)
+    const result = await this.workMachineClientService.getMachines(auth, false)
     if (!result || !result.totalCount) {
       throw new TemplateApiError(
         {
