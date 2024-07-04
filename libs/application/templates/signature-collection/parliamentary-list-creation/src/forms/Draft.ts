@@ -55,14 +55,14 @@ export const Draft: Form = buildForm({
             }),
             buildTextField({
               id: 'list.name',
-              title: m.name,
+              title: m.listName,
               width: 'full',
               readOnly: true,
               defaultValue: 'Flokkur 1',
             }),
             buildTextField({
               id: 'list.nameLetter',
-              title: m.nameLetter,
+              title: m.listLetter,
               width: 'half',
               readOnly: true,
               defaultValue: 'F',
@@ -277,19 +277,19 @@ export const Draft: Form = buildForm({
               },
             }),
             buildDescriptionField({
-              id: 'space0',
+              id: 'space',
               title: '',
               space: 'gutter',
             }),
             buildKeyValueField({
-              label: m.nameLetter,
+              label: m.listLetter,
               width: 'half',
               value: ({ answers }) => {
                 return (answers.list as any).nameLetter
               },
             }),
             buildDescriptionField({
-              id: 'space',
+              id: 'space1',
               title: '',
               space: 'gutter',
             }),
@@ -316,7 +316,7 @@ export const Draft: Form = buildForm({
               },
             }),
             buildDescriptionField({
-              id: 'space1',
+              id: 'space2',
               title: '',
               space: 'gutter',
             }),
@@ -335,7 +335,7 @@ export const Draft: Form = buildForm({
               },
             }),
             buildDescriptionField({
-              id: 'space2',
+              id: 'space3',
               title: '',
               space: 'gutter',
             }),
@@ -353,7 +353,7 @@ export const Draft: Form = buildForm({
               component: 'ListsInOverview',
             }),
             buildDescriptionField({
-              id: 'space3',
+              id: 'space4',
               title: '',
               space: 'gutter',
             }),
@@ -382,7 +382,7 @@ export const Draft: Form = buildForm({
               },
             }),
             buildDescriptionField({
-              id: 'space4',
+              id: 'space5',
               title: '',
               space: 'gutter',
             }),

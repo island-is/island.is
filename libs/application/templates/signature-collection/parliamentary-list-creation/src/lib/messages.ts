@@ -103,11 +103,16 @@ export const m = defineMessages({
   },
   name: {
     id: 'plc.application:name',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  listName: {
+    id: 'plc.application:listName',
     defaultMessage: 'Heiti framboðs',
     description: '',
   },
-  nameLetter: {
-    id: 'plc.application:nameLetter',
+  listLetter: {
+    id: 'plc.application:listLetter',
     defaultMessage: 'Listabókstafur',
     description: '',
   },
