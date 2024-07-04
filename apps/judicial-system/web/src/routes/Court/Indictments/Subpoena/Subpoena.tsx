@@ -20,6 +20,7 @@ import {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   useCase,
@@ -28,7 +29,6 @@ import {
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import SubpoenaType from '../../components/SubpoenaType/SubpoenaType'
 import { subpoena as strings } from './Subpoena.strings'
 
 const Subpoena: FC = () => {
