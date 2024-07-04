@@ -47,12 +47,11 @@ export const stopRedis = () => {
   redisClusterContainer.stop()
 }
 
-export const startSQS = async () => {
+export const startLocalstack = async () => {
   const lc = await new GenericContainer(
     'public.ecr.aws/localstack/localstack:3',
   )
-    .withName(`localstack-sqs-${Math.random().toString(16).slice(2, 8)}`)
-    .withEnv('SERVICES', 'sqs')
+    .withName(`localstack-${Math.random().toString(16).slice(2, 8)}`)
     .withExposedPorts(4566)
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
@@ -61,11 +60,6 @@ export const startSQS = async () => {
   ;(global as any).__localstack__ = lc
 
   process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(4566)}`
-}
-
-export const stopSQS = async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await ((global as any).__localstack__ as StartedTestContainer).stop()
 }
 
 export const stopLocalstack = async () => {
