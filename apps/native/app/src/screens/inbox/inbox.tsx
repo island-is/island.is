@@ -179,6 +179,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
   const [query, setQuery] = useState('')
+  const [loadingMore, setLoadingMore] = useState(false)
   const queryString = useThrottleState(query)
   const theme = useTheme()
   const [visible, setVisible] = useState(false)
@@ -209,6 +210,7 @@ export const InboxScreen: NavigationFunctionComponent<{
     useMarkAllDocumentsAsReadMutation({
       onCompleted: (data) => {
         if (data.documentsV2MarkAllAsRead?.success) {
+          // TODO mark all items in cache as read?
           res.refetch()
         }
       },
@@ -256,6 +258,7 @@ export const InboxScreen: NavigationFunctionComponent<{
     if (DEFAULT_PAGE_SIZE * pageRef.current > numItems) {
       return
     }
+    setLoadingMore(true)
 
     pageRef.current = pageRef.current + 1
     const page = pageRef.current
@@ -288,6 +291,7 @@ export const InboxScreen: NavigationFunctionComponent<{
     } catch (e) {
       // TODO handle error
     }
+    setLoadingMore(false)
   }
 
   useActiveTabItemPress(0, () => {
@@ -524,7 +528,7 @@ export const InboxScreen: NavigationFunctionComponent<{
           loadMore()
         }}
         ListFooterComponent={
-          res.loading && items.length > 0 ? ( // && !res.error TODO not working
+          loadingMore && !res.error ? (
             <LoadingWrapper>
               <ActivityIndicator
                 size="small"
