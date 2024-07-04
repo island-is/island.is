@@ -93,5 +93,7 @@ export async function hasLabel(labelName, { owner, repo, pullNumber } = hasLabel
         _HASH_LABEL_CACHE[pullNumber] = prData.labels;
         return prData.labels;
     })();
-    return labels.some(label => label.name === labelName);
+    console.log(labels);
+    return labels.some(label => label.name.trim() === labelName.trim());
 }
+
