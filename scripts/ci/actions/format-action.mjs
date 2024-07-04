@@ -6,13 +6,14 @@ import { setFailed, info } from '@actions/core';
 import { commitUnstagedChanges, hasUnstagedChanges } from "./_git_utils.mjs";
 import { isPR } from "./_pr_utils.mjs";
 import { runCommand } from "./_utils.mjs";
+import { ROOT } from './_common.mjs';
 
 
 const canWrite = isPR;
 const action = canWrite ? 'write' : 'check';
 
 try {
-    await runCommand(`yarn nx format:${action} --all`);
+    await runCommand(`yarn nx format:${action} --all`, ROOT);
 } catch (error) {
     // Ignore errors.
     if (!canWrite) {
