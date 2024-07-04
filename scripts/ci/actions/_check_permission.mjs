@@ -13,7 +13,7 @@ const DEFAULT_VALUES = { owner, repo, token: GITHUB_TOKEN };
  * @param {string} options.token - The GitHub token to use for the request.
  * @returns {Promise<boolean>} - A promise that resolves when the permission check is complete.
  */
-export async function checkPermission(username, { owner, repo,token } = DEFAULT_VALUES) {
+export async function checkIfUserIsAdmin(username, { owner, repo,token } = DEFAULT_VALUES) {
     const graphqlWithAuth = graphql.defaults({
         headers: {
             authorization: `token ${token}`,
@@ -52,8 +52,7 @@ export async function checkPermission(username, { owner, repo,token } = DEFAULT_
         const permission = collaborator.permission;
         info(`User ${username} has ${permission} permission on ${owner}/${repo}`);
 
-        // Consider ADMIN and MAINTAIN as having sufficient permission
-        return ['ADMIN', 'MAINTAIN'].includes(permission);
+        return ['ADMIN'].includes(permission);
 
     } catch (error) {
         return false;

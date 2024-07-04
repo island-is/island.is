@@ -16,8 +16,8 @@ export const octokit = getOctokit(GITHUB_TOKEN);
 const hasLabelDefaultValues = { owner, repo, pullNumber };
 
 // Dumb cache so we don't have to fetch again and again
-const _HASH_LABEL_CACHE = {};
-const _HASH_LABEL_OWNER_CACHE = {};
+const _LABEL_CACHE = {};
+const _LABEL_OWNER_CACHE = {};
 
 /**
  * Checks if a pull request has a specific label.
@@ -34,8 +34,8 @@ export async function findLabelOwner(labelName, page = 0, { owner, repo, pullNum
     if (!pullNumber) {
         throw new Error(`Pull number not defined`);
     }
-    if (_HASH_LABEL_OWNER_CACHE[pullNumber]?.[labelName]) {
-        return _HASH_LABEL_OWNER_CACHE[pullNumber][labelName];
+    if (_LABEL_OWNER_CACHE[pullNumber]?.[labelName]) {
+        return _LABEL_OWNER_CACHE[pullNumber][labelName];
     }
     const { data: events, ...settings } = await octokit.rest.issues.listEventsForTimeline({
         owner,
@@ -59,8 +59,8 @@ export async function findLabelOwner(labelName, page = 0, { owner, repo, pullNum
         throw new Error(`Label ${labelName} not found in timeline`);
     }
 
-    _HASH_LABEL_CACHE[pullNumber] ??= {};
-    _HASH_LABEL_CACHE[pullNumber][labelName] = labelOwner;
+    _LABEL_CACHE[pullNumber] ??= {};
+    _LABEL_CACHE[pullNumber][labelName] = labelOwner;
 
     return labelOwner;
 
@@ -82,18 +82,17 @@ export async function hasLabel(labelName, { owner, repo, pullNumber } = hasLabel
         throw new Error(`Pull number not defined`);
     }
     const labels = await (async () => {
-        if (_HASH_LABEL_CACHE[pullNumber]) {
-            return _HASH_LABEL_CACHE[pullNumber];
+        if (_LABEL_CACHE[pullNumber]) {
+            return _LABEL_CACHE[pullNumber];
         }
         const { data: prData } = await octokit.rest.pulls.get({
             owner,
             repo,
             pull_number: pullNumber,
         });
-        _HASH_LABEL_CACHE[pullNumber] = prData.labels;
+        _LABEL_CACHE[pullNumber] = prData.labels;
         return prData.labels;
     })();
-    console.log(labels);
     return labels.some(label => label.name.trim() === labelName.trim());
 }
 

@@ -26,7 +26,7 @@ runs:
     with:
       github-token: ${{ inputs.github-token }}
       enable-cache: 'node_modules'
-  - name: Permission flag
+  - name: Initial settings
     shell: bash
     env:
       GITHUB_TOKEN: ${{ inputs.github-token }}
@@ -34,7 +34,7 @@ runs:
       cd scripts/ci/actions
       yarn install --immutable
       node permission-action.mjs
-      echo $TEST_EVERYTHING
+      node format-action.mjs
   - name: License audit
     shell: bash
     run: yarn run license-audit
