@@ -15,6 +15,7 @@ query GetSubpoena($input: LawAndOrderSubpoenaInput!) {
       acknowledged
       displayClaim
       chosenDefender
+      defenderChoice
       groups {
         label
         items {

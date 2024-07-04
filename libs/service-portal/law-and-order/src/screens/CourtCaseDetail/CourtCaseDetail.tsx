@@ -120,7 +120,7 @@ const CourtCaseDetail = () => {
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
       <Box marginBottom={3} display="flex" flexWrap="wrap">
-        {!loading && (
+        {data?.lawAndOrderCourtCaseDetail && !loading && (
           <Box paddingRight={2} marginBottom={[1]}>
             {subpoenaAcknowledged ? (
               <LinkResolver

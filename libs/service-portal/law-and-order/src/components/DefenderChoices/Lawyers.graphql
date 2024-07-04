@@ -11,7 +11,5 @@ query GetLawyers($input: LawAndOrderLawyersInput!) {
 mutation PostDefenseChoice($input: LawAndOrderDefenseChoiceInput!) {
   lawAndOrderDefenseChoicePost(input: $input) {
     caseId
-    lawyersNationalId
-    choice
   }
 }

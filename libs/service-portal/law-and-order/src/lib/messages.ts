@@ -169,24 +169,6 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:registration-error',
     defaultMessage: 'Skráning tókst ekki',
   },
-  firstChoiceNoDefender: {
-    id: 'sp.law-and-order:no-defender',
-    defaultMessage: 'Ég óska ekki eftir verjanda.',
-  },
-  secondChoiceChoosingLawyer: {
-    id: 'sp.law-and-order:choosing-lawyer',
-    defaultMessage:
-      'Ég óska þess að valinn lögmaður verði skipaður verjandi minn.',
-  },
-  thirdChoiceDelayChoice: {
-    id: 'sp.law-and-order:delay-choice',
-    defaultMessage:
-      'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.',
-  },
-  fourthChoiceChooseForMe: {
-    id: 'sp.law-and-order:choose-for-me',
-    defaultMessage: 'Ég fel dómara málsins að tilnefna og skipa mér verjanda.',
-  },
   change: {
     id: 'sp.law-and-order:change',
     defaultMessage: 'Breyta',
@@ -194,5 +176,9 @@ export const messages = defineMessages({
   modalFromPolice: {
     id: 'sp.law-and-order:modal-from-police',
     defaultMessage: 'Lögreglustjóranum á höfuðborgarsvæðinu',
+  },
+  pleaseChooseALawyer: {
+    id: 'sp.law-and-order:please-choose-a-lawyer',
+    defaultMessage: 'Vinsamlegast veljið verjanda',
   },
 })
