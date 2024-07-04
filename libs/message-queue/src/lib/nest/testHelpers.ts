@@ -45,6 +45,10 @@ export const deleteQueues = async (): Promise<void> => {
   const { QueueUrls: urls = [] } = await client.send(
     new ListQueuesCommand({ QueueNamePrefix: testQueuePrefix }),
   )
+  if (!urls.length) {
+    logger.info('No queues to delete')
+    return
+  }
 
   logger.debug('Deleting queues', { urls })
   await Promise.all(
@@ -53,5 +57,5 @@ export const deleteQueues = async (): Promise<void> => {
       await client.send(new DeleteQueueCommand({ QueueUrl: url }))
     }),
   )
-  logger.debug('Done deleting queues')
+  logger.info('Done deleting queues')
 }
