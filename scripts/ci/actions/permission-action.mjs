@@ -7,9 +7,9 @@ import { setOutput, setFailed, info } from '@actions/core';
 import { context, getOctokit } from '@actions/github';
 import { checkPermission } from "./_check_permission.mjs";
 
-const token = process.env.GITHUB_TOKEN;
+const token = process.env.ACTIONS_RUNTIME_TOKEN;
 if (!token) {
-    setFailed('GITHUB_TOKEN is required');
+    setFailed('ACTIONS_RUNTIME_TOKEN is required');
     process.exit(1);
 }
 
