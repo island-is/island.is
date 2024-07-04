@@ -1,5 +1,7 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
+import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
+import { Locale } from 'locale'
 
 @InputType('LawAndOrderDefenseChoiceInput')
 export class PostDefenseChoiceInput {
@@ -7,11 +9,13 @@ export class PostDefenseChoiceInput {
   @IsString()
   caseId!: string
 
-  @Field()
-  @IsString()
-  choice!: string
+  @Field(() => DefenseChoiceEnum)
+  choice!: DefenseChoiceEnum
 
   @Field({ nullable: true })
   @IsOptional()
   lawyersNationalId?: string
+
+  @Field(() => String)
+  locale!: Locale
 }

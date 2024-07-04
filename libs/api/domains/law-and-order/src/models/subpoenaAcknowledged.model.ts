@@ -5,6 +5,6 @@ export class SubpoenaAcknowledged {
   @Field(() => ID, { nullable: true })
   caseId?: string
 
-  @Field({ nullable: true })
+  @Field(() => Boolean, { nullable: true })
   acknowledged?: boolean | undefined
 }

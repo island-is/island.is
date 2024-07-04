@@ -77,8 +77,8 @@ export class Data {
   @Field({ nullable: true })
   chosenDefender?: string
 
-  @Field(() => Number, { nullable: true })
-  defenderChoice?: number
+  @Field({ nullable: true })
+  defenderChoice?: string
 
   @Field(() => [Groups], { nullable: true })
   groups?: Array<Groups>
