@@ -3,6 +3,8 @@ import { useNamespaces } from '@island.is/localization'
 import OwnerView from './CandidateView'
 import SigneeView from './SigneeView'
 import { useGetCurrentCollection, useIsOwner } from '../hooks'
+import { EmptyState } from '@island.is/service-portal/core'
+import { m } from '../lib/messages'
 
 const SignatureLists = () => {
   useNamespaces('sp.signatureCollection')
@@ -13,7 +15,9 @@ const SignatureLists = () => {
 
   return (
     <div>
-      {!loadingIsOwner && !loadingCurrentCollection && (
+      {currentCollection?.name === 'Forsetakosningar' &&
+      !loadingIsOwner &&
+      !loadingCurrentCollection ? (
         <Box>
           {isOwner.success ? (
             <OwnerView currentCollection={currentCollection} />
@@ -21,6 +25,11 @@ const SignatureLists = () => {
             <SigneeView currentCollection={currentCollection} />
           )}
         </Box>
+      ) : (
+        <EmptyState
+          title={m.noCollectionIsActive}
+          description={m.noCollectionIsActiveDescription}
+        />
       )}
     </div>
   )

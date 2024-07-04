@@ -504,6 +504,14 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  signatureCollectionParliamentaryLists: {
+    id: 'service.portal:signatureCollectionParliamentaryLists',
+    defaultMessage: 'Meðmælasöfnun (Alþingis)',
+  },
+  signatureCollectionPresidentialLists: {
+    id: 'service.portal:signatureCollectionPresidentialLists',
+    defaultMessage: 'Meðmælasöfnun (Forseta)',
+  },
   notifications: {
     id: 'service.portal:notifications',
     defaultMessage: 'Tilkynningar',
