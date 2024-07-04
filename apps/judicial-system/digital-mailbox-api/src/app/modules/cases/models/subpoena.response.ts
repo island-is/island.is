@@ -1,3 +1,5 @@
+import { IsEnum } from 'class-validator'
+
 import { ApiProperty } from '@nestjs/swagger'
 
 import {
@@ -11,8 +13,9 @@ import { Groups } from './shared/groups.model'
 import { getTranslations } from './utils/translations.strings'
 
 class DefenderInfo {
-  @ApiProperty({ enum: () => DefenderChoice })
-  defenderChoice?: DefenderChoice
+  @IsEnum(DefenderChoice)
+  @ApiProperty({ enum: DefenderChoice })
+  defenderChoice!: DefenderChoice
 
   @ApiProperty({ type: () => String })
   defenderName?: string
@@ -88,15 +91,16 @@ export class SubpoenaResponse {
         ],
       },
 
-      defenderInfo: defendantInfo
-        ? {
-            defenderChoice: defendantInfo?.defenderChoice,
-            defenderName:
-              !waivedRight && hasDefender
-                ? defendantInfo?.defenderName
-                : undefined,
-          }
-        : undefined,
+      defenderInfo:
+        defendantInfo && defendantInfo.defenderChoice
+          ? {
+              defenderChoice: defendantInfo?.defenderChoice,
+              defenderName:
+                !waivedRight && hasDefender
+                  ? defendantInfo?.defenderName
+                  : undefined,
+            }
+          : undefined,
       acceptCompensationClaim: defendantInfo?.acceptCompensationClaim,
     }
   }
