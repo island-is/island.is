@@ -1,5 +1,6 @@
 import { CreateQueueCommand, SQSClient } from '@aws-sdk/client-sqs'
-import { startSQS } from '@island.is/testing/containers'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import { startLocalstack } from '../../../../libs/testing/containers/src'
 import { register } from 'tsconfig-paths'
 
 import { environment } from './environment'
@@ -33,7 +34,7 @@ const setupSqsQueue = async () => {
 }
 
 export default async () => {
-  await Promise.all([startPostgres(), startSQS()])
+  await Promise.all([startPostgres(), startLocalstack()])
 
   // Setting up the SQS queue to prevent concurrent issues between spec files.
   await setupSqsQueue()
