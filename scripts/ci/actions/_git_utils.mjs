@@ -37,7 +37,6 @@ export async function getUnstagedChanges() {
 export async function commitUnstagedChanges({ user, message }) {
   const { name, email, token } =
     user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER
-  const currentBranch = await getCurrentBranch()
   const repoUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`
   await runCommand(['git', 'remote', 'set-url', 'origin', repoUrl])
 
@@ -46,7 +45,7 @@ export async function commitUnstagedChanges({ user, message }) {
   await runCommand(['git', 'config', 'user.email', email])
   await runCommand(['git', 'add', '-A'])
   await runCommand(['git', 'commit', '-m', message])
-     await runCommand(['git', 'push'])
+     await runCommand(['git', 'push', 'origin', `HEAD:${prBranch}`])
 }
 
 export async function getCurrentBranch() {
