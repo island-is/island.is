@@ -14,7 +14,6 @@ export const ListsInOverview: FC<FieldBaseProps> = ({ application }) => {
         <ActionCard
           key={index}
           heading={'Flokkur 1 - ' + c}
-          text={formatMessage(m.listCardText)}
           progressMeter={{
             currentProgress: 0,
             maxProgress: 350,

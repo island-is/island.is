@@ -26,5 +26,5 @@ export const Constituencies = [
   'Reykjavíkurkjördæmi norður',
   'Reykjavíkurkjördæmi suður',
   'Suðurkjördæmi',
-  'Suðausturkjördæmi',
+  'Suðvesturkjördæmi',
 ]

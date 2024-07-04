@@ -103,7 +103,12 @@ export const m = defineMessages({
   },
   name: {
     id: 'plc.application:name',
-    defaultMessage: 'Nafn',
+    defaultMessage: 'Heiti framboðs',
+    description: '',
+  },
+  nameLetter: {
+    id: 'plc.application:nameLetter',
+    defaultMessage: 'Listabókstafur',
     description: '',
   },
   nationalId: {
@@ -143,6 +148,11 @@ export const m = defineMessages({
     defaultMessage: 'Kjördæmi',
     description: '',
   },
+  allConstituencies: {
+    id: 'plc.application:allConstituencies',
+    defaultMessage: 'Öll kjördæmi',
+    description: '',
+  },
   selectConstituency: {
     id: 'plc.application:selectConstituency',
     defaultMessage: 'Veljið kjördæmi',
@@ -155,6 +165,16 @@ export const m = defineMessages({
   },
 
   /* Ábyrgðaraðilar */
+  managersAndSupervisors: {
+    id: 'plc.application:managersAndSupervisors',
+    defaultMessage: 'Ábyrgðar-/umsjónaraðilar',
+    description: '',
+  },
+  managersAndSupervisorsDescription: {
+    id: 'plc.application:managersAndSupervisorsDescription',
+    defaultMessage: 'Veljið ábyrgðar-/umsjónaraðila',
+    description: '',
+  },
   managers: {
     id: 'plc.application:managers',
     defaultMessage: 'Ábyrgðaraðilar',
@@ -220,11 +240,6 @@ export const m = defineMessages({
     defaultMessage: 'Lokadagur',
     description: '',
   },
-  listCardText: {
-    id: 'plc.application:listCardText',
-    defaultMessage: 'Alþingiskosningar',
-    description: '',
-  },
   createList: {
     id: 'plc.application:createList',
     defaultMessage: 'Stofna meðmælasöfnun',
@@ -234,7 +249,7 @@ export const m = defineMessages({
   /* Listi stofnaður */
   listCreated: {
     id: 'plc.application:listCreated',
-    defaultMessage: 'Meðmælalisti stofnaður',
+    defaultMessage: 'Meðmælasöfnun stofnuð',
     description: '',
   },
   listCreatedDescription: {

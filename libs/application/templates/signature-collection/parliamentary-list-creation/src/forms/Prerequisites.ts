@@ -90,11 +90,21 @@ export const Prerequisites: Form = buildForm({
     }),
     buildSection({
       id: 'screen4',
-      title: m.overview,
+      title: m.constituency,
       children: [],
     }),
     buildSection({
       id: 'screen5',
+      title: m.managersAndSupervisors,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen6',
+      title: m.overview,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen7',
       title: m.listCreated,
       children: [],
     }),

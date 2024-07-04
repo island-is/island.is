@@ -31,6 +31,11 @@ export const Draft: Form = buildForm({
   children: [
     buildSection({
       id: 'screen1',
+      title: m.intro,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen2',
       title: m.dataCollection,
       children: [],
     }),
@@ -53,12 +58,19 @@ export const Draft: Form = buildForm({
               title: m.name,
               width: 'full',
               readOnly: true,
-              defaultValue: 'Flokkur 1 - Listabókstafur',
+              defaultValue: 'Flokkur 1',
+            }),
+            buildTextField({
+              id: 'list.nameLetter',
+              title: m.nameLetter,
+              width: 'half',
+              readOnly: true,
+              defaultValue: 'F',
             }),
             buildTextField({
               id: 'list.nationalId',
               title: m.nationalId,
-              width: 'full',
+              width: 'half',
               readOnly: true,
               defaultValue: (application: Application) =>
                 formatNationalId(application.applicant),
@@ -140,7 +152,7 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'constituency',
-      title: m.selectConstituency,
+      title: m.constituency,
       children: [
         buildMultiField({
           id: 'constituency',
@@ -163,11 +175,11 @@ export const Draft: Form = buildForm({
     }),
     buildSection({
       id: 'managers',
-      title: 'Umsjónar-/ábyrgðaraðilar',
+      title: m.managersAndSupervisors,
       children: [
         buildMultiField({
           id: 'managers',
-          title: 'Veljið umsjónar-/ábyrgðaraðila',
+          title: m.managersAndSupervisorsDescription,
           description: '',
           children: [
             buildTableRepeaterField({
@@ -186,8 +198,8 @@ export const Draft: Form = buildForm({
                   width: 'full',
                   options: [
                     {
-                      value: 'Öll kjördæmi',
-                      label: 'Öll kjördæmi',
+                      value: m.allConstituencies.defaultMessage,
+                      label: m.allConstituencies,
                     },
                   ],
                 },
@@ -265,6 +277,18 @@ export const Draft: Form = buildForm({
               },
             }),
             buildDescriptionField({
+              id: 'space0',
+              title: '',
+              space: 'gutter',
+            }),
+            buildKeyValueField({
+              label: m.nameLetter,
+              width: 'half',
+              value: ({ answers }) => {
+                return (answers.list as any).nameLetter
+              },
+            }),
+            buildDescriptionField({
               id: 'space',
               title: '',
               space: 'gutter',
@@ -321,7 +345,7 @@ export const Draft: Form = buildForm({
               title: m.listsOverviewHeader,
               titleVariant: 'h3',
               space: 'gutter',
-              marginBottom: 3,
+              marginBottom: 5,
             }),
             buildCustomField({
               id: 'createdLists',
