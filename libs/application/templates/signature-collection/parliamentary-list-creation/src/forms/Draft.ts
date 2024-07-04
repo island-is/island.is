@@ -1,4 +1,5 @@
 import {
+  buildActionCardListField,
   buildCheckboxField,
   buildCustomField,
   buildDescriptionField,
@@ -346,10 +347,20 @@ export const Draft: Form = buildForm({
               space: 'gutter',
               marginBottom: 5,
             }),
-            buildCustomField({
-              id: 'createdLists',
+            buildActionCardListField({
+              id: 'listsInOverview',
+              doesNotRequireAnswer: true,
               title: '',
-              component: 'ListsInOverview',
+              items: ({ answers }) => {
+                return (answers.constituency as string[]).map((c: string, index: number) => ({
+                  heading: 'Flokkur 1 - ' + c,
+                  progressMeter: {
+                    currentProgress: 0,
+                    maxProgress: 350,
+                    withLabel: true,
+                  },
+                }))
+              },
             }),
             buildDescriptionField({
               id: 'space4',
