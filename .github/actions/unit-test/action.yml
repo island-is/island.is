@@ -33,7 +33,7 @@ runs:
       shell: bash
 
     - name: Setup yarn
-      run: npm install -g yarn
+      run: corepack enable
       shell: bash
 
     - uses: actions/setup-node@v4
@@ -41,7 +41,7 @@ runs:
         node-version-file: 'package.json'
 
     - name: Setup yarn
-      run: npm install -g yarn
+      run: corepack enable
       shell: bash
 
     - name: Running tests
