@@ -3,21 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/parental-leave/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/parental-leave/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/parental-leave/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/parental-leave/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/parental-leave"
@@ -35,6 +30,5 @@
         "command": "graphql-codegen --config libs/application/templates/parental-leave/codegen.yml"
       }
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }
