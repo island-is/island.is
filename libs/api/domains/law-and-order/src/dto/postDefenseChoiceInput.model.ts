@@ -1,7 +1,7 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
 import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 @InputType('LawAndOrderDefenseChoiceInput')
 export class PostDefenseChoiceInput {

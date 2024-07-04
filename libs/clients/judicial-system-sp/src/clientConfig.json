@@ -457,11 +457,7 @@
           "defenderNationalId": { "type": "string" },
           "acceptCompensationClaim": { "type": "boolean" }
         },
-        "required": [
-          "defenderChoice",
-          "defenderNationalId",
-          "acceptCompensationClaim"
-        ]
+        "required": ["defenderChoice"]
       },
       "Defender": {
         "type": "object",

@@ -10,7 +10,7 @@ import {
   DefendersApi,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()

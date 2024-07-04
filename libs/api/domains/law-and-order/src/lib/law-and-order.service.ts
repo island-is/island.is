@@ -1,14 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import { CourtCases } from '../models/courtCases.model'
-import { getSubpoena } from './helpers/mockData'
-import { CourtCase } from '../models/courtCase.model'
-import { Subpoena } from '../models/subpoena.model'
-import { Lawyers } from '../models/lawyers.model'
-import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
-import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import {
   CasesResponse,
   Defender,
@@ -17,6 +9,14 @@ import {
   UpdateSubpoenaDtoDefenderChoiceEnum,
   CaseControllerUpdateSubpoenaLocaleEnum,
 } from '@island.is/clients/judicial-system-sp'
+import { CourtCases } from '../models/courtCases.model'
+import { getSubpoena } from './helpers/mockData'
+import { CourtCase } from '../models/courtCase.model'
+import { Subpoena } from '../models/subpoena.model'
+import { Lawyers } from '../models/lawyers.model'
+import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
+import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
+import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
 
 const mapDefenseChoice = (
@@ -46,6 +46,7 @@ const mapLocale = (locale: Locale): CaseControllerUpdateSubpoenaLocaleEnum => {
       return CaseControllerUpdateSubpoenaLocaleEnum.Is
   }
 }
+
 @Injectable()
 export class LawAndOrderService {
   constructor(private api: JudicialSystemSPClientService) {}
@@ -145,7 +146,7 @@ export class LawAndOrderService {
         caseId: input.caseId,
         updateSubpoenaDto: {
           defenderChoice: mapDefenseChoice(input.choice), // eslint-disable-next-line local-rules/disallow-kennitalas
-          defenderNationalId: input.lawyersNationalId ?? '1801912409', // temp solution, remove when service has updated field to be unrequired
+          defenderNationalId: input.lawyersNationalId, // temp solution, remove when service has updated field to be unrequired
           acceptCompensationClaim: false,
         },
         locale: mapLocale(input.locale),
@@ -157,7 +158,6 @@ export class LawAndOrderService {
 
   // TODO: Wait for pósthólfs api to be ready
   async isSubpoenaAcknowledged(user: User, id?: string) {
-    //const answer = this.lawAndOrderApi.getTest(user)
     if (!id) return undefined
     const randomBoolean = Math.random() < 0.75
 
