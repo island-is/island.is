@@ -4,6 +4,7 @@
   "sourceRoot": "apps/consultation-portal",
   "projectType": "application",
   "prefix": "consultation-portal",
+  "tags": ["scope:react-next"],
   "generators": {},
   "targets": {
     "build": {
@@ -31,7 +32,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/consultation-portal/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -94,17 +96,14 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/consultation-portal"],
       "options": {
-        "jestConfig": "apps/consultation-portal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/consultation-portal/jest.config.ts"
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/consultation-portal/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
-    "docker-next": {}
-  },
-  "tags": ["scope:react-next"]
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
 }

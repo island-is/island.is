@@ -501,6 +501,23 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message summary when a user already has icelandic citizenship',
   },
+  drivingLicenseDuplicateEntryValidationErrorTitle: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationError',
+    defaultMessage: 'Ökuskírteini hæfir ekki umsókn um samrit',
+    description: 'Driving License duplicate entry validation error',
+  },
+  drivingLicenseDuplicateEntryValidationSign400Error: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationSign400Error',
+    defaultMessage: 'Ógild tákntala, 400, fannst á ökuskírteini',
+    description:
+      'Driving License duplicate entry validation error for sign (is: tákntala)',
+  },
+  drivingLicenseDuplicateEntryValidationExpiredCategoryLicenseError: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationExpiredLicenseError',
+    defaultMessage:
+      'Flokkur "{categoryName}" á ökukírteini er útrunninn eða rennur út innan 6 mánaða',
+    description: 'Driving License duplicate entry validation error',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
     defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
