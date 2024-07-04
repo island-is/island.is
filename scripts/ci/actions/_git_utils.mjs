@@ -40,12 +40,11 @@ export async function commitUnstagedChanges({ user, message }) {
   const repoUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`
   await runCommand(['git', 'remote', 'set-url', 'origin', repoUrl])
 
-  
   await runCommand(['git', 'config', 'user.name', name])
   await runCommand(['git', 'config', 'user.email', email])
   await runCommand(['git', 'add', '-A'])
   await runCommand(['git', 'commit', '-m', message])
-     await runCommand(['git', 'push', 'origin', `HEAD:${prBranch}`])
+  await runCommand(['git', 'push', 'origin', `HEAD:${prBranch}`])
 }
 
 export async function getCurrentBranch() {
