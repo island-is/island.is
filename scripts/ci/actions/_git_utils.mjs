@@ -1,6 +1,7 @@
 // @ts-check
 import { info } from "console";
 import { runCommand } from "./_utils.mjs";
+import { prBranch } from "./_pr_utils.mjs";
 
 const GITHUB_ACTION_USER = {
     name: 'github-actions[bot]',
@@ -30,6 +31,7 @@ export async function commitUnstagedChanges({ user, message }) {
     const { name, email } = user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER;
     const currentBranch = await getCurrentBranch();
     info(`Committing unstaged changes to branch ${currentBranch}`);
+    info(`prBranch: ${prBranch}`);
     await runCommand(["git", "config", "user.name",name]);
     await runCommand(["git", "config", "user.email", email]);
     await runCommand(["git", "add", "-A"]);
@@ -39,5 +41,9 @@ export async function commitUnstagedChanges({ user, message }) {
 
 
 export async function getCurrentBranch() {
-    return (await runCommand('git rev-parse --abbrev-ref HEAD')).trim();
+    const value = (await runCommand('git rev-parse --abbrev-ref HEAD')).trim();
+    if (value === 'HEAD') {
+        return (await runCommand('git rev-parse HEAD')).trim();
+    }
+    return value;
 }

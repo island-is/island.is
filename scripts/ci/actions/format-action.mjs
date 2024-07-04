@@ -8,6 +8,16 @@ import { isPR } from "./_pr_utils.mjs";
 import { runCommand } from "./_utils.mjs";
 import { ROOT } from './_common.mjs';
 
+const HEAD = process.env.HEAD;
+const BASE = process.env.BASE;
+
+[{ HEAD }, { BASE }].forEach((obj) => {
+    const [key, value] = Object.entries(obj)[0];
+    if (!value) {
+        setFailed(`Missing ${key} environment variable.`);
+        process.exit(1);
+    }
+});
 
 const canWrite = isPR;
 const action = canWrite ? 'write' : 'check';
@@ -15,7 +25,11 @@ const action = canWrite ? 'write' : 'check';
 info(`Running format:${action} for all projects.`);
 let files = [];
 try {
-    files = (await runCommand(`yarn nx format:${action} --all`, ROOT)).split('\n');
+    if (isPR) {
+        files = (await runCommand(`yarn nx format:${action} --base=${BASE} --head=${HEAD}`, ROOT)).split('\n');
+    } else {
+        files = (await runCommand(`yarn nx format:${action}`, ROOT)).split('\n');
+    }
 } catch (error) {
     // Ignore errors.
     if (!canWrite) {

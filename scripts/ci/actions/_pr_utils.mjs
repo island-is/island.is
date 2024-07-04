@@ -4,6 +4,7 @@ import { context, getOctokit } from '@actions/github';
 import { setFailed } from '@actions/core';
 
 export const isPR = !!context.payload.pull_request;
+export const prBranch = context.payload.pull_request?.head.ref.replace('refs/heads/', '') ?? '';
 export const GITHUB_TOKEN = process.env.GITHUB_TOKEN || '';
 if (!GITHUB_TOKEN) {
     setFailed('GITHUB_TOKEN is required');
