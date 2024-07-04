@@ -16,7 +16,7 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, UserProfile } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
-import Logo from '../../../assets/Logo'
+import Logo from '../../assets/Logo'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'

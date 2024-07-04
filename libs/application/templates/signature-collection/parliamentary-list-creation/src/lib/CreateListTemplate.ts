@@ -9,9 +9,8 @@ import {
   NationalRegistryUserApi,
   StateLifeCycle,
   UserProfileApi,
-  defineTemplateApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from './constants'
+import { Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
@@ -23,7 +22,7 @@ const WeekLifeCycle: StateLifeCycle = {
   whenToPrune: 1000 * 3600 * 24 * 7,
 }
 
-const CreateListTemplate: ApplicationTemplate<
+const createListTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
@@ -146,4 +145,4 @@ const CreateListTemplate: ApplicationTemplate<
   },
 }
 
-export default CreateListTemplate
+export default createListTemplate
