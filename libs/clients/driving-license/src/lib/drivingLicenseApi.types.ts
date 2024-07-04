@@ -38,6 +38,7 @@ export interface DriversLicense {
   disqualification?: Disqualification | null
   birthCountry?: string | null
   publishPlaceName?: string | null
+  comments?: LicenseComments[] | null
 }
 
 export interface RemarkCode {
