@@ -6,6 +6,7 @@ register({ baseUrl: './', paths: tsConfig.compilerOptions.paths })
 import { startPostgres, startLocalstack } from '@island.is/testing/containers'
 import { CreateQueueCommand, SQSClient } from '@aws-sdk/client-sqs'
 import { environment } from './environment'
+import { logger } from '@island.is/logging'
 
 const setupSqsQueue = async () => {
   try {
@@ -18,12 +19,17 @@ const setupSqsQueue = async () => {
       },
     })
 
+    logger.debug('Creating main queue...')
     await client.send(
       new CreateQueueCommand({ QueueName: environment.MAIN_QUEUE_NAME }),
     )
+    logger.debug('Main queue created.')
+
+    logger.debug('Creating dead letter queue...')
     await client.send(
       new CreateQueueCommand({ QueueName: environment.DEAD_LETTER_QUEUE_NAME }),
     )
+    logger.debug('Dead letter queue created.')
   } catch (error) {
     console.error('Error setting up SQS queue', error)
     throw error
