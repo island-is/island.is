@@ -1,4 +1,5 @@
 // @ts-check
+import { info } from "console";
 import { runCommand } from "./_utils.mjs";
 
 const GITHUB_ACTION_USER = {
@@ -26,10 +27,17 @@ export async function getUnstagedChanges() {
  * @returns {Promise<void>} - A promise that resolves when the commit is complete.
  */
 export async function commitUnstagedChanges({ user, message }) {
-    const {name, email} = user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER;
+    const { name, email } = user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER;
+    const currentBranch = await getCurrentBranch();
+    info(`Committing unstaged changes to branch ${currentBranch}`);
     await runCommand(["git", "config", "user.name",name]);
     await runCommand(["git", "config", "user.email", email]);
     await runCommand(["git", "add", "-A"]);
     await runCommand(["git", "commit", "-m", message]);
-    await runCommand(["git", "push"]);
+    // await runCommand(["git", "push"]);
+}
+
+
+export async function getCurrentBranch() {
+    return (await runCommand('git rev-parse --abbrev-ref HEAD')).trim();
 }
