@@ -20,6 +20,22 @@ export enum ApiActions {
   submitApplication = 'createLists',
 }
 
+export type Manager = {
+  manager: {
+    name: string
+    nationalId: string
+  }
+  constituency: string
+}
+
+export type Supervisor = {
+  supervisor: {
+    name: string
+    nationalId: string
+  }
+  constituency: string
+}
+
 export const Constituencies = [
   'Norðausturkjördæmi',
   'Norðvesturkjördæmi',

@@ -1,16 +1,13 @@
 import { FC } from 'react'
 import { ActionCard, Stack } from '@island.is/island-ui/core'
 import { FieldBaseProps } from '@island.is/application/types'
-import { useLocale } from '@island.is/localization'
-import { m } from '../../lib/messages'
 
 export const ListsInOverview: FC<FieldBaseProps> = ({ application }) => {
   const { answers } = application
-  const { formatMessage } = useLocale()
 
   return (
     <Stack space={3}>
-      {(answers.constituency as any).map((c: string, index: number) => (
+      {(answers.constituency as string[]).map((c: string, index: number) => (
         <ActionCard
           key={index}
           heading={'Flokkur 1 - ' + c}

@@ -24,6 +24,11 @@ export const dataSchema = z.object({
     dateFrom: z.string(),
     dateTil: z.string(),
   }),
+  list: z.object({
+    name: z.string(),
+    nationalId: z.string(),
+    letter: z.string(),
+  }),
 
   /* Kjördæmi */
   constituency: z.array(z.string()).refine((arr) => arr.length >= 1, {

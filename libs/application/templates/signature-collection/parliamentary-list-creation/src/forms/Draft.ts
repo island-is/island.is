@@ -11,6 +11,7 @@ import {
   buildSubmitField,
   buildTableRepeaterField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Application, UserProfile } from '@island.is/api/schema'
@@ -19,7 +20,7 @@ import Logo from '../../../assets/Logo'
 
 import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
-import { Constituencies } from '../lib/constants'
+import { Constituencies, Manager, Supervisor } from '../lib/constants'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListCreationDraft',
@@ -61,7 +62,7 @@ export const Draft: Form = buildForm({
               defaultValue: 'Flokkur 1',
             }),
             buildTextField({
-              id: 'list.nameLetter',
+              id: 'list.letter',
               title: m.listLetter,
               width: 'half',
               readOnly: true,
@@ -263,18 +264,16 @@ export const Draft: Form = buildForm({
               marginBottom: 3,
             }),
             buildKeyValueField({
-              label: m.name,
+              label: m.listName,
               width: 'half',
-              value: ({ answers }) => {
-                return (answers.list as any).name
-              },
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'list.name') ?? '',
             }),
             buildKeyValueField({
               label: m.nationalId,
               width: 'half',
-              value: ({ answers }) => {
-                return (answers.list as any).nationalId
-              },
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'list.nationalId') ?? '',
             }),
             buildDescriptionField({
               id: 'space',
@@ -284,9 +283,8 @@ export const Draft: Form = buildForm({
             buildKeyValueField({
               label: m.listLetter,
               width: 'half',
-              value: ({ answers }) => {
-                return (answers.list as any).nameLetter
-              },
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'list.letter') ?? '',
             }),
             buildDescriptionField({
               id: 'space1',
@@ -304,16 +302,14 @@ export const Draft: Form = buildForm({
             buildKeyValueField({
               label: m.name,
               width: 'half',
-              value: ({ answers }) => {
-                return (answers.applicant as any).name
-              },
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'applicant.name') ?? '',
             }),
             buildKeyValueField({
               label: m.nationalId,
               width: 'half',
-              value: ({ answers }) => {
-                return (answers.applicant as any).nationalId
-              },
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'applicant.nationalId') ?? '',
             }),
             buildDescriptionField({
               id: 'space2',
@@ -324,15 +320,18 @@ export const Draft: Form = buildForm({
               label: m.phone,
               width: 'half',
               value: ({ answers }) => {
-                return formatPhone((answers.applicant as any).phone)
+                const phone = getValueViaPath(
+                  answers,
+                  'applicant.phone',
+                ) as string
+                return formatPhone(phone) ?? ''
               },
             }),
             buildKeyValueField({
               label: m.email,
               width: 'half',
-              value: ({ answers }) => {
-                return (answers.applicant as any).email
-              },
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'applicant.email') ?? '',
             }),
             buildDescriptionField({
               id: 'space3',
@@ -363,15 +362,16 @@ export const Draft: Form = buildForm({
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 3,
-              condition: (answers) => !!(answers.managers as any)?.length,
+              condition: (answers) =>
+                !!(answers.managers as Array<Manager>)?.length,
             }),
             buildKeyValueField({
               label: '',
               width: 'full',
               value: ({ answers }) => {
-                return (answers.managers as any)
+                return (answers.managers as Array<Manager>)
                   .map(
-                    (m: any) =>
+                    (m: Manager) =>
                       m.manager.name +
                       ' - ' +
                       formatNationalId(m.manager.nationalId) +
@@ -392,15 +392,16 @@ export const Draft: Form = buildForm({
               titleVariant: 'h3',
               space: 'gutter',
               marginBottom: 3,
-              condition: (answers) => !!(answers.supervisors as any)?.length,
+              condition: (answers) =>
+                !!(answers.supervisors as Array<Supervisor>)?.length,
             }),
             buildKeyValueField({
               label: '',
               width: 'full',
               value: ({ answers }) => {
-                return (answers.supervisors as any)
+                return (answers.supervisors as Array<Supervisor>)
                   .map(
-                    (s: any) =>
+                    (s: Supervisor) =>
                       s.supervisor.name +
                       ' - ' +
                       formatNationalId(s.supervisor.nationalId) +
