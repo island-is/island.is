@@ -1,5 +1,4 @@
-// How do I get path-aliases to work??!!
-// import { startSQS } from '@island.is/testing/containers'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { startSQS } from '../../testing/containers/src'
 
 export default async () => {
