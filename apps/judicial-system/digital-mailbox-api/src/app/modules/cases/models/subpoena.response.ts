@@ -91,9 +91,7 @@ export class SubpoenaResponse {
         ],
       },
 
-      defenderInfo:
-        defendantInfo && defendantInfo.defenderChoice
-          ? {
+      defenderInfo: defendantInfo?.defenderChoice
               defenderChoice: defendantInfo?.defenderChoice,
               defenderName:
                 !waivedRight && hasDefender
