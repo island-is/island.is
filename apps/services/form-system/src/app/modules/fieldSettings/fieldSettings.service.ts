@@ -5,6 +5,8 @@ import { InjectModel } from '@nestjs/sequelize'
 import { FieldSettingsMapper } from './models/fieldSettings.mapper'
 import { FieldSettingsDto } from './models/dto/fieldSettings.dto'
 import { ListItem } from '../listItems/models/listItem.model'
+import { defaults, keys, keysIn, pick, zipObject } from 'lodash'
+import { FieldSettingsKeys } from './models/fieldSettingsKeys'
 
 @Injectable()
 export class FieldSettingsService {

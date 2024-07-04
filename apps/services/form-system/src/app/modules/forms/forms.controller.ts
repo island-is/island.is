@@ -8,7 +8,7 @@ import {
   Param,
   Post,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { FormsService } from './forms.service'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormResponse } from './models/dto/form.response.dto'
@@ -20,11 +20,12 @@ export class FormsController {
   constructor(private readonly formsService: FormsService) {}
 
   @Post()
-  @Documentation({
+  @ApiCreatedResponse({
+    type: FormResponse,
     description: 'Create new form',
-    response: { status: 200, type: FormResponse },
   })
   async create(@Body() createFormDto: CreateFormDto): Promise<FormResponse> {
+    console.log('blee')
     const formResponse = await this.formsService.create(createFormDto)
     if (!formResponse) {
       throw new Error('Error')

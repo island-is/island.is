@@ -1,20 +1,10 @@
 import { Injectable } from '@nestjs/common'
 import { UpdateFieldSettingsDto } from './dto/updateFieldSettings.dto'
 import { FieldSettings } from './fieldSettings.model'
-import {
-  DatePickerFieldSettingsDto,
-  DocumentFieldSettingsDto,
-  DropdownListFieldSettingsDto,
-  FieldSettingsDto,
-  IskNumberboxFieldSettingsDto,
-  MessageFieldSettingsDto,
-  NumberboxFieldSettingsDto,
-  PropertyNumberFieldSettingsDto,
-  RadioButtonsFieldSettingsDto,
-  TextboxFieldSettingsDto,
-  TimeInputFieldSettingsDto,
-} from './dto/fieldSettings.dto'
+import { FieldSettingsDto } from './dto/fieldSettings.dto'
 import { ListItemMapper } from '../../listItems/models/listItem.mapper'
+import { defaults, pick, zipObject } from 'lodash'
+import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 
 @Injectable()
 export class FieldSettingsMapper {
@@ -48,70 +38,62 @@ export class FieldSettingsMapper {
   }
 
   mapFieldTypeToFieldSettingsDto(
-    fieldSettings: FieldSettings | null | undefined,
+    fieldSettings: FieldSettings | undefined | null,
     fieldType: string,
   ): FieldSettingsDto {
+    let keys: string[]
     switch (fieldType) {
       case 'textbox':
-        return {
-          maxLength: fieldSettings ? fieldSettings.maxLength : null,
-          minLength: fieldSettings ? fieldSettings.minLength : null,
-        } as TextboxFieldSettingsDto
+        keys = ['minLength', 'maxLength']
+        return this.pickSettings(fieldSettings, keys)
       case 'numberbox':
-        return {
-          maxLength: fieldSettings ? fieldSettings.maxLength : null,
-          minLength: fieldSettings ? fieldSettings.minLength : null,
-          maxValue: fieldSettings ? fieldSettings.maxValue : null,
-          minValue: fieldSettings ? fieldSettings.minValue : null,
-        } as NumberboxFieldSettingsDto
+        keys = ['minLength', 'maxLength', 'minValue', 'maxValue']
+        return this.pickSettings(fieldSettings, keys)
       case 'message':
-        return {
-          hasLink: fieldSettings ? fieldSettings.hasLink : null,
-          url: fieldSettings ? fieldSettings.url : null,
-          buttonText: fieldSettings ? fieldSettings.buttonText : null,
-        } as MessageFieldSettingsDto
+        keys = ['hasLink', 'url', 'buttonText']
+        return this.pickSettings(fieldSettings, keys)
       case 'datePicker':
-        return {
-          minDate: fieldSettings ? fieldSettings.minDate : null,
-          maxDate: fieldSettings ? fieldSettings.maxDate : null,
-        } as DatePickerFieldSettingsDto
+        keys = ['minDate', 'maxDate']
+        return this.pickSettings(fieldSettings, keys)
       case 'dropdownList':
-        return {
-          list: fieldSettings?.list
-            ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
-            : '',
-          listType: fieldSettings?.listType ? fieldSettings.listType : '',
-        } as DropdownListFieldSettingsDto
+        keys = ['list', 'listType']
+        const dropdownListFieldSettings = this.pickSettings(fieldSettings, keys)
+        dropdownListFieldSettings.list = fieldSettings?.list
+          ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
+          : []
+        return dropdownListFieldSettings
       case 'radioButtons':
-        return {
-          list: fieldSettings?.list
-            ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
-            : null,
-        } as RadioButtonsFieldSettingsDto
+        keys = ['list']
+        const radioButtonsFieldSettings = this.pickSettings(fieldSettings, keys)
+        radioButtonsFieldSettings.list = fieldSettings?.list
+          ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
+          : []
+        return radioButtonsFieldSettings
       case 'iskNumberbox':
-        return {
-          minAmount: fieldSettings ? fieldSettings.minAmount : null,
-          maxAmount: fieldSettings ? fieldSettings.maxAmount : null,
-        } as IskNumberboxFieldSettingsDto
+        keys = ['minAmount', 'maxAmount']
+        return this.pickSettings(fieldSettings, keys)
       case 'propertyNumber':
-        return {
-          hasPropertyInput: fieldSettings
-            ? fieldSettings.hasPropertyInput
-            : null,
-          hasPropertyList: fieldSettings ? fieldSettings.hasPropertyList : null,
-        } as PropertyNumberFieldSettingsDto
+        keys = ['hasPropertyInput', 'hasPropertyList']
+        return this.pickSettings(fieldSettings, keys)
       case 'document':
-        return {
-          fileTypes: fieldSettings ? fieldSettings.fileTypes : null,
-          fileMaxSize: fieldSettings ? fieldSettings.fileMaxSize : null,
-          maxFiles: fieldSettings ? fieldSettings.maxFiles : null,
-        } as DocumentFieldSettingsDto
+        keys = ['fileTypes', 'fileMaxSize', 'maxFiles']
+        return this.pickSettings(fieldSettings, keys)
       case 'timeInput':
-        return {
-          timeInterval: fieldSettings ? fieldSettings.timeInterval : null,
-        } as TimeInputFieldSettingsDto
+        keys = ['timeInterval']
+        return this.pickSettings(fieldSettings, keys)
       default:
         return {}
     }
+  }
+
+  private pickSettings = (
+    obj: FieldSettings | undefined | null,
+    keys: string[],
+    defaultValue = null,
+  ): FieldSettingsDto => {
+    return defaults(
+      pick(obj, keys),
+      zipObject(keys, Array(keys.length).fill(defaultValue)),
+    ) as FieldSettingsDto
   }
 }
