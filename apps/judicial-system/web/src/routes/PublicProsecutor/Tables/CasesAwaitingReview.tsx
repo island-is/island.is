@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -27,10 +27,7 @@ interface CasesForReviewTableProps {
   cases?: CaseListEntry[]
 }
 
-const CasesForReview: React.FC<CasesForReviewTableProps> = ({
-  loading,
-  cases,
-}) => {
+const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
   const { openCaseInNewTabMenuItem } = useContextMenu()
 
@@ -49,10 +46,16 @@ const CasesForReview: React.FC<CasesForReviewTableProps> = ({
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.state) },
-                { title: formatMessage(tables.deadline) },
+                {
+                  title: formatMessage(tables.deadline),
+                  sortable: {
+                    isSortable: true,
+                    key: 'indictmentAppealDeadline',
+                  },
+                },
               ]}
               data={cases}
               generateContextMenuItems={(row) => {

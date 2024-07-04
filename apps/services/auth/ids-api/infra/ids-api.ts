@@ -34,6 +34,7 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      PASSKEY_CORE_MAX_AGE_DAYS: '365',
       PUBLIC_URL: {
         dev: 'https://identity-server.dev01.devland.is/api',
         staging: 'https://identity-server.staging01.devland.is/api',
@@ -83,7 +84,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
       PASSKEY_CORE_ALLOWED_ORIGINS:
         '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS',
-      PASSKEY_CORE_MAX_AGE_DAYS: '/k8s/services-auth/PASSKEY_CORE_MAX_AGE_DAYS',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
@@ -123,7 +123,7 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
     .resources({
       limits: {
         cpu: '400m',
-        memory: '512Mi',
+        memory: '1024Mi',
       },
       requests: {
         cpu: '100m',

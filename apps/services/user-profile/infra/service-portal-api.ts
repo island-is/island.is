@@ -96,4 +96,5 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceId> =>
       'islandis',
       'user-notification',
       'identity-server',
+      'application-system',
     )

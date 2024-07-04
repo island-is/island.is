@@ -480,6 +480,9 @@ export class DrivingLicenseApi {
     nationalIdApplicant: string
     token: string
     jurisdictionId: number
+    instructorSSN: string
+    phoneNumber: string
+    email: string
   }): Promise<boolean> {
     const response = await this.applicationV5.apiApplicationsV5ApplyforBePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -488,6 +491,9 @@ export class DrivingLicenseApi {
       postApplicationForBEModel: {
         districtId: params.jurisdictionId,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
+        instructorSSN: params.instructorSSN,
+        primaryPhoneNumber: params.phoneNumber,
+        studentEmail: params.email,
       },
     })
 

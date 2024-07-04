@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-community/async-storage'
 import { Alert } from 'react-native'
 import {
   authorize,
@@ -10,7 +9,6 @@ import {
 import Keychain from 'react-native-keychain'
 import createUse from 'zustand'
 import create, { State } from 'zustand/vanilla'
-import { persist } from 'zustand/middleware'
 import { bundleId, getConfig } from '../config'
 import { getIntl } from '../contexts/i18n-provider'
 import { getApolloClientAsync } from '../graphql/client'
@@ -19,13 +17,22 @@ import { offlineStore } from './offline-store'
 import { preferencesStore } from './preferences-store'
 import { clearAllStorages } from '../stores/mmkv'
 import { notificationsStore } from './notifications-store'
+import { featureFlagClient } from '../contexts/feature-flag-provider'
+import {
+  DeletePasskeyDocument,
+  DeletePasskeyMutation,
+  DeletePasskeyMutationVariables,
+} from '../graphql/types/schema'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
 const UNAUTHORIZED_USER_INFO = 'Got 401 when fetching user info'
 
 // Optional scopes (not required for all users so we do not want to force a logout)
-const OPTIONAL_SCOPES = ['@island.is/licenses:barcode']
+const OPTIONAL_SCOPES = [
+  '@island.is/licenses:barcode',
+  '@island.is/auth/passkeys',
+]
 
 interface UserInfo {
   sub: string
@@ -36,7 +43,7 @@ interface UserInfo {
 interface AuthStore extends State {
   authorizeResult: AuthorizeResult | RefreshResult | undefined
   userInfo: UserInfo | undefined
-  lockScreenActivatedAt?: number | null
+  lockScreenActivatedAt?: number
   lockScreenComponentId: string | undefined
   noLockScreenUntilNextAppStateActive: boolean
   isCogitoAuth: boolean
@@ -61,143 +68,166 @@ const getAppAuthConfig = () => {
   }
 }
 
-export const authStore = create<AuthStore>(
-  persist(
-    (set, get) => ({
-      authorizeResult: undefined,
-      userInfo: undefined,
-      lockScreenActivatedAt: undefined,
-      lockScreenComponentId: undefined,
-      noLockScreenUntilNextAppStateActive: false,
-      isCogitoAuth: false,
-      cognitoDismissCount: 0,
-      cognitoAuthUrl: undefined,
-      cookies: '',
-      async fetchUserInfo(skipRefresh = false) {
-        const appAuthConfig = getAppAuthConfig()
-        // Detect expired token
-        const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
+const clearPasskey = async (userNationalId?: string) => {
+  // Clear passkey if exists
+  const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
+    'isPasskeyEnabled',
+    false,
+    userNationalId ? { identifier: userNationalId } : undefined,
+  )
+  if (isPasskeyEnabled) {
+    preferencesStore.setState({
+      hasCreatedPasskey: false,
+      hasOnboardedPasskeys: false,
+      lastUsedPasskey: 0,
+    })
 
-        if (!skipRefresh && new Date(expiresAt) < new Date()) {
-          await get().refresh()
-        }
+    const client = await getApolloClientAsync()
+    try {
+      await client.mutate<
+        DeletePasskeyMutation,
+        DeletePasskeyMutationVariables
+      >({
+        mutation: DeletePasskeyDocument,
+      })
+    } catch (e) {
+      console.error('Failed to delete passkey', e)
+    }
+  }
+}
 
-        const res = await fetch(
-          `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
-          {
-            headers: {
-              Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
-            },
-          },
-        )
+export const authStore = create<AuthStore>((set, get) => ({
+  authorizeResult: undefined,
+  userInfo: undefined,
+  lockScreenActivatedAt: undefined,
+  lockScreenComponentId: undefined,
+  noLockScreenUntilNextAppStateActive: false,
+  isCogitoAuth: false,
+  cognitoDismissCount: 0,
+  cognitoAuthUrl: undefined,
+  cookies: '',
+  async fetchUserInfo(skipRefresh = false) {
+    const appAuthConfig = getAppAuthConfig()
+    // Detect expired token
+    const expiresAt = get().authorizeResult?.accessTokenExpirationDate ?? 0
 
-        if (res.status === 401) {
-          // Attempt to refresh the access token
-          if (!skipRefresh) {
-            await get().refresh()
-            // Retry the userInfo call
-            return get().fetchUserInfo(true)
-          }
-          throw new Error(UNAUTHORIZED_USER_INFO)
-        } else if (res.status === 200) {
-          const userInfo = await res.json()
-          set({ userInfo })
+    if (!skipRefresh && new Date(expiresAt) < new Date()) {
+      await get().refresh()
+    }
 
-          return userInfo
-        }
+    const res = await fetch(
+      `${appAuthConfig.issuer.replace(/\/$/, '')}/connect/userinfo`,
+      {
+        headers: {
+          Authorization: `Bearer ${get().authorizeResult?.accessToken}`,
+        },
       },
-      async refresh() {
-        const appAuthConfig = getAppAuthConfig()
-        const refreshToken = get().authorizeResult?.refreshToken
+    )
 
-        if (!refreshToken) {
-          return
-        }
+    if (res.status === 401) {
+      // Attempt to refresh the access token
+      if (!skipRefresh) {
+        await get().refresh()
+        // Retry the userInfo call
+        return get().fetchUserInfo(true)
+      }
+      throw new Error(UNAUTHORIZED_USER_INFO)
+    } else if (res.status === 200) {
+      const userInfo = await res.json()
+      set({ userInfo })
 
-        const newAuthorizeResult = await authRefresh(appAuthConfig, {
-          refreshToken,
-        })
+      return userInfo
+    }
+  },
+  async refresh() {
+    const appAuthConfig = getAppAuthConfig()
+    const refreshToken = get().authorizeResult?.refreshToken
 
-        const authorizeResult = {
-          ...get().authorizeResult,
-          ...newAuthorizeResult,
-        }
+    if (!refreshToken) {
+      return
+    }
 
-        await Keychain.setGenericPassword(
-          KEYCHAIN_AUTH_KEY,
-          JSON.stringify(authorizeResult),
-          { service: KEYCHAIN_AUTH_KEY },
-        )
-        set({ authorizeResult })
+    const newAuthorizeResult = await authRefresh(appAuthConfig, {
+      refreshToken,
+    })
+
+    const authorizeResult = {
+      ...get().authorizeResult,
+      ...newAuthorizeResult,
+    }
+
+    await Keychain.setGenericPassword(
+      KEYCHAIN_AUTH_KEY,
+      JSON.stringify(authorizeResult),
+      { service: KEYCHAIN_AUTH_KEY },
+    )
+    set({ authorizeResult })
+  },
+  async login() {
+    const appAuthConfig = getAppAuthConfig()
+    const authorizeResult = await authorize({
+      ...appAuthConfig,
+      additionalParameters: {
+        prompt: 'login',
+        prompt_delegations: 'true',
+        ui_locales: preferencesStore.getState().locale,
+        externalUserAgent: 'yes',
       },
-      async login() {
-        const appAuthConfig = getAppAuthConfig()
-        const authorizeResult = await authorize({
-          ...appAuthConfig,
-          additionalParameters: {
-            prompt: 'login',
-            prompt_delegations: 'true',
-            ui_locales: preferencesStore.getState().locale,
-            externalUserAgent: 'yes',
-          },
-        })
+    })
 
-        if (authorizeResult) {
-          await Keychain.setGenericPassword(
-            KEYCHAIN_AUTH_KEY,
-            JSON.stringify(authorizeResult),
-            { service: KEYCHAIN_AUTH_KEY },
-          )
-          set({ authorizeResult })
-          return true
-        }
-        return false
-      },
-      async logout() {
-        // Clear all MMKV storages
-        clearAllStorages()
+    if (authorizeResult) {
+      await Keychain.setGenericPassword(
+        KEYCHAIN_AUTH_KEY,
+        JSON.stringify(authorizeResult),
+        { service: KEYCHAIN_AUTH_KEY },
+      )
+      set({ authorizeResult })
+      return true
+    }
+    return false
+  },
+  async logout() {
+    // Clear all MMKV storages
+    clearAllStorages()
 
-        // Clear push token if exists
-        const pushToken = notificationsStore.getState().pushToken
-        if (pushToken) {
-          notificationsStore.getState().deletePushToken(pushToken)
-        }
-        notificationsStore.getState().reset()
+    // Clear push token if exists
+    const pushToken = notificationsStore.getState().pushToken
+    if (pushToken) {
+      notificationsStore.getState().deletePushToken(pushToken)
+    }
+    notificationsStore.getState().reset()
 
-        const appAuthConfig = getAppAuthConfig()
-        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-        const tokenToRevoke = get().authorizeResult!.accessToken!
-        try {
-          await revoke(appAuthConfig, {
-            tokenToRevoke,
-            includeBasicAuth: true,
-            sendClientId: true,
-          })
-        } catch (e) {
-          // NOOP
-        }
+    // Clear passkey if exists
+    const userNationalId = get().userInfo?.nationalId
+    await clearPasskey(userNationalId)
 
-        const client = await getApolloClientAsync()
-        await client.cache.reset()
-        await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
-        set(
-          (state) => ({
-            ...state,
-            authorizeResult: undefined,
-            userInfo: undefined,
-          }),
-          true,
-        )
-        return true
-      },
-    }),
-    {
-      name: 'auth_01',
-      getStorage: () => AsyncStorage,
-      whitelist: ['userInfo'],
-    },
-  ),
-)
+    const appAuthConfig = getAppAuthConfig()
+    // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+    const tokenToRevoke = get().authorizeResult!.accessToken!
+    try {
+      await revoke(appAuthConfig, {
+        tokenToRevoke,
+        includeBasicAuth: true,
+        sendClientId: true,
+      })
+    } catch (e) {
+      // NOOP
+    }
+
+    const client = await getApolloClientAsync()
+    await client.cache.reset()
+    await Keychain.resetGenericPassword({ service: KEYCHAIN_AUTH_KEY })
+    set(
+      (state) => ({
+        ...state,
+        authorizeResult: undefined,
+        userInfo: undefined,
+      }),
+      true,
+    )
+    return true
+  },
+}))
 
 export const useAuthStore = createUse(authStore)
 

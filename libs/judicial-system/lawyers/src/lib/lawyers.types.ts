@@ -33,3 +33,7 @@ export type Lawyer = {
   Languages: null | any
   InternationConnection: string
 }
+
+export enum LawyerType {
+  LITIGATORS = 'LITIGATORS',
+}
