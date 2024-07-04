@@ -65,7 +65,7 @@ export const startSQS = async () => {
 
 export const stopSQS = async () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(global as any).__localstack__.stop()
+  await ((global as any).__localstack__ as StartedTestContainer).stop()
 }
 
 export const stopLocalstack = async () => {
