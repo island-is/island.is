@@ -11,16 +11,16 @@ const PersonInformationSchema = z.object({
 })
 
 export const NewMachineAnswersSchema = z.object({
-  machine: z.object({
-    id: z.string().optional(),
-    date: z.string().optional(),
-    type: z.string().optional(),
-    plate: z.string().optional(),
-    subType: z.string().optional(),
-    category: z.string().optional(),
-    regNumber: z.string().optional(),
-    ownerNumber: z.string().optional(),
-  }),
+  // machine: z.object({
+  //   id: z.string().optional(),
+  //   date: z.string().optional(),
+  //   type: z.string().optional(),
+  //   plate: z.string().optional(),
+  //   subType: z.string().optional(),
+  //   category: z.string().optional(),
+  //   regNumber: z.string().optional(),
+  //   ownerNumber: z.string().optional(),
+  // }),
   importerInformation: z.object({
     importer: PersonInformationSchema,
     isOwnerOtherThanImporter: z.enum([YES, NO]),
@@ -29,6 +29,12 @@ export const NewMachineAnswersSchema = z.object({
   operatorInformation: z.object({
     operator: PersonInformationSchema.optional(),
     hasOperator: z.enum([YES, NO]),
+  }),
+  machine: z.object({
+    machineType: z.object({
+      manufacturer: z.string(),
+      type: z.string(),
+    }),
   }),
   deregister: z.object({
     date: z.string(),

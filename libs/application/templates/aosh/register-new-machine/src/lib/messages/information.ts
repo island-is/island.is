@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const information = {
   general: defineMessages({
     sectionTitle: {
-      id: 'aosh.rnm.information:general.sectionTitle',
+      id: 'aosh.rnm.application:information.general.sectionTitle',
       defaultMessage: 'Upplýsingar',
       description: `Application's name`,
     },
@@ -11,97 +11,149 @@ export const information = {
   labels: {
     importer: defineMessages({
       sectionTitle: {
-        id: 'aosh.rnm.information:labels.importer.sectionTitle',
+        id: 'aosh.rnm.application:information.labels.importer.sectionTitle',
         defaultMessage: 'Innflytjandi',
         description: `Importer section title`,
       },
       title: {
-        id: 'aosh.rnm.information:labels.importer.title',
+        id: 'aosh.rnm.application:information.labels.importer.title',
         defaultMessage: 'Innflytjandi tækis',
         description: `Importer page title`,
       },
       description: {
-        id: 'aosh.rnm.information:labels.importer.description',
+        id: 'aosh.rnm.application:information.labels.importer.description',
         defaultMessage:
           'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
         description: `Importer page description`,
       },
       isOwnerOtherThenImporter: {
-        id: 'aosh.rnm.information:labels.importer.isOwnerOtherThenImporter',
+        id: 'aosh.rnm.application:information.labels.importer.isOwnerOtherThenImporter',
         defaultMessage: 'Er eigandi annar en innflytjandi?',
         description: `Is owner other than importer question label`,
       },
       name: {
-        id: 'aosh.rnm.information:labels.importer.name',
+        id: 'aosh.rnm.application:information.labels.importer.name',
         defaultMessage: 'Nafn',
         description: `Importer name label`,
       },
       nationalId: {
-        id: 'aosh.rnm.information:labels.importer.nationalId',
+        id: 'aosh.rnm.application:information.labels.importer.nationalId',
         defaultMessage: 'Kennitala',
         description: `Importer nationalId label`,
       },
       address: {
-        id: 'aosh.rnm.information:labels.importer.address',
+        id: 'aosh.rnm.application:information.labels.importer.address',
         defaultMessage: 'Heimilisfang',
         description: `Importer address label`,
       },
       postCode: {
-        id: 'aosh.rnm.information:labels.importer.postCode',
+        id: 'aosh.rnm.application:information.labels.importer.postCode',
         defaultMessage: 'Póstnúmer',
         description: `Importer post code label`,
       },
       phone: {
-        id: 'aosh.rnm.information:labels.importer.phone',
+        id: 'aosh.rnm.application:information.labels.importer.phone',
         defaultMessage: 'Símanúmer',
         description: `Importer phone number label`,
       },
       email: {
-        id: 'aosh.rnm.information:labels.importer.email',
+        id: 'aosh.rnm.application:information.labels.importer.email',
         defaultMessage: 'Netfang',
         description: `Importer email label`,
       },
     }),
-    otherOwner: defineMessages({
+    owner: defineMessages({
       name: {
-        id: 'aosh.rnm.information:labels.otherOwner.name',
-        defaultMessage: 'Nafn',
+        id: 'aosh.rnm.application:information.labels.otherOwner.name',
+        defaultMessage: 'Nafn eiganda',
         description: `Importer name label`,
       },
       nationalId: {
-        id: 'aosh.rnm.information:labels.otherOwner.nationalId',
-        defaultMessage: 'Kennitala',
+        id: 'aosh.rnm.application:information.labels.otherOwner.nationalId',
+        defaultMessage: 'Kennitala eiganda',
         description: `Importer nationalId label`,
       },
       address: {
-        id: 'aosh.rnm.information:labels.otherOwner.address',
-        defaultMessage: 'Heimilisfang',
+        id: 'aosh.rnm.application:information.labels.otherOwner.address',
+        defaultMessage: 'Heimilisfang eiganda',
         description: `Importer address label`,
       },
       postCode: {
-        id: 'aosh.rnm.information:labels.potherOwner.ostCode',
-        defaultMessage: 'Póstnúmer',
+        id: 'aosh.rnm.application:information.labels.otherOwner.ostCode',
+        defaultMessage: 'Póstnúmer eiganda',
         description: `Importer post code label`,
       },
       phone: {
-        id: 'aosh.rnm.information:labels.otherOwner.phone',
-        defaultMessage: 'Símanúmer',
+        id: 'aosh.rnm.application:information.labels.otherOwner.phone',
+        defaultMessage: 'Símanúmer eiganda',
         description: `Importer phone number label`,
       },
       email: {
-        id: 'aosh.rnm.information:labels.otherOwner.email',
-        defaultMessage: 'Netfang',
+        id: 'aosh.rnm.application:information.labels.otherOwner.email',
+        defaultMessage: 'Netfang eiganda',
         description: `Importer email label`,
+      },
+    }),
+    operator: defineMessages({
+      sectionTitle: {
+        id: 'aosh.rnm.application:information.labels.operator.sectionTitle',
+        defaultMessage: 'Umráðamaður',
+        description: `Operator section title`,
+      },
+      title: {
+        id: 'aosh.rnm.application:information.labels.operator.title',
+        defaultMessage: 'Umráðamaður',
+        description: `Operator page title`,
+      },
+      description: {
+        id: 'aosh.rnm.application:information.labels.operator.description',
+        defaultMessage: 'Skráðu viðeigandi upplýsingar',
+        description: `Operator page description`,
+      },
+      hasOperator: {
+        id: 'aosh.rnm.application:information.labels.operator.hasOperator',
+        defaultMessage: 'Á að skrá umráðamann?',
+        description: `Is there an operator`,
+      },
+      name: {
+        id: 'aosh.rnm.application:information.labels.operator.name',
+        defaultMessage: 'Nafn',
+        description: `Operator name label`,
+      },
+      nationalId: {
+        id: 'aosh.rnm.application:information.labels.operator.nationalId',
+        defaultMessage: 'Kennitala',
+        description: `Operator nationalId label`,
+      },
+      address: {
+        id: 'aosh.rnm.application:information.labels.operator.address',
+        defaultMessage: 'Heimilisfang',
+        description: `Operator address label`,
+      },
+      postCode: {
+        id: 'aosh.rnm.application:information.labels.operator.postCode',
+        defaultMessage: 'Póstnúmer',
+        description: `Operator post code label`,
+      },
+      phone: {
+        id: 'aosh.rnm.application:information.labels.operator.phone',
+        defaultMessage: 'Símanúmer',
+        description: `Operator phone number label`,
+      },
+      email: {
+        id: 'aosh.rnm.application:information.labels.operator.email',
+        defaultMessage: 'Netfang',
+        description: `Operator email label`,
       },
     }),
     radioButtons: defineMessages({
       radioOptionYes: {
-        id: 'aosh.rnm.information.labels.radioButtons.radioYes',
+        id: 'aosh.rnm.application:information.labels.radioButtons.radioYes',
         defaultMessage: 'Já',
         description: 'Yes option on radio button',
       },
       radioOptionNo: {
-        id: 'aosh.rnm.information.labels.radioButtons.radioNo',
+        id: 'aosh.rnm.application:information.labels.radioButtons.radioNo',
         defaultMessage: 'Nei',
         description: 'No option on radio button',
       },

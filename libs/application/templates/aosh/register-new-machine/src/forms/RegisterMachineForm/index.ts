@@ -3,7 +3,8 @@ import { Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion, externalData } from '../../lib/messages'
-import { informationSection } from './InformationSection'
+import { InformationSection } from './InformationSection'
+import { MachineSection } from './MachineSection'
 
 export const RegisterNewMachineForm: Form = buildForm({
   id: 'RegisterNewMachineFormDraft',
@@ -18,7 +19,8 @@ export const RegisterNewMachineForm: Form = buildForm({
       title: externalData.dataProvider.sectionTitle,
       children: [],
     }),
-    informationSection,
+    InformationSection,
+    MachineSection,
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,
