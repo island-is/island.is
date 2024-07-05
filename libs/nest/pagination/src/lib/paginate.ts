@@ -191,7 +191,14 @@ export async function paginate<T = any>({
         return count
       },
     ),
-    Model.count(cursorCountQueryOptions),
+    Model.count(cursorCountQueryOptions).then(
+      (count: Array<unknown> | number) => {
+        if (Array.isArray(count)) {
+          return count.length
+        }
+        return count
+      },
+    ),
   ])
 
   if (before) {
