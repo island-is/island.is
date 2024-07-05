@@ -1,6 +1,6 @@
 // @ts-check
 import { resolve } from 'path'
-import { MOBILE_APP_DIR, ROOT } from './libs/_common.mjs'
+import { MOBILE_APP_DIR, ROOT } from '../libs/_common.mjs'
 import {
   getPlatformString,
   getYarnLockHash,
@@ -11,15 +11,15 @@ import {
   fileSizeIsEqualOrGreaterThan,
   getPackageJSON,
   getFilesHash,
-} from './libs/_utils.mjs'
+} from '../libs/_utils.mjs'
 
 import {
   ENV_INIT_CACHE,
   ENV_ENABLED_CACHE,
   ENV_CACHE_SUCCESS,
-} from './libs/_const.mjs'
-import { keyStorage } from './libs/_key_storage.mjs'
-import { getGeneratedFilesHash } from './libs/_generated_files.mjs'
+} from '../libs/_const.mjs'
+import { keyStorage } from '../libs/_key_storage.mjs'
+import { getGeneratedFilesHash } from '../libs/_generated_files.mjs'
 
 // When testing this is good to manipulate
 const HASH_VERSION = `newcache-${6}`
