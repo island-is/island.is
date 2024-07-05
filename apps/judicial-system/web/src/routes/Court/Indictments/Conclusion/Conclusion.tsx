@@ -379,7 +379,7 @@ const Conclusion: FC = () => {
               <CourtArrangements
                 handleCourtDateChange={handleCourtDateChange}
                 handleCourtRoomChange={handleCourtRoomChange}
-                courtDate={courtDate}
+                courtDate={workingCase.courtDate}
                 blueBox={false}
               />
             </BlueBox>

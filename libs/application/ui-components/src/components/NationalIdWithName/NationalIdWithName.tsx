@@ -50,7 +50,7 @@ export const NationalIdWithName: FC<
 }) => {
   const fieldId = customId.length > 0 ? customId : id
   const nameField = `${fieldId}.name`
-  const nationaIdField = `${fieldId}.nationalId`
+  const nationalIdField = `${fieldId}.nationalId`
 
   const { formatMessage } = useLocale()
   const {
@@ -81,13 +81,13 @@ export const NationalIdWithName: FC<
       { minAge: minAgePerson },
     )
   } else if (!errorMessage) {
-    nationalIdFieldErrors = getErrorViaPath(errors, nationaIdField)
+    nationalIdFieldErrors = getErrorViaPath(errors, nationalIdField)
   }
 
   // get default values
   const defaultNationalId = nationalIdDefaultValue
     ? nationalIdDefaultValue
-    : getValueViaPath(application.answers, nationaIdField, '')
+    : getValueViaPath(application.answers, nationalIdField, '')
   const defaultName = nameDefaultValue
     ? nameDefaultValue
     : getValueViaPath(application.answers, nameField, '')
@@ -123,7 +123,7 @@ export const NationalIdWithName: FC<
     <GridRow>
       <GridColumn span={['1/1', '1/1', '1/1', '1/2']} paddingTop={2}>
         <InputController
-          id={nationaIdField}
+          id={nationalIdField}
           label={
             customNationalIdLabel
               ? formatMessage(customNationalIdLabel)
