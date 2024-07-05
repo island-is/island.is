@@ -20,9 +20,12 @@ runs:
     - uses: actions/setup-node@v4
       with:
         node-version-file: 'package.json'
-    - name: Install yarn
+    - name: Init
       shell: bash
-      run: corepack enable
+      run: |
+        corepack enable
+        # Remove event.json if it exists
+        rm -f event.json
     - name: Get cache
       id: get-cache
       uses: ./.github/actions/get-cache
