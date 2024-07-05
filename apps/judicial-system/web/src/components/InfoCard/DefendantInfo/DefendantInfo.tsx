@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
 import {
   Box,
@@ -9,7 +9,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './DefendantInfo.strings'
 import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
@@ -29,31 +32,45 @@ interface DefendantInfoProps {
   defendantInfoActionButton?: DefendantInfoActionButton
 }
 
-export const DefendantInfo: FC<DefendantInfoProps> = ({
-  defendant,
-  displayDefenderInfo,
-  displayAppealExpirationInfo,
-  defendantInfoActionButton,
-}) => {
-  const { formatMessage } = useIntl()
-
-  const getAppealExpirationInfo = (viewDate?: string) => {
-    if (!viewDate) {
-      return formatMessage(strings.appealDateNotBegun)
-    }
-
-    const today = new Date()
-    const expiryDate = new Date(viewDate)
-    expiryDate.setDate(expiryDate.getDate() + 28)
-
-    const message =
-      today < expiryDate
-        ? strings.appealExpirationDate
-        : strings.appealDateExpired
-    return formatMessage(message, {
-      appealExpirationDate: formatDate(expiryDate, 'P'),
-    })
+export const getAppealExpirationInfo = (
+  formatMessage: IntlShape['formatMessage'],
+  viewDate?: string,
+  serviceRequirement?: ServiceRequirement | null,
+) => {
+  if (!viewDate) {
+    return formatMessage(strings.appealDateNotBegun)
   }
+
+  if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
+    return formatMessage(strings.serviceRequirementNotRequired)
+  }
+
+  if (serviceRequirement === ServiceRequirement.NOT_APPLICABLE) {
+    return formatMessage(strings.serviceRequirementNotApplicable)
+  }
+
+  const today = new Date()
+  const expiryDate = new Date(viewDate)
+  expiryDate.setDate(expiryDate.getDate() + 28)
+
+  const message =
+    today < expiryDate
+      ? strings.appealExpirationDate
+      : strings.appealDateExpired
+
+  return formatMessage(message, {
+    appealExpirationDate: formatDate(expiryDate, 'P'),
+  })
+}
+
+export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
+  const {
+    defendant,
+    displayDefenderInfo,
+    displayAppealExpirationInfo,
+    defendantInfoActionButton,
+  } = props
+  const { formatMessage } = useIntl()
 
   return (
     <div
@@ -80,7 +97,11 @@ export const DefendantInfo: FC<DefendantInfoProps> = ({
         {displayAppealExpirationInfo && (
           <Box>
             <Text as="span">
-              {getAppealExpirationInfo(defendant.verdictViewDate ?? '')}
+              {getAppealExpirationInfo(
+                formatMessage,
+                defendant.verdictViewDate ?? '',
+                defendant.serviceRequirement,
+              )}
             </Text>
           </Box>
         )}
