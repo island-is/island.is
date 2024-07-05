@@ -3,7 +3,10 @@
  */
 // @ts-check
 import { setFailed, info } from '@actions/core'
-import { commitUnstagedChanges, getUnstagedChanges } from './libs/_git_utils.mjs'
+import {
+  commitUnstagedChanges,
+  getUnstagedChanges,
+} from './libs/_git_utils.mjs'
 import { isPR } from './libs/_pr_utils.mjs'
 import { runCommand } from './libs/_utils.mjs'
 import { ROOT } from './libs/_common.mjs'
@@ -57,7 +60,7 @@ if (canWrite && files.length > 0) {
       message: 'chore: format files',
     })
     info('Unstaged changes for formatting were committed.')
-    setFailed('Unstaged changes were committed.');
+    setFailed('Unstaged changes were committed.')
     process.exit(1)
   }
   info('No unstaged changes found.')
