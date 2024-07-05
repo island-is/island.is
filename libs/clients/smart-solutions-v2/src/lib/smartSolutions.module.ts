@@ -1,10 +1,11 @@
 import { Module } from '@nestjs/common'
 import { SmartSolutionsService } from './smartSolutions.service'
 import { ConfigurableModuleClass } from './smartSolutions.module-definition'
-import { clientFactory } from './graphql/clientFactory'
+import { gqlClientFactory } from './gqlClientFactory'
+import { GQLFetcher } from './gqlFetch'
 
 @Module({
-  providers: [SmartSolutionsService, clientFactory],
+  providers: [SmartSolutionsService, gqlClientFactory, GQLFetcher],
   exports: [SmartSolutionsService],
 })
 export class SmartSolutionsModule extends ConfigurableModuleClass {}

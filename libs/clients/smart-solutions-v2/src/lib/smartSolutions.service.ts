@@ -3,31 +3,30 @@ import type { Logger } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 import {
   DeletePass,
-  DeletePassMutation,
   DeletePassMutationVariables,
   DynamicBarcodeDataInput,
-  Pass,
   PassDataInput,
+  PassTemplatePageInfo,
   PassTemplates,
-  PassTemplatesQuery,
   UpdatePass,
-  UpdatePassMutation,
+  UpdatePassMutationVariables,
   UpdateStatusOnPassWithDynamicBarcode,
-  UpdateStatusOnPassWithDynamicBarcodeMutation,
   UpdateStatusOnPassWithDynamicBarcodeMutationVariables,
   UpsertPass,
-  UpsertPassMutation,
   UpsertPassMutationVariables,
 } from '../../gen/schema'
-import {
-  APOLLO_CLIENT_FACTORY,
-  LOG_CATEGORY,
-  PkPass,
-  SmartSolutionsModuleOptions,
-  VerifyPassResponse,
-} from './smartSolutions.types'
+import { GraphQLClient } from 'graphql-request'
 import { MODULE_OPTIONS_TOKEN } from './smartSolutions.module-definition'
-import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import {
+  PkPass,
+  UpdatePassResponseData,
+  UpsertPassResponseData,
+  VerifyPassData,
+} from './types/responses.type'
+import { GraphqlErrorResponse } from './types/graphqlFetchResponses.type'
+import { GQLFetcher } from './gqlFetch'
+import { LOG_CATEGORY, SmartSolutionsModuleOptions } from './types/config.type'
+import { Result } from './types/result.type'
 
 export class SmartSolutionsService {
   constructor(
@@ -35,25 +34,46 @@ export class SmartSolutionsService {
     private readonly logger: Logger,
     @Inject(MODULE_OPTIONS_TOKEN)
     private readonly options: SmartSolutionsModuleOptions,
-    @Inject(APOLLO_CLIENT_FACTORY)
-    private readonly client: ApolloClient<NormalizedCacheObject>,
+    private readonly fetcher: GQLFetcher,
   ) {}
 
   async verifyPkPass(
     payload: DynamicBarcodeDataInput,
     requestId?: string,
-  ): Promise<VerifyPassResponse> {
-    const res = await this.client.mutate<
-      UpdateStatusOnPassWithDynamicBarcodeMutation,
-      UpdateStatusOnPassWithDynamicBarcodeMutationVariables
-    >({
-      mutation: UpdateStatusOnPassWithDynamicBarcode,
-      variables: {
-        dynamicBarcodeData: payload,
-      },
-    })
+  ): Promise<VerifyPassData | null> {
+    return null
+    /*
+    const vnulliables: UpdateStatusOnPassWithDynamicBarcodeMutationVariables = {
+      dynamicBarcodeData: payload,
+    }
 
-    if (res.data?.updateStatusOnPassWithDynamicBarcode && !res.errors) {
+    let res
+    try {
+      res = await this.client.request(
+        UpdateStatusOnPassWithDynamicBarcode,
+        variables,
+      )
+    } catch (e) {
+      this.logger.warn('Verification post failed', {
+        requestId,
+        passId: res.data.updateStatusOnPassWithDynamicBarcode?.id,
+        category: LOG_CATEGORY,
+      })
+      return null
+    }
+
+    this.logger.debug('VERIFY', res)
+
+    return {
+      valid: true,
+      data: res.data.updateStatusOnPassWithDynamicBarcode,
+    }
+
+
+    if (
+      !isErrorResponse(res) &&
+      res.data.updateStatusOnPassWithDynamicBarcode
+    ) {
       this.logger.debug('PkPass verification successful', {
         requestId,
         passId: res.data.updateStatusOnPassWithDynamicBarcode?.id,
@@ -70,10 +90,12 @@ export class SmartSolutionsService {
       requestId,
       category: LOG_CATEGORY,
     })
+
     return {
       valid: false,
       data: res.data?.updateStatusOnPassWithDynamicBarcode,
     }
+      */
   }
 
   /**
@@ -84,18 +106,51 @@ export class SmartSolutionsService {
   async updatePkPass(
     payload: PassDataInput,
     requestId?: string,
-  ): Promise<PkPass | null> {
-    const res = await this.client.mutate<
-      UpdatePassMutation,
-      UpsertPassMutationVariables
-    >({
-      mutation: UpdatePass,
-      variables: {
-        inputData: payload,
-      },
+  ): Promise<Result<PkPass>> {
+    if (!payload.passTemplateId) {
+      this.logger.warning(
+        'Pkpass update failed, missing pass template id from input',
+        {
+          requestId,
+          category: LOG_CATEGORY,
+        },
+      )
+      return null
+    }
+
+    const variables: UpdatePassMutationVariables = {
+      passTemplateId: payload.passTemplateId,
+      expirationDate: payload.expirationDate,
+      thumbnail: payload.thumbnail,
+      values: payload.inputFieldValues,
+    }
+
+    const res = await this.fetcher.fetch<UpdatePassResponseData>(UpdatePass, {
+      variables,
     })
 
-    return res.data?.updatePass ?? null
+    if (!res.ok) {
+      this.logger.warn('PkPass creation failed', {
+        requestId,
+        passId: payload.id,
+        category: LOG_CATEGORY,
+        error: {
+          message: res.error.message,
+        },
+      })
+      return res
+    }
+
+    const updatePass = res.data.updatePass
+    this.logger.debug('PkPass upates successfully', {
+      requestId,
+      passId: updatePass.id,
+      category: LOG_CATEGORY,
+    })
+    return {
+      ok: true,
+      data: updatePass,
+    }
   }
 
   /**
@@ -107,50 +162,56 @@ export class SmartSolutionsService {
     payload: PassDataInput,
     onCreateCallback?: () => Promise<void>,
     requestId?: string,
-  ): Promise<PkPass | null> {
-    const res = await this.client.mutate<
-      UpsertPassMutation,
-      UpsertPassMutationVariables
-    >({
-      mutation: UpsertPass,
-      variables: {
-        inputData: {
-          ...payload,
-          passTemplateId: this.options.config.passTemplateId,
-        },
+  ): Promise<Result<PkPass>> {
+    const variables: UpsertPassMutationVariables = {
+      inputData: {
+        ...payload,
+        passTemplateId: this.options.config.passTemplateId,
       },
-    })
-
-    if (res.errors) {
-      this.logger.debug('PkPass creation failed', {
-        requestId,
-        passId: res.data?.upsertPass?.id,
-        category: LOG_CATEGORY,
-      })
-      return res.data?.upsertPass ?? null
     }
 
+    const res = await this.fetcher.fetch<UpsertPassResponseData>(
+      UpsertPass,
+      variables,
+    )
+
+    if (!res.ok) {
+      this.logger.warn('PkPass creation failed', {
+        requestId,
+        passId: payload.id,
+        category: LOG_CATEGORY,
+        error: {
+          message: res.error.message,
+        },
+      })
+      return res
+    }
+
+    const upsertPass = res.data.upsertPass
     if (
       onCreateCallback &&
-      res.data?.upsertPass?.whenCreated &&
-      res.data?.upsertPass?.whenModified &&
-      res.data?.upsertPass?.whenCreated === res.data?.upsertPass?.whenModified
+      upsertPass?.whenCreated &&
+      upsertPass?.whenModified &&
+      upsertPass?.whenCreated === upsertPass?.whenModified
     ) {
       this.logger.debug('PkPass created successfully', {
         requestId,
-        passId: res.data?.upsertPass?.id,
+        passId: upsertPass?.id,
         category: LOG_CATEGORY,
       })
       await onCreateCallback()
     } else {
       this.logger.debug('PkPass upsert successful', {
         requestId,
-        passId: res.data?.upsertPass?.id,
+        passId: upsertPass?.id,
         category: LOG_CATEGORY,
       })
     }
 
-    return res.data?.upsertPass ?? null
+    return {
+      ok: true,
+      data: upsertPass,
+    }
   }
 
   async revokePkPass(
@@ -158,23 +219,59 @@ export class SmartSolutionsService {
     payload: PassDataInput,
     requestId?: string,
   ) {
-    const res = await this.client.mutate<
-      DeletePassMutation,
-      DeletePassMutationVariables
-    >({
-      mutation: DeletePass,
-      variables: {
-        passTemplateId,
-        values: payload,
-      },
-    })
+    return null
+    /*
+  const variables: DeletePassMutationVariables = {
+  passTemplateId,
+  values: payload,
+  }
 
-    return res.data?.deleteUniquePass
+  let res: {
+  deleteUniquePass: boolean
+  }
+  try {
+  res = await this.client.request(DeletePass, variables)
+  } catch (e) {
+  const errors: GraphqlErrorResponse = e
+
+  const error = errors.response.errors?.[0]
+  this.logger.warn('PkPass revocation failed', {
+    requestId,
+    passId: payload.id,
+    category: LOG_CATEGORY,
+    error: {
+      message: error?.message,
+    },
+  })
+  return null
+  }
+
+  return res.deleteUniquePass
+  */
   }
 
   async listTemplates() {
-    return this.client.query<PassTemplatesQuery>({
-      query: PassTemplates,
-    })
+    return null
+    /*
+  let res: {
+  passTemplates: PassTemplatePageInfo
+  }
+  try {
+  res = await this.client.request(PassTemplates)
+  } catch (e) {
+  const errors: GraphqlErrorResponse = e
+
+  const error = errors.response.errors?.[0]
+  this.logger.warn('Pass template listing failed', {
+    category: LOG_CATEGORY,
+    error: {
+      message: error?.message,
+    },
+  })
+  return null
+  }
+
+  return res.passTemplates.data
+  */
   }
 }
