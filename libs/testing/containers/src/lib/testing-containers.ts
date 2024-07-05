@@ -66,14 +66,19 @@ export const startLocalstack = async () => {
     .start()
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  ;(global as any).__localstack__ = lc
+  global.__localstack__ = lc
 
   process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(
     portConfig.SQS,
   )}`
 }
 
+declare global {
+  // eslint-disable-next-line no-var
+  var __localstack__: StartedTestContainer | undefined
+}
+
 export const stopLocalstack = async () => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  await ((global as any).__localstack__ as StartedTestContainer).stop()
+  await global.__localstack__?.stop()
+  global.__localstack__ = undefined
 }
