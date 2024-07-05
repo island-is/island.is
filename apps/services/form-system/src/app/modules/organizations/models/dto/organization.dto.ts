@@ -1,5 +1,4 @@
-import { ApiProperty, OmitType } from '@nestjs/swagger'
-import { Organization } from '../organization.model'
+import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 
 export class OrganizationDto {

@@ -24,7 +24,10 @@ import { FormResponse } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
 import { FormsListDto } from './models/dto/formsList.dto'
-import { FormMapper } from './models/form.mapper'
+import { defaults, pick, zipObject } from 'lodash'
+import { FormsListFormDto } from './models/dto/formsListForm.dto'
+import { createFormTranslations } from '../translations/form'
+import { createSectionTranslations } from '../translations/section'
 
 @Injectable()
 export class FormsService {
@@ -42,7 +45,6 @@ export class FormsService {
     @InjectModel(ListType)
     private readonly listTypeModel: typeof ListType,
     private readonly fieldSettingsMapper: FieldSettingsMapper,
-    private readonly formMapper: FormMapper,
   ) {}
 
   async findAll(organizationId: string): Promise<FormsListDto> {
@@ -50,8 +52,26 @@ export class FormsService {
       where: { organizationId: organizationId },
     })
 
-    const formsListDto: FormsListDto =
-      this.formMapper.mapFormsToFormsListDto(forms)
+    const keys = [
+      'id',
+      'name',
+      'slug',
+      'invalidationDate',
+      'created',
+      'modified',
+      'isTranslated',
+      'applicationDaysToRemove',
+      'stopProgressOnValidatingScreen',
+    ]
+
+    const formsListDto: FormsListDto = {
+      forms: forms.map((form) => {
+        return defaults(
+          pick(form, keys),
+          zipObject(keys, Array(keys.length).fill(null)),
+        ) as FormsListFormDto
+      }),
+    }
 
     return formsListDto
   }
@@ -68,7 +88,6 @@ export class FormsService {
   }
 
   async create(createFormDto: CreateFormDto): Promise<FormResponse | null> {
-    console.log('halló')
     const { organizationId } = createFormDto
 
     if (!organizationId) {
@@ -165,13 +184,14 @@ export class FormsService {
 
     const certificationTypesDto: CertificationTypeDto[] = []
 
+    const keys = ['id', 'type', 'name', 'description']
     organizationCertificationTypes?.map((certificationType) => {
-      certificationTypesDto.push({
-        id: certificationType.id,
-        type: certificationType.type,
-        name: certificationType.name,
-        description: certificationType.description,
-      } as CertificationTypeDto)
+      certificationTypesDto.push(
+        defaults(
+          pick(certificationType, keys),
+          zipObject(keys, Array(keys.length).fill(null)),
+        ) as CertificationTypeDto,
+      )
     })
 
     return certificationTypesDto
@@ -191,18 +211,23 @@ export class FormsService {
     )
 
     const fieldTypesDto: FieldTypeDto[] = []
+    const keys = ['id', 'type', 'name', 'description', 'isCommon']
     organizationFieldTypes.map((fieldType) => {
-      fieldTypesDto.push({
-        id: fieldType.id,
-        type: fieldType.type,
-        name: fieldType.name,
-        description: fieldType.description,
-        isCommon: fieldType.isCommon,
-        fieldSettings: this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
-          null,
-          fieldType.type,
-        ),
-      } as FieldTypeDto)
+      fieldTypesDto.push(
+        Object.assign(
+          defaults(
+            pick(fieldType, keys),
+            zipObject(keys, Array(keys.length).fill(null)),
+          ),
+          {
+            fieldSettings:
+              this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
+                null,
+                fieldType.type,
+              ),
+          },
+        ) as FieldTypeDto,
+      )
     })
 
     return fieldTypesDto
@@ -222,99 +247,134 @@ export class FormsService {
     )
 
     const listTypesDto: ListTypeDto[] = []
+    const keys = ['id', 'type', 'name', 'description', 'isCommon']
     organizationListTypes.map((listType) => {
-      listTypesDto.push({
-        id: listType.id,
-        type: listType.type,
-        name: listType.name,
-        description: listType.description,
-        isCommon: listType.isCommon,
-      } as ListTypeDto)
+      listTypesDto.push(
+        defaults(
+          pick(listType, keys),
+          zipObject(keys, Array(keys.length).fill(null)),
+        ) as ListTypeDto,
+      )
     })
 
     return listTypesDto
   }
 
   private setArrays(form: Form): FormDto {
-    const formDto: FormDto = {
-      id: form.id,
-      organizationId: form.organizationId,
-      name: form.name,
-      slug: form.slug,
-      invalidationDate: form.invalidationDate,
-      created: form.created,
-      modified: form.modified,
-      isTranslated: form.isTranslated,
-      applicationDaysToRemove: form.applicationDaysToRemove,
-      derivedFrom: form.derivedFrom,
-      stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
-      completedMessage: form.completedMessage,
-      certificationTypes: [],
-      applicants: [],
-      sections: [],
-      screens: [],
-      fields: [],
-    }
+    const formKeys = [
+      'id',
+      'organizationId',
+      'name',
+      'slug',
+      'invalidationDate',
+      'created',
+      'modified',
+      'isTranslated',
+      'applicationDaysToRemove',
+      'stopProgressOnValidatingScreen',
+      'completedMessage',
+    ]
+    const formDto: FormDto = Object.assign(
+      defaults(
+        pick(form, formKeys),
+        zipObject(formKeys, Array(formKeys.length).fill(null)),
+      ),
+      {
+        certificationTypes: [],
+        applicants: [],
+        sections: [],
+        screens: [],
+        fields: [],
+      },
+    ) as FormDto
 
+    const formCertificationTypeKeys = ['id', 'name', 'description', 'type']
     form.certificationTypes?.map((certificationType) => {
-      formDto.certificationTypes?.push({
-        id: certificationType.id,
-        name: certificationType.name,
-        description: certificationType.description,
-        type: certificationType.type,
-      } as FormCertificationTypeDto)
+      formDto.certificationTypes?.push(
+        defaults(
+          pick(certificationType, formCertificationTypeKeys),
+          zipObject(
+            formCertificationTypeKeys,
+            Array(formCertificationTypeKeys.length).fill(null),
+          ),
+        ) as FormCertificationTypeDto,
+      )
     })
 
+    const applicantKeys = ['id', 'applicantType', 'name']
     form.applicants?.map((applicant) => {
-      formDto.applicants?.push({
-        id: applicant.id,
-        applicantType: applicant.applicantType,
-        name: applicant.name,
-      } as FormApplicantDto)
+      formDto.applicants?.push(
+        defaults(
+          pick(applicant, applicantKeys),
+          zipObject(applicantKeys, Array(applicantKeys.length).fill(null)),
+        ) as FormApplicantDto,
+      )
     })
 
+    const sectionKeys = [
+      'id',
+      'name',
+      'created',
+      'modified',
+      'sectionType',
+      'displayOrder',
+      'waitingText',
+      'isHidden',
+      'isCompleted',
+    ]
+    const screenKeys = [
+      'id',
+      'sectionId',
+      'name',
+      'created',
+      'modified',
+      'displayOrder',
+      'isHidden',
+      'multiset',
+      'callRuleset',
+    ]
+    const fieldKeys = [
+      'id',
+      'screenId',
+      'name',
+      'created',
+      'modified',
+      'displayOrder',
+      'description',
+      'isHidden',
+      'isPartOfMultiset',
+      'fieldType',
+    ]
     form.sections.map((section) => {
-      formDto.sections?.push({
-        id: section.id,
-        name: section.name,
-        created: section.created,
-        modified: section.modified,
-        sectionType: section.sectionType,
-        displayOrder: section.displayOrder,
-        waitingText: section.waitingText,
-        isHidden: section.isHidden,
-        isCompleted: section.isCompleted,
-      } as SectionDto)
+      formDto.sections?.push(
+        defaults(
+          pick(section, sectionKeys),
+          zipObject(sectionKeys, Array(sectionKeys.length).fill(null)),
+        ) as SectionDto,
+      )
       section.screens?.map((screen) => {
-        formDto.screens?.push({
-          id: screen.id,
-          sectionId: section.id,
-          name: screen.name,
-          created: screen.created,
-          modified: screen.modified,
-          displayOrder: screen.displayOrder,
-          isHidden: screen.isHidden,
-          multiset: screen.multiset,
-          callRuleset: screen.callRuleset,
-        } as ScreenDto)
+        formDto.screens?.push(
+          defaults(
+            pick(screen, screenKeys),
+            zipObject(screenKeys, Array(screenKeys.length).fill(null)),
+          ) as ScreenDto,
+        )
         screen.fields?.map((field) => {
-          formDto.fields?.push({
-            id: field.id,
-            screenId: screen.id,
-            name: field.name,
-            created: field.created,
-            modified: field.modified,
-            displayOrder: field.displayOrder,
-            description: field.description,
-            isHidden: field.isHidden,
-            isPartOfMultiset: field.isPartOfMultiset,
-            fieldSettings:
-              this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
-                field.fieldSettings,
-                field.fieldType,
+          formDto.fields?.push(
+            Object.assign(
+              defaults(
+                pick(field, fieldKeys),
+                zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
               ),
-            fieldType: field.fieldType,
-          } as FieldDto)
+              {
+                fieldSettings:
+                  this.fieldSettingsMapper.mapFieldTypeToFieldSettingsDto(
+                    field.fieldSettings,
+                    field.fieldType,
+                  ),
+              },
+            ) as FieldDto,
+          )
         })
       })
     })
@@ -323,38 +383,38 @@ export class FormsService {
   }
 
   private async createFormTemplate(form: Form): Promise<void> {
-    await this.sectionModel.create({
-      formId: form.id,
-      sectionType: SectionTypes.PREMISES,
-      displayOrder: 0,
-      name: { is: 'Forsendur', en: 'Premises' },
-    } as Section)
-
-    await this.sectionModel.create({
-      formId: form.id,
-      sectionType: SectionTypes.PARTIES,
-      displayOrder: 1,
-      name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
-    } as Section)
+    await this.sectionModel.bulkCreate([
+      {
+        formId: form.id,
+        sectionType: SectionTypes.PREMISES,
+        displayOrder: 0,
+        name: createFormTranslations.premise,
+      } as Section,
+      {
+        formId: form.id,
+        sectionType: SectionTypes.PARTIES,
+        displayOrder: 1,
+        name: createFormTranslations.parties,
+      } as Section,
+      {
+        formId: form.id,
+        sectionType: SectionTypes.PAYMENT,
+        displayOrder: 3,
+        name: createFormTranslations.payment,
+      } as Section,
+    ])
 
     const inputSection = await this.sectionModel.create({
       formId: form.id,
       sectionType: SectionTypes.INPUT,
       displayOrder: 2,
-      name: { is: 'Kafli', en: 'Section' },
-    } as Section)
-
-    await this.sectionModel.create({
-      formId: form.id,
-      sectionType: SectionTypes.PAYMENT,
-      displayOrder: 3,
-      name: { is: 'Greiðsla', en: 'Payment' },
+      name: createSectionTranslations.input,
     } as Section)
 
     await this.screenModel.create({
       sectionId: inputSection.id,
       displayOrder: 0,
-      name: { is: 'innsláttarsíða 1', en: 'Input screen 1' },
+      name: createFormTranslations.input,
     } as Screen)
   }
 }

@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { FieldsService } from './fields.service'
 import { Field } from './models/field.model'
@@ -18,7 +19,7 @@ import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
 
 @ApiTags('fields')
-@Controller('fields')
+@Controller({ path: 'fields', version: ['1', VERSION_NEUTRAL] })
 export class FieldsController {
   constructor(private readonly fieldsService: FieldsService) {}
 

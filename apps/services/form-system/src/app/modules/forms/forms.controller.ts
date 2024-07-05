@@ -7,6 +7,7 @@ import {
   NotFoundException,
   Param,
   Post,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 import { FormsService } from './forms.service'
@@ -15,7 +16,7 @@ import { FormResponse } from './models/dto/form.response.dto'
 import { FormsListDto } from './models/dto/formsList.dto'
 
 @ApiTags('forms')
-@Controller('forms')
+@Controller({ path: 'forms', version: ['1', VERSION_NEUTRAL] })
 export class FormsController {
   constructor(private readonly formsService: FormsService) {}
 

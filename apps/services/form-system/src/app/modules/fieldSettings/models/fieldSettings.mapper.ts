@@ -4,7 +4,6 @@ import { FieldSettings } from './fieldSettings.model'
 import { FieldSettingsDto } from './dto/fieldSettings.dto'
 import { ListItemMapper } from '../../listItems/models/listItem.mapper'
 import { defaults, pick, zipObject } from 'lodash'
-import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 
 @Injectable()
 export class FieldSettingsMapper {

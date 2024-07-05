@@ -1,11 +1,11 @@
-import { Controller, Get, Param, Post } from '@nestjs/common'
+import { Controller, Get, Param, Post, VERSION_NEUTRAL } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ApplicationsService } from './applications.service'
 import { ApplicationDto } from './models/dto/application.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
 @ApiTags('applications')
-@Controller('applications')
+@Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
   constructor(private readonly applicationsService: ApplicationsService) {}
 

@@ -7,6 +7,7 @@ import {
   Param,
   NotFoundException,
   Put,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { SectionsService } from './sections.service'
 import { CreateSectionDto } from './models/dto/createSection.dto'
@@ -18,7 +19,7 @@ import { SectionDto } from './models/dto/section.dto'
 import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDisplayOrder.dto'
 
 @ApiTags('sections')
-@Controller('sections')
+@Controller({ path: 'sections', version: ['1', VERSION_NEUTRAL] })
 export class SectionsController {
   constructor(private readonly sectionsService: SectionsService) {}
 

@@ -7,6 +7,7 @@ import {
   Param,
   NotFoundException,
   Put,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ScreensService } from './screens.service'
 import { CreateScreenDto } from './models/dto/createScreen.dto'
@@ -18,7 +19,7 @@ import { ScreenDto } from './models/dto/screen.dto'
 import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayOrder.dto'
 
 @ApiTags('screens')
-@Controller('screens')
+@Controller({ path: 'screens', version: ['1', VERSION_NEUTRAL] })
 export class ScreensController {
   constructor(private readonly screensService: ScreensService) {}
 

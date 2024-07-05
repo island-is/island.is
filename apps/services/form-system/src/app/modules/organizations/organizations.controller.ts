@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   NotFoundException,
+  VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
@@ -13,7 +14,7 @@ import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Documentation } from '@island.is/nest/swagger'
 
 @ApiTags('organizations')
-@Controller('organizations')
+@Controller({ path: 'organizations', version: ['1', VERSION_NEUTRAL] })
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 

@@ -1,4 +1,4 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 import { ApplicationSectionDto } from '../../../sections/models/dto/applicationSection.dto'
 import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
 

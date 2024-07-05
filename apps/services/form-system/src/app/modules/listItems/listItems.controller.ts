@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Post, Put, Delete } from '@nestjs/common'
+import {
+  Body,
+  Controller,
+  Param,
+  Post,
+  Put,
+  Delete,
+  VERSION_NEUTRAL,
+} from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { ListItemsService } from './listItems.service'
 import { CreateListItemDto } from './models/dto/createListItem.dto'
@@ -8,7 +16,7 @@ import { UpdateListItemsDisplayOrderDto } from './models/dto/updateListItemsDisp
 import { Documentation } from '@island.is/nest/swagger'
 
 @ApiTags('list items')
-@Controller('listItems')
+@Controller({ path: 'listItems', version: ['1', VERSION_NEUTRAL] })
 export class ListItemsController {
   constructor(private readonly listItemsService: ListItemsService) {}
 
