@@ -5,22 +5,20 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "./tools/executors/node:build",
       "outputs": ["{options.outputPath}"],
-      "defaultConfiguration": "production",
       "options": {
-        "target": "node",
-        "compiler": "tsc",
         "outputPath": "dist/apps/services/form-system",
         "main": "apps/services/form-system/src/main.ts",
         "tsConfig": "apps/services/form-system/tsconfig.app.json",
-        "assets": ["apps/services/form-system/src/assets"],
-        "isolatedConfig": true,
-        "webpackConfig": "apps/services/form-system/webpack.config.js"
+        "assets": ["apps/services/form-system/src/assets"]
       },
       "configurations": {
-        "development": {},
-        "production": {}
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
       }
     },
     "serve": {
