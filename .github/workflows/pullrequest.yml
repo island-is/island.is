@@ -65,14 +65,6 @@ jobs:
           BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
           HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
           echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-
-      - name: Keep PR run event
-        uses: actions/upload-artifact@v4
-        with:
-          name: pr-event
-          path: event.json
-          retention-days: 60
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache

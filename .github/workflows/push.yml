@@ -220,22 +220,11 @@ jobs:
           BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
           HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
           echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
-          echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-
       - name: Checking out relevant branches for a branch build
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
           git checkout main
           git checkout $GITHUB_SHA
-
-      - name: Keep PR run event
-        uses: actions/upload-artifact@v4
-        if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
-        with:
-          name: pr-event
-          path: event.json
-          retention-days: 60
-
       - name: Generate nodejs image tag
         id: nodejs_image
         continue-on-error: false
