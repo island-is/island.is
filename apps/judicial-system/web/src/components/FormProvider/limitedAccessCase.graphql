@@ -154,6 +154,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     courtSessionType
     eventLogs {
+      id
       created
       eventType
     }
