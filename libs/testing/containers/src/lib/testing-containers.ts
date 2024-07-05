@@ -9,12 +9,16 @@ const portConfig = {
   redis: [7000, 7001, 7002, 7003, 7004, 7005],
 }
 
+const uniqueName = (name: string) => {
+  return `${name}-${Math.random().toString(16).slice(2, 8)}`
+}
+
 export const startPostgres = async () => {
   const name = 'test_db'
   postgresContainer = await new GenericContainer(
     'public.ecr.aws/docker/library/postgres:15.3-alpine',
   )
-    .withName(`postgres-${Math.random().toString(16).slice(2, 8)}`)
+    .withName(uniqueName('postgres'))
     .withEnv('POSTGRES_DB', name)
     .withEnv('POSTGRES_USER', name)
     .withEnv('POSTGRES_PASSWORD', name)
@@ -42,7 +46,7 @@ export const startRedisCluster = async () => {
   redisClusterContainer = await new GenericContainer(
     'public.ecr.aws/bitnami/redis-cluster:5.0.14',
   )
-    .withName(`redis-cluster-${Math.random().toString(16).slice(2, 8)}`)
+    .withName(uniqueName('redis'))
     .withEnv('IP', '0.0.0.0')
     .withExposedPorts(...portConfig.redis)
     .start()
@@ -56,7 +60,7 @@ export const startLocalstack = async () => {
   const lc = await new GenericContainer(
     'public.ecr.aws/localstack/localstack:3',
   )
-    .withName(`localstack-${Math.random().toString(16).slice(2, 8)}`)
+    .withName(uniqueName('localstack'))
     .withExposedPorts(portConfig.SQS)
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
