@@ -22,8 +22,8 @@ import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/app
 import {
   getApplicationAnswers as getSBApplicationAnswers,
   ChildInformation,
+  DeathBenefits,
 } from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
@@ -511,7 +511,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
-    console.log('--> application ', application)
     if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
       const { applicationType } = getOAPApplicationAnswers(application.answers)
 
@@ -520,7 +519,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         applicationType.toLowerCase(),
       )
     } else if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
-      return await this.siaClientService.getIsEligible(auth, 'deathbenefits')
+      return await this.siaClientService.getIsEligible(auth, DeathBenefits)
     } else {
       return await this.siaClientService.getIsEligible(
         auth,

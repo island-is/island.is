@@ -23,6 +23,17 @@ export const survivorsBenefitsFormMessage: MessageDir = {
       description:
         'Information about bank account will be retrieved from My Pages at the Social Insurance Administration. \n\nThe Social Insurance Administration only collects the necessary information for processing applications and determining cases. If applicable, the Social Insurance Administration is authorised to obtain information from other organisations. \n\nMore information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://www.tr.is/tryggingastofnun/personuvernd).',
     },
+    isNotEligibleTitle: {
+      id: 'sb.application:is.not.eligible.title',
+      defaultMessage: 'Því miður hefur þú ekki rétt á dánarbótum',
+      description: 'english translation',
+    },
+    isNotEligibleDescription: {
+      id: 'sb.application:is.not.eligible.description#markdown',
+      defaultMessage:
+        'Ástæður fyrir því gætu verið eftirfarandi.\n* Þú ert ekki með skráð lögheimili á Íslandi.\n* Þú ert með ellilífeyri sjómanna.\n* Þú ert 67 ára eða eldri\n\nEf þú telur þessi atriði ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description: `The reasons for this could be the following.\n* You do not have a registered domicile in Iceland.\n* You have a sailor's pension.\n* You are 67 or older.\n\nIf you do not think these points apply to you, please contact [tr@tr.is](mailto:tr @tr.is)`,
+    },
   }),
 
   info: defineMessages({

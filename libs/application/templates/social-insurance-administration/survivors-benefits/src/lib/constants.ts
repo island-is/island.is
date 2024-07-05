@@ -7,3 +7,5 @@ export const AttachmentLabel: {
   additionalDocuments:
     socialInsuranceAdministrationMessage.confirm.additionalDocumentsAttachment,
 }
+
+export const DeathBenefits = 'deathbenefits'

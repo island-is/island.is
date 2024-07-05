@@ -1,7 +1,9 @@
 import {
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
@@ -22,13 +24,15 @@ import {
 } from '../dataProviders'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { isEligible } from '../lib/survivorsBenefitsUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'SurvivorsBenefitsPrerequisites',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.NOT_STARTED,
-  renderLastScreenButton: true,
+  renderLastScreenButton: false,
+  renderLastScreenBackButton: false,
   children: [
     buildSection({
       id: 'externalData',
@@ -99,27 +103,29 @@ export const PrerequisitesForm: Form = buildForm({
             }),
           ],
         }),
+        buildMultiField({
+          id: 'isNotEligible',
+          title: survivorsBenefitsFormMessage.pre.isNotEligibleTitle,
+          condition: (_, externalData) => {
+            // Show if applicant is not eligible
+            return !isEligible(externalData)
+          },
+          children: [
+            buildDescriptionField({
+              id: 'isNotEligible',
+              title: '',
+              description:
+                survivorsBenefitsFormMessage.pre.isNotEligibleDescription,
+            }),
+            // Empty submit field to hide all buttons in the footer
+            buildSubmitField({
+              id: '',
+              title: '',
+              actions: [],
+            }),
+          ],
+        }),
       ],
-    }),
-    buildSection({
-      id: 'infoSection',
-      title: socialInsuranceAdministrationMessage.info.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInfo',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
     }),
   ],
 })

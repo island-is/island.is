@@ -44,7 +44,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
 } from '../dataProviders'
-import { getApplicationAnswers } from './survivorsBenefitsUtils'
+import { getApplicationAnswers, isEligible } from './survivorsBenefitsUtils'
 
 const SurvivorsBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -99,7 +99,16 @@ const SurvivorsBenefitsTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          SUBMIT: States.DRAFT,
+          SUBMIT: [
+            {
+              target: States.DRAFT,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
+            },
+            {
+              actions: 'setApproveExternalData',
+            },
+          ],
         },
       },
       [States.DRAFT]: {

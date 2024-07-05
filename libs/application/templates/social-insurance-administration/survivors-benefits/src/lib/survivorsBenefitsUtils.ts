@@ -1,5 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { Application, YesOrNo } from '@island.is/application/types'
+import {
+  Application,
+  ExternalData,
+  YesOrNo,
+} from '@island.is/application/types'
 import { AttachmentLabel } from './constants'
 import {
   FileType,
@@ -184,6 +188,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationChildren.data',
   ) as ChildInformation[]
 
+  const isEligible = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+  ) as boolean
+
   return {
     applicantName,
     applicantNationalId,
@@ -196,6 +205,7 @@ export const getApplicationExternalData = (
     children,
     maritalStatus,
     lastModified,
+    isEligible,
   }
 }
 
@@ -253,4 +263,9 @@ export const hasSpouseLessThanAYear = (
     return true
   }
   return false
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+  return isEligible
 }
