@@ -76,7 +76,7 @@ jobs:
           name: pr-event
           path: event.json
           retention-days: 90
-          
+
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
