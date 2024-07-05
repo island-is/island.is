@@ -50,8 +50,8 @@ if (canWrite && files.length > 0) {
   info(`The following files were formatted:\n${files.join('\n')}`)
   const unstagedChanges = await getUnstagedChanges()
   if (actorIsBot) {
-    setFailed('Actor is a bot. Skipping commit.')
-    process.exit(1)
+    info('Actor is a bot. Skipping commit.')
+    process.exit(0)
   }
   if (unstagedChanges) {
     info(
