@@ -4,8 +4,8 @@
 
 // @ts-check
 import { exportVariable, setOutput, setFailed, info } from '@actions/core'
-import { checkIfUserIsAdmin } from './_check_permission.mjs'
-import { findLabelOwner, hasLabel, isPR } from './_pr_utils.mjs'
+import { checkIfUserIsAdmin } from './libs/_check_permission.mjs'
+import { findLabelOwner, hasLabel, isPR } from './libs/_pr_utils.mjs'
 
 const TEST_EVERYTHING_LABEL = 'test everything'
 
