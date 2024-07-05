@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useMemo, useState } from 'react'
+import React, { FC, PointerEvent, useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
@@ -209,6 +209,33 @@ const CaseFile: FC<CaseFileProps> = (props) => {
     return formatDate(caseFile.displayDate ?? caseFile.created, DDMMYYYY)
   }, [caseFile.displayDate, caseFile.created])
 
+  const getCursorStyle = () => {
+    if (caseFile.isDivider || caseFile.isHeading) {
+      return 'default'
+    }
+
+    return isDragging ? 'grabbing' : 'grab'
+  }
+
+  const handlePointerDown = (evt: PointerEvent) => {
+    if (caseFile.isDivider || caseFile.isHeading) {
+      return
+    }
+
+    // Prevents text selection when dragging
+    evt.preventDefault()
+
+    setIsDragging(true)
+    controls.start(evt)
+  }
+
+  const handlePointerUp = () => {
+    if (isDragging) {
+      onReorder(caseFile.id)
+    }
+    setIsDragging(false)
+  }
+
   return (
     <Reorder.Item
       value={caseFile}
@@ -216,15 +243,14 @@ const CaseFile: FC<CaseFileProps> = (props) => {
       style={{
         y,
         boxShadow,
+        cursor: getCursorStyle(),
       }}
       className={styles.reorderItem}
       dragListener={false}
       dragControls={controls}
-      onPointerDown={(evt) => {
-        controls.start(evt)
-        // Prevents text selection when dragging
-        evt.preventDefault()
-      }}
+      onPointerDown={handlePointerDown}
+      onPointerUp={handlePointerUp}
+      drag
     >
       {caseFile.isHeading &&
       caseFile.chapter !== undefined &&
@@ -238,25 +264,12 @@ const CaseFile: FC<CaseFileProps> = (props) => {
           <Text>{caseFile.displayText?.split('|')[1]}</Text>
         </Box>
       ) : (
-        <div
-          className={styles.caseFileWrapper}
-          onPointerUp={() => {
-            if (isDragging) {
-              onReorder(caseFile.id)
-            }
-            setIsDragging(false)
-          }}
-        >
+        <div className={styles.caseFileWrapper}>
           <Box
             data-testid="caseFileDragHandle"
             display="flex"
             paddingX={3}
             paddingY={2}
-            style={{ cursor: isDragging ? 'grabbing' : 'grab' }}
-            onPointerDown={(e) => {
-              setIsDragging(true)
-              controls.start(e)
-            }}
           >
             <Icon icon="menu" color="blue400" />
           </Box>
