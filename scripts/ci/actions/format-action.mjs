@@ -7,7 +7,7 @@ import {
   commitUnstagedChanges,
   getUnstagedChanges,
 } from './libs/_git_utils.mjs'
-import { isPR } from './libs/_pr_utils.mjs'
+import { actorIsBot, isPR } from './libs/_pr_utils.mjs'
 import { runCommand } from './libs/_utils.mjs'
 import { ROOT } from './libs/_common.mjs'
 
@@ -49,6 +49,10 @@ try {
 if (canWrite && files.length > 0) {
   info(`The following files were formatted:\n${files.join('\n')}`)
   const unstagedChanges = await getUnstagedChanges()
+  if (actorIsBot) {
+    setFailed('Actor is a bot. Skipping commit.')
+    process.exit(1)
+  }
   if (unstagedChanges) {
     info(
       `Unstaged changes found:\n${unstagedChanges.join(
