@@ -7,9 +7,9 @@ export const prBranch =
   context.payload.pull_request?.head.ref.replace('refs/heads/', '') ?? ''
 export const GITHUB_TOKEN = process.env.GITHUB_TOKEN || ''
 export const DIRTYBOT_TOKEN = process.env.DIRTYBOT_TOKEN || ''
-export const actor = context.actor;
-export const bots = ["andes-it"];
-export const actorIsBot = bots.includes(actor);
+export const actor = context.actor
+export const bots = ['andes-it']
+export const actorIsBot = bots.includes(actor)
 
 if (!GITHUB_TOKEN) {
   setFailed('GITHUB_TOKEN is required')

@@ -72,7 +72,7 @@ jobs:
           name: pr-event
           path: event.json
           retention-days: 90
-          
+
       - name: Nx init
         uses: ./.github/actions/nx-init
         with:
