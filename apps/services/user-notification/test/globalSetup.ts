@@ -38,8 +38,6 @@ const setupSqsQueue = async () => {
     console.error('Error setting up SQS queue', error)
     throw error
   }
-
-  await startRedis()
 }
 
 export default async () => {
