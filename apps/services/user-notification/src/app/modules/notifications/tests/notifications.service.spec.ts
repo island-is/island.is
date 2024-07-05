@@ -74,7 +74,7 @@ describe('NotificationsService', () => {
     service = module.get<NotificationsService>(NotificationsService)
   })
 
-  it('should be defined', () => {
+  it('should be defined', async () => {
     expect(service).toBeDefined()
   })
 
@@ -96,7 +96,7 @@ describe('NotificationsService', () => {
     expect(template).toBeInstanceOf(Object)
   })
 
-  it('should validate true argument count match', () => {
+  it('should validate true argument count match', async () => {
     const counts = service.validateArgCounts(
       mockCreateHnippNotificationDto.args,
       mockHnippTemplate,
@@ -105,7 +105,7 @@ describe('NotificationsService', () => {
     expect(counts).toBeTruthy()
   })
 
-  it('should validate false on argument count mismatch +', () => {
+  it('should validate false on argument count mismatch +', async () => {
     mockCreateHnippNotificationDto.args = [
       { key: 'arg1', value: 'hello' },
       { key: 'arg2', value: 'world' },
@@ -118,7 +118,7 @@ describe('NotificationsService', () => {
     expect(mockCreateHnippNotificationDto.args.length).toBe(3)
     expect(counts).toBe(false)
   })
-  it('should validate false on argument count mismatch -', () => {
+  it('should validate false on argument count mismatch -', async () => {
     mockCreateHnippNotificationDto.args = [{ key: 'arg2', value: 'world' }]
     const counts = service.validateArgCounts(
       mockCreateHnippNotificationDto.args,
@@ -128,7 +128,7 @@ describe('NotificationsService', () => {
     expect(counts).toBe(false)
   })
 
-  it('should validate false on argument count mismatch 0', () => {
+  it('should validate false on argument count mismatch 0', async () => {
     mockCreateHnippNotificationDto.args = []
     const counts = service.validateArgCounts(
       mockCreateHnippNotificationDto.args,
