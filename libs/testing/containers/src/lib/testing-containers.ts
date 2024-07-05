@@ -58,7 +58,7 @@ export const stopPostgres = async (): Promise<void> => {
 export const startRedis = async () => {
   logger.info('Starting redis cluster...')
   redisClusterContainer = await new GenericContainer(
-    'public.ecr.aws/bitnami/redis-cluster:5.0.14',
+    'public.ecr.aws/bitnami/redis-cluster:7.0',
   )
     .withName(uniqueName('redis'))
     .withEnv('IP', '0.0.0.0')
