@@ -1,21 +1,27 @@
 import { Box } from '@island.is/island-ui/core'
-import { useNamespaces } from '@island.is/localization'
-import OwnerView from './CandidateView'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import SigneeView from './SigneeView'
-import { useGetCurrentCollection, useIsOwner } from '../hooks'
-import { EmptyState } from '@island.is/service-portal/core'
-import { m } from '../lib/messages'
+import OwnerView from './OwnerView'
+import { useGetCurrentCollection, useIsOwner } from '../../hooks'
+import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
+import { m } from '../../lib/messages'
+import { CollectionType } from '../../lib/constants'
 
 const SignatureLists = () => {
   useNamespaces('sp.signatureCollection')
+  const { formatMessage } = useLocale()
 
   const { isOwner, loadingIsOwner } = useIsOwner()
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection()
 
   return (
-    <div>
-      {currentCollection?.name === 'Forsetakosningar' &&
+    <Box>
+      <IntroHeader
+        title={formatMessage(m.pageTitle)}
+        intro={formatMessage(m.pageDescriptionSignee)}
+      />
+      {currentCollection?.name === CollectionType.Presidential &&
       !loadingIsOwner &&
       !loadingCurrentCollection ? (
         <Box>
@@ -31,7 +37,7 @@ const SignatureLists = () => {
           description={m.noCollectionIsActiveDescription}
         />
       )}
-    </div>
+    </Box>
   )
 }
 

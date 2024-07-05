@@ -1,10 +1,9 @@
 import { Box, Text } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useNamespaces } from '@island.is/localization'
 import { IntroHeader } from '@island.is/service-portal/core'
 
 const OwnerView = () => {
-  useNamespaces('sp.signatureCollection')
-  const { formatMessage } = useLocale()
+  useNamespaces('sp.signatureCollectionParliamentary')
 
   return (
     <Box>

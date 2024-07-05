@@ -7,17 +7,16 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
-import { SignatureCollectionPaths } from '../../lib/paths'
-import { IntroHeader } from '@island.is/service-portal/core'
+import { m } from '../../../lib/messages'
+import { SignatureCollectionPaths } from '../../../lib/paths'
 import CancelCollection from './CancelCollection'
-import { useGetListsForOwner } from '../../hooks'
+import { useGetListsForOwner } from '../../../hooks'
 import format from 'date-fns/format'
-import { Skeleton } from '../skeletons'
+import { Skeleton } from '../../../skeletons'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '@island.is/auth/react'
 import copyToClipboard from 'copy-to-clipboard'
-import SignedList from '../../components/SignedList'
+import SignedList from '../SignedList'
 import { SignatureCollection } from '@island.is/api/schema'
 
 const CandidateView = ({
@@ -35,10 +34,6 @@ const CandidateView = ({
 
   return (
     <Box>
-      <IntroHeader
-        title={formatMessage(m.pageTitle)}
-        intro={formatMessage(m.pageDescription)}
-      />
       {!loadingOwnerLists && !!currentCollection ? (
         <Box>
           {listsForOwner?.length === 0 && currentCollection.isActive && (

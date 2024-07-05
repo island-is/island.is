@@ -506,11 +506,11 @@ export const m = defineMessages({
   },
   signatureCollectionParliamentaryLists: {
     id: 'service.portal:signatureCollectionParliamentaryLists',
-    defaultMessage: 'Meðmælasöfnun (Alþingis)',
+    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
   },
   signatureCollectionPresidentialLists: {
     id: 'service.portal:signatureCollectionPresidentialLists',
-    defaultMessage: 'Meðmælasöfnun (Forseta)',
+    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
   },
   notifications: {
     id: 'service.portal:notifications',

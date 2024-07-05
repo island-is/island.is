@@ -7,15 +7,15 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../lib/messages'
 import { EmptyState, IntroHeader } from '@island.is/service-portal/core'
-import { useGetListsForUser, useGetSignedList } from '../../hooks'
+import { useGetListsForUser, useGetSignedList } from '../../../hooks'
 import format from 'date-fns/format'
-import { Skeleton } from '../skeletons'
-import SignedList from '../../components/SignedList'
+import { Skeleton } from '../../../skeletons'
 import { useAuth } from '@island.is/auth/react'
-import { SignatureCollection } from '../../types/schema'
 import { sortAlpha } from '@island.is/shared/utils'
+import { m } from '../../../lib/messages'
+import SignedList from '../SignedList'
+import { SignatureCollection } from '../../../types/schema'
 
 const SigneeView = ({
   currentCollection,
@@ -33,10 +33,6 @@ const SigneeView = ({
 
   return (
     <Box>
-      <IntroHeader
-        title={formatMessage(m.pageTitle)}
-        intro={formatMessage(m.pageDescriptionSignee)}
-      />
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (
         <Box>
           {currentCollection?.isActive && (

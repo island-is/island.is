@@ -7,10 +7,10 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 
 const SignatureListsParliamentary = lazy(() =>
-  import('./screens/parliamentary/owner'),
+  import('./screens/Parliamentary/OwnerView'),
 )
-const SignatureLists = lazy(() => import('./screens'))
-const ViewList = lazy(() => import('./screens/CandidateView/ViewList'))
+const SignatureLists = lazy(() => import('./screens/Presidential'))
+const ViewList = lazy(() => import('./screens/Presidential/OwnerView/ViewList'))
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollectionLists,
