@@ -19,7 +19,7 @@ const setupSqsQueue = async () => {
       },
     })
 
-    logger.debug('Creating main queue...')
+    logger.debug('Creating main queue...', { client })
     await client.send(
       new CreateQueueCommand({ QueueName: environment.MAIN_QUEUE_NAME }),
     )

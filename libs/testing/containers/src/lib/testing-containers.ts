@@ -1,7 +1,9 @@
 import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
+import { logger } from '@island.is/logging'
 
 let postgresContainer: StartedTestContainer
 let redisClusterContainer: StartedTestContainer
+let localstackContainer: StartedTestContainer
 
 const portConfig = {
   SQS: parseInt(process.env.SQS_PORT || '9324', 10),
@@ -10,10 +12,13 @@ const portConfig = {
 }
 
 const uniqueName = (name: string) => {
-  return `${name}-${Math.random().toString(16).slice(2, 8)}`
+  const newName = `${name}-${Math.random().toString(16).slice(2, 8)}`
+  logger.debug(`Unique name: ${newName}`)
+  return newName
 }
 
 export const startPostgres = async () => {
+  logger.info(`Starting postgres...`)
   const name = 'test_db'
   postgresContainer = await new GenericContainer(
     'public.ecr.aws/docker/library/postgres:15.3-alpine',
@@ -32,17 +37,26 @@ export const startPostgres = async () => {
     .withWaitStrategy(Wait.forHealthCheck())
     .withExposedPorts(portConfig.postgres)
     .start()
+  logger.debug(`Started postgres container with name ${name}`, {
+    postgresContainer,
+  })
 
   const port = postgresContainer.getMappedPort(5432)
   process.env.DB_PORT = `${port}`
   process.env.DB_HOST = postgresContainer.getHost()
+  logger.debug('Set environment config', {
+    port: process.env.DB_PORT,
+    host: process.env.DB_HOST,
+  })
 }
 
 export const stopPostgres = async (): Promise<void> => {
+  logger.info(`Stopping postgres...`)
   await postgresContainer.stop()
 }
 
 export const startRedisCluster = async () => {
+  logger.info('Starting redis cluster...')
   redisClusterContainer = await new GenericContainer(
     'public.ecr.aws/bitnami/redis-cluster:5.0.14',
   )
@@ -50,35 +64,34 @@ export const startRedisCluster = async () => {
     .withEnv('IP', '0.0.0.0')
     .withExposedPorts(...portConfig.redis)
     .start()
+  logger.debug('Started redis cluster', { redisClusterContainer })
 }
 
 export const stopRedis = () => {
+  logger.info('Stopping redis...')
   redisClusterContainer.stop()
 }
 
 export const startLocalstack = async () => {
-  const lc = await new GenericContainer(
+  logger.info('Starting localstack...')
+  localstackContainer = await new GenericContainer(
     'public.ecr.aws/localstack/localstack:3',
   )
     .withName(uniqueName('localstack'))
     .withExposedPorts(portConfig.SQS)
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
+  logger.debug('Started localstack', { localstackContainer })
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  global.__localstack__ = lc
-
-  process.env.SQS_ENDPOINT = `http://${lc.getHost()}:${lc.getMappedPort(
+  process.env.SQS_ENDPOINT = `http://${localstackContainer.getHost()}:${localstackContainer.getMappedPort(
     portConfig.SQS,
   )}`
-}
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __localstack__: StartedTestContainer | undefined
+  logger.debug('Set environment config', {
+    SQS_ENDPOINT: process.env.SQS_ENDPOINT,
+  })
 }
 
 export const stopLocalstack = async () => {
-  await global.__localstack__?.stop()
-  global.__localstack__ = undefined
+  logger.info('Stopping localstack...')
+  await localstackContainer.stop()
 }
