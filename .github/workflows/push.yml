@@ -174,7 +174,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Check node version
         run: |
@@ -433,7 +433,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -487,7 +487,7 @@ jobs:
         if: steps.gather.outcome == 'success'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
         if: steps.gather.outcome == 'success'
 
       - name: Get cache
@@ -614,7 +614,7 @@ jobs:
 
       - name: Comment on PR
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{secrets.GITHUB_TOKEN}}
           script: |
