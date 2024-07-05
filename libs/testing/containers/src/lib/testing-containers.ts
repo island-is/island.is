@@ -2,19 +2,17 @@ import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 import { logger } from '@island.is/logging'
 
 let postgresContainer: StartedTestContainer
-let redisClusterContainer: StartedTestContainer
+let redisClusterContainers: StartedTestContainer[]
 let localstackContainer: StartedTestContainer
 
 const portConfig = {
   SQS: parseInt(process.env.SQS_PORT || '4566', 10),
   postgres: parseInt(process.env.DB_PORT || '5432', 10),
-  redis: [7000, 7001, 7002, 7003, 7004, 7005],
+  redis: [6379],
 }
 
 const uniqueName = (name: string) => {
-  const newName = `${name}-${Math.random().toString(16).slice(2, 8)}`
-  logger.debug(`Unique name: ${newName}`)
-  return newName
+  return `${name}-${Math.random().toString(16).slice(2, 8)}`
 }
 
 export const startPostgres = async () => {
@@ -50,27 +48,59 @@ export const startPostgres = async () => {
   })
 }
 
-export const stopPostgres = async (): Promise<void> => {
+export const stopPostgres = async () => {
   logger.info(`Stopping postgres...`)
   await postgresContainer.stop()
 }
 
 export const startRedis = async () => {
   logger.info('Starting redis cluster...')
-  redisClusterContainer = await new GenericContainer(
-    'public.ecr.aws/bitnami/redis-cluster:7.0',
+  logger.debug('Configuring Redis slaves')
+  redisClusterContainers = await Promise.all(
+    portConfig.redis.slice(1).map(async (port) => {
+      const node = await new GenericContainer(
+        'public.ecr.aws/bitnami/redis:7.0',
+      )
+        .withName(uniqueName('redis'))
+        .withEnv('REDIS_CLUSTER_CREATOR', 'yes')
+        .withExposedPorts(port)
+        .start()
+      process.env[`REDIS_${port}_PORT`] = node.getMappedPort(port).toString()
+      return node
+    }),
   )
-    .withName(uniqueName('redis'))
-    .withEnv('IP', '0.0.0.0')
-    .withEnv('ALLOW_EMPTY_PASSWORD', 'yes')
-    .withExposedPorts(...portConfig.redis)
-    .start()
-  logger.debug('Started redis cluster', { redisClusterContainer })
+
+  logger.debug('Configuring Redis master')
+  redisClusterContainers.push(
+    await new GenericContainer('public.ecr.aws/bitnami/redis:7.0')
+      .withName(uniqueName('redis'))
+      .withEnv('REDIS_CLUSTER_CREATOR', 'yes')
+      .withEnv('REDIS_CLUSTER_REPLICAS', '1')
+      .withEnv(
+        'REDIS_NODES',
+        JSON.stringify(redisClusterContainers.map((n) => n.getHost())),
+      )
+      .withEnv('IP', '0.0.0.0')
+      .withEnv('ALLOW_EMPTY_PASSWORD', 'yes')
+      .withEnv('REDIS_PORT_NUMBER', portConfig.redis[0].toString())
+      .withExposedPorts(portConfig.redis[0])
+      .start(),
+  )
+  process.env.REDIS_NODES = JSON.stringify(
+    redisClusterContainers.map(
+      (n) => `${n.getHost()}:${n.getMappedPort(portConfig.redis[0])}`,
+    ),
+  )
+
+  logger.debug('Started redis cluster', {
+    nodes: redisClusterContainers,
+    REDIS_NODES: process.env.REDIS_NODES,
+  })
 }
 
 export const stopRedis = () => {
   logger.info('Stopping redis...')
-  redisClusterContainer.stop()
+  redisClusterContainers.map((c) => c.stop())
 }
 
 export const startLocalstack = async () => {
