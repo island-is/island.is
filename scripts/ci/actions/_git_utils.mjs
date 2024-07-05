@@ -2,8 +2,6 @@
 import { info } from 'console'
 import { runCommand } from './_utils.mjs'
 import {
-  DIRTYBOT_TOKEN,
-  GITHUB_TOKEN,
   owner,
   prBranch,
   repo,
@@ -12,13 +10,11 @@ import {
 const GITHUB_ACTION_USER = {
   name: 'github-actions[bot]',
   email: 'github-actions[bot]@users.noreply.github.com',
-  token: GITHUB_TOKEN,
 }
 
 const DIRTYBOT_USER = {
   name: 'andes-it',
   email: 'builders@andes.is',
-  token: DIRTYBOT_TOKEN,
 }
 
 export async function getUnstagedChanges() {
@@ -35,11 +31,8 @@ export async function getUnstagedChanges() {
  * @returns {Promise<void>} - A promise that resolves when the commit is complete.
  */
 export async function commitUnstagedChanges({ user, message }) {
-  const { name, email, token } =
+  const { name, email } =
     user === 'github-actions' ? GITHUB_ACTION_USER : DIRTYBOT_USER
-  const repoUrl = `https://x-access-token:${token}@github.com/${owner}/${repo}.git`
-  await runCommand(['git', 'remote', 'set-url', 'origin', repoUrl])
-
   await runCommand(['git', 'config', 'user.name', name])
   await runCommand(['git', 'config', 'user.email', email])
   await runCommand(['git', 'add', '-A'])
