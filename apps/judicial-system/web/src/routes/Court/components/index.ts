@@ -6,3 +6,4 @@ export { default as ReceptionAndAssignment } from './ReceptionAndAssignment/Rece
 export { default as RulingModifiedModal } from './RulingModifiedModal/RulingModifiedModal'
 export { default as RegistrarRequestRulingSignatureModal } from './RulingModifiedModal/RegistrarRequestRulingSignatureModal'
 export { default as JudgeRequestRulingSignatureModal } from './RulingModifiedModal/JudgeRequestRulingSignatureModal'
+export { default as SubpoenaType } from './SubpoenaType/SubpoenaType'
