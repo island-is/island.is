@@ -14,7 +14,7 @@ const DIRTYBOT_USER = {
 }
 
 export async function getUnstagedChanges() {
-  const values = (await runCommand('git diff --stat')).trim().split('\n')
+  const values = (await runCommand('git diff --stat')).trim().split('\n').map((line) => line.split('|')[0].trim()).filter((e) => e !== '' && !e.includes("tsconfig.base.json"))
   return !!values === false ? false : values
 }
 
