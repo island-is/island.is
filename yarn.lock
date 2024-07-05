@@ -18858,6 +18858,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/archiver@npm:6.0.2":
+  version: 6.0.2
+  resolution: "@types/archiver@npm:6.0.2"
+  dependencies:
+    "@types/readdir-glob": "*"
+  checksum: 4bef71e5b95863be9880339275ad92c2513dd78d56587653614dc5a74af1d078f5f5926ec996de06e7071a1003e0c2764d0e9d2bb0893a2ffb14ab1718eaf5ca
+  languageName: node
+  linkType: hard
+
 "@types/archiver@npm:^5.1.1":
   version: 5.1.1
   resolution: "@types/archiver@npm:5.1.1"
@@ -20286,6 +20295,15 @@ __metadata:
     "@types/scheduler": ^0.16
     csstype: ^3.0.2
   checksum: 75f7a88ace7fafd670b076ef0b2d490b18a8abb51271f7c04fb6141778ad03c83d741981f2809d430d8a205ba8b4153b31814efa5e8b505e29919c981c3a1889
+  languageName: node
+  linkType: hard
+
+"@types/readdir-glob@npm:*":
+  version: 1.1.5
+  resolution: "@types/readdir-glob@npm:1.1.5"
+  dependencies:
+    "@types/node": "*"
+  checksum: 58625586589a2cbcf19d7bff5a9b61e961b42e438e5a4f537633785efdcacfad15d3b32df3d27926696b36b43eb86eeb790fce9373fa357ab87720c64f86618b
   languageName: node
   linkType: hard
 
@@ -36386,6 +36404,7 @@ __metadata:
     "@testing-library/jest-dom": 5.16.5
     "@testing-library/react": 15.0.6
     "@testing-library/user-event": 14.4.3
+    "@types/archiver": 6.0.2
     "@types/aws4": 1.5.1
     "@types/classnames": 2.2.10
     "@types/cookie-parser": 1.4.2
