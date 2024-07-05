@@ -6,7 +6,7 @@ let redisClusterContainer: StartedTestContainer
 let localstackContainer: StartedTestContainer
 
 const portConfig = {
-  SQS: parseInt(process.env.SQS_PORT || '9324', 10),
+  SQS: parseInt(process.env.SQS_PORT || '4566', 10),
   postgres: parseInt(process.env.DB_PORT || '5432', 10),
   redis: [7000, 7001, 7002, 7003, 7004, 7005],
 }
