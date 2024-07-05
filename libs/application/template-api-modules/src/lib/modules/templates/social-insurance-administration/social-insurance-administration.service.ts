@@ -519,6 +519,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         auth,
         applicationType.toLowerCase(),
       )
+    } else if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
+      return await this.siaClientService.getIsEligible(auth, 'deathbenefits')
     } else {
       return await this.siaClientService.getIsEligible(
         auth,
