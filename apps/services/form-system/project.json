@@ -59,6 +59,13 @@
         }
       }
     },
+    "codegen/backend-schema": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/form-system/tsconfig.app.json apps/services/form-system/src/buildOpenApi.ts"
+      },
+      "outputs": ["{projectRoot}/src/openapi.yaml"]
+    },
     "migrate": {
       "executor": "nx:run-commands",
       "options": {
