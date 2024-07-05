@@ -56,8 +56,8 @@ if (canWrite && files.length > 0) {
       user: 'dirtybot',
       message: 'chore: format files',
     })
-              info('Unstaged changes for formatting were committed.')
-      
+    info('Unstaged changes for formatting were committed.')
+
     process.exit(0)
   }
   info('No unstaged changes found.')

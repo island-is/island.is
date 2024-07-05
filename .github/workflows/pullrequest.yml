@@ -79,7 +79,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
-      
+
       - name: Nx init
         uses: ./.github/actions/nx-init
         with:

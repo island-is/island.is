@@ -1,11 +1,7 @@
 // @ts-check
 import { info } from 'console'
 import { runCommand } from './_utils.mjs'
-import {
-  owner,
-  prBranch,
-  repo,
-} from './_pr_utils.mjs'
+import { owner, prBranch, repo } from './_pr_utils.mjs'
 
 const GITHUB_ACTION_USER = {
   name: 'github-actions[bot]',
