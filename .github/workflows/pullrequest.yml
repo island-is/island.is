@@ -63,8 +63,6 @@ jobs:
           HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
           echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
-<<<<<<< HEAD
-
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
       # https://github.blog/changelog/2020-10-08-github-actions-ability-to-change-retention-days-for-artifacts-and-logs/
@@ -82,8 +80,6 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           enable-cache: 'node_modules,cypress,generated-files'
       
-=======
->>>>>>> 95623fd4c7 (fix: test)
       - name: Nx init
         uses: ./.github/actions/nx-init
         with:
