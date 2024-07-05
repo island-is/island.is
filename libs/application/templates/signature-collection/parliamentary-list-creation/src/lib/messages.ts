@@ -316,7 +316,7 @@ export const m = defineMessages({
   },
   nationalIdValidationError: {
     id: 'plc.application:managerValidationError',
-    defaultMessage: 'Ógilt kennitala',
+    defaultMessage: 'Ógild kennitala',
     description: '',
   },
 })

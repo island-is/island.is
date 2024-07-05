@@ -5,7 +5,7 @@ export type Events = { type: DefaultEvents.SUBMIT }
 export enum States {
   DRAFT = 'draft',
   DONE = 'done',
-  PREREQUISITES = 'PREREQUISITES',
+  PREREQUISITES = 'prerequisites',
 }
 export enum Roles {
   APPLICANT = 'applicant',
@@ -36,6 +36,7 @@ export type Supervisor = {
   constituency: string
 }
 
+// These will be fetched later
 export const Constituencies = [
   'Norðausturkjördæmi',
   'Norðvesturkjördæmi',

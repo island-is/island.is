@@ -9,7 +9,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'slc.application:error.age.summary#markdown',
-      defaultMessage: '35 ára aldursmark er ekki náð',
+      defaultMessage: '35 ára aldursmarki er ekki náð',
       description: '',
     },
   }),

@@ -16,6 +16,7 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
+import Logo from '../../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
@@ -23,6 +24,7 @@ export const Prerequisites: Form = buildForm({
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'intro',
