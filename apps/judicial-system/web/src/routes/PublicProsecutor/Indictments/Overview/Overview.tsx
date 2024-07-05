@@ -25,7 +25,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
   useCase,
@@ -139,7 +142,11 @@ export const Overview = () => {
                     },
                     icon: 'mailOpen',
                     isDisabled: (defendant) =>
-                      defendant.verdictViewDate !== null,
+                      defendant.verdictViewDate !== null ||
+                      defendant.serviceRequirement ===
+                        ServiceRequirement.NOT_APPLICABLE ||
+                      defendant.serviceRequirement ===
+                        ServiceRequirement.NOT_REQUIRED,
                   }
                 : undefined
             }
