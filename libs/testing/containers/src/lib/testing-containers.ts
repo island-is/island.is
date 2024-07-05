@@ -62,6 +62,7 @@ export const startRedis = async () => {
   )
     .withName(uniqueName('redis'))
     .withEnv('IP', '0.0.0.0')
+    .withEnv('ALLOW_EMPTY_PASSWORD', 'yes')
     .withExposedPorts(...portConfig.redis)
     .start()
   logger.debug('Started redis cluster', { redisClusterContainer })
