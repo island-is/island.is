@@ -19,7 +19,7 @@ import { getSelectedOptionLabel } from '../../lib/newPrimarySchoolUtils'
 const RelativesTableRepeater: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ error, field, application }) => {
-  const { title } = field
+  const { id, title } = field
 
   const relationFriggOptions = useFriggOptions(OptionsType.RELATION)
 
@@ -31,7 +31,7 @@ const RelativesTableRepeater: FC<
         type: FieldTypes.TABLE_REPEATER,
         component: FieldComponents.TABLE_REPEATER,
         children: undefined,
-        id: field.id,
+        id,
         title,
         formTitle:
           newPrimarySchoolMessages.childrenNParents.relativesRegistrationTitle,
