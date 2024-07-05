@@ -116,7 +116,7 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
               expireDate: t.validTo ? t.validTo.toISOString() : undefined,
               displayTag: expiryTag(
                 formatMessage,
-                t.isValid,
+                !t.isValid,
                 t.validTo &&
                   formatMessage(m.validUntil, {
                     arg: formatDate(t.validTo),
