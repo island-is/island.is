@@ -19,7 +19,7 @@ import copyToClipboard from 'copy-to-clipboard'
 import SignedList from '../SignedList'
 import { SignatureCollection } from '@island.is/api/schema'
 
-const CandidateView = ({
+const OwnerView = ({
   currentCollection,
 }: {
   currentCollection: SignatureCollection
@@ -153,4 +153,4 @@ const CandidateView = ({
   )
 }
 
-export default CandidateView
+export default OwnerView

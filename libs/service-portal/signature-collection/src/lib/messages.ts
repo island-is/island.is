@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  /* Forsetakosningar */
   pageTitle: {
     id: 'sp.signatureCollection:title',
     defaultMessage: 'Meðmælasöfnun',
@@ -243,6 +244,19 @@ export const m = defineMessages({
   signeeAddress: {
     id: 'sp.signatureCollection:signeeAddress',
     defaultMessage: 'Heimilisfang',
+    description: '',
+  },
+
+  /* Parliamentary */
+  pageTitleParliamentary: {
+    id: 'sp.pageTitleParliamentary',
+    defaultMessage: 'Meðmælasöfnun fyrir Alþingiskosningar',
+    description: '',
+  },
+  pageDescriptionParliamentary: {
+    id: 'sp.pageDescriptionParliamentary',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
     description: '',
   },
 })
