@@ -1,5 +1,16 @@
 import { defineMessages } from 'react-intl'
 
+export * from './propertySearch'
+export * from './overview'
+export * from './error'
+export * from './application'
+export * from './confirmation'
+export * from './externalData'
+export * from './payment'
+export * from './property'
+
+// TODO: Remove once the application is live and all new messages have
+// been translated to english
 export const m = defineMessages({
   name: {
     id: 'mc.application:name',
