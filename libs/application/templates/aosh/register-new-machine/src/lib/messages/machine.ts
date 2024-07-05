@@ -11,34 +11,45 @@ export const machine = {
   labels: {
     machineType: defineMessages({
       sectionTitle: {
-        id: 'aosh.rnm.application:machine.labels.importer.sectionTitle',
+        id: 'aosh.rnm.application:machine.labels.machineType.sectionTitle',
         defaultMessage: 'Tegund og gerð tækis',
         description: `Machine type section title`,
       },
       title: {
-        id: 'aosh.rnm.application:machine.labels.importer.title',
+        id: 'aosh.rnm.application:machine.labels.machineType.title',
         defaultMessage: 'Tegund og gerð tækis',
         description: `Machine type page title`,
       },
       description: {
-        id: 'aosh.rnm.application:machine.labels.importer.description',
+        id: 'aosh.rnm.application:machine.labels.machineType.description',
         defaultMessage: 'Sameiginlegar grunnupplýsingar',
         description: `Machine type page description`,
       },
-      isOwnerOtherThenImporter: {
-        id: 'aosh.rnm.application:machine.labels.importer.isOwnerOtherThenImporter',
+      inputTitle: {
+        id: 'aosh.rnm.application:machine.labels.machineType.inputTitle',
         defaultMessage: 'Vinsamlegast skráðu tegund og gerð tækis',
-        description: `Is owner other than importer question label`,
+        description: `Machine type title for inputs`,
       },
-      name: {
-        id: 'aosh.rnm.application:machine.labels.importer.name',
-        defaultMessage: 'Nafn',
+      manufacturer: {
+        id: 'aosh.rnm.application:machine.labels.machineType.manufacturer',
+        defaultMessage: 'Tegund tækis / framleiðandi',
         description: `Machine type name label`,
       },
-      nationalId: {
-        id: 'aosh.rnm.application:machine.labels.importer.nationalId',
-        defaultMessage: 'Kennitala',
+      type: {
+        id: 'aosh.rnm.application:machine.labels.machineType.type',
+        defaultMessage: 'Gerð',
         description: `Machine type nationalId label`,
+      },
+      warningAlertMessageTitle: {
+        id: 'aosh.rnm.application:machine.labels.machineType.warningAlertMessageTitle',
+        defaultMessage: 'Tegund/gerð tækis finnst ekki',
+        description: `Machine type warning alert message title`,
+      },
+      warningAlertMessageDescription: {
+        id: 'aosh.rnm.application:machine.labels.machineType.warningAlertMessageDescription',
+        defaultMessage:
+          'Vinsamlegast skráðu inn upplýsingar um tegund og gerð tækisins',
+        description: `Machine type warning alert message description`,
       },
     }),
   },
