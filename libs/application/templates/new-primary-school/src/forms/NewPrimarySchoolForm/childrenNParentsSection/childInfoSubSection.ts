@@ -82,7 +82,7 @@ export const childInfoSubSection = buildSubSection({
           width: 'half',
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .childInformation.preferredName,
+              .childInformation.preferredName ?? undefined,
         }),
         buildCustomField(
           {

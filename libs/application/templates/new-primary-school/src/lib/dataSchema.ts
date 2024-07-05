@@ -25,7 +25,9 @@ export const dataSchema = z.object({
   childNationalId: z.string().min(1),
   childInfo: z
     .object({
-      gender: z.array(z.string()).optional(),
+      gender: z.string().optional(),
+      preferredName: z.string().optional(),
+      pronouns: z.array(z.string()).optional(),
       differentPlaceOfResidence: z.enum([YES, NO]),
       placeOfResidence: z
         .object({

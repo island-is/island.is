@@ -25,8 +25,8 @@ const FriggOptionsAsyncSelectField: FC<
   React.PropsWithChildren<FieldBaseProps & FriggOptionsAsyncSelectFieldProps>
 > = ({ error, field, application }) => {
   const { lang } = useLocale()
-  const { title, props } = field
-  const { isMulti = true } = props
+  const { title, props, defaultValue, id } = field
+  const { isMulti = true, optionsType, placeholder } = props
 
   return (
     <AsyncSelectFormField
@@ -36,17 +36,13 @@ const FriggOptionsAsyncSelectField: FC<
         type: FieldTypes.ASYNC_SELECT,
         component: FieldComponents.ASYNC_SELECT,
         children: undefined,
-        id: field.id,
+        id,
         title,
-        placeholder: props.placeholder,
-        defaultValue: field.defaultValue,
+        placeholder,
+        defaultValue,
         loadingError: coreErrorMessages.failedDataProvider,
         loadOptions: async ({ apolloClient }) => {
-          return await getOptionsListByType(
-            apolloClient,
-            props.optionsType,
-            lang,
-          )
+          return await getOptionsListByType(apolloClient, optionsType, lang)
         },
         isMulti,
         backgroundColor: 'blue',
