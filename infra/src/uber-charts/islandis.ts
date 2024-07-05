@@ -67,14 +67,16 @@ const skilavottordWs = skilavottordWsSetup()
 const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const documentsService = serviceDocumentsSetup()
+const servicePortalApi = servicePortalApiSetup()
+
 const appSystemApi = appSystemApiSetup({
   documentsService,
   servicesEndorsementApi: endorsement,
   skilavottordWs,
+  servicePortalApi,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup()
 
-const servicePortalApi = servicePortalApiSetup()
 const adminPortal = adminPortalSetup()
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
 

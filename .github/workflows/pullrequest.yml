@@ -48,7 +48,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Check node version
         run: |
@@ -167,7 +167,7 @@ jobs:
     timeout-minutes: 35
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
-      MAX_JOBS: 3
+      MAX_JOBS: 1
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
@@ -181,7 +181,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -225,7 +225,7 @@ jobs:
           node-version-file: 'package.json'
 
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -251,7 +251,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -299,7 +299,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
 
       - name: Get cache
         id: get-cache
@@ -340,7 +340,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache
@@ -371,7 +371,7 @@ jobs:
         with:
           node-version-file: 'package.json'
       - name: Setup yarn
-        run: npm install -g yarn
+        run: corepack enable
       - name: Get cache
         id: get-cache
         uses: ./.github/actions/get-cache

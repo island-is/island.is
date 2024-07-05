@@ -517,6 +517,10 @@ export const m = defineMessages({
     id: 'service.portal:notifications',
     defaultMessage: 'Tilkynningar',
   },
+  notificationsUnread: {
+    id: 'service.portal:notifications-unread-a11y',
+    defaultMessage: 'Þú átt ólesnar tilkynningar',
+  },
   notificationsViewAll: {
     id: 'service.portal:notifications-view-all',
     defaultMessage: 'Sjá allar tilkynningar',

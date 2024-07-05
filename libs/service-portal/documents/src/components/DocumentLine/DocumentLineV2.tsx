@@ -64,8 +64,13 @@ export const DocumentLine: FC<Props> = ({
 
   const { activeArchive, fetchObject, refetch } = useDocumentList()
 
-  const { setActiveDocument, setDocumentDisplayError, setDocLoading } =
-    useDocumentContext()
+  const {
+    setActiveDocument,
+    setDocumentDisplayError,
+    setDocLoading,
+    setLocalRead,
+    localRead,
+  } = useDocumentContext()
 
   const wrapperRef = useRef(null)
   const avatarRef = useRef(null)
@@ -124,6 +129,7 @@ export const DocumentLine: FC<Props> = ({
           if (docContent) {
             displayPdf(docContent)
             setDocumentDisplayError(undefined)
+            setLocalRead([...localRead, documentLine.id])
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }
@@ -162,7 +168,7 @@ export const DocumentLine: FC<Props> = ({
     getDocument()
   }
 
-  const unread = !documentLine.opened
+  const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
   const isArchived = activeArchive || archiveSuccess
 

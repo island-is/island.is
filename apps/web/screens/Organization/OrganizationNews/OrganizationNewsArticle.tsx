@@ -28,7 +28,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 interface OrganizationNewsArticleProps {
   newsItem: GetSingleNewsItemQuery['getSingleNews']
