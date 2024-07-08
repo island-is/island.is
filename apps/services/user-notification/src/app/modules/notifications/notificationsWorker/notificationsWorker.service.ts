@@ -183,6 +183,9 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
                   href: this.getClickActionUrl(formattedTemplate, subjectId),
                 },
               },
+              {
+                component: 'Spacer',
+              },
             ]
           : [null]),
         {
