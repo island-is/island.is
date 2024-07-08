@@ -336,55 +336,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
             id: 'settings.accessibilityLayout.groupTitle',
           })}
         >
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.accessibilityLayout.sytemDarkMode',
-            })}
-            accessory={
-              <Switch
-                onValueChange={(value) => {
-                  setAppearanceMode(value ? 'automatic' : 'light')
-                }}
-                value={appearanceMode === 'automatic'}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <Pressable
-            onPress={() => {
-              clearTimeout(efficient.ts)
-              efficient.count = (efficient.count ?? 0) + 1
-              if (efficient.count === 11) {
-                setAppearanceMode('efficient')
-              }
-              efficient.ts = setTimeout(() => {
-                efficient.count = 0
-              }, 500)
-            }}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.darkMode',
-              })}
-              accessory={
-                <Switch
-                  onValueChange={(value) =>
-                    setAppearanceMode(value ? 'dark' : 'light')
-                  }
-                  value={appearanceMode === 'dark'}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
-                  trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
-                  }}
-                />
-              }
-            />
-          </Pressable>
           <PressableHighlight onPress={onLanguagePress}>
             <TableViewCell
               title={intl.formatMessage({
