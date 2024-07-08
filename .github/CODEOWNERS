@@ -164,6 +164,7 @@ codemagic.yaml                                                                  
 /libs/clients/firearm-license/                                                                           @island-is/hugsmidjan
 /libs/clients/hunting-license/                                                                           @island-is/hugsmidjan
 /libs/clients/smartsolutions/                                                                            @island-is/hugsmidjan
+/libs/clients/smart-solutions-v2/                                                                            @island-is/hugsmidjan
 /libs/clients/license-client/                                                                            @island-is/hugsmidjan @island-is/aranja
 /libs/clients/intellectual-properties/                                                                   @island-is/hugsmidjan
 /libs/clients/islykill/                                                                                  @island-is/hugsmidjan
