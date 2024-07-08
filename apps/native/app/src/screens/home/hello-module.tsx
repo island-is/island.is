@@ -31,24 +31,32 @@ export const HelloModule = React.memo(() => {
     variables: { input: { pageIdentifier: 'frontpage' } },
   })
 
-  const {
-    data: title,
-    loading,
-    error,
-  } = useGetFrontPageImageTitleQuery({
+  const { data: title, loading } = useGetFrontPageImageTitleQuery({
     variables: { input: { pageIdentifier: 'frontpage' } },
   })
 
   const imageTitle = title?.getFrontpage?.imageMobile?.title
 
+  const cacheDirectory = `${FileSystem.documentDirectory}homeScreenImages`
+
   const checkImage = async () => {
-    // Check if title of image is the same as the one we have in cache
+    // If we don't have a title, for example when we are offline, check if we have any image in the cache and use that
+    if (!imageTitle) {
+      FileSystem.readDirectoryAsync(cacheDirectory).then((files) => {
+        if (files.length > 0) {
+          setImageSrc(`${cacheDirectory}/${files[0]}`)
+        }
+      })
+      return
+    }
+
+    // Check if title of the image that we fetched from server is the same as the one we have in cache
     const fileInfo = await FileSystem.getInfoAsync(
-      `${FileSystem.documentDirectory}${imageTitle}`,
+      `${cacheDirectory}/${imageTitle}`,
     )
 
     if (fileInfo.exists) {
-      // We have the correct image in the cache, use that one
+      // If we have the image in cache, use it
       setImageSrc(fileInfo.uri)
       return
     }
@@ -60,11 +68,18 @@ export const HelloModule = React.memo(() => {
         setImageSrc(imageSrcFromServer)
         const downloadResumable = FileSystem.createDownloadResumable(
           imageSrcFromServer,
-          `${FileSystem.documentDirectory}${imageTitle}`,
+          `${cacheDirectory}/${imageTitle}`,
         )
         try {
+          const directoryInfo = await FileSystem.getInfoAsync(cacheDirectory)
+          if (!directoryInfo.exists) {
+            await FileSystem.makeDirectoryAsync(cacheDirectory, {
+              intermediates: true,
+            })
+          }
           await downloadResumable.downloadAsync()
-        } catch {
+        } catch (e) {
+          console.error(e)
           // Do nothing, try again next time
         }
       }
@@ -98,7 +113,7 @@ export const HelloModule = React.memo(() => {
           {userInfo?.name}
         </Typography>
 
-        {!error && (
+        {imageSrc && (
           <ImageWrapper>
             {loading ? (
               <Skeleton
