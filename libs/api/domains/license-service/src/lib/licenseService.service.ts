@@ -164,7 +164,7 @@ export class LicenseService {
           type: licenseType,
           fetch: {
             status: GenericUserLicenseFetchStatus.Error,
-            updated: new Date().toISOString(),
+            updated: new Date().getTime().toString(),
           },
           errorCode: licensesFetchResponse.error.code,
           errorMessage: licensesFetchResponse.error.message,
@@ -219,7 +219,7 @@ export class LicenseService {
           },
           fetch: {
             status: GenericUserLicenseFetchStatus.Fetched,
-            updated: new Date().toISOString(),
+            updated: new Date().getTime().toString(),
           },
           payload: {
             ...lp.payload,
