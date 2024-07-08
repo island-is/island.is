@@ -19,7 +19,11 @@ import { getConfigValue } from './shared.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
-import { S3 } from 'aws-sdk'
+import {
+  GetObjectCommand,
+  GetObjectCommandOutput,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
@@ -27,7 +31,7 @@ import { ExtraData } from '@island.is/clients/charge-fjs-v2'
 
 @Injectable()
 export class SharedTemplateApiService {
-  s3: S3
+  s3: S3Client
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -41,7 +45,7 @@ export class SharedTemplateApiService {
     private readonly applicationService: BaseTemplateApiApplicationService,
     private readonly paymentService: PaymentService,
   ) {
-    this.s3 = new S3()
+    this.s3 = new S3Client()
   }
 
   async createAssignToken(application: Application, expiresIn: number) {
@@ -245,19 +249,26 @@ export class SharedTemplateApiService {
   async getS3File(
     application: ApplicationWithAttachments,
     attachmentKey: string,
-  ) {
+  ): Promise<GetObjectCommandOutput> {
+    this.logger.debug(`Fetching attachment from S3`, { attachmentKey })
     const fileName = (
       application.attachments as {
         [key: string]: string
       }
     )[attachmentKey]
     const { bucket, key } = AmazonS3URI(fileName)
-    const file = await this.s3
-      .getObject({
+    const file = await this.s3.send(
+      new GetObjectCommand({
         Bucket: bucket,
         Key: key,
+      }),
+    )
+    if (!file.Body) {
+      this.logger.error('Could not find file in S3', {
+        attachmentKey,
+        applicationId: application.id,
       })
-      .promise()
+    }
     return file
   }
 
@@ -265,16 +276,23 @@ export class SharedTemplateApiService {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<string> {
-    const fileContent = (await this.getS3File(application, attachmentKey))
-      ?.Body as Buffer
-    return fileContent?.toString('base64') || ''
+    const fileContent = (await this.getS3File(application, attachmentKey)).Body
+    if (!fileContent) {
+      return ''
+    }
+    return await fileContent.transformToString('base64')
   }
 
   async getAttachmentContentAsBlob(
     application: ApplicationWithAttachments,
     attachmentKey: string,
-  ): Promise<Blob> {
+  ): Promise<Blob | null> {
     const file = await this.getS3File(application, attachmentKey)
-    return new Blob([file.Body as ArrayBuffer], { type: file.ContentType })
+    if (!file.Body) {
+      return new Blob([], { type: file.ContentType })
+    }
+    return new Blob([await file.Body.transformToByteArray()], {
+      type: file.ContentType,
+    })
   }
 }
