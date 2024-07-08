@@ -34,10 +34,12 @@ export class AttachmentS3Service {
     const attachments: AttachmentData[] = []
 
     for (const key of attachmentAnswerKeys) {
-      const answers = getValueViaPath(application.answers, key) as Array<{
-        key: string
-        name: string
-      }>
+      const answers = getValueViaPath<
+        Array<{
+          key: string
+          name: string
+        }>
+      >(application.answers, key)
       if (!answers) continue
       const list = await this.toDocumentDataList(answers, key, application)
       attachments.push(...list)
