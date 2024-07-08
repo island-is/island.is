@@ -1,0 +1,8 @@
+generates:
+  libs/clients/smart-solutions-v2/smartsolutions-api.graphql:
+    schema: https://smartpages-api-dev.smartsolutions.is/graphql
+    plugins:
+      - schema-ast
+hooks:
+  afterAllFileWrite:
+    - prettier --write
