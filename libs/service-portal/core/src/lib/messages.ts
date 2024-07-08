@@ -1431,6 +1431,10 @@ export const m = defineMessages({
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
   },
+  socialInsuranceMaintenanceIntro: {
+    id: 'service.portal:social-insurance-maintenance-intro',
+    defaultMessage: 'Yfirlit yfir greiðslur frá almannatryggingum',
+  },
   socialInsuranceMaintenanceDescription: {
     id: 'service.portal:social-insurance-maintenance-description',
     defaultMessage:
