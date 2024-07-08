@@ -6,10 +6,12 @@ describe('Overview', () => {
   describe('isDefendantInfoActionButtonDisabled', () => {
     test('should return true if defendant vervidictViewDate is not null', () => {
       const verdictViewDate = '2024-07-08'
+      const serviceRequirement = ServiceRequirement.REQUIRED
 
       const res = isDefendantInfoActionButtonDisabled({
         id: 'id',
         verdictViewDate,
+        serviceRequirement,
       })
 
       expect(res).toEqual(true)
