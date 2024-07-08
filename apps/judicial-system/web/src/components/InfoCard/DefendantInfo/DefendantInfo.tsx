@@ -1,5 +1,5 @@
 import React, { FC } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -34,20 +34,19 @@ interface DefendantInfoProps {
 }
 
 export const getAppealExpirationInfo = (
-  formatMessage: IntlShape['formatMessage'],
-  viewDate?: string,
+  viewDate?: string | null,
   serviceRequirement?: ServiceRequirement | null,
 ) => {
   if (!viewDate) {
-    return formatMessage(strings.appealDateNotBegun)
+    return { message: strings.appealDateNotBegun, data: null }
   }
 
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
-    return formatMessage(strings.serviceRequirementNotRequired)
+    return { message: strings.serviceRequirementNotRequired, data: null }
   }
 
   if (serviceRequirement === ServiceRequirement.NOT_APPLICABLE) {
-    return formatMessage(strings.serviceRequirementNotApplicable)
+    return { message: strings.serviceRequirementNotApplicable, data: null }
   }
 
   const today = new Date()
@@ -59,9 +58,7 @@ export const getAppealExpirationInfo = (
       ? strings.appealExpirationDate
       : strings.appealDateExpired
 
-  return formatMessage(message, {
-    appealExpirationDate: formatDate(expiryDate, 'P'),
-  })
+  return { message, data: formatDate(expiryDate, 'P') }
 }
 
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
@@ -73,6 +70,11 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     displayVerdictViewDate,
   } = props
   const { formatMessage } = useIntl()
+
+  const appealExpirationInfo = getAppealExpirationInfo(
+    defendant.verdictViewDate,
+    defendant.serviceRequirement,
+  )
 
   return (
     <div
@@ -98,11 +100,9 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         {displayAppealExpirationInfo && (
           <Box>
             <Text as="span">
-              {getAppealExpirationInfo(
-                formatMessage,
-                defendant.verdictViewDate ?? '',
-                defendant.serviceRequirement,
-              )}
+              {formatMessage(appealExpirationInfo.message, {
+                appealExpirationDate: appealExpirationInfo.data,
+              })}
             </Text>
           </Box>
         )}

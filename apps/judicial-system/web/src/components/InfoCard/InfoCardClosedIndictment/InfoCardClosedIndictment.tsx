@@ -1,5 +1,5 @@
 import React, { FC, useContext } from 'react'
-import { IntlFormatters, useIntl } from 'react-intl'
+import { IntlShape, useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
 import {
@@ -23,7 +23,7 @@ export interface Props {
 }
 
 export const getAdditionalDataSections = (
-  formatMessage: IntlFormatters['formatMessage'],
+  formatMessage: IntlShape['formatMessage'],
   reviewerName?: string | null,
   reviewDecision?: IndictmentCaseReviewDecision | null,
   indictmendReviewedDate?: string | null,
