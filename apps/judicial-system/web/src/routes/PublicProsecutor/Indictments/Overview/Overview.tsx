@@ -38,6 +38,11 @@ import {
 import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED' | 'DEFENDANT_VIEWS_VERDICT'
 
+export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) =>
+  defendant.verdictViewDate !== null ||
+  defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE ||
+  defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+
 export const Overview = () => {
   const router = useRouter()
   const { formatMessage: fm } = useIntl()
@@ -141,12 +146,7 @@ export const Overview = () => {
                       setModalVisible('DEFENDANT_VIEWS_VERDICT')
                     },
                     icon: 'mailOpen',
-                    isDisabled: (defendant) =>
-                      defendant.verdictViewDate !== null ||
-                      defendant.serviceRequirement ===
-                        ServiceRequirement.NOT_APPLICABLE ||
-                      defendant.serviceRequirement ===
-                        ServiceRequirement.NOT_REQUIRED,
+                    isDisabled: isDefendantInfoActionButtonDisabled,
                   }
                 : undefined
             }
