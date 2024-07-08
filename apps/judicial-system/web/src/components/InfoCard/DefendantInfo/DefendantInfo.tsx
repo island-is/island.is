@@ -30,6 +30,7 @@ interface DefendantInfoProps {
   displayDefenderInfo: boolean
   displayAppealExpirationInfo?: boolean
   defendantInfoActionButton?: DefendantInfoActionButton
+  displayVerdictViewDate?: boolean
 }
 
 export const getAppealExpirationInfo = (
@@ -69,6 +70,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     displayDefenderInfo,
     displayAppealExpirationInfo,
     defendantInfoActionButton,
+    displayVerdictViewDate,
   } = props
   const { formatMessage } = useIntl()
 
@@ -93,7 +95,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             {defendant.address && `, ${defendant.address}`}
           </Text>
         </span>
-
         {displayAppealExpirationInfo && (
           <Box>
             <Text as="span">
@@ -105,7 +106,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             </Text>
           </Box>
         )}
-
         {displayDefenderInfo && (
           <Box display="flex" key={defendant.defenderName} role="paragraph">
             <Text as="span">{`${formatMessage(strings.defender)}: ${
@@ -127,8 +127,14 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             )}
           </Box>
         )}
+        {displayVerdictViewDate && (
+          <Text>
+            {formatMessage(strings.verdictDisplayedDate, {
+              date: formatDate(defendant.verdictViewDate, 'PPP'),
+            })}
+          </Text>
+        )}
       </div>
-
       {defendantInfoActionButton && (
         <Box>
           <Button
