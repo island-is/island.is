@@ -331,24 +331,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               }
             /> */}
         </TableViewGroup>
-        <TableViewGroup
-          header={intl.formatMessage({
-            id: 'settings.accessibilityLayout.groupTitle',
-          })}
-        >
-          <PressableHighlight onPress={onLanguagePress}>
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.language',
-              })}
-              accessory={
-                <TableViewAccessory>
-                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
-                </TableViewAccessory>
-              }
-            />
-          </PressableHighlight>
-        </TableViewGroup>
+
         <TableViewGroup
           header={intl.formatMessage({
             id: 'settings.security.groupTitle',
@@ -555,6 +538,18 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         <TableViewGroup
           header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
         >
+          <PressableHighlight onPress={onLanguagePress}>
+            <TableViewCell
+              title={intl.formatMessage({
+                id: 'settings.accessibilityLayout.language',
+              })}
+              accessory={
+                <TableViewAccessory>
+                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
+                </TableViewAccessory>
+              }
+            />
+          </PressableHighlight>
           <TableViewCell
             title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
             subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
