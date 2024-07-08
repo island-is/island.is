@@ -1,8 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
+import { AwsService } from '@island.is/nest/aws'
 import { Injectable } from '@nestjs/common'
 
 export interface AttachmentData {
@@ -14,10 +13,7 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  private readonly s3: AWS.S3
-  constructor() {
-    this.s3 = new S3()
-  }
+  constructor(private readonly aws: AwsService) {}
 
   public async getFiles(
     application: Application,
@@ -68,17 +64,10 @@ export class AttachmentS3Service {
   private async getApplicationFilecontentAsBase64(
     fileName: string,
   ): Promise<string | undefined> {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64')
+      const file = await this.aws.getFile(fileName)
+      const fileContent = file.Body
+      return fileContent?.transformToString('base64')
     } catch (error) {
       logger.error(error)
       return undefined
