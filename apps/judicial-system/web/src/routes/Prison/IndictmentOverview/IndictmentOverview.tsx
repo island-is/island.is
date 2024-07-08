@@ -54,24 +54,24 @@ const IndictmentOverview = () => {
             {formatMessage(strings.title)}
           </Text>
         </Box>
-        {workingCase.courtCaseNumber && (
-          <Box marginBottom={1}>
-            <Text variant="h2" as="h2">
-              {formatMessage(core.caseNumber, {
-                caseNumber: workingCase.courtCaseNumber,
-              })}
-            </Text>
-          </Box>
-        )}
-        {workingCase.indictmentCompletedDate && (
-          <Box marginBottom={5}>
+        <Box marginBottom={5}>
+          {workingCase.courtCaseNumber && (
+            <Box marginBottom={1}>
+              <Text variant="h2" as="h2">
+                {formatMessage(core.caseNumber, {
+                  caseNumber: workingCase.courtCaseNumber,
+                })}
+              </Text>
+            </Box>
+          )}
+          {workingCase.indictmentCompletedDate && (
             <Text variant="h4" as="h3">
               {formatMessage(strings.indictmentCompletedTitle, {
                 date: formatDate(workingCase.indictmentCompletedDate, 'PPP'),
               })}
             </Text>
-          </Box>
-        )}
+          )}
+        </Box>
         <Box marginBottom={5}>
           <InfoCardClosedIndictment
             displayVerdictViewDate
