@@ -143,7 +143,7 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         {
           component: 'Image',
           context: {
-            src: join(__dirname, `./assets/images/logo.jpg`),
+            src: join(__dirname, `./assets/images/island-2x-logo.png`),
             alt: 'Ísland.is logo',
           },
         },
@@ -171,14 +171,17 @@ export class NotificationsWorkerService implements OnApplicationBootstrap {
         ...(formattedTemplate.clickActionUrl
           ? [
               {
-                component: 'Button',
+                component: 'ImageWithLink',
                 context: {
-                  copy: `${isEnglish ? 'View on' : 'Skoða á'} island.is`,
+                  src: join(
+                    __dirname,
+                    `./assets/images/${
+                      isEnglish ? 'en' : 'is'
+                    }-button-open.png`,
+                  ),
+                  alt: isEnglish ? 'Open mailbox' : 'Opna Pósthólf',
                   href: this.getClickActionUrl(formattedTemplate, subjectId),
                 },
-              },
-              {
-                component: 'Spacer',
               },
             ]
           : [null]),
