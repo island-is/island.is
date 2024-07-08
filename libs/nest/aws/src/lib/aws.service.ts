@@ -5,9 +5,13 @@ import {
   PutObjectCommand,
   HeadObjectCommand,
   DeleteObjectCommand,
-  GetObjectOutput,
+  GetObjectCommandOutput,
 } from '@aws-sdk/client-s3'
+import AmazonS3Uri from 'amazon-s3-uri'
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+
+const MINUTE = 60
+const HOUR = 60 * MINUTE
 
 @Injectable()
 export class AwsService {
@@ -17,7 +21,23 @@ export class AwsService {
     this.s3Client = new S3Client({})
   }
 
-  async getFile(bucket: string, fileName: string): Promise<GetObjectOutput> {
+  async getFile(fileName: string): Promise<GetObjectCommandOutput>
+  async getFile(
+    bucket: string,
+    fileName: string,
+  ): Promise<GetObjectCommandOutput>
+  async getFile(
+    bucket: string,
+    fileName?: string,
+  ): Promise<GetObjectCommandOutput> {
+    // If bucket is the only parameter, then it must be an S3 bucket URI
+    if (!fileName) {
+      // `bucket` is actually an S3 bucket URI here
+      const uri = AmazonS3Uri(bucket)
+      bucket = uri.bucket
+      fileName = uri.key
+    }
+
     const command = new GetObjectCommand({
       Bucket: bucket,
       Key: fileName,
@@ -47,16 +67,18 @@ export class AwsService {
     return `https://${bucket}.s3.amazonaws.com/${fileName}`
   }
 
-  async getPresignedUrl(bucket: string, fileName: string): Promise<string> {
-    const MINUTE = 60
-    const HOUR = 60 * MINUTE
+  async getPresignedUrl(
+    bucket: string,
+    fileName: string,
+    TTL = 2 * HOUR, // TODO: Select length for presigned url's in island.is
+  ): Promise<string> {
     const command = new GetObjectCommand({
       Bucket: bucket,
       Key: fileName,
     })
 
     return await getSignedUrl(this.s3Client, command, {
-      expiresIn: 2 * HOUR, // TODO: Select length for presigned url's in island.is
+      expiresIn: TTL,
     })
   }
 
@@ -66,15 +88,15 @@ export class AwsService {
       Key: fileName,
     })
 
-    try {
-      await this.s3Client.send(command)
-      return true
-    } catch (error) {
-      if (error.name === 'NotFound') {
-        return false
-      }
-      throw error
-    }
+    return await this.s3Client
+      .send(command)
+      .then(() => true)
+      .catch((error) => {
+        if (error.name === 'NotFound') {
+          return false
+        }
+        throw error
+      })
   }
 
   public async deleteObject(bucket: string, key: string) {
@@ -82,7 +104,6 @@ export class AwsService {
       Bucket: bucket,
       Key: key,
     })
-
-    await this.s3Client.send(command)
+    return await this.s3Client.send(command)
   }
 }
