@@ -25,7 +25,6 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
 
-import { S3 } from 'aws-sdk'
 import {
   mapValuesToIndividualtype,
   mapValuesToPartytype,
@@ -33,6 +32,7 @@ import {
 } from './mappers/mapValuesToUsertype'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
 
 export interface AttachmentData {
   key: string
@@ -56,22 +56,29 @@ export interface DataResponse {
 
 @Injectable()
 export class FinancialStatementsInaoTemplateService extends BaseTemplateApiService {
-  s3: S3
+  s3: S3Client
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
-    this.s3 = new S3()
+    this.s3 = new S3Client()
   }
 
   private async getAttachment(application: Application): Promise<string> {
-    const attachments: AttachmentData[] | undefined = getValueViaPath(
+    const attachments = getValueViaPath<Array<AttachmentData>>(
       application.answers,
       'attachments.file',
-    ) as Array<{ key: string; name: string }>
+    )
 
-    const attachmentKey = attachments[0].key
+    // TODO: Handle multiple attachments
+    if (!attachments || !attachments.length) {
+      this.logger.warning(`No attachments found`, {
+        applicationId: application.id,
+      })
+      return ''
+    }
+    const attachmentKey = attachments?.[0].key
 
     const fileName = (
       application.attachments as {
@@ -86,18 +93,13 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
     const { bucket, key } = AmazonS3URI(fileName)
 
     const uploadBucket = bucket
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64') || ''
-    } catch (error) {
-      throw new Error('Villa kom kom upp við að senda umsókn')
-    }
+    const file = await this.s3.send(
+      new GetObjectCommand({
+        Bucket: uploadBucket,
+        Key: key,
+      }),
+    )
+    return file.Body?.transformToString('base64') || ''
   }
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
