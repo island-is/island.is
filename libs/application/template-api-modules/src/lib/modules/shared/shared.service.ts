@@ -153,10 +153,13 @@ export class SharedTemplateApiService {
   async sendEmailWithAttachment(
     templateGenerator: AttachmentEmailTemplateGenerator,
     application: Application,
-    fileContent: string,
+    fileContent: Parameters<AttachmentEmailTemplateGenerator>[1],
     recipientEmail: string,
     locale = 'is',
   ) {
+    this.logger.debug('Sending email with attachment', {
+      applicationId: application.id,
+    })
     const clientLocationOrigin = getConfigValue(
       this.configService,
       'clientLocationOrigin',
