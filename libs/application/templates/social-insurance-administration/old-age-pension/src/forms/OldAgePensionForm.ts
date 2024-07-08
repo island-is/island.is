@@ -60,11 +60,6 @@ export const OldAgePensionForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: oldAgePensionFormMessage.pre.prerequisitesSection,
-      children: [],
-    }),
-    buildSection({
       id: 'applicant',
       title: socialInsuranceAdministrationMessage.info.section,
       children: [
