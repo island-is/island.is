@@ -19,15 +19,13 @@ import { getConfigValue } from './shared.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
-import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
+import { AwsService } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -40,9 +38,8 @@ export class SharedTemplateApiService {
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
     private readonly paymentService: PaymentService,
-  ) {
-    this.s3 = new S3()
-  }
+    private readonly aws: AwsService,
+  ) {}
 
   async createAssignToken(application: Application, expiresIn: number) {
     const token = await this.applicationService.createAssignToken(
@@ -254,13 +251,7 @@ export class SharedTemplateApiService {
         [key: string]: string
       }
     )[attachmentKey]
-    const { bucket, key } = AmazonS3URI(fileName)
-    const file = await this.s3
-      .getObject({
-        Bucket: bucket,
-        Key: key,
-      })
-      .promise()
+    const file = await this.aws.getFile(fileName)
     return file
   }
 
@@ -268,9 +259,8 @@ export class SharedTemplateApiService {
     application: ApplicationWithAttachments,
     attachmentKey: string,
   ): Promise<string> {
-    const fileContent = (await this.getS3File(application, attachmentKey))
-      ?.Body as Buffer
-    return fileContent?.toString('base64') || ''
+    const fileContent = (await this.getS3File(application, attachmentKey))?.Body
+    return fileContent?.transformToString('base64') || ''
   }
 
   async getAttachmentContentAsBlob(
@@ -278,6 +268,11 @@ export class SharedTemplateApiService {
     attachmentKey: string,
   ): Promise<Blob> {
     const file = await this.getS3File(application, attachmentKey)
-    return new Blob([file.Body as ArrayBuffer], { type: file.ContentType })
+    if (!file.Body) {
+      return new Blob([], { type: file.ContentType })
+    }
+    return new Blob([await file.Body.transformToByteArray()], {
+      type: file.ContentType,
+    })
   }
 }
