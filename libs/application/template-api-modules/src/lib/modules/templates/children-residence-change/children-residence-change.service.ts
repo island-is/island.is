@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -68,11 +68,13 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     if (!file.Body) {
       throw new Error('File content was undefined')
     }
+    const fileB64 = await file.Body.transformToString('base64')
+    const fileBinary = await file.Body.transformToString('binary')
 
     const attachments: Attachment[] = [
       {
         name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-        content: await file.Body?.transformToString('base64'),
+        content: fileB64,
       },
     ]
 
@@ -144,7 +146,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
         await this.sharedTemplateAPIService.sendEmailWithAttachment(
           generateSyslumennNotificationEmail,
           application as unknown as Application,
-          fileContent.toString('binary'),
+          fileBinary,
           syslumennData.email,
         )
         return undefined
@@ -154,7 +156,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       (props) =>
         generateApplicationSubmittedEmail(
           props,
-          fileContent.toString('binary'),
+          fileBinary,
           answers.parentA.email,
           syslumennData.name,
           response?.caseNumber,
@@ -166,7 +168,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
       (props) =>
         generateApplicationSubmittedEmail(
           props,
-          fileContent.toString('binary'),
+          fileBinary,
           answers.parentB.email,
           syslumennData.name,
           response?.caseNumber,
