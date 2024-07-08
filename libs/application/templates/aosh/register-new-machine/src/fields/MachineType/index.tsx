@@ -1,6 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
+  AsyncSearch,
   Box,
   GridColumn,
   GridRow,
@@ -18,8 +19,8 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
   const { application, field } = props
   const { formatMessage } = useLocale()
 
-  const [manufacturer, setManufacturer] = useState<string>()
   const [type, setType] = useState<string>()
+  const [model, setModel] = useState<string>()
   const [warning, setWarning] = useState<boolean>(false)
   const [disabled, setDisabled] = useState<boolean>(true)
 
@@ -27,16 +28,16 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
     // Call service if manufacturer exists
     // If exists, make type disabled false
     // If not show error message
-    if (manufacturer) {
+    if (type) {
       setWarning(true)
       setDisabled(false)
     }
-  }, [manufacturer])
+  }, [type])
 
   useEffect(() => {
     // Call service if type exists
     // If not show error message
-  }, [type])
+  }, [model])
   return (
     <Box>
       <Box paddingBottom={2}>
@@ -46,20 +47,31 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
       </Box>
       <GridRow marginBottom={5}>
         <GridColumn span={['1/1', '1/2']}>
+          {/* <AsyncSearch
+            id={`${field.id}.type`}
+            label={formatMessage(machine.labels.machineType.type)}
+            options={[
+              {
+                label: 'cfe',
+                value: 'eda',
+              },
+            ]}
+            onSubmit={(e) => setType(e.)}
+          /> */}
           <InputController
-            id={`${field.id}.manufacturer`}
+            id={`${field.id}.type`}
             backgroundColor="blue"
-            onChange={debounce((e) => setManufacturer(e.target.value), 300)}
-            label={formatMessage(machine.labels.machineType.manufacturer)}
+            onChange={debounce((e) => setType(e.target.value), 300)}
+            label={formatMessage(machine.labels.machineType.type)}
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
           <InputController
-            id={`${field.id}.type`}
+            id={`${field.id}.model`}
             backgroundColor="blue"
             disabled={disabled}
-            onChange={debounce((e) => setType(e.target.value), 300)}
-            label={formatMessage(machine.labels.machineType.type)}
+            onChange={debounce((e) => setModel(e.target.value), 300)}
+            label={formatMessage(machine.labels.machineType.model)}
           />
         </GridColumn>
       </GridRow>

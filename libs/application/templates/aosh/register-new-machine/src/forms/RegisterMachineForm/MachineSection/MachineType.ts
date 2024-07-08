@@ -10,7 +10,7 @@ export const MachineType = buildSubSection({
   title: machine.labels.machineType.sectionTitle,
   children: [
     buildMultiField({
-      id: 'operatorInformationMultiField',
+      id: 'machineTypeMultiField',
       title: machine.labels.machineType.title,
       description: machine.labels.machineType.description,
       children: [

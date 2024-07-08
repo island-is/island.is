@@ -31,10 +31,28 @@ export const NewMachineAnswersSchema = z.object({
     hasOperator: z.enum([YES, NO]),
   }),
   machine: z.object({
-    machineType: z.object({
-      manufacturer: z.string(),
-      type: z.string(),
-    }),
+    machineType: z
+      .object({
+        type: z.string(),
+        model: z.string(),
+      })
+      .optional(),
+    basicInformation: z
+      .object({
+        type: z.string(),
+        model: z.string(),
+        category: z.string(),
+        subcategory: z.string(),
+        productionCountry: z.string(),
+        productionYear: z.string(),
+        productionNumber: z.string(),
+        markedCE: z.string(),
+        preRegistration: z.string(),
+        isUsed: z.boolean(),
+        location: z.string(),
+        cargoFileNumber: z.string(),
+      })
+      .optional(),
   }),
   deregister: z.object({
     date: z.string(),
