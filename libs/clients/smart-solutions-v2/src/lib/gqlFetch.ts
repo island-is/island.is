@@ -22,7 +22,7 @@ export class GQLFetcher {
 
   async fetch<T>(
     node: DocumentNode,
-    variables: { [key: string]: unknown },
+    variables?: { [key: string]: unknown },
   ): Promise<Result<T>> {
     const res: GraphqlFetchResponse<T> = await this.client
       .request(node, variables)

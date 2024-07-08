@@ -1,11 +1,12 @@
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Inject } from '@nestjs/common'
 import {
   DeletePass,
   DeletePassMutationVariables,
   DynamicBarcodeDataInput,
   PassDataInput,
+  PassTemplate,
+  PassTemplates,
   UpdatePass,
   UpdatePassMutationVariables,
   UpdateStatusOnPassWithDynamicBarcode,
@@ -16,6 +17,7 @@ import {
 import { MODULE_OPTIONS_TOKEN } from './smartSolutions.module-definition'
 import {
   DeletePassResponseData,
+  ListTemplatesResponseData,
   PkPass,
   RevokePassData,
   UpdatePassResponseData,
@@ -236,28 +238,24 @@ export class SmartSolutionsService {
     }
   }
 
-  async listTemplates() {
-    return null
-    /*
-  let res: {
-  passTemplates: PassTemplatePageInfo
-  }
-  try {
-  res = await this.client.request(PassTemplates)
-  } catch (e) {
-  const errors: GraphqlErrorResponse = e
+  async listTemplates(): Promise<Result<Array<PassTemplate>>> {
+    const res = await this.fetcher.fetch<ListTemplatesResponseData>(
+      PassTemplates,
+    )
 
-  const error = errors.response.errors?.[0]
-  this.logger.warn('Pass template listing failed', {
-    category: LOG_CATEGORY,
-    error: {
-      message: error?.message,
-    },
-  })
-  return null
-  }
+    if (!res.ok) {
+      this.logger.warn('Pass template listing failed', {
+        category: LOG_CATEGORY,
+        error: {
+          message: res.error?.message,
+        },
+      })
+      return res
+    }
 
-  return res.passTemplates.data
-  */
+    return {
+      ok: true,
+      data: res.data.passes?.data ?? [],
+    }
   }
 }
