@@ -1485,6 +1485,16 @@ export class CaseService {
 
         return this.eventLogService.create(eventLogDTO, transaction)
       }
+
+      if (update.indictmentReviewDecision) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.INDICTMENT_REVIEWED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
     }
   }
 
