@@ -4,11 +4,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { createPkPassDataInput } from './adrLicenseClientMapper'
 import { AdrApi, AdrDto } from '@island.is/clients/adr-and-machine-license'
-import {
-  Pass,
-  PassDataInput,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
 import { format } from 'kennitala'
 import { FetchError } from '@island.is/clients/middlewares'
 import compareAsc from 'date-fns/compareAsc'
@@ -22,6 +17,11 @@ import {
   VerifyPkPassResult,
 } from '../../licenseClient.type'
 import { FlattenedAdrDto } from './adrLicenseClient.type'
+import {
+  PassDataInput,
+  PkPass,
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'adrlicense-service'
@@ -31,7 +31,7 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private adrApi: AdrApi,
-    private smartApi: SmartSolutionsApi,
+    private smartApi: SmartSolutionsService,
   ) {}
 
   clientSupportsPkPass = true
@@ -155,7 +155,7 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
     }
   }
 
-  private async getPkPass(user: User): Promise<Result<Pass>> {
+  private async getPkPass(user: User): Promise<Result<PkPass>> {
     const license = await this.fetchLicense(user)
 
     if (!license.ok || !license.data) {
@@ -264,21 +264,33 @@ export class AdrLicenseClient implements LicenseClient<LicenseType.AdrLicense> {
     const { code, date } = JSON.parse(data) as PkPassVerificationInputData
     const result = await this.smartApi.verifyPkPass({ code, date })
 
-    if (!result.ok) {
-      return result
+    return {
+      ok: false,
+      error: {
+        code: 13,
+        message: 'Missing pkpass distribution url in adr license',
+      },
     }
 
     /*
-      Todo when possible:
-      Currently impossible to verify whether a user has an actual license
-      with the relevant organization. We only verify the user has a PkPass
-    */
-
+  if (!result.valid) {
     return {
-      ok: true,
-      data: {
-        valid: result.data.valid,
-      },
+      ok: false
+      data: {},
     }
+  }
+
+  /*
+    Todo when possible:
+    Currently impossible to verify whether a user has an actual license
+    with the relevant organization. We only verify the user has a PkPass
+
+
+  return {
+    ok: true,
+    data: {
+      valid: result.data.valid,
+    },
+  } */
   }
 }

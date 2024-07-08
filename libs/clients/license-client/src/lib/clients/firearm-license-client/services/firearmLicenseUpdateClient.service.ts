@@ -4,12 +4,6 @@ import { Inject, Injectable } from '@nestjs/common'
 import { OpenFirearmApi } from '@island.is/clients/firearm-license'
 import { sanitize as sanitizeNationalId } from 'kennitala'
 import {
-  Pass,
-  PassDataInput,
-  RevokePassData,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
-import {
   PassVerificationData,
   Result,
   VerifyInputData,
@@ -19,6 +13,12 @@ import { BaseLicenseUpdateClient } from '../../baseLicenseUpdateClient'
 import { mapNationalId } from '../firearmLicenseMapper'
 import type { ConfigType } from '@island.is/nest/config'
 import { FirearmDigitalLicenseClientConfig } from '../firearmLicenseClient.config'
+import {
+  PassDataInput,
+  PkPass,
+  RevokePassData,
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -30,7 +30,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     @Inject(FirearmDigitalLicenseClientConfig.KEY)
     private config: ConfigType<typeof FirearmDigitalLicenseClientConfig>,
     private openFirearmApi: OpenFirearmApi,
-    protected smartApi: SmartSolutionsApi,
+    protected smartApi: SmartSolutionsService,
   ) {
     super(logger, smartApi)
   }
@@ -39,7 +39,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PkPass>> {
     const inputFieldValues = inputData.inputFieldValues ?? []
     //small check that nationalId doesnt' already exist
     if (
@@ -62,7 +62,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
   async pullUpdate(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass>> {
+  ): Promise<Result<PkPass>> {
     let data
     try {
       data = await Promise.all([
@@ -202,7 +202,7 @@ export class FirearmLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const passNationalId = verifyRes.data.pass?.inputFieldValues.find(
+    const passNationalId = (verifyRes.data.pass?.inputFieldValues ?? []).find(
       (i) => i.passInputField.identifier === 'kt',
     )?.value
 

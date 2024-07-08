@@ -3,12 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { User } from '@island.is/auth-nest-tools'
 import { Inject, Injectable } from '@nestjs/common'
 import { FirearmApi } from '@island.is/clients/firearm-license'
-import {
-  Pass,
-  PassDataInput,
-  Result,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
 import compareAsc from 'date-fns/compareAsc'
 import {
   LicenseClient,
@@ -19,6 +13,12 @@ import {
 } from '../../../licenseClient.type'
 import { FirearmLicenseDto } from '../firearmLicenseClient.type'
 import { createPkPassDataInput } from '../firearmLicenseMapper'
+import {
+  PassDataInput,
+  PkPass,
+  Result,
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'firearmlicense-service'
@@ -30,7 +30,7 @@ export class FirearmLicenseClient
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private firearmApi: FirearmApi,
-    private smartApi: SmartSolutionsApi,
+    private smartApi: SmartSolutionsService,
   ) {}
 
   clientSupportsPkPass = true
@@ -185,7 +185,7 @@ export class FirearmLicenseClient
     return payload
   }
 
-  async getPkPass(user: User): Promise<Result<Pass>> {
+  async getPkPass(user: User): Promise<Result<PkPass>> {
     const license = await this.fetchLicenseData(user)
 
     if (!license.ok || !license.data) {

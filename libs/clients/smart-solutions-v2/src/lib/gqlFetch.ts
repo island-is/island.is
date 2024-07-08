@@ -4,6 +4,7 @@ import { Logger } from 'winston'
 import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
+  GraphqlError,
   GraphqlErrorResponse,
   GraphqlFetchResponse,
 } from './types/graphqlFetchResponses.type'
@@ -45,7 +46,9 @@ export class GQLFetcher {
     }
 
     if (res.error) {
-      const errorCode = mapErrorToActionStatusCode(res.error?.extensions.type)
+      const errorCode = mapErrorToActionStatusCode(
+        res.error?.extensions?.type ?? undefined,
+      )
       return {
         ok: false,
         error: {

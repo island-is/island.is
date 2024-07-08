@@ -1,26 +1,21 @@
 import { AdrAndMachineLicenseClientModule } from '@island.is/clients/adr-and-machine-license'
-import {
-  SmartSolutionsApiClientModule,
-  SmartSolutionsConfig,
-} from '@island.is/clients/smartsolutions'
+
 import { Module } from '@nestjs/common'
 import { ConfigType } from '@island.is/nest/config'
 import { AdrLicenseClient } from './adrLicenseClient.service'
 import { AdrDigitalLicenseClientConfig } from './adrLicenseClient.config'
+import { SmartSolutionsModule } from '@island.is/clients/smart-solutions'
 
 @Module({
   imports: [
     AdrAndMachineLicenseClientModule,
-    SmartSolutionsApiClientModule.registerAsync({
+    SmartSolutionsModule.registerAsync({
       useFactory: (
         config: ConfigType<typeof AdrDigitalLicenseClientConfig>,
       ) => {
-        const smartConfig: SmartSolutionsConfig = {
-          apiKey: config.apiKey,
-          apiUrl: config.apiUrl,
-          passTemplateId: config.passTemplateId,
+        return {
+          config,
         }
-        return smartConfig
       },
       inject: [AdrDigitalLicenseClientConfig.KEY],
     }),

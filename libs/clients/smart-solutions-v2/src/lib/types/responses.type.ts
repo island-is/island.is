@@ -4,7 +4,7 @@ export type PkPass = Partial<Pass>
 
 export interface VerifyPassData {
   valid: boolean
-  data?: PkPass
+  pass?: PkPass
 }
 
 export interface RevokePassData {
