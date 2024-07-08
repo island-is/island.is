@@ -15,10 +15,22 @@ export interface AttachmentData {
 export class AttachmentS3Service {
   constructor(private readonly aws: AwsService) {}
 
+  /**
+   * This function retrieves files from an application based on provided attachment keys.
+   * It iterates over the attachment keys, retrieves the corresponding answers from the application,
+   * and converts them into a list of document data. The resulting list of document data is then returned.
+   *
+   * @param {Application} application - The application from which to retrieve files.
+   * @param {string[]} attachmentAnswerKeys - The keys of the attachments to retrieve.
+   * @returns {Promise<AttachmentData[]>} - A promise that resolves to an array of attachment data.
+   */
   public async getFiles(
     application: Application,
-    attachmentAnswerKeys: string[],
+    attachmentAnswerKeys: string | string[],
   ): Promise<AttachmentData[]> {
+    if (!Array.isArray(attachmentAnswerKeys)) {
+      attachmentAnswerKeys = [attachmentAnswerKeys]
+    }
     const attachments: AttachmentData[] = []
 
     for (const key of attachmentAnswerKeys) {
