@@ -38,10 +38,17 @@ import {
 import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED' | 'DEFENDANT_VIEWS_VERDICT'
 
-export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) =>
-  defendant.verdictViewDate !== null ||
-  defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE ||
-  defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) => {
+  switch (defendant.serviceRequirement) {
+    case ServiceRequirement.NOT_APPLICABLE:
+    case ServiceRequirement.NOT_REQUIRED:
+      return true
+    case ServiceRequirement.REQUIRED:
+      return defendant.verdictViewDate !== null
+    default:
+      return false
+  }
+}
 
 export const Overview = () => {
   const router = useRouter()
