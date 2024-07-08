@@ -130,6 +130,7 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
       fields: data.map((field) => ({
         type: GenericLicenseDataFieldType.Category,
         name: field.flokkur ?? '',
+        label: field.heiti ?? '',
         description: field.heiti ?? '',
       })),
     }

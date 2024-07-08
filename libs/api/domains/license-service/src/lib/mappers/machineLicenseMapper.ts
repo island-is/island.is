@@ -96,6 +96,7 @@ export class MachineLicensePayloadMapper implements GenericLicenseMapper {
                 type: GenericLicenseDataFieldType.Category,
                 name: field.flokkur ?? '',
                 description: field.fulltHeiti ?? field.stuttHeiti ?? '',
+                label: field.fulltHeiti ?? field.stuttHeiti ?? '',
                 fields: this.parseVvrRights(field, formatMessage),
               })),
           },

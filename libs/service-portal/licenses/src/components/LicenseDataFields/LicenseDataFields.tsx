@@ -113,11 +113,7 @@ export const LicenseDataFields = ({
             )}
             {field.type === GenericLicenseDataFieldType.Category && (
               <ExpandableLine
-                title={
-                  field.value
-                    ? field.name ?? ''
-                    : [field.name, field.label].filter(Boolean).join(' ')
-                }
+                title={field.name ?? ''}
                 data={field.fields ?? []}
                 description={field.description ?? undefined}
                 type={licenseType}

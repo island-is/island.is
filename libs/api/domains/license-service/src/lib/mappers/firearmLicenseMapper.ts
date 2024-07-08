@@ -68,14 +68,14 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
               ? {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.publishedDate),
-                  value: licenseInfo.issueDate ?? '',
+                  value: formatDate(new Date(licenseInfo.issueDate)) ?? '',
                 }
               : null,
             licenseInfo.expirationDate
               ? {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.validTo),
-                  value: licenseInfo.expirationDate ?? '',
+                  value: formatDate(new Date(licenseInfo.expirationDate)) ?? '',
                   tag: expiryTag(formatMessage, isExpired),
                 }
               : null,
@@ -83,7 +83,10 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
               ? {
                   type: GenericLicenseDataFieldType.Value,
                   label: formatMessage(m.collectorLicenseValidTo),
-                  value: licenseInfo.collectorLicenseExpirationDate ?? '',
+                  value:
+                    formatDate(
+                      new Date(licenseInfo.collectorLicenseExpirationDate),
+                    ) ?? '',
                 }
               : null,
 
