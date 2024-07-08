@@ -1,10 +1,10 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 
 import AmazonS3URI from 'amazon-s3-uri'
-import { S3Client, GetObjectCommand } from '@aws-sdk/client-s3'
+import { S3 } from 'aws-sdk'
 import {
   SyslumennService,
   Person,
@@ -22,6 +22,7 @@ import {
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
+  InstitutionNationalIds,
   YES,
 } from '@island.is/application/types'
 import { Info, BankruptcyHistoryResult } from './types/application'
@@ -36,15 +37,10 @@ import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 import { error } from '@island.is/application/templates/operating-license'
 import { isPerson } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
-import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
-
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
-  s3Client: S3Client
-
+  s3: S3
   constructor(
-    @Inject(LOGGER_PROVIDER)
-    private readonly logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
     private readonly criminalRecordService: CriminalRecordService,
@@ -52,7 +48,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly judicialAdministrationService: JudicialAdministrationService,
   ) {
     super(ApplicationTypes.OPERATING_LICENSE)
-    this.s3Client = new S3Client({})
+    this.s3 = new S3()
   }
 
   async criminalRecord({
@@ -340,17 +336,14 @@ export class OperatingLicenseService extends BaseTemplateApiService {
 
     const uploadBucket = bucket
     try {
-      const command = new GetObjectCommand({
-        Bucket: uploadBucket,
-        Key: key,
-      })
-      const response = await this.s3Client.send(command)
-      const fileContent = await response.Body?.transformToByteArray()
-      if (!fileContent) {
-        this.logger.error(`File not found`, { key, bucket: uploadBucket })
-        throw new Error('File not found')
-      }
-      return Buffer.from(fileContent).toString('base64') || ''
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64') || ''
     } catch (e) {
       return 'err'
     }
