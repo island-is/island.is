@@ -4,7 +4,6 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 
 import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import {
   SyslumennService,
   Person,
@@ -22,7 +21,6 @@ import {
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
-  InstitutionNationalIds,
   YES,
 } from '@island.is/application/types'
 import { Info, BankruptcyHistoryResult } from './types/application'
@@ -37,18 +35,19 @@ import { BANNED_BANKRUPTCY_STATUSES } from './constants'
 import { error } from '@island.is/application/templates/operating-license'
 import { isPerson } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
+import { AwsService } from '@island.is/nest/aws'
+
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly syslumennService: SyslumennService,
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.OPERATING_LICENSE)
-    this.s3 = new S3()
   }
 
   async criminalRecord({
@@ -334,16 +333,10 @@ export class OperatingLicenseService extends BaseTemplateApiService {
   private async getFileContentBase64(fileName: string): Promise<string> {
     const { bucket, key } = AmazonS3URI(fileName)
 
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64') || ''
+      const file = await this.awsService.getFile(bucket, key)
+      const fileContent = file.Body
+      return fileContent?.transformToString('base64') || ''
     } catch (e) {
       return 'err'
     }
