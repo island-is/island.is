@@ -45,7 +45,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
-    private readonly awsService: AwsService,
+    private readonly aws: AwsService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -59,20 +59,28 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
     for (const attachment of attachments) {
       const Key = `${application.id}/${attachment.key}`
-      const file = await this.awsService.getFile(this.attachmentBucket, Key)
-
-      if (!file.Body) {
-        throw new Error('File content was undefined')
-      }
+      const pdf = await this.getPdf(Key)
 
       result.push({
         name: attachment.name,
         type,
-        file: file.Body,
+        file: pdf,
       })
     }
 
     return result
+  }
+
+  async getPdf(key: string) {
+    this.logger.debug('Getting pdf', { key })
+    const file = await this.aws.getFile(this.attachmentBucket, key)
+    const fileContent = file.Body
+
+    if (!fileContent) {
+      throw new Error('File content was undefined')
+    }
+
+    return fileContent.transformToString('base64')
   }
 
   private async getAdditionalAttachments(
