@@ -13,7 +13,6 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
-import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
@@ -25,9 +24,8 @@ import { SmsService } from '@island.is/nova-sms'
 import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-
-export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
+import { AwsService } from '@island.is/nest/aws'
+import AmazonS3URI from 'amazon-s3-uri'
 
 type props = Override<
   TemplateApiModuleActionProps,
@@ -36,17 +34,13 @@ type props = Override<
 
 @Injectable()
 export class ChildrenResidenceChangeService extends BaseTemplateApiService {
-  s3: S3
-
   constructor(
     private readonly syslumennService: SyslumennService,
-    @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
-    private nationalRegistryApi: NationalRegistryClientService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
-    this.s3 = new S3()
   }
 
   async submitApplication({ application }: props) {
@@ -54,10 +48,8 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.s3
-      .getObject({ Bucket: this.presignedBucket, Key: s3FileName })
-      .promise()
-    const fileContent = file.Body as Buffer
+    const { bucket, key } = AmazonS3URI(s3FileName)
+    const file = await this.awsService.getFile(bucket, key)
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,
@@ -73,14 +65,14 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     )
     const currentAddress = childResidenceInfo?.current?.address
 
-    if (!fileContent) {
+    if (!file.Body) {
       throw new Error('File content was undefined')
     }
 
     const attachments: Attachment[] = [
       {
         name: `Lögheimilisbreyting-barns-${applicant.nationalId}.pdf`,
-        content: fileContent.toString('base64'),
+        content: await file.Body?.transformToString('base64'),
       },
     ]
 
