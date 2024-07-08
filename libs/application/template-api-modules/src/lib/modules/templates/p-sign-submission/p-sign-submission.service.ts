@@ -16,12 +16,13 @@ import {
 } from '@island.is/application/types'
 
 import AmazonS3URI from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import { SharedTemplateApiService } from '../../shared'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { AwsService } from '@island.is/nest/aws'
+import { AttachmentS3Service } from '../../shared/services'
 
 export const QUALITY_PHOTO = `
 query HasQualityPhoto {
@@ -59,14 +60,13 @@ type Delivery = {
 const YES = 'yes'
 @Injectable()
 export class PSignSubmissionService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    private readonly aws: AwsService,
   ) {
     super(ApplicationTypes.P_SIGN)
-    this.s3 = new S3()
   }
 
   async doctorsNote({
@@ -187,11 +187,13 @@ export class PSignSubmissionService extends BaseTemplateApiService {
   private async getAttachments({
     application,
   }: TemplateApiModuleActionProps): Promise<string> {
-    const attachments = getValueViaPath(
-      application.answers,
+    const attacher = new AttachmentS3Service(this.aws)
+    const attachments = await attacher.getFiles(
+      application,
       'photo.attachments',
-    ) as Array<{ key: string; name: string }>
-    const hasAttachments = attachments && attachments?.length > 0
+    )
+
+    const hasAttachments = attachments && attachments.length > 0
 
     if (!hasAttachments) {
       return Promise.reject({})
@@ -204,16 +206,8 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       }
     )[attachmentKey]
 
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
-    const file = await this.s3
-      .getObject({
-        Bucket: uploadBucket,
-        Key: key,
-      })
-      .promise()
-    const fileContent = file.Body as Buffer
-    return fileContent?.toString('base64') || ''
+    const file = await this.aws.getFile(fileName)
+    const fileContent = file.Body
+    return fileContent?.transformToString('base64') || ''
   }
 }
