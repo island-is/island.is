@@ -1,6 +1,5 @@
 import { Client } from '@elastic/elasticsearch'
 import merge from 'lodash/merge'
-import { config } from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
@@ -392,7 +391,8 @@ export class ElasticService {
     }
 
     return new Client({
-      ...AwsConnector(config),
+      // TODO: Send config, but try to use the local environment instead of explicit config
+      ...AwsConnector(),
       node: elastic.node,
     })
   }

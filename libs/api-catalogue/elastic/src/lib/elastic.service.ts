@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
-import { config } from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
@@ -157,7 +156,8 @@ export class ElasticService {
     }
 
     return new Client({
-      ...AwsConnector(config),
+      // TODO: Send config, but try to use the local environment instead of explicit config
+      ...AwsConnector(),
       node: elastic.node,
     })
   }
