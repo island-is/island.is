@@ -1,5 +1,6 @@
-import { SES } from 'aws-sdk'
+import { SESClient, SESClientConfig } from '@aws-sdk/client-ses'
 import nodemailer from 'nodemailer'
+import { SESTransport } from 'nodemailer-ses-transport'
 
 import { Inject } from '@nestjs/common'
 
@@ -62,7 +63,7 @@ export class EmailService {
 
     this.logger.debug('Using SES')
 
-    const cfg: SES.ClientConfiguration = {
+    const cfg: SESClientConfig = {
       apiVersion: '2010-12-01',
     }
 
@@ -70,9 +71,11 @@ export class EmailService {
       cfg.region = this.options.options?.region
     }
 
-    return {
-      SES: new SES(cfg),
-    }
+    const sesClient = new SESClient(cfg)
+
+    return new SESTransport({
+      SES: { ses: sesClient, aws: { SendRawEmail: () => {} } },
+    })
   }
 
   async sendEmail(message: Message): Promise<string> {
