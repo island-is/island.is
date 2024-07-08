@@ -1,5 +1,5 @@
 import { useIntl } from 'react-intl'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 
 import {

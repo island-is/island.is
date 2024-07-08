@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/ui-components/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/ui-components/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/ui-components/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/ui-components/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/application/ui-components"]
     },
@@ -28,6 +23,5 @@
         "command": "graphql-codegen --config libs/application/ui-components/codegen.yml"
       }
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }

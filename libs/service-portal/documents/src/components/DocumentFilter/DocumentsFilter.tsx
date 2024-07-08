@@ -195,7 +195,7 @@ const DocumentsFilter = ({
                 key="date-accordion-item"
                 id="date-accordion-item"
                 label={formatMessage(m.datesLabel)}
-                labelUse="h5"
+                labelUse="h2"
                 labelVariant="h5"
                 iconVariant="small"
               >

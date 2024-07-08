@@ -81,7 +81,7 @@ ENV PORT=4200
 COPY --from=deps /build/node_modules /webapp/node_modules
 COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
-ENTRYPOINT [ "node", "--no-experimental-fetch", "main.js" ]
+ENTRYPOINT [ "node", "main.js" ]
 
 FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 ARG APP

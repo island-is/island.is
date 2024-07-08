@@ -15,6 +15,7 @@ export const serviceSetup = (services: {
     .secrets({
       ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL',
       BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN',
+      LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY',
     })
     .liveness('/liveness')
     .readiness('/liveness')

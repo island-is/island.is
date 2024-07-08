@@ -3,22 +3,18 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/regulations-admin/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/api/domains/regulations-admin/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/regulations-admin/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/regulations-admin/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/regulations-admin"]
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

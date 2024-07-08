@@ -36,7 +36,7 @@ interface Props {
   infoBoxText?: string
 }
 
-const FormFooter: FC<React.PropsWithChildren<Props>> = ({
+const FormFooter: FC<Props> = ({
   previousUrl,
   previousIsDisabled,
   previousButtonText,

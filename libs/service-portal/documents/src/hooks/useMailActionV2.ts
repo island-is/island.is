@@ -6,6 +6,7 @@ import { m } from '@island.is/service-portal/core'
 import { useMailActionV2Mutation } from '../screens/Overview/Overview.generated'
 import { MailActions } from '../utils/types'
 import { useDocumentList } from './useDocumentList'
+import { messages as docMessages } from '../utils/messages'
 
 export const useMailAction = () => {
   const { formatMessage } = useLocale()
@@ -55,6 +56,7 @@ export const useMailAction = () => {
         }
         if (actionName === 'archive') {
           setArchiveSuccess(true)
+          toast.success(formatMessage(docMessages.successArchive))
           setDataSuccess({
             ...dataSuccess,
             archive: true,
@@ -62,6 +64,7 @@ export const useMailAction = () => {
         }
         if (actionName === 'unarchive') {
           setArchiveSuccess(false)
+          toast.success(formatMessage(docMessages.successUnarchive))
           setDataSuccess({
             ...dataSuccess,
             unarchive: true,
@@ -88,6 +91,7 @@ export const useMailAction = () => {
             if (refetch) {
               refetch(fetchObject)
             }
+            toast.success(formatMessage(docMessages.successArchiveMulti))
           } else {
             toast.error(formatMessage(m.errorTitle))
           }

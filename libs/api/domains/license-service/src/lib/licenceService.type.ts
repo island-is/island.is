@@ -19,15 +19,18 @@ export enum GenericLicenseType {
  * */
 export enum GenericLicenseOrganizationSlug {
   DriversLicense = 'rikislogreglustjori',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   FirearmLicense = 'rikislogreglustjori',
   HuntingLicense = 'umhverfisstofnun',
   AdrLicense = 'vinnueftirlitid',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   MachineLicense = 'vinnueftirlitid',
   DisabilityLicense = 'tryggingastofnun',
   PCard = 'syslumenn',
   EHIC = 'sjukratryggingar-islands',
   Passport = 'thjodskra-islands',
 }
+
 export type GenericLicenseTypeType = keyof typeof GenericLicenseType
 
 export enum GenericLicenseProviderId {

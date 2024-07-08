@@ -129,7 +129,7 @@ export class UniversityCareersClientService {
         .filter(isDefined) ?? []
 
     if (!transcripts.length) {
-      this.logger.debug('No transcripts found for user', {
+      this.logger.info('No transcripts found for user', {
         university,
       })
     }

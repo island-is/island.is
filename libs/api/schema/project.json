@@ -3,13 +3,11 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/schema/src",
   "projectType": "library",
+  "tags": ["lib:dom", "scope:dom"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/api/schema/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
@@ -17,6 +15,5 @@
         "command": "graphql-codegen --config libs/api/schema/codegen.yml"
       }
     }
-  },
-  "tags": ["lib:dom", "scope:dom"]
+  }
 }

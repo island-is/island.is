@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { DelegationType } from './DelegationType.dto'
-import { Environment } from 'environment'
+import { Environment } from '@island.is/shared/types'
 
 @ObjectType('AuthAdminDelegationProvider')
 export class DelegationProvider {

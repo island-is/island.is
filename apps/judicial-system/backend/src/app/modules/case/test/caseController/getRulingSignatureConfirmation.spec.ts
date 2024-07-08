@@ -1,8 +1,6 @@
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
-import { ForbiddenException } from '@nestjs/common'
-
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
@@ -212,25 +210,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
       ])
     })
   })
-
-  describe('user is not the assigned judge', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, judgeId: uuid() } as Case
-    const documentToken = uuid()
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(caseId, user, theCase, documentToken)
-    })
-
-    it('should throw ForbiddenException', () => {
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe(
-        'A ruling must be signed by the assigned judge',
-      )
-    })
-  })
-
   describe('database update fails', () => {
     const caseId = uuid()
     const theCase = {

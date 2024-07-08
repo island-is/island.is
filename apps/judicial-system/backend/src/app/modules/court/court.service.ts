@@ -130,6 +130,7 @@ enum RobotEmailType {
   NEW_INDICTMENT_INFO = 'INDICTMENT_INFO',
   INDICTMENT_CASE_ASSIGNED_ROLES = 'INDICTMENT_CASE_ASSIGNED_ROLES',
   INDICTMENT_CASE_DEFENDER_INFO = 'INDICTMENT_CASE_DEFENDER_INFO',
+  INDICTMENT_CASE_CANCELLATION_NOTICE = 'INDICTMENT_CASE_CANCELLATION_NOTICE',
 }
 
 @Injectable()
@@ -508,7 +509,7 @@ export class CourtService {
       })
   }
 
-  async updateCaseWithConclusion(
+  updateCaseWithConclusion(
     user: User,
     caseId: string,
     courtName?: string,
@@ -559,7 +560,7 @@ export class CourtService {
     }
   }
 
-  async updateIndictmentCaseWithIndictmentInfo(
+  updateIndictmentCaseWithIndictmentInfo(
     user: User,
     caseId: string,
     courtName?: string,
@@ -607,7 +608,7 @@ export class CourtService {
     }
   }
 
-  async updateIndictmentCaseWithDefenderInfo(
+  updateIndictmentCaseWithDefenderInfo(
     user: User,
     caseId: string,
     courtName?: string,
@@ -646,7 +647,7 @@ export class CourtService {
     }
   }
 
-  async updateIndictmentCaseWithAssignedRoles(
+  updateIndictmentCaseWithAssignedRoles(
     user: User,
     caseId: string,
     courtName?: string,
@@ -678,7 +679,26 @@ export class CourtService {
     }
   }
 
-  async updateAppealCaseWithReceivedDate(
+  updateIndictmentCaseWithCancellationNotice(
+    user: User,
+    caseId: string,
+    courtName?: string,
+    courtCaseNumber?: string,
+    noticeSubject?: string,
+    noticeText?: string,
+  ): Promise<unknown> {
+    const subject = `${courtName} - ${courtCaseNumber} - afturköllun`
+    const content = JSON.stringify({ subject: noticeSubject, text: noticeText })
+
+    return this.sendToRobot(
+      subject,
+      content,
+      RobotEmailType.INDICTMENT_CASE_CANCELLATION_NOTICE,
+      caseId,
+    )
+  }
+
+  updateAppealCaseWithReceivedDate(
     user: User,
     caseId: string,
     appealCaseNumber?: string,
@@ -711,7 +731,7 @@ export class CourtService {
     }
   }
 
-  async updateAppealCaseWithAssignedRoles(
+  updateAppealCaseWithAssignedRoles(
     user: User,
     caseId: string,
     appealCaseNumber?: string,
@@ -767,7 +787,7 @@ export class CourtService {
     }
   }
 
-  async updateAppealCaseWithConclusion(
+  updateAppealCaseWithConclusion(
     user: User,
     caseId: string,
     appealCaseNumber?: string,
@@ -808,7 +828,7 @@ export class CourtService {
     }
   }
 
-  async updateAppealCaseWithFile(
+  updateAppealCaseWithFile(
     user: User,
     caseId: string,
     fileId: string,

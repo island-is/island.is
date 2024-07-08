@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/finance/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/finance/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/finance"],
       "options": {
-        "jestConfig": "libs/clients/finance/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/finance/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

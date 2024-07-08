@@ -46,7 +46,7 @@ export class UserProfile {
   @Field(() => Boolean, {
     nullable: true,
     deprecationReason:
-      'Deprecated due to new field "EmailNotification" from UserProfile V2',
+      'Deprecated due to new field EmailNotification from UserProfile V2',
   })
   canNudge?: boolean
 

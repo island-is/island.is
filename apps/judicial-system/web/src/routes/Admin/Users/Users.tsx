@@ -74,6 +74,8 @@ export const Users = () => {
         return 'Aðstoðarmaður dómara'
       case UserRole.PRISON_SYSTEM_STAFF:
         return 'Starfsmaður'
+      case UserRole.PUBLIC_PROSECUTOR_STAFF:
+        return 'Skrifstofa'
       default:
         return 'Óþekkt'
     }

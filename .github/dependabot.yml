@@ -24,3 +24,11 @@ updates:
     labels:
       - automerge
       - dependencies
+
+  - package-ecosystem: npm
+    directory: /scripts/ci/cache
+    schedule:
+      interval: daily
+    labels:
+      - automerge
+      - dependencies

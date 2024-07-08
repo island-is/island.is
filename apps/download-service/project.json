@@ -4,6 +4,7 @@
   "sourceRoot": "apps/download-service/src",
   "projectType": "application",
   "prefix": "download-service",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -29,20 +30,17 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/download-service/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/download-service"],
       "options": {
-        "jestConfig": "apps/download-service/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/download-service/jest.config.ts"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

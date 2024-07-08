@@ -16,7 +16,7 @@ import {
   PassDataInput,
   SmartSolutionsApi,
 } from '@island.is/clients/smartsolutions'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import {
   LicenseClient,
   LicensePkPassAvailability,

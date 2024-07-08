@@ -1,6 +1,7 @@
 import {
   InstitutionNationalIds,
   PaymentCatalogApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
@@ -8,4 +9,9 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
     organizationId: InstitutionNationalIds.SYSLUMENN,
   },
   externalDataId: 'payment',
+})
+
+export const DuplicateEligibilityApi = defineTemplateApi({
+  action: 'canGetNewDuplicate',
+  shouldPersistToExternalData: false,
 })

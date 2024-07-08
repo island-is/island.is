@@ -27,7 +27,7 @@ import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { LayoutProps, withMainLayout } from '@island.is/web/layouts/main'
 import type { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
 import {

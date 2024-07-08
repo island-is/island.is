@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/fishing-license/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/fishing-license/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/fishing-license"],
       "options": {
-        "jestConfig": "libs/clients/fishing-license/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/fishing-license/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -39,6 +34,5 @@
       },
       "outputs": ["{projectRoot}/src/lib/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

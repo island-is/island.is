@@ -3,21 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/service-desk/src",
   "projectType": "library",
+  "tags": ["scope:portals-admin", "lib:portals-admin"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/portals/admin/service-desk/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/portals/admin/service-desk"],
       "options": {
-        "jestConfig": "libs/portals/admin/service-desk/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/portals/admin/service-desk/jest.config.ts"
       }
     },
     "codegen/frontend-client": {
@@ -27,6 +22,5 @@
         "command": "graphql-codegen --config libs/portals/admin/service-desk/codegen.yml"
       }
     }
-  },
-  "tags": ["scope:portals-admin", "lib:portals-admin"]
+  }
 }

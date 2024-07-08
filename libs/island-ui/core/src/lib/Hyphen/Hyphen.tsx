@@ -1,6 +1,7 @@
 import React, { useMemo } from 'react'
-import Hypher from 'hypher'
 import { Locale } from '@island.is/shared/types'
+
+import Hypher from 'hypher'
 
 import is from './patterns/is'
 import en from './patterns/en'

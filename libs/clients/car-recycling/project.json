@@ -3,20 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/car-recycling/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["skilavottord-ws"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/car-recycling/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/car-recycling"],
       "options": {
-        "jestConfig": "libs/clients/car-recycling/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/car-recycling/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -30,7 +28,5 @@
       ],
       "outputs": ["{projectRoot}/gen", "{projectRoot}/**/*.generated.ts"]
     }
-  },
-  "implicitDependencies": ["skilavottord-ws"],
-  "tags": ["lib:client", "scope:client"]
+  }
 }

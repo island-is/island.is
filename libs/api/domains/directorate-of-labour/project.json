@@ -3,26 +3,20 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/directorate-of-labour/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/api/domains/directorate-of-labour/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/directorate-of-labour/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/directorate-of-labour/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/api/domains/directorate-of-labour"
       ]
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

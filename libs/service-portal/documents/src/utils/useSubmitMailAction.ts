@@ -4,6 +4,7 @@ import { useState } from 'react'
 import { toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '@island.is/service-portal/core'
+import { messages } from './messages'
 
 const POST_MAIL_ACTION = gql`
   mutation PostMailActionMutation($input: PostMailActionResolverInput!) {
@@ -61,6 +62,7 @@ export const useSubmitMailAction = (input?: { messageId: string }) => {
         }
         if (actionName === 'archive') {
           setArchiveSuccess(true)
+          toast.success(formatMessage(messages.successArchive))
           setDataSuccess({
             ...dataSuccess,
             archive: true,
@@ -68,6 +70,7 @@ export const useSubmitMailAction = (input?: { messageId: string }) => {
         }
         if (actionName === 'unarchive') {
           setArchiveSuccess(false)
+          toast.success(formatMessage(messages.successUnarchive))
           setDataSuccess({
             ...dataSuccess,
             unarchive: true,

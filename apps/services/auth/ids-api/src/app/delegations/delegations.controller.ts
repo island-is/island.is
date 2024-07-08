@@ -28,7 +28,7 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')

@@ -1,8 +1,3 @@
-import {
-  MortgageCertificateValidation,
-  PropertyDetail,
-} from '@island.is/clients/syslumenn'
-
 export interface Address {
   streetAddress?: string
   city?: string
@@ -24,7 +19,8 @@ export interface SubmitRequestToSyslumennResult {
   hasSentRequest: boolean
 }
 
-export interface ValidateMortgageCertificateResult {
-  validation: MortgageCertificateValidation
-  propertyDetails: PropertyDetail
+export interface SelectedProperty {
+  propertyNumber: string
+  propertyName: string
+  propertyType: string
 }

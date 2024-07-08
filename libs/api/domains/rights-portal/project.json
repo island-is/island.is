@@ -3,22 +3,17 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/rights-portal/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/api/domains/rights-portal/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/rights-portal"],
       "options": {
-        "jestConfig": "libs/api/domains/rights-portal/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/rights-portal/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

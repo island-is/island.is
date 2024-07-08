@@ -25,6 +25,7 @@ import {
 
 import { CaseEvent, EventService } from '../event'
 import { DeliverDto } from './dto/deliver.dto'
+import { DeliverCancellationNoticeDto } from './dto/deliverCancellationNotice.dto'
 import { InternalCasesDto } from './dto/internalCases.dto'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { CurrentCase } from './guards/case.decorator'
@@ -218,6 +219,34 @@ export class InternalCaseController {
       theCase,
       deliverDto.user,
       nationalId,
+    )
+  }
+
+  @UseGuards(CaseExistsGuard, new CaseTypeGuard(indictmentCases))
+  @Post(
+    `case/:caseId/${
+      messageEndpoint[
+        MessageType.DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE
+      ]
+    }`,
+  )
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers an indictment cancellation notice to court',
+  })
+  deliverIndictmentCancellationNoticeToCourt(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+    @Body() deliverDto: DeliverCancellationNoticeDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering the cancellation notice for indictment case ${caseId} to court`,
+    )
+
+    return this.internalCaseService.deliverIndictmentCancellationNoticeToCourt(
+      theCase,
+      deliverDto.withCourtCaseNumber,
+      deliverDto.user,
     )
   }
 

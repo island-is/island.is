@@ -4570,6 +4570,9 @@ export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
 
+  /** Only use one title */
+  onlyUseOneTitle?: boolean | undefined
+
   /** Left Content */
   leftContent?: Document | undefined
 

@@ -7,7 +7,16 @@ export const m = defineMessages({
   },
   maintenanceFooter: {
     id: 'sp.social-insurance-maintenance:maintenance-footer',
-    defaultMessage: ' ',
+    defaultMessage:
+      'Hægt er að nálgast eldri áætlanir á mínum síðum TR undir mín skjöl.',
+  },
+  maintenanceFooterLinkUrl: {
+    id: 'sp.social-insurance-maintenance:maintenance-footer-link-url',
+    defaultMessage: 'https://minarsidur.tr.is/forsendur/rafraen-skjol',
+  },
+  maintenanceFooterLink: {
+    id: 'sp.social-insurance-maintenance:maintenance-footer-link',
+    defaultMessage: ' <link>Fara á mínar síður TR</link>',
   },
   paymentPlan: {
     id: 'sp.social-insurance-maintenance:payment-plan',

@@ -72,7 +72,11 @@ const NotificationButton = ({
             : setMenuState('notifications')
         }}
         ref={ref}
-        aria-label={formatMessage(m.notifications)}
+        aria-label={
+          showBadge
+            ? formatMessage(m.notificationsUnread)
+            : formatMessage(m.notifications)
+        }
       />
       {data?.userNotificationsOverview?.data.length ? (
         <Box

@@ -31,6 +31,7 @@ import {
   isAdminUser,
   isCourtOfAppealsUser,
   isDefenceUser,
+  isPrisonSystemUser,
 } from '@island.is/judicial-system/types'
 import { api } from '@island.is/judicial-system-web/src/services'
 
@@ -96,6 +97,8 @@ const HeaderContainer = () => {
       ? constants.USERS_ROUTE
       : isCourtOfAppealsUser(user)
       ? constants.COURT_OF_APPEAL_CASES_ROUTE
+      : isPrisonSystemUser(user)
+      ? constants.PRISON_CASES_ROUTE
       : constants.CASES_ROUTE
 
   const handleLogout = () => {

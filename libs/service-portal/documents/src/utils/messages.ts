@@ -92,4 +92,16 @@ export const messages = defineMessages({
     id: 'sp.documents:mark-as-bulk-selection',
     defaultMessage: 'Merkja skjal fyrir fjöldaframkvæmd',
   },
+  successArchiveMulti: {
+    id: 'sp.documents:success-archive-messages',
+    defaultMessage: 'Skjöl sett í geymslu',
+  },
+  successArchive: {
+    id: 'sp.documents:success-archive-message',
+    defaultMessage: 'Skjal sett í geymslu',
+  },
+  successUnarchive: {
+    id: 'sp.documents:success-unarchive-message',
+    defaultMessage: 'Skjal tekið úr geymslu',
+  },
 })

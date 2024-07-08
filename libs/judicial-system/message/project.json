@@ -3,23 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/judicial-system/message/src",
   "projectType": "library",
+  "tags": ["lib:judicial-system-api", "scope:judicial-system-api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/judicial-system/message/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/message"],
       "options": {
-        "jestConfig": "libs/judicial-system/message/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/judicial-system/message/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]
+  }
 }

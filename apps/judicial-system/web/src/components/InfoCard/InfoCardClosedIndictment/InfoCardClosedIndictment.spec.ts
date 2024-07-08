@@ -44,7 +44,7 @@ describe('getAdditionalDataSections', () => {
       {
         data: [
           { title: 'Yfirlestur', value: 'John Doe' },
-          { title: 'Ákvörðun', value: 'Una' },
+          { title: 'Ákvörðun', value: 'Una dómi' },
         ],
       },
     ])

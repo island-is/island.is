@@ -3,14 +3,10 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/payment-schedule/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/payment-schedule/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "codegen/backend-client": {
       "executor": "nx:run-commands",
@@ -23,10 +19,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/payment-schedule"],
       "options": {
-        "jestConfig": "libs/clients/payment-schedule/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/payment-schedule/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -118,6 +118,8 @@ export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
   servicesEndorsementApi: ServiceBuilder<'services-endorsement-api'>
   skilavottordWs: ServiceBuilder<'skilavottord-ws'>
+  // The user profile service is named service-portal-api in infra setup
+  servicePortalApi: ServiceBuilder<'service-portal-api'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -249,6 +251,9 @@ export const serviceSetup = (services: {
           'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
         prod: 'http://web-services-university-gateway.services-university-gateway.svc.cluster.local',
       },
+      SERVICE_USER_PROFILE_URL: ref(
+        (h) => `http://${h.svc(services.servicePortalApi)}`,
+      ),
     })
     .xroad(
       Base,

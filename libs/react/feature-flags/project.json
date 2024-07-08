@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/react/feature-flags/src",
   "projectType": "library",
+  "tags": ["lib:react-spa", "scope:react-spa"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/react/feature-flags/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/react/feature-flags"],
       "options": {
-        "jestConfig": "libs/react/feature-flags/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/react/feature-flags/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:react-spa", "scope:react-spa"]
+  }
 }

@@ -74,7 +74,7 @@ interface NewsListProps {
 const spacing: ResponsiveSpace = [3, 3, 4]
 const spacingMini: ResponsiveSpace = [0, 0, 4]
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+// @ts-expect-error make web strict
 const NewsListNew: Screen<NewsListProps> = ({
   newsItem,
   newsList,
@@ -90,7 +90,7 @@ const NewsListNew: Screen<NewsListProps> = ({
   const { linkResolver } = useLinkResolver()
   const { format, getMonthByIndex } = useDateUtils()
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const n = useNamespace(namespace)
   useContentfulId(newsItem?.id)
 
@@ -153,7 +153,7 @@ const NewsListNew: Screen<NewsListProps> = ({
     },
   ]
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const breadCrumbTags: BreadCrumbItem | BreadCrumbItem[] = newsItem
     ?.genericTags?.length
     ? newsItem.genericTags
@@ -200,7 +200,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         title={navTitle}
         items={navItems}
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         renderLink={(link, { href }) => {
           return (
             <NextLink href={href} legacyBehavior>
@@ -228,9 +228,9 @@ const NewsListNew: Screen<NewsListProps> = ({
 
   return (
     <>
-      {/** 
+      {/**
        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-       // @ts-ignore make web strict */}
+       // @ts-expect-error make web strict */}
       <HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}
@@ -305,7 +305,7 @@ const NewsListNew: Screen<NewsListProps> = ({
             title={navTitleMobile}
             items={navItems}
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             renderLink={(link, { href }) => {
               return (
                 <NextLink href={href} legacyBehavior>
@@ -324,7 +324,7 @@ const NewsListNew: Screen<NewsListProps> = ({
         {!newsItem && (
           <Webreader
             // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-ignore make web strict
+            // @ts-expect-error make web strict
             readId={null}
             readClass="rs_read"
           />
@@ -354,11 +354,9 @@ const NewsListNew: Screen<NewsListProps> = ({
                   <NewsCard
                     key={index}
                     title={title}
-                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
                     introduction={intro}
                     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                    // @ts-ignore make web strict
+                    // @ts-expect-error make web strict
                     image={image}
                     titleAs="h2"
                     href={linkResolver('news', [slug]).href}
@@ -414,17 +412,17 @@ const getIntParam = (s: string | string[]) => {
   if (!isNaN(i)) return i
 }
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
+// @ts-expect-error make web strict
 NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const year = getIntParam(query.y)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const month = year && getIntParam(query.m)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const selectedPage = getIntParam(query.page) ?? 1
   const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
 
@@ -483,19 +481,19 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
       .then((variables) => {
         // map data here to reduce data processing in component
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore make web strict
+        // @ts-expect-error make web strict
         return JSON.parse(variables.data.getNamespace.fields)
       }),
   ])
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const newsItem = getSingleNewsResult?.data?.getSingleNews ?? null
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const newsList = getNewsResults?.data?.getNews?.items ?? []
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore make web strict
+  // @ts-expect-error make web strict
   const total = getNewsResults?.data?.getNews?.total ?? 0
 
   const selectedYear = newsItem?.date
@@ -514,7 +512,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
 
   return {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
+    // @ts-expect-error make web strict
     newsList: newsList.map((item) => ({
       ...item,
       genericTags: item?.genericTags?.filter(filterOutFrontpageTag) ?? [],

@@ -25,7 +25,10 @@ import {
   DrivingLicenseDuplicateFeatureFlags,
   getApplicationFeatureFlags,
 } from './getApplicationFeatureFlags'
-import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import {
+  DuplicateEligibilityApi,
+  SyslumadurPaymentCatalogApi,
+} from '../dataProviders'
 import {
   coreHistoryMessages,
   getValueViaPath,
@@ -121,6 +124,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                 QualitySignatureApi,
                 QualityPhotoApi,
                 UserProfileApi,
+                DuplicateEligibilityApi,
               ],
               write: 'all',
               delete: true,

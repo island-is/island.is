@@ -38,8 +38,8 @@ describe('useFilter - filterOptionsForUser', () => {
         { value: 'INVESTIGATION', label: 'INVESTIGATION' },
       ]),
     )
-    expect(result.length).toBe(3)
-    expect(result).toEqual(
+    expect(result.length).toBe(2)
+    expect(result).not.toEqual(
       expect.arrayContaining([{ value: 'INDICTMENT', label: 'INDICTMENT' }]),
     )
   })

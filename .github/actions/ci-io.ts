@@ -11,6 +11,7 @@ import { Octokit } from '@octokit/rest'
 import { Endpoints } from '@octokit/types'
 import Debug from 'debug'
 import * as unzipper from 'unzipper'
+
 const app = Debug('change-detection:io')
 
 const repository = process.env.GITHUB_REPOSITORY || 'island-is/island.is'
@@ -44,6 +45,7 @@ export const chunk = <ElementType>(arr: ElementType[], size: number) =>
 
 export class LocalRunner implements GitActionStatus {
   constructor(private octokit: Octokit) {}
+
   async getChangedComponents(
     git: SimpleGit,
     sha1: string,
@@ -70,8 +72,9 @@ export class LocalRunner implements GitActionStatus {
         `npx`,
         [
           `nx`,
-          `print-affected`,
-          `--select=projects`,
+          `show`,
+          `projects`,
+          `--affected`,
           ...chunk(changedFiles, 20).map(
             (chunk) => `--files=${chunk.join(',')}`,
           ),
@@ -84,22 +87,18 @@ export class LocalRunner implements GitActionStatus {
       )
       if (printAffected.status !== 0) {
         log(
-          `Error running nx print-affected. Error is %O, stderr is %O`,
+          `Error running nx show projects --affected. Error is %O, stderr is %O`,
           printAffected.error,
           printAffected.stderr,
         )
-        printAffected = spawnSync(
-          `npx`,
-          [`nx`, `print-affected`, `--select=projects`, '--all'],
-          {
-            encoding: 'utf-8',
-            cwd: git.cwd,
-            shell: git.shell,
-          },
-        )
+        printAffected = spawnSync(`npx`, [`nx`, `show`, `projects`, '--all'], {
+          encoding: 'utf-8',
+          cwd: git.cwd,
+          shell: git.shell,
+        })
         if (printAffected.status !== 0) {
           log(
-            `Error running print-affected --all. Error is %O\nstderr: %O\nstdout: %O`,
+            `Error running show projects --all. Error is %O\nstderr: %O\nstdout: %O`,
             printAffected.stderr,
             printAffected.stdout,
           )

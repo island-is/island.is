@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
-import { UserProfileApi } from '@island.is/clients/user-profile'
+import { V2MeApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
   BaseTemplateAPIModuleConfig,
@@ -13,19 +13,17 @@ import {
   UserProfile,
   UserProfileParameters,
 } from '@island.is/application/types'
-import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages, getSlugFromType } from '@island.is/application/core'
 import { IdsClientConfig } from '@island.is/nest/config'
 import { Inject } from '@nestjs/common'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import { getConfigValue } from '../../shared.utils'
-
-export const MAX_OUT_OF_DATE_MONTHS = 6
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class UserProfileService extends BaseTemplateApiService {
   constructor(
-    private readonly userProfileApi: UserProfileApi,
+    private readonly userProfileApi: V2MeApi,
     private readonly islyklarApi: IslyklarApi,
     @Inject(IdsClientConfig.KEY)
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
@@ -35,7 +33,7 @@ export class UserProfileService extends BaseTemplateApiService {
     super('UserProfile')
   }
 
-  userProfileApiWithAuth(auth: Auth): UserProfileApi {
+  userProfileApiWithAuth(auth: Auth): V2MeApi {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
@@ -44,51 +42,64 @@ export class UserProfileService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
-    // Temporary solution while we still run the old user profile service.
-    return this.islyklarApi
-      .islyklarGet({ ssn: auth.nationalId })
-
-      .then((results) => {
-        if (params?.validateBankInformation && !results?.bankInfo) {
-          // If individual does not have a valid bank account, then we fail this check
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.noBankAccountError,
-              summary: coreErrorMessages.noBankAccountError,
-            },
-            400,
-          )
-        }
-
-        if (params?.validateEmail && !results?.email) {
-          throw new TemplateApiError(
-            {
-              title: coreErrorMessages.noEmailFound,
-              summary: {
-                ...coreErrorMessages.noEmailFoundDescription,
-                values: { link: this.getIDSLink(application) },
-              },
-            },
-            500,
-          )
-        }
-
-        return {
-          mobilePhoneNumber: results?.mobile,
-          email: results?.email,
-          bankInfo: results?.bankInfo,
-        }
-      })
+    const { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
+      .meUserProfileControllerFindUserProfile()
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
           return {
             email: 'mockEmail@island.is',
             mobilePhoneNumber: '9999999',
-            bankInfo: '0000-11-222222',
           }
         }
-        if (params?.catchMock) {
-          return {}
+        throw error
+      })
+
+    /// Temporary dependency on íslykill for bank info retrieval via FJS API.
+    /// A refactor is planned to integrate bank info directly from FJS API to eliminate íslykill dependency.
+    const bankInfo = await this.getBankInfoFromIslykill(auth)
+
+    if (params?.validateBankInformation && !bankInfo) {
+      // If individual does not have a valid bank account, then we fail this check
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.noBankAccountError,
+          summary: coreErrorMessages.noBankAccountError,
+        },
+        400,
+      )
+    }
+
+    if (params?.validateEmail && !email) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.noEmailFound,
+          summary: {
+            ...coreErrorMessages.noEmailFoundDescription,
+            values: { link: this.getIDSLink(application) },
+          },
+        },
+        500,
+      )
+    }
+
+    return {
+      mobilePhoneNumber: mobilePhoneNumber ?? undefined,
+      email: email ?? undefined,
+      bankInfo,
+    }
+  }
+
+  private async getBankInfoFromIslykill(
+    auth: User,
+  ): Promise<string | undefined> {
+    return this.islyklarApi
+      .islyklarGet({ ssn: auth.nationalId })
+      .then((results) => {
+        return results?.bankInfo
+      })
+      .catch((error) => {
+        if (isRunningOnEnvironment('local')) {
+          return '0000-11-222222'
         }
         throw error
       })

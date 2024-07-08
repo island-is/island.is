@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
-import type { Locale } from 'locale'
+import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
