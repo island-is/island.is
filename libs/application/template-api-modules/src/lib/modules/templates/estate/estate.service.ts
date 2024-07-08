@@ -29,23 +29,22 @@ import {
   ApplicationFile,
 } from './types/attachments'
 import AmazonS3Uri from 'amazon-s3-uri'
-import { S3 } from 'aws-sdk'
 import kennitala from 'kennitala'
 import { EstateTypes } from './consts'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
+import { AwsService } from '@island.is/nest/aws'
 
 type EstateSchema = zinfer<typeof estateSchema>
 
 @Injectable()
 export class EstateTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.ESTATE)
-    this.s3 = new S3()
   }
 
   async estateProvider({
@@ -204,8 +203,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
     let estateData = externalData.estates?.find(
       (estate) => estate.caseNumber === answers.estateInfoSelection,
     )
-    // TODO: Remove the singular estate property in the future when
-    //       legacy applications clear out of the system
     estateData = estateData ?? externalData.estate ?? undefined
     if (!estateData) {
       throw new Error(
@@ -214,13 +211,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
 
     const uploadData = generateRawUploadData(answers, estateData, application)
-    // We deep copy the pdfData since the transform function
-    // for the PDF creation mutates the object
     const pdfData = structuredClone(uploadData)
 
     const attachments: Attachment[] = []
 
-    // Convert form data to a PDF backup for syslumenn
     const pdfBuffer = await transformUploadDataToPDFStream(
       pdfData,
       application.id,
@@ -230,7 +224,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
       content: pdfBuffer.toString('base64'),
     })
 
-    // Retrieve attachments from the application and attach them to the upload data
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
@@ -244,7 +237,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
           const fileName = (application.attachments as ApplicationAttachments)[
             attachmentAnswerData[index]?.key
           ]
-          const content = await this.getFileContentBase64(fileName)
+          const { bucket, key } = AmazonS3Uri(fileName)
+          const content = await this.awsService
+            .getFile(bucket, key)
+            .then((file) => file.Body?.toString('base64') || '')
           attachments.push({ name, content })
         }
       }
@@ -269,24 +265,6 @@ export class EstateTemplateService extends BaseTemplateApiService {
       this.logger.error('[estate]: Failed to upload data - ', result.message)
       throw new Error('Application submission failed on syslumadur upload data')
     }
-    return { sucess: result.success, id: result.caseNumber }
-  }
-  private async getFileContentBase64(fileName: string): Promise<string> {
-    const { bucket, key } = AmazonS3Uri(fileName)
-
-    const uploadBucket = bucket
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64') || ''
-    } catch (e) {
-      this.logger.warn('[estate]: Failed to get file content - ', e)
-      return 'err'
-    }
+    return { success: result.success, id: result.caseNumber }
   }
 }
