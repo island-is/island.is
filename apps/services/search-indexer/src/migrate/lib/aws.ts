@@ -1,4 +1,7 @@
-import { ES, S3, config } from 'aws-sdk'
+// import { S3 } from '@aws-sdk/client-s3'
+// import { ... } from '@aws-sdk/client-elasticsearch-service'
+// 👇 Needs to be migrated to 👆
+import { ES, S3 } from 'aws-sdk'
 import { PutObjectRequest } from 'aws-sdk/clients/s3'
 import { PackageStatus, DomainPackageStatus } from 'aws-sdk/clients/es'
 import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
@@ -6,7 +9,6 @@ import { logger } from '@island.is/logging'
 import { environment } from '../../environments/environment'
 import { Dictionary } from './dictionary'
 
-config.update({ region: environment.awsRegion })
 const awsEs = new ES()
 const s3 = new S3()
 
