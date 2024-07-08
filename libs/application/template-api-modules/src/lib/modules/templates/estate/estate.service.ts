@@ -28,7 +28,6 @@ import {
   AttachmentPaths,
   ApplicationFile,
 } from './types/attachments'
-import AmazonS3Uri from 'amazon-s3-uri'
 import kennitala from 'kennitala'
 import { EstateTypes } from './consts'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -237,10 +236,9 @@ export class EstateTemplateService extends BaseTemplateApiService {
           const fileName = (application.attachments as ApplicationAttachments)[
             attachmentAnswerData[index]?.key
           ]
-          const { bucket, key } = AmazonS3Uri(fileName)
           const content = await this.awsService
-            .getFile(bucket, key)
-            .then((file) => file.Body?.toString('base64') || '')
+            .getFile(fileName)
+            .then((file) => file.Body?.transformToString('base64') || '')
           attachments.push({ name, content })
         }
       }
