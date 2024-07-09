@@ -398,7 +398,9 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, state } = workingCase
-    const caseHasBeenReceivedByCourt = state === CaseState.RECEIVED
+    const substepsShouldBeHidden =
+      state === CaseState.RECEIVED ||
+      state === CaseState.WAITING_FOR_CANCELLATION
     const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
@@ -409,7 +411,7 @@ const useSections = (
         state !== CaseState.RECEIVED &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
-      children: caseHasBeenReceivedByCourt
+      children: substepsShouldBeHidden
         ? []
         : [
             {
@@ -536,7 +538,7 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-              isActive: caseHasBeenReceivedByCourt
+              isActive: substepsShouldBeHidden
                 ? false
                 : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
               onClick:

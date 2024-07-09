@@ -13,8 +13,13 @@ export type DrivingLicenseCategory = {
   validToCode: number
 }
 
+export interface Remark {
+  code: string
+  description: string
+}
+
 export type DrivingLicense = {
   currentLicense: string | null
-  remarks?: string[]
+  remarks?: Remark[]
   categories: DrivingLicenseCategory[]
 }
