@@ -84,7 +84,6 @@ import {
   courtOfAppealsRegistrarUpdateRule,
   districtCourtAssistantTransitionRule,
   districtCourtAssistantUpdateRule,
-  districtCourtJudgeSignRulingRule,
   districtCourtJudgeTransitionRule,
   districtCourtJudgeUpdateRule,
   districtCourtRegistrarTransitionRule,
