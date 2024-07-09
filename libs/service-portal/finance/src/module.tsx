@@ -9,12 +9,14 @@ import { redirects } from './financeRedirects'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
-const FinanceTransactions = lazy(() => import('./screens/FinanceTransactions'))
-const FinanceTransactionPeriods = lazy(() =>
-  import('./screens/FinanceTransactionPeriods'),
+const FinanceTransactionsCategories = lazy(
+  () => import('./screens/FinanceTransactions'),
 )
-const FinanceEmployeeClaims = lazy(() =>
-  import('./screens/FinanceEmployeeClaims'),
+const FinanceTransactionPeriods = lazy(
+  () => import('./screens/FinanceTransactionPeriods'),
+)
+const FinanceEmployeeClaims = lazy(
+  () => import('./screens/FinanceEmployeeClaims'),
 )
 const FinanceLocalTax = lazy(() => import('./screens/FinanceLocalTax'))
 const FinanceSchedule = lazy(() => import('./screens/FinanceSchedule'))
@@ -48,9 +50,9 @@ export const financeModule: PortalModule = {
       element: <FinanceBills />,
     },
     {
-      name: m.financeTransactions,
-      path: FinancePaths.FinanceTransactions,
-      element: <FinanceTransactions />,
+      name: m.financeTransactionsCategories,
+      path: FinancePaths.FinanceTransactionCategories,
+      element: <FinanceTransactionPeriods />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),
