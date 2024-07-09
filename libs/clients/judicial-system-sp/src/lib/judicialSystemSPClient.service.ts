@@ -10,7 +10,7 @@ import {
   DefendersApi,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Locale } from '@island.is/shared/types'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class JudicialSystemSPClientService {
@@ -26,66 +26,49 @@ export class JudicialSystemSPClientService {
   private defenderApiWithAuth = (user: User) =>
     this.defendersApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getCases(user: User, locale: Locale) {
-    let cases
-    try {
-      cases = await this.casesApiWithAuth(user).caseControllerGetAllCases({
-        locale: locale as CaseControllerGetAllCasesLocaleEnum,
+  async getCases(user: User, locale: CaseControllerGetAllCasesLocaleEnum) {
+    return this.casesApiWithAuth(user)
+      .caseControllerGetAllCases({
+        locale: locale,
       })
-    } catch (error) {
-      this.logger.error('Failed getting cases for user', error)
-    }
-    return cases
+      .catch(handle404)
   }
 
-  async getCase(id: string, user: User, locale: Locale) {
-    let singleCase
-    try {
-      singleCase = await this.casesApiWithAuth(user).caseControllerGetCase({
+  async getCase(
+    id: string,
+    user: User,
+    locale: CaseControllerGetCaseLocaleEnum,
+  ) {
+    return this.casesApiWithAuth(user)
+      .caseControllerGetCase({
         caseId: id,
-        locale: locale as CaseControllerGetCaseLocaleEnum,
+        locale: locale,
       })
-    } catch (error) {
-      this.logger.error('Failed getting single case for user', error)
-    }
-
-    return singleCase
+      .catch(handle404)
   }
 
   async getLawyers(user: User) {
-    let lawyers
-    try {
-      lawyers = await this.defenderApiWithAuth(
-        user,
-      ).defenderControllerGetLawyers()
-    } catch (error) {
-      this.logger.warn('Failed getting lawyers list', error)
-    }
-    return lawyers
+    return this.defenderApiWithAuth(user)
+      .defenderControllerGetLawyers()
+      .catch(handle404)
   }
 
-  async getSubpoena(id: string, user: User, locale: Locale) {
-    let subpoena
-    try {
-      subpoena = await this.casesApiWithAuth(user).caseControllerGetSubpoena({
+  async getSubpoena(
+    id: string,
+    user: User,
+    locale: CaseControllerGetSubpoenaLocaleEnum,
+  ) {
+    return this.casesApiWithAuth(user)
+      .caseControllerGetSubpoena({
         caseId: id,
-        locale: locale as CaseControllerGetSubpoenaLocaleEnum,
+        locale: locale,
       })
-    } catch (error) {
-      this.logger.warn('Failed getting subpoena for user', error)
-    }
-    return subpoena
+      .catch(handle404)
   }
 
   async patchSubpoena(input: CaseControllerUpdateSubpoenaRequest, user: User) {
-    let response
-    try {
-      response = await this.casesApiWithAuth(user).caseControllerUpdateSubpoena(
-        input,
-      )
-    } catch (error) {
-      this.logger.error('Failed updating subpoena information')
-    }
-    return response
+    return this.casesApiWithAuth(user)
+      .caseControllerUpdateSubpoena(input)
+      .catch(handle404)
   }
 }
