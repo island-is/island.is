@@ -15,7 +15,6 @@
     "apps/native/*"
   ],
   "scripts": {
-    "thiscommanddoesnotexist": "echo 'This command does not exist. Please run `yarn help` for a list of available commands.'",
     "nx": "nx",
     "start": "nx serve",
     "build": "nx build",
