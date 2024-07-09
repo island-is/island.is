@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import {
   SyslumennService,
@@ -25,18 +25,20 @@ import { syslumennDataFromPostalCode } from './utils'
 import { applicationRejectedEmail } from './emailGenerators/applicationRejected'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { AwsService } from '@island.is/nest/aws'
-import AmazonS3URI from 'amazon-s3-uri'
 
 type props = Override<
   TemplateApiModuleActionProps,
   { application: CRCApplication }
 >
 
+export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
+
 @Injectable()
 export class ChildrenResidenceChangeService extends BaseTemplateApiService {
   constructor(
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
+    @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly smsService: SmsService,
     private readonly aws: AwsService,
   ) {
@@ -48,8 +50,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const { bucket, key } = AmazonS3URI(s3FileName)
-    const file = await this.aws.getFile(bucket, key)
+    const file = await this.aws.getFile(this.presignedBucket, s3FileName)
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,
