@@ -1,5 +1,5 @@
 import { Locale } from '@island.is/shared/types'
-import { AlertType, LICENSE_NAMESPACE } from '../licenseService.constants'
+import { LICENSE_NAMESPACE } from '../licenseService.constants'
 import { Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
 import {
@@ -15,6 +15,7 @@ import { capitalize } from '../utils/capitalize'
 import { Payload } from '../dto/Payload.dto'
 import { formatDate } from '../utils'
 import {
+  AlertType,
   GenericLicenseDataFieldType,
   GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,

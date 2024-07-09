@@ -6,12 +6,6 @@ import {
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseDataField,
-  GenericLicenseDataFieldType,
-  GenericLicenseMapper,
-  GenericLicenseMappedPayloadResponse,
-} from '../licenceService.type'
-import {
   DEFAULT_LICENSE_ID,
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
@@ -19,6 +13,12 @@ import { Injectable } from '@nestjs/common'
 import { m } from '../messages'
 import { FormatMessage, IntlService } from '@island.is/cms-translations'
 import { formatDate, expiryTag } from '../utils'
+import {
+  GenericLicenseDataFieldType,
+  GenericLicenseMappedPayloadResponse,
+  GenericLicenseMapper,
+} from '../licenceService.type'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 @Injectable()
 export class MachineLicensePayloadMapper implements GenericLicenseMapper {

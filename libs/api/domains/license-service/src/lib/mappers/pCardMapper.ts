@@ -1,12 +1,6 @@
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseDataField,
-  GenericLicenseDataFieldType,
-  GenericLicenseMappedPayloadResponse,
-  GenericLicenseMapper,
-} from '../licenceService.type'
-import {
   DEFAULT_LICENSE_ID,
   LICENSE_NAMESPACE,
 } from '../licenseService.constants'
@@ -18,6 +12,12 @@ import { m } from '../messages'
 import { IntlService } from '@island.is/cms-translations'
 import { expiryTag } from '../utils/expiryTag'
 import { formatDate } from '../utils'
+import {
+  GenericLicenseDataFieldType,
+  GenericLicenseMappedPayloadResponse,
+  GenericLicenseMapper,
+} from '../licenceService.type'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
 
 @Injectable()
 export class PCardPayloadMapper implements GenericLicenseMapper {

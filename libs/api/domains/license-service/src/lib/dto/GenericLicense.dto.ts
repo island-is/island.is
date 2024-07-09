@@ -33,13 +33,6 @@ export class GenericLicense {
   })
   provider!: GenericLicenseProvider
 
-  @Field({
-    description: 'Display name of license',
-    deprecationReason: 'Moved to metadata for each payload',
-    nullable: true,
-  })
-  name?: string
-
   @Field({ description: 'Does the license support pkpass?' })
   pkpass!: boolean
 

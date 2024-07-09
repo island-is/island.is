@@ -1,6 +1,5 @@
 import {
   GenericLicenseMetadata,
-  GenericLicenseOrganizationSlug,
   GenericLicenseProviderId,
   GenericLicenseType,
 } from './licenceService.type'
@@ -9,12 +8,6 @@ export const LICENSE_MAPPER_FACTORY = 'license-mapper-factory'
 export const LICENSE_NAMESPACE = 'api.license-service'
 
 export const DEFAULT_LICENSE_ID = 'default'
-
-export enum AlertType {
-  WARNING,
-  ERROR,
-  INFO,
-}
 
 export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
   {
@@ -26,7 +19,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.FirearmLicense,
   },
   {
     type: GenericLicenseType.DriversLicense,
@@ -37,7 +29,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.DriversLicense,
   },
   {
     type: GenericLicenseType.AdrLicense,
@@ -48,7 +39,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.AdrLicense,
   },
   {
     type: GenericLicenseType.MachineLicense,
@@ -59,7 +49,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.MachineLicense,
   },
   {
     type: GenericLicenseType.DisabilityLicense,
@@ -70,7 +59,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.DisabilityLicense,
   },
   {
     type: GenericLicenseType.HuntingLicense,
@@ -81,7 +69,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: true,
     pkpassVerify: true,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.HuntingLicense,
   },
   {
     type: GenericLicenseType.PCard,
@@ -92,7 +79,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: false,
     pkpassVerify: false,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.PCard,
   },
   {
     type: GenericLicenseType.Ehic,
@@ -103,7 +89,6 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: false,
     pkpassVerify: false,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.EHIC,
   },
   {
     type: GenericLicenseType.Passport,
@@ -114,6 +99,5 @@ export const AVAILABLE_LICENSES: GenericLicenseMetadata[] = [
     pkpass: false,
     pkpassVerify: false,
     timeout: 100,
-    orgSlug: GenericLicenseOrganizationSlug.Passport,
   },
 ]
