@@ -210,22 +210,18 @@ const Table: FC<TableProps> = (props) => {
             {generateContextMenuItems && (
               <td width="4%">
                 {generateContextMenuItems(row).length > 0 && (
-                  <AnimatePresence
-                    exitBeforeEnter
-                    initial={false}
-                    mode="popLayout"
-                  >
+                  <AnimatePresence initial={false} mode="popLayout">
                     {isOpeningCaseId === row.id && showLoading ? (
                       <motion.div
                         className={styles.smallContainer}
                         key={row.id}
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1, y: 0 }}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 1 }}
                         exit={{
                           opacity: 0,
                           y: 5,
-                          transition: { duration: 0.5 },
                         }}
+                        transition={{ type: 'spring' }}
                       >
                         <LoadingIndicator />
                       </motion.div>
@@ -237,16 +233,16 @@ const Table: FC<TableProps> = (props) => {
                           <motion.div
                             className={styles.smallContainer}
                             key={row.id}
-                            initial={{ opacity: 0 }}
-                            animate={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 1 }}
+                            animate={{ opacity: 1, y: 1 }}
                             exit={{ opacity: 0, y: 5 }}
+                            onClick={(evt) => {
+                              evt.stopPropagation()
+                            }}
                           >
                             <IconButton
                               icon="ellipsisVertical"
                               colorScheme="transparent"
-                              onClick={(evt) => {
-                                evt.stopPropagation()
-                              }}
                             />
                           </motion.div>
                         }
