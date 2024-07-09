@@ -20,6 +20,7 @@ import get from 'lodash/get'
 import set from 'lodash/set'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
+import { AwsService } from '@island.is/nest/aws'
 
 const nationalId = '1234564321'
 let id = 0
@@ -56,7 +57,7 @@ const S3Instance = {
 
 describe('AccidentNotificationService', () => {
   let accidentNotificationService: AccidentNotificationService
-  let s3Service: S3Service
+  let aws: AwsService
   let documentApi: DocumentApi
 
   beforeEach(async () => {
@@ -80,10 +81,6 @@ describe('AccidentNotificationService', () => {
           })),
         },
         {
-          provide: S3,
-          useFactory: () => S3Instance,
-        },
-        {
           provide: ConfigService,
           useValue: {},
         },
@@ -100,9 +97,9 @@ describe('AccidentNotificationService', () => {
           useClass: MockSmsService,
         },
         {
-          provide: S3Service,
+          provide: AwsService,
           useClass: jest.fn(() => ({
-            getFilecontentAsBase64: jest.fn(),
+            getFileB64: jest.fn(),
           })),
         },
         {
@@ -124,7 +121,7 @@ describe('AccidentNotificationService', () => {
     }).compile()
 
     accidentNotificationService = module.get(AccidentNotificationService)
-    s3Service = module.get(S3Service)
+    aws = module.get(AwsService)
     documentApi = module.get(DocumentApi)
   })
 
@@ -212,7 +209,7 @@ describe('AccidentNotificationService', () => {
       }
 
       jest
-        .spyOn(s3Service, 'getFilecontentAsBase64')
+        .spyOn(aws, 'getFileB64')
         .mockResolvedValueOnce(
           Buffer.from('some content', 'utf-8') as unknown as string,
         )
