@@ -2,10 +2,6 @@ import { globalStyle, style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const header = style({
-  background: theme.color.blue100,
-})
-
 export const table = style({
   borderSpacing: 0,
   borderCollapse: 'collapse',
@@ -46,31 +42,6 @@ export const largeColumn = style({
     },
   },
 })
-export const blockColumn = style({
-  display: 'block',
-  overflow: 'hidden',
-  textOverflow: 'ellipsis',
-})
-
-export const deleteButtonContainer = style({
-  maxWidth: '0',
-  height: '100%',
-  padding: 0,
-  transform: 'translate3d(2px, 0px, 0px)',
-})
-
-export const td = style({
-  selectors: {
-    [`&:not(${deleteButtonContainer})`]: {
-      padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
-    },
-    '&.secondLast': {
-      marginLeft: 'auto',
-      height: '100%',
-      padding: 0,
-    },
-  },
-})
 
 globalStyle(`${table} td, th`, {
   borderBottomWidth: 1,
@@ -81,11 +52,6 @@ globalStyle(`${table} td, th`, {
   paddingTop: theme.spacing[2],
   paddingBottom: theme.spacing[2],
   textAlign: 'left',
-})
-
-export const expandLabel = style({
-  color: theme.color.blue400,
-  cursor: 'pointer',
 })
 
 export const row = style({

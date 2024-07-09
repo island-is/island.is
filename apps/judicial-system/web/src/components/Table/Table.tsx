@@ -205,12 +205,10 @@ const Table: FC<TableProps> = (props) => {
             data-testid="tableRow"
           >
             {columns.map((td) => (
-              <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
-                {td.cell(row)}
-              </td>
+              <td key={`${td}-${columns.indexOf(td)}`}>{td.cell(row)}</td>
             ))}
             {generateContextMenuItems && (
-              <td className={styles.td}>
+              <td>
                 {generateContextMenuItems(row).length > 0 && (
                   <AnimatePresence exitBeforeEnter initial={false}>
                     {isOpeningCaseId === row.id && showLoading ? (
