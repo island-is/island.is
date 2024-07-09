@@ -298,7 +298,10 @@ export const Cases: FC = () => {
                 <SectionHeading title={formatMessage(m.activeRequests.title)} />
                 <TableWrapper loading={loading || isFiltering}>
                   {activeCases.length > 0 ? (
-                    <ActiveCases cases={activeCases} />
+                    <ActiveCases
+                      cases={activeCases}
+                      onContextMenuDeleteClick={setVisibleModal}
+                    />
                   ) : (
                     <div className={styles.infoContainer}>
                       <AlertMessage
