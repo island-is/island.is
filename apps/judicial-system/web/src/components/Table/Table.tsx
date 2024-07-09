@@ -212,9 +212,9 @@ const Table: FC<TableProps> = (props) => {
                 {generateContextMenuItems(row).length > 0 && (
                   <AnimatePresence exitBeforeEnter initial={false}>
                     {isOpeningCaseId === row.id && showLoading ? (
-                      <Box padding={1}>
+                      <div className={styles.smallContainer}>
                         <LoadingIndicator />
-                      </Box>
+                      </div>
                     ) : (
                       <ContextMenu
                         menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}

@@ -43,14 +43,6 @@ export const thead = style({
   textAlign: 'left',
 })
 
-export const thButton = style({
-  outline: 'none',
-
-  ':active': {
-    color: theme.color.dark400,
-  },
-})
-
 export const tableRowContainer = style({
   borderBottom: `1px solid ${theme.color.blue200}`,
   cursor: 'pointer',
@@ -87,35 +79,4 @@ export const deleteButtonWrapper = style({
   padding: 10,
   width: 44,
   height: 44,
-})
-
-export const sortIcon = style({
-  opacity: 0.4,
-  transition: 'opacity .2s ease-in-out',
-
-  selectors: {
-    [`${thButton}:hover &`]: {
-      opacity: 1,
-    },
-  },
-})
-
-export const sortCreatedAsc = style({
-  opacity: 1,
-  transform: 'rotate(180deg)',
-})
-
-export const sortCreatedDes = style({
-  opacity: 1,
-  transform: 'rotate(0deg)',
-})
-
-export const sortAccusedNameAsc = style({
-  opacity: 1,
-  transform: 'rotate(0deg)',
-})
-
-export const sortAccusedNameDes = style({
-  opacity: 1,
-  transform: 'rotate(180deg)',
 })
