@@ -24,21 +24,10 @@ import {
   PageHeader,
   SectionHeading,
   SharedPageLayout,
-  TagCaseState,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
-import {
-  ColumnCaseType,
-  CourtCaseNumber,
-  CourtDate,
-  CreatedDate,
-  DefendantInfo,
-  PastCasesTable,
-} from '@island.is/judicial-system-web/src/components/Table'
-import Table, {
-  TableWrapper,
-} from '@island.is/judicial-system-web/src/components/Table/Table'
+import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
+import { TableWrapper } from '@island.is/judicial-system-web/src/components/Table/Table'
 import {
   CaseListEntry,
   CaseState,
@@ -114,7 +103,6 @@ const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
 export const Cases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useContextMenu()
   const { transitionCase, isTransitioningCase, isSendingNotification } =
     useCase()
 
@@ -310,82 +298,7 @@ export const Cases: FC = () => {
                 <SectionHeading title={formatMessage(m.activeRequests.title)} />
                 <TableWrapper loading={loading || isFiltering}>
                   {activeCases.length > 0 ? (
-                    <Table
-                      thead={[
-                        {
-                          title: formatMessage(tables.caseNumber),
-                        },
-                        {
-                          title: capitalize(
-                            formatMessage(core.defendant, { suffix: 'i' }),
-                          ),
-                          sortable: { isSortable: true, key: 'defendants' },
-                        },
-                        {
-                          title: formatMessage(tables.type),
-                        },
-                        {
-                          title: capitalize(
-                            formatMessage(tables.created, { suffix: 'i' }),
-                          ),
-                          sortable: { isSortable: true, key: 'created' },
-                        },
-                        { title: formatMessage(tables.state) },
-                        {
-                          title: formatMessage(tables.hearingArrangementDate),
-                          sortable: {
-                            isSortable: true,
-                            key: 'courtDate',
-                          },
-                        },
-                      ]}
-                      data={activeCases}
-                      generateContextMenuItems={(row) => {
-                        return [openCaseInNewTabMenuItem(row.id)]
-                      }}
-                      columns={[
-                        {
-                          cell: (row) => (
-                            <CourtCaseNumber
-                              courtCaseNumber={row.courtCaseNumber ?? ''}
-                              policeCaseNumbers={row.policeCaseNumbers ?? []}
-                              appealCaseNumber={row.appealCaseNumber ?? ''}
-                            />
-                          ),
-                        },
-                        {
-                          cell: (row) => (
-                            <DefendantInfo defendants={row.defendants} />
-                          ),
-                        },
-                        {
-                          cell: (row) => <ColumnCaseType type={row.type} />,
-                        },
-                        {
-                          cell: (row) => <CreatedDate created={row.created} />,
-                        },
-                        {
-                          cell: (row) => (
-                            <TagCaseState
-                              caseState={row.state}
-                              isCourtRole={true}
-                              indictmentDecision={row.indictmentDecision}
-                            />
-                          ),
-                        },
-                        {
-                          cell: (row) => (
-                            <CourtDate
-                              courtDate={row.courtDate}
-                              postponedIndefinitelyExplanation={
-                                row.postponedIndefinitelyExplanation
-                              }
-                              courtSessionType={row.courtSessionType}
-                            />
-                          ),
-                        },
-                      ]}
-                    />
+                    <ActiveCases cases={activeCases} />
                   ) : (
                     <div className={styles.infoContainer}>
                       <AlertMessage
