@@ -6,6 +6,7 @@ import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
+import { config } from 'aws-sdk'
 
 const { elastic } = environment
 
@@ -157,7 +158,7 @@ export class ElasticService {
 
     return new Client({
       // TODO: Send config, but try to use the local environment instead of explicit config
-      ...AwsConnector(),
+      ...AwsConnector(config),
       node: elastic.node,
     })
   }
