@@ -14,6 +14,7 @@ import { FileStorageModule } from '@island.is/file-storage'
 import { ApplicationAttachmentProvider } from './attachments/providers/applicationAttachmentProvider'
 import { PdfFileProvider } from './attachments/providers/pdfFileProvider'
 import { AttachmentS3Service } from '../../shared/services'
+import { AwsService } from '@island.is/nest/aws'
 
 export class DataProtectionComplaintModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -25,6 +26,7 @@ export class DataProtectionComplaintModule {
         ClientsDataProtectionComplaintModule,
       ],
       providers: [
+        AwsService,
         ApplicationAttachmentProvider,
         PdfFileProvider,
         AttachmentS3Service,

@@ -23,9 +23,9 @@ export class ParentalLeaveModule {
         SmsModule.register(config.smsOptions),
         ApplicationApiCoreModule,
         NationalRegistryClientModule,
-        AwsService,
       ],
       providers: [
+        AwsService,
         ChildrenService,
         ParentalLeaveService,
         NationalRegistryClientService,
