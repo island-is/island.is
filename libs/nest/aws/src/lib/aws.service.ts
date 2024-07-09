@@ -12,7 +12,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const MINUTE = 60
 const HOUR = 60 * MINUTE
-type Encoding = 'binary' | 'base64' | 'utf-8'
+export type Encoding = 'binary' | 'base64' | 'utf-8'
 
 @Injectable()
 export class AwsService {
@@ -67,8 +67,11 @@ export class AwsService {
     return out.Body?.transformToString(encoding)
   }
 
-  async getFileB64(fileName: string): Promise<string>
-  async getFileB64(bucket: string, fileName: string): Promise<string>
+  async getFileB64(fileName: string): Promise<string | undefined>
+  async getFileB64(
+    bucket: string,
+    fileName: string,
+  ): Promise<string | undefined>
   async getFileB64(
     bucket: string,
     fileName?: string,
