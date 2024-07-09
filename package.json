@@ -297,7 +297,7 @@
     "slate-react": "0.70.0",
     "smoothscroll-polyfill": "0.4.4",
     "soap": "1.0.0",
-    "sqs-consumer": "10.3.0",
+    "sqs-consumer": "5.4.0",
     "stream-browserify": "3.0.0",
     "styled-components": "5.3.6",
     "supertest": "4.0.2",
