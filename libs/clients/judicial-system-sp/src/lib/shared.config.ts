@@ -20,7 +20,6 @@ export const SharedApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'clients-judicial-system-sp',
         organizationSlug: 'domsmalaraduneytid',
-        timeout: config.fetch.timeout,
         autoAuth: idsClientConfig.isConfigured
           ? {
               mode: 'tokenExchange',
