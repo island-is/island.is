@@ -105,18 +105,18 @@ export const expandAnswers = (
     prepaidInheritance: answers.prepaidInheritance,
     executors: {
       executor: {
-        email: '',
-        phone: '',
-        name: '',
-        nationalId: '',
+        email: answers.executors.executor.email ?? '',
+        phone: answers.executors.executor.phone ?? '',
+        name: answers.executors.executor.name ?? '',
+        nationalId: answers.executors.executor.nationalId ?? '',
       },
       spouse: {
-        email: '',
-        phone: '',
-        name: '',
-        nationalId: '',
+        email: answers.executors.spouse?.email ?? '',
+        phone: answers.executors.spouse?.phone ?? '',
+        name: answers.executors.spouse?.name ?? '',
+        nationalId: answers.executors.spouse?.nationalId ?? '',
       },
-      includeSpouse: undefined,
+      includeSpouse: answers.executors.includeSpouse ?? undefined,
     },
     approveExternalData: answers.approveExternalData,
     assets: {
@@ -315,7 +315,7 @@ export const expandAnswers = (
       hasCustomSpouseSharePercentage:
         answers?.customShare?.hasCustomSpouseSharePercentage ?? 'No',
       customSpouseSharePercentage:
-        answers?.customShare?.customSpouseSharePercentage ?? '50',
+        answers?.customShare?.customSpouseSharePercentage ?? '0',
       deceasedWasMarried: answers?.customShare?.deceasedWasMarried ?? '',
       deceasedHadAssets: answers?.customShare?.deceasedHadAssets ?? '',
     },
