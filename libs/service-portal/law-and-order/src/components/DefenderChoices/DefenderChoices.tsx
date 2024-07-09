@@ -42,13 +42,7 @@ const DefenderChoices: FC<React.PropsWithChildren<Props>> = ({
 }) => {
   useNamespaces('sp.law-and-order')
   const { formatMessage, lang } = useLocale()
-  const { data, loading, error } = useGetLawyersQuery({
-    variables: {
-      input: {
-        locale: lang,
-      },
-    },
-  })
+  const { data, loading, error } = useGetLawyersQuery()
 
   const lawyers = data?.lawAndOrderLawyers?.items
 
