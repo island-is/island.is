@@ -57,7 +57,7 @@ export const DropModal: FC<React.PropsWithChildren<Props>> = ({
             <Hidden below="sm">
               <img
                 src="assets/images/retirement.svg"
-                alt="Skrautmynd"
+                alt=""
                 style={{ float: 'right' }}
                 width="80%"
               />
