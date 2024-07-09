@@ -13,6 +13,7 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+// eslint-disable-next-line @typescript-eslint/naming-convention
 import ShortUniqueId from 'short-unique-id'
 import { GenericUserLicense } from './dto/GenericUserLicense.dto'
 import {
@@ -188,8 +189,8 @@ export class LicenseService {
       locale,
     )
 
-    const mappedLicenses: Array<GenericUserLicense> = licensesPayload.map(
-      (lp) => {
+    const mappedLicenses: Array<GenericUserLicense> = await Promise.all(
+      licensesPayload.map(async (lp) => {
         const licenseUserData: GenericLicenseUserdata = {
           status: GenericUserLicenseStatus.Unknown,
           pkpassStatus: GenericUserLicensePkPassStatus.Unknown,
@@ -197,10 +198,10 @@ export class LicenseService {
 
         if (lp) {
           licenseUserData.pkpassStatus = client.clientSupportsPkPass
-            ? (client.licenseIsValidForPkPass?.(
+            ? ((await client.licenseIsValidForPkPass?.(
                 lp.payload.rawData,
                 user,
-              ) as unknown as GenericUserLicensePkPassStatus) ??
+              )) as unknown as GenericUserLicensePkPassStatus) ??
               GenericUserLicensePkPassStatus.Unknown
             : GenericUserLicensePkPassStatus.NotAvailable
           licenseUserData.status = GenericUserLicenseStatus.HasLicense
@@ -231,8 +232,9 @@ export class LicenseService {
             rawData: lp.payload.rawData ?? undefined,
           },
         }
-      },
+      }),
     )
+
     return {
       fetchResponseType: 'licenses',
       data: mappedLicenses,
