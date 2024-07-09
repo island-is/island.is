@@ -1,6 +1,19 @@
 import { Environment } from './environment.interface'
 
-const devConfig: Environment = {
+const devConfig: Environment<
+  | 'attachmentBucket'
+  | 'baseApiUrl'
+  | 'clientLocationOrigin'
+  | 'email'
+  | 'emailOptions'
+  | 'generalPetition'
+  | 'islykill'
+  | 'jwtSecret'
+  | 'presignBucket'
+  | 'userProfile'
+  | 'xRoadBasePathWithEnv'
+  | 'smsOptions'
+> = {
   production: false,
   environment: 'local',
   name: 'local',
@@ -60,20 +73,18 @@ const devConfig: Environment = {
 
 // TODO: Remove empty-string defaulting
 const prodConfig: Environment<
-  [
-    'attachmentBucket',
-    'baseApiUrl',
-    'clientLocationOrigin',
-    'email',
-    'emailOptions',
-    'generalPetition',
-    'islykill',
-    'jwtSecret',
-    'presignBucket',
-    'userProfile',
-    'xRoadBasePathWithEnv',
-    'smsOptions',
-  ]
+  | 'attachmentBucket'
+  | 'baseApiUrl'
+  | 'clientLocationOrigin'
+  | 'email'
+  | 'emailOptions'
+  | 'generalPetition'
+  | 'islykill'
+  | 'jwtSecret'
+  | 'presignBucket'
+  | 'userProfile'
+  | 'xRoadBasePathWithEnv'
+  | 'smsOptions'
 > = {
   production: true,
   environment: process.env.ENVIRONMENT ?? '',

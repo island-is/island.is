@@ -4,7 +4,7 @@ import { AuditOptions } from '@island.is/nest/audit'
 import { SmsServiceOptions } from '@island.is/nova-sms'
 
 export interface Environment<
-  TemplateAPISubset extends keyof TemplateAPIConfig,
+  TemplateAPISubset extends keyof TemplateAPIConfig = keyof TemplateAPIConfig,
 > {
   production: boolean
   environment: string
@@ -13,7 +13,7 @@ export interface Environment<
   audit: AuditOptions
   auth: AuthConfig
   templateApi: Pick<TemplateAPIConfig, TemplateAPISubset>
-  smsOptions: SmsServiceOptions
+  smsOptions?: SmsServiceOptions
   contentful: {
     accessToken: string
   }
