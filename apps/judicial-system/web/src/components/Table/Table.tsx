@@ -126,7 +126,7 @@ const Table: FC<TableProps> = (props) => {
     }
   }, [data, sortConfig])
 
-  return width < theme.breakpoints.md ? (
+  return width < theme.breakpoints.lg ? (
     <>
       {data.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>

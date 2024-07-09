@@ -44,9 +44,11 @@ export const largeColumn = style({
 })
 
 export const smallContainer = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   width: '34px',
   height: '34px',
-  padding: `${theme.spacing[2]}px`,
 })
 
 globalStyle(`${table} td, th`, {
