@@ -102,7 +102,7 @@ const getPoliceCasesForUpdate = (
     [[], {}, {}],
   )
 
-const Defendant: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Defendant = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()

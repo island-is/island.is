@@ -14,9 +14,13 @@ import { getBackgroundStyle } from '@island.is/web/utils/organization'
 
 interface ProjectHeaderProps {
   projectPage: ProjectPageSchema
+  isSubpage?: boolean
 }
 
-export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
+export const ProjectHeader = ({
+  projectPage,
+  isSubpage,
+}: ProjectHeaderProps) => {
   switch (projectPage.theme) {
     case 'traveling-to-iceland':
       return <EntryProjectHeader projectPage={projectPage} />
@@ -70,6 +74,7 @@ export const ProjectHeader = ({ projectPage }: ProjectHeaderProps) => {
               ?.titleSectionPaddingLeft as ResponsiveSpace
           }
           mobileBackground={projectPage.themeProperties?.mobileBackgroundColor}
+          isSubpage={isSubpage}
         />
       )
     default: {

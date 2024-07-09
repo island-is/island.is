@@ -76,7 +76,7 @@ export const getIndictmentIntroductionAutofill = (
     : []
 }
 
-const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Indictment = () => {
   const {
     workingCase,
     setWorkingCase,

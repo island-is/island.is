@@ -404,6 +404,7 @@ export function buildKeyValueField(data: {
   divider?: boolean
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
+  paddingBottom?: BoxProps['padding']
 }): KeyValueField {
   const {
     label,
@@ -415,6 +416,7 @@ export function buildKeyValueField(data: {
     divider = false,
     paddingX,
     paddingY,
+    paddingBottom,
   } = data
 
   return {
@@ -433,6 +435,7 @@ export function buildKeyValueField(data: {
     display,
     paddingX,
     paddingY,
+    paddingBottom,
   }
 }
 
@@ -627,6 +630,8 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile = false,
+    downloadButtonTitle,
   } = data
   return {
     ...extractCommonFields(data),
@@ -635,6 +640,10 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile,
+    downloadButtonTitle:
+      downloadButtonTitle ||
+      coreDefaultFieldMessages.defaultDownloadButtonTitle,
     children: undefined,
     type: FieldTypes.PDF_LINK_BUTTON,
     component: FieldComponents.PDF_LINK_BUTTON,

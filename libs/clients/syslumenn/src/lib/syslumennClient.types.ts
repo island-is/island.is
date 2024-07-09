@@ -187,11 +187,11 @@ export enum PersonType {
 export interface MortgageCertificate {
   contentBase64: string
   apiMessage?: string | undefined
+  propertyNumber?: string | undefined
 }
 
 export interface MortgageCertificateValidation {
   propertyNumber: string
-  isFromSearch?: boolean
   exists: boolean
   hasKMarking: boolean
 }
@@ -227,6 +227,7 @@ export type EstateMember = {
   phone?: string
   email?: string
   advocate?: Advocate
+  advocate2?: Advocate
 }
 
 export type InheritanceEstateMember = EstateMember & {
@@ -336,6 +337,42 @@ export interface PropertyDetail {
   unitsOfUse?: UnitsOfUseModel
 }
 
+export interface ManyPropertyDetail {
+  propertyNumber?: string
+  propertyType?: string
+  realEstate?: Array<RealEstateDetail>
+  vehicle?: VehicleDetail
+  ship?: ShipDetail
+}
+
+export interface RealEstateDetail {
+  propertyNumber: string
+  usage: string
+  defaultAddress: string
+}
+
+export interface VehicleDetail {
+  licencePlate: string
+  propertyNumber: string
+  manufacturer: string
+  manufacturerType: string
+  color: string
+  dateOfRegistration: Date
+}
+
+export interface ShipDetail {
+  shipRegistrationNumber: string
+  usageType: string
+  name: string
+  initialRegistrationDate: Date
+  mainMeasurements: ShipMeasurements
+}
+
+interface ShipMeasurements {
+  length: string
+  bruttoWeightTons: string
+}
+
 interface PropertyLocation {
   display?: string
 }
@@ -353,6 +390,18 @@ export interface MasterLicence {
   dateOfPublication?: Date
   profession?: string
   office?: string
+  nationalId?: string
+}
+
+export interface JourneymanLicence {
+  name?: string
+  dateOfPublication?: Date
+  profession?: string
+}
+
+export interface ProfessionRight {
+  name?: string
+  profession?: string
 }
 
 export interface VehicleRegistration {

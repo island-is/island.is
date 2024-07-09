@@ -1,5 +1,5 @@
 import { ProblemType, ProviderErrorReason } from '@island.is/shared/problem'
-import { StaticText } from 'static-text'
+import { StaticText } from '@island.is/shared/types'
 import { ProblemError } from './ProblemError'
 
 export class TemplateApiError extends ProblemError {

@@ -52,7 +52,7 @@ export const m = defineMessages({
     description: 'National registry subtitle',
   },
   dataCollectionUserProfileTitle: {
-    id: 'cr.application:dataCollectionUserProfileTitle',
+    id: 'aod.application:dataCollectionUserProfileTitle',
     defaultMessage: 'Mínar síður á Ísland.is/stillingar',
     description: 'Your user profile information',
   },
@@ -208,7 +208,7 @@ export const m = defineMessages({
   firearmsDescription: {
     id: 'aod.application:firearmsDescription#markdown',
     defaultMessage: `Skrá þarf upplýsingar um skotvopn látna og nafn og kennitölu þess sem hefur samþykkt að taka við vörslu þeirra.
-      Vörsluaðili þarf að vera með gilt leyfi til að varsla skotvopnin. 
+      Vörsluaðili þarf að vera með gilt leyfi til að varsla skotvopnin.
       Hann fær sms/tölvupóst með beiðni um að samþykkja að taka við vörslu skotvopnanna.`,
     description: 'Firearms step description',
   },
@@ -675,7 +675,7 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   nextStepsText: {
     id: 'aod.application:nextStepsText#markdown',
-    defaultMessage: `* Þegar búið er að staðfesta tilkynninguna og móttöku dánarvottorðs getur útför farið fram. 
+    defaultMessage: `* Þegar búið er að staðfesta tilkynninguna og móttöku dánarvottorðs getur útför farið fram.
     * Heimildir verða sendar í pósthólf á Mínar síður á Ísland.is hjá þeim aðilum sem óskað var eftir.
     * Erfingjar þurfa að taka ákvörðun um frágang dánarbúsins innan fjögurra mánaða frá dánardegi. Nánari upplýsingar má finna á vefsíðu sýslumanns.
     * Mikilvægt er að koma frumriti af erfðaskrám til sýslumanns sem fyrst þar sem innihald hennar getur haft áhrif á dánarbú hins látna.

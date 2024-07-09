@@ -270,6 +270,9 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
                 parentalLeaveFormMessages.employer.registerEmployer,
               removeButtonTooltipText:
                 parentalLeaveFormMessages.employer.deleteEmployer,
+              editButtonTooltipText:
+                parentalLeaveFormMessages.employer.editEmployer,
+              editField: true,
               marginTop: 0,
               fields: {
                 email: {
@@ -414,6 +417,10 @@ export const EditOrAddEmployersAndPeriods: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertType: 'success',
+      alertTitle: parentalLeaveFormMessages.finalScreen.alertTitle,
+      alertMessage: parentalLeaveFormMessages.finalScreen.description,
+      multiFieldTitle: parentalLeaveFormMessages.finalScreen.title,
+      expandableIntro: parentalLeaveFormMessages.finalScreen.expandableIntro,
       expandableHeader: parentalLeaveFormMessages.finalScreen.title,
       expandableDescription: (application: Application) => {
         const nextSteps = getConclusionScreenSteps(application)

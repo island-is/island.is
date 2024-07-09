@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { FC, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -31,7 +31,7 @@ interface Props {
   showingCompletedCases?: boolean
 }
 
-const AppealCasesTable: React.FC<Props> = (props) => {
+const AppealCasesTable: FC<Props> = (props) => {
   const { cases, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
   const { isOpeningCaseId, handleOpenCase, showLoading } = useCaseList()
@@ -77,7 +77,7 @@ const AppealCasesTable: React.FC<Props> = (props) => {
           },
           {
             title: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
-            sortable: { isSortable: true, key: 'defendant' },
+            sortable: { isSortable: true, key: 'defendants' },
           },
           {
             title: formatMessage(tables.type),

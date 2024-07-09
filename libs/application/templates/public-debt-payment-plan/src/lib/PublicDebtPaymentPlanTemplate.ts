@@ -18,7 +18,7 @@ import {
 import { PaymentPlanPrerequisitesApi } from '../dataProviders'
 import { PublicDebtPaymentPlanSchema } from './dataSchema'
 import { application, conclusion } from './messages'
-import { AuthDelegationType } from 'delegation'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const States = {
   draft: 'draft',

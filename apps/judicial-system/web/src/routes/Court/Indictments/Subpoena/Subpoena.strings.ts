@@ -31,4 +31,22 @@ export const subpoena = defineMessages({
     description:
       'Notaður sem texti í staðfesta takka í modal glugga á Fyrirkallsskjá í ákærum.',
   },
+  subpoenaTypeTitle: {
+    id: 'judicial.system.core:subpoena.subpoena_type_title',
+    defaultMessage: 'Tegund fyrirkalls',
+    description:
+      'Notaður sem titill fyrir Tegund fyrirkalls hluta á Fyrirkalls skjá í dómaraflæði í ákærum.',
+  },
+  subpoenaTypeAbsence: {
+    id: 'judicial.system.core:subpoena.subpoena_type_absence',
+    defaultMessage: 'Útivistarfyrirkall',
+    description:
+      'Notaður sem texti fyrir Útivistarfyrirkall valkost á Fyrirkalls skjá í dómaraflæði í ákærum.',
+  },
+  subpoenaTypeArrest: {
+    id: 'judicial.system.core:subpoena.subpoena_type_arrest',
+    defaultMessage: 'Handtökufyrirkall',
+    description:
+      'Notaður sem texti fyrir Handtökufyrirkall valkost á Fyrirkalls skjá í dómaraflæði í ákærum.',
+  },
 })
