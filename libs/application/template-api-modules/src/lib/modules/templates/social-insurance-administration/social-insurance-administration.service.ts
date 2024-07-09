@@ -568,4 +568,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     )
     return filteredChildren
   }
+
+  async getSpousalInfo({ auth }: TemplateApiModuleActionProps) {
+    await this.siaClientService.getSpousalInfo(auth)
+  }
 }
