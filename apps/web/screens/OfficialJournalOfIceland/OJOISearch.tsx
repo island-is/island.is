@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'

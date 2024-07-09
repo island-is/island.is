@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/cms/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/cms/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/cms/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/cms/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/cms"]
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }
