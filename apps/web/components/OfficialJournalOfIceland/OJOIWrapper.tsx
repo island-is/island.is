@@ -135,12 +135,11 @@ export const OJOIWrapper = ({
 
       {!sidebarContent && children}
 
-      <Box className="rs_read">
+      <Box className="rs_read" background="blue100">
         <WebFooter
           imageUrl={organization.logo?.url}
           heading={organization.title}
           columns={organization.footerItems}
-          background={organization?.footerConfig?.background}
           titleVariant="h2"
         />
       </Box>
