@@ -1,6 +1,6 @@
 import { Environment } from './environment.interface'
 
-const devConfig = {
+const devConfig: Environment = {
   production: false,
   environment: 'local',
   name: 'local',
@@ -18,10 +18,11 @@ const devConfig = {
       process.env.WEB_FRONTEND_PORT ?? '4242'
     }/umsoknir`,
     emailOptions: {
-      useTestAccount: !(process.env.USE_SES === 'true'),
-      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+      useTestAccount: !(process.env.USE_SES === 'true') ?? '',
+      useNodemailerApp:
+        process.env.USE_NODEMAILER_APP === 'true' ?? false ?? '',
       options: {
-        region: process.env.EMAIL_REGION ?? 'eu-west-1',
+        region: process.env.EMAIL_REGION ?? 'eu-west-1' ?? '',
       },
     },
     email: {
@@ -34,11 +35,11 @@ const devConfig = {
     smsOptions: {
       url: 'https://smsapi.devnova.is',
       username: 'IslandIs_User_Development',
-      password: process.env.NOVA_PASSWORD,
+      password: process.env.NOVA_PASSWORD ?? '',
       acceptUnauthorized: true,
     },
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
+    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET ?? '',
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET ?? '',
     generalPetition: {
       endorsementsApiBasePath: 'http://localhost:4246',
     },
@@ -46,72 +47,72 @@ const devConfig = {
       serviceBasePath: 'http://localhost:3366',
     },
     islykill: {
-      cert: process.env.ISLYKILL_CERT,
-      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+      cert: process.env.ISLYKILL_CERT ?? '',
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
     },
   },
 
   contentful: {
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN ?? '',
   },
-} as Environment
+}
 
-const prodConfig = {
+const prodConfig: Environment = {
   production: true,
-  environment: process.env.ENVIRONMENT,
-  name: process.env.name,
-  baseApiUrl: process.env.GRAPHQL_API_URL,
+  environment: process.env.ENVIRONMENT ?? '',
+  name: process.env.name ?? '',
+  baseApiUrl: process.env.GRAPHQL_API_URL ?? '',
   audit: {
     defaultNamespace: '@island.is/applications',
-    groupName: process.env.AUDIT_GROUP_NAME,
+    groupName: process.env.AUDIT_GROUP_NAME ?? '',
     serviceName: 'application-system-api',
   },
   auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
     audience: ['@island.is', '@admin.island.is'],
     allowClientNationalId: true,
   },
   templateApi: {
-    clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
+    clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN ?? '',
     emailOptions: {
       useTestAccount: false,
       useNodemailerApp: false,
       options: {
-        region: process.env.EMAIL_REGION,
+        region: process.env.EMAIL_REGION ?? '',
       },
     },
     email: {
-      sender: process.env.EMAIL_FROM_NAME,
-      address: process.env.EMAIL_FROM,
+      sender: process.env.EMAIL_FROM_NAME ?? '',
+      address: process.env.EMAIL_FROM ?? '',
     },
-    jwtSecret: process.env.AUTH_JWT_SECRET,
+    jwtSecret: process.env.AUTH_JWT_SECRET ?? '',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
-    baseApiUrl: process.env.GRAPHQL_API_URL,
+    baseApiUrl: process.env.GRAPHQL_API_URL ?? '',
     smsOptions: {
-      url: process.env.NOVA_URL,
-      username: process.env.NOVA_USERNAME,
-      password: process.env.NOVA_PASSWORD,
-      acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
+      url: process.env.NOVA_URL ?? '',
+      username: process.env.NOVA_USERNAME ?? '',
+      password: process.env.NOVA_PASSWORD ?? '',
+      acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true' ?? '',
     },
-    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
-    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
+    presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET ?? '',
+    attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET ?? '',
     generalPetition: {
-      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH,
+      endorsementsApiBasePath: process.env.ENDORSEMENTS_API_BASE_PATH ?? '',
     },
     userProfile: {
-      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL,
+      serviceBasePath: process.env.SERVICE_USER_PROFILE_URL ?? '',
     },
     islykill: {
-      cert: process.env.ISLYKILL_CERT,
-      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-      basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
+      cert: process.env.ISLYKILL_CERT ?? '',
+      passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
+      basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
     },
   },
   contentful: {
-    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN,
+    accessToken: process.env.CONTENTFUL_ACCESS_TOKEN ?? '',
   },
-} as Environment
+}
 
 export default process.env.PROD_MODE === 'true' ||
 process.env.NODE_ENV === 'production'

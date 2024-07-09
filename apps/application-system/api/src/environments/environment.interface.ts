@@ -10,7 +10,7 @@ export interface Environment {
   baseApiUrl: string
   audit: AuditOptions
   auth: AuthConfig
-  templateApi: TemplateAPIConfig
+  templateApi: Partial<TemplateAPIConfig>
   smsOptions: SmsServiceOptions
   contentful: {
     accessToken: string
