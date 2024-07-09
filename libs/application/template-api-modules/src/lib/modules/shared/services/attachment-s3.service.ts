@@ -79,9 +79,7 @@ export class AttachmentS3Service {
     fileName: string,
   ): Promise<string | undefined> {
     try {
-      const file = await this.aws.getFile(fileName)
-      const fileContent = file.Body
-      return fileContent?.transformToString('base64')
+      return this.aws.getFileB64(fileName)
     } catch (error) {
       logger.error(error)
       return undefined

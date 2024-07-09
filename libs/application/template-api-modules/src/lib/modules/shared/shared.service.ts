@@ -22,7 +22,7 @@ import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
-import { AwsService } from '@island.is/nest/aws'
+import { AwsService, Encoding } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
@@ -245,14 +245,24 @@ export class SharedTemplateApiService {
   async getS3File(
     application: ApplicationWithAttachments,
     attachmentKey: string,
-  ) {
+  ): Promise<ReturnType<AwsService['getFile']>>
+  async getS3File(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    encoding: Encoding,
+  ): Promise<string | undefined>
+  async getS3File(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    encoding?: Encoding,
+  ): Promise<ReturnType<AwsService['getFile']> | string | undefined> {
     const fileName = (
       application.attachments as {
         [key: string]: string
       }
     )[attachmentKey]
-    const file = await this.aws.getFile(fileName)
-    return file
+    if (encoding) return await this.aws.getFileEncoded(fileName, encoding)
+    return await this.aws.getFile(fileName)
   }
 
   async getAttachmentContentAsBase64(
