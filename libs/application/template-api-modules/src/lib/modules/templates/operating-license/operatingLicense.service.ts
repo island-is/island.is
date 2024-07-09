@@ -36,7 +36,8 @@ import { error } from '@island.is/application/templates/operating-license'
 import { isPerson } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
 import { AwsService } from '@island.is/nest/aws'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -46,7 +47,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly criminalRecordService: CriminalRecordService,
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
-    private readonly awsService: AwsService,
+    private readonly aws: AwsService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
@@ -337,7 +338,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     const { bucket, key } = AmazonS3URI(fileName)
 
     try {
-      return (await this.awsService.getFileB64(bucket, key)) ?? ''
+      return (await this.aws.getFileB64(bucket, key)) ?? ''
     } catch (e) {
       this.logger.error('Error getting file', { error: e })
       return 'err'
