@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
@@ -36,6 +36,7 @@ import { error } from '@island.is/application/templates/operating-license'
 import { isPerson } from 'kennitala'
 import { User } from '@island.is/auth-nest-tools'
 import { AwsService } from '@island.is/nest/aws'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @Injectable()
 export class OperatingLicenseService extends BaseTemplateApiService {
@@ -46,6 +47,8 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     private readonly financeService: FinanceClientService,
     private readonly judicialAdministrationService: JudicialAdministrationService,
     private readonly awsService: AwsService,
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
   ) {
     super(ApplicationTypes.OPERATING_LICENSE)
   }
@@ -334,10 +337,9 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     const { bucket, key } = AmazonS3URI(fileName)
 
     try {
-      const file = await this.awsService.getFile(bucket, key)
-      const fileContent = file.Body
-      return fileContent?.transformToString('base64') || ''
+      return (await this.awsService.getFileB64(bucket, key)) ?? ''
     } catch (e) {
+      this.logger.error('Error getting file', { error: e })
       return 'err'
     }
   }

@@ -26,9 +26,9 @@ import {
   mapValuesToPartytype,
   mapValuesToCemeterytype,
 } from './mappers/mapValuesToUsertype'
-import { AwsService } from '@island.is/nest/aws'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { SharedTemplateApiService } from '../../shared'
 
 export interface AttachmentData {
   key: string
@@ -55,7 +55,7 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementsClientService: FinancialStatementsInaoClientService,
-    private readonly awsService: AwsService,
+    private readonly sharedTemplateAPIService: SharedTemplateApiService,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENTS_INAO)
   }
@@ -78,32 +78,13 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
     const currentUserType = getCurrentUserType(answers, externalData)
 
     const getAttachment = async (): Promise<string> => {
-      const attachments: AttachmentData[] | undefined = getValueViaPath(
-        application.answers,
+      const file = await this.sharedTemplateAPIService.getS3File(
+        application,
         'attachments.file',
-      ) as Array<{ key: string; name: string }>
-
-      const attachmentKey = attachments[0].key
-
-      const fileName = (
-        application.attachments as {
-          [key: string]: string
-        }
-      )[attachmentKey]
-
-      if (!fileName) {
-        return Promise.reject({})
-      }
-
-      const { bucket, key } = AmazonS3URI(fileName)
-
-      const file = await this.awsService.getFile(bucket, key)
-
-      if (!file.Body) {
-        throw new Error('Villa kom kom upp við að senda umsókn')
-      }
-
-      return (await file.Body?.transformToString('base64')) ?? ''
+        'base64',
+      )
+      if (!file) throw new Error('Error submitting application')
+      return file
     }
 
     if (currentUserType === FSIUSERTYPE.INDIVIDUAL) {

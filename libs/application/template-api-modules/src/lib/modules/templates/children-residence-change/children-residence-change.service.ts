@@ -38,7 +38,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly smsService: SmsService,
-    private readonly awsService: AwsService,
+    private readonly aws: AwsService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
   }
@@ -49,7 +49,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
     const { bucket, key } = AmazonS3URI(s3FileName)
-    const file = await this.awsService.getFile(bucket, key)
+    const file = await this.aws.getFile(bucket, key)
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,

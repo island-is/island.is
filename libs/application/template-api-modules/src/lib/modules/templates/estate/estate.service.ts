@@ -41,7 +41,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
-    private readonly awsService: AwsService,
+    private readonly aws: AwsService,
   ) {
     super(ApplicationTypes.ESTATE)
   }
@@ -236,9 +236,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
           const fileName = (application.attachments as ApplicationAttachments)[
             attachmentAnswerData[index]?.key
           ]
-          const content = await this.awsService
-            .getFile(fileName)
-            .then((file) => file.Body?.transformToString('base64') || '')
+          const content = (await this.aws.getFileB64(fileName)) ?? ''
           attachments.push({ name, content })
         }
       }
