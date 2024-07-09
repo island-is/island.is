@@ -21,7 +21,6 @@ import { DefenseChoice } from '../models/defenseChoice.model'
 import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { GetCourtCasesInput } from '../dto/getCourtCasesInput.model'
-import { GetLawyersInput } from '../dto/getLawyers'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -74,11 +73,8 @@ export class LawAndOrderResolver {
   //@Scopes(ApiScope.lawAndOrder)
   @Query(() => Lawyers, { name: 'lawAndOrderLawyers', nullable: true })
   @Audit()
-  async getLawyers(
-    @CurrentUser() user: User,
-    @Args('input') input: GetLawyersInput,
-  ) {
-    return this.lawAndOrderService.getLawyers(user, input.locale)
+  async getLawyers(@CurrentUser() user: User) {
+    return this.lawAndOrderService.getLawyers(user)
   }
 
   @Mutation(() => DefenseChoice, {

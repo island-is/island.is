@@ -18,43 +18,23 @@ import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
-
-const mapDefenseChoice = (
-  choice: DefenseChoiceEnum,
-): UpdateSubpoenaDtoDefenderChoiceEnum => {
-  switch (choice) {
-    case DefenseChoiceEnum.CHOOSE:
-      return UpdateSubpoenaDtoDefenderChoiceEnum.CHOOSE
-    case DefenseChoiceEnum.WAIVE:
-      return UpdateSubpoenaDtoDefenderChoiceEnum.WAIVE
-    case DefenseChoiceEnum.DELAY:
-      return UpdateSubpoenaDtoDefenderChoiceEnum.DELAY
-    case DefenseChoiceEnum.DELEGATE:
-      return UpdateSubpoenaDtoDefenderChoiceEnum.DELEGATE
-    default:
-      return UpdateSubpoenaDtoDefenderChoiceEnum.DELAY
-  }
-}
-
-const mapLocale = (locale: Locale): CaseControllerUpdateSubpoenaLocaleEnum => {
-  switch (locale) {
-    case 'is':
-      return CaseControllerUpdateSubpoenaLocaleEnum.Is
-    case 'en':
-      return CaseControllerUpdateSubpoenaLocaleEnum.En
-    default:
-      return CaseControllerUpdateSubpoenaLocaleEnum.Is
-  }
-}
+import {
+  mapCaseLocale,
+  mapCasesLocale,
+  mapDefenseChoice,
+  mapSubpoenaLocale,
+  mapUpdateSubpoenaLocale,
+} from './helpers/mappers'
 
 @Injectable()
 export class LawAndOrderService {
   constructor(private api: JudicialSystemSPClientService) {}
 
   async getCourtCases(user: User, locale: Locale) {
-    const cases: Array<CasesResponse> | undefined = await this.api.getCases(
+    const caseLocale = mapCasesLocale(locale)
+    const cases: Array<CasesResponse> | null = await this.api.getCases(
       user,
-      locale,
+      caseLocale,
     )
     if (cases === null) return null
 
@@ -76,7 +56,8 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
-    const singleCase = await this.api.getCase(id, user, locale)
+    const caseLocale = mapCaseLocale(locale)
+    const singleCase = await this.api.getCase(id, user, caseLocale)
     if (singleCase === null) return null
 
     const randomBoolean = Math.random() < 0.75
@@ -98,8 +79,9 @@ export class LawAndOrderService {
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
+    const caseLocale = mapSubpoenaLocale(locale)
     const subpoena: SubpoenaResponse | undefined | null =
-      await this.api.getSubpoena(id, user, locale)
+      await this.api.getSubpoena(id, user, caseLocale)
 
     if (subpoena === null) return null
 
@@ -122,9 +104,9 @@ export class LawAndOrderService {
     return data
   }
 
-  async getLawyers(user: User, locale: Locale) {
+  async getLawyers(user: User) {
     const answer: Array<Defender> | undefined | null =
-      await this.api.getLawyers(user, locale)
+      await this.api.getLawyers(user)
     const list: Lawyers = { items: [] }
 
     answer?.map((x) => {
@@ -146,10 +128,10 @@ export class LawAndOrderService {
         caseId: input.caseId,
         updateSubpoenaDto: {
           defenderChoice: mapDefenseChoice(input.choice), // eslint-disable-next-line local-rules/disallow-kennitalas
-          defenderNationalId: input.lawyersNationalId, // temp solution, remove when service has updated field to be unrequired
-          acceptCompensationClaim: false,
+          defenderNationalId: input.lawyersNationalId,
+          acceptCompensationClaim: false, // Remove when service has removed this field
         },
-        locale: mapLocale(input.locale),
+        locale: mapUpdateSubpoenaLocale(input.locale),
       },
       user,
     )

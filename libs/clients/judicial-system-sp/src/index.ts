@@ -5,6 +5,9 @@ export {
   DefendersApi,
   UpdateSubpoenaDtoDefenderChoiceEnum,
   CaseControllerUpdateSubpoenaLocaleEnum,
+  CaseControllerGetAllCasesLocaleEnum,
+  CaseControllerGetCaseLocaleEnum,
+  CaseControllerGetSubpoenaLocaleEnum,
 } from '../gen/fetch'
 export { JudicialSystemSPClientService } from './lib/judicialSystemSPClient.service'
 export * from '../gen/fetch/models'
