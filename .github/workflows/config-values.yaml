@@ -94,7 +94,7 @@ jobs:
       - name: Commit any changes to charts
         if: ${{ github.event_name == 'pull_request' }}
         run: |
-          yarn --cwd infra charts
+          (cd infra && yarn charts)
           ./infra/scripts/ci/git-check-dirty.sh "charts/" "charts" "dirtybot"
 
   check-secrets:
