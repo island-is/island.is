@@ -816,6 +816,56 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-sdk/client-ses@npm:3.609.0":
+  version: 3.609.0
+  resolution: "@aws-sdk/client-ses@npm:3.609.0"
+  dependencies:
+    "@aws-crypto/sha256-browser": 5.2.0
+    "@aws-crypto/sha256-js": 5.2.0
+    "@aws-sdk/client-sso-oidc": 3.609.0
+    "@aws-sdk/client-sts": 3.609.0
+    "@aws-sdk/core": 3.609.0
+    "@aws-sdk/credential-provider-node": 3.609.0
+    "@aws-sdk/middleware-host-header": 3.609.0
+    "@aws-sdk/middleware-logger": 3.609.0
+    "@aws-sdk/middleware-recursion-detection": 3.609.0
+    "@aws-sdk/middleware-user-agent": 3.609.0
+    "@aws-sdk/region-config-resolver": 3.609.0
+    "@aws-sdk/types": 3.609.0
+    "@aws-sdk/util-endpoints": 3.609.0
+    "@aws-sdk/util-user-agent-browser": 3.609.0
+    "@aws-sdk/util-user-agent-node": 3.609.0
+    "@smithy/config-resolver": ^3.0.4
+    "@smithy/core": ^2.2.4
+    "@smithy/fetch-http-handler": ^3.2.0
+    "@smithy/hash-node": ^3.0.3
+    "@smithy/invalid-dependency": ^3.0.3
+    "@smithy/middleware-content-length": ^3.0.3
+    "@smithy/middleware-endpoint": ^3.0.4
+    "@smithy/middleware-retry": ^3.0.7
+    "@smithy/middleware-serde": ^3.0.3
+    "@smithy/middleware-stack": ^3.0.3
+    "@smithy/node-config-provider": ^3.1.3
+    "@smithy/node-http-handler": ^3.1.1
+    "@smithy/protocol-http": ^4.0.3
+    "@smithy/smithy-client": ^3.1.5
+    "@smithy/types": ^3.3.0
+    "@smithy/url-parser": ^3.0.3
+    "@smithy/util-base64": ^3.0.0
+    "@smithy/util-body-length-browser": ^3.0.0
+    "@smithy/util-body-length-node": ^3.0.0
+    "@smithy/util-defaults-mode-browser": ^3.0.7
+    "@smithy/util-defaults-mode-node": ^3.0.7
+    "@smithy/util-endpoints": ^2.0.4
+    "@smithy/util-middleware": ^3.0.3
+    "@smithy/util-retry": ^3.0.3
+    "@smithy/util-utf8": ^3.0.0
+    "@smithy/util-waiter": ^3.1.2
+    tslib: ^2.6.2
+  checksum: 042f53e221a7edf5eb70dd9706453d29865a0952d49d3e08f7f683dac586bdc9e57f9d3d2b1a1ee636571c165cd643afe6be04907d554cfe1b723a7d466825d3
+  languageName: node
+  linkType: hard
+
 "@aws-sdk/client-sns@npm:3.609.0":
   version: 3.609.0
   resolution: "@aws-sdk/client-sns@npm:3.609.0"
@@ -19765,6 +19815,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/aws-sdk2-types@npm:*":
+  version: 0.0.5
+  resolution: "@types/aws-sdk2-types@npm:0.0.5"
+  dependencies:
+    "@types/node": "*"
+  checksum: 18d0b59db3100ed0215e41c12005eb4a62e69ad94f7f9fccf906ac6ed8a831c1b74fb81d612c8c91ef8087ae0c812a781698bcb112419e5778d1aa9c89a69ca1
+  languageName: node
+  linkType: hard
+
 "@types/aws4@npm:1.5.1":
   version: 1.5.1
   resolution: "@types/aws4@npm:1.5.1"
@@ -20835,12 +20894,63 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/nodemailer-direct-transport@npm:*":
+  version: 1.0.35
+  resolution: "@types/nodemailer-direct-transport@npm:1.0.35"
+  dependencies:
+    "@types/nodemailer": ^3
+  checksum: ab133b588d0fa34a2cc2f3f0964ceb5d826a3ad2dff7170d79deb9f6cf9c506165765c002678f50d341be244a9b899e3e3a79ec2c5c71be200e85c4dc00372e6
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer-ses-transport@npm:*":
+  version: 3.1.6
+  resolution: "@types/nodemailer-ses-transport@npm:3.1.6"
+  dependencies:
+    "@types/nodemailer": ^3
+    aws-sdk: ^2.37.0
+  checksum: 50a517d84c242c5c8ba1fd3aaffa5506950332e49d1ca95c1dbb1e72811256c0c2cc6f4590deffd219e06c1501b4f7e71a88bc0051b3c3c0f9245e6e045b54dd
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer-ses-transport@npm:1.5.5":
+  version: 1.5.5
+  resolution: "@types/nodemailer-ses-transport@npm:1.5.5"
+  dependencies:
+    "@types/aws-sdk2-types": "*"
+    "@types/nodemailer": ^3
+  checksum: 6bcc9b5084065b8665021d0a14cd4cab480a3c5771c2663ed4d68cbe186fe0e448fb8f1155984fd4f7e308e69e244ff0af1394462053850afcba9157d86f0075
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer-smtp-transport@npm:*":
+  version: 2.7.8
+  resolution: "@types/nodemailer-smtp-transport@npm:2.7.8"
+  dependencies:
+    "@types/node": "*"
+    "@types/nodemailer": ^3
+  checksum: 8747b55ffe99199b421a60eedc5a5a50eb54bcce5d796a6cc2d7d8a253752faba5ff82d3d7211b99d3f5c4d3748299234146a6a986b9604775bd89763b430839
+  languageName: node
+  linkType: hard
+
 "@types/nodemailer@npm:6.4.1":
   version: 6.4.1
   resolution: "@types/nodemailer@npm:6.4.1"
   dependencies:
     "@types/node": "*"
   checksum: 58239d1996c0f7f5f7a9373e575e1889c7757af30064803efc2032f87d4be7a62cb87df401b8ed060f919af9606bbb7470450a44b46a53ff12041e7fac8acb8a
+  languageName: node
+  linkType: hard
+
+"@types/nodemailer@npm:^3":
+  version: 3.1.14
+  resolution: "@types/nodemailer@npm:3.1.14"
+  dependencies:
+    "@types/node": "*"
+    "@types/nodemailer-direct-transport": "*"
+    "@types/nodemailer-ses-transport": "*"
+    "@types/nodemailer-smtp-transport": "*"
+  checksum: e389a414eb0c6a3c3f5a8bdb40f579b207f85a5481a1b657753153b265bf5ae90d38cee24d918641ce695b93e276e649ca4b7c7f1184b14b7353748fa130cfc7
   languageName: node
   linkType: hard
 
@@ -24412,6 +24522,24 @@ __metadata:
     uuid: 8.0.0
     xml2js: 0.6.2
   checksum: 322b5b1b27e12ca68680557fe4ebf21baeb307b13e6759929531e3b5e444700ed45406755ed7b1dcbe011cc9953e4f02f77d350f10c19ab8fe87958923136a69
+  languageName: node
+  linkType: hard
+
+"aws-sdk@npm:^2.2.36, aws-sdk@npm:^2.37.0":
+  version: 2.1656.0
+  resolution: "aws-sdk@npm:2.1656.0"
+  dependencies:
+    buffer: 4.9.2
+    events: 1.1.1
+    ieee754: 1.1.13
+    jmespath: 0.16.0
+    querystring: 0.2.0
+    sax: 1.2.1
+    url: 0.10.3
+    util: ^0.12.4
+    uuid: 8.0.0
+    xml2js: 0.6.2
+  checksum: 48b16dd3b9cd6776f99c92bb826c6cc3451e7e9261891000af33377ca26b60364724927de9035ccf3cfc8e0c3ade7ee4edf356d805db2487aff91d7d8e163196
   languageName: node
   linkType: hard
 
@@ -37183,6 +37311,7 @@ __metadata:
     "@apollo/utils.keyvadapter": 3.0.0
     "@aws-sdk/client-elasticsearch-service": 3.609.0
     "@aws-sdk/client-s3": 3.609.0
+    "@aws-sdk/client-ses": 3.609.0
     "@aws-sdk/client-sns": 3.609.0
     "@aws-sdk/client-sqs": 3.598.0
     "@aws-sdk/client-ssm": 3.598.0
@@ -37314,6 +37443,7 @@ __metadata:
     "@types/memoizee": 0.4.5
     "@types/node": 18.16.9
     "@types/nodemailer": 6.4.1
+    "@types/nodemailer-ses-transport": 1.5.5
     "@types/opossum": 4.1.1
     "@types/passport-jwt": 3.0.8
     "@types/pdfkit": 0.11.2
@@ -37479,6 +37609,7 @@ __metadata:
     node-gyp: 9.1.0
     node-html-markdown: 1.3.0
     nodemailer: 6.7.2
+    nodemailer-ses-transport: 1.5.1
     nx: 19.4.0
     oidc-client-ts: 2.4.0
     openapi3-ts: 2.0.0
@@ -43746,6 +43877,15 @@ __metadata:
     is-promise: ~1.0.0
     promise: ~1.3.0
   checksum: 2d61f77a43ba0d580fc9615c5112d891605baa56f13d871a9f9736a92a80d974f77fa9ad3a4698214929216e79f583c18fd17e6363934f73d39cc69319f244de
+  languageName: node
+  linkType: hard
+
+"nodemailer-ses-transport@npm:1.5.1":
+  version: 1.5.1
+  resolution: "nodemailer-ses-transport@npm:1.5.1"
+  dependencies:
+    aws-sdk: ^2.2.36
+  checksum: df507f778f376c053e1b9d780bd539bb87849d29cfc8577056e11bb41126bc99a8a922ad1e98eca487db05b7a0cd0797f9377e995d90b136568d77c972179498
   languageName: node
   linkType: hard
 
