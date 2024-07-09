@@ -12,6 +12,7 @@ import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const MINUTE = 60
 const HOUR = 60 * MINUTE
+type Encoding = 'binary' | 'base64' | 'utf-8'
 
 @Injectable()
 export class AwsService {
@@ -44,6 +45,36 @@ export class AwsService {
     })
 
     return await this.s3Client.send(command)
+  }
+
+  async getFileEncoded(
+    fileName: string,
+    encoding?: Encoding,
+  ): Promise<string | undefined>
+  async getFileEncoded(
+    bucket: string,
+    fileName: string,
+    encoding?: Encoding,
+  ): Promise<string | undefined>
+  async getFileEncoded(
+    bucket: string,
+    fileName?: string,
+    encoding: Encoding = 'base64',
+  ): Promise<string | undefined> {
+    const out = fileName
+      ? await this.getFile(bucket, fileName)
+      : await this.getFile(bucket)
+    return out.Body?.transformToString(encoding)
+  }
+
+  async getFileB64(fileName: string): Promise<string>
+  async getFileB64(bucket: string, fileName: string): Promise<string>
+  async getFileB64(
+    bucket: string,
+    fileName?: string,
+  ): Promise<string | undefined> {
+    if (!fileName) return await this.getFileEncoded(bucket, 'base64')
+    return await this.getFileEncoded(bucket, fileName, 'base64')
   }
 
   async uploadFile(
