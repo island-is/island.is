@@ -6,7 +6,6 @@ import { AccidentNotificationService } from './accident-notification.service'
 import { HealthInsuranceV2ClientModule } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { ApplicationAttachmentService } from './attachments/applicationAttachment.service'
 import { AccidentNotificationAttachmentProvider } from './attachments/applicationAttachmentProvider'
-import { S3Service } from './attachments/s3.service'
 import { AwsService } from '@island.is/nest/aws'
 
 const applicationRecipientName =
@@ -41,7 +40,6 @@ export class AccidentNotificationModule {
         AccidentNotificationService,
         ApplicationAttachmentService,
         AccidentNotificationAttachmentProvider,
-        S3Service,
         {
           provide: AwsService,
           useValue: new AwsService(),

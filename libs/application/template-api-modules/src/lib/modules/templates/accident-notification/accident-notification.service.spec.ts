@@ -48,13 +48,6 @@ class MockSmsService {
   }
 }
 
-const S3Instance = {
-  upload: jest.fn().mockReturnThis(),
-  promise: jest.fn(),
-  deleteObject: jest.fn().mockReturnThis(),
-  getObject: jest.fn().mockReturnThis(),
-}
-
 describe('AccidentNotificationService', () => {
   let accidentNotificationService: AccidentNotificationService
   let aws: AwsService
