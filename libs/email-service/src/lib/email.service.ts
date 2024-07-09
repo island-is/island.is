@@ -1,6 +1,5 @@
 import { SESClient, SESClientConfig } from '@aws-sdk/client-ses'
 import nodemailer from 'nodemailer'
-import { SESTransport } from 'nodemailer-ses-transport'
 
 import { Inject } from '@nestjs/common'
 
@@ -71,11 +70,9 @@ export class EmailService {
       cfg.region = this.options.options?.region
     }
 
-    const sesClient = new SESClient(cfg)
-
-    return new SESTransport({
-      SES: { ses: sesClient, aws: { SendRawEmail: () => {} } },
-    })
+    return {
+      SES: new SESClient(cfg),
+    }
   }
 
   async sendEmail(message: Message): Promise<string> {
