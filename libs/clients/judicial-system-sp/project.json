@@ -29,7 +29,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10014/Rettarvorslugatt-Private/getOpenAPI?serviceCode=judicial-system-mailbox-api -H 'Accept: application/json' > src/clientConfig.json"
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10014/Rettarvorslugatt-Private/getOpenAPI?serviceCode=judicial-system-mailbox-api -H 'Accept: application/json' > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
         "cwd": "libs/clients/judicial-system-sp"
