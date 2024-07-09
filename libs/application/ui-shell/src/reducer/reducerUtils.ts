@@ -33,7 +33,7 @@ import {
   RepeaterScreen,
 } from '../types'
 import { answerIsMissing } from '../utils'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
 export const screenRequiresAnswer = (screen: FormScreen) => {
   if (!screen.isNavigable) {

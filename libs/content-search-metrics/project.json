@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/content-search-metrics/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/content-search-metrics/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/content-search-metrics/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/content-search-metrics/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/content-search-metrics"]
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }
