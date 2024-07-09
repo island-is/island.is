@@ -52,7 +52,7 @@ export const financeModule: PortalModule = {
     {
       name: m.financeTransactionsCategories,
       path: FinancePaths.FinanceTransactionCategories,
-      element: <FinanceTransactionPeriods />,
+      element: <FinanceTransactionsCategories />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),
