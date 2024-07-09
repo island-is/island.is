@@ -765,7 +765,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeSignRulingRule)
+  @RolesRules(districtCourtJudgeRule)
   @Post('case/:caseId/ruling/signature')
   @ApiCreatedResponse({
     type: SigningServiceResponse,
@@ -777,6 +777,12 @@ export class CaseController {
     @CurrentCase() theCase: Case,
   ): Promise<SigningServiceResponse> {
     this.logger.debug(`Requesting a signature for the ruling of case ${caseId}`)
+
+    if (user.id !== theCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
+    }
 
     return this.caseService.requestRulingSignature(theCase).catch((error) => {
       if (error instanceof DokobitError) {
@@ -802,7 +808,7 @@ export class CaseController {
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
-  @RolesRules(districtCourtJudgeSignRulingRule)
+  @RolesRules(districtCourtJudgeRule)
   @Get('case/:caseId/ruling/signature')
   @ApiOkResponse({
     type: SignatureConfirmationResponse,
@@ -816,6 +822,12 @@ export class CaseController {
     @Query('documentToken') documentToken: string,
   ): Promise<SignatureConfirmationResponse> {
     this.logger.debug(`Confirming a signature for the ruling of case ${caseId}`)
+
+    if (user.id !== theCase.judgeId) {
+      throw new ForbiddenException(
+        'A ruling must be signed by the assigned judge',
+      )
+    }
 
     return this.caseService.getRulingSignatureConfirmation(
       theCase,

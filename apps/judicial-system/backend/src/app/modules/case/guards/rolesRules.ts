@@ -354,7 +354,7 @@ export const districtCourtJudgeSignRulingRule: RolesRule = {
     const theCase: Case = request.case
 
     // Deny if something is missing - shuould never happen
-    if (!user || !theCase) {
+    if (!user) {
       return false
     }
 
