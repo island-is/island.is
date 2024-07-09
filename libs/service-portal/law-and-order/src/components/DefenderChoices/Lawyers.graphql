@@ -1,5 +1,5 @@
-query GetLawyers($input: LawAndOrderLawyersInput!) {
-  lawAndOrderLawyers(input: $input) {
+query GetLawyers {
+  lawAndOrderLawyers {
     items {
       name
       nationalId
