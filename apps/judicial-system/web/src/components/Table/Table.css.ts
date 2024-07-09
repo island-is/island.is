@@ -5,7 +5,6 @@ import { theme } from '@island.is/island-ui/theme'
 export const table = style({
   borderSpacing: 0,
   borderCollapse: 'collapse',
-  overflow: 'hidden',
 
   // Needed for Safari.
   width: '100%',
@@ -49,6 +48,7 @@ export const smallContainer = style({
   justifyContent: 'center',
   width: '34px',
   height: '34px',
+  marginLeft: 'auto',
 })
 
 globalStyle(`${table} td, th`, {

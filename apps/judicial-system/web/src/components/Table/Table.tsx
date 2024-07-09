@@ -8,7 +8,7 @@ import React, {
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -208,25 +208,47 @@ const Table: FC<TableProps> = (props) => {
               <td key={`${td}-${columns.indexOf(td)}`}>{td.cell(row)}</td>
             ))}
             {generateContextMenuItems && (
-              <td>
+              <td width="4%">
                 {generateContextMenuItems(row).length > 0 && (
-                  <AnimatePresence exitBeforeEnter initial={false}>
+                  <AnimatePresence
+                    exitBeforeEnter
+                    initial={false}
+                    mode="popLayout"
+                  >
                     {isOpeningCaseId === row.id && showLoading ? (
-                      <div className={styles.smallContainer}>
+                      <motion.div
+                        className={styles.smallContainer}
+                        key={row.id}
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{
+                          opacity: 0,
+                          y: 5,
+                          transition: { duration: 0.5 },
+                        }}
+                      >
                         <LoadingIndicator />
-                      </div>
+                      </motion.div>
                     ) : (
                       <ContextMenu
                         menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
                         items={generateContextMenuItems(row)}
                         disclosure={
-                          <IconButton
-                            icon="ellipsisVertical"
-                            colorScheme="transparent"
-                            onClick={(evt) => {
-                              evt.stopPropagation()
-                            }}
-                          />
+                          <motion.div
+                            className={styles.smallContainer}
+                            key={row.id}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: 5 }}
+                          >
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                              onClick={(evt) => {
+                                evt.stopPropagation()
+                              }}
+                            />
+                          </motion.div>
                         }
                       />
                     )}
