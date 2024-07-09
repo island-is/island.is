@@ -34,6 +34,7 @@ export interface BaseTemplateAPIModuleConfig {
     acceptUnauthorized?: boolean
   }
   attachmentBucket: string
+  presignBucket: string
   generalPetition: {
     endorsementsApiBasePath: string
   }
