@@ -10,7 +10,6 @@ import {
   DefendersApi,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Locale } from '@island.is/shared/types'
 import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
@@ -27,38 +26,42 @@ export class JudicialSystemSPClientService {
   private defenderApiWithAuth = (user: User) =>
     this.defendersApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getCases(user: User, locale: Locale) {
-    let cases
-    try {
-      cases = await this.casesApiWithAuth(user).caseControllerGetAllCases({
-        locale: locale as CaseControllerGetAllCasesLocaleEnum,
-      })
-    } catch (error) {
-      this.logger.error('Failed getting cases for user', error)
-    }
-    return cases
-  }
-
-  async getCase(id: string, user: User, locale: Locale) {
+  async getCases(user: User, locale: CaseControllerGetAllCasesLocaleEnum) {
     return this.casesApiWithAuth(user)
-      .caseControllerGetCase({
-        caseId: id,
-        locale: locale as CaseControllerGetCaseLocaleEnum,
+      .caseControllerGetAllCases({
+        locale: locale,
       })
       .catch(handle404)
   }
 
-  async getLawyers(user: User, locale: Locale) {
+  async getCase(
+    id: string,
+    user: User,
+    locale: CaseControllerGetCaseLocaleEnum,
+  ) {
+    return this.casesApiWithAuth(user)
+      .caseControllerGetCase({
+        caseId: id,
+        locale: locale,
+      })
+      .catch(handle404)
+  }
+
+  async getLawyers(user: User) {
     return this.defenderApiWithAuth(user)
       .defenderControllerGetLawyers()
       .catch(handle404)
   }
 
-  async getSubpoena(id: string, user: User, locale: Locale) {
+  async getSubpoena(
+    id: string,
+    user: User,
+    locale: CaseControllerGetSubpoenaLocaleEnum,
+  ) {
     return this.casesApiWithAuth(user)
       .caseControllerGetSubpoena({
         caseId: id,
-        locale: locale as CaseControllerGetSubpoenaLocaleEnum,
+        locale: locale,
       })
       .catch(handle404)
   }
