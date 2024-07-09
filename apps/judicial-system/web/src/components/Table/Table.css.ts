@@ -49,7 +49,6 @@ export const smallContainer = style({
   width: '34px',
   height: '34px',
   marginLeft: 'auto',
-  zIndex: -1,
 })
 
 globalStyle(`${table} td, th`, {
