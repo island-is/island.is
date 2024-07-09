@@ -58,7 +58,23 @@ const devConfig: Environment = {
   },
 }
 
-const prodConfig: Environment = {
+// TODO: Remove empty-string defaulting
+const prodConfig: Environment<
+  [
+    'attachmentBucket',
+    'baseApiUrl',
+    'clientLocationOrigin',
+    'email',
+    'emailOptions',
+    'generalPetition',
+    'islykill',
+    'jwtSecret',
+    'presignBucket',
+    'userProfile',
+    'xRoadBasePathWithEnv',
+    'smsOptions',
+  ]
+> = {
   production: true,
   environment: process.env.ENVIRONMENT ?? '',
   name: process.env.name ?? '',
