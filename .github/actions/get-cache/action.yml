@@ -34,14 +34,9 @@ runs:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         NODE_OPTIONS: --max-old-space-size=8192
       run: |
-        id
-        ls -lah /github/home/ /github/home/.cache/ || true
-        if [ -d /github/home/.cache ]; then
-          if [ "$(stat -c '%U' /github/home/.cache)" = "root" ]; then
-            rm -rf /github/home/.cache
-            mkdir -p /github/home/.cache
-          fi
-        fi
+        # This is because of a weird bug where Github would write as root to .cache
+        export COREPACK_HOME=/github/home/.corepack-cache
+        echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
