@@ -147,7 +147,7 @@ export const caches = [
       }
       const pkg = await getPackageJSON()
       const cypressVersion = pkg?.devDependencies?.cypress
-      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}`
+      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}-2`
     },
     name: 'Cache Cypress',
     id: 'cypress',
