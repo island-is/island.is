@@ -17,6 +17,8 @@ type FilterCategory = {
   id: string
   /** The category label to display on screen. */
   label: string | ReactNode
+  /** The heading size of the label */
+  labelAs?: 'h2' | 'h3' | 'h4' | 'h5'
   /** The array of currently selected active filters. */
   selected: Array<string>
   /** Array of available filters in this category. */
@@ -147,7 +149,7 @@ export const FilterMultiChoice: FC<
             key={`${category.id}-${index}}`}
             id={category.id}
             label={category.label}
-            labelUse="h5"
+            labelUse={category.labelAs || 'h5'}
             labelVariant="h5"
             labelColor={
               category.selected.length > 0 ? 'blue400' : 'currentColor'

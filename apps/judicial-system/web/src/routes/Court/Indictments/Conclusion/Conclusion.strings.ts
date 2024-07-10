@@ -93,6 +93,12 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í niðurfelling máls valmöguleika á Niðurstaða skrefi.',
   },
+  merge: {
+    id: 'judicial.system.core:court.indictments.conclusion.merge',
+    defaultMessage: 'Sameinað öðru máli',
+    description:
+      'Notaður sem texti í Sameinað valmöguleika á Niðurstaða skrefi.',
+  },
   courtRecordTitle: {
     id: 'judicial.system.core:court.indictments.conclusion.court_record_title',
     defaultMessage: 'Þingbók',
