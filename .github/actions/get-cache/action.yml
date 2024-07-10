@@ -36,6 +36,12 @@ runs:
       run: |
         id
         ls -lah /github/home/ /github/home/.cache/ || true
+        if [ -d /github/home/.cache ]; then
+          if [ "$(stat -c '%U' /github/home/.cache)" = "root" ]; then
+            rm -rf /github/home/.cache
+            mkdir -p /github/home/.cache
+          fi
+        fi
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
