@@ -36,6 +36,7 @@ import {
 } from '../../../utils/dataMapper'
 import { isDefined } from '@island.is/shared/utils'
 import ExpandableLine from '../../../components/ExpandableLine/ExpandableLine'
+import React from 'react'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
