@@ -38,7 +38,7 @@ export interface PreferencesStore extends State {
 const availableLocales: Locale[] = ['en-US', 'is-IS', 'is-US', 'en-IS']
 
 const defaultPreferences = {
-  appearanceMode: 'light',
+  appearanceMode: 'automatic',
   locale: 'is-IS',
   useBiometrics: false,
   dev__useLockScreen: true,
