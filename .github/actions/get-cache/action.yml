@@ -36,7 +36,9 @@ runs:
       run: |
         # This is because of a weird bug where Github would write as root to .cache
         export COREPACK_HOME=/github/home/.corepack-cache
+        export CYPRESS_CACHE_FOLDER=/github/home/.cypress-cache
         echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
+        echo "CYPRESS_CACHE_FOLDER=$COREPACK_HOME" >> $GITHUB_ENV
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
