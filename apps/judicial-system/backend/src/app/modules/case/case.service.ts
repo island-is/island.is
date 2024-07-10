@@ -299,6 +299,8 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
+  { model: Case, as: 'mergeCase' },
+  { model: Case, as: 'mergedCases', separate: true },
 ]
 
 export const order: OrderItem[] = [
