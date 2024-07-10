@@ -4,6 +4,7 @@ import { FieldSettings } from './fieldSettings.model'
 import { FieldSettingsDto } from './dto/fieldSettings.dto'
 import { ListItemMapper } from '../../listItems/models/listItem.mapper'
 import { defaults, pick, zipObject } from 'lodash'
+import { FieldTypes } from '../../../enums/fieldTypes'
 
 @Injectable()
 export class FieldSettingsMapper {
@@ -42,42 +43,42 @@ export class FieldSettingsMapper {
   ): FieldSettingsDto {
     let keys: string[]
     switch (fieldType) {
-      case 'textbox':
+      case FieldTypes.TEXTBOX:
         keys = ['minLength', 'maxLength']
         return this.pickSettings(fieldSettings, keys)
-      case 'numberbox':
+      case FieldTypes.NUMBERBOX:
         keys = ['minLength', 'maxLength', 'minValue', 'maxValue']
         return this.pickSettings(fieldSettings, keys)
-      case 'message':
+      case FieldTypes.MESSAGE:
         keys = ['hasLink', 'url', 'buttonText']
         return this.pickSettings(fieldSettings, keys)
-      case 'datePicker':
+      case FieldTypes.DATE_PICKER:
         keys = ['minDate', 'maxDate']
         return this.pickSettings(fieldSettings, keys)
-      case 'dropdownList':
+      case FieldTypes.DROPDOWN_LIST:
         keys = ['list', 'listType']
         const dropdownListFieldSettings = this.pickSettings(fieldSettings, keys)
         dropdownListFieldSettings.list = fieldSettings?.list
           ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
           : []
         return dropdownListFieldSettings
-      case 'radioButtons':
+      case FieldTypes.RADIO_BUTTONS:
         keys = ['list']
         const radioButtonsFieldSettings = this.pickSettings(fieldSettings, keys)
         radioButtonsFieldSettings.list = fieldSettings?.list
           ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
           : []
         return radioButtonsFieldSettings
-      case 'iskNumberbox':
+      case FieldTypes.ISK_NUMBERBOX:
         keys = ['minAmount', 'maxAmount']
         return this.pickSettings(fieldSettings, keys)
-      case 'propertyNumber':
+      case FieldTypes.PROPERTY_NUMBER:
         keys = ['hasPropertyInput', 'hasPropertyList']
         return this.pickSettings(fieldSettings, keys)
-      case 'document':
+      case FieldTypes.DOCUMENT:
         keys = ['fileTypes', 'fileMaxSize', 'maxFiles']
         return this.pickSettings(fieldSettings, keys)
-      case 'timeInput':
+      case FieldTypes.TIME_INPUT:
         keys = ['timeInterval']
         return this.pickSettings(fieldSettings, keys)
       default:
