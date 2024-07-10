@@ -32,7 +32,7 @@ jobs:
         id: get-matrix
         run: |
             export PROJECTS=$(node scripts/ci/get-all-projects.mjs)
-            echo "PROJECTS=$GITHUB_OUTPUT" >> $GITHUB_OUTPUT
+            echo "PROJECTS=$PROJECTS" >> $GITHUB_OUTPUT
       
   static-analysis:
       runs-on: ec2-runners
