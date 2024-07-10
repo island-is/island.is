@@ -20,9 +20,4 @@ export class UpdateSubpoenaDto {
   @IsString()
   @ApiProperty({ type: String, required: false })
   defenderNationalId?: string
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiProperty({ type: Boolean, required: false })
-  acceptCompensationClaim?: boolean
 }
