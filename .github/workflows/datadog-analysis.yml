@@ -14,11 +14,19 @@ on:
       - opened
       - synchronize
 
+concurrency:
+  # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  group: datadog-analysis-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+
 jobs:
   prepare:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    outputs:
+      PROJECTS: ${{ steps.get-matrix.outputs.PROJECTS }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -69,6 +77,6 @@ jobs:
         with:
           dd_api_key: ${{ secrets.DD_API_KEY }}
           dd_app_key: ${{ secrets.DD_APP_KEY }}
-          dd_service: my-app
+          dd_service: islandis
           dd_env: ci
           dd_site: datadoghq.eu
