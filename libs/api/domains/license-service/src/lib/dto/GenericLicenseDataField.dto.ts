@@ -24,6 +24,7 @@ export class GenericLicenseDataField {
   @Field({
     nullable: true,
     description: 'Display value of data field category',
+    deprecationReason: 'Only used for cosmetic purposes, can be done better',
   })
   description?: string
 
