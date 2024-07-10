@@ -760,8 +760,8 @@ export class CaseController {
 
   @UseGuards(
     JwtAuthGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
@@ -797,8 +797,8 @@ export class CaseController {
 
   @UseGuards(
     JwtAuthGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseWriteGuard,
   )
