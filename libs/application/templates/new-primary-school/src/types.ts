@@ -1,5 +1,4 @@
 import {
-  Gender,
   MembershipOrganizationType,
   MembershipRole,
   SiblingRelationOptions,
@@ -37,8 +36,9 @@ export type ChildInformation = {
     postalCode: string
     city: string
   }
-  gender: Gender
-  chosenName: string
+  gender: string
+  preferredName: string
+  pronouns: string[]
   differentPlaceOfResidence: string
   placeOfResidence?: {
     streetAddress: string
