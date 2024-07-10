@@ -73,8 +73,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     locale,
     setLocale,
     hasAcceptedBiometrics,
-    appearanceMode,
-    setAppearanceMode,
     useBiometrics,
     setUseBiometrics,
     appLockTimeout,
