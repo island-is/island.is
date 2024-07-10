@@ -106,6 +106,9 @@ export const childInfoSubSection = buildSubSection({
             id: 'childInfo.pronouns',
             title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
             component: 'FriggOptionsAsyncSelectField',
+            defaultValue: (application: Application) =>
+              getApplicationExternalData(application.externalData)
+                .childInformation.pronouns,
           },
           {
             optionsType: OptionsType.PRONOUN,
