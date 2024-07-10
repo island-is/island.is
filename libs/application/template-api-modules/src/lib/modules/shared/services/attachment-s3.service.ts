@@ -1,8 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
+import { AwsService } from '@island.is/nest/aws'
 import { Injectable } from '@nestjs/common'
 
 export interface AttachmentData {
@@ -14,22 +13,33 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  private readonly s3: AWS.S3
-  constructor() {
-    this.s3 = new S3()
-  }
+  constructor(private readonly aws: AwsService) {}
 
+  /**
+   * This function retrieves files from an application based on provided attachment keys.
+   * It iterates over the attachment keys, retrieves the corresponding answers from the application,
+   * and converts them into a list of document data. The resulting list of document data is then returned.
+   *
+   * @param {Application} application - The application from which to retrieve files.
+   * @param {string[]} attachmentAnswerKeys - The keys of the attachments to retrieve.
+   * @returns {Promise<AttachmentData[]>} - A promise that resolves to an array of attachment data.
+   */
   public async getFiles(
     application: Application,
-    attachmentAnswerKeys: string[],
+    attachmentAnswerKeys: string | string[],
   ): Promise<AttachmentData[]> {
+    if (!Array.isArray(attachmentAnswerKeys)) {
+      attachmentAnswerKeys = [attachmentAnswerKeys]
+    }
     const attachments: AttachmentData[] = []
 
     for (const key of attachmentAnswerKeys) {
-      const answers = getValueViaPath(application.answers, key) as Array<{
-        key: string
-        name: string
-      }>
+      const answers = getValueViaPath<
+        Array<{
+          key: string
+          name: string
+        }>
+      >(application.answers, key)
       if (!answers) continue
       const list = await this.toDocumentDataList(answers, key, application)
       attachments.push(...list)
@@ -68,17 +78,8 @@ export class AttachmentS3Service {
   private async getApplicationFilecontentAsBase64(
     fileName: string,
   ): Promise<string | undefined> {
-    const { bucket, key } = AmazonS3URI(fileName)
-    const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64')
+      return this.aws.getFileB64(fileName)
     } catch (error) {
       logger.error(error)
       return undefined

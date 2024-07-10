@@ -14,14 +14,14 @@ import { ApplicationAttachmentService } from './attachments/applicationAttachmen
 import { ACCIDENT_NOTIFICATION_CONFIG } from './config'
 import { DocumentApi } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { S3 } from 'aws-sdk'
 import type { Locale } from '@island.is/shared/types'
 import { createApplication } from '@island.is/application/testing'
 import get from 'lodash/get'
 import set from 'lodash/set'
-import { S3Service } from './attachments/s3.service'
 import { SmsService } from '@island.is/nova-sms'
 import { PaymentService } from '@island.is/application/api/payment'
+import { AwsService } from '@island.is/nest/aws'
+
 const nationalId = '1234564321'
 let id = 0
 
@@ -48,16 +48,9 @@ class MockSmsService {
   }
 }
 
-const S3Instance = {
-  upload: jest.fn().mockReturnThis(),
-  promise: jest.fn(),
-  deleteObject: jest.fn().mockReturnThis(),
-  getObject: jest.fn().mockReturnThis(),
-}
-
 describe('AccidentNotificationService', () => {
   let accidentNotificationService: AccidentNotificationService
-  let s3Service: S3Service
+  let aws: AwsService
   let documentApi: DocumentApi
 
   beforeEach(async () => {
@@ -81,10 +74,6 @@ describe('AccidentNotificationService', () => {
           })),
         },
         {
-          provide: S3,
-          useFactory: () => S3Instance,
-        },
-        {
           provide: ConfigService,
           useValue: {},
         },
@@ -101,9 +90,9 @@ describe('AccidentNotificationService', () => {
           useClass: MockSmsService,
         },
         {
-          provide: S3Service,
+          provide: AwsService,
           useClass: jest.fn(() => ({
-            getFilecontentAsBase64: jest.fn(),
+            getFileB64: jest.fn(),
           })),
         },
         {
@@ -125,7 +114,7 @@ describe('AccidentNotificationService', () => {
     }).compile()
 
     accidentNotificationService = module.get(AccidentNotificationService)
-    s3Service = module.get(S3Service)
+    aws = module.get(AwsService)
     documentApi = module.get(DocumentApi)
   })
 
@@ -213,7 +202,7 @@ describe('AccidentNotificationService', () => {
       }
 
       jest
-        .spyOn(s3Service, 'getFilecontentAsBase64')
+        .spyOn(aws, 'getFileB64')
         .mockResolvedValueOnce(
           Buffer.from('some content', 'utf-8') as unknown as string,
         )

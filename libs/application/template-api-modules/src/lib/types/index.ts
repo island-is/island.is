@@ -7,8 +7,10 @@ import {
 import { User } from '@island.is/auth-nest-tools'
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
+import { SmsServiceOptions } from '@island.is/nova-sms'
 
 import type { Locale } from '@island.is/shared/types'
+import { Attachment } from 'nodemailer/lib/mailer'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
@@ -26,12 +28,7 @@ export interface BaseTemplateAPIModuleConfig {
     sender: string
     address: string
   }
-  smsOptions: {
-    url: string
-    username: string
-    password: string
-    acceptUnauthorized?: boolean
-  }
+  smsOptions: SmsServiceOptions
   attachmentBucket: string
   presignBucket: string
   generalPetition: {
@@ -77,7 +74,7 @@ export type EmailTemplateGenerator = (
 
 export type AttachmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
-  fileContent: string,
+  fileContent: Attachment['content'],
   email: string,
 ) => Message
 
@@ -119,3 +116,8 @@ export interface SmsMessage {
   phoneNumber: string
   message: string
 }
+
+export type ApplicationSubmittedEmail<T> = (
+  props: EmailTemplateGeneratorProps,
+  recipient: T,
+) => Message

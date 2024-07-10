@@ -12,6 +12,7 @@ import {
   SendMessageCommand,
   SetQueueAttributesCommand,
   Message,
+  QueueAttributeName,
 } from '@aws-sdk/client-sqs'
 import { AbortController } from '@aws-sdk/abort-controller'
 import type { Logger } from '@island.is/logging'
@@ -76,7 +77,7 @@ export class ClientService {
 
   async getQueueAttributes(
     url: string,
-    attributes: string[],
+    attributes: QueueAttributeName[],
   ): Promise<Record<string, string>> {
     const r = await this.client.send(
       new GetQueueAttributesCommand({
@@ -130,12 +131,15 @@ export class ClientService {
   async syncQueueAttributes(
     name: string,
     url: string,
-    attributes: Record<string, string>,
+    attributes: Record<QueueAttributeName, string>,
   ): Promise<void> {
-    const current = await this.getQueueAttributes(url, Object.keys(attributes))
+    const current = await this.getQueueAttributes(
+      url,
+      Object.keys(attributes) as QueueAttributeName[],
+    )
 
-    const areNotEqual = (k: string) => attributes[k] !== current[k]
-    if (Object.keys(attributes).some(areNotEqual)) {
+    const areNotEqual = (k: QueueAttributeName) => attributes[k] !== current[k]
+    if ((Object.keys(attributes) as QueueAttributeName[]).some(areNotEqual)) {
       this.logger.debug(`Updating "${name}" queue attributes`, attributes)
 
       await this.client.send(

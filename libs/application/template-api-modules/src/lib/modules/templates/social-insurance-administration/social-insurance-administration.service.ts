@@ -25,7 +25,6 @@ import {
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
-import { S3 } from 'aws-sdk'
 import {
   getApplicationType,
   transformApplicationToHouseholdSupplementDTO,
@@ -35,18 +34,18 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { AwsService } from '@island.is/nest/aws'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
 export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly aws: AwsService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -70,6 +69,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     return result
+  }
+
+  async getPdf(key: string) {
+    this.logger.debug('Getting pdf', { key })
+    const file = await this.aws.getFileB64(this.attachmentBucket, key)
+    if (!file) {
+      throw new Error('File content was undefined')
+    }
+    return file
   }
 
   private async getAdditionalAttachments(
@@ -372,19 +380,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     return attachments
-  }
-
-  async getPdf(key: string) {
-    const file = await this.s3
-      .getObject({ Bucket: this.attachmentBucket, Key: key })
-      .promise()
-    const fileContent = file.Body as Buffer
-
-    if (!fileContent) {
-      throw new Error('File content was undefined')
-    }
-
-    return fileContent.toString('base64')
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {

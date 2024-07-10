@@ -2,8 +2,8 @@ import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 
 import { logger } from '@island.is/logging'
+import { AwsService } from '@island.is/nest/aws'
 import { Injectable } from '@nestjs/common'
-import { S3Service } from './s3.service'
 
 export interface AttachmentData {
   key: string
@@ -14,7 +14,7 @@ export interface AttachmentData {
 
 @Injectable()
 export class ApplicationAttachmentService {
-  constructor(private readonly s3Service: S3Service) {}
+  constructor(private readonly aws: AwsService) {}
 
   public async getFiles(
     application: Application,
@@ -61,8 +61,7 @@ export class ApplicationAttachmentService {
           logger.info('Failed to get url from application state')
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
-        const fileContent =
-          (await this.s3Service.getFilecontentAsBase64(url)) ?? ''
+        const fileContent = (await this.aws.getFileB64(url)) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
