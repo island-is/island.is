@@ -19,20 +19,22 @@ import { Message } from '@aws-sdk/client-sqs'
 
 import { logger } from '@island.is/logging'
 
-const SNS_LOCALSTACK_ENDPOINT = 'http://localhost:4566'
-const SQS_LOCALSTACK_ENDPOINT = 'http://localhost:4566'
+const SNS_LOCALSTACK_ENDPOINT =
+  process.env.SNS_ENDPOINT ?? 'http://localhost:4566'
+const SQS_LOCALSTACK_ENDPOINT =
+  process.env.SQS_ENDPOINT ?? 'http://localhost:4566'
 
 class Channel {
   sns: SNSClient
   sqs: SQSClient
 
-  constructor(production: boolean) {
+  constructor(isProduction: boolean) {
     this.sns = new SNSClient({
-      endpoint: production ? undefined : SNS_LOCALSTACK_ENDPOINT,
+      endpoint: isProduction ? undefined : SNS_LOCALSTACK_ENDPOINT,
     })
 
     this.sqs = new SQSClient({
-      endpoint: production ? undefined : SQS_LOCALSTACK_ENDPOINT,
+      endpoint: isProduction ? undefined : SQS_LOCALSTACK_ENDPOINT,
     })
   }
 
