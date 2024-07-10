@@ -42,4 +42,4 @@ runs:
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
-        ls $CYRESS_CACHE_FOLDER
+        ls -R $CYRESS_CACHE_FOLDER
