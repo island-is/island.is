@@ -19,11 +19,12 @@ FLAKY_TESTS=(
   "services-auth-delegation-api"
   "services-auth-personal-representative"
 )
-if [[ ${FLAKY_TESTS[*]} =~ ${APP} ]]; then
+if [[ " ${FLAKY_TESTS[*]} " == *" ${APP} "* ]]; then
   IS_FLAKY_TEST=true
 else
   IS_FLAKY_TEST=false
 fi
+
 
 projects_uncollectible_coverage=(
   "application-templates-no-debt-certificate"
@@ -48,12 +49,9 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
 FLAKY_TEST_RETRIES=$(if [[ "$IS_FLAKY_TEST" == true ]]; then echo "$FLAKY_TEST_RETRIES"; else echo 1; fi)
 
 for ((i=1; i<=FLAKY_TEST_RETRIES; i++)); do
-  echo "Running test ${APP} retry ${i}/${FLAKY_TEST_RETRIES}"
+  echo "Running test ${APP} (attempt: ${i}/${FLAKY_TEST_RETRIES})"
   if yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
-    break
-  else
-    if [[ $i -eq $FLAKY_TEST_RETRIES ]]; then
-      exit 1
-    fi
+    exit 0
   fi
 done
+exit 1
