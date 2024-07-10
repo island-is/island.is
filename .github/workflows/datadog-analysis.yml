@@ -48,7 +48,7 @@ jobs:
     needs:
       - prepare
     strategy:
-      matrix: 
+      matrix:
         projects: ${{ fromJson(needs.prepare.outputs.PROJECTS) }}
     env:
       PROJECTS: ${{ matrix.projects }}
