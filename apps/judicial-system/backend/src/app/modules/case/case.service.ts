@@ -41,6 +41,7 @@ import {
   EventType,
   isCompletedCase,
   isIndictmentCase,
+  isRequestCase,
   isRestrictionCase,
   isTrafficViolationCase,
   NotificationType,
@@ -298,6 +299,8 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
+  { model: Case, as: 'mergeCase' },
+  { model: Case, as: 'mergedCases', separate: true },
 ]
 
 export const order: OrderItem[] = [
@@ -448,9 +451,9 @@ export class CaseService {
     const theCase = await this.caseModel.create(
       {
         ...caseToCreate,
-        state: isIndictmentCase(caseToCreate.type)
-          ? CaseState.DRAFT
-          : CaseState.NEW,
+        state: isRequestCase(caseToCreate.type)
+          ? CaseState.NEW
+          : CaseState.DRAFT,
       },
       { transaction },
     )
@@ -1207,7 +1210,7 @@ export class CaseService {
     if (updatedCase.courtCaseNumber) {
       if (updatedCase.courtCaseNumber !== theCase.courtCaseNumber) {
         // New court case number
-        if (isIndictmentCase(updatedCase.type)) {
+        if (isIndictment) {
           await this.addMessagesForIndictmentCourtCaseConnectionToQueue(
             updatedCase,
             user,
@@ -1222,7 +1225,7 @@ export class CaseService {
         }
 
         if (
-          !isIndictmentCase(updatedCase.type) &&
+          !isIndictment &&
           updatedCase.defenderEmail !== theCase.defenderEmail
         ) {
           // New defender email
@@ -1232,7 +1235,7 @@ export class CaseService {
     }
 
     if (
-      isIndictmentCase(updatedCase.type) &&
+      isIndictment &&
       ![
         CaseState.DRAFT,
         CaseState.SUBMITTED,
@@ -1326,7 +1329,9 @@ export class CaseService {
             creatingProsecutorId: user.id,
             prosecutorId:
               user.role === UserRole.PROSECUTOR ? user.id : undefined,
-            courtId: user.institution?.defaultCourtId,
+            courtId: isRequestCase(caseToCreate.type)
+              ? user.institution?.defaultCourtId
+              : undefined,
             prosecutorsOfficeId: user.institution?.id,
           } as CreateCaseDto,
           transaction,
@@ -1476,6 +1481,16 @@ export class CaseService {
       if (update.state === CaseState.COMPLETED) {
         const eventLogDTO = this.constructEventLogDTO(
           EventType.INDICTMENT_COMPLETED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
+
+      if (update.indictmentReviewDecision) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.INDICTMENT_REVIEWED,
           theCase,
           user,
         )
