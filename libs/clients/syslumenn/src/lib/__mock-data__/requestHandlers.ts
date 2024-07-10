@@ -1,4 +1,8 @@
-import { ThjodskraSkeyti, VedbandayfirlitSkeyti } from '../../../gen/fetch'
+import {
+  ThjodskraSkeyti,
+  VedbandayfirlitMargirSkeyti,
+  VedbandayfirlitSkeyti,
+} from '../../../gen/fetch'
 import { rest } from 'msw'
 import { AssetType } from '../syslumennClient.types'
 import {
@@ -23,9 +27,9 @@ import {
   DEPARTED_REGISTRY_PERSON_RESPONSE,
 } from './responses'
 
-export const MOCK_PROPERTY_NUMBER_OK = 'F2003292'
-export const MOCK_PROPERTY_NUMBER_NO_KMARKING = 'F2038390'
-export const MOCK_PROPERTY_NUMBER_NOT_EXISTS = 'F12345678'
+export const MOCK_PROPERTY_NUMBER_OK = '2003292'
+export const MOCK_PROPERTY_NUMBER_NO_KMARKING = '2038390'
+export const MOCK_PROPERTY_NUMBER_NOT_EXISTS = '12345678'
 
 const url = (path: string) => {
   return new URL(path, 'http://localhost').toString()
@@ -159,36 +163,51 @@ export const requestHandlers = [
     switch ((body.tegundAndlags as number) ?? -1) {
       case AssetType.RealEstate: {
         if (!/f?\d+/.test(assetId)) return res(ctx.status(404), ctx.json([]))
-        response[0].heiti = REAL_ESTATE_ADDRESS_NAME
+        if (response.fasteign)
+          response.fasteign[0].heiti = REAL_ESTATE_ADDRESS_NAME
         return res(ctx.status(200), ctx.json(response))
       }
       default: {
-        response[0].heiti = 'INVALIDE'
+        if (response.fasteign) response.fasteign[0].heiti = 'INVALIDE'
         return res(ctx.status(200), ctx.json(response))
       }
     }
   }),
-  rest.post(url('/api/Vedbokarvottord'), (req, res, ctx) => {
-    const { fastanumer } = req.body as {
-      fastanumer?: string
+  rest.post(url('/api/Vedbokarvottord2'), (req, res, ctx) => {
+    const body = req.body as VedbandayfirlitMargirSkeyti
+    const { eignir } = body as {
+      eignir: {
+        fastanumer?: string
+      }[]
     }
-    if ('F' + fastanumer === MOCK_PROPERTY_NUMBER_OK) {
-      return res(
-        ctx.status(200),
-        ctx.json({ vedbandayfirlitPDFSkra: MORTGAGE_CERTIFICATE_CONTENT_OK }),
-      )
-    } else if ('F' + fastanumer === MOCK_PROPERTY_NUMBER_NO_KMARKING) {
+    if (eignir[0].fastanumer === MOCK_PROPERTY_NUMBER_OK) {
       return res(
         ctx.status(200),
         ctx.json({
-          vedbandayfirlitPDFSkra: MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
-          skilabod: MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
+          skilabodOgSkra: [
+            { vedbandayfirlitPDFSkra: MORTGAGE_CERTIFICATE_CONTENT_OK },
+          ],
         }),
       )
-    } else if ('F' + fastanumer === MOCK_PROPERTY_NUMBER_NOT_EXISTS) {
+    } else if (eignir[0].fastanumer === MOCK_PROPERTY_NUMBER_NO_KMARKING) {
+      return res(
+        ctx.status(200),
+        ctx.json({
+          skilabodOgSkra: [
+            {
+              vedbandayfirlitPDFSkra: MORTGAGE_CERTIFICATE_CONTENT_NO_KMARKING,
+              skilabod: MORTGAGE_CERTIFICATE_MESSAGE_NO_KMARKING,
+            },
+          ],
+        }),
+      )
+    } else if (eignir[0].fastanumer === MOCK_PROPERTY_NUMBER_NOT_EXISTS) {
       return res(ctx.status(500), ctx.text('Internal Server Error'))
     } else {
-      return res(ctx.status(200), ctx.json({ vedbandayfirlitPDFSkra: '' }))
+      return res(
+        ctx.status(200),
+        ctx.json({ skilabodOgSkra: [{ vedbandayfirlitPDFSkra: '' }] }),
+      )
     }
   }),
 ]

@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { LicenseLabelsObject } from '../licenceService.type'
 
 export const getLabel = (

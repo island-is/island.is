@@ -1629,7 +1629,10 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertType: 'success',
-      expandableHeader: parentalLeaveFormMessages.finalScreen.title,
+      alertTitle: parentalLeaveFormMessages.finalScreen.alertTitle,
+      alertMessage: parentalLeaveFormMessages.finalScreen.description,
+      multiFieldTitle: parentalLeaveFormMessages.finalScreen.title,
+      expandableIntro: parentalLeaveFormMessages.finalScreen.expandableIntro,
       expandableDescription: (application: Application) => {
         const nextSteps = getConclusionScreenSteps(application)
 

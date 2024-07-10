@@ -3,22 +3,18 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/shared/connected/src",
   "projectType": "library",
+  "tags": ["lib:react", "scope:react"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/shared/connected/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/shared/connected/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/shared/connected/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/shared/connected"]
     }
-  },
-  "tags": ["lib:react", "scope:react"]
+  }
 }

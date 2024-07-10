@@ -40,6 +40,7 @@ const FinanceLoans = () => {
               title={formatMessage(m.noData)}
               message={formatMessage(m.noTransactionFound)}
               imgSrc="./assets/images/sofa.svg"
+              imgAlt=""
             />
           )}
         {loanOverviewData?.hmsLoansHistory?.length ? (

@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/judicial-system/web",
   "projectType": "application",
+  "tags": ["scope:judicial-system-web"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,7 +31,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/judicial-system/web/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -84,16 +86,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/judicial-system/web/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/judicial-system/web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/judicial-system/web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/judicial-system/web"]
     },
@@ -103,13 +101,14 @@
         "command": "graphql-codegen --config apps/judicial-system/web/codegen.yml"
       }
     },
-    "docker-next": {},
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/web/{messages/**/*,**/*.strings}.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:judicial-system-web"]
+  }
 }

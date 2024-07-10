@@ -101,6 +101,13 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_OVERVIEW_ROUTE =
   '/rikissaksoknari/akaera/yfirlit'
 //#endregion Public prosecutor user routes
 
+//#region Prison user routes
+export const PRISON_CASES_ROUTE = '/fangelsi/krofur'
+export const PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE = '/fangelsi/krafa/yfirlit'
+export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
+  '/fangelsi/akaera/yfirlit'
+//#endregion Prison user routes
+
 //#region Court of appeals user routes
 export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
 export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'

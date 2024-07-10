@@ -234,6 +234,7 @@ const Conclusion: FC = () => {
             )
           case CaseIndictmentRulingDecision.FINE:
           case CaseIndictmentRulingDecision.CANCELLATION:
+          case CaseIndictmentRulingDecision.MERGE:
             return uploadFiles.some(
               (file) =>
                 file.category === CaseFileCategory.COURT_RECORD &&
@@ -379,7 +380,7 @@ const Conclusion: FC = () => {
               <CourtArrangements
                 handleCourtDateChange={handleCourtDateChange}
                 handleCourtRoomChange={handleCourtRoomChange}
-                courtDate={courtDate}
+                courtDate={workingCase.courtDate}
                 blueBox={false}
               />
             </BlueBox>
@@ -435,6 +436,21 @@ const Conclusion: FC = () => {
                   large
                   backgroundColor="white"
                   label={formatMessage(strings.dismissal)}
+                />
+              </Box>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-merge"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.MERGE
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.merge)}
                 />
               </Box>
               <RadioButton
