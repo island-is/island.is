@@ -97,8 +97,8 @@ export const LicensesOverviewV2 = () => {
   return (
     <>
       <IntroHeader
-        title={formatMessage(coreMessages.licenses)}
-        intro={formatMessage(coreMessages.licensesDescription)}
+        title={formatMessage(m.title)}
+        intro={formatMessage(m.intro)}
         marginBottom={4}
       />
       {error && !loading && <Problem error={error} noBorder={false} />}{' '}
