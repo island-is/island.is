@@ -16,7 +16,6 @@ import {
 } from '@aws-sdk/client-sns'
 import { Consumer } from 'sqs-consumer'
 import { Message } from '@aws-sdk/client-sqs'
-
 import { logger } from '@island.is/logging'
 
 const SNS_LOCALSTACK_ENDPOINT =
@@ -41,14 +40,14 @@ class Channel {
   async declareExchange({ name }: { name: string }) {
     const cmd = new CreateTopicCommand({ Name: name })
     const { TopicArn } = await this.sns.send(cmd)
-    logger.info(`Declared exchange ${TopicArn}`)
+    logger.info(`Declared exchange`, { TopicArn })
     return TopicArn
   }
 
   async declareQueue({ name }: { name: string }) {
     const queueUrl = await this.getQueueUrl({ name })
     if (queueUrl) {
-      logger.info(`Declared queue ${queueUrl}`)
+      logger.info(`Declared queue`, { queueUrl })
       return queueUrl
     }
 
@@ -59,7 +58,7 @@ class Channel {
       throw new Error(`Failed to create queue ${name}`)
     }
 
-    logger.info(`Declared queue ${QueueUrl}`)
+    logger.info(`Declared queue`, { QueueUrl })
     return QueueUrl
   }
 
@@ -87,7 +86,10 @@ class Channel {
       },
     })
     await this.sqs.send(command)
-    logger.info(`Set queue ${dlQueueId} as dead letter queue for ${queueId}`)
+    logger.info(`Set dead letter queue`, {
+      deadLetterQueueId: dlQueueId,
+      queueId,
+    })
   }
 
   async bindQueue<K>({
@@ -147,11 +149,11 @@ class Channel {
     })
     await this.sqs.send(setQueueAttributesCommand)
 
-    logger.info(
-      `Bound queue ${queueId} to exchange ${exchangeId} with routingKeys: ${routingKeys.join(
-        ', ',
-      )}.`,
-    )
+    logger.info(`Bound queue to topic ${exchangeId}`, {
+      queueId,
+      exchangeId,
+      routingKeys,
+    })
     return SubscriptionArn
   }
 
@@ -242,9 +244,11 @@ class Channel {
       }
     }
     const { MessageId } = await this.sns.send(new PublishCommand(params))
-    logger.info(
-      `Published message ${MessageId} to ${exchangeId} with routingKey ${routingKey}`,
-    )
+    logger.info(`Published message to topic ${exchangeId}`, {
+      messageId: MessageId,
+      topicArn: exchangeId,
+      routingKey,
+    })
     return MessageId
   }
 
