@@ -34,8 +34,9 @@ runs:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         NODE_OPTIONS: --max-old-space-size=8192
       run: |
-        ls -lah /github/home/ /github/home/.cache/
         mkdir -p /github/home/.cache/node/corepack/v1
+        id
+        ls -lah /github/home/ /github/home/.cache/
         cd scripts/ci/cache
         yarn install --immutable
         node cache-action.mjs
