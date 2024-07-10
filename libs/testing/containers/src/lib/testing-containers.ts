@@ -33,6 +33,7 @@ export const startPostgres = async () => {
       startPeriod: 1000,
     })
     .withWaitStrategy(Wait.forHealthCheck())
+    .withStartupTimeout(20000)
     .withExposedPorts(portConfig.postgres)
     .start()
   logger.debug(`Started postgres container with name ${name}`, {
