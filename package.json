@@ -62,7 +62,8 @@
     "infra": "node scripts/infra-cmds.js",
     "run-proxies": "./scripts/run-proxies.sh",
     "proxies": "yarn run-proxies",
-    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts",
+    "mock-national-registry": "mockoon-cli start --data ./mocks/national-registry.json"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
@@ -337,6 +338,7 @@
     "@graphql-codegen/typescript-operations": "2.5.3",
     "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@graphql-codegen/typescript-resolvers": "2.7.3",
+    "@mockoon/cli": "8.3.0",
     "@nestjs/schematics": "10.0.1",
     "@nestjs/testing": "10.0.5",
     "@nx/cypress": "19.4.0",
