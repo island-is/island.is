@@ -27,6 +27,7 @@ import {
 import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
 import { domainName, TestCase, user } from './delegations-index-types'
 import { setupWithAuth } from '../../../../../test/setup'
+import { sleep } from '@island.is/shared/utils'
 
 const testDate = new Date(2024, 2, 1)
 
@@ -464,6 +465,7 @@ describe('DelegationsIndexService', () => {
 
       // Act
       await delegationIndexService.indexRepresentativeDelegations(nationalId)
+      await sleep(200) // Small sleep for less flakiness
 
       // Assert
       const delegations = await delegationIndexModel.findAll({
