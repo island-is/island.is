@@ -42,4 +42,7 @@ runs:
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
-        ls -R $CYRESS_CACHE_FOLDER
+        ls /github/home/.corepack-cache/13.9.0/Cypress || true
+        ls /github/home/.corepack-cache/13.9.0 || true
+        ls /github/home/.corepack-cache/ || true
+        
