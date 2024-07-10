@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/document-provider/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["services-documents"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/document-provider/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/document-provider"],
       "options": {
-        "jestConfig": "libs/clients/document-provider/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/document-provider/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -27,7 +23,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["services-documents"],
-  "tags": ["lib:client", "scope:client"]
+  }
 }
