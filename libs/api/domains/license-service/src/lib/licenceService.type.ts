@@ -1,4 +1,3 @@
-import { User } from '@island.is/auth-nest-tools'
 import { Locale } from '@island.is/shared/types'
 import { GenericLicenseError } from './dto/GenericLicenseError.dto'
 import { Payload } from './dto/Payload.dto'
