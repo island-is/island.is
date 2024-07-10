@@ -117,6 +117,11 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               displayStatus: 'success',
             },
           },
+          onExit: defineTemplateApi({
+            action: ApiModuleActions.sendApplication,
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
