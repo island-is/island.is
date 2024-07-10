@@ -88,7 +88,10 @@ export class WorkerService implements OnModuleDestroy {
           await messageHandler(JSON.parse(msg.Body ?? ''), job)
           return true
         } catch (e) {
-          this.logger.error('Worker exception', e, { messageId: msg.MessageId })
+          this.logger.error('Worker exception', {
+            messageId: msg.MessageId,
+            error: e,
+          })
           return false
         }
       }),

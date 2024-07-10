@@ -1,5 +1,5 @@
 import * as express from 'express'
-import { S3 } from 'aws-sdk'
+import { S3 } from '@aws-sdk/client-s3'
 import { logger } from '@island.is/logging'
 
 import stream from 'stream'
@@ -27,16 +27,14 @@ export const uploadChunkStream = (
   const pass = new stream.PassThrough()
   return {
     writeStream: pass,
-    promise: s3
-      .uploadPart({
-        Body: pass,
-        Bucket,
-        Key: key,
-        PartNumber,
-        ContentLength,
-        UploadId,
-      })
-      .promise(),
+    promise: s3.uploadPart({
+      Body: pass,
+      Bucket,
+      Key: key,
+      PartNumber,
+      ContentLength,
+      UploadId,
+    }),
   }
 }
 

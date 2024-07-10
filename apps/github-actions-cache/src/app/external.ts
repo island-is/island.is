@@ -1,4 +1,4 @@
-import { S3 } from 'aws-sdk'
+import { S3 } from '@aws-sdk/client-s3'
 import environment from '../environments/environment'
 import { createCache } from '@island.is/cache'
 

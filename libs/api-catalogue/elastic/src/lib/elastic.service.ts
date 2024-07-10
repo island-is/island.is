@@ -1,16 +1,16 @@
 import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
-import * as AWS from 'aws-sdk'
 import AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
+import { config } from 'aws-sdk'
 
 const { elastic } = environment
 
-type RequestBodyType<T = Record<string, any>> = T | string | Buffer
+type RequestBodyType<T = Record<string, unknown>> = T | string | Buffer
 
 @Injectable()
 export class ElasticService {
@@ -46,16 +46,12 @@ export class ElasticService {
     logger.info('Bulk insert', services)
 
     if (services.length) {
-      const bulk: Array<any> = []
-      services.forEach((service) => {
-        bulk.push({
-          index: {
-            _index: this.indexName,
-            _id: service.id,
-          },
-        })
-        bulk.push(service)
-      })
+      const bulk = services.map((service) => ({
+        index: {
+          _index: this.indexName,
+          _id: service.id,
+        },
+      }))
 
       await this.client.bulk({
         body: bulk,
@@ -161,7 +157,8 @@ export class ElasticService {
     }
 
     return new Client({
-      ...AwsConnector(AWS.config),
+      // TODO: Send config, but try to use the local environment instead of explicit config
+      ...AwsConnector(config),
       node: elastic.node,
     })
   }

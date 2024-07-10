@@ -1,5 +1,4 @@
 import { Args, Resolver, Mutation } from '@nestjs/graphql'
-import { S3 } from 'aws-sdk'
 import { PresignedPost } from './presignedPost.model'
 import { FileStorageService } from '@island.is/file-storage'
 
@@ -8,9 +7,13 @@ export class FileUploadResolver {
   constructor(private fileStorageService: FileStorageService) {}
 
   @Mutation(() => PresignedPost)
-  createUploadUrl(
+  async createUploadUrl(
     @Args('filename') filename: string,
-  ): Promise<S3.PresignedPost> {
-    return this.fileStorageService.generatePresignedPost(filename)
+  ): Promise<PresignedPost> {
+    const result = await this.fileStorageService.generatePresignedPost(filename)
+    return {
+      url: result.url,
+      fields: result.fields,
+    }
   }
 }

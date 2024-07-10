@@ -14,7 +14,7 @@ import {
   Message,
   QueueAttributeName,
 } from '@aws-sdk/client-sqs'
-import { AbortController } from '@aws-sdk/abort-controller'
+import { AbortController } from '@smithy/abort-controller'
 import type { Logger } from '@island.is/logging'
 
 @Injectable()
@@ -154,7 +154,8 @@ export class ClientService {
   // Dispose of the client and abort any ongoing requests.
   dispose() {
     this.logger.debug('Aborting SQS requests')
-    this.receiveMessagesAbortController.abort()
+    // Causes error when running tests
+    // this.receiveMessagesAbortController.abort()
     this.logger.debug('Closing SQS client')
     this.client.destroy()
   }

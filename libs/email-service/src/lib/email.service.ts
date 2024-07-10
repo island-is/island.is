@@ -1,4 +1,4 @@
-import { SES } from 'aws-sdk'
+import { SESClient, SESClientConfig } from '@aws-sdk/client-ses'
 import nodemailer from 'nodemailer'
 
 import { Inject } from '@nestjs/common'
@@ -62,7 +62,7 @@ export class EmailService {
 
     this.logger.debug('Using SES')
 
-    const cfg: SES.ClientConfiguration = {
+    const cfg: SESClientConfig = {
       apiVersion: '2010-12-01',
     }
 
@@ -71,7 +71,7 @@ export class EmailService {
     }
 
     return {
-      SES: new SES(cfg),
+      SES: new SESClient(cfg),
     }
   }
 
