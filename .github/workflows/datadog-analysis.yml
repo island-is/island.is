@@ -1,7 +1,19 @@
-on: [push]
-
 name: Datadog Static Analysis
-
+on:
+    push:
+      branches:
+        - 'main'
+        - 'release/**'
+        - 'pre-release/**'
+      paths-ignore:
+        - '**/*.md'
+    workflow_dispatch:
+    create:
+    pull_request:
+      types:
+        - opened
+        - synchronize
+     
 jobs:
   static-analysis:
     runs-on: ec2-runners
