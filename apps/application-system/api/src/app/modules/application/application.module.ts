@@ -29,7 +29,7 @@ import { PaymentModule } from '@island.is/application/api/payment'
 import { HistoryModule } from '@island.is/application/api/history'
 import { AuthPublicApiClientModule } from '@island.is/clients/auth/public-api'
 import { ApplicationActionService } from './application-action.service'
-import { BaseTemplateAPIModuleConfig } from 'libs/application/template-api-modules/src/lib/types'
+import { TemplateAPIConfig } from '@island.is/application/template-api-modules'
 
 @Module({
   imports: [
@@ -39,7 +39,7 @@ import { BaseTemplateAPIModuleConfig } from 'libs/application/template-api-modul
     TemplateAPIModule.register({
       // TODO: Update typing to accomodate incomplete module setup
       // Some modules don't need to configure everything, yet the type requires it.
-      ...(environment.templateApi as BaseTemplateAPIModuleConfig),
+      ...(environment.templateApi as TemplateAPIConfig),
       applicationService: TemplateApiApplicationService,
     }),
     ApplicationApiCoreModule,
