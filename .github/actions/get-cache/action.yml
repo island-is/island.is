@@ -34,8 +34,6 @@ runs:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         NODE_OPTIONS: --max-old-space-size=8192
       run: |
-        echo $_CACHE_KEYS
         cd scripts/ci/cache
-        yarn install --immutable
+        yarn install --immutable || true
         node cache-action.mjs
-        echo $_CACHE_KEYS

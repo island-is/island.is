@@ -18,7 +18,7 @@ const projects = await Promise.all(
       root: graph.graph.nodes[e].data.root,
       name: graph.graph.nodes[e].name,
     }
-    return data
+    return JSON.stringify(data)
   }),
 )
 

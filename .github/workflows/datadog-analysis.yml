@@ -48,19 +48,29 @@ jobs:
     needs:
       - prepare
     strategy:
-      matrix: ${{ fromJson(needs.prepare.outputs.PROJECTS) }}
+      matrix: 
+        projects: ${{ fromJson(needs.prepare.outputs.PROJECTS) }}
+    env:
+      PROJECTS: ${{ matrix.projects }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Get value from matrix
+        run: |
+          # Run JQ to convert string to object
+          NAME=(echo $PROJECTS | jq .name)
+          ROOT=(echo $PROJECTS | jq .root)
+          echo "NAME=$NAME" >> $GITHUB_ENV
+          echo "ROOT=$ROOT" >> $GITHUB_ENV
       - name: Check code meets quality and security standards
         id: datadog-static-analysis
         uses: DataDog/datadog-static-analyzer-github-action@v1
         with:
           dd_api_key: ${{ secrets.DD_API_KEY }}
           dd_app_key: ${{ secrets.DD_APP_KEY }}
-          dd_service: ${{ matrix.name }}
+          dd_service: ${{ env.NAME }}
           dd_env: ci
-          subdirectory: ${{ matrix.path }}
+          subdirectory: ${{ env.ROOT }}
           dd_site: datadoghq.eu
           cpu_count: 2
   sca:
