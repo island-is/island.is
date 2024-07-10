@@ -46,6 +46,7 @@ export class Section extends Model<Section> {
     type: DataTypes.ENUM,
     allowNull: false,
     values: Object.values(SectionTypes),
+    defaultValue: 'input',
   })
   @ApiProperty({ enum: SectionTypes })
   sectionType!: string
