@@ -15,12 +15,34 @@ on:
       - synchronize
 
 jobs:
-  static-analysis:
+  prepare:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    name: Datadog Static Analyzer
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Get cache
+        id: get-cache
+        uses: ./.github/actions/get-cache
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          enable-cache: 'node_modules,cypress,generated-files'
+      - name: Get matrix
+        id: get-matrix
+        run: |
+            export PROJECTS=$(node scripts/ci/get-all-projects.mjs)
+            echo "PROJECTS=$GITHUB_OUTPUT" >> $GITHUB_OUTPUT
+      
+  static-analysis:
+      runs-on: ec2-runners
+      container:
+        image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      needs:
+        - prepare
+      strategy:
+        matrix: ${{ fromJson(needs.prepare.outputs.PROJECTS ) }}
+      steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Check code meets quality and security standards
@@ -29,10 +51,18 @@ jobs:
         with:
           dd_api_key: ${{ secrets.DD_API_KEY }}
           dd_app_key: ${{ secrets.DD_APP_KEY }}
-          dd_service: my-app
+          dd_service: ${{ matrix.name }}
           dd_env: ci
+          subdirectory: ${{ matrix.path }}
           dd_site: datadoghq.eu
           cpu_count: 2
+  sca:
+      runs-on: ec2-runners
+      container:
+        image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+      steps:
+      - name: Checkout
+        uses: actions/checkout@v4
       - name: Check imported libraries are secure and compliant
         id: datadog-software-composition-analysis
         uses: DataDog/datadog-sca-github-action@main
