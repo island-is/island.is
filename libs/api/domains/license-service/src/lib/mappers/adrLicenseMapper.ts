@@ -131,7 +131,6 @@ export class AdrLicensePayloadMapper implements GenericLicenseMapper {
         type: GenericLicenseDataFieldType.Category,
         name: field.flokkur ?? '',
         label: field.heiti ?? '',
-        description: field.heiti ?? '',
       })),
     }
   }

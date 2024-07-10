@@ -11,7 +11,7 @@ import { m } from '../messages'
 import { GenericUserLicenseAlert } from '../dto/GenericUserLicenseAlert.dto'
 import { GenericUserLicenseMetaLinks } from '../dto/GenericUserLicenseMetaLinks.dto'
 import { GenericUserLicenseMetaTag } from '../dto/GenericUserLicenseMetaTag.dto'
-import { capitalize } from '../utils/capitalize'
+import { capitalize, capitalizeEveryWord } from '../utils/capitalize'
 import { Payload } from '../dto/Payload.dto'
 import { formatDate } from '../utils'
 import {
@@ -43,26 +43,26 @@ export class PassportMapper implements GenericLicenseMapper {
       locale,
     )
 
-    if (!payload.length) {
-      return [
-        {
-          licenseName: formatMessage(m.passport),
-          type: 'user',
-          payload: {
-            data: [],
-            rawData: '',
-            metadata: {
-              title: formatMessage(m.passport),
-              name: formatMessage(m.passport),
-              subtitle: formatMessage(m.noValidPassport),
-              ctaLink: {
-                label: formatMessage(m.apply),
-                value: formatMessage(m.applyPassportUrl),
-              },
-            },
+    const emptyPassport = {
+      licenseName: formatMessage(m.passport),
+      type: 'user' as const,
+      payload: {
+        data: [],
+        rawData: '',
+        metadata: {
+          title: formatMessage(m.passport),
+          name: formatMessage(m.passport),
+          subtitle: formatMessage(m.noValidPassport),
+          ctaLink: {
+            label: formatMessage(m.apply),
+            value: formatMessage(m.applyPassportUrl),
           },
         },
-      ]
+      },
+    }
+
+    if (!payload.length) {
+      return [emptyPassport]
     }
 
     const typedPayload = payload as Array<
@@ -88,6 +88,10 @@ export class PassportMapper implements GenericLicenseMapper {
         })
       }
     })
+
+    if (!mappedLicenses.some((m) => m.type === 'user')) {
+      mappedLicenses.push(emptyPassport)
+    }
 
     return mappedLicenses
   }
@@ -156,7 +160,7 @@ export class PassportMapper implements GenericLicenseMapper {
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.personName),
-            value: capitalize(
+            value: capitalizeEveryWord(
               `${document.displayFirstName} ${document.displayLastName}`,
             ),
           }

@@ -115,7 +115,7 @@ export const LicenseDataFields = ({
               <ExpandableLine
                 title={field.name ?? ''}
                 data={field.fields ?? []}
-                description={field.description ?? undefined}
+                description={field.label ?? undefined}
                 type={licenseType}
               />
             )}

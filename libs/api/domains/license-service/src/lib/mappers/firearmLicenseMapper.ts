@@ -188,14 +188,17 @@ export class FirearmLicensePayloadMapper implements GenericLicenseMapper {
     return {
       type: GenericLicenseDataFieldType.Group,
       label: formatMessage(m.classesOfRights),
-      fields: qualifications.split('').map((qualification) => ({
-        type: GenericLicenseDataFieldType.Category,
-        name: qualification,
-        label:
-          categories?.[`${formatMessage(m.category)} ${qualification} `] ?? '',
-        description:
-          categories?.[`${formatMessage(m.category)} ${qualification} `] ?? '',
-      })),
+      fields: qualifications.split('').map((qualification) => {
+        const key: keyof FirearmCategories = `${formatMessage(
+          m.category,
+        )} ${qualification}`
+
+        return {
+          type: GenericLicenseDataFieldType.Category,
+          name: qualification,
+          label: categories?.[key] ?? '',
+        }
+      }),
     }
   }
 

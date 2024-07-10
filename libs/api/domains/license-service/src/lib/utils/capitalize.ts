@@ -1,4 +1,4 @@
-export const capitalize = (s?: string) => {
+export const capitalizeEveryWord = (s?: string) => {
   if (typeof s !== 'string') return ''
 
   const arr = s.split(' ')
@@ -9,4 +9,9 @@ export const capitalize = (s?: string) => {
 
   const word = capitalized.join(' ')
   return word
+}
+
+export const capitalize = (s?: string) => {
+  if (typeof s !== 'string') return ''
+  return s.charAt(0).toUpperCase() + s.slice(1)
 }
