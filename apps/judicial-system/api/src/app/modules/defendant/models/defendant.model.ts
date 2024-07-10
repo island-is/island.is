@@ -73,9 +73,6 @@ export class Defendant {
   @Field(() => DefenderChoice, { nullable: true })
   readonly defenderChoice?: DefenderChoice
 
-  @Field(() => Boolean, { nullable: true })
-  readonly acceptCompensationClaim?: boolean
-
   @Field(() => SubpoenaType, { nullable: true })
   readonly subpoenaType?: SubpoenaType
 }

@@ -78,9 +78,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
       },
     },
   })
-  const [postMileage] = usePostVehicleMileageMutation({
-    refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
-  })
+  const [postMileage, { loading: loadingSubmit }] =
+    usePostVehicleMileageMutation({
+      refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
+    })
   const [updateMileage] = useUpdateVehicleMileageMutation({
     refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
   })
@@ -363,7 +364,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   id: 'vehicle.mileage.inputSubmitButton',
                 })}
                 onPress={onSubmit}
-                disabled={!canRegisterMileage}
+                disabled={!canRegisterMileage || loadingSubmit}
               />
             </View>
             <View>

@@ -2,6 +2,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import Illustration from '../../../../assets/Illustration'
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC } from 'react'
