@@ -154,6 +154,7 @@ type Filters = {
   archived?: boolean
   bookmarked?: boolean
   subjectContains?: string
+  senderNationalId?: string[]
 }
 
 function applyFilters(filters?: Filters) {
@@ -162,6 +163,7 @@ function applyFilters(filters?: Filters) {
     bookmarked: filters?.bookmarked ? true : undefined,
     opened: filters?.opened ? false : undefined,
     subjectContains: filters?.subjectContains ?? '',
+    senderNationalId: filters?.senderNationalId ?? [],
   }
 }
 
@@ -169,22 +171,26 @@ export const InboxScreen: NavigationFunctionComponent<{
   opened?: boolean
   archived?: boolean
   bookmarked?: boolean
+  senderNationalId?: string[]
+  categoryIds?: string[]
 }> = ({
   componentId,
   opened = false,
   archived = false,
   bookmarked = false,
+  senderNationalId = [],
+  categoryIds = [],
 }) => {
   useNavigationOptions(componentId)
   const ui = useUiStore()
   const intl = useIntl()
+  const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
   const client = useApolloClient()
   const [query, setQuery] = useState('')
   const [loadingMore, setLoadingMore] = useState(false)
   const queryString = useThrottleState(query)
-  const theme = useTheme()
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
   const pageRef = useRef(1)
@@ -196,8 +202,10 @@ export const InboxScreen: NavigationFunctionComponent<{
       archived,
       bookmarked,
       subjectContains: queryString,
+      senderNationalId,
+      categoryIds,
     }
-  }, [opened, archived, bookmarked, queryString])
+  }, [opened, archived, bookmarked, queryString, senderNationalId, categoryIds])
 
   const [filters, setFilters] = useState(applyFilters(incomingFilters))
 
@@ -209,6 +217,9 @@ export const InboxScreen: NavigationFunctionComponent<{
       },
     },
   })
+
+  const availableSenders = res.data?.documentsV2?.senders ?? []
+  const availableCategories = res.data?.documentsV2?.categories ?? []
 
   const [markAllAsRead, { loading: markAllAsReadLoading }] =
     useMarkAllDocumentsAsReadMutation({
@@ -484,6 +495,8 @@ export const InboxScreen: NavigationFunctionComponent<{
                     opened,
                     archived,
                     bookmarked,
+                    senders: availableSenders,
+                    categories: availableCategories,
                   })
                 }}
               />
