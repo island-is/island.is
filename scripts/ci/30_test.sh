@@ -50,9 +50,13 @@ if [[ $IS_FLAKY_TEST == true ]]; then
     echo "Running flaky test ${APP} retry ${i}/${FLAKY_TEST_RETRIES}"
     if yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
       break
+    else
+      if [[ $i -eq $FLAKY_TEST_RETRIES ]]; then
+        exit 1
+      fi
     fi
+
   done
-  exit 1
 else
   yarn run test \
     "${APP}" \
