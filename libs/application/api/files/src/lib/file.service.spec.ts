@@ -13,6 +13,7 @@ import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
 
 describe('FileService', () => {
   let service: FileService
@@ -129,9 +130,12 @@ describe('FileService', () => {
 
     awsService = module.get(AwsService)
 
-    jest
-      .spyOn(awsService, 'getFile')
-      .mockImplementation(() => Promise.resolve({ Body: 'body' }))
+    jest.spyOn(awsService, 'getFile').mockImplementation(
+      async () =>
+        ({
+          Body: { transformToString: () => 'body' },
+        } as unknown as GetObjectCommandOutput),
+    )
 
     jest.spyOn(awsService, 'fileExists').mockResolvedValue(false)
 
@@ -220,9 +224,12 @@ describe('FileService', () => {
   it('should throw error for request file signature since file content is missing', async () => {
     const application = createApplication()
 
-    jest
-      .spyOn(awsService, 'getFile')
-      .mockImplementation(() => Promise.resolve({ Body: '' }))
+    jest.spyOn(awsService, 'getFile').mockImplementation(
+      async () =>
+        ({
+          Body: { transformToString: () => '' },
+        } as unknown as GetObjectCommandOutput),
+    )
 
     const act = async () =>
       await service.requestFileSignature(
