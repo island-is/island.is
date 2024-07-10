@@ -47,10 +47,12 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
 
 if [[ $IS_FLAKY_TEST == true ]]; then
   for ((i=1; i<=FLAKY_TEST_RETRIES; i++)); do
+    echo "Running flaky test ${APP} retry ${i}/${FLAKY_TEST_RETRIES}"
     if yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
       break
     fi
   done
+  exit 1
 else
   yarn run test \
     "${APP}" \
