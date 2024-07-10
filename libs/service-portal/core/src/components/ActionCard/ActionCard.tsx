@@ -146,7 +146,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           marginRight={[2, 3]}
           borderRadius="circle"
         >
-          <img className={styles.image} src={image.url} alt="action-card" />
+          <img className={styles.image} src={image.url} alt="" />
         </Box>
       )
     }
@@ -162,7 +162,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           background={image.active ? 'white' : 'blue100'}
           className={cn(styles.avatar, styles.image)}
         >
-          <img className={styles.circleImg} src={image.url} alt="action-card" />
+          <img className={styles.circleImg} src={image.url} alt="" />
         </Box>
       )
     }
