@@ -36,9 +36,7 @@ runs:
       run: |
         id
         ls -lah /github/home/ /github/home/.cache/ || true
-        corepack disable
         cd scripts/ci/cache
         npx yarn install --immutable
         node cache-action.mjs
-        echo $_CACHE_KEYS
-        corepack enable
+        
