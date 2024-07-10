@@ -5,12 +5,7 @@ interface LogoSvgProps {
 }
 
 const LicenseIcon = ({ category }: LogoSvgProps) => {
-  return (
-    <img
-      src={`./assets/icons/${category}.svg`}
-      alt={`driving-license-icon-${category}`}
-    />
-  )
+  return <img src={`./assets/icons/${category}.svg`} alt="" />
 }
 
 export default LicenseIcon
