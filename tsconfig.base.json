@@ -787,7 +787,7 @@
       ],
       "@island.is/clients/smart-solutions-v2": [
         "libs/clients/smart-solutions-v2/src/index.ts"
-      ]
+      ],
       "@island.is/clients/social-insurance-administration": [
         "libs/clients/social-insurance-administration/src/index.ts"
       ],
