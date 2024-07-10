@@ -19,7 +19,6 @@ concurrency:
   group: datadog-analysis-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
-
 jobs:
   prepare:
     runs-on: ec2-runners
@@ -39,18 +38,18 @@ jobs:
       - name: Get matrix
         id: get-matrix
         run: |
-            export PROJECTS=$(node scripts/ci/get-all-projects.mjs)
-            echo "PROJECTS=$PROJECTS" >> $GITHUB_OUTPUT
-      
+          export PROJECTS=$(node scripts/ci/get-all-projects.mjs)
+          echo "PROJECTS=$PROJECTS" >> $GITHUB_OUTPUT
+
   static-analysis:
-      runs-on: ec2-runners
-      container:
-        image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-      needs:
-        - prepare
-      strategy:
-        matrix: ${{ fromJson(needs.prepare.outputs.PROJECTS ) }}
-      steps:
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    needs:
+      - prepare
+    strategy:
+      matrix: ${{ fromJson(needs.prepare.outputs.PROJECTS ) }}
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Check code meets quality and security standards
@@ -65,10 +64,10 @@ jobs:
           dd_site: datadoghq.eu
           cpu_count: 2
   sca:
-      runs-on: ec2-runners
-      container:
-        image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-      steps:
+    runs-on: ec2-runners
+    container:
+      image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
+    steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Check imported libraries are secure and compliant
