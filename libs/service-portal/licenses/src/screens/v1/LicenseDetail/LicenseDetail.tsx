@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useUserProfile } from '@island.is/service-portal/graphql'
-
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -35,8 +34,6 @@ import {
   getLicenseDetailHeading,
   getTypeFromPath,
 } from '../../../utils/dataMapper'
-import { isExpired } from '../../../utils/dateUtils'
-import isValid from 'date-fns/isValid'
 import { isDefined } from '@island.is/shared/utils'
 import ExpandableLine from '../../../components/ExpandableLine/ExpandableLine'
 
