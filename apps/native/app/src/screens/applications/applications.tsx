@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
@@ -25,7 +26,6 @@ import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from '../home/applications-module'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { isIos } from '../../utils/devices'
 
 type ListItem =

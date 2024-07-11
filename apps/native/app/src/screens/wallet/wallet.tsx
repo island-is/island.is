@@ -13,6 +13,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -25,16 +26,13 @@ import {
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { ButtonRegistry } from '../../utils/component-registry'
 import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
 type FlatListItem =
   | GenericUserLicense

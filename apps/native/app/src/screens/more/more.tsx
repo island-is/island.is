@@ -8,6 +8,7 @@ import {
   TouchableHighlight,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
@@ -23,7 +24,6 @@ import { formatNationalId } from '../../lib/format-national-id'
 import { useAuthStore } from '../../stores/auth-store'
 import { testIDs } from '../../utils/test-ids'
 import { getRightButtons } from '../../utils/get-main-root'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { isIos } from '../../utils/devices'
 
 const Row = styled.View`
