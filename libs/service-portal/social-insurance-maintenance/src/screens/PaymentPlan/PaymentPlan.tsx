@@ -4,6 +4,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import {
   FootNote,
   IntroHeader,
+  LinkButton,
   UserInfoLine,
   amountFormat,
   m as coreMessages,
@@ -21,7 +22,7 @@ const PaymentPlan = () => {
   return (
     <Box>
       <IntroHeader
-        title={formatMessage(coreMessages.socialInsuranceMaintenance)}
+        title={formatMessage(coreMessages.paymentPlan)}
         intro={formatMessage(
           coreMessages.socialInsuranceMaintenanceDescription,
         )}
@@ -77,6 +78,15 @@ const PaymentPlan = () => {
           <Box>
             <Text variant="small" marginTop={5} marginBottom={2}>
               {formatMessage(m.maintenanceFooter)}
+              {formatMessage(m.maintenanceFooterLink, {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                link: (str: any) => (
+                  <LinkButton
+                    to={formatMessage(m.maintenanceFooterLinkUrl)}
+                    text={str ?? ''}
+                  />
+                ),
+              })}
             </Text>
           </Box>
         </>
