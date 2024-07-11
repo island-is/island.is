@@ -325,14 +325,11 @@ export const InboxScreen: NavigationFunctionComponent<{
     setBadgeCountAsync(unreadCount)
   }, [intl, theme, unreadCount])
 
-  const keyExtractor = useCallback(
-    (item: ListItem) => {
-      return item.id.toString()
-    },
-    [items],
-  )
+  const keyExtractor = useCallback((item: ListItem) => {
+    return item.id.toString()
+  }, [])
 
-  const onRefresh = useCallback(() => {
+  const onRefresh = useCallback(async () => {
     try {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
@@ -340,16 +337,10 @@ export const InboxScreen: NavigationFunctionComponent<{
       setRefetching(true)
       // Reset page to 1 when refreshing
       pageRef.current = 1
-      res
-        .refetch()
-        .then(() => {
-          ;(loadingTimeout as any).current = setTimeout(() => {
-            setRefetching(false)
-          }, 1331)
-        })
-        .catch(() => {
-          setRefetching(false)
-        })
+      await res.refetch()
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
     } catch (err) {
       setRefetching(false)
     }
