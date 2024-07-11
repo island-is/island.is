@@ -22,7 +22,6 @@ import {
   useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -48,7 +47,9 @@ const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        rightButtons: initialized
+          ? getRightButtons({ screen: 'Home', theme: theme as any })
+          : [],
       },
       bottomTab: {
         ...({
@@ -99,10 +100,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
-  useActiveTabItemPress(2, () => {
-    flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-  })
-
   const applicationsRes = useListApplicationsQuery()
   const inboxRes = useListDocumentsQuery({
     variables: { input: { page: 1, pageSize: 3 } },
@@ -110,7 +107,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ screen: 'Home' }),
     queryResult: applicationsRes,
     refetching,
   })

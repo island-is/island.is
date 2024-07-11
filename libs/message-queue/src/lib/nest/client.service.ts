@@ -15,7 +15,7 @@ import {
   QueueAttributeName,
 } from '@aws-sdk/client-sqs'
 import { AbortController } from '@smithy/abort-controller'
-import type { Logger } from '@island.is/logging'
+import { type Logger } from '@island.is/logging'
 
 @Injectable()
 export class ClientService {

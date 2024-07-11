@@ -3,6 +3,7 @@ import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 let postgresContainer: StartedTestContainer
 let redisClusterContainers: StartedTestContainer[]
 let localstackContainer: StartedTestContainer
+let redisClusterContainer: StartedTestContainer
 
 const portConfig = {
   SQS: parseInt(process.env.SQS_PORT || '4566', 10),
@@ -11,7 +12,8 @@ const portConfig = {
 }
 
 const uniqueName = (name: string) => {
-  return `${name}-${Math.random().toString(16).slice(2, 8)}`
+  const newName = `${name}-${Math.random().toString(16).slice(2, 8)}`
+  return newName
 }
 
 export const startPostgres = async () => {
@@ -71,7 +73,7 @@ export const startRedis = async () => {
       .withEnv('IP', '0.0.0.0')
       .withEnv('ALLOW_EMPTY_PASSWORD', 'yes')
       .withEnv('REDIS_PORT_NUMBER', portConfig.redis[0].toString())
-      .withExposedPorts(portConfig.redis[0])
+      .withExposedPorts(...portConfig.redis)
       .start(),
   )
   process.env.REDIS_NODES = JSON.stringify(

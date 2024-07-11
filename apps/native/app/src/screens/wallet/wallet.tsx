@@ -13,6 +13,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -25,10 +26,8 @@ import {
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { ButtonRegistry } from '../../utils/component-registry'
 import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { isDefined } from '../../utils/is-defined'
@@ -54,15 +53,9 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
-        leftButtons: [
-          {
-            id: ButtonRegistry.ScanLicenseButton,
-            testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
-            icon: require('../../assets/icons/navbar-scan.png'),
-            color: theme.color.blue400,
-          },
-        ],
+        rightButtons: initialized
+          ? getRightButtons({ screen: 'Wallet', theme: theme as any })
+          : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -102,6 +95,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
+  const [hiddenContent, setHiddenContent] = useState(isIos)
 
   // Feature flags
   const showPassport = useFeatureFlag('isPassportEnabled', false)
@@ -133,16 +127,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ screen: 'Wallet' }),
     queryResult: [res, resPassport],
     refetching,
-  })
-
-  useActiveTabItemPress(1, () => {
-    flatListRef.current?.scrollToOffset({
-      offset: -150,
-      animated: true,
-    })
   })
 
   // Filter licenses
@@ -207,6 +194,10 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [])
 
+  useNavigationComponentDidAppear(() => {
+    setHiddenContent(false)
+  }, componentId)
+
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
@@ -270,6 +261,11 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       ...(showPassport ? resPassport?.data?.getIdentityDocument ?? [] : []),
     ] as FlatListItem[]
   }, [licenseItems, resPassport, showPassport, res.loading, res.data])
+
+  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  if (hiddenContent) {
+    return null
+  }
 
   return (
     <>
