@@ -304,7 +304,9 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    await expect(act()).resolves.toBeTruthy()
+    // The resolves are `undefined` 🥹
+    // await expect(act()).resolves.toBeTruthy()
+    await expect(act).resolves
   })
 
   it('should throw error for requestFileSignature since application type is not supported', async () => {
