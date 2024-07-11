@@ -1,6 +1,5 @@
 import { Client } from '@elastic/elasticsearch'
 import merge from 'lodash/merge'
-import AwsConnector from 'aws-elasticsearch-connector'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { autocompleteTermQuery } from '../queries/autocomplete'
@@ -35,7 +34,10 @@ import { tagAggregationQuery } from '../queries/tagAggregation'
 import { typeAggregationQuery } from '../queries/typeAggregation'
 import { rankEvaluationQuery } from '../queries/rankEvaluation'
 import { filterDoc, getValidBulkRequestChunk } from './utils'
-import { config } from 'aws-sdk'
+import {
+  createAWSConnection,
+  awsGetCredentials,
+} from '@acuris/aws-es-connection'
 
 type RequestBodyType<T = Record<string, unknown>> = T | string | Buffer
 type RankResultMap<T extends string> = Record<string, RankEvaluationResponse<T>>
@@ -392,8 +394,7 @@ export class ElasticService {
     }
 
     return new Client({
-      // TODO: Send config, but try to use the local environment instead of explicit config
-      ...AwsConnector(config),
+      ...createAWSConnection(await awsGetCredentials()),
       node: elastic.node,
     })
   }

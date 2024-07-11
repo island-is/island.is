@@ -6,7 +6,10 @@ import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'
 import { searchQuery } from './queries/search.model'
 import { logger } from '@island.is/logging'
-import { config } from 'aws-sdk'
+import {
+  createAWSConnection,
+  awsGetCredentials,
+} from '@acuris/aws-es-connection'
 
 const { elastic } = environment
 
@@ -14,12 +17,10 @@ type RequestBodyType<T = Record<string, unknown>> = T | string | Buffer
 
 @Injectable()
 export class ElasticService {
-  private client: Client
+  private client?: Client
   private indexName = 'apicatalogue'
 
-  constructor() {
-    this.client = this.createEsClient()
-  }
+  constructor() {}
 
   /**
    * Tries to delete the index.
@@ -27,12 +28,13 @@ export class ElasticService {
    */
   async deleteIndex(): Promise<void> {
     logger.info('Deleting index', this.indexName)
+    const client = await this.getClient()
 
-    const { body } = await this.client.indices.exists({
+    const { body } = await client.indices.exists({
       index: this.indexName,
     })
     if (body) {
-      await this.client.indices.delete({ index: this.indexName })
+      await client.indices.delete({ index: this.indexName })
       logger.info(`Index ${this.indexName} deleted`)
     } else {
       logger.info('No index to delete', this.indexName)
@@ -53,7 +55,8 @@ export class ElasticService {
         },
       }))
 
-      await this.client.bulk({
+      const client = await this.getClient()
+      await client.bulk({
         body: bulk,
         index: this.indexName,
       })
@@ -99,7 +102,8 @@ export class ElasticService {
     query: RequestBody,
   ) {
     logger.debug('Searching for', query)
-    return await this.client.search<ResponseBody, RequestBody>({
+    const client = await this.getClient()
+    return await client.search<ResponseBody, RequestBody>({
       body: query,
       index: this.indexName,
     })
@@ -111,7 +115,8 @@ export class ElasticService {
     }
 
     logger.info('Deleting based on indexes', { ids })
-    return await this.client.delete_by_query({
+    const client = await this.getClient()
+    return await client.delete_by_query({
       index: this.indexName,
       body: {
         query: {
@@ -125,7 +130,8 @@ export class ElasticService {
 
   async deleteAllExcept(excludeIds: Array<string>) {
     logger.info('Deleting everything except', { excludeIds })
-    return await this.client.delete_by_query({
+    const client = await this.getClient()
+    return await client.delete_by_query({
       index: this.indexName,
       body: {
         query: {
@@ -138,14 +144,19 @@ export class ElasticService {
   }
 
   async ping() {
-    const result = await this.client.ping().catch((error) => {
+    const client = await this.getClient()
+    const result = await client.ping().catch((error) => {
       logger.error('Error in ping', error)
     })
     logger.info('Got elasticsearch ping response')
     return result
   }
+  private async getClient(): Promise<Client> {
+    if (this.client) return this.client
+    return await this.createEsClient()
+  }
 
-  private createEsClient(): Client {
+  private async createEsClient(): Promise<Client> {
     const hasAWS =
       'AWS_WEB_IDENTITY_TOKEN_FILE' in process.env ||
       'AWS_SECRET_ACCESS_KEY' in process.env
@@ -157,8 +168,7 @@ export class ElasticService {
     }
 
     return new Client({
-      // TODO: Send config, but try to use the local environment instead of explicit config
-      ...AwsConnector(config),
+      ...createAWSConnection(await awsGetCredentials()),
       node: elastic.node,
     })
   }
