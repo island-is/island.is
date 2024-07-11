@@ -7,7 +7,10 @@ import {
   ScrollView,
   TouchableHighlight,
 } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 import assetsIcon from '../../assets/icons/assets.png'
@@ -74,6 +77,7 @@ const { useNavigationOptions, getNavigationOptions } =
   )
 
 export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
+  useNavigationOptions(componentId)
   const authStore = useAuthStore()
   const intl = useIntl()
   const theme = useTheme()
@@ -81,13 +85,19 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const showFinances = useFeatureFlag('isFinancesEnabled', false)
   const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
 
-  useNavigationOptions(componentId)
   useConnectivityIndicator({
     componentId,
     rightButtons: getRightButtons({ screen: 'More' }),
   })
+
   useNavigationComponentDidAppear(() => {
     setHiddenContent(false)
+    // This is needed to make sure we show the settings icon on a cold boot
+    Navigation.mergeOptions(componentId, {
+      topBar: {
+        rightButtons: getRightButtons({ screen: 'More' }),
+      },
+    })
   }, componentId)
 
   // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717

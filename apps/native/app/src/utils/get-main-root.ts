@@ -51,6 +51,7 @@ export const getRightButtons = ({
           testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
           icon: require('../assets/icons/navbar-scan.png'),
           color: theme.color.blue400,
+          iconBackground,
         },
       ]
     case 'More':
