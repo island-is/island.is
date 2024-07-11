@@ -45,7 +45,6 @@ import { toggleAction } from '../../lib/post-mail-action'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
-import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 
 type ListItem =
@@ -61,7 +60,6 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'inbox.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -297,7 +295,6 @@ export const InboxScreen: NavigationFunctionComponent<{
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
     queryResult: res,
     refetching: res.refetching,
   })
