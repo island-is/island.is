@@ -38,11 +38,6 @@ export const MachineLicensePlate = buildSubSection({
             },
           ],
         }),
-        // buildCustomField({
-        //   id: 'licencePlate',
-        //   title: '',
-        //   component: 'LicensePlates',
-        // }),
         buildRadioField({
           id: 'licencePlate.size',
           title: '',
@@ -65,7 +60,8 @@ export const MachineLicensePlate = buildSubSection({
             },
           ],
           defaultValue: Plate.A,
-          width: 'half',
+          widthWithIllustration: '1/3',
+          hasIllustration: true,
           condition: (answers) => {
             const registerToTraffic = getValueViaPath(
               answers,

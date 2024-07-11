@@ -288,6 +288,8 @@ export interface RadioField extends BaseField {
   largeButtons?: boolean
   required?: boolean
   space?: BoxProps['paddingTop']
+  hasIllustration?: boolean
+  widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 

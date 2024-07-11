@@ -171,6 +171,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
   } = data
 
   return {
@@ -181,6 +183,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
