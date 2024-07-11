@@ -9,7 +9,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './DefendantInfo.strings'
 import { link } from '../../MarkdownWrapper/MarkdownWrapper.css'
@@ -30,6 +33,34 @@ interface DefendantInfoProps {
   displayVerdictViewDate?: boolean
 }
 
+export const getAppealExpirationInfo = (
+  viewDate?: string | null,
+  serviceRequirement?: ServiceRequirement | null,
+) => {
+  if (!viewDate) {
+    return { message: strings.appealDateNotBegun, data: null }
+  }
+
+  if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
+    return { message: strings.serviceRequirementNotRequired, data: null }
+  }
+
+  if (serviceRequirement === ServiceRequirement.NOT_APPLICABLE) {
+    return { message: strings.serviceRequirementNotApplicable, data: null }
+  }
+
+  const today = new Date()
+  const expiryDate = new Date(viewDate)
+  expiryDate.setDate(expiryDate.getDate() + 28)
+
+  const message =
+    today < expiryDate
+      ? strings.appealExpirationDate
+      : strings.appealDateExpired
+
+  return { message, data: formatDate(expiryDate, 'P') }
+}
+
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const {
     defendant,
@@ -40,23 +71,10 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   } = props
   const { formatMessage } = useIntl()
 
-  const getAppealExpirationInfo = (viewDate?: string) => {
-    if (!viewDate) {
-      return formatMessage(strings.appealDateNotBegun)
-    }
-
-    const today = new Date()
-    const expiryDate = new Date(viewDate)
-    expiryDate.setDate(expiryDate.getDate() + 28)
-
-    const message =
-      today < expiryDate
-        ? strings.appealExpirationDate
-        : strings.appealDateExpired
-    return formatMessage(message, {
-      appealExpirationDate: formatDate(expiryDate, 'P'),
-    })
-  }
+  const appealExpirationInfo = getAppealExpirationInfo(
+    defendant.verdictViewDate,
+    defendant.serviceRequirement,
+  )
 
   return (
     <div
@@ -82,7 +100,9 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         {displayAppealExpirationInfo && (
           <Box>
             <Text as="span">
-              {getAppealExpirationInfo(defendant.verdictViewDate ?? '')}
+              {formatMessage(appealExpirationInfo.message, {
+                appealExpirationDate: appealExpirationInfo.data,
+              })}
             </Text>
           </Box>
         )}
