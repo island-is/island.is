@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common'
 import { Client, ApiResponse } from '@elastic/elasticsearch'
-import AwsConnector from 'aws-elasticsearch-connector'
 import { environment } from '../environments/environments'
 import { Service } from '@island.is/api-catalogue/types'
 import { SearchResponse } from '@island.is/shared/types'
@@ -19,8 +18,6 @@ type RequestBodyType<T = Record<string, unknown>> = T | string | Buffer
 export class ElasticService {
   private client?: Client
   private indexName = 'apicatalogue'
-
-  constructor() {}
 
   /**
    * Tries to delete the index.
