@@ -406,15 +406,11 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  limitedAccessGetAllFiles(caseId: string): Promise<Buffer> {
-    return this.get(`case/${caseId}/limitedAccess/files/all`)
-  }
-
   createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
     return fetch(`${environment.backend.url}/api/eventLog/event`, {
       method: 'POST',
       headers: {
-        authorization: `Bearer ${environment.auth.secretToken}`,
+        authorization: `Bearer ${environment.backend.secretToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
