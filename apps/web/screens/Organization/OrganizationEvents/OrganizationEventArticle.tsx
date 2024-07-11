@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react'
 import cn from 'classnames'
-import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import { EmbeddedVideo, Image } from '@island.is/island-ui/contentful'
@@ -14,6 +13,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import type { Locale } from '@island.is/shared/types'
 import {
   EventLocation,
   EventTime,

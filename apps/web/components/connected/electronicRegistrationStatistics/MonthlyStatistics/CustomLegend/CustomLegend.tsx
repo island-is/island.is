@@ -1,5 +1,5 @@
-import { LegendProps } from 'recharts'
 import cn from 'classnames'
+import { LegendProps } from 'recharts'
 
 import * as styles from './CustomLegend.css'
 

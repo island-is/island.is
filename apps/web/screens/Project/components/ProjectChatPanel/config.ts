@@ -1,5 +1,4 @@
 import { Locale } from '@island.is/shared/types'
-
 import {
   LiveChatIncChatPanelProps,
   WatsonChatPanelProps,

@@ -1,8 +1,9 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+
 import { AsyncSearchInput, Box, Text } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import { useNamespace } from '@island.is/web/hooks'
 
 interface SidebarShipSearchInputProps {
   namespace: {

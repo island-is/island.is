@@ -4,7 +4,9 @@ import {
   StyleRule,
   styleVariants,
 } from '@vanilla-extract/css'
+
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+
 import covidColors from '../colors'
 
 // this is used to generate uniqe classname for button so we can target empty styles for icon

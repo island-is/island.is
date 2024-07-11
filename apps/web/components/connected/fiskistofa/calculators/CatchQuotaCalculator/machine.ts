@@ -1,19 +1,21 @@
+import { assign,createMachine } from 'xstate'
 import { ApolloClient } from '@apollo/client'
-import { createMachine, assign } from 'xstate'
+
 import {
   FiskistofaCatchQuotaCategory as CatchQuotaCategory,
   FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory,
-  QueryFiskistofaUpdateShipStatusForTimePeriodArgs as QueryUpdateShipStatusForTimePeriodArgs,
-  QueryFiskistofaGetShipStatusForTimePeriodArgs as QueryGetShipStatusForTimePeriodArgs,
-  FiskistofaQuotaType as QuotaType,
-  FiskistofaShip as Ship,
-  QueryFiskistofaUpdateShipQuotaStatusForTimePeriodArgs as QueryUpdateShipQuotaStatusForTimePeriodArgs,
   FiskistofaExtendedShipStatusInformationResponse,
-  FiskistofaQuotaTypeResponse,
   FiskistofaExtendedShipStatusInformationUpdateResponse,
   FiskistofaQuotaStatusResponse,
+  FiskistofaQuotaType as QuotaType,
+  FiskistofaQuotaTypeResponse,
+  FiskistofaShip as Ship,
+  QueryFiskistofaGetShipStatusForTimePeriodArgs as QueryGetShipStatusForTimePeriodArgs,
+  QueryFiskistofaUpdateShipQuotaStatusForTimePeriodArgs as QueryUpdateShipQuotaStatusForTimePeriodArgs,
+  QueryFiskistofaUpdateShipStatusForTimePeriodArgs as QueryUpdateShipStatusForTimePeriodArgs,
 } from '@island.is/api/schema'
 import { sortAlpha } from '@island.is/shared/utils'
+import initApollo from '@island.is/web/graphql/client'
 
 import {
   GET_QUOTA_TYPES_FOR_TIME_PERIOD,
@@ -21,7 +23,6 @@ import {
   UPDATE_SHIP_QUOTA_STATUS_FOR_TIME_PERIOD,
   UPDATE_SHIP_STATUS_FOR_TIME_PERIOD,
 } from '../queries'
-import initApollo from '@island.is/web/graphql/client'
 
 type ContextData = {
   shipInformation?: Ship

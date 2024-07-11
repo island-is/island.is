@@ -1,9 +1,11 @@
 import { style } from '@vanilla-extract/css'
+
 import { themeUtils } from '@island.is/island-ui/theme'
+
 import {
   DESKTOP_HEADER_HEIGHT,
-  MOBILE_HEADER_HEIGHT,
   DESKTOP_HEIGHT,
+  MOBILE_HEADER_HEIGHT,
   MOBILE_HEIGHT,
 } from '../../../components/ServiceWeb/constants'
 

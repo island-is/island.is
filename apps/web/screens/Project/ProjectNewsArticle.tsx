@@ -1,30 +1,32 @@
 import { useRouter } from 'next/router'
+
 import { BreadCrumbItem } from '@island.is/island-ui/core'
-import { Screen } from '@island.is/web/types'
+import { Locale } from '@island.is/shared/types'
+import { HeadWithSocialSharing, NewsArticle } from '@island.is/web/components'
+import {
+  ContentLanguage,
+  GetNamespaceQuery,
+  GetSingleNewsItemQuery,
+  ProjectPage,
+  Query,
+  QueryGetNamespaceArgs,
+  QueryGetProjectPageArgs,
+  QueryGetSingleNewsArgs,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+import useContentfulId from '@island.is/web/hooks/useContentfulId'
+import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
+import { withMainLayout } from '@island.is/web/layouts/main'
 import {
   GET_NAMESPACE_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
 } from '@island.is/web/screens/queries'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import {
-  ContentLanguage,
-  GetSingleNewsItemQuery,
-  QueryGetSingleNewsArgs,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  Query,
-  QueryGetProjectPageArgs,
-  ProjectPage,
-} from '@island.is/web/graphql/schema'
-import { HeadWithSocialSharing, NewsArticle } from '@island.is/web/components'
-import { useNamespace } from '@island.is/web/hooks'
+import { Screen } from '@island.is/web/types'
+
 import { useLinkResolver } from '../../hooks/useLinkResolver'
 import { CustomNextError } from '../../units/errors'
-import { useLocalLinkTypeResolver } from '@island.is/web/hooks/useLocalLinkTypeResolver'
-import { Locale } from '@island.is/shared/types'
-import { ProjectWrapper } from './components/ProjectWrapper'
 import { GET_PROJECT_PAGE_QUERY } from '../queries/Project'
+import { ProjectWrapper } from './components/ProjectWrapper'
 import { getThemeConfig } from './utils'
 
 interface ProjectNewsArticleleProps {

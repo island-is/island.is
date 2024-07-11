@@ -1,23 +1,24 @@
 import { FC } from 'react'
+
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
-  Text,
+  Hyphen,
+  Inline,
+  Link,
+  LinkContext,
   Logo,
   Stack,
-  LinkContext,
-  Link,
-  Inline,
-  Hyphen,
+  Text,
 } from '@island.is/island-ui/core'
-import Illustration from './Illustration'
 import { Locale } from '@island.is/shared/types'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { useNamespace } from '@island.is/web/hooks'
 
+import Illustration from './Illustration'
 import * as styles from './Footer.css'
 
 interface Props {

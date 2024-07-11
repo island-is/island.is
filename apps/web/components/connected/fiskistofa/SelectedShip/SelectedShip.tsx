@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
+
 import { Box, Inline, LoadingDots, Text } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
 import { GET_SINGLE_SHIP } from '@island.is/web/screens/queries/Fiskistofa'

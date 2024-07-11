@@ -1,4 +1,6 @@
+import { useState } from 'react'
 import { useQuery } from '@apollo/client'
+
 import {
   AlertMessage,
   Box,
@@ -15,7 +17,6 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { GET_DRIVING_INSTRUCTORS_QUERY } from '@island.is/web/screens/queries/DrivingInstructors'
-import { useState } from 'react'
 
 const DEFAULT_ITEMS_PER_PAGE = 10
 

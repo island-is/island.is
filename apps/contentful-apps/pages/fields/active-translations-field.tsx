@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { useSDK } from '@contentful/react-apps-toolkit'
 import { Checkbox } from '@contentful/f36-components'
+import { useSDK } from '@contentful/react-apps-toolkit'
 
 const localeMap = {
   en: 'English',

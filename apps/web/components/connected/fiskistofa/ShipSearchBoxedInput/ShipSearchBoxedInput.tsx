@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useRouter } from 'next/router'
+
 import {
   Box,
   BoxProps,
@@ -11,11 +12,11 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
-import { theme } from '@island.is/island-ui/theme'
 import { SpanType } from '@island.is/island-ui/core/types'
+import { theme } from '@island.is/island-ui/theme'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
+import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
 
 const INPUT_COLUMN_SPAN: SpanType = [
   '12/12',

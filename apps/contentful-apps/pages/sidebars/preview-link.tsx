@@ -3,6 +3,7 @@ import { EntryProps, KeyValueMap } from 'contentful-management'
 import { CMAClient, SidebarExtensionSDK } from '@contentful/app-sdk'
 import { Button, Text } from '@contentful/f36-components'
 import { useCMA, useSDK } from '@contentful/react-apps-toolkit'
+
 import {
   CONTENTFUL_ENVIRONMENT,
   CONTENTFUL_SPACE,

@@ -2,57 +2,57 @@ import { useContext } from 'react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import {
+  parseAsArrayOf,
+  parseAsInteger,
+  parseAsString,
+} from 'next-usequerystate'
+
+import {
   Box,
-  Text,
-  Pagination,
-  Link,
-  Inline,
+  Button,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Button,
+  Inline,
+  Link,
+  Pagination,
   Table as T,
+  Text,
 } from '@island.is/island-ui/core'
 import {
+  BackgroundImage,
   QueryFilterInput,
   SearchableTagsFilter,
-  BackgroundImage,
-  useSearchableTagsFilter,
   useQueryFilter,
+  useSearchableTagsFilter,
 } from '@island.is/web/components'
-import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { GlobalContext } from '@island.is/web/context'
-import { CustomNextError } from '@island.is/web/units/errors'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import {
+  type Article,
+  type ContentLanguage,
+  type GetApplicationsQuery,
+  type GetNamespaceQuery,
+  type GetSearchCountTagsQuery,
+  type QueryGetNamespaceArgs,
+  type QuerySearchResultsArgs,
   SearchableContentTypes,
   SearchableTags,
-  SortField,
   SortDirection,
+  SortField,
   type Tag as TagType,
-  type GetApplicationsQuery,
-  type GetSearchCountTagsQuery,
-  type QuerySearchResultsArgs,
-  type ContentLanguage,
-  type QueryGetNamespaceArgs,
-  type GetNamespaceQuery,
-  type Article,
 } from '@island.is/web/graphql/schema'
+import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
 import { useLinkResolver } from '@island.is/web/hooks'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
+
 import type { Screen } from '../../types'
 import {
-  GET_NAMESPACE_QUERY,
   GET_APPLICATIONS_QUERY,
+  GET_NAMESPACE_QUERY,
   GET_SEARCH_COUNT_QUERY,
 } from '../queries'
-
-import {
-  parseAsString,
-  parseAsInteger,
-  parseAsArrayOf,
-} from 'next-usequerystate'
 import type { ApplicationsTexts } from './Applications.types'
-
 import * as styles from './Applications.css'
 
 interface CategoryProps {

@@ -1,34 +1,36 @@
 import { FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
-import { GET_TEMPORARY_EVENT_LICENCES } from './queries'
+
+import {
+  AlertMessage,
+  Box,
+  Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Input,
+  LoadingDots,
+  Select,
+  Tag,
+  Text,
+} from '@island.is/island-ui/core'
+import { SyslumennListCsvExport } from '@island.is/web/components'
 import {
   ConnectedComponent,
   Maybe,
   Query,
   TemporaryEventLicence,
 } from '@island.is/web/graphql/schema'
-import {
-  prepareCsvString,
-  textSearch,
-  getNormalizedSearchTerms,
-  getValidPeriodRepresentation,
-} from '../../utils'
-import {
-  Box,
-  Button,
-  Tag,
-  LoadingDots,
-  Text,
-  Input,
-  AlertMessage,
-  Select,
-  GridContainer,
-  GridRow,
-  GridColumn,
-} from '@island.is/island-ui/core'
-import { SyslumennListCsvExport } from '@island.is/web/components'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+
+import {
+  getNormalizedSearchTerms,
+  getValidPeriodRepresentation,
+  prepareCsvString,
+  textSearch,
+} from '../../utils'
+import { GET_TEMPORARY_EVENT_LICENCES } from './queries'
 
 const DEFAULT_PAGE_SIZE = 10
 

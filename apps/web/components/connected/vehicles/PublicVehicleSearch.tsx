@@ -1,7 +1,8 @@
-import { useLazyQuery } from '@apollo/client'
 import { useEffect, useRef, useState } from 'react'
 import isEqual from 'lodash/isEqual'
 import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
+
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -9,7 +10,6 @@ import {
   Table,
   Text,
 } from '@island.is/island-ui/core'
-import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
 import {
   ConnectedComponent,
   GetPublicVehicleSearchQuery,
@@ -17,6 +17,7 @@ import {
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { PUBLIC_VEHICLE_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicVehicleSearch'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
 

@@ -12,18 +12,18 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { FormField } from '@island.is/web/components'
-import { FormFieldType } from '../../../Form/Form'
 import {
   EmailSignup as EmailSignupSchema,
   EmailSignupInputField,
   EmailSignupSubscriptionMutation,
   EmailSignupSubscriptionMutationVariables,
 } from '@island.is/web/graphql/schema'
-import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 import { useNamespace } from '@island.is/web/hooks'
+import { EMAIL_SIGNUP_MUTATION } from '@island.is/web/screens/queries'
 import { isValidEmail } from '@island.is/web/utils/isValidEmail'
 import { isValidNationalId } from '@island.is/web/utils/isValidNationalId'
 
+import { FormFieldType } from '../../../Form/Form'
 import * as styles from './EmailSignup.css'
 
 type SubmitResponse = {

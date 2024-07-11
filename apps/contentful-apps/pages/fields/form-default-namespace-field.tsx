@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react'
+import { FieldExtensionSDK } from '@contentful/app-sdk'
 import {
-  TextInput,
   Box,
   Checkbox,
-  FormLabel,
-  FormControl,
   Flex,
+  FormControl,
+  FormLabel,
+  TextInput,
 } from '@contentful/f36-components'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useSDK } from '@contentful/react-apps-toolkit'
 
 interface ValueType {

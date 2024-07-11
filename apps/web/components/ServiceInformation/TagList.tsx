@@ -1,19 +1,21 @@
 import React from 'react'
-import { useNamespace } from '@island.is/web/hooks'
+
 import {
   Box,
-  Inline,
-  Text,
   GridColumn,
   GridContainer,
   GridRow,
+  Inline,
+  Text,
   Tooltip,
 } from '@island.is/island-ui/core'
 import {
+  AccessCategory,
   DataCategory,
   TypeCategory,
-  AccessCategory,
 } from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
+
 import ServiceTag from './ServiceTag'
 
 interface TagListProps {

@@ -1,4 +1,3 @@
-import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import {
@@ -11,6 +10,7 @@ import {
   TopicCard,
 } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'
+import { Locale } from '@island.is/shared/types'
 import { sortAlpha } from '@island.is/shared/utils'
 import {
   Card,

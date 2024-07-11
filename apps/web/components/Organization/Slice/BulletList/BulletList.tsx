@@ -1,6 +1,7 @@
 import React from 'react'
-import { BulletListSlice as BulletListProps } from '@island.is/web/graphql/schema'
+
 import { BulletList } from '@island.is/web/components'
+import { BulletListSlice as BulletListProps } from '@island.is/web/graphql/schema'
 
 interface SliceProps {
   slice: BulletListProps

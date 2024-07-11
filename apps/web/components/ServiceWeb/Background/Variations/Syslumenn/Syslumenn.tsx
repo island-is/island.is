@@ -1,8 +1,8 @@
 import React from 'react'
 import cn from 'classnames'
+
 import { VariationProps } from '../../../types'
 import Illustration from './Illustration'
-
 import * as styles from './Syslumenn.css'
 
 export const Syslumenn = ({ small }: VariationProps) => {

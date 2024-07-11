@@ -1,68 +1,70 @@
 import { FC, useEffect, useMemo, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
+import { createPortal } from 'react-dom'
 import NextLink from 'next/link'
+import { useRouter } from 'next/router'
 import { BLOCKS } from '@contentful/rich-text-types'
 import slugify from '@sindresorhus/slugify'
+
 import {
-  Slice as SliceType,
   ProcessEntry,
+  Slice as SliceType,
 } from '@island.is/island-ui/contentful'
 import {
   Box,
-  Text,
-  Stack,
   Breadcrumbs,
+  Button,
   GridColumn,
   GridRow,
   Link,
   Navigation,
+  Stack,
   TableOfContents,
-  Button,
   Tag,
+  Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import {
+  AppendedArticleComponents,
+  Form,
   HeadWithSocialSharing,
   InstitutionPanel,
   InstitutionsPanel,
   OrganizationFooter,
-  Sticky,
-  Webreader,
-  AppendedArticleComponents,
+  SignLanguageButton,
   Stepper,
   stepperUtils,
-  Form,
-  SignLanguageButton,
+  Sticky,
+  Webreader,
 } from '@island.is/web/components'
-import { withMainLayout } from '@island.is/web/layouts/main'
-import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
-import { Screen } from '@island.is/web/types'
-import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
-import { CustomNextError } from '@island.is/web/units/errors'
 import {
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
   AllSlicesFragment as Slice,
+  GetNamespaceQuery,
   GetSingleArticleQuery,
-  QueryGetSingleArticleArgs,
   Organization,
+  QueryGetNamespaceArgs,
+  QueryGetSingleArticleArgs,
   Stepper as StepperSchema,
 } from '@island.is/web/graphql/schema'
-import { createNavigation } from '@island.is/web/utils/navigation'
+import { useNamespace, usePlausiblePageview } from '@island.is/web/hooks'
 import useContentfulId from '@island.is/web/hooks/useContentfulId'
-import { SidebarLayout } from '../Layouts/SidebarLayout'
-import { createPortal } from 'react-dom'
+import { useI18n } from '@island.is/web/i18n'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { createNavigation } from '@island.is/web/utils/navigation'
+import { getOrganizationLink } from '@island.is/web/utils/organization'
+import { webRichText } from '@island.is/web/utils/richText'
+
 import {
   LinkResolverResponse,
   LinkType,
   useLinkResolver,
 } from '../../hooks/useLinkResolver'
-import { ArticleChatPanel } from './components/ArticleChatPanel'
-import { webRichText } from '@island.is/web/utils/richText'
-import { Locale } from '@island.is/shared/types'
 import { useScrollPosition } from '../../hooks/useScrollPosition'
 import { scrollTo } from '../../hooks/useScrollSpy'
-import { getOrganizationLink } from '@island.is/web/utils/organization'
+import { SidebarLayout } from '../Layouts/SidebarLayout'
+import { GET_ARTICLE_QUERY, GET_NAMESPACE_QUERY } from '../queries'
+import { ArticleChatPanel } from './components/ArticleChatPanel'
 
 type Article = GetSingleArticleQuery['getSingleArticle']
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment

@@ -1,23 +1,25 @@
 import React from 'react'
+
+import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
 import {
-  GridContainer,
   Box,
-  GridColumn,
-  GridRow,
-  Text,
-  ContentBlock,
-  Button,
-  Hidden,
-  BulletList,
   Bullet,
+  BulletList,
+  Button,
+  ContentBlock,
+  GridColumn,
+  GridContainer,
+  GridRow,
+  Hidden,
+  Text,
 } from '@island.is/island-ui/core'
+import { webLoginButtonSelect } from '@island.is/plausible'
 import { SvgLogin } from '@island.is/web/components'
 import { LoginPageTexts } from '@island.is/web/components'
-import { Screen } from '@island.is/web/types'
-import { withMainLayout } from '@island.is/web/layouts/main'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
-import { Query, QueryGetNamespaceArgs } from '@island.is/api/schema'
-import { webLoginButtonSelect } from '@island.is/plausible'
+import { withMainLayout } from '@island.is/web/layouts/main'
+import { Screen } from '@island.is/web/types'
+
 import { GET_NAMESPACE_QUERY } from '../queries'
 import * as styles from './Login.css'
 

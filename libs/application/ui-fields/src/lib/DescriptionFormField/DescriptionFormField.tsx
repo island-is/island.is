@@ -26,8 +26,7 @@ export const DescriptionFormField: FC<
         <Text variant={field.titleVariant}>
           {formatText(field.title, application, formatMessage)}
           {field.titleTooltip && (
-            <>
-              <Tooltip
+            <Tooltip
                 placement="top"
                 text={formatText(
                   field.titleTooltip,
@@ -35,7 +34,6 @@ export const DescriptionFormField: FC<
                   formatMessage,
                 )}
               />
-            </>
           )}
         </Text>
       )}
@@ -47,12 +45,10 @@ export const DescriptionFormField: FC<
             </Markdown>
           )}
           {field.tooltip && (
-            <>
-              <Tooltip
+            <Tooltip
                 placement="top"
                 text={formatText(field.tooltip, application, formatMessage)}
               />
-            </>
           )}
         </Text>
       )}

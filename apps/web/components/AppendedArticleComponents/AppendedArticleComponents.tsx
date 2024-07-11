@@ -1,5 +1,6 @@
 import React from 'react'
 import dynamic from 'next/dynamic'
+
 import { GetSingleArticleQuery } from '@island.is/web/graphql/schema'
 
 const IcelandicNamesSearcher = dynamic(

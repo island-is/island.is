@@ -1,4 +1,5 @@
 import gql from 'graphql-tag'
+
 import { nestedFields, slices } from './fragments'
 
 export const GET_TAB_SECTION_QUERY = gql`

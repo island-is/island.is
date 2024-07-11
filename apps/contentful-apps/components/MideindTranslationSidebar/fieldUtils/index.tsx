@@ -1,9 +1,9 @@
 // Widget operations
+import { DEFAULT_LOCALE } from '../../../constants'
+import markdownEditor from './widgets/markdownEditor'
+import multipleLine from './widgets/multipleLine'
 import richTextEditor from './widgets/richTextEditor'
 import singleLine from './widgets/singleLine'
-import multipleLine from './widgets/multipleLine'
-import markdownEditor from './widgets/markdownEditor'
-import { DEFAULT_LOCALE } from '../../../constants'
 
 interface WidgetActions {
   extractText: (value: string) => string[]
