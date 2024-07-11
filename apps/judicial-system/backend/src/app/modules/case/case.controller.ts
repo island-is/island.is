@@ -460,6 +460,33 @@ export class CaseController {
     return theCase
   }
 
+  @UseGuards(JwtAuthGuard, CaseExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get('case/:caseId/connectedCases')
+  @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
+  async getConnectedCases(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case[]> {
+    this.logger.debug(`Getting connected cases for case ${caseId}`)
+
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return []
+    }
+
+    const connectedCases = await Promise.all(
+      theCase.defendants.map((defendant) =>
+        this.caseService.getConnectedIndictmentCases(theCase.id, defendant),
+      ),
+    )
+
+    return connectedCases.flat()
+  }
+
   @UseGuards(
     JwtAuthGuard,
     RolesGuard,

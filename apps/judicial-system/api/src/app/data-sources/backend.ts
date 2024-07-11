@@ -183,6 +183,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.get<Case>(`case/${id}`, this.caseTransformer)
   }
 
+  getConnectedCases(id: string): Promise<Case[]> {
+    return this.get(`case/${id}/connectedCases`)
+  }
+
   createCase(createCase: unknown): Promise<Case> {
     return this.post<unknown, Case>('case', createCase, this.caseTransformer)
   }
