@@ -16,15 +16,8 @@ query GetProfile {
 query GetFrontPageImage($input: GetFrontpageInput!) {
   getFrontpage(input: $input) {
     imageMobile {
-      url
-    }
-  }
-}
-
-query GetFrontPageImageTitle($input: GetFrontpageInput!) {
-  getFrontpage(input: $input) {
-    imageMobile {
       title
+      url
     }
   }
 }

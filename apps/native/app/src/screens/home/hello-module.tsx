@@ -8,10 +8,7 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { useAuthStore } from '../../stores/auth-store'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import {
-  useGetFrontPageImageLazyQuery,
-  useGetFrontPageImageTitleQuery,
-} from '../../graphql/types/schema'
+import { useGetFrontPageImageQuery } from '../../graphql/types/schema'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -27,68 +24,51 @@ export const HelloModule = React.memo(() => {
   const { userInfo } = useAuthStore()
   const [imageSrc, setImageSrc] = React.useState<string | undefined>(undefined)
 
-  const [getFrontPageImageUrl] = useGetFrontPageImageLazyQuery({
+  const { data: image, loading } = useGetFrontPageImageQuery({
     variables: { input: { pageIdentifier: 'frontpage' } },
   })
-
-  const { data: title, loading } = useGetFrontPageImageTitleQuery({
-    variables: { input: { pageIdentifier: 'frontpage' } },
-  })
-
-  const imageTitle = title?.getFrontpage?.imageMobile?.title
 
   const cacheDirectory = `${FileSystem.cacheDirectory}homeScreenImages`
 
-  const checkImage = async () => {
-    // If we don't have a title, for example when we are offline, check if we have any image in the cache and use that
-    if (!imageTitle) {
-      FileSystem.readDirectoryAsync(cacheDirectory).then((files) => {
-        if (files.length > 0) {
-          setImageSrc(`${cacheDirectory}/${files[0]}`)
-        }
-      })
+  const handleImage = async () => {
+    if (!image || !image.getFrontpage?.imageMobile?.title) {
       return
     }
 
-    // Check if title of the image that we fetched from server is the same as the one we have in cache
-    const fileInfo = await FileSystem.getInfoAsync(
-      `${cacheDirectory}/${imageTitle}`,
-    )
-
+    const localPath = `${cacheDirectory}/${image.getFrontpage?.imageMobile?.title}`
+    const fileInfo = await FileSystem.getInfoAsync(localPath)
+    // Use image from cache if it exists
     if (fileInfo.exists) {
-      // If we have the image in cache, use it
       setImageSrc(fileInfo.uri)
-      return
-    }
-
-    // We don't have the correct image in the cache, fetch it, download it and save to cache
-    getFrontPageImageUrl().then(async (data) => {
-      const imageSrcFromServer = data.data?.getFrontpage?.imageMobile?.url
-      if (imageSrcFromServer) {
-        setImageSrc(imageSrcFromServer)
-        const downloadResumable = FileSystem.createDownloadResumable(
-          imageSrcFromServer,
-          `${cacheDirectory}/${imageTitle}`,
-        )
-        try {
-          const directoryInfo = await FileSystem.getInfoAsync(cacheDirectory)
-          if (!directoryInfo.exists) {
-            await FileSystem.makeDirectoryAsync(cacheDirectory, {
-              intermediates: true,
-            })
-          }
-          await downloadResumable.downloadAsync()
-        } catch (e) {
-          console.error(e)
-          // Do nothing, try again next time
-        }
+    } else {
+      const imageSource = image.getFrontpage?.imageMobile?.url
+      if (!imageSource) {
+        return
       }
-    })
+      setImageSrc(imageSource)
+      // Download image and save in cache
+      const downloadResumable = FileSystem.createDownloadResumable(
+        imageSource,
+        localPath,
+      )
+      try {
+        const directoryInfo = await FileSystem.getInfoAsync(cacheDirectory)
+        if (!directoryInfo.exists) {
+          await FileSystem.makeDirectoryAsync(cacheDirectory, {
+            intermediates: true,
+          })
+        }
+        await downloadResumable.downloadAsync()
+      } catch (e) {
+        console.error(e)
+        // Do nothing, try again next time
+      }
+    }
   }
 
   useEffect(() => {
-    checkImage()
-  }, [])
+    handleImage()
+  }, [image])
 
   // If the onboardingWidget is shown, don't show this module
   if (!dismissed.includes('onboardingWidget')) {
