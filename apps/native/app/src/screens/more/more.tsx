@@ -1,5 +1,5 @@
 import { FamilyMemberCard, ListButton } from '@ui'
-import React from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Image,
@@ -23,6 +23,8 @@ import { formatNationalId } from '../../lib/format-national-id'
 import { useAuthStore } from '../../stores/auth-store'
 import { testIDs } from '../../utils/test-ids'
 import { getRightButtons } from '../../utils/get-main-root'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
+import { isIos } from '../../utils/devices'
 
 const Row = styled.View`
   margin-top: ${({ theme }) => theme.spacing[2]}px;
@@ -75,6 +77,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
   const intl = useIntl()
   const theme = useTheme()
+  const [hiddenContent, setHiddenContent] = useState(isIos)
   const showFinances = useFeatureFlag('isFinancesEnabled', false)
   const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
 
@@ -83,6 +86,14 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
     componentId,
     rightButtons: getRightButtons({ screen: 'More' }),
   })
+  useNavigationComponentDidAppear(() => {
+    setHiddenContent(false)
+  }, componentId)
+
+  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  if (hiddenContent) {
+    return null
+  }
 
   return (
     <>

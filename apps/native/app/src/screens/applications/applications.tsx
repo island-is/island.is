@@ -25,6 +25,8 @@ import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from '../home/applications-module'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
+import { isIos } from '../../utils/devices'
 
 type ListItem =
   | { id: string; __typename: 'Skeleton' }
@@ -78,6 +80,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
+  const [hiddenContent, setHiddenContent] = useState(isIos)
 
   const res = useListSearchQuery({
     variables: {
@@ -98,6 +101,10 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     refetching,
     queryResult: [applicationsRes, res],
   })
+
+  useNavigationComponentDidAppear(() => {
+    setHiddenContent(false)
+  }, componentId)
 
   const data = useMemo<ListItem[]>(() => {
     if (!res.data && res.loading) {
@@ -148,6 +155,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       setRefetching(false)
     }
   }, [applicationsRes])
+
+  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  if (hiddenContent) {
+    return null
+  }
 
   return (
     <>
