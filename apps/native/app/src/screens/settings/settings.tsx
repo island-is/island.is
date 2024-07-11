@@ -73,8 +73,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
     locale,
     setLocale,
     hasAcceptedBiometrics,
-    appearanceMode,
-    setAppearanceMode,
     useBiometrics,
     setUseBiometrics,
     appLockTimeout,
@@ -101,6 +99,10 @@ export const SettingsScreen: NavigationFunctionComponent = ({
 
   const [documentNotifications, setDocumentNotifications] = useState(
     userProfile.data?.getUserProfile?.documentNotifications,
+  )
+
+  const [emailNotifications, setEmailNotifications] = useState(
+    !!userProfile.data?.getUserProfile?.canNudge,
   )
 
   const onRemovePasskeyPress = () => {
@@ -184,7 +186,47 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         },
       })
       .catch((err) => {
-        RNAlert.alert('Villa', err.message)
+        console.error(err)
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorDescription',
+          }),
+        )
+      })
+  }
+
+  function updateEmailNotifications(value: boolean) {
+    client
+      .mutate<UpdateProfileMutation, UpdateProfileMutationVariables>({
+        mutation: UpdateProfileDocument,
+        update(cache, { data }) {
+          cache.modify({
+            fields: {
+              getUserProfile: (existing) => {
+                return { ...existing, ...data?.updateProfile }
+              },
+            },
+          })
+        },
+        variables: {
+          input: {
+            canNudge: value,
+          },
+        },
+      })
+      .catch((err) => {
+        console.error(err)
+        RNAlert.alert(
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorTitle',
+          }),
+          intl.formatMessage({
+            id: 'settings.communication.newNotificationsErrorDescription',
+          }),
+        )
       })
   }
 
@@ -193,6 +235,7 @@ export const SettingsScreen: NavigationFunctionComponent = ({
       setDocumentNotifications(
         userProfile.data?.getUserProfile?.documentNotifications,
       )
+      setEmailNotifications(!!userProfile.data?.getUserProfile?.canNudge)
     }
   }, [userProfile])
 
@@ -298,7 +341,33 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         >
           <TableViewCell
             title={intl.formatMessage({
-              id: 'settings.communication.newDocumentsNotifications',
+              id: 'settings.communication.newNotificationsEmailLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsEmailDescription',
+            })}
+            accessory={
+              <Switch
+                onValueChange={(value) => {
+                  updateEmailNotifications(value)
+                  setEmailNotifications(value)
+                }}
+                disabled={userProfile.loading && !userProfile.data}
+                value={emailNotifications}
+                thumbColor={Platform.select({ android: theme.color.dark100 })}
+                trackColor={{
+                  false: theme.color.dark200,
+                  true: theme.color.blue400,
+                }}
+              />
+            }
+          />
+          <TableViewCell
+            title={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppLabel',
+            })}
+            subtitle={intl.formatMessage({
+              id: 'settings.communication.newNotificationsInAppDescription',
             })}
             accessory={
               <Switch
@@ -316,88 +385,8 @@ export const SettingsScreen: NavigationFunctionComponent = ({
               />
             }
           />
-          {/* <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.appUpdatesNotifications',
-              })}
-              accessory={<PreferencesSwitch name="notificationsAppUpdates" />}
-            />
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.communication.applicationsNotifications',
-              })}
-              accessory={
-                <PreferencesSwitch name="notificationsApplicationStatusUpdates" />
-              }
-            /> */}
         </TableViewGroup>
-        <TableViewGroup
-          header={intl.formatMessage({
-            id: 'settings.accessibilityLayout.groupTitle',
-          })}
-        >
-          <TableViewCell
-            title={intl.formatMessage({
-              id: 'settings.accessibilityLayout.sytemDarkMode',
-            })}
-            accessory={
-              <Switch
-                onValueChange={(value) => {
-                  setAppearanceMode(value ? 'automatic' : 'light')
-                }}
-                value={appearanceMode === 'automatic'}
-                thumbColor={Platform.select({ android: theme.color.dark100 })}
-                trackColor={{
-                  false: theme.color.dark200,
-                  true: theme.color.blue400,
-                }}
-              />
-            }
-          />
-          <Pressable
-            onPress={() => {
-              clearTimeout(efficient.ts)
-              efficient.count = (efficient.count ?? 0) + 1
-              if (efficient.count === 11) {
-                setAppearanceMode('efficient')
-              }
-              efficient.ts = setTimeout(() => {
-                efficient.count = 0
-              }, 500)
-            }}
-          >
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.darkMode',
-              })}
-              accessory={
-                <Switch
-                  onValueChange={(value) =>
-                    setAppearanceMode(value ? 'dark' : 'light')
-                  }
-                  value={appearanceMode === 'dark'}
-                  thumbColor={Platform.select({ android: theme.color.dark100 })}
-                  trackColor={{
-                    false: theme.color.dark200,
-                    true: theme.color.blue400,
-                  }}
-                />
-              }
-            />
-          </Pressable>
-          <PressableHighlight onPress={onLanguagePress}>
-            <TableViewCell
-              title={intl.formatMessage({
-                id: 'settings.accessibilityLayout.language',
-              })}
-              accessory={
-                <TableViewAccessory>
-                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
-                </TableViewAccessory>
-              }
-            />
-          </PressableHighlight>
-        </TableViewGroup>
+
         <TableViewGroup
           header={intl.formatMessage({
             id: 'settings.security.groupTitle',
@@ -604,6 +593,18 @@ export const SettingsScreen: NavigationFunctionComponent = ({
         <TableViewGroup
           header={intl.formatMessage({ id: 'settings.about.groupTitle' })}
         >
+          <PressableHighlight onPress={onLanguagePress}>
+            <TableViewCell
+              title={intl.formatMessage({
+                id: 'settings.accessibilityLayout.language',
+              })}
+              accessory={
+                <TableViewAccessory>
+                  {locale === 'is-IS' ? 'Íslenska' : 'English'}
+                </TableViewAccessory>
+              }
+            />
+          </PressableHighlight>
           <TableViewCell
             title={intl.formatMessage({ id: 'settings.about.versionLabel' })}
             subtitle={`${DeviceInfo.getVersion()} build ${DeviceInfo.getBuildNumber()}`}
@@ -619,23 +620,39 @@ export const SettingsScreen: NavigationFunctionComponent = ({
                   switch (status) {
                     case CodePush.SyncStatus.UP_TO_DATE:
                       return RNAlert.alert(
-                        'Up to date',
-                        'The app is up to date',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpToDateTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpToDate',
+                        }),
                       )
                     case CodePush.SyncStatus.UPDATE_INSTALLED:
                       return RNAlert.alert(
-                        'Update installed',
-                        'The app has been updated',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateInstalledTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateInstalledDescription',
+                        }),
                       )
                     case CodePush.SyncStatus.UPDATE_IGNORED:
                       return RNAlert.alert(
-                        'Update cancelled',
-                        'The update was cancelled',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateCancelledTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateCancelledDescription',
+                        }),
                       )
                     case CodePush.SyncStatus.UNKNOWN_ERROR:
                       return RNAlert.alert(
-                        'Unknown error',
-                        'An unknown error occurred',
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateErrorTitle',
+                        }),
+                        intl.formatMessage({
+                          id: 'settings.about.codePushUpdateErrorDescription',
+                        }),
                       )
                   }
                 },
