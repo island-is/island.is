@@ -6,7 +6,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common'
 
-import { ConfigType } from '@island.is/nest/config'
+import { type ConfigType } from '@island.is/nest/config'
 
 import { sharedAuthModuleConfig } from '../auth.config'
 

@@ -4,9 +4,9 @@ import { Strategy } from 'passport-jwt'
 import { Inject, Injectable } from '@nestjs/common'
 import { PassportStrategy } from '@nestjs/passport'
 
-import { ConfigType } from '@island.is/nest/config'
+import { type ConfigType } from '@island.is/nest/config'
 
-import type { User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import { sharedAuthModuleConfig } from './auth.config'
 import { Credentials } from './auth.types'

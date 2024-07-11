@@ -2,10 +2,10 @@ import { sign } from 'jsonwebtoken'
 
 import { Inject, Injectable } from '@nestjs/common'
 
-import { ConfigType } from '@island.is/nest/config'
+import { type ConfigType } from '@island.is/nest/config'
 
 import { EXPIRES_IN_SECONDS } from '@island.is/judicial-system/consts'
-import type { User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import { sharedAuthModuleConfig } from './auth.config'
 import { Credentials } from './auth.types'
