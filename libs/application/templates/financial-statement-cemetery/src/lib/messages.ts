@@ -599,36 +599,75 @@ export const m = defineMessages({
     description: 'total equity',
   },
   nationalIdAgeError: {
-    id: 'fsn.application:error.nationalIdAgeError',
+    id: 'fsc.application:error.nationalIdAgeError',
     defaultMessage: 'Skoðunar- og Stjórnunarmenn þurfa að vera eldri en 18 ára',
     description:
       'Error message when attempting to register younger then 18 caretaker',
   },
   errorMembersMissing: {
-    id: 'fsn.application:error.errorMembersMissing',
+    id: 'fsc.application:error.errorMembersMissing',
     defaultMessage: 'Skrá þarf bæði skoðunarmann og stjórnarmann',
     description: 'Members missing',
   },
   errormemberNotUnique: {
-    id: 'fsn.application:error.errormemberNotUnique',
+    id: 'fsc.application:error.errormemberNotUnique',
     defaultMessage:
       'Ekki er hægt að skrá sama aðila sem Stjórnarmann og Skoðunarmann',
     description: 'Members missing',
   },
   debts: {
-    id: 'fsn.application:keyNumbers.debts',
+    id: 'fsc.application:keyNumbers.debts',
     defaultMessage: 'Skuldir',
     description: 'debts',
   },
   SignatureMessage: {
-    id: 'fsn.application:SignatureMessage',
+    id: 'fsc.application:SignatureMessage',
     defaultMessage:
       'Eftir að þú hefur sent inn umsókn mun rafræn undirritun verða send á netfangið',
     description: 'Signature message',
   },
   SignaturePossible: {
-    id: 'fsn.application:SignaturePossible',
+    id: 'fsc.application:SignaturePossible',
     defaultMessage: 'svo hægt sé að undirrita hana með rafrænum skilríkjum.',
     description: 'Signature possible message',
+  },
+  operatingYearMsgFirst: {
+    id: 'fsc.application:operatingYearMsgFirst',
+    defaultMessage: 'Ársreikningi fyrir rekstrarárið',
+    description: 'First part of audit received message',
+  },
+  individualReceivedMsgSecond: {
+    id: 'fsc.application:individualReceivedMsgSecond',
+    defaultMessage: 'hefur verið skilað þann',
+    description: 'Second part of audit received message',
+  },
+  returned: {
+    id: 'fsc.application:returned',
+    defaultMessage: 'Skilað',
+    description: 'Returned',
+  },
+  digitalSignatureTitle: {
+    id: 'fsc.application:digitalSignatureTitle',
+    defaultMessage: 'Rafræn undirritun',
+    description:
+      'Reminder of digital signature after the application is returned',
+  },
+  digitalSignatureMessage: {
+    id: 'fsc.application:digitalSignatureMessage',
+    defaultMessage:
+      'Það bíður þín skjal sem á eftir að undirrita með rafrænum skilríkjum. Hlekkur á skjalið hefur verið sendur í tölvupósti á netfangið þitt: {email}',
+    description:
+      'Reminder of digital signature after the application is returned',
+  },
+  myPagesLinkText: {
+    id: 'fsc.application:myPagesLinkText',
+    defaultMessage:
+      'Á Mínum síðum Ísland.is hefur þú aðgang að marvíslegum upplýsingum s.s stafrænt pósthólf, þínar upplýsingar, fjármál, umsóknir, menntun, fasteignir, ökutæki, skírteini, starfsleyfi ofl. ',
+    description: 'island.is my pages info',
+  },
+  continue: {
+    id: 'fsc.application:continue',
+    defaultMessage: 'Áfram',
+    description: 'continue',
   },
 })

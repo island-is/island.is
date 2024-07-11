@@ -20,6 +20,10 @@ const checkIfNegative = (inputNumber: string) => {
   }
 }
 
+const conditionalAbout = z.object({
+  operatingYear: z.string().refine((x) => !!x, { params: m.required }),
+})
+
 const cemeteryOperation = z.object({
   incomeLimit: z.string().optional(),
 })
@@ -212,6 +216,7 @@ const capitalNumbers = z.object({
 })
 
 export const dataSchema = z.object({
+  conditionalAbout,
   about,
   approveExternalData: z.boolean().refine((v) => v),
   cemeteryOperation,

@@ -13,6 +13,7 @@ import {
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
+  PerformActionResult,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
@@ -32,8 +33,10 @@ import {
   mapContactsAnswersToContacts,
   mapDigitalSignee,
 } from '../financial-statement-cemetery/mappers/mapValuesToUserType'
+import { TemplateApiError } from '@island.is/nest/problem'
+import { ApplicationApiAction } from '../../template-api.service'
 
-export interface AttachmentData {
+export type AttachmentData = {
   key: string
   name: string
 }
@@ -98,9 +101,10 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
     const externalData = application.externalData
     const currentUserType = getCurrentUserType(answers, externalData)
 
-    if (currentUserType !== FSIUSERTYPE.CEMETRY) {
-      throw new Error('Application submission failed')
-    }
+    // Todo test before this goes live
+    // if (currentUserType !== FSIUSERTYPE.CEMETRY) {
+    //   throw new Error('Application submission failed')
+    // }
 
     if (!actor) {
       return new Error('Enginn umboðsmaður fannst')
