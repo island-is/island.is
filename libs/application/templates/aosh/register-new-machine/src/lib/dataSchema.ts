@@ -48,7 +48,7 @@ export const NewMachineAnswersSchema = z.object({
         productionNumber: z.string(),
         markedCE: z.string(),
         preRegistration: z.string(),
-        isUsed: z.boolean(),
+        isUsed: z.string(),
         location: z.string(),
         cargoFileNumber: z.string(),
       })

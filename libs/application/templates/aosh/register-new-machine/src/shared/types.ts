@@ -13,3 +13,9 @@ export enum Status {
   TEMPORARY = 'Temporary',
   PERMANENT = 'Permanent',
 }
+
+export enum Plate {
+  A = 'A',
+  B = 'B',
+  D = 'D',
+}

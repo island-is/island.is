@@ -144,5 +144,53 @@ export const machine = {
         description: `Basic machine information cargo file number label`,
       },
     }),
+    technicalMachineInformation: defineMessages({
+      sectionTitle: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.sectionTitle',
+        defaultMessage: 'Tækniupplýsingar',
+        description: `Basic machine information section title`,
+      },
+      title: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.title',
+        defaultMessage: 'Tækniupplýsingar',
+        description: `Basic machine information page title`,
+      },
+      description: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.description',
+        defaultMessage: 'Tæknilegar upplýsingar um tækið sem á að flytja inn',
+        description: `Basic machine information page description`,
+      },
+      // This will be removed once we get these messages from the service.
+      energySource: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.energySource',
+        defaultMessage: 'Orkugjafi',
+        description: `Basic machine information type label`,
+      },
+      enginePower: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.enginePower',
+        defaultMessage: 'Afl hreyfils (kW)',
+        description: `Basic machine information model label`,
+      },
+      ownWeight: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.ownWeight',
+        defaultMessage: 'Eigin þyngd (kg)',
+        description: `Basic machine information category label`,
+      },
+      liftingCapactiy: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.liftingCapactiy',
+        defaultMessage: 'Lyftigeta (kg)',
+        description: `Basic machine information subcategory label`,
+      },
+      voiceWorkshop: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.category',
+        defaultMessage: 'Hlassmiðja (mm)',
+        description: `Basic machine information category label`,
+      },
+      liftHeight: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.subcategory',
+        defaultMessage: 'Lyftihæð (mm)',
+        description: `Basic machine information subcategory label`,
+      },
+    }),
   },
 }

@@ -28,16 +28,19 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.type',
           title: machine.labels.basicMachineInformation.type,
           width: 'half',
+          required: true,
         }),
         buildTextField({
           id: 'machine.basicInformation.model',
           title: machine.labels.basicMachineInformation.model,
           width: 'half',
+          required: true,
         }),
         buildSelectField({
           id: 'machine.basicInformation.category',
           title: machine.labels.basicMachineInformation.category,
           width: 'half',
+          required: true,
           options: [
             {
               value: 'lyftarar',
@@ -49,6 +52,7 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.subcategory',
           title: machine.labels.basicMachineInformation.subcategory,
           width: 'half',
+          required: true,
           options: [
             {
               value: 'JF',
@@ -66,29 +70,33 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.productionCountry',
           title: machine.labels.basicMachineInformation.productionCountry,
           width: 'half',
+          required: true,
         }),
         buildTextField({
           id: 'machine.basicInformation.productionYear',
           title: machine.labels.basicMachineInformation.productionYear,
           width: 'half',
+          required: true,
         }),
         buildTextField({
           id: 'machine.basicInformation.productionNumber',
           title: machine.labels.basicMachineInformation.productionNumber,
           width: 'half',
+          required: true,
         }),
         buildSelectField({
           id: 'machine.basicInformation.markedCE',
           title: machine.labels.basicMachineInformation.markedCE,
           width: 'half',
+          required: true,
           options: [
-            {
-              value: NO,
-              label: information.labels.radioButtons.radioOptionNo,
-            },
             {
               value: YES,
               label: information.labels.radioButtons.radioOptionYes,
+            },
+            {
+              value: NO,
+              label: information.labels.radioButtons.radioOptionNo,
             },
           ],
         }),
@@ -96,14 +104,15 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.preRegistration',
           title: machine.labels.basicMachineInformation.preRegistration,
           width: 'half',
+          required: true,
           options: [
-            {
-              value: NO,
-              label: information.labels.radioButtons.radioOptionNo,
-            },
             {
               value: YES,
               label: information.labels.radioButtons.radioOptionYes,
+            },
+            {
+              value: NO,
+              label: information.labels.radioButtons.radioOptionNo,
             },
           ],
         }),
@@ -111,6 +120,7 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.isUsed',
           title: machine.labels.basicMachineInformation.isUsed,
           width: 'half',
+          required: true,
           options: [
             {
               value: 'new',
@@ -133,11 +143,13 @@ export const MachineBasicInformation = buildSubSection({
           id: 'machine.basicInformation.location',
           title: machine.labels.basicMachineInformation.location,
           width: 'half',
+          required: true,
         }),
         buildTextField({
           id: 'machine.basicInformation.cargoFileNumber',
           title: machine.labels.basicMachineInformation.cargoFileNumber,
           width: 'half',
+          required: true,
         }),
       ],
     }),
