@@ -51,7 +51,7 @@ export class S3Service {
     s3Location: S3Location,
   ): Promise<string | null> {
     return this.uploadFromStream(stream, s3Location)
-      .then(async ({}) => {
+      .then(async () => {
         const oneMinutePlus = 65 // leave extra 5 seconds for network delay
         const command = new GetObjectCommand({
           Bucket: s3Location.bucket,
