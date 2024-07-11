@@ -19,7 +19,7 @@ import { Inject } from '@nestjs/common'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import { getConfigValue } from '../../shared.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
-import {FetchError} from "@island.is/clients/middlewares";
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class UserProfileService extends BaseTemplateApiService {
