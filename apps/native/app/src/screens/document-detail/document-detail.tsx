@@ -256,6 +256,10 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   useEffect(() => {
+    if (Document.opened) {
+      return
+    }
+
     // Lets mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
@@ -278,7 +282,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         },
       },
     })
-  }, [Document.id])
+  }, [Document.id, Document.opened])
 
   useEffect(() => {
     const { authorizeResult, refresh } = authStore.getState()
