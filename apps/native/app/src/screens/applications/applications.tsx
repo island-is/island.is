@@ -20,11 +20,9 @@ import {
   useListSearchQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
-import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from '../home/applications-module'
 
@@ -42,7 +40,6 @@ const { useNavigationOptions, getNavigationOptions } =
         searchBar: {
           visible: false,
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -98,7 +95,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
     refetching,
     queryResult: [applicationsRes, res],
   })
@@ -138,13 +134,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     },
     [],
   )
-
-  useActiveTabItemPress(3, () => {
-    flatListRef.current?.scrollToOffset({
-      offset: -150,
-      animated: true,
-    })
-  })
 
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
 
