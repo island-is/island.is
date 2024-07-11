@@ -192,6 +192,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               loading={applicationsRes.loading}
               componentId={componentId}
               hideAction={true}
+              hideSeeAllButton={true}
             />
             <SafeAreaView style={{ marginHorizontal: 16 }}>
               <Heading>

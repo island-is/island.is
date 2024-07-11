@@ -34,7 +34,6 @@ export const VehicleItem = React.memo(
         : 0) < 0
 
     const isMileageRequired = item.requiresMileageRegistration && mileage
-    const canRegisterMileage = !!item.canRegisterMileage && mileage
 
     return (
       <View style={{ paddingHorizontal: 16 }}>

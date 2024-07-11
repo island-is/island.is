@@ -1,9 +1,14 @@
-import { ListButton, UserCard } from '@ui'
+import { FamilyMemberCard, ListButton } from '@ui'
 import React from 'react'
 import { useIntl } from 'react-intl'
-import { Image, SafeAreaView, ScrollView } from 'react-native'
+import {
+  Image,
+  SafeAreaView,
+  ScrollView,
+  TouchableHighlight,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import assetsIcon from '../../assets/icons/assets.png'
 import familyIcon from '../../assets/icons/family.png'
 import financeIcon from '../../assets/icons/finance.png'
@@ -69,6 +74,7 @@ const { useNavigationOptions, getNavigationOptions } =
 export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
   const intl = useIntl()
+  const theme = useTheme()
   const showFinances = useFeatureFlag('isFinancesEnabled', false)
   const showAirDiscount = useFeatureFlag('isAirDiscountEnabled', false)
 
@@ -88,16 +94,19 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
         }}
       >
         <SafeAreaView>
-          <UserCard
-            name={authStore.userInfo?.name}
-            ssn={formatNationalId(authStore.userInfo?.nationalId)}
-            actions={[
-              {
-                text: intl.formatMessage({ id: 'profile.seeInfo' }),
-                onPress: () => navigateTo(`/personalinfo`),
-              },
-            ]}
-          />
+          <TouchableHighlight
+            underlayColor={
+              theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
+            }
+            onPress={() => {
+              navigateTo('/personalinfo')
+            }}
+          >
+            <FamilyMemberCard
+              name={authStore.userInfo?.name ?? ''}
+              nationalId={formatNationalId(authStore.userInfo?.nationalId)}
+            />
+          </TouchableHighlight>
         </SafeAreaView>
         <Row>
           <ListButton
