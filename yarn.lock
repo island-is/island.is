@@ -24,6 +24,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@acuris/aws-es-connection@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@acuris/aws-es-connection@npm:2.3.0"
+  dependencies:
+    aws4: ^1.11.0
+  peerDependencies:
+    "@elastic/elasticsearch": ">=5.6.16"
+    aws-sdk: ">=2"
+  checksum: fba56bdf9aedd4cfc11ccf3d50fbd5ce8eebd00c59519f1a8664df645c07cf0abd0cca1595f4a71d6ebd374fefa0a65e7565dcba12105fc6d13d30d3675a827b
+  languageName: node
+  linkType: hard
+
 "@adobe/css-tools@npm:^4.0.1":
   version: 4.0.1
   resolution: "@adobe/css-tools@npm:4.0.1"
@@ -37305,6 +37317,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "island.is@workspace:."
   dependencies:
+    "@acuris/aws-es-connection": 2.3.0
     "@anatine/esbuild-decorators": 0.2.4
     "@anatine/esbuildnx": 0.2.0
     "@anev/ts-mountebank": ^1.6.0
