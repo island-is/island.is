@@ -18,40 +18,59 @@ import {
   RefreshControl,
   View,
   Alert,
+  ActivityIndicator,
 } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
-import { useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import filterIcon from '../../assets/icons/filter-icon.png'
 import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
 import {
-  ListDocumentsDocument,
-  ListDocumentsQuery,
-  useListDocumentsLazyQuery,
   useMarkAllDocumentsAsReadMutation,
   DocumentV2,
+  useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { navigateTo } from '../../lib/deep-linking'
-import { toggleAction } from '../../lib/post-mail-action'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { testIDs } from '../../utils/test-ids'
+import { isAndroid } from '../../utils/devices'
+import { InboxCard } from '@ui/lib/card/inbox-card'
+import { useApolloClient } from '@apollo/client'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
   | (DocumentV2 & { type: undefined })
 
 const DEFAULT_PAGE_SIZE = 50
+
+const LoadingWrapper = styled.View`
+  padding-vertical: ${({ theme }) => theme.spacing[3]}px;
+  ${({ theme }) => isAndroid && `padding-bottom: ${theme.spacing[6]}px;`}
+`
+
+const ListHeaderWrapper = styled.View`
+  padding: ${({ theme }) => theme.spacing[2]}px;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing[1]}px;
+  min-height: 76px; // To prevent flickering on android
+`
+
+const TagsWrapper = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
+  padding-bottom: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: -4px;
+  flex-direction: row;
+  gap: ${({ theme }) => theme.spacing[2]}px;
+`
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -93,36 +112,23 @@ const { useNavigationOptions, getNavigationOptions } =
 const PressableListItem = React.memo(
   ({ item, listParams }: { item: DocumentV2; listParams: any }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
-    const [starred, setStarred] = useState<boolean>(!!item.bookmarked)
-    useEffect(() => setStarred(!!item.bookmarked), [item.bookmarked])
-    const theme = useTheme()
     return (
-      <PressableHighlight
-        highlightColor={theme.shade.shade400}
+      <InboxCard
+        key={item.id}
+        subject={item.subject}
+        publicationDate={item.publicationDate}
+        id={item.id}
+        unread={!item.opened}
+        bookmarked={item.bookmarked}
+        senderName={item.sender.name}
+        icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
         onPress={() =>
           navigateTo(`/inbox/${item.id}`, {
             title: item.sender.name,
             listParams,
           })
         }
-      >
-        <ListItem
-          title={item.sender.name ?? ''}
-          subtitle={item.subject}
-          date={
-            item?.publicationDate ? new Date(item.publicationDate) : undefined
-          }
-          unread={!item.opened}
-          starred={starred}
-          onStarPress={() => {
-            toggleAction(!item.bookmarked ? 'bookmark' : 'unbookmark', item.id)
-            setStarred(!item.bookmarked)
-          }}
-          icon={
-            item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)
-          }
-        />
-      </PressableHighlight>
+      />
     )
   },
 )
@@ -155,17 +161,86 @@ function applyFilters(filters?: Filters) {
   }
 }
 
-function useInboxQuery(incomingFilters?: Filters) {
-  const [filters, setFilters] = useState(applyFilters(incomingFilters))
-  const [page, setPage] = useState<number>(1)
-  const [data, setData] = useState<ListDocumentsQuery['documentsV2']>()
-  const [refetching, setRefetching] = useState(true)
-  const [loading, setLoading] = useState(false)
-  const [refetcher, setRefetcher] = useState(0)
-  const pageSize = DEFAULT_PAGE_SIZE
+export const InboxScreen: NavigationFunctionComponent<{
+  opened?: boolean
+  archived?: boolean
+  bookmarked?: boolean
+}> = ({
+  componentId,
+  opened = false,
+  archived = false,
+  bookmarked = false,
+}) => {
+  useNavigationOptions(componentId)
+  const ui = useUiStore()
+  const intl = useIntl()
+  const scrollY = useRef(new Animated.Value(0)).current
+  const flatListRef = useRef<FlatList>(null)
+  const client = useApolloClient()
+  const [query, setQuery] = useState('')
+  const [loadingMore, setLoadingMore] = useState(false)
+  const queryString = useThrottleState(query)
+  const theme = useTheme()
+  const [visible, setVisible] = useState(false)
+  const [refetching, setRefetching] = useState(false)
+  const pageRef = useRef(1)
+  const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
 
-  const [getListDocument] = useListDocumentsLazyQuery({
-    query: ListDocumentsDocument,
+  const incomingFilters = useMemo(() => {
+    return {
+      opened,
+      archived,
+      bookmarked,
+      subjectContains: queryString,
+    }
+  }, [opened, archived, bookmarked, queryString])
+
+  const [filters, setFilters] = useState(applyFilters(incomingFilters))
+
+  const res = useListDocumentsQuery({
+    variables: {
+      input: {
+        pageSize: DEFAULT_PAGE_SIZE,
+        ...filters,
+      },
+    },
+  })
+
+  const [markAllAsRead, { loading: markAllAsReadLoading }] =
+    useMarkAllDocumentsAsReadMutation({
+      onCompleted: (result) => {
+        if (result.documentsV2MarkAllAsRead?.success) {
+          // If all documents are successfully marked as read, update cache to reflect that
+          for (const document of res.data?.documentsV2?.data || []) {
+            client.cache.modify({
+              id: client.cache.identify(document),
+              fields: {
+                opened: () => true,
+              },
+            })
+          }
+
+          // Set unread count to 0 so red badge disappears
+          client.cache.modify({
+            fields: {
+              documentsV2: (existing) => {
+                return {
+                  ...existing,
+                  unreadCount: 0,
+                }
+              },
+            },
+          })
+        }
+      },
+    })
+
+  const unreadCount = res?.data?.documentsV2?.unreadCount ?? 0
+
+  useConnectivityIndicator({
+    componentId,
+    queryResult: res,
+    refetching: refetching || markAllAsReadLoading,
   })
 
   useEffect(() => {
@@ -181,141 +256,55 @@ function useInboxQuery(incomingFilters?: Filters) {
     setFilters(appliedFilters)
   }, [incomingFilters, filters])
 
-  useEffect(() => {
-    // Reset page on filter changes
-    setPage(1)
-    setRefetching(true)
-  }, [filters])
-
-  useEffect(() => {
-    const numItems = data?.totalCount ?? pageSize
-
-    if (pageSize * (page - 1) > numItems) {
-      return
-    }
-
-    setLoading(true)
-
-    // Fetch data
-    getListDocument({
-      variables: {
-        input: {
-          page,
-          pageSize,
-          ...filters,
-        },
-      },
-    })
-      .then(({ data }) => {
-        if (data) {
-          if (page > 1) {
-            setData((prevData) => ({
-              data: [
-                ...(prevData?.data ?? []),
-                ...(data.documentsV2?.data ?? []),
-              ],
-              totalCount: data.documentsV2?.totalCount ?? 0,
-              unreadCount: data.documentsV2?.unreadCount ?? 0,
-            }))
-          } else {
-            setData(data.documentsV2)
-          }
-        }
-      })
-      .finally(() => {
-        setRefetching(false)
-        setLoading(false)
-      })
-  }, [filters, page, refetcher])
-
-  const loadMore = () => {
-    if (loading) {
-      return
-    }
-    setPage((prevPage) => prevPage + 1)
-  }
-
-  const refetch = () => {
-    setRefetching(true)
-    setPage(1)
-    setRefetcher((prev) => prev + 1)
-  }
-
-  return {
-    data,
-    page,
-    pageSize,
-    filters,
-    loading,
-    refetching,
-    refetch,
-    loadMore,
-  }
-}
-
-export const InboxScreen: NavigationFunctionComponent<{
-  opened?: boolean
-  archived?: boolean
-  bookmarked?: boolean
-  refresh?: number
-}> = ({
-  componentId,
-  opened = false,
-  archived = false,
-  bookmarked = false,
-  refresh,
-}) => {
-  useNavigationOptions(componentId)
-  const ui = useUiStore()
-  const intl = useIntl()
-  const scrollY = useRef(new Animated.Value(0)).current
-  const flatListRef = useRef<FlatList>(null)
-  const [query, setQuery] = useState('')
-  const queryString = useThrottleState(query)
-  const theme = useTheme()
-  const [visible, setVisible] = useState(false)
-  const [refetching, setRefetching] = useState(false)
-
-  const res = useInboxQuery({
-    opened,
-    archived,
-    bookmarked,
-    subjectContains: queryString,
-  })
-
-  const [markAllAsRead, { loading: markAllAsReadLoading }] =
-    useMarkAllDocumentsAsReadMutation({
-      onCompleted: (data) => {
-        if (data.documentsV2MarkAllAsRead?.success) {
-          res.refetch()
-        }
-      },
-    })
-  const unreadCount = res?.data?.unreadCount ?? 0
-
-  useConnectivityIndicator({
-    componentId,
-    queryResult: res,
-    refetching: res.refetching,
-  })
-
-  useEffect(() => {
-    setRefetching(false)
-  }, [res.refetching])
-
-  useEffect(() => {
-    res.refetch()
-  }, [refresh])
-
-  const items = useMemo(() => res.data?.data ?? [], [res.data])
+  const items = useMemo(() => res.data?.documentsV2?.data ?? [], [res.data])
   const isSearch = ui.inboxQuery.length > 2
 
-  useActiveTabItemPress(0, () => {
-    flatListRef.current?.scrollToOffset({
-      offset: -200,
-      animated: true,
-    })
-  })
+  const loadMore = async () => {
+    if (res.loading || loadingMore) {
+      return
+    }
+
+    const numItems = res.data?.documentsV2?.totalCount ?? DEFAULT_PAGE_SIZE
+
+    // No more items left to fetch
+    if (DEFAULT_PAGE_SIZE * pageRef.current > numItems) {
+      return
+    }
+    setLoadingMore(true)
+
+    pageRef.current = pageRef.current + 1
+    const page = pageRef.current
+
+    try {
+      await res.fetchMore({
+        variables: {
+          input: {
+            page,
+            pageSize: DEFAULT_PAGE_SIZE,
+            ...filters,
+          },
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult || !fetchMoreResult.documentsV2?.data?.length) {
+            return prev
+          }
+
+          return {
+            documentsV2: {
+              ...fetchMoreResult.documentsV2,
+              data: [
+                ...(prev.documentsV2?.data || []),
+                ...(fetchMoreResult.documentsV2?.data || []),
+              ],
+            },
+          }
+        },
+      })
+    } catch (e) {
+      // TODO handle error
+    }
+    setLoadingMore(false)
+  }
 
   useEffect(() => {
     Navigation.mergeOptions(ComponentRegistry.InboxScreen, {
@@ -337,7 +326,24 @@ export const InboxScreen: NavigationFunctionComponent<{
   }, [intl, theme, unreadCount])
 
   const keyExtractor = useCallback((item: ListItem) => {
-    return item.id
+    return item.id.toString()
+  }, [])
+
+  const onRefresh = useCallback(async () => {
+    try {
+      if (loadingTimeout.current) {
+        clearTimeout(loadingTimeout.current)
+      }
+      setRefetching(true)
+      // Reset page to 1 when refreshing
+      pageRef.current = 1
+      await res.refetch()
+      loadingTimeout.current = setTimeout(() => {
+        setRefetching(false)
+      }, 1331)
+    } catch (err) {
+      setRefetching(false)
+    }
   }, [])
 
   const renderItem = useCallback(
@@ -368,16 +374,16 @@ export const InboxScreen: NavigationFunctionComponent<{
         <PressableListItem
           item={item as DocumentV2}
           listParams={{
-            ...res.filters,
+            ...filters,
           }}
         />
       )
     },
-    [intl, res.filters],
+    [intl, filters],
   )
 
   const data = useMemo(() => {
-    if (res.refetching || markAllAsReadLoading) {
+    if (res.loading && !res.data) {
       return Array.from({ length: 20 }).map((_, id) => ({
         id: String(id),
         type: 'skeleton',
@@ -387,7 +393,7 @@ export const InboxScreen: NavigationFunctionComponent<{
       return [{ id: '0', type: 'empty' }]
     }
     return items
-  }, [res.refetching, items, markAllAsReadLoading]) as ListItem[]
+  }, [res.loading, res.data, items]) as ListItem[]
 
   useNavigationComponentDidAppear(() => {
     setVisible(true)
@@ -430,14 +436,15 @@ export const InboxScreen: NavigationFunctionComponent<{
       <Animated.FlatList
         ref={flatListRef}
         scrollEventThrottle={16}
-        scrollToOverflowEnabled={true}
+        scrollToOverflowEnabled
+        onEndReachedThreshold={0.5}
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           {
             useNativeDriver: true,
           },
         )}
-        style={{ marginHorizontal: 0, flex: 1 }}
+        style={{ marginHorizontal: 0 }}
         data={data}
         keyExtractor={keyExtractor}
         renderItem={renderItem}
@@ -445,14 +452,7 @@ export const InboxScreen: NavigationFunctionComponent<{
         keyboardShouldPersistTaps="handled"
         ListHeaderComponent={
           <>
-            <View
-              style={{
-                padding: 16,
-                flexDirection: 'row',
-                gap: 8,
-                minHeight: 76,
-              }}
-            >
+            <ListHeaderWrapper>
               <SearchBar
                 placeholder={intl.formatMessage({
                   id: 'inbox.searchPlaceholder',
@@ -494,17 +494,9 @@ export const InboxScreen: NavigationFunctionComponent<{
                 }}
                 onPress={onPressMarkAllAsRead}
               />
-            </View>
+            </ListHeaderWrapper>
             {opened || archived || bookmarked ? (
-              <View
-                style={{
-                  paddingHorizontal: 16,
-                  paddingBottom: 16,
-                  marginTop: -4,
-                  flexDirection: 'row',
-                  gap: 15,
-                }}
-              >
+              <TagsWrapper>
                 {opened && (
                   <Tag
                     title={intl.formatMessage({
@@ -538,23 +530,27 @@ export const InboxScreen: NavigationFunctionComponent<{
                     }
                   />
                 )}
-              </View>
+              </TagsWrapper>
             ) : null}
           </>
         }
         refreshControl={
-          <RefreshControl
-            refreshing={refetching}
-            onRefresh={() => {
-              setRefetching(true)
-              res.refetch()
-            }}
-          />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         onEndReached={() => {
-          res.loadMore()
+          loadMore()
         }}
-        onEndReachedThreshold={0.5}
+        ListFooterComponent={
+          loadingMore && !res.error ? (
+            <LoadingWrapper>
+              <ActivityIndicator
+                size="small"
+                animating
+                color={theme.color.blue400}
+              />
+            </LoadingWrapper>
+          ) : null
+        }
       />
       <BottomTabsIndicator index={0} total={5} />
       {!isSearch && <TopLine scrollY={scrollY} />}
