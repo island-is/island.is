@@ -1,37 +1,36 @@
 import React, {
   FC,
-  useCallback,
+  useState,
   useContext,
+  useCallback,
   useEffect,
   useRef,
-  useState,
 } from 'react'
-import intersection from 'lodash/intersection'
 import uniq from 'lodash/uniq'
-
-import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
+import intersection from 'lodash/intersection'
 import {
   Box,
-  Icon,
-  Inline,
-  LoadingDots,
+  Tiles,
   Stack,
   Text,
-  Tiles,
+  Inline,
+  Icon,
+  LoadingDots,
 } from '@island.is/island-ui/core'
-import {
-  ADGERDIR_COMPANIES_TAG_ID,
-  ADGERDIR_INDIVIDUALS_TAG_ID,
-} from '@island.is/web/constants'
+import { AdgerdirPage, AdgerdirTag } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-
-import { Button } from '../UI/Button/Button'
 import { Card } from '../UI/Card/Card'
-import { ColorSchemeContext } from '../UI/ColorSchemeContext/ColorSchemeContext'
+import { Button } from '../UI/Button/Button'
 import { Tag } from '../UI/Tag/Tag'
-import * as covidStyles from '../UI/styles/styles.css'
+import { ColorSchemeContext } from '../UI/ColorSchemeContext/ColorSchemeContext'
+import {
+  ADGERDIR_INDIVIDUALS_TAG_ID,
+  ADGERDIR_COMPANIES_TAG_ID,
+} from '@island.is/web/constants'
+
 import * as styles from './AdgerdirArticles.css'
+import * as covidStyles from '../UI/styles/styles.css'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 const FILTER_TIMER = 300
 const ITEMS_PER_SHOW = 9

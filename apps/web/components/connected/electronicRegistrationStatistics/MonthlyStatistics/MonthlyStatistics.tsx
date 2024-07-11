@@ -15,9 +15,10 @@ import {
 import { useNamespace } from '@island.is/web/hooks'
 
 import { GET_BROKEN_DOWN_ELECTRONIC_REGISTRATION_STATISTICS_QUERY } from '../queries'
-import { CustomLegend } from './CustomLegend'
 import { CustomTooltip } from './CustomTooltip'
 import { extractRegistrationTypesFromData } from './utils'
+import { CustomLegend } from './CustomLegend'
+
 import * as styles from './MonthlyStatistics.css'
 
 type QueryType = {

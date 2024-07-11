@@ -2,23 +2,23 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
-import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
+  Text,
   Button,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Link,
   RadioButton,
   Select,
-  Text,
+  Link,
+  GridColumn,
+  GridRow,
+  GridContainer,
 } from '@island.is/island-ui/core'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Webreader } from '@island.is/web/components'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { useI18n } from '@island.is/web/i18n'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Stepper as StepperSchema } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import {
@@ -26,18 +26,19 @@ import {
   StepperHelper,
 } from '../StepperHelper/StepperHelper'
 import {
-  getCurrentStepAndStepType,
-  getStepBySlug,
-  getStepOptions,
   getStepperMachine,
-  getStepQuestion,
   resolveStepType,
+  getStepOptions,
   STEP_TYPES,
   StepOption,
+  getStepBySlug,
   StepperMachine,
-  validateStepConfig,
+  getStepQuestion,
+  getCurrentStepAndStepType,
   validateStepperConfig,
+  validateStepConfig,
 } from '../utils'
+
 import * as styles from './Stepper.css'
 
 const ANSWER_DELIMITER = ','
@@ -387,7 +388,7 @@ const Stepper = ({
 
   const renderCurrentStepOptions = () => {
     if (currentStepType === STEP_TYPES.QUESTION_RADIO)
-      return stepOptions.map((option, i) => {
+      return stepOptions.map(function (option, i) {
         const key = `step-option-${i}`
         return (
           <Box key={key} marginBottom={3}>

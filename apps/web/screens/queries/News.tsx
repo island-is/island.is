@@ -1,5 +1,4 @@
 import gql from 'graphql-tag'
-
 import { slices } from './fragments'
 
 export const GET_NEWS_QUERY = gql`

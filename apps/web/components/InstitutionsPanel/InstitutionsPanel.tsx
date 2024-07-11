@@ -1,14 +1,12 @@
-import React from 'react'
-
 import {
   Box,
-  Button,
+  Text,
   Hyphen,
   HyphenProps,
+  Button,
   Link,
-  Text,
 } from '@island.is/island-ui/core'
-
+import React from 'react'
 import * as styles from './InstitutionsPanel.css'
 
 type Institution = {

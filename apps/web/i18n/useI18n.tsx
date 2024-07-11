@@ -1,5 +1,4 @@
 import { useContext } from 'react'
-
 import { I18nContext } from './I18n'
 
 export function useI18n() {

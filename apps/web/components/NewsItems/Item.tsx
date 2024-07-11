@@ -1,16 +1,15 @@
 import React from 'react'
-
 import {
-  Box,
   FocusableBox,
-  Inline,
-  Stack,
-  Tag,
   Text,
+  Box,
+  Stack,
+  Inline,
+  Tag,
 } from '@island.is/island-ui/core'
 import { BackgroundImage } from '@island.is/web/components'
-import { Image } from '@island.is/web/graphql/schema'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { Image } from '@island.is/web/graphql/schema'
 
 import * as styles from './Item.css'
 

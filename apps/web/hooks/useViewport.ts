@@ -1,4 +1,4 @@
-import { useCallback,useEffect, useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 
 type Position = {
   x: number

@@ -1,5 +1,4 @@
 import React from 'react'
-
 import { Box, Inline, Text } from '@island.is/island-ui/core'
 
 interface XroadValueProps {

@@ -1,8 +1,6 @@
-import React from 'react'
 import Markdown from 'markdown-to-jsx'
-
 import { Bullet, BulletList, Text, TextProps } from '@island.is/island-ui/core'
-
+import React from 'react'
 import * as styles from './MarkdownText.css'
 
 interface MarkdownTextProps {

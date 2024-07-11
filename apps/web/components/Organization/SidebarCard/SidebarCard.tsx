@@ -1,5 +1,3 @@
-import React from 'react'
-
 import {
   Box,
   Button,
@@ -10,8 +8,8 @@ import {
   Link,
   Text,
 } from '@island.is/island-ui/core'
+import React from 'react'
 import { SidebarCard as Card } from '@island.is/web/graphql/schema'
-
 import * as styles from './SidebarCard.css'
 
 interface SidebarCardProps {

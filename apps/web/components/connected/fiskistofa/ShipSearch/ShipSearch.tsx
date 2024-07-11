@@ -1,12 +1,6 @@
 import { useEffect, useState } from 'react'
-import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
-
-import {
-  FiskistofaShipBasicInfo as ShipBasicInfo,
-  FiskistofaShipBasicInfoResponse,
-  QueryFiskistofaGetShipsArgs as QueryGetShipsArgs,
-} from '@island.is/api/schema'
+import { useRouter } from 'next/router'
 import {
   Box,
   Button,
@@ -15,10 +9,14 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
-import { useNamespace } from '@island.is/web/hooks'
-
+import {
+  QueryFiskistofaGetShipsArgs as QueryGetShipsArgs,
+  FiskistofaShipBasicInfo as ShipBasicInfo,
+  FiskistofaShipBasicInfoResponse,
+} from '@island.is/api/schema'
 import { GET_SHIPS_QUERY } from './queries'
+import { useNamespace } from '@island.is/web/hooks'
+import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 
 interface ShipSearchProps {
   namespace: {

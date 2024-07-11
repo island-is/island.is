@@ -1,25 +1,23 @@
 import React, {
   FC,
-  useCallback,
-  useContext,
+  useState,
   useEffect,
   useRef,
-  useState,
+  useCallback,
+  useContext,
 } from 'react'
-import AliceCarousel, { EventObject } from 'react-alice-carousel'
 import cn from 'classnames'
-
+import AliceCarousel, { EventObject } from 'react-alice-carousel'
+import { Icon, Inline, Hidden } from '@island.is/island-ui/core'
 import { AdgerdirPage } from '@island.is/api/schema'
-import { Hidden,Icon, Inline } from '@island.is/island-ui/core'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-
-import { Card } from '../UI/Card/Card'
 import {
   ColorSchemeContext,
   ColorSchemes,
 } from '../UI/ColorSchemeContext/ColorSchemeContext'
+import { Card } from '../UI/Card/Card'
 import 'react-alice-carousel/lib/alice-carousel.css'
 import * as styles from './CardsSlider.css'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface StagePaddingProps {
   paddingLeft: number

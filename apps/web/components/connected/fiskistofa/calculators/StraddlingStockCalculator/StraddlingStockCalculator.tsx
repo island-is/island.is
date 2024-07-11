@@ -1,9 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
-import cn from 'classnames'
 import { useRouter } from 'next/router'
+import cn from 'classnames'
 import { useMachine } from '@xstate/react'
-
-import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
 import {
   Box,
   Button,
@@ -13,15 +11,16 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { FiskistofaCatchQuotaCategory as CatchQuotaCategory } from '@island.is/api/schema'
 import { useNamespace } from '@island.is/web/hooks'
-
 import {
   getYearOptions,
-  isNumberBelowZero,
-  numberFormatter,
   YearOption,
+  numberFormatter,
+  isNumberBelowZero,
 } from '../utils'
-import { Context, Event as EventType,machine } from './machine'
+import { machine, Context, Event as EventType } from './machine'
+
 import * as styles from './StraddlingStockCalculator.css'
 
 const emptyValue = { value: -1, label: '' }

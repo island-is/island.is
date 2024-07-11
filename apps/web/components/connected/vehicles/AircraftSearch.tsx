@@ -1,7 +1,13 @@
-import { CSSProperties,useEffect, useState } from 'react'
+import { useState, useEffect, CSSProperties } from 'react'
 import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
-
+import {
+  ConnectedComponent,
+  AircraftRegistryAircraft,
+  GetAllAircraftsQuery,
+  GetAllAircraftsQueryVariables,
+  AircraftRegistryPerson,
+} from '@island.is/web/graphql/schema'
+import { useNamespace } from '@island.is/web/hooks'
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -11,14 +17,7 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import {
-  AircraftRegistryAircraft,
-  AircraftRegistryPerson,
-  ConnectedComponent,
-  GetAllAircraftsQuery,
-  GetAllAircraftsQueryVariables,
-} from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLazyQuery } from '@apollo/client'
 import { GET_ALL_AIRCRAFTS_QUERY } from '@island.is/web/screens/queries/AircraftSearch'
 
 const DEFAULT_PAGE_SIZE = 10

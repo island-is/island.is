@@ -1,5 +1,3 @@
-import React, { MouseEvent } from 'react'
-
 import {
   Button,
   ButtonTypes,
@@ -8,6 +6,7 @@ import {
 } from '@island.is/island-ui/core'
 import { webLoginButtonSelect } from '@island.is/plausible'
 import { useI18n } from '@island.is/web/i18n'
+import React, { MouseEvent } from 'react'
 
 const minarsidurLink = '/minarsidur/'
 const minarsidurDelegationsLink = '/minarsidur/login?prompt=select_account'

@@ -62,7 +62,7 @@ export class SamgongustofaService {
       // Parse xml to Json all Soap and added all vehicles and their information to vehicleInformationList
       const vehicleInformationList: VehicleInformation[] = await parser
         .parseStringPromise(allCarsResponse.data.replace(/(\t\n|\t|\n)/gm, ''))
-        .then((allCarsResult) => {
+        .then(function (allCarsResult) {
           // check if SOAP returns 200 status code but with Fault message
           if (
             Object.prototype.hasOwnProperty.call(
@@ -88,7 +88,7 @@ export class SamgongustofaService {
                 'ns1:allVehiclesForPersidnoResponse'
               ][0]['allVehiclesForPersidnoReturn'][0]['_'],
             )
-            .then((allCars) => {
+            .then(function (allCars) {
               if (allCars['persidnolookup']['vehicleList'][0] == '') {
                 return []
               }
@@ -133,7 +133,7 @@ export class SamgongustofaService {
               )
               return vehicleArr
             })
-            .catch((err) => {
+            .catch(function (err) {
               logger.error(
                 `Failed while parsing xml to json on getUserVehiclesInformation request with error: ${err}`,
               )
@@ -142,7 +142,7 @@ export class SamgongustofaService {
               )
             })
         })
-        .catch((err) => {
+        .catch(function (err) {
           logger.error(
             `Failed while parsing xml to json on allVehiclesForPersidno request with error: ${err}`,
           )
@@ -192,7 +192,7 @@ export class SamgongustofaService {
             .parseStringPromise(
               basicInforesponse.data.replace(/(\t\n|\t|\n)/gm, ''),
             )
-            .then((basicResult) => {
+            .then(function (basicResult) {
               // check if SOAP returns 200 status code but with Fault message
               if (
                 Object.prototype.hasOwnProperty.call(
@@ -213,7 +213,7 @@ export class SamgongustofaService {
                     'ns1:basicVehicleInformationResponse'
                   ][0]['basicVehicleInformationReturn'][0]['_'],
                 )
-                .then((basicInfo) => {
+                .then(function (basicInfo) {
                   //  If there is any information in updatelocks, stolens, ownerregistrationerrors then we may not deregister it
                   if (
                     typeof basicInfo.vehicle.ownerregistrationerrors[0]
@@ -255,7 +255,7 @@ export class SamgongustofaService {
                   }
                   return newVehicleArr[i]
                 })
-                .catch((err) => {
+                .catch(function (err) {
                   logger.error(
                     `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
                   )
@@ -264,7 +264,7 @@ export class SamgongustofaService {
                   )
                 })
             })
-            .catch((err) => {
+            .catch(function (err) {
               logger.error(
                 `Failed while parsing xml to json on basicVehicleInformation with error: ${err}`,
               )

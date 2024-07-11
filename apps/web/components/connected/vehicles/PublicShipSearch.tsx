@@ -1,8 +1,7 @@
-import { useEffect, useRef, useState } from 'react'
-import isEqual from 'lodash/isEqual'
-import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'
-
+import { useEffect, useRef, useState } from 'react'
+import { useRouter } from 'next/router'
+import isEqual from 'lodash/isEqual'
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -11,13 +10,13 @@ import {
   Table,
   Text,
 } from '@island.is/island-ui/core'
+import { PUBLIC_SHIP_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicShipSearch'
 import {
   ConnectedComponent,
   GetPublicShipSearchQuery,
   GetPublicShipSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
-import { PUBLIC_SHIP_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicShipSearch'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
 

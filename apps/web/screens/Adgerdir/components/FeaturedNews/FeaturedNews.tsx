@@ -1,22 +1,21 @@
 import React, { FC } from 'react'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
-
-import { News } from '@island.is/api/schema'
 import {
   Box,
-  Button,
-  GridColumn,
   GridContainer,
   GridRow,
-  Link,
+  GridColumn,
   Stack,
+  Button,
+  Link,
 } from '@island.is/island-ui/core'
+import { News } from '@island.is/api/schema'
 import { BackgroundImage } from '@island.is/web/components'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-
 import AdgerdirHeading from '../AdgerdirHeading/AdgerdirHeading'
+
 import * as styles from './FeaturedNews.css'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 
 interface FeaturedNewsProps {
   items: Array<News>

@@ -18,12 +18,12 @@ const a = jest
   .mockImplementationOnce(() => {
     throw { extensions: { response: { status: 401 } } }
   })
-const postMock = jest.fn((
+const postMock = jest.fn(function (
   path: string,
   body: { request?: { Recipients?: string[] } },
   // The init argument is needed for the mock to work
   init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
-) => {
+) {
   switch (path) {
     case testLogin:
       return { Token: testToken }

@@ -1,8 +1,7 @@
 import * as React from 'react'
 import { AllHTMLAttributes, forwardRef, ReactNode } from 'react'
-import cn from 'classnames'
 import { Button as ReaButton } from 'reakit/Button'
-
+import cn from 'classnames'
 import { Box, Icon, IconMapIcon, IconMapType } from '@island.is/island-ui/core'
 
 import * as styles from './Button.css'

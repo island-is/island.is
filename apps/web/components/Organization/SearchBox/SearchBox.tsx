@@ -1,24 +1,23 @@
 import React, { useEffect, useState } from 'react'
-import { useDebounce } from 'react-use'
-import { useRouter } from 'next/router'
-import { useLazyQuery } from '@apollo/client'
-
 import {
-  AsyncSearch,
-  AsyncSearchOption,
   Box,
-  Button,
-  ResponsiveSpace,
+  AsyncSearch,
   Text,
+  Button,
+  AsyncSearchOption,
+  ResponsiveSpace,
 } from '@island.is/island-ui/core'
-import { trackSearchQuery } from '@island.is/plausible'
+import { useLazyQuery } from '@apollo/client'
 import {
   Query,
   QueryGetArticlesArgs,
   SortField,
 } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { GET_ORGANIZATION_SERVICES_QUERY } from '@island.is/web/screens/queries'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
+import { useRouter } from 'next/router'
+import { useDebounce } from 'react-use'
+import { trackSearchQuery } from '@island.is/plausible'
 
 interface AsyncSearchOptionWithIsArticleField extends AsyncSearchOption {
   isArticle: boolean

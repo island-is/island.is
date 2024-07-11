@@ -1,5 +1,4 @@
 import { TooltipProps } from 'recharts'
-
 import * as styles from './CustomTooltip.css'
 
 export const CustomTooltip = ({

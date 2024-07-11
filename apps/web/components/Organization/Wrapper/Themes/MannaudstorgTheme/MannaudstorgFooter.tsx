@@ -1,20 +1,19 @@
 import React, { FC, ReactNode } from 'react'
-import { BLOCKS } from '@contentful/rich-text-types'
-
-import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
   Hidden,
-  Hyphen,
-  Logo,
   Text,
+  Logo,
+  Hyphen,
 } from '@island.is/island-ui/core'
-import { FooterItem } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
+import { FooterItem } from '@island.is/web/graphql/schema'
 import { webRichText } from '@island.is/web/utils/richText'
+import { SliceType } from '@island.is/island-ui/contentful'
+import { BLOCKS } from '@contentful/rich-text-types'
 
 import * as styles from './MannaudstorgFooter.css'
 

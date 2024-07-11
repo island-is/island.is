@@ -1,44 +1,43 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
-import React, { useEffect,useRef, useState } from 'react'
+import React, { useRef, useState, useEffect } from 'react'
 import { createPortal } from 'react-dom'
 import NextLink from 'next/link'
-
 import {
-  ContentLanguage,
+  ContentBlock,
+  Box,
+  Stack,
+  Inline,
+  Text,
+} from '@island.is/island-ui/core'
+import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
+import {
   Query,
+  QueryGetNamespaceArgs,
+  ContentLanguage,
   QueryGetAdgerdirPageArgs,
   QueryGetAdgerdirPagesArgs,
   QueryGetAdgerdirTagsArgs,
-  QueryGetNamespaceArgs,
 } from '@island.is/api/schema'
-import { richText, Slice as SliceType } from '@island.is/island-ui/contentful'
-import {
-  Box,
-  ContentBlock,
-  Inline,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
-import { HeadWithSocialSharing } from '@island.is/web/components'
-import { useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
-import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
-import { Screen } from '@island.is/web/types'
-import { CustomNextError } from '@island.is/web/units/errors'
-
-import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
-import {
-  GET_ADGERDIR_PAGE_QUERY,
-  GET_ADGERDIR_PAGES_QUERY,
-  GET_ADGERDIR_TAGS_QUERY,
-  GET_NAMESPACE_QUERY,
-} from '../queries'
+import { HeadWithSocialSharing } from '@island.is/web/components'
 import AdgerdirArticles from './components/AdgerdirArticles/AdgerdirArticles'
+import { Tag } from './components/UI/Tag/Tag'
+import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
 import { Breadcrumbs } from './components/UI/Breadcrumbs/Breadcrumbs'
 import { ColorSchemeContext } from './components/UI/ColorSchemeContext/ColorSchemeContext'
-import { ProcessEntry } from './components/UI/ProcessEntry/ProcessEntry'
-import { Tag } from './components/UI/Tag/Tag'
+import {
+  GET_ADGERDIR_PAGE_QUERY,
+  GET_NAMESPACE_QUERY,
+  GET_ADGERDIR_PAGES_QUERY,
+  GET_ADGERDIR_TAGS_QUERY,
+} from '../queries'
+import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
+import { Screen } from '@island.is/web/types'
+import { useI18n } from '@island.is/web/i18n'
+import { CustomNextError } from '@island.is/web/units/errors'
+import { useNamespace } from '@island.is/web/hooks'
+import { LinkType, useLinkResolver } from '../../hooks/useLinkResolver'
+
 import * as covidStyles from './components/UI/styles/styles.css'
 
 interface AdgerdirArticleProps {

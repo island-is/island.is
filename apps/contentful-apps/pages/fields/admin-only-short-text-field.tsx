@@ -1,7 +1,7 @@
 import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { Box, Paragraph } from '@contentful/f36-components'
-import { SingleLineEditor } from '@contentful/field-editor-single-line'
 import { useSDK } from '@contentful/react-apps-toolkit'
+import { SingleLineEditor } from '@contentful/field-editor-single-line'
+import { Box, Paragraph } from '@contentful/f36-components'
 
 const AdminOnlyShortTextField = () => {
   const sdk = useSDK<FieldExtensionSDK>()

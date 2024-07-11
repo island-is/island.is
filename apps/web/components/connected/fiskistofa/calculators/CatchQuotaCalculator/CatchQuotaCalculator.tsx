@@ -1,9 +1,7 @@
-import { useEffect, useMemo, useRef, useState } from 'react'
-import cn from 'classnames'
 import { useRouter } from 'next/router'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMachine } from '@xstate/react'
-
-import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
+import cn from 'classnames'
 import {
   Box,
   Button,
@@ -14,16 +12,17 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useNamespace } from '@island.is/web/hooks'
-
+import { FiskistofaExtendedCatchQuotaCategory as ExtendedCatchQuotaCategory } from '@island.is/api/schema'
 import {
   formattedNumberStringToNumber,
   generateTimePeriodOptions,
-  isNumberBelowZero,
-  numberFormatter,
   sevenFractionDigitNumberFormatter,
   TimePeriodOption,
+  numberFormatter,
+  isNumberBelowZero,
 } from '../utils'
-import { Context, Event as EventType,machine } from './machine'
+import { Context, machine, Event as EventType } from './machine'
+
 import * as styles from './CatchQuotaCalculator.css'
 
 const QUOTA_CHANGE_DEBOUNCE_TIME = 1000

@@ -1,20 +1,18 @@
 import { CSSProperties, FC, useState } from 'react'
 import { useQuery } from '@apollo/client/react'
-
+import { GET_BROKERS_QUERY } from './queries'
 import { ConnectedComponent, Query } from '@island.is/api/schema'
+import { sortAlpha } from '@island.is/shared/utils'
 import {
-  AlertMessage,
   Box,
-  Input,
   LoadingDots,
   Pagination,
   Table as T,
   Text,
+  Input,
+  AlertMessage,
 } from '@island.is/island-ui/core'
-import { sortAlpha } from '@island.is/shared/utils'
 import { useNamespace } from '@island.is/web/hooks'
-
-import { GET_BROKERS_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 5
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'

@@ -1,11 +1,11 @@
 import {
-  convertToRegex,
-  extractSlugsByRouteTemplate,
   linkResolver,
-  LinkType,
-  replaceVariableInPath,
-  routesTemplate,
   typeResolver,
+  LinkType,
+  routesTemplate,
+  extractSlugsByRouteTemplate,
+  replaceVariableInPath,
+  convertToRegex,
 } from './useLinkResolver'
 
 describe('Link resolver', () => {

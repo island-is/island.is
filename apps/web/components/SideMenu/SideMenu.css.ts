@@ -1,5 +1,4 @@
 import { style } from '@vanilla-extract/css'
-
 import { theme } from '@island.is/island-ui/theme'
 
 const SIDE_MENU_WIDTH = 345

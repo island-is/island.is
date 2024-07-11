@@ -1,16 +1,17 @@
 import { useEffect, useState } from 'react'
-import { useDebounce } from 'react-use'
 import { useRouter } from 'next/router'
+import { useDebounce } from 'react-use'
 import { useLazyQuery } from '@apollo/client'
 
 import {
   AsyncSearch,
   AsyncSearchOption,
   AsyncSearchProps,
-  Box,
   Text,
+  Box,
 } from '@island.is/island-ui/core'
-import { trackSearchQuery } from '@island.is/plausible'
+import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
+import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import {
   ContentLanguage,
   GetSupportSearchResultsQuery,
@@ -18,13 +19,12 @@ import {
   SearchableContentTypes,
   SupportQna,
 } from '@island.is/web/graphql/schema'
-import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-import { useI18n } from '@island.is/web/i18n'
-import { GET_SUPPORT_SEARCH_RESULTS_QUERY } from '@island.is/web/screens/queries'
 import {
-  getServiceWebSearchTagQuery,
   getSlugPart,
+  getServiceWebSearchTagQuery,
 } from '@island.is/web/screens/ServiceWeb/utils'
+import { useI18n } from '@island.is/web/i18n'
+import { trackSearchQuery } from '@island.is/plausible'
 
 const unused = ['.', '?', ':', ',', ';', '!', '-', '_', '#', '~', '|']
 

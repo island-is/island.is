@@ -1,6 +1,4 @@
-import { ReactNode } from 'react'
 import { BLOCKS } from '@contentful/rich-text-types'
-
 import { SliceType } from '@island.is/island-ui/contentful'
 import {
   Box,
@@ -17,6 +15,7 @@ import { useNamespace } from '@island.is/web/hooks'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './LandskjorstjornFooter.css'
+import { ReactNode } from 'react'
 
 interface LandskjorstjornFooterProps {
   footerItems: FooterItem[]

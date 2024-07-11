@@ -1,3 +1,4 @@
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
@@ -13,7 +14,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import {
   getThemeConfig,
   OrganizationWrapper,

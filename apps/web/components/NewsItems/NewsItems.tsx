@@ -1,19 +1,17 @@
 import React from 'react'
-import cn from 'classnames'
-
 import {
   Box,
+  Text,
   Button,
-  GridContainer,
   Hidden,
   Link,
-  Text,
+  GridContainer,
 } from '@island.is/island-ui/core'
 import { GridItems } from '@island.is/web/components'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import { GetNewsQuery } from '@island.is/web/graphql/schema'
+import cn from 'classnames'
 import { LinkType, useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
-
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
 import Item from './Item'
 import * as styles from './NewsItems.css'
 

@@ -1,6 +1,5 @@
 import React, { FC, MouseEvent } from 'react'
 import cn from 'classnames'
-
 import * as styles from './IconBullet.css'
 
 export interface IconBulletProps {

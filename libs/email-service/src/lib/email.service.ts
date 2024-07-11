@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer'
 import { SESClient, SESClientConfig } from '@aws-sdk/client-ses'
+import nodemailer from 'nodemailer'
 
 import { Inject } from '@nestjs/common'
 

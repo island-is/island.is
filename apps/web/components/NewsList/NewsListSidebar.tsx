@@ -1,6 +1,5 @@
-import capitalize from 'lodash/capitalize'
 import { useRouter } from 'next/router'
-
+import capitalize from 'lodash/capitalize'
 import {
   Box,
   Divider,
@@ -10,10 +9,9 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { Select as NativeSelect } from '@island.is/web/components'
+import { makeHref } from './utils'
 import { useNamespace } from '@island.is/web/hooks'
 import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
-
-import { makeHref } from './utils'
 
 interface NewsListSidebarProps {
   title: string

@@ -1,5 +1,4 @@
 import React from 'react'
-
 import {
   Box,
   Button,
@@ -9,10 +8,9 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
-import { Featured } from '@island.is/web/graphql/schema'
-import { LinkType, useLinkResolver } from '@island.is/web/hooks'
-
 import * as styles from './CardWithFeaturedItems.css'
+import { LinkType, useLinkResolver } from '@island.is/web/hooks'
+import { Featured } from '@island.is/web/graphql/schema'
 
 type CardWithFeaturedItemsProps = {
   heading: string

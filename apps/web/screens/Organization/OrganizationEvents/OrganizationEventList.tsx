@@ -1,3 +1,4 @@
+import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import {
@@ -8,7 +9,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import type { Locale } from '@island.is/shared/types'
 import {
   EventList,
   getThemeConfig,

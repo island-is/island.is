@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useMemo } from 'react'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useMutation } from '@apollo/client'
 import { BLOCKS, INLINES } from '@contentful/rich-text-types'
@@ -18,7 +19,6 @@ import {
   toast,
   ToastContainer,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import {
   ServiceWebStandardForm,
   ServiceWebWrapper,

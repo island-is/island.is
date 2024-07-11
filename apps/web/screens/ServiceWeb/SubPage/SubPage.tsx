@@ -1,3 +1,4 @@
+import { Locale } from '@island.is/shared/types'
 import groupBy from 'lodash/groupBy'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -18,7 +19,6 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import { ServiceWebWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,

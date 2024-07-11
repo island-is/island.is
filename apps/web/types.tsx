@@ -1,7 +1,7 @@
 import { ComponentType } from 'react'
-import { GetServerSidePropsContext } from 'next'
-import { NormalizedCacheObject } from '@apollo/client/cache'
 import { ApolloClient } from '@apollo/client/core'
+import { NormalizedCacheObject } from '@apollo/client/cache'
+import { GetServerSidePropsContext } from 'next'
 
 export type ScreenContext = {
   query: GetServerSidePropsContext['query']

@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 
@@ -15,7 +16,6 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { Locale } from '@island.is/shared/types'
 import {
   Card,
   CardTagsProps,

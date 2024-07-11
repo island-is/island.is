@@ -1,17 +1,16 @@
 import React, { FC, ReactNode, useContext } from 'react'
 import cn from 'classnames'
-
 import {
   Box,
   GridColumn,
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-
 import {
   ColorSchemeContext,
   ColorSchemes,
 } from '../UI/ColorSchemeContext/ColorSchemeContext'
+
 import * as styles from './GroupedPages.css'
 
 interface GroupedPagesProps {

@@ -84,7 +84,7 @@ export const AuthProvider = ({
   )
 
   const signIn = useCallback(
-    async () => {
+    async function signIn() {
       dispatch({
         type: ActionType.SIGNIN_START,
       })
@@ -100,7 +100,7 @@ export const AuthProvider = ({
   )
 
   const signInSilent = useCallback(
-    async () => {
+    async function signInSilent() {
       let user = null
       dispatch({
         type: ActionType.SIGNIN_START,
@@ -119,7 +119,7 @@ export const AuthProvider = ({
   )
 
   const switchUser = useCallback(
-    async (nationalId?: string) => {
+    async function switchUser(nationalId?: string) {
       const args =
         nationalId !== undefined
           ? {
@@ -155,7 +155,7 @@ export const AuthProvider = ({
   )
 
   const signOut = useCallback(
-    async () => {
+    async function signOut() {
       dispatch({
         type: ActionType.LOGGING_OUT,
       })
@@ -165,7 +165,7 @@ export const AuthProvider = ({
   )
 
   const checkLogin = useCallback(
-    async () => {
+    async function checkLogin() {
       dispatch({
         type: ActionType.SIGNIN_START,
       })
