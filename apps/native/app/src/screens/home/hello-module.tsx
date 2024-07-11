@@ -37,7 +37,7 @@ export const HelloModule = React.memo(() => {
 
   const imageTitle = title?.getFrontpage?.imageMobile?.title
 
-  const cacheDirectory = `${FileSystem.documentDirectory}homeScreenImages`
+  const cacheDirectory = `${FileSystem.cacheDirectory}homeScreenImages`
 
   const checkImage = async () => {
     // If we don't have a title, for example when we are offline, check if we have any image in the cache and use that
