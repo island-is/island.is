@@ -1,6 +1,6 @@
 const path = require('path')
-const nxPreset = require('@nx/jest/preset').default
-const { transform, ...nxPresetRest } = nxPreset
+const nxPreset = require('@nx/jest/preset')
+const { transform, ...nxPresetRest } = nxPreset.default
 const customResolver = path.join(__dirname, 'jest.resolver.js')
 
 module.exports = {
@@ -34,4 +34,6 @@ module.exports = {
    * More info: https://jestjs.io/docs/upgrading-to-jest29#snapshot-format
    */
   snapshotFormat: { escapeString: true, printBasicPrototype: true },
+  detectLeaks: true,
+  detectOpenHandles: true,
 }
