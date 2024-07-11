@@ -55,9 +55,12 @@ export function getThemeWithPreferences(
 ) {
   // get color scheme from system if "automatic"
   // otherwise from appearanceMode
-  const colorScheme = (
-    appearanceMode === 'automatic' ? systemScheme : appearanceMode
-  ) as ThemeMode
+  // const colorScheme = (
+  //   appearanceMode === 'automatic' ? systemScheme : appearanceMode
+  // ) as ThemeMode
+
+  // Force light mode for now until we have a proper dark mode
+  const colorScheme = 'light' as ThemeMode
 
   // find correct shades key
   const themeKey =
