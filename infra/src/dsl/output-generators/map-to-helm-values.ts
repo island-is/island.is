@@ -52,6 +52,7 @@ const serializeService: SerializeMethod<HelmService> = async (
     'portals-admin',
     'service-portal',
     'island-ui-storybook',
+    'services-documents',
   ]
   const result: HelmService = {
     enabled: true,
