@@ -19,6 +19,7 @@ import { Inject } from '@nestjs/common'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import { getConfigValue } from '../../shared.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
+import {FetchError} from "@island.is/clients/middlewares";
 
 @Injectable()
 export class UserProfileService extends BaseTemplateApiService {
@@ -100,6 +101,8 @@ export class UserProfileService extends BaseTemplateApiService {
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
           return '0000-11-222222'
+        } else if (error instanceof FetchError && error.status === 404) {
+          return undefined
         }
         throw error
       })
