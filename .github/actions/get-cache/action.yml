@@ -40,6 +40,6 @@ runs:
         export CYPRESS_CACHE_FOLDER=/github/home/.cypress-cache
         echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
         echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> $GITHUB_ENV
-        cd scripts/ci/cache
+        cd scripts/ci/action
         npx yarn install --immutable
         node cache-action.mjs
