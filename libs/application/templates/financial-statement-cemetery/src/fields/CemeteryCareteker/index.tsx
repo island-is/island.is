@@ -63,8 +63,6 @@ export const CemeteryCaretaker = ({
       const { careTakers, boardMembers } =
         getBoardmembersAndCaretakers(allMembers)
 
-      console.log('CareTakers and boardmembers: ', careTakers, boardMembers)
-
       const caretakersIncludeActor =
         careTakers.filter((careTaker) => careTaker === currentActor).length > 0
 
