@@ -17,13 +17,6 @@ const devConfig = {
     clientLocationOrigin: `http://localhost:${
       process.env.WEB_FRONTEND_PORT ?? '4242'
     }/umsoknir`,
-    emailOptions: {
-      useTestAccount: !(process.env.USE_SES === 'true'),
-      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-      options: {
-        region: process.env.EMAIL_REGION ?? 'eu-west-1',
-      },
-    },
     email: {
       sender: 'Devland.is',
       address: 'development@island.is',
@@ -68,13 +61,6 @@ const prodConfig = {
   },
   templateApi: {
     clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
-    emailOptions: {
-      useTestAccount: false,
-      useNodemailerApp: false,
-      options: {
-        region: process.env.EMAIL_REGION,
-      },
-    },
     email: {
       sender: process.env.EMAIL_FROM_NAME,
       address: process.env.EMAIL_FROM,
