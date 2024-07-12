@@ -36,12 +36,6 @@ export const clientInfoSection = buildSection({
           id: 'OperatingYear',
           childInputIds: [ABOUTIDS.operatingYear],
           title: '',
-          // condition: (answers, externalData) => {
-          //   const userType = getCurrentUserType(answers, externalData)
-          //   return (
-          //     userType === FSIUSERTYPE.CEMETRY || userType === FSIUSERTYPE.PARTY
-          //   )
-          // },
           component: 'OperatingYear',
         }),
         buildTextField({

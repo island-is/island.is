@@ -1,4 +1,3 @@
-import React, { Fragment } from 'react'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 
 import { m } from '../../lib/messages'
@@ -18,7 +17,7 @@ export const CapitalNumberOverview = ({
 }) => {
   const { formatMessage } = useLocale()
   return (
-    <Fragment>
+    <>
       <Box className={starterColumnStyle}>
         <Text variant="h3" as="h3">
           {formatMessage(m.capitalNumbers)}
@@ -49,6 +48,6 @@ export const CapitalNumberOverview = ({
           />
         </GridColumn>
       </GridRow>
-    </Fragment>
+    </>
   )
 }

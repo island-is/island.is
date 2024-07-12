@@ -1,9 +1,7 @@
 import {
   buildDataProviderItem,
   buildExternalDataProvider,
-  buildMultiField,
   buildSection,
-  buildSubSection,
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'

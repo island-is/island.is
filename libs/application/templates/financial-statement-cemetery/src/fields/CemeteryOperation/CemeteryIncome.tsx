@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import { useEffect } from 'react'
 import { Box } from '@island.is/island-ui/core'
 import { RecordObject } from '@island.is/application/types'
 import debounce from 'lodash/debounce'
@@ -13,7 +13,7 @@ import {
   INPUTCHANGEINTERVAL,
 } from '../../utils/constants'
 
-interface PropTypes {
+type Props = {
   data?: {
     financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]
   } | null
@@ -22,12 +22,7 @@ interface PropTypes {
   errors: RecordObject<unknown> | undefined
 }
 
-export const CemetryIncome = ({
-  data,
-  loading,
-  errors,
-  getSum,
-}: PropTypes): JSX.Element => {
+export const CemetryIncome = ({ data, loading, errors, getSum }: Props) => {
   const { formatMessage } = useLocale()
   const { clearErrors, getValues, setValue } = useFormContext()
 
@@ -79,7 +74,7 @@ export const CemetryIncome = ({
   }, INPUTCHANGEINTERVAL)
 
   return (
-    <Fragment>
+    <>
       <Box paddingY={1}>
         <InputController
           id={CEMETERYOPERATIONIDS.careIncome}
@@ -146,6 +141,6 @@ export const CemetryIncome = ({
           }
         />
       </Box>
-    </Fragment>
+    </>
   )
 }
