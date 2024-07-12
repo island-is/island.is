@@ -11,18 +11,6 @@ import { AdapterService } from '../tools/adapter.service'
 import { Message } from '../types'
 import { emailModuleConfig } from './email.config'
 
-export const EMAIL_OPTIONS = 'EMAIL_OPTIONS'
-
-export interface EmailServiceSESOptions {
-  region: string
-}
-
-export interface EmailServiceOptions {
-  useTestAccount: boolean
-  useNodemailerApp?: boolean
-  options?: EmailServiceSESOptions
-}
-
 export class EmailService {
   constructor(
     @Inject(emailModuleConfig.KEY)
