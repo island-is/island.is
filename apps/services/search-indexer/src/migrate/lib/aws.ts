@@ -252,7 +252,7 @@ export const streamToBuffer = async (
       // In case the input is not a Readable stream (shouldn't happen due to typing)
       reject(new Error('Input is not a valid Readable stream'))
     }
-    const chunks: unknown[] = []
+    const chunks: Uint8Array[] = []
     file.on('data', (chunk) => chunks.push(chunk))
     file.on('end', () => {
       if (chunks.every((chunk) => typeof chunk === 'string')) {
