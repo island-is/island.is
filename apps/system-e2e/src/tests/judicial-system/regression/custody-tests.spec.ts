@@ -1,4 +1,4 @@
-import { expect } from '@playwright/test'
+import { expect } from '@island.is/playwright-tests'
 import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'

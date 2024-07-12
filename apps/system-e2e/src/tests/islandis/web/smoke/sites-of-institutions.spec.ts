@@ -1,4 +1,4 @@
-import { BrowserContext, expect, Page, test } from '@playwright/test'
+import { BrowserContext, expect, Page, test } from '@island.is/playwright-tests'
 import { urls } from '../../../../support/urls'
 import slugify from 'slugify'
 import { session } from '../../../../support/session'

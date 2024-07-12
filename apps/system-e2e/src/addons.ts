@@ -1,4 +1,4 @@
-import { expect, Locator, Page } from '@playwright/test'
+import { expect, Locator, Page } from '@island.is/playwright-tests'
 import { sleep } from './support/utils'
 
 expect.extend({

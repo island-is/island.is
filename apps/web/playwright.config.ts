@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@playwright/test'
+import { defineConfig, devices } from '@island.is/playwright-tests'
 
 const webServerUrl = 'http://127.0.0.1:4200'
 
@@ -26,7 +26,7 @@ export default defineConfig({
     baseURL: webServerUrl,
 
     // Collect trace when retrying the failed test.
-    trace: 'on-first-retry',
+    trace: process.env.CI ? 'on-first-retry' : 'on',
   },
   // Configure projects for major browsers.
   projects: [

@@ -1,4 +1,4 @@
-import { test, expect, BrowserContext } from '@playwright/test'
+import { test, expect, BrowserContext } from '@island.is/playwright-tests'
 import { format } from 'kennitala'
 
 import { env, icelandicAndNoPopupUrl, urls } from '../../../../support/urls'

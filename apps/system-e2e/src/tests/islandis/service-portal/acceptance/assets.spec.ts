@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test } from '@playwright/test'
+import { BrowserContext, expect, test } from '@island.is/playwright-tests'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'

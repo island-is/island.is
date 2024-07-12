@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { Page } from '@island.is/playwright-tests'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 
 export const randomPoliceCaseNumber = () => {

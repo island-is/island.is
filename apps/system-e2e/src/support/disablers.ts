@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { Page } from '@island.is/playwright-tests'
 import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
 import { debug } from './utils'

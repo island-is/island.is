@@ -1,4 +1,4 @@
-import { expect, test as base, Page } from '@playwright/test'
+import { expect, test as base, Page } from '@island.is/playwright-tests'
 import { env } from '../../../../support/urls'
 import {
   disableI18n,

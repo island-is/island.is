@@ -1,4 +1,4 @@
-import { expect, Page } from '@playwright/test'
+import { expect, Page } from '@island.is/playwright-tests'
 import { urls, shouldSkipNavigation } from './urls'
 import { debug } from './utils'
 

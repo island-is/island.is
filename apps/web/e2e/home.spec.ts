@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test'
+import { expect, test } from '@island.is/playwright-tests'
 
 test.describe('Front page', () => {
   test('has expected sections @lang:is', async ({ page }) => {

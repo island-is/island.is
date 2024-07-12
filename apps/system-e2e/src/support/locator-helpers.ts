@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test'
+import { Locator, Page } from '@island.is/playwright-tests'
 
 type Roles = 'heading' | 'button' | 'radio'
 export const locatorByRole = (
