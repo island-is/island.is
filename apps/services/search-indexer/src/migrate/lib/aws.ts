@@ -79,8 +79,7 @@ const getPackageStatuses = async (
   return {
     packageStatus: packages.PackageDetailsList?.[0]
       .PackageStatus as PackageStatus,
-    // TODO: Set correct status; 'DISSOCIATING' is not a valid status
-    domainStatus: domainPackage?.DomainPackageStatus ?? 'DISSOCIATED',
+    domainStatus: domainPackage?.DomainPackageStatus ?? 'DISSOCIATING',
   }
 }
 
@@ -364,8 +363,7 @@ const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
   logger.info('Disassociating package from AWS ES domain', params)
   const dissociatePackageCommand = new DissociatePackageCommand(params)
   const result = await awsEs.send(dissociatePackageCommand)
-  // TODO: Set correct status; 'DISSOCIATING' is not a valid status
-  await waitForPackageStatus(packageId, 'DISSOCIATED')
+  await waitForPackageStatus(packageId, 'DISSOCIATING')
   return result
 }
 
