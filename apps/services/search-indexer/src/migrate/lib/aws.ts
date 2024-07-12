@@ -20,6 +20,7 @@ import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manage
 import { logger } from '@island.is/logging'
 import { environment } from '../../environments/environment'
 import { Dictionary } from './dictionary'
+import { Readable } from 'stream'
 
 const awsEs = new ElasticsearchServiceClient({})
 const s3 = new S3Client({})
@@ -231,6 +232,35 @@ interface S3DictionaryFile {
   analyzerType: string
   version: string
 }
+
+type UploadableBody = Buffer | Readable | string | Uint8Array
+
+const streamToBuffer = async (
+  file: Dictionary['file'],
+): Promise<UploadableBody> => {
+  if (file instanceof ReadableStream) {
+    const reader = file.getReader()
+    const chunks: Uint8Array[] = []
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      chunks.push(value)
+    }
+    return Buffer.concat(chunks)
+  }
+
+  if (
+    file instanceof Readable ||
+    typeof file === 'string' ||
+    file instanceof Uint8Array ||
+    file instanceof Buffer
+  ) {
+    return file
+  }
+
+  throw new Error('Unsupported file type')
+}
+
 export const uploadS3DictionaryFiles = async (
   dictionaries: Dictionary[],
 ): Promise<S3DictionaryFile[]> => {
@@ -242,7 +272,9 @@ export const uploadS3DictionaryFiles = async (
     const exists = await checkIfS3Exists(s3Key)
     if (!exists) {
       logger.info('S3 file not found, uploading file', { key: s3Key })
-      await uploadFileToS3({ Key: s3Key, Body: file })
+
+      const uploadBody = await streamToBuffer(file)
+      await uploadFileToS3({ Key: s3Key, Body: uploadBody })
     } else {
       logger.info('S3 file found, skipping upload of file', { key: s3Key })
     }
