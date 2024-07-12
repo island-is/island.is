@@ -1,5 +1,4 @@
 import { useIntl } from 'react-intl'
-import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 
 import {
@@ -13,6 +12,7 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,

@@ -10,7 +10,10 @@ import {
   AuditTrailModule,
   auditTrailModuleConfig,
 } from '@island.is/judicial-system/audit-trail'
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 
 import { environment } from '../environments'
 import { BackendApi } from './data-sources/backend'
@@ -51,10 +54,7 @@ const autoSchemaFile = environment.production
       context: ({ req }: never) => ({ req }),
       dataSources: () => ({ backendApi: new BackendApi() }),
     }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
-    }),
+    SharedAuthModule,
     AuditTrailModule,
     AuthModule,
     UserModule,
@@ -73,6 +73,7 @@ const autoSchemaFile = environment.production
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        sharedAuthModuleConfig,
         fileModuleConfig,
         auditTrailModuleConfig,
         featureModuleConfig,

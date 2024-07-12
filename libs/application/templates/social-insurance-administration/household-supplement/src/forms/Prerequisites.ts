@@ -140,40 +140,5 @@ export const PrerequisitesForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'infoSection',
-      title: socialInsuranceAdministrationMessage.info.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'householdSupplementSection',
-      title: householdSupplementFormMessage.shared.householdSupplement,
-      children: [],
-    }),
-    buildSection({
-      id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'fileUpload',
-      title: socialInsuranceAdministrationMessage.fileUpload.title,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInfo',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
-    }),
   ],
 })

@@ -299,6 +299,8 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
+  { model: Case, as: 'mergeCase' },
+  { model: Case, as: 'mergedCases', separate: true },
 ]
 
 export const order: OrderItem[] = [
@@ -1479,6 +1481,16 @@ export class CaseService {
       if (update.state === CaseState.COMPLETED) {
         const eventLogDTO = this.constructEventLogDTO(
           EventType.INDICTMENT_COMPLETED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
+
+      if (update.indictmentReviewDecision) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.INDICTMENT_REVIEWED,
           theCase,
           user,
         )
