@@ -4,17 +4,16 @@ import {
   PutObjectCommand,
   HeadObjectCommand,
   ListObjectsV2Command,
-  DeleteObjectCommand,
-  CreateBucketCommand,
-  DeleteBucketCommand,
 } from '@aws-sdk/client-s3'
 import {
   CreatePackageCommand,
   ElasticsearchServiceClient,
   ListPackagesForDomainCommand,
+  DescribePackagesCommand,
 } from '@aws-sdk/client-elasticsearch-service'
 import * as indexManager from '@island.is/content-search-index-manager'
 import * as dictionary from './lib/dictionary'
+import { Readable } from 'stream'
 
 jest.mock('@island.is/content-search-index-manager')
 jest.mock('@island.is/logging')
@@ -27,25 +26,22 @@ const environment = {
   awsEsDomain: 'domain',
 }
 
-const mockS3Client = jest.mocked(S3Client)
-const mockEsClient = jest.mocked(ElasticsearchServiceClient)
+const mockS3Send = jest.fn()
+const mockEsSend = jest.fn()
 
-const s3Client = new S3Client({
-  endpoint: process.env.AWS_ENDPOINT,
-  forcePathStyle: true,
-  credentials: {
-    accessKeyId: 'test',
-    secretAccessKey: 'test',
-  },
-})
+jest.mocked(S3Client).mockImplementation(
+  () =>
+    ({
+      send: mockS3Send,
+    } as unknown as S3Client),
+)
 
-const esClient = new ElasticsearchServiceClient({
-  endpoint: process.env.AWS_ENDPOINT,
-  credentials: {
-    accessKeyId: 'test',
-    secretAccessKey: 'test',
-  },
-})
+jest.mocked(ElasticsearchServiceClient).mockImplementation(
+  () =>
+    ({
+      send: mockEsSend,
+    } as unknown as ElasticsearchServiceClient),
+)
 
 describe('migrateBootstrap', () => {
   beforeEach(() => {
@@ -53,18 +49,21 @@ describe('migrateBootstrap', () => {
     environment.s3Bucket = `${environment.s3Bucket}-${Math.random()}`
     environment.awsEsDomain = `${environment.awsEsDomain}-${Math.random()}`
 
-    jest
-      .mocked(dictionary.getDictionaryFilesForVersion)
-      .mockResolvedValue([
-        {
-          version: 'v1.0.0',
-          analyzerType: 'mock',
-          locale: 'en',
-          file: {} as NodeJS.ReadableStream,
-        },
-      ])
+    jest.mocked(dictionary.getDictionaryFilesForVersion).mockResolvedValue([
+      {
+        version: 'v1.0.0',
+        analyzerType: 'mock',
+        locale: 'en',
+        file: new Readable({
+          read() {
+            this.push('test data')
+            this.push(null)
+          },
+        }),
+      },
+    ])
 
-    jest.mocked(s3Client.send).mockImplementation((command) => {
+    mockS3Send.mockImplementation((command) => {
       if (command instanceof HeadObjectCommand) {
         return Promise.resolve({})
       }
@@ -74,16 +73,24 @@ describe('migrateBootstrap', () => {
       if (command instanceof ListObjectsV2Command) {
         return Promise.resolve({ Contents: [] })
       }
-      return Promise.resolve({})
+      throw new Error(`Unknown command: ${command.constructor.name}`)
     })
 
-    jest.mocked(esClient.send).mockImplementation((command) => {
+    mockEsSend.mockImplementation((command) => {
       if (command instanceof ListPackagesForDomainCommand) {
         return Promise.resolve({
           DomainPackageDetailsList: [{ PackageID: 'mock-package' }],
         })
       }
-      return Promise.resolve({})
+      if (command instanceof CreatePackageCommand) {
+        return Promise.resolve({
+          PackageDetails: { PackageID: 'new-mock-package' },
+        })
+      }
+      if (command instanceof DescribePackagesCommand) {
+        return Promise.resolve({ PackageDetailsList: [] })
+      }
+      throw new Error(`Unknown command: ${command.constructor.name}`)
     })
   })
 
@@ -95,37 +102,26 @@ describe('migrateBootstrap', () => {
 
     await migrateBootstrap()
 
-    // Verify S3 operations
-    expect(jest.mocked(s3Client.send)).toHaveBeenCalledWith(
-      expect.any(HeadObjectCommand),
-    )
-    expect(jest.mocked(s3Client.send)).toHaveBeenCalledWith(
-      expect.any(PutObjectCommand),
-    )
-
-    // Verify ES operations
-    expect(jest.mocked(esClient.send)).toHaveBeenCalledWith(
-      expect.any(CreatePackageCommand),
-    )
-    expect(jest.mocked(esClient.send)).toHaveBeenCalledWith(
+    expect(mockS3Send).toHaveBeenCalledWith(expect.any(HeadObjectCommand))
+    expect(mockS3Send).toHaveBeenCalledWith(expect.any(PutObjectCommand))
+    expect(mockEsSend).toHaveBeenCalledWith(expect.any(CreatePackageCommand))
+    expect(mockEsSend).toHaveBeenCalledWith(
       expect.any(ListPackagesForDomainCommand),
     )
-  }, 10000)
+  })
 
   it('should handle S3 upload errors', async () => {
     jest.mocked(indexManager.getDictionaryVersion).mockReturnValue('v1.0.0')
-    jest
-      .mocked(s3Client.send)
-      .mockRejectedValueOnce(new Error('S3 upload failed'))
+    mockS3Send.mockRejectedValueOnce(new Error('S3 upload failed') as never)
 
     await expect(migrateBootstrap()).rejects.toThrow('S3 upload failed')
   })
 
   it('should handle Elasticsearch package creation errors', async () => {
     jest.mocked(indexManager.getDictionaryVersion).mockReturnValue('v1.0.0')
-    jest
-      .mocked(esClient.send)
-      .mockRejectedValueOnce(new Error('Failed to create package'))
+    mockEsSend.mockRejectedValueOnce(
+      new Error('Failed to create package') as never,
+    )
 
     await expect(migrateBootstrap()).rejects.toThrow('Failed to create package')
   })
@@ -136,7 +132,7 @@ describe('migrateBootstrap', () => {
       .mocked(indexManager.getDictionaryVersion)
       .mockReturnValue(mockDictionaryVersion)
 
-    jest.mocked(s3Client.send).mockImplementation((command) => {
+    mockS3Send.mockImplementation((command) => {
       if (command instanceof HeadObjectCommand) {
         return Promise.resolve({ ContentLength: 'Test content'.length })
       }
@@ -145,11 +141,7 @@ describe('migrateBootstrap', () => {
 
     await migrateBootstrap()
 
-    expect(jest.mocked(s3Client.send)).toHaveBeenCalledWith(
-      expect.any(HeadObjectCommand),
-    )
-    expect(jest.mocked(s3Client.send)).not.toHaveBeenCalledWith(
-      expect.any(PutObjectCommand),
-    )
+    expect(mockS3Send).toHaveBeenCalledWith(expect.any(HeadObjectCommand))
+    expect(mockS3Send).not.toHaveBeenCalledWith(expect.any(PutObjectCommand))
   })
 })
