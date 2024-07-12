@@ -53,10 +53,60 @@ export const survivorsBenefitsFormMessage: MessageDir = {
         'Hérna eru upplýsingar um látinn maka/sambúðaraðila. Athugið ef eftirfarandi upplýsingar eru ekki réttar þá þarf að breyta þeim í Þjóðskrá.',
       description: 'english translation',
     },
+    deceasedSpouseNotFoundDescription: {
+      id: 'sb.application:deceased.spouse.not.found.description',
+      defaultMessage:
+        'Engar upplýsingar um maka/sambúðaraðila fundust í Þjóðskrá. Hérna geturu skráð þær upplýsingar.',
+      description:
+        'No information about spouse/cohabitant found in Þjóðskrá. Here you can record the information.',
+    },
+    deceasedSpouseNationalId: {
+      id: 'sb.application:deceased.spouse.national.id',
+      defaultMessage: 'Kennitala',
+      description: 'National Id',
+    },
+    deceasedSpouseDate: {
+      id: 'sb.application:deceased.spouse.date',
+      defaultMessage: 'Dánardagur',
+      description: 'Date of death',
+    },
+    deceasedSpouseNotIcelandic: {
+      id: 'sb.application:deceased.spouse.not.icelandic',
+      defaultMessage: 'látinn maki/sambúðaraðili ekki með íslenska kennitölu',
+      description:
+        'deceased spouse/cohabitant does not have an Icelandic social security number',
+    },
     deceasedSpouseName: {
       id: 'sb.application:deceased.spouse.name',
       defaultMessage: 'Nafn',
       description: 'Name',
+    },
+    deceasedSpouseAttachmentSubSection: {
+      id: 'sb.application:deceased.spouse.attachment.sub.section',
+      defaultMessage: 'Fylgiskjöl dánarvottorð',
+      description: 'Attached documents death certificate',
+    },
+    deceasedSpouseAttachmentSectionDescription: {
+      id: 'sb.application:deceased.spouse.attachment.section.description',
+      defaultMessage:
+        'Hér getur þú skilað dánarvottorði. Athugaðu að skjalið þarf að vera á .pdf formi.',
+      description:
+        'Here you can submit a death certificate. Note that the document must be in .pdf format.',
+    },
+    deceasedSpouseAttachmentHeader: {
+      id: 'sb.application:deceased.spouse.attachment.header',
+      defaultMessage: 'Dragðu skjalið hingað til að hlaða upp',
+      description: 'Drag the file here to upload',
+    },
+    deceasedSpouseAttachmentDescription: {
+      id: 'sb.application:deceased.spouse.attachment.description',
+      defaultMessage: 'Tekið er við skjali með endingu: .pdf',
+      description: 'A file with the extension: .pdf is accepted',
+    },
+    deceasedSpouseAttachmentButton: {
+      id: 'sb.application:deceased.spouse.attachment.button',
+      defaultMessage: 'Veldu skjal',
+      description: 'Select file',
     },
     childrenTitle: {
       id: 'sb.application:children.title',

@@ -90,6 +90,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
+  const notIcelandic = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.notIcelandic[0]',
+  ) as YesOrNo
+
   const tempAnswers = getValueViaPath(
     answers,
     'tempAnswers',
@@ -118,6 +123,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     spouseAllowanceUsage,
     taxLevel,
     additionalAttachmentsRequired,
+    notIcelandic,
     tempAnswers,
     isExpectingChild,
   }

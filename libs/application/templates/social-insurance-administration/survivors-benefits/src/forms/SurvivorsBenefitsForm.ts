@@ -1,9 +1,12 @@
 import {
   buildAlertMessageField,
+  buildCheckboxField,
   buildCustomField,
+  buildDateField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
+  buildNationalIdWithNameField,
   buildRadioField,
   buildSection,
   buildSelectField,
@@ -345,11 +348,120 @@ export const SurvivorsBenefitsForm: Form = buildForm({
               title: survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
               description:
                 survivorsBenefitsFormMessage.info.deceasedSpouseDescription,
+              // Use correct value for condition
+              condition: (_, externalData) =>
+                !!getApplicationExternalData(externalData).maritalStatus,
               children: [
+                buildTextField({
+                  id: 'deceasedSpouseInfo.nationalId',
+                  title:
+                    survivorsBenefitsFormMessage.info.deceasedSpouseNationalId,
+                  width: 'half',
+                  defaultValue: 'id',
+                  // Use correct value for condition
+                  // (application: Application) =>
+                  //   getApplicationExternalData(application.externalData)
+                  //     .socialInsuranceAdministrationSpousalInfo.nationalId,
+                  readOnly: true,
+                }),
+                buildDateField({
+                  id: 'deceasedSpouseInfo.date',
+                  title: survivorsBenefitsFormMessage.info.deceasedSpouseDate,
+                  width: 'half',
+                  defaultValue: new Date('1995-11-24').toISOString(),
+                  // Use correct value for condition
+                  // (application: Application) =>
+                  //   getApplicationExternalData(application.externalData)
+                  //     .socialInsuranceAdministrationSpousalInfo.date,
+                  readOnly: true,
+                }),
                 buildTextField({
                   id: 'deceasedSpouseInfo.name',
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
-                  width: 'half',
+                  defaultValue: 'name',
+                  // Use correct value for condition
+                  // (application: Application) =>
+                  //   getApplicationExternalData(application.externalData)
+                  //     .socialInsuranceAdministrationSpousalInfo.name,
+                  readOnly: true,
+                }),
+              ],
+            }),
+            buildMultiField({
+              id: 'deceasedSpouseNoInfo',
+              title: survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
+              description:
+                survivorsBenefitsFormMessage.info
+                  .deceasedSpouseNotFoundDescription,
+              // Use correct value for condition
+              condition: (_, externalData) =>
+                !getApplicationExternalData(externalData).maritalStatus,
+              children: [
+                buildCheckboxField({
+                  id: 'deceasedSpouseInfo.notIcelandic',
+                  title: '',
+                  backgroundColor: 'white',
+                  large: false,
+                  options: [
+                    {
+                      value: YES,
+                      label:
+                        survivorsBenefitsFormMessage.info
+                          .deceasedSpouseNotIcelandic,
+                    },
+                  ],
+                }),
+                buildNationalIdWithNameField({
+                  id: 'deceasedSpouseInfo',
+                  title: '',
+                  condition: (answers) =>
+                    !getApplicationAnswers(answers).notIcelandic,
+                }),
+                buildDateField({
+                  id: 'deceasedSpouseInfo.date',
+                  title: survivorsBenefitsFormMessage.info.deceasedSpouseDate,
+                }),
+                buildTextField({
+                  id: 'deceasedSpouseInfo.name',
+                  title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
+                  condition: (answers) =>
+                    !!getApplicationAnswers(answers).notIcelandic,
+                }),
+              ],
+            }),
+          ],
+        }),
+        buildSubSection({
+          id: 'deceasedSpouseAttachmentSection',
+          title:
+            survivorsBenefitsFormMessage.info
+              .deceasedSpouseAttachmentSubSection,
+          condition: (_, externalData) =>
+            !getApplicationExternalData(externalData).maritalStatus,
+          children: [
+            buildMultiField({
+              id: 'deceasedSpouseAttachment',
+              title:
+                survivorsBenefitsFormMessage.info
+                  .deceasedSpouseAttachmentSubSection,
+              description:
+                survivorsBenefitsFormMessage.info
+                  .deceasedSpouseAttachmentSectionDescription,
+              children: [
+                buildFileUploadField({
+                  id: 'deceasedSpouseAttachment.file',
+                  title: '',
+                  uploadHeader:
+                    survivorsBenefitsFormMessage.info
+                      .deceasedSpouseAttachmentHeader,
+                  uploadDescription:
+                    survivorsBenefitsFormMessage.info
+                      .deceasedSpouseAttachmentDescription,
+                  uploadButtonLabel:
+                    survivorsBenefitsFormMessage.info
+                      .deceasedSpouseAttachmentButton,
+                  uploadAccept: '.pdf',
+                  uploadMultiple: false,
                 }),
               ],
             }),
