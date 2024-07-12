@@ -1,4 +1,4 @@
-import React, { Fragment, useEffect } from 'react'
+import { useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
@@ -13,7 +13,7 @@ import {
   CEMETERYOPERATIONIDS,
   INPUTCHANGEINTERVAL,
 } from '../../utils/constants'
-interface PropTypes {
+type Props = {
   data?: {
     financialStatementsInaoTaxInfo: FinancialStatementsInaoTaxInfo[]
   } | null
@@ -22,12 +22,7 @@ interface PropTypes {
   errors: RecordObject<unknown> | undefined
 }
 
-export const CemeteryExpenses = ({
-  data,
-  loading,
-  errors,
-  getSum,
-}: PropTypes): JSX.Element => {
+export const CemeteryExpenses = ({ data, loading, errors, getSum }: Props) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue, getValues } = useFormContext()
   const values = getValues()
@@ -57,7 +52,7 @@ export const CemeteryExpenses = ({
   }, INPUTCHANGEINTERVAL)
 
   return (
-    <Fragment>
+    <>
       <Box paddingY={1}>
         <InputController
           id={CEMETERYOPERATIONIDS.payroll}
@@ -168,6 +163,6 @@ export const CemeteryExpenses = ({
           currency
         />
       </Box>
-    </Fragment>
+    </>
   )
 }
