@@ -233,32 +233,34 @@ interface S3DictionaryFile {
   version: string
 }
 
-type UploadableBody = Buffer | Readable | string | Uint8Array
-
-const streamToBuffer = async (
-  file: Dictionary['file'],
-): Promise<UploadableBody> => {
-  if (file instanceof ReadableStream) {
-    const reader = file.getReader()
-    const chunks: Uint8Array[] = []
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      chunks.push(value)
+export const streamToBuffer = async (
+  file: NodeJS.ReadableStream,
+): Promise<Buffer> => {
+  return new Promise((resolve, reject) => {
+    if (!(file instanceof Readable)) {
+      // In case the input is not a Readable stream (shouldn't happen due to typing)
+      reject(new Error('Input is not a valid Readable stream'))
     }
-    return Buffer.concat(chunks)
-  }
-
-  if (
-    file instanceof Readable ||
-    typeof file === 'string' ||
-    file instanceof Uint8Array ||
-    file instanceof Buffer
-  ) {
-    return file
-  }
-
-  throw new Error('Unsupported file type')
+    const chunks: any[] = []
+    file.on('data', (chunk) => chunks.push(chunk))
+    file.on('end', () => {
+      if (chunks.every((chunk) => typeof chunk === 'string')) {
+        // If all chunks are strings, concatenate them and convert to Buffer
+        resolve(Buffer.from(chunks.join('')))
+      } else if (
+        chunks.every(
+          (chunk) => Buffer.isBuffer(chunk) || chunk instanceof Uint8Array,
+        )
+      ) {
+        // If all chunks are Buffer or Uint8Array, use Buffer.concat
+        resolve(Buffer.concat(chunks))
+      } else {
+        // For mixed types or object mode, stringify and convert to Buffer
+        resolve(Buffer.from(JSON.stringify(chunks)))
+      }
+    })
+    file.on('error', (err) => reject(err))
+  })
 }
 
 export const uploadS3DictionaryFiles = async (
