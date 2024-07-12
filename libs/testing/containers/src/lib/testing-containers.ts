@@ -3,12 +3,13 @@ import { GenericContainer, StartedTestContainer, Wait } from 'testcontainers'
 let postgresContainer: StartedTestContainer
 let redisClusterContainers: StartedTestContainer[]
 let localstackContainer: StartedTestContainer
-let redisClusterContainer: StartedTestContainer
 
 const portConfig = {
   SQS: parseInt(process.env.SQS_PORT || '4566', 10),
   postgres: parseInt(process.env.DB_PORT || '5432', 10),
   redis: [6379],
+  S3: parseInt(process.env.S3_PORT || '4566', 10),
+  ES: parseInt(process.env.ES_PORT || '4566', 10),
 }
 
 const uniqueName = (name: string) => {
@@ -92,12 +93,18 @@ export const startLocalstack = async () => {
     'public.ecr.aws/localstack/localstack:3',
   )
     .withName(uniqueName('localstack'))
-    .withExposedPorts(portConfig.SQS)
+    .withExposedPorts(...[portConfig.SQS, portConfig.S3, portConfig.ES])
     .withWaitStrategy(Wait.forLogMessage('Ready.'))
     .start()
 
   process.env.SQS_ENDPOINT = `http://${localstackContainer.getHost()}:${localstackContainer.getMappedPort(
     portConfig.SQS,
+  )}`
+  process.env.S3_ENDPOINT = `http://${localstackContainer.getHost()}:${localstackContainer.getMappedPort(
+    portConfig.S3,
+  )}`
+  process.env.ES_ENDPOINT = `http://${localstackContainer.getHost()}:${localstackContainer.getMappedPort(
+    portConfig.ES,
   )}`
 }
 

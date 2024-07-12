@@ -22,8 +22,19 @@ import { environment } from '../../environments/environment'
 import { Dictionary } from './dictionary'
 import { Readable } from 'stream'
 
-const awsEs = new ElasticsearchServiceClient({})
-const s3 = new S3Client({})
+const ES_LOCALSTACK_ENDPOINT =
+  process.env.ES_ENDPOINT ?? 'http://localhost:4566'
+const S3_LOCALSTACK_ENDPOINT =
+  process.env.S3_ENDPOINT ?? 'http://localhost:4566'
+
+const awsEs = new ElasticsearchServiceClient({
+  endpoint:
+    process.env.NODE_ENV !== 'production' ? ES_LOCALSTACK_ENDPOINT : undefined,
+})
+const s3 = new S3Client({
+  endpoint:
+    process.env.NODE_ENV !== 'production' ? S3_LOCALSTACK_ENDPOINT : undefined,
+})
 
 const sleep = (sec: number) => {
   return new Promise((resolve) => {
