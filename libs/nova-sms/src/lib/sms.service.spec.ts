@@ -2,7 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { NovaError, SmsService, SMS_OPTIONS } from './sms.service'
+import { NovaError, SmsService } from './sms.service'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'
@@ -18,30 +18,32 @@ const a = jest
   .mockImplementationOnce(() => {
     throw { extensions: { response: { status: 401 } } }
   })
-const postMock = jest.fn(function (
-  path: string,
-  body: { request?: { Recipients?: string[] } },
-  // The init argument is needed for the mock to work
-  init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
-) {
-  switch (path) {
-    case testLogin:
-      return { Token: testToken }
-    case testSendSms: {
-      if (body?.request?.Recipients?.includes(testNumber)) {
-        return { Code: testCode }
-      }
+const postMock = jest.fn(
+  (
+    path: string,
+    body: { request?: { Recipients?: string[] } },
+    // The init argument is needed for the mock to work
+    init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ) => {
+    switch (path) {
+      case testLogin:
+        return { Token: testToken }
+      case testSendSms: {
+        if (body?.request?.Recipients?.includes(testNumber)) {
+          return { Code: testCode }
+        }
 
-      if (body?.request?.Recipients?.includes(failOnceTestNumber)) {
-        return a()
-      }
+        if (body?.request?.Recipients?.includes(failOnceTestNumber)) {
+          return a()
+        }
 
-      throw new Error()
+        throw new Error()
+      }
+      default:
+        throw new Error()
     }
-    default:
-      throw new Error()
-  }
-})
+  },
+)
 jest.mock('apollo-datasource-rest', () => {
   class MockRESTDataSource {
     post = postMock
@@ -66,13 +68,7 @@ describe('SmsService', () => {
 
     const module: TestingModule = await Test.createTestingModule({
       imports: [LoggingModule],
-      providers: [
-        {
-          provide: SMS_OPTIONS,
-          useValue: testOptions,
-        },
-        SmsService,
-      ],
+      providers: [SmsService],
     }).compile()
 
     smsService = module.get<SmsService>(SmsService)

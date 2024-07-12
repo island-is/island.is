@@ -31,12 +31,6 @@ const devConfig = {
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: 'http://localhost:4444',
-    smsOptions: {
-      url: 'https://smsapi.devnova.is',
-      username: 'IslandIs_User_Development',
-      password: process.env.NOVA_PASSWORD,
-      acceptUnauthorized: true,
-    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {
@@ -88,12 +82,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: process.env.GRAPHQL_API_URL,
-    smsOptions: {
-      url: process.env.NOVA_URL,
-      username: process.env.NOVA_USERNAME,
-      password: process.env.NOVA_PASSWORD,
-      acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
-    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {

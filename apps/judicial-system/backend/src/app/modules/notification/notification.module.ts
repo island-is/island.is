@@ -17,7 +17,7 @@ import { NotificationService } from './notification.service'
 @Module({
   imports: [
     EmailModule.register(environment.emailOptions),
-    SmsModule.register(environment.smsOptions),
+    SmsModule,
     CmsTranslationsModule,
     MessageModule,
     forwardRef(() => CaseModule),

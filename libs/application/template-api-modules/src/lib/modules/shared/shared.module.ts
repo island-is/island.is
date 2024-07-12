@@ -23,7 +23,7 @@ export class SharedTemplateAPIModule {
           load: [configuration],
         }),
         EmailModule.register(config.emailOptions),
-        SmsModule.register(config.smsOptions),
+        SmsModule,
         ApplicationApiCoreModule,
         AwsModule,
         PaymentModule,

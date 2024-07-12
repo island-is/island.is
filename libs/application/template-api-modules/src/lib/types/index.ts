@@ -26,12 +26,6 @@ export interface BaseTemplateAPIModuleConfig {
     sender: string
     address: string
   }
-  smsOptions: {
-    url: string
-    username: string
-    password: string
-    acceptUnauthorized?: boolean
-  }
   attachmentBucket: string
   presignBucket: string
   generalPetition: {

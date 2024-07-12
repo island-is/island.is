@@ -23,7 +23,7 @@ import { UserDeviceTokens } from './userDeviceTokens.model'
       UserDeviceTokens,
     ]),
     EmailModule.register(environment.emailOptions),
-    SmsModule.register(environment.smsOptions),
+    SmsModule,
   ],
   controllers: [
     UserProfileController,

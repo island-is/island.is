@@ -3,10 +3,12 @@ import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { Agent } from 'https'
 
-import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import type { Logger } from '@island.is/logging'
-export interface NovaResponse {
+import { smsModuleConfig } from './sms.config'
+
+interface NovaResponse {
   Code: number
   Message: string
 }
@@ -37,15 +39,6 @@ export class NovaError extends Error {
 
 let token: string
 
-export const SMS_OPTIONS = 'SMS_OPTIONS'
-
-export interface SmsServiceOptions {
-  url: string
-  username: string
-  password: string
-  acceptUnauthorized?: boolean
-}
-
 interface SmsBody {
   request: {
     Recipients: string[]
@@ -60,17 +53,17 @@ export class SmsService extends RESTDataSource {
   private readonly agent: Agent
 
   constructor(
-    @Inject(SMS_OPTIONS)
-    private readonly options: SmsServiceOptions,
+    @Inject(smsModuleConfig.KEY)
+    private readonly config: ConfigType<typeof smsModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {
     super()
 
-    this.baseURL = `${this.options.url}/NovaSmsService/`
+    this.baseURL = `${this.config.url}/NovaSmsService/`
 
     this.agent = new Agent({
-      rejectUnauthorized: !this.options.acceptUnauthorized,
+      rejectUnauthorized: !this.config.acceptUnauthorized,
     })
     this.initialize({} as DataSourceConfig<void>)
   }
@@ -85,8 +78,8 @@ export class SmsService extends RESTDataSource {
     try {
       const res: NovaAuthResponse = await this.post('Login', undefined, {
         headers: {
-          username: this.options.username,
-          password: this.options.password,
+          username: this.config.username,
+          password: this.config.password,
         },
       })
 
