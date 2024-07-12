@@ -10,11 +10,7 @@ import { financialLimitQuery } from '../../graphql'
 import { FSIUSERTYPE } from '../../types'
 import { CEMETERYOPERATIONIDS } from '../../utils/constants'
 
-export const CemeteryIncomeLimit = ({
-  currentUserType,
-}: {
-  currentUserType?: FSIUSERTYPE
-}) => {
+export const CemeteryIncomeLimit = () => {
   const { getValues, setValue } = useFormContext()
   const { formatMessage } = useLocale()
 

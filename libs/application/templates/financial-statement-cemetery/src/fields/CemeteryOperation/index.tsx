@@ -17,14 +17,13 @@ import { getValueViaPath } from '@island.is/application/core'
 import { taxInfoQuery } from '../../graphql'
 import { CEMETERYOPERATIONIDS, OPERATINGCOST } from '../../utils/constants'
 import { useTotals } from '../../hooks/useTotals'
-import { getCurrentUserType } from '../../utils/helpers'
 
 export const CemeteryOperation = ({
   application,
 }: {
   application: Application
 }) => {
-  const { answers, externalData } = application
+  const { answers } = application
 
   const operatingYear =
     getValueViaPath(answers, 'conditionalAbout.operatingYear') ?? ''
@@ -37,7 +36,6 @@ export const CemeteryOperation = ({
     formState: { errors },
   } = useFormContext()
   const { formatMessage } = useLocale()
-  const currentUserType = getCurrentUserType(answers, externalData)
   const [getTotalIncome, totalIncome] = useTotals(
     CEMETERYOPERATIONIDS.prefixIncome,
   )
@@ -47,7 +45,7 @@ export const CemeteryOperation = ({
 
   return (
     <GridContainer>
-      <CemeteryIncomeLimit currentUserType={currentUserType} />
+      <CemeteryIncomeLimit />
       <GridRow align="spaceBetween">
         <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
           <Text paddingY={1} as="h2" variant="h4">
