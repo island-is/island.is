@@ -3,6 +3,8 @@ import { Test, TestingModule } from '@nestjs/testing'
 import { LoggingModule } from '@island.is/logging'
 
 import { NovaError, SmsService } from './sms.service'
+import { ConfigModule } from '@island.is/nest/config'
+import { smsModuleConfig } from './sms.config'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'
@@ -67,7 +69,12 @@ describe('SmsService', () => {
     postMock.mockClear()
 
     const module: TestingModule = await Test.createTestingModule({
-      imports: [LoggingModule],
+      imports: [
+        ConfigModule.forRoot({
+          load: [smsModuleConfig],
+        }),
+        LoggingModule,
+      ],
       providers: [SmsService],
     }).compile()
 
@@ -83,8 +90,8 @@ describe('SmsService', () => {
     // Verify login
     expect(postMock).toHaveBeenCalledWith(testLogin, undefined, {
       headers: {
-        username: testOptions.username,
-        password: testOptions.password,
+        username: 'IslandIs_User_Development',
+        password: '',
       },
     })
 
@@ -123,8 +130,8 @@ describe('SmsService', () => {
     // Verify login
     expect(postMock).toHaveBeenCalledWith(testLogin, undefined, {
       headers: {
-        username: testOptions.username,
-        password: testOptions.password,
+        username: 'IslandIs_User_Development',
+        password: '',
       },
     })
 
