@@ -1,4 +1,3 @@
-import React, { FC } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Box, Text } from '@island.is/island-ui/core'
 import { m } from '../lib/messages'
