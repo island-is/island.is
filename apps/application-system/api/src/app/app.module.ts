@@ -53,6 +53,7 @@ import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-heal
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { smsModuleConfig } from '@island.is/nova-sms'
+import { emailModuleConfig } from '@island.is/email-service'
 
 @Module({
   imports: [
@@ -107,6 +108,7 @@ import { smsModuleConfig } from '@island.is/nova-sms'
         VmstClientConfig,
         FriggClientConfig,
         smsModuleConfig,
+        emailModuleConfig,
       ],
     }),
   ],

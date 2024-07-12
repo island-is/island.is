@@ -14,13 +14,6 @@ export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
   jwtSecret: string
   clientLocationOrigin: string
-  emailOptions: {
-    useTestAccount: boolean
-    useNodemailerApp?: boolean
-    options?: {
-      region: string
-    }
-  }
   baseApiUrl: string
   email: {
     sender: string

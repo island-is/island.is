@@ -20,6 +20,7 @@ import { AuthDelegationApiClientConfig } from '@island.is/clients/auth/delegatio
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { smsModuleConfig } from '@island.is/nova-sms'
+import { emailModuleConfig } from '@island.is/email-service'
 import { UserProfileConfig } from '../config'
 
 @Module({
@@ -34,6 +35,7 @@ import { UserProfileConfig } from '../config'
         AuthDelegationApiClientConfig,
         UserProfileConfig,
         smsModuleConfig,
+        emailModuleConfig,
       ],
     }),
     AuditModule.forRoot(environment.audit),

@@ -5,9 +5,11 @@ import { Inject } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import { AdapterService } from '../tools/adapter.service'
 import { Message } from '../types'
+import { emailModuleConfig } from './email.config'
 
 export const EMAIL_OPTIONS = 'EMAIL_OPTIONS'
 
@@ -23,15 +25,15 @@ export interface EmailServiceOptions {
 
 export class EmailService {
   constructor(
-    @Inject(EMAIL_OPTIONS)
-    private readonly options: EmailServiceOptions,
+    @Inject(emailModuleConfig.KEY)
+    private readonly config: ConfigType<typeof emailModuleConfig>,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private adapterService: AdapterService,
   ) {}
 
   private async getTransport() {
-    if (this.options.useNodemailerApp) {
+    if (this.config.useNodemailerApp) {
       this.logger.debug('Using nodemailer app to preview emails')
 
       return {
@@ -44,7 +46,7 @@ export class EmailService {
       }
     }
 
-    if (this.options.useTestAccount) {
+    if (this.config.useTestAccount) {
       this.logger.debug('Using nodemailer test account')
 
       const account = await nodemailer.createTestAccount()
@@ -66,8 +68,8 @@ export class EmailService {
       apiVersion: '2010-12-01',
     }
 
-    if (this.options.options?.region) {
-      cfg.region = this.options.options?.region
+    if (this.config.region) {
+      cfg.region = this.config.region
     }
 
     return {
@@ -96,11 +98,11 @@ export class EmailService {
 
       this.logger.info(`Message sent: ${messageId}`)
 
-      if (this.options.useNodemailerApp) {
+      if (this.config.useNodemailerApp) {
         this.logger.debug(
           'You can now preview the email within the NodemailerApp.',
         )
-      } else if (this.options.useTestAccount) {
+      } else if (this.config.useTestAccount) {
         this.logger.debug(`Preview URL: ${nodemailer.getTestMessageUrl(info)}`)
       }
     } catch (e) {

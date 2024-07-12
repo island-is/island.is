@@ -6,10 +6,6 @@ const devConfig = {
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
   },
-  emailOptions: {
-    useTestAccount: true,
-    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-  },
   audit: {
     defaultNamespace: '@island.is/user-profile',
   },
@@ -28,12 +24,6 @@ const prodConfig = {
     cert: process.env.ISLYKILL_CERT ?? '',
     basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
     passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
-  },
-  emailOptions: {
-    useTestAccount: false,
-    options: {
-      region: process.env.EMAIL_REGION ?? '',
-    },
   },
   audit: {
     defaultNamespace: '@island.is/user-profile',

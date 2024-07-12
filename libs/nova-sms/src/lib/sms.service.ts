@@ -1,10 +1,11 @@
-import { Inject, Injectable } from '@nestjs/common'
 import { DataSourceConfig } from 'apollo-datasource'
 import { RequestOptions, RESTDataSource } from 'apollo-datasource-rest'
 import { Agent } from 'https'
 
-import { type ConfigType } from '@island.is/nest/config'
+import { Inject, Injectable } from '@nestjs/common'
+
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import { smsModuleConfig } from './sms.config'
 

@@ -1,10 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing'
 
 import { LoggingModule } from '@island.is/logging'
-
-import { NovaError, SmsService } from './sms.service'
 import { ConfigModule } from '@island.is/nest/config'
+
 import { smsModuleConfig } from './sms.config'
+import { NovaError, SmsService } from './sms.service'
 
 const testLogin = 'Login'
 const testToken = 'Test Token'
@@ -55,11 +55,6 @@ jest.mock('apollo-datasource-rest', () => {
   return { RESTDataSource: MockRESTDataSource }
 })
 
-const testOptions = {
-  url: 'Test Url',
-  username: 'Test User',
-  password: 'Test Password',
-}
 const testMessage = 'Test Message'
 
 describe('SmsService', () => {

@@ -22,7 +22,7 @@ export class SharedTemplateAPIModule {
         ConfigModule.forRoot({
           load: [configuration],
         }),
-        EmailModule.register(config.emailOptions),
+        EmailModule,
         SmsModule,
         ApplicationApiCoreModule,
         AwsModule,
