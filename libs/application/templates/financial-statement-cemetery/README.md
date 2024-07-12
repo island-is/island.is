@@ -1,6 +1,6 @@
 # financial-statement-cemetery
 
-This library was generated with [Nx](https://nx.dev).
+This application turns in financial statements for cemeteries to the The Icelandic National Audit Office (Ríkisendurskoðun, inao for short).
 
 ## Running unit tests
 

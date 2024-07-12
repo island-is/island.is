@@ -143,8 +143,6 @@ export class FinancialStatementsInaoClientService {
       star_email: client.email,
     }
 
-    console.log('Hér!!! Token Endpoint: ', this.config.tokenEndpoint, url)
-
     await this.fetch(url, {
       method: 'POST',
       body: JSON.stringify(body),
