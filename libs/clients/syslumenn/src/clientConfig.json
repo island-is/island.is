@@ -1354,9 +1354,8 @@
         "parameters": [
           {
             "type": "string",
-            "name": "danardagur",
+            "name": "malsnumer",
             "in": "query",
-            "format": "date-time",
             "x-nullable": false
           },
           {
