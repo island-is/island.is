@@ -99,7 +99,6 @@ const InfoCardActiveIndictment = () => {
               ],
             }))
           : []),
-        // Other sections can be added here
       ]}
       defendants={
         workingCase.defendants
