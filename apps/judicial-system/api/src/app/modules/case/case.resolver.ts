@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { CaseQueryInput } from './dto/case.input'
 import { CreateCaseInput } from './dto/createCase.input'
 import { CreateCourtCaseInput } from './dto/createCourtCase.input'
@@ -45,14 +45,15 @@ export class CaseResolver {
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     this.logger.debug(`Getting case ${input.id}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASE,
-      backendApi.getCase(input.id),
+      backendService.getCase(input.id),
       input.id,
     )
   }
@@ -81,14 +82,15 @@ export class CaseResolver {
     @Args('input', { type: () => CreateCaseInput })
     input: CreateCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     this.logger.debug('Creating a new case')
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_CASE,
-      backendApi.createCase(input),
+      backendService.createCase(input),
       (theCase) => theCase.id,
     )
   }
@@ -99,7 +101,8 @@ export class CaseResolver {
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     const { id, ...updateCase } = input
 
@@ -108,7 +111,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_CASE,
-      backendApi.updateCase(id, updateCase),
+      backendService.updateCase(id, updateCase),
       id,
     )
   }
@@ -119,7 +122,8 @@ export class CaseResolver {
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     const { id, ...transitionCase } = input
 
@@ -128,7 +132,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.TRANSITION_CASE,
-      backendApi.transitionCase(id, transitionCase),
+      backendService.transitionCase(id, transitionCase),
       id,
     )
   }
@@ -138,7 +142,8 @@ export class CaseResolver {
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(
       `Requesting signature of court record for case ${input.caseId}`,
@@ -147,7 +152,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendApi.requestCourtRecordSignature(input.caseId),
+      backendService.requestCourtRecordSignature(input.caseId),
       input.caseId,
     )
   }
@@ -157,7 +162,8 @@ export class CaseResolver {
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
@@ -166,7 +172,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendApi.getCourtRecordSignatureConfirmation(caseId, documentToken),
+      backendService.getCourtRecordSignatureConfirmation(caseId, documentToken),
       caseId,
     )
   }
@@ -176,14 +182,15 @@ export class CaseResolver {
     @Args('input', { type: () => RequestSignatureInput })
     input: RequestSignatureInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<RequestSignatureResponse> {
     this.logger.debug(`Requesting signature of ruling for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.REQUEST_RULING_SIGNATURE,
-      backendApi.requestRulingSignature(input.caseId),
+      backendService.requestRulingSignature(input.caseId),
       input.caseId,
     )
   }
@@ -193,7 +200,8 @@ export class CaseResolver {
     @Args('input', { type: () => SignatureConfirmationQueryInput })
     input: SignatureConfirmationQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<SignatureConfirmationResponse> {
     const { caseId, documentToken } = input
 
@@ -202,7 +210,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CONFIRM_RULING_SIGNATURE,
-      backendApi.getRulingSignatureConfirmation(caseId, documentToken),
+      backendService.getRulingSignatureConfirmation(caseId, documentToken),
       caseId,
     )
   }
@@ -212,7 +220,8 @@ export class CaseResolver {
     @Args('input', { type: () => SendNotificationInput })
     input: SendNotificationInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<SendNotificationResponse> {
     const { caseId, ...sendNotification } = input
 
@@ -221,7 +230,7 @@ export class CaseResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.SEND_NOTIFICATION,
-      backendApi.sendNotification(caseId, sendNotification),
+      backendService.sendNotification(caseId, sendNotification),
       caseId,
     )
   }
@@ -232,14 +241,15 @@ export class CaseResolver {
     @Args('input', { type: () => ExtendCaseInput })
     input: ExtendCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     this.logger.debug(`Extending case ${input.id}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.EXTEND_CASE,
-      backendApi.extendCase(input.id),
+      backendService.extendCase(input.id),
       (theCase) => theCase.id,
     )
   }
@@ -250,14 +260,15 @@ export class CaseResolver {
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case> {
     this.logger.debug(`Creating court case for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_COURT_CASE,
-      backendApi.createCourtCase(input.caseId),
+      backendService.createCourtCase(input.caseId),
       input.caseId,
     )
   }
