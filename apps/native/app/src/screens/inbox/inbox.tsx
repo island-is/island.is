@@ -6,6 +6,7 @@ import {
   SearchBar,
   Tag,
   TopLine,
+  InboxCard,
 } from '@ui'
 import { setBadgeCountAsync } from 'expo-notifications'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -41,10 +42,11 @@ import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { isAndroid } from '../../utils/devices'
-import { InboxCard } from '@ui/lib/card/inbox-card'
 import { useApolloClient } from '@apollo/client'
+import { isIos } from '../../utils/devices'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -79,6 +81,7 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'inbox.screenTitle' }),
         },
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -181,7 +184,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   const [loadingMore, setLoadingMore] = useState(false)
   const queryString = useThrottleState(query)
   const theme = useTheme()
-  const [visible, setVisible] = useState(false)
+  const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
   const pageRef = useRef(1)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
@@ -239,6 +242,7 @@ export const InboxScreen: NavigationFunctionComponent<{
 
   useConnectivityIndicator({
     componentId,
+    rightButtons: getRightButtons(),
     queryResult: res,
     refetching: refetching || markAllAsReadLoading,
   })
@@ -396,7 +400,7 @@ export const InboxScreen: NavigationFunctionComponent<{
   }, [res.loading, res.data, items]) as ListItem[]
 
   useNavigationComponentDidAppear(() => {
-    setVisible(true)
+    setHiddenContent(false)
   }, componentId)
 
   const onPressMarkAllAsRead = () => {
@@ -427,7 +431,8 @@ export const InboxScreen: NavigationFunctionComponent<{
     )
   }
 
-  if (!visible) {
+  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  if (hiddenContent) {
     return null
   }
 
