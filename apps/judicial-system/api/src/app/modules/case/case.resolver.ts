@@ -69,7 +69,7 @@ export class CaseResolver {
 
     return this.auditTrailService.audit(
       user.id,
-      AuditedAction.GET_CASES,
+      AuditedAction.GET_CONNECTED_CASES,
       backendApi.getConnectedCases(input.id),
       input.id,
     )
