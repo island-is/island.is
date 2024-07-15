@@ -1,10 +1,9 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { BoardMember, FSIUSERTYPE } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { BOARDMEMEBER, CARETAKER, TOTAL } from './constants'
 import { FinancialStatementCemetery } from '../lib/dataSchema'
 import { getYear, subYears } from 'date-fns'
-import { Config } from '../types/types'
+import { BoardMember, Config, FSIUSERTYPE } from '../types/types'
 
 export const getTotal = (values: Record<string, string>, key: string) => {
   if (!values[key]) {
@@ -44,7 +43,7 @@ export const getCurrentUserType = (
   return fakeUserType ? fakeUserType : currentUserType
 }
 
-export const getBoardmembersAndCaretakers = (members: BoardMember[]) => {
+export const getBoardmembersAndCaretakers = (members: Array<BoardMember>) => {
   const careTakers = members
     ?.filter((member) => member.role === CARETAKER)
     .map((member) => member.nationalId)
