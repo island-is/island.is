@@ -64,14 +64,15 @@ export class CaseResolver {
     input: CaseQueryInput,
     @CurrentGraphQlUser()
     user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<Case[]> {
     this.logger.debug('Getting connected cases')
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CONNECTED_CASES,
-      backendApi.getConnectedCases(input.id),
+      backendService.getConnectedCases(input.id),
       input.id,
     )
   }
