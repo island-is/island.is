@@ -55,6 +55,52 @@ const InfoCardActiveIndictment = () => {
           ),
         },
       ]}
+      additionalDataSections={[
+        ...(workingCase.mergedCases
+          ? workingCase.mergedCases.map((mergedCase) => ({
+              data: [
+                {
+                  title: formatMessage(core.policeCaseNumber),
+                  value: mergedCase.policeCaseNumbers?.map((n) => (
+                    <Text key={n}>{n}</Text>
+                  )),
+                },
+                {
+                  title: formatMessage(strings.mergedFromTitle),
+                  value: <Text>{mergedCase.courtCaseNumber}</Text>,
+                },
+                {
+                  title: formatMessage(core.prosecutor),
+                  value: mergedCase.prosecutorsOffice?.name,
+                },
+                {
+                  title: formatMessage(core.judge),
+                  value: mergedCase.judge?.name,
+                },
+                {
+                  title: formatMessage(core.court),
+                  value: mergedCase.court?.name,
+                },
+                {
+                  title: formatMessage(strings.offence),
+                  value: (
+                    <>
+                      {readableIndictmentSubtypes(
+                        workingCase.policeCaseNumbers,
+                        workingCase.indictmentSubtypes,
+                      ).map((subtype, index) => (
+                        <Text key={`${subtype}-${index}`}>
+                          {capitalize(subtype)}
+                        </Text>
+                      ))}
+                    </>
+                  ),
+                },
+              ],
+            }))
+          : []),
+        // Other sections can be added here
+      ]}
       defendants={
         workingCase.defendants
           ? {

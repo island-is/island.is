@@ -300,7 +300,25 @@ export const include: Includeable[] = [
   },
   { model: Notification, as: 'notifications' },
   { model: Case, as: 'mergeCase' },
-  { model: Case, as: 'mergedCases', separate: true },
+  {
+    model: Case,
+    as: 'mergedCases',
+    where: { state: CaseState.COMPLETED },
+    include: [
+      {
+        model: CaseFile,
+        as: 'caseFiles',
+        required: false,
+        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+        separate: true,
+      },
+      { model: Institution, as: 'court' },
+      { model: User, as: 'judge' },
+      { model: User, as: 'prosecutor' },
+      { model: Institution, as: 'prosecutorsOffice' },
+    ],
+    separate: true,
+  },
 ]
 
 export const order: OrderItem[] = [
