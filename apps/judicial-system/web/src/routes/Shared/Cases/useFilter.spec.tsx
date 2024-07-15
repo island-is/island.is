@@ -4,7 +4,6 @@ import {
   User,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 
 import { filterCases, FilterOption, filterOptionsForUser } from './useFilter'
 
