@@ -10,7 +10,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { CreateEventLogInput } from '../event-log/dto/createEventLog.input'
 
 @UseGuards(JwtGraphQlAuthGuard)
@@ -26,11 +26,12 @@ export class EventLogResolver {
     @Args('input', { type: () => CreateEventLogInput })
     input: CreateEventLogInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<boolean> {
     this.logger.debug(`Creating event log for case ${input.caseId}`)
 
-    const res = await backendApi.createEventLog(input, user.role)
+    const res = await backendService.createEventLog(input, user.role)
 
     return res.ok
   }
