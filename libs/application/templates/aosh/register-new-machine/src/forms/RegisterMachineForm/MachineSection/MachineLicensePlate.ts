@@ -12,18 +12,20 @@ import { plate110 } from '../../../assets/plates/plate-110-510'
 import { plate200 } from '../../../assets/plates/plate-200-280'
 import { plate155 } from '../../../assets/plates/plate-155-305'
 import { Plate } from '../../../shared/types'
+import { canRegisterToTraffic } from '../../../utils'
 
 export const MachineLicensePlate = buildSubSection({
-  id: 'licencePlate',
+  id: 'streetRegistrationSection',
   title: licensePlate.general.title,
+  // condition: (answers) => canRegisterToTraffic(answers),
   children: [
     buildMultiField({
-      id: 'licencePlate',
+      id: 'streetRegistration',
       title: licensePlate.general.title,
       description: licensePlate.general.description,
       children: [
         buildRadioField({
-          id: 'licencePlate.registerToTraffic',
+          id: 'streetRegistration.registerToTraffic',
           title: licensePlate.general.subTitle,
           width: 'half',
           defaultValue: NO,
@@ -39,7 +41,7 @@ export const MachineLicensePlate = buildSubSection({
           ],
         }),
         buildRadioField({
-          id: 'licencePlate.size',
+          id: 'streetRegistration.size',
           title: '',
           backgroundColor: 'white',
           options: [
@@ -65,7 +67,7 @@ export const MachineLicensePlate = buildSubSection({
           condition: (answers) => {
             const registerToTraffic = getValueViaPath(
               answers,
-              'licencePlate.registerToTraffic',
+              'streetRegistration.registerToTraffic',
               NO,
             ) as typeof NO | typeof YES
 

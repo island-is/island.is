@@ -45,7 +45,7 @@ export const NewMachineAnswersSchema = z.object({
     basicInformation: BasicInformationSchema.optional(),
     streetRegistration: z
       .object({
-        shouldApply: z.enum([YES, NO]),
+        registerToTraffic: z.enum([YES, NO]),
         size: z.enum(['A', 'B', 'D']),
       })
       .optional(),

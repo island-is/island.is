@@ -8,29 +8,36 @@ import { AlertMessage, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { ReviewGroup } from '../components/ReviewGroup'
 import { KeyValueFormField } from '@island.is/application/ui-fields'
-import { information, machine, overview } from '../../lib/messages'
 import {
+  information,
+  licensePlate,
+  machine,
+  overview,
+} from '../../lib/messages'
+import {
+  canMaybeRegisterToTraffic,
   getBasicMachineInformation,
   getPersonInformationForOverview,
+  getStreetRegistrationInformation,
   hasOperator,
   isOwnerOtherThanImporter,
 } from '../../utils'
-import { getValueViaPath } from '@island.is/application/core'
 
 export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
 }) => {
-  const { application, refetch, goToScreen } = props
+  const { application, goToScreen } = props
   const { formatMessage } = useLocale()
 
   const onClick = (page: string) => {
-    goToScreen && goToScreen(page)
+    console.log(page)
+    if (goToScreen) goToScreen(page)
   }
 
   return (
     <Box>
       <ReviewGroup
-        handleClick={() => onClick('importerInformation')}
+        handleClick={() => onClick('importerInformationMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
       >
         <KeyValueFormField
@@ -48,7 +55,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             ),
           }}
         />
-        <Box marginTop={2}>
+        <Box marginTop={3}>
           <KeyValueFormField
             application={application}
             field={{
@@ -70,7 +77,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       </ReviewGroup>
 
       <ReviewGroup
-        handleClick={() => onClick('operatorInformation')}
+        handleClick={() => onClick('operatorInformationMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
       >
         <KeyValueFormField
@@ -93,7 +100,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       </ReviewGroup>
 
       <ReviewGroup
-        handleClick={() => onClick('machineType')}
+        handleClick={() => onClick('machineTypeMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
       >
         <KeyValueFormField
@@ -113,9 +120,8 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       </ReviewGroup>
 
       <ReviewGroup
-        handleClick={() => onClick('machineTechnicalInformation')}
+        handleClick={() => onClick('machineTechnicalInformationMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
-        isLast
       >
         <KeyValueFormField
           application={application}
@@ -130,12 +136,34 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         />
       </ReviewGroup>
 
-      {/* Bæta við götuskráningu */}
-      <AlertMessage
-        type="warning"
-        title={formatMessage(overview.labels.alertMessageTitle)}
-        message={formatMessage(overview.labels.alertMessageMessage)}
-      />
+      <ReviewGroup
+        handleClick={() => onClick('streetRegistration')}
+        editMessage={formatMessage(overview.labels.editMessage)}
+        isLast
+      >
+        <KeyValueFormField
+          application={application}
+          field={{
+            ...props.field,
+            type: FieldTypes.KEY_VALUE,
+            component: FieldComponents.KEY_VALUE,
+            title: '',
+            label: licensePlate.general.title,
+            value: getStreetRegistrationInformation(
+              application.answers,
+              formatMessage,
+            ),
+          }}
+        />
+      </ReviewGroup>
+
+      {canMaybeRegisterToTraffic(application.answers) && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(overview.labels.alertMessageTitle)}
+          message={formatMessage(overview.labels.alertMessageMessage)}
+        />
+      )}
     </Box>
   )
 }

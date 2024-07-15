@@ -24,6 +24,16 @@ export const licensePlate = {
     },
   }),
   labels: defineMessages({
+    streetRegistration: {
+      id: 'aosh.rnm.application:licensePlate.labels.streetRegistration',
+      defaultMessage: 'Götuskráning',
+      description: 'Label for street registration',
+    },
+    plateSize: {
+      id: 'aosh.rnm.application:licensePlate.labels.plateSize',
+      defaultMessage: 'Stærð merkis',
+      description: 'Label for plate size',
+    },
     plate110: {
       id: 'aosh.rnm.application:licensePlate.labels.plate110',
       defaultMessage: 'Stærð A (110x510cm)',
