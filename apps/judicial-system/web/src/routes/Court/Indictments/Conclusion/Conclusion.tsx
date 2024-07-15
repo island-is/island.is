@@ -251,7 +251,7 @@ const Conclusion: FC = () => {
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
                   file.status === 'done',
-              ) && workingCase.mergeCase?.id !== undefined
+              ) && !workingCase.mergeCase?.id
             )
           default:
             return false
