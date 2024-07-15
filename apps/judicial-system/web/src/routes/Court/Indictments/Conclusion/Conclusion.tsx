@@ -246,12 +246,12 @@ const Conclusion: FC = () => {
                 file.status === 'done',
             )
           case CaseIndictmentRulingDecision.MERGE:
-            return (
+            return Boolean(
               uploadFiles.some(
                 (file) =>
                   file.category === CaseFileCategory.COURT_RECORD &&
                   file.status === 'done',
-              ) && workingCase.mergeCase?.id
+              ) && workingCase.mergeCase?.id,
             )
           default:
             return false
