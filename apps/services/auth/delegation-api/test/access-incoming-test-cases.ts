@@ -1,8 +1,10 @@
 import { AuthScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 import {
   createCurrentUser,
   createNationalId,
 } from '@island.is/testing/fixtures'
+
 import { TestCase } from './types'
 
 const currentUser = createCurrentUser({
@@ -31,6 +33,7 @@ export const accessIncomingTestCases: Record<string, TestCase> = {
           {
             name: 's1',
             allowExplicitDelegationGrant: true,
+            supportedDelegationTypes: [AuthDelegationType.Custom],
           },
         ],
       },
@@ -56,6 +59,7 @@ export const accessIncomingTestCases: Record<string, TestCase> = {
           {
             name: 's1',
             allowExplicitDelegationGrant: true,
+            supportedDelegationTypes: [AuthDelegationType.Custom],
           },
         ],
       },
@@ -78,6 +82,7 @@ export const accessIncomingTestCases: Record<string, TestCase> = {
           {
             name: 's1',
             allowExplicitDelegationGrant: true,
+            supportedDelegationTypes: [AuthDelegationType.Custom],
           },
           {
             name: 's2',
@@ -117,6 +122,7 @@ export const accessIncomingTestCases: Record<string, TestCase> = {
           {
             name: 's1',
             allowExplicitDelegationGrant: true,
+            supportedDelegationTypes: [AuthDelegationType.Custom],
           },
         ],
       },
