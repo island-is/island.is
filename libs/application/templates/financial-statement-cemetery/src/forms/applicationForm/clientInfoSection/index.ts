@@ -6,11 +6,11 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { getCurrentUserType } from '../../../utils/helpers'
-import { FSIUSERTYPE } from '../../../types'
 import { Application, UserProfile } from '@island.is/application/types'
 import { m } from '../../../lib/messages'
 import { ABOUTIDS } from '../../../utils/constants'
 import { Identity } from '@island.is/api/schema'
+import { FSIUSERTYPE } from '../../../types/types'
 
 export const clientInfoSection = buildSection({
   id: 'info',

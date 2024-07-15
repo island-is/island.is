@@ -1,17 +1,3 @@
-import { DefaultEvents } from '@island.is/application/types'
-
-export type Events = { type: DefaultEvents.SUBMIT }
-
-export enum States {
-  PREREQUISITES = 'prerequisites',
-  DRAFT = 'draft',
-  DONE = 'done',
-}
-
-export enum Roles {
-  APPLICANT = 'applicant',
-}
-
 export const CEMETERYCARETAKER = {
   nationalId: 'cemeteryCaretaker.nationalId',
   name: 'cemeteryCaretaker.name',
@@ -84,11 +70,6 @@ export const CEMETERYEQUITIESANDLIABILITIESIDS = {
 
 export const OPERATINGCOST = {
   total: 'operatingCost.total',
-}
-
-export enum ApiActions {
-  getUserType = 'getUserType',
-  submitApplication = 'submitApplication',
 }
 
 export const ABOUTIDS = {

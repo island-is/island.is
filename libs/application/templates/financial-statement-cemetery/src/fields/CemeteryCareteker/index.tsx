@@ -18,9 +18,9 @@ import {
   ACTORLONEBOARDMEMBER,
 } from '../../utils/constants'
 
-import { BoardMember } from '../../types'
 import { getBoardmembersAndCaretakers } from '../../utils/helpers'
 import { CaretakerRepeaterItem } from './CemeteryCaretakerRepeaterItem'
+import { BoardMember } from '../../types/types'
 
 export const CemeteryCaretaker = ({
   application,

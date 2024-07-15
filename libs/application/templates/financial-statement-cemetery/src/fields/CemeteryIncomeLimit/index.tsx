@@ -1,14 +1,12 @@
-import React, { useEffect } from 'react'
+import { useEffect } from 'react'
 import { AlertMessage, ContentBlock } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useQuery } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
 import { m } from '../../lib/messages'
-
 import { financialLimitQuery } from '../../graphql'
-
-import { FSIUSERTYPE } from '../../types'
 import { CEMETERYOPERATIONIDS } from '../../utils/constants'
+import { FSIUSERTYPE } from '../../types/types'
 
 export const CemeteryIncomeLimit = () => {
   const { getValues, setValue } = useFormContext()
