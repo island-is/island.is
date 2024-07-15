@@ -22,7 +22,6 @@ import {
   useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -98,10 +97,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
-
-  useActiveTabItemPress(2, () => {
-    flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-  })
 
   const applicationsRes = useListApplicationsQuery()
   const inboxRes = useListDocumentsQuery({

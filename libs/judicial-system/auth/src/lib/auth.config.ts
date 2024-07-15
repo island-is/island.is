@@ -1,9 +1,9 @@
 import { defineConfig } from '@island.is/nest/config'
 
-export const eventLogModuleConfig = defineConfig({
-  name: 'EventLogModule',
+export const sharedAuthModuleConfig = defineConfig({
+  name: 'SharedAuthModule',
   load: (env) => ({
-    backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
+    jwtSecret: env.required('AUTH_JWT_SECRET', 'jwt-secret'),
     secretToken: env.required(
       'BACKEND_ACCESS_TOKEN',
       'secret-backend-api-token',
