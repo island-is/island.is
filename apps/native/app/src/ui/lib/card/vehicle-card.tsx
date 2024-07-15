@@ -3,7 +3,7 @@ import { Image } from 'react-native'
 import styled from 'styled-components/native'
 import chevronForward from '../../assets/icons/chevron-forward.png'
 import { dynamicColor } from '../../utils'
-import { font } from '../../utils/font'
+import { Typography } from '../typography/typography'
 
 const Host = styled.View`
   display: flex;
@@ -28,30 +28,21 @@ const Content = styled.View`
   align-items: flex-start;
 `
 
-const Title = styled.Text`
+const Title = styled(Typography)`
   padding-right: ${({ theme }) => theme.spacing[1]}px;
   margin-bottom: ${({ theme }) => theme.spacing[1]}px;
-
-  ${font({
-    fontWeight: '600',
-    lineHeight: 24,
-    fontSize: 18,
-  })}
 `
 
-const Text = styled.Text`
+const Text = styled(Typography)`
   padding-right: ${({ theme }) => theme.spacing[2]}px;
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-
-  ${font({
-    fontWeight: '300',
-    lineHeight: 24,
-    fontSize: 16,
-  })}
 `
 
 const Icon = styled.View`
   margin-left: auto;
+`
+
+const Label = styled.View`
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
 `
 
 interface VehicleCardProps {
@@ -65,11 +56,11 @@ export function VehicleCard({ title, color, number, label }: VehicleCardProps) {
   return (
     <Host>
       <Content>
-        <Title>{title}</Title>
+        <Title variant="heading4">{title}</Title>
         <Text>
           {color} - {number}
         </Text>
-        {label}
+        {label && <Label>{label}</Label>}
       </Content>
       <Icon>
         <Image source={chevronForward} style={{ width: 24, height: 24 }} />

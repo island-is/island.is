@@ -1,6 +1,7 @@
 import { Typography, Skeleton } from '@ui'
+import * as FileSystem from 'expo-file-system'
 
-import React from 'react'
+import React, { useEffect } from 'react'
 import { FormattedMessage } from 'react-intl'
 import { Image, SafeAreaView } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -21,11 +22,53 @@ export const HelloModule = React.memo(() => {
   const theme = useTheme()
   const { dismissed } = usePreferencesStore()
   const { userInfo } = useAuthStore()
+  const [imageSrc, setImageSrc] = React.useState<string | undefined>(undefined)
 
-  const { data, loading, error } = useGetFrontPageImageQuery({
+  const { data: image, loading } = useGetFrontPageImageQuery({
     variables: { input: { pageIdentifier: 'frontpage' } },
   })
-  const imageSrc = data?.getFrontpage?.imageMobile?.url
+
+  const cacheDirectory = `${FileSystem.cacheDirectory}homeScreenImages`
+
+  const handleImage = async () => {
+    if (!image || !image.getFrontpage?.imageMobile?.title) {
+      return
+    }
+
+    const localPath = `${cacheDirectory}/${image.getFrontpage?.imageMobile?.title}`
+    const fileInfo = await FileSystem.getInfoAsync(localPath)
+    // Use image from cache if it exists
+    if (fileInfo.exists) {
+      setImageSrc(fileInfo.uri)
+    } else {
+      const imageSource = image.getFrontpage?.imageMobile?.url
+      if (!imageSource) {
+        return
+      }
+      setImageSrc(imageSource)
+      // Download image and save in cache
+      const downloadResumable = FileSystem.createDownloadResumable(
+        imageSource,
+        localPath,
+      )
+      try {
+        const directoryInfo = await FileSystem.getInfoAsync(cacheDirectory)
+        if (!directoryInfo.exists) {
+          await FileSystem.makeDirectoryAsync(cacheDirectory, {
+            intermediates: true,
+          })
+        }
+        await downloadResumable.downloadAsync()
+      } catch (e) {
+        console.error(e)
+        // Do nothing, try again next time
+      }
+    }
+  }
+
+  useEffect(() => {
+    handleImage()
+  }, [image])
 
   // If the onboardingWidget is shown, don't show this module
   if (!dismissed.includes('onboardingWidget')) {
@@ -50,7 +93,7 @@ export const HelloModule = React.memo(() => {
           {userInfo?.name}
         </Typography>
 
-        {!error && (
+        {imageSrc && (
           <ImageWrapper>
             {loading ? (
               <Skeleton
