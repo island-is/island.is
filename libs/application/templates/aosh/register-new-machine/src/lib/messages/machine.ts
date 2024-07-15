@@ -63,6 +63,11 @@ export const machine = {
         defaultMessage: 'Grunnupplýsingar',
         description: `Basic machine information page title`,
       },
+      overviewTitle: {
+        id: 'aosh.rnm.application:machine.labels.basicMachineInformation.overviewTitle',
+        defaultMessage: 'Grunnupplýsingar tækis',
+        description: `Basic machine information overview title`,
+      },
       description: {
         id: 'aosh.rnm.application:machine.labels.basicMachineInformation.description',
         defaultMessage: 'Sameiginlegar grunnupplýsingar',
@@ -148,48 +153,53 @@ export const machine = {
       sectionTitle: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.sectionTitle',
         defaultMessage: 'Tækniupplýsingar',
-        description: `Basic machine information section title`,
+        description: `Technical machine information section title`,
       },
       title: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.title',
         defaultMessage: 'Tækniupplýsingar',
-        description: `Basic machine information page title`,
+        description: `Technical machine information page title`,
+      },
+      overviewTitle: {
+        id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.overviewTitle',
+        defaultMessage: 'Tækniupplýsingar tækis',
+        description: `Technical machine information overview title`,
       },
       description: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.description',
         defaultMessage: 'Tæknilegar upplýsingar um tækið sem á að flytja inn',
-        description: `Basic machine information page description`,
+        description: `Technical machine information page description`,
       },
       // This will be removed once we get these messages from the service.
       energySource: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.energySource',
         defaultMessage: 'Orkugjafi',
-        description: `Basic machine information type label`,
+        description: `Technical machine information type label`,
       },
       enginePower: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.enginePower',
         defaultMessage: 'Afl hreyfils (kW)',
-        description: `Basic machine information model label`,
+        description: `Technical machine information model label`,
       },
       ownWeight: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.ownWeight',
         defaultMessage: 'Eigin þyngd (kg)',
-        description: `Basic machine information category label`,
+        description: `Technical machine information category label`,
       },
       liftingCapactiy: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.liftingCapactiy',
         defaultMessage: 'Lyftigeta (kg)',
-        description: `Basic machine information subcategory label`,
+        description: `Technical machine information subcategory label`,
       },
       voiceWorkshop: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.category',
         defaultMessage: 'Hlassmiðja (mm)',
-        description: `Basic machine information category label`,
+        description: `Technical machine information category label`,
       },
       liftHeight: {
         id: 'aosh.rnm.application:machine.labels.technicalMachineInformation.subcategory',
         defaultMessage: 'Lyftihæð (mm)',
-        description: `Basic machine information subcategory label`,
+        description: `Technical machine information subcategory label`,
       },
     }),
   },

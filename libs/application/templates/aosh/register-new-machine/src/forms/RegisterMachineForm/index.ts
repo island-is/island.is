@@ -5,6 +5,7 @@ import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { conclusion, externalData } from '../../lib/messages'
 import { InformationSection } from './InformationSection'
 import { MachineSection } from './MachineSection'
+import { OverviewSection } from './OverviewSection'
 
 export const RegisterNewMachineForm: Form = buildForm({
   id: 'RegisterNewMachineFormDraft',
@@ -21,6 +22,7 @@ export const RegisterNewMachineForm: Form = buildForm({
     }),
     InformationSection,
     MachineSection,
+    OverviewSection,
     buildFormConclusionSection({
       sectionTitle: conclusion.general.sectionTitle,
       multiFieldTitle: conclusion.general.title,

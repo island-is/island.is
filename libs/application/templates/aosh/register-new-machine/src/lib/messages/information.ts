@@ -63,35 +63,40 @@ export const information = {
       },
     }),
     owner: defineMessages({
+      title: {
+        id: 'aosh.rnm.application:information.labels.otherOwner.title',
+        defaultMessage: 'Eigandi',
+        description: `Owner title label`,
+      },
       name: {
         id: 'aosh.rnm.application:information.labels.otherOwner.name',
         defaultMessage: 'Nafn eiganda',
-        description: `Importer name label`,
+        description: `Owner name label`,
       },
       nationalId: {
         id: 'aosh.rnm.application:information.labels.otherOwner.nationalId',
         defaultMessage: 'Kennitala eiganda',
-        description: `Importer nationalId label`,
+        description: `Owner nationalId label`,
       },
       address: {
         id: 'aosh.rnm.application:information.labels.otherOwner.address',
         defaultMessage: 'Heimilisfang eiganda',
-        description: `Importer address label`,
+        description: `Owner address label`,
       },
       postCode: {
         id: 'aosh.rnm.application:information.labels.otherOwner.ostCode',
         defaultMessage: 'Póstnúmer eiganda',
-        description: `Importer post code label`,
+        description: `Owner post code label`,
       },
       phone: {
         id: 'aosh.rnm.application:information.labels.otherOwner.phone',
         defaultMessage: 'Símanúmer eiganda',
-        description: `Importer phone number label`,
+        description: `Owner phone number label`,
       },
       email: {
         id: 'aosh.rnm.application:information.labels.otherOwner.email',
         defaultMessage: 'Netfang eiganda',
-        description: `Importer email label`,
+        description: `Owner email label`,
       },
     }),
     operator: defineMessages({

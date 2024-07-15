@@ -36,5 +36,20 @@ export const overview = {
         'Tæki í flokkum IA, IF, IM, JL og KG uppfylla oft ekki kröfur um gerð og búnað ökutækja og þarf að sækja sérstaklega um götuskráningu þeirra með því að hafa samband við þjónustuver Vinnueftirlitsins.',
       description: 'Overview alert message',
     },
+    editMessage: {
+      id: 'aosh.rnm.application:overview.labels.editMessage',
+      defaultMessage: 'Breyta upplýsingum',
+      description: 'Overview edit message',
+    },
+    ownerSameAsImporter: {
+      id: 'aosh.rnm.application:overview.labels.ownerSameAsOperator',
+      defaultMessage: 'Innflytjandi er eigandi tækis',
+      description: 'Overview owner is the same as importer',
+    },
+    noOperatorRegistered: {
+      id: 'aosh.rnm.application:overview.labels.noOperatorRegistered',
+      defaultMessage: 'Engin umráðamaður skráður',
+      description: 'Overview no operator registered',
+    },
   }),
 }

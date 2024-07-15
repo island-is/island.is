@@ -1,20 +1,25 @@
 import {
   buildCustomField,
-  buildKeyValueField,
   buildMultiField,
-  buildSubSection,
+  buildSection,
 } from '@island.is/application/core'
 import { overview } from '../../lib/messages'
 
-export const Overview = buildSubSection({
-  id: 'machineType',
+export const OverviewSection = buildSection({
+  id: 'overviewSection',
   title: overview.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'machineTypeMultiField',
+      id: 'overviewMultifield',
       title: overview.general.title,
       description: overview.general.description,
-      children: [],
+      children: [
+        buildCustomField({
+          id: 'overview',
+          title: '',
+          component: 'Overview',
+        }),
+      ],
     }),
   ],
 })
