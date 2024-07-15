@@ -163,6 +163,7 @@ export interface UpdateCase
     | 'rulingSignatureDate'
     | 'judgeId'
     | 'courtSessionType'
+    | 'mergeCaseId'
   > {
   type?: CaseType
   state?: CaseState
