@@ -5,7 +5,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Animated, Platform, StyleSheet, View } from 'react-native'
 import {
-  Navigation,
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
@@ -28,10 +27,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { toggleAction } from '../../lib/post-mail-action'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
-import {
-  ButtonRegistry,
-  ComponentRegistry,
-} from '../../utils/component-registry'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 const Host = styled.SafeAreaView`
   margin-left: 24px;
@@ -205,7 +201,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [visible, setVisible] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
-  const [touched, setTouched] = useState(false)
 
   const loading = docRes.loading || !accessToken
   const fileTypeLoaded = !!Document?.content?.type
@@ -227,20 +222,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.DocumentArchiveButton) {
-      toggleAction(
-        Document.archived ? 'unarchive' : 'archive',
-        Document.id!,
-        // true,
-      )
-      setTouched(true)
+      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id!)
     }
     if (buttonId === ButtonRegistry.DocumentStarButton) {
       toggleAction(
         Document.bookmarked ? 'unbookmark' : 'bookmark',
         Document.id!,
-        // true,
       )
-      setTouched(true)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
@@ -265,15 +253,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     if (hasPdf) {
       setLoaded(false)
     }
-    if (touched) {
-      Navigation.updateProps(ComponentRegistry.InboxScreen, {
-        refresh: Math.random(),
-      })
-    }
   })
 
   useEffect(() => {
-    // Lets mark the document as read
+    if (Document.opened) {
+      return
+    }
+
+    // Lets mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
         __typename: 'DocumentV2',
@@ -283,7 +270,19 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         opened: () => true,
       },
     })
-  }, [Document.id])
+
+    client.cache.modify({
+      fields: {
+        documentsV2: (existing) => {
+          return {
+            ...existing,
+            unreadCount:
+              existing.unreadCount > 0 ? existing.unreadCount - 1 : 0,
+          }
+        },
+      },
+    })
+  }, [Document.id, Document.opened])
 
   useEffect(() => {
     const { authorizeResult, refresh } = authStore.getState()
