@@ -120,16 +120,9 @@ export class Defendant extends Model {
   @ApiProperty({ enum: ServiceRequirement })
   serviceRequirement?: ServiceRequirement
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiProperty()
-  verdictViewDate?: string
-
-  @Column({ type: DataType.BOOLEAN, allowNull: true })
-  @ApiPropertyOptional({ type: Boolean })
-  acceptCompensationClaim?: boolean
+  @Column({ type: DataType.DATE, allowNull: true })
+  @ApiPropertyOptional({ type: Date })
+  verdictViewDate?: Date
 
   @Column({
     type: DataType.ENUM,

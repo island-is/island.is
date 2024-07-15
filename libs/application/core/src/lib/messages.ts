@@ -291,6 +291,11 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
   },
+  defaultDownloadButtonTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
+    defaultMessage: 'Hlaða niður skjali',
+    description: 'Button label to download file',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -501,6 +506,23 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message summary when a user already has icelandic citizenship',
   },
+  drivingLicenseDuplicateEntryValidationErrorTitle: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationError',
+    defaultMessage: 'Ökuskírteini hæfir ekki umsókn um samrit',
+    description: 'Driving License duplicate entry validation error',
+  },
+  drivingLicenseDuplicateEntryValidationSign400Error: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationSign400Error',
+    defaultMessage: 'Ógild tákntala, 400, fannst á ökuskírteini',
+    description:
+      'Driving License duplicate entry validation error for sign (is: tákntala)',
+  },
+  drivingLicenseDuplicateEntryValidationExpiredCategoryLicenseError: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationExpiredLicenseError',
+    defaultMessage:
+      'Flokkur "{categoryName}" á ökukírteini er útrunninn eða rennur út innan 6 mánaða',
+    description: 'Driving License duplicate entry validation error',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
     defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
@@ -555,6 +577,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.nationalRegistryCitizenshipNotIcelandic',
     defaultMessage: 'Þú ert ekki með íslenskt ríkisfang',
     description: 'You do not have a domicile in Iceland',
+  },
+  nationalRegistryCitizenshipNotWithinEES: {
+    id: 'application.system:core.fetch.data.nationalRegistryCitizenshipNotWithinEES',
+    defaultMessage: 'Þú ert ekki með ríkisfang innan EES',
+    description: 'You do not have citizenship with EES',
   },
   nationalRegistryAgeNotValid: {
     id: 'application.system:core.fetch.data.nationalRegistryAgeNotValid',
@@ -666,6 +693,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.nationalRegistryMinAgeNotFulfilled',
     defaultMessage: 'Lágmarksaldur er {minAge} ára',
     description: 'Min age not fulfilled error',
+  },
+  idCardApplicationRequirementsNotMet: {
+    id: 'application.system:core.fetch.data.idCardApplicationRequirementsNotMet',
+    defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir umsókn um nafnskírteini',
+    description: 'Requirements for id card application not met',
   },
 })
 
@@ -839,6 +871,24 @@ export const coreErrorScreenMessages = defineMessages({
   badSubjectDescription: {
     id: 'application.system:core.errorScreen.badSubjectDescription#markdown',
     defaultMessage: `* Þú hefur ekki rétt umboð til að opna þessa umsóknartegund`,
+    description:
+      'Error screen description when user has a bad subject error after checking delegations',
+  },
+  prunedTitle: {
+    id: 'application.system:core.errorScreen.prunedTitle',
+    defaultMessage: 'Umsóknin er runnin út',
+    description:
+      'Error screen title when the application has been pruned and is not editable',
+  },
+  prunedSubTitle: {
+    id: 'application.system:core.errorScreen.prunedSubTitle',
+    defaultMessage: 'Umsóknin hefur runnið út og er ekki lengur aðgengileg',
+    description:
+      'Error screen subtitle when the application has been pruned and is not editable',
+  },
+  prunedDescription: {
+    id: 'application.system:core.errorScreen.prunedDescription#markdown',
+    defaultMessage: `* Öllum persónugögnum var eytt þegar umsóknin rann út\n* Ef klára á umsókn af þessu tagi þarf að stofna nýja`,
     description:
       'Error screen description when user has a bad subject error after checking delegations',
   },

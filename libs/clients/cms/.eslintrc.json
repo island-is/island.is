@@ -1,0 +1,23 @@
+{
+  "extends": "../../../.eslintrc.json",
+  "rules": {},
+  "ignorePatterns": ["!**/*"],
+  "overrides": [
+    { "files": ["*.ts", "*.tsx", "*.js", "*.jsx"], "rules": {} },
+    { "files": ["*.ts", "*.tsx"], "rules": {} },
+    { "files": ["*.js", "*.jsx"], "rules": {} },
+    {
+      "files": ["**/schema.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off",
+        "@typescript-eslint/naming-convention": "off"
+      }
+    },
+    {
+      "files": ["**/cms.service.ts"],
+      "rules": {
+        "@typescript-eslint/no-explicit-any": "off"
+      }
+    }
+  ]
+}

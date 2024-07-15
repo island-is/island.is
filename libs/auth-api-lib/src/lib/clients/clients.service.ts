@@ -9,7 +9,12 @@ import { BulkCreateOptions, DestroyOptions } from 'sequelize'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { NoContentException } from '@island.is/nest/problem'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
+import { DelegationTypeModel } from '../delegations/models/delegation-type.model'
 import { ClientsTranslationService } from './clients-translation.service'
 import { ClientAllowedCorsOriginDTO } from './dto/client-allowed-cors-origin.dto'
 import { ClientAllowedScopeDTO } from './dto/client-allowed-scope.dto'

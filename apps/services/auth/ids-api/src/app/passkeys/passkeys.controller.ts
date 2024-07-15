@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Post,
@@ -9,18 +8,19 @@ import {
 import { ApiCreatedResponse, ApiTags } from '@nestjs/swagger'
 
 import { PasskeysCoreService } from '@island.is/auth-api-lib'
-import { Documentation } from '@island.is/nest/swagger'
-import {
-  AuthenticationOptions,
-  AuthenticationResult,
-} from './dto/authenticationOptions.dto'
-import { IdsAuthGuard, ScopesGuard } from '@island.is/auth-nest-tools'
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { Documentation } from '@island.is/nest/swagger'
+
+import {
+  AuthenticationOptions,
+  AuthenticationResult,
+} from './dto/authenticationOptions.dto'
 
 const namespace = '@island.is/auth/ids-api/passkeys'
 
@@ -31,6 +31,7 @@ const namespace = '@island.is/auth/ids-api/passkeys'
 })
 @UseGuards(IdsAuthGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace })
+@Scopes('@identityserver.api/authentication')
 export class PasskeysController {
   constructor(private readonly passkeysCoreService: PasskeysCoreService) {}
 

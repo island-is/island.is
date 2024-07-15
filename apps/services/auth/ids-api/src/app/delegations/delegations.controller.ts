@@ -26,6 +26,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import type { Logger } from '@island.is/logging'
 import type { User } from '@island.is/auth-nest-tools'

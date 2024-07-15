@@ -178,6 +178,8 @@ export interface RealEstateData extends DeceasedShare {
   description: string
   propertyValuation: string
   taxFreeInheritance: number
+  enabled?: boolean
+  initial?: boolean
 }
 
 export interface RealEstate {
@@ -203,6 +205,7 @@ export interface BankAccountsData extends DeceasedShare {
   propertyValuation: string
   foreignBankAccount?: ('yes' | 'no')[]
   taxFreeInheritance: number
+  enabled?: boolean
 }
 
 export interface BankAccounts {

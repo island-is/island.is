@@ -11,10 +11,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule, ConfigType } from '@island.is/nest/config'
 import { SmsService } from '@island.is/nova-sms'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 import { MessageService } from '@island.is/judicial-system/message'
 
-import { environment } from '../../../../environments'
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
 import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
@@ -35,16 +37,18 @@ const formatMessage = createTestIntl({
 export const createTestingNotificationModule = async () => {
   const notificationModule = await Test.createTestingModule({
     imports: [
-      SharedAuthModule.register({
-        jwtSecret: environment.auth.jwtSecret,
-        secretToken: environment.auth.secretToken,
-      }),
       ConfigModule.forRoot({
-        load: [awsS3ModuleConfig, eventModuleConfig, notificationModuleConfig],
+        load: [
+          sharedAuthModuleConfig,
+          awsS3ModuleConfig,
+          eventModuleConfig,
+          notificationModuleConfig,
+        ],
       }),
     ],
     controllers: [NotificationController, InternalNotificationController],
     providers: [
+      SharedAuthModule,
       MessageService,
       {
         provide: CourtService,
@@ -81,9 +85,6 @@ export const createTestingNotificationModule = async () => {
         provide: getModelToken(Notification),
         useValue: {
           create: jest.fn(),
-          findOne: jest.fn(),
-          findAll: jest.fn(),
-          update: jest.fn(),
         },
       },
       NotificationService,

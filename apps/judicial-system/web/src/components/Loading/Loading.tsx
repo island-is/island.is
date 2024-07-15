@@ -4,7 +4,7 @@ import { Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Loading.css'
 
-const Loading: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Loading = () => {
   return (
     <Box className={styles.loadingContainer}>
       <Box className={styles.animatedLoadingContainer}>

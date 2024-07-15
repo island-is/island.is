@@ -27,7 +27,11 @@ import {
   createDomain,
   FixtureFactory,
 } from '@island.is/services/auth/testing'
-import { getPersonalRepresentativeDelegationType } from '@island.is/shared/types'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+  getPersonalRepresentativeDelegationType,
+} from '@island.is/shared/types'
 import {
   createCurrentUser,
   createNationalRegistryUser,

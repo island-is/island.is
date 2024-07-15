@@ -9,6 +9,10 @@ import {
   IndividualDto,
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
+import {
+  CompanyExtendedInfo,
+  CompanyRegistryClientService,
+} from '@island.is/clients/rsk/company-registry'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
 import { AuthDelegationType } from '@island.is/shared/types'
@@ -33,6 +37,11 @@ type FindAllValidIncomingOptions = {
   domainName?: string
 }
 
+type FromNameInfo = {
+  nationalId: string
+  name: string
+}
+
 /**
  * Service class for incoming delegations.
  * This class supports domain based delegations.
@@ -45,6 +54,7 @@ export class DelegationsIncomingCustomService {
     @InjectModel(ApiScopeUserAccess)
     private apiScopeUserAccessModel: typeof ApiScopeUserAccess,
     private nationalRegistryClient: NationalRegistryClientService,
+    private companyRegistryClient: CompanyRegistryClientService,
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private auditService: AuditService,
@@ -151,7 +161,7 @@ export class DelegationsIncomingCustomService {
       validity: DelegationValidity
     },
     useMaster = false,
-  ): Promise<{ delegations: Delegation[]; fromNameInfo: IndividualDto[] }> {
+  ): Promise<{ delegations: Delegation[]; fromNameInfo: FromNameInfo[] }> {
     let whereOptions = getScopeValidityWhereClause(validity)
     if (domainName) whereOptions = { ...whereOptions, domainName: domainName }
 
@@ -254,7 +264,7 @@ export class DelegationsIncomingCustomService {
   ): Promise<{
     aliveDelegations: Delegation[]
     deceasedDelegations: Delegation[]
-    fromNameInfo: IndividualDto[]
+    fromNameInfo: FromNameInfo[]
   }> {
     if (delegations.length === 0) {
       return {
@@ -266,18 +276,24 @@ export class DelegationsIncomingCustomService {
 
     const delegationsPromises = delegations.map(({ fromNationalId }) =>
       kennitala.isCompany(fromNationalId)
-        ? null
+        ? this.companyRegistryClient
+            .getCompany(fromNationalId)
+            .catch(this.handlerGetError)
         : this.nationalRegistryClient
             .getIndividual(fromNationalId)
-            .catch(this.handlerGetIndividualError),
+            .catch(this.handlerGetError),
     )
 
     try {
       // Check if delegations is linked to a person, i.e. not deceased
-      const persons = await Promise.all(delegationsPromises)
-      const personsValuesNoError = persons
+      const identities = await Promise.all(delegationsPromises)
+      const identitiesValuesNoError = identities
         .filter(this.isNotError)
         .filter(isDefined)
+        .map((identity) => ({
+          nationalId: identity.nationalId,
+          name: identity.name ?? UNKNOWN_NAME,
+        }))
 
       // Divide delegations into alive or deceased delegations.
       const [aliveDelegations, deceasedDelegations] = partitionWithIndex(
@@ -285,16 +301,16 @@ export class DelegationsIncomingCustomService {
         ({ fromNationalId }, index) =>
           // All companies will be divided into aliveDelegations
           kennitala.isCompany(fromNationalId) ||
-          // Pass through altough Þjóðskrá API throws an error since it is not required to view the delegation.
-          persons[index] instanceof Error ||
+          // Pass through although Þjóðskrá API throws an error since it is not required to view the delegation.
+          identities[index] instanceof Error ||
           // Make sure we can match the person to the delegation, i.e. not deceased
-          (persons[index] as IndividualDto)?.nationalId === fromNationalId,
+          (identities[index] as IndividualDto)?.nationalId === fromNationalId,
       )
 
       return {
         aliveDelegations,
         deceasedDelegations,
-        fromNameInfo: personsValuesNoError,
+        fromNameInfo: identitiesValuesNoError,
       }
     } catch (error) {
       this.logger.error(
@@ -314,7 +330,7 @@ export class DelegationsIncomingCustomService {
     }
   }
 
-  private handlerGetIndividualError(error: null | Error) {
+  private handlerGetError(error: null | Error) {
     return error
   }
 
@@ -329,10 +345,10 @@ export class DelegationsIncomingCustomService {
    * Finds person by nationalId.
    */
   private getPersonByNationalId(
-    persons: Array<IndividualDto | null>,
+    identities: Array<FromNameInfo | null>,
     nationalId: string,
   ) {
-    return persons.find((person) => person?.nationalId === nationalId)
+    return identities.find((identity) => identity?.nationalId === nationalId)
   }
 
   private async findAccessControlList(

@@ -25,6 +25,7 @@ import {
   RegistryPerson,
   InheritanceTax,
   InheritanceReportInfo,
+  ManyPropertyDetail,
 } from './syslumennClient.types'
 import {
   mapSyslumennAuction,
@@ -49,6 +50,12 @@ import {
   mapDepartedToRegistryPerson,
   mapInheritanceTax,
   mapEstateToInheritanceReportInfo,
+  mapJourneymanLicence,
+  mapProfessionRight,
+  mapVehicleResponse,
+  mapRealEstateResponse,
+  mapShipResponse,
+  mapPropertyCertificate,
 } from './syslumennClient.utils'
 import { Injectable, Inject } from '@nestjs/common'
 import {
@@ -56,9 +63,10 @@ import {
   SvarSkeyti,
   Configuration,
   VirkLeyfiGetRequest,
-  VedbandayfirlitReguverkiSvarSkeyti,
   VedbondTegundAndlags,
   Skilabod,
+  VedbandayfirlitRegluverkGeneralSvar,
+  InnsigludSkjol,
 } from '../../gen/fetch'
 import { SyslumennClientConfig } from './syslumennClient.config'
 import type { ConfigType } from '@island.is/nest/config'
@@ -240,13 +248,25 @@ export class SyslumennService {
     return (temporaryEventLicences ?? []).map(mapTemporaryEventLicence)
   }
 
+  async sealDocuments(documents: string[]): Promise<InnsigludSkjol> {
+    const { id, api } = await this.createApi()
+    const explanation = 'Rafrænt undirritað vottorð'
+    return await api.innsiglaSkjolPost({
+      skeyti: {
+        audkenni: id,
+        skyring: explanation,
+        skjol: documents,
+      },
+    })
+  }
+
   async sealDocument(document: string): Promise<SvarSkeyti> {
     const { id, api } = await this.createApi()
-    const explination = 'Rafrænt undirritað vottorð'
+    const explanation = 'Rafrænt undirritað vottorð'
     return await api.innsiglunPost({
       skeyti: {
         audkenni: id,
-        skyring: explination,
+        skyring: explanation,
         skjal: document,
       },
     })
@@ -337,7 +357,7 @@ export class SyslumennService {
   async getAsset(
     assetId: string,
     assetType: AssetType,
-    assetMapper: (res: VedbandayfirlitReguverkiSvarSkeyti) => AssetName,
+    assetMapper: (res: VedbandayfirlitRegluverkGeneralSvar) => AssetName,
   ): Promise<Array<AssetName>> {
     const { id, api } = await this.createApi()
     const response = await api
@@ -350,12 +370,12 @@ export class SyslumennService {
       })
       .catch((e) => {
         if ((e as { status: number })?.status === 404) {
-          return []
+          return null
         }
         throw e
       })
 
-    return response.map(assetMapper)
+    return response ? [assetMapper(response)] : []
   }
 
   async getRealEstateAddress(realEstateId: string): Promise<Array<AssetName>> {
@@ -380,83 +400,131 @@ export class SyslumennService {
   }
 
   async getMortgageCertificate(
-    propertyNumber: string,
-  ): Promise<MortgageCertificate> {
+    properties: {
+      propertyNumber: string
+      propertyType: string
+    }[],
+  ): Promise<MortgageCertificate[]> {
     const { id, api } = await this.createApi()
 
-    const res = await api.vedbokarvottordPost({
+    const res = await api.vedbokarvottord2Post({
       skilabod: {
         audkenni: id,
-        fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+        eignir: properties.map(({ propertyNumber, propertyType }) => {
+          return {
+            fastanumer: propertyNumber,
+            tegundAndlags:
+              propertyType === '1'
+                ? VedbondTegundAndlags.NUMBER_1 // 1 = Vehicle
+                : propertyType === '2'
+                ? VedbondTegundAndlags.NUMBER_2 // 2 = Ship
+                : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+          }
+        }),
       },
     })
-    const contentBase64 = res.vedbandayfirlitPDFSkra || ''
 
-    const certificate: MortgageCertificate = {
-      contentBase64: contentBase64,
-      apiMessage: res.skilabod,
-    }
+    const certificates: MortgageCertificate[] =
+      res.skilabodOgSkra?.map((resultItem) => {
+        const contentBase64 = resultItem.vedbandayfirlitPDFSkra || ''
+        return {
+          contentBase64: contentBase64,
+          apiMessage: resultItem.skilabod,
+          propertyNumber: resultItem.fastanumer,
+        }
+      }) ?? []
 
-    return certificate
+    return certificates
   }
 
   async validateMortgageCertificate(
-    propertyNumber: string,
-    isFromSearch: boolean | undefined,
-  ): Promise<MortgageCertificateValidation> {
+    properties: {
+      propertyNumber: string
+      propertyType: string
+    }[],
+  ): Promise<MortgageCertificateValidation[]> {
     try {
       // Note: this function will throw an error if something goes wrong
-      const certificate = await this.getMortgageCertificate(propertyNumber)
-
-      const exists = certificate.contentBase64.length !== 0
-      const hasKMarking =
-        exists && certificate.contentBase64 !== 'Precondition Required'
+      const certificates = await this.getMortgageCertificate(properties)
 
       // Note: we are saving propertyNumber and isFromSearch also in externalData,
       // since it is not saved in answers if we go from state DRAFT -> DRAFT
-      return {
-        propertyNumber: propertyNumber,
-        isFromSearch: isFromSearch,
-        exists: exists,
-        hasKMarking: hasKMarking,
-      }
+      return certificates.map(mapPropertyCertificate)
     } catch (exception) {
-      return {
-        propertyNumber: propertyNumber,
-        isFromSearch: isFromSearch,
-        exists: false,
-        hasKMarking: false,
-      }
+      throw new Error(
+        `Validation failed for properties: ${JSON.stringify(properties)}`,
+      )
     }
   }
 
   async getPropertyDetails(propertyNumber: string): Promise<PropertyDetail> {
     const { id, api } = await this.createApi()
 
-    const res = await api.vedbokavottordRegluverkiPost({
-      skilabod: {
-        audkenni: id,
-        fastanumer: cleanPropertyNumber(propertyNumber),
-        tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+    const res = await api
+      .vedbokavottordRegluverkiPost({
+        skilabod: {
+          audkenni: id,
+          fastanumer: cleanPropertyNumber(propertyNumber),
+          tegundAndlags: VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
+        },
+      })
+      .catch(() => {
+        throw new Error(
+          `Failed to get propertyDetail for property number: ${propertyNumber}`,
+        )
+      })
+
+    const fasteign = res.fasteign?.length ? res.fasteign[0] : undefined
+
+    return {
+      propertyNumber: propertyNumber,
+      defaultAddress: {
+        display: fasteign?.heiti || '',
       },
-    })
-    if (res.length > 0) {
-      return {
-        propertyNumber: propertyNumber,
-        defaultAddress: {
-          display: res[0].heiti,
+      unitsOfUse: {
+        unitsOfUse: [
+          {
+            explanation: fasteign?.notkun,
+          },
+        ],
+      },
+    }
+  }
+
+  async getAllPropertyDetails(
+    propertyNumber: string,
+    propertyType: string,
+  ): Promise<ManyPropertyDetail> {
+    const { id, api } = await this.createApi()
+
+    const res = await api
+      .vedbokavottordRegluverkiPost({
+        skilabod: {
+          audkenni: id,
+          fastanumer:
+            propertyType === '0'
+              ? cleanPropertyNumber(propertyNumber)
+              : propertyNumber,
+          tegundAndlags:
+            propertyType === '1'
+              ? VedbondTegundAndlags.NUMBER_1 // 1 = Vehicle
+              : propertyType === '2'
+              ? VedbondTegundAndlags.NUMBER_2 // 2 = Ship
+              : VedbondTegundAndlags.NUMBER_0, // 0 = Real estate
         },
-        unitsOfUse: {
-          unitsOfUse: [
-            {
-              explanation: res[0].notkun,
-            },
-          ],
-        },
-      }
-    } else {
-      throw new Error()
+      })
+      .catch(() => {
+        throw new Error(
+          `Failed to get all properties for property number: ${propertyNumber}`,
+        )
+      })
+
+    return {
+      propertyNumber: res.fastanum,
+      propertyType: res.tegundEignar,
+      realEstate: res.fasteign ? res.fasteign.map(mapRealEstateResponse) : [],
+      vehicle: res.okutaeki ? mapVehicleResponse(res.okutaeki) : undefined,
+      ship: res.skip ? mapShipResponse(res.skip) : undefined,
     }
   }
 
@@ -574,6 +642,29 @@ export class SyslumennService {
     return res
       .map(mapMasterLicence)
       .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
+  }
+
+  async getJourneymanLicences() {
+    const { id, api } = await this.createApi()
+    const res = await api.sveinsbrefGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapJourneymanLicence)
+      .filter((licence) => Boolean(licence.name) && Boolean(licence.profession))
+  }
+
+  async getProfessionRights() {
+    const { id, api } = await this.createApi()
+    const res = await api.starfsrettindiGet({
+      audkenni: id,
+    })
+    return res
+      .map(mapProfessionRight)
+      .filter(
+        (professionRight) =>
+          Boolean(professionRight.name) && Boolean(professionRight.profession),
+      )
   }
 
   async checkCriminalRecord(nationalId: string) {

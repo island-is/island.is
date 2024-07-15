@@ -22,7 +22,7 @@ import { OrganizationSubpage } from './models/organizationSubpage.model'
 import { GetPublishedMaterialInput } from './dto/getPublishedMaterial.input'
 import { EnhancedAssetSearchResult } from './models/enhancedAssetSearchResult.model'
 import { ApiResponse } from '@elastic/elasticsearch'
-import { SearchResponse } from 'elastic'
+import { SearchResponse } from '@island.is/shared/types'
 import { MappedData } from '@island.is/content-search-indexer/types'
 import { SupportQNA } from './models/supportQNA.model'
 import { GetFeaturedSupportQNAsInput } from './dto/getFeaturedSupportQNAs.input'
@@ -454,7 +454,7 @@ export class CmsElasticsearchService {
   async getGenericListItems(
     input: GetGenericListItemsInput,
   ): Promise<GenericListItemResponse> {
-    const must: Record<string, unknown>[] = [
+    let must: Record<string, unknown>[] = [
       {
         term: {
           type: {
@@ -514,6 +514,12 @@ export class CmsElasticsearchService {
     // Order by score first in case there is a query string
     if (queryString.length > 0 && queryString !== '*') {
       sort.unshift('_score')
+    }
+
+    if (input.tags && input.tags.length > 0 && input.tagGroups) {
+      must = must.concat(
+        generateGenericTagGroupQueries(input.tags, input.tagGroups),
+      )
     }
 
     const response: ApiResponse<SearchResponse<MappedData>> =

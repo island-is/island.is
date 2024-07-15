@@ -9,6 +9,7 @@ import {
   CommentType,
   DateType,
   type User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { environment } from '../../environments'
@@ -20,6 +21,7 @@ import {
 } from '../modules/case'
 import { CaseListEntry } from '../modules/case-list'
 import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
+import { CreateEventLogInput } from '../modules/event-log'
 import {
   CaseFile,
   DeleteFileResponse,
@@ -404,8 +406,18 @@ export class BackendApi extends DataSource<{ req: Request }> {
     return this.delete(`case/${caseId}/limitedAccess/file/${id}`)
   }
 
-  limitedAccessGetAllFiles(caseId: string): Promise<Buffer> {
-    return this.get(`case/${caseId}/limitedAccess/files/all`)
+  createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
+    return fetch(`${environment.backend.url}/api/eventLog/event`, {
+      method: 'POST',
+      headers: {
+        authorization: `Bearer ${environment.backend.secretToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        ...eventLog,
+        userRole,
+      }),
+    })
   }
 }
 

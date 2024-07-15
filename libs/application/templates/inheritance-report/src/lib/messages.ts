@@ -199,6 +199,16 @@ export const m = defineMessages({
       'Persónustillingar þínar (sími og netfang) þínar frá Ísland.is.',
     description: '',
   },
+  maritalStatusProviderTitle: {
+    id: 'ir.application:maritalStatusProviderTitle',
+    defaultMessage: 'Hjúskaparstaða',
+    description: '',
+  },
+  maritalStatusProviderSubtitle: {
+    id: 'ir.application:maritalStatusProviderSubtitle',
+    defaultMessage: 'Hjúskaparstaða falleg lýsing kemur hér.',
+    description: '',
+  },
 
   // Applicant's Information
   applicantsInfo: {
@@ -1203,11 +1213,6 @@ export const m = defineMessages({
   },
   deceasedShare: {
     id: 'ir.application:deceasedShare',
-    defaultMessage: 'Hlutfall séreignar',
-    description: '',
-  },
-  deceasedSharePart: {
-    id: 'ir.application:deceasedSharePart',
     defaultMessage: 'Hlutfall séreignar',
     description: '',
   },

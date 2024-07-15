@@ -56,6 +56,10 @@ class ConfigCatAsyncStorageCache {
   }
 }
 
+// Temporary way to get feature flag values in logout function.
+// Consider removing when not needed anymore.
+export let featureFlagClient: configcat.IConfigCatClient | null = null
+
 export const FeatureFlagProvider: FC<
   React.PropsWithChildren<FeatureFlagContextProviderProps>
 > = ({ children }) => {
@@ -63,7 +67,7 @@ export const FeatureFlagProvider: FC<
   const [time, setTime] = useState(Date.now())
   const { environment = environments.prod } = useEnvironmentStore()
 
-  const featureFlagClient = useMemo(() => {
+  const client = useMemo(() => {
     return configcat.getClient(
       environment.configCat ?? '',
       configcat.PollingMode.AutoPoll,
@@ -74,15 +78,16 @@ export const FeatureFlagProvider: FC<
       },
     )
   }, [environment])
+  featureFlagClient = client
 
   useEffect(() => {
     const listener = () => setTime(Date.now())
-    featureFlagClient.addListener('configChanged', listener)
+    client.addListener('configChanged', listener)
 
     return () => {
-      featureFlagClient.removeListener('configChanged', listener)
+      client.removeListener('configChanged', listener)
     }
-  }, [featureFlagClient])
+  }, [client])
 
   const context = useMemo<FeatureFlagClient>(() => {
     const userAuth =
@@ -101,9 +106,9 @@ export const FeatureFlagProvider: FC<
         defaultValue: boolean | string,
         user: FeatureFlagUser | undefined = userAuth,
       ) {
-        return featureFlagClient.getValueAsync(key, defaultValue, user)
+        return client.getValueAsync(key, defaultValue, user)
       },
-      dispose: () => featureFlagClient.dispose(),
+      dispose: () => client.dispose(),
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [featureFlagClient, userInfo, time])

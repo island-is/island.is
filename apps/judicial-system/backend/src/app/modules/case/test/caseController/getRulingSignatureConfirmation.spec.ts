@@ -1,8 +1,6 @@
 import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
-import { ForbiddenException } from '@nestjs/common'
-
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import {
   CaseFileState,
@@ -66,7 +64,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
     const mockToday = nowFactory as jest.Mock
     mockToday.mockReturnValueOnce(date)
     const mockPutGeneratedObject =
-      mockAwsS3Service.putGeneratedObject as jest.Mock
+      mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
     mockPutGeneratedObject.mockResolvedValue(uuid())
     const mockUpdate = mockCaseModel.update as jest.Mock
     mockUpdate.mockResolvedValue([1])
@@ -131,7 +129,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-      expect(mockAwsS3Service.putGeneratedObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
@@ -167,7 +165,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
         { rulingSignatureDate: date },
         { where: { id: caseId }, transaction },
       )
-      expect(mockAwsS3Service.putGeneratedObject).toHaveBeenCalled()
+      expect(mockAwsS3Service.putGeneratedRequestCaseObject).toHaveBeenCalled()
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         { type: MessageType.DELIVERY_TO_COURT_SIGNED_RULING, user, caseId },
         {
@@ -212,25 +210,6 @@ describe('CaseController - Get ruling signature confirmation', () => {
       ])
     })
   })
-
-  describe('user is not the assigned judge', () => {
-    const caseId = uuid()
-    const theCase = { id: caseId, judgeId: uuid() } as Case
-    const documentToken = uuid()
-    let then: Then
-
-    beforeEach(async () => {
-      then = await givenWhenThen(caseId, user, theCase, documentToken)
-    })
-
-    it('should throw ForbiddenException', () => {
-      expect(then.error).toBeInstanceOf(ForbiddenException)
-      expect(then.error.message).toBe(
-        'A ruling must be signed by the assigned judge',
-      )
-    })
-  })
-
   describe('database update fails', () => {
     const caseId = uuid()
     const theCase = {
@@ -265,7 +244,7 @@ describe('CaseController - Get ruling signature confirmation', () => {
 
     beforeEach(async () => {
       const mockPutGeneratedObject =
-        mockAwsS3Service.putGeneratedObject as jest.Mock
+        mockAwsS3Service.putGeneratedRequestCaseObject as jest.Mock
       mockPutGeneratedObject.mockRejectedValueOnce(new Error('Some error'))
 
       then = await givenWhenThen(caseId, user, theCase, documentToken)

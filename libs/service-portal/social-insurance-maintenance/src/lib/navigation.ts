@@ -4,6 +4,7 @@ import { SocialInsuranceMaintenancePaths } from './paths'
 
 export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
   name: m.socialInsuranceMaintenance,
+  description: m.socialInsuranceMaintenanceIntro,
   path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceRoot,
   icon: {
     icon: 'cardWithCheckmark',
