@@ -14,7 +14,6 @@ import {
   ApplicationConfigurations,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { ApiActions, Events, Roles, States } from '../utils/constants'
 import { m } from './messages'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { dataSchema } from './dataSchema'
@@ -25,6 +24,7 @@ import {
   NationalRegistryUserApi,
   UserInfoApi,
 } from '../dataProviders'
+import { ApiActions, Events, Roles, States } from '../types/types'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENTS_INAO]
