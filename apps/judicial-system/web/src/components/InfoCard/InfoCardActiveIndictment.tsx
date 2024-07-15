@@ -86,8 +86,8 @@ const InfoCardActiveIndictment = () => {
                   value: (
                     <>
                       {readableIndictmentSubtypes(
-                        workingCase.policeCaseNumbers,
-                        workingCase.indictmentSubtypes,
+                        mergedCase.policeCaseNumbers,
+                        mergedCase.indictmentSubtypes,
                       ).map((subtype, index) => (
                         <Text key={`${subtype}-${index}`}>
                           {capitalize(subtype)}
