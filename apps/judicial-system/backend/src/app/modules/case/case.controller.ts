@@ -256,6 +256,12 @@ export class CaseController {
       update.appealRulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
+    if (update.mergeCaseId && update.state !== CaseState.RECEIVED) {
+      throw new BadRequestException(
+        'Cannot merge case that is not in a received state',
+      )
+    }
+
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
