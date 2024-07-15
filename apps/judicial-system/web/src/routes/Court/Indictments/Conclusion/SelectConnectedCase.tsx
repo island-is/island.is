@@ -46,13 +46,23 @@ const SelectConnectedCase: FC<Props> = ({ workingCase, setWorkingCase }) => {
     value: aCase.id,
   })) as ConnectedCaseOption[]
 
+  // For now we only want to allow cases with a single defendant to be able to merge
+  // in to another case
+  const mergeAllowed = workingCase.defendants?.length === 1 ? true : false
+
   const defaultConnectedCase = connectedCases?.find(
     (connectedCase) =>
       workingCase.mergeCase &&
       connectedCase.value === workingCase.mergeCase?.id,
   )
 
-  return connectedCasesLoading ? (
+  return !mergeAllowed ? (
+    <AlertMessage
+      type={'warning'}
+      title={formatMessage(strings.cannotBeMergedTitle)}
+      message={formatMessage(strings.cannotBeMergedMessage)}
+    />
+  ) : connectedCasesLoading ? (
     <Box
       textAlign="center"
       paddingY={2}

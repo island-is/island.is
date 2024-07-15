@@ -25,4 +25,14 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti í upplýsingabox þegar engin opin mál eru fyrir hendi.',
   },
+  cannotBeMergedTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.select_connected_case.cant_be_merged_title',
+    defaultMessage: 'Ekki hægt að sameina mál',
+    description: 'Notaður sem titill þegar ekki er hægt að sameina mál',
+  },
+  cannotBeMergedMessage: {
+    id: 'judicial.system.core:court.indictments.conclusion.select_connected_case.cant_be_merged_message',
+    defaultMessage: 'Einungis er hægt að sameina mál með einum varnaraðila',
+    description: 'Notaður sem titill þegar ekki er hægt að sameina mál',
+  },
 })
