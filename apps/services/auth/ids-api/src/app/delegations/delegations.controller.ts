@@ -93,6 +93,16 @@ export class DelegationsController {
     )
     delegationType: Array<AuthDelegationType>,
   ): Promise<string[]> {
+    if (
+      delegationType &&
+      delegationType.some(
+        (dt) => dt === AuthDelegationType.PersonalRepresentative,
+      )
+    ) {
+      // TODO: For backwards compatibility with IDS, add PersonalRepresentative:postholf type. Then remove this.
+      delegationType.push(AuthDelegationType.PersonalRepresentativePostholf)
+    }
+
     return this.delegationScopeService.findAllScopesTo(
       user,
       fromNationalId,
