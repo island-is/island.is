@@ -2,7 +2,7 @@
 
 ## Prerequisites
 
-Since the mock will be listening on port `8081` the port forwarding for xroad needs to be listening on port `8082` as that is where the mock server will forward requests it does not have mock responses for
+Since the mock will be listening on port `8081`, the port forwarding for xroad needs to be listening on port `8082` as that is where the mock server will forward requests it does not have mock responses for.
 
 ## How to
 
