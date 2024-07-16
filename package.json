@@ -62,8 +62,7 @@
     "infra": "node scripts/infra-cmds.js",
     "run-proxies": "./scripts/run-proxies.sh",
     "proxies": "yarn run-proxies",
-    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts",
-    "mock-national-registry": "mockoon-cli start --data ./mocks/national-registry.json"
+    "hmr-benchmark": "node -r esbuild-register scripts/hmr-benchmark.ts"
   },
   "dependencies": {
     "@apollo/client": "3.7.15",
@@ -182,7 +181,7 @@
     "font-awesome": "4.7.0",
     "form-data": "3.0.0",
     "formik": "2.2.9",
-    "framer-motion": "6.5.1",
+    "framer-motion": "9.0.0",
     "fridagar": "^3.2.0",
     "fuse.js": "7.0.0",
     "glob": "10.3.3",
@@ -338,7 +337,6 @@
     "@graphql-codegen/typescript-operations": "2.5.3",
     "@graphql-codegen/typescript-react-apollo": "3.3.3",
     "@graphql-codegen/typescript-resolvers": "2.7.3",
-    "@mockoon/cli": "8.3.0",
     "@nestjs/schematics": "10.0.1",
     "@nestjs/testing": "10.0.5",
     "@nx/cypress": "19.4.0",
