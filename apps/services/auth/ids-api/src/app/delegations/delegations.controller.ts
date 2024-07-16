@@ -94,8 +94,7 @@ export class DelegationsController {
     delegationType: Array<AuthDelegationType>,
   ): Promise<string[]> {
     if (
-      delegationType &&
-      delegationType.some(
+      delegationType?.some(
         (dt) => dt === AuthDelegationType.PersonalRepresentative,
       )
     ) {
