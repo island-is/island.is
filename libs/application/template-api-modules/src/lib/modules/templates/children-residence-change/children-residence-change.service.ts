@@ -13,6 +13,7 @@ import {
 } from '@island.is/application/templates/family-matters-core/utils'
 import { Override } from '@island.is/application/templates/family-matters-core/types'
 import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import {PRESIGNED_BUCKET} from './constants'
 import { SharedTemplateApiService } from '../../shared'
 import {
   generateApplicationSubmittedEmail,
@@ -30,8 +31,6 @@ type props = Override<
   TemplateApiModuleActionProps,
   { application: CRCApplication }
 >
-
-export const PRESIGNED_BUCKET = 'PRESIGNED_BUCKET'
 
 @Injectable()
 export class ChildrenResidenceChangeService extends BaseTemplateApiService {

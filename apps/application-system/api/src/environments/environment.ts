@@ -1,6 +1,6 @@
 import { Environment } from './environment.interface'
 
-const devConfig: Environment<
+type EnvironmentKeys =
   | 'attachmentBucket'
   | 'baseApiUrl'
   | 'clientLocationOrigin'
@@ -12,8 +12,9 @@ const devConfig: Environment<
   | 'presignBucket'
   | 'userProfile'
   | 'xRoadBasePathWithEnv'
-  | 'smsOptions'
-> = {
+  | 'smsOptions';
+
+const devConfig: Environment<EnvironmentKeys> = {
   production: false,
   environment: 'local',
   name: 'local',
@@ -31,11 +32,10 @@ const devConfig: Environment<
       process.env.WEB_FRONTEND_PORT ?? '4242'
     }/umsoknir`,
     emailOptions: {
-      useTestAccount: !(process.env.USE_SES === 'true') ?? '',
-      useNodemailerApp:
-        process.env.USE_NODEMAILER_APP === 'true' ?? false ?? '',
+      useTestAccount: !(process.env.USE_SES === 'true'),
+      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true',
       options: {
-        region: process.env.EMAIL_REGION ?? 'eu-west-1' ?? '',
+        region: process.env.EMAIL_REGION ?? 'eu-west-1',
       },
     },
     email: {
@@ -72,20 +72,7 @@ const devConfig: Environment<
 }
 
 // TODO: Remove empty-string defaulting
-const prodConfig: Environment<
-  | 'attachmentBucket'
-  | 'baseApiUrl'
-  | 'clientLocationOrigin'
-  | 'email'
-  | 'emailOptions'
-  | 'generalPetition'
-  | 'islykill'
-  | 'jwtSecret'
-  | 'presignBucket'
-  | 'userProfile'
-  | 'xRoadBasePathWithEnv'
-  | 'smsOptions'
-> = {
+const prodConfig: Environment<EnvironmentKeys> = {
   production: true,
   environment: process.env.ENVIRONMENT ?? '',
   name: process.env.name ?? '',

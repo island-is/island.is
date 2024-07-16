@@ -91,7 +91,7 @@ const getPackageStatuses = async (
   return {
     packageStatus: packages.PackageDetailsList?.[0]
       .PackageStatus as PackageStatus,
-    domainStatus: domainPackage?.DomainPackageStatus ?? 'DISSOCIATING',
+    domainStatus: domainPackage?.DomainPackageStatus ?? DomainPackageStatus.DISSOCIATING,
   }
 }
 
@@ -358,7 +358,7 @@ export const createAwsEsPackages = async (
       // we have to wait for package to be ready cause AWS ES can only process one request at a time
       await waitForPackageStatus(
         esPackage.PackageDetails?.PackageID ?? '',
-        'AVAILABLE',
+        PackageStatus.AVAILABLE,
       )
 
       logger.info('Created AWS ES package', { esPackage })
@@ -396,7 +396,7 @@ const getPackageAssociationStatus = async (
   if (!domainPackage) {
     return 'missing'
   }
-  return domainPackage.DomainPackageStatus === 'ACTIVE' ? 'active' : 'broken'
+  return domainPackage.DomainPackageStatus === DomainPackageStatus.ACTIVE ? 'active' : 'broken'
 }
 
 const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
@@ -408,7 +408,7 @@ const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
   logger.info('Disassociating package from AWS ES domain', params)
   const dissociatePackageCommand = new DissociatePackageCommand(params)
   const result = await awsEs.send(dissociatePackageCommand)
-  await waitForPackageStatus(packageId, 'DISSOCIATING')
+  await waitForPackageStatus(packageId, DomainPackageStatus.DISSOCIATING)
   return result
 }
 
@@ -439,7 +439,7 @@ export const associatePackagesWithAwsEsSearchDomain = async (
       // we have to wait for package to be ready cause AWS ES can only process one request at a time
       await waitForPackageStatus(
         esPackage.DomainPackageDetails?.PackageID ?? '',
-        'ACTIVE',
+        DomainPackageStatus.ACTIVE,
       )
     } else {
       logger.info(

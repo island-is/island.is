@@ -64,7 +64,7 @@ export class AwsS3Service {
       Bucket: this.config.bucket,
       Key: formatS3Key(caseType, key),
       Conditions: [
-        ['content-length-range', 0, 10485760], // 10 MB
+        ['content-length-range', 0, 104857600], // 100 MB
         ['starts-with', '$Content-Type', type],
       ],
       Fields: {
