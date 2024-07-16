@@ -9,8 +9,8 @@ Since the mock will be listening on port `8081`, the port forwarding for xroad n
 Just run `yarn mock-national-registry`
 
 ## Current mocks
+
 Currently, only mock responses for the national registry are included.
-Currently only mock responses for the national registry are included.
 
 ## What if I need to call an endpoint that isn't mocked
 
