@@ -1,8 +1,9 @@
 import { DataSource, DataSourceConfig } from 'apollo-datasource'
 import { Request } from 'express'
 
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 
+import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
 import {
@@ -12,16 +13,15 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { environment } from '../../environments'
 import {
   Case,
   RequestSignatureResponse,
   SendNotificationResponse,
   SignatureConfirmationResponse,
-} from '../modules/case'
-import { CaseListEntry } from '../modules/case-list'
-import { Defendant, DeleteDefendantResponse } from '../modules/defendant'
-import { CreateEventLogInput } from '../modules/event-log'
+} from '../case'
+import { CaseListEntry } from '../case-list'
+import { Defendant, DeleteDefendantResponse } from '../defendant'
+import { CreateEventLogInput } from '../event-log'
 import {
   CaseFile,
   DeleteFileResponse,
@@ -29,24 +29,32 @@ import {
   SignedUrl,
   UpdateFilesResponse,
   UploadFileToCourtResponse,
-} from '../modules/file'
+} from '../file'
 import {
   CreateIndictmentCountInput,
   DeleteIndictmentCountInput,
   DeleteIndictmentCountResponse,
   IndictmentCount,
   UpdateIndictmentCountInput,
-} from '../modules/indictment-count'
-import { Institution } from '../modules/institution'
+} from '../indictment-count'
+import { Institution } from '../institution'
 import {
   PoliceCaseFile,
   PoliceCaseInfo,
   UploadPoliceCaseFileResponse,
-} from '../modules/police'
+} from '../police'
+import { backendModuleConfig } from './backend.config'
 
 @Injectable()
-export class BackendApi extends DataSource<{ req: Request }> {
+export class BackendService extends DataSource<{ req: Request }> {
   private headers!: { [key: string]: string }
+
+  constructor(
+    @Inject(backendModuleConfig.KEY)
+    private readonly config: ConfigType<typeof backendModuleConfig>,
+  ) {
+    super()
+  }
 
   initialize(config: DataSourceConfig<{ req: Request }>): void {
     this.headers = {
@@ -61,7 +69,7 @@ export class BackendApi extends DataSource<{ req: Request }> {
     options: RequestInit,
     transformer?: (data: unknown) => TResult,
   ): Promise<TResult> {
-    return fetch(`${environment.backend.url}/api/${route}`, options).then(
+    return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
       async (res) => {
         const response = await res.json()
 
@@ -181,6 +189,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
 
   getCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}`, this.caseTransformer)
+  }
+
+  getConnectedCases(id: string): Promise<Case[]> {
+    return this.get(`case/${id}/connectedCases`)
   }
 
   createCase(createCase: unknown): Promise<Case> {
@@ -407,10 +419,10 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 
   createEventLog(eventLog: CreateEventLogInput, userRole?: UserRole) {
-    return fetch(`${environment.backend.url}/api/eventLog/event`, {
+    return fetch(`${this.config.backendUrl}/api/eventLog/event`, {
       method: 'POST',
       headers: {
-        authorization: `Bearer ${environment.backend.secretToken}`,
+        authorization: `Bearer ${this.config.secretToken}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
@@ -421,4 +433,4 @@ export class BackendApi extends DataSource<{ req: Request }> {
   }
 }
 
-export default BackendApi
+export default BackendService
