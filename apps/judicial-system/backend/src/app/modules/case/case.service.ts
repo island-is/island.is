@@ -1,4 +1,4 @@
-import { Op } from 'sequelize'
+import { Op, WhereOptions } from 'sequelize'
 import { Includeable, OrderItem, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -20,6 +20,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
   CaseMessage,
   MessageService,
@@ -162,6 +163,7 @@ export interface UpdateCase
     | 'rulingSignatureDate'
     | 'judgeId'
     | 'courtSessionType'
+    | 'mergeCaseId'
   > {
   type?: CaseType
   state?: CaseState
@@ -299,6 +301,8 @@ export const include: Includeable[] = [
     where: { commentType: { [Op.in]: commentTypes } },
   },
   { model: Notification, as: 'notifications' },
+  { model: Case, as: 'mergeCase' },
+  { model: Case, as: 'mergedCases', separate: true },
 ]
 
 export const order: OrderItem[] = [
@@ -1317,6 +1321,49 @@ export class CaseService {
     })
   }
 
+  getConnectedIndictmentCases(
+    caseId: string,
+    defendant: Defendant,
+  ): Promise<Case[]> {
+    let whereClause: WhereOptions = {
+      type: CaseType.INDICTMENT,
+      id: { [Op.ne]: caseId },
+      state: [CaseState.RECEIVED],
+    }
+
+    if (defendant.noNationalId) {
+      whereClause = {
+        ...whereClause,
+        [Op.and]: [
+          { '$defendants.national_id$': defendant.nationalId },
+          { '$defendants.name$': defendant.name },
+        ],
+      }
+    } else {
+      const formattedNationalId = formatNationalId(defendant.nationalId)
+      whereClause = {
+        ...whereClause,
+        [Op.or]: [
+          { '$defendants.national_id$': defendant.nationalId },
+          { '$defendants.national_id$': formattedNationalId },
+        ],
+      }
+    }
+
+    return this.caseModel.findAll({
+      include: [
+        { model: Defendant, as: 'defendants' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+        },
+      ],
+      order: [[{ model: DateLog, as: 'dateLogs' }, 'created', 'DESC']],
+      attributes: ['id', 'courtCaseNumber', 'type', 'state'],
+      where: whereClause,
+    })
+  }
+
   async create(caseToCreate: CreateCaseDto, user: TUser): Promise<Case> {
     return this.sequelize
       .transaction(async (transaction) => {
@@ -1479,6 +1526,16 @@ export class CaseService {
       if (update.state === CaseState.COMPLETED) {
         const eventLogDTO = this.constructEventLogDTO(
           EventType.INDICTMENT_COMPLETED,
+          theCase,
+          user,
+        )
+
+        return this.eventLogService.create(eventLogDTO, transaction)
+      }
+
+      if (update.indictmentReviewDecision) {
+        const eventLogDTO = this.constructEventLogDTO(
+          EventType.INDICTMENT_REVIEWED,
           theCase,
           user,
         )

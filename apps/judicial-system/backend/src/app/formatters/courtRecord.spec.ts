@@ -9,9 +9,8 @@ describe('formatCourtEndDate', () => {
     onError: jest.fn,
   }).formatMessage
 
-  function fn(startDate?: Date, endDate?: Date) {
-    return formatCourtEndDate(formatMessage, startDate, endDate)
-  }
+  const fn = (startDate?: Date, endDate?: Date) =>
+    formatCourtEndDate(formatMessage, startDate, endDate)
 
   test('should return court still in progress', () => {
     const startDate = undefined
