@@ -26,7 +26,6 @@ export const useSubmitApplication: UseSubmitApplication = ({
 }) => {
   return useMutation(SUBMIT_APPLICATION, {
     onError: (e) => {
-      console.log('Breytur: ', application.id, event, application.answers)
       console.error(e.message)
       return
     },
