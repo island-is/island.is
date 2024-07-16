@@ -91,7 +91,7 @@ export class DelegationsController {
       'delegationType',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
     )
-    delegationType: Array<AuthDelegationType>,
+    delegationType: Array<string>,
   ): Promise<string[]> {
     if (
       delegationType?.some(
@@ -99,7 +99,9 @@ export class DelegationsController {
       )
     ) {
       // TODO: For backwards compatibility with IDS, add PersonalRepresentative:postholf type. Then remove this.
-      delegationType.push(AuthDelegationType.PersonalRepresentativePostholf)
+      delegationType.push(
+        AuthDelegationType.PersonalRepresentative + ':postholf',
+      )
     }
 
     return this.delegationScopeService.findAllScopesTo(
