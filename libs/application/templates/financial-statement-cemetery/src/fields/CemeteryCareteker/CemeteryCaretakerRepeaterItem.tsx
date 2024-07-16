@@ -56,7 +56,6 @@ export const CaretakerRepeaterItem = ({
     { input: IdentityInput }
   >(IdentityQuery, {
     onCompleted: (data) => {
-
       setValue(nameField, data.identity?.name ?? '')
     },
   })
@@ -64,7 +63,6 @@ export const CaretakerRepeaterItem = ({
   useEffect(() => {
     clearErrors()
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-
       getIdentity({
         variables: {
           input: {
