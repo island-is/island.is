@@ -12,7 +12,7 @@ type EnvironmentKeys =
   | 'presignBucket'
   | 'userProfile'
   | 'xRoadBasePathWithEnv'
-  | 'smsOptions';
+  | 'smsOptions'
 
 const devConfig: Environment<EnvironmentKeys> = {
   production: false,

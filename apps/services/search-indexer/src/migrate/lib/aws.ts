@@ -91,7 +91,8 @@ const getPackageStatuses = async (
   return {
     packageStatus: packages.PackageDetailsList?.[0]
       .PackageStatus as PackageStatus,
-    domainStatus: domainPackage?.DomainPackageStatus ?? DomainPackageStatus.DISSOCIATING,
+    domainStatus:
+      domainPackage?.DomainPackageStatus ?? DomainPackageStatus.DISSOCIATING,
   }
 }
 
@@ -396,7 +397,9 @@ const getPackageAssociationStatus = async (
   if (!domainPackage) {
     return 'missing'
   }
-  return domainPackage.DomainPackageStatus === DomainPackageStatus.ACTIVE ? 'active' : 'broken'
+  return domainPackage.DomainPackageStatus === DomainPackageStatus.ACTIVE
+    ? 'active'
+    : 'broken'
 }
 
 const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
