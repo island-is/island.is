@@ -95,7 +95,19 @@ export function setupEventHandlers() {
 
       if (status === 'background' || status === 'inactive') {
         // Add a small delay for those accidental backgrounds in iOS
-        backgroundAppLockTimeout = setTimeout(() => {
+        if (isIos) {
+          backgroundAppLockTimeout = setTimeout(() => {
+            const { lockScreenComponentId, lockScreenActivatedAt } =
+              authStore.getState()
+
+            if (!lockScreenComponentId && !lockScreenActivatedAt) {
+              showAppLockOverlay({ status })
+            } else if (lockScreenComponentId) {
+              Navigation.updateProps(lockScreenComponentId, { status })
+            }
+          }, 100)
+        } else {
+          // set timeout does not work properly on android when app is in background
           const { lockScreenComponentId, lockScreenActivatedAt } =
             authStore.getState()
 
@@ -104,7 +116,7 @@ export function setupEventHandlers() {
           } else if (lockScreenComponentId) {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
-        }, 100)
+        }
       }
 
       if (status === 'active') {

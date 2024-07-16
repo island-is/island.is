@@ -274,7 +274,7 @@ const CaseFile: FC<CaseFileProps> = (props) => {
             <Icon icon="menu" color="blue400" />
           </Box>
           <Box width="full">
-            <AnimatePresence initial={false} exitBeforeEnter>
+            <AnimatePresence initial={false} mode="wait">
               {isEditing ? (
                 <motion.div
                   initial={{ y: 10, opacity: 0 }}
