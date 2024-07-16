@@ -18,6 +18,7 @@ import {
   PageLayout,
   PageTitle,
   useIndictmentsLawsBroken,
+  ConnectedCaseFilesAccordionItem,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
@@ -103,6 +104,13 @@ const IndictmentOverview = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
+        {workingCase.mergedCases &&
+          workingCase.mergedCases.length > 0 &&
+          workingCase.mergedCases.map((mergedCase) => (
+            <Box marginBottom={5}>
+              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+            </Box>
+          ))}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />

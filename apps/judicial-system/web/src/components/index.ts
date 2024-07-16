@@ -10,6 +10,7 @@ export {
   default as CheckboxList,
   type CheckboxInfo,
 } from './CheckboxList/CheckboxList'
+export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export { default as ContextMenu } from './ContextMenu/ContextMenu'
@@ -53,7 +54,7 @@ export { default as ParentCaseFiles } from './ParentCaseFiles/ParentCaseFiles'
 export { default as PdfButton } from './PdfButton/PdfButton'
 export { default as PoliceRequestAccordionItem } from './AccordionItems/PoliceRequestAccordionItem/PoliceRequestAccordionItem'
 export { default as ProsecutorSelection } from './ProsecutorSelection/ProsecutorSelection'
-export { RenderFiles } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
+export { RenderFiles,  } from './IndictmentCaseFilesList/IndictmentCaseFilesList'
 export { default as RestrictionTags } from './RestrictionTags/RestrictionTags'
 export { default as RulingAccordionItem } from './AccordionItems/RulingAccordionItem/RulingAccordionItem'
 export { default as RulingInput } from './RulingInput/RulingInput'
