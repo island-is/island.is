@@ -64,11 +64,6 @@ export const CaretakerRepeaterItem = ({
   useEffect(() => {
     clearErrors()
     if (nationalIdInput.length === 10 && kennitala.isValid(nationalIdInput)) {
-      console.log('Kalla í getIdentity með: ', {
-        input: {
-          nationalId: nationalIdInput,
-        },
-      })
 
       getIdentity({
         variables: {
