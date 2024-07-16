@@ -56,7 +56,6 @@ export const CaretakerRepeaterItem = ({
     { input: IdentityInput }
   >(IdentityQuery, {
     onCompleted: (data) => {
-      console.log('Hér er data: ', data)
 
       setValue(nameField, data.identity?.name ?? '')
     },
