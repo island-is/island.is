@@ -570,6 +570,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getSpousalInfo({ auth }: TemplateApiModuleActionProps) {
-    await this.siaClientService.getSpousalInfo(auth)
+    return await this.siaClientService.getSpousalInfo(auth)
   }
 }

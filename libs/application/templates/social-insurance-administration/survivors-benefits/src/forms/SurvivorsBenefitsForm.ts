@@ -36,7 +36,6 @@ import isEmpty from 'lodash/isEmpty'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  hasSpouseLessThanAYear,
 } from '../lib/survivorsBenefitsUtils'
 import {
   friendlyFormatIBAN,
@@ -348,41 +347,35 @@ export const SurvivorsBenefitsForm: Form = buildForm({
               title: survivorsBenefitsFormMessage.info.deceasedSpouseTitle,
               description:
                 survivorsBenefitsFormMessage.info.deceasedSpouseDescription,
-              // Use correct value for condition
               condition: (_, externalData) =>
-                !!getApplicationExternalData(externalData).maritalStatus,
+                !!getApplicationExternalData(externalData)
+                  .deceasedSpouseNationalId,
               children: [
                 buildTextField({
                   id: 'deceasedSpouseInfo.nationalId',
                   title:
                     survivorsBenefitsFormMessage.info.deceasedSpouseNationalId,
                   width: 'half',
-                  defaultValue: 'id',
-                  // Use correct value for condition
-                  // (application: Application) =>
-                  //   getApplicationExternalData(application.externalData)
-                  //     .socialInsuranceAdministrationSpousalInfo.nationalId,
+                  defaultValue: (application: Application) =>
+                    getApplicationExternalData(application.externalData)
+                      .deceasedSpouseNationalId,
                   readOnly: true,
                 }),
                 buildDateField({
                   id: 'deceasedSpouseInfo.date',
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseDate,
                   width: 'half',
-                  defaultValue: new Date('1995-11-24').toISOString(),
-                  // Use correct value for condition
-                  // (application: Application) =>
-                  //   getApplicationExternalData(application.externalData)
-                  //     .socialInsuranceAdministrationSpousalInfo.date,
+                  defaultValue: (application: Application) =>
+                    getApplicationExternalData(application.externalData)
+                      .deceasedSpouseDateOfDeath,
                   readOnly: true,
                 }),
                 buildTextField({
                   id: 'deceasedSpouseInfo.name',
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
-                  defaultValue: 'name',
-                  // Use correct value for condition
-                  // (application: Application) =>
-                  //   getApplicationExternalData(application.externalData)
-                  //     .socialInsuranceAdministrationSpousalInfo.name,
+                  defaultValue: (application: Application) =>
+                    getApplicationExternalData(application.externalData)
+                      .deceasedSpouseName,
                   readOnly: true,
                 }),
               ],
@@ -395,7 +388,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                   .deceasedSpouseNotFoundDescription,
               // Use correct value for condition
               condition: (_, externalData) =>
-                !getApplicationExternalData(externalData).maritalStatus,
+                !getApplicationExternalData(externalData)
+                  .deceasedSpouseNationalId,
               children: [
                 buildCheckboxField({
                   id: 'deceasedSpouseInfo.notIcelandic',
@@ -498,7 +492,10 @@ export const SurvivorsBenefitsForm: Form = buildForm({
           title: survivorsBenefitsFormMessage.info.expectingChildTitle,
           condition: (_, externalData) => {
             const { hasSpouse } = getApplicationExternalData(externalData)
-            const spouseLessThanAYear = hasSpouseLessThanAYear(externalData)
+            const spouseLessThanAYear =
+              getApplicationExternalData(
+                externalData,
+              ).deceasedSpouseCohabitationLessThan1Year
 
             //if no spouse info is found or cohabitation has lasted less than a year, then show question
             if (hasSpouse === null || spouseLessThanAYear) return true
