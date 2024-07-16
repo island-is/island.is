@@ -18,7 +18,7 @@ No problem, mockoon will transparently proxy whatever requests it does not have 
 
 ## My calls aren't being mocked
 
-The mocks are currently set up for the Gervimaður Færeyjar fake person. If you need to mock other fake prersons you can download the [mockoon app](https://mockoon.com/download/) and either open the `national-registry.json` collection or start your own with [automocking](https://mockoon.com/docs/latest/logging-and-recording/auto-mocking-and-recording/)
+The mocks are currently set up for the Gervimaður Færeyjar fake person. If you need to mock other fake persons, you can download the [mockoon app](https://mockoon.com/download/) and either open the `national-registry.json` collection or start your own with [automocking](https://mockoon.com/docs/latest/logging-and-recording/auto-mocking-and-recording/)
 
 ## Does the mocking proxy only respond with mocks when the proxied service is down?
 
