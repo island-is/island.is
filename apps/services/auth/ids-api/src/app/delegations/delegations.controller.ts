@@ -9,7 +9,6 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
-import { AuthDelegationType } from 'delegation'
 
 import {
   DelegationDTO,

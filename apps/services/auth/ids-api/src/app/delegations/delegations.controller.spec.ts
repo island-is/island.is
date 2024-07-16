@@ -1,5 +1,4 @@
 import { getModelToken } from '@nestjs/sequelize'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
 import faker from 'faker'
 import times from 'lodash/times'
 import request from 'supertest'
