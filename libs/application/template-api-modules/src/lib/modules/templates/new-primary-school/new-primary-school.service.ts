@@ -5,6 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school-utils'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -34,5 +35,21 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     const { childNationalId } = getApplicationAnswers(application.answers)
 
     return await this.friggClientService.getUserById(auth, childNationalId)
+  }
+
+  // TODO: Þarf auth?
+  async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
+    const newPrimarySchoolDTO =
+      transformApplicationToNewPrimarySchoolDTO(application)
+
+    console.log('=====> newPrimarySchoolDTO: ', newPrimarySchoolDTO)
+
+    const response = await this.friggClientService.sendApplication(
+      auth,
+      newPrimarySchoolDTO,
+    )
+    console.log('=====> response: ', response)
+
+    return response
   }
 }

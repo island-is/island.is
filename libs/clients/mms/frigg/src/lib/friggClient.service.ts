@@ -1,9 +1,11 @@
 import { Auth, AuthMiddleware, type User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  FormDto,
   FriggApi,
   KeyOption,
   OrganizationModel,
+  SuccessModel,
   UserModel,
 } from '../../gen/fetch'
 
@@ -35,5 +37,9 @@ export class FriggClientService {
     return await this.friggApiWithAuth(user).getUserBySourcedId({
       nationalId: childNationalId,
     })
+  }
+
+  sendApplication(user: User, form: FormDto): Promise<SuccessModel> {
+    return this.friggApiWithAuth(user).submitForm({ formDto: form })
   }
 }
