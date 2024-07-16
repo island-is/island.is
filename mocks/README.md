@@ -22,4 +22,4 @@ The mocks are currently set up for the Gervimaður Færeyjar fake person. If you
 
 ## Does the mocking proxy only respond with mocks when the proxied service is down?
 
-No, one of the benefits of mocking locally is way shorter response time and to get that we need to mock even if the underlying service is up.
+No, one of the benefits of mocking locally is a significantly shorter response time, and to achieve that, it's necessary to use mocks even if the underlying service is operational.
