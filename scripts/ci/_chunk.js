@@ -5,6 +5,8 @@ const projects = process.argv[2].split(',').map((s) => s.trim()) ?? []
 const problematicProjects = [
   'judicial-system-backend',
   'application-system-api',
+  'services-auth-delegation-api',
+  'services-auth-personal-representative',
 ]
 
 function groupbByPrefix(arr) {

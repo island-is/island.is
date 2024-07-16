@@ -266,5 +266,15 @@ query Case($input: CaseQueryInput!) {
     indictmentVerdictAppealDeadline
     indictmentDecision
     indictmentReviewDecision
+    indictmentCompletedDate
+    courtSessionType
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+    }
   }
 }

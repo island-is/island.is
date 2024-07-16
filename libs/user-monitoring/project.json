@@ -3,21 +3,17 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/user-monitoring/src",
   "projectType": "library",
+  "tags": ["lib:dom", "scope:dom"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/user-monitoring/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/user-monitoring"],
       "options": {
-        "jestConfig": "libs/user-monitoring/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/user-monitoring/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:dom", "scope:dom"]
+  }
 }

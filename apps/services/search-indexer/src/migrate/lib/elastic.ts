@@ -18,7 +18,7 @@ import {
   MetricsService,
 } from '@island.is/content-search-metrics'
 import { AwsEsPackage } from './aws'
-import { SearchResponse } from 'elastic'
+import { SearchResponse } from '@island.is/shared/types'
 
 const esService = new ElasticService()
 

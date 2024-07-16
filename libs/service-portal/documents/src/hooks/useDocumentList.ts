@@ -7,7 +7,9 @@ import differenceInYears from 'date-fns/differenceInYears'
 
 export const pageSize = 10
 
-export const useDocumentList = () => {
+type UseDocumentListProps = { defaultPageSize?: number }
+
+export const useDocumentList = (props?: UseDocumentListProps) => {
   const {
     filterValue,
     page,
@@ -41,7 +43,7 @@ export const useDocumentList = () => {
       typeId: null,
       opened: filterValue.showUnread ? false : null,
       page: page,
-      pageSize: pageSize,
+      pageSize: props?.defaultPageSize ?? pageSize,
       isLegalGuardian: hideHealthData,
       archived: filterValue.archived,
       bookmarked: filterValue.bookmarked,

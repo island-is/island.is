@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
@@ -16,8 +16,7 @@ interface Props {
   rows?: number
 }
 
-const RulingInput: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { workingCase, setWorkingCase, rows } = props
+const RulingInput: FC<Props> = ({ workingCase, setWorkingCase, rows }) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
 

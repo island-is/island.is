@@ -55,7 +55,7 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
 
-  // peronal info screen
+  // personal info screen
   'personalInfo.screenTitle': 'Personal info',
 
   // user
@@ -77,12 +77,16 @@ export const en: TranslatedMessages = {
   'settings.usersettings.email': 'Email',
   'settings.usersettings.bankinfo': 'Bank info',
   'settings.communication.groupTitle': 'Notifications and communication',
-  'settings.communication.newDocumentsNotifications':
-    'Get notifications of new documents',
-  'settings.communication.appUpdatesNotifications':
-    'Get notifications about app updates',
-  'settings.communication.applicationsNotifications':
-    'Get notifications about application status updates',
+  'settings.communication.newNotificationsEmailLabel': 'Notifications in email',
+  'settings.communication.newNotificationsEmailDescription':
+    'Government agencies can send you notifications in email.',
+  'settings.communication.newNotificationsErrorTitle': 'Error',
+  'settings.communication.newNotificationsErrorDescription':
+    'Failed to update settings',
+  'settings.communication.newNotificationsInAppLabel':
+    'Notifications in the Island.is app',
+  'settings.communication.newNotificationsInAppDescription':
+    'Government agencies can send you notifications in the Island.is app.',
   'settings.security.privacyTitle': 'Privacy Policy',
   'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
@@ -91,6 +95,18 @@ export const en: TranslatedMessages = {
   'settings.security.useBiometricsLabel': 'Use {biometricType}',
   'settings.security.useBiometricsDescription':
     'With {biometricType} you don’t need to enter PIN',
+  'settings.security.createPasskeyLabel': 'Create a passkey',
+  'settings.security.createPasskeyDescription':
+    'To automatically sign in to Island.is through the app in this device',
+  'settings.security.removePasskeyLabel': 'Delete passkey',
+  'settings.security.removePasskeyDescription':
+    'By deleting your passkey you skip signing in automatically to Island.is with the app',
+  'settings.security.removePasskeyPromptTitle':
+    'Do you want to delete the passkey?',
+  'settings.security.removePasskeyPromptDescription':
+    'By deleting your passkey you can not sign in automatically to Island.is with the app',
+  'settings.security.removePasskeyButton': 'Delete',
+  'settings.security.removePasskeyCancelButton': 'Cancel',
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
@@ -101,6 +117,15 @@ export const en: TranslatedMessages = {
   'settings.about.codePushLabel': 'Updates',
   'settings.about.codePushLoading': 'Loading...',
   'settings.about.codePushUpToDate': 'The app is up to date',
+  'settings.about.codePushUpToDateTitle': 'Up to date',
+  'settings.about.codePushUpdateCancelledTitle': 'Update cancelled',
+  'settings.about.codePushUpdateCancelledDescription':
+    'The update was cancelled',
+  'settings.about.codePushUpdateInstalledTitle': 'Update installed',
+  'settings.about.codePushUpdateInstalledDescription':
+    'The app has been updated',
+  'settings.about.codePushUpdateErrorTitle': 'Unknown error',
+  'settings.about.codePushUpdateErrorDescription': 'An unknown error occurred',
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',
@@ -143,8 +168,9 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.notifications': 'Notifications',
+  'home.inbox': 'Latest in inbox',
   'home.welcomeText': 'Hi',
+  'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
     'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
   'home.onboardingModule.card2':
@@ -177,6 +203,8 @@ export const en: TranslatedMessages = {
   'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
   'inbox.markAllAsReadPromptCancel': 'Cancel',
   'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
+  'inbox.cardNoInboxDocuments':
+    'When you receive mail in your mailbox, it will appear here.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
@@ -523,4 +551,15 @@ export const en: TranslatedMessages = {
   'problem.offline.title': 'No internet connection',
   'problem.offline.message':
     'An error occurred while communicating with the service provider',
+
+  // passkeys
+  'passkeys.headingTitle': 'Sign in with Island.is app',
+  'passkeys.openUrlHeadingSubtitle':
+    'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.headingSubtitle':
+    'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.createButton': 'Create a passkey',
+  'passkeys.skipButton': 'Skip',
+  'passkeys.errorRegistering': 'Error',
+  'passkeys.errorRegisteringMessage': 'Could not create a passkey',
 }

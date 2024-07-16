@@ -41,9 +41,7 @@ import {
 } from '../../components'
 import ArrestDate from './ArrestDate'
 
-export const HearingArrangements: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+export const HearingArrangements = () => {
   const router = useRouter()
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
