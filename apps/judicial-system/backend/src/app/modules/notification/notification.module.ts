@@ -8,11 +8,20 @@ import { SmsModule } from '@island.is/nova-sms'
 import { MessageModule } from '@island.is/judicial-system/message'
 
 import { environment } from '../../../environments'
-import { CaseModule, CourtModule, DefendantModule, EventModule } from '../index'
+import {
+  CaseModule,
+  CourtModule,
+  DefendantModule,
+  EventModule,
+  InstitutionModule,
+} from '../index'
 import { Notification } from './models/notification.model'
+import { InstitutionNotificationService } from './institutionNotification.service'
 import { InternalNotificationController } from './internalNotification.controller'
+import { InternalNotificationService } from './internalNotification.service'
 import { NotificationController } from './notification.controller'
 import { NotificationService } from './notification.service'
+import { NotificationDispatchService } from './notificationDispatch.service'
 
 @Module({
   imports: [
@@ -20,6 +29,7 @@ import { NotificationService } from './notification.service'
     SmsModule.register(environment.smsOptions),
     CmsTranslationsModule,
     MessageModule,
+    InstitutionModule,
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),
     forwardRef(() => EventModule),
@@ -27,6 +37,11 @@ import { NotificationService } from './notification.service'
     SequelizeModule.forFeature([Notification]),
   ],
   controllers: [NotificationController, InternalNotificationController],
-  providers: [NotificationService],
+  providers: [
+    NotificationService,
+    InternalNotificationService,
+    NotificationDispatchService,
+    InstitutionNotificationService,
+  ],
 })
 export class NotificationModule {}

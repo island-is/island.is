@@ -11,7 +11,7 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 
 jest.mock('../../../../factories')
@@ -23,7 +23,7 @@ interface Then {
 
 type GivenWhenThen = (
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send indictment denied notification', () => {
@@ -44,7 +44,7 @@ describe('InternalNotificationController - Send indictment denied notification',
 
     givenWhenThen = async (
       theCase: Case,
-      notificationDto: SendInternalNotificationDto,
+      notificationDto: CaseNotificationDto,
     ) => {
       const then = {} as Then
 
@@ -60,7 +60,7 @@ describe('InternalNotificationController - Send indictment denied notification',
   describe('notification sent', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.INDICTMENT_DENIED,
     }
