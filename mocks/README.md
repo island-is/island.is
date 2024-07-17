@@ -4,13 +4,17 @@
 
 Since the mock will be listening on port `8081`, the port forwarding for xroad needs to be listening on port `8082` as that is where the mock server will forward requests it does not have mock responses for.
 
+To set the port forwarding to listen on port `8082` you can pass a port argument to the proxies script like so `yarn proxies xroad --p 8082`. Alternatively if you use kubectl and socat just replace `8081:80` with `8082:80`.
+
 ## How to
 
-Just run `yarn mock-national-registry`
+First you'll want to install [mockoon-cli](https://github.com/mockoon/mockoon/tree/main/packages/cli#installation), then you just call `mockoon-cli start --data ./mocks/national-registry.json`. Mockoon will now start listening on port `8081`and proxying non-mocked traffic to port `8082`.
+
+For more in depth instructions you can check out the [mockoon site](https://mockoon.com/cli/).
 
 ## Current mocks
 
-Currently, only mock responses for the national registry are included.
+Currently, only mock responses for the national registry V2 are included.
 
 ## What if I need to call an endpoint that isn't mocked
 
