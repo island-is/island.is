@@ -177,7 +177,7 @@ export const PasskeyScreen: NavigationFunctionComponent<{
                       authenticationResponse,
                     )
                     if (urlWithLoginHint) {
-                      openNativeBrowser(urlWithLoginHint)
+                      openNativeBrowser(urlWithLoginHint, parentComponentId)
                     }
                   }
                   setIsLoading(false)
@@ -200,7 +200,9 @@ export const PasskeyScreen: NavigationFunctionComponent<{
 
                 // If authenticate fails we fail silently - close the modal and open the browser
                 Navigation.dismissModal(componentId)
-                url && openNativeBrowser(url, parentComponentId)
+                if (url) {
+                  openNativeBrowser(url, parentComponentId)
+                }
               }
             }}
             style={{ marginBottom: theme.spacing[1] }}

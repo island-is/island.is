@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { PoliceCaseFilesQueryInput } from './dto/policeCaseFiles.input'
 import { PoliceCaseInfoQueryInput } from './dto/policeCaseInfo.input'
 import { UploadPoliceCaseFileInput } from './dto/uploadPoliceCaseFile.input'
@@ -36,14 +36,15 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceCaseFilesQueryInput })
     input: PoliceCaseFilesQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<PoliceCaseFile[]> {
     this.logger.debug(`Getting all police case files for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_CASE_FILES,
-      backendApi.getPoliceCaseFiles(input.caseId),
+      backendService.getPoliceCaseFiles(input.caseId),
       input.caseId,
     )
   }
@@ -53,14 +54,15 @@ export class PoliceResolver {
     @Args('input', { type: () => PoliceCaseInfoQueryInput })
     input: PoliceCaseInfoQueryInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<PoliceCaseInfo[]> {
     this.logger.debug(`Getting all police case info for case ${input.caseId}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_POLICE_CASE_INFO,
-      backendApi.getPoliceCaseInfo(input.caseId),
+      backendService.getPoliceCaseInfo(input.caseId),
       input.caseId,
     )
   }
@@ -70,7 +72,8 @@ export class PoliceResolver {
     @Args('input', { type: () => UploadPoliceCaseFileInput })
     input: UploadPoliceCaseFileInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<UploadPoliceCaseFileResponse> {
     const { caseId, ...uploadPoliceFile } = input
     this.logger.debug(
@@ -80,7 +83,7 @@ export class PoliceResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPLOAD_POLICE_CASE_FILE,
-      backendApi.uploadPoliceFile(input.caseId, uploadPoliceFile),
+      backendService.uploadPoliceFile(input.caseId, uploadPoliceFile),
       input.caseId,
     )
   }

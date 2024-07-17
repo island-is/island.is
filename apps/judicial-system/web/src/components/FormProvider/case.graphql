@@ -268,5 +268,13 @@ query Case($input: CaseQueryInput!) {
     indictmentReviewDecision
     indictmentCompletedDate
     courtSessionType
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+    }
   }
 }
