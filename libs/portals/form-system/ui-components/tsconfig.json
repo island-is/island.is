@@ -4,8 +4,7 @@
     "allowJs": false,
     "esModuleInterop": false,
     "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "types": ["node"]
+    "strict": true
   },
   "files": [],
   "include": [],

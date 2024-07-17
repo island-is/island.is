@@ -845,7 +845,7 @@
       "@island.is/form-system/graphql": [
         "libs/portals/form-system/graphql/src/index.ts"
       ],
-      "@island.is/form-system/ui": ["libs/portals/form-system/ui/src/index.ts"],
+      "@island.is/form-system/ui": ["libs/portals/form-system/ui-components/src/index.ts"],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -1084,7 +1084,11 @@
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/web/component*": ["apps/web/component*/real.ts"]
+      "@island.is/web/component*": ["apps/web/component*/real.ts"],
+      "portals/form-system/ui-components": [
+        "libs/portals/form-system/ui-components/src/index.ts"
+      ],
+      "portals/form-system/ui2": ["libs/portals/form-system/ui2/src/index.ts"]
     }
   }
 }
