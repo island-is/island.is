@@ -1,11 +1,12 @@
 /* eslint-disable */
 export default {
-  displayName: 'form-system/ui',
+  displayName: 'portals-form-system-ui-components',
   preset: '../../../../jest.preset.js',
   transform: {
     '^(?!.*\\.(js|jsx|ts|tsx|css|json)$)': '@nx/react/plugins/jest',
     '^.+\\.[tj]sx?$': ['babel-jest', { presets: ['@nx/react/babel'] }],
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../../../coverage/libs/portals/form-system/ui',
+  coverageDirectory:
+    '../../../../coverage/libs/portals/form-system/ui-components',
 }

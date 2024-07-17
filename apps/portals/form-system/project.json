@@ -20,7 +20,7 @@
           "apps/portals/form-system/src/favicon.ico",
           "apps/portals/form-system/src/assets"
         ],
-        "styles": ["apps/portals/form-system/src/styles.scss"],
+        "styles": ["apps/portals/form-system/src/styles.css"],
         "scripts": [],
         "webpackConfig": "apps/portals/form-system/webpack.config.js"
       },
