@@ -2,11 +2,10 @@ import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AccordionItem } from '@island.is/island-ui/core'
-
-import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-import { strings } from './ConnectedCaseFilesAccordionItem.strings'
-
 import { IndictmentCaseFilesList } from '@island.is/judicial-system-web/src/components'
+import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
+
+import { strings } from './ConnectedCaseFilesAccordionItem.strings'
 
 interface Props {
   connectedCase: Case
