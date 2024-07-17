@@ -1,5 +1,8 @@
 import { ApplicationCard } from '@island.is/application/ui-components'
-import { ApplicationStatus, ApplicationTypes } from '@island.is/application/types'
+import {
+  ApplicationStatus,
+  ApplicationTypes,
+} from '@island.is/application/types'
 import { Stack } from '@island.is/island-ui/core'
 
 interface Props {
@@ -19,7 +22,6 @@ interface Props {
 }
 
 export const FormCards = ({ forms }: Props) => {
-
   const handleOnClick = (id: string) => {
     // TODO: Implement
     console.log(`Clicked on form with id: ${id}`)
@@ -27,7 +29,6 @@ export const FormCards = ({ forms }: Props) => {
 
   const onDelete = () => {
     // TODO: Implement
-
   }
 
   if (!forms) return null
