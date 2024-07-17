@@ -8,7 +8,7 @@ To set the port forwarding to listen on port `8082` you can pass a port argument
 
 ## How to
 
-First you'll want to install [mockoon-cli](https://github.com/mockoon/mockoon/tree/main/packages/cli#installation), then you just call `mockoon-cli start --data ./mocks/national-registry.json`. Mockoon will now start listening on port `8081`and proxying non-mocked traffic to port `8082`.
+First you'll want to install [mockoon-cli](https://github.com/mockoon/mockoon/tree/main/packages/cli#installation), then you just call `mockoon-cli start --data ./mocks/national-registry.json`. Mockoon will now start listening on port `8081` and proxying non-mocked traffic to port `8082`.
 
 For more in-depth instructions, you can check out the [mockoon site](https://mockoon.com/cli/).
 
