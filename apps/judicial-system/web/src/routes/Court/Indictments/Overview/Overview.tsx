@@ -107,7 +107,7 @@ const IndictmentOverview = () => {
         {workingCase.mergedCases &&
           workingCase.mergedCases.length > 0 &&
           workingCase.mergedCases.map((mergedCase) => (
-            <Box marginBottom={5}>
+            <Box marginBottom={5} key={mergedCase.id}>
               <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
             </Box>
           ))}
