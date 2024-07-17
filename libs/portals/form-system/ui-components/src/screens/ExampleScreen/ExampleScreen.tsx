@@ -1,4 +1,3 @@
-
 export const ExampleScreen = () => {
   return (
     <div>
