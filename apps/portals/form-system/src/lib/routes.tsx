@@ -58,16 +58,16 @@ const FormsScreen = () => {
     data,
     loading,
     error: formsError,
-    refetch
+    refetch,
   } = useLocalizedQuery(FORMS_FROM_SLUG, {
     variables: {
       input: {
         slug: slug,
-        nationalId: nationalId
+        nationalId: nationalId,
       },
     },
     skip: !slug,
-    fetchPolicy: 'cache-and-network'
+    fetchPolicy: 'cache-and-network',
   })
 
   if (loading) {
@@ -105,7 +105,5 @@ const FormCard = () => {
   // Delete button
   // Open form button
 
-  return (
-    <FormCards />
-  )
+  return <FormCards />
 }
