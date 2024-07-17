@@ -153,9 +153,6 @@ export const TableRow = ({
                   title: formatMessage(m.translateToEnglish),
                 },
                 {
-                  title: formatMessage(m.translateToEnglish),
-                },
-                {
                   title: 'Export',
                 },
                 {

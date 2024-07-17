@@ -1,6 +1,10 @@
 import { useLoaderData } from 'react-router-dom'
-import { useReducer, useState } from 'react'
-import { NavbarSelectStatus } from '../../lib/utils/interfaces'
+import { useCallback, useReducer, useState } from 'react'
+import {
+  ButtonTypes,
+  InputButton,
+  NavbarSelectStatus,
+} from '../../lib/utils/interfaces'
 import { FormLoaderResponse } from './Form.loader'
 import { ControlState, controlReducer } from '../../hooks/controlReducer'
 import { baseSettingsStep } from '../../utils/getBaseSettingsStep'
@@ -26,6 +30,8 @@ import { useFormSystemUpdateFormMutation } from './Form.generated'
 import { useFormSystemUpdateStepMutation } from './UpdateStep.generated'
 import { useFormSystemUpdateGroupMutation } from './UpdateGroup.generated'
 import { useFormSystemUpdateInputMutation } from './UpdateInput.generated'
+import { useFormSystemGetTranslationMutation } from '../../lib/utils/getTranslation.generated'
+import { translate as translationStation } from '../../lib/utils/translation'
 
 export const Form = () => {
   const { formBuilder } = useLoaderData() as FormLoaderResponse
@@ -43,14 +49,15 @@ export const Form = () => {
   const [updateInput] = useFormSystemUpdateInputMutation()
   const [updateForm] = useFormSystemUpdateFormMutation()
   const [updateFormSettings] = useFormSystemUpdateFormSettingsMutation()
-  const updateActiveItem = (updatedActiveItem?: ActiveItem) =>
-    updateActiveItemFn(
-      control.activeItem,
-      updateStep,
-      updateGroup,
-      updateInput,
-      updatedActiveItem,
-    )
+  const [getTranslation] = useFormSystemGetTranslationMutation()
+  // const updateActiveItem = (updatedActiveItem?: ActiveItem) =>
+  //   updateActiveItemFn(
+  //     control.activeItem,
+  //     updateStep,
+  //     updateGroup,
+  //     updateInput,
+  //     updatedActiveItem,
+  //   )
 
   const initialControl: ControlState = {
     activeItem: {
@@ -64,14 +71,68 @@ export const Form = () => {
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
   }
-
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
+
+  const updateActiveItem = useCallback(
+    (updatedActiveItem?: ActiveItem) =>
+      updateActiveItemFn(
+        control.activeItem,
+        updateStep,
+        updateGroup,
+        updateInput,
+        updatedActiveItem,
+      ),
+    [control.activeItem, updateStep, updateGroup, updateInput],
+  )
+
+  const translate = (text: string) => translationStation(text, getTranslation)
+  const translationButtons = (
+    text: string,
+    type: ButtonTypes,
+  ): InputButton[] => {
+    if (type === 'SET_MESSAGE_WITH_LINK_SETTINGS') {
+      return [
+        {
+          label: 'Translate',
+          name: 'reader',
+          onClick: async () => {
+            const translation = await translate(text)
+            controlDispatch({
+              type: type,
+              payload: {
+                property: 'buttonText',
+                lang: 'en',
+                value: translation,
+              },
+            })
+          },
+        },
+      ]
+    }
+    return [
+      {
+        label: 'Translate',
+        name: 'reader',
+        onClick: async () => {
+          const translation = await translate(text)
+          controlDispatch({
+            type: type,
+            payload: {
+              lang: 'en',
+              newValue: translation,
+            },
+          })
+        },
+      },
+    ]
+  }
 
   const updateDragAndDrop = (type: ItemType) =>
     updateDnd(type, control, updateForm)
 
   const updateSettings = (updatedForm?: FormSystemForm) =>
     us(control, updatedForm, updateFormSettings)
+
   const formUpdate = (updatedForm?: FormSystemForm) =>
     entireFormUpdate(control, updateForm, updatedForm)
 
@@ -94,6 +155,8 @@ export const Form = () => {
     inListBuilder,
     setInListBuilder,
     updateSettings,
+    translate,
+    translationButtons,
   }
 
   if (!form) {

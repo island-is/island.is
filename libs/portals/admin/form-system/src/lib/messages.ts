@@ -365,6 +365,62 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:get-json',
     defaultMessage: 'Sækja JSON',
   },
+  address: {
+    id: 'portals-admin.form-system:address',
+    defaultMessage: 'Heimilisfang',
+  },
+  city: {
+    id: 'portals-admin.form-system:city',
+    defaultMessage: 'Staður',
+  },
+  properties: {
+    id: 'portals-admin.form-system:properties',
+    defaultMessage: 'Eignir',
+  },
+  chooseProperty: {
+    id: 'portals-admin.form-system:choose-property',
+    defaultMessage: 'Veldu eign',
+  },
+  enterPropertyNumber: {
+    id: 'portals-admin.form-system:enter-property-number',
+    defaultMessage: 'Sláðu inn fasteignanúmer',
+  },
+  propertyChoice: {
+    id: 'portals-admin.form-system:property-choice',
+    defaultMessage: 'Velja fasteign',
+  },
+  propertyNumberInput: {
+    id: 'portals-admin.form-system:property-number-input',
+    defaultMessage: 'Skrá fasteignanúmer',
+  },
+  addGroupHover: {
+    id: 'portals-admin.form-system:add-step-hover',
+    defaultMessage: 'Bæta við hópi',
+  },
+  addInputHover: {
+    id: 'portals-admin.form-system:add-input-hover',
+    defaultMessage: 'Bæta við innslætti',
+  },
+  areYouSure: {
+    id: 'portals-admin.form-system:are-you-sure',
+    defaultMessage: 'Ertu viss?',
+  },
+  completelySure: {
+    id: 'portals-admin.form-system:completely-sure',
+    defaultMessage: 'Alveg viss?',
+  },
+  confirm: {
+    id: 'portals-admin.form-system:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  cancel: {
+    id: 'portals-admin.form-system:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  delete: {
+    id: 'portals-admin.form-system:delete',
+    defaultMessage: 'Eyða',
+  },
   // Error messages
   invalidEmail: {
     id: 'portals-admin.form-system:invalid-email',
