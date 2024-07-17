@@ -1,4 +1,3 @@
-import { ApplicationCard } from '@island.is/application/ui-components'
 
 export const ExampleScreen = () => {
   return (
