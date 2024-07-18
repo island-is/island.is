@@ -1,4 +1,3 @@
-import React, { Fragment } from 'react'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import { format as formatNationalId } from 'kennitala'
@@ -7,13 +6,13 @@ import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema
 import { ValueLine } from './ValueLine'
 import { m } from '../../lib/utils/messages'
 
-export const AboutOverview = ({
-  answers,
-}: {
+type Props = {
   answers: FinancialStatementIndividualElection
-}) => {
+}
+
+export const AboutOverview = ({ answers }: Props) => {
   return (
-    <Fragment>
+    <>
       <GridRow>
         <GridColumn span={['12/12', '6/12']} className={sectionColumn}>
           <ValueLine label={m.fullName} value={answers.about.fullName} />
@@ -58,6 +57,6 @@ export const AboutOverview = ({
           />
         </GridColumn>
       </GridRow>
-    </Fragment>
+    </>
   )
 }
