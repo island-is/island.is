@@ -3,16 +3,15 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/fiancial-statement-individual-election/src",
   "projectType": "library",
-  "tags": [],
+  "tags": ["lib:js", "scope:application-system"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
     },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+    "extract-strings": {
+      "executor": "nx:run-commands",
       "options": {
-        "jestConfig": "libs/application/templates/fiancial-statement-individual-election/jest.config.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/financial-statement-individual-election/src/lib/messages.ts"
       }
     }
   }
