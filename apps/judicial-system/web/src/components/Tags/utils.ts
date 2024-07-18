@@ -1,7 +1,9 @@
+import { TagVariant } from '@island.is/island-ui/core'
 import {
   isDistrictCourtUser,
   isPublicProsecutorUser,
 } from '@island.is/judicial-system/types'
+
 import {
   Case,
   CaseIndictmentRulingDecision,
@@ -10,7 +12,6 @@ import {
   User,
 } from '../../graphql/schema'
 import { strings } from './CaseTag.strings'
-import { TagVariant } from '@island.is/island-ui/core'
 
 export const getIndictmentCaseStateTag = (
   workingCase: Case,
@@ -111,6 +112,7 @@ export const getIndictmentRulingDecisionTag = (
     case CaseIndictmentRulingDecision.DISMISSAL:
       return { color: 'blue', text: strings.indictmentDismissal }
     case CaseIndictmentRulingDecision.RULING:
+      return { color: 'darkerBlue', text: strings.indictmentRuling }
     default:
       return { color: 'darkerBlue', text: strings.complete }
   }
