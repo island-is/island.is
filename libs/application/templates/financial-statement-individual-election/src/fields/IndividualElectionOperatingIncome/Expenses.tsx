@@ -10,11 +10,11 @@ import {
 } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
 
-interface PropTypes {
+type Props = {
   getSum: () => void
 }
 
-export const Expenses = ({ getSum }: PropTypes): JSX.Element => {
+export const Expenses = ({ getSum }: Props) => {
   const { formatMessage } = useLocale()
   const {
     formState: { errors },
