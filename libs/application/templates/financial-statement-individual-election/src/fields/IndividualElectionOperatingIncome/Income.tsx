@@ -1,4 +1,3 @@
-import React, { Fragment } from 'react'
 import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
@@ -11,11 +10,11 @@ import {
 } from '../../lib/utils/constants'
 import { m } from '../../lib/utils/messages'
 
-interface PropTypes {
+type Props = {
   getSum: () => void
 }
 
-export const Income = ({ getSum }: PropTypes): JSX.Element => {
+export const Income = ({ getSum }: Props) => {
   const { formatMessage } = useLocale()
   const {
     formState: { errors },
@@ -28,7 +27,7 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
   }, INPUTCHANGEINTERVAL)
 
   return (
-    <Fragment>
+    <>
       <Box paddingY={1}>
         <InputController
           id={INDIVIDUALOPERATIONIDS.contributionsByLegalEntities}
@@ -104,6 +103,6 @@ export const Income = ({ getSum }: PropTypes): JSX.Element => {
           currency
         />
       </Box>
-    </Fragment>
+    </>
   )
 }
