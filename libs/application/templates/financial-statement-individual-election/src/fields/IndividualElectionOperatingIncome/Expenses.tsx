@@ -1,4 +1,3 @@
-import React, { Fragment } from 'react'
 import debounce from 'lodash/debounce'
 import { useFormContext } from 'react-hook-form'
 import { InputController } from '@island.is/shared/form-fields'
@@ -28,7 +27,7 @@ export const Expenses = ({ getSum }: PropTypes): JSX.Element => {
   }, INPUTCHANGEINTERVAL)
 
   return (
-    <Fragment>
+    <>
       <Box paddingY={1}>
         <InputController
           id={INDIVIDUALOPERATIONIDS.electionOffice}
@@ -87,6 +86,6 @@ export const Expenses = ({ getSum }: PropTypes): JSX.Element => {
           currency
         />
       </Box>
-    </Fragment>
+    </>
   )
 }
