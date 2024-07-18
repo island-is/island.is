@@ -1,7 +1,6 @@
 import { z } from 'zod'
 import { m } from './messages'
 import * as kennitala from 'kennitala'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { BOARDMEMEBER, CARETAKER } from '../utils/constants'
 import { getBoardmembersAndCaretakers } from '../utils/helpers'
@@ -115,10 +114,6 @@ const about = z.object({
   powerOfAttorneyName: z.string().optional(),
   phoneNumber: z.string().refine(
     (p) => {
-      // ignore validation on dev to test with Gervimenn remove b4 release
-      if (isRunningOnEnvironment('dev')) {
-        return true
-      }
       const phoneNumber = parsePhoneNumberFromString(p, 'IS')
       return phoneNumber && phoneNumber.isValid()
     },

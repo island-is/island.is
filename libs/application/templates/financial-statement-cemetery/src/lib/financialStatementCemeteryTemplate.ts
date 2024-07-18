@@ -25,6 +25,7 @@ import {
   UserInfoApi,
 } from '../dataProviders'
 import { ApiActions, Events, Roles, States } from '../types/types'
+import { Features } from '@island.is/feature-flags'
 
 const configuration =
   ApplicationConfigurations[ApplicationTypes.FINANCIAL_STATEMENTS_INAO]
@@ -38,6 +39,7 @@ const FinancialStatementCemeteryTemplate: ApplicationTemplate<
   name: m.applicationTitle,
   institution: m.institutionName,
   translationNamespaces: [configuration.translation],
+  featureFlag: Features.FinancialStatementCemetery,
   dataSchema,
   allowedDelegations: [{ type: AuthDelegationType.ProcurationHolder }],
   stateMachineConfig: {
