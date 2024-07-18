@@ -192,6 +192,7 @@ import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
+import { GradeClientConfig } from '@island.is/clients/mms/grade'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
 
@@ -413,6 +414,7 @@ const environment = getConfig
         UserProfileClientConfig,
         UltravioletRadiationClientConfig,
         FriggClientConfig,
+        GradeClientConfig,
         VmstClientConfig,
         HealthInsuranceV2ClientConfig,
         CriminalRecordClientConfig,
