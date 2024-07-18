@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common'
+import defaults from 'lodash/defaults'
+import pick from 'lodash/pick'
+import zipObject from 'lodash/zipObject'
+
 import { UpdateFieldSettingsDto } from './dto/updateFieldSettings.dto'
 import { FieldSettings } from './fieldSettings.model'
 import { FieldSettingsDto } from './dto/fieldSettings.dto'
 import { ListItemMapper } from '../../listItems/models/listItem.mapper'
-import { defaults, pick, zipObject } from 'lodash'
 import { FieldTypes } from '../../../enums/fieldTypes'
 
 @Injectable()
@@ -55,20 +58,22 @@ export class FieldSettingsMapper {
       case FieldTypes.DATE_PICKER:
         keys = ['minDate', 'maxDate']
         return this.pickSettings(fieldSettings, keys)
-      case FieldTypes.DROPDOWN_LIST:
+      case FieldTypes.DROPDOWN_LIST: {
         keys = ['list', 'listType']
         const dropdownListFieldSettings = this.pickSettings(fieldSettings, keys)
         dropdownListFieldSettings.list = fieldSettings?.list
           ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
           : []
         return dropdownListFieldSettings
-      case FieldTypes.RADIO_BUTTONS:
+      }
+      case FieldTypes.RADIO_BUTTONS: {
         keys = ['list']
         const radioButtonsFieldSettings = this.pickSettings(fieldSettings, keys)
         radioButtonsFieldSettings.list = fieldSettings?.list
           ? this.listItemMapper.mapListItemsToListItemsDto(fieldSettings.list)
           : []
         return radioButtonsFieldSettings
+      }
       case FieldTypes.ISK_NUMBERBOX:
         keys = ['minAmount', 'maxAmount']
         return this.pickSettings(fieldSettings, keys)
