@@ -10,6 +10,7 @@ export {
   default as CheckboxList,
   type CheckboxInfo,
 } from './CheckboxList/CheckboxList'
+export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export { default as ContextMenu } from './ContextMenu/ContextMenu'
