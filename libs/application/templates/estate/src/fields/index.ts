@@ -1,5 +1,4 @@
 export { Cards } from './Cards'
-export { DoneImage } from './DoneImage'
 export { EstateMembersRepeater } from './EstateMembersRepeater'
 export { RealEstateRepeater } from './RealEstateRepeater'
 export { OtherAssetsRepeater } from './OtherAssetsRepeater'
