@@ -6,11 +6,11 @@ import { formatCurrency } from '../../lib/utils/helpers'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { m } from '../../lib/utils/messages'
 
-export const CapitalNumberOverview = ({
-  answers,
-}: {
+type Props = {
   answers: FinancialStatementIndividualElection
-}) => {
+}
+
+export const CapitalNumberOverview = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
   return (
     <>

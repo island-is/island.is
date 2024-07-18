@@ -6,11 +6,11 @@ import { sectionColumn } from './overviewStyles.css'
 import { FinancialStatementIndividualElection } from '../../lib/utils/dataSchema'
 import { m } from '../../lib/utils/messages'
 
-export const AssetDebtEquityOverview = ({
-  answers,
-}: {
+type Props = {
   answers: FinancialStatementIndividualElection
-}) => {
+}
+
+export const AssetDebtEquityOverview = ({ answers }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
