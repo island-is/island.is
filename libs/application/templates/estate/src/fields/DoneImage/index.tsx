@@ -8,5 +8,3 @@ export const DoneImage = () => {
     </Box>
   )
 }
-
-export default DoneImage
