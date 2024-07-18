@@ -678,6 +678,7 @@
       ],
       "@island.is/clients/mms": ["libs/clients/mms/general/src/index.ts"],
       "@island.is/clients/mms/frigg": ["libs/clients/mms/frigg/src/index.ts"],
+      "@island.is/clients/mms/grade": ["libs/clients/mms/grade/src/index.ts"],
       "@island.is/clients/municipalities-financial-aid": [
         "libs/clients/municipalities-financial-aid/src/index.ts"
       ],
