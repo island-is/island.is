@@ -13,9 +13,11 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  CaseTag,
   FormContentContainer,
   FormContext,
   FormFooter,
+  getIndictmentRulingDecisionTag,
   IndictmentCaseFilesList,
   InfoCardClosedIndictment,
   Modal,
@@ -119,6 +121,10 @@ const Completed: FC = () => {
         )
       : true
 
+  const indictmentRulingTag = getIndictmentRulingDecisionTag(
+    workingCase.indictmentRulingDecision,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -128,11 +134,20 @@ const Completed: FC = () => {
     >
       <PageHeader title={formatMessage(titles.court.indictments.completed)} />
       <FormContentContainer>
-        <Box marginBottom={7}>
+        <Box marginBottom={7} display="flex" justifyContent="spaceBetween">
           <Text as="h1" variant="h1">
             {formatMessage(strings.heading)}
           </Text>
+          {workingCase.indictmentRulingDecision && (
+            <Box marginTop={2}>
+              <CaseTag
+                color={indictmentRulingTag.color}
+                text={formatMessage(indictmentRulingTag.text)}
+              />
+            </Box>
+          )}
         </Box>
+
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
