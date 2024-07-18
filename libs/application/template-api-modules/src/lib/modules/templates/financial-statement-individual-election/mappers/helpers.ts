@@ -14,8 +14,6 @@ const LESS = 'less'
 const GREATER = 'greater'
 
 export const getIndividualElectionValues = (answers: FormValue) => {
-  console.log('HÉR!!! answers: ', answers)
-
   const incomeLimit = getValueViaPath(answers, 'election.incomeLimit') as string
   const electionId = getValueViaPath(
     answers,
