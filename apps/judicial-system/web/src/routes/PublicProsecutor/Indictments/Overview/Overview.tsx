@@ -25,7 +25,10 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useProsecutorSelectionUsersQuery } from '@island.is/judicial-system-web/src/components/ProsecutorSelection/prosecutorSelectionUsers.generated'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  ServiceRequirement,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   formatDateForServer,
   useCase,
@@ -34,6 +37,18 @@ import {
 
 import { strings } from './Overview.strings'
 type VisibleModal = 'REVIEWER_ASSIGNED' | 'DEFENDANT_VIEWS_VERDICT'
+
+export const isDefendantInfoActionButtonDisabled = (defendant: Defendant) => {
+  switch (defendant.serviceRequirement) {
+    case ServiceRequirement.NOT_APPLICABLE:
+    case ServiceRequirement.NOT_REQUIRED:
+      return true
+    case ServiceRequirement.REQUIRED:
+      return defendant.verdictViewDate !== null
+    default:
+      return false
+  }
+}
 
 export const Overview = () => {
   const router = useRouter()
@@ -138,8 +153,7 @@ export const Overview = () => {
                       setModalVisible('DEFENDANT_VIEWS_VERDICT')
                     },
                     icon: 'mailOpen',
-                    isDisabled: (defendant) =>
-                      defendant.verdictViewDate !== null,
+                    isDisabled: isDefendantInfoActionButtonDisabled,
                   }
                 : undefined
             }

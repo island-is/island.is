@@ -16,6 +16,7 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
@@ -27,6 +28,7 @@ import {
 import {
   useCase,
   useDefendants,
+  useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
@@ -35,13 +37,37 @@ import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
 const Processing: FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
-  const { transitionCase } = useCase()
+  const { user } = useContext(UserContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+    refreshCase,
+  } = useContext(FormContext)
+  const { updateCase, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
   const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+
+  const initialize = useCallback(async () => {
+    if (!workingCase.court) {
+      await updateCase(workingCase.id, {
+        courtId: user?.institution?.defaultCourtId,
+      })
+      refreshCase()
+    }
+  }, [
+    refreshCase,
+    updateCase,
+    user?.institution?.defaultCourtId,
+    workingCase.court,
+    workingCase.id,
+  ])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {

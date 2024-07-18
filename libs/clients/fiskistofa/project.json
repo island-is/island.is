@@ -3,20 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/fiskistofa/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/fiskistofa/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/fiskistofa"],
       "options": {
-        "jestConfig": "libs/clients/fiskistofa/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/fiskistofa/jest.config.ts"
       }
     },
     "update-openapi-document": {
@@ -38,6 +34,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -187,11 +187,11 @@ export enum PersonType {
 export interface MortgageCertificate {
   contentBase64: string
   apiMessage?: string | undefined
+  propertyNumber?: string | undefined
 }
 
 export interface MortgageCertificateValidation {
   propertyNumber: string
-  isFromSearch?: boolean
   exists: boolean
   hasKMarking: boolean
 }
@@ -335,6 +335,42 @@ export interface PropertyDetail {
   defaultAddress?: PropertyLocation
   propertyNumber?: string
   unitsOfUse?: UnitsOfUseModel
+}
+
+export interface ManyPropertyDetail {
+  propertyNumber?: string
+  propertyType?: string
+  realEstate?: Array<RealEstateDetail>
+  vehicle?: VehicleDetail
+  ship?: ShipDetail
+}
+
+export interface RealEstateDetail {
+  propertyNumber: string
+  usage: string
+  defaultAddress: string
+}
+
+export interface VehicleDetail {
+  licencePlate: string
+  propertyNumber: string
+  manufacturer: string
+  manufacturerType: string
+  color: string
+  dateOfRegistration: Date
+}
+
+export interface ShipDetail {
+  shipRegistrationNumber: string
+  usageType: string
+  name: string
+  initialRegistrationDate: Date
+  mainMeasurements: ShipMeasurements
+}
+
+interface ShipMeasurements {
+  length: string
+  bruttoWeightTons: string
 }
 
 interface PropertyLocation {

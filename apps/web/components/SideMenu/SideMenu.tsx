@@ -1,26 +1,26 @@
 import React, {
-  useState,
-  useRef,
-  useEffect,
   useCallback,
   useContext,
+  useEffect,
+  useRef,
+  useState,
 } from 'react'
 import FocusLock from 'react-focus-lock'
 import { RemoveScroll } from 'react-remove-scroll'
 import { useKey, useWindowSize } from 'react-use'
 import cn from 'classnames'
 import {
-  Text,
-  Icon,
-  Hidden,
-  Link,
+  Box,
   Button,
+  FocusableBox,
+  GridColumn,
   GridContainer,
   GridRow,
-  GridColumn,
-  Box,
-  FocusableBox,
+  Hidden,
+  Icon,
+  Link,
   Logo,
+  Text,
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { MenuTabsContext } from '@island.is/web/context/MenuTabsContext/MenuTabsContext'
@@ -214,7 +214,7 @@ export const SideMenu = ({
                     role="presentation"
                   >
                     <FocusableBox
-                      ref={(el) => (tabRefs.current[index] = el)}
+                      ref={(el) => (tabRefs.current[index] = el) as any}
                       component="button"
                       className={styles.tabButton}
                       role="tab"

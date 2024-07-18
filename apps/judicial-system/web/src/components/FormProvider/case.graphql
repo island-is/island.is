@@ -268,5 +268,42 @@ query Case($input: CaseQueryInput!) {
     indictmentReviewDecision
     indictmentCompletedDate
     courtSessionType
+    mergeCase {
+      id
+      courtCaseNumber
+    }
+    mergedCases {
+      id
+      courtCaseNumber
+      court {
+        id
+        name
+      }
+      judge {
+        id
+        name
+        title
+        email
+      }
+      prosecutor {
+        id
+        name
+        email
+      }
+      prosecutorsOffice {
+        id
+        name
+      }
+      caseFiles {
+        id
+        created
+        name
+        state
+        key
+        size
+      }
+      policeCaseNumbers
+      indictmentSubtypes
+    }
   }
 }

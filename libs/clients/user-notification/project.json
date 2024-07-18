@@ -3,26 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/user-notification/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["services-user-notification"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/user-notification/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/clients/user-notification/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "jestConfig": "libs/clients/user-notification/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -32,7 +23,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["services-user-notification"],
-  "tags": ["lib:client", "scope:client"]
+  }
 }
