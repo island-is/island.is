@@ -26,6 +26,8 @@ import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
 import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
+import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
+import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
@@ -165,6 +167,7 @@ export const modules = [
   PassportModule,
   OperatingLicenseModule,
   FinancialStatementsInaoTemplateModule,
+  FinancialStatementIndividualElectionModule,
   NoDebtCertificateModule,
   InheritanceReportModule,
   EstateTemplateModule,
@@ -235,6 +238,7 @@ export const services = [
   PassportService,
   OperatingLicenseService,
   FinancialStatementsInaoTemplateService,
+  FinancialStatementIndividualElectionService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
   InheritanceReportService,

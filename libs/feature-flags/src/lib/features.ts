@@ -36,6 +36,7 @@ export enum Features {
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
   ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
+  FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

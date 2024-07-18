@@ -31,6 +31,7 @@ export enum ApplicationTypes {
   MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
+  FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
@@ -205,6 +206,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
+    slug: 'skil-arsreikninga-einstaklingsframbod',
+    translation: 'fsie.application',
   },
   [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
