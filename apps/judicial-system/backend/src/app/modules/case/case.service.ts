@@ -311,7 +311,18 @@ export const include: Includeable[] = [
         model: CaseFile,
         as: 'caseFiles',
         required: false,
-        where: { state: { [Op.not]: CaseFileState.DELETED }, category: null },
+        where: {
+          state: { [Op.not]: CaseFileState.DELETED },
+          category: {
+            [Op.in]: [
+              CaseFileCategory.INDICTMENT,
+              CaseFileCategory.COURT_RECORD,
+              CaseFileCategory.CRIMINAL_RECORD,
+              CaseFileCategory.COST_BREAKDOWN,
+              CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+            ],
+          },
+        },
         separate: true,
       },
       { model: Institution, as: 'court' },
