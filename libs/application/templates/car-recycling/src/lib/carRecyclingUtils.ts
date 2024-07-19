@@ -58,17 +58,28 @@ export const getApplicationExternalData = (
 
   const applicantMunicipality = applicantPostalCode + ' ' + city
 
-  const vehiclesList = getValueViaPath(
-    externalData,
-    'currentVehicles.data',
-    [],
-  ) as VehicleDto[]
-
   return {
     applicantName,
     applicantNationalId,
     applicantAddress,
     applicantMunicipality,
-    vehiclesList,
   }
+}
+
+export const filterVehiclesList = (
+  vehicle: VehicleDto,
+  list: VehicleDto[],
+): VehicleDto[] => {
+  return list.filter((item) => item.permno !== vehicle.permno)
+}
+
+export const filterSelectedVehiclesFromList = (
+  selectedList: VehicleDto[],
+  allVehicles: VehicleDto[],
+): VehicleDto[] => {
+  // Not show selected vehicles in filered list
+  return allVehicles.filter(
+    (vehicle1) =>
+      !selectedList.some((vehicle2) => vehicle1.permno === vehicle2.permno),
+  )
 }

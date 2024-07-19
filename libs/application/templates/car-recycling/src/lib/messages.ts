@@ -88,10 +88,10 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Afskrá til endurvinnslu',
       description: 'Unregister for recycling',
     },
-    filter: {
-      id: 'rf.cr.application:cars.filter',
-      defaultMessage: 'Sía ökutæki',
-      description: 'Filter vehicles',
+    search: {
+      id: 'rf.cr.application:cars.search',
+      defaultMessage: 'Leita að ökutæki',
+      description: 'Search for vehicle',
     },
     overview: {
       id: 'rf.cr.application:cars.overview',
