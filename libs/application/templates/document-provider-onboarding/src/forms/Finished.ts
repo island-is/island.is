@@ -27,11 +27,6 @@ export const Finished: Form = buildForm({
           image: WomanWithLaptopIllustration,
           imageWidth: isMobile ? 'full' : 'auto',
         }),
-        buildCustomField({
-          id: 'thankYouImage',
-          title: m.thankYouScreenTitle,
-          component: 'WomanWithLaptopIllustrationPeriods',
-        }),
       ],
     }),
   ],

@@ -9,4 +9,3 @@ export { default as ThankYouScreen } from './DocumentProvicerApplication/ThankYo
 export { default as TechnicalImplementation } from './TestPhase/TechnicalImplementation'
 export { default as RejectionScreen } from './DocumentProvicerApplication/RejectionScreen'
 export { default as ManOnBenchIllustrationPeriods } from './Illustrations/ManOnBenchIllustrationPeriods'
-export { default as WomanWithLaptopIllustrationPeriods } from './Illustrations/WomanWithLaptopIllustrationPeriods'

@@ -1,10 +1,12 @@
 import {
   buildCustomField,
   buildForm,
+  buildImageField,
   buildMultiField,
 } from '@island.is/application/core'
 import { ApplicationTypes, Form, FormModes } from '@island.is/application/types'
 import { m } from './messages'
+import { ManOnBenchIllustration } from '../assets/ManOnBenchIllustration'
 export const Rejected: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.rejectedTitle,
@@ -20,10 +22,15 @@ export const Rejected: Form = buildForm({
           title: 'RejectionScreen',
           component: 'RejectionScreen',
         }),
-        buildCustomField({
+        // buildCustomField({
+        //   id: 'ManOnBench',
+        //   title: 'ManOnBench',
+        //   component: 'ManOnBenchIllustrationPeriods',
+        // }),
+        buildImageField({
           id: 'ManOnBench',
           title: 'ManOnBench',
-          component: 'ManOnBenchIllustrationPeriods',
+          image: ManOnBenchIllustration,
         }),
       ],
     }),
