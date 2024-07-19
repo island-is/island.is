@@ -22,15 +22,12 @@ export const Rejected: Form = buildForm({
           title: 'RejectionScreen',
           component: 'RejectionScreen',
         }),
-        // buildCustomField({
-        //   id: 'ManOnBench',
-        //   title: 'ManOnBench',
-        //   component: 'ManOnBenchIllustrationPeriods',
-        // }),
         buildImageField({
           id: 'ManOnBench',
           title: 'ManOnBench',
           image: ManOnBenchIllustration,
+          imageWidth: ['full', 'full', '50%', '50%'],
+          imagePosition: 'center',
         }),
       ],
     }),

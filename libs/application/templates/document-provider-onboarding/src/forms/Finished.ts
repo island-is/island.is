@@ -1,15 +1,11 @@
 import {
   buildForm,
-  buildCustomField,
   buildMultiField,
   buildImageField,
 } from '@island.is/application/core'
 import { ApplicationTypes, Form, FormModes } from '@island.is/application/types'
 import { m } from './messages'
 import { WomanWithLaptopIllustration } from '../assets/WomanWithLaptopIllustration'
-
-const isMobile = window.innerWidth < 480
-console.log(isMobile)
 
 export const Finished: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
@@ -25,7 +21,8 @@ export const Finished: Form = buildForm({
           id: 'thankYouImage',
           title: m.thankYouScreenTitle,
           image: WomanWithLaptopIllustration,
-          imageWidth: isMobile ? 'full' : 'auto',
+          imageWidth: ['full', 'full', '50%', '50%'],
+          imagePosition: 'center',
         }),
       ],
     }),
