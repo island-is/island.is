@@ -88,8 +88,11 @@ const ActiveCases: FC<Props> = (props) => {
           cell: (row) => (
             <TagCaseState
               caseState={row.state}
-              isCourtRole={true}
+              caseType={row.type}
+              isValidToDateInThePast={row.isValidToDateInThePast}
+              courtDate={row.courtDate}
               indictmentDecision={row.indictmentDecision}
+              indictmentRulingDecision={row.indictmentRulingDecision}
             />
           ),
         },

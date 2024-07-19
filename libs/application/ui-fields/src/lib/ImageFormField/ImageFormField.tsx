@@ -12,6 +12,7 @@ interface Props extends FieldBaseProps {
 export const ImageFormField: FC<Props> = ({ field, application }) => {
   const { formatMessage } = useLocale()
   const fullWidth = field.imageWidth === 'full'
+  const imagePosition = field.imagePosition
   const Image = field.image
 
   return (
@@ -27,18 +28,29 @@ export const ImageFormField: FC<Props> = ({ field, application }) => {
           </Text>
         </Box>
       )}
-      {typeof field.image === 'string' ? (
-        // Render a normal img element if the image is a string
-        <img
-          src={field.image}
-          alt={field.alt}
-          width={fullWidth ? '100%' : 'auto'}
-          height="auto"
-        />
-      ) : (
-        // Otherwise, render a svg component
-        <Image />
-      )}
+      <Box
+        display={'flex'}
+        justifyContent={
+          imagePosition === 'center'
+            ? 'center'
+            : imagePosition === 'right'
+            ? 'flexEnd'
+            : 'flexStart'
+        }
+      >
+        {typeof field.image === 'string' ? (
+          // Render a normal img element if the image is a string
+          <img
+            src={field.image}
+            alt={field.alt}
+            width={fullWidth ? '100%' : 'auto'}
+            height="auto"
+          />
+        ) : (
+          // Otherwise, render a svg component
+          <Image />
+        )}
+      </Box>
     </Box>
   )
 }
