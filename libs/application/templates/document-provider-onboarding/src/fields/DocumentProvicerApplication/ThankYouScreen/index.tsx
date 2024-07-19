@@ -1,13 +1,10 @@
-import React, { FC } from 'react'
 import { formatText } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { Box, Text, Link } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../forms/messages'
 
-const ThankYouScreen: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+const ThankYouScreen = ({ application }: FieldBaseProps) => {
   const { formatMessage } = useLocale()
   return (
     <Box marginBottom={8}>

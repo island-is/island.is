@@ -5,16 +5,16 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import useGenerateFileUrl from './hooks/useGenerateFileUrl'
 
-export const LinkFormField: FC<
-  React.PropsWithChildren<{
-    field: LinkField
-    application: Application
-  }>
-> = ({ field, application }) => {
+type Props = {
+  field: LinkField
+  application: Application
+}
+
+export const LinkFormField = ({ field, application }: Props) => {
   const { formatMessage } = useLocale()
 
   const openLink = useCallback(() => {
-    window.open(field.link, '_blank')
+    window.open(formatText(field.link, application, formatMessage), '_blank')
   }, [field.link])
 
   const { getFileUrl } = useGenerateFileUrl(

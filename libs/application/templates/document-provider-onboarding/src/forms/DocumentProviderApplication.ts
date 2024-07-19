@@ -6,6 +6,9 @@ import {
   buildSubmitField,
   buildCustomField,
   buildDividerField,
+  buildDescriptionField,
+  buildCheckboxField,
+  buildLinkField,
 } from '@island.is/application/core'
 import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
 import { m } from './messages'
@@ -19,15 +22,37 @@ export const DocumentProviderOnboarding: Form = buildForm({
       id: 'termsOfAgreement',
       title: m.termsSection,
       children: [
-        buildCustomField(
-          {
-            id: 'termsOfAgreement',
-            title: m.termsTitle,
-            description: m.termsSubTitle,
-            component: 'TermsOfAgreement',
-          },
-          {},
-        ),
+        buildMultiField({
+          id: 'termsOfAgreement',
+          title: m.termsTitle,
+          children: [
+            buildCustomField(
+              {
+                id: 'thankYouScreen',
+                title: m.thankYouScreenTitle,
+                component: 'ThankYouScreen',
+              },
+              {},
+            ),
+            buildDescriptionField({
+              id: 'description',
+              title: '',
+              description: m.termsSubTitle,
+              marginBottom: 3,
+            }),
+            buildLinkField({
+              id: 'link',
+              title: m.termsUserAgreementTitle,
+              link: m.termsUserAgreementUrl,
+              iconProps: { icon: 'open' },
+            }),
+            buildCheckboxField({
+              id: 'userTerms',
+              title: '',
+              options: [{ value: 'yes', label: m.userAgreementOptionLabel }],
+            }),
+          ],
+        }),
       ],
     }),
     buildSection({
