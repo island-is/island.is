@@ -61,7 +61,7 @@ export class ApplicationAttachmentService {
           logger.info('Failed to get url from application state')
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
-        const fileContent = (await this.aws.getFileB64(url)) ?? ''
+        const fileContent = (await this.aws.getFileBase64({ s3Uri: url })) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),

@@ -73,7 +73,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getPdf(key: string) {
     this.logger.debug('Getting pdf', { key })
-    const file = await this.aws.getFileB64(this.attachmentBucket, key)
+    const file = await this.aws.getFileBase64({
+      bucket: this.attachmentBucket,
+      fileName: key,
+    })
     if (!file) {
       throw new Error('File content was undefined')
     }

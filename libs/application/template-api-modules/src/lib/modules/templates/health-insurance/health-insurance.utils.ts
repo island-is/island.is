@@ -93,7 +93,7 @@ export const insuranceToXML = async (
     }
     for (let i = 0; i < arrAttachments.length; i++) {
       const filename = arrAttachments[i]
-      const file = await aws.getFileB64(attachmentNames[i])
+      const file = await aws.getFileBase64({ s3Uri: attachmentNames[i] })
       if (!file) throw new Error('error getting file')
       const fylgiskjal: Fylgiskjal = {
         heiti: filename,

@@ -10,10 +10,6 @@ export class FileUploadResolver {
   async createUploadUrl(
     @Args('filename') filename: string,
   ): Promise<PresignedPost> {
-    const result = await this.fileStorageService.generatePresignedPost(filename)
-    return {
-      url: result.url,
-      fields: result.fields,
-    }
+    return this.fileStorageService.generatePresignedPost(filename)
   }
 }

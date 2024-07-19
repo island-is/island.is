@@ -338,7 +338,7 @@ export class OperatingLicenseService extends BaseTemplateApiService {
     const { bucket, key } = AmazonS3URI(fileName)
 
     try {
-      return (await this.aws.getFileB64(bucket, key)) ?? ''
+      return (await this.aws.getFileBase64({ bucket, fileName: key })) ?? ''
     } catch (e) {
       this.logger.error('Error getting file', { error: e })
       return 'err'

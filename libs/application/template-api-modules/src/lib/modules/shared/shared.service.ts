@@ -261,8 +261,8 @@ export class SharedTemplateApiService {
         [key: string]: string
       }
     )[attachmentKey]
-    if (encoding) return await this.aws.getFileEncoded(fileName, encoding)
-    return await this.aws.getFile(fileName)
+    if (encoding) return await this.aws.getFileEncoded({ fileName, encoding })
+    return await this.aws.getFile({ fileName })
   }
 
   async getAttachmentContentAsBase64(

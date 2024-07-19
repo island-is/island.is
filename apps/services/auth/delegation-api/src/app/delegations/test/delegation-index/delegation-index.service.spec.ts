@@ -27,7 +27,6 @@ import {
 import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
 import { domainName, TestCase, user } from './delegations-index-types'
 import { setupWithAuth } from '../../../../../test/setup'
-import { sleep } from '@island.is/shared/utils'
 
 const testDate = new Date(2024, 2, 1)
 
@@ -52,19 +51,19 @@ describe('DelegationsIndexService', () => {
     await factory.createClient(testCase.client)
 
     await Promise.all(
-      testCase.apiScopes.map((scope) => factory.createApiScope(scope)),
+      testCase.apiScopes.flatMap((scope) => factory.createApiScope(scope)),
     )
 
     // create custom delegations
     await Promise.all(
-      testCase.customDelegations.map((delegation) =>
+      testCase.customDelegations.flatMap((delegation) =>
         factory.createCustomDelegation(delegation),
       ),
     )
 
     // create personal representation delegations
     await Promise.all(
-      testCase.personalRepresentativeDelegation.map((d) =>
+      testCase.personalRepresentativeDelegation.flatMap((d) =>
         factory.createPersonalRepresentativeDelegation(d),
       ),
     )
@@ -465,7 +464,6 @@ describe('DelegationsIndexService', () => {
 
       // Act
       await delegationIndexService.indexRepresentativeDelegations(nationalId)
-      await sleep(200) // Small sleep for less flakiness
 
       // Assert
       const delegations = await delegationIndexModel.findAll({

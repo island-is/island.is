@@ -92,7 +92,7 @@ describe('AccidentNotificationService', () => {
         {
           provide: AwsService,
           useClass: jest.fn(() => ({
-            getFileB64: jest.fn(),
+            getFileBase64: jest.fn(),
           })),
         },
         {
@@ -202,7 +202,7 @@ describe('AccidentNotificationService', () => {
       }
 
       jest
-        .spyOn(aws, 'getFileB64')
+        .spyOn(aws, 'getFileBase64')
         .mockResolvedValueOnce(
           Buffer.from('some content', 'utf-8') as unknown as string,
         )

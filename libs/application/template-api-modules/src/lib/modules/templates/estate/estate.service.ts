@@ -236,7 +236,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
           const fileName = (application.attachments as ApplicationAttachments)[
             attachmentAnswerData[index]?.key
           ]
-          const content = (await this.aws.getFileB64(fileName)) ?? ''
+          const content = (await this.aws.getFileBase64({ fileName })) ?? ''
           attachments.push({ name, content })
         }
       }

@@ -57,7 +57,16 @@ export const searchQuery = ({
     })
   }
 
-  const result = {
+  const result: {
+    query: {
+      bool: {
+        must: Array<object>
+      }
+    }
+    sort: Array<object>
+    size: number
+    search_after?: typeof searchAfter
+  } = {
     query: {
       bool: {
         must: [
@@ -82,11 +91,10 @@ export const searchQuery = ({
       { 'title.keyword': { order: 'asc' } },
     ],
     size: limit + 1, // if we have a page number add it as offset for pagination
-    search_after: [] as typeof searchAfter,
   }
 
   if (searchAfter?.length) {
-    result['search_after'] = searchAfter
+    result.search_after = searchAfter
   }
 
   return result

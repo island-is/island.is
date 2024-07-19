@@ -386,7 +386,10 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const file = await this.awsService.getFileB64(this.attachmentBucket, Key)
+      const file = await this.awsService.getFileBase64({
+        bucket: this.attachmentBucket,
+        fileName: Key,
+      })
 
       if (!file) {
         throw new Error('File content was undefined')

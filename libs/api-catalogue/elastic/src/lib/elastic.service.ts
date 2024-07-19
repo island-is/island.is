@@ -45,12 +45,15 @@ export class ElasticService {
     logger.info('Bulk insert', services)
 
     if (services.length) {
-      const bulk = services.map((service) => ({
-        index: {
-          _index: this.indexName,
-          _id: service.id,
+      const bulk = services.flatMap((service) => [
+        {
+          index: {
+            _index: this.indexName,
+            _id: service.id,
+          },
         },
-      }))
+        service,
+      ])
 
       const client = await this.getClient()
       await client.bulk({
@@ -148,9 +151,13 @@ export class ElasticService {
     logger.info('Got elasticsearch ping response')
     return result
   }
+
   private async getClient(): Promise<Client> {
-    if (this.client) return this.client
-    return await this.createEsClient()
+    if (this.client) {
+      return this.client
+    }
+    this.client = await this.createEsClient()
+    return this.client
   }
 
   private async createEsClient(): Promise<Client> {

@@ -49,7 +49,10 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.aws.getFile(this.presignedBucket, s3FileName)
+    const file = await this.aws.getFile({
+      bucket: this.presignedBucket,
+      fileName: s3FileName,
+    })
 
     const selectedChildren = getSelectedChildrenFromExternalData(
       externalData.childrenCustodyInformation.data,

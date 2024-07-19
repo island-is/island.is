@@ -14,6 +14,16 @@ const MINUTE = 60
 const HOUR = 60 * MINUTE
 export type Encoding = 'binary' | 'base64' | 'utf-8'
 
+interface GetFileOptions {
+  bucket?: string
+  fileName?: string
+  s3Uri?: string
+}
+
+interface GetEncodedFileOptions extends GetFileOptions {
+  encoding?: Encoding
+}
+
 @Injectable()
 export class AwsService {
   s3Client: S3Client
@@ -22,19 +32,11 @@ export class AwsService {
     this.s3Client = new S3Client({})
   }
 
-  async getFile(fileName: string): Promise<GetObjectCommandOutput>
-  async getFile(
-    bucket: string,
-    fileName: string,
-  ): Promise<GetObjectCommandOutput>
-  async getFile(
-    bucket: string,
-    fileName?: string,
-  ): Promise<GetObjectCommandOutput> {
-    // If bucket is the only parameter, then it must be an S3 bucket URI
-    if (!fileName) {
-      // `bucket` is actually an S3 bucket URI here
-      const uri = AmazonS3Uri(bucket)
+  async getFile(options: GetFileOptions): Promise<GetObjectCommandOutput> {
+    let { bucket, fileName } = options
+
+    if (options.s3Uri) {
+      const uri = AmazonS3Uri(options.s3Uri)
       bucket = uri.bucket
       fileName = uri.key
     }
@@ -48,36 +50,15 @@ export class AwsService {
   }
 
   async getFileEncoded(
-    fileName: string,
-    encoding?: Encoding,
-  ): Promise<string | undefined>
-  async getFileEncoded(
-    bucket: string,
-    fileName: string,
-    encoding?: Encoding,
-  ): Promise<string | undefined>
-  async getFileEncoded(
-    bucket: string,
-    fileName?: string,
-    encoding: Encoding = 'base64',
+    options: GetEncodedFileOptions,
   ): Promise<string | undefined> {
-    const out = fileName
-      ? await this.getFile(bucket, fileName)
-      : await this.getFile(bucket)
+    const encoding = options.encoding || 'base64'
+    const out = await this.getFile(options)
     return out.Body?.transformToString(encoding)
   }
 
-  async getFileB64(fileName: string): Promise<string | undefined>
-  async getFileB64(
-    bucket: string,
-    fileName: string,
-  ): Promise<string | undefined>
-  async getFileB64(
-    bucket: string,
-    fileName?: string,
-  ): Promise<string | undefined> {
-    if (!fileName) return await this.getFileEncoded(bucket, 'base64')
-    return await this.getFileEncoded(bucket, fileName, 'base64')
+  async getFileBase64(options: GetFileOptions): Promise<string | undefined> {
+    return await this.getFileEncoded({ ...options, encoding: 'base64' })
   }
 
   async uploadFile(

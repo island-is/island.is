@@ -12,7 +12,7 @@ import kebabCase from 'lodash/kebabCase'
 import { ConfigType } from '@nestjs/config'
 import { FileStorageConfig } from './file-storage.configuration'
 
-const PRESIGNED_POST_EXPIRES = 1000 * 60 * 5
+const PRESIGNED_POST_EXPIRES = 60 * 5
 const SIGNED_GET_EXPIRES = 10 * 60
 
 @Injectable()
@@ -53,7 +53,7 @@ export class FileStorageService {
       Conditions: [
         ['content-length-range', 0, 10000000], // Max 10MB
       ],
-      Expires: PRESIGNED_POST_EXPIRES / 1000, // createPresignedPost expects seconds
+      Expires: PRESIGNED_POST_EXPIRES, // createPresignedPost expects seconds
     })
 
     return { url, fields }
