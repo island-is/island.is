@@ -101,10 +101,12 @@ export const overviewAssetsAndDebts = [
     marginBottom: 'gutter',
     space: 'gutter',
   }),
-  buildCustomField({
+  buildDescriptionField({
     id: 'inventoryNotFilledOut',
     title: '',
-    component: 'NotFilledOut',
+    description: m.notFilledOutItalic,
+    marginTop: [3],
+    marginBottom: [3],
     condition: (answers) =>
       getValueViaPath<string>(answers, 'inventory.value') === '',
   }),
@@ -448,10 +450,12 @@ export const overviewAssetsAndDebts = [
     condition: (answers) =>
       getValueViaPath<string>(answers, 'moneyAndDeposit.value') !== '',
   }),
-  buildCustomField({
+  buildDescriptionField({
     id: 'moneyAndDepositNotFilledOut',
     title: '',
-    component: 'NotFilledOut',
+    description: m.notFilledOutItalic,
+    marginTop: [3],
+    marginBottom: [3],
     condition: (answers) => {
       return getValueViaPath<string>(answers, 'moneyAndDeposit.value') === ''
     },
