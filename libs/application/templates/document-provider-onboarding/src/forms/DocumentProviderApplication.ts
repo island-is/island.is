@@ -11,12 +11,13 @@ import {
   buildLinkField,
 } from '@island.is/application/core'
 import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
   title: m.formName,
   mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'termsOfAgreement',
@@ -297,14 +298,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
             }),
           ],
         }),
-        buildCustomField(
-          {
-            id: 'thankYouScreen',
-            title: m.thankYouScreenTitle,
-            component: 'ThankYouScreen',
-          },
-          {},
-        ),
       ],
     }),
   ],

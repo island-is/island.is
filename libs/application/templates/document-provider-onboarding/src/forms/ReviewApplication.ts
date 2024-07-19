@@ -13,7 +13,7 @@ import {
   Comparators,
   FormModes,
 } from '@island.is/application/types'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 export const ReviewApplication: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,

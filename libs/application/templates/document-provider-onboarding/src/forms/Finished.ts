@@ -4,7 +4,7 @@ import {
   buildImageField,
 } from '@island.is/application/core'
 import { ApplicationTypes, Form, FormModes } from '@island.is/application/types'
-import { m } from './messages'
+import { m } from '../lib/messages'
 import { WomanWithLaptopIllustration } from '../assets/WomanWithLaptopIllustration'
 
 export const Finished: Form = buildForm({
