@@ -16,6 +16,7 @@ export const useVehicles = () => {
           permno,
         },
       },
+      fetchPolicy: 'no-cache',
     })
   }
 

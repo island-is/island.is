@@ -74,12 +74,16 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
 
   useDebounce(
     () => {
-      // search for vehicles
-      // else go back to first page
       if (permno !== '') {
         getVehicles(1, permno)
       } else {
-        setPage(1)
+        // if on 1 page when starting to search, the page is cached so we need to call backend directly
+        // else on other pages we can just set page to 1
+        if (page === 1) {
+          getVehicles(1, '')
+        } else {
+          setPage(1)
+        }
       }
     },
     500,
@@ -128,10 +132,14 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   }
 
   const onRecycle = (vehicle: VehicleDto): void => {
-    setSelectedVehiclesList([...selectedVehiclesList, { ...vehicle }])
+    const selectedList = [...selectedVehiclesList, { ...vehicle }]
+    setSelectedVehiclesList(selectedList)
 
     // Remove selected vehicle from current list
-    const filterdVehiclesList = filterVehiclesList(vehicle, qlVehicleList)
+    const filterdVehiclesList = filterSelectedVehiclesFromList(
+      selectedList,
+      qlVehicleList,
+    )
     setCurrentVehiclesList(filterdVehiclesList)
 
     // Remove selected vehicle from cancel list if user changes his mind about canceling recycling
@@ -148,7 +156,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     }
   }
 
-  function onCancel(vehicle: VehicleDto): void {
+  const onCancel = (vehicle: VehicleDto): void => {
     // Check if the vehicle has been selcted and submitted
     if (vehicle.selectedForRecycling) {
       // Keep bookeeping about canceled recycling
