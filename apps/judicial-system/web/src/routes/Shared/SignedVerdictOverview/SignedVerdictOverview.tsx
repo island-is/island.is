@@ -719,7 +719,7 @@ export const SignedVerdictOverview: FC = () => {
             onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
           />
         )}
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence mode="wait">
           {isModifyingDates && (
             <ModifyDatesModal
               workingCase={workingCase}

@@ -608,6 +608,7 @@ export function buildImageField(
     condition,
     imageWidth = 'full',
     titleVariant = 'h4',
+    imagePosition = 'left',
   } = data
   return {
     children: undefined,
@@ -620,6 +621,7 @@ export function buildImageField(
     marginBottom,
     condition,
     titleVariant,
+    imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
   }

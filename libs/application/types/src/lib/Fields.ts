@@ -481,6 +481,7 @@ export interface ImageField extends BaseField {
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
+  imagePosition?: 'left' | 'right' | 'center'
 }
 
 export interface PdfLinkButtonField extends BaseField {

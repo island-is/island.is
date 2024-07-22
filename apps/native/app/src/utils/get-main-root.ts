@@ -10,10 +10,15 @@ import {
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { testIDs } from './test-ids'
 
+type RightButtonProps = {
+  unseenCount?: number
+  theme?: ReturnType<typeof getThemeWithPreferences>
+}
+
 export const getRightButtons = ({
   unseenCount = notificationsStore.getState().unseenCount,
   theme = getThemeWithPreferences(preferencesStore.getState()),
-} = {}): OptionsTopBarButton[] => {
+}: RightButtonProps = {}): OptionsTopBarButton[] => {
   const iconBackground = {
     color: 'transparent',
     cornerRadius: 4,

@@ -2,7 +2,7 @@ import { NestFactory } from '@nestjs/core'
 
 import { AppModule, AppService } from './app'
 
-async function bootstrap() {
+const bootstrap = async () => {
   const app = await NestFactory.createApplicationContext(AppModule)
   app.enableShutdownHooks()
   const service = app.get(AppService)
