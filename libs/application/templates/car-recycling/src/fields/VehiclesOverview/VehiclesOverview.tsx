@@ -30,18 +30,6 @@ import { useVehicles } from '../../hooks'
 import { FuelCodes } from '../../shared'
 import { VehicleDto } from '../../shared/types'
 
-/*
-TODOS:
- - laga hreinsa search
- - Backwards compatibility
- 
- X Passa að hreinsa út valda bíla þegar verið er að nota pagination
- X Breyta required úr fuelcode
- X Setja loading indicator
- X Laga next takka
- X Breyta text í search í leita að bíl
-*/
-
 const VehiclesOverview: FC<FieldBaseProps> = ({
   application,
   errors,
@@ -235,7 +223,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                     vehicle.requiresMileageRegistration ||
                     Object.values(FuelCodes).includes(
                       vehicle.fuelCode as FuelCodes,
-                    )
+                    ) // Fuelcodes is not used any more. Kept to support old data
                   }
                   id={vehicle.permno + 'input'}
                   label={formatText(
