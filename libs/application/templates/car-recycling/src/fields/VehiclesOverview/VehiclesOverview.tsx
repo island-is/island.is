@@ -292,8 +292,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
           height={130}
           borderRadius="large"
         />
-      ) : (
-        currentVehiclesList &&
+      ) : currentVehiclesList && currentVehiclesList.length > 0 ? (
         currentVehiclesList.map((vehicle: VehicleDto, index) => {
           const color = vehicle.color || vehicle.colorName
 
@@ -333,7 +332,16 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
             </Box>
           )
         })
-      )}
+      ) : qlPaging && qlPaging.totalPages === 0 ? (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="warning"
+            title=""
+            message={formatMessage(carRecyclingMessages.cars.noVehicles)}
+          />
+        </Box>
+      ) : null}
+
       {!loadingCurrent && qlPaging && qlPaging.totalPages > 0 ? (
         <Box paddingTop={8}>
           <Pagination

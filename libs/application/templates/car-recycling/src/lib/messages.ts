@@ -144,6 +144,11 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Kílómetrastaða',
       description: 'Vehicles mileage status',
     },
+    noVehicles: {
+      id: 'rf.cr.application:no.vehicles',
+      defaultMessage: 'Engin ökutæki fundust skráð á umsækjanda',
+      description: 'No vehicles was found registered to the applicant',
+    },
   }),
   review: defineMessages({
     confirmSectionTitle: {
