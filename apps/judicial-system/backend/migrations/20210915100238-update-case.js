@@ -1,3 +1,4 @@
+/* eslint-disable func-style */
 'use strict'
 
 const laws = {
