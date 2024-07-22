@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiMachineModelsGetRequest,
   ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
   ApiMachinesGetRequest,
@@ -9,12 +10,16 @@ import {
   MachineCategoryApi,
   MachineHateoasDto,
   MachineInspectionRequestCreateDto,
+  MachineModelDto,
+  MachineModelsApi,
   MachineOwnerChangeApi,
   MachineRequestInspectionApi,
   MachineStatusChangeApi,
   MachineStreetRegistrationApi,
   MachineStreetRegistrationCreateDto,
   MachineSupervisorChangeApi,
+  MachineTypeDto,
+  MachineTypesApi,
   MachinesApi,
   MachinesDocumentApi,
   MachinesFriendlyHateaosDto,
@@ -46,6 +51,8 @@ export class WorkMachinesClientService {
     private readonly machineStatusApi: MachineStatusChangeApi,
     private readonly machineStreetApi: MachineStreetRegistrationApi,
     private readonly machineRequestInspection: MachineRequestInspectionApi,
+    private readonly machineTypesApi: MachineTypesApi,
+    private readonly machineModelsApi: MachineModelsApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -80,6 +87,14 @@ export class WorkMachinesClientService {
     return this.machineRequestInspection.withMiddleware(
       new AuthMiddleware(auth),
     )
+  }
+
+  private machineTypesApiWithAuth(auth: Auth) {
+    return this.machineTypesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineModelsApiWithAuth(auth: Auth) {
+    return this.machineModelsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   getWorkMachines = async (
@@ -233,5 +248,18 @@ export class WorkMachinesClientService {
     return await this.machineStreetApiWithAuth(
       auth,
     ).apiMachineStreetRegistrationMustInspectBeforeRegistrationGet()
+  }
+
+  async getMachineTypes(auth: Auth): Promise<MachineTypeDto[]> {
+    return await this.machineTypesApiWithAuth(auth).apiMachineTypesGet()
+  }
+
+  async getMachineModels(
+    auth: Auth,
+    requestParameters: ApiMachineModelsGetRequest,
+  ): Promise<MachineModelDto[]> {
+    return await this.machineModelsApiWithAuth(auth).apiMachineModelsGet(
+      requestParameters,
+    )
   }
 }

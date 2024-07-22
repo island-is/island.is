@@ -40,15 +40,10 @@ export const machine = {
         defaultMessage: 'Gerð',
         description: `Machine type nationalId label`,
       },
-      warningAlertMessageTitle: {
-        id: 'aosh.rnm.application:machine.labels.machineType.warningAlertMessageTitle',
-        defaultMessage: 'Tegund/gerð tækis finnst ekki',
-        description: `Machine type warning alert message title`,
-      },
       warningAlertMessageDescription: {
         id: 'aosh.rnm.application:machine.labels.machineType.warningAlertMessageDescription',
         defaultMessage:
-          'Vinsamlegast skráðu inn upplýsingar um tegund og gerð tækisins',
+          'Ef þú finnur ekki tegund og gerð tækis hér fyrir ofan, þá getur þú skráð það inn á næstu síðu.',
         description: `Machine type warning alert message description`,
       },
     }),

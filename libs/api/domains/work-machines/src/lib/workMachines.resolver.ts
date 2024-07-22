@@ -28,6 +28,7 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { MachineDetails } from './models/machineDetails'
+import { MachineModel } from './models/machineModel'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -128,5 +129,15 @@ export class WorkMachinesResolver {
     @Args('rel') rel: string,
   ) {
     return this.workMachinesService.getMachineByRegno(auth, regno, rel)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [MachineModel])
+  @Audit()
+  async getMachineModels(
+    @CurrentUser() auth: User,
+    @Args('type') type: string,
+  ) {
+    return this.workMachinesService.getMachineModels(auth, type)
   }
 }

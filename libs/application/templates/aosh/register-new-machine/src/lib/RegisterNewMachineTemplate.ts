@@ -22,7 +22,7 @@ import { NewMachineAnswersSchema } from './dataSchema'
 import { application as applicationMessage } from './messages'
 import { assign } from 'xstate'
 import set from 'lodash/set'
-import { IdentityApi, UserProfileApi } from '../dataProviders'
+import { IdentityApi, MachineTypesApi, UserProfileApi } from '../dataProviders'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Features } from '@island.is/feature-flags'
 
@@ -96,7 +96,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
-              api: [IdentityApi, UserProfileApi],
+              api: [IdentityApi, UserProfileApi, MachineTypesApi],
             },
           ],
         },

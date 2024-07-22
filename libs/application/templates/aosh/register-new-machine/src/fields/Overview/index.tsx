@@ -136,6 +136,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         />
       </ReviewGroup>
 
+      {/* add when we have correct answers canRegisterToTraffic(answers) */}
       <ReviewGroup
         handleClick={() => onClick('streetRegistration')}
         editMessage={formatMessage(overview.labels.editMessage)}

@@ -7,11 +7,13 @@ import { ConfigType } from '@nestjs/config'
 import {
   Configuration,
   MachineCategoryApi,
+  MachineModelsApi,
   MachineOwnerChangeApi,
   MachineRequestInspectionApi,
   MachineStatusChangeApi,
   MachineStreetRegistrationApi,
   MachineSupervisorChangeApi,
+  MachineTypesApi,
   MachinesApi,
   MachinesDocumentApi,
 } from '../../gen/fetch'
@@ -97,6 +99,16 @@ export const apiProviders = [
     api: MachineRequestInspectionApi,
     provide: MachineRequestInspectionApi,
     acceptHeader: 'application/json-patch+json',
+  },
+  {
+    api: MachineTypesApi,
+    provide: MachineTypesApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: MachineModelsApi,
+    provide: MachineModelsApi,
+    acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({
   provide: provide,

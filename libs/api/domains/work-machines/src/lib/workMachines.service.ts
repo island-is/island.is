@@ -1,4 +1,7 @@
-import { WorkMachinesClientService } from '@island.is/clients/work-machines'
+import {
+  MachineModelDto,
+  WorkMachinesClientService,
+} from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
 import {
   WorkMachine,
@@ -152,5 +155,9 @@ export class WorkMachinesService {
     return (
       (await this.machineService.isPaymentRequired(auth, regNumber)) || false
     )
+  }
+
+  async getMachineModels(auth: User, type: string): Promise<MachineModelDto[]> {
+    return this.machineService.getMachineModels(auth, { tegund: type })
   }
 }

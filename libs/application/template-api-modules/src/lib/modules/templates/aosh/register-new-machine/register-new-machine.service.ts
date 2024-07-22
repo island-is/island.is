@@ -8,7 +8,7 @@ import { coreErrorMessages } from '@island.is/application/core'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
-  MachinesWithTotalCount,
+  MachineTypeDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
@@ -19,6 +19,22 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
     private readonly workMachineClientService: WorkMachinesClientService,
   ) {
     super(ApplicationTypes.MACHINE_REGISTRATION)
+  }
+
+  async getMachineTypes({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<MachineTypeDto[]> {
+    const result = await this.workMachineClientService.getMachineTypes(auth)
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.machinesEmptyListDefault,
+          summary: coreErrorMessages.machinesEmptyListDefault,
+        },
+        400,
+      )
+    }
+    return result
   }
 
   async submitApplication({

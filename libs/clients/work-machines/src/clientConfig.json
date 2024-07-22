@@ -34,7 +34,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
@@ -54,7 +54,57 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineModels": {
+      "get": {
+        "tags": ["MachineModels"],
+        "parameters": [
+          {
+            "name": "tegund",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "default": ""
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineModelDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -105,7 +155,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -154,7 +204,72 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineParentCategories": {
+      "get": {
+        "tags": ["MachineParentCategories"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineParentCategoryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineParentCategories/{type}/{model}": {
+      "get": {
+        "tags": ["MachineParentCategories"],
+        "parameters": [
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "model",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MachineParentCategoryDetailsDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
             "content": {
               "application/json": {
                 "schema": {
@@ -210,7 +325,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -297,7 +412,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "headers": {
               "X-Pagination": {
                 "description": "Paging info",
@@ -427,7 +542,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/vnd.ver.machines.hateoas.v1+json": {
                 "schema": {
@@ -447,7 +562,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/vnd.ver.machines.hateoas.v1+json": {
                 "schema": {
@@ -459,6 +574,93 @@
                   "$ref": "#/components/schemas/ProblemDetails"
                 }
               },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Machines"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MachineRegistrationCreateDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "406": {
+            "description": "Not Acceptable",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/ProblemDetails"
@@ -494,7 +696,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/vnd.ver.machine.hateoas.v1+json": {
                 "schema": {
@@ -614,7 +816,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/vnd.ver.machine.hateoas.v1+json": {
                 "schema": {
@@ -634,7 +836,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/vnd.ver.machine.hateoas.v1+json": {
                 "schema": {
@@ -672,7 +874,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "OK"
           },
           "400": {
             "description": "Bad Request",
@@ -725,7 +927,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -735,7 +937,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -765,7 +967,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -816,7 +1018,7 @@
             }
           },
           "500": {
-            "description": "Server Error",
+            "description": "Internal Server Error",
             "content": {
               "application/octet-stream": {
                 "schema": {
@@ -859,7 +1061,7 @@
         },
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "OK"
           }
         }
       }
@@ -927,7 +1129,7 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
             "content": {
               "application/json": {
                 "schema": {
@@ -945,13 +1147,42 @@
         "summary": "Returns a list of registration number prefixes that require an inspection before street registration",
         "responses": {
           "200": {
-            "description": "Success",
+            "description": "OK",
             "content": {
               "application/json": {
                 "schema": {
                   "type": "array",
                   "items": {
                     "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineSubCategories": {
+      "get": {
+        "tags": ["MachineSubCategories"],
+        "parameters": [
+          {
+            "name": "parentCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineSubCategoryDto"
                   }
                 }
               }
@@ -1004,7 +1235,47 @@
             }
           },
           "422": {
-            "description": "Client Error",
+            "description": "Unprocessable Content",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/MachineTypes": {
+      "get": {
+        "tags": ["MachineTypes"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MachineTypeDto"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ValidationProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
             "content": {
               "application/json": {
                 "schema": {
@@ -1022,7 +1293,167 @@
         "summary": "Returns the openapi document as a json file",
         "responses": {
           "200": {
-            "description": "Success"
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/BearingCables": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/PullingCables": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/Chemicals": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/BaseTypes": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/HeatingEquipment": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/RunningSpeed": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/LiftingEquiptment": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/TechnicalInfo/PowerSource": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
           }
         }
       }
@@ -1297,6 +1728,16 @@
         },
         "additionalProperties": false
       },
+      "MachineModelDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MachineOwnerChangeCompleteDto": {
         "type": "object",
         "properties": {
@@ -1387,6 +1828,118 @@
         },
         "additionalProperties": false
       },
+      "MachineParentCategoryDetailsDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "subCategoryName": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationNumberPrefix": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineParentCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineRegistrationCreateDto": {
+        "required": [
+          "containerNumber",
+          "countryOfProduction",
+          "importer",
+          "isCECertified",
+          "isPreRegistered",
+          "locationOfMachine",
+          "model",
+          "owner",
+          "parentCategory",
+          "serialNumber",
+          "streetRegistrationRequested",
+          "supervisor",
+          "type",
+          "used",
+          "yearOfProduction"
+        ],
+        "type": "object",
+        "properties": {
+          "importer": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "supervisor": {
+            "$ref": "#/components/schemas/PersonDto"
+          },
+          "isPreRegistered": {
+            "type": "boolean"
+          },
+          "isCECertified": {
+            "type": "boolean"
+          },
+          "countryOfProduction": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "containerNumber": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "locationOfMachine": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "serialNumber": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "yearOfProduction": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "used": {
+            "type": "boolean"
+          },
+          "type": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "model": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "parentCategory": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "subCategory": {
+            "type": "string",
+            "nullable": true
+          },
+          "streetRegistrationRequested": {
+            "type": "boolean"
+          },
+          "plateSize": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MachineStatusEnum": {
         "enum": ["Temporary", "Permanent"],
         "type": "string"
@@ -1416,6 +1969,14 @@
           },
           "status": {
             "$ref": "#/components/schemas/MachineStatusEnum"
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "phoneNumber": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -1469,6 +2030,24 @@
         },
         "additionalProperties": false
       },
+      "MachineSubCategoryDto": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "registrationNumberPrefix": {
+            "type": "string",
+            "nullable": true
+          },
+          "parentCategoryName": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "MachineSupervisorChangeDto": {
         "type": "object",
         "properties": {
@@ -1506,6 +2085,16 @@
             "nullable": true
           },
           "moreInfo": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MachineTypeDto": {
+        "type": "object",
+        "properties": {
+          "name": {
             "type": "string",
             "nullable": true
           }
@@ -1564,6 +2153,44 @@
         },
         "additionalProperties": false
       },
+      "PersonDto": {
+        "required": [
+          "address",
+          "email",
+          "gsm",
+          "name",
+          "nationalId",
+          "postalCode"
+        ],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "address": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "postalCode": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "gsm": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
       "PlateSize": {
         "enum": ["A", "B", "D"],
         "type": "string"
@@ -1591,6 +2218,480 @@
           "instance": {
             "type": "string",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechInfoItemDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoCarLiftDto": {
+        "required": [
+          "baseType",
+          "cableDiameter",
+          "liftHeight",
+          "maxWeight",
+          "numberOfPosts"
+        ],
+        "type": "object",
+        "properties": {
+          "maxWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "liftHeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "baseType": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfPosts": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cableDiameter": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoCraneDto": {
+        "required": ["powerSource"],
+        "type": "object",
+        "properties": {
+          "maxWeightInTonMeters": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxWeightInKilogram": {
+            "type": "number",
+            "format": "float"
+          },
+          "liftHeightInMillimeters": {
+            "type": "number",
+            "format": "float"
+          },
+          "boomLengthInMeters": {
+            "type": "number",
+            "format": "float"
+          },
+          "powerSource": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "licensePlate": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoForkliftDto": {
+        "required": [
+          "centerLoad",
+          "enginePower",
+          "liftHeightInMillimeters",
+          "maxLiftWeightKilogram",
+          "powerSource"
+        ],
+        "type": "object",
+        "properties": {
+          "powerSource": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enginePower": {
+            "type": "number",
+            "format": "float"
+          },
+          "ownWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxLiftWeightKilogram": {
+            "type": "number",
+            "format": "float"
+          },
+          "centerLoad": {
+            "type": "number",
+            "format": "float"
+          },
+          "liftHeightInMillimeters": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoPersonOrProductElevatorDto": {
+        "required": [
+          "datePutInUse",
+          "elevatorArea",
+          "liftHeight",
+          "liftingEquipment",
+          "maxSpeed",
+          "maxWeightKilogram",
+          "maxWeightPeople",
+          "numberOfFloors",
+          "personToNotify"
+        ],
+        "type": "object",
+        "properties": {
+          "liftingEquipment": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "liftHeight": {
+            "type": "number",
+            "format": "float"
+          },
+          "numberOfFloors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "personToNotify": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "elevatorArea": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxWeightKilogram": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxWeightPeople": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSpeed": {
+            "type": "number",
+            "format": "float"
+          },
+          "runningSpeeds": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "datePutInUse": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "numberOfLoadBearingCables": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cableDiameter": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxHeightInElevatorTunnel": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "pitDepthInElevatorTunnel": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoPressureEquipmentOrContainerDto": {
+        "required": ["capacity", "chemical", "licensePlate", "maxPressure"],
+        "type": "object",
+        "properties": {
+          "capacity": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment1": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment2": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment3": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment4": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment5": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment6": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment7": {
+            "type": "number",
+            "format": "float"
+          },
+          "capacityCompartment8": {
+            "type": "number",
+            "format": "float"
+          },
+          "workingPressure": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxPressure": {
+            "type": "number",
+            "format": "float"
+          },
+          "safetyValvePressure": {
+            "type": "number",
+            "format": "float"
+          },
+          "chemical": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "vottunarflokkur": {
+            "type": "string",
+            "nullable": true
+          },
+          "licensePlate": {
+            "minLength": 1,
+            "type": "string"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoSkiliftDto": {
+        "required": [
+          "diameterOfPullingCable",
+          "heightDifferenceOfEndStops",
+          "lengthOfLift",
+          "liftingEquipment",
+          "maxSpeed",
+          "numberOfPassengersGoingUp",
+          "performance",
+          "runningSpeeds",
+          "steepestAngleInPercents",
+          "stoppingDistance"
+        ],
+        "type": "object",
+        "properties": {
+          "lengthOfLift": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "performance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSpeed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "runningSpeeds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "numberOfPassengersGoingUp": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "heightDifferenceOfEndStops": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "steepestAngleInPercents": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "diameterOfPullingCable": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "stoppingDistance": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "liftingEquipment": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoSteamKettleDto": {
+        "required": [
+          "capacity",
+          "maxPressure",
+          "performanceInKilogramsPerHour",
+          "performanceInKiloWatts",
+          "powerSource",
+          "safetyValvePressure",
+          "workingPressure"
+        ],
+        "type": "object",
+        "properties": {
+          "performanceInKiloWatts": {
+            "type": "number",
+            "format": "float"
+          },
+          "performanceInKilogramsPerHour": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "capacity": {
+            "type": "number",
+            "format": "float"
+          },
+          "heatPower": {
+            "type": "number",
+            "format": "float"
+          },
+          "workingPressure": {
+            "type": "number",
+            "format": "float"
+          },
+          "maxPressure": {
+            "type": "number",
+            "format": "float"
+          },
+          "safetyValvePressure": {
+            "type": "number",
+            "format": "float"
+          },
+          "powerSource": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "preheater": {
+            "type": "boolean"
+          },
+          "pumps": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "superheater": {
+            "type": "boolean"
+          },
+          "heatingEquipment": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "chemical": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoTravelingMachineDto": {
+        "required": ["enginePower", "ownWeight", "powerSource"],
+        "type": "object",
+        "properties": {
+          "powerSource": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "enginePower": {
+            "type": "number",
+            "format": "float"
+          },
+          "ownWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "cO2Emission": {
+            "type": "number",
+            "format": "double"
+          },
+          "licensePlate": {
+            "type": "string",
+            "nullable": true
+          },
+          "maxLiftHeight": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoUnusualMachineDto": {
+        "required": ["powerSource"],
+        "type": "object",
+        "properties": {
+          "powerSource": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "ownWeight": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxSpeed": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "runningSpeeds": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxWeightInKilograms": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxWeightInPersons": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "other": {
+            "type": "string",
+            "nullable": true
+          },
+          "liftHeight": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechnicalInfoWorkElevatorOrPeopleBasketDto": {
+        "required": ["maxWeightKilogram", "maxWeightPeople", "powerSource"],
+        "type": "object",
+        "properties": {
+          "maxWeightKilogram": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "maxWeightPeople": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "powerSource": {
+            "type": "integer",
+            "format": "int32"
           }
         },
         "additionalProperties": false

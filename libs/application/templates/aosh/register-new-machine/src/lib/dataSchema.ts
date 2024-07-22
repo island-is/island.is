@@ -26,6 +26,7 @@ const BasicInformationSchema = z.object({
 })
 
 export const NewMachineAnswersSchema = z.object({
+  approveExternalData: z.boolean(),
   importerInformation: z.object({
     importer: PersonInformationSchema,
     isOwnerOtherThanImporter: z.enum([YES, NO]),
@@ -50,8 +51,6 @@ export const NewMachineAnswersSchema = z.object({
       })
       .optional(),
   }),
-
-  approveExternalData: z.boolean(),
 })
 
 export type NewMachineAnswers = z.TypeOf<typeof NewMachineAnswersSchema>

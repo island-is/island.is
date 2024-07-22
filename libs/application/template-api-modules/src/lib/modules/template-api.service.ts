@@ -31,7 +31,7 @@ export class TemplateAPIService {
     const serviceId = this.getServiceId(action)
 
     const service = this.services.find((x) => x.serviceId === serviceId)
-
+    this.services.map((x) => console.log(x.serviceId))
     if (service) {
       const result = await service.performAction(
         action,
