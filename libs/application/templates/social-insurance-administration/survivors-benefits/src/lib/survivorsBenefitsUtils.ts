@@ -95,6 +95,21 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'deceasedSpouseInfo.notIcelandic[0]',
   ) as YesOrNo
 
+  const deceasedSpouseName = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.name',
+  ) as string
+
+  const deceasedSpouseNationalId = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.nationalId',
+  ) as string
+
+  const deceasedSpouseDate = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.date',
+  ) as Date
+
   const tempAnswers = getValueViaPath(
     answers,
     'tempAnswers',
@@ -124,6 +139,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     taxLevel,
     additionalAttachmentsRequired,
     notIcelandic,
+    deceasedSpouseName,
+    deceasedSpouseNationalId,
+    deceasedSpouseDate,
     tempAnswers,
     isExpectingChild,
   }
