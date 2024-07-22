@@ -34,6 +34,11 @@ import {
   getApplicationExternalData as getPSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 
+import {
+  getApplicationAnswers as getSBApplicationAnswers,
+  getApplicationExternalData as getSBApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
+
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
   uploads: Attachment[],
@@ -296,6 +301,73 @@ export const transformApplicationToPensionSupplementDTO = (
   }
 
   return pensionSupplementDTO
+}
+
+export const transformApplicationToSurvivorsBenefitsDTO = (
+  application: Application,
+  uploads: Attachment[],
+): ApplicationDTO => {
+  const {
+    applicantPhonenumber,
+    comment,
+    bankAccountType,
+    bank,
+    iban,
+    swift,
+    bankName,
+    bankAddress,
+    currency,
+    paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    spouseAllowance,
+    spouseAllowanceUsage,
+    taxLevel,
+    notIcelandic,
+    deceasedSpouseName,
+    deceasedSpouseNationalId,
+    deceasedSpouseDate,
+    tempAnswers,
+    isExpectingChild,
+  } = getSBApplicationAnswers(application.answers)
+  const { bankInfo, userProfileEmail } = getSBApplicationExternalData(
+    application.externalData,
+  )
+  // TODO: Implement sendApplication for SURVIVORS_BENEFITS
+  const survivorsBenefitsDTO: ApplicationDTO = {
+    applicationId: application.id,
+    applicantInfo: {
+      email: userProfileEmail,
+      phonenumber: applicantPhonenumber,
+    },
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      ...((bankAccountType === undefined ||
+        bankAccountType === BankAccountType.ICELANDIC) && {
+        domesticBankInfo: {
+          bank: formatBank(bank),
+        },
+      }),
+      ...(bankAccountType === BankAccountType.FOREIGN && {
+        foreignBankInfo: {
+          iban: iban.replace(/[\s]+/g, ''),
+          swift: swift.replace(/[\s]+/g, ''),
+          foreignBankName: bankName,
+          foreignBankAddress: bankAddress,
+          foreignCurrency: currency,
+        },
+      }),
+    }),
+    taxInfo: {
+      personalAllowance: YES === personalAllowance,
+      personalAllowanceUsage:
+        YES === personalAllowance ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+    uploads,
+    comment,
+  }
+
+  return survivorsBenefitsDTO
 }
 
 export const getMonthNumber = (monthName: string): number => {
