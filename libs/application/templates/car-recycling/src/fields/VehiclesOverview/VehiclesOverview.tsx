@@ -11,7 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import { formatText, getErrorViaPath } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
@@ -39,6 +39,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   const { setValue } = useFormContext()
   const [page, setPage] = useState(1)
   const [permno, setPermno] = useState('')
+  const skipEffect = useRef(false)
   const [currentVehiclesList, setCurrentVehiclesList] = useState<VehicleDto[]>(
     [],
   )
@@ -70,6 +71,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         if (page === 1) {
           getVehicles(1, '')
         } else {
+          skipEffect.current = false
           setPage(1)
         }
       }
@@ -79,15 +81,16 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   )
 
   useEffect(() => {
-    getVehicles(page, '')
+    // Skip getting paged data if using search
+    if (!skipEffect.current) {
+      getVehicles(page, permno)
+    }
   }, [page])
 
   useEffect(() => {
-    const vehicles = qlVehiclesData?.vehiclesListV2.vehicleList as VehicleDto[]
-
-    if (vehicles) {
+    if (qlVehicleList) {
       setCurrentVehiclesList(
-        filterSelectedVehiclesFromList(selectedVehiclesList, vehicles),
+        filterSelectedVehiclesFromList(selectedVehiclesList, qlVehicleList),
       )
     }
   }, [qlVehiclesData, selectedVehiclesList])
@@ -97,9 +100,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
       application.answers,
     )
 
-    if (selectedVehicles.length > 0) {
-      setSelectedVehiclesList(selectedVehicles)
-    }
+    setSelectedVehiclesList(selectedVehicles)
 
     setCanceledVehiclesList(canceledVehicles)
   }, [])
@@ -109,10 +110,10 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     setValue('vehicles.canceledVehicles', canceledVehiclesList)
   }, [selectedVehiclesList, setValue])
 
-  const getRoleLabel = (vechicle: VehicleDto): string => {
-    if (vechicle.role === 'Eigandi') {
+  const getRoleLabel = (vehicle: VehicleDto): string => {
+    if (vehicle.role === 'Eigandi') {
       return formatMessage(carRecyclingMessages.cars.owner)
-    } else if (vechicle.role === 'Meðeigandi')
+    } else if (vehicle.role === 'Meðeigandi')
       return formatMessage(carRecyclingMessages.cars.coOwner)
     else {
       return formatMessage(carRecyclingMessages.cars.operator)
@@ -178,7 +179,12 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
             application,
             formatMessage,
           )}
-          onChange={(e) => setPermno(e.target.value)}
+          onChange={(e) => {
+            skipEffect.current = true
+            setPage(1)
+
+            setPermno(e.target.value)
+          }}
         />
       </Box>
 
@@ -292,7 +298,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
           height={130}
           borderRadius="large"
         />
-      ) : currentVehiclesList && currentVehiclesList.length > 0 ? (
+      ) : currentVehiclesList.length > 0 ? (
         currentVehiclesList.map((vehicle: VehicleDto, index) => {
           const color = vehicle.color || vehicle.colorName
 
@@ -332,7 +338,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
             </Box>
           )
         })
-      ) : qlPaging && qlPaging.totalPages === 0 ? (
+      ) : qlPaging?.totalPages === 0 ? (
         <Box marginTop={3}>
           <AlertMessage
             type="warning"
@@ -342,7 +348,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         </Box>
       ) : null}
 
-      {!loadingCurrent && qlPaging && qlPaging.totalPages > 0 ? (
+      {!loadingCurrent && qlPaging?.totalPages > 0 ? (
         <Box paddingTop={8}>
           <Pagination
             page={page}
