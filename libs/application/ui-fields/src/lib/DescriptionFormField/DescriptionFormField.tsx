@@ -27,13 +27,9 @@ export const DescriptionFormField: FC<
           {formatText(field.title, application, formatMessage)}
           {field.titleTooltip && (
             <Tooltip
-                placement="top"
-                text={formatText(
-                  field.titleTooltip,
-                  application,
-                  formatMessage,
-                )}
-              />
+              placement="top"
+              text={formatText(field.titleTooltip, application, formatMessage)}
+            />
           )}
         </Text>
       )}
@@ -46,9 +42,9 @@ export const DescriptionFormField: FC<
           )}
           {field.tooltip && (
             <Tooltip
-                placement="top"
-                text={formatText(field.tooltip, application, formatMessage)}
-              />
+              placement="top"
+              text={formatText(field.tooltip, application, formatMessage)}
+            />
           )}
         </Text>
       )}
