@@ -40,13 +40,13 @@ interface Arguments {
 const writeToOutput = async (data: string, output?: string) => {
   if (output) {
     if (output.startsWith('s3://')) {
-      const Bucket = output.substr(5).split('/')[0]
-      const Key = output.substr(5).split(/\/(.+)/)[1]
+      const Bucket = output.substring(5).split('/')[0]
+      const Key = output.substring(5).split(/\/(.+)/)[1]
       const objectParams = {
         Bucket,
         Key,
         Body: data,
-        ACL: 'bucket-owner-full-control',
+        ACL: 'bucket-owner-full-control' as const,
       }
       const config = {
         region: 'eu-west-1',
