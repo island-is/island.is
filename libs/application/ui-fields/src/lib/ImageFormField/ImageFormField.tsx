@@ -6,7 +6,6 @@ import { formatText } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useWindowSize } from 'react-use'
 import { useEffect, useState } from 'react'
-import { el } from 'date-fns/locale'
 
 interface Props extends FieldBaseProps {
   field: ImageField
@@ -64,7 +63,7 @@ export const ImageFormField = ({ field, application }: Props) => {
     if (typeof imageWidth === 'string') {
       setImageWidthForScreenWidth(imageWidth)
     }
-  }, [])
+  }, [imagePosition, imageWidth])
 
   useEffect(() => {
     if (typeof imagePosition !== 'string' && imagePosition) {
@@ -78,8 +77,7 @@ export const ImageFormField = ({ field, application }: Props) => {
         getImageWidthForScreenWidth(imageWidth, width),
       )
     }
-  }, [width])
-  console.log(width, imageWidthForScreenWidth)
+  }, [width, imagePosition, imageWidth])
 
   return (
     <Box

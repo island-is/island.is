@@ -1,4 +1,4 @@
-import React, { FC, useCallback } from 'react'
+import { useCallback } from 'react'
 import { formatText } from '@island.is/application/core'
 import { LinkField, Application } from '@island.is/application/types'
 import { Box, Button } from '@island.is/island-ui/core'
@@ -15,7 +15,7 @@ export const LinkFormField = ({ field, application }: Props) => {
 
   const openLink = useCallback(() => {
     window.open(formatText(field.link, application, formatMessage), '_blank')
-  }, [field.link])
+  }, [field.link, application, formatMessage])
 
   const { getFileUrl } = useGenerateFileUrl(
     application.id,
