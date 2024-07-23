@@ -90,7 +90,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         filterSelectedVehiclesFromList(selectedVehiclesList, vehicles),
       )
     }
-  }, [qlVehiclesData])
+  }, [qlVehiclesData, selectedVehiclesList])
 
   useEffect(() => {
     const { selectedVehicles, canceledVehicles } = getApplicationAnswers(

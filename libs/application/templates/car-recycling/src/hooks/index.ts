@@ -11,12 +11,12 @@ export const useVehicles = () => {
       variables: {
         input: {
           page,
-          pageSize: 15,
+          pageSize: 3, // ROLLBACK
           onlyMileage: false,
           permno,
         },
       },
-      fetchPolicy: 'no-cache',
+      fetchPolicy: 'cache-first',
     })
   }
 
