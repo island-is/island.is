@@ -11,7 +11,7 @@ export const useVehicles = () => {
       variables: {
         input: {
           page,
-          pageSize: 3, // ROLLBACK
+          pageSize: 15,
           onlyMileage: false,
           permno,
         },
