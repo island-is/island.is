@@ -17,7 +17,6 @@ import { formatText, getErrorViaPath } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
 import { InputController } from '@island.is/shared/form-fields'
 import {
-  filterSelectedVehiclesFromList,
   filterVehiclesList,
   getApplicationAnswers,
 } from '../../lib/carRecyclingUtils'
