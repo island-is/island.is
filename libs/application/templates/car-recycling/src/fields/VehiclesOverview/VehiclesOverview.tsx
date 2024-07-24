@@ -71,10 +71,10 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         if (page === 1) {
           getVehicles(1, '')
         } else {
-          skipEffect.current = false
           setPage(1)
         }
       }
+      skipEffect.current = false
     },
     500,
     [permno],
