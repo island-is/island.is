@@ -199,10 +199,10 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${application.id}.pdf`,
-    )
+    expect(awsService.getFile).toHaveBeenCalledWith({
+      bucket: bucket,
+      fileName: `children-residence-change/${application.id}.pdf`,
+    })
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
       parentAWithContactInfo.phoneNumber,
@@ -239,10 +239,10 @@ describe('FileService', () => {
 
     await expect(act).rejects.toThrowError(NotFoundException)
 
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${applicationId}.pdf`,
-    )
+    expect(awsService.getFile).toHaveBeenCalledWith({
+      bucket: bucket,
+      key: `children-residence-change/${applicationId}.pdf`,
+    })
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
   })
