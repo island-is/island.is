@@ -149,6 +149,11 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Engin ökutæki fundust skráð á umsækjanda',
       description: 'No vehicles was found registered to the applicant',
     },
+    vehicleSelected: {
+      id: 'rf.cr.application:vehicle.selected',
+      defaultMessage: 'Ökutæki valið til endurvinnslu',
+      description: 'Vehicle selected for recycling',
+    },
   }),
   review: defineMessages({
     confirmSectionTitle: {

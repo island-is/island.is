@@ -89,9 +89,21 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
 
   useEffect(() => {
     if (qlVehicleList) {
-      setCurrentVehiclesList(
-        filterSelectedVehiclesFromList(selectedVehiclesList, qlVehicleList),
-      )
+      // Mark selected vechicles in currentVehicles List as selectedForRecycling
+      const updatedAllVehicles = qlVehicleList.map((vehicle) => {
+        const isSelected = selectedVehiclesList.find((selectedVehicle) => {
+          return selectedVehicle.permno === vehicle.permno
+        })
+        if (isSelected) {
+          return {
+            ...vehicle,
+            selectedForRecycling: true,
+          }
+        }
+        return vehicle
+      })
+
+      setCurrentVehiclesList(updatedAllVehicles)
     }
   }, [qlVehiclesData, selectedVehiclesList])
 
@@ -120,16 +132,17 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     }
   }
 
+  const getUnavailableText = (vehicle: VehicleDto): string => {
+    if (vehicle.selectedForRecycling) {
+      return formatMessage(carRecyclingMessages.cars.vehicleSelected)
+    }
+
+    return formatMessage(carRecyclingMessages.cars.onlyOwnerCanRecyle)
+  }
+
   const onRecycle = (vehicle: VehicleDto): void => {
     const selectedList = [...selectedVehiclesList, { ...vehicle }]
     setSelectedVehiclesList(selectedList)
-
-    // Remove selected vehicle from current list
-    const filterdVehiclesList = filterSelectedVehiclesFromList(
-      selectedList,
-      qlVehicleList,
-    )
-    setCurrentVehiclesList(filterdVehiclesList)
 
     // Remove selected vehicle from cancel list if user changes his mind about canceling recycling
     const filteredCanceledVehiclesList = filterVehiclesList(
@@ -182,7 +195,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
           onChange={(e) => {
             skipEffect.current = true
             setPage(1)
-
             setPermno(e.target.value)
           }}
         />
@@ -208,7 +220,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
               borderWidth="standard"
               flexDirection="column"
               color="blue"
-              marginBottom={4}
               paddingX={4}
               paddingY={3}
             >
@@ -310,6 +321,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
             >
               <ActionCard
                 key={vehicle.permno}
+                backgroundColor={
+                  vehicle.selectedForRecycling ? 'blue' : 'white'
+                }
                 tag={{
                   label: getRoleLabel(vehicle),
                   variant: vehicle.role === 'Eigandi' ? 'dark' : 'red',
@@ -317,6 +331,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                 }}
                 cta={{
                   icon: undefined,
+                  size: 'small',
                   buttonType: {
                     variant: 'primary',
                     colorScheme: 'default',
@@ -329,10 +344,9 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                 heading={vehicle.permno || ''}
                 text={`${vehicle.make}, ${color}`}
                 unavailable={{
-                  active: vehicle.role !== 'Eigandi',
-                  label: formatMessage(
-                    carRecyclingMessages.cars.onlyOwnerCanRecyle,
-                  ),
+                  active:
+                    vehicle.role !== 'Eigandi' || vehicle.selectedForRecycling,
+                  label: getUnavailableText(vehicle),
                 }}
               />
             </Box>
