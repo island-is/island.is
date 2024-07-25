@@ -9,22 +9,18 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     [],
   ) as VehicleDto[]
 
-  const allVehicles = getValueViaPath(
-    answers,
-    'vehicles.allVehicles',
-    [],
-  ) as VehicleDto[]
-
   const canceledVehicles = getValueViaPath(
     answers,
     'vehicles.canceledVehicles',
     [],
   ) as VehicleDto[]
 
+  const permnoSearch = getValueViaPath(answers, 'permnoSearch', '') as ''
+
   return {
     selectedVehicles,
-    allVehicles,
     canceledVehicles,
+    permnoSearch,
   }
 }
 
@@ -71,15 +67,4 @@ export const filterVehiclesList = (
   list: VehicleDto[],
 ): VehicleDto[] => {
   return list.filter((item) => item.permno !== vehicle.permno)
-}
-
-export const filterSelectedVehiclesFromList = (
-  selectedList: VehicleDto[],
-  allVehicles: VehicleDto[],
-): VehicleDto[] => {
-  // Not show selected vehicles in filered list
-  return allVehicles.filter(
-    (vehicle1) =>
-      !selectedList.some((vehicle2) => vehicle1.permno === vehicle2.permno),
-  )
 }

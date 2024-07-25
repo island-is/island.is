@@ -88,7 +88,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
 
   useEffect(() => {
     if (qlVehicleList) {
-      // Mark selected vechicles in currentVehicles List as selectedForRecycling
+      // Mark selected vechicles in currentVehicles List as markedForRecycling
       const updatedAllVehicles = qlVehicleList.map((vehicle) => {
         const isSelected = selectedVehiclesList.find((selectedVehicle) => {
           return selectedVehicle.permno === vehicle.permno
@@ -96,7 +96,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         if (isSelected) {
           return {
             ...vehicle,
-            selectedForRecycling: true,
+            markedForRecycling: true,
           }
         }
         return vehicle
@@ -107,13 +107,12 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   }, [qlVehiclesData, selectedVehiclesList])
 
   useEffect(() => {
-    const { selectedVehicles, canceledVehicles } = getApplicationAnswers(
-      application.answers,
-    )
+    const { selectedVehicles, canceledVehicles, permnoSearch } =
+      getApplicationAnswers(application.answers)
 
     setSelectedVehiclesList(selectedVehicles)
-
     setCanceledVehiclesList(canceledVehicles)
+    setPermno(permnoSearch)
   }, [])
 
   useEffect(() => {
@@ -132,7 +131,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   }
 
   const getUnavailableText = (vehicle: VehicleDto): string => {
-    if (vehicle.selectedForRecycling) {
+    if (vehicle.markedForRecycling) {
       return formatMessage(carRecyclingMessages.cars.vehicleSelected)
     }
 
@@ -174,16 +173,13 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     )
 
     setSelectedVehiclesList(filteredSelectedVehiclesList)
-
-    // Add selected vehicle back to the non selected list
-    setCurrentVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
   }
 
   return (
     <Box id="vehicles">
       <Box paddingTop={2}>
         <InputController
-          id="vehiclesList.input"
+          id="permnoSearch"
           defaultValue=""
           backgroundColor="blue"
           label={formatText(
@@ -211,7 +207,11 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         const color = vehicle.color || vehicle.colorName
 
         return (
-          <Box marginBottom={2} key={index} id="vehicles.selectedVehicles">
+          <Box
+            marginBottom={2}
+            key={vehicle.permno + '-selected'}
+            id="vehicles.selectedVehicles"
+          >
             <FocusableBox
               key={vehicle.permno}
               borderRadius="large"
@@ -309,20 +309,18 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
           borderRadius="large"
         />
       ) : currentVehiclesList.length > 0 ? (
-        currentVehiclesList.map((vehicle: VehicleDto, index) => {
+        currentVehiclesList.map((vehicle: VehicleDto) => {
           const color = vehicle.color || vehicle.colorName
 
           return (
             <Box
               marginBottom={2}
-              key={index + '_currentbox'}
+              key={vehicle.permno + '_currentbox'}
               id="vehicles.allVehicles"
             >
               <ActionCard
                 key={vehicle.permno}
-                backgroundColor={
-                  vehicle.selectedForRecycling ? 'blue' : 'white'
-                }
+                backgroundColor={vehicle.markedForRecycling ? 'blue' : 'white'}
                 tag={{
                   label: getRoleLabel(vehicle),
                   variant: vehicle.role === 'Eigandi' ? 'dark' : 'red',
@@ -344,7 +342,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                 text={`${vehicle.make}, ${color}`}
                 unavailable={{
                   active:
-                    vehicle.role !== 'Eigandi' || vehicle.selectedForRecycling,
+                    vehicle.role !== 'Eigandi' || vehicle.markedForRecycling,
                   label: getUnavailableText(vehicle),
                 }}
               />
