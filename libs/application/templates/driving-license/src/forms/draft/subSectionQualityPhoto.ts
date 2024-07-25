@@ -2,7 +2,6 @@ import {
   buildMultiField,
   buildCheckboxField,
   buildCustomField,
-  buildRadioField,
   buildSubSection,
   getValueViaPath,
 } from '@island.is/application/core'
@@ -37,15 +36,6 @@ export const subSectionQualityPhoto = buildSubSection({
           title: m.eligibilityRequirementTitle,
           component: 'QualityPhoto',
           id: 'qphoto',
-        }),
-        buildRadioField({
-          id: 'willBringQualityPhoto',
-          title: '',
-          disabled: false,
-          options: [
-            { value: NO, label: m.qualityPhotoNoAcknowledgement },
-            { value: YES, label: m.qualityPhotoAcknowledgement },
-          ],
         }),
         buildCustomField({
           id: 'photdesc',
