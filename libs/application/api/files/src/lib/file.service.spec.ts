@@ -202,6 +202,7 @@ describe('FileService', () => {
     expect(awsService.getFile).toHaveBeenCalledWith({
       bucket: bucket,
       fileName: `children-residence-change/${application.id}.pdf`,
+      encoding: 'binary',
     })
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
@@ -241,7 +242,8 @@ describe('FileService', () => {
 
     expect(awsService.getFile).toHaveBeenCalledWith({
       bucket: bucket,
-      key: `children-residence-change/${applicationId}.pdf`,
+      fileName: `children-residence-change/${applicationId}.pdf`,
+      encoding: 'binary',
     })
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
