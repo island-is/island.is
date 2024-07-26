@@ -139,8 +139,14 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   }
 
   const onRecycle = (vehicle: VehicleDto): void => {
-    const selectedList = [...selectedVehiclesList, { ...vehicle }]
-    setSelectedVehiclesList(selectedList)
+    // Force changes on selectedForRecycling and mileage to all selected vehicle objects to prevent ghost effects
+    setSelectedVehiclesList((prevArray) =>
+      prevArray.concat({
+        ...vehicle,
+        selectedForRecycling: vehicle.selectedForRecycling || false,
+        mileage: vehicle.mileage || '',
+      }),
+    )
 
     // Remove selected vehicle from cancel list if user changes his mind about canceling recycling
     const filteredCanceledVehiclesList = filterVehiclesList(
@@ -160,10 +166,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     // Check if the vehicle has been selcted and submitted
     if (vehicle.selectedForRecycling) {
       // Keep bookeeping about canceled recycling
-      setCanceledVehiclesList((vehicles: VehicleDto[]) => [
-        vehicle,
-        ...vehicles,
-      ])
+      setCanceledVehiclesList((prevArray) => prevArray.concat(vehicle))
     }
 
     // Remove the vehicle from the selected list
@@ -316,7 +319,8 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
             <Box
               marginBottom={2}
               key={vehicle.permno + '_currentbox'}
-              id="vehicles.allVehicles"
+              id={vehicle.permno + '_currentbox'}
+              //  id="vehicles.allVehicles"
             >
               <ActionCard
                 key={vehicle.permno}
