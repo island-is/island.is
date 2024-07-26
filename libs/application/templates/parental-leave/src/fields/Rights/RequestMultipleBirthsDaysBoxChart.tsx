@@ -1,38 +1,26 @@
-import React, { FC, useState } from 'react'
+import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Controller, useFormContext } from 'react-hook-form'
+import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
-import {
-  getMaxMultipleBirthsDays,
-  getMaxMultipleBirthsAndDefaultMonths,
-  getMultipleBirthRequestDays,
-} from '../../lib/parentalLeaveUtils'
+import { getMaxMultipleBirthsAndDefaultMonths } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
-import { Slider } from '@island.is/application/ui-components'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
 import { formatText } from '@island.is/application/core'
 import { NO } from '../../constants'
 import { useEffectOnce } from 'react-use'
 
-const RequestMultipleBirthsDaysSlider: FC<
+const RequestMultipleBirthsDaysBoxChart: FC<
   React.PropsWithChildren<FieldBaseProps>
 > = ({ field, application }) => {
-  const { id, description } = field
+  const { description } = field
   const { formatMessage } = useLocale()
-  const { setValue } = useFormContext()
-  const multipleBirthsRequestDays = getMultipleBirthRequestDays(
-    application.answers,
-  )
+  const { setValue, watch } = useFormContext()
 
-  const maxDays = getMaxMultipleBirthsDays(application.answers)
   const maxMonths = getMaxMultipleBirthsAndDefaultMonths(application.answers)
 
-  const [chosenRequestDays, setChosenRequestDays] = useState<number>(
-    multipleBirthsRequestDays,
-  )
+  const chosenRequestDays = watch('multipleBirthsRequestDays')
   useEffectOnce(() => {
     setValue('requestRights.isRequestingRights', NO)
     setValue('requestRights.requestDays', '0')
@@ -65,36 +53,6 @@ const RequestMultipleBirthsDaysSlider: FC<
     <>
       <p>{formatText(description!, application, formatMessage)}</p>
       <Box marginBottom={6} marginTop={5}>
-        <Box marginBottom={12}>
-          <Controller
-            defaultValue={chosenRequestDays}
-            name={id}
-            render={({ field: { onChange, value } }) => (
-              <Slider
-                label={{
-                  singular: formatMessage(parentalLeaveFormMessages.shared.day),
-                  plural: formatMessage(parentalLeaveFormMessages.shared.days),
-                }}
-                min={0}
-                max={maxDays}
-                step={1}
-                currentIndex={value}
-                showMinMaxLabels
-                showToolTip
-                trackStyle={{ gridTemplateRows: 8 }}
-                calculateCellStyle={() => {
-                  return {
-                    background: theme.color.dark200,
-                  }
-                }}
-                onChange={(newValue: number) => {
-                  onChange(newValue.toString())
-                  setChosenRequestDays(newValue)
-                }}
-              />
-            )}
-          />
-        </Box>
         <BoxChart
           application={application}
           boxes={Math.ceil(maxMonths)}
@@ -116,4 +74,4 @@ const RequestMultipleBirthsDaysSlider: FC<
   )
 }
 
-export default RequestMultipleBirthsDaysSlider
+export default RequestMultipleBirthsDaysBoxChart

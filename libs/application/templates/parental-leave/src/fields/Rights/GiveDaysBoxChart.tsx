@@ -1,10 +1,9 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
 import { useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import BoxChart, { BoxChartKey } from '../components/BoxChart'
-import { getApplicationAnswers } from '../../lib/parentalLeaveUtils'
 import {
   maxDaysToGiveOrReceive,
   defaultMonths,
@@ -13,13 +12,12 @@ import {
 import { YES } from '../../constants'
 import { useEffectOnce } from 'react-use'
 
-const GiveDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+const GiveDaysBoxChart: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
   application,
 }) => {
-  const { setValue } = useFormContext()
-
-  const { giveDays } = getApplicationAnswers(application.answers)
+  const { setValue, watch } = useFormContext()
+  const giveDays = watch('giveRights.giveDays')
 
   useEffectOnce(() => {
     setValue('giveRights.isGivingRights', YES)
@@ -74,4 +72,4 @@ const GiveDaysSlider: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 }
 
-export default GiveDaysSlider
+export default GiveDaysBoxChart

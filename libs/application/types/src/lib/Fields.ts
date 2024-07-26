@@ -616,7 +616,7 @@ export interface SliderField extends BaseField {
   readonly color?: Colors
   component: FieldComponents.SLIDER
   min: number
-  max: number
+  max: MaybeWithApplicationAndField<number>
   step?: number
   snap?: boolean
   trackStyle?: CSSProperties

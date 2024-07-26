@@ -1,14 +1,19 @@
-import { FC } from 'react'
-import { SliderField, Application } from '@island.is/application/types'
+import { FC, useMemo } from 'react'
+import {
+  SliderField,
+  Application,
+  MaybeWithApplicationAndField,
+} from '@island.is/application/types'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Slider } from '@island.is/application/ui-components'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { Box } from '@island.is/island-ui/core'
+import { getDefaultValue } from '../../getDefaultValue'
 
 type SliderFormFieldProps = {
-  field: Omit<SliderField, 'type' | 'component' | 'title' | 'children'>
+  field: SliderField
   application: Application
 }
 
@@ -17,7 +22,26 @@ export const SliderFormField: FC<
 > = ({ application, field }) => {
   const { clearErrors, setValue } = useFormContext()
   const { formatMessage } = useLocale()
-  const giveDays = getValueViaPath(application.answers, field.id)
+  const computeMax = (
+    maybeMax: MaybeWithApplicationAndField<number>,
+    memoApplication: Application,
+    memoField: SliderField,
+  ) => {
+    if (typeof maybeMax === 'function') {
+      return maybeMax(memoApplication, memoField)
+    }
+    return maybeMax
+  }
+
+  const finalMax = useMemo(
+    () =>
+      computeMax(
+        field.max as MaybeWithApplicationAndField<number>,
+        application,
+        field,
+      ),
+    [field, application],
+  )
 
   return (
     <Box>
@@ -25,13 +49,13 @@ export const SliderFormField: FC<
         name={field.id}
         defaultValue={
           Number(getValueViaPath(application.answers, field.id)) ||
-          field.currentIndex ||
+          getDefaultValue(field, application) ||
           field.min
         }
         render={({ field: { onChange, value } }) => (
           <Slider
             min={field.min}
-            max={field.max}
+            max={finalMax}
             step={field.step}
             snap={field.snap}
             trackStyle={field.trackStyle}

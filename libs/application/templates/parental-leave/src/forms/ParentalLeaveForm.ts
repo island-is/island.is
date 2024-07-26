@@ -33,7 +33,7 @@ import {
 } from '@island.is/application/ui-components'
 
 import Logo from '../assets/Logo'
-import { minPeriodDays } from '../config'
+import { maxDaysToGiveOrReceive, minPeriodDays } from '../config'
 import {
   ADOPTION,
   FILE_SIZE_LIMIT,
@@ -1202,15 +1202,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 }),
               ],
             }),
-            buildCustomField({
-              id: 'multipleBirthsRequestDays',
-              childInputIds: [
-                'multipleBirthsRequestDays',
-                'requestRights.isRequestingRights',
-                'requestRights.requestDays',
-                'giveRights.isGivingRights',
-                'giveRights.giveDays',
-              ],
+            buildMultiField({
+              id: 'multipleBirthsRequestDaysMultiField',
               title: parentalLeaveFormMessages.shared.multipleBirthsDaysTitle,
               description:
                 parentalLeaveFormMessages.shared.multipleBirthsDaysDescription,
@@ -1227,7 +1220,40 @@ export const ParentalLeaveForm: Form = buildForm({
                   otherParent !== SINGLE
                 )
               },
-              component: 'RequestMultipleBirthsDaysSlider',
+              children: [
+                buildSliderField({
+                  id: 'multipleBirthsRequestDays',
+                  label: {
+                    singular: parentalLeaveFormMessages.shared.day,
+                    plural: parentalLeaveFormMessages.shared.days,
+                  },
+                  min: 0,
+                  max: (application: Application) =>
+                    getMaxMultipleBirthsDays(application.answers),
+                  step: 1,
+                  defaultValue: (application: Application) =>
+                    getMultipleBirthRequestDays(application.answers),
+                  showMinMaxLabels: true,
+                  showToolTip: true,
+                  trackStyle: { gridTemplateRows: 8 },
+                  calculateCellStyle: () => {
+                    return {
+                      background: theme.color.dark200,
+                    }
+                  },
+                }),
+                buildCustomField({
+                  id: 'requestRights',
+                  childInputIds: [
+                    'requestRights.isRequestingRights',
+                    'requestRights.requestDays',
+                    'giveRights.isGivingRights',
+                    'giveRights.giveDays',
+                  ],
+                  title: '',
+                  component: 'RequestMultipleBirthsDaysBoxChart',
+                }),
+              ],
             }),
             buildCustomField({
               id: 'transferRights',
@@ -1263,12 +1289,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.shared.transferRightsDescription,
               component: 'TransferRights',
             }),
-            buildCustomField({
-              id: 'requestRights.requestDays',
-              childInputIds: [
-                'requestRights.isRequestingRights',
-                'requestRights.requestDays',
-              ],
+            buildMultiField({
+              id: 'requestRights',
               title:
                 parentalLeaveFormMessages.shared.transferRightsRequestTitle,
               condition: (answers, externalData) => {
@@ -1291,12 +1313,37 @@ export const ParentalLeaveForm: Form = buildForm({
                       getMaxMultipleBirthsDays(answers))
                 )
               },
-              component: 'RequestDaysSlider',
+              children: [
+                buildSliderField({
+                  id: 'requestRights.requestDays',
+                  label: {
+                    singular: parentalLeaveFormMessages.shared.day,
+                    plural: parentalLeaveFormMessages.shared.days,
+                  },
+                  min: 1,
+                  max: maxDaysToGiveOrReceive,
+                  step: 1,
+                  defaultValue: 1,
+                  showMinMaxLabels: true,
+                  showToolTip: true,
+                  trackStyle: { gridTemplateRows: 8 },
+                  calculateCellStyle: () => {
+                    return {
+                      background: theme.color.dark200,
+                    }
+                  },
+                }),
+                buildCustomField({
+                  id: 'requestRights.isRequestingRights',
+                  childInputIds: ['requestRights.isRequestingRights'],
+                  title: '',
+                  component: 'RequestDaysBoxChart',
+                }),
+              ],
             }),
             buildMultiField({
-              id: 'pruf',
-              title: parentalLeaveFormMessages.shared.theseAreYourRights,
-              description: getRightsDescTitle,
+              id: 'giveRights',
+              title: parentalLeaveFormMessages.shared.transferRightsGiveTitle,
               condition: (answers, externalData) => {
                 const canTransferRights =
                   getSelectedChild(answers, externalData)?.parentalRelation ===
@@ -1321,7 +1368,7 @@ export const ParentalLeaveForm: Form = buildForm({
                     plural: parentalLeaveFormMessages.shared.days,
                   },
                   min: 1,
-                  max: 45,
+                  max: maxDaysToGiveOrReceive,
                   step: 1,
                   defaultValue: 1,
                   showMinMaxLabels: true,
@@ -1336,27 +1383,8 @@ export const ParentalLeaveForm: Form = buildForm({
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
                   childInputIds: ['giveRights.isGivingRights'],
-                  title:
-                    parentalLeaveFormMessages.shared.transferRightsGiveTitle,
-                  condition: (answers, externalData) => {
-                    const canTransferRights =
-                      getSelectedChild(answers, externalData)
-                        ?.parentalRelation === ParentalRelations.primary &&
-                      allowOtherParent(answers)
-
-                    const { hasMultipleBirths } = getApplicationAnswers(answers)
-
-                    const multipleBirthsRequestDays =
-                      getMultipleBirthRequestDays(answers)
-
-                    return (
-                      canTransferRights &&
-                      getApplicationAnswers(answers).isGivingRights === YES &&
-                      (hasMultipleBirths === NO ||
-                        multipleBirthsRequestDays === 0)
-                    )
-                  },
-                  component: 'GiveDaysSlider',
+                  title: '',
+                  component: 'GiveDaysBoxChart',
                 }),
               ],
             }),
