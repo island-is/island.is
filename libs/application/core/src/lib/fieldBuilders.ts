@@ -863,6 +863,7 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier = 1,
     id,
+    saveAsString,
   } = data
   return {
     title: '',
@@ -888,5 +889,6 @@ export const buildSliderField = (
     onChangeEnd,
     labelMultiplier,
     condition,
+    saveAsString,
   }
 }

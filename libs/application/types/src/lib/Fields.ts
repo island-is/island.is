@@ -639,6 +639,7 @@ export interface SliderField extends BaseField {
   onChangeEnd?(index: number): void
   labelMultiplier?: number
   id: string
+  saveAsString?: boolean
 }
 
 export type Field =
