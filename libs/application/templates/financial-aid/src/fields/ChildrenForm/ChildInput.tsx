@@ -13,19 +13,19 @@ import { RecordObject } from '@island.is/application/types'
 import { getErrorViaPath } from '@island.is/application/core'
 import { useFormContext } from 'react-hook-form'
 
-interface Props {
+type Props = {
   fieldIndex: string
   errors: RecordObject<unknown> | undefined
   childFullName: string
   childNationalId: string
 }
 
-export const ChildInput: FC<React.PropsWithChildren<Props>> = ({
+export const ChildInput = ({
   fieldIndex,
   errors,
   childFullName,
   childNationalId,
-}) => {
+}: Props) => {
   const { setValue, clearErrors } = useFormContext()
 
   const schoolField = `${fieldIndex}.school`

@@ -41,6 +41,7 @@ import {
   StaticTableField,
   HiddenInputWithWatchedValueField,
   HiddenInputField,
+  AccordionField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -436,6 +437,32 @@ export function buildKeyValueField(data: {
     paddingX,
     paddingY,
     paddingBottom,
+  }
+}
+
+export function buildAccordionField(
+  data: Omit<AccordionField, 'type' | 'component' | 'children'>,
+): AccordionField {
+  const {
+    accordionItems,
+    title,
+    titleVariant,
+    id,
+    marginTop,
+    marginBottom,
+    condition,
+  } = data
+  return {
+    children: undefined,
+    id,
+    title,
+    titleVariant,
+    marginTop,
+    marginBottom,
+    accordionItems,
+    condition,
+    type: FieldTypes.ACCORDION,
+    component: FieldComponents.ACCORDION,
   }
 }
 

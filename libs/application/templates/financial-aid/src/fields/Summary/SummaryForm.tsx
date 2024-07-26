@@ -18,21 +18,18 @@ import {
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
-import { DescriptionText, Breakdown } from '../index'
 import { formatAddress, formItems } from '../../lib/formatters'
-import {
-  FormInfo,
-  SummaryComment,
-  UserInfo,
-  ContactInfo,
-  Files,
-  DirectTaxPaymentCell,
-} from './index'
-
-import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus } from '../../lib/utils'
-import withLogo from '../Logo/Logo'
-import ChildrenInfo from './ChildrenInfo'
+import DescriptionText from '../../components/DescriptionText/DescriptionText'
+import Breakdown from '../../components/Breakdown/Breakdown'
+import DirectTaxPaymentModal from '../../components/DirectTaxPaymentsModal/DirectTaxPaymentModal'
+import SummaryComment from '../../components/Summary/SummaryComment'
+import ChildrenInfo from '../../components/Summary/ChildrenInfo'
+import ContactInfo from '../../components/Summary/ContactInfo'
+import Files from '../../components/Summary/Files'
+import FormInfo from '../../components/Summary/FormInfo'
+import DirectTaxPaymentCell from '../../components/Summary/DirectTaxPaymentCell'
+import UserInfo from '../../components/Summary/UserInfo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -189,7 +186,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         comment={answers?.formComment}
       />
 
-      <DirectTaxPaymentsModal
+      <DirectTaxPaymentModal
         items={
           externalData?.taxData?.data?.municipalitiesDirectTaxPayments
             ?.directTaxPayments
@@ -204,4 +201,4 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(SummaryForm)
+export default SummaryForm

@@ -5,18 +5,16 @@ import { Box, LoadingDots } from '@island.is/island-ui/core'
 
 import { FAFieldBaseProps } from '../../lib/types'
 import { hasSpouse, waitingForSpouse } from '../../lib/utils'
-import {
-  AidAmount,
-  ApprovedAlert,
-  Header,
-  MissingFilesCard,
-  MoreActions,
-  RejectionMessage,
-  SpouseAlert,
-  Timeline,
-} from './index'
 import useApplication from '../../lib/hooks/useApplication'
 import * as styles from './Status.css'
+import Header from '../../components/Status/Header/Header'
+import SpouseAlert from '../../components/Status/SpouseAlert/SpouseAlert'
+import ApprovedAlert from '../../components/Status/ApprovedAlert/ApprovedAlert'
+import RejectionMessage from '../../components/Status/RejectionMessage/RejectionMessage'
+import MissingFilesCard from '../../components/Status/MissingFilesCard/MissingFilesCard'
+import AidAmount from '../../components/Status/AidAmount/AidAmount'
+import Timeline from '../../components/Status/Timeline/Timeline'
+import MoreActions from '../../components/Status/MoreActions/MoreActions'
 
 const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { currentApplication, loading } = useApplication(

@@ -2,8 +2,11 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import * as kennitala from 'kennitala'
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  Answer,
   ApplicantChildCustodyInformation,
   ApplicationContext,
+  ExternalData,
+  FormValue,
 } from '@island.is/application/types'
 
 import {
@@ -18,12 +21,13 @@ import {
   CurrentApplication,
   FAApplication,
   OverrideAnswerSchema,
-  SchoolType,
   UploadFileType,
 } from '..'
 import { UploadFile } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
+import { Application } from '@island.is/api/schema'
+import * as m from '../lib/messages'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -94,7 +98,8 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
     'currentApplication.data',
   ) as CurrentApplication
 
-  return currentApplication?.currentApplicationId != null
+  return false // TODO revert before commit
+  // return currentApplication?.currentApplicationId != null
 }
 
 export const hasFiles = (
@@ -121,4 +126,63 @@ export const sortChildrenUnderAgeByAge = (
   return sortBy(childrenUnderAge, (child) => {
     return kennitala.info(child.nationalId)?.birthday
   })
+}
+
+export const hasSpouse2 = (answers: FormValue, externalData: ExternalData) => {
+  const nationalRegistrySpouse = externalData.nationalRegistrySpouse.data
+
+  const unregisteredCohabitation = (answers?.relationshipStatus as any)
+    ?.unregisteredCohabitation
+
+  return (
+    Boolean(nationalRegistrySpouse) ||
+    unregisteredCohabitation === ApproveOptions.Yes
+  )
+}
+
+export const getNextStepsDescription = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const applicantHasSpouse = hasSpouse2(answers, externalData)
+  const missingIncomeFiles =
+    answers.income === ApproveOptions.Yes &&
+    !hasFiles('incomeFiles', answers as unknown as OverrideAnswerSchema)
+
+  if (applicantHasSpouse && missingIncomeFiles) {
+    return m.confirmation.nextSteps.contentBothMissingFiles
+  } else if (applicantHasSpouse) {
+    return m.confirmation.nextSteps.contentSpouseMissingFiles
+  } else if (missingIncomeFiles) {
+    return m.confirmation.nextSteps.contentMissingFiles
+  }
+
+  return ''
+}
+
+export const getSpouseNextStepsDescription = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const incomeFiles = hasSpouseIncomeFiles(answers)
+
+  return incomeFiles ? '' : m.confirmation.nextSteps.contentMissingFiles
+}
+
+type File = {
+  name: string
+  key: string
+}
+
+export const hasIncomeFiles = (formValue: FormValue) => {
+  const income = formValue.income === ApproveOptions.Yes
+  const incomeFiles = formValue.incomeFiles as Array<File>
+
+  return income && incomeFiles && incomeFiles.length > 0
+}
+
+export const hasSpouseIncomeFiles = (formValue: FormValue) => {
+  const income = formValue.spouseIncomeFiles as Array<File>
+
+  return income && income.length > 0
 }

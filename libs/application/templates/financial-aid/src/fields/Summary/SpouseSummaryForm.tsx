@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from 'react'
-
 import { Box } from '@island.is/island-ui/core'
 import { useAuth } from '@island.is/auth/react'
-
 import * as m from '../../lib/messages'
 import {
   ApproveOptions,
@@ -10,18 +8,16 @@ import {
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
 import { Routes } from '../../lib/constants'
-import { DescriptionText, DirectTaxPaymentsModal } from '../index'
 import { formatAddress, spouseFormItems } from '../../lib/formatters'
-import {
-  FormInfo,
-  SummaryComment,
-  UserInfo,
-  ContactInfo,
-  Files,
-  DirectTaxPaymentCell,
-} from './index'
-import withLogo from '../Logo/Logo'
 import { useFormContext } from 'react-hook-form'
+import DescriptionText from '../../components/DescriptionText/DescriptionText'
+import DirectTaxPaymentModal from '../../components/DirectTaxPaymentsModal/DirectTaxPaymentModal'
+import SummaryComment from '../../components/Summary/SummaryComment'
+import ContactInfo from '../../components/Summary/ContactInfo'
+import Files from '../../components/Summary/Files'
+import FormInfo from '../../components/Summary/FormInfo'
+import DirectTaxPaymentCell from '../../components/Summary/DirectTaxPaymentCell'
+import UserInfo from '../../components/Summary/UserInfo'
 
 const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { id, answers, externalData } = application
@@ -98,7 +94,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       {externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
         ?.directTaxPayments && (
-        <DirectTaxPaymentsModal
+        <DirectTaxPaymentModal
           items={
             externalData?.taxDataSpouse?.data?.municipalitiesDirectTaxPayments
               ?.directTaxPayments
@@ -114,4 +110,4 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(SpouseSummaryForm)
+export default SpouseSummaryForm

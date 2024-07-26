@@ -65,8 +65,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites').then((module) =>
-                  Promise.resolve(module.Prerequisites),
+                import('../forms/PrerequisitesForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesForm),
                 ),
               write: 'all',
               delete: true,
@@ -109,8 +109,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Application').then((module) =>
-                  Promise.resolve(module.Application),
+                import('../forms/ApplicationForm').then((module) =>
+                  Promise.resolve(module.ApplicationForm),
                 ),
               read: 'all',
               write: 'all',
@@ -142,8 +142,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/PrerequisitesSpouse').then((module) =>
-                  Promise.resolve(module.PrerequisitesSpouse),
+                import('../forms/PrerequisitesSpouseForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesSposeForm),
                 ),
               read: 'all',
               write: 'all',
@@ -152,8 +152,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicantSubmitted').then((module) =>
-                  Promise.resolve(module.ApplicantSubmitted),
+                import('../forms/SubmittedForms/ApplicantSubmitted').then(
+                  (module) => Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
               delete: true,
@@ -182,8 +182,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/Spouse').then((module) =>
-                  Promise.resolve(module.Spouse),
+                import('../forms/SpouseForm').then((module) =>
+                  Promise.resolve(module.spouseForm),
                 ),
               read: 'all',
               write: 'all',
@@ -191,8 +191,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicantSubmitted').then((module) =>
-                  Promise.resolve(module.ApplicantSubmitted),
+                import('../forms/SubmittedForms/ApplicantSubmitted').then(
+                  (module) => Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
               delete: true,
@@ -216,8 +216,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/ApplicantSubmitted').then((module) =>
-                  Promise.resolve(module.ApplicantSubmitted),
+                import('../forms/SubmittedForms/ApplicantSubmitted').then(
+                  (module) => Promise.resolve(module.ApplicantSubmitted),
                 ),
               read: 'all',
               write: 'all',
@@ -225,8 +225,8 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.SPOUSE,
               formLoader: () =>
-                import('../forms/SpouseSubmitted').then((module) =>
-                  Promise.resolve(module.SpouseSubmitted),
+                import('../forms/SubmittedForms/SpouseSubmitted').then(
+                  (module) => Promise.resolve(module.SpouseSubmitted),
                 ),
               read: 'all',
               write: 'all',
@@ -250,7 +250,9 @@ const FinancialAidTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/MuncipalityNotRegistered').then((module) =>
+                import(
+                  '../forms/MunicipalityNotRegisteredForm/MuncipalityNotRegistered'
+                ).then((module) =>
                   Promise.resolve(module.MuncipalityNotRegistered),
                 ),
               read: 'all',

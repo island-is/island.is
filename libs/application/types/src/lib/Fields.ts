@@ -210,6 +210,7 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
+  ACCORDION = 'ACCORDION',
 }
 
 export enum FieldComponents {
@@ -241,6 +242,7 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  ACCORDION = 'AccordionFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -481,6 +483,20 @@ export interface ImageField extends BaseField {
   titleVariant?: TitleVariants
 }
 
+type AccordionItem = {
+  itemTitle: FormText
+  itemContent: FormText
+}
+
+export interface AccordionField extends BaseField {
+  readonly type: FieldTypes.ACCORDION
+  component: FieldComponents.ACCORDION
+  accordionItems: Array<AccordionItem>
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -632,3 +648,4 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | AccordionField
