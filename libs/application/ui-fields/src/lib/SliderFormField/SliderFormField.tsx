@@ -81,8 +81,9 @@ export const SliderFormField: FC<
             currentIndex={Number(value)}
             onChange={(val) => {
               clearErrors(field.id)
-              onChange(String(val))
-              setValue(field.id, String(val))
+              const value = field.saveAsString ? String(val) : val
+              onChange(value)
+              setValue(field.id, value)
             }}
             onChangeEnd={field.onChangeEnd}
             labelMultiplier={field.labelMultiplier}

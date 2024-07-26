@@ -17,6 +17,7 @@ import {
   buildSubSection,
   buildTableRepeaterField,
   buildTextField,
+  buildSliderField,
   formatText,
   NO_ANSWER,
 } from '@island.is/application/core'
@@ -92,7 +93,6 @@ import {
 
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { useLocale } from '@island.is/localization'
-import { buildSliderField } from '@island.is/application/core'
 import { theme } from '@island.is/island-ui/theme'
 
 export const ParentalLeaveForm: Form = buildForm({
@@ -1241,6 +1241,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       background: theme.color.dark200,
                     }
                   },
+                  saveAsString: true,
                 }),
                 buildCustomField({
                   id: 'requestRights',
@@ -1332,6 +1333,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       background: theme.color.dark200,
                     }
                   },
+                  saveAsString: true,
                 }),
                 buildCustomField({
                   id: 'requestRights.isRequestingRights',
@@ -1379,6 +1381,7 @@ export const ParentalLeaveForm: Form = buildForm({
                       background: theme.color.dark200,
                     }
                   },
+                  saveAsString: true,
                 }),
                 buildCustomField({
                   id: 'giveRights.isGivingRights',
