@@ -1,6 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
+  ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
   ApplicantApi,
@@ -147,5 +148,14 @@ export class SocialInsuranceAdministrationClientService {
     return this.incomePlanApiWithAuth(
       user,
     ).apiProtectedV1IncomePlanLatestIncomePlanGet()
+  }
+
+async getTemporaryCalculations(
+    user: User,
+    parameters: ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanTemporaryCalculationsPost(parameters)
   }
 }

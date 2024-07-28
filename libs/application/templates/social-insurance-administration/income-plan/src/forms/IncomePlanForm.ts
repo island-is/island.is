@@ -4,6 +4,7 @@ import {
   buildForm,
   buildMultiField,
   buildSection,
+  buildStaticTableField,
   buildSubSection,
   buildSubmitField,
   buildTableRepeaterField,
@@ -414,6 +415,49 @@ export const IncomePlanForm: Form = buildForm({
         }),
       ],
     }),
+    buildSection({
+      id: 'preliminaryCalculationSection',
+      title: incomePlanFormMessage.info.temporaryCalculationTitle,
+      children: [
+        buildMultiField({
+          id: 'preliminaryCalculationTable',
+          title: incomePlanFormMessage.info.temporaryCalculationTitle,
+          description: incomePlanFormMessage.info.tableDescription,
+          children: [
+            buildCustomField({
+              title: '',
+              id: 'printScreen',
+              component: 'PrintScreen',
+            }),
+            buildStaticTableField({
+              title: '',
+              description: '',
+              header: [
+                incomePlanFormMessage.info.tableHeaderOne,
+                incomePlanFormMessage.info.tableHeaderTwo,
+                incomePlanFormMessage.info.tableHeaderThree,
+              ],
+              rows: [],
+            }),
+            buildStaticTableField({
+              title: '',
+              description: '',
+              header: [
+                incomePlanFormMessage.info.taxedTableHeader,
+                '0 kr.',
+                '0 kr.',
+              ],
+              rows: [] 
+            }),
+            buildDescriptionField({
+              id: 'assumptions',
+              title: '',
+              description: incomePlanFormMessage.info.assumptions,
+            }),
+          ],
+        }),
+      ],
+    }),            
     buildSection({
       id: 'confirm',
       title: socialInsuranceAdministrationMessage.confirm.overviewTitle,

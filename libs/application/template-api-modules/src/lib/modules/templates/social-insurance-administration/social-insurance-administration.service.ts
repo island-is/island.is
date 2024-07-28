@@ -25,7 +25,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
+  ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
 } from '@island.is/clients/social-insurance-administration'
 import { S3 } from 'aws-sdk'
 import {
@@ -566,5 +566,41 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getLatestIncomePlan({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getLatestIncomePlan(auth)
+  }
+  async getTemporaryCalculations(
+    { auth }: TemplateApiModuleActionProps,
+    parameters: ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest = {
+      trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto: {
+        incomeYear: 2024,
+        splitIncomeByMonth: true,
+        incomeTypes: [
+          {
+            incomeTypeNumber: 1,
+            incomeTypeCode: "21",
+            incomeTypeName: "Laun",
+            changesAllowed: true,
+            currencyNumber: 21,
+            currencyCode: "IKR",
+            incomeCategoryNumber: 1,
+            incomeCategoryCode: "1",
+            incomeCategoryName: "Atvinnutekjur",
+            amountJan: 99000,
+            amountFeb: 99000,
+            amountMar: 99000,
+            amountApr: 99000,
+            amountMay: 99000,
+            amountJun: 99000,
+            amountJul: 99000,
+            amountAug: 99000,
+            amountSep: 99000,
+            amountOct: 99000,
+            amountNov: 99000,
+            amountDec: 99000
+          }
+        ]
+      }
+    },
+  ) { 
+    return await this.siaClientService.getTemporaryCalculations(auth, parameters) 
   }
 }

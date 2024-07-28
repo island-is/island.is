@@ -19,6 +19,7 @@ import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationTemporaryCalculation,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 
@@ -91,6 +92,10 @@ export const PrerequisitesForm: Form = buildForm({
               provider: SocialInsuranceAdministrationLatestIncomePlan,
               title: '',
             }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationTemporaryCalculation,
+              title: '',
+            }),      
             buildDataProviderItem({
               id: 'sia.privacy',
               title:

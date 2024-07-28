@@ -27,11 +27,12 @@ import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationTemporaryCalculation,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 import { assign } from 'xstate'
 import { getApplicationExternalData } from './incomePlanUtils'
-import { set } from 'lodash'
+import set from 'lodash/set'
 import {
   Events,
   Roles,
@@ -83,6 +84,7 @@ const IncomePlanTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationWithholdingTaxApi,
                 SocialInsuranceAdministrationLatestIncomePlan,
+                SocialInsuranceAdministrationTemporaryCalculation,
               ],
               delete: true,
             },
