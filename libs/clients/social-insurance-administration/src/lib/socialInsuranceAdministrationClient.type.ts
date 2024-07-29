@@ -6,6 +6,7 @@ import {
   IncomePlanApi,
   PaymentPlanApi,
   PensionCalculatorApi,
+  DeathBenefitsApi,
   TestApi,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
 } from '../../gen/fetch'
@@ -19,6 +20,7 @@ export type Scope =
   | '@tr.is/greidsluaetlun:read'
   | '@tr.is/almennt:read'
   | '@tr.is/fylgiskjol:write'
+  | '@tr.is/danarbaetur:read'
 
 export type Api =
   | typeof ApplicationApi
@@ -29,6 +31,7 @@ export type Api =
   | typeof IncomePlanApi
   | typeof PaymentPlanApi
   | typeof PensionCalculatorApi
+  | typeof DeathBenefitsApi
   | typeof TestApi
 
 export class ApplicationWriteApi extends ApplicationApi {}

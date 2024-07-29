@@ -90,6 +90,26 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
+  const notIcelandic = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.notIcelandic[0]',
+  ) as YesOrNo
+
+  const deceasedSpouseName = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.name',
+  ) as string
+
+  const deceasedSpouseNationalId = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.nationalId',
+  ) as string
+
+  const deceasedSpouseDate = getValueViaPath(
+    answers,
+    'deceasedSpouseInfo.date',
+  ) as Date
+
   const tempAnswers = getValueViaPath(
     answers,
     'tempAnswers',
@@ -118,6 +138,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     spouseAllowanceUsage,
     taxLevel,
     additionalAttachmentsRequired,
+    notIcelandic,
+    deceasedSpouseName,
+    deceasedSpouseNationalId,
+    deceasedSpouseDate,
     tempAnswers,
     isExpectingChild,
   }
@@ -193,6 +217,26 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const deceasedSpouseName = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.name',
+  ) as string
+
+  const deceasedSpouseNationalId = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.nationalId',
+  ) as string
+
+  const deceasedSpouseDateOfDeath = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.dateOfDeath',
+  ) as Date
+
+  const deceasedSpouseCohabitationLessThan1Year = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationSpousalInfo.data.cohabitationLessThan1Year',
+  ) as boolean
+
   return {
     applicantName,
     applicantNationalId,
@@ -206,6 +250,10 @@ export const getApplicationExternalData = (
     maritalStatus,
     lastModified,
     isEligible,
+    deceasedSpouseName,
+    deceasedSpouseNationalId,
+    deceasedSpouseDateOfDeath,
+    deceasedSpouseCohabitationLessThan1Year,
   }
 }
 
@@ -248,21 +296,6 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
-}
-
-export const hasSpouseLessThanAYear = (
-  externalData: Application['externalData'],
-) => {
-  const { maritalStatus, lastModified } =
-    getApplicationExternalData(externalData)
-  const today = new Date()
-  const oneYearAgo = addYears(today, -1)
-  const statusLastModified = new Date(lastModified)
-
-  if (maritalStatus === '3' && statusLastModified > oneYearAgo) {
-    return true
-  }
-  return false
 }
 
 export const isEligible = (externalData: ExternalData): boolean => {
