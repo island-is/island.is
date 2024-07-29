@@ -4,10 +4,15 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../lib/constants'
 import * as m from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import {
+  currentMonth,
+  getNextPeriod,
+} from '@island.is/financial-aid/shared/lib'
 
 export const informationSection = buildSection({
   id: Routes.SPOUSEACCECPTCONTRACT,
@@ -20,7 +25,23 @@ export const informationSection = buildSection({
         buildDescriptionField({
           id: `${Routes.SPOUSEACCECPTCONTRACT}-description`,
           title: '',
-          description: m.aboutSpouseForm.general.description,
+          description: (application) => {
+            const { externalData } = application
+            const spouseName = getValueViaPath(
+              externalData,
+              'nationalRegistry.data.fullName',
+            )
+            console.log(application)
+
+            return {
+              ...m.aboutSpouseForm.general.description,
+              values: {
+                spouseName,
+                currentMonth: currentMonth(),
+                nextMonth: getNextPeriod().month,
+              },
+            }
+          },
           marginBottom: 5,
         }),
         buildAccordionField({

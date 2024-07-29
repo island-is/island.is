@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCustomField,
   buildDescriptionField,
   buildImageField,
   buildMultiField,
@@ -11,10 +10,10 @@ import { Routes } from '../../lib/constants'
 import { ConfirmationImage } from '../../assets/ConfirmationImage'
 import { Application, FormValue } from '@island.is/application/types'
 import {
-  getNextStepsDescription,
   getSpouseNextStepsDescription,
   hasSpouseIncomeFiles,
 } from '../../lib/utils'
+import { getNextPeriod } from '@island.is/financial-aid/shared/lib'
 
 export const spouseConfirmationSection = buildSection({
   id: Routes.SPOUSECONFIRMATION,
@@ -59,7 +58,14 @@ export const spouseConfirmationSection = buildSection({
         buildDescriptionField({
           id: 'confirmationDescriptionBullets',
           title: '',
-          description: m.confirmation.nextSteps.content, // TODO add variable
+          description: () => {
+            return {
+              ...m.confirmation.nextSteps.content,
+              values: {
+                nextMonth: getNextPeriod().month,
+              },
+            }
+          },
           marginBottom: 5,
         }),
         buildDescriptionField({

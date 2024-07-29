@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildDescriptionField,
   buildForm,
   buildLinkField,
@@ -10,6 +9,7 @@ import { Routes } from '../../lib/constants'
 import * as m from '../../lib/messages'
 import { createElement } from 'react'
 import { Logo } from '../../components/Logo/Logo'
+import { getAplicantsServiceCenter } from '../../lib/utils/getAplicantsServiceCenter'
 
 export const MuncipalityNotRegistered: Form = buildForm({
   id: 'FinancialAidApplication',
@@ -22,7 +22,13 @@ export const MuncipalityNotRegistered: Form = buildForm({
     buildMultiField({
       id: Routes.SERVICECENTER,
       title: m.serviceCenter.general.pageTitle,
-      description: m.serviceCenter.general.description, // TODO add variable
+      description: (application) => {
+        const applicantsServiceCenter = getAplicantsServiceCenter(application)
+        return {
+          ...m.serviceCenter.general.description,
+          values: { applicantsServiceCenter: applicantsServiceCenter?.name },
+        }
+      },
       children: [
         buildDescriptionField({
           id: `${Routes.SERVICECENTER}-description`,
@@ -31,8 +37,23 @@ export const MuncipalityNotRegistered: Form = buildForm({
         }),
         buildLinkField({
           id: `${Routes.SERVICECENTER}-link`,
-          title: m.serviceCenter.general.linkToServiceCenter, // TODO add variable
+          title: (application) => {
+            const applicantsServiceCenter =
+              getAplicantsServiceCenter(application)
+            return {
+              ...m.serviceCenter.general.linkToServiceCenter,
+              values: {
+                applicantsServiceCenter: applicantsServiceCenter?.name,
+              },
+            }
+          },
           iconProps: { icon: 'open' },
+          link: (application) => {
+            const applicantsServiceCenter =
+              getAplicantsServiceCenter(application)
+
+            return applicantsServiceCenter?.link
+          },
         }),
       ],
     }),

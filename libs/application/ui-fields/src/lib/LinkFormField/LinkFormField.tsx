@@ -14,7 +14,8 @@ export const LinkFormField: FC<
   const { formatMessage } = useLocale()
 
   const openLink = useCallback(() => {
-    window.open(field.link, '_blank')
+    const link = formatText(field?.link ?? '', application, formatMessage)
+    window.open(link, '_blank')
   }, [field.link])
 
   const { getFileUrl } = useGenerateFileUrl(
