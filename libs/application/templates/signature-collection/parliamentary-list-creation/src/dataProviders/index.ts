@@ -5,5 +5,5 @@ export const OwnerRequirementsApi = defineTemplateApi({
 })
 
 export const CurrentCollectionApi = defineTemplateApi({
-  action: 'currentCollection',
+  action: 'parliamentaryCollection',
 })

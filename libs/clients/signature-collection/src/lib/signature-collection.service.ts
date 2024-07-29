@@ -12,6 +12,7 @@ import {
   ReasonKey,
   CanCreateInput,
   CanSignInput,
+  CreateParliamentaryCandidacyInput,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
 import { List, SignedList, mapList, mapListBase } from './types/list.dto'
@@ -132,6 +133,66 @@ export class SignatureCollectionClientService {
     }
     const { slug } = mapList(lists[0])
     return { slug }
+  }
+
+  async createParliamentaryCandidacy(
+    { collectionId, owner, areas, agents }: CreateParliamentaryCandidacyInput,
+    auth: User,
+  ): Promise<Slug> {
+    const {
+      id,
+      isActive,
+      areas: collectionAreas,
+    } = await this.currentCollection()
+    // check if collectionId is current collection and current collection is open
+    if (collectionId !== id.toString() || !isActive) {
+      throw new Error('Collection is not open')
+    }
+    // check if user is sending in their own nationalId
+    if (owner.nationalId !== auth.nationalId) {
+      throw new Error('NationalId does not match')
+    }
+    // check if user is already owner of lists
+
+    const { canCreate, isOwner, name } = await this.getSignee(auth)
+    if (!canCreate || isOwner) {
+      throw new Error('User is already owner of lists')
+    }
+
+    const filteredAreas = areas
+      ? collectionAreas.filter((area) =>
+          areas.flatMap((a) => a.areaId).includes(area.id),
+        )
+      : collectionAreas
+
+    const candidacy = await this.getApiWithAuth(
+      this.candidateApi,
+      auth,
+    ).frambodPost({
+      frambodRequestDTO: {
+        umbodsadilar: agents.map((agent) => ({
+          kennitala: agent.nationalId,
+          tegundUmbodsID: agent.mandateType,
+          netfang: agent.email,
+          simi: agent.phoneNumber,
+          svaediIDList: agent.areas.map((area) => parseInt(area.areaId)),
+        })),
+        sofnunID: parseInt(id),
+        kennitala: owner.nationalId,
+        simi: owner.phone,
+        netfang: owner.email,
+        medmaelalistar: filteredAreas.map((area) => ({
+          svaediID: parseInt(area.id),
+          listiNafn: `${name} - ${area.name}`,
+        })),
+      },
+    })
+    if (filteredAreas.length !== candidacy.umbodList?.length) {
+      throw new Error('Not all lists created')
+    }
+    console.log('HERE COMES THE CANDIDACY WOWEE')
+    console.log(JSON.stringify(candidacy))
+    return { slug: 'frambodWowee' }
   }
 
   async signList(listId: string, auth: User): Promise<Signature> {

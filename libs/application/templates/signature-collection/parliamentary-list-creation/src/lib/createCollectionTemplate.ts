@@ -16,6 +16,7 @@ import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { EphemeralStateLifeCycle } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
+import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
 
 const WeekLifeCycle: StateLifeCycle = {
   shouldBeListed: false,
@@ -66,8 +67,8 @@ const createListTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                //OwnerRequirementsApi,
-                //CurrentCollectionApi,
+                OwnerRequirementsApi,
+                CurrentCollectionApi,
               ],
             },
           ],
