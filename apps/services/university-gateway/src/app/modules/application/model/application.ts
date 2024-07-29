@@ -14,7 +14,10 @@ import {
 } from 'sequelize-typescript'
 import { Program } from '../../program/model/program'
 import { University } from '../../university/model/university'
-import {ApplicationStatus, ModeOfDelivery} from '@island.is/university-gateway'
+import {
+  ApplicationStatus,
+  ModeOfDelivery,
+} from '@island.is/university-gateway'
 import {
   CreationOptional,
   InferAttributes,
