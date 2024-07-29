@@ -6,7 +6,6 @@ import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { FAFieldBaseProps } from '../../lib/types'
 import { hasSpouse, waitingForSpouse } from '../../lib/utils'
 import useApplication from '../../lib/hooks/useApplication'
-import * as styles from './Status.css'
 import Header from '../../components/Status/Header/Header'
 import SpouseAlert from '../../components/Status/SpouseAlert/SpouseAlert'
 import ApprovedAlert from '../../components/Status/ApprovedAlert/ApprovedAlert'
@@ -33,7 +32,7 @@ const ApplicantStatus = ({ application, goToScreen }: FAFieldBaseProps) => {
   }
 
   return (
-    <Box paddingBottom={5} className={styles.container}>
+    <Box paddingBottom={5}>
       <Header state={state} />
       {isWaitingForSpouse && (
         <SpouseAlert

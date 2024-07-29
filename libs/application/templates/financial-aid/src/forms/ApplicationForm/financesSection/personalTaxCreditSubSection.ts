@@ -22,7 +22,6 @@ export const personalTaxCreditSubSection = buildSubSection({
           id: Routes.PERSONALTAXCREDIT,
           title: '',
           width: 'half',
-          backgroundColor: 'white',
           options: getPersonalTaxCreditOptions(),
         }),
         buildDescriptionField({

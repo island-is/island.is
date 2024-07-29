@@ -1,18 +1,32 @@
-import { AccordionField, FieldBaseProps } from '@island.is/application/types'
+import {
+  AccordionField,
+  AccordionItem as AccordionItemType,
+  FieldBaseProps,
+} from '@island.is/application/types'
 import { Accordion, AccordionItem, Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { formatText } from '@island.is/application/core'
 import { Markdown } from '@island.is/shared/components'
+import { useEffect, useState } from 'react'
 
 interface Props extends FieldBaseProps {
   field: AccordionField
 }
 
 export const AccordionFormField = ({ field, application }: Props) => {
+  const [items, setItems] = useState<Array<AccordionItemType>>()
   const { formatMessage } = useLocale()
   const { accordionItems, marginBottom, marginTop, title, titleVariant } = field
 
-  if (!accordionItems || accordionItems.length === 0) {
+  useEffect(() => {
+    if (typeof accordionItems === 'function') {
+      setItems(accordionItems(application))
+    } else {
+      setItems(accordionItems)
+    }
+  }, [accordionItems])
+
+  if (!items || items.length === 0) {
     return null
   }
 
@@ -26,7 +40,7 @@ export const AccordionFormField = ({ field, application }: Props) => {
         </Box>
       )}
       <Accordion>
-        {accordionItems.map((item, index) => {
+        {items.map((item, index) => {
           return (
             <AccordionItem
               key={`accordion-item-${index}`}

@@ -47,12 +47,26 @@ export const informationSection = buildSection({
         buildAccordionField({
           id: `${Routes.SPOUSEACCECPTCONTRACT}-accordion`,
           title: m.privacyPolicyAccordion.general.sectionTitle,
-          accordionItems: [
-            {
-              itemTitle: m.privacyPolicyAccordion.accordion.title,
-              itemContent: m.privacyPolicyAccordion.accordion.about,
-            },
-          ],
+          accordionItems: (application) => {
+            const url = getValueViaPath(
+              application.externalData,
+              'municipality.data.homepage',
+            )
+
+            return [
+              {
+                itemTitle: m.privacyPolicyAccordion.accordion.title,
+                itemContent: {
+                  ...m.privacyPolicyAccordion.accordion.about,
+                  values: {
+                    webInfo: url
+                      ? `vefsíðunni [${url}](${url})`
+                      : 'vefsíðu sveitarfélagsins',
+                  },
+                },
+              },
+            ]
+          },
         }),
         buildSubmitField({
           id: 'toDraft',

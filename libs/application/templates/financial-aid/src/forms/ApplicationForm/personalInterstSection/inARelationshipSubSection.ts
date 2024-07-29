@@ -27,7 +27,6 @@ export const inARelationshipSubSection = buildSubSection({
           id: 'spouse.email',
           title: m.inRelationship.inputs.spouseEmail,
           variant: 'email',
-          backgroundColor: 'blue',
           required: true,
           width: 'full',
           placeholder: m.inRelationship.inputs.spouseEmailPlaceholder,
@@ -35,7 +34,6 @@ export const inARelationshipSubSection = buildSubSection({
         buildCheckboxField({
           id: 'spouse.approveTerms',
           title: '',
-          backgroundColor: 'blue',
           required: true,
           defaultValue: [],
           options: [

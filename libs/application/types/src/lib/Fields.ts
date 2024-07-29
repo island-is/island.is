@@ -483,7 +483,7 @@ export interface ImageField extends BaseField {
   titleVariant?: TitleVariants
 }
 
-type AccordionItem = {
+export type AccordionItem = {
   itemTitle: FormText
   itemContent: FormText
 }
@@ -491,7 +491,9 @@ type AccordionItem = {
 export interface AccordionField extends BaseField {
   readonly type: FieldTypes.ACCORDION
   component: FieldComponents.ACCORDION
-  accordionItems: Array<AccordionItem>
+  accordionItems:
+    | Array<AccordionItem>
+    | ((application: Application) => Array<AccordionItem>)
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants

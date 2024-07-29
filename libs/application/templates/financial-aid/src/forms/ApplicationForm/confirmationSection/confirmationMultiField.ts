@@ -4,6 +4,7 @@ import {
   buildDescriptionField,
   buildImageField,
   buildMultiField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
@@ -40,7 +41,15 @@ export const confirmationMultiField = buildMultiField({
     buildAlertMessageField({
       id: 'confirmationAlert',
       title: m.confirmation.alertMessagesInRelationship.dataNeeded,
-      message: m.confirmation.alertMessagesInRelationship.dataNeededText, // condition for message
+      message: (application) => {
+        const spouse = getValueViaPath(
+          application.externalData,
+          'sendSpouseEmail.data.success',
+        )
+        return spouse
+          ? m.confirmation.alertMessagesInRelationship.dataNeededText
+          : m.confirmation.alertMessagesInRelationship.dataNeededAlternativeText
+      },
       alertType: 'warning',
       condition: (formValue, externalData) => {
         return hasSpouse2(formValue, externalData)
@@ -76,7 +85,20 @@ export const confirmationMultiField = buildMultiField({
       id: 'confirmationLinks',
       title: m.confirmation.links.title,
       titleVariant: 'h3',
-      description: m.confirmation.links.content,
+      description: (application) => {
+        const url = getValueViaPath(
+          application.externalData,
+          'municipality.data.homepage',
+        )
+        console.log(application.externalData)
+
+        console.log(url)
+
+        return {
+          ...m.confirmation.links.content,
+          values: { statusPage: window.location.href, homePage: url ?? '' },
+        }
+      },
       marginTop: 5,
       marginBottom: 5,
     }),

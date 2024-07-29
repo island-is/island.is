@@ -4,11 +4,12 @@ import {
   buildMultiField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { Routes } from '../../lib/constants'
 import { DefaultEvents } from '@island.is/application/types'
-import { currentMonth } from '@island.is/financial-aid/shared/lib'
+import { Municipality, currentMonth } from '@island.is/financial-aid/shared/lib'
 
 export const informationSection = buildSection({
   id: Routes.ACCECPTCONTRACT,
@@ -33,12 +34,25 @@ export const informationSection = buildSection({
         buildAccordionField({
           id: `${Routes.ACCECPTCONTRACT}-accordion`,
           title: m.privacyPolicyAccordion.general.sectionTitle,
-          accordionItems: [
-            {
-              itemTitle: m.privacyPolicyAccordion.accordion.title,
-              itemContent: m.privacyPolicyAccordion.accordion.about,
-            },
-          ],
+          accordionItems: (application) => {
+            const url = getValueViaPath(
+              application.externalData,
+              'municipality.data.homepage',
+            )
+            return [
+              {
+                itemTitle: m.privacyPolicyAccordion.accordion.title,
+                itemContent: {
+                  ...m.privacyPolicyAccordion.accordion.about,
+                  values: {
+                    webInfo: url
+                      ? `vefsíðunni [${url}](${url})`
+                      : 'vefsíðu sveitarfélagsins',
+                  },
+                },
+              },
+            ]
+          },
         }),
         buildSubmitField({
           id: 'toDraft',
