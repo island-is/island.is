@@ -13,9 +13,11 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Program } from '../../program/model/program'
-import { ProgramModeOfDelivery } from '../../program/model/programModeOfDelivery'
 import { University } from '../../university/model/university'
-import { ApplicationStatus } from '@island.is/university-gateway'
+import {
+  ApplicationStatus,
+  ModeOfDelivery,
+} from '@island.is/university-gateway'
 import {
   CreationOptional,
   InferAttributes,
@@ -86,15 +88,16 @@ export class Application extends Model<
   programId!: string
 
   @ApiProperty({
-    description: 'Program mode of delivery ID',
-    example: '00000000-0000-0000-0000-000000000000',
+    description: 'The mode of delivery selected in the application',
+    example: ModeOfDelivery.ON_SITE,
+    enum: ModeOfDelivery,
   })
   @Column({
-    type: DataType.UUID,
+    type: DataType.ENUM,
+    values: Object.values(ModeOfDelivery),
     allowNull: false,
   })
-  @ForeignKey(() => ProgramModeOfDelivery)
-  programModeOfDeliveryId!: string
+  programModeOfDelivery!: ModeOfDelivery
 
   @ApiProperty({
     description: 'Application status',
