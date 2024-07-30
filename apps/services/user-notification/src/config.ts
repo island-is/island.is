@@ -20,8 +20,10 @@ export const UserNotificationsConfig = defineConfig({
   name: 'UserNotificationsApi',
   schema,
   load(env) {
-    const rawFirebaseCredentials = env.required('FIREBASE_CREDENTIALS', '');
-    const cleanedFirebaseCredentials = rawFirebaseCredentials.replace(/\\n/g, '').replace(/\\"/g, '"');
+    const rawFirebaseCredentials = env.required('FIREBASE_CREDENTIALS', '')
+    const cleanedFirebaseCredentials = rawFirebaseCredentials
+      .replace(/\\n/g, '')
+      .replace(/\\"/g, '"')
     return {
       isWorker: processJob() === 'worker',
       firebaseCredentials: cleanedFirebaseCredentials,
