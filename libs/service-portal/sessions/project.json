@@ -6,13 +6,7 @@
   "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/service-portal/sessions/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
@@ -31,8 +25,7 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/sessions"],
       "options": {
-        "jestConfig": "libs/service-portal/sessions/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/sessions/jest.config.ts"
       }
     }
   }

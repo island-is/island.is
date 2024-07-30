@@ -483,6 +483,7 @@ export interface ImageField extends BaseField {
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
+  imagePosition?: 'left' | 'right' | 'center'
 }
 
 export type AccordionItem = {
@@ -522,6 +523,8 @@ export interface PdfLinkButtonField extends BaseField {
     filename: string
   }[]
   setViewPdfFile?: (file: { base64: string; filename: string }) => void
+  viewPdfFile?: boolean
+  downloadButtonTitle?: StaticText
 }
 
 export interface NationalIdWithNameField extends BaseField {

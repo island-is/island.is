@@ -167,7 +167,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -189,7 +189,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -250,7 +250,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -272,7 +272,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: `https://island.is/minarsidur/login?login_hint=${delegationSubjectId}&target_link_uri=https://island.is/minarsidur/postholf`,
               }),
@@ -307,7 +307,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: notServicePortalUrl,
               }),
@@ -329,7 +329,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: notServicePortalUrl,
               }),

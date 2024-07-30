@@ -39,6 +39,7 @@ interface Props {
     items: Defendant[]
     defendantInfoActionButton?: DefendantInfoActionButton
     displayAppealExpirationInfo?: boolean
+    displayVerdictViewDate?: boolean
   }
   defenders?: Defender[]
   icon?: IconMapIcon
@@ -130,6 +131,7 @@ const InfoCard: FC<Props> = (props) => {
                   defendantInfoActionButton={
                     defendants.defendantInfoActionButton
                   }
+                  displayVerdictViewDate={defendants.displayVerdictViewDate}
                 />
               ))}
             </Box>

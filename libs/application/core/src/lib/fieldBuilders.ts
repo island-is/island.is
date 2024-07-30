@@ -649,6 +649,7 @@ export function buildImageField(
     condition,
     imageWidth = 'full',
     titleVariant = 'h4',
+    imagePosition = 'left',
   } = data
   return {
     children: undefined,
@@ -661,6 +662,7 @@ export function buildImageField(
     marginBottom,
     condition,
     titleVariant,
+    imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
   }
@@ -675,6 +677,8 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile = false,
+    downloadButtonTitle,
   } = data
   return {
     ...extractCommonFields(data),
@@ -683,6 +687,10 @@ export function buildPdfLinkButtonField(
     verificationLinkUrl,
     getPdfFiles,
     setViewPdfFile,
+    viewPdfFile,
+    downloadButtonTitle:
+      downloadButtonTitle ||
+      coreDefaultFieldMessages.defaultDownloadButtonTitle,
     children: undefined,
     type: FieldTypes.PDF_LINK_BUTTON,
     component: FieldComponents.PDF_LINK_BUTTON,

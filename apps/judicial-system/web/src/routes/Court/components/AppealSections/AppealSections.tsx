@@ -4,7 +4,10 @@ import { useIntl } from 'react-intl'
 import { Box, Input, RadioButton, Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
-import { BlueBox } from '@island.is/judicial-system-web/src/components'
+import {
+  BlueBox,
+  SectionHeading,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CaseAppealDecision,
   SessionArrangements,
@@ -47,14 +50,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
       {workingCase.defendants && workingCase.defendants.length > 0 && (
         <Box marginBottom={3}>
           <BlueBox>
-            <Box marginBottom={2}>
-              <Text as="h4" variant="h4">
-                {`${formatMessage(m.defendantTitleV2)} `}
-                <Text as="span" color="red600" fontWeight="semiBold">
-                  *
-                </Text>
-              </Text>
-            </Box>
+            <SectionHeading
+              title={formatMessage(m.defendantTitleV2)}
+              heading="h4"
+              marginBottom={2}
+              required
+            />
             <div className={styles.gridRowEqual}>
               <RadioButton
                 name="accused-appeal-decision"
@@ -231,14 +232,12 @@ const AppealSections: FC<Props> = ({ workingCase, setWorkingCase }) => {
       )}
       <Box marginBottom={5}>
         <BlueBox>
-          <Box marginBottom={2}>
-            <Text as="h4" variant="h4">
-              {formatMessage(m.prosecutorTitleV2)}{' '}
-              <Text as="span" color="red400" fontWeight="semiBold">
-                *
-              </Text>
-            </Text>
-          </Box>
+          <SectionHeading
+            title={formatMessage(m.prosecutorTitleV2)}
+            heading="h4"
+            marginBottom={2}
+            required
+          />
           <div className={styles.gridRowEqual}>
             <RadioButton
               name="prosecutor-appeal-decision"

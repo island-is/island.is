@@ -508,4 +508,9 @@ export class UpdateCaseDto {
   @IsEnum(CourtSessionType)
   @ApiPropertyOptional({ enum: CourtSessionType })
   readonly courtSessionType?: CourtSessionType
+
+  @IsOptional()
+  @IsUUID()
+  @ApiPropertyOptional({ type: String })
+  readonly mergeCaseId?: string
 }

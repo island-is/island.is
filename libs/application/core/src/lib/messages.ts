@@ -305,6 +305,10 @@ export const coreDefaultFieldMessages = defineMessages({
     id: 'application.system:core.default.bankAccount.accountNumber',
     defaultMessage: 'Reikningsnúmer',
     description: 'Bank account account number',
+  defaultDownloadButtonTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
+    defaultMessage: 'Hlaða niður skjali',
+    description: 'Button label to download file',
   },
 })
 
@@ -515,6 +519,23 @@ export const coreErrorMessages = defineMessages({
       'Samkvæmt gögnum úr Þjóðskrá Ísland er innskráður notandi nú þegar með íslenskt ríkisfang.',
     description:
       'Error message summary when a user already has icelandic citizenship',
+  },
+  drivingLicenseDuplicateEntryValidationErrorTitle: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationError',
+    defaultMessage: 'Ökuskírteini hæfir ekki umsókn um samrit',
+    description: 'Driving License duplicate entry validation error',
+  },
+  drivingLicenseDuplicateEntryValidationSign400Error: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationSign400Error',
+    defaultMessage: 'Ógild tákntala, 400, fannst á ökuskírteini',
+    description:
+      'Driving License duplicate entry validation error for sign (is: tákntala)',
+  },
+  drivingLicenseDuplicateEntryValidationExpiredCategoryLicenseError: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationExpiredLicenseError',
+    defaultMessage:
+      'Flokkur "{categoryName}" á ökukírteini er útrunninn eða rennur út innan 6 mánaða',
+    description: 'Driving License duplicate entry validation error',
   },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
