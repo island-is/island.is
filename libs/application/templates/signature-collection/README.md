@@ -2,5 +2,8 @@
 
 Application folder containing two processes used for Signature Collection
 
-- Signature List Creation
-- Signature List Signing
+- Presidential List Creation
+- Presidential List Signing
+
+- Parliamentary List Creation
+- Parliamentary List Signing

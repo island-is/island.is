@@ -89,13 +89,6 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
-    IndictmentCaseTransition.REDISTRIBUTE,
-    {
-      fromStates: [IndictmentCaseState.RECEIVED],
-      to: { state: IndictmentCaseState.MAIN_HEARING },
-    },
-  ],
-  [
     IndictmentCaseTransition.COMPLETE,
     {
       fromStates: [

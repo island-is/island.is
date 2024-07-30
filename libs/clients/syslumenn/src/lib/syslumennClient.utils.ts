@@ -26,6 +26,10 @@ import {
   ErfdafjarskatturSvar,
   DanarbuUpplErfdafjarskatt,
   EignirDanarbusErfdafjarskatt,
+  SveinsbrefModel,
+  StarfsrettindiModel,
+  VedbandayfirlitRegluverkGeneralSvar,
+  Skip,
 } from '../../gen/fetch'
 import { uuid } from 'uuidv4'
 import {
@@ -62,6 +66,13 @@ import {
   InheritanceEstateMember,
   InheritanceReportInfo,
   DebtTypes,
+  JourneymanLicence,
+  ProfessionRight,
+  VehicleDetail,
+  RealEstateDetail,
+  ShipDetail,
+  MortgageCertificateValidation,
+  MortgageCertificate,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -80,6 +91,55 @@ export const mapDistrictCommissionersAgenciesResponse = (
     name: response.nafn ?? '',
     place: response.stadur ?? '',
     address: response.adsetur ?? '',
+  }
+}
+
+export const mapRealEstateResponse = (
+  response: VedbandayfirlitReguverkiSvarSkeyti,
+): RealEstateDetail => {
+  return {
+    propertyNumber: response.fastnum ?? '',
+    usage: response.notkun ?? '',
+    defaultAddress: response.heiti ?? '',
+  }
+}
+
+export const mapVehicleResponse = (response: Okutaeki): VehicleDetail => {
+  return {
+    licencePlate: response.numerOkutaekis ?? '',
+    propertyNumber: response.fastanumerOkutaekis ?? '',
+    manufacturer: response.framleidandi ?? '',
+    manufacturerType: response.framleidandaGerd ?? '',
+    color: response.litur ?? '',
+    dateOfRegistration: response.skraningardagur,
+  }
+}
+
+export const mapShipResponse = (response: Skip): ShipDetail => {
+  return {
+    shipRegistrationNumber: response.shipRegistrationNumber.toString(),
+    usageType: response.usageType ?? '',
+    name: response.name ?? '',
+    initialRegistrationDate: response.initialRegistrationDate,
+    mainMeasurements: {
+      length: response.mainMeasurements?.length?.toString() ?? '',
+      bruttoWeightTons:
+        response.mainMeasurements?.bruttoWeightTons?.toString() ?? '',
+    },
+  }
+}
+
+export const mapPropertyCertificate = (
+  certificate: MortgageCertificate,
+): MortgageCertificateValidation => {
+  const exists = certificate.contentBase64.length !== 0
+  const hasKMarking =
+    exists && certificate.contentBase64 !== 'Precondition Required'
+
+  return {
+    propertyNumber: certificate.propertyNumber ?? '',
+    exists: exists,
+    hasKMarking: hasKMarking,
   }
 }
 
@@ -318,9 +378,10 @@ function mapPersonEnum(e: PersonType) {
 }
 
 export const mapAssetName = (
-  response: VedbandayfirlitReguverkiSvarSkeyti,
+  response: VedbandayfirlitRegluverkGeneralSvar,
 ): AssetName => {
-  return { name: response.heiti ?? '' }
+  const fasteign = response.fasteign?.length ? response.fasteign[0] : undefined
+  return { name: fasteign?.heiti ?? '' }
 }
 
 export const mapVehicle = (response: Okutaeki): VehicleRegistration => {
@@ -477,12 +538,33 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
     availableSettlements: mapAvailableSettlements(syslaData.mogulegSkipti),
   }
 }
+
 export const mapMasterLicence = (licence: Meistaraleyfi): MasterLicence => {
   return {
     name: licence.nafn,
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
     office: licence.embaetti,
+    nationalId: licence.kennitala,
+  }
+}
+
+export const mapJourneymanLicence = (
+  licence: SveinsbrefModel,
+): JourneymanLicence => {
+  return {
+    name: licence.nafn,
+    dateOfPublication: licence.gildirFra,
+    profession: licence.idngrein,
+  }
+}
+
+export const mapProfessionRight = (
+  professionRight: StarfsrettindiModel,
+): ProfessionRight => {
+  return {
+    name: professionRight.nafn,
+    profession: professionRight.starfsrettindi,
   }
 }
 

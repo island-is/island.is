@@ -291,6 +291,11 @@ export const coreDefaultFieldMessages = defineMessages({
     defaultMessage: 'Veljið skjöl til að hlaða upp',
     description: 'Default file upload button label',
   },
+  defaultDownloadButtonTitle: {
+    id: 'application.system:core.default.pdfLinkButtonField.downloadButtonTitle',
+    defaultMessage: 'Hlaða niður skjali',
+    description: 'Button label to download file',
+  },
 })
 
 export const coreErrorMessages = defineMessages({
@@ -501,6 +506,23 @@ export const coreErrorMessages = defineMessages({
     description:
       'Error message summary when a user already has icelandic citizenship',
   },
+  drivingLicenseDuplicateEntryValidationErrorTitle: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationError',
+    defaultMessage: 'Ökuskírteini hæfir ekki umsókn um samrit',
+    description: 'Driving License duplicate entry validation error',
+  },
+  drivingLicenseDuplicateEntryValidationSign400Error: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationSign400Error',
+    defaultMessage: 'Ógild tákntala, 400, fannst á ökuskírteini',
+    description:
+      'Driving License duplicate entry validation error for sign (is: tákntala)',
+  },
+  drivingLicenseDuplicateEntryValidationExpiredCategoryLicenseError: {
+    id: 'application.system:core.fetch.data.drivingLicenseDuplicateEntryValidationExpiredLicenseError',
+    defaultMessage:
+      'Flokkur "{categoryName}" á ökukírteini er útrunninn eða rennur út innan 6 mánaða',
+    description: 'Driving License duplicate entry validation error',
+  },
   drivingLicenseNoTeachingRightsTitle: {
     id: 'application.system:core.fetch.data.drivingLicenseNoTeachingRightsTitle',
     defaultMessage: 'Þú hefur ekki ökukennararéttindi í ökuskírteinaskrá.',
@@ -671,6 +693,11 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.nationalRegistryMinAgeNotFulfilled',
     defaultMessage: 'Lágmarksaldur er {minAge} ára',
     description: 'Min age not fulfilled error',
+  },
+  idCardApplicationRequirementsNotMet: {
+    id: 'application.system:core.fetch.data.idCardApplicationRequirementsNotMet',
+    defaultMessage: 'Þú uppfyllir ekki skilyrði fyrir umsókn um nafnskírteini',
+    description: 'Requirements for id card application not met',
   },
 })
 

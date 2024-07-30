@@ -13,6 +13,7 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
+
 import externalLinkIcon from '../../assets/icons/external-link.png'
 import {
   GetVehicleDocument,
@@ -24,8 +25,10 @@ import {
   useUpdateVehicleMileageMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/useBrowser'
+import { showAndroidPrompt } from '../../lib/show-picker'
 import { MileageCell } from './components/mileage-cell'
+import { isAndroid, isIos } from '../../utils/devices'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -56,6 +59,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
 
   const intl = useIntl()
   const dynamicColor = useDynamicColor()
+  const { openBrowser } = useBrowser()
   const [input, setInput] = useState('')
   const info = useGetVehicleQuery({
     fetchPolicy: 'cache-first',
@@ -74,9 +78,10 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
       },
     },
   })
-  const [postMileage] = usePostVehicleMileageMutation({
-    refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
-  })
+  const [postMileage, { loading: loadingSubmit }] =
+    usePostVehicleMileageMutation({
+      refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
+    })
   const [updateMileage] = useUpdateVehicleMileageMutation({
     refetchQueries: [GetVehicleMileageDocument, GetVehicleDocument],
   })
@@ -175,66 +180,109 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
     })
   }, [id, input, parseMileage, postMileage, intl])
 
-  const onEdit = useCallback(() => {
-    return Alert.prompt(
-      intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
-      undefined,
-      [
-        {
-          isPreferred: true,
-          onPress(value) {
-            const mileage = parseMileage(value, true)
-            const internalId = data[0].internalId
-            if (!mileage) {
-              return
-            }
-            if (!internalId) {
-              return Alert.alert(
-                intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-                intl.formatMessage({
-                  id: 'vehicle.mileage.errorFailedToUpdate',
-                }),
-              )
-            }
-            updateMileage({
-              variables: {
-                input: {
-                  mileage: mileage.toString(),
-                  permno: id,
-                  internalId: Number(internalId),
-                },
-              },
-            }).then((res) => {
-              if (res.data?.vehicleMileagePut?.mileage !== String(mileage)) {
-                Alert.alert(
-                  intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
-                  intl.formatMessage({
-                    id: 'vehicle.mileage.errorFailedToUpdate',
-                  }),
-                )
-              } else {
-                Alert.alert(
-                  intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
-                  intl.formatMessage({ id: 'vehicle.mileage.successMessage' }),
-                )
-              }
-            })
+  const onEditMileageSubmit = useCallback(
+    (mileageInput: string | undefined) => {
+      const mileage = parseMileage(mileageInput, true)
+      const internalId = data[0].internalId
+      if (!mileage) {
+        return
+      }
+      if (!internalId) {
+        return Alert.alert(
+          intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+          intl.formatMessage({
+            id: 'vehicle.mileage.errorFailedToUpdate',
+          }),
+        )
+      }
+      updateMileage({
+        variables: {
+          input: {
+            mileage: mileage.toString(),
+            permno: id,
+            internalId: Number(internalId),
           },
-          text: intl.formatMessage({ id: 'vehicle.mileage.promptEditButton' }),
-          style: 'default',
         },
+      })
+        .then((res) => {
+          if (res.data?.vehicleMileagePut?.mileage !== String(mileage)) {
+            Alert.alert(
+              intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+              intl.formatMessage({
+                id: 'vehicle.mileage.errorFailedToUpdate',
+              }),
+            )
+          } else {
+            Alert.alert(
+              intl.formatMessage({ id: 'vehicle.mileage.successTitle' }),
+              intl.formatMessage({
+                id: 'vehicle.mileage.successMessage',
+              }),
+            )
+          }
+        })
+        .catch(() => {
+          Alert.alert(
+            intl.formatMessage({ id: 'vehicle.mileage.errorTitle' }),
+            intl.formatMessage({
+              id: 'vehicle.mileage.errorFailedToUpdate',
+            }),
+          )
+        })
+    },
+    [data, id, parseMileage, updateMileage, intl],
+  )
+
+  const onEdit = useCallback(async () => {
+    if (isIos) {
+      return Alert.prompt(
+        intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
+        undefined,
+        [
+          {
+            isPreferred: true,
+            onPress(value) {
+              return onEditMileageSubmit(value)
+            },
+            text: intl.formatMessage({
+              id: 'vehicle.mileage.promptEditButton',
+            }),
+            style: 'default',
+          },
+          {
+            text: intl.formatMessage({
+              id: 'vehicle.mileage.promptCancelButton',
+            }),
+            style: 'cancel',
+          },
+        ],
+        'plain-text',
+        String(highestMileage),
+        'number-pad',
+      )
+    }
+    if (isAndroid) {
+      await showAndroidPrompt(
+        intl.formatMessage({ id: 'vehicle.mileage.promptEditTitle' }),
+        undefined,
         {
-          text: intl.formatMessage({
+          keyboardType: 'numeric',
+          allowEmptyInput: false,
+          defaultValue: String(highestMileage),
+          positiveText: intl.formatMessage({
+            id: 'vehicle.mileage.promptEditButton',
+          }),
+          negativeText: intl.formatMessage({
             id: 'vehicle.mileage.promptCancelButton',
           }),
-          style: 'cancel',
         },
-      ],
-      'plain-text',
-      String(highestMileage),
-      'number-pad',
-    )
-  }, [data, highestMileage, id, parseMileage, updateMileage, intl])
+      ).then((res) => {
+        if (res.action === 'positive') {
+          return onEditMileageSubmit(res.text)
+        }
+      })
+    }
+  }, [highestMileage, onEditMileageSubmit, intl])
 
   return (
     <>
@@ -316,7 +364,7 @@ export const VehicleMileageScreen: NavigationFunctionComponent<{
                   id: 'vehicle.mileage.inputSubmitButton',
                 })}
                 onPress={onSubmit}
-                disabled={!canRegisterMileage}
+                disabled={!canRegisterMileage || loadingSubmit}
               />
             </View>
             <View>
