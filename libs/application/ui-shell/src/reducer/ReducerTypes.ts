@@ -5,7 +5,7 @@ import {
   Section,
 } from '@island.is/application/types'
 import { FormScreen } from '../types'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
 export interface ApplicationUIState {
   application: Application
