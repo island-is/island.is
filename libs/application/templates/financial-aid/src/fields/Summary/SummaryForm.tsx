@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-
 import { Text, Box, AlertMessage, UploadFile } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
@@ -10,7 +9,6 @@ import {
   ChildrenAid,
 } from '@island.is/financial-aid/shared/lib'
 import { useLocale } from '@island.is/localization'
-
 import * as m from '../../lib/messages'
 import {
   ApproveOptions,
