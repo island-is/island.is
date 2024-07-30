@@ -135,7 +135,6 @@ export const getCartesianGridComponents = ({
           angle={270}
           value={slice.yAxisLabel}
           dx={-20}
-          dy={10}
         />
       )}
     </YAxis>,
