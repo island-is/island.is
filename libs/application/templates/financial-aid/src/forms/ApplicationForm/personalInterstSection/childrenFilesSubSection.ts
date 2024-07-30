@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildFileUploadField,
   buildMultiField,
   buildSubSection,
@@ -23,12 +22,12 @@ export const childrenFilesSubSection = buildSubSection({
   title: m.childrenFilesForm.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'childrenFiles',
+      id: Routes.CHILDRENFILES,
       title: m.childrenFilesForm.general.pageTitle,
       description: m.childrenFilesForm.general.description,
       children: [
         buildFileUploadField({
-          id: 'childrenFiles',
+          id: Routes.CHILDRENFILES,
           uploadMultiple: true,
           maxSize: FILE_SIZE_LIMIT,
           uploadAccept: UPLOAD_ACCEPT,

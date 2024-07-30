@@ -2,7 +2,7 @@ import {
   buildSubSection,
   buildMultiField,
   buildDescriptionField,
-  buildTextField,
+  buildBankAccountField,
 } from '@island.is/application/core'
 import { Routes } from '../../../lib/constants'
 import * as m from '../../../lib/messages'
@@ -16,11 +16,9 @@ export const bankInfoSubSection = buildSubSection({
       title: m.bankInfoForm.general.pageTitle,
       description: m.bankInfoForm.general.info,
       children: [
-        buildTextField({
-          id: `${Routes.BANKINFO}.accountNumber`,
-          title: m.bankInfoForm.inputsLabels.bankNumber,
-          format: '####-##-######',
-          placeholder: '0000-00-000000',
+        buildBankAccountField({
+          id: Routes.BANKINFO,
+          title: '',
         }),
         buildDescriptionField({
           id: `${Routes.BANKINFO}.description`,

@@ -72,7 +72,7 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
       <Files
         route={
-          answers.spouseIncome === ApproveOptions.Yes
+          answers.spouseIncome.type === ApproveOptions.Yes
             ? Routes.SPOUSEINCOMEFILES
             : Routes.SPOUSETAXRETURNFILES
         }
@@ -81,8 +81,8 @@ const SpouseSummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           externalData?.taxDataSpouse?.data?.municipalitiesPersonalTaxReturn
             ?.personalTaxReturn
         }
-        taxFiles={answers.spouseTaxReturnFiles ?? []}
-        incomeFiles={answers.spouseIncomeFiles ?? []}
+        taxFiles={answers?.spouseTaxReturnFiles ?? []}
+        incomeFiles={answers?.spouseIncomeFiles ?? []}
         childrenFiles={[]}
         applicationId={id}
       />

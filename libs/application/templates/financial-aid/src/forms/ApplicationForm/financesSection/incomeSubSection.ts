@@ -13,10 +13,11 @@ export const incomeSubSection = buildSubSection({
   title: m.incomeForm.general.sectionTitle,
   children: [
     buildMultiField({
+      id: Routes.INCOME,
       title: m.incomeForm.general.pageTitle,
       children: [
         buildRadioField({
-          id: Routes.INCOME,
+          id: `${Routes.INCOME}.type`,
           title: '',
           width: 'half',
           options: getIncomeOptions(),

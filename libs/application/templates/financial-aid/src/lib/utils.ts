@@ -20,7 +20,6 @@ import {
   ApproveOptions,
   CurrentApplication,
   FAApplication,
-  OverrideAnswerSchema,
   UploadFileType,
 } from '..'
 import { UploadFile } from '@island.is/island-ui/core'
@@ -28,6 +27,7 @@ import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
 import { Application } from '@island.is/api/schema'
 import * as m from '../lib/messages'
+import { AnswersSchema } from './dataSchema'
 
 const emailRegex =
   /^[\w!#$%&'*+/=?`{|}~^-]+(?:\.[\w!#$%&'*+/=?`{|}~^-]+)*@(?:[A-Z0-9-]+\.)+[A-Z]{2,6}$/i
@@ -102,11 +102,8 @@ export function hasActiveCurrentApplication(context: ApplicationContext) {
   // return currentApplication?.currentApplicationId != null
 }
 
-export const hasFiles = (
-  fileType: UploadFileType,
-  answers: OverrideAnswerSchema,
-) => {
-  const files = answers[fileType as keyof OverrideAnswerSchema] as UploadFile[]
+export const hasFiles = (fileType: UploadFileType, answers: AnswersSchema) => {
+  const files = answers[fileType as keyof AnswersSchema] as UploadFile[]
   return files && files.length > 0
 }
 
@@ -147,7 +144,7 @@ export const getNextStepsDescription = (
   const applicantHasSpouse = hasSpouse2(answers, externalData)
   const missingIncomeFiles =
     answers.income === ApproveOptions.Yes &&
-    !hasFiles('incomeFiles', answers as unknown as OverrideAnswerSchema)
+    !hasFiles('incomeFiles', answers as unknown as AnswersSchema)
 
   if (applicantHasSpouse && missingIncomeFiles) {
     return m.confirmation.nextSteps.contentBothMissingFiles

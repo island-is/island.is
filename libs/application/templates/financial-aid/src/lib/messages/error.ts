@@ -32,6 +32,11 @@ export const error = {
       defaultMessage: 'Athugaðu hvort kennitala sé rétt slegin inn',
       description: 'Error message when national id is invalid or not present',
     },
+    missingFiles: {
+      id: 'fa.application:error.missingFile',
+      defaultMessage: 'Viðhengi vantar',
+      description: 'Error message when there are no files',
+    },
     approveSpouse: {
       id: 'fa.application:error.approveSpouse',
       defaultMessage: 'Þú þarft að samþykkja',

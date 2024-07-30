@@ -94,7 +94,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
           <Breakdown
             calculations={estimatedBreakDown(
               aidAmount,
-              answers.personalTaxCredit === ApproveOptions.Yes,
+              answers.personalTaxCredit.type === ApproveOptions.Yes,
             )}
           />
         </Box>
@@ -169,7 +169,12 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <Files
-        route={findFilesRouteFrom(answers.childrenFiles, answers.income)}
+        route={
+          findFilesRouteFrom(
+            answers.childrenFiles ?? [],
+            answers.income.type,
+          ) || []
+        }
         goToScreen={goToScreen}
         personalTaxReturn={
           externalData.taxData?.data?.municipalitiesPersonalTaxReturn

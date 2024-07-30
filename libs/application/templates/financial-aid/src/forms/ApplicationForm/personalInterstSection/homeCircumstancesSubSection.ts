@@ -9,7 +9,7 @@ import * as m from '../../../lib/messages'
 
 import { getHomeCircumstancesOptions } from '../../../lib/utils/getHomeCircumstancesOptions'
 import { HomeCircumstances } from '@island.is/financial-aid/shared/lib'
-import { Answer, FormValue } from '@island.is/application/types'
+import { FormValue } from '@island.is/application/types'
 
 export const homeCircumstancesSubSection = buildSubSection({
   id: Routes.HOMECIRCUMSTANCES,

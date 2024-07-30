@@ -19,7 +19,7 @@ export const personalTaxCreditSubSection = buildSubSection({
       description: m.personalTaxCreditForm.general.recommendedChoice,
       children: [
         buildRadioField({
-          id: Routes.PERSONALTAXCREDIT,
+          id: `${Routes.PERSONALTAXCREDIT}.type`,
           title: '',
           width: 'half',
           options: getPersonalTaxCreditOptions(),

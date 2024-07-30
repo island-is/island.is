@@ -12,14 +12,10 @@ import format from 'date-fns/format'
 
 import * as m from './messages'
 import { Routes } from './constants'
-import {
-  ApproveOptions,
-  ExternalData,
-  OverrideAnswerSchema,
-  SchoolType,
-} from './types'
+import { ApproveOptions, ExternalData } from './types'
 import { findFamilyStatus } from './utils'
 import { NationalRegistryIndividual } from '@island.is/application/types'
+import { AnswersSchema } from './dataSchema'
 
 export const getMessageHomeCircumstances: KeyMapping<
   HomeCircumstances,
@@ -90,7 +86,7 @@ export const formatBankInfo = (bankInfo: {
     : ''
 
 export const formItems = (
-  answers: OverrideAnswerSchema,
+  answers: AnswersSchema,
   externalData: ExternalData,
 ) => [
   {
@@ -126,12 +122,12 @@ export const formItems = (
   {
     route: Routes.INCOME,
     label: m.incomeForm.general.sectionTitle,
-    info: getMessageApproveOptionsForIncome[answers?.income],
+    info: getMessageApproveOptionsForIncome[answers?.income.type],
   },
   {
     route: Routes.PERSONALTAXCREDIT,
     label: m.summaryForm.formInfo.personalTaxCreditTitle,
-    info: getMessageApproveOptions[answers?.personalTaxCredit],
+    info: getMessageApproveOptions[answers?.personalTaxCredit.type],
   },
   {
     route: Routes.BANKINFO,
@@ -140,11 +136,11 @@ export const formItems = (
   },
 ]
 
-export const spouseFormItems = (answers: OverrideAnswerSchema) => [
+export const spouseFormItems = (answers: AnswersSchema) => [
   {
     route: Routes.SPOUSEINCOME,
     label: m.incomeForm.general.sectionTitle,
-    info: getMessageApproveOptionsForIncome[answers?.spouseIncome],
+    info: getMessageApproveOptionsForIncome[answers?.spouseIncome.type],
   },
 ]
 

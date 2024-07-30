@@ -6,6 +6,11 @@ export const contactInfoMultiField = buildMultiField({
   id: Routes.CONTACTINFO,
   title: m.contactInfo.general.pageTitle,
   description: m.contactInfo.general.description,
+  condition: (answers) => {
+    console.log(answers)
+
+    return true
+  },
   children: [
     buildTextField({
       id: `${Routes.CONTACTINFO}.email`,

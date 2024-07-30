@@ -1,7 +1,6 @@
 import {
   ApplicantChildCustodyInformation,
   Application,
-  ApplicationAnswerFile,
   FieldBaseProps,
   NationalRegistryIndividual,
   NationalRegistrySpouse,
@@ -11,7 +10,7 @@ import {
   Municipality,
   PersonalTaxReturn,
 } from '@island.is/financial-aid/shared/lib'
-import { answersSchema } from './dataSchema'
+import { AnswersSchema } from './dataSchema'
 
 export enum ApproveOptions {
   Yes = 'Yes',
@@ -20,7 +19,7 @@ export enum ApproveOptions {
 
 type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
-export type ErrorSchema = NestedType<answersSchema>
+export type ErrorSchema = NestedType<AnswersSchema>
 
 export interface ExternalData {
   nationalRegistry: {
@@ -72,18 +71,10 @@ export type NestedType<T> = {
     : string
 }
 
-export interface OverrideAnswerSchema extends answersSchema {
-  incomeFiles: ApplicationAnswerFile[]
-  taxReturnFiles: ApplicationAnswerFile[]
-  spouseIncomeFiles: ApplicationAnswerFile[]
-  spouseTaxReturnFiles: ApplicationAnswerFile[]
-  childrenFiles: ApplicationAnswerFile[]
-}
-
 export type FAApplication = Override<
   Application,
   {
-    answers: OverrideAnswerSchema
+    answers: AnswersSchema
     externalData: ExternalData
   }
 >

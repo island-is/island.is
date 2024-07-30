@@ -211,6 +211,7 @@ export enum FieldTypes {
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
   ACCORDION = 'ACCORDION',
+  BANK_ACCOUNT = 'BANK_ACCOUNT',
 }
 
 export enum FieldComponents {
@@ -243,6 +244,7 @@ export enum FieldComponents {
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
   ACCORDION = 'AccordionFormField',
+  BANK_ACCOUNT = 'BankAccountFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -499,6 +501,14 @@ export interface AccordionField extends BaseField {
   titleVariant?: TitleVariants
 }
 
+export interface BankAccountField extends BaseField {
+  readonly type: FieldTypes.BANK_ACCOUNT
+  component: FieldComponents.BANK_ACCOUNT
+  marginTop?: ResponsiveProp<Space>
+  marginBottom?: ResponsiveProp<Space>
+  titleVariant?: TitleVariants
+}
+
 export interface PdfLinkButtonField extends BaseField {
   readonly type: FieldTypes.PDF_LINK_BUTTON
   component: FieldComponents.PDF_LINK_BUTTON
@@ -651,3 +661,4 @@ export type Field =
   | FindVehicleField
   | StaticTableField
   | AccordionField
+  | BankAccountField

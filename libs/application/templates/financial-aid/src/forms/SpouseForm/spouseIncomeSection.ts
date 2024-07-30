@@ -17,7 +17,7 @@ export const spouseIncomeSection = buildSection({
       title: m.incomeForm.general.pageTitle,
       children: [
         buildRadioField({
-          id: Routes.SPOUSEINCOME,
+          id: `${Routes.SPOUSEINCOME}.type`,
           title: '',
           width: 'half',
           options: getIncomeOptions(),

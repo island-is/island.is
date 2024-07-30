@@ -9,7 +9,7 @@ import {
 import * as m from '../../lib/messages'
 import { Routes } from '../../lib/constants'
 import { DefaultEvents } from '@island.is/application/types'
-import { Municipality, currentMonth } from '@island.is/financial-aid/shared/lib'
+import { currentMonth } from '@island.is/financial-aid/shared/lib'
 
 export const informationSection = buildSection({
   id: Routes.ACCECPTCONTRACT,

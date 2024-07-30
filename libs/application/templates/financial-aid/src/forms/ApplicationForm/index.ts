@@ -18,7 +18,6 @@ export const ApplicationForm: Form = buildForm({
     return () => logo
   },
   children: [
-    confirmationSection,
     personalInterestSection,
     financesSection,
     contactInfoSection,

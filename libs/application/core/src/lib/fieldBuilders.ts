@@ -42,6 +42,7 @@ import {
   HiddenInputWithWatchedValueField,
   HiddenInputField,
   AccordionField,
+  BankAccountField,
 } from '@island.is/application/types'
 
 import { Colors } from '@island.is/island-ui/theme'
@@ -463,6 +464,23 @@ export function buildAccordionField(
     condition,
     type: FieldTypes.ACCORDION,
     component: FieldComponents.ACCORDION,
+  }
+}
+
+export function buildBankAccountField(
+  data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
+): BankAccountField {
+  const { title, id, marginBottom, marginTop, titleVariant } = data
+
+  return {
+    children: undefined,
+    id,
+    title,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    type: FieldTypes.BANK_ACCOUNT,
+    component: FieldComponents.BANK_ACCOUNT,
   }
 }
 

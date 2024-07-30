@@ -61,7 +61,7 @@ export const Estimation = ({ application, municipality }: EstimationProps) => {
       <Breakdown
         calculations={estimatedBreakDown(
           aidAmount,
-          application.answers.personalTaxCredit === ApproveOptions.Yes,
+          application.answers.personalTaxCredit.type === ApproveOptions.Yes,
         )}
       />
     </>
