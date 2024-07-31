@@ -17,12 +17,12 @@ const configFactory = (
     name: 'clients-university-application-iceland-university-of-the-arts',
     autoAuth: idsClientConfig.isConfigured
       ? {
-        mode: 'auto',
-        issuer: idsClientConfig.issuer,
-        clientId: idsClientConfig.clientId,
-        clientSecret: idsClientConfig.clientSecret,
-        scope: config.scope,
-      }
+          mode: 'auto',
+          issuer: idsClientConfig.issuer,
+          clientId: idsClientConfig.clientId,
+          clientSecret: idsClientConfig.clientSecret,
+          scope: config.scope,
+        }
       : undefined,
   }),
   headers: {
