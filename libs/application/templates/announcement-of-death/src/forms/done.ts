@@ -5,6 +5,7 @@ import {
   buildDescriptionField,
   buildSection,
   getValueViaPath,
+  buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import CoatOfArms from '../assets/CoatOfArms'
@@ -19,6 +20,7 @@ import {
   theAnnouncer,
   theDeceased,
 } from './overviewSections'
+import AOD from '../assets/AOD'
 
 export const done: Form = buildForm({
   id: 'done',
@@ -42,10 +44,11 @@ export const done: Form = buildForm({
               title: '',
               component: 'ViewOverviewInDone',
             }),
-            buildCustomField({
+            buildImageField({
               id: 'viewOverview',
               title: '',
-              component: 'Done',
+              image: AOD,
+              imagePosition: 'center',
               condition: (answers) =>
                 getValueViaPath(answers, 'viewOverview') !== true,
             }),
