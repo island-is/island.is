@@ -35,7 +35,7 @@ export const useMenuHoverProps = (
             }, MENU_LEAVE_DELAY)
           }
         },
-        unstable_autoFocusOnHide: false,
+        unstable_autofocusOnhide: 'false',
       }
     : undefined
 }
