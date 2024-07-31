@@ -3,25 +3,19 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { AnswerOptions } from './types'
 
-const contact = z.object({
-  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
-  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
-  phoneNumber: z.string().refine(
-    (p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    },
-    { message: 'Símanúmerið þarf að vera gilt' },
-  ),
-})
-
 const phoneNumberSchema = z.string().refine(
   (p) => {
     const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-    return phoneNumber && phoneNumber.isValid()
+    return phoneNumber?.isValid()
   },
   { message: 'Símanúmer þarf að vera gilt' },
 )
+
+const contact = z.object({
+  name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
+  email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
+  phoneNumber: phoneNumberSchema,
+})
 
 const helpDesk = z.object({
   email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
