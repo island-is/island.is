@@ -24,8 +24,9 @@ export const UserNotificationsConfig = defineConfig({
     const cleanedFirebaseCredentials = rawFirebaseCredentials
       .replace(/\\n/g, '')
       .replace(/\\"/g, '"')
+    const isWorker = processJob() === 'worker'
     return {
-      isWorker: processJob() === 'worker',
+      isWorker,
       firebaseCredentials: cleanedFirebaseCredentials,
       servicePortalClickActionUrl:
         env.optional('SERVICE_PORTAL_CLICK_ACTION_URL') ??
