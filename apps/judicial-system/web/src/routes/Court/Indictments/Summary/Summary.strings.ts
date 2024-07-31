@@ -38,4 +38,10 @@ export const strings = defineMessages({
     defaultMessage: 'Gögn hafa verið send ákæranda og verjanda.',
     description: 'Notaður sem texti í staðfestingarglugga um að mál sé lokið.',
   },
+  indictmentRulingDecisionTagText: {
+    id: 'judicial.system.core:indictments.summary.indictment_ruling_decision_tag_text_v2',
+    defaultMessage:
+      '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} MERGE {Sameinað} other {Lokið}}',
+    description: 'Notaður sem texti í TagCaseState til að birta úrskurð ákæru.',
+  },
 })

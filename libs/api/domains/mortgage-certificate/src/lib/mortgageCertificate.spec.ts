@@ -6,10 +6,13 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   MOCK_PROPERTY_NUMBER_OK,
+  MockIdentityData,
+  MockUserProfileData,
   requestHandlers,
 } from './__mock-data__/requestHandlers'
 import { startMocking } from '@island.is/shared/mocking'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
+import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 
 const config = defineConfig({
   name: 'SyslumennApi',
@@ -34,7 +37,14 @@ describe('MortgageCertificateService', () => {
         SyslumennClientModule,
         ConfigModule.forRoot({ isGlobal: true, load: [config] }),
       ],
-      providers: [MortgageCertificateService, SyslumennService],
+      providers: [
+        {
+          provide: LOGGER_PROVIDER,
+          useValue: logger,
+        },
+        MortgageCertificateService,
+        SyslumennService,
+      ],
     }).compile()
 
     service = module.get(MortgageCertificateService)
@@ -48,29 +58,38 @@ describe('MortgageCertificateService', () => {
 
   describe('getMortgageCertificate', () => {
     it('should return a result', async () => {
-      const response = await service.getMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_OK,
-      )
+      const response = await service.getMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
 
-      expect(response.contentBase64).toBeTruthy()
+      expect(response[0].contentBase64).toBeTruthy()
     })
   })
 
   describe('validateMortgageCertificate', () => {
     it('exists should be true', async () => {
-      const res = await service.validateMortgageCertificate(
-        MOCK_PROPERTY_NUMBER_OK,
-        undefined,
-      )
-      expect(res.exists).toStrictEqual(true)
+      const res = await service.validateMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
+      expect(res[0].exists).toStrictEqual(true)
     })
 
     it('hasKMarking should be true', async () => {
-      const res = await service.validateMortgageCertificate(
+      const res = await service.validateMortgageCertificate([
+        { propertyNumber: MOCK_PROPERTY_NUMBER_OK, propertyType: '0' },
+      ])
+      expect(res[0].hasKMarking).toStrictEqual(true)
+    })
+  })
+
+  describe('requestCorrectionOnMortgageCertificate', () => {
+    it('hasSentRequest should be true', async () => {
+      const res = await service.requestCorrectionOnMortgageCertificate(
         MOCK_PROPERTY_NUMBER_OK,
-        undefined,
+        MockIdentityData,
+        MockUserProfileData,
       )
-      expect(res.hasKMarking).toStrictEqual(true)
+      expect(res.hasSentRequest).toStrictEqual(true)
     })
   })
 })

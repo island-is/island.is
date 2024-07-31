@@ -8,7 +8,7 @@ import React, {
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
-import { AnimatePresence } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -126,7 +126,7 @@ const Table: FC<TableProps> = (props) => {
     }
   }, [data, sortConfig])
 
-  return width < theme.breakpoints.md ? (
+  return width < theme.breakpoints.lg ? (
     <>
       {data.map((theCase: CaseListEntry) => (
         <Box marginTop={2} key={theCase.id}>
@@ -205,30 +205,46 @@ const Table: FC<TableProps> = (props) => {
             data-testid="tableRow"
           >
             {columns.map((td) => (
-              <td key={`${td}-${columns.indexOf(td)}`} className={styles.td}>
-                {td.cell(row)}
-              </td>
+              <td key={`${td}-${columns.indexOf(td)}`}>{td.cell(row)}</td>
             ))}
             {generateContextMenuItems && (
-              <td className={styles.td}>
+              <td width="4%">
                 {generateContextMenuItems(row).length > 0 && (
-                  <AnimatePresence exitBeforeEnter initial={false}>
+                  <AnimatePresence initial={false} mode="popLayout">
                     {isOpeningCaseId === row.id && showLoading ? (
-                      <Box padding={1}>
+                      <motion.div
+                        className={styles.smallContainer}
+                        key={row.id}
+                        initial={{ opacity: 0, y: 5 }}
+                        animate={{ opacity: 1, y: 1 }}
+                        exit={{
+                          opacity: 0,
+                          y: 5,
+                        }}
+                        transition={{ type: 'spring' }}
+                      >
                         <LoadingIndicator />
-                      </Box>
+                      </motion.div>
                     ) : (
                       <ContextMenu
                         menuLabel={`Valmynd fyrir mál ${row.courtCaseNumber}`}
                         items={generateContextMenuItems(row)}
                         disclosure={
-                          <IconButton
-                            icon="ellipsisVertical"
-                            colorScheme="transparent"
+                          <motion.div
+                            className={styles.smallContainer}
+                            key={row.id}
+                            initial={{ opacity: 1 }}
+                            animate={{ opacity: 1, y: 1 }}
+                            exit={{ opacity: 0, y: 5 }}
                             onClick={(evt) => {
                               evt.stopPropagation()
                             }}
-                          />
+                          >
+                            <IconButton
+                              icon="ellipsisVertical"
+                              colorScheme="transparent"
+                            />
+                          </motion.div>
                         }
                       />
                     )}

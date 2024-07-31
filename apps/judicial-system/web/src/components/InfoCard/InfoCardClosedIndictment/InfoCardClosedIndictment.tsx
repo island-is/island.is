@@ -4,6 +4,7 @@ import { IntlFormatters, useIntl } from 'react-intl'
 import { Text } from '@island.is/island-ui/core'
 import {
   capitalize,
+  formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -17,12 +18,15 @@ import { strings } from '../InfoCardIndictment.strings'
 export interface Props {
   defendantInfoActionButton?: DefendantInfoActionButton
   displayAppealExpirationInfo?: boolean
+  displayVerdictViewDate?: boolean
+  indictmentReviewedDate?: string | null
 }
 
 export const getAdditionalDataSections = (
   formatMessage: IntlFormatters['formatMessage'],
   reviewerName?: string | null,
   reviewDecision?: IndictmentCaseReviewDecision | null,
+  indictmendReviewedDate?: string | null,
 ): DataSection[] => [
   ...(reviewerName
     ? [
@@ -43,6 +47,14 @@ export const getAdditionalDataSections = (
                   },
                 ]
               : []),
+            ...(indictmendReviewedDate
+              ? [
+                  {
+                    title: formatMessage(strings.indictmentReviewedDateTitle),
+                    value: formatDate(indictmendReviewedDate, 'PPP'),
+                  },
+                ]
+              : []),
           ],
         },
       ]
@@ -53,7 +65,12 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
-  const { defendantInfoActionButton, displayAppealExpirationInfo } = props
+  const {
+    defendantInfoActionButton,
+    displayAppealExpirationInfo,
+    displayVerdictViewDate,
+    indictmentReviewedDate,
+  } = props
 
   return (
     <InfoCard
@@ -72,6 +89,14 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           title: formatMessage(core.prosecutor),
           value: `${workingCase.prosecutorsOffice?.name}`,
         },
+        ...(workingCase.mergeCase
+          ? [
+              {
+                title: formatMessage(strings.indictmentMergedTitle),
+                value: workingCase.mergeCase?.courtCaseNumber,
+              },
+            ]
+          : []),
         {
           title: formatMessage(core.court),
           value: workingCase.court?.name,
@@ -117,6 +142,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
               items: workingCase.defendants,
               defendantInfoActionButton: defendantInfoActionButton,
               displayAppealExpirationInfo,
+              displayVerdictViewDate,
             }
           : undefined
       }
@@ -124,6 +150,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         formatMessage,
         workingCase.indictmentReviewer?.name,
         workingCase.indictmentReviewDecision,
+        indictmentReviewedDate,
       )}
     />
   )

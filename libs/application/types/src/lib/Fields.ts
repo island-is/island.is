@@ -60,6 +60,16 @@ export type TableRepeaterFields =
   | 'radio'
   | 'checkbox'
   | 'date'
+  | 'nationalIdWithName'
+
+type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
+
+type TableRepeaterOptions =
+  | RepeaterOption[]
+  | ((
+      application: Application,
+      activeField: Record<string, string>,
+    ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
   component: TableRepeaterFields
@@ -69,15 +79,21 @@ export type TableRepeaterItem = {
   displayInTable?: boolean
   label?: StaticText
   placeholder?: StaticText
-  options?: { label: StaticText; value: string }[]
+  options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
-  width?: 'half' | 'full'
+  width?: 'half' | 'full' | 'third'
   required?: boolean
   condition?: (
     application: Application,
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  readonly?:
+    | boolean
+    | ((
+        application: Application,
+        activeField?: Record<string, string>,
+      ) => boolean)
 } & (
   | {
       component: 'input'
@@ -88,6 +104,7 @@ export type TableRepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
+      suffix?: string
     }
   | {
       component: 'date'
@@ -102,8 +119,8 @@ export type TableRepeaterItem = {
   | {
       component: 'select'
       label: StaticText
-      options: { label: StaticText; value: string }[]
       isSearchable?: boolean
+      isMulti?: boolean
     }
   | {
       component: 'radio'
@@ -112,6 +129,9 @@ export type TableRepeaterItem = {
   | {
       component: 'checkbox'
       large?: boolean
+    }
+  | {
+      component: 'nationalIdWithName'
     }
 )
 
@@ -459,6 +479,7 @@ export interface ImageField extends BaseField {
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
+  imagePosition?: 'left' | 'right' | 'center'
 }
 
 export interface PdfLinkButtonField extends BaseField {
@@ -474,6 +495,8 @@ export interface PdfLinkButtonField extends BaseField {
     filename: string
   }[]
   setViewPdfFile?: (file: { base64: string; filename: string }) => void
+  viewPdfFile?: boolean
+  downloadButtonTitle?: StaticText
 }
 
 export interface NationalIdWithNameField extends BaseField {
