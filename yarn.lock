@@ -36413,6 +36413,7 @@ __metadata:
     react-is: 18.3.1
     react-keyed-flatten-children: 1.2.0
     react-modal: 3.15.1
+    react-multi-date-picker: 4.5.2
     react-number-format: 4.9.1
     react-pdf: 7.5.0
     react-popper: 2.3.0
@@ -46092,6 +46093,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"react-date-object@npm:^2.1.8":
+  version: 2.1.9
+  resolution: "react-date-object@npm:2.1.9"
+  checksum: 47df9fe2450419a6fa8d0f72beb1468ae6b4361c9012c99d3b4c55b39baf0e6ba380a53c3bdf571879ddc93bd0f212262135ccd32b096066c0aba466dfacf4f3
+  languageName: node
+  linkType: hard
+
 "react-datepicker@npm:4.10.0":
   version: 4.10.0
   resolution: "react-datepicker@npm:4.10.0"
@@ -46200,6 +46208,16 @@ __metadata:
   peerDependencies:
     react: ">= 16.8"
   checksum: 7549bb67da5222dfbb7b79d9df84a4f2bd417e53396df8b0772a95fd7621ec967b87a17ff7f1e54eb5597d73c51c2a0d16328c792b11e751c73e18e2f7160207
+  languageName: node
+  linkType: hard
+
+"react-element-popper@npm:^2.1.6":
+  version: 2.1.6
+  resolution: "react-element-popper@npm:2.1.6"
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 0140c2f78ea5b4ef92d2711ca66d96513403ffab62063cd3bdfee662d5424ceaf50f08a74da3a5e370b3160b1e345d144afa834f90bea5e06fa23c1682660ac4
   languageName: node
   linkType: hard
 
@@ -46492,6 +46510,19 @@ __metadata:
     react: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
     react-dom: ^0.14.0 || ^15.0.0 || ^16 || ^17 || ^18
   checksum: 978936e9320fad839c039b9ee4de55d40888156cb40e093615d6fbc2ff07139d5db06f14782cb7767f780bd5fb57956778669426c535ebc0068a7a03882c7e75
+  languageName: node
+  linkType: hard
+
+"react-multi-date-picker@npm:4.5.2":
+  version: 4.5.2
+  resolution: "react-multi-date-picker@npm:4.5.2"
+  dependencies:
+    react-date-object: ^2.1.8
+    react-element-popper: ^2.1.6
+  peerDependencies:
+    react: ">=16.8.0"
+    react-dom: ">=16.8.0"
+  checksum: 6ed0e03f2c07d409c1d0db040a94d6aa632f81b62d017c0167b90d51a7587ade8b29abcd520ef0d41a93253d37607e8275cff9f4c9c748875fafb49f4e9efc99
   languageName: node
   linkType: hard
 

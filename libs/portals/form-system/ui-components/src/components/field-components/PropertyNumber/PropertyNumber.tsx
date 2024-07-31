@@ -11,19 +11,19 @@ import {
 import { ChangeEvent, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
-import { m } from '../../../../../lib/messages'
 import { FormSystemInput } from '@island.is/api/schema'
+import { m } from '../../../lib/messages'
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const PropertyNumber = ({ currentItem }: Props) => {
+export const PropertyNumber = ({ item }: Props) => {
   const [propertyNumber, setPropertyNumber] = useState<string>('')
   const [ownedProperty, setOwnedProperty] = useState<string>('')
   const showPropertyNumber = propertyNumber.length === 7
   const showOwnedProperty = ownedProperty !== ''
-  const isRequired = currentItem?.isRequired ?? false
+  const isRequired = item?.isRequired ?? false
   const { formatMessage } = useIntl()
 
   const propertyProperties = (

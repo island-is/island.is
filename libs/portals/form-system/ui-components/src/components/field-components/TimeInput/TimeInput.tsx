@@ -7,10 +7,10 @@ import {
 } from '@island.is/island-ui/core'
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const TimeInput = ({ currentItem }: Props) => {
+export const TimeInput = ({ item }: Props) => {
   // 0: Minute
   // 1: Hourly
   // 2: Half hour
@@ -19,7 +19,7 @@ export const TimeInput = ({ currentItem }: Props) => {
     const createOptions = (list: string[]) =>
       list.map((t) => ({ label: t, value: t }))
 
-    const interval = currentItem?.inputSettings?.interval
+    const interval = item?.inputSettings?.interval
 
     switch (interval) {
       case 1:
@@ -34,36 +34,34 @@ export const TimeInput = ({ currentItem }: Props) => {
   }
 
   return (
-    <>
-      <Row marginTop={2}>
-        <Column span="2/10">
-          <Select
-            label="Klukkustund"
-            name="timeSelectHour"
-            defaultValue={{ label: '00', value: '00' }}
-            options={hourList.map((t) => {
-              return {
-                label: t,
-                value: t,
-              }
-            })}
-            size="xs"
-          />
-        </Column>
-        <Box style={{ lineHeight: '90px' }}>:</Box>
-        <Column span="2/10">
-          <Select
-            label="Mínútur"
-            name="timeSelectMinute"
-            defaultValue={{ label: '00', value: '00' }}
-            options={chosenMinuteList()}
-            size="xs"
-            isSearchable
-            isDisabled={currentItem?.inputSettings?.interval === 1}
-          />
-        </Column>
-      </Row>
-    </>
+    <Row marginTop={2}>
+      <Column span="2/10">
+        <Select
+          label="Klukkustund"
+          name="timeSelectHour"
+          defaultValue={{ label: '00', value: '00' }}
+          options={hourList.map((t) => {
+            return {
+              label: t,
+              value: t,
+            }
+          })}
+          size="xs"
+        />
+      </Column>
+      <Box style={{ lineHeight: '90px' }}>:</Box>
+      <Column span="2/10">
+        <Select
+          label="Mínútur"
+          name="timeSelectMinute"
+          defaultValue={{ label: '00', value: '00' }}
+          options={chosenMinuteList()}
+          size="xs"
+          isSearchable
+          isDisabled={item?.inputSettings?.interval === 1}
+        />
+      </Column>
+    </Row>
   )
 }
 

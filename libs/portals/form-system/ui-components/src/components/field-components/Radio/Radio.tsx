@@ -3,11 +3,11 @@ import { RadioButton, Text, Box } from '@island.is/island-ui/core'
 import { useEffect, useState } from 'react'
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const Radio = ({ currentItem }: Props) => {
-  const radioButtons = currentItem.inputSettings?.list as FormSystemListItem[]
+export const Radio = ({ item }: Props) => {
+  const radioButtons = item.inputSettings?.list as FormSystemListItem[]
   const [radioChecked, setRadioChecked] = useState<boolean[]>([])
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export const Radio = ({ currentItem }: Props) => {
   return (
     <>
       <div>
-        <Text variant="h3">{currentItem?.name?.is}</Text>
+        <Text variant="h3">{item?.name?.is}</Text>
       </div>
       <Box
         marginTop={2}

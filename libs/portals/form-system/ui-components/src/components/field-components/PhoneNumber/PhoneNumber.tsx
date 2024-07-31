@@ -4,20 +4,23 @@ import {
   GridColumn as Column,
   PhoneInput,
 } from '@island.is/island-ui/core'
+import { useIntl } from 'react-intl'
+import { m } from '../../../lib/messages'
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const PhoneNumber = ({ currentItem }: Props) => {
+export const PhoneNumber = ({ item }: Props) => {
+  const { formatMessage } = useIntl()
   return (
     <Row>
       <Column>
         <PhoneInput
-          label="Símanúmer"
+          label={formatMessage(m.phoneNumber)}
           placeholder="Símanúmer"
           name="phoneNumber"
-          required={currentItem.isRequired ?? false}
+          required={item.isRequired ?? false}
         />
       </Column>
     </Row>

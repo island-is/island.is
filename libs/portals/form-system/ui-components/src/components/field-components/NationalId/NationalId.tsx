@@ -1,13 +1,14 @@
 import { Input, Stack, GridColumn as Column } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../../lib/messages'
+import { m } from '../../../lib/messages'
+
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const NationalId = ({ currentItem }: Props) => {
+export const NationalId = ({ item }: Props) => {
   const { formatMessage } = useIntl()
   return (
     <div>
@@ -17,7 +18,7 @@ export const NationalId = ({ currentItem }: Props) => {
             label={formatMessage(m.nationalId)}
             name="kennitala"
             type="number"
-            required={currentItem?.isRequired ?? false}
+            required={item?.isRequired ?? false}
           />
         </Column>
         <Column>
