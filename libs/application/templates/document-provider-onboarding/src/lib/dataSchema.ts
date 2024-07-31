@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
+import { AnswerOptions } from './types'
 
 const contact = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
@@ -14,7 +15,7 @@ const contact = z.object({
   ),
 })
 
-const helpDeskContact = z.object({
+const helpDesk = z.object({
   email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
   phoneNumber: z.string().refine(
     (p) => {
@@ -45,17 +46,21 @@ const applicant = z.object({
 })
 
 const termsOfAgreement = z.object({
-  userTerms: z.boolean().refine((v) => v, {}),
+  userTerms: z
+    .array(
+      z.nativeEnum(AnswerOptions).refine((v) => v === AnswerOptions.YES, {}),
+    )
+    .length(1),
 })
 
-const endPoint = z.object({
+const endPointObject = z.object({
   endPoint: z.string().url().nonempty(),
   endPointExists: z.string().nonempty({
     message: 'Þú verður að vista endapunkt til að halda áfram',
   }),
 })
 
-const productionEndPoint = z.object({
+const productionEndPointObject = z.object({
   prodEndPoint: z.string().url().nonempty(),
   prodEndPointExists: z.string().nonempty({
     message: 'Þú verður að vista endapunkt til að halda áfram',
@@ -63,22 +68,22 @@ const productionEndPoint = z.object({
 })
 
 export const dataSchema = z.object({
-  termsOfAgreement: termsOfAgreement,
-  applicant: applicant,
+  termsOfAgreement,
+  applicant,
   administrativeContact: contact,
   technicalContact: contact,
-  helpDesk: helpDeskContact,
+  helpDesk,
   technicalAnswer: z.boolean().refine((v) => v, {
     message: 'Þú verður að samþykkja að forritun og prófunum sé lokið',
   }),
-  endPointObject: endPoint,
+  endPointObject,
   testProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
   prodProviderId: z.string().nonempty({
     message: 'Þú verður að stofna aðgang til að halda áfram',
   }),
-  productionEndPointObject: productionEndPoint,
+  productionEndPointObject,
   rejectionReason: z.string(),
   approvedByReviewer: z.enum(['APPROVE', 'REJECT']),
 })

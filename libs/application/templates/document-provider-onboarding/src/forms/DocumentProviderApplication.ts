@@ -4,7 +4,6 @@ import {
   buildSection,
   buildTextField,
   buildSubmitField,
-  buildCustomField,
   buildDividerField,
   buildDescriptionField,
   buildCheckboxField,
@@ -12,6 +11,7 @@ import {
 } from '@island.is/application/core'
 import { Form, ApplicationTypes, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
+import { AnswerOptions } from '../lib/types'
 
 export const DocumentProviderOnboarding: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
@@ -27,14 +27,6 @@ export const DocumentProviderOnboarding: Form = buildForm({
           id: 'termsOfAgreement',
           title: m.termsTitle,
           children: [
-            buildCustomField(
-              {
-                id: 'thankYouScreen',
-                title: m.thankYouScreenTitle,
-                component: 'ThankYouScreen',
-              },
-              {},
-            ),
             buildDescriptionField({
               id: 'description',
               title: '',
@@ -48,9 +40,11 @@ export const DocumentProviderOnboarding: Form = buildForm({
               iconProps: { icon: 'open' },
             }),
             buildCheckboxField({
-              id: 'userTerms',
+              id: 'termsOfAgreement.userTerms',
               title: '',
-              options: [{ value: 'yes', label: m.userAgreementOptionLabel }],
+              options: [
+                { value: AnswerOptions.YES, label: m.userAgreementOptionLabel },
+              ],
             }),
           ],
         }),
