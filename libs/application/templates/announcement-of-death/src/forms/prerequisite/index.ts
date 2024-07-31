@@ -162,8 +162,6 @@ export const prerequisite = (): Form => {
               buildHiddenInput({
                 id: 'marriageSettlement',
                 defaultValue: (application: Application) => {
-                  console.log(application.externalData)
-
                   return getValueViaPath(
                     application.externalData,
                     'syslumennOnEntry.data.estate.marriageSettlement',
