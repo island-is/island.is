@@ -3,7 +3,9 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 
 const job = processJob()
-console.log(`Starting job: ${job} ***************************************************************************`);
+console.log(
+  `Starting job: ${job} ***************************************************************************`,
+)
 
 if (job === 'cleanup') {
   import('./cleanup').then((app) => app.cleanup())
