@@ -12,9 +12,11 @@ type Props = {
 
 export const LinkFormField = ({ field, application }: Props) => {
   const { formatMessage } = useLocale()
-
   const openLink = useCallback(() => {
-    window.open(formatText(field.link, application, formatMessage), '_blank')
+    window.open(
+      formatText(field.link ?? '', application, formatMessage),
+      '_blank',
+    )
   }, [field.link, application, formatMessage])
 
   const { getFileUrl } = useGenerateFileUrl(
