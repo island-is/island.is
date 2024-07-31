@@ -94,8 +94,8 @@ export type CommitteeSignatureState = NonNullable<
 >
 
 export enum TemplateApiActions {
-  departments = 'departments',
-  types = 'types',
+  departments = 'getDepartments',
+  types = 'getAdvertTypes',
   postApplication = 'postApplication',
 }
 
