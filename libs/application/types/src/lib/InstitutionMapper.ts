@@ -49,11 +49,6 @@ export const institutionMapper = {
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
     contentfulId: InstitutionContentfulIds.SJUKRATRYGGINGAR_ISLANDS,
   },
-  [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE]: {
-    nationalId: InstitutionNationalIds.SYSLUMENN,
-    slug: InstitutionTypes.SYSLUMENN,
-    contentfulId: InstitutionContentfulIds.SYSLUMENN,
-  },
   [ApplicationTypes.CHILDREN_RESIDENCE_CHANGE_V2]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,

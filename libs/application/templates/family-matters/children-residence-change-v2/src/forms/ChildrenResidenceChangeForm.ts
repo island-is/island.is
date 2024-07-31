@@ -31,10 +31,17 @@ export const ChildrenResidenceChangeForm: Form = buildForm({
           id: 'selectChildInCustody',
           title: m.selectChildren.general.sectionTitle,
           children: [
-            buildCustomField({
-              id: 'selectedChildren',
+            buildMultiField({
+              id: 'selectChildInCustodyMultiField',
               title: m.selectChildren.general.pageTitle,
-              component: 'SelectChildren',
+              description: m.selectChildren.general.description,
+              children: [
+                buildCustomField({
+                  id: 'selectedChildren',
+                  title: m.selectChildren.general.pageTitle,
+                  component: 'SelectChildren',
+                }),
+              ],
             }),
           ],
         }),

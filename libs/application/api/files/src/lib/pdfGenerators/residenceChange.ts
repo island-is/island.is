@@ -8,7 +8,7 @@ import {
   childrenResidenceInfo,
   sortChildrenByAge,
 } from '@island.is/application/templates/family-matters-core/utils'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change-v2'
 import { PdfConstants } from '../utils/constants'
 import { DistrictCommissionerLogo } from '../utils/districtCommissionerLogo'
 import {
