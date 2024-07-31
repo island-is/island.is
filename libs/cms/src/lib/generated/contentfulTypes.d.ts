@@ -583,6 +583,9 @@ export interface IChartFields {
 
   /** Reduce and round value */
   reduceAndRoundValue?: boolean | undefined
+
+  /** Y Axis Label */
+  yAxisLabel?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
