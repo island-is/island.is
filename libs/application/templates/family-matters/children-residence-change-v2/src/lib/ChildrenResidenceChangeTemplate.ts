@@ -125,7 +125,7 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentA,
               formLoader: () =>
-                import('../forms/ChildrenResidenceChangeForm').then((module) =>
+                import('../forms/ApplicationForm').then((module) =>
                   Promise.resolve(module.ChildrenResidenceChangeForm),
                 ),
               actions: [
@@ -235,7 +235,9 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentA,
               formLoader: () =>
-                import('../forms/ApplicationConfirmation').then((module) =>
+                import(
+                  '../forms/ConfirmationForms/ApplicationConfirmation'
+                ).then((module) =>
                   Promise.resolve(module.ApplicationConfirmation),
                 ),
               read: 'all',
@@ -267,15 +269,15 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentB,
               formLoader: () =>
-                import('../forms/ContractRejected').then((module) =>
-                  Promise.resolve(module.ParentBContractRejected),
+                import('../forms/RejectedForms/ContractRejected').then(
+                  (module) => Promise.resolve(module.ParentBContractRejected),
                 ),
             },
             {
               id: Roles.ParentA,
               formLoader: () =>
-                import('../forms/ContractRejected').then((module) =>
-                  Promise.resolve(module.ContractRejected),
+                import('../forms/RejectedForms/ContractRejected').then(
+                  (module) => Promise.resolve(module.ContractRejected),
                 ),
               read: 'all',
             },
@@ -315,16 +317,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentA,
               formLoader: () =>
-                import('../forms/WaitingForOrganization').then((module) =>
-                  Promise.resolve(module.WaitingForOrganization),
+                import('../forms/WaitingForm/WaitingForOrganization').then(
+                  (module) => Promise.resolve(module.WaitingForOrganization),
                 ),
               read: 'all',
             },
             {
               id: Roles.ParentB,
               formLoader: () =>
-                import('../forms/WaitingForOrganization').then((module) =>
-                  Promise.resolve(module.WaitingForOrganization),
+                import('../forms/WaitingForm/WaitingForOrganization').then(
+                  (module) => Promise.resolve(module.WaitingForOrganization),
                 ),
               read: 'all',
             },
@@ -370,16 +372,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentA,
               formLoader: () =>
-                import('../forms/ApplicationRejected').then((module) =>
-                  Promise.resolve(module.ApplicationRejected),
+                import('../forms/RejectedForms/ApplicationRejected').then(
+                  (module) => Promise.resolve(module.ApplicationRejected),
                 ),
               read: 'all',
             },
             {
               id: Roles.ParentB,
               formLoader: () =>
-                import('../forms/ApplicationRejected').then((module) =>
-                  Promise.resolve(module.ApplicationRejected),
+                import('../forms/RejectedForms/ApplicationRejected').then(
+                  (module) => Promise.resolve(module.ApplicationRejected),
                 ),
               read: 'all',
             },
@@ -402,16 +404,16 @@ const ChildrenResidenceChangeTemplate: ApplicationTemplate<
             {
               id: Roles.ParentA,
               formLoader: () =>
-                import('../forms/ApplicationApproved').then((module) =>
-                  Promise.resolve(module.ApplicationApproved),
+                import('../forms/ApprovedForm/ApplicationApproved').then(
+                  (module) => Promise.resolve(module.ApplicationApproved),
                 ),
               read: 'all',
             },
             {
               id: Roles.ParentB,
               formLoader: () =>
-                import('../forms/ApplicationApproved').then((module) =>
-                  Promise.resolve(module.ApplicationApproved),
+                import('../forms/ApprovedForm/ApplicationApproved').then(
+                  (module) => Promise.resolve(module.ApplicationApproved),
                 ),
               read: 'all',
             },

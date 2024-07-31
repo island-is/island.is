@@ -6,7 +6,7 @@ import {
   buildDescriptionField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
-import * as m from '../lib/messages'
+import * as m from '../../lib/messages'
 
 export const WaitingForOrganization = buildForm({
   id: 'WaitingForOrganization',

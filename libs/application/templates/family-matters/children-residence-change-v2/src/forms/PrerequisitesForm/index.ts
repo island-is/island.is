@@ -8,12 +8,12 @@ import {
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import Logo from '@island.is/application/templates/family-matters-core/assets/Logo'
-import * as m from '../lib/messages'
+import * as m from '../../lib/messages'
 import {
   ChildrenCustodyInformationApi,
   NationalRegistryUserApi,
   UserProfileApi,
-} from '../dataProviders'
+} from '../../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
