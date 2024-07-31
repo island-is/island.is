@@ -4,7 +4,6 @@ import * as z from 'zod'
 const schema = z.object({
   xroadPath: z.string(),
   scope: z.array(z.string()),
-  fetchTimeout: z.number().int(),
 })
 
 export const AgriculturalUniversityOfIcelandApplicationClientConfig =
@@ -18,10 +17,6 @@ export const AgriculturalUniversityOfIcelandApplicationClientConfig =
           'IS-DEV/EDU/10056/LBHI-Protected/umsoknir-v1',
         ),
         scope: [],
-        fetchTimeout:
-          env.optionalJSON(
-            'XROAD_UNIVERSITY_GATEWAY_AGRICULTURAL_UNIVERSITY_OF_ICELAND_TIMEOUT',
-          ) ?? 10000,
       }
     },
   })
