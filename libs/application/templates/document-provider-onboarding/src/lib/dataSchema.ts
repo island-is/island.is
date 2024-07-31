@@ -15,34 +15,26 @@ const contact = z.object({
   ),
 })
 
+const phoneNumberSchema = z.string().refine(
+  (p) => {
+    const phoneNumber = parsePhoneNumberFromString(p, 'IS')
+    return phoneNumber && phoneNumber.isValid()
+  },
+  { message: 'Símanúmer þarf að vera gilt' },
+)
+
 const helpDesk = z.object({
   email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
-  phoneNumber: z.string().refine(
-    (p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    },
-    { message: 'Símanúmer þarf að vera gilt' },
-  ),
+  phoneNumber: phoneNumberSchema,
 })
 
-//TODO: extend contact. Couldn't get it to work easily with contact.extend
 const applicant = z.object({
   name: z.string().nonempty({ message: 'Nafn þarf að vera útfyllt' }),
   email: z.string().email({ message: 'Netfang þarf að vera gilt' }),
-  phoneNumber: z.string().refine(
-    (p) => {
-      const phoneNumber = parsePhoneNumberFromString(p, 'IS')
-      return phoneNumber && phoneNumber.isValid()
-    },
-    { message: 'Símanúmer þarf að vera gilt' },
-  ),
+  phoneNumber: phoneNumberSchema,
   nationalId: z.string().refine((k) => kennitala.isValid(k), {
     message: 'Skrá þarf löglega kennitölu, með eða án bandstriks',
   }),
-  // .refine((k) => kennitala.isCompany(k), {
-  //   message: 'Skrá þarf kennitölu fyrirtækis eða stofnunar',
-  // }),
 })
 
 const termsOfAgreement = z.object({
