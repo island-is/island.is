@@ -8,7 +8,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
-import { m } from '../../../forms/messages'
+import { m } from '../../../lib/messages'
 import { ErrorMessage } from '@hookform/error-message'
 
 export const updateTestEndpointMutation = gql`

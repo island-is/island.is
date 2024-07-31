@@ -1,6 +1,5 @@
 import {
   buildForm,
-  buildCustomField,
   buildMultiField,
   getValueViaPath,
   buildMessageWithLinkButtonField,

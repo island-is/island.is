@@ -336,37 +336,22 @@ export const m = defineMessages({
       'Til að gerast skjalaveitandi þarf að útfæra tvenn forritunarskil. Annarsvegar eru það skil til að senda skjalatilvísun í pósthólf og hinsvegar eru það skil til að hægt sé að nálgast skjal hjá skjalaveitu. Hlekkirnir hér undir innihalda upplýsingar um tæknilegar útfærslur á þessum skilum. Í þessu ferli færð þú aðgang að prófunarumhverfi til þess að útfæra þjónustuna. Þegar þjónustan er tilbúin og prófunum er lokið, er hægt að framkvæma sjálfvirkar prófanir til að staðfesta virkni.',
     description: '',
   },
-  thankYouScreenLinkUrl1: {
-    id: 'dpo.application:thankYouScreen.linkUrl1',
+  thankYouScreenLink1: {
+    id: 'dpo.application:thankYouScreen.link1#markdown',
     defaultMessage:
-      'http://assets.ctfassets.net/8k0h54kbe6bj/Cy8xoQ5fX1Cef99GVYH4L/d12d148dace0528d67e59da19e732304/Design-1.0.0-DocumentProviders.pdf',
+      '[Tæknilýsing vegna samskipta skjalaveitu við Pósthólf (aðeins á ensku)](http://assets.ctfassets.net/8k0h54kbe6bj/Cy8xoQ5fX1Cef99GVYH4L/d12d148dace0528d67e59da19e732304/Design-1.0.0-DocumentProviders.pdf)',
     description: '',
   },
-  thankYouScreenLinkText1: {
-    id: 'dpo.application:thankYouScreen.linkText1',
+  thankYouScreenLink2: {
+    id: 'dpo.application:thankYouScreen.link2#markdown',
     defaultMessage:
-      'Tæknilýsing vegna samskipta skjalaveitu við Pósthólf (aðeins á ensku)',
+      '[Sýnidæmi á Github fyrir samskipti við Pósthólf island.is](https://github.com/digitaliceland/postholf-demo)',
     description: '',
   },
-  thankYouScreenLinkUrl2: {
-    id: 'dpo.application:thankYouScreen.linkUrl2',
-    defaultMessage: 'https://github.com/digitaliceland/postholf-demo',
-    description: '',
-  },
-  thankYouScreenLinkText2: {
-    id: 'dpo.application:thankYouScreen.linkText2',
-    defaultMessage: 'Sýnidæmi á Github fyrir samskipti við Pósthólf island.is',
-    description: '',
-  },
-  thankYouScreenLinkUrl3: {
-    id: 'dpo.application:thankYouScreen.linkUrl3',
+  thankYouScreenLink3: {
+    id: 'dpo.application:thankYouScreen.link3#markdown',
     defaultMessage:
-      'http://assets.ctfassets.net/8k0h54kbe6bj/1MkIyeKtuc7c6BlbmKIOYz/c987f9e6a5d9a5284887869671c178a8/oryggisgatlisti-postholf.pdf',
-    description: '',
-  },
-  thankYouScreenLinkText3: {
-    id: 'dpo.application:thankYouScreen.linkText3',
-    defaultMessage: 'Öryggiskröfur sem gerðar eru til skjalaveitna',
+      '[Öryggiskröfur sem gerðar eru til skjalaveitna](http://assets.ctfassets.net/8k0h54kbe6bj/1MkIyeKtuc7c6BlbmKIOYz/c987f9e6a5d9a5284887869671c178a8/oryggisgatlisti-postholf.pdf)',
     description: '',
   },
   thankYouScreenFooterMessage: {
