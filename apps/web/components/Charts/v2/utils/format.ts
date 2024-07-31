@@ -69,8 +69,8 @@ export const formatValueForPresentation = (
       let result = integer.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
 
       // Add fraction separator
-      if (fraction || !reduceAndRoundValue) {
-        result += `${fractionSeparator}${fraction ? fraction : '0'}`
+      if (fraction) {
+        result += `${fractionSeparator}${fraction}`
       }
 
       return `${result}${postfix}`
