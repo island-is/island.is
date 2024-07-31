@@ -456,7 +456,6 @@ export interface LinkField extends BaseField {
   readonly type: FieldTypes.LINK
   component: FieldComponents.LINK
   s3key?: FormText
-  link: FormText
   link?: FormText
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
