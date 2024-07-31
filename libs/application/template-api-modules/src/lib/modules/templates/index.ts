@@ -4,8 +4,6 @@ import { AnnouncementOfDeathModule } from './announcement-of-death/announcement-
 import { AnnouncementOfDeathService } from './announcement-of-death/announcement-of-death.service'
 import { ChildrenResidenceChangeModuleV2 } from './children-residence-change-v2/children-residence-change.module'
 import { ChildrenResidenceChangeServiceV2 } from './children-residence-change-v2/children-residence-change.service'
-import { ChildrenResidenceChangeModule } from './children-residence-change/children-residence-change.module'
-import { ChildrenResidenceChangeService } from './children-residence-change/children-residence-change.service'
 import { ComplaintsToAlthingiOmbudsmanTemplateModule } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.module'
 import { ComplaintsToAlthingiOmbudsmanTemplateService } from './complaints-to-althingi-ombudsman/complaints-to-althingi-ombudsman.service'
 import { CriminalRecordSubmissionModule } from './criminal-record-submission/criminal-record-submission.module'
@@ -60,7 +58,6 @@ import { PublicDebtPaymentPlanTemplateModule } from './public-debt-payment-plan/
 import { PublicDebtPaymentPlanTemplateService } from './public-debt-payment-plan/public-debt-payment-plan.service'
 import { ReferenceTemplateModule } from './reference-template/reference-template.module'
 import { ReferenceTemplateService } from './reference-template/reference-template.service'
-
 import { CitizenshipModule } from './directorate-of-immigration/citizenship/citizenship.module'
 import { CitizenshipService } from './directorate-of-immigration/citizenship/citizenship.service'
 import { DrivingLearnersPermitModule } from './driving-learners-permit/driving-learners-permit.module'
@@ -95,12 +92,10 @@ import { OrderVehicleRegistrationCertificateModule } from './transport-authority
 import { OrderVehicleRegistrationCertificateService } from './transport-authority/order-vehicle-registration-certificate/order-vehicle-registration-certificate.service'
 import { TransferOfVehicleOwnershipModule } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.module'
 import { TransferOfVehicleOwnershipService } from './transport-authority/transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.service'
-
 import { EnergyFundsModule } from './energy-funds/energy-funds.module'
 import { EnergyFundsService } from './energy-funds/energy-funds.service'
 import { UniversityModule } from './university/university.module'
 import { UniversityService } from './university/university.service'
-
 import { TransferOfMachineOwnershipTemplateModule } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.module'
 import { TransferOfMachineOwnershipTemplateService } from './aosh/transfer-of-machine-ownership/transfer-of-machine-ownership.service'
 import { CarRecyclingModule } from './car-recycling/car-recycling.module'
@@ -131,7 +126,6 @@ import { HealthInsuranceDeclarationModule } from './health-insurance-declaration
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
-
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
 
@@ -144,7 +138,6 @@ export const modules = [
   DocumentProviderOnboardingModule,
   InstitutionCollaborationModule,
   HealthInsuranceModule,
-  ChildrenResidenceChangeModule,
   ChildrenResidenceChangeModuleV2,
   LoginServiceModule,
   FundingGovernmentProjectsModule,
@@ -215,7 +208,6 @@ export const services = [
   DocumentProviderOnboardingService,
   InstitutionCollaborationService,
   HealthInsuranceService,
-  ChildrenResidenceChangeService,
   ChildrenResidenceChangeServiceV2,
   LoginServiceService,
   FundingGovernmentProjectsService,

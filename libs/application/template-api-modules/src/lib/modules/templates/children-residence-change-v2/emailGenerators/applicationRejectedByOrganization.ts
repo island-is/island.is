@@ -1,4 +1,4 @@
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change-v2'
 import { childrenResidenceInfo } from '@island.is/application/templates/family-matters-core/utils'
 import { EmailTemplateGenerator } from '../../../../types'
 import { syslumennDataFromPostalCode } from '../utils'
