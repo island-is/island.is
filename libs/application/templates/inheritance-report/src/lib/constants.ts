@@ -20,6 +20,13 @@ export enum PrePaidHeirsRelationTypes {
 
 export const RelationSpouse = 'Maki'
 
+export enum PrePaidInheritanceOptions {
+  REAL_ESTATE = 'realEstate',
+  STOCKS = 'stocks',
+  MONEY = 'money',
+  OTHER_ASSETS = 'otherAssets',
+}
+
 export const PrePaidHeirsRelations = [
   {
     value: PrePaidHeirsRelationTypes.SPOUSE,

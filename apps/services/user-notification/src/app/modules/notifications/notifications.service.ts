@@ -23,7 +23,7 @@ import {
   UnreadNotificationsCountDto,
 } from './dto/notification.dto'
 import type { Locale } from '@island.is/shared/types'
-import { mapToContentfulLocale, mapToLocale } from './utils'
+import { mapToContentfulLocale, mapToLocale, cleanString } from './utils'
 import {
   CmsService,
   GetTemplateByTemplateId,
@@ -35,16 +35,14 @@ import {
  * These are the properties that can be replaced in the template
  */
 const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
-  'notificationTitle',
-  'notificationBody',
-  'notificationDataCopy',
-  'clickAction',
-  'clickActionWeb',
+  'title',
+  'externalBody',
+  'internalBody',
   'clickActionUrl',
 ]
 
 type SenderOrganization = {
-  title: string | undefined
+  title: string
 }
 
 @Injectable()
@@ -57,9 +55,6 @@ export class NotificationsService {
     private readonly cmsService: CmsService,
   ) {}
 
-  private cleanString(str: string) {
-    return str.replace(/\s+/g, ' ').trim()
-  }
   async getSenderOrganizationTitle(
     senderId: string,
     locale?: Locale,
@@ -76,7 +71,7 @@ export class NotificationsService {
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
-      item.title = this.cleanString(item.title)
+      item.title = cleanString(item.title)
       return item
     } else {
       this.logger.warn(`No org found for senderid: ${senderId}`)
@@ -96,33 +91,12 @@ export class NotificationsService {
         template = await this.getTemplate(templateId, locale)
       }
 
-      // check for organization argument to fetch translated organization title
-      const organizationArg = notification.args.find(
-        (arg) => arg.key === 'organization',
-      )
-
-      // if senderId is set and args contains organization, fetch organizationtitle from senderId
-      if (notification.senderId && organizationArg) {
-        try {
-          const sender = await this.getSenderOrganizationTitle(
-            notification.senderId,
-            locale,
-          )
-          if (sender?.title) {
-            organizationArg.value = sender.title
-          }
-        } catch (error) {
-          this.logger.error(error.message, {
-            senderId: notification.senderId,
-            locale,
-          })
-        }
-      }
-
       // Format the template with arguments from the notification
-      const formattedTemplate = this.formatArguments(
+      const formattedTemplate = await this.formatArguments(
         notification.args,
         template,
+        notification.senderId,
+        locale,
       )
 
       // Map to RenderedNotificationDto
@@ -130,10 +104,9 @@ export class NotificationsService {
         id: notification.id,
         messageId: notification.messageId,
         senderId: notification.senderId || '',
-        title: formattedTemplate.notificationTitle,
-        body: formattedTemplate.notificationBody,
-        dataCopy: formattedTemplate.notificationDataCopy,
-        clickAction: formattedTemplate.clickAction,
+        title: formattedTemplate.title,
+        externalBody: formattedTemplate.externalBody,
+        internalBody: formattedTemplate.internalBody,
         clickActionUrl: formattedTemplate.clickActionUrl,
         created: notification.created,
         updated: notification.updated,
@@ -219,7 +192,29 @@ export class NotificationsService {
   /**
    * Replaces the placeholders in the template with the values provided in the request body
    */
-  formatArguments(args: ArgumentDto[], template: HnippTemplate): HnippTemplate {
+  async formatArguments(
+    args: ArgumentDto[],
+    template: HnippTemplate,
+    senderId?: string,
+    locale?: Locale,
+  ): Promise<HnippTemplate> {
+    // Fetch and update organization name if needed
+    if (senderId && args.some((arg) => arg.key === 'organization')) {
+      try {
+        const sender = await this.getSenderOrganizationTitle(senderId, locale)
+        if (sender?.title) {
+          args = args.map((arg) =>
+            arg.key === 'organization' ? { ...arg, value: sender.title } : arg,
+          )
+        }
+      } catch (error) {
+        this.logger.error('Error fetching sender organization title:', {
+          senderId,
+          locale,
+        })
+      }
+    }
+
     // Deep clone the template to avoid modifying the original
     const formattedTemplate = JSON.parse(JSON.stringify(template))
 

@@ -4,12 +4,13 @@ import {
   buildExternalDataProvider,
   buildDataProviderItem,
   buildMultiField,
-  buildCustomField,
   buildDescriptionField,
   buildKeyValueField,
   buildSubmitField,
   getValueViaPath,
   buildRadioField,
+  buildHiddenInput,
+  buildNationalIdWithNameField,
 } from '@island.is/application/core'
 import {
   Form,
@@ -18,6 +19,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   ExistingApplicationApi,
+  Application,
 } from '@island.is/application/types'
 import { m } from '../../lib/messages'
 import { RoleConfirmationEnum } from '../../types'
@@ -148,15 +150,44 @@ export const prerequisite = (): Form => {
                 ],
                 width: 'full',
               }),
-              buildCustomField({
-                title: '',
-                id: 'misc',
-                component: 'AnswerPopulator',
+              buildHiddenInput({
+                id: 'caseNumber',
+                defaultValue: (application: Application) => {
+                  return getValueViaPath(
+                    application.externalData,
+                    'syslumennOnEntry.data.estate.caseNumber',
+                  )
+                },
               }),
-              buildCustomField({
+              buildHiddenInput({
+                id: 'marriageSettlement',
+                defaultValue: (application: Application) => {
+                  return getValueViaPath(
+                    application.externalData,
+                    'syslumennOnEntry.data.estate.marriageSettlement',
+                  )
+                },
+              }),
+              buildHiddenInput({
+                id: 'districtCommissionerHasWill',
+                defaultValue: (application: Application) => {
+                  return getValueViaPath(
+                    application.externalData,
+                    'syslumennOnEntry.data.estate.districtCommissionerHasWill',
+                  )
+                },
+              }),
+              buildDescriptionField({
+                id: 'delegateRoleDisclaimer',
                 title: '',
+                description: m.delegateRoleDisclaimer,
+                condition: (answers) =>
+                  getValueViaPath(answers, 'pickRole.roleConfirmation') ===
+                  RoleConfirmationEnum.DELEGATE,
+              }),
+              buildNationalIdWithNameField({
                 id: 'pickRole.electPerson',
-                component: 'ElectPerson',
+                title: '',
                 condition: (answers) =>
                   getValueViaPath(answers, 'pickRole.roleConfirmation') ===
                   RoleConfirmationEnum.DELEGATE,

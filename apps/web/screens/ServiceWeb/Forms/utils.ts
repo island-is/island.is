@@ -85,6 +85,15 @@ export enum DirectorateOfImmigrationCategories {
   ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
 }
 
+export enum FiskistofaCategories {
+  STRANDVEIDAR = '6vPorSHCBf4o22rhbHedHR',
+  VEIDILEYFI = '5QmuK7Ns1wgpEUWTetbLGb',
+  AFLASKRANING = '4D5Fhl2YedrTOJ7PTMYeo0',
+  FISKVEIDAR = '5i5oQMp8r2oE43bYNPeZig',
+  UTFLUTNINGUR = '6sE8R2mNldfv9ZEHGv5FA',
+  VEIDIHEIMILDIR = '1agbWJCHTDVfVR4yQZPaEK',
+}
+
 export const filterSupportCategories = (
   supportCategories: SupportCategory[] | undefined,
   slug: string,

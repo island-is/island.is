@@ -246,35 +246,5 @@ export const PrerequisitesForm: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'applicant',
-      title: socialInsuranceAdministrationMessage.info.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'periodSection',
-      title: socialInsuranceAdministrationMessage.period.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'fileUpload',
-      title: socialInsuranceAdministrationMessage.fileUpload.title,
-      children: [],
-    }),
-    buildSection({
-      id: 'additionalInformation',
-      title: socialInsuranceAdministrationMessage.additionalInfo.section,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'conclusion',
-      title: socialInsuranceAdministrationMessage.conclusionScreen.section,
-      children: [],
-    }),
   ],
 })

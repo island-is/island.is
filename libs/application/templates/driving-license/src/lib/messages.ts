@@ -324,46 +324,10 @@ export const m = defineMessages({
     `,
     description: 'Description of photo requirements',
   },
-  qualityPhotoInstructionsBulletOne: {
-    id: 'dl.application:qualityPhoto.instructionsbulletone',
-    defaultMessage: `
-    Ljósmynd af umsækjanda þarf að vera tekin beint að framan.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletTwo: {
-    id: 'dl.application:qualityPhoto.instructionsbullettwo',
-    defaultMessage: `
-    Sýna þarf höfuð (án höfuðfats) og herðar.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletThree: {
-    id: 'dl.application:qualityPhoto.instructionsbulletthree',
-    defaultMessage: `
-    Lýsing andlits þarf að vera jöfn.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFour: {
-    id: 'dl.application:qualityPhoto.instructionsbulletfour',
-    defaultMessage: `
-    Athuga þarf að ekki glampi á gleraugu og skyggi á augu.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletFive: {
-    id: 'dl.application:qualityPhoto.instructionsbulletfive',
-    defaultMessage: `
-    Bakgrunnur þarf að vera ljós og ekki virka truflandi á myndefni.
-    `,
-    description: 'Description of photo requirements',
-  },
-  qualityPhotoInstructionsBulletSix: {
-    id: 'dl.application:qualityPhoto.instructionsbulletsix',
-    defaultMessage: `
-    Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.
-    `,
+  qualityPhotoInstructionBullets: {
+    id: 'dl.application:qualityPhoto.instructionbullets#markdown',
+    defaultMessage:
+      '* Myndin skal vera andlitsmynd, tekin þannig að andlitið snúi beint að myndavél og bæði augu sjáist.\n* Umsækjandi má ekki bera höfuðfat. Þó má heimila slíkt ef umsækjandi fer fram á það af trúarástæðum.\n* Lýsing andlits þarf að vera jöfn og góð.\n* Umsækjandi má ekki bera dökk gleraugu eða gleraugu með speglun.\n* Myndin skal vera jafnlýst, bakgrunnur ljósgrár, hlutlaus og án skugga.\n* Ljósmyndin þarf að vera prentuð á ljósmyndapappír og 35x45mm að stærð.',
     description: 'Description of photo requirements',
   },
   overviewBringAlongTitle: {
@@ -522,6 +486,11 @@ export const m = defineMessages({
   },
   nextStepsDescriptionBFull: {
     id: 'dl.application:nextStepsDescriptionBFull#markdown',
+    defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
+    description: '',
+  },
+  nextStepsDescriptionBEFull: {
+    id: 'dl.application:nextStepsDescriptionBEFull#markdown',
     defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
     description: '',
   },
@@ -728,7 +697,7 @@ export const m = defineMessages({
   },
   applicationForBELicenseTitle: {
     id: 'dl.application:applicationForBELicenseTitle',
-    defaultMessage: 'Kerruréttindi BE',
+    defaultMessage: 'Eftirvagn BE',
     description: 'Option title for selecting to apply for trailer license',
   },
   applicationForBELicenseDescription: {

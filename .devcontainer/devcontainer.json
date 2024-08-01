@@ -1,0 +1,22 @@
+// vi: ft=jsonc
+{
+  "name": "Devcontainer for island.is",
+  "build": { "dockerfile": "Dockerfile", "context": "../" },
+  "customizations": {
+    "vscode": {
+      "extensions": ["dbaeumer.vscode-eslint"]
+    }
+  },
+  "privileged": true,
+  "runArgs": ["--name=devcontainer-islandis"],
+  "postCreateCommands": [
+    "cp .devcontainer/aws-config.default.ini .devcontainer/aws-config.ini",
+    "cp .devcontainer/.envrc.default .devcontainer/.envrc"
+  ],
+  "containerEnv": {
+    "AWS_CONFIG_FILE": "${containerWorkspaceFolder}/.devcontainer/aws-config.ini",
+    "IS_DEVCONTAINER": true
+  },
+
+  "forwardPorts": [3000, 3333, 4200, 4242]
+}

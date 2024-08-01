@@ -132,6 +132,9 @@ import { HealthInsuranceDeclarationService } from './health-insurance-declaratio
 import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
 import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
 
+import { IdCardModule } from './id-card/id-card.module'
+import { IdCardService } from './id-card/id-card.service'
+
 export const modules = [
   ReferenceTemplateModule,
   GeneralFishingLicenseModule,
@@ -198,6 +201,7 @@ export const modules = [
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
+  IdCardModule,
   HealthInsuranceDeclarationModule,
   NewPrimarySchoolModule,
 ]
@@ -268,6 +272,7 @@ export const services = [
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
+  IdCardService,
   HealthInsuranceDeclarationService,
   NewPrimarySchoolService,
 ]

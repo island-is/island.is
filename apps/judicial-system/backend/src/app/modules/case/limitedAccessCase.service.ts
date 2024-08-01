@@ -100,8 +100,12 @@ export const attributes: (keyof Case)[] = [
   'appealRulingModifiedHistory',
   'requestAppealRulingNotToBePublished',
   'prosecutorsOfficeId',
+  'indictmentDecision',
   'indictmentRulingDecision',
   'indictmentHash',
+  'courtSessionType',
+  'indictmentReviewDecision',
+  'indictmentReviewerId',
 ]
 
 export interface LimitedAccessUpdateCase
@@ -159,6 +163,11 @@ export const include: Includeable[] = [
   {
     model: User,
     as: 'appealJudge3',
+    include: [{ model: Institution, as: 'institution' }],
+  },
+  {
+    model: User,
+    as: 'indictmentReviewer',
     include: [{ model: Institution, as: 'institution' }],
   },
   { model: Case, as: 'parentCase', attributes },

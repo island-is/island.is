@@ -13,9 +13,9 @@ export const error = defineMessages({
     description: 'Empty career response',
   },
   emptyCareerResponseMessage: {
-    id: 'hwp.application:error.emptyCareerResponseMessage',
+    id: 'hwp.application:error.emptyCareerResponseMessage#markdown',
     defaultMessage:
-      'Samkvæmt þjónustu Háskóla Íslands ertu ekki með brautskráningu á skrá',
+      '* Ekki eru upplýsingar um brautskráningu frá HÍ eða HA úr löggildri heilbrigðsstétt \n* Brautskráning úr HÍ eða HA fyrir 1. janúar 2024 \n* Starfsleyfi nú þegar til staðar \n\n### Vinsamlega skoðið https://island.is/starfsleyfi-heilbrigdisstarfsmanna',
     description: 'Empty career response',
   },
   noResponseEducationInfoTitle: {
@@ -76,7 +76,7 @@ export const error = defineMessages({
     description: 'No graduated programs found that are valid form work permit',
   },
   noPermitValidGraduationFoundMessage: {
-    id: 'hwp.application:error.noPermitValidGraduationFoundMessage',
+    id: 'hwp.application:error.noPermitValidGraduationFoundMessage#markdown',
     defaultMessage: 'Ekki fundust brautskráningar sem gefa starfsleyfi',
     description: 'No graduated programs found that are valid form work permit',
   },
@@ -87,7 +87,7 @@ export const error = defineMessages({
     description: 'No graduated programs found that can go through self service',
   },
   noPermitValidForSelfServiceMessage: {
-    id: 'hwp.application:error.noPermitValidForSelfServiceMessage',
+    id: 'hwp.application:error.noPermitValidForSelfServiceMessage#markdown',
     defaultMessage:
       'Ekki fundust brautskráningar sem geta farið í gegnum sjálfsafgreiðslu, vinsamlega hafðu samband við Embætti Landlæknis',
     description: 'No graduated programs found that can go through self service',
