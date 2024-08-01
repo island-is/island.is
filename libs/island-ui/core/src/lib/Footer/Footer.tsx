@@ -94,6 +94,7 @@ export const Footer = ({
                         variant="intro"
                         paddingBottom={isLast ? 4 : 2}
                         color={'blue600'}
+                        as="div"
                       >
                         <a href={href}>
                           <Hyphen>{title}</Hyphen>
@@ -215,6 +216,7 @@ export const Footer = ({
                             variant="h5"
                             color="blue600"
                             fontWeight="light"
+                            as="div"
                           >
                             <a href={href}>{title}</a>
                           </Text>
@@ -247,7 +249,7 @@ export const Footer = ({
             >
               <Inline space={[2, 2, 4]}>
                 {bottomLinks.map(({ title, href }, index) => (
-                  <Text key={index} variant="small" color="blue600">
+                  <Text key={index} variant="small" color="blue600" as="div">
                     <a href={href}>{title}</a>
                   </Text>
                 ))}
