@@ -22,7 +22,6 @@ export const FormPreview = () => {
   const { form } = formBuilder
   const { stepsList, groupsList, inputsList } = form ?? {}
   const documents = form?.documentTypes ?? [] as FormSystemDocumentType[]
-  const { }
 
   const steps = (stepsList ?? []).filter((step): step is FormSystemStep => step != null)
   const groups = (groupsList ?? []).filter((group): group is FormSystemGroup => group != null)
