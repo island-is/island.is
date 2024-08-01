@@ -50,14 +50,6 @@ export const Form = () => {
   const [updateForm] = useFormSystemUpdateFormMutation()
   const [updateFormSettings] = useFormSystemUpdateFormSettingsMutation()
   const [getTranslation] = useFormSystemGetTranslationMutation()
-  // const updateActiveItem = (updatedActiveItem?: ActiveItem) =>
-  //   updateActiveItemFn(
-  //     control.activeItem,
-  //     updateStep,
-  //     updateGroup,
-  //     updateInput,
-  //     updatedActiveItem,
-  //   )
 
   const initialControl: ControlState = {
     activeItem: {
@@ -65,8 +57,8 @@ export const Form = () => {
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.stepsList)?.find(
-            (s: FormSystemStep) => s?.type === 'Input',
-          ) ?? defaultStep,
+          (s: FormSystemStep) => s?.type === 'Input',
+        ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,

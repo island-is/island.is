@@ -142,7 +142,7 @@ export const HomestayOverview: React.FC = () => {
               style={{ height: '100%' }}
             >
               <Stack space={4}>
-                <Text variant="h4">{monthName}</Text>
+                <Text variant="h3">{monthName}</Text>
                 {selectedDatesThisMonth > 0 && (
                   <Input
                     name="monthTotal"
@@ -165,7 +165,7 @@ export const HomestayOverview: React.FC = () => {
                       flexDirection="row"
                       justifyContent="spaceBetween"
                     >
-                      <Text>{`${formatMessage(label)}:`}</Text>
+                      <Text fontWeight='semiBold'>{`${formatMessage(label)}:`}</Text>
                       <Text>{value}</Text>
                     </Box>
                   ))}
