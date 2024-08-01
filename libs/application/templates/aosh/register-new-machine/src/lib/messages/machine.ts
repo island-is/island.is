@@ -46,6 +46,11 @@ export const machine = {
           'Ef þú finnur ekki tegund og gerð tækis hér fyrir ofan, þá getur þú skráð það inn á næstu síðu.',
         description: `Machine type warning alert message description`,
       },
+      errorAlertMessageDescription: {
+        id: 'aosh.rnm.application:machine.labels.machineType.errorAlertMessageDescription',
+        defaultMessage: 'Engin gerð fannst fyrir tiltekna tegund.',
+        description: `Machine type warning alert message description`,
+      },
     }),
     basicMachineInformation: defineMessages({
       sectionTitle: {

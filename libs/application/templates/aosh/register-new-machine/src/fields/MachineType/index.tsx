@@ -8,40 +8,70 @@ import {
   Select,
   Text,
 } from '@island.is/island-ui/core'
-import { FC, useEffect, useState } from 'react'
-import { gql, useLazyQuery } from '@apollo/client'
+import { FC, useCallback, useEffect, useState } from 'react'
+import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { machine } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import debounce from 'lodash/debounce'
 import { getValueViaPath } from '@island.is/application/core'
-import { Controller } from 'react-hook-form'
-import { MACHINE_MODELS } from '../../graphql/queries'
+import { Controller, useFormContext } from 'react-hook-form'
+import { MACHINE_MODELS, MACHINE_CATEGORY } from '../../graphql/queries'
+import { UPDATE_APPLICATION } from '@island.is/application/graphql'
+import { useLazyMachineCategory } from '../../hooks/useLazyMachineCategory'
 
 export const machineModelsQuery = gql`
   ${MACHINE_MODELS}
 `
 
+export const machineCategoryQuery = gql`
+  ${MACHINE_CATEGORY}
+`
+
 export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
-  const { application, field } = props
-  const { formatMessage } = useLocale()
+  const { application, field, setBeforeSubmitCallback } = props
+  const { setValue } = useFormContext()
+  const { formatMessage, locale } = useLocale()
   const machineTypes = getValueViaPath(
     application.externalData,
     'machineTypes.data',
     [],
   ) as { name: string }[]
+  const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const modelFromAnswers = getValueViaPath(
+    application.answers,
+    'machine.machineType.model',
+  ) as string | undefined
+  const typeFromAnswers = getValueViaPath(
+    application.answers,
+    'machine.machineType.type',
+  ) as string | undefined
 
-  const [type, setType] = useState<string>()
+  const [type, setType] = useState<string | undefined>(typeFromAnswers)
   const [machineModels, setMachineModels] =
     useState<{ value: string; label: string }[]>()
-  const [model, setModel] = useState<string>()
+  const [model, setModel] = useState<string | undefined>(modelFromAnswers)
   const [disabled, setDisabled] = useState<boolean>(true)
+  const [displayError, setDisplayError] = useState<boolean>(false)
+
+  const getMachineCategory = useLazyMachineCategory()
+  const getMachineCategoryCallback = useCallback(
+    async (type: string, model: string) => {
+      const { data } = await getMachineCategory({
+        input: {
+          type,
+          model,
+        },
+      })
+      return data
+    },
+    [getMachineCategory],
+  )
 
   const [runQuery, { loading }] = useLazyQuery(machineModelsQuery, {
     onCompleted(result) {
-      console.log(result)
       const models = result.getMachineModels.map(
         (machineModel: { name: string }) => {
           return {
@@ -53,21 +83,32 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
       setMachineModels(models)
       if (models.length > 0) {
         setDisabled(false)
+      } else {
+        setDisplayError(true)
       }
     },
     onError() {
       setMachineModels([])
+      setDisplayError(true)
       setDisabled(true)
       // Something happens? Maybe a message to the user?
     },
   })
 
+  const setMachineType = (value: string) => {
+    if (value !== type) {
+      setModel(undefined)
+      setDisabled(true)
+    }
+    setType(value)
+  }
+
   useEffect(() => {
     // Call service if manufacturer exists
     // If exists, make type disabled false
     // If not show error message
-    if (type) {
-      setModel(undefined)
+    setDisplayError(false)
+    if (type && type !== 'unknown') {
       runQuery({
         variables: {
           type: type,
@@ -76,10 +117,63 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
     }
   }, [type])
 
-  useEffect(() => {
-    // Call service if type exists
-    // If not show error message
-  }, [model])
+  setBeforeSubmitCallback?.(async () => {
+    // Call updateApplication for basicInformation.type and basicInformation.model
+    // Get information for basicInformation here and updateApplication
+    const response =
+      type && model && type !== 'unknown' && model !== 'unknown'
+        ? await getMachineCategoryCallback(type, model)
+        : undefined
+
+    const category =
+      response?.getMachineParentCategoryByTypeAndModel?.name ?? ''
+    const subcategory =
+      response?.getMachineParentCategoryByTypeAndModel?.subCategoryName ?? ''
+
+    setValue(
+      'machine.aboutMachine.type',
+      type && type !== 'unknown' ? type : '',
+    )
+    setValue(
+      'machine.aboutMachine.model',
+      model && model !== 'unknown' ? model : '',
+    )
+    setValue('machine.aboutMachine.category', category)
+    setValue('machine.aboutMachine.subcategory', subcategory)
+    setValue(
+      'machine.aboutMachine.fromService',
+      !!(category.length && subcategory.length),
+    )
+    const res = await updateApplication({
+      variables: {
+        input: {
+          id: application.id,
+          answers: {
+            ...application.answers,
+            machine: {
+              aboutMachine: {
+                type: type && type !== 'unknown' ? type : '',
+                model: model && model !== 'unknown' ? model : '',
+                category,
+                subcategory,
+                fromService: !!(category.length && subcategory.length),
+              },
+              machineType: {
+                type: type ?? '',
+                model: model ?? '',
+              },
+            },
+          },
+        },
+        locale,
+      },
+    })
+    if (res.data) {
+      return [true, null]
+    }
+    return [false, '']
+  })
+
   return (
     <Box>
       <Box paddingBottom={2}>
@@ -91,16 +185,25 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
         <GridColumn span={['1/1', '1/2']}>
           <Controller
             name={`${field.id}.type`}
-            render={() => {
+            defaultValue={type}
+            render={({ field: { onChange, value } }) => {
               return (
                 <Select
-                  id={`${field.id}.type`}
+                  name={`${field.id}.type`}
                   label={formatMessage(machine.labels.machineType.type)}
                   icon="search"
-                  options={machineTypes.map(({ name }) => {
-                    return { value: name, label: name }
-                  })}
-                  onChange={(option) => option && setType(option.value)}
+                  options={[
+                    { value: 'unknown', label: 'Finn ekki tegund' },
+                  ].concat(
+                    machineTypes.map(({ name }) => {
+                      return { value: name, label: name }
+                    }),
+                  )}
+                  value={{ value: value, label: value }}
+                  onChange={(option) => {
+                    onChange(option?.value)
+                    option && setMachineType(option.value)
+                  }}
                   backgroundColor="blue"
                 />
               )
@@ -110,17 +213,26 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
         <GridColumn span={['1/1', '1/2']}>
           <Controller
             name={`${field.id}.model`}
-            render={() => {
+            defaultValue={model}
+            render={({ field: { onChange } }) => {
               return (
                 <Select
-                  id={`${field.id}.model`}
+                  name={`${field.id}.model`}
                   label={formatMessage(machine.labels.machineType.model)}
                   icon="search"
                   isLoading={loading}
-                  options={machineModels}
+                  options={
+                    machineModels &&
+                    [{ value: 'unknown', label: 'Finn ekki tegund' }].concat(
+                      machineModels,
+                    )
+                  }
                   isDisabled={disabled}
-                  value={model ? { value: model, label: model } : undefined}
-                  onChange={(option) => option && setModel(option.value)}
+                  value={{ value: model ?? '', label: model ?? '' }}
+                  onChange={(option) => {
+                    onChange(option?.value)
+                    option && setModel(option.value)
+                  }}
                   backgroundColor="blue"
                 />
               )
@@ -128,6 +240,17 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
           />
         </GridColumn>
       </GridRow>
+      {displayError && (
+        <Box marginBottom={3}>
+          <AlertMessage
+            type="error"
+            title=""
+            message={formatMessage(
+              machine.labels.machineType.errorAlertMessageDescription,
+            )}
+          />
+        </Box>
+      )}
       <Box>
         <AlertMessage
           type="warning"

@@ -11,10 +11,6 @@ const PersonInformationSchema = z.object({
 })
 
 const BasicInformationSchema = z.object({
-  type: z.string(),
-  model: z.string(),
-  category: z.string(),
-  subcategory: z.string(),
   productionCountry: z.string(),
   productionYear: z.string(),
   productionNumber: z.string(),
@@ -23,6 +19,14 @@ const BasicInformationSchema = z.object({
   isUsed: z.string(),
   location: z.string(),
   cargoFileNumber: z.string(),
+})
+
+const AboutMachineSchema = z.object({
+  type: z.string().optional(),
+  model: z.string().optional(),
+  category: z.string().optional(),
+  subcategory: z.string().optional(),
+  fromService: z.boolean().optional(),
 })
 
 export const NewMachineAnswersSchema = z.object({
@@ -39,10 +43,11 @@ export const NewMachineAnswersSchema = z.object({
   machine: z.object({
     machineType: z
       .object({
-        type: z.string(),
-        model: z.string(),
+        type: z.string().optional(),
+        model: z.string().optional(),
       })
       .optional(),
+    aboutMachine: AboutMachineSchema.optional(),
     basicInformation: BasicInformationSchema.optional(),
     streetRegistration: z
       .object({
@@ -56,3 +61,4 @@ export const NewMachineAnswersSchema = z.object({
 export type NewMachineAnswers = z.TypeOf<typeof NewMachineAnswersSchema>
 export type PersonInformation = z.TypeOf<typeof PersonInformationSchema>
 export type BasicInformation = z.TypeOf<typeof BasicInformationSchema>
+export type AboutMachine = z.TypeOf<typeof AboutMachineSchema>

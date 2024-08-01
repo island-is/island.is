@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { FormatMessage, FormValue } from '@island.is/application/types'
-import { BasicInformation } from '../lib/dataSchema'
+import { AboutMachine, BasicInformation } from '../lib/dataSchema'
 import { machine } from '../lib/messages'
 
 export const getBasicMachineInformation = (
@@ -11,19 +11,23 @@ export const getBasicMachineInformation = (
     answers,
     'machine.basicInformation',
   ) as BasicInformation
+  const aboutMachineInformation = getValueViaPath(
+    answers,
+    'machine.aboutMachine',
+  ) as AboutMachine
 
   return [
     `${formatMessage(machine.labels.basicMachineInformation.type)}: ${
-      basicMachineInformation.type
+      aboutMachineInformation.type
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.model)}: ${
-      basicMachineInformation.model
+      aboutMachineInformation.model
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.category)}: ${
-      basicMachineInformation.category
+      aboutMachineInformation.category
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.subcategory)}: ${
-      basicMachineInformation.subcategory
+      aboutMachineInformation.subcategory
     }`,
     `${formatMessage(
       machine.labels.basicMachineInformation.productionCountry,

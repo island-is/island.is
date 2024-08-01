@@ -9,6 +9,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   MachineTypeDto,
+  MachineParentCategoryDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 @Injectable()
@@ -25,6 +26,23 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
     auth,
   }: TemplateApiModuleActionProps): Promise<MachineTypeDto[]> {
     const result = await this.workMachineClientService.getMachineTypes(auth)
+    if (!result) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.machinesEmptyListDefault,
+          summary: coreErrorMessages.machinesEmptyListDefault,
+        },
+        400,
+      )
+    }
+    return result
+  }
+
+  async getMachineParentCategories({
+    auth,
+  }: TemplateApiModuleActionProps): Promise<MachineParentCategoryDto[]> {
+    const result =
+      await this.workMachineClientService.getMachineParentCategories(auth)
     if (!result) {
       throw new TemplateApiError(
         {

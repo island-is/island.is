@@ -9,7 +9,12 @@ import {
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 import { Logo } from '../assets/Logo'
 import { conclusion, information, externalData } from '../lib/messages'
-import { IdentityApi, MachineTypesApi, UserProfileApi } from '../dataProviders'
+import {
+  IdentityApi,
+  MachineParentCategoriesApi,
+  MachineTypesApi,
+  UserProfileApi,
+} from '../dataProviders'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -50,7 +55,11 @@ export const PrerequisitesForm: Form = buildForm({
         }),
         buildDataProviderItem({
           provider: MachineTypesApi,
-          title: 'Bla bla',
+          title: '',
+        }),
+        buildDataProviderItem({
+          provider: MachineParentCategoriesApi,
+          title: '',
         }),
       ],
     }),

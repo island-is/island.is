@@ -29,6 +29,9 @@ import {
 } from '@island.is/nest/feature-flags'
 import { MachineDetails } from './models/machineDetails'
 import { MachineModel } from './models/machineModel'
+import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
+import { MachineCategory } from './models/machineCategory'
+import { MachineSubCategory } from './models/machineSubCategory'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -139,5 +142,31 @@ export class WorkMachinesResolver {
     @Args('type') type: string,
   ) {
     return this.workMachinesService.getMachineModels(auth, type)
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => MachineCategory)
+  @Audit()
+  async getMachineParentCategoryByTypeAndModel(
+    @CurrentUser() auth: User,
+    @Args('input') input: GetMachineParentCategoryByTypeAndModelInput,
+  ) {
+    return this.workMachinesService.getMachineParentCategoriesTypeModelGet(
+      auth,
+      input,
+    )
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [MachineSubCategory])
+  @Audit()
+  async getMachineSubCategories(
+    @CurrentUser() auth: User,
+    @Args('parentCategory') parentCategory: string,
+  ) {
+    return this.workMachinesService.getMachineSubCategories(
+      auth,
+      parentCategory,
+    )
   }
 }

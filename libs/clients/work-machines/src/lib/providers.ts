@@ -9,9 +9,11 @@ import {
   MachineCategoryApi,
   MachineModelsApi,
   MachineOwnerChangeApi,
+  MachineParentCategoriesApi,
   MachineRequestInspectionApi,
   MachineStatusChangeApi,
   MachineStreetRegistrationApi,
+  MachineSubCategoriesApi,
   MachineSupervisorChangeApi,
   MachineTypesApi,
   MachinesApi,
@@ -108,6 +110,17 @@ export const apiProviders = [
   {
     api: MachineModelsApi,
     provide: MachineModelsApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: MachineParentCategoriesApi,
+    provide: MachineParentCategoriesApi,
+    acceptHeader: 'application/json',
+  },
+
+  {
+    api: MachineSubCategoriesApi,
+    provide: MachineSubCategoriesApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

@@ -8,12 +8,12 @@ import { machine } from '../../../lib/messages'
 
 export const MachineTechnicalInformation = buildSubSection({
   id: 'machineTechnicalInformation',
-  title: machine.labels.basicMachineInformation.sectionTitle,
+  title: machine.labels.technicalMachineInformation.sectionTitle,
   children: [
     buildMultiField({
       id: 'machineTechnicalInformationMultiField',
-      title: machine.labels.basicMachineInformation.title,
-      description: machine.labels.basicMachineInformation.description,
+      title: machine.labels.technicalMachineInformation.title,
+      description: machine.labels.technicalMachineInformation.description,
       children: [
         // TODO: Get description from machine basic answers
         buildDescriptionField({

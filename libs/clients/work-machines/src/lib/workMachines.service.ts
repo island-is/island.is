@@ -2,8 +2,10 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import {
   ApiMachineModelsGetRequest,
+  ApiMachineParentCategoriesTypeModelGetRequest,
   ApiMachineRequestInspectionPostRequest,
   ApiMachineStatusChangePostRequest,
+  ApiMachineSubCategoriesGetRequest,
   ApiMachinesGetRequest,
   ExcelRequest,
   GetMachineRequest,
@@ -13,10 +15,15 @@ import {
   MachineModelDto,
   MachineModelsApi,
   MachineOwnerChangeApi,
+  MachineParentCategoriesApi,
+  MachineParentCategoryDetailsDto,
+  MachineParentCategoryDto,
   MachineRequestInspectionApi,
   MachineStatusChangeApi,
   MachineStreetRegistrationApi,
   MachineStreetRegistrationCreateDto,
+  MachineSubCategoriesApi,
+  MachineSubCategoryDto,
   MachineSupervisorChangeApi,
   MachineTypeDto,
   MachineTypesApi,
@@ -53,6 +60,8 @@ export class WorkMachinesClientService {
     private readonly machineRequestInspection: MachineRequestInspectionApi,
     private readonly machineTypesApi: MachineTypesApi,
     private readonly machineModelsApi: MachineModelsApi,
+    private readonly machineParentCategoriesApi: MachineParentCategoriesApi,
+    private readonly machineSubCategoriesApi: MachineSubCategoriesApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -95,6 +104,16 @@ export class WorkMachinesClientService {
 
   private machineModelsApiWithAuth(auth: Auth) {
     return this.machineModelsApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private machineParentCategoriesApiWithAuth(auth: Auth) {
+    return this.machineParentCategoriesApi.withMiddleware(
+      new AuthMiddleware(auth),
+    )
+  }
+
+  private machineSubCategoriesApiWithAuth(auth: Auth) {
+    return this.machineSubCategoriesApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   getWorkMachines = async (
@@ -261,5 +280,31 @@ export class WorkMachinesClientService {
     return await this.machineModelsApiWithAuth(auth).apiMachineModelsGet(
       requestParameters,
     )
+  }
+
+  async getMachineParentCategoriesTypeModel(
+    auth: Auth,
+    requestParameters: ApiMachineParentCategoriesTypeModelGetRequest,
+  ): Promise<MachineParentCategoryDetailsDto> {
+    return await this.machineParentCategoriesApiWithAuth(
+      auth,
+    ).apiMachineParentCategoriesTypeModelGet(requestParameters)
+  }
+
+  async getMachineParentCategories(
+    auth: Auth,
+  ): Promise<MachineParentCategoryDto[]> {
+    return await this.machineParentCategoriesApiWithAuth(
+      auth,
+    ).apiMachineParentCategoriesGet()
+  }
+
+  async getMachineSubCategories(
+    auth: Auth,
+    requestParameters: ApiMachineSubCategoriesGetRequest,
+  ): Promise<MachineSubCategoryDto[]> {
+    return await this.machineSubCategoriesApiWithAuth(
+      auth,
+    ).apiMachineSubCategoriesGet(requestParameters)
   }
 }

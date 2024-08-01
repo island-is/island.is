@@ -24,42 +24,47 @@ export const MachineBasicInformation = buildSubSection({
           title: machine.labels.basicMachineInformation.aboutTitle,
           titleVariant: 'h5',
         }),
-        buildTextField({
-          id: 'machine.basicInformation.type',
-          title: machine.labels.basicMachineInformation.type,
-          width: 'half',
-          required: true,
+        // buildTextField({
+        //   id: 'machine.aboutMachine.type',
+        //   title: machine.labels.basicMachineInformation.type,
+        //   width: 'half',
+        //   required: true,
+        // }),
+        // buildTextField({
+        //   id: 'machine.aboutMachine.model',
+        //   title: machine.labels.basicMachineInformation.model,
+        //   width: 'half',
+        //   required: true,
+        // }),
+        buildCustomField({
+          id: 'machine.aboutMachine',
+          title: '',
+          component: 'AboutMachine',
         }),
-        buildTextField({
-          id: 'machine.basicInformation.model',
-          title: machine.labels.basicMachineInformation.model,
-          width: 'half',
-          required: true,
-        }),
-        buildSelectField({
-          id: 'machine.basicInformation.category',
-          title: machine.labels.basicMachineInformation.category,
-          width: 'half',
-          required: true,
-          options: [
-            {
-              value: 'lyftarar',
-              label: 'Lyftarar',
-            },
-          ],
-        }),
-        buildSelectField({
-          id: 'machine.basicInformation.subcategory',
-          title: machine.labels.basicMachineInformation.subcategory,
-          width: 'half',
-          required: true,
-          options: [
-            {
-              value: 'JF',
-              label: 'JF Lyftarar með skotbómu',
-            },
-          ],
-        }),
+        // buildSelectField({
+        //   id: 'machine.aboutMachine.category',
+        //   title: machine.labels.basicMachineInformation.category,
+        //   width: 'half',
+        //   required: true,
+        //   options: [
+        //     {
+        //       value: 'lyftarar',
+        //       label: 'Lyftarar',
+        //     },
+        //   ],
+        // }),
+        // buildSelectField({
+        //   id: 'machine.aboutMachine.subcategory',
+        //   title: machine.labels.basicMachineInformation.subcategory,
+        //   width: 'half',
+        //   required: true,
+        //   options: [
+        //     {
+        //       value: 'JF',
+        //       label: 'JF Lyftarar með skotbómu',
+        //     },
+        //   ],
+        // }),
         buildDescriptionField({
           id: 'machine.basicInformation.basicInformationTitle',
           title: machine.labels.basicMachineInformation.basicInformationTitle,
