@@ -497,7 +497,7 @@ export const m = defineMessages({
     description: '',
   },
   nextStepsInfoLink: {
-    id: 'dl.application:nextStepsInfoLink',
+    id: 'dl.application:nextStepsInfoLink#markdown',
     defaultMessage:
       '[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
