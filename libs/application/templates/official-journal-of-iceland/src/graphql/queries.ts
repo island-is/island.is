@@ -210,3 +210,19 @@ export const CATEGORIES_QUERY = gql`
     }
   }
 `
+
+export const PDF_URL_QUERY = gql`
+  query PdfUrl($id: String!) {
+    officialJournalOfIcelandApplicationGetPdfUrl(id: $id) {
+      url
+    }
+  }
+`
+
+export const PDF_QUERY = gql`
+  query PdfDocument($id: String!) {
+    officialJournalOfIcelandApplicationGetPdf(id: $id) {
+      pdf
+    }
+  }
+`
