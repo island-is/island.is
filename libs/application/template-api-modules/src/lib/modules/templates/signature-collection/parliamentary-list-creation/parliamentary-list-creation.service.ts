@@ -4,6 +4,8 @@ import { TemplateApiModuleActionProps } from '../../../../types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
+  CreateParliamentaryCandidacyInput,
+  MandateType,
   ReasonKey,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
@@ -13,6 +15,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CollectionType } from 'libs/clients/signature-collection/src/lib/types/collection.dto'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
+import { FetchError } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class ParliamentaryListCreationService extends BaseTemplateApiService {
@@ -61,6 +65,45 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         errorMessages.currentCollectionNotParliamentary,
         405,
       )
+    }
+  }
+
+  async submit({ application, auth }: TemplateApiModuleActionProps) {
+    const answers = application.answers as CreateListSchema
+    const input: CreateParliamentaryCandidacyInput = {
+      owner: answers.applicant,
+      agents: answers.managers
+        .map((manager) => ({
+          nationalId: manager.manager.nationalId,
+          phoneNumber: '',
+          mandateType: MandateType.Guarantor,
+          email: '',
+          areas: [],
+        }))
+        .concat(
+          answers.supervisors.map((supervisor) => ({
+            nationalId: supervisor.supervisor.nationalId,
+            phoneNumber: '',
+            mandateType: MandateType.Administrator,
+            email: '',
+            areas: [],
+          })),
+        ),
+      collectionId: '',
+      areas: [],
+    }
+
+    const result = await this.signatureCollectionClientService
+      .createParliamentaryCandidacy(input, auth)
+      .catch((e: FetchError) => {
+        return {
+          success: false,
+          message: e.message,
+        }
+      })
+
+    return {
+      success: true,
     }
   }
 }
