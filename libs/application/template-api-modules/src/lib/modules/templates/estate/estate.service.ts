@@ -107,12 +107,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
         {
           title: coreErrorMessages.errorDataProviderEstateValidationFailed,
           summary: {
+            values: { message },
             ...coreErrorMessages.errorDataProviderEstateValidationFailedSummary,
-            defaultMessage:
-              coreErrorMessages.errorDataProviderEstateValidationFailedSummary.defaultMessage.replace(
-                '{message}',
-                message,
-              ),
           },
         },
         500,
