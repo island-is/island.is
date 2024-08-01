@@ -481,17 +481,25 @@ export const m = defineMessages({
   nextStepsDescription: {
     id: 'dl.application:nextStepsDescription#markdown',
     defaultMessage:
-      'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn.',
+      'Næst þarf umsækjandi að mæta til sýslumanns með mynd og gefa rithandarsýnishorn. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: 'Next steps',
   },
   nextStepsDescriptionBFull: {
     id: 'dl.application:nextStepsDescriptionBFull#markdown',
-    defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
+    defaultMessage:
+      'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
   nextStepsDescriptionBEFull: {
     id: 'dl.application:nextStepsDescriptionBEFull#markdown',
-    defaultMessage: 'Næst þarf umsækjandi að mæta til sýslumanns',
+    defaultMessage:
+      'Næst þarf umsækjandi að mæta til sýslumanns. \n[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
+    description: '',
+  },
+  nextStepsInfoLink: {
+    id: 'dl.application:nextStepsInfoLink',
+    defaultMessage:
+      '[Stafræn ökunámsbók - starfsreglur](https://island.is/stafraen-oekunamsbok/upplysingar-um-personuvernd)',
     description: '',
   },
   congratulationsCertificateTitle: {
