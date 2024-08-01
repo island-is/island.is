@@ -23,6 +23,9 @@ export class VehiclesPublicVehicleSearch {
   @Field(() => Date, { nullable: true })
   newRegDate?: Date | null
 
+  @Field(() => Date, { nullable: true })
+  firstRegDate?: Date | null
+
   @Field(() => String, { nullable: true })
   vehicleStatus?: string | null
 

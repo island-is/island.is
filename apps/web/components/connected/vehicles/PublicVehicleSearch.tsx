@@ -101,8 +101,8 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [router?.isReady, router?.query?.vq])
 
-  const formattedRegistrationDate = vehicleInformation?.newRegDate
-    ? format(new Date(vehicleInformation.newRegDate), 'do MMMM yyyy')
+  const formattedRegistrationDate = vehicleInformation?.firstRegDate
+    ? format(new Date(vehicleInformation.firstRegDate), 'do MMMM yyyy')
     : ''
   const formattedNextVehicleMainInspectionDate =
     vehicleInformation?.nextVehicleMainInspection
