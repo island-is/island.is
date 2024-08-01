@@ -129,7 +129,7 @@ export class EndorsementService {
       endorsementListId: endorsementList.id,
       meta: {
         fullName: person?.fulltNafn?.fulltNafn,
-        locality: person?.heimilisfang?.postnumer,
+        locality: person?.heimilisfang?.sveitarfelag,
         showName,
       },
     }
