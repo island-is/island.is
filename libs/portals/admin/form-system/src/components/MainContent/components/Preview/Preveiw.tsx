@@ -1,18 +1,22 @@
 import { FormSystemInput } from '@island.is/api/schema'
 import { Box, DatePicker, Text } from '@island.is/island-ui/core'
-import { MessageWithLink } from './components/MessageWithLink'
-import { Banknumber } from './components/Banknumber'
-import { Email } from './components/Email'
-import { NationalId } from './components/NationalId'
-import { FileUpload } from './components/FileUpload'
-import { TextInput } from './components/TextInput'
-import { List } from './components/List'
-import { Radio } from './components/Radio'
-import { Currency } from './components/Currency'
-import { CheckboxPreview } from './components/CheckboxPreview'
-import { PhoneNumber } from './components/PhoneNumber'
-import { TimeInput } from './components/TimeInput'
-import { PropertyNumber } from './components/PropertyNumber'
+// eslint-disable-next-line @nx/enforce-module-boundaries
+import {
+  Banknumber,
+  MessageWithLink,
+  CurrencyField,
+  Email,
+  FileUpload,
+  NationalId,
+  PhoneNumber,
+  PropertyNumber,
+  Radio,
+  TextInput,
+  TimeInput,
+  Checkbox,
+  List,
+  HomestayOverview
+} from '@island.is/form-system/ui'
 
 interface Props {
   data: FormSystemInput
@@ -21,15 +25,15 @@ interface Props {
 export const Preview = ({ data }: Props) => {
   const { type } = data
   return (
-    <Box background="blue100">
-      {type === 'Message' && <MessageWithLink data={data} />}
+    <Box padding={2} background="blue100">
+      {type === 'Message' && <MessageWithLink item={data} />}
       {type === 'Bank_account' && (
         <div>
           <Text variant="h5">{data?.name?.is}</Text>
-          <Banknumber currentItem={data} />
+          <Banknumber item={data} />
         </div>
       )}
-      {type === 'Email' && <Email currentItem={data} />}
+      {type === 'Email' && <Email item={data} />}
       {type === 'Date_picker' && (
         <Box marginTop={2} width="half">
           <DatePicker
@@ -42,17 +46,18 @@ export const Preview = ({ data }: Props) => {
           />
         </Box>
       )}
-      {type === 'National_id' && <NationalId currentItem={data} />}
-      {type === 'Document' && <FileUpload currentItem={data} />}
+      {type === 'National_id' && <NationalId item={data} />}
+      {type === 'Document' && <FileUpload item={data} />}
       {type === 'Textalínubox' ||
-        (type === 'Textbox' && <TextInput data={data} />)}
-      {type === 'Dropdown_list' && <List currentItem={data} />}
-      {type === 'Radio_buttons' && <Radio currentItem={data} />}
-      {type === 'ISK_numberbox' && <Currency currentItem={data} />}
-      {type === 'Checkbox' && <CheckboxPreview currentItem={data} />}
-      {type === 'Phone_number' && <PhoneNumber currentItem={data} />}
-      {type === 'Time_input' && <TimeInput currentItem={data} />}
-      {type === 'Property_number' && <PropertyNumber currentItem={data} />}
+        (type === 'Textbox' && <TextInput item={data} />)}
+      {type === 'Dropdown_list' && <List item={data} />}
+      {type === 'Radio_buttons' && <Radio item={data} />}
+      {type === 'ISK_numberbox' && <CurrencyField item={data} />}
+      {type === 'Checkbox' && <Checkbox item={data} />}
+      {type === 'Phone_number' && <PhoneNumber item={data} />}
+      {type === 'Time_input' && <TimeInput item={data} />}
+      {type === 'Property_number' && <PropertyNumber item={data} />}
+      {type === 'Homestay_overview' && <HomestayOverview />}
     </Box>
   )
 }

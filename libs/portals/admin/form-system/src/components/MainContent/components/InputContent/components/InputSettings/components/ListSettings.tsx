@@ -52,22 +52,24 @@ export const ListSettings = () => {
   }
 
   const { formatMessage } = useIntl()
+  const listTypes = [
+    'sveitarfelog',
+    'lond',
+    'postnumer',
+    'idngreinarMeistara',
+    'skraningarflokkar',
+  ]
+  const getListType = (index: number) => listTypes[index] || 'customList'
 
-  const getListType = (index: number) => {
-    switch (index) {
-      case 0:
-        return 'sveitarfelog'
-      case 1:
-        return 'lond'
-      case 2:
-        return 'postnumer'
-      case 3:
-        return 'idngreinarMeistara'
-      case 4:
-        return 'skraningarflokkar'
-      default:
-        return 'customList'
-    }
+  const onClickRadioHandler = (index: number) => {
+    radioHandler(index)
+    controlDispatch({
+      type: 'SET_LIST_TYPE',
+      payload: {
+        listType: index === 0 ? 'customList' : 'other',
+        update: updateActiveItem,
+      },
+    })
   }
 
   return (
@@ -76,18 +78,7 @@ export const ListSettings = () => {
         <>
           <Row>
             <Column>
-              <Box
-                onClick={() => {
-                  controlDispatch({
-                    type: 'SET_LIST_TYPE',
-                    payload: {
-                      listType: 'customList',
-                      update: updateActiveItem,
-                    },
-                  })
-                  radioHandler(0)
-                }}
-              >
+              <Box onClick={() => onClickRadioHandler(0)}>
                 <RadioButton
                   label={formatMessage(m.customList)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function
@@ -99,18 +90,7 @@ export const ListSettings = () => {
           </Row>
           <Row>
             <Column>
-              <Box
-                onClick={() => {
-                  controlDispatch({
-                    type: 'SET_LIST_TYPE',
-                    payload: {
-                      listType: 'other',
-                      update: updateActiveItem,
-                    },
-                  })
-                  radioHandler(1)
-                }}
-              >
+              <Box onClick={() => onClickRadioHandler(1)}>
                 <RadioButton
                   label={formatMessage(m.predeterminedLists)}
                   // eslint-disable-next-line @typescript-eslint/no-empty-function

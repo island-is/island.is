@@ -35,13 +35,13 @@ export const NavButtons = () => {
     const { type } = activeItem
     if (type === 'Step') {
       return groups?.some((group) => group?.stepGuid === activeItem?.data?.guid)
-    } else if (type === 'Group') {
+    }
+    if (type === 'Group') {
       return inputs?.some(
         (input) => input?.groupGuid === activeItem?.data?.guid,
       )
-    } else {
-      return false
     }
+    return false
   }
 
   const addItem = async () => {

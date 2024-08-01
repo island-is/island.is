@@ -17,7 +17,6 @@ import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepO
 import { RelevantParties } from './components/RelevantParties/RevelantParties'
 import { useIntl } from 'react-intl'
 import { m } from '../../lib/messages'
-import { getTranslationButtons } from '../../lib/utils/getTranslationButtons'
 
 export const MainContent = () => {
   const {
@@ -31,12 +30,6 @@ export const MainContent = () => {
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
-
-  const translateNameButton = getTranslationButtons(
-    activeItem?.data?.name?.is ?? '',
-    controlDispatch,
-    'CHANGE_NAME',
-  )
 
   return (
     <Box padding={2}>
