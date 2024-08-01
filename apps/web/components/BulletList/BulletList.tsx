@@ -26,10 +26,10 @@ type NumberBulletGroup = {
   bullets: NumberBullet[]
 }
 
-type Entry = IconBullet | NumberBulletGroup
+export type BulletEntry = IconBullet | NumberBulletGroup
 
 export interface BulletListProps {
-  bullets: Entry[]
+  bullets: BulletEntry[]
 }
 
 export const BulletList: FC<React.PropsWithChildren<BulletListProps>> = ({
