@@ -94,6 +94,10 @@ const PowerBiSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.PowerBiSlice),
 )
 
+const ChartNumberBox = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.ChartNumberBox),
+)
+
 interface SliceMachineProps {
   slice: Slice
   namespace?: Record<string, string>
@@ -192,6 +196,8 @@ const renderSlice = (
           filterTags={(slice as GenericListSchema).filterTags}
         />
       )
+    case 'ChartNumberBox':
+      return <ChartNumberBox slice={slice} />
     default:
       return <RichText body={[slice]} />
   }
