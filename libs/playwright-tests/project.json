@@ -2,6 +2,7 @@
   "name": "playwright-tests",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/playwright-tests/src",
+  "tags": ["lib:react", "scope:react"],
   "projectType": "library",
   "targets": {
     "build": {
@@ -15,29 +16,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/playwright-tests/**/*.ts",
-          "libs/playwright-tests/package.json"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
       "options": {
-        "jestConfig": "libs/playwright-tests/jest.config.ts",
-        "passWithNoTests": true
-      },
-      "configurations": {
-        "ci": {
-          "ci": true,
-          "codeCoverage": true
-        }
+        "jestConfig": "libs/playwright-tests/jest.config.ts"
       }
     }
-  },
-  "tags": []
+  }
 }

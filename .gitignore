@@ -100,4 +100,6 @@ apps/**/index.html
 
 
 # E2E outputs
+test-results/
 playwright-report/
+tmp-sessions/
