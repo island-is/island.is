@@ -15,6 +15,8 @@ import { paginate } from '@island.is/nest/pagination'
 import { ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS } from '../../../environments/environment'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
+
+
 interface FindEndorsementInput {
   listId: string
   nationalId: string
@@ -181,4 +183,6 @@ export class EndorsementService {
       throw new NotFoundException(["This endorsement doesn't exist"])
     }
   }
+
+  
 }
