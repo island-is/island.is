@@ -228,7 +228,7 @@ const PublicVehicleSearch = ({ slice }: PublicVehicleSearchProps) => {
                 <Table.Row>
                   <Table.Data>
                     <Text fontWeight="semiBold">
-                      {n('newRegDate', 'Fyrst skráð:')}
+                      {n('firstRegDate', 'Fyrst skráð:')}
                     </Text>
                   </Table.Data>
                   <Table.Data>
