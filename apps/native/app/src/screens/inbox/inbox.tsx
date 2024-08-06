@@ -63,7 +63,7 @@ const ListHeaderWrapper = styled.View`
   padding: ${({ theme }) => theme.spacing[2]}px;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing[1]}px;
-  min-height: 76px; // To prevent flickering on android
+  min-height: 76px; /* To prevent flickering on android */
 `
 
 const TagsWrapper = styled.View`

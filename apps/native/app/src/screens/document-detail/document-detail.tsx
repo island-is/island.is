@@ -221,20 +221,13 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useNavigationButtonPress(({ buttonId }) => {
     if (buttonId === ButtonRegistry.DocumentArchiveButton) {
-      toggleAction(
-        Document.archived ? 'unarchive' : 'archive',
-        Document.id!,
-        // true,
-      )
-      setTouched(true)
+      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id!)
     }
     if (buttonId === ButtonRegistry.DocumentStarButton) {
       toggleAction(
         Document.bookmarked ? 'unbookmark' : 'bookmark',
         Document.id!,
-        // true,
       )
-      setTouched(true)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
@@ -269,7 +262,19 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         opened: () => true,
       },
     })
-  }, [Document.id])
+
+    client.cache.modify({
+      fields: {
+        documentsV2: (existing) => {
+          return {
+            ...existing,
+            unreadCount:
+              existing.unreadCount > 0 ? existing.unreadCount - 1 : 0,
+          }
+        },
+      },
+    })
+  }, [Document.id, Document.opened])
 
   useEffect(() => {
     const { authorizeResult, refresh } = authStore.getState()
