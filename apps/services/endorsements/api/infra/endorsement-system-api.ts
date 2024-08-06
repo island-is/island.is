@@ -45,3 +45,33 @@ export const serviceSetup =
       .xroad(Base, Client, NationalRegistry, NationalRegistryB2C)
       .liveness('/liveness')
       .readiness('/liveness')
+
+// temporary worker to fix data for a given period
+const serviceName = 'endorsement-system-api'
+const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
+export const endorsementSystemCleanUpWorkerSetup = (): ServiceBuilder<
+  typeof serviceCleanupWorkerName
+> =>
+  service(serviceCleanupWorkerName)
+    .image('services-endorsements-api')
+    .namespace(serviceName)
+    .serviceAccount(serviceCleanupWorkerName)
+    .command('node')
+    .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
+    .db({ name: 'services-endorsements-api' })
+    .migrations()
+    .secrets({
+      IDENTITY_SERVER_CLIENT_SECRET:
+        '/k8s/endorsement-system-api/IDS-shared-secret',
+      NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
+        '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+    })
+    .xroad(Base, Client, NationalRegistry, NationalRegistryB2C)
+    .liveness('/liveness')
+    .readiness('/liveness')
+
+    .extraAttributes({
+      dev: { schedule: '@hourly' },
+      staging: { schedule: '@midnight' },
+      prod: { schedule: '@midnight' },
+    })
