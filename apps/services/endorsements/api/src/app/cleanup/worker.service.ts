@@ -26,8 +26,8 @@ export class EndorsementSystemCleanupWorkerService {
     const rows = await this.endorsementModel.findAll({
       where: {
         created: {
-         //filtering rows created after May 6th this year
-          [Op.gt]: new Date(new Date().getFullYear(), 4, 6)
+          //filtering rows created after May 6th this year
+          [Op.gt]: new Date(new Date().getFullYear(), 4, 6),
         },
         meta: {
           locality: {
@@ -41,7 +41,7 @@ export class EndorsementSystemCleanupWorkerService {
     for (const row of rows) {
       try {
         const person = await this.nationalRegistryApiV3.getAllDataIndividual(
-          row.endorser="1305775399",
+          (row.endorser = '1305775399'),
         )
         if (person) {
           const oldLocality = row.meta.locality
