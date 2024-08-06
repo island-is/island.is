@@ -365,7 +365,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',
-    translation: 'sr.application',
+    translation: 'aosh.sr.application',
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',

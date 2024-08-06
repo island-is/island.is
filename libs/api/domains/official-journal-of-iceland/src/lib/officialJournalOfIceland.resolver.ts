@@ -32,63 +32,63 @@ export class OfficialJournalOfIcelandResolver {
   @Query(() => AdvertResponse, {
     name: 'officialJournalOfIcelandAdvert',
   })
-  advert(@Args('params') params: AdvertSingleParams) {
-    return this.ojoiService.advert(params)
+  getAdvertById(@Args('params') params: AdvertSingleParams) {
+    return this.ojoiService.getAdvertById(params)
   }
 
   @Query(() => AdvertsResponse, {
     name: 'officialJournalOfIcelandAdverts',
   })
-  adverts(@Args('input') input: AdvertsInput) {
-    return this.ojoiService.adverts(input)
+  getAdverts(@Args('input') input: AdvertsInput) {
+    return this.ojoiService.getAdverts(input)
   }
 
   @Query(() => AdvertDepartmentResponse, {
     name: 'officialJournalOfIcelandDepartment',
   })
-  department(@Args('params') params: AdvertSingleParams) {
-    return this.ojoiService.department(params)
+  getDepartmentById(@Args('params') params: AdvertSingleParams) {
+    return this.ojoiService.getDepartmentById(params)
   }
 
   @Query(() => AdvertDepartmentsResponse, {
     name: 'officialJournalOfIcelandDepartments',
   })
-  departments(@Args('params') params: QueryParams) {
-    return this.ojoiService.departments(params)
+  getDepartments(@Args('params') params: QueryParams) {
+    return this.ojoiService.getDepartments(params)
   }
 
   @Query(() => AdvertTypeResponse, {
     name: 'officialJournalOfIcelandType',
   })
-  type(@Args('params') params: AdvertSingleParams) {
-    return this.ojoiService.type(params)
+  getAdvertTypeById(@Args('params') params: AdvertSingleParams) {
+    return this.ojoiService.getAdvertTypeById(params)
   }
 
   @Query(() => AdvertTypesResponse, {
     name: 'officialJournalOfIcelandTypes',
   })
-  types(@Args('params') params: TypeQueryParams) {
-    return this.ojoiService.types(params)
+  getAdvertTypes(@Args('params') params: TypeQueryParams) {
+    return this.ojoiService.getAdvertTypes(params)
   }
 
   @Query(() => AdvertMainCategoriesResponse, {
     name: 'officialJournalOfIcelandMainCategories',
   })
-  mainCategories(@Args('params') params: QueryParams) {
-    return this.ojoiService.mainCategories(params)
+  getMainCategories(@Args('params') params: QueryParams) {
+    return this.ojoiService.getMainCategories(params)
   }
 
   @Query(() => AdvertCategoryResponse, {
     name: 'officialJournalOfIcelandCategories',
   })
-  categories(@Args('params') params: QueryParams) {
-    return this.ojoiService.categories(params)
+  getCategories(@Args('params') params: QueryParams) {
+    return this.ojoiService.getCategories(params)
   }
 
   @Query(() => AdvertInstitutionsResponse, {
     name: 'officialJournalOfIcelandInstitutions',
   })
-  institutions(@Args('params') params: QueryParams) {
-    return this.ojoiService.institutions(params)
+  getInstitutions(@Args('params') params: QueryParams) {
+    return this.ojoiService.getInstitutions(params)
   }
 }

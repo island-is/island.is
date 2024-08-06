@@ -311,6 +311,11 @@
           {
             "selector": "enumMember",
             "format": ["camelCase", "UPPER_CASE", "PascalCase"]
+          },
+          {
+            "selector": "import",
+            "leadingUnderscore": "allow",
+            "format": ["camelCase", "PascalCase"]
           }
         ],
         "@typescript-eslint/no-empty-interface": [
