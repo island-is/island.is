@@ -7,6 +7,8 @@ export const messages = {
     changeYOY: 'Breyting milli ára',
     millionPostfix: 'm',
     thousandPostfix: 'þ',
+    thousandSeparator: '.',
+    fractionSeparator: ',',
   },
   en: {
     skipGraph: 'Skip graph with title',
@@ -16,5 +18,7 @@ export const messages = {
     changeYOY: 'Change year over year',
     millionPostfix: 'm',
     thousandPostfix: 'k',
+    thousandSeparator: ',',
+    fractionSeparator: '.',
   },
 }
