@@ -21,20 +21,20 @@ export class EndorsementSystemCleanupWorkerService {
   }
 
   async fixSveitafelag() {
-    console.log("RUNNING ***********************")
+    console.log('RUNNING ***********************')
     const rowCountBeforeCleanup = await this.endorsementModel.count()
-    console.log("rowCountBeforeCleanup", rowCountBeforeCleanup)
+    console.log('rowCountBeforeCleanup', rowCountBeforeCleanup)
 
     const rows = await this.endorsementModel.findAll({
       limit: 10,
       order: [['created', 'DESC']],
-    });
+    })
 
     const person = await this.nationalRegistryApiV3.getAllDataIndividual(
-      "1305775399",
+      '1305775399',
     )
-    console.log("person",person)
-    // loop rows and console log meta property  
+    console.log('person', person)
+    // loop rows and console log meta property
     // rows.forEach(async row => {
     //   console.log("endorser",row.endorser)
     //   const person = await this.nationalRegistryApiV3.getAllDataIndividual(

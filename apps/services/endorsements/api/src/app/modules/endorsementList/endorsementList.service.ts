@@ -263,9 +263,9 @@ export class EndorsementListService {
   // generic get open lists
   async findOpenListsTaggedGeneralPetition(query: any) {
     const person = await this.nationalRegistryApiV3.getAllDataIndividual(
-      "0101302989",
+      '0101302989',
     )
-    console.log("person",person)
+    console.log('person', person)
     const dateOb = new Date()
     try {
       const where = {

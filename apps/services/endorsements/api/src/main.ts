@@ -3,9 +3,6 @@ import { AppModule } from './app/app.module'
 import { environment } from './environments'
 import { openApi } from './openApi'
 
-
-
-
 const job = processJob()
 
 if (job === 'cleanup') {
