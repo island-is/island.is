@@ -1,8 +1,9 @@
 import { BadRequestException } from '@nestjs/common'
 
-export const isDateValid = (startDate: string, isEndDate: boolean): boolean => {
-  const dateType = isEndDate ? 'endDate' : 'startDate'
-
+export const isDateValid = (
+  startDate: string,
+  dateType: 'endDate' | 'startDate',
+): boolean => {
   // Regular expression to match the YYYY-MM-DD format
   const regex = /^\d{4}-\d{2}-\d{2}$/
   if (!regex.test(startDate)) {

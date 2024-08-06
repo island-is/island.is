@@ -34,7 +34,7 @@ export class AppService {
       `${this.config.backend.url}/api/financial-aid/open-api-applications/getAll`,
     )
     url.searchParams.append('startDate', filters.startDate)
-    isDateValid(filters.startDate, false)
+    isDateValid(filters.startDate, 'startDate')
 
     url.searchParams.append(
       'endDate',
@@ -44,7 +44,7 @@ export class AppService {
         }),
     )
     if (filters.endDate) {
-      isDateValid(filters.endDate, true)
+      isDateValid(filters.endDate, 'endDate')
     }
     if (filters.state) {
       url.searchParams.append('state', filters.state)
