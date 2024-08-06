@@ -37,7 +37,6 @@ export class EndorsementSystemCleanupWorkerService {
     for (const row of rows) {
       try {
         const person = await this.nationalRegistryApiV3.getAllDataIndividual(row.endorser)
-        console.log(person)
         if (person) {
           const oldLocality = row.meta.locality
           const newLocality = person?.heimilisfang?.sveitarfelag || ''
