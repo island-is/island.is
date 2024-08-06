@@ -5,10 +5,12 @@ import { EndorsementSystemCleanupWorkerService } from './worker.service'
 
 import { Endorsement } from '../modules/endorsement/models/endorsement.model'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
-import { NationalRegistryV3ClientConfig, NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import {
+  NationalRegistryV3ClientConfig,
+  NationalRegistryV3ClientModule,
+} from '@island.is/clients/national-registry-v3'
 import { ConfigModule } from '@nestjs/config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
-
 
 @Module({
   imports: [
