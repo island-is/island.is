@@ -26,8 +26,8 @@ export class EndorsementSystemCleanupWorkerService {
     const rows = await this.endorsementModel.findAll({
       where: {
         created: {
-         //filtering rows created after May 6th this year
-          [Op.gt]: new Date(new Date().getFullYear(), 4, 6)
+          //filtering rows created after May 6th this year
+          [Op.gt]: new Date(new Date().getFullYear(), 4, 6),
         },
         meta: {
           locality: {
