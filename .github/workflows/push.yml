@@ -583,8 +583,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v4
         with:
-          node-version-file: 'package.json'
-        if: steps.gather.outcome == 'success'
+          node-version-file: 'infra/package.json'
 
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh
