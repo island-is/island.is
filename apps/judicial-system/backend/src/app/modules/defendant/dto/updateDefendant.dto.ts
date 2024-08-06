@@ -1,4 +1,11 @@
-import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
+import { Type } from 'class-transformer'
+import {
+  IsBoolean,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+} from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -77,14 +84,10 @@ export class UpdateDefendantDto {
   readonly serviceRequirement?: ServiceRequirement
 
   @IsOptional()
-  @IsString()
-  @ApiPropertyOptional()
-  readonly verdictViewDate?: string
-
-  @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly acceptCompensationClaim?: boolean
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly verdictViewDate?: Date
 
   @IsOptional()
   @IsEnum(SubpoenaType)

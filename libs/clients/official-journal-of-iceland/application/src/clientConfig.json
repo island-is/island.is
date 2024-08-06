@@ -1,6 +1,32 @@
 {
   "openapi": "3.0.0",
   "paths": {
+    "/api/v1/applications/{id}/price": {
+      "get": {
+        "operationId": "getPrice",
+        "summary": "Get price of application by ID.",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "description": "Id of the application to get price.",
+            "allowEmptyValue": false,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/CasePriceResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/applications/{id}/post": {
       "post": {
         "operationId": "postApplication",
@@ -27,6 +53,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of the application to get comments.",
             "schema": { "type": "string" }
           }
         ],
@@ -51,19 +78,10 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of the application to post comment.",
             "schema": { "type": "string" }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostApplicationComment"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": "",
@@ -80,9 +98,101 @@
     },
     "/api/v1/health": {
       "get": {
-        "operationId": "HealthController_health",
+        "operationId": "HealthController_",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    },
+    "/api/v1/pdf/case/{id}": {
+      "get": {
+        "operationId": "getPdfByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}": {
+      "get": {
+        "operationId": "getPdfByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/case/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -96,6 +206,13 @@
   "servers": [],
   "components": {
     "schemas": {
+      "CasePriceResponse": {
+        "type": "object",
+        "properties": {
+          "price": { "type": "number", "description": "The price of the case" }
+        },
+        "required": ["price"]
+      },
       "CaseCommentTask": {
         "type": "object",
         "properties": {
@@ -153,7 +270,14 @@
           },
           "type": {
             "type": "string",
-            "enum": ["submit", "assign", "update", "comment", "message"],
+            "enum": [
+              "submit",
+              "assign",
+              "assign_self",
+              "update",
+              "comment",
+              "message"
+            ],
             "example": "comment",
             "description": "Type of the case task."
           },
@@ -207,16 +331,6 @@
         },
         "required": ["comments"]
       },
-      "PostApplicationComment": {
-        "type": "object",
-        "properties": {
-          "comment": {
-            "type": "string",
-            "description": "The case comment itself"
-          }
-        },
-        "required": ["comment"]
-      },
       "PostCaseCommentResponse": {
         "type": "object",
         "properties": {
@@ -226,6 +340,12 @@
           }
         },
         "required": ["comment"]
+      },
+      "StreamableFile": { "type": "object", "properties": {} },
+      "GetPdfUrlResponse": {
+        "type": "object",
+        "properties": { "url": { "type": "string" } },
+        "required": ["url"]
       }
     }
   }

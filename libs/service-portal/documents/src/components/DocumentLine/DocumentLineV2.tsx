@@ -71,8 +71,13 @@ export const DocumentLine: FC<Props> = ({
 
   const { activeArchive, fetchObject, refetch } = useDocumentList()
 
-  const { setActiveDocument, setDocumentDisplayError, setDocLoading } =
-    useDocumentContext()
+  const {
+    setActiveDocument,
+    setDocumentDisplayError,
+    setDocLoading,
+    setLocalRead,
+    localRead,
+  } = useDocumentContext()
 
   const toggleModal = () => {
     setModalVisible(!isModalVisible)
@@ -139,6 +144,7 @@ export const DocumentLine: FC<Props> = ({
           if (docContent) {
             displayPdf(docContent, actions)
             setDocumentDisplayError(undefined)
+            setLocalRead([...localRead, documentLine.id])
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }
@@ -181,13 +187,60 @@ export const DocumentLine: FC<Props> = ({
     }
   }
 
-  const unread = !documentLine.opened
+  const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
   const isArchived = activeArchive || archiveSuccess
 
   return (
-    <>
-      <Box className={styles.wrapper} ref={wrapperRef}>
+    <Box className={styles.wrapper} ref={wrapperRef}>
+      <Box
+        display="flex"
+        position="relative"
+        borderColor="blue200"
+        borderBottomWidth="standard"
+        borderTopWidth={includeTopBorder ? 'standard' : undefined}
+        paddingX={2}
+        width="full"
+        className={cn(styles.docline, {
+          [styles.active]: active,
+          [styles.unread]: unread,
+        })}
+      >
+        <div ref={avatarRef}>
+          <AvatarImage
+            img={img}
+            onClick={(e) => {
+              e.stopPropagation()
+              if (documentLine.id && setSelectLine) {
+                setSelectLine(documentLine.id)
+              }
+            }}
+            as={asFrame ? 'div' : 'button'}
+            avatar={
+              (hasAvatarFocus || selected) && !asFrame ? (
+                <Box
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                  background={selected ? 'blue400' : 'blue300'}
+                  borderRadius="circle"
+                  className={styles.checkCircle}
+                >
+                  <Icon icon="checkmark" color="white" type="filled" />
+                </Box>
+              ) : undefined
+            }
+            background={
+              hasAvatarFocus
+                ? asFrame
+                  ? 'white'
+                  : 'blue200'
+                : documentLine.opened
+                ? 'blue100'
+                : 'white'
+            }
+          />
+        </div>
         <Box
           display="flex"
           position="relative"
@@ -337,7 +390,7 @@ export const DocumentLine: FC<Props> = ({
           })}
         />
       )}
-    </>
+    </Box>
   )
 }
 

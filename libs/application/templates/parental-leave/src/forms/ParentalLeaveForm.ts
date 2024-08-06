@@ -100,11 +100,6 @@ export const ParentalLeaveForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: parentalLeaveFormMessages.shared.prerequisitesSection,
-      children: [],
-    }),
-    buildSection({
       id: 'theApplicant',
       title: parentalLeaveFormMessages.shared.applicantSection,
       children: [
@@ -865,6 +860,9 @@ export const ParentalLeaveForm: Form = buildForm({
                 parentalLeaveFormMessages.employer.registerEmployer,
               removeButtonTooltipText:
                 parentalLeaveFormMessages.employer.deleteEmployer,
+              editButtonTooltipText:
+                parentalLeaveFormMessages.employer.editEmployer,
+              editField: true,
               marginTop: 0,
               fields: {
                 email: {
@@ -1626,7 +1624,10 @@ export const ParentalLeaveForm: Form = buildForm({
     }),
     buildFormConclusionSection({
       alertType: 'success',
-      expandableHeader: parentalLeaveFormMessages.finalScreen.title,
+      alertTitle: parentalLeaveFormMessages.finalScreen.alertTitle,
+      alertMessage: parentalLeaveFormMessages.finalScreen.description,
+      multiFieldTitle: parentalLeaveFormMessages.finalScreen.title,
+      expandableIntro: parentalLeaveFormMessages.finalScreen.expandableIntro,
       expandableDescription: (application: Application) => {
         const nextSteps = getConclusionScreenSteps(application)
 

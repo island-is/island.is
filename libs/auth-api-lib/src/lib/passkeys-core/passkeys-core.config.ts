@@ -44,7 +44,7 @@ export const PasskeysCoreConfig = defineConfig({
             (2 * 60 * 1000).toString(),
           ),
         ),
-        maxAgeDays: Number(env.optional('PASSKEY_CORE_MAX_AGE_DAYS', '365')),
+        maxAgeDays: env.optionalJSON('PASSKEY_CORE_MAX_AGE_DAYS') ?? 365,
       },
     }
 

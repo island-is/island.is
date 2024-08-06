@@ -508,6 +508,10 @@ export const m = defineMessages({
     id: 'service.portal:notifications',
     defaultMessage: 'Tilkynningar',
   },
+  notificationsUnread: {
+    id: 'service.portal:notifications-unread-a11y',
+    defaultMessage: 'Þú átt ólesnar tilkynningar',
+  },
   notificationsViewAll: {
     id: 'service.portal:notifications-view-all',
     defaultMessage: 'Sjá allar tilkynningar',
@@ -1422,6 +1426,10 @@ export const m = defineMessages({
   socialInsuranceMaintenance: {
     id: 'service.portal:social-insurance-maintenance',
     defaultMessage: 'Framfærsla',
+  },
+  socialInsuranceMaintenanceIntro: {
+    id: 'service.portal:social-insurance-maintenance-intro',
+    defaultMessage: 'Yfirlit yfir greiðslur frá almannatryggingum',
   },
   socialInsuranceMaintenanceDescription: {
     id: 'service.portal:social-insurance-maintenance-description',

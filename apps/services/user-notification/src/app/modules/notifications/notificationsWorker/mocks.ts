@@ -105,19 +105,17 @@ export const mockTemplateId = 'HNIPP.DEMO.ID'
 
 export const getMockHnippTemplate = ({
   templateId = mockTemplateId,
-  notificationTitle = 'Demo title ',
-  notificationBody = 'Demo body {{arg1}}',
-  notificationDataCopy = 'Demo data copy',
+  title = 'Demo title ',
+  externalBody = 'Demo body {{arg1}}',
+  internalBody = 'Demo data copy',
   clickActionUrl = 'https://island.is/minarsidur/postholf',
-  category = 'Demo category',
   args = ['arg1', 'arg2'],
 }: Partial<HnippTemplate>): HnippTemplate => ({
   templateId,
-  notificationTitle,
-  notificationBody,
-  notificationDataCopy,
+  title,
+  externalBody,
+  internalBody,
   clickActionUrl,
-  category,
   args,
 })
 
@@ -201,4 +199,8 @@ export const MockUserNotificationsConfig: ConfigType<
   emailFromAddress: 'development@island.is',
   isConfigured: true,
   servicePortalClickActionUrl: 'https://island.is/minarsidur',
+  redis: {
+    nodes: ['node'],
+    ssl: false,
+  },
 }

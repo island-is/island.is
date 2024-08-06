@@ -16,6 +16,7 @@ import { useLocale } from '@island.is/localization'
 import {
   DocumentsPaths,
   DocumentLine,
+  useDocumentList,
 } from '@island.is/service-portal/documents'
 import {
   LinkResolver,
@@ -40,6 +41,9 @@ import { DocumentsScope } from '@island.is/auth/scopes'
 export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const { userInfo } = useAuth()
   const { data, loading } = useDocumentList()
+  const { filteredDocuments, data, loading } = useDocumentList({
+    defaultPageSize: 8,
+  })
   const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
   const { width } = useWindowSize()
@@ -78,8 +82,8 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
             navRoot.path && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                span={['12/12', '6/12', '6/12', '6/12', '6/12']}
-                paddingBottom={[1, 2, 3, 3]}
+                span={['12/12', '6/12']}
+                paddingBottom={[1, 2, 3]}
                 hiddenAbove={
                   navRoot.path === DocumentsPaths.ElectronicDocumentsRoot
                     ? 'md'
@@ -117,6 +121,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                         component={Link}
                         to={navRoot.path}
                         headingVariant="h4"
+                        headingAs="h2"
                         icon={
                           isMobile && navRoot.icon ? (
                             <Icon
@@ -193,7 +198,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                         )
                       )}
                     </Box>
-                    <Text as="h3" variant="h4" color="blue400" truncate>
+                    <Text as="h2" variant="h4" color="blue400" truncate>
                       {formatMessage(m.documents)}
                     </Text>
 
@@ -213,17 +218,20 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                       height={65}
                     />
                   </Box>
-                ) : data?.documentsV2?.data &&
-                  data?.documentsV2?.data.length > 0 ? (
-                  data?.documentsV2?.data.map((doc, i) => (
+                ) : filteredDocuments.length > 0 ? (
+                  filteredDocuments.map((doc, i) => (
                     <Box key={doc.id}>
                       <DocumentLine
-                        img={getOrganizationLogoUrl(
-                          doc.sender.name ?? '',
-                          organizations,
-                          60,
-                          'none',
-                        )}
+                        img={
+                          doc?.sender?.name
+                            ? getOrganizationLogoUrl(
+                                doc?.sender?.name,
+                                organizations,
+                                60,
+                                'none',
+                              )
+                            : undefined
+                        }
                         documentLine={doc}
                         active={false}
                         asFrame

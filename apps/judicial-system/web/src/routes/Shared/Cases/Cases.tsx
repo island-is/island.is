@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
@@ -51,7 +51,7 @@ interface CreateCaseButtonProps {
   user: User
 }
 
-const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
+const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
   const { user } = props
   const { formatMessage } = useIntl()
 
@@ -100,7 +100,7 @@ const CreateCaseButton: React.FC<CreateCaseButtonProps> = (props) => {
   )
 }
 
-export const Cases: React.FC = () => {
+export const Cases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { transitionCase, isTransitioningCase, isSendingNotification } =
@@ -277,29 +277,30 @@ export const Cases: React.FC = () => {
           </div>
         ) : (
           <>
-            {isProsecutionUser(user) && filter.value !== 'INVESTIGATION' && (
+            {isProsecutionUser(user) && (
               <>
-                <CasesAwaitingConfirmationTable
-                  loading={loading}
-                  isFiltering={isFiltering}
-                  cases={casesAwaitingConfirmation}
-                  onContextMenuDeleteClick={setVisibleModal}
-                />
-                {isPublicProsecutor(user) && (
-                  <CasesAwaitingReview
-                    loading={loading}
-                    cases={casesAwaitingReview}
-                  />
+                {filter.value !== 'INVESTIGATION' && (
+                  <>
+                    <CasesAwaitingConfirmationTable
+                      loading={loading}
+                      isFiltering={isFiltering}
+                      cases={casesAwaitingConfirmation}
+                      onContextMenuDeleteClick={setVisibleModal}
+                    />
+                    {isPublicProsecutor(user) && (
+                      <CasesAwaitingReview
+                        loading={loading}
+                        cases={casesAwaitingReview}
+                      />
+                    )}
+                  </>
                 )}
                 <SectionHeading title={formatMessage(m.activeRequests.title)} />
                 <TableWrapper loading={loading || isFiltering}>
                   {activeCases.length > 0 ? (
                     <ActiveCases
                       cases={activeCases}
-                      isDeletingCase={
-                        isTransitioningCase || isSendingNotification
-                      }
-                      onDeleteCase={deleteCase}
+                      onContextMenuDeleteClick={setVisibleModal}
                     />
                   ) : (
                     <div className={styles.infoContainer}>
@@ -317,13 +318,15 @@ export const Cases: React.FC = () => {
                 </TableWrapper>
               </>
             )}
-            {isDistrictCourtUser(user) && filter.value !== 'INVESTIGATION' && (
+            {isDistrictCourtUser(user) && (
               <>
-                <CasesAwaitingAssignmentTable
-                  cases={casesAwaitingAssignment}
-                  loading={loading || isFiltering}
-                  isFiltering={isFiltering}
-                />
+                {filter.value !== 'INVESTIGATION' && (
+                  <CasesAwaitingAssignmentTable
+                    cases={casesAwaitingAssignment}
+                    loading={loading || isFiltering}
+                    isFiltering={isFiltering}
+                  />
+                )}
                 <CasesInProgressTable
                   loading={loading}
                   isFiltering={isFiltering}

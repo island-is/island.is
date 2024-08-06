@@ -12,3 +12,5 @@
 **/*.hbs
 .yarn
 /infra/helm/
+/.nx/cache
+/.nx/workspace-data

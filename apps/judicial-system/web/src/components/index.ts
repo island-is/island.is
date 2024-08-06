@@ -10,6 +10,7 @@ export {
   default as CheckboxList,
   type CheckboxInfo,
 } from './CheckboxList/CheckboxList'
+export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export { default as ContextMenu } from './ContextMenu/ContextMenu'
@@ -38,7 +39,7 @@ export { default as IndictmentsCaseFilesAccordionItem } from './AccordionItems/I
 export { default as InfoBox } from './InfoBox/InfoBox'
 export { default as InfoCard } from './InfoCard/InfoCard'
 export { default as InfoCardActiveIndictment } from './InfoCard/InfoCardActiveIndictment'
-export { default as InfoCardClosedIndictment } from './InfoCard/InfoCardClosedIndictment'
+export { default as InfoCardClosedIndictment } from './InfoCard/InfoCardClosedIndictment/InfoCardClosedIndictment'
 export { default as InfoCardCaseScheduled } from './InfoCard/InfoCardCaseScheduled'
 export { default as InfoCardCaseScheduledIndictment } from './InfoCard/InfoCardCaseScheduledIndictment'
 export { default as Loading } from './Loading/Loading'

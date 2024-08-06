@@ -36,6 +36,7 @@ import {
   userWithNoDelegations,
   userProfiles,
 } from './mocks'
+import { CmsService } from '@island.is/clients/cms'
 
 const workingHoursDelta = 1000 * 60 * 60 // 1 hour
 const insideWorkingHours = new Date(2021, 1, 1, 9, 0, 0)
@@ -62,7 +63,9 @@ export const MockV2UsersApi = {
     },
   ),
 }
-
+const mockContentfulGraphQLClientService = {
+  fetchData: jest.fn(),
+}
 describe('NotificationsWorkerService', () => {
   let app: INestApplication
   let sequelize: Sequelize
@@ -89,7 +92,9 @@ describe('NotificationsWorkerService', () => {
           .overrideProvider(UserNotificationsConfig.KEY)
           .useValue(MockUserNotificationsConfig)
           .overrideProvider(FIREBASE_PROVIDER)
-          .useValue({}),
+          .useValue({})
+          .overrideProvider(CmsService)
+          .useValue(mockContentfulGraphQLClientService),
       hooks: [
         useDatabase({ type: 'postgres', provider: SequelizeConfigService }),
       ],
@@ -162,7 +167,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -184,7 +189,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -245,7 +250,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: 'https://island.is/minarsidur/postholf',
               }),
@@ -267,7 +272,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: `https://island.is/minarsidur/login?login_hint=${delegationSubjectId}&target_link_uri=https://island.is/minarsidur/postholf`,
               }),
@@ -302,7 +307,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: notServicePortalUrl,
               }),
@@ -324,7 +329,7 @@ describe('NotificationsWorkerService', () => {
         template: expect.objectContaining({
           body: expect.arrayContaining([
             expect.objectContaining({
-              component: 'Button',
+              component: 'ImageWithLink',
               context: expect.objectContaining({
                 href: notServicePortalUrl,
               }),

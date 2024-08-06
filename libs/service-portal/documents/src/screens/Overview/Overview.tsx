@@ -415,6 +415,14 @@ export const ServicePortalDocuments = () => {
                         },
                       },
                     })
+                      .then(() => {
+                        toast.success(
+                          formatMessage(messages.successArchiveMulti),
+                        )
+                      })
+                      .catch((e) => {
+                        toast.error(formatMessage(m.errorTitle))
+                      })
                   }
                   onFav={() =>
                     bulkMailAction({

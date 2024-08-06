@@ -73,7 +73,10 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
 
     const applicationAnswers = application.answers as unknown as EstateSchema
-    const estateData = applicationData.find((estate) => estate.caseNumber)
+    const selectedCaseNumber = applicationAnswers.estateInfoSelection
+    const estateData = applicationData.find(
+      (estate) => estate.caseNumber === selectedCaseNumber,
+    )
     if (
       !estateData?.caseNumber?.length ||
       estateData?.caseNumber.length === 0
@@ -104,12 +107,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
         {
           title: coreErrorMessages.errorDataProviderEstateValidationFailed,
           summary: {
+            values: { message },
             ...coreErrorMessages.errorDataProviderEstateValidationFailedSummary,
-            defaultMessage:
-              coreErrorMessages.errorDataProviderEstateValidationFailedSummary.defaultMessage.replace(
-                '{message}',
-                message,
-              ),
           },
         },
         500,

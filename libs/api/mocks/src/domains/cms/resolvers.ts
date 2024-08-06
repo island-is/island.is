@@ -62,7 +62,7 @@ export const resolvers: Resolvers = {
         (anchorPage) => anchorPage.slug === args.input.slug,
       ) || null,
 
-    getLifeEvents: () => store.lifeEventsPages,
+    getLifeEventsForOverview: () => store.lifeEventsPages,
 
     getLifeEventPage: (parent, args) =>
       store.lifeEventsPages.find(
