@@ -444,7 +444,13 @@ export const SignedVerdictOverview: FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() => router.push(constants.CASES_ROUTE)}
+                onClick={() =>
+                  router.push(
+                    isPrisonSystemUser(user)
+                      ? constants.PRISON_CASES_ROUTE
+                      : constants.CASES_ROUTE,
+                  )
+                }
               >
                 {formatMessage(core.back)}
               </Button>
@@ -713,7 +719,7 @@ export const SignedVerdictOverview: FC = () => {
             onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
           />
         )}
-        <AnimatePresence exitBeforeEnter>
+        <AnimatePresence mode="wait">
           {isModifyingDates && (
             <ModifyDatesModal
               workingCase={workingCase}

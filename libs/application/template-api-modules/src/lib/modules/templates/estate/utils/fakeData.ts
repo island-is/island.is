@@ -91,7 +91,7 @@ export const getFakeEstateInfo = (
         nationalId: '0101304929',
       },
     ],
-    caseNumber: `2020-00012${nationalIdOfDeceased.slice(-1)}`,
+    caseNumber: `2020-00012${nationalIdOfDeceased.slice(-4)}`,
     dateOfDeath: new Date(Date.now() - 1000 * 3600 * 24 * 100),
     nameOfDeceased,
     nationalIdOfDeceased,

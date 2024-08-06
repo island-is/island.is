@@ -5,11 +5,13 @@ import { signingModuleConfig } from '@island.is/dokobit-signing'
 import { ConfigModule } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
 
-import { SharedAuthModule } from '@island.is/judicial-system/auth'
+import {
+  SharedAuthModule,
+  sharedAuthModuleConfig,
+} from '@island.is/judicial-system/auth'
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { messageModuleConfig } from '@island.is/judicial-system/message'
 
-import { environment } from '../environments'
 import {
   awsS3ModuleConfig,
   CaseModule,
@@ -36,10 +38,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
     }),
-    SharedAuthModule.register({
-      jwtSecret: environment.auth.jwtSecret,
-      secretToken: environment.auth.secretToken,
-    }),
+    SharedAuthModule,
     CaseModule,
     DefendantModule,
     IndictmentCountModule,
@@ -53,6 +52,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
+        sharedAuthModuleConfig,
         signingModuleConfig,
         courtClientModuleConfig,
         messageModuleConfig,

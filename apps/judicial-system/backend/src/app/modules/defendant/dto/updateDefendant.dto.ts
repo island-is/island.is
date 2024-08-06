@@ -90,11 +90,6 @@ export class UpdateDefendantDto {
   readonly verdictViewDate?: Date
 
   @IsOptional()
-  @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean })
-  readonly acceptCompensationClaim?: boolean
-
-  @IsOptional()
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
   readonly subpoenaType?: SubpoenaType
