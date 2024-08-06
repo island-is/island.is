@@ -36,7 +36,9 @@ export class EndorsementSystemCleanupWorkerService {
     // Loop through rows and fix the locality value
     for (const row of rows) {
       try {
-        const person = await this.nationalRegistryApiV3.getAllDataIndividual(row.endorser)
+        const person = await this.nationalRegistryApiV3.getAllDataIndividual(
+          row.endorser,
+        )
         if (person) {
           const oldLocality = row.meta.locality
           const newLocality = person?.heimilisfang?.sveitarfelag || ''
@@ -49,16 +51,20 @@ export class EndorsementSystemCleanupWorkerService {
               { meta: newMeta },
               { where: { id: row.id } },
             )
-            this.logger.info(`Fixed locality for row id:${row.id} from ${oldLocality} to ${newLocality}`)
+            this.logger.info(
+              `Fixed locality for row id:${row.id} from ${oldLocality} to ${newLocality}`,
+            )
           } catch (error) {
-            this.logger.error(`Error fixing locality for row id:${row.id} from ${oldLocality} to ${newLocality}`)
+            this.logger.error(
+              `Error fixing locality for row id:${row.id} from ${oldLocality} to ${newLocality}`,
+            )
           }
-
         }
       } catch (error) {
-        this.logger.error(`Error fixing locality for row id:${row.id} locality ${row.meta.locality}`)
+        this.logger.error(
+          `Error fixing locality for row id:${row.id} locality ${row.meta.locality}`,
+        )
       }
     }
-   
   }
 }
