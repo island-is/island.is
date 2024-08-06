@@ -226,6 +226,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         Document.id!,
         // true,
       )
+      setTouched(true)
     }
     if (buttonId === ButtonRegistry.DocumentStarButton) {
       toggleAction(
@@ -233,6 +234,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         Document.id!,
         // true,
       )
+      setTouched(true)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       if (Platform.OS === 'android') {
@@ -253,7 +255,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   useEffect(() => {
-    // Let's mark the document as read
+    if (Document.opened) {
+      return
+    }
+
+    // Let's mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
         __typename: 'DocumentV2',

@@ -300,10 +300,7 @@ export const Cases: FC = () => {
                   {activeCases.length > 0 ? (
                     <ActiveCases
                       cases={activeCases}
-                      isDeletingCase={
-                        isTransitioningCase || isSendingNotification
-                      }
-                      onDeleteCase={deleteCase}
+                      onContextMenuDeleteClick={setVisibleModal}
                     />
                   ) : (
                     <div className={styles.infoContainer}>

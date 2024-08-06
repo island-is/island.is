@@ -87,6 +87,10 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:name-of-individual',
     defaultMessage: 'Nafn einstaklings',
   },
+  licenseNumber: {
+    id: 'sp.occupational-licenses:license-number',
+    defaultMessage: 'Skírteinisnúmer',
+  },
   dateOfBirth: {
     id: 'sp.occupational-licenses:date-of-birth',
     defaultMessage: 'Fæðingardagur',

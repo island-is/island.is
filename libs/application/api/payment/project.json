@@ -2,22 +2,17 @@
   "name": "application-api-payment",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/api/payment/src",
+  "tags": ["lib:application-system-api", "scope:application-system-api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/application/api/payment/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/application/api/payment"],
       "options": {
-        "jestConfig": "libs/application/api/payment/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/api/payment/jest.config.ts"
       }
     }
-  },
-  "tags": ["lib:application-system-api", "scope:application-system-api"]
+  }
 }

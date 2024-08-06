@@ -30,6 +30,7 @@ import {
   EventType,
   isIndictmentCase,
   isProsecutionUser,
+  isRequestCase,
   isRestrictionCase,
   isTrafficViolationCase,
   NotificationType,
@@ -353,14 +354,16 @@ export class InternalCaseService {
         .create(
           {
             ...caseToCreate,
-            state: isIndictmentCase(caseToCreate.type)
-              ? CaseState.DRAFT
-              : CaseState.NEW,
+            state: isRequestCase(caseToCreate.type)
+              ? CaseState.NEW
+              : CaseState.DRAFT,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: creator.id,
             prosecutorId:
               creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-            courtId: creator.institution?.defaultCourtId,
+            courtId: isRequestCase(caseToCreate.type)
+              ? creator.institution?.defaultCourtId
+              : undefined,
             prosecutorsOfficeId: creator.institution?.id,
           },
           { transaction },
@@ -653,12 +656,12 @@ export class InternalCaseService {
       theCase.judge?.nationalId === nationalId
         ? {
             name: theCase.judge?.name,
-            role: UserRole.DISTRICT_COURT_JUDGE,
+            role: theCase.judge?.role,
           }
         : theCase.registrar?.nationalId === nationalId
         ? {
             name: theCase.registrar?.name,
-            role: UserRole.DISTRICT_COURT_REGISTRAR,
+            role: theCase.registrar?.role,
           }
         : {}
 
