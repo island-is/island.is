@@ -7,7 +7,7 @@ import {
   session,
   label,
   disableI18n,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { messages } from '@island.is/service-portal/assets/messages'
 import { m } from '@island.is/service-portal/core/messages'
 

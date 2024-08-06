@@ -1,7 +1,7 @@
 import type {
   PlaywrightTestConfig,
   ReporterDescription,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import './addons'
 import { urls } from './support/urls'
 

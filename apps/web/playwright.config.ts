@@ -1,4 +1,4 @@
-import { defineConfig, devices } from '@island.is/playwright-tests'
+import { defineConfig, devices } from '@island.is/testing/e2e'
 
 const webServerUrl = 'http://127.0.0.1:4200'
 

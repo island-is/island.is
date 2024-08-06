@@ -1,4 +1,4 @@
-import { expect } from '@island.is/playwright-tests'
+import { expect } from '@island.is/testing/e2e'
 import { urls } from '../../../support/urls'
 import { test } from '../utils/judicialSystemTest'
 import { verifyRequestCompletion } from '../../../support/api-tools'

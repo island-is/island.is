@@ -14,18 +14,18 @@ import {
   XroadConf,
   XRoadEnvs,
   XroadSectionConfig,
-} from '../../../../../infra/src/dsl/xroad'
-import { getEnvVariables } from '../../../../../infra/src/dsl/service-to-environment/pre-process-service'
+} from '../../../../../../infra/src/dsl/xroad'
+import { getEnvVariables } from '../../../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { XRoadMemberClass } from '@island.is/shared/utils/server'
-import { serializeValueSource } from '../../../../../infra/src/dsl/output-generators/serialization-helpers'
-import { Localhost } from '../../../../../infra/src/dsl/localhost-runtime'
+import { serializeValueSource } from '../../../../../../infra/src/dsl/output-generators/serialization-helpers'
+import { Localhost } from '../../../../../../infra/src/dsl/localhost-runtime'
 import {
   EnvironmentVariableValue,
   ServiceDefinitionForEnv,
   ValueSource,
-} from '../../../../../infra/src/dsl/types/input-types'
+} from '../../../../../../infra/src/dsl/types/input-types'
 // eslint-disable-next-line @nx/enforce-module-boundaries
-import { Envs } from '../../../../../infra/src/environments'
+import { Envs } from '../../../../../../infra/src/environments'
 import { env, TestEnvironment } from './urls'
 
 const getServiceMock = (envVariableRef: ValueSource) => {

@@ -7,7 +7,7 @@ import {
   session,
   label,
   disableI18n,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { m } from '@island.is/service-portal/core/messages'
 
 const timeout = 15000

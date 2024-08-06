@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test } from '@island.is/playwright-tests'
+import { BrowserContext, expect, test } from '@island.is/testing/e2e'
 import { helpers } from '../../../../support/locator-helpers'
 import { session } from '../../../../support/session'
 import { urls } from '../../../../support/urls'

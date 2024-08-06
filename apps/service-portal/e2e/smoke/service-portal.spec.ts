@@ -8,7 +8,7 @@ import {
   label,
   disableI18n,
   helpers,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { messages as m } from '@island.is/service-portal/documents/messages'
 
 test.use({ baseURL: urls.islandisBaseUrl })

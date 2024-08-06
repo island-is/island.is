@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test } from '@island.is/playwright-tests'
+import { BrowserContext, expect, test } from '@island.is/testing/e2e'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'
 import { helpers } from '../../../../support/locator-helpers'
@@ -8,7 +8,7 @@ import { m } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/service-portal/core/messages'
 import { mCompany } from '@island.is/service-portal/information/messages'
 import { disableI18n } from '../../../../support/disablers'
-import { switchDelegation } from './auth.spec'
+import { switchDelegation } from './switchDelegation'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })

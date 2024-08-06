@@ -1,4 +1,4 @@
-import { Page } from '@island.is/playwright-tests'
+import { Page } from '@island.is/testing/e2e'
 
 export async function graphqlSpy(page: Page, url: string, operation: string) {
   const data: { request: any; response: any }[] = []

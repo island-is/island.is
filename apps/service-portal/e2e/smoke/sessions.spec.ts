@@ -6,7 +6,7 @@ import {
   urls,
   session,
   env,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { format } from 'kennitala'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`

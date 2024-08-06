@@ -1,4 +1,4 @@
-import { addXroadMock } from '@island.is/playwright-tests'
+import { addXroadMock } from '@island.is/testing/e2e'
 import { HttpMethod, Response } from '@anev/ts-mountebank'
 import { HealthInsurance } from '../../../../../infra/src/dsl/xroad'
 

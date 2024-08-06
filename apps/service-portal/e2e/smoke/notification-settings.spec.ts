@@ -8,7 +8,7 @@ import {
   label,
   disableI18n,
   helpers,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { mNotifications } from '@island.is/service-portal/information/messages'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`

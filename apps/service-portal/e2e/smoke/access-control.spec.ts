@@ -6,7 +6,7 @@ import {
   urls,
   session,
   switchUser,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur/`
 test.use({ baseURL: urls.islandisBaseUrl })

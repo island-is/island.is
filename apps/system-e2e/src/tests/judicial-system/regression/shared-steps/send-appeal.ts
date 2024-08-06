@@ -1,4 +1,4 @@
-import { Page, expect } from '@island.is/playwright-tests'
+import { Page, expect } from '@island.is/testing/e2e'
 import { chooseDocument, verifyUpload } from '../../utils/helpers'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 

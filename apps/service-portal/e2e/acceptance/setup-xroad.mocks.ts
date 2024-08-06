@@ -1,4 +1,4 @@
-import { resetMocks, wildcard, env } from '@island.is/playwright-tests'
+import { resetMocks, wildcard, env } from '@island.is/testing/e2e'
 import { Base } from '../../../../infra/src/dsl/xroad'
 import { getEnvVariables } from '../../../../infra/src/dsl/service-to-environment/pre-process-service'
 import { EnvironmentConfig } from '../../../../infra/src/dsl/types/charts'

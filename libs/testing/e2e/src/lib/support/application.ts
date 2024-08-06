@@ -1,4 +1,4 @@
-import { Page } from '@island.is/playwright-tests'
+import { Page } from '@island.is/testing/e2e'
 
 /**
  Creates a new application and returns the number of applications before creation.

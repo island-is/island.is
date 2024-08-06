@@ -6,7 +6,7 @@ import {
   urls,
   session,
   disableI18n,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`

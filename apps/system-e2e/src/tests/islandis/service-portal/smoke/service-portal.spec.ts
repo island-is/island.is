@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test } from '@island.is/playwright-tests'
+import { BrowserContext, expect, test } from '@island.is/testing/e2e'
 import { messages as m } from '@island.is/service-portal/documents/messages'
 import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
 import { session } from '../../../../support/session'

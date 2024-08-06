@@ -1,7 +1,7 @@
-import { defineConfig, devices } from '@island.is/playwright-tests'
+import { defineConfig, devices } from '@island.is/testing/e2e'
 import './e2e/utils/addons'
 
-const webServerUrl = 'http://127.0.0.1:4200'
+const webServerUrl = 'http://localhost:4200'
 
 export default defineConfig({
   // Look for test files in the "tests" directory, relative to this configuration file.
@@ -37,10 +37,13 @@ export default defineConfig({
     },
   ],
   // Run your local dev server before starting the tests.
-  // webServer: {
-  //   command: 'yarn dev service-portal',
-  //   url: webServerUrl,
-  //   reuseExistingServer: !process.env.CI,
-  //   timeout: 5 * 60 * 1000,
-  // },
+  webServer: {
+    stdout: 'pipe',
+    command:
+      'cd infra && yarn cli run-local-env --service service-portal --dependencies api service-portal-api services-documents --print',
+    port: 4200,
+    reuseExistingServer: !process.env.CI,
+    timeout: 5 * 60 * 1000,
+    cwd: '../../',
+  },
 })

@@ -8,7 +8,7 @@ import {
   helpers,
   label,
   disableI18n,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { coreDelegationsMessages } from '@island.is/application/core/messages'
 import { m } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/service-portal/core/messages'

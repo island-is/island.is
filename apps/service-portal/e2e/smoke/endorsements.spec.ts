@@ -6,7 +6,7 @@ import {
   urls,
   session,
   disableI18n,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Endorsements', () => {

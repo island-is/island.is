@@ -1,4 +1,4 @@
-import { expect, Locator, sleep } from '@island.is/playwright-tests'
+import { expect, Locator, sleep } from '@island.is/testing/e2e'
 
 expect.extend({
   async toHaveCountGreaterThan(

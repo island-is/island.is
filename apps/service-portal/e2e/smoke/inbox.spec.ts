@@ -8,7 +8,7 @@ import {
   label,
   disableI18n,
   sleep,
-} from '@island.is/playwright-tests'
+} from '@island.is/testing/e2e'
 import { messages } from '@island.is/service-portal/documents/messages'
 import { m } from '@island.is/service-portal/core/messages'
 

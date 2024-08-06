@@ -1,9 +1,4 @@
-import {
-  Browser,
-  BrowserContext,
-  expect,
-  Page,
-} from '@island.is/playwright-tests'
+import { Browser, BrowserContext, expect, Page } from '@island.is/testing/e2e'
 import { existsSync, mkdirSync } from 'fs'
 import { join } from 'path'
 import { cognitoLogin, idsLogin } from './login'
