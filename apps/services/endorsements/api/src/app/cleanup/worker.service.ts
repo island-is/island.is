@@ -25,6 +25,10 @@ export class EndorsementSystemCleanupWorkerService {
     // Find all rows with COUNTRY_CODE as locality value
     const rows = await this.endorsementModel.findAll({
       where: {
+        created: {
+         //filtering rows created after May 7th this year
+          [Op.gt]: new Date(new Date().getFullYear(), 4, 7)
+      },
         meta: {
           locality: {
             [Op.regexp]: '^[A-Z]{2}$',
