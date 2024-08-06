@@ -170,7 +170,7 @@ codemagic.yaml                                                                  
 /libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
 /libs/clients/district-commissioners-licenses/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
-/libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
+/libs/clients/vehicles/                                                                                  @island-is/hugsmidjan @island-is/stefna
 /libs/clients/vehicles-mileage/                                                                          @island-is/hugsmidjan
 /libs/clients/user-notification/                                                                         @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
