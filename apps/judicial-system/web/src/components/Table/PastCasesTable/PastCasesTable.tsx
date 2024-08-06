@@ -145,7 +145,7 @@ const PastCasesTable: FC<Props> = ({ cases, loading = false, testid }) => {
                   appealCaseNumber={column.appealCaseNumber}
                 />
               </td>
-              <td className={cn(styles.td, styles.largeColumn)}>
+              <td className={styles.largeColumn}>
                 <DefendantInfo defendants={column.defendants} />
               </td>
               <td>

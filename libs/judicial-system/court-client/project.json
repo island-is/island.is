@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/judicial-system/court-client/src",
   "projectType": "library",
+  "tags": ["lib:judicial-system-api", "scope:judicial-system-api"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/judicial-system/court-client/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/judicial-system/court-client/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/judicial-system/court-client/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/judicial-system/court-client"]
     },
@@ -28,6 +23,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:judicial-system-api", "scope:judicial-system-api"]
+  }
 }

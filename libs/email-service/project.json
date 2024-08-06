@@ -3,13 +3,11 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/email-service/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/email-service/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "generate-html": {
       "executor": "nx:run-commands",
@@ -20,11 +18,9 @@
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/email-service/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/email-service/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/email-service"]
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }

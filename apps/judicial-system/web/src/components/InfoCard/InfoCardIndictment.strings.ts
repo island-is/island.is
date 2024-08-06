@@ -38,14 +38,29 @@ export const strings = defineMessages({
     description: 'Notaður sem titill á "dómfelldu" hluta af yfirliti ákæru.',
   },
   reviewTagAppealed: {
-    id: 'judicial.system.core:info_card_indictment.review_tag_appealed',
-    defaultMessage: 'Áfrýjun',
+    id: 'judicial.system.core:info_card_indictment.review_tag_appealed_v1',
+    defaultMessage: 'Áfrýja dómi',
     description:
       'Notað sem texti á tagg fyrir "Áfrýjun" tillögu í yfirliti ákæru.',
   },
   reviewTagAccepted: {
-    id: 'judicial.system.core:info_card_indictment.review_tag_completed',
-    defaultMessage: 'Una',
+    id: 'judicial.system.core:info_card_indictment.review_tag_completed_v1',
+    defaultMessage: 'Una dómi',
     description: 'Notað sem texti á tagg fyrir "Una" tillögu í yfirliti ákæru.',
+  },
+  indictmentReviewedDateTitle: {
+    id: 'judicial.system.core:info_card_indictment.indictment_reviewed_date_title',
+    defaultMessage: 'Dagsetning áritunar',
+    description: 'Notaður sem titill á "Dagsetning" hluta af yfirliti ákæru.',
+  },
+  indictmentMergedTitle: {
+    id: 'judicial.system.core:info_card_indictment.indictment_merged_title',
+    defaultMessage: 'Sameinað máli',
+    description: 'Notaður sem titill á "Sameinað" hluta af yfirliti ákæru.',
+  },
+  mergedFromTitle: {
+    id: 'judicial.system.core:info_card_indictment.merged_from_title',
+    defaultMessage: 'Sameinað úr',
+    description: 'Notaður sem titill á "Sameinað úr" hluta af yfirliti ákæru.',
   },
 })

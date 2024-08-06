@@ -2,7 +2,7 @@ import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -83,6 +83,23 @@ const Summary: FC = () => {
     [[] as CaseFile[], [] as CaseFile[]],
   )
 
+  const getRulingDecisionTagColor = (
+    indictmentRulingDecision: CaseIndictmentRulingDecision,
+  ): TagVariant => {
+    switch (indictmentRulingDecision) {
+      case CaseIndictmentRulingDecision.FINE:
+        return 'mint'
+      case CaseIndictmentRulingDecision.CANCELLATION:
+      case CaseIndictmentRulingDecision.MERGE:
+        return 'rose'
+      case CaseIndictmentRulingDecision.DISMISSAL:
+        return 'blue'
+      case CaseIndictmentRulingDecision.RULING:
+      default:
+        return 'darkerBlue'
+    }
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -91,8 +108,29 @@ const Summary: FC = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
+
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <Box display="flex" justifyContent="spaceBetween">
+          <PageTitle>{formatMessage(strings.title)}</PageTitle>
+
+          {workingCase.indictmentRulingDecision && (
+            <Box marginTop={2}>
+              <Tag
+                variant={getRulingDecisionTagColor(
+                  workingCase.indictmentRulingDecision,
+                )}
+                outlined
+                disabled
+                truncate
+              >
+                {formatMessage(strings.indictmentRulingDecisionTagText, {
+                  indictmentRulingDecision:
+                    workingCase.indictmentRulingDecision,
+                })}
+              </Tag>
+            </Box>
+          )}
+        </Box>
         <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
