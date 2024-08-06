@@ -1,12 +1,17 @@
-import { PaymentScheduleDebts } from '@island.is/api/schema'
+import {
+  PaymentScheduleDebts,
+  PaymentScheduleEmployer,
+} from '@island.is/api/schema'
 import {
   buildCompanySearchField,
   buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildMultiField,
   buildRadioField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   CustomField,
@@ -35,6 +40,7 @@ import {
   paymentPlanIndexKeyMapper,
   PublicDebtPaymentPlan,
 } from '../types'
+import { format as formatKennitala } from 'kennitala'
 
 // Builds a payment plan step that exists of two custom fields:
 // The overview step detailing a list of all payment plans and their status
@@ -99,17 +105,43 @@ export const PaymentPlanForm: Form = buildForm({
             return debts?.find((x) => x.type === 'Wagedection') !== undefined
           },
           children: [
-            buildCustomField({
+            buildDescriptionField({
               id: 'employerInfoDescription',
               title: '',
-              doesNotRequireAnswer: true,
-              component: 'EmployerInfoDescription',
+              description: employer.general.pageDescription,
             }),
-            buildCustomField({
-              id: 'employerInfo',
-              title: '',
-              doesNotRequireAnswer: true,
-              component: 'EmployerInfo',
+            buildDescriptionField({
+              id: 'employerInfoDescription',
+              title: (application) => {
+                const correctedName = getValueViaPath(
+                  application.answers,
+                  'correctedEmployer.label',
+                )
+                const employerInfo = getValueViaPath(
+                  application.externalData,
+                  'paymentPlanPrerequisites.data.employer',
+                ) as PaymentScheduleEmployer
+
+                return correctedName || employerInfo.name
+              },
+              titleVariant: 'h2',
+              description: (application) => {
+                const correctedNationalId = getValueViaPath(
+                  application.answers,
+                  'correctedEmployer.nationalId',
+                  undefined,
+                )
+
+                const employerInfo = getValueViaPath(
+                  application.externalData,
+                  'paymentPlanPrerequisites.data.employer',
+                ) as PaymentScheduleEmployer
+
+                return `kt ${formatKennitala(
+                  correctedNationalId || employerInfo.nationalId,
+                )}`
+              },
+              marginTop: 3,
             }),
             buildRadioField({
               id: 'employer.isCorrectInfo',

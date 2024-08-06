@@ -3,15 +3,11 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/family-matters/children-residence-change/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/family-matters/children-residence-change/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "extract-strings": {
       "executor": "nx:run-commands",
@@ -19,6 +15,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/family-matters/children-residence-change/src/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

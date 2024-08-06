@@ -1,6 +1,5 @@
-import { Locale } from 'locale'
-
 import { Stack } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 
