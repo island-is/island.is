@@ -69,9 +69,8 @@ export const endorsementSystemCleanUpWorkerSetup = (): ServiceBuilder<
     .xroad(Base, Client, NationalRegistry, NationalRegistryB2C)
     .liveness('/liveness')
     .readiness('/liveness')
-
     .extraAttributes({
       dev: { schedule: '@hourly' },
-      staging: { schedule: '@midnight' },
-      prod: { schedule: '@midnight' },
+      staging: { schedule: '@hourly' },
+      prod: { schedule: '@hourly' },
     })

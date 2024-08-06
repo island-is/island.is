@@ -21,27 +21,49 @@ export class EndorsementSystemCleanupWorkerService {
   }
 
   async fixSveitafelag() {
-    console.log("RUNNING ***********************")
-    const rowCountBeforeCleanup = await this.endorsementModel.count()
-    console.log("rowCountBeforeCleanup", rowCountBeforeCleanup)
-
+    this.logger.info('Cleanup worker starting...')
+    // Find all rows with COUNTRY_CODE as locality value
     const rows = await this.endorsementModel.findAll({
-      limit: 10,
-      order: [['created', 'DESC']],
-    });
+      where: {
+        meta: {
+          locality: {
+            [Op.regexp]: '^[A-Z]{2}$',
+          },
+        },
+      },
+    })
+    this.logger.info(`Found ${rows.length} rows with invalid locality`)
+    // Loop through rows and fix the locality value
+    for (const row of rows) {
+      console.log(row.id)
+      row.endorser = "1305775399"
+      try {
+        const person = await this.nationalRegistryApiV3.getAllDataIndividual(row.endorser)
+        console.log(person)
+        if (person) {
+          const oldLocality = row.meta.locality
+          const newLocality = person?.heimilisfang?.sveitarfelag || ''
+          row.meta.locality = newLocality
 
-    const person = await this.nationalRegistryApiV3.getAllDataIndividual(
-      "1305775399",
-    )
-    console.log("person",person)
-    // loop rows and console log meta property  
-    // rows.forEach(async row => {
-    //   console.log("endorser",row.endorser)
-    //   const person = await this.nationalRegistryApiV3.getAllDataIndividual(
-    //     "0101302989",
-    //   )
-    //   console.log("person",person)
-    //   console.log(row.meta)
-    // })
+          const newMeta = {
+            ...row.meta,
+            locality: newLocality,
+          }
+          try {
+            await this.endorsementModel.update(
+              { meta: newMeta },
+              { where: { id: row.id } },
+            )
+            this.logger.info(`Fixed locality for row id:${row.id} from ${oldLocality} to ${newLocality}`)
+          } catch (error) {
+            this.logger.error(`Error fixing locality for row id:${row.id} from ${oldLocality} to ${newLocality}`)
+          }
+
+        }
+      } catch (error) {
+        this.logger.error(`Error fixing locality for row id:${row.id} locality ${row.meta.locality}`)
+      }
+    }
+   
   }
 }
