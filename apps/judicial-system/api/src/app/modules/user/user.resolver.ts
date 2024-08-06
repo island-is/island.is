@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User as TUser } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { CreateUserInput } from './dto/createUser.input'
 import { UpdateUserInput } from './dto/updateUser.input'
 import { UserQueryInput } from './dto/user.input'
@@ -33,7 +33,8 @@ export class UserResolver {
   @Query(() => [User], { nullable: true })
   users(
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
     @Args('input', { type: () => UsersQueryInput, nullable: true })
     input?: UsersQueryInput,
   ): Promise<User[]> {
@@ -42,7 +43,7 @@ export class UserResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_USERS,
-      backendApi.getUsers().then((users) => {
+      backendService.getUsers().then((users) => {
         if (!input?.role) {
           return users
         }
@@ -59,14 +60,15 @@ export class UserResolver {
     @Args('input', { type: () => UserQueryInput })
     input: UserQueryInput,
     @CurrentGraphQlUser() user: TUser,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<User | undefined> {
     this.logger.debug(`Getting user ${input.id}`)
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_USER,
-      backendApi.getUser(input.id),
+      backendService.getUser(input.id),
       (user: User) => user.id,
     )
   }
@@ -87,14 +89,15 @@ export class UserResolver {
     @Args('input', { type: () => CreateUserInput })
     input: CreateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<User> {
     this.logger.debug('Creating user')
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.CREATE_USER,
-      backendApi.createUser(input),
+      backendService.createUser(input),
       (theUser) => theUser.id,
     )
   }
@@ -105,7 +108,8 @@ export class UserResolver {
     @Args('input', { type: () => UpdateUserInput })
     input: UpdateUserInput,
     @CurrentGraphQlUser() user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<User> {
     const { id, ...updateUser } = input
 
@@ -114,7 +118,7 @@ export class UserResolver {
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_USER,
-      backendApi.updateUser(id, updateUser),
+      backendService.updateUser(id, updateUser),
       id,
     )
   }
