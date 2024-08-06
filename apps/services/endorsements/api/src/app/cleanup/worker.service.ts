@@ -17,10 +17,10 @@ export class EndorsementSystemCleanupWorkerService {
   ) {}
 
   public async run() {
-    await this.fixSveitafelag()
+    await this.fixLocality()
   }
 
-  async fixSveitafelag() {
+  async fixLocality() {
     this.logger.info('Cleanup worker starting...')
     // Find all rows with COUNTRY_CODE as locality value
     const rows = await this.endorsementModel.findAll({
