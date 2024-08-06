@@ -40,8 +40,6 @@ export class EndorsementSystemCleanupWorkerService {
         if (person) {
           const oldLocality = row.meta.locality
           const newLocality = person?.heimilisfang?.sveitarfelag || ''
-          row.meta.locality = newLocality
-
           const newMeta = {
             ...row.meta,
             locality: newLocality,
