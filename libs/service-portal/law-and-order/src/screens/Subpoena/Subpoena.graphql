@@ -13,7 +13,6 @@ query GetSubpoena($input: LawAndOrderSubpoenaInput!) {
     data {
       id
       acknowledged
-      displayClaim
       chosenDefender
       defenderChoice
       groups {

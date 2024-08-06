@@ -72,9 +72,6 @@ export class Data {
   acknowledged?: boolean
 
   @Field({ nullable: true })
-  displayClaim?: boolean
-
-  @Field({ nullable: true })
   chosenDefender?: string
 
   @Field({ nullable: true })

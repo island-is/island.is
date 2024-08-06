@@ -71,7 +71,6 @@ export type Subpoena = {
       label: string
       items: Items[]
     }[]
-    displayClaim: boolean
   }
 }
 
@@ -419,8 +418,6 @@ export const getSubpoena = (id: number) => {
       data: {
         id: 123,
         acknowledged: undefined,
-        displayClaim: false,
-
         groups: [
           {
             label: 'Mál nr. S-2023/2022',
@@ -477,8 +474,6 @@ export const getSubpoena = (id: number) => {
       data: {
         id: 1234,
         acknowledged: true,
-        displayClaim: false,
-
         groups: [
           {
             label: 'Mál nr. S-2023/2022',
@@ -535,8 +530,6 @@ export const getSubpoena = (id: number) => {
       data: {
         id: 12345,
         acknowledged: false,
-        displayClaim: false,
-
         groups: [
           {
             label: 'Mál nr. S-2023/2022',

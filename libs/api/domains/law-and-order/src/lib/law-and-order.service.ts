@@ -94,7 +94,6 @@ export class LawAndOrderService {
         acknowledged: undefined,
         chosenDefender: subpoena?.defenderInfo.defenderName,
         defenderChoice: subpoena?.defenderInfo.defenderChoice,
-        displayClaim: subpoena?.acceptCompensationClaim,
         groups: subpoena?.data.groups,
       },
       actions: undefined,
@@ -129,7 +128,6 @@ export class LawAndOrderService {
         updateSubpoenaDto: {
           defenderChoice: mapDefenseChoice(input.choice), // eslint-disable-next-line local-rules/disallow-kennitalas
           defenderNationalId: input.lawyersNationalId,
-          acceptCompensationClaim: false, // Remove when service has removed this field
         },
         locale: mapUpdateSubpoenaLocale(input.locale),
       },
