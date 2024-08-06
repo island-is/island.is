@@ -13,7 +13,7 @@ export const isDateValid = (startDate: string, isEndDate: boolean): boolean => {
 
   // Parse the input string into a Date object
   const date = new Date(startDate)
-  const isValidDate = date instanceof Date && !isNaN(date.getTime())
+  const isValidDate = date instanceof Date && !Number.isNaN(date.getTime())
   const [year, month, day] = startDate.split('-').map(Number)
   const isCorrectDate =
     date.getFullYear() === year &&
