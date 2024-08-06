@@ -19,6 +19,6 @@ export const messages = {
     millionPostfix: 'm',
     thousandPostfix: 'k',
     thousandSeparator: ',',
-    fractionSeparator: ',',
+    fractionSeparator: '.',
   },
 }
