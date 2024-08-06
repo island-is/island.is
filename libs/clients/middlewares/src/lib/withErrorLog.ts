@@ -33,7 +33,7 @@ export function withErrorLog({
         stack: error.stack,
         url: request.url,
         message: `Fetch failure (${name}): ${error.message}`,
-        name,
+        fetch: { name },
         body,
         cacheStatus,
         // Do not log large response objects.
