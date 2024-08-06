@@ -46,7 +46,6 @@ export const serviceSetup =
       .liveness('/liveness')
       .readiness('/liveness')
 
-// temporary worker to fix data for a given period
 const serviceName = 'endorsement-system-api'
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 export const endorsementSystemCleanUpWorkerSetup = (): ServiceBuilder<
