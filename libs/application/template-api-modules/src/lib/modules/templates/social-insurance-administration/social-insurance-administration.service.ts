@@ -601,6 +601,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       }
     },
   ) { 
-    return await this.siaClientService.getTemporaryCalculations(auth, parameters) 
+    const bla = await this.siaClientService.getTemporaryCalculations(auth, parameters) 
+    console.log('bla: ', bla)
+    return bla//await this.siaClientService.getTemporaryCalculations(auth, parameters) 
   }
 }

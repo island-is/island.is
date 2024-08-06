@@ -46,7 +46,57 @@ export const incomePlanFormMessage: MessageDir = {
       description:
         '\n* On the next page you will find your proposed income plan. There you can edit amounts and add income categories.\n* You must submit your total pre-tax income in your income plan.\n* For couples, their total income must be recorded in the income plan, as their income is considered shared.\n* If a spouse is receiving disability, his or her benefits will also be recalculated if there is a change in income.\n* Income may be recorded in the month in which it is earned. The income is then calculated only for that month. Attention, it is necessary to select the option of requesting a monthly distribution of income in the income plan.\n* Salary / pension payments must be recorded in the currency in which they are paid.\n* It is the responsibility of the pensioner that the income plan is correct and that the necessary information for determining the correct payments is available.',
     },
-  }),
+    temporaryCalculationTitle: {
+      id: 'ip.application:temorary.calculation.title',
+      defaultMessage: 'Bráðabirgðaútreikningur',
+      description: 'Preliminary calculation',
+    },
+    tableHeaderOne: {
+      id: 'ip.application:table.header.one',
+      defaultMessage: 'Greiðslutegundir',
+      description: 'Payment types',
+    },
+    tableHeaderTwo: {
+      id: 'ip.application:table.header.two',
+      defaultMessage: 'Samtals á mánuði',
+      description: 'Montly total',
+    },
+    tableHeaderThree: {
+      id: 'ip.application:table.header.three',
+      defaultMessage: 'Samtals á ári',
+      description: 'Annual total',
+    },
+    tableDescription: {
+      id: 'ip.application:table.description',
+      defaultMessage: 'Bráðabirgðareikningi er ætlað að hjálpa umsækjendum að átta sig á mögulegum greiðslum ef breytingar verða á tekjum þeirra. Of- eða vangreiðslur eru ekki sýndar í þessum bráðabirgðaútreikningi en ef um inneign er að ræða verður hún greidd út á meðan ofgreiddar bætur bíða uppgjörs.',
+      description: 'Preliminary calculation is intended to help the applicant understand possible payments if their income changes. Overpayments or underpayments are not shown in this preliminary calculation, but if there is credit, it will be paid out while the overpayment is pending settlement.',
+    },
+    taxedTableHeader: {
+      id: 'ip.application:taxed.table.header',
+      defaultMessage: 'Skattskyldar greiðslur',
+      description: 'Taxed payments',
+    },
+    untaxedTableHeader: {
+      id: 'ip.application:untaxed.table.header',
+      defaultMessage: 'Óskattskyldar greiðslur',
+      description: 'Untaxed payments',
+    },
+    deductionsTableHeader: {
+      id: 'ip.application:deductions.table.header',
+      defaultMessage: 'Frádráttur',
+      description: 'Deductions',
+    },
+    paidTableHeader: {
+      id: 'ip.application:paid.table.header',
+      defaultMessage: 'Útborgað',
+      description: 'Paid',      
+    },
+    assumptions: {
+      id: 'ip.application:assumptions.title#markdown',
+      defaultMessage: 'Útreikningur staðgreiðslu miðast við eftirfarandi forsendur: \n* Almenna reglan er sú að greiðslur frá Tryggingastofnun eru settar í lægsta mögulega skattþrep miðað við tekjuáætlun. Hægt er að óska eftir breytingu skattþreps inni á mínum síðum TR. \n* Persónuafsláttur miðast við 100% nýtingu skattkorts',
+      description: 'Calculations of tax payments are based on the following assumptions: \n*Transl',  
+    },
+  }),  
 
   incomePlan: defineMessages({
     description: {
