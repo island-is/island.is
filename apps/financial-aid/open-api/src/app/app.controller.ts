@@ -1,4 +1,11 @@
-import { Controller, Get, Headers, Inject, Query } from '@nestjs/common'
+import {
+  BadRequestException,
+  Controller,
+  Get,
+  Headers,
+  Inject,
+  Query,
+} from '@nestjs/common'
 import { ApiCreatedResponse } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -26,6 +33,16 @@ export class AppController {
     @Headers('Municipality-Code') municipalityCode: string,
     @Query() filters: FilterApplicationsDto,
   ): Promise<ApplicationModel[]> {
+    if (!apiKey && !municipalityCode) {
+      throw new BadRequestException('API-Key and Municipality-Code are missing')
+    }
+    if (!apiKey) {
+      throw new BadRequestException('API-Key is missing')
+    }
+    if (!municipalityCode) {
+      throw new BadRequestException('Municipality-Code is missing')
+    }
+
     this.logger.info('Gets all application')
     return this.appService
       .getApplications(apiKey, municipalityCode, filters)
