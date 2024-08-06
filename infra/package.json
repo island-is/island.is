@@ -1,6 +1,11 @@
 {
   "name": "infra",
   "version": "1.0.0",
+  "engines": {
+    "npm": "please-use-yarn",
+    "node": "20.15.0",
+    "yarn": "3.2"
+  },
   "main": "index.js",
   "scripts": {
     "test": "jest",
@@ -35,6 +40,7 @@
     "yargs": "17.2.1"
   },
   "volta": {
-    "node": "18.12.1"
+    "node": "20.15.0",
+    "yarn": "3.2.3"
   }
 }
