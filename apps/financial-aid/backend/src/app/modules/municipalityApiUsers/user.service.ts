@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Injectable,
   NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import CryptoJS from 'crypto-js'
@@ -38,7 +39,7 @@ export class ApiUserService {
     )
 
     if (!findKeysWithMunicipalityCode) {
-      throw new BadRequestException('API-Key is invalid')
+      throw new UnauthorizedException('API-Key is invalid')
     }
     return findKeysWithMunicipalityCode
   }
