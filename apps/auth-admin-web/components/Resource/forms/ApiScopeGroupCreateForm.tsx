@@ -97,7 +97,6 @@ const ApiScopeGroupCreateForm: React.FC<React.PropsWithChildren<Props>> = (
                     })}
                     defaultValue={props.apiScopeGroup.domainName}
                     className="api-resource-form__input"
-                    placeholder={localization.fields['domainName'].placeholder}
                     title={localization.fields['domainName'].helpText}
                   >
                     {domains.map((domain: Domain) => {

@@ -455,6 +455,9 @@ export interface IBigBulletListFields {
 
   /** Bullets */
   bullets: (IIconBullet | INumberBulletSection)[]
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IBigBulletList extends Entry<IBigBulletListFields> {
@@ -583,6 +586,9 @@ export interface IChartFields {
 
   /** Reduce and round value */
   reduceAndRoundValue?: boolean | undefined
+
+  /** Y Axis Label */
+  yAxisLabel?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -4569,6 +4575,9 @@ export interface ITimelineEvent extends Entry<ITimelineEventFields> {
 export interface ITwoColumnTextFields {
   /** Left Title */
   leftTitle?: string | undefined
+
+  /** Only use one title */
+  onlyUseOneTitle?: boolean | undefined
 
   /** Left Content */
   leftContent?: Document | undefined

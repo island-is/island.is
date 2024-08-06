@@ -142,7 +142,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           marginRight={[2, 3]}
           borderRadius="circle"
         >
-          <img className={styles.image} src={image.url} alt="action-card" />
+          <img className={styles.image} src={image.url} alt="" />
         </Box>
       )
     }
@@ -158,7 +158,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
           background={image.active ? 'white' : 'blue100'}
           className={cn(styles.avatar, styles.image)}
         >
-          <img className={styles.circleImg} src={image.url} alt="action-card" />
+          <img className={styles.circleImg} src={image.url} alt="" />
         </Box>
       )
     }
@@ -339,13 +339,13 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
         {/* Checking image type so the image is placed correctly */}
         {image?.type !== 'logo' && renderImage()}
         <Box flexDirection="row" width="full">
-          {heading && (
-            <Box
-              display="flex"
-              flexDirection="row"
-              justifyContent="spaceBetween"
-              alignItems={['flexStart', 'flexStart', 'flexEnd']}
-            >
+          <Box
+            display="flex"
+            flexDirection="row"
+            justifyContent="spaceBetween"
+            alignItems={['flexStart', 'flexStart', 'flexEnd']}
+          >
+            {heading && (
               <Box
                 display="flex"
                 flexDirection="row"
@@ -365,17 +365,20 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
                   {heading}
                 </Text>
               </Box>
-              <Hidden above="xs">
-                {secondaryTag && (
-                  <Box marginRight="smallGutter">
-                    {!date && !eyebrow && renderTag(secondaryTag)}
-                  </Box>
-                )}
-                <Box>{!date && !eyebrow && renderTag(tag)}</Box>
-              </Hidden>
-            </Box>
-          )}
-          {text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
+            )}
+            {!heading && text && (
+              <Text paddingTop={heading ? 1 : 0}>{text}</Text>
+            )}
+            <Hidden above="xs">
+              {secondaryTag && (
+                <Box marginRight="smallGutter">
+                  {!date && !eyebrow && renderTag(secondaryTag)}
+                </Box>
+              )}
+              <Box>{!date && !eyebrow && renderTag(tag)}</Box>
+            </Hidden>
+          </Box>
+          {heading && text && <Text paddingTop={heading ? 1 : 0}>{text}</Text>}
           {subText && <Text>{subText}</Text>}
         </Box>
         <Box
