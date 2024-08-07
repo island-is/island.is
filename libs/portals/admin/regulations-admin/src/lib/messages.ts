@@ -386,6 +386,11 @@ export const impactMsgs = defineMessages({
     defaultMessage: 'Ertu viss um að þú viljir eyða þessari skráningu?',
   },
 
+  specificDateApply: {
+    id: 'ap.regulations-admin:change-applied-on-specific-date',
+    defaultMessage: 'Breyting tekur gildi á ákveðinni dagsetningu',
+  },
+
   // ---------------------------------------------------------------------------
 
   regExplainer: {

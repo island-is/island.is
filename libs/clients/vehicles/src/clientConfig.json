@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrï¿½ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-38 : 20240605.1",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrï¿½ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-41 : 20240708.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -2965,6 +2965,11 @@
             "nullable": true
           },
           "newRegDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "firstRegDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
