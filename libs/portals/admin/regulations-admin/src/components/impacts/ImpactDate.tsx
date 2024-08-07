@@ -38,7 +38,7 @@ export const ImpactDate = (props: ImpactDateProps) => {
     <Box marginBottom={4} width={size}>
       <Box marginBottom={3}>
         <Checkbox
-          label="Breyting tekur gildi á ákveðinni dagsetningu"
+          label={t(impactMsgs.specificDateApply)}
           labelVariant="default"
           checked={hasCustomDate}
           onChange={() => setHasCustomDate(!hasCustomDate)}
