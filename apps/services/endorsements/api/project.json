@@ -71,7 +71,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d --build",
+        "command": "docker compose up -d --build",
         "cwd": "apps/services/endorsements/api"
       }
     },
