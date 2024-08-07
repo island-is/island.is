@@ -7,7 +7,7 @@ import { Readable } from 'stream'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CompleteMultipartUploadOutput } from 'aws-sdk/clients/s3'
+import { CompleteMultipartUploadOutput } from '@aws-sdk/client-s3'
 
 type S3Location = {
   fileName: string
