@@ -22,7 +22,7 @@ const devConfig = {
   },
   emailOptions: {
     useTestAccount: false,
-    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true',
     options: {
       region: 'eu-west-1',
     },
