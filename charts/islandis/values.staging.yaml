@@ -1279,8 +1279,10 @@ endorsement-system-api-cleanup-worker:
     XROAD_TJODSKRA_MEMBER_CODE: '6503760649'
     XROAD_TLS_BASE_PATH: 'https://securityserver.staging01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.staging01.devland.is/r1/IS-TEST'
-  grantNamespaces: []
-  grantNamespacesEnabled: false
+  grantNamespaces:
+    - 'islandis'
+    - 'application-system'
+  grantNamespacesEnabled: true
   healthCheck:
     liveness:
       initialDelaySeconds: 3
@@ -1323,7 +1325,7 @@ endorsement-system-api-cleanup-worker:
       SERVERSIDE_FEATURES_ON: ''
     secrets:
       DB_PASS: '/k8s/services-endorsements-api/DB_PASSWORD'
-  namespace: 'endorsement-system-api'
+  namespace: 'endorsement-system'
   podDisruptionBudget:
     maxUnavailable: 1
   podSecurityContext:
@@ -1627,7 +1629,6 @@ namespaces:
     - 'air-discount-scheme'
     - 'regulations-admin'
     - 'user-notification'
-    - 'endorsement-system-api'
     - 'license-api'
     - 'services-sessions'
     - 'services-university-gateway'
