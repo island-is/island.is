@@ -8,10 +8,23 @@
     "noEmit": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
-    "incremental": true
+    "incremental": true,
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ]
   },
-  "include": ["**/*.js", "**/*.ts", "**/*.tsx", "next-env.d.ts"],
-  "exclude": ["node_modules"],
+  "include": [
+    "**/*.js",
+    "**/*.ts",
+    "**/*.tsx",
+    "next-env.d.ts",
+    ".next/types/**/*.ts"
+  ],
+  "exclude": [
+    "node_modules"
+  ],
   "files": [],
   "references": [
     {
