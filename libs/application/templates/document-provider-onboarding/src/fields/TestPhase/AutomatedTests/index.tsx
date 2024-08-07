@@ -16,7 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../forms/messages'
+import { m } from '../../../lib/messages'
 
 export const runEndpointTestsMutation = gql`
   mutation RunEndpointTests($input: RunEndpointTestsInput!) {
