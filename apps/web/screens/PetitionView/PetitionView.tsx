@@ -224,7 +224,7 @@ const PetitionView: Screen<PetitionViewProps> = ({ namespace }) => {
               </>
             )}
             {list.closedDate && new Date() <= new Date(list.closedDate) ? (
-              listEndorsements.data && listEndorsements.data.length ? (
+              listEndorsements.data?.length && !loadingEndorsements ? (
                 <Box marginY={3}>
                   <Pagination
                     page={page}
