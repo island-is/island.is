@@ -66,6 +66,10 @@ export class EndorsementSystemCleanupWorkerService {
               `Error fixing locality for row id:${row.id} from ${oldLocality} to ${newLocality}`,
             )
           }
+        } else {
+          this.logger.error(
+            `Person not found in national registry for row id:${row.id}`,
+          )
         }
       } catch (error) {
         this.logger.error(
