@@ -69,7 +69,6 @@ export type Subpoena = {
     acknowledged?: boolean
     chosenDefender?: string // ef null = birta lista ef ekki, birta breyta
     groups: Array<Groups>
-    displayClaim: boolean
   }
 }
 
@@ -493,7 +492,6 @@ export const getSubpoena = (id: string) => {
       data: {
         id: '2f2c4944-04a9-47fe-b02d-faf278af558a',
         acknowledged: undefined,
-        displayClaim: false,
 
         groups: [
           {
@@ -551,7 +549,6 @@ export const getSubpoena = (id: string) => {
       data: {
         id: '1234',
         acknowledged: true,
-        displayClaim: false,
 
         groups: [
           {
@@ -609,7 +606,6 @@ export const getSubpoena = (id: string) => {
       data: {
         id: '12345',
         acknowledged: false,
-        displayClaim: false,
 
         groups: [
           {

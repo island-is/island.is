@@ -5,6 +5,6 @@ export class PostSubpoenaAcknowledgedInput {
   @Field(() => ID)
   caseId!: string
 
-  @Field(() => Boolean)
+  @Field()
   acknowledged!: boolean | undefined
 }

@@ -2,13 +2,13 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('LawAndOrderCourtCasesState')
 export class State {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   title?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   date?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   theme?: string
 }
 
@@ -17,19 +17,19 @@ export class Item {
   @Field(() => ID)
   id!: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   caseNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   caseNumberTitle?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   type?: string
 
   @Field(() => State, { nullable: true })
   state?: State
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   acknowledged?: boolean
 }
 

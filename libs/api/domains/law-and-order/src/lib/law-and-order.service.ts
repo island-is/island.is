@@ -1,52 +1,43 @@
 import { Injectable } from '@nestjs/common'
 import type { User } from '@island.is/auth-nest-tools'
-import { CourtCases, State } from '../models/courtCases.model'
-import { getSubpoena } from './helpers/mockData'
-import { CourtCase } from '../models/courtCase.model'
-import { Subpoena } from '../models/subpoena.model'
-import { Lawyers } from '../models/lawyers.model'
-import { DefenseChoice } from '../models/defenseChoice.model'
-import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
-import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
-import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import {
-  CaseResponse,
   CasesResponse,
   Defender,
   JudicialSystemSPClientService,
   SubpoenaResponse,
+  UpdateSubpoenaDtoDefenderChoiceEnum,
+  CaseControllerUpdateSubpoenaLocaleEnum,
 } from '@island.is/clients/judicial-system-sp'
+import { CourtCases } from '../models/courtCases.model'
+import { getSubpoena } from './helpers/mockData'
+import { CourtCase } from '../models/courtCase.model'
+import { Subpoena } from '../models/subpoena.model'
+import { Lawyers } from '../models/lawyers.model'
+import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
+import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
+import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
+import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
+import {
+  mapCaseLocale,
+  mapCasesLocale,
+  mapDefenseChoice,
+  mapSubpoenaLocale,
+  mapUpdateSubpoenaLocale,
+} from './helpers/mappers'
 
-interface CaseResponseTemp {
-  id: string
-  caseNumber: string
-  type: string
-  state: State
-}
-
-interface SingleCaseResponseTemp {
-  data: {
-    caseNumber: string
-    groups: {
-      label: string
-      items: {
-        label: string
-        value: string
-        linkType?: string | undefined
-      }[]
-    }[]
-  }
-}
 @Injectable()
 export class LawAndOrderService {
   constructor(private api: JudicialSystemSPClientService) {}
 
   async getCourtCases(user: User, locale: Locale) {
-    const cases: Array<CasesResponse> | undefined = await this.api.getCases(
+    const caseLocale = mapCasesLocale(locale)
+    const cases: Array<CasesResponse> | null = await this.api.getCases(
       user,
-      locale,
+      caseLocale,
     )
+    if (cases === null) return null
+
     const list: CourtCases = { items: [] }
     const randomBoolean = Math.random() < 0.75
 
@@ -65,14 +56,17 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
-    const singleCase = await this.api.getCase(id, user, locale)
+    const caseLocale = mapCaseLocale(locale)
+    const singleCase = await this.api.getCase(id, user, caseLocale)
+    if (singleCase === null) return null
+
     const randomBoolean = Math.random() < 0.75
     let data: CourtCase = {}
 
     data = {
       data: {
         id: singleCase?.caseId ?? id,
-        acknowledged: randomBoolean,
+        acknowledged: randomBoolean, // temp while waiting for pósthólfs api
         caseNumber: singleCase?.data.caseNumber,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: singleCase?.data.groups,
@@ -85,11 +79,12 @@ export class LawAndOrderService {
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
-    const subpoena: SubpoenaResponse | undefined = await this.api.getSubpoena(
-      id,
-      user,
-      locale,
-    )
+    const caseLocale = mapSubpoenaLocale(locale)
+    const subpoena: SubpoenaResponse | undefined | null =
+      await this.api.getSubpoena(id, user, caseLocale)
+
+    if (subpoena === null) return null
+
     const mockAnswer = getSubpoena(id).data
     let data: Subpoena = {}
 
@@ -99,21 +94,18 @@ export class LawAndOrderService {
         acknowledged: undefined,
         chosenDefender: subpoena?.defenderInfo.defenderName,
         defenderChoice: subpoena?.defenderInfo.defenderChoice,
-        displayClaim: subpoena?.acceptCompensationClaim,
-        groups: mockAnswer?.data.groups,
+        groups: subpoena?.data.groups,
       },
-      actions: mockAnswer?.actions,
+      actions: undefined,
       texts: mockAnswer?.texts,
     }
 
     return data
   }
 
-  async getLawyers(user: User, locale: Locale) {
-    const answer: Array<Defender> | undefined = await this.api.getLawyers(
-      user,
-      locale,
-    )
+  async getLawyers(user: User) {
+    const answer: Array<Defender> | undefined | null =
+      await this.api.getLawyers(user)
     const list: Lawyers = { items: [] }
 
     answer?.map((x) => {
@@ -127,26 +119,32 @@ export class LawAndOrderService {
     return list
   }
 
+  async postDefenseChoice(user: User, input: PostDefenseChoiceInput) {
+    if (!input || !input.choice) return null
+
+    const res = await this.api.patchSubpoena(
+      {
+        caseId: input.caseId,
+        updateSubpoenaDto: {
+          defenderChoice: mapDefenseChoice(input.choice), // eslint-disable-next-line local-rules/disallow-kennitalas
+          defenderNationalId: input.lawyersNationalId,
+        },
+        locale: mapUpdateSubpoenaLocale(input.locale),
+      },
+      user,
+    )
+    return res
+  }
+
+  // TODO: Wait for pósthólfs api to be ready
   async isSubpoenaAcknowledged(user: User, id?: string) {
-    //const answer = this.lawAndOrderApi.getTest(user)
     if (!id) return undefined
     const randomBoolean = Math.random() < 0.75
 
     return randomBoolean
   }
 
-  async postDefenseChoice(user: User, input: PostDefenseChoiceInput) {
-    if (!input) return null
-
-    const res: DefenseChoice = {
-      caseId: input.caseId,
-      lawyersNationalId: input.lawyersNationalId,
-      choice: input.choice,
-    }
-
-    return res
-  }
-
+  // TODO: Wait for pósthólfs api to be ready
   async postSubpoenaAcknowledged(
     user: User,
     input: PostSubpoenaAcknowledgedInput,

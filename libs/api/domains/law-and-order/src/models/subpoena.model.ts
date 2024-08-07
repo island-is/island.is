@@ -2,52 +2,52 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('LawAndOrderSubpoenaTexts')
 export class Texts {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   intro?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   confirmation?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   description?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   claim?: string
 }
 
 @ObjectType('LawAndOrderSubpoenaActions')
 export class Actions {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   type?: 'file' | 'url' | 'inbox'
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   title?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   data?: string
 }
 
 @ObjectType('LawAndOrderSubpoenaItemActions')
 export class ItemActions {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   url?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   type?: string
 }
 
 @ObjectType('LawAndOrderSubpoenaItems')
 export class Items {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   value?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   link?: string
 
   @Field(() => ItemActions, { nullable: true })
@@ -56,7 +56,7 @@ export class Items {
 
 @ObjectType('LawAndOrderSubpoenaGroups')
 export class Groups {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
   @Field(() => [Items], { nullable: true })
@@ -68,17 +68,14 @@ export class Data {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   acknowledged?: boolean
 
-  @Field(() => Boolean, { nullable: true })
-  displayClaim?: boolean
-
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   chosenDefender?: string
 
-  @Field(() => Number, { nullable: true })
-  defenderChoice?: number
+  @Field({ nullable: true })
+  defenderChoice?: string
 
   @Field(() => [Groups], { nullable: true })
   groups?: Array<Groups>

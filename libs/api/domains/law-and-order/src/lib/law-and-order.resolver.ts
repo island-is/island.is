@@ -21,7 +21,6 @@ import { DefenseChoice } from '../models/defenseChoice.model'
 import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
 import { GetCourtCasesInput } from '../dto/getCourtCasesInput.model'
-import { GetLawyersInput } from '../dto/getLawyers'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver()
@@ -45,11 +44,7 @@ export class LawAndOrderResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetCourtCasesInput,
   ) {
-    const res = this.lawAndOrderService.getCourtCases(user, input.locale)
-
-    if (!res) return undefined
-
-    return res
+    return this.lawAndOrderService.getCourtCases(user, input.locale)
   }
 
   //@Scopes(ApiScope.lawAndOrder)
@@ -62,15 +57,7 @@ export class LawAndOrderResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetCourtCaseInput,
   ) {
-    const res = this.lawAndOrderService.getCourtCase(
-      user,
-      input.id,
-      input.locale,
-    )
-
-    if (!res) return undefined
-
-    return res
+    return this.lawAndOrderService.getCourtCase(user, input.id, input.locale)
   }
 
   //@Scopes(ApiScope.lawAndOrder)
@@ -80,29 +67,14 @@ export class LawAndOrderResolver {
     @CurrentUser() user: User,
     @Args('input') input: GetSubpoenaInput,
   ) {
-    const res = this.lawAndOrderService.getSubpoena(
-      user,
-      input.id,
-      input.locale,
-    )
-
-    if (!res) return undefined
-
-    return res
+    return this.lawAndOrderService.getSubpoena(user, input.id, input.locale)
   }
 
   //@Scopes(ApiScope.lawAndOrder)
   @Query(() => Lawyers, { name: 'lawAndOrderLawyers', nullable: true })
   @Audit()
-  async getLawyers(
-    @CurrentUser() user: User,
-    @Args('input') input: GetLawyersInput,
-  ) {
-    const res = this.lawAndOrderService.getLawyers(user, input.locale)
-
-    if (!res) return undefined
-
-    return res
+  async getLawyers(@CurrentUser() user: User) {
+    return this.lawAndOrderService.getLawyers(user)
   }
 
   @Mutation(() => DefenseChoice, {
@@ -114,13 +86,9 @@ export class LawAndOrderResolver {
     @Args('input') input: PostDefenseChoiceInput,
     @CurrentUser() user: User,
   ) {
-    const res = await this.lawAndOrderService.postDefenseChoice(user, {
+    return this.lawAndOrderService.postDefenseChoice(user, {
       ...input,
     })
-
-    if (!res) return undefined
-
-    return res
   }
 
   @Mutation(() => SubpoenaAcknowledged, {
@@ -132,12 +100,8 @@ export class LawAndOrderResolver {
     @Args('input') input: PostSubpoenaAcknowledgedInput,
     @CurrentUser() user: User,
   ) {
-    const res = await this.lawAndOrderService.postSubpoenaAcknowledged(user, {
+    return this.lawAndOrderService.postSubpoenaAcknowledged(user, {
       ...input,
     })
-
-    if (!res) return undefined
-
-    return res
   }
 }

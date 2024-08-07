@@ -1,13 +1,14 @@
 import { Field, ObjectType } from '@nestjs/graphql'
+import { DefenseChoiceEnum } from './defenseChoiceEnum.model'
 
 @ObjectType('LawAndOrderDefenseChoice')
 export class DefenseChoice {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   caseId?: string
 
-  @Field(() => String, { nullable: true })
-  choice?: string
+  @Field(() => DefenseChoice, { nullable: true })
+  choice?: DefenseChoiceEnum
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   lawyersNationalId?: string
 }

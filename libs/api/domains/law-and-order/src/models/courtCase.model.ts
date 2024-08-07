@@ -2,46 +2,46 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('LawAndOrderCourtCaseTexts')
 export class Texts {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   intro?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   footnote?: string
 }
 
 @ObjectType('LawAndOrderCourtCaseActions')
 export class Actions {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   type?: 'file' | 'url' | 'inbox'
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   title?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   data?: string
 }
 
 @ObjectType('LawAndOrderCourtCaseItemActions')
 export class ItemActions {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   url?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   type?: string
 }
 
 @ObjectType('LawAndOrderCourtCaseItems')
 export class Items {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   value?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   link?: string
 
   @Field(() => ItemActions, { nullable: true })
@@ -50,7 +50,7 @@ export class Items {
 
 @ObjectType('LawAndOrderCourtCaseGroups')
 export class Groups {
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   label?: string
 
   @Field(() => [Items], { nullable: true })
@@ -62,13 +62,13 @@ export class Data {
   @Field(() => ID)
   id!: string
 
-  @Field(() => Boolean, { nullable: true })
+  @Field({ nullable: true })
   acknowledged?: boolean
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   caseNumber?: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   caseNumberTitle?: string
 
   @Field(() => [Groups], { nullable: true })

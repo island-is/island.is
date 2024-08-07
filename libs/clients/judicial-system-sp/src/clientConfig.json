@@ -410,10 +410,24 @@
         },
         "required": ["caseId", "data"]
       },
+      "SubpoenaData": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "groups": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/Groups" }
+          }
+        },
+        "required": ["title", "groups"]
+      },
       "DefenderInfo": {
         "type": "object",
         "properties": {
-          "defenderChoice": { "type": "number", "enum": [] },
+          "defenderChoice": {
+            "type": "string",
+            "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
+          },
           "defenderName": { "type": "string" }
         },
         "required": ["defenderChoice", "defenderName"]
@@ -422,10 +436,10 @@
         "type": "object",
         "properties": {
           "caseId": { "type": "string" },
-          "defenderInfo": { "$ref": "#/components/schemas/DefenderInfo" },
-          "acceptCompensationClaim": { "type": "boolean" }
+          "data": { "$ref": "#/components/schemas/SubpoenaData" },
+          "defenderInfo": { "$ref": "#/components/schemas/DefenderInfo" }
         },
-        "required": ["caseId", "defenderInfo", "acceptCompensationClaim"]
+        "required": ["caseId", "data", "defenderInfo"]
       },
       "UpdateSubpoenaDto": {
         "type": "object",
@@ -434,14 +448,9 @@
             "type": "string",
             "enum": ["WAIVE", "CHOOSE", "DELAY", "DELEGATE"]
           },
-          "defenderNationalId": { "type": "string" },
-          "acceptCompensationClaim": { "type": "boolean" }
+          "defenderNationalId": { "type": "string" }
         },
-        "required": [
-          "defenderChoice",
-          "defenderNationalId",
-          "acceptCompensationClaim"
-        ]
+        "required": ["defenderChoice"]
       },
       "Defender": {
         "type": "object",
