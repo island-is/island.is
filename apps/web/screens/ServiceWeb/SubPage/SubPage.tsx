@@ -1,4 +1,3 @@
-import { Locale } from '@island.is/shared/types'
 import groupBy from 'lodash/groupBy'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
@@ -19,6 +18,7 @@ import {
   Text,
   TopicCard,
 } from '@island.is/island-ui/core'
+import { Locale } from '@island.is/shared/types'
 import { ServiceWebWrapper } from '@island.is/web/components'
 import {
   ContentLanguage,
@@ -41,6 +41,7 @@ import useContentfulId from '@island.is/web/hooks/useContentfulId'
 import useLocalLinkTypeResolver from '@island.is/web/hooks/useLocalLinkTypeResolver'
 import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
+import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { Screen } from '../../../types'
@@ -518,6 +519,13 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
       },
     }),
   ])
+
+  if (
+    categorySlug &&
+    (!singleSupportCategory || !singleSupportCategory?.data?.getSupportCategory)
+  ) {
+    throw new CustomNextError(404, 'Support category not found')
+  }
 
   const organizationNamespace = JSON.parse(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
