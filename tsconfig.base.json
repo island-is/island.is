@@ -366,6 +366,9 @@
       "@island.is/application/templates/financial-aid": [
         "libs/application/templates/financial-aid/src/index.ts"
       ],
+      "@island.is/application/templates/financial-statement-cemetery": [
+        "libs/application/templates/financial-statement-cemetery/src/index.ts"
+      ],
       "@island.is/application/templates/financial-statement-individual-election": [
         "libs/application/templates/financial-statement-individual-election/src/index.ts"
       ],
@@ -1087,11 +1090,18 @@
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
+      "api/domains/financial-statement-cemetery": [
+        "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      // TODO: fix this missing @island.is
       "api/domains/financial-statement-individual-election": [
         "libs/api/domains/financial-statement-individual-election/src/index.ts"
       ],
       "fiancial-statement-individual-election": [
         "libs/application/templates/financial-statement-individual-election/src/index.ts"
+      ],
+      "financial-statement-cemetery": [
+        "libs/application/templates/financial-statement-cemetery/src/index.ts"
       ]
     }
   }

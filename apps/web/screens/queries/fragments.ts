@@ -173,6 +173,7 @@ export const slices = gql`
         }
       }
     }
+    dividerOnTop
   }
 
   fragment FaqListFields on FaqList {
@@ -835,6 +836,7 @@ export const slices = gql`
     xAxisValueType
     customStyleConfig
     reduceAndRoundValue
+    yAxisLabel
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {

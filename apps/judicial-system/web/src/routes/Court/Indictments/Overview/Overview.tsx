@@ -6,6 +6,7 @@ import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -103,6 +104,13 @@ const IndictmentOverview = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
+        {workingCase.mergedCases &&
+          workingCase.mergedCases.length > 0 &&
+          workingCase.mergedCases.map((mergedCase) => (
+            <Box marginBottom={5} key={mergedCase.id}>
+              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+            </Box>
+          ))}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />

@@ -53,7 +53,7 @@ const loadTemplateLib = async (
   }
 }
 
-/* eslint-disable-next-line func-style */
+// eslint-disable-next-line func-style
 export async function getApplicationTemplateByTypeId<
   TContext extends ApplicationContext,
   TStateSchema extends ApplicationStateSchema<TEvents>,

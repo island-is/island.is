@@ -30,6 +30,7 @@ export enum ApplicationTypes {
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
   MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
+  FINANCIAL_STATEMENT_CEMETERY = 'FinancialStatementCemetery',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
   OPERATING_LICENSE = 'OperatingLicense',
@@ -203,6 +204,10 @@ export const ApplicationConfigurations = {
     slug: 'skuldleysisvottord',
     translation: 'ndc.application',
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
+    slug: 'skil-arsreikninga-kirkjugardar',
+    translation: 'fsck.application',
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
@@ -365,7 +370,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',
-    translation: 'sr.application',
+    translation: 'aosh.sr.application',
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
