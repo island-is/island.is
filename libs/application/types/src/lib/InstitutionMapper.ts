@@ -119,6 +119,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
     slug: InstitutionTypes.FJARSYSLA_RIKISINS,
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
     slug: InstitutionTypes.RIKISENDURSKODUN,
