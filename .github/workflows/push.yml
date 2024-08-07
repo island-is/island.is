@@ -114,7 +114,7 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             if [[ "${{ github.event.action }}" == "labeled" ]]; then
               echo "Action is labeled, using label that was applied: '${{ github.event.label.name }}'"
-              deployFeature=$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )
+              deployFeature="$([[ "${{ github.event.label.name }}" == "deploy-feature" ]] && echo true || echo false )"
             else
               echo "Action is ${{ github.event.action }}, using labels on PR"
               deployFeature=${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
@@ -217,8 +217,8 @@ jobs:
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA=$(git merge-base HEAD "$GITHUB_BASE_REF")
-          HEAD_SHA=$(git merge-base HEAD "$GITHUB_HEAD_REF")
+          BASE_SHA="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          HEAD_SHA="$(git merge-base HEAD "$GITHUB_HEAD_REF")"
           echo "Current base SHA is '$BASE_SHA' and head SHA is '$HEAD_SHA'"
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -251,7 +251,7 @@ jobs:
       - name: Generate docker image tag
         id: docker_tags
         run: |
-          export DOCKER_BRANCH_TAG=$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )
+          export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
@@ -374,7 +374,7 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         run: |
-          CHUNKS=$(./scripts/ci/generate-chunks.sh test)
+          CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo CHUNKS="{\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
@@ -384,7 +384,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
+          CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo BUILD_CHUNKS="$CHUNKS" >> "$GITHUB_OUTPUT"
@@ -393,7 +393,7 @@ jobs:
       - name: Gather unaffected docker images
         id: unaffected
         run: |
-          UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
+          UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
           echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
 
       - name: check pre-release
@@ -405,11 +405,11 @@ jobs:
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
-          export BASE=$(git merge-base HEAD "$GITHUB_BASE_REF")
-          CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
+          export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
+          CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo "IMAGES=$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')" >> "$GITHUB_OUTPUT"
+            echo "IMAGES="$(echo "$CHUNKS" | jq '.[] | fromjson | .projects' -r | tr '\n' ',')"" >> "$GITHUB_OUTPUT"
           fi
 
   tests:
@@ -477,8 +477,8 @@ jobs:
       - name: Gather apps
         id: gather
         run: |
-          AFFECTED_PROJECTS=$(echo '${{ matrix.chunk }}' | jq -r '.projects')
-          DOCKER_TYPE=$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')
+          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
+          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
           echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
         continue-on-error: true
