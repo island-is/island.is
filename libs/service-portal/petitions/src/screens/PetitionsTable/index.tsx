@@ -7,40 +7,31 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { formatDate, pages, PAGE_SIZE, paginate } from '../../lib/utils'
+import { formatDate, pageSize } from '../../lib/utils'
 import { m } from '../../lib/messages'
 import DropdownExport from './ExportPetition'
-import {
-  Endorsement,
-  EndorsementList,
-  PaginatedEndorsementResponse,
-} from '@island.is/api/schema'
-import { getCSV } from './ExportPetition/downloadCSV'
+import { Endorsement, EndorsementList } from '@island.is/api/schema'
+import { useGetPetitionEndorsementsPaginated } from '../hooks'
 
 const PetitionsTable = (data: {
   canEdit: boolean
   listId: string
   petition?: EndorsementList
-  petitionSigners: PaginatedEndorsementResponse
 }) => {
   useNamespaces('sp.petitions')
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
-  const [totalPages, setTotalPages] = useState(0)
-  const [petitionSigners, setPetitionSigners] = useState(
-    data.petitionSigners?.data ?? [],
+  const [cursor, setCursor] = useState<string>('')
+  const [pageDirection, setPageDirection] = useState<'before' | 'after' | ''>(
+    '',
   )
 
-  const handlePagination = (page: number, petitionSigners: Endorsement[]) => {
-    setPage(page)
-    setTotalPages(pages(petitionSigners?.length))
-    setPetitionSigners(paginate(petitionSigners, PAGE_SIZE, page))
-  }
+  const { endorsements, loadingEndorsements, refetch } =
+    useGetPetitionEndorsementsPaginated(data.listId, cursor, pageDirection)
 
   useEffect(() => {
-    setPetitionSigners(data.petitionSigners?.data ?? [])
-    handlePagination(1, data.petitionSigners?.data ?? [])
-  }, [data])
+    refetch()
+  }, [cursor, pageDirection])
 
   return (
     <Box>
@@ -48,12 +39,7 @@ const PetitionsTable = (data: {
         <Text variant="h3">{formatMessage(m.petitionsOverview)}</Text>
         <Box>
           {data.canEdit && (
-            <DropdownExport
-              petition={data.petition}
-              petitionSigners={data.petitionSigners}
-              petitionId={data.listId}
-              onGetCSV={() => getCSV(data.petitionSigners, 'Undirskriftalisti')}
-            />
+            <DropdownExport petition={data.petition} petitionId={data.listId} />
           )}
         </Box>
       </Box>
@@ -69,39 +55,52 @@ const PetitionsTable = (data: {
             </T.Row>
           </T.Head>
           <T.Body>
-            {petitionSigners?.map((petition: Endorsement) => {
-              return (
-                <T.Row key={petition.id}>
-                  <T.Data text={{ variant: 'medium' }}>
-                    {formatDate(petition.created)}
-                  </T.Data>
-                  <T.Data text={{ variant: 'medium' }}>
-                    {petition.meta.fullName
-                      ? petition.meta.fullName
-                      : formatMessage(m.noName)}
-                  </T.Data>
-                  {data.canEdit && (
+            {!loadingEndorsements &&
+              endorsements.data?.map((petition: Endorsement) => {
+                return (
+                  <T.Row key={petition.id}>
                     <T.Data text={{ variant: 'medium' }}>
-                      {petition.meta.locality ? petition.meta.locality : ''}
+                      {formatDate(petition.created)}
                     </T.Data>
-                  )}
-                </T.Row>
-              )
-            })}
+                    <T.Data text={{ variant: 'medium' }}>
+                      {petition.meta.fullName
+                        ? petition.meta.fullName
+                        : formatMessage(m.noName)}
+                    </T.Data>
+                    {data.canEdit && (
+                      <T.Data text={{ variant: 'medium' }}>
+                        {petition.meta.locality ? petition.meta.locality : ''}
+                      </T.Data>
+                    )}
+                  </T.Row>
+                )
+              })}
           </T.Body>
         </T.Table>
 
-        {petitionSigners && !!petitionSigners.length ? (
+        {endorsements && !!endorsements.data?.length ? (
           <Pagination
             page={page}
-            totalPages={totalPages}
-            renderLink={(page, className, children) => (
+            totalItems={endorsements.totalCount}
+            itemsPerPage={pageSize}
+            renderLink={(p, className, children) => (
               <Box
                 cursor="pointer"
                 className={className}
-                onClick={() =>
-                  handlePagination(page, data.petitionSigners?.data)
-                }
+                component="button"
+                onClick={() => {
+                  setPage(p)
+                  if (p > page && endorsements.pageInfo.hasNextPage) {
+                    setPageDirection('after')
+                    setCursor(endorsements.pageInfo.endCursor ?? '')
+                  } else if (
+                    p < page &&
+                    endorsements.pageInfo.hasPreviousPage
+                  ) {
+                    setPageDirection('before')
+                    setCursor(endorsements.pageInfo.startCursor ?? '')
+                  }
+                }}
               >
                 {children}
               </Box>
