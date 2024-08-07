@@ -439,16 +439,6 @@ export const IncomePlanForm: Form = buildForm({
               ],
               rows: [],
             }),
-            buildStaticTableField({
-              title: '',
-              description: '',
-              header: [
-                incomePlanFormMessage.info.taxedTableHeader,
-                '0 kr.',
-                '0 kr.',
-              ],
-              rows: [] 
-            }),
             buildDescriptionField({
               id: 'assumptions',
               title: '',

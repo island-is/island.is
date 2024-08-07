@@ -572,14 +572,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     parameters: ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest = {
       trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto: {
         incomeYear: 2024,
-        splitIncomeByMonth: true,
         incomeTypes: [
           {
             incomeTypeNumber: 1,
             incomeTypeCode: "21",
             incomeTypeName: "Laun",
-            changesAllowed: true,
-            currencyNumber: 21,
             currencyCode: "IKR",
             incomeCategoryNumber: 1,
             incomeCategoryCode: "1",
@@ -601,8 +598,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       }
     },
   ) { 
-    const bla = await this.siaClientService.getTemporaryCalculations(auth, parameters) 
-    console.log('bla: ', bla)
-    return bla//await this.siaClientService.getTemporaryCalculations(auth, parameters) 
+    await this.siaClientService.getTemporaryCalculations(auth, parameters) 
   }
 }

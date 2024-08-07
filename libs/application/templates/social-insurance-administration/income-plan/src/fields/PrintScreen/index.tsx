@@ -14,3 +14,5 @@ export const PrintScreen = () => {
     </Box> 
   )
 }
+
+export default PrintScreen

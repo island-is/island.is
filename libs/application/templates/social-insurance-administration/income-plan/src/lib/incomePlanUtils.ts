@@ -31,11 +31,17 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationLatestIncomePlan.data',
   ) as latestIncomePlan
 
+  const temporaryCalculation = getValueViaPath(
+    externalData,
+    'SocialInsuranceAdministrationTemporaryCalculation.data',
+  )
+
   return {
     categorizedIncomeTypes,
     currencies,
     withholdingTax,
     latestIncomePlan,
+    temporaryCalculation,
   }
 }
 
