@@ -101,6 +101,9 @@
       "@island.is/api/domains/financial-statements-inao": [
         "libs/api/domains/financial-statements-inao/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statement-individual-election": [
+        "libs/api/domains/financial-statement-individual-election/src/index.ts"
+      ],
       "@island.is/api/domains/fishing-license": [
         "libs/api/domains/fishing-license/src/index.ts"
       ],
@@ -1093,16 +1096,6 @@
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],
-      // TODO: fix this missing @island.is
-      "api/domains/financial-statement-individual-election": [
-        "libs/api/domains/financial-statement-individual-election/src/index.ts"
-      ],
-      "fiancial-statement-individual-election": [
-        "libs/application/templates/financial-statement-individual-election/src/index.ts"
-      ],
-      "financial-statement-cemetery": [
-        "libs/application/templates/financial-statement-cemetery/src/index.ts"
-      ]
     }
   }
 }
