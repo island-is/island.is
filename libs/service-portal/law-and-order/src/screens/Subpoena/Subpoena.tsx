@@ -9,6 +9,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import {
+  CardLoader,
   ConfirmationModal,
   DOMSMALARADUNEYTID_SLUG,
   IntroHeader,
@@ -28,6 +29,8 @@ import { useGetSubpoenaQuery } from './Subpoena.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import { usePostSubpoenaAcknowledgedMutation } from '../CourtCaseDetail/CourtCaseDetail.generated'
 import { LawAndOrderPaths } from '../../lib/paths'
+import { DefenseChoices } from '../../lib/const'
+import { isDefined } from '@island.is/shared/utils'
 
 type UseParams = {
   id: string
@@ -38,7 +41,7 @@ const Subpoena = () => {
   const { formatMessage, lang } = useLocale()
   const { id } = useParams() as UseParams
 
-  const { data, error, loading } = useGetSubpoenaQuery({
+  const { data, error, loading, refetch } = useGetSubpoenaQuery({
     variables: {
       input: {
         id,
@@ -52,8 +55,6 @@ const Subpoena = () => {
   const {
     subpoenaAcknowledged,
     setSubpoenaAcknowledged,
-    defenseChoice,
-    lawyerSelected,
     subpoenaModalVisible,
     setSubpoenaModalVisible,
   } = useLawAndOrderContext()
@@ -65,14 +66,13 @@ const Subpoena = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const [postAction, { loading: postActionLoading, data: updateData }] =
+  const [postAction, { loading: postActionLoading }] =
     usePostSubpoenaAcknowledgedMutation({
       onError: () => {
         toast.error(formatMessage(messages.registrationError))
       },
       onCompleted: () => {
         //TODO: What to do if user closes or cancel the pop up?
-
         subpoenaAcknowledged &&
           toast.success(formatMessage(messages.registrationCompleted))
         setSubpoenaModalVisible(false)
@@ -84,7 +84,7 @@ const Subpoena = () => {
   }
 
   const handleSubmit = () => {
-    // TODO: What to do if error ?
+    // TODO: Change to service
     setSubpoenaAcknowledged(true)
     postAction({
       variables: {
@@ -97,7 +97,7 @@ const Subpoena = () => {
   }
 
   const handleCancel = () => {
-    // TODO: What to do if error ?
+    // TODO: Change to service
     setSubpoenaAcknowledged(false)
     postAction({
       variables: {
@@ -151,23 +151,28 @@ const Subpoena = () => {
         </GridContainer>
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-
+      {loading && !error && (
+        <Box width="full">
+          <CardLoader />
+        </Box>
+      )}
       {subpoena?.data?.groups && subpoena.data.groups.length > 0 && (
         <>
           <InfoLines groups={subpoena.data.groups} loading={loading} />
-          {(subpoena?.data?.chosenDefender ||
-            lawyerSelected ||
-            defenseChoice) && (
+          {isDefined(subpoena?.data.defenderChoice) && (
             <>
               <Box paddingTop={1} />
               <UserInfoLine
                 loading={loading}
-                label={messages.defenseAttorney}
-                content={
-                  subpoena?.data?.chosenDefender ??
-                  lawyerSelected?.name ??
-                  defenseChoice
-                }
+                label={messages.chooseDefenderTitle}
+                content={[
+                  formatMessage(
+                    DefenseChoices[subpoena.data.defenderChoice].message,
+                  ),
+                  subpoena.data.chosenDefender,
+                ]
+                  .filter(Boolean)
+                  .join(', ')}
                 labelColumnSpan={['1/1', '6/12']}
                 valueColumnSpan={['1/1', '4/12']}
                 editColumnSpan={['2/12']}
@@ -191,8 +196,8 @@ const Subpoena = () => {
             </GridRow>
           )}
 
-          {!loading && !subpoena?.data?.chosenDefender && !defenseChoice && (
-            <DefenderChoices id={id} />
+          {!loading && !subpoena?.data.defenderChoice && (
+            <DefenderChoices id={id} refetch={refetch} />
           )}
 
           {defenderPopUp && (
@@ -200,10 +205,23 @@ const Subpoena = () => {
               id="defender-pop-up"
               onCloseModal={() => setDefenderPopUp(false)}
             >
-              <DefenderChoices popUp={{ setPopUp: setDefenderPopUp }} id={id} />
+              <DefenderChoices
+                popUp={{ setPopUp: setDefenderPopUp }}
+                id={id}
+                refetch={refetch}
+              />
             </Modal>
           )}
         </>
+      )}
+      {!loading && !error && data?.lawAndOrderSubpoena === null && (
+        <Problem
+          type="no_data"
+          noBorder={false}
+          title={formatMessage(m.noData)}
+          message={formatMessage(m.noDataFoundDetail)}
+          imgSrc="./assets/images/sofa.svg"
+        />
       )}
     </>
   )

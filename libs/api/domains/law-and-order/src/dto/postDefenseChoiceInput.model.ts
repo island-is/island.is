@@ -8,7 +8,7 @@ export class PostDefenseChoiceInput {
   @IsString()
   caseId!: string
 
-  @Field()
+  @Field(() => DefenseChoiceEnum)
   choice!: DefenseChoiceEnum
 
   @Field({ nullable: true })
