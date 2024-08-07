@@ -52,7 +52,7 @@ jobs:
 
       - name: Check node version
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           node -v
           ls -l `which node`
       - name: Checking out relevant branches
@@ -88,7 +88,7 @@ jobs:
           enable-cache: 'node_modules,cypress,generated-files'
 
       - run: |
-          set -euxo pipefail
+          set -euo pipefail
           echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
@@ -125,7 +125,7 @@ jobs:
       - name: Prepare lint targets
         id: lint_projects
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh lint)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
@@ -134,7 +134,7 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
@@ -145,7 +145,7 @@ jobs:
         env:
           CHUNK_SIZE: 1
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
@@ -157,7 +157,7 @@ jobs:
         env:
           CHUNK_SIZE: 4
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh build)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
@@ -168,7 +168,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           node -r esbuild-register .github/actions/check-team-approval.ts release-managers
   tests:
     needs:

@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0
       - name: Check if codeowners file changed
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           MERGE_BASE="$(git merge-base "${{github.event.pull_request.base.sha}}" "$GITHUB_SHA")"
           if ! git diff --exit-code --name-only "$MERGE_BASE".."$GITHUB_SHA" .github/CODEOWNERS; then
             echo "CHECK=true" >> "$GITHUB_ENV"
@@ -35,7 +35,7 @@ jobs:
       - name: Check indentation
         if: env.CHECK == 'true'
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           no_different_indentations="$(cat .github/CODEOWNERS | grep -v '^#' | awk NF | sed s/@.*//g | awk '{ print length }' | sort | uniq | wc -l)"
           if [[ "$no_different_indentations" != "1" ]]; then
             echo "CODEOWNERS has $no_different_indentations different indentations."
@@ -46,7 +46,7 @@ jobs:
       - name: Codeowners validation
         if: env.CHECK == 'true'
         run: |
-          set -euxo pipefail
+          set -euo pipefail
           curl -sfL https://raw.githubusercontent.com/mszostok/codeowners-validator/main/install.sh | sh -s -- -b "$HOME" v0.7.4
           REPOSITORY_PATH="." \
           GITHUB_ACCESS_TOKEN="$GH_TOKEN" \
