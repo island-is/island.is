@@ -39,9 +39,7 @@ export class EndorsementSystemCleanupWorkerService {
     this.logger.info(`Found ${rows.length} rows with invalid locality`)
     // Loop through rows and fix the locality value
     for (const row of rows) {
-      this.logger.info(
-        `Proccessing row id:${row.id}`,
-      )
+      this.logger.info(`Proccessing row id:${row.id}`)
       try {
         const person = await this.nationalRegistryApiV3.getAllDataIndividual(
           row.endorser,
