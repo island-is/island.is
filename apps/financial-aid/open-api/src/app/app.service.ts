@@ -9,8 +9,8 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import appModuleConfig from './app.config'
 import { FilterApplicationsDto } from './app.dto'
-import { ApplicationModel } from './models'
 import { isDateValid } from './helpers'
+import { ApplicationModel } from './models'
 
 @Injectable()
 export class AppService {
