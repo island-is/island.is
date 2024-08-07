@@ -68,7 +68,7 @@ cd apps/skilavottord/ws
 and run
 
 ```bash
-docker-compose up
+docker compose up
 ```
 
 Then run migrations and seed the database:
