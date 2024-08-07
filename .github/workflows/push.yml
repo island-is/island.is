@@ -59,8 +59,8 @@ jobs:
         id: git-branch
         run: |
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "GIT_BRANCH=${GIT_BRANCH}" >> $GITHUB_OUTPUT
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+          echo "GIT_BRANCH=${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
+          echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
@@ -73,16 +73,16 @@ jobs:
             # Avoid too long resource names
             GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
           fi
-          echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> $GITHUB_OUTPUT
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
-          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> $GITHUB_OUTPUT
+          echo "GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY}" >> "$GITHUB_OUTPUT"
+          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
+          echo "FEATURE_NAME=$(echo $GIT_BRANCH_DEPLOY | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)" >> "$GITHUB_OUTPUT"
       - name: Check if we want to run workflow
         id: should-run
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
         run: |
           echo "GITHUB_EVENT_NAME is '$GITHUB_EVENT_NAME'"
-          echo "PRE_RELEASE=false" >> $GITHUB_OUTPUT
+          echo "PRE_RELEASE=false" >> "$GITHUB_OUTPUT"
 
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
@@ -93,8 +93,8 @@ jobs:
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
             done
@@ -104,7 +104,7 @@ jobs:
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
                   echo "'$GIT_BRANCH' matches '$pattern', continuing with build"
-                  echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
+                  echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
             done
@@ -121,7 +121,7 @@ jobs:
             fi
             if [[ "$deployFeature" == "true" ]]; then
               echo "Pull request contains deploy-feature label, continuing with feature deployment"
-              echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
+              echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
               exit 0
             fi
             echo "Pull request does not have deploy-feature label, exiting..."
@@ -133,12 +133,12 @@ jobs:
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
                 if [[ "$GIT_BRANCH" =~ $pre_pattern ]]; then
                   echo "'$GIT_BRANCH' matches 'pre_$pattern', continuing with build"
-                  echo "PRE_CHECK=feature-deploy" >> $GITHUB_OUTPUT
-                  echo "PRE_RELEASE=true" >> $GITHUB_OUTPUT
+                  echo "PRE_CHECK=feature-deploy" >> "$GITHUB_OUTPUT"
+                  echo "PRE_RELEASE=true" >> "$GITHUB_OUTPUT"
                   exit 0
                 fi
             done
-          echo "PRE_CHECK=push" >> $GITHUB_OUTPUT
+          echo "PRE_CHECK=push" >> "$GITHUB_OUTPUT"
 
   prepare:
     runs-on: ec2-runners
@@ -187,13 +187,13 @@ jobs:
           if [[ -n "$GITHUB_BASE_REF" ]]
           then
            # a PR
-           GIT_BASE_BRANCH=$GITHUB_BASE_REF
+           GIT_BASE_BRANCH="$GITHUB_BASE_REF"
           else
            # on main
            GIT_BASE_BRANCH=main
           fi
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
-          echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> $GITHUB_ENV
+          echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
+          echo "GIT_BASE_BRANCH=$GIT_BASE_BRANCH" >> "$GITHUB_ENV"
           echo "Base branch is '${GIT_BASE_BRANCH}'"
           echo "Branch is '${GIT_BRANCH}'"
 
@@ -203,7 +203,7 @@ jobs:
           echo "Feature Name: $FEATURE_NAME"
 
           git checkout main
-          git checkout $GITHUB_SHA
+          git checkout "$GITHUB_SHA"
 
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
@@ -211,14 +211,14 @@ jobs:
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
-          git checkout $GITHUB_HEAD_REF
-          git checkout $GITHUB_BASE_REF
-          git checkout $GITHUB_SHA
+          git checkout "$GITHUB_HEAD_REF"
+          git checkout "$GITHUB_BASE_REF"
+          git checkout "$GITHUB_SHA"
           git config --global user.email "ci@island.is"
           git config --global user.name "CI Bot"
 
-          BASE_SHA=$(git merge-base HEAD $GITHUB_BASE_REF)
-          HEAD_SHA=$(git merge-base HEAD $GITHUB_HEAD_REF)
+          BASE_SHA=$(git merge-base HEAD "$GITHUB_BASE_REF")
+          HEAD_SHA=$(git merge-base HEAD "$GITHUB_HEAD_REF")
           echo Current base SHA is $BASE_SHA and head SHA is $HEAD_SHA
           echo "{\"base_sha\": \"$BASE_SHA\", \"head_sha\":\"$HEAD_SHA\"}" > event.json
 
@@ -226,7 +226,7 @@ jobs:
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
           git checkout main
-          git checkout $GITHUB_SHA
+          git checkout "$GITHUB_SHA"
 
       # This is to increase the retention days for our GitHub Actions run events
       # See this for more information:
@@ -245,9 +245,9 @@ jobs:
         run: |
           export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
           echo "NODE_IMAGE_TAG: ${NODE_IMAGE_TAG}"
-          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_OUTPUT
-          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> $GITHUB_ENV
-          echo "**NODE_IMAGE_TAG** ${NODE_IMAGE_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
+          echo "NODE_IMAGE_TAG=${NODE_IMAGE_TAG}" >> "$GITHUB_ENV"
+          echo "**NODE_IMAGE_TAG** ${NODE_IMAGE_TAG}" >> "$GITHUB_STEP_SUMMARY"
       - name: Generate docker image tag
         id: docker_tags
         run: |
@@ -255,15 +255,15 @@ jobs:
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
-            SHA=$GITHUB_SHA
+            SHA="$GITHUB_SHA"
             echo "SHA='$SHA', retrived from action environment"
           fi
           echo "Using SHA='$SHA' as docker tag sha"
-          export DOCKER_TAG=${DOCKER_BRANCH_TAG}_${SHA:0:10}_${GITHUB_RUN_NUMBER}
+          export DOCKER_TAG="${DOCKER_BRANCH_TAG}_${SHA:0:10}_${GITHUB_RUN_NUMBER}"
           echo "Docker tag will be ${DOCKER_TAG}"
-          echo "DOCKER_TAG=${DOCKER_TAG}" >> $GITHUB_OUTPUT
-          echo "DOCKER_TAG=$DOCKER_TAG" >> $GITHUB_ENV
-          echo "**Monorepo tag:** ${DOCKER_TAG}" >> $GITHUB_STEP_SUMMARY
+          echo "DOCKER_TAG=${DOCKER_TAG}" >> "$GITHUB_OUTPUT"
+          echo "DOCKER_TAG=$DOCKER_TAG" >> "$GITHUB_ENV"
+          echo "**Monorepo tag:** ${DOCKER_TAG}" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Send Slack notification
         id: slack
@@ -283,7 +283,7 @@ jobs:
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_RELEASE_WEBHOOK_URL }} # required
 
       - run: |
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
         id: git_nx_head
         name: Preparing HEAD tag
 
@@ -296,11 +296,11 @@ jobs:
 
       - name: Set Test Everything true
         run: |
-          echo "TEST_EVERYTHING=true" >> $GITHUB_ENV
+          echo "TEST_EVERYTHING=true" >> "$GITHUB_ENV"
         if: github.event_name == 'pull_request' && contains(github.event.pull_request.labels.*.name, 'test everything')
 
       - name: Set Test Everything false
-        run: echo "TEST_EVERYTHING=false" >> $GITHUB_ENV
+        run: echo "TEST_EVERYTHING=false" >> "$GITHUB_ENV"
         if: github.event_name != 'pull_request' || !contains(github.event.pull_request.labels.*.name, 'test everything')
 
       - name: Preparing BASE tags
@@ -313,7 +313,7 @@ jobs:
           if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' && "${{needs.pre-checks.outputs.PRE_RELEASE}}" == 'false' ]]; then
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
-            export PR_REF=$GITHUB_SHA
+            export PR_REF="$GITHUB_SHA"
           else
             export HEAD_REF="$GIT_BRANCH"
             export BASE_REF="$GIT_BASE_BRANCH"
@@ -321,10 +321,10 @@ jobs:
           fi
           export WORKFLOW_ID=push
           export SHELL=/usr/bin/bash
-          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD $GITHUB_BASE_REF)
-          git checkout $GITHUB_SHA
-          echo "BASE=$BASE" >> $GITHUB_ENV
-          echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> $GITHUB_OUTPUT
+          source ./scripts/ci/00_prepare-base-tags.sh $(git merge-base HEAD "$GITHUB_BASE_REF")
+          git checkout "$GITHUB_SHA"
+          echo "BASE=$BASE" >> "$GITHUB_ENV"
+          echo "LAST_GOOD_BUILD_DOCKER_TAG=${LAST_GOOD_BUILD_DOCKER_TAG}" >> "$GITHUB_OUTPUT"
       - name: Docker login to ECR repo
         run: ./scripts/ci/docker-login-ecr.sh
         env:
@@ -369,14 +369,14 @@ jobs:
         run: '[[ "${{ steps.cache-deps-base.outputs.success }}" != "false" ]] || exit 1'
 
       - name: set BRANCH env var
-        run: echo "BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+        run: echo "BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
 
       - name: Prepare test targets
         id: test_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
         env:
           SKIP_TESTS_ON_BRANCH: ${{ secrets.SKIP_TESTS_ON_BRANCH }}
@@ -387,29 +387,29 @@ jobs:
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
-            echo "BUILD_CHUNKS=$CHUNKS" >> $GITHUB_OUTPUT
+            echo "BUILD_CHUNKS=$CHUNKS" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Gather unaffected docker images
         id: unaffected
         run: |
           UNAFFECTED=$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)
-          echo "UNAFFECTED=$UNAFFECTED" >> $GITHUB_OUTPUT
+          echo "UNAFFECTED=$UNAFFECTED" >> "$GITHUB_OUTPUT"
 
       - name: check pre-release
         if: needs.pre-checks.outputs.PRE_RELEASE == 'true'
         run: |
-          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> $GITHUB_ENV
+          echo "AFFECTED_ALL=7913-$GIT_BRANCH" >> "$GITHUB_ENV"
 
       - name: Prepare deployment targets
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
-          export BASE=$(git merge-base HEAD $GITHUB_BASE_REF)
+          export BASE=$(git merge-base HEAD "$GITHUB_BASE_REF")
           CHUNKS=$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)
           echo "CHUNKS: '$CHUNKS'"
           if [[ $CHUNKS != "[]" ]]; then
-            echo "IMAGES=$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')" >> $GITHUB_OUTPUT
+            echo "IMAGES=$(echo $CHUNKS | jq '.[] | fromjson | .projects' -r | tr '\n' ',')" >> "$GITHUB_OUTPUT"
           fi
 
   tests:
@@ -479,8 +479,8 @@ jobs:
         run: |
           AFFECTED_PROJECTS=$(echo '${{ matrix.chunk }}' | jq -r '.projects')
           DOCKER_TYPE=$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')
-          echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> $GITHUB_ENV
-          echo "DOCKER_TYPE=$DOCKER_TYPE" >> $GITHUB_ENV
+          echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
+          echo "DOCKER_TYPE=$DOCKER_TYPE" >> "$GITHUB_ENV"
         continue-on-error: true
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
@@ -600,10 +600,10 @@ jobs:
           echo Image tag is: ${{env.NODE_IMAGE_TAG}}
           export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
           ./scripts/build-docker-container.sh $DOCKER_TAG
-          echo "COMMENT<<EOF" >> $GITHUB_ENV
-          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> $GITHUB_ENV
-          docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> $GITHUB_ENV
-          echo 'EOF' >> $GITHUB_ENV
+          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
+          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
+          docker run --rm ${DOCKER_REGISTRY}helm-config:$DOCKER_TAG ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature=$FEATURE_NAME >> "$GITHUB_ENV"
+          echo 'EOF' >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
 
@@ -619,7 +619,7 @@ jobs:
         if: needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         uses: actions/github-script@v7
         with:
-          github-token: ${{secrets.GITHUB_TOKEN}}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
@@ -686,7 +686,7 @@ jobs:
               "docker_tag": "$DOCKER_TAG",
               "feature_name": "$FEATURE_NAME",
               "images": "$IMAGES",
-              "pull_request_number": "$(echo $GITHUB_REF | cut -d'/' -f3)"
+              "pull_request_number": "$(echo "$GITHUB_REF" | cut -d'/' -f3)"
             }
           }
           BODY

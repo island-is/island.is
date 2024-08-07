@@ -87,7 +87,7 @@ jobs:
 
       - run: |
           set -x
-          echo "HEAD=$GITHUB_SHA" >> $GITHUB_ENV
+          echo "HEAD=$GITHUB_SHA" >> "$GITHUB_ENV"
           export HEAD_REF="$GITHUB_HEAD_REF"
           export BASE_REF="$GITHUB_BASE_REF"
           export PR_REF="$GITHUB_SHA"
@@ -95,7 +95,7 @@ jobs:
           export WORKFLOW_ID=pullrequest
           source ./scripts/ci/00_prepare-base-tags.sh "$(git merge-base HEAD "$GITHUB_BASE_REF")"
           git checkout "$GITHUB_SHA"
-          echo "BASE=$BASE" >> $GITHUB_ENV
+          echo "BASE=$BASE" >> "$GITHUB_ENV"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           HTML_URL: ${{ github.event.pull_request.html_url }}
@@ -112,20 +112,20 @@ jobs:
       - name: Set magic env if test-everything label is set
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] == 'admin' }}
         run: |
-          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> $GITHUB_ENV
+          echo "AFFECTED_ALL=7913-$GITHUB_HEAD_REF" >> "$GITHUB_ENV"
 
       - name: Warn if user does not have the required permissions
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outputs['user-permission'] != 'admin' }}
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
-          echo "User $GITHUB_ACTOR does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
+          echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Prepare lint targets
         id: lint_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare test targets
@@ -133,7 +133,7 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Prepare e2e targets
@@ -143,9 +143,9 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-          echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> $GITHUB_OUTPUT
+          echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare build targets
         id: build_projects
@@ -154,7 +154,7 @@ jobs:
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
           if [[ $CHUNKS != "[]" ]]; then
-            echo "CHUNKS={\"projects\":$CHUNKS}" >> $GITHUB_OUTPUT
+            echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
       - name: Check release-manager approval
         id: check-release-manager-approval

@@ -23,9 +23,9 @@ jobs:
           fetch-depth: 0
       - name: Check if codeowners file changed
         run: |
-          MERGE_BASE=$(git merge-base ${{github.event.pull_request.base.sha}} $GITHUB_SHA)
-          if ! git diff --exit-code --name-only $MERGE_BASE..$GITHUB_SHA .github/CODEOWNERS; then
-            echo "CHECK=true" >> $GITHUB_ENV
+          MERGE_BASE=$(git merge-base "${{github.event.pull_request.base.sha}}" "$GITHUB_SHA")
+          if ! git diff --exit-code --name-only "$MERGE_BASE".."$GITHUB_SHA" .github/CODEOWNERS; then
+            echo "CHECK=true" >> "$GITHUB_ENV"
             if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "${{ github.repository }}" ]]; then
               echo "Changes to codeowners are not allowed on forks!"
               exit 1
