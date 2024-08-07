@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { Page } from '@island.is/testing/e2e'
 import { verifyRequestCompletion } from '../../../../support/api-tools'
 
 export const judgeReceivesAppealTest = async (page: Page, caseId: string) => {
