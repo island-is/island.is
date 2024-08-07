@@ -124,7 +124,7 @@ jobs:
         id: lint_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh lint)
-          if [[ $CHUNKS != "[]" ]]; then
+          if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
@@ -132,7 +132,7 @@ jobs:
         id: test_projects
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh test)
-          if [[ $CHUNKS != "[]" ]]; then
+          if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
 
@@ -142,10 +142,10 @@ jobs:
           CHUNK_SIZE: 1
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh e2e-ci)
-          if [[ $CHUNKS != "[]" ]]; then
+          if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
-          echo "BUILD_ID=$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
+          echo BUILD_ID="$GITHUB_RUN_ID-$GITHUB_RUN_NUMBER-$(uuidgen)" >> "$GITHUB_OUTPUT"
 
       - name: Prepare build targets
         id: build_projects
@@ -153,7 +153,7 @@ jobs:
           CHUNK_SIZE: 4
         run: |
           CHUNKS=$(./scripts/ci/generate-chunks.sh build)
-          if [[ $CHUNKS != "[]" ]]; then
+          if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
       - name: Check release-manager approval
@@ -242,7 +242,7 @@ jobs:
           enable-cache: 'node_modules,cypress,generated-files'
 
       - name: Running e2e tests
-        run: ./scripts/ci/40_e2e.sh ${AFFECTED_PROJECT}
+        run: ./scripts/ci/40_e2e.sh "${AFFECTED_PROJECT}"
 
   linting-workspace:
     needs:
