@@ -132,7 +132,7 @@ export async function folderSizeIsEqualOrGreaterThan(
 
 /**
  * Run command in a child process.
- * @param {string} cmd
+ * @param {string | string[]} cmd
  * @param {string | undefined} cwd
  */
 export async function runCommand(cmd, cwd = undefined, env = {}) {
@@ -170,7 +170,7 @@ export async function runCommand(cmd, cwd = undefined, env = {}) {
         reject(`Error: Process exited with code ${code}`)
         return
       }
-      resolve(void 0)
+      resolve(outputChunks.join('\n'))
     })
 
     childProcess.on('error', (error) => {

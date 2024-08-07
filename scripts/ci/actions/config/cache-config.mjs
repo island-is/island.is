@@ -1,6 +1,6 @@
 // @ts-check
 import { resolve } from 'path'
-import { MOBILE_APP_DIR, ROOT } from './_common.mjs'
+import { MOBILE_APP_DIR, ROOT } from '../libs/_common.mjs'
 import {
   getPlatformString,
   getYarnLockHash,
@@ -11,15 +11,15 @@ import {
   fileSizeIsEqualOrGreaterThan,
   getPackageJSON,
   getFilesHash,
-} from './_utils.mjs'
+} from '../libs/_utils.mjs'
 
 import {
   ENV_INIT_CACHE,
   ENV_ENABLED_CACHE,
   ENV_CACHE_SUCCESS,
-} from './_const.mjs'
-import { keyStorage } from './_key_storage.mjs'
-import { getGeneratedFilesHash } from './_generated_files.mjs'
+} from '../libs/_const.mjs'
+import { keyStorage } from '../libs/_key_storage.mjs'
+import { getGeneratedFilesHash } from '../libs/_generated_files.mjs'
 
 // When testing this is good to manipulate
 const HASH_VERSION = `newcache-${6}`
@@ -101,7 +101,7 @@ export const caches = [
     },
     init: async (path) => {
       console.log(`Generating files to ${path} - THIS WILL TAKE A LOT OF TIME`)
-      const script = resolve(ROOT, 'scripts/ci/cache/generate-files.sh')
+      const script = resolve(ROOT, 'scripts/ci/actions/generate-files.sh')
       await runCommand(`${script}`, ROOT)
     },
   },

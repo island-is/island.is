@@ -4,14 +4,14 @@
 
 // @ts-check
 import { resolve } from 'node:path'
-import { ENABLED_MODULES, caches } from './__config.mjs'
-import { HAS_HASH_KEYS, ROOT } from './_common.mjs'
-import { writeToSummary, writeToOutput } from './_get_hashes_utils.mjs'
-import { keyStorage } from './_key_storage.mjs'
-import { restoreCache } from './_restore_cache.mjs'
-import { saveCache } from './_save_cache.mjs'
-import { arrayIncludesOneOf, sleep, tryRun } from './_utils.mjs'
-import { ENV_ENABLED_CACHE } from './_const.mjs'
+import { ENABLED_MODULES, caches } from './config/cache-config.mjs'
+import { HAS_HASH_KEYS, ROOT } from './libs/_common.mjs'
+import { writeToSummary, writeToOutput } from './libs/_get_hashes_utils.mjs'
+import { keyStorage } from './libs/_key_storage.mjs'
+import { restoreCache } from './libs/_restore_cache.mjs'
+import { saveCache } from './libs/_save_cache.mjs'
+import { arrayIncludesOneOf, tryRun } from './libs/_utils.mjs'
+import { ENV_ENABLED_CACHE } from './libs/_const.mjs'
 
 if (Object.keys(ENABLED_MODULES).length === 0) {
   throw new Error(`No cache modules enabled, set env key ${ENV_ENABLED_CACHE}`)

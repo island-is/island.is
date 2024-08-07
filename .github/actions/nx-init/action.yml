@@ -1,0 +1,52 @@
+name: 'Init Nx Cloud'
+description: 'Action to initialize Nx Cloud'
+inputs:
+  github-token:
+    description: 'GitHub token'
+    required: true
+  dirtybot-token:
+    description: 'Dirtybot token'
+    required: true
+outputs:
+  test-everything:
+    description: 'Whether to test everything'
+    value: ${{ steps.permission-flag.outputs.test-everything }}
+  keys:
+    description: 'Keys'
+    value: ${{ steps.get-cache.outputs.keys }}
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version-file: 'package.json'
+    - name: Init
+      shell: bash
+      run: |
+        corepack enable
+        # Remove event.json if it exists
+        rm -f event.json
+    - name: Get cache
+      id: get-cache
+      uses: ./.github/actions/get-cache
+      with:
+        github-token: ${{ inputs.github-token }}
+        enable-cache: 'node_modules'
+    - name: Derive appropriate SHAs for base and head for `nx affected` commands
+      uses: nrwl/nx-set-shas@v4
+      id: setSHAs
+    - name: Initial settings
+      shell: bash
+      env:
+        BASE: ${{ steps.setSHAs.outputs.base }}
+        HEAD: ${{ steps.setSHAs.outputs.head }}
+        DIRTYBOT_TOKEN: ${{ inputs.dirtybot-token }}
+        GITHUB_TOKEN: ${{ inputs.github-token }}
+      run: |
+        cd scripts/ci/actions
+        yarn install --immutable
+        node permission-action.mjs
+        node format-action.mjs
+    - name: License audit
+      shell: bash
+      run: yarn run license-audit
