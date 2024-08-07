@@ -18,11 +18,13 @@ jobs:
     steps:
       - name: Get git branch
         run: |
+          set -euxo pipefail
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
+          set -euxo pipefail
           GIT_BRANCH_DEPLOY="$GIT_BRANCH"
           if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
             # If event is pull request but branch is not prefixed with feature/
@@ -36,6 +38,7 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
         run: |
+          set -euxo pipefail
           curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",

@@ -36,6 +36,7 @@ jobs:
       - name: Select secret envs to check
         id: select_envs
         run: |
+          set -euxo pipefail
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           # ENVS=("dev" "staging")
           ENVS=("dev" "staging")
@@ -174,6 +175,7 @@ jobs:
         working-directory: infra
         shell: /bin/bash {0}
         run: |
+          set -euxo pipefail
           missing="$(grep -vxFf CLOUD_SECRETS LOCAL_SECRETS)"
           if [[ "$missing" != "" ]]; then
             echo "Required secrets not available in environment ${{ matrix.env }}:"

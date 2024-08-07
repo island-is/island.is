@@ -58,12 +58,14 @@ jobs:
       - name: Get git branch
         id: git-branch
         run: |
+          set -euxo pipefail
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
           echo GIT_BRANCH="${GIT_BRANCH}" >> "$GITHUB_OUTPUT"
           echo GIT_BRANCH="$GIT_BRANCH" >> "$GITHUB_ENV"
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
+          set -euxo pipefail
           export GIT_BRANCH_DEPLOY="$GIT_BRANCH"
           if [[ "$GITHUB_EVENT_NAME" == "pull_request" ]]; then
             if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
@@ -178,12 +180,14 @@ jobs:
 
       - name: Check node version
         run: |
+          set -euxo pipefail
           node -v
           ls -l `which node`
 
       - name: Git refs
         id: git_refs
         run: |
+          set -euxo pipefail
           if [[ -n "$GITHUB_BASE_REF" ]]
           then
            # a PR
@@ -211,6 +215,7 @@ jobs:
       - name: Checking out relevant branches for a PR
         if: needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy' && !(needs.pre-checks.outputs.PRE_RELEASE == 'true')
         run: |
+          set -euxo pipefail
           git checkout "$GITHUB_HEAD_REF"
           git checkout "$GITHUB_BASE_REF"
           git checkout "$GITHUB_SHA"
@@ -225,6 +230,7 @@ jobs:
       - name: Checking out relevant branches for a branch build
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
+          set -euxo pipefail
           git checkout main
           git checkout "$GITHUB_SHA"
 
@@ -243,6 +249,7 @@ jobs:
         id: nodejs_image
         continue-on-error: false
         run: |
+          set -euxo pipefail
           export NODE_IMAGE_TAG="$(./scripts/ci/get-node-version.mjs)"
           echo "NODE_IMAGE_TAG: '${NODE_IMAGE_TAG}'"
           echo NODE_IMAGE_TAG="${NODE_IMAGE_TAG}" >> "$GITHUB_OUTPUT"
@@ -251,6 +258,7 @@ jobs:
       - name: Generate docker image tag
         id: docker_tags
         run: |
+          set -euxo pipefail
           export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
@@ -310,6 +318,7 @@ jobs:
           HTML_URL: ${{ github.event.pull_request.html_url }}
           ISSUE_REPORTING_SLACK_WEBHOOK_URL: ${{ secrets.SLACK_BUILD_ISSUES_REPORTING_WEBHOOK_URL }}
         run: |
+          set -euxo pipefail
           if [[ "${{needs.pre-checks.outputs.PRE_CHECK}}" == 'feature-deploy' && "${{needs.pre-checks.outputs.PRE_RELEASE}}" == 'false' ]]; then
             export HEAD_REF="$GITHUB_HEAD_REF"
             export BASE_REF="$GITHUB_BASE_REF"
@@ -374,6 +383,7 @@ jobs:
       - name: Prepare test targets
         id: test_projects
         run: |
+          set -euxo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh test)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo CHUNKS="{\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
@@ -384,6 +394,7 @@ jobs:
       - name: Prepare docker build targets
         id: build_map
         run: |
+          set -euxo pipefail
           CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
@@ -393,6 +404,7 @@ jobs:
       - name: Gather unaffected docker images
         id: unaffected
         run: |
+          set -euxo pipefail
           UNAFFECTED="$(./scripts/ci/list-unaffected.sh docker-next docker-express docker-static docker-playwright docker-jest)"
           echo UNAFFECTED="$UNAFFECTED" >> "$GITHUB_OUTPUT"
 
@@ -405,6 +417,7 @@ jobs:
         id: deploy_map
         if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
+          set -euxo pipefail
           export BASE="$(git merge-base HEAD "$GITHUB_BASE_REF")"
           CHUNKS="$(./scripts/ci/generate-build-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
           echo "CHUNKS: '$CHUNKS'"
@@ -477,6 +490,7 @@ jobs:
       - name: Gather apps
         id: gather
         run: |
+          set -euxo pipefail
           AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
@@ -697,6 +711,7 @@ jobs:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           GH_PRIVATE_REPO_TOKEN: ${{secrets.GH_PRIVATE_REPO_TOKEN}}
         run: |
+          set -euxo pipefail
           if read -d "\n" IDENTITY_SERVER_HEAD_SHA IDENTITY_SERVER_RUN_NUMBER; then :; fi <<<$(curl -H "Authorization: token $GH_PRIVATE_REPO_TOKEN" -H "Accept: application/vnd.github.v3+json" https://api.github.com/repos/island-is/identity-server.web/actions/workflows/build.yml/runs\?branch\=main\&status\=success\&per_page\=1\&event\=push | jq '.workflow_runs[] | .head_sha, .run_number' | tr -d \")
           export IDENTITY_SERVER_DOCKER_TAG="main_${IDENTITY_SERVER_HEAD_SHA:0:10}_${IDENTITY_SERVER_RUN_NUMBER}"
           echo "Deploying with identity-server docker tag: '$IDENTITY_SERVER_DOCKER_TAG'"
