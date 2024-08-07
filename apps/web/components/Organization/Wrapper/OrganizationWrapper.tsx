@@ -271,12 +271,13 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'digital_iceland':
-      return (
-        <DigitalIcelandHeader
-          organizationPage={organizationPage}
-          logoAltText={logoAltText}
-        />
-      )
+      return <DefaultHeader {...defaultProps} />
+    // return (
+    //   <DigitalIcelandHeader
+    //     organizationPage={organizationPage}
+    //     logoAltText={logoAltText}
+    //   />
+    // )
     case 'hsn':
       return (
         <HeilbrigdisstofnunNordurlandsHeader
