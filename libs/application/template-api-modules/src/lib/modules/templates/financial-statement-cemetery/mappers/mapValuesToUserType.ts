@@ -4,6 +4,7 @@ import { FormValue } from '@island.is/application/types'
 import {
   Contact,
   ContactType,
+  ClientRoles,
   DigitalSignee,
 } from '@island.is/clients/financial-statements-inao'
 
@@ -109,7 +110,7 @@ export const mapContactsAnswersToContacts = (
         nationalId: x.nationalId,
         name: x.name,
         contactType:
-          x.role === 'Stjórnarmaður'
+          x.role === ClientRoles.BoardMember
             ? ContactType.BoardMember
             : ContactType.Inspector,
       }

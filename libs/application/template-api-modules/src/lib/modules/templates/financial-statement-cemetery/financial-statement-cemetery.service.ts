@@ -6,6 +6,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   CemeteryFinancialStatementValues,
   FinancialStatementsInaoClientService,
+  ClientRoles,
   Contact,
   ContactType,
   DigitalSignee,
@@ -82,14 +83,16 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
       const fileContent = file.Body as Buffer
       return fileContent.toString('base64') || ''
     } catch (error) {
-      throw new Error('Villa kom upp við að senda umsókn')
+      throw new Error('Error occurred while fetching attachment')
     }
   }
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
     const { nationalId } = auth
     if (kennitala.isPerson(nationalId)) {
-      return this.financialStatementClientService.getClientType('Einstaklingur')
+      return this.financialStatementClientService.getClientType(
+        ClientRoles.Individual,
+      )
     } else {
       return this.financialStatementClientService.getUserClientType(nationalId)
     }

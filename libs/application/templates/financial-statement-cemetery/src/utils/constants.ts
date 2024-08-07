@@ -21,6 +21,12 @@ export const APPLICANTASMEMBER = 'applicantasmember'
 export const ACTORASCARETAKER = 'actorascaretaker'
 export const ACTORLONEBOARDMEMBER = 'actorloneboardmember'
 
+export enum TaxInfoTypes {
+  CARE_INCOME = 300,
+  BURIAL_REVENUE = 301,
+  GRANT_FROM_THE_CEMETERY_FUND = 302,
+}
+
 export const CEMETERYOPERATIONIDS = {
   prefixIncome: 'cemeteryIncome',
   prefixExpense: 'cemeteryExpense',

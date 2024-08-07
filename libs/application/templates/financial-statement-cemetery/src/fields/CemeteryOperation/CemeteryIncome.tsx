@@ -11,6 +11,7 @@ import { FinancialStatementsInaoTaxInfo } from '@island.is/api/schema'
 import {
   CEMETERYOPERATIONIDS,
   INPUTCHANGEINTERVAL,
+  TaxInfoTypes,
 } from '../../utils/constants'
 
 type Props = {
@@ -44,7 +45,7 @@ export const CemetryIncome = ({ data, loading, errors, getSum }: Props) => {
         setValue(
           CEMETERYOPERATIONIDS.careIncome,
           data.financialStatementsInaoTaxInfo
-            ?.find((x) => x.key === 300)
+            ?.find((x) => x.key === TaxInfoTypes.CARE_INCOME)
             ?.value?.toString() ?? '',
         )
       }
@@ -52,7 +53,7 @@ export const CemetryIncome = ({ data, loading, errors, getSum }: Props) => {
         setValue(
           CEMETERYOPERATIONIDS.burialRevenue,
           data.financialStatementsInaoTaxInfo
-            ?.find((x) => x.key === 301)
+            ?.find((x) => x.key === TaxInfoTypes.BURIAL_REVENUE)
             ?.value?.toString() ?? '',
         )
       }
@@ -60,7 +61,7 @@ export const CemetryIncome = ({ data, loading, errors, getSum }: Props) => {
         setValue(
           CEMETERYOPERATIONIDS.grantFromTheCemeteryFund,
           data.financialStatementsInaoTaxInfo
-            ?.find((x) => x.key === 302)
+            ?.find((x) => x.key === TaxInfoTypes.GRANT_FROM_THE_CEMETERY_FUND)
             ?.value?.toString() ?? '',
         )
       }
