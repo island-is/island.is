@@ -53,7 +53,7 @@ export const endorsementSystemCleanUpWorkerSetup = (): ServiceBuilder<
 > =>
   service(serviceCleanupWorkerName)
     .image('services-endorsements-api')
-    .namespace(serviceName)
+    .namespace('endorsement-system')
     .serviceAccount(serviceCleanupWorkerName)
     .command('node')
     .args('--no-experimental-fetch', 'main.js', '--job=cleanup')
