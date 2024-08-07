@@ -36,6 +36,8 @@ import {
   userNotificationCleanUpWorkerSetup,
   userNotificationWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
+import {endorsementSystemCleanUpWorkerSetup} from '../../../apps/services/endorsements/api/infra/endorsement-system-api'
+
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
 import { serviceSetup as adsWebSetup } from '../../../apps/air-discount-scheme/web/infra/web'
@@ -134,6 +136,9 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
+const endorsementSystemCleanUpWorkerService =
+  endorsementSystemCleanUpWorkerSetup()
+
 const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
@@ -165,6 +170,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    endorsementSystemCleanUpWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -200,6 +206,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    endorsementSystemCleanUpWorkerService,
     licenseApi,
     sessionsService,
     sessionsWorker,
@@ -233,6 +240,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    endorsementSystemCleanUpWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -254,6 +262,7 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
+  endorsementSystemCleanUpWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
