@@ -147,7 +147,7 @@ export function Button({
           <Icon
             source={icon}
             resizeMode="center"
-            {...iconStyle}
+            style={iconStyle}
             noMargin={!title}
           />
         )}
