@@ -129,6 +129,11 @@ import { RequestInspectionTemplateModule } from './aosh/request-inspection/reque
 import { RequestInspectionTemplateService } from './aosh/request-inspection/request-inspection.service'
 import { HealthInsuranceDeclarationModule } from './health-insurance-declaration/health-insurance-declaration.module'
 import { HealthInsuranceDeclarationService } from './health-insurance-declaration/health-insurance-declaration.service'
+import { NewPrimarySchoolModule } from './new-primary-school/new-primary-school.module'
+import { NewPrimarySchoolService } from './new-primary-school/new-primary-school.service'
+
+import { IdCardModule } from './id-card/id-card.module'
+import { IdCardService } from './id-card/id-card.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -196,7 +201,9 @@ export const modules = [
   RequestInspectionTemplateModule,
   OfficialJournalOfIcelandTemplateModule,
   StreetRegistrationTemplateModule,
+  IdCardModule,
   HealthInsuranceDeclarationModule,
+  NewPrimarySchoolModule,
 ]
 
 export const services = [
@@ -265,5 +272,7 @@ export const services = [
   RequestInspectionTemplateService,
   OfficialJournalOfIcelandTemaplateService,
   StreetRegistrationTemplateService,
+  IdCardService,
   HealthInsuranceDeclarationService,
+  NewPrimarySchoolService,
 ]

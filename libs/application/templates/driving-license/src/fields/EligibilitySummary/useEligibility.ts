@@ -5,8 +5,10 @@ import { useQuery, gql } from '@apollo/client'
 import {
   B_FULL,
   BE,
+  codesRequiringHealthCertificate,
   DrivingLicenseApplicationFor,
   DrivingLicenseFakeData,
+  otherLicenseCategories,
   YES,
 } from '../../lib/constants'
 import { fakeEligibility } from './fakeEligibility'
@@ -69,26 +71,21 @@ export const useEligibility = (
     'currentLicense.data',
   )
   const hasQualityPhoto =
-    getValueViaPath<boolean>(application.externalData, 'qualityPhoto.data') ??
-    false
-  const hasOtherLicenseCategories = (
+    getValueViaPath<boolean>(
+      application.externalData,
+      'qualityPhoto.data.hasQualityPhoto',
+    ) ?? false
+
+  const hasOtherCategoryOrHealthRemarks = (
     currentLicense: DrivingLicense | undefined,
   ) => {
     return (
-      (currentLicense?.categories.some(
-        (license) =>
-          license.nr === 'C' ||
-          license.nr === 'C1' ||
-          license.nr === 'CE' ||
-          license.nr === 'D' ||
-          license.nr === 'D1' ||
-          license.nr === 'DE',
+      (currentLicense?.categories.some((license) =>
+        otherLicenseCategories.includes(license.nr),
       ) ??
         false) ||
-      currentLicense?.remarks?.some((x) =>
-        x.includes(
-          'Réttindi til farþegaflutninga í atvinnuskyni fyrir B-flokk.',
-        ),
+      currentLicense?.remarks?.some((remark) =>
+        codesRequiringHealthCertificate.includes(remark.code),
       )
     )
   }
@@ -130,13 +127,13 @@ export const useEligibility = (
           : (data.drivingLicenseApplicationEligibility?.isEligible ?? false) &&
             !hasGlasses &&
             hasQualityPhoto &&
-            !hasOtherLicenseCategories(currentLicense),
+            !hasOtherCategoryOrHealthRemarks(currentLicense),
         requirements: [
           ...eligibility,
           {
             key: RequirementKey.BeRequiresHealthCertificate,
             requirementMet:
-              !hasGlasses && !hasOtherLicenseCategories(currentLicense),
+              !hasGlasses && !hasOtherCategoryOrHealthRemarks(currentLicense),
           },
           {
             key: RequirementKey.HasNoPhoto,

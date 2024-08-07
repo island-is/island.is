@@ -14,6 +14,7 @@ import {
   calculateTaxOfAmount,
   ChildrenAid,
   FamilyStatus,
+  getMonth,
   HomeCircumstances,
   Municipality,
   showSpouseData,
@@ -31,6 +32,8 @@ interface Props {
   familyStatus: FamilyStatus
   applicationMunicipality: Municipality
   hasApplicantChildren: boolean
+  decemberCompensation: number
+  appliedMonth: number
 }
 
 interface calculationsState {
@@ -44,6 +47,7 @@ interface calculationsState {
   hasSubmitError: boolean
   deductionFactor: Array<{ description: string; amount: number }>
   comment: string
+  decemberAidAmount?: number
 }
 
 const AcceptModal = ({
@@ -54,10 +58,13 @@ const AcceptModal = ({
   familyStatus,
   applicationMunicipality,
   hasApplicantChildren,
+  decemberCompensation,
+  appliedMonth,
 }: Props) => {
   const router = useRouter()
   const maximumInputLength = 6
 
+  const hasDecemberAid = getMonth(appliedMonth, 'en') === 'November'
   const hasChildrenAid =
     applicationMunicipality.childrenAid === ChildrenAid.APPLICANT &&
     hasApplicantChildren
@@ -85,6 +92,18 @@ const AcceptModal = ({
     )
   }
 
+  const calculateDecemberAid = (
+    hasDecemberAid: boolean,
+    aidAmount: number,
+    decemberCompensation: number,
+  ) => {
+    if (hasDecemberAid) {
+      const aidPercentage = aidAmount / 100
+      return aidPercentage * decemberCompensation
+    }
+    return 0
+  }
+
   const [state, setState] = useState<calculationsState>({
     amount: aidAmount,
     childrenAidAmount: undefined,
@@ -96,6 +115,11 @@ const AcceptModal = ({
     hasError: false,
     hasSubmitError: false,
     comment: '',
+    decemberAidAmount: calculateDecemberAid(
+      hasDecemberAid,
+      aidAmount,
+      decemberCompensation,
+    ),
   })
 
   const sumValues = state.deductionFactor.reduce(
@@ -105,7 +129,11 @@ const AcceptModal = ({
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
-  const amount = (state.amount || 0) - checkingValue(state.income) - sumValues
+  const amount =
+    (state.amount || 0) -
+    checkingValue(state.income) -
+    sumValues +
+    (state.decemberAidAmount || 0)
 
   const taxAmountWithPersonalTax = calculateFinalTaxAmount(
     amount,
@@ -145,6 +173,7 @@ const AcceptModal = ({
         tax: taxAmount,
         finalAmount: finalAmount,
         deductionFactors: state.deductionFactor,
+        decemberAidAmount: state.decemberAidAmount,
       },
       state.comment,
     )
@@ -174,11 +203,28 @@ const AcceptModal = ({
         />
       </Box>
 
+      {hasDecemberAid && (
+        <Box marginBottom={3}>
+          <NumberInput
+            label="Desember uppbót"
+            placeholder="Sláðu inn upphæð desember uppbótar"
+            id="decemberAidAmountInput"
+            name="decemberAidAmountInput"
+            value={
+              state?.decemberAidAmount
+                ? state?.decemberAidAmount.toString()
+                : ''
+            }
+            onUpdate={(input) => {
+              setState({ ...state, decemberAidAmount: input, hasError: false })
+            }}
+            maximumInputLength={maximumInputLength}
+          />
+        </Box>
+      )}
+
       {hasChildrenAid && (
         <Box marginBottom={3}>
-          <Text variant="small" fontWeight="semiBold" marginBottom={1}>
-            ATH. ekki er tekinn skattur af styrk barna
-          </Text>
           <NumberInput
             label="Styrkur vegna barna"
             placeholder="Sláðu inn upphæð"
@@ -199,6 +245,9 @@ const AcceptModal = ({
             maximumInputLength={maximumInputLength}
             hasError={state.hasError && state.childrenAidAmount === undefined}
           />
+          <Text variant="small" fontWeight="semiBold" marginBottom={1}>
+            ATH. ekki er tekinn skattur af styrk barna
+          </Text>
         </Box>
       )}
 

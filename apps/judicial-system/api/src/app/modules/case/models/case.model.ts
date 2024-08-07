@@ -18,6 +18,7 @@ import {
   CaseState,
   CaseType,
   CourtDocument,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
@@ -26,11 +27,11 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { CaseFile } from '../../file'
 import { IndictmentCount } from '../../indictment-count'
 import { Institution } from '../../institution'
 import { User } from '../../user'
-import { EventLog } from './eventLog.model'
 import { Notification } from './notification.model'
 
 registerEnumType(CaseOrigin, { name: 'CaseOrigin' })
@@ -53,6 +54,7 @@ registerEnumType(IndictmentCaseReviewDecision, {
   name: 'IndictmentCaseReviewDecision',
 })
 registerEnumType(IndictmentDecision, { name: 'IndictmentDecision' })
+registerEnumType(CourtSessionType, { name: 'CourtSessionType' })
 
 @ObjectType()
 class DateLog {
@@ -439,4 +441,16 @@ export class Case {
 
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
+
+  @Field(() => CourtSessionType, { nullable: true })
+  readonly courtSessionType?: CourtSessionType
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentCompletedDate?: string
+
+  @Field(() => Case, { nullable: true })
+  readonly mergeCase?: Case
+
+  @Field(() => [Case], { nullable: true })
+  readonly mergedCases?: Case[]
 }

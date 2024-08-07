@@ -16,33 +16,6 @@ export const cases = {
     },
   }),
   activeRequests: {
-    table: {
-      headers: defineMessages({
-        type: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.type',
-          defaultMessage: 'Tegund',
-          description:
-            'Notaður sem titill fyrir tegund dálk í lista yfir mál í vinnslu.',
-        },
-        date: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.date',
-          defaultMessage: 'Stofnað/Fyrirtaka',
-          description:
-            'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreidd mál í vinnslu.',
-        },
-        created: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.created',
-          defaultMessage: 'Stofnað',
-          description:
-            'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
-        },
-        prosecutor: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.prosecutor',
-          defaultMessage: 'Sækjandi',
-          description: 'Notaður sem titill fyrir sækjanda í málalista.',
-        },
-      }),
-    },
     title: defineMessage({
       id: 'judicial.system.core:cases.active_requests.title',
       defaultMessage: 'Mál í vinnslu',
@@ -83,6 +56,12 @@ export const cases = {
         defaultMessage: 'Engar samþykktar kröfur fundust.',
         description:
           'Notaður sem texti í upplýsingasvæði sem segir að engin mál fundust á heimaskjá fangelsisstarfsmanna.',
+      },
+      prisonAdminIndictmentCaseTitle: {
+        id: 'judicial.system.core:cases.active_requests.prison_staff_users.prison_admin_indictment_case_title',
+        defaultMessage: 'Mál til fullnustu',
+        description:
+          'Notaður sem titill á málalista yfir mál til fullnustu hjá FMST.',
       },
     }),
     deleteCaseModal: defineMessages({

@@ -1,6 +1,7 @@
 import {
   CurrentActor,
   IdsUserGuard,
+  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import {
@@ -23,6 +24,7 @@ import {
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
+import { AuthScope } from '@island.is/auth/scopes'
 
 import {
   RegistrationOptions,
@@ -30,16 +32,13 @@ import {
 } from './dto/registrationOptions.dto'
 
 import { RegistrationResponse } from './dto/registrationResponse.dto'
-import {
-  AuthenticationOptions,
-  AuthenticationResult,
-} from './dto/authenticationOptions.dto'
-import { AuthenticationResponse } from './dto/authenticationResponse.dto'
+import { AuthenticationOptions } from './dto/authenticationOptions.dto'
 
 const namespace = '@island.is/auth/public-api/passkeys'
 
 @ApiTags('passkeys')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@Scopes(AuthScope.passkeys)
 @Controller({
   path: 'passkeys',
   version: ['1', VERSION_NEUTRAL],
@@ -117,22 +116,5 @@ export class PasskeysController {
       await this.passkeysCoreService.generateAuthenticationOptions(actor)
 
     return response as AuthenticationOptions
-  }
-
-  // TODO remove before merging into main
-  // should only be possible to verify authentication through auth-ids-api
-  @Post('authenticate')
-  @Documentation({
-    summary:
-      'Validates passkey authentication based on input from authenticated user.',
-    description: 'Verifies authenticated user passkey authentication response.',
-    response: { status: 200, type: AuthenticationResult },
-  })
-  @ApiCreatedResponse({ type: AuthenticationResult })
-  @FeatureFlag(Features.isPasskeyAuthEnabled)
-  async verifyAuthentication(
-    @Body() body: AuthenticationResponse,
-  ): Promise<AuthenticationResult> {
-    return this.passkeysCoreService.verifyAuthenticationString(body.passkey)
   }
 }

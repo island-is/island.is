@@ -156,6 +156,9 @@ export class ApplicationStatistics {
 
   @Field(() => Number)
   approved!: number
+
+  @Field(() => String)
+  name?: string
 }
 
 @ObjectType()

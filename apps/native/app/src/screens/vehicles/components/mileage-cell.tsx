@@ -42,7 +42,7 @@ export function MileageCell({
           backgroundColor: dynamicColor({
             light: editable ? '#FFFCE0' : dynamicColor.theme.color.blueberry100,
             dark: editable
-              ? '#FFFCE0'
+              ? dynamicColor.theme.shades.dark.shade400
               : dynamicColor.theme.shades.dark.shade100,
           }),
           gap: 4,

@@ -3,15 +3,11 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/criminal-record/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/criminal-record/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -19,8 +15,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/criminal-record"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/criminal-record/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/criminal-record/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -29,6 +24,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/criminal-record/src/**/*.{js,ts,tsx}'"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

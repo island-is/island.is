@@ -16,13 +16,12 @@ import {
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   Application,
   useListApplicationsQuery,
+  useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
@@ -31,6 +30,8 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
 import { OnboardingModule } from './onboarding-module'
+import { HelloModule } from './hello-module'
+import { InboxModule } from './inbox-module'
 
 interface ListItem {
   id: string
@@ -46,11 +47,6 @@ const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
-        title: {
-          text: initialized
-            ? intl.formatMessage({ id: 'home.screenTitle' })
-            : '',
-        },
         rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
@@ -75,9 +71,6 @@ const { useNavigationOptions, getNavigationOptions } =
     {
       topBar: {
         rightButtons: [],
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -105,11 +98,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
 
-  useActiveTabItemPress(2, () => {
-    flatListRef.current?.scrollToOffset({ offset: -150, animated: true })
-  })
-
   const applicationsRes = useListApplicationsQuery()
+  const inboxRes = useListDocumentsQuery({
+    variables: { input: { page: 1, pageSize: 3 } },
+  })
 
   useConnectivityIndicator({
     componentId,
@@ -117,12 +109,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     queryResult: applicationsRes,
     refetching,
   })
-
-  // Get feature flag for mileage
-  const isMileageEnabled = useFeatureFlag(
-    'isServicePortalVehicleMileagePageEnabled',
-    false,
-  )
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<ListItem>) => item.component,
@@ -155,8 +141,21 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   const data = [
     {
+      id: 'hello',
+      component: <HelloModule />,
+    },
+    {
       id: 'onboarding',
       component: <OnboardingModule />,
+    },
+    {
+      id: 'inbox',
+      component: (
+        <InboxModule
+          documents={inboxRes.data?.documentsV2?.data ?? []}
+          loading={inboxRes.loading}
+        />
+      ),
     },
     {
       id: 'applications',

@@ -91,6 +91,7 @@ export interface Amount {
   tax: number
   finalAmount: number
   deductionFactors?: DeductionFactors[]
+  decemberAidAmount?: number
 }
 
 export interface DeductionFactors {

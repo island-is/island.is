@@ -85,7 +85,7 @@ const Lookup = () => {
 
   const noInfo =
     vehicleSearch?.data?.vehiclesSearch === null ||
-    typeof vehicleSearch?.data?.vehiclesSearch === undefined
+    typeof vehicleSearch?.data?.vehiclesSearch === 'undefined'
 
   const noSearchData =
     searchLimitData?.data?.vehiclesSearchLimit === undefined ||

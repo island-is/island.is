@@ -99,6 +99,10 @@ const TeamListSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.TeamListSlice),
 )
 
+const ChartNumberBox = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.ChartNumberBox),
+)
+
 interface SliceMachineProps {
   slice: Slice
   namespace?: Record<string, string>
@@ -206,6 +210,8 @@ const renderSlice = (
           variant={(slice as TeamList).variant as 'card' | 'accordion'}
         />
       )
+    case 'ChartNumberBox':
+      return <ChartNumberBox slice={slice} />
     default:
       return <RichText body={[slice]} />
   }
