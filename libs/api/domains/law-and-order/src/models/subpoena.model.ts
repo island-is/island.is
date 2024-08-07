@@ -1,3 +1,4 @@
+import { DefenderInfoDefenderChoiceEnum } from '@island.is/clients/judicial-system-sp'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('LawAndOrderSubpoenaTexts')
@@ -74,8 +75,8 @@ export class Data {
   @Field({ nullable: true })
   chosenDefender?: string
 
-  @Field({ nullable: true })
-  defenderChoice?: string
+  @Field(() => DefenderInfoDefenderChoiceEnum, { nullable: true })
+  defenderChoice?: DefenderInfoDefenderChoiceEnum
 
   @Field(() => [Groups], { nullable: true })
   groups?: Array<Groups>

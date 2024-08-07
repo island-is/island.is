@@ -1,5 +1,6 @@
 import { Field, ID, InputType } from '@nestjs/graphql'
 import { IsOptional, IsString } from 'class-validator'
+import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
 
 @InputType('LawAndOrderDefenseChoiceInput')
 export class PostDefenseChoiceInput {
@@ -8,8 +9,7 @@ export class PostDefenseChoiceInput {
   caseId!: string
 
   @Field()
-  @IsString()
-  choice!: string
+  choice!: DefenseChoiceEnum
 
   @Field({ nullable: true })
   @IsOptional()
