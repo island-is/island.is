@@ -4,7 +4,7 @@
 
 In order to ensure the most effortless and error-free way to connect our code to the execution environment we created a Domain-Specific Language(DSL) to support an expressive way for developers to define the services' expected configuration. The DSL is written intentionally such that it enforces conventions and principles we have.
 
-Additionally, we have started experimenting with using the DSL to generate _bash_ commands for running locally services. The DSL is abstract enough that is not tied to any one specific execution environment and leaves our options open to generating pretty much any deployment environments we might want to explore in the future - docker-compose, raw k8s manifests, etc.
+Additionally, we have started experimenting with using the DSL to generate _bash_ commands for running locally services. The DSL is abstract enough that is not tied to any one specific execution environment and leaves our options open to generating pretty much any deployment environments we might want to explore in the future - docker compose, raw k8s manifests, etc.
 
 ## A few key abstractions
 
