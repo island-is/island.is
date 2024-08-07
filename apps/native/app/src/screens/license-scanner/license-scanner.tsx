@@ -147,7 +147,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   )
 
   const onCodeScanned: CodeScanner['onCodeScanned'] = (codes) => {
-    const { type, value } = codes?.[0]
+    const { type, value } = codes[0]
 
     if (!type || !value || scanningRef.current !== ScanningStatus.INITIAL) {
       return
