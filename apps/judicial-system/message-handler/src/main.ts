@@ -7,7 +7,7 @@ import { LoggingModule } from '@island.is/logging'
 
 import { AppModule, appModuleConfig, MessageHandlerService } from './app'
 
-async function bootstrap() {
+const bootstrap = async () => {
   const port = process.env.PORT || 3366
 
   const app = await NestFactory.create(AppModule, {

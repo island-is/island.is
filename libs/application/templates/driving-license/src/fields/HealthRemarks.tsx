@@ -5,14 +5,14 @@ import { FieldBaseProps } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
-import { YES, NO } from '../lib/constants'
-import { DrivingLicense } from '../lib/types'
+import { YES, NO, codesRequiringHealthCertificate } from '../lib/constants'
+import { DrivingLicense, Remark } from '../lib/types'
 
 const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   application,
 }) => {
   const { formatMessage } = useLocale()
-  const remarks: string[] =
+  const remarks: Remark[] =
     getValueViaPath<DrivingLicense>(
       application.externalData,
       'currentLicense.data',
@@ -21,7 +21,12 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { setValue } = useFormContext()
 
   useEffect(() => {
-    setValue('hasHealthRemarks', remarks?.length > 0 ? YES : NO)
+    setValue(
+      'hasHealthRemarks',
+      remarks.some((r) => codesRequiringHealthCertificate.includes(r.code))
+        ? YES
+        : NO,
+    )
   }, [remarks, setValue])
 
   return (
@@ -32,7 +37,7 @@ const HealthRemarks: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         message={
           formatText(m.healthRemarksDescription, application, formatMessage) +
             ' ' +
-            remarks?.join(', ') || ''
+            remarks?.map((r) => r.description).join(', ') || ''
         }
       />
     </Box>

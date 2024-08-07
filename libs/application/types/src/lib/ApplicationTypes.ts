@@ -52,6 +52,7 @@ export enum ApplicationTypes {
   CAR_RECYCLING = 'CarRecycling',
   PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
   PRESIDENTIAL_LIST_SIGNING = 'PresidentialListSigning',
+  PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -285,6 +286,10 @@ export const ApplicationConfigurations = {
     slug: 'maela-med-frambodi',
     translation: 'sls.application',
   },
+  [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: {
+    slug: 'althingis-medmaelasofnun',
+    translation: 'plc.application',
+  },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
     translation: ['doi.cs.application', 'uiForms.application'],
@@ -355,7 +360,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',
-    translation: 'sr.application',
+    translation: 'aosh.sr.application',
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',

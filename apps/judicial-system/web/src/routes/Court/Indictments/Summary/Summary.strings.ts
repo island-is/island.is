@@ -39,9 +39,9 @@ export const strings = defineMessages({
     description: 'Notaður sem texti í staðfestingarglugga um að mál sé lokið.',
   },
   indictmentRulingDecisionTagText: {
-    id: 'judicial.system.core:indictments.summary.indictment_ruling_decision_tag_text',
+    id: 'judicial.system.core:indictments.summary.indictment_ruling_decision_tag_text_v2',
     defaultMessage:
-      '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} other {Lokið}}',
+      '{indictmentRulingDecision, select, RULING {Dómur} FINE {Viðurlagaákvörðun} DISMISSAL {Frávísun} CANCELLATION {Niðurfelling} MERGE {Sameinað} other {Lokið}}',
     description: 'Notaður sem texti í TagCaseState til að birta úrskurð ákæru.',
   },
 })
