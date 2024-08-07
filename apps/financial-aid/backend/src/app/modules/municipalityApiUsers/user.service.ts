@@ -1,4 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import CryptoJS from 'crypto-js'
 import { ApiUserModel } from './models/user.model'
@@ -25,9 +30,18 @@ export class ApiUserService {
       },
     })
 
-    return keysWithMunicipalityCode.find(
+    if (keysWithMunicipalityCode.length === 0) {
+      throw new BadRequestException('Municipality-Code is invalid')
+    }
+
+    const findKeysWithMunicipalityCode = keysWithMunicipalityCode.find(
       (m) => this.decryptApiKey(m).apiKey === apiKey,
     )
+
+    if (!findKeysWithMunicipalityCode) {
+      throw new UnauthorizedException('API-Key is invalid')
+    }
+    return findKeysWithMunicipalityCode
   }
 
   async findByMunicipalityCode(

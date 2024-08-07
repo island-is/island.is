@@ -49,6 +49,7 @@ export const ComponentRegistry = {
 
   // overlays
   OfflineBanner: `${prefix}.overlay.OfflineBanner`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
 }
 
 export const ButtonRegistry = {

@@ -20,7 +20,10 @@ import { createCurrentUser } from '@island.is/testing/fixtures'
 import { getRequestMethod, setupApp, TestApp } from '@island.is/testing/nest'
 
 import { AppModule } from '../../../app.module'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 
 const tenantId = '@test.is'
 const clientId = '@test.is/test-client'
@@ -363,14 +366,13 @@ describe('MeClientsController with auth', () => {
   it.each`
     value | typeSpecificDefaults
     ${'super admin fields'} | ${{
-  promptDelegations: true,
-  requireApiScopes: true,
   requireConsent: false,
   singleSession: false,
   allowOfflineAccess: true,
   requirePkce: false,
   supportTokenExchange: true,
   accessTokenLifetime: 100,
+  allowedAcr: ['some-acr-value'],
   customClaims: [{ type: 'claim1', value: 'value1' }],
 }}
   `(

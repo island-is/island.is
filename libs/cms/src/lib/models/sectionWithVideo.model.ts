@@ -3,7 +3,7 @@ import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
 import { Html, mapHtml } from './html.model'
 import { ISectionWithVideo } from '../generated/contentfulTypes'
-import { SystemMetadata } from 'api-cms-domain'
+import { SystemMetadata } from '@island.is/shared/types'
 import { Link, mapLink } from './link.model'
 
 @ObjectType()

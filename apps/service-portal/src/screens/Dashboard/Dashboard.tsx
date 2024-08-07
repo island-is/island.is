@@ -16,6 +16,7 @@ import { useLocale } from '@island.is/localization'
 import {
   DocumentsPaths,
   DocumentLine,
+  useDocumentList,
 } from '@island.is/service-portal/documents'
 import {
   LinkResolver,
@@ -30,10 +31,7 @@ import { iconIdMapper, iconTypeToSVG } from '../../utils/Icons/idMapper'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 import { MAIN_NAVIGATION } from '../../lib/masterNavigation'
-import {
-  useListDocuments,
-  useOrganizations,
-} from '@island.is/service-portal/graphql'
+import { useOrganizations } from '@island.is/service-portal/graphql'
 import * as styles from './Dashboard.css'
 import cn from 'classnames'
 import { getOrganizationLogoUrl } from '@island.is/shared/utils'
@@ -42,8 +40,8 @@ import { Helmet } from 'react-helmet-async'
 
 export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
   const { userInfo } = useAuth()
-  const { unreadCounter, data, loading } = useListDocuments({
-    pageSize: 8,
+  const { filteredDocuments, data, loading } = useDocumentList({
+    defaultPageSize: 8,
   })
   const { data: organizations } = useOrganizations()
   const { formatMessage } = useLocale()
@@ -62,6 +60,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
+  const unreadCounter = data?.documentsV2?.unreadCount ?? 0
   const badgeActive: keyof typeof styles.badge =
     unreadCounter > 0 ? 'active' : 'inactive'
 
@@ -82,8 +81,8 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
             navRoot.path && (
               <GridColumn
                 key={formatMessage(navRoot.name) + '-' + index}
-                span={['12/12', '6/12', '6/12', '6/12', '6/12']}
-                paddingBottom={[1, 2, 3, 3]}
+                span={['12/12', '6/12']}
+                paddingBottom={[1, 2, 3]}
                 hiddenAbove={
                   navRoot.path === DocumentsPaths.ElectronicDocumentsRoot
                     ? 'md'
@@ -121,6 +120,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                         component={Link}
                         to={navRoot.path}
                         headingVariant="h4"
+                        headingAs="h2"
                         icon={
                           isMobile && navRoot.icon ? (
                             <Icon
@@ -200,7 +200,7 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                         )
                       )}
                     </Box>
-                    <Text as="h3" variant="h4" color="blue400" truncate>
+                    <Text as="h2" variant="h4" color="blue400" truncate>
                       {formatMessage(m.documents)}
                     </Text>
 
@@ -220,16 +220,20 @@ export const Dashboard: FC<React.PropsWithChildren<unknown>> = () => {
                       height={65}
                     />
                   </Box>
-                ) : data.documents.length > 0 ? (
-                  data.documents.map((doc, i) => (
+                ) : filteredDocuments.length > 0 ? (
+                  filteredDocuments.map((doc, i) => (
                     <Box key={doc.id}>
                       <DocumentLine
-                        img={getOrganizationLogoUrl(
-                          doc.senderName,
-                          organizations,
-                          60,
-                          'none',
-                        )}
+                        img={
+                          doc?.sender?.name
+                            ? getOrganizationLogoUrl(
+                                doc?.sender?.name,
+                                organizations,
+                                60,
+                                'none',
+                              )
+                            : undefined
+                        }
                         documentLine={doc}
                         active={false}
                         asFrame

@@ -766,7 +766,8 @@ export const m = defineMessages({
   },
   isAccessControlledDescription: {
     id: 'ap.ids-admin:is-access-controlled-description',
-    defaultMessage: 'Only allow specific national ids',
+    defaultMessage:
+      'Authorize a list of national ids for this permission. Request support from island.is to manage the list.',
   },
   grantToAuthenticatedUser: {
     id: 'ap.ids-admin:grant-to-authenticated-user',
@@ -774,7 +775,8 @@ export const m = defineMessages({
   },
   grantToAuthenticatedUserDescription: {
     id: 'ap.ids-admin:grant-to-authenticated-user-description',
-    defaultMessage: 'Should the authenticated user get this scope',
+    defaultMessage:
+      'Should the authenticated individual get this scope (uncheck if only delegated users should be allowed).',
   },
   grantToProcuringHolders: {
     id: 'ap.ids-admin:grant-to-procuring-holders',

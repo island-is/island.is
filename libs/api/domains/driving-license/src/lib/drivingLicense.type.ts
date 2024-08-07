@@ -25,6 +25,13 @@ export interface NewTemporaryDrivingLicenseInput {
   phone: string
 }
 
+export interface NewBEDrivingLicenseInput {
+  jurisdiction: number
+  instructorSSN: string
+  primaryPhoneNumber: string
+  studentEmail: string
+}
+
 export interface NewDrivingLicenseResult {
   success: boolean
   errorMessage: string | null
@@ -38,6 +45,11 @@ export interface NewDrivingAssessmentResult {
 export interface TeachingRightsStatus {
   nationalId: string
   hasTeachingRights: boolean
+}
+
+export interface DrivinglicenseDuplicateValidityStatus {
+  canGetNewDuplicate: boolean
+  meta: string
 }
 
 export interface StudentQueryInput {

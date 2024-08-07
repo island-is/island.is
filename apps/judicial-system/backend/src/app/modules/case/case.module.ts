@@ -27,7 +27,7 @@ import { InternalCaseController } from './internalCase.controller'
 import { InternalCaseService } from './internalCase.service'
 import { LimitedAccessCaseController } from './limitedAccessCase.controller'
 import { LimitedAccessCaseService } from './limitedAccessCase.service'
-import { PDFService } from './pdf.service'
+import { PdfService } from './pdf.service'
 
 @Module({
   imports: [
@@ -54,13 +54,18 @@ import { PDFService } from './pdf.service'
     CaseService,
     InternalCaseService,
     LimitedAccessCaseService,
-    PDFService,
+    PdfService,
   ],
   controllers: [
     CaseController,
     InternalCaseController,
     LimitedAccessCaseController,
   ],
-  exports: [CaseService, LimitedAccessCaseService, InternalCaseService],
+  exports: [
+    CaseService,
+    LimitedAccessCaseService,
+    InternalCaseService,
+    PdfService,
+  ],
 })
 export class CaseModule {}
