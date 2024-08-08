@@ -1,6 +1,6 @@
 export const ApplicantTypes = {
   INDIVIDUAL: 'individual',
-  iNDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL:
+  INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL:
     'individualWithDelegationFromIndividual',
   INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY:
     'individualWithDelegationFromLegalEntity',
