@@ -9,11 +9,11 @@ RUN apk add -U git
 WORKDIR /build
 
 # Adding and installing packages
-ADD package.json yarn.lock .yarnrc.yml ./
-ADD apps/native/app/package.json ./apps/native/app/
-COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN corepack enable
+COPY package.json yarn.lock .yarnrc.yml ./
+COPY apps/native/app/package.json ./apps/native/app/
+COPY .yarn/ ./.yarn
 RUN CI=true yarn install --immutable
 
 FROM deps as src
