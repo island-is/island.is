@@ -3,10 +3,8 @@ import {
   AlertMessage,
   Box,
   Button,
-  Checkbox,
   Column,
   Columns,
-  DatePicker,
   Inline,
   Input,
   InputFileUpload,
@@ -15,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import { useDraftingState } from '../state/useDraftingState'
 import { editorMsgs as msg } from '../lib/messages'
-import { getMinPublishDate } from '../utils'
 
 import { EditorInput } from './EditorInput'
 import { HTMLText, PlainText, URLString } from '@island.is/regulations'
@@ -216,42 +213,6 @@ export const EditSignature = () => {
             </Column>
           </Columns>
 
-          <Box>
-            <Inline space="gutter" alignY="center">
-              {/* idealPublishDate Input */}
-              <DatePicker
-                size="sm"
-                label={t(msg.idealPublishDate)}
-                placeholderText={t(msg.idealPublishDate_default)}
-                minDate={getMinPublishDate(
-                  draft.fastTrack.value,
-                  draft.signatureDate.value,
-                )}
-                selected={draft.idealPublishDate.value}
-                handleChange={(date: Date) =>
-                  updateState('idealPublishDate', date)
-                }
-                hasError={
-                  draft.idealPublishDate.showError &&
-                  !!draft.idealPublishDate.error
-                }
-                errorMessage={
-                  draft.idealPublishDate.error &&
-                  t(draft.idealPublishDate.error)
-                }
-                backgroundColor="blue"
-              />
-              {/* Request fastTrack */}
-              <Checkbox
-                label={t(msg.applyForFastTrack)}
-                labelVariant="default"
-                checked={draft.fastTrack.value}
-                onChange={() => {
-                  updateState('fastTrack', !draft.fastTrack.value)
-                }}
-              />
-            </Inline>
-          </Box>
           <Box marginBottom={3}>
             {/* Clear idealPublishDate */}
             {!!draft.idealPublishDate.value && (

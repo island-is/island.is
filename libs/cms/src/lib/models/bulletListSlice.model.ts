@@ -14,6 +14,9 @@ export class BulletListSlice {
 
   @CacheField(() => [BulletEntryUnion])
   bullets!: Array<typeof BulletEntryUnion>
+
+  @Field(() => Boolean, { nullable: true })
+  dividerOnTop?: boolean
 }
 
 export const mapBulletListSlice = ({
@@ -23,4 +26,5 @@ export const mapBulletListSlice = ({
   typename: 'BulletListSlice',
   id: sys.id,
   bullets: (fields.bullets ?? []).map(mapBulletEntryUnion),
+  dividerOnTop: fields.dividerOnTop ?? true,
 })

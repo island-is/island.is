@@ -58,4 +58,9 @@ export const strings = defineMessages({
     defaultMessage: 'Sameinað máli',
     description: 'Notaður sem titill á "Sameinað" hluta af yfirliti ákæru.',
   },
+  mergedFromTitle: {
+    id: 'judicial.system.core:info_card_indictment.merged_from_title',
+    defaultMessage: 'Sameinað úr',
+    description: 'Notaður sem titill á "Sameinað úr" hluta af yfirliti ákæru.',
+  },
 })

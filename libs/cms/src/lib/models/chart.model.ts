@@ -1,5 +1,4 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import pick from 'lodash/pick'
 
 import { CacheField } from '@island.is/nest/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
@@ -59,6 +58,9 @@ export class Chart {
 
   @Field({ nullable: true })
   reduceAndRoundValue?: boolean
+
+  @Field({ nullable: true })
+  yAxisLabel?: string
 }
 
 export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
@@ -85,5 +87,6 @@ export const mapChart = ({ sys, fields }: IChart): SystemMetadata<Chart> => {
       ? JSON.stringify(fields.customStyleConfig)
       : undefined,
     reduceAndRoundValue: fields.reduceAndRoundValue ?? true,
+    yAxisLabel: fields.yAxisLabel ?? '',
   }
 }
