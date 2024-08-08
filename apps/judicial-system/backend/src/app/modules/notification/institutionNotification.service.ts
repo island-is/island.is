@@ -3,45 +3,86 @@ import {
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
+import { InjectModel } from '@nestjs/sequelize'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import { IntlService } from '@island.is/cms-translations'
+import { EmailService } from '@island.is/email-service'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import { NotificationType } from '@island.is/judicial-system/types'
 
+import { InternalCaseService } from '../case'
+import { EventService } from '../event'
+import { type User, UserService } from '../user'
 import { DeliverResponse } from './models/deliver.response'
+import { Notification } from './models/notification.model'
+import { BaseNotificationService } from './baseNotification.service'
+import { strings } from './institutionNotification.strings'
+import { notificationModuleConfig } from './notification.config'
 
 @Injectable()
-export class InstitutionNotificationService {
+export class InstitutionNotificationService extends BaseNotificationService {
   constructor(
-    private readonly intlService: IntlService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
-
-  // Útbúa sérstakann message module fyrir intlService
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
+    @InjectModel(Notification)
+    notificationModel: typeof Notification,
+    @Inject(notificationModuleConfig.KEY)
+    config: ConfigType<typeof notificationModuleConfig>,
+    @Inject(LOGGER_PROVIDER) logger: Logger,
+    intlService: IntlService,
+    emailService: EmailService,
+    eventService: EventService,
+    private readonly internalCaseService: InternalCaseService,
+    private readonly userService: UserService,
+  ) {
+    super(
+      notificationModel,
+      emailService,
+      intlService,
+      config,
+      eventService,
+      logger,
+    )
   }
 
   private async sendIndictmentsWaitingForConfirmationNotification(
     prosecutorsOfficeId: string,
-  ): Promise<void> {
-    // This is a mock function that would send a notification to all prosecutors' offices
-    // in the system. In a real system, this would be implemented to send a notification
-    // to a specific prosecutors' office.
-    return
+  ): Promise<unknown> {
+    const count =
+      await this.internalCaseService.countIndictmentsWaitingForConfirmation(
+        prosecutorsOfficeId,
+      )
+
+    if (count === 0) {
+      return
+    }
+
+    const recipients = await this.userService.getUsersWhoCanConfirmIndictments(
+      prosecutorsOfficeId,
+    )
+
+    if (recipients.length === 0) {
+      return
+    }
+
+    await this.refreshFormatMessage()
+
+    const subject = this.formatMessage(strings.waitingForConfirmation.subject)
+    const body = this.formatMessage(strings.waitingForConfirmation.body, {
+      count,
+    })
+    const tail = this.formatMessage(strings.tail)
+
+    return Promise.all(
+      recipients.map((recipient: User) =>
+        this.sendEmail(
+          subject,
+          `${body}<br /><br />${tail}`,
+          recipient.name,
+          recipient.email,
+        ),
+      ),
+    )
   }
 
   async sendNotification(

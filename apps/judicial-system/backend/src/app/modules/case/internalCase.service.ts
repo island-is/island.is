@@ -1268,4 +1268,15 @@ export class InternalCaseService {
 
     return caseById
   }
+
+  countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
+    return this.caseModel.count({
+      include: [{ model: User, as: 'creatingProsecutor' }],
+      where: {
+        type: CaseType.INDICTMENT,
+        state: CaseState.WAITING_FOR_CONFIRMATION,
+        '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
+      },
+    })
+  }
 }

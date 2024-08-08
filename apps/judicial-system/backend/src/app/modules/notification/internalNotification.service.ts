@@ -8,11 +8,10 @@ import {
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { FormatMessage, IntlService } from '@island.is/cms-translations'
+import { IntlService } from '@island.is/cms-translations'
 import { EmailService } from '@island.is/email-service'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { ConfigType } from '@island.is/nest/config'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 import { SmsService } from '@island.is/nova-sms'
 
 import {
@@ -29,7 +28,6 @@ import {
   getAppealResultTextByValue,
   getHumanReadableCaseIndictmentRulingDecision,
 } from '@island.is/judicial-system/formatters'
-import { type User } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
   CaseCustodyRestrictions,
@@ -46,6 +44,7 @@ import {
   NotificationType,
   RequestSharedWithDefender,
   SessionArrangements,
+  type User,
   UserRole,
 } from '@island.is/judicial-system/types'
 
@@ -70,7 +69,6 @@ import {
   formatProsecutorCourtDateEmailNotification,
   formatProsecutorReadyForCourtEmailNotification,
   formatProsecutorReceivedByCourtSmsNotification,
-  stripHtmlTags,
 } from '../../formatters'
 import { notifications } from '../../messages'
 import { type Case, DateLog } from '../case'
@@ -80,6 +78,7 @@ import { type Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
 import { DeliverResponse } from './models/deliver.response'
 import { Notification, Recipient } from './models/notification.model'
+import { BaseNotificationService } from './baseNotification.service'
 import { notificationModuleConfig } from './notification.config'
 
 interface Attachment {
@@ -94,34 +93,28 @@ interface RecipientInfo {
 }
 
 @Injectable()
-export class InternalNotificationService {
+export class InternalNotificationService extends BaseNotificationService {
   constructor(
     @InjectModel(Notification)
-    private readonly notificationModel: typeof Notification,
+    notificationModel: typeof Notification,
     @Inject(notificationModuleConfig.KEY)
-    private readonly config: ConfigType<typeof notificationModuleConfig>,
+    config: ConfigType<typeof notificationModuleConfig>,
+    @Inject(LOGGER_PROVIDER) logger: Logger,
+    intlService: IntlService,
+    emailService: EmailService,
+    eventService: EventService,
     private readonly courtService: CourtService,
     private readonly smsService: SmsService,
-    private readonly emailService: EmailService,
-    private readonly eventService: EventService,
-    private readonly intlService: IntlService,
     private readonly defendantService: DefendantService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
-
-  private formatMessage: FormatMessage = () => {
-    throw new InternalServerErrorException('Format message not initialized')
-  }
-
-  private async refreshFormatMessage(): Promise<void> {
-    return this.intlService
-      .useIntl(['judicial.system.backend'], 'is')
-      .then((res) => {
-        this.formatMessage = res.formatMessage
-      })
-      .catch((reason) => {
-        this.logger.error('Unable to refresh format messages', { reason })
-      })
+  ) {
+    super(
+      notificationModel,
+      emailService,
+      intlService,
+      config,
+      eventService,
+      logger,
+    )
   }
 
   private hasSentNotification(
@@ -212,99 +205,6 @@ export class InternalNotificationService {
 
         return { address: mobileNumbers, success: false }
       })
-  }
-
-  private async sendEmail(
-    subject: string,
-    html: string,
-    recipientName?: string,
-    recipientEmail?: string,
-    attachments?: Attachment[],
-    skipTail?: boolean,
-  ): Promise<Recipient> {
-    try {
-      // This is to handle a comma separated list of emails
-      // We use the first one as the main recipient and the rest as CC
-      const recipients = recipientEmail ? recipientEmail.split(',') : undefined
-
-      html =
-        html.match(/<a/g) || skipTail
-          ? html
-          : `${html} ${this.formatMessage(notifications.emailTail)}`
-
-      await this.emailService.sendEmail({
-        from: {
-          name: this.config.email.fromName,
-          address: this.config.email.fromEmail,
-        },
-        replyTo: {
-          name: this.config.email.replyToName,
-          address: this.config.email.replyToEmail,
-        },
-        to: [
-          {
-            name: recipientName ?? '',
-            address: recipients ? recipients[0] : '',
-          },
-        ],
-        cc:
-          recipients && recipients.length > 1 ? recipients.slice(1) : undefined,
-        subject,
-        text: stripHtmlTags(html),
-        html: html,
-        attachments,
-      })
-    } catch (error) {
-      this.logger.error('Failed to send email', { error })
-
-      this.eventService.postErrorEvent(
-        'Failed to send email',
-        {
-          subject,
-          to: `${recipientName} (${recipientEmail})`,
-          attachments:
-            attachments && attachments.length > 0
-              ? attachments.reduce(
-                  (acc, attachment, index) =>
-                    index > 0
-                      ? `${acc}, ${attachment.filename}`
-                      : `${attachment.filename}`,
-                  '',
-                )
-              : undefined,
-        },
-        error as Error,
-      )
-
-      return {
-        address: recipientEmail,
-        success: false,
-      }
-    }
-
-    return {
-      address: recipientEmail,
-      success: true,
-    }
-  }
-
-  private async recordNotification(
-    caseId: string,
-    type: NotificationType,
-    recipients: Recipient[],
-  ): Promise<DeliverResponse> {
-    await this.notificationModel.create({
-      caseId,
-      type,
-      recipients,
-    })
-
-    return {
-      delivered: recipients.reduce(
-        (sent, recipient) => sent || recipient.success,
-        false as boolean,
-      ),
-    }
   }
 
   private createICalAttachment(theCase: Case): Attachment | undefined {

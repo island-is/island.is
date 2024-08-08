@@ -14,6 +14,7 @@ import {
   DefendantModule,
   EventModule,
   InstitutionModule,
+  UserModule,
 } from '../index'
 import { Notification } from './models/notification.model'
 import { InstitutionNotificationService } from './institutionNotification.service'
@@ -30,6 +31,7 @@ import { NotificationDispatchService } from './notificationDispatch.service'
     CmsTranslationsModule,
     MessageModule,
     InstitutionModule,
+    UserModule,
     forwardRef(() => CaseModule),
     forwardRef(() => CourtModule),
     forwardRef(() => EventModule),
