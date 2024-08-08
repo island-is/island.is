@@ -24,7 +24,6 @@ const configFactory = (
           scope: config.scope,
         }
       : undefined,
-    timeout: config.fetchTimeout,
   }),
   headers: {
     'X-Road-Client': xRoadConfig.xRoadClient,

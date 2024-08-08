@@ -100,11 +100,6 @@ export const ParentalLeaveForm: Form = buildForm({
   mode: FormModes.DRAFT,
   children: [
     buildSection({
-      id: 'prerequisites',
-      title: parentalLeaveFormMessages.shared.prerequisitesSection,
-      children: [],
-    }),
-    buildSection({
       id: 'theApplicant',
       title: parentalLeaveFormMessages.shared.applicantSection,
       children: [
