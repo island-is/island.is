@@ -334,7 +334,9 @@ export const Form = ({ form }: FormProps) => {
   const validate = () => {
     const err = Object.keys(data)
       .map((slug) => {
-        const field = form.fields.find((f) => getUniqueFormFieldValue(f) === slug)
+        const field = form.fields.find(
+          (f) => getUniqueFormFieldValue(f) === slug,
+        )
 
         // Handle name and email
         if (!field) {
@@ -417,7 +419,7 @@ export const Form = ({ form }: FormProps) => {
         return null
       })
       .filter((x) => !!x)
-      
+
     setErrors(err)
 
     return !err.length
@@ -471,8 +473,8 @@ export const Form = ({ form }: FormProps) => {
 
   /** Returns the value for the form field that decides what email the form will be sent to */
   const getRecipientFormFieldDeciderValue = (): string | undefined => {
-    if (!form?.recipientFormFieldDecider?.title) return undefined
-    return data[slugify(form.recipientFormFieldDecider.title)]
+    if (!form?.recipientFormFieldDecider?.id) return undefined
+    return data[getUniqueFormFieldValue(form.recipientFormFieldDecider)]
   }
 
   const uploadFile = async (
