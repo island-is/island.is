@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/form-system/src",
   "projectType": "application",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "./tools/executors/node:build",
@@ -92,6 +93,5 @@
         "cwd": "apps/services/form-system"
       }
     }
-  },
-  "tags": []
+  }
 }

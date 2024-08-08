@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common'
+import defaults from 'lodash/defaults'
+import pick from 'lodash/pick'
+import zipObject from 'lodash/zipObject'
+
 import { UpdateFieldSettingsDto } from './dto/updateFieldSettings.dto'
 import { FieldSettings } from './fieldSettings.model'
 import { FieldSettingsDto } from './dto/fieldSettings.dto'
 import { ListItemMapper } from '../../listItems/models/listItem.mapper'
-import { defaults, pick, zipObject } from 'lodash'
 import { FieldTypes } from '../../../enums/fieldTypes'
 
 @Injectable()
