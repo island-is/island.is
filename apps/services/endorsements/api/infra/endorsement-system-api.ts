@@ -46,7 +46,7 @@ export const serviceSetup =
       .liveness('/liveness')
       .readiness('/liveness')
 
-const serviceName = 'endorsement-system-api-cleanup-worker'
+const serviceName = 'endorsement-system-api'
 const serviceCleanupWorkerName = `${serviceName}-cleanup-worker`
 export const endorsementSystemCleanUpWorkerSetup = (): ServiceBuilder<
   typeof serviceCleanupWorkerName
