@@ -3,13 +3,7 @@ import faker from 'faker'
 import { urls } from '../../../support/urls'
 import { verifyRequestCompletion } from '../../../support/api-tools'
 import { test } from '../utils/judicialSystemTest'
-import {
-  randomPoliceCaseNumber,
-  randomCourtCaseNumber,
-  getDaysFromNow,
-  chooseDocument,
-  verifyUpload,
-} from '../utils/helpers'
+import { randomPoliceCaseNumber, getDaysFromNow } from '../utils/helpers'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
