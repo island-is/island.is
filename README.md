@@ -30,7 +30,7 @@ If you want to contribute to the repository, please make sure to follow [this gu
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
 - You have [CMake](https://cmake.org/) installed.
 - You have [gcc](https://gcc.gnu.org/) installed (Linux MacOs).
-- You have [g++](https://gcc.gnu.org/) installed.
+- You have [g++](https://gcc.gnu.org/) installed (Linux MacOs).
 
 {% hint style="info" %}
 If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
