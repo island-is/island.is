@@ -7,7 +7,7 @@ export const getIntParam = (
   }
   const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
 
-  if (isNaN(i)) {
+  if (Number.isNaN(i)) {
     return undefined
   }
   if (range?.minValue !== undefined && i < range.minValue) {
