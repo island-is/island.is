@@ -20,8 +20,8 @@ import { CloseList, OpenList } from '../queries'
 import Skeleton from '../Skeletons/Skeleton'
 import { Modal } from '@island.is/service-portal/core'
 import {
+  useGetPetitionEndorsementsPaginated,
   useGetSinglePetition,
-  useGetSinglePetitionEndorsements,
 } from '../hooks'
 import {
   PaginatedEndorsementResponse,
@@ -66,8 +66,8 @@ const ViewOwnedList = () => {
     isListOpen ? new Date(petition?.closedDate) : undefined,
   )
 
-  const { petitionEndorsements, loadingSigners } =
-    useGetSinglePetitionEndorsements(listId)
+  const { endorsements, loadingEndorsements } =
+    useGetPetitionEndorsementsPaginated(listId)
 
   useEffect(() => {
     setIsListOpen(new Date() <= new Date(petition?.closedDate))
@@ -113,7 +113,7 @@ const ViewOwnedList = () => {
 
   return (
     <Box>
-      {!loadingPetition && !loadingSigners ? (
+      {!loadingPetition && !loadingEndorsements ? (
         <>
           <Columns>
             <Column width="11/12">
@@ -137,7 +137,7 @@ const ViewOwnedList = () => {
                     </Text>
                     <Text variant="default">
                       {
-                        (petitionEndorsements as PaginatedEndorsementResponse)
+                        (endorsements as PaginatedEndorsementResponse)
                           .totalCount
                       }
                     </Text>
@@ -299,14 +299,7 @@ const ViewOwnedList = () => {
             )}
           </Box>
 
-          <PetitionsTable
-            petition={petition}
-            petitionSigners={
-              petitionEndorsements as PaginatedEndorsementResponse
-            }
-            listId={listId}
-            canEdit={true}
-          />
+          <PetitionsTable petition={petition} listId={listId} canEdit={true} />
         </>
       ) : (
         <Skeleton />
