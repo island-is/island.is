@@ -535,6 +535,7 @@ export const slices = gql`
     intro
     defaultFieldNamespace
     fields {
+      id
       title
       name
       placeholder

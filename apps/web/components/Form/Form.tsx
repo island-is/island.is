@@ -43,6 +43,9 @@ const CREATE_UPLOAD_URL = gql`
     }
   }
 `
+const getUniqueFormFieldValue = (field: FormFieldProps['field']) => {
+  return slugify(field.title + '-' + field.id)
+}
 
 export enum FormFieldType {
   CHECKBOXES = 'checkboxes',
@@ -257,7 +260,7 @@ export const Form = ({ form }: FormProps) => {
   const [data, setData] = useState<Record<string, string>>(() => {
     const fields = form.fields
       .filter((field) => field.type !== FormFieldType.INFORMATION)
-      .map((field): [string, string] => [slugify(field.title), ''])
+      .map((field): [string, string] => [getUniqueFormFieldValue(field), ''])
 
     if (defaultNameFieldIsShown) {
       fields.push(['name', ''])
@@ -273,7 +276,7 @@ export const Form = ({ form }: FormProps) => {
     Object.fromEntries(
       form.fields
         .filter((field) => field.type === FormFieldType.FILE)
-        .map((field) => [slugify(field.title), []]),
+        .map((field) => [getUniqueFormFieldValue(field), []]),
     ),
   )
   const [errors, setErrors] = useState<ErrorData[]>([])
@@ -331,7 +334,7 @@ export const Form = ({ form }: FormProps) => {
   const validate = () => {
     const err = Object.keys(data)
       .map((slug) => {
-        const field = form.fields.find((f) => slugify(f.title) === slug)
+        const field = form.fields.find((f) => getUniqueFormFieldValue(f) === slug)
 
         // Handle name and email
         if (!field) {
@@ -414,8 +417,7 @@ export const Form = ({ form }: FormProps) => {
         return null
       })
       .filter((x) => !!x)
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore make web strict
+      
     setErrors(err)
 
     return !err.length
@@ -438,7 +440,7 @@ export const Form = ({ form }: FormProps) => {
       form.fields
         .filter((field) => field.type !== FormFieldType.INFORMATION)
         .map((field) => {
-          const value = data[slugify(field.title)]
+          const value = data[getUniqueFormFieldValue(field)]
           if (field.type === FormFieldType.ACCEPT_TERMS) {
             return `${field.title}\nSvar: ${
               value === 'true'
@@ -545,7 +547,7 @@ export const Form = ({ form }: FormProps) => {
             .map((field) => {
               return new Promise((resolve, reject) => {
                 Promise.all(
-                  fileList[slugify(field.title)].map((file) => {
+                  fileList[getUniqueFormFieldValue(field)].map((file) => {
                     return new Promise((resolve, reject) => {
                       createUploadUrl({
                         variables: {
@@ -557,7 +559,7 @@ export const Form = ({ form }: FormProps) => {
                             uploadFile(
                               file,
                               response.data.createUploadUrl,
-                              slugify(field.title),
+                              getUniqueFormFieldValue(field),
                             ).then(() =>
                               resolve(
                                 response.data?.createUploadUrl.fields.key,
@@ -572,7 +574,7 @@ export const Form = ({ form }: FormProps) => {
                   }),
                 )
                   .then((fileNames) =>
-                    resolve([slugify(field.title), fileNames]),
+                    resolve([getUniqueFormFieldValue(field), fileNames]),
                   )
                   .catch(() => reject())
               })
@@ -585,10 +587,10 @@ export const Form = ({ form }: FormProps) => {
             form.fields
               .filter((field) => field.type === FormFieldType.FILE)
               .map((field) => [
-                slugify(field.title),
+                getUniqueFormFieldValue(field),
                 JSON.stringify(
                   (files as string[][]).find(
-                    (file) => file[0] === slugify(field.title),
+                    (file) => file[0] === getUniqueFormFieldValue(field),
                   )?.[1],
                 ),
               ]),
@@ -729,7 +731,7 @@ export const Form = ({ form }: FormProps) => {
             {form.fields
               .filter((field) => field.type !== FormFieldType.FILE)
               .map((field) => {
-                const slug = slugify(field.title)
+                const slug = getUniqueFormFieldValue(field)
                 return (
                   <FormField
                     key={field.id}
@@ -760,7 +762,7 @@ export const Form = ({ form }: FormProps) => {
             {form.fields
               .filter((field) => field.type === FormFieldType.FILE)
               .map((field) => {
-                const slug = slugify(field.title)
+                const slug = getUniqueFormFieldValue(field)
                 return (
                   <InputFileUpload
                     key={slug}
