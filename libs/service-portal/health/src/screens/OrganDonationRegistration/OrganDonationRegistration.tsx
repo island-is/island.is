@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useForm, FormProvider, Controller, Control } from 'react-hook-form'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -10,24 +10,18 @@ import {
 import {
   Box,
   Button,
-  GridColumn,
   RadioButton,
   Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import { InputController } from '@island.is/shared/form-fields'
-
 import { Problem } from '@island.is/react-spa/shared'
 import { HealthPaths } from '../../lib/paths'
 import { messages as m } from '../../lib/messages'
 import * as styles from './OrganDonationRegistration.css'
 import { getOptions } from '../../utils/OrganDonationMock'
-
-interface FormData {
-  selectedChoice?: string
-  selectedLimitations?: string[] // is array because it can have multiple values in the future
-}
+import { FormData as FormDataType } from '../../utils/types'
+import Limitations from './Limitations'
 
 const OrganDonationRegistration = () => {
   useNamespaces('sp.health')
@@ -36,16 +30,20 @@ const OrganDonationRegistration = () => {
   const { data, loading, error } = getOptions(lang)
   const navigate = useNavigate()
 
-  const [formState, setFormState] = useState<FormData>()
+  const [formState, setFormState] = useState<FormDataType>()
 
-  const hookFormData = useForm<FormData>()
+  const hookFormData = useForm<FormDataType>()
 
   const {
     handleSubmit,
-    formState: { isSubmitting, errors },
+    formState: { isSubmitting },
     reset,
     control,
   } = hookFormData
+
+  useEffect(() => {
+    console.log('formState', formState)
+  }, [formState])
 
   const clearAll = () => {
     // Clear form, state and errors on success.
@@ -53,18 +51,19 @@ const OrganDonationRegistration = () => {
     reset()
   }
 
-  const handleSubmitForm = (submitData: FormData) => {
+  const handleSubmitForm = (submitData: FormDataType) => {
     const formData = new FormData()
     // TODO: Skipta út fyrir þjónustu
     console.log(submitData)
+
     if (submitData.selectedChoice) {
-      formData.append('selectedChoice.id', submitData.selectedChoice)
-      if (submitData.selectedLimitations) {
-        formData.append(
-          'selectedLimitations',
-          submitData.selectedLimitations.toString(),
-        )
-      }
+      // formData.append('selectedChoice.id', submitData.selectedChoice)
+      // if (submitData.selectedLimitations) {
+      //   formData.append(
+      //     'selectedLimitations',
+      //     submitData.selectedLimitations.toString(),
+      //   )
+      // }
       clearAll()
 
       toast.success('Skráning tókst')
@@ -112,7 +111,7 @@ const OrganDonationRegistration = () => {
                                 >
                                   <RadioButton
                                     id={x.id}
-                                    name="organ-donation-form"
+                                    name="organ-registration-form"
                                     label={x.title}
                                     key={`organ-donation-${x.id}`}
                                     value={x.id}
@@ -125,60 +124,15 @@ const OrganDonationRegistration = () => {
                                       }))
                                     }}
                                   />
-                                  {value === x.id && x.limitations && (
-                                    <Box marginTop={2}>
-                                      <Stack space={2}>
-                                        <Box
-                                          display="flex"
-                                          flexDirection="row"
-                                          flexWrap="wrap"
-                                          width="full"
-                                        >
-                                          {x.limitations.map((y, yi) => {
-                                            return (
-                                              <GridColumn
-                                                span="5/7"
-                                                key={`organ-donation-limitation-${yi}`}
-                                              >
-                                                <Box marginY="smallGutter">
-                                                  <InputController
-                                                    id="organ-donation-limitation"
-                                                    name="selectedLimitations"
-                                                    textarea
-                                                    label={formatMessage(
-                                                      m.organRegistrationOtherLabel,
-                                                    )}
-                                                    placeholder={formatMessage(
-                                                      m.organRegistrationOtherText,
-                                                    )}
-                                                    maxLength={220}
-                                                    rules={{
-                                                      minLength: {
-                                                        value: 1,
-                                                        message: formatMessage(
-                                                          m.organLimitationsError,
-                                                        ),
-                                                      },
-                                                    }}
-                                                    onChange={(e) => {
-                                                      setFormState(
-                                                        (currentState) =>
-                                                          ({
-                                                            ...currentState,
-                                                            selectedLimitations:
-                                                              [e.target.value], // Initialize the array with the new value if it doesn't exist
-                                                          } as FormData),
-                                                      )
-                                                    }}
-                                                  />
-                                                </Box>
-                                              </GridColumn>
-                                            )
-                                          })}
-                                        </Box>
-                                      </Stack>
-                                    </Box>
-                                  )}
+                                  {value === x.id &&
+                                    x.limitations &&
+                                    formState && (
+                                      <Limitations
+                                        data={x.limitations}
+                                        formState={formState}
+                                        setFormState={setFormState}
+                                      />
+                                    )}
                                 </Box>
                               )
                             })}

@@ -59,7 +59,17 @@ export const getOptions = (locale: Locale) => {
           id: '2',
           title:
             'Ég heimila líffæragjöf, en heimildin nær ekki til eftirtalinna líffæra:',
-          limitations: ['Annað'],
+          limitations: [
+            'Bris',
+            'Lifur',
+            'Hjarta',
+            'Lungu',
+            'Hornhimna',
+            'Nýru',
+            'Húð',
+            'Þarmar',
+            'Annað',
+          ],
         },
         {
           id: '3',
@@ -79,7 +89,17 @@ export const getOptions = (locale: Locale) => {
           id: '2',
           title:
             'I authorize organ donation, but the authorization does not cover the following organs:',
-          limitations: ['Other'],
+          limitations: [
+            'Pancreas',
+            'Liver',
+            'Heart',
+            'Lungs',
+            'Cornea',
+            'Kidney',
+            'Húð',
+            'Þarmar',
+            'Other',
+          ],
         },
         {
           id: '3',
