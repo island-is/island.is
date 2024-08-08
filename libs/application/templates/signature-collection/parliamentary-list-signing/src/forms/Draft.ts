@@ -1,0 +1,126 @@
+import {
+  buildActionCardListField,
+  buildCheckboxField,
+  buildCustomField,
+  buildDescriptionField,
+  buildDividerField,
+  buildForm,
+  buildKeyValueField,
+  buildMultiField,
+  buildPhoneField,
+  buildSection,
+  buildSubmitField,
+  buildTableRepeaterField,
+  buildTextField,
+  getValueViaPath,
+} from '@island.is/application/core'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { Application, UserProfile } from '@island.is/api/schema'
+import { format as formatNationalId } from 'kennitala'
+import Logo from '../../assets/Logo'
+
+import { m } from '../lib/messages'
+import { formatPhone } from '../lib/utils'
+import { Constituencies, Manager, Supervisor } from '../lib/constants'
+
+export const Draft: Form = buildForm({
+  id: 'ParliamentaryListSigningDraft',
+  title: '',
+  mode: FormModes.DRAFT,
+  renderLastScreenButton: true,
+  renderLastScreenBackButton: true,
+  logo: Logo,
+  children: [
+    buildSection({
+      id: 'screen1',
+      title: m.intro,
+      children: [],
+    }),
+    buildSection({
+      id: 'screen2',
+      title: m.dataCollection,
+      children: [],
+    }),
+    buildSection({
+      id: 'listInformationSection',
+      title: m.information,
+      children: [
+        buildMultiField({
+          id: 'listInformation',
+          title: m.listInformationSection,
+          description: m.listInformationDescription,
+          children: [
+            buildDescriptionField({
+              id: 'listHeader',
+              title: m.listHeader,
+              titleVariant: 'h3',
+            }),
+            buildTextField({
+              id: 'list.name',
+              title: m.listName,
+              width: 'full',
+              readOnly: true,
+              defaultValue: 'Flokkur 1',
+            }),
+            buildTextField({
+              id: 'list.letter',
+              title: m.listLetter,
+              width: 'half',
+              readOnly: true,
+              defaultValue: 'F',
+            }),
+            buildTextField({
+              id: 'list.nationalId',
+              title: m.nationalId,
+              width: 'half',
+              readOnly: true,
+              defaultValue: (application: Application) =>
+                formatNationalId(application.applicant),
+            }),
+            buildDescriptionField({
+              id: 'signeeHeader',
+              title: m.signeeHeader,
+              titleVariant: 'h3',
+              marginTop: 'containerGutter',
+            }),
+            buildTextField({
+              id: 'signee.name',
+              title: m.name,
+              width: 'half',
+              readOnly: true,
+              defaultValue: ({ externalData }: Application) =>
+                externalData.nationalRegistry?.data.fullName,
+            }),
+            buildTextField({
+              id: 'signee.nationalId',
+              title: m.nationalId,
+              width: 'half',
+              readOnly: true,
+              defaultValue: (application: Application) =>
+                formatNationalId(application.applicant),
+            }),
+            buildSubmitField({
+              id: 'submit',
+              placement: 'footer',
+              title: m.signList,
+              refetchApplicationAfterSubmit: true,
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: m.signList,
+                  type: 'primary',
+                },
+              ],
+            }),
+          ],
+        }),
+      ],
+    }),
+    /* Section setup for the stepper */
+    buildSection({
+      id: 'done',
+      title: m.listSigned,
+      children: [],
+    }),
+  ],
+})
