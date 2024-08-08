@@ -17,7 +17,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { dataSchema } from './dataSchema'
-import { incomePlanFormMessage } from './messages'
+import { historyMessages, incomePlanFormMessage } from './messages'
 import {
   socialInsuranceAdministrationMessage,
   statesMessages as coreSIAStatesMessages,
@@ -31,7 +31,7 @@ import {
 } from '../dataProviders'
 import { assign } from 'xstate'
 import { getApplicationExternalData } from './incomePlanUtils'
-import { set } from 'lodash'
+import set from 'lodash/set'
 import {
   Events,
   Roles,
@@ -56,6 +56,14 @@ const IncomePlanTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: historyMessages.applicationStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -100,6 +108,10 @@ const IncomePlanTemplate: ApplicationTemplate<
           actionCard: {
             tag: {
               label: coreSIAStatesMessages.inProgressTag,
+            },
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: historyMessages.applicationSent,
             },
           },
           roles: [

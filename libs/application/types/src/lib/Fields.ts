@@ -71,15 +71,6 @@ type TableRepeaterOptions =
       activeField: Record<string, string>,
     ) => RepeaterOption[] | [])
 
-type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
-
-type TableRepeaterOptions =
-  | RepeaterOption[]
-  | ((
-      application: Application,
-      activeField: Record<string, string>,
-    ) => RepeaterOption[] | [])
-
 export type TableRepeaterItem = {
   component: TableRepeaterFields
   /**

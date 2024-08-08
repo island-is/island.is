@@ -238,3 +238,16 @@ export const statesMessages = defineMessages({
       'Your income plan is awaiting review. It is possible to edit the income plan until it is under review.',
   },
 })
+
+export const historyMessages = defineMessages({
+  applicationSent: {
+    id: 'ip.application:history.applicationSent',
+    defaultMessage: 'Tekjuáætlun send',
+    description: 'Income plan sent',
+  },
+  applicationStarted: {
+    id: 'ip.application:history.applicationStarted',
+    defaultMessage: 'Tekjuáætlun hafin',
+    description: 'Income plan started',
+  },
+})
