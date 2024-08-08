@@ -275,6 +275,7 @@ query Case($input: CaseQueryInput!) {
     mergedCases {
       id
       courtCaseNumber
+      type
       court {
         id
         name
@@ -301,6 +302,7 @@ query Case($input: CaseQueryInput!) {
         state
         key
         size
+        category
       }
       policeCaseNumbers
       indictmentSubtypes
