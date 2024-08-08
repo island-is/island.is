@@ -220,7 +220,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
           id: f.id,
           name: f.name,
           type: 'application/pdf',
-          category: CaseFileCategory.CASE_FILE,
+          category: f.category || CaseFileCategory.CASE_FILE,
           policeCaseNumber: f.policeCaseNumber,
           chapter: f.chapter ?? undefined,
           orderWithinChapter:
