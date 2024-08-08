@@ -56,4 +56,4 @@ export const dataSchema = z.object({
   ),
 })
 
-export type ParliamentaryCreateListSchema = z.TypeOf<typeof dataSchema>
+export type ParliamentarySignListSchema = z.TypeOf<typeof dataSchema>

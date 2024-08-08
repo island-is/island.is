@@ -19,7 +19,7 @@ import { m } from '../lib/messages'
 import Logo from '../../assets/Logo'
 
 export const Prerequisites: Form = buildForm({
-  id: 'CreateListPrerequisites',
+  id: 'SignListPrerequisites',
   title: '',
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
@@ -77,7 +77,7 @@ export const Prerequisites: Form = buildForm({
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
             buildDataProviderItem({
-              //provider: TODO: Add providers needed for creating collection,
+              //provider: TODO: Add providers needed for signing collection,
               title: '',
               subTitle: '',
             }),
