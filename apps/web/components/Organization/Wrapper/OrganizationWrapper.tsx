@@ -278,8 +278,8 @@ export const OrganizationHeader: React.FC<
         />
       ) : (
         <DigitalIcelandHeader
-          logoAltText={logoAltText}
           organizationPage={organizationPage}
+          logoAltText={logoAltText}
         />
       )
     case 'hsn':
