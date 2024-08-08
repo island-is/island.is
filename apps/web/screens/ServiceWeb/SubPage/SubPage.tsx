@@ -432,16 +432,18 @@ SubPage.getProps = async ({ apolloClient, locale, query, res }) => {
   const categorySlug = slugs[1]
   const questionSlug = slugs[2] ?? undefined
 
-  if (single(query.q)) {
+  const q = single(query.q)
+
+  if (q) {
     if (res) {
       res.writeHead(302, {
-        Location: linkResolver(
-          'supportqna',
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore make web strict
-          [organizationSlug, categorySlug, single(query.q)],
-          locale as Locale,
-        ).href,
+        Location: encodeURI(
+          linkResolver(
+            'supportqna',
+            [organizationSlug, categorySlug, q],
+            locale as Locale,
+          ).href,
+        ),
       })
       res.end()
     }
