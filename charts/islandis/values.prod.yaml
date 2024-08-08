@@ -1374,7 +1374,7 @@ endorsement-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/endorsement-system-api'
     create: true
     name: 'endorsement-system-api'
-endorsement-system-api-cleanup-worker:
+endorsement-system-api-cleanup-worker-cleanup-worker:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
@@ -1387,6 +1387,11 @@ endorsement-system-api-cleanup-worker:
     DB_NAME: 'services_endorsements_api'
     DB_REPLICAS_HOST: 'postgres-applications.internal'
     DB_USER: 'services_endorsements_api'
+    EMAIL_FROM_ADDRESS: 'noreply@island.is'
+    EMAIL_FROM_NAME: 'island.is'
+    EMAIL_REGION: 'eu-west-1'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
+    IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: '2304d7ca-7ed3-4188-8b6d-e1b7e0e3df7f'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentity.b2clogin.com/skraidentity.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -1477,9 +1482,9 @@ endorsement-system-api-cleanup-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/endorsement-system-api-cleanup-worker'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/endorsement-system-api-cleanup-worker-cleanup-worker'
     create: true
-    name: 'endorsement-system-api-cleanup-worker'
+    name: 'endorsement-system-api-cleanup-worker-cleanup-worker'
 global:
   env:
     AUDIT_GROUP_NAME: '/island-is/audit-log'
