@@ -25,7 +25,7 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
 
 export const formatDate = (
   date: Date | string | undefined | null,
-  formatPattern: string = 'dd.MM.yyyy',
+  formatPattern = 'dd.MM.yyyy',
   shortenDayName?: boolean,
 ): string | undefined => {
   const theDate: Date = getAsDate(date)
