@@ -19,29 +19,3 @@ export type SubmitResponse = {
 export enum ApiActions {
   submitApplication = 'signList',
 }
-
-export type Manager = {
-  manager: {
-    name: string
-    nationalId: string
-  }
-  constituency: string
-}
-
-export type Supervisor = {
-  supervisor: {
-    name: string
-    nationalId: string
-  }
-  constituency: string
-}
-
-// These will be fetched later
-export const Constituencies = [
-  'Norðausturkjördæmi',
-  'Norðvesturkjördæmi',
-  'Reykjavíkurkjördæmi norður',
-  'Reykjavíkurkjördæmi suður',
-  'Suðurkjördæmi',
-  'Suðvesturkjördæmi',
-]

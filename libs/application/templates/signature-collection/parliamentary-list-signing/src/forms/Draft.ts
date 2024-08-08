@@ -1,27 +1,17 @@
 import {
-  buildActionCardListField,
-  buildCheckboxField,
-  buildCustomField,
   buildDescriptionField,
-  buildDividerField,
   buildForm,
-  buildKeyValueField,
   buildMultiField,
-  buildPhoneField,
   buildSection,
   buildSubmitField,
-  buildTableRepeaterField,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { Application, UserProfile } from '@island.is/api/schema'
+import { Application } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../../assets/Logo'
 
 import { m } from '../lib/messages'
-import { formatPhone } from '../lib/utils'
-import { Constituencies, Manager, Supervisor } from '../lib/constants'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListSigningDraft',
