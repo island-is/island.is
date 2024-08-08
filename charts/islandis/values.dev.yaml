@@ -1379,7 +1379,7 @@ endorsement-system-api:
       eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api'
     create: true
     name: 'endorsement-system-api'
-endorsement-system-api-cleanup-worker-cleanup-worker:
+endorsement-system-api-cleanup-worker:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
@@ -1487,9 +1487,9 @@ endorsement-system-api-cleanup-worker-cleanup-worker:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api-cleanup-worker-cleanup-worker'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/endorsement-system-api-cleanup-worker'
     create: true
-    name: 'endorsement-system-api-cleanup-worker-cleanup-worker'
+    name: 'endorsement-system-api-cleanup-worker'
 external-contracts-tests:
   enabled: true
   env:
