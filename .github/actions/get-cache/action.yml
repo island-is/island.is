@@ -34,8 +34,11 @@ runs:
         ENABLE_CACHE: ${{ inputs.enable-cache }}
         NODE_OPTIONS: --max-old-space-size=8192
       run: |
-        echo $_CACHE_KEYS
+        # This is because of a weird bug where Github would write as root to .cache
+        export COREPACK_HOME=/github/home/.corepack-cache
+        export CYPRESS_CACHE_FOLDER=/github/home/.cypress-cache
+        echo "COREPACK_HOME=$COREPACK_HOME" >> $GITHUB_ENV
+        echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> $GITHUB_ENV
         cd scripts/ci/cache
-        yarn install --immutable
+        npx yarn install --immutable
         node cache-action.mjs
-        echo $_CACHE_KEYS

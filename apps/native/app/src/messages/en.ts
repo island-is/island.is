@@ -77,12 +77,16 @@ export const en: TranslatedMessages = {
   'settings.usersettings.email': 'Email',
   'settings.usersettings.bankinfo': 'Bank info',
   'settings.communication.groupTitle': 'Notifications and communication',
-  'settings.communication.newDocumentsNotifications':
-    'Get notifications of new documents',
-  'settings.communication.appUpdatesNotifications':
-    'Get notifications about app updates',
-  'settings.communication.applicationsNotifications':
-    'Get notifications about application status updates',
+  'settings.communication.newNotificationsEmailLabel': 'Notifications in email',
+  'settings.communication.newNotificationsEmailDescription':
+    'Government agencies can send you notifications in email.',
+  'settings.communication.newNotificationsErrorTitle': 'Error',
+  'settings.communication.newNotificationsErrorDescription':
+    'Failed to update settings',
+  'settings.communication.newNotificationsInAppLabel':
+    'Notifications in the Island.is app',
+  'settings.communication.newNotificationsInAppDescription':
+    'Government agencies can send you notifications in the Island.is app.',
   'settings.security.privacyTitle': 'Privacy Policy',
   'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
@@ -113,6 +117,15 @@ export const en: TranslatedMessages = {
   'settings.about.codePushLabel': 'Updates',
   'settings.about.codePushLoading': 'Loading...',
   'settings.about.codePushUpToDate': 'The app is up to date',
+  'settings.about.codePushUpToDateTitle': 'Up to date',
+  'settings.about.codePushUpdateCancelledTitle': 'Update cancelled',
+  'settings.about.codePushUpdateCancelledDescription':
+    'The update was cancelled',
+  'settings.about.codePushUpdateInstalledTitle': 'Update installed',
+  'settings.about.codePushUpdateInstalledDescription':
+    'The app has been updated',
+  'settings.about.codePushUpdateErrorTitle': 'Unknown error',
+  'settings.about.codePushUpdateErrorDescription': 'An unknown error occurred',
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',

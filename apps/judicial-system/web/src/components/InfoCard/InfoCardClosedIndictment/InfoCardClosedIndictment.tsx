@@ -89,6 +89,14 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           title: formatMessage(core.prosecutor),
           value: `${workingCase.prosecutorsOffice?.name}`,
         },
+        ...(workingCase.mergeCase
+          ? [
+              {
+                title: formatMessage(strings.indictmentMergedTitle),
+                value: workingCase.mergeCase?.courtCaseNumber,
+              },
+            ]
+          : []),
         {
           title: formatMessage(core.court),
           value: workingCase.court?.name,
