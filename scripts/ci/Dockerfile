@@ -13,6 +13,7 @@ ADD package.json yarn.lock .yarnrc.yml ./
 ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
 RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
+RUN corepack enable
 RUN CI=true yarn install --immutable
 
 FROM deps as src
