@@ -2,15 +2,11 @@ import messaging, {
   FirebaseMessagingTypes,
 } from '@react-native-firebase/messaging'
 import {
-  addNotificationReceivedListener,
-  addNotificationResponseReceivedListener,
   DEFAULT_ACTION_IDENTIFIER,
   Notification,
   NotificationResponse,
-  setNotificationHandler,
 } from 'expo-notifications'
 import { navigateTo, navigateToNotification } from '../../lib/deep-linking'
-import { isIos } from '../devices'
 
 export const ACTION_IDENTIFIER_NO_OPERATION = 'NOOP'
 
@@ -55,51 +51,34 @@ function mapRemoteMessage(
 }
 
 export function setupNotifications() {
-  setNotificationHandler({
-    handleNotification: async () => ({
-      shouldShowAlert: true,
-      shouldPlaySound: false,
-      shouldSetBadge: true,
-    }),
-  })
+  // FCMs
 
-  addNotificationReceivedListener((notification) =>
+  messaging().onNotificationOpenedApp((remoteMessage) =>
     handleNotificationResponse({
-      notification,
+      notification: mapRemoteMessage(remoteMessage),
+      actionIdentifier: DEFAULT_ACTION_IDENTIFIER,
+    }),
+  )
+
+  messaging().onMessage((remoteMessage) =>
+    handleNotificationResponse({
+      notification: mapRemoteMessage(remoteMessage),
       actionIdentifier: ACTION_IDENTIFIER_NO_OPERATION,
     }),
   )
 
-  addNotificationResponseReceivedListener((response) =>
-    handleNotificationResponse(response),
+  messaging().setBackgroundMessageHandler((remoteMessage) =>
+    handleNotificationResponse({
+      notification: mapRemoteMessage(remoteMessage),
+      actionIdentifier: ACTION_IDENTIFIER_NO_OPERATION,
+    }),
   )
-
-  // FCMs
-  if (!isIos) {
-    messaging().onNotificationOpenedApp((remoteMessage) =>
-      handleNotificationResponse({
-        notification: mapRemoteMessage(remoteMessage),
-        actionIdentifier: DEFAULT_ACTION_IDENTIFIER,
-      }),
-    )
-
-    messaging().onMessage((remoteMessage) =>
-      handleNotificationResponse({
-        notification: mapRemoteMessage(remoteMessage),
-        actionIdentifier: ACTION_IDENTIFIER_NO_OPERATION,
-      }),
-    )
-
-    messaging().setBackgroundMessageHandler((remoteMessage) =>
-      handleNotificationResponse({
-        notification: mapRemoteMessage(remoteMessage),
-        actionIdentifier: ACTION_IDENTIFIER_NO_OPERATION,
-      }),
-    )
-  }
 }
 
-export function handleInitialNotificationAndroid() {
+/**
+ * Handle initial notification when app is in quit state and opened from a notification
+ */
+export function handleInitialNotification() {
   // FCMs
   messaging()
     .getInitialNotification()
