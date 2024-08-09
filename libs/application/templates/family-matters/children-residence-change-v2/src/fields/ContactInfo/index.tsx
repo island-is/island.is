@@ -1,4 +1,3 @@
-import React from 'react'
 import { useIntl } from 'react-intl'
 import { Box, Text, InputError } from '@island.is/island-ui/core'
 import { getSelectedChildrenFromExternalData } from '@island.is/application/templates/family-matters-core/utils'

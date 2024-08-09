@@ -16,7 +16,7 @@ import {
 } from './utils/constants'
 import { AwsService } from '@island.is/nest/aws'
 import { getOtherParentInformation } from '@island.is/application/templates/family-matters-core/utils'
-import { CRCApplication } from '@island.is/application/templates/children-residence-change'
+import { CRCApplication } from '@island.is/application/templates/children-residence-change-v2'
 import { generateResidenceChangePdf } from './pdfGenerators'
 import AmazonS3URI from 'amazon-s3-uri'
 import { LOGGER_PROVIDER } from '@island.is/logging'
