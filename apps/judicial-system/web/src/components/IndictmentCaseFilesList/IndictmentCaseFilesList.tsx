@@ -36,6 +36,17 @@ interface RenderFilesProps {
   onOpenFile: (fileId: string) => void
 }
 
+export const filterCaseFilesByCategory = (
+  categories: CaseFileCategory[],
+  caseFiles?: CaseFile[] | null,
+) => {
+  if (!caseFiles) {
+    return []
+  }
+
+  return caseFiles.filter((c) => c.category && categories.includes(c.category))
+}
+
 export const RenderFiles: FC<Props & RenderFilesProps> = ({
   caseFiles,
   onOpenFile,
@@ -69,31 +80,37 @@ const IndictmentCaseFilesList: FC<Props> = ({
   })
 
   const showTrafficViolationCaseFiles = isTrafficViolationCase(workingCase)
-
   const cf = workingCase.caseFiles
+  const indictments = filterCaseFilesByCategory(
+    [CaseFileCategory.INDICTMENT],
+    cf,
+  )
+  const rulings = filterCaseFilesByCategory([CaseFileCategory.RULING], cf)
 
-  const indictments = cf?.filter(
-    (file) => file.category === CaseFileCategory.INDICTMENT,
+  const criminalRecords = filterCaseFilesByCategory(
+    [CaseFileCategory.CRIMINAL_RECORD],
+    cf,
   )
-  const criminalRecords = cf?.filter(
-    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD,
+
+  const costBreakdowns = filterCaseFilesByCategory(
+    [CaseFileCategory.COST_BREAKDOWN],
+    cf,
   )
-  const costBreakdowns = cf?.filter(
-    (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
+
+  const courtRecords = filterCaseFilesByCategory(
+    [CaseFileCategory.COURT_RECORD],
+    cf,
   )
+
+  const criminalRecordUpdate = filterCaseFilesByCategory(
+    [CaseFileCategory.CRIMINAL_RECORD_UPDATE],
+    cf,
+  )
+
   const others = cf?.filter(
     (file) =>
       file.category === CaseFileCategory.INVOICE ||
       (file.category === CaseFileCategory.CASE_FILE && !file.policeCaseNumber),
-  )
-  const rulings = cf?.filter(
-    (file) => file.category === CaseFileCategory.RULING,
-  )
-  const courtRecords = cf?.filter(
-    (file) => file.category === CaseFileCategory.COURT_RECORD,
-  )
-  const criminalRecordUpdate = cf?.filter(
-    (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
   )
 
   return (
@@ -122,7 +139,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
             <PdfButton
               caseId={workingCase.id}
               title={formatMessage(caseFiles.trafficViolationIndictmentTitle)}
-              pdfType={'indictment'}
+              pdfType="indictment"
               renderAs="row"
             />
           </Box>
@@ -192,7 +209,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
               title={formatMessage(strings.caseFileButtonText, {
                 policeCaseNumber,
               })}
-              pdfType={'caseFilesRecord'}
+              pdfType="caseFilesRecord"
               elementId={policeCaseNumber}
               renderAs="row"
             />
