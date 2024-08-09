@@ -60,8 +60,6 @@ const CaseFiles = () => {
     [workingCase.id],
   )
 
-  console.log('CaseFiles', uploadFiles)
-
   return (
     <PageLayout
       workingCase={workingCase}

@@ -1,5 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { CaseFileCategory } from '@island.is/judicial-system/types'
+
 export class PoliceCaseFile {
   @ApiProperty({ type: String })
   id!: string
@@ -17,6 +19,6 @@ export class PoliceCaseFile {
   @ApiPropertyOptional({ type: String })
   displayDate?: string
 
-  @ApiPropertyOptional({ type: String })
-  category?: string | null
+  @ApiPropertyOptional({ enum: CaseFileCategory })
+  category?: CaseFileCategory
 }
