@@ -1,13 +1,15 @@
 import fetch from 'node-fetch'
 import FormData from 'form-data'
-import * as AWS from 'aws-sdk'
+import {
+  STSClient,
+  AssumeRoleWithWebIdentityCommand,
+} from '@aws-sdk/client-sts'
 import aws4 from 'aws4'
 import util from 'util'
 import fs from 'fs'
 import { Injectable } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 import { KibanaSavedObject } from '@island.is/content-search-indexer/types'
-import { arnType } from 'aws-sdk/clients/sts'
 
 import { environment } from '../environments/environment'
 
@@ -29,7 +31,10 @@ interface ApiParams {
 
 @Injectable()
 export class KibanaService {
+  private stsClient: STSClient
+
   constructor() {
+    this.stsClient = new STSClient({})
     logger.info(
       `Created Kibana Service using the url: ${kibana.url} and ${process.env.ELASTIC_NODE}`,
     )
@@ -41,16 +46,15 @@ export class KibanaService {
     body,
     headers,
   }: ApiParams): Promise<object> {
-    const sts = new AWS.STS()
     const token = await readFile(awsWebIdentityTokenFile as string)
 
-    const { Credentials } = await sts
-      .assumeRoleWithWebIdentity({
-        RoleArn: awsRoleName as arnType,
-        RoleSessionName: 'kibana',
-        WebIdentityToken: token.toString(),
-      })
-      .promise()
+    const command = new AssumeRoleWithWebIdentityCommand({
+      RoleArn: awsRoleName,
+      RoleSessionName: 'kibana',
+      WebIdentityToken: token.toString(),
+    })
+
+    const { Credentials } = await this.stsClient.send(command)
 
     if (!Credentials) {
       throw new Error('AWS STS credentials missing.')

@@ -2,6 +2,7 @@ import { DynamicModule } from '@nestjs/common'
 
 import { SharedTemplateAPIModule } from '../../shared'
 import { SyslumennClientModule } from '@island.is/clients/syslumenn'
+import { AwsService } from '@island.is/nest/aws'
 
 import { BaseTemplateAPIModuleConfig } from '../../../types'
 
@@ -15,7 +16,7 @@ export class EstateTemplateModule {
         SharedTemplateAPIModule.register(config),
         SyslumennClientModule,
       ],
-      providers: [EstateTemplateService],
+      providers: [EstateTemplateService, AwsService],
       exports: [EstateTemplateService],
     }
   }

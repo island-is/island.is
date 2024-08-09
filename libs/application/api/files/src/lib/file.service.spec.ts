@@ -13,6 +13,7 @@ import { LoggingModule } from '@island.is/logging'
 import { NotFoundException } from '@nestjs/common'
 import { defineConfig, ConfigModule } from '@island.is/nest/config'
 import { FileStorageConfig } from '@island.is/file-storage'
+import { GetObjectCommandOutput } from '@aws-sdk/client-s3'
 
 describe('FileService', () => {
   let service: FileService
@@ -129,9 +130,12 @@ describe('FileService', () => {
 
     awsService = module.get(AwsService)
 
-    jest
-      .spyOn(awsService, 'getFile')
-      .mockImplementation(() => Promise.resolve({ Body: 'body' }))
+    jest.spyOn(awsService, 'getFile').mockImplementation(
+      async () =>
+        ({
+          Body: { transformToString: () => 'body' },
+        } as unknown as GetObjectCommandOutput),
+    )
 
     jest.spyOn(awsService, 'fileExists').mockResolvedValue(false)
 
@@ -195,10 +199,11 @@ describe('FileService', () => {
       PdfTypes.CHILDREN_RESIDENCE_CHANGE,
     )
 
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${application.id}.pdf`,
-    )
+    expect(awsService.getFile).toHaveBeenCalledWith({
+      bucket: bucket,
+      fileName: `children-residence-change/${application.id}.pdf`,
+      encoding: 'binary',
+    })
 
     expect(signingService.requestSignature).toHaveBeenCalledWith(
       parentAWithContactInfo.phoneNumber,
@@ -220,9 +225,12 @@ describe('FileService', () => {
   it('should throw error for request file signature since file content is missing', async () => {
     const application = createApplication()
 
-    jest
-      .spyOn(awsService, 'getFile')
-      .mockImplementation(() => Promise.resolve({ Body: '' }))
+    jest.spyOn(awsService, 'getFile').mockImplementation(
+      async () =>
+        ({
+          Body: { transformToString: () => '' },
+        } as unknown as GetObjectCommandOutput),
+    )
 
     const act = async () =>
       await service.requestFileSignature(
@@ -232,10 +240,11 @@ describe('FileService', () => {
 
     await expect(act).rejects.toThrowError(NotFoundException)
 
-    expect(awsService.getFile).toHaveBeenCalledWith(
-      bucket,
-      `children-residence-change/${applicationId}.pdf`,
-    )
+    expect(awsService.getFile).toHaveBeenCalledWith({
+      bucket: bucket,
+      fileName: `children-residence-change/${applicationId}.pdf`,
+      encoding: 'binary',
+    })
 
     expect(signingService.requestSignature).not.toHaveBeenCalled()
   })
@@ -297,6 +306,8 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
+    // The resolves are `undefined` 🥹
+    // await expect(act()).resolves.toBeTruthy()
     await expect(act).resolves
   })
 
@@ -323,7 +334,7 @@ describe('FileService', () => {
         PdfTypes.CHILDREN_RESIDENCE_CHANGE,
       )
 
-    await expect(act).resolves
+    await expect(act()).resolves.toBeTruthy()
   })
 
   it('should throw error for getPresignedUrl since application type is not supported', async () => {

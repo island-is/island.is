@@ -11,6 +11,7 @@ import {
   NationalRegistryClientService,
 } from '@island.is/clients/national-registry-v2'
 import { APPLICATION_ATTACHMENT_BUCKET } from './constants'
+import { AwsService } from '@island.is/nest/aws'
 
 export class ParentalLeaveModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -24,6 +25,7 @@ export class ParentalLeaveModule {
         NationalRegistryClientModule,
       ],
       providers: [
+        AwsService,
         ChildrenService,
         ParentalLeaveService,
         NationalRegistryClientService,
