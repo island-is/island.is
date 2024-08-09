@@ -1,7 +1,7 @@
 import * as React from 'react'
 import type { SvgProps as SVGRProps } from '../types'
 
-const SvgFileTrayStacked = ({
+const SvgFileTrayEmptyOutline = ({
   title,
   titleId,
   ...props
@@ -9,7 +9,7 @@ const SvgFileTrayStacked = ({
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
-      className="file_tray_stacked_outline"
+      className="file_tray_empty_outline"
       viewBox="0 0 512 512"
       aria-labelledby={titleId}
       {...props}
@@ -34,4 +34,4 @@ const SvgFileTrayStacked = ({
   )
 }
 
-export default SvgFileTrayStacked
+export default SvgFileTrayEmptyOutline
