@@ -47,7 +47,7 @@
     "@react-native-firebase/messaging": "16.7.0",
     "@react-native-firebase/perf": "16.7.0",
     "apollo3-cache-persist": "0.15.0",
-    "configcat-js": "7.0.0",
+    "configcat-js": "9.5.0",
     "dynamic-color": "0.3.0",
     "expo": "47.0.13",
     "expo-barcode-scanner": "12.1.0",
