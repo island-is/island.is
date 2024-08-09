@@ -108,10 +108,7 @@ export const FirearmApplicant: FC<
                 errors,
                 'pickRole.electPerson.lookupError.message',
               ) ||
-              getErrorViaPath(
-                errors,
-                'pickRole.electPerson.electedPersonNationalId',
-              ) ||
+              getErrorViaPath(errors, 'pickRole.electPerson.nationalId') ||
               undefined
             }
           />

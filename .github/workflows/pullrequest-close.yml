@@ -18,25 +18,28 @@ jobs:
     steps:
       - name: Get git branch
         run: |
+          set -euo pipefail
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "GIT_BRANCH=$GIT_BRANCH" >> $GITHUB_ENV
+          echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
       - name: Generate deployment branch name
         id: git-branch-deploy
         run: |
-          GIT_BRANCH_DEPLOY=$GIT_BRANCH
+          set -euo pipefail
+          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
           if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
             # If event is pull request but branch is not prefixed with feature/
             GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
           fi
           # Avoid too long resource names
-          GIT_BRANCH_DEPLOY=${GIT_BRANCH_DEPLOY:0:50}
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> $GITHUB_ENV
+          GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
+          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
       - name: Clean up feature
         env:
           SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
           SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
         run: |
-          curl $SPINNAKER_URL/webhooks/webhook/feature-cleanup -H "content-type: application/json" --data-binary @- <<BODY
+          set -euo pipefail
+          curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
           {
             "token": "$SPINNAKER_WEBHOOK_TOKEN",
             "parameters": {

@@ -1,20 +1,7 @@
+import { AdvertStatusEnum } from '@island.is/clients/official-journal-of-iceland'
 import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-export enum AdvertStatus {
-  Active = 'Virk',
-  Revoked = 'Afturkölluð',
-  Draft = 'Drög',
-  Old = 'Eldri auglýsing',
-  Rejected = 'Hafnað',
-  Waiting = 'Í bið',
-  InProgress = 'Í vinnslu',
-  Submitted = 'Innsend',
-  ReadyForPublication = 'Tilbúin til útgáfu',
-  Published = 'Útgefin',
-  Unknown = 'Óþekkt',
-}
-
-registerEnumType(AdvertStatus, {
+registerEnumType(AdvertStatusEnum, {
   name: 'OfficialJournalOfIcelandAdvertStatus',
 })
 
@@ -119,8 +106,8 @@ export class Advert {
   @Field(() => String)
   title!: string
 
-  @Field(() => AdvertStatus)
-  status!: AdvertStatus
+  @Field(() => AdvertStatusEnum)
+  status!: AdvertStatusEnum
 
   @Field(() => AdvertPublicationNumber)
   publicationNumber!: AdvertPublicationNumber | null
