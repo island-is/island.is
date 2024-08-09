@@ -72,7 +72,7 @@ export const confirmation = {
       description: 'You can also find the mortgage certificate in your inbox',
     },
     incorrectPropertyTitle: {
-      id: 'mc.application:confirmation.labels.incorrectPropertyTitle',
+      id: 'mc.application:confirmation.labels.incorrectPropertyTitle#markdown',
       defaultMessage:
         'Beiðni um lagfæringu á veðbókarvottorði fyir {propertyName} hefur verið send sýslumanni.',
       description: 'Incorrect property title in alert message',
