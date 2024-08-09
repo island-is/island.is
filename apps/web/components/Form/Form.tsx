@@ -419,7 +419,8 @@ export const Form = ({ form }: FormProps) => {
         return null
       })
       .filter((x) => !!x)
-
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore make web strict
     setErrors(err)
 
     return !err.length
