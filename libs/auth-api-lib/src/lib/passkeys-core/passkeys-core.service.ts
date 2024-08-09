@@ -71,10 +71,10 @@ export class PasskeysCoreService {
       rpName: this.config.passkey.rpName,
       rpID: this.config.passkey.rpId,
       userName: tokenInfo.name,
-      timeout: 60000,
+      timeout: 180000,
       attestationType: 'direct',
       authenticatorSelection: {
-        residentKey: 'discouraged',
+        residentKey: 'required',
         userVerification: 'required',
       },
       excludeCredentials: existingPasskeys.map((passkey) => ({
