@@ -3,14 +3,14 @@ import { useLocale } from '@island.is/localization'
 import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { Modal, m } from '@island.is/service-portal/core'
 import { useUserInfo } from '@island.is/auth/react'
-import { ActiveDocumentType } from '../../lib/types'
-import { downloadFile } from '../../utils/downloadDocument'
+import { ActiveDocumentType2 } from '../../lib/types'
+import { downloadFile } from '../../utils/downloadDocumentV2'
 import { messages } from '../../utils/messages'
 import { Problem } from '@island.is/react-spa/shared'
 import * as styles from './DocumentRenderer.css'
 
 type PdfDocumentProps = {
-  document: ActiveDocumentType
+  document: ActiveDocumentType2
   expandCallback?: (value: boolean) => void
   initScale?: number
   onClose?: () => void
@@ -100,7 +100,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
         ref={ref}
       >
         <PdfViewer
-          file={`data:application/pdf;base64,${document.document.content}`}
+          file={`data:application/pdf;base64,${document.document.value}`}
           scale={scalePDF}
           autoWidth={false}
           errorComponent={
