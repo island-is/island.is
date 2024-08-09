@@ -65,7 +65,8 @@ const CaseFile = () => {
                     workingCase.caseFiles?.filter(
                       (caseFile) =>
                         caseFile.policeCaseNumber === policeCaseNumber &&
-                        caseFile.category === CaseFileCategory.CASE_FILE,
+                        (caseFile.category === CaseFileCategory.CASE_FILE ||
+                          caseFile.category === CaseFileCategory.INVOICE),
                     ) ?? []
                   }
                   subtypes={workingCase.indictmentSubtypes}

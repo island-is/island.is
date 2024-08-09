@@ -1,5 +1,7 @@
 import { Field, ID, Int, ObjectType } from '@nestjs/graphql'
 
+import { CaseFileCategory } from '@island.is/judicial-system/types'
+
 @ObjectType()
 export class PoliceCaseFile {
   @Field(() => ID)
@@ -16,4 +18,7 @@ export class PoliceCaseFile {
 
   @Field(() => String, { nullable: true })
   readonly displayDate?: string
+
+  @Field(() => CaseFileCategory, { nullable: true })
+  readonly category?: CaseFileCategory
 }

@@ -148,6 +148,7 @@ export class FileService {
         courtDocumentFolder = CourtDocumentFolder.COURT_DOCUMENTS
         break
       case CaseFileCategory.CASE_FILE:
+      case CaseFileCategory.INVOICE:
       case undefined:
       case null:
         courtDocumentFolder = CourtDocumentFolder.CASE_DOCUMENTS

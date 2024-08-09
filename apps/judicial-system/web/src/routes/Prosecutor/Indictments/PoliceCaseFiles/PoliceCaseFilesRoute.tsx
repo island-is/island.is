@@ -219,17 +219,17 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
         return {
           id: f.id,
           name: f.name,
+          policeFileId: f.id,
           type: 'application/pdf',
-          category: CaseFileCategory.CASE_FILE,
+          category: f.category ?? CaseFileCategory.CASE_FILE,
           policeCaseNumber: f.policeCaseNumber,
           chapter: f.chapter ?? undefined,
+          displayDate: f.displayDate ?? undefined,
           orderWithinChapter:
             currentOrderWithinChapter !== undefined &&
             currentOrderWithinChapter !== null
               ? ++currentOrderWithinChapter
               : undefined,
-          displayDate: f.displayDate ?? undefined,
-          policeFileId: f.id,
         }
       })
 

@@ -34,6 +34,7 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   policeCaseNumber: file.policeCaseNumber,
   chapter: file.chapter,
   displayDate: file.displayDate,
+  category: file.category,
   checked: false,
 })
 

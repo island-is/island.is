@@ -21,7 +21,7 @@ import {
   XRoadMemberClass,
 } from '@island.is/shared/utils/server'
 
-import type { User } from '@island.is/judicial-system/types'
+import { CaseFileCategory, User } from '@island.is/judicial-system/types'
 import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
@@ -63,6 +63,17 @@ const getChapter = (category?: string): number | undefined => {
   return +chapter[1] - 1
 }
 
+const getCategory = (code?: string | null): CaseFileCategory | undefined => {
+  switch (code) {
+    case 'REIKN':
+      return CaseFileCategory.INVOICE
+    case 'RVSK':
+      return CaseFileCategory.COST_BREAKDOWN
+    default:
+      return undefined
+  }
+}
+
 const formatCrimeScenePlace = (
   street?: string | null,
   streetNumber?: string | null,
@@ -91,12 +102,16 @@ export class PoliceService {
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
+  private policeCaseFileType = z.object({
+    kodi: z.string().nullish(),
+  })
   private policeCaseFileStructure = z.object({
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
     malsnumer: z.string(),
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
+    tegundSkjals: z.optional(this.policeCaseFileType),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -258,6 +273,7 @@ export class PoliceService {
                 policeCaseNumber: file.malsnumer,
                 chapter: getChapter(file.domsSkjalsFlokkun),
                 displayDate: file.dagsStofnad,
+                category: getCategory(file.tegundSkjals?.kodi),
               })
             }
           })

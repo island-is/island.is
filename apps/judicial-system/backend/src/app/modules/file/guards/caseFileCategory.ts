@@ -19,4 +19,5 @@ export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.CRIMINAL_RECORD,
   CaseFileCategory.COST_BREAKDOWN,
   CaseFileCategory.CASE_FILE,
+  CaseFileCategory.INVOICE,
 ]

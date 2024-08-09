@@ -713,7 +713,8 @@ export class CaseService {
             caseFile.key &&
             ((caseFile.category &&
               caseFilesCategories.includes(caseFile.category)) ||
-              (caseFile.category === CaseFileCategory.CASE_FILE &&
+              ((caseFile.category === CaseFileCategory.CASE_FILE ||
+                caseFile.category === CaseFileCategory.INVOICE) &&
                 !caseFile.policeCaseNumber)),
         )
         .map((caseFile) => ({
