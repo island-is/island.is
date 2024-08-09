@@ -54,6 +54,13 @@ const PaymentParticipation = lazy(() =>
 )
 const PaymentOverview = lazy(() => import('./screens/Payments/PaymentOverview'))
 
+const VaccinationsGeneral = lazy(() =>
+  import('./screens/Vaccinations/VaccinationsGeneral'),
+)
+
+const VaccinationsOther = lazy(() =>
+  import('./screens/Vaccinations/VaccinationsOther'),
+)
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
@@ -188,6 +195,24 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthDentistRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <DentistRegistration />,
+    },
+    {
+      name: hm.vaccinations,
+      path: HealthPaths.HealthVaccinations,
+      enabled: userInfo.scopes.includes(ApiScope.healthHealthcare), // TODO: Add correct scope
+      element: <VaccinationsGeneral />,
+    },
+    {
+      name: hm.generalVaccinations,
+      path: HealthPaths.HealthVaccinationsGeneral,
+      enabled: userInfo.scopes.includes(ApiScope.healthHealthcare), // TODO: Add correct scope
+      element: <VaccinationsGeneral />,
+    },
+    {
+      name: hm.otherVaccinations,
+      path: HealthPaths.HealthVaccinationsOther,
+      enabled: userInfo.scopes.includes(ApiScope.healthHealthcare), // TODO: Add correct scope
+      element: <VaccinationsOther />,
     },
   ],
 }
