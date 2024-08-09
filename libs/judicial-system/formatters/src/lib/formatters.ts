@@ -23,15 +23,29 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
   }
 }
 
+export enum FormatPattern {
+  SHORT_DATE = 'dd.MM', // 01.01
+  SHORT_DATE_YEAR = 'dd.MM.yyyy', // 01.01.2024
+  SHORT_DATE_YEAR_TIME = "dd.MM.yyyy 'kl.' HH:mm", // 01.01.2024 kl. 10:00
+  LONG_DATE = 'd. MMMM', // 1. janúar.
+  LONG_DATE_YEAR = 'PPP', // 1. janúar 2024
+  LONG_DATE_YEAR_TIME = 'PPPp', // 1. janúar 2024 kl. 10:00
+  LONG_DAY_DATE_YEAR = 'PPPP', // mánudagur, 1. janúar 2024
+  LONG_DAY_DATE_YEAR_TIME = 'PPPPp', // mánudagur, 1. janúar 2024 kl. 10:00
+  TIME = 'HH:mm', // 10:00
+  SHORT_YEAR_DATE_TIME = 'yyy-MM-dd HH:mm', // 2024-01-01 10:00
+}
+
 export const formatDate = (
   date: Date | string | undefined | null,
-  formatPattern: string,
+  formatPattern?: FormatPattern,
   shortenDayName?: boolean,
 ): string | undefined => {
   const theDate: Date = getAsDate(date)
 
   if (isValid(theDate)) {
-    const formattedDate = format(theDate, formatPattern, {
+    const pattern = formatPattern || FormatPattern.SHORT_DATE_YEAR
+    const formattedDate = format(theDate, pattern, {
       locale: is,
     })
 

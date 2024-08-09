@@ -59,8 +59,8 @@ const AppealCasesTable: FC<Props> = (props) => {
             {showingCompletedCases && (
               <Text fontWeight={'medium'} variant="small">
                 {isRestrictionCase(theCase.type)
-                  ? `${formatDate(theCase.rulingDate ?? '', 'd.M.y')} -
-                  ${formatDate(theCase.validToDate ?? '', 'd.M.y')}`
+                  ? `${formatDate(theCase.rulingDate ?? '')} -
+                  ${formatDate(theCase.validToDate ?? '')}`
                   : ''}
               </Text>
             )}
@@ -140,7 +140,7 @@ const AppealCasesTable: FC<Props> = (props) => {
                       )
                     : ''
                   : row.appealedDate
-                  ? formatDate(row.appealedDate, 'd.M.y')
+                  ? formatDate(row.appealedDate)
                   : '-'}
               </Text>
             ),

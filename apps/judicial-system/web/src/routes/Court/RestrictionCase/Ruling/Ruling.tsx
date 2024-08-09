@@ -12,7 +12,11 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -96,12 +100,18 @@ export const getConclusionAutofill = (
           decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
             ? CaseType.TRAVEL_BAN
             : workingCase.type,
-        validToDate: `${formatDate(validToDate, 'PPPPp')
+        validToDate: `${formatDate(
+          validToDate,
+          FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+        )
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.')}`,
         hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
         isolationEndsBeforeValidToDate,
-        isolationToDate: formatDate(isolationToDate, 'PPPPp')
+        isolationToDate: formatDate(
+          isolationToDate,
+          FormatPattern.LONG_DAY_DATE_YEAR_TIME,
+        )
           ?.replace('dagur,', 'dagsins')
           ?.replace(' kl.', ', kl.'),
       })
@@ -142,7 +152,10 @@ export const Ruling = () => {
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
+            date: formatDate(
+              workingCase.arraignmentDate?.date,
+              FormatPattern.LONG_DATE_YEAR,
+            ),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(

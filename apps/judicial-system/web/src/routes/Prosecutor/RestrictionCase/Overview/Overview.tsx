@@ -11,7 +11,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  FormatPattern,
+} from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
@@ -140,7 +144,10 @@ export const Overview = () => {
             <AlertMessage
               title={formatMessage(m.openedByDefenderAlert.title)}
               message={formatMessage(m.openedByDefenderAlert.text, {
-                when: formatDate(workingCase.openedByDefender, 'PPPp'),
+                when: formatDate(
+                  workingCase.openedByDefender,
+                  FormatPattern.LONG_DATE_YEAR_TIME,
+                ),
               })}
               type="info"
               testid="alertMessageOpenedByDefender"
@@ -206,11 +213,14 @@ export const Overview = () => {
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
-                    '',
+                  formatDate(
+                    workingCase.requestedCourtDate,
+                    FormatPattern.LONG_DAY_DATE_YEAR,
+                    true,
+                  ) ?? '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  constants.TIME_FORMAT,
+                  FormatPattern.TIME,
                 )}`,
               },
               ...(workingCase.registrar
@@ -241,19 +251,23 @@ export const Overview = () => {
                   ? `${capitalize(
                       formatDate(
                         workingCase.parentCase.validToDate,
-                        'PPPP',
+                        FormatPattern.LONG_DAY_DATE_YEAR,
                         true,
                       ) ?? '',
                     )} kl. ${formatDate(
                       workingCase.parentCase.validToDate,
-                      constants.TIME_FORMAT,
+                      FormatPattern.TIME,
                     )}`
                   : workingCase.arrestDate
                   ? `${capitalize(
-                      formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
+                      formatDate(
+                        workingCase.arrestDate,
+                        FormatPattern.LONG_DAY_DATE_YEAR,
+                        true,
+                      ) ?? '',
                     )} kl. ${formatDate(
                       workingCase.arrestDate,
-                      constants.TIME_FORMAT,
+                      FormatPattern.TIME,
                     )}`
                   : 'Var ekki skráður',
               },
@@ -264,12 +278,12 @@ export const Overview = () => {
                       value: `${capitalize(
                         formatDate(
                           workingCase.arraignmentDate.date,
-                          'PPPP',
+                          FormatPattern.LONG_DAY_DATE_YEAR,
                           true,
                         ) ?? '',
                       )} kl. ${formatDate(
                         workingCase.arraignmentDate.date,
-                        constants.TIME_FORMAT,
+                        FormatPattern.TIME,
                       )}`,
                     },
                   ]

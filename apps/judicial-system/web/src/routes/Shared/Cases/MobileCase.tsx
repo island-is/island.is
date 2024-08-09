@@ -7,6 +7,7 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, FocusableBox, Text } from '@island.is/island-ui/core'
 import {
   displayFirstPlusRemaining,
+  formatDate,
   formatDOB,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
@@ -112,9 +113,8 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
         <>
           <br />
           <Text variant="small" fontWeight={'medium'}>
-            {`${formatMessage(tables.created)} ${format(
+            {`${formatMessage(tables.created)} ${formatDate(
               parseISO(theCase.created),
-              'd.M.y',
             )}`}
           </Text>
         </>

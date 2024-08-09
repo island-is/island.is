@@ -15,6 +15,7 @@ import {
   capitalize,
   formatCaseType,
   formatDate,
+  FormatPattern,
 } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -90,7 +91,10 @@ const Overview = () => {
               message={formatMessage(
                 icCourtOverview.sections.openedByDefenderAlert.text,
                 {
-                  when: formatDate(workingCase.openedByDefender, 'PPPp'),
+                  when: formatDate(
+                    workingCase.openedByDefender,
+                    FormatPattern.LONG_DATE_YEAR_TIME,
+                  ),
                 },
               )}
               type="info"
@@ -131,11 +135,14 @@ const Overview = () => {
               {
                 title: formatMessage(requestCourtDate.heading),
                 value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
-                    '',
+                  formatDate(
+                    workingCase.requestedCourtDate,
+                    FormatPattern.LONG_DAY_DATE_YEAR,
+                    true,
+                  ) ?? '',
                 )} eftir kl. ${formatDate(
                   workingCase.requestedCourtDate,
-                  constants.TIME_FORMAT,
+                  FormatPattern.TIME,
                 )}`,
               },
               {

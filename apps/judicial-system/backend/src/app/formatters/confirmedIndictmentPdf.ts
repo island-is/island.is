@@ -177,7 +177,7 @@ export const createConfirmedIndictment = async (
   })
 
   if (confirmation?.date) {
-    const dateFormattedDate = formatDate(confirmation.date, 'P')
+    const dateFormattedDate = formatDate(confirmation.date)
 
     if (dateFormattedDate) {
       doc.drawText(dateFormattedDate, {

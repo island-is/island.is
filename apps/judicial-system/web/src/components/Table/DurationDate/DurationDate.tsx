@@ -18,17 +18,15 @@ export const getDurationDate = (
   ) {
     return null
   } else if (initialRulingDate) {
-    return `${formatDate(parseISO(initialRulingDate), 'd.M.y')} - ${formatDate(
+    return `${formatDate(parseISO(initialRulingDate))} - ${formatDate(
       parseISO(validToDate),
-      'd.M.y',
     )}`
   } else if (rulingDate) {
-    return `${formatDate(parseISO(rulingDate), 'd.M.y')} - ${formatDate(
+    return `${formatDate(parseISO(rulingDate))} - ${formatDate(
       parseISO(validToDate),
-      'd.M.y',
     )}`
   } else if (validToDate) {
-    return formatDate(parseISO(validToDate), 'd.M.y') || null
+    return formatDate(parseISO(validToDate)) || null
   }
   return null
 }
