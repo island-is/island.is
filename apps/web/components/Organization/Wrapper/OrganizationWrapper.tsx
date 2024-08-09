@@ -271,7 +271,12 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'digital_iceland':
-      return (
+      return n('useDefaultDigitalIcelandHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          titleClassName={styles.digitalIcelandHeaderTitle}
+        />
+      ) : (
         <DigitalIcelandHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
