@@ -8,8 +8,24 @@ export const infoCardContainer = style({
   borderRadius: theme.border.radius.large,
 })
 
+export const infoCardContainerNew = style({
+  background: theme.color.blue100,
+  borderRadius: theme.border.radius.large,
+})
+
 export const infoCardTitleContainer = style({
   borderBottom: `2px solid ${theme.color.blue200}`,
+})
+
+export const twoCols = style({
+  display: 'grid',
+  gap: theme.spacing[2],
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridTemplateColumns: '1fr 1fr',
+    },
+  },
 })
 
 export const infoCardDataContainer = style({

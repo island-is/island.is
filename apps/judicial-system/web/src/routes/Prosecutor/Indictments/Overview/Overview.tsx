@@ -29,6 +29,9 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import InfoCardNew, {
+  defendantsSection,
+} from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard__new'
 import {
   CaseState,
   CaseTransition,
@@ -40,7 +43,7 @@ import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCas
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
-const Overview: FC<unknown> = () => {
+const Overview: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -168,7 +171,7 @@ const Overview: FC<unknown> = () => {
               title={formatMessage(strings.indictmentReturnedExplanationTitle)}
               message={workingCase.indictmentReturnedExplanation}
               type="warning"
-            ></AlertMessage>
+            />
           </Box>
         )}
         <Box marginBottom={7}>
@@ -197,6 +200,23 @@ const Overview: FC<unknown> = () => {
           )}
         <Box component="section" marginBottom={5}>
           <InfoCardActiveIndictment />
+          <InfoCardNew
+            sections={[
+              defendantsSection,
+              {
+                id: 'something-else-section',
+                items: [
+                  {
+                    title: 'qweqwe',
+                    values: ['qweqwe', 'qweqwe'],
+                    id: 'smmmtnghs',
+                  },
+                  { title: 'qweqwe', values: ['qwe'], id: 'smthngels' },
+                ],
+                columns: 2,
+              },
+            ]}
+          />
         </Box>
         {lawsBroken.size > 0 && (
           <Box marginBottom={5}>

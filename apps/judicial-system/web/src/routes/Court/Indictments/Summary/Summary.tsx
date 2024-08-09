@@ -112,7 +112,6 @@ const Summary: FC = () => {
       <FormContentContainer>
         <Box display="flex" justifyContent="spaceBetween">
           <PageTitle>{formatMessage(strings.title)}</PageTitle>
-
           {workingCase.indictmentRulingDecision && (
             <Box marginTop={2}>
               <Tag
