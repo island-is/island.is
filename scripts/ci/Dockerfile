@@ -1,8 +1,8 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
-ARG NODE_IMAGE_TAG
 ARG DOCKER_REGISTRY=public.ecr.aws
 FROM ${DOCKER_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS deps
+ARG NODE_IMAGE_TAG=latest
 
 RUN apk add -U git
 
@@ -23,7 +23,7 @@ RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-ADD . .
+COPY . .
 
 FROM src as builder
 ARG APP
@@ -84,7 +84,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM $DOCKER_REGISTRY/nginx/nginx:1.21-alpine AS output-static
+FROM $DOCKER_REGISTRY/nginx/nginx:1.21-alpine as output-static
 ARG APP
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
@@ -103,9 +103,9 @@ RUN apk update && \
   apk upgrade && \
   apk add bash nodejs
 
-ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
-ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
-ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
+COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
+COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
+COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base as output-jest
@@ -143,7 +143,7 @@ COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-ADD .yarnrc.yml ./
+COPY .yarnrc.yml ./
 RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 RUN yarn install

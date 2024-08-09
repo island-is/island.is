@@ -1,6 +1,6 @@
-ARG NODE_IMAGE_TAG
 ARG DOCKER_REGISTRY=public.ecr.aws
 FROM ${DOCKER_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS runner
+ARG NODE_IMAGE_TAG=latest
 
 RUN apk add postgresql-client bash
 
