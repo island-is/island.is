@@ -1,0 +1,15 @@
+query GetLawyers {
+  lawAndOrderLawyers {
+    items {
+      name
+      nationalId
+      practice
+    }
+  }
+}
+
+mutation PostDefenseChoice($input: LawAndOrderDefenseChoiceInput!) {
+  lawAndOrderDefenseChoicePost(input: $input) {
+    caseId
+  }
+}
