@@ -64,7 +64,11 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
-
+export { default as CaseTag } from './Tags/CaseTag'
+export {
+  getIndictmentRulingDecisionTag,
+  getIndictmentCaseStateTag,
+} from './Tags/utils'
 export {
   SigningModal,
   useRequestRulingSignature,
