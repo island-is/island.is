@@ -76,7 +76,6 @@ describe('InternalNotificationController - Send indictments waiting for confirma
       mockCountIndictmentsWaitingForConfirmation.mockResolvedValueOnce(0)
 
       then = await givenWhenThen()
-      console.log(then)
     })
 
     it('should not send messages', () => {
