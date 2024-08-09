@@ -88,10 +88,10 @@ export const carRecyclingMessages: MessageDir = {
       defaultMessage: 'Afskrá til endurvinnslu',
       description: 'Unregister for recycling',
     },
-    filter: {
-      id: 'rf.cr.application:cars.filter',
-      defaultMessage: 'Sía ökutæki',
-      description: 'Filter vehicles',
+    search: {
+      id: 'rf.cr.application:cars.search',
+      defaultMessage: 'Leita að ökutæki',
+      description: 'Search for vehicle',
     },
     overview: {
       id: 'rf.cr.application:cars.overview',
@@ -143,6 +143,16 @@ export const carRecyclingMessages: MessageDir = {
       id: 'rf.cr.application:mileage',
       defaultMessage: 'Kílómetrastaða',
       description: 'Vehicles mileage status',
+    },
+    noVehicles: {
+      id: 'rf.cr.application:no.vehicles',
+      defaultMessage: 'Engin ökutæki fundust skráð á umsækjanda',
+      description: 'No vehicles was found registered to the applicant',
+    },
+    vehicleSelected: {
+      id: 'rf.cr.application:vehicle.selected',
+      defaultMessage: 'Ökutæki valið til endurvinnslu',
+      description: 'Vehicle selected for recycling',
     },
   }),
   review: defineMessages({

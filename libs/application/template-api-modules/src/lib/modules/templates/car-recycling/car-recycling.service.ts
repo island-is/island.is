@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 
-import { coreErrorMessages } from '@island.is/application/core'
 import {
   ApplicationTypes,
   ApplicationWithAttachments,
@@ -17,9 +16,8 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '@island.is/application/templates/car-recycling'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { User } from '@island.is/auth-nest-tools'
 import { VehicleSearchApi } from '@island.is/clients/vehicles'
-import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 
@@ -31,32 +29,6 @@ export class CarRecyclingService extends BaseTemplateApiService {
     private readonly vehiclesApi: VehicleSearchApi,
   ) {
     super(ApplicationTypes.CAR_RECYCLING)
-  }
-
-  private vehiclesApiWithAuth(auth: Auth) {
-    return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  async getCurrentVehicles({ auth }: TemplateApiModuleActionProps) {
-    const result = await this.vehiclesApiWithAuth(auth).currentVehiclesGet({
-      persidNo: auth.nationalId,
-      showOwned: true,
-      showCoowned: true,
-      showOperated: true,
-    })
-
-    // Validate that user has at least 1 vehicle
-    if (!result || !result.length) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.vehiclesEmptyListDefault,
-          summary: coreErrorMessages.vehiclesEmptyListDefault,
-        },
-        400,
-      )
-    }
-
-    return result
   }
 
   async createOwner(application: ApplicationWithAttachments, auth: User) {

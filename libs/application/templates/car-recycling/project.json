@@ -7,12 +7,13 @@
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/eslint:lint"
+      "executor": "@nx/linter:eslint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/car-recycling/jest.config.ts"
+        "jestConfig": "libs/application/templates/car-recycling/jest.config.ts",
+        "passWithNoTests": true
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/car-recycling"
@@ -22,6 +23,12 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/car-recycling/src/lib/messages.ts"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/car-recycling/codegen.yml"
       }
     }
   }

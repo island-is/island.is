@@ -9,7 +9,6 @@ import {
 import { Form, FormModes, IdentityApi } from '@island.is/application/types'
 import Logo from '../assets/Logo'
 
-import { VehicleSearchApi } from '../dataProviders'
 import { carRecyclingMessages } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
@@ -48,13 +47,6 @@ export const Prerequisites: Form = buildForm({
               title: carRecyclingMessages.pre.nationalRegistryInformationTitle,
               subTitle:
                 carRecyclingMessages.pre.nationalRegistryInformationSubTitle,
-            }),
-            buildDataProviderItem({
-              provider: VehicleSearchApi,
-              title:
-                carRecyclingMessages.pre.externalDataTransportAuthorityTitle,
-              subTitle:
-                carRecyclingMessages.pre.externalDataTransportAuthoritySubtitle,
             }),
           ],
         }),

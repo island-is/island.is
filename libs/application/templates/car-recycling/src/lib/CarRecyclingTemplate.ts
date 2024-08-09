@@ -22,8 +22,6 @@ import { Actions } from '../shared'
 import { DataSchema } from './dataSchema'
 import { carRecyclingMessages, statesMessages } from './messages'
 
-import { VehicleSearchApi } from '../dataProviders'
-
 const enum States {
   PREREQUISITES = 'prerequisites',
   DRAFT = 'draft',
@@ -88,7 +86,7 @@ const CarRecyclingTemplate: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [IdentityApi, VehicleSearchApi],
+              api: [IdentityApi],
             },
           ],
         },
