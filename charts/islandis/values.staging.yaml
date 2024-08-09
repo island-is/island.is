@@ -2212,7 +2212,6 @@ services-form-system:
     SERVERSIDE_FEATURES_ON: ''
   grantNamespaces:
     - 'islandis'
-    - 'form-system-service'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
