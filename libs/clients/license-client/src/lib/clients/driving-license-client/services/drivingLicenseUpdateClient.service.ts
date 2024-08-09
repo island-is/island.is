@@ -3,12 +3,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  Pass,
-  PassDataInput,
-  RevokePassData,
-  SmartSolutionsApi,
-} from '@island.is/clients/smartsolutions'
-import {
   PassVerificationData,
   Result,
   VerifyInputData,
@@ -21,6 +15,12 @@ import {
   nationalIdIndex,
 } from '../drivingLicenseMapper'
 import { DrivingDigitalLicenseClientConfig } from '../drivingLicenseClient.config'
+import {
+  PassDataInput,
+  PkPass,
+  RevokePassData,
+  SmartSolutionsService,
+} from '@island.is/clients/smart-solutions'
 
 /** Category to attach each log message to */
 const LOG_CATEGORY = 'driving-license-service'
@@ -32,7 +32,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     @Inject(DrivingDigitalLicenseClientConfig.KEY)
     private config: ConfigType<typeof DrivingDigitalLicenseClientConfig>,
     private drivingLicenseApi: DrivingLicenseApi,
-    protected smartApi: SmartSolutionsApi,
+    protected smartApi: SmartSolutionsService,
   ) {
     super(logger, smartApi)
   }
@@ -41,7 +41,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
     inputData: PassDataInput,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PkPass>> {
     const inputFieldValues = inputData.inputFieldValues ?? []
     //small check that nationalId doesnt' already exist
     if (
@@ -63,7 +63,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
   async pullUpdate(
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PkPass>> {
     let data
     try {
       data = await Promise.all([
@@ -221,7 +221,7 @@ export class DrivingLicenseUpdateClient extends BaseLicenseUpdateClient {
       }
     }
 
-    const passNationalId = verifyRes.data.pass?.inputFieldValues.find(
+    const passNationalId = (verifyRes.data.pass?.inputFieldValues ?? []).find(
       (i) => i.passInputField.identifier === 'kennitala',
     )?.value
 

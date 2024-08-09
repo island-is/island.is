@@ -77,7 +77,7 @@ type Namespace = {
 export class LicenseServiceService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly barcodeService: BarcodeService,
+    // private readonly barcodeService: BarcodeService,
     private readonly licenseClient: LicenseClientService,
     private readonly cmsContentfulService: CmsContentfulService,
     @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
@@ -414,7 +414,7 @@ export class LicenseServiceService {
     }
 
     throw new InternalServerErrorException(
-      `Unable to get pkpass for ${licenseType} for user`,
+      `Unable to get pkpass url for ${licenseType} for user`,
     )
   }
 
@@ -450,12 +450,14 @@ export class LicenseServiceService {
 
     const pkPassRes = await client.getPkPassQRCode(user)
 
+    this.logger.debug('pkpassres', pkPassRes)
+
     if (pkPassRes.ok) {
       return pkPassRes.data
     }
 
     throw new InternalServerErrorException(
-      `Unable to get pkpass for ${licenseType} for user`,
+      `Unable to get pkpass QR code for ${licenseType} for user`,
     )
   }
 
@@ -541,6 +543,8 @@ export class LicenseServiceService {
     user: User,
     genericUserLicense: GenericUserLicense,
   ): Promise<CreateBarcodeResult | null> {
+    return null
+    /*
     const code = randomUUID()
     const genericUserLicenseType = genericUserLicense.license.type
     const licenseType = this.mapLicenseType(genericUserLicenseType)
@@ -588,7 +592,7 @@ export class LicenseServiceService {
       }),
     ])
 
-    return tokenPayload
+    return tokenPayload*/
   }
 
   logWarn(msg: string) {
@@ -598,7 +602,8 @@ export class LicenseServiceService {
   }
 
   async getDataFromToken(token: string) {
-    let code: string | undefined
+    return null
+    /*let code: string | undefined
 
     try {
       const payload = await this.barcodeService.verifyToken(token)
@@ -647,12 +652,17 @@ export class LicenseServiceService {
             type: licenseType,
           }
         : null,
-    }
+        }*/
   }
 
   async verifyLicenseBarcode(
     data: string,
   ): Promise<VerifyLicenseBarcodeResult> {
+    return {
+      barcodeType: VerifyLicenseBarcodeType.PK_PASS,
+      ...COMMON_VERIFY_ERROR,
+    }
+    /*
     if (isJWT(data)) {
       // Verify the barcode data as a token, e.g. new barcode format
       const tokenData = await this.getDataFromToken(data)
@@ -752,6 +762,6 @@ export class LicenseServiceService {
             ...licenseData,
           }
         : null,
-    }
+        }*/
   }
 }

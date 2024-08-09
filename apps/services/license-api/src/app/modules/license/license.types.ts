@@ -3,7 +3,7 @@ import {
   PassDataInput,
   Result,
   RevokePassData,
-} from '@island.is/clients/smartsolutions'
+} from '@island.is/clients/smart-solutions'
 
 export enum LicenseUpdateType {
   PUSH = 'push',

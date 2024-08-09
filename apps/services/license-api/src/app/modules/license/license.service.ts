@@ -3,7 +3,6 @@ import {
   LicenseType,
   LicenseUpdateClientService,
 } from '@island.is/clients/license-client'
-import { Pass, PassDataInput, Result } from '@island.is/clients/smartsolutions'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
@@ -28,6 +27,11 @@ import {
 } from './dto'
 import { ErrorType, LicenseId } from './license.types'
 import { mapLicenseIdToLicenseType } from './utils/mapLicenseId'
+import {
+  PassDataInput,
+  PkPass,
+  Result,
+} from '@island.is/clients/smart-solutions'
 
 const LOG_CATEGORY = 'license-api'
 
@@ -139,7 +143,7 @@ export class LicenseService {
     nationalId: string,
     payload?: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PkPass>> {
     let updatePayload: PassDataInput = {
       expirationDate,
     }
@@ -178,7 +182,7 @@ export class LicenseService {
     service: BaseLicenseUpdateClient,
     nationalId: string,
     requestId?: string,
-  ): Promise<Result<Pass | undefined>> {
+  ): Promise<Result<PkPass>> {
     /** PULL - Update electronic license with pulled data from service
      * 1. Fetch data from provider
      * 2. Parse and validate license data
@@ -209,7 +213,7 @@ export class LicenseService {
       updateType: inputData.licenseUpdateType,
     })
 
-    let updateRes: Result<Pass | undefined>
+    let updateRes: Result<PkPass>
     if (inputData.licenseUpdateType === 'push') {
       const { expiryDate, payload } = inputData
 

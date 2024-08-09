@@ -15,7 +15,7 @@ import { LicenseMapperProvider, LoggerProvider } from './providers'
     LicenseClientModule,
     LicenseMapperModule,
     CmsModule,
-    LicenseModule,
+    //LicenseModule,
     CacheModule.register({
       ttl: 60 * 10 * 1000, // 10 minutes
     }),
