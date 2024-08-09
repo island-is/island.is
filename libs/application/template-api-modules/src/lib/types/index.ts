@@ -14,23 +14,10 @@ export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
   jwtSecret: string
   clientLocationOrigin: string
-  emailOptions: {
-    useTestAccount: boolean
-    useNodemailerApp?: boolean
-    options?: {
-      region: string
-    }
-  }
   baseApiUrl: string
   email: {
     sender: string
     address: string
-  }
-  smsOptions: {
-    url: string
-    username: string
-    password: string
-    acceptUnauthorized?: boolean
   }
   attachmentBucket: string
   presignBucket: string
