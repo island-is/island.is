@@ -14,14 +14,25 @@ To be done.
 
 ### NestJS Standalone - not recommended
 
-Assuming `environment.smsOptions` implements `SmsServiceOptions`, add the module to your Module imports:
+Add `SmsModule` to your Module imports:
 
 ```typescript
 @Module({
-  imports: [
-    SmsModule.register(environment.smsOptions),
-  ],
+  imports: [SmsModule],
 })
+```
+
+Add `smsModuleConfig` to your App Module imports:
+
+```typescript
+@Module(
+  imports: [
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [smsModuleConfig],
+    }),
+  ]
+)
 ```
 
 ## Code owners and maintainers
