@@ -202,6 +202,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                             const cardUrl = linkResolver(
                               thing?.type as LinkType,
                               [thing?.slug ?? ''],
+                              locale,
                             )
                             return cardUrl?.href && cardUrl?.href.length > 0 ? (
                               <Tag
