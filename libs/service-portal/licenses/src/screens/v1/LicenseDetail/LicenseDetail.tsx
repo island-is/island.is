@@ -1,6 +1,5 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { useUserProfile } from '@island.is/service-portal/graphql'
-
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   Box,
@@ -20,10 +19,9 @@ import {
   ErrorScreen,
   m as coreMessages,
 } from '@island.is/service-portal/core'
-import ExpandableLine from './ExpandableLine'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
-import { useLocation, useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import format from 'date-fns/format'
 import { dateFormat } from '@island.is/shared/constants'
 import {
@@ -31,14 +29,14 @@ import {
   GenericUserLicenseMetaLinksType,
   Query,
 } from '@island.is/api/schema'
-import { PkPass } from '../../components/QRCodeModal/PkPass'
+import { PkPass } from '../../../components/QRCodeModal/PkPass'
 import {
   getLicenseDetailHeading,
   getTypeFromPath,
-} from '../../utils/dataMapper'
-import { isExpired } from '../../utils/dateUtils'
-import isValid from 'date-fns/isValid'
+} from '../../../utils/dataMapper'
 import { isDefined } from '@island.is/shared/utils'
+import ExpandableLine from '../../../components/ExpandableLine/ExpandableLine'
+import React from 'react'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {
@@ -112,18 +110,14 @@ const GenericLicenseQuery = gql`
   ${dataFragment}
 `
 
-const checkLicenseExpired = (date?: string) => {
-  if (!date) return false
-
-  return isExpired(new Date(), new Date(date))
-}
-
 const DataFields = ({
   fields,
   licenseType,
+  expired,
 }: {
   fields: GenericLicenseDataField[]
   licenseType?: string
+  expired?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const [page, setPage] = useState(1)
@@ -157,20 +151,14 @@ const DataFields = ({
                   }
                   renderContent={
                     field.value &&
+                    field.value !== 'Sjá réttindi' &&
                     (field.label?.toLowerCase().includes('gildir til') ||
                       field.label?.toLowerCase().includes('gildistími') ||
                       field.label?.toLowerCase().includes('valid to')) &&
-                    isValid(new Date(field.value))
+                    expired !== undefined
                       ? () => (
                           <Box display="flex" alignItems="center">
-                            <Text>
-                              {field.value && isJSONDate(field.value)
-                                ? format(
-                                    +new Date(field.value).getTime(),
-                                    dateFormat.is,
-                                  )
-                                : field.value}
-                            </Text>
+                            <Text>{field.value}</Text>
                             <Box
                               marginLeft={2}
                               display="flex"
@@ -187,24 +175,14 @@ const DataFields = ({
                               >
                                 <Icon
                                   icon={
-                                    checkLicenseExpired(
-                                      field.value ?? undefined,
-                                    )
-                                      ? 'closeCircle'
-                                      : 'checkmarkCircle'
+                                    expired ? 'closeCircle' : 'checkmarkCircle'
                                   }
-                                  color={
-                                    checkLicenseExpired(
-                                      field.value ?? undefined,
-                                    )
-                                      ? 'red600'
-                                      : 'mint600'
-                                  }
+                                  color={expired ? 'red600' : 'mint600'}
                                   type="filled"
                                 />
                               </Box>
                               <Text variant="eyebrow">
-                                {checkLicenseExpired(field.value ?? undefined)
+                                {expired
                                   ? formatMessage(m.isExpired)
                                   : formatMessage(m.isValid)}
                               </Text>
@@ -228,13 +206,9 @@ const DataFields = ({
             )}
             {field.type === 'Category' && (
               <ExpandableLine
-                title={
-                  field.description
-                    ? field.name ?? ''
-                    : [field.name, field.label].filter(Boolean).join(' ')
-                }
+                title={field.name ?? ''}
                 data={field.fields ?? []}
-                description={field.description ?? undefined}
+                description={field.label ?? undefined}
                 type={licenseType}
               />
             )}
@@ -252,6 +226,7 @@ const DataFields = ({
                 <DataFields
                   fields={field.fields ?? []}
                   licenseType={licenseType}
+                  expired={expired}
                 />
               </>
             )}
@@ -454,6 +429,7 @@ const LicenseDetail = () => {
           <DataFields
             fields={genericLicense?.payload?.data ?? []}
             licenseType={licenseType}
+            expired={expired ?? undefined}
           />
         </>
       )}

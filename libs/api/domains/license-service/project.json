@@ -14,6 +14,12 @@
       "options": {
         "jestConfig": "libs/api/domains/license-service/jest.config.ts"
       }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/license-service/src/lib/messages.ts'"
+      }
     }
   }
 }

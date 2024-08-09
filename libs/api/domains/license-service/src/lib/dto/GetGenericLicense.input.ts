@@ -6,6 +6,6 @@ export class GetGenericLicenseInput {
   @Field(() => String)
   licenseType!: GenericLicenseType
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   licenseId?: string
 }

@@ -1,31 +1,52 @@
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import { User } from '@island.is/auth-nest-tools'
 import { LicenseClient, LicenseType, Result } from '../../licenseClient.type'
 import { FetchError } from '@island.is/clients/middlewares'
-import { PassportsService, Passport } from '@island.is/clients/passports'
+import {
+  IdentityDocument,
+  IdentityDocumentChild,
+  PassportsService,
+} from '@island.is/clients/passports'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+import { isDefined } from '@island.is/shared/utils'
 
 @Injectable()
 export class PassportsClient implements LicenseClient<LicenseType.Passport> {
   constructor(
-    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private passportService: PassportsService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   clientSupportsPkPass = false
   type = LicenseType.Passport
 
-  async getLicenses(user: User): Promise<Result<Array<Passport>>> {
+  async getLicenses(
+    user: User,
+  ): Promise<Result<Array<IdentityDocument | IdentityDocumentChild>>> {
     try {
-      const licenseInfo = await this.passportService.getCurrentPassport(user)
-      return { ok: true, data: [licenseInfo] }
+      const { userPassport, childPassports } =
+        await this.passportService.getCurrentPassport(user)
+
+      let passports: Array<IdentityDocument | IdentityDocumentChild> = [
+        userPassport,
+      ].filter(isDefined)
+
+      if (childPassports) {
+        passports = [...passports, ...childPassports]
+      }
+      return {
+        ok: true,
+        data: passports.filter(isDefined),
+      }
     } catch (e) {
       let error
       if (e instanceof FetchError) {
         //404 - no license for user, still ok!
         if (e.status === 404) {
-          return { ok: true, data: [] }
+          return {
+            ok: true,
+            data: [],
+          }
         } else {
           error = {
             code: 13,
