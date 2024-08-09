@@ -230,7 +230,7 @@ export const m = defineMessages({
     description: 'Open my sites',
   },
   outroMessage: {
-    id: 'mc.application:outro.message',
+    id: 'mc.application:outro.message#markdown',
     defaultMessage:
       'Your application #{id} is now in review. The ID of the application is returned by the createApplication API action and read from application.externalData',
     description: '',
