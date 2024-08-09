@@ -5,6 +5,7 @@ import {
   CreateListInput,
   BulkUploadInput,
   ReasonKey,
+  CollectionType,
 } from './signature-collection.types'
 import { Collection } from './types/collection.dto'
 import { List, ListStatus, mapList, mapListBase } from './types/list.dto'
@@ -43,15 +44,22 @@ export class SignatureCollectionAdminClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(auth: Auth): Promise<Collection> {
+  async currentCollection(
+    auth: Auth,
+    type: CollectionType,
+  ): Promise<Collection> {
     return await this.sharedService.currentCollection(
       this.getApiWithAuth(this.collectionsApi, auth),
+      type,
     )
   }
 
   async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
     const list = await this.getList(listId, auth)
-    const { status } = await this.currentCollection(auth)
+    const { status } = await this.currentCollection(
+      auth,
+      CollectionType.Presidential,
+    ) //TODO: Haukur fix
     return this.sharedService.getListStatus(list, status)
   }
 
@@ -107,7 +115,10 @@ export class SignatureCollectionAdminClientService {
     { collectionId, owner, areas }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, areas: collectionAreas } = await this.currentCollection(auth)
+    const { id, areas: collectionAreas } = await this.currentCollection(
+      auth,
+      CollectionType.Presidential,
+    ) //TODO: Haukur fix
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id) {
       throw new Error('Collection id input wrong')
@@ -155,7 +166,10 @@ export class SignatureCollectionAdminClientService {
     nationalId: string,
     auth: Auth,
   ): Promise<CandidateLookup> {
-    const collection = await this.currentCollection(auth)
+    const collection = await this.currentCollection(
+      auth,
+      CollectionType.Presidential,
+    ) //TODO: Haukur fix
     const { id, isPresidential, areas } = collection
     const user = await this.getApiWithAuth(
       this.collectionsApi,

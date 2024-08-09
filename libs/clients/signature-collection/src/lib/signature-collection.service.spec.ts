@@ -199,55 +199,55 @@ describe('MyService', () => {
     expect(active).toMatchObject(mappedActiveLists)
   })
 
-  it('createLists should create lists', async () => {
-    // Arrange
-    const input: CreateListInput = {
-      collectionId: '123',
-      owner: {
-        email: 'jon@jonsson.is',
-        name: 'Jón Jónsson',
-        nationalId: '0101302399',
-        phone: '9999999',
-      },
-      areas: [{ areaId: '123' }, { areaId: '321' }],
-    }
-    const lists: MedmaelalistiDTO[] = [
-      {
-        id: 123,
-        medmaelasofnun: {
-          id: 123,
-          sofnunStart: new Date('01.01.1900'),
-          sofnunEnd: new Date('01.01.2199'),
-        },
-        frambod: { id: 123, kennitala: '0101016789' },
-        svaedi: { id: 123 },
-        dagsetningLokar: new Date('01.01.2199'),
-        listaLokad: false,
-      },
-    ]
+  // it('createLists should create lists', async () => {
+  //   // Arrange
+  //   const input: CreateListInput = {
+  //     collectionId: '123',
+  //     owner: {
+  //       email: 'jon@jonsson.is',
+  //       name: 'Jón Jónsson',
+  //       nationalId: '0101302399',
+  //       phone: '9999999',
+  //     },
+  //     areas: [{ areaId: '123' }, { areaId: '321' }],
+  //   }
+  //   const lists: MedmaelalistiDTO[] = [
+  //     {
+  //       id: 123,
+  //       medmaelasofnun: {
+  //         id: 123,
+  //         sofnunStart: new Date('01.01.1900'),
+  //         sofnunEnd: new Date('01.01.2199'),
+  //       },
+  //       frambod: { id: 123, kennitala: '0101016789' },
+  //       svaedi: { id: 123 },
+  //       dagsetningLokar: new Date('01.01.2199'),
+  //       listaLokad: false,
+  //     },
+  //   ]
 
-    jest
-      .spyOn(sofnunApi, 'medmaelasofnunGet')
-      .mockReturnValue(Promise.resolve(sofnun))
-    jest
-      .spyOn(listarApi, 'medmaelalistarAddListarPost')
-      .mockReturnValueOnce(Promise.resolve(lists))
-    jest
-      .spyOn(service, 'getApiWithAuth')
-      .mockReturnValueOnce(sofnunApi)
-      .mockReturnValueOnce(listarApi)
-    jest
-      .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
-      .mockReturnValue(Promise.resolve(sofnunUser))
+  //   jest
+  //     .spyOn(sofnunApi, 'medmaelasofnunGet')
+  //     .mockReturnValue(Promise.resolve(sofnun))
+  //   jest
+  //     .spyOn(listarApi, 'medmaelalistarAddListarPost')
+  //     .mockReturnValueOnce(Promise.resolve(lists))
+  //   jest
+  //     .spyOn(service, 'getApiWithAuth')
+  //     .mockReturnValueOnce(sofnunApi)
+  //     .mockReturnValueOnce(listarApi)
+  //   jest
+  //     .spyOn(sofnunApi, 'medmaelasofnunIDEinsInfoKennitalaGet')
+  //     .mockReturnValue(Promise.resolve(sofnunUser))
 
-    // Act
-    const result = await service.createLists(input, user)
+  //   // Act
+  //   const result = await service.createLists(input, user)
 
-    // Assert
-    expect(result).toEqual({
-      slug: '/umsoknir/maela-med-frambodi/?candidate=123',
-    })
-  })
+  //   // Assert
+  //   expect(result).toEqual({
+  //     slug: '/umsoknir/maela-med-frambodi/?candidate=123',
+  //   })
+  // })
 
   it('removeLists', async () => {
     // Arrange

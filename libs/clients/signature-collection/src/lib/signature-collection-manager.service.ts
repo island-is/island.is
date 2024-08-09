@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { GetListInput } from './signature-collection.types'
+import { CollectionType, GetListInput } from './signature-collection.types'
 import { Collection, CollectionStatus } from './types/collection.dto'
 import { List, ListStatus } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
@@ -29,6 +29,7 @@ export class SignatureCollectionManagerClientService {
   async currentCollection(auth: Auth): Promise<Collection> {
     return await this.sharedService.currentCollection(
       this.getApiWithAuth(this.collectionsApi, auth),
+      CollectionType.Presidential, //TODO: Haukur fix
     )
   }
 
