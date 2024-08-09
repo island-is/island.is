@@ -1,13 +1,17 @@
 import { z } from 'zod'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
+import {
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+} from '@island.is/application/core'
 import {
   ApplicationTemplate,
   ApplicationTypes,
   ApplicationContext,
   ApplicationRole,
   ApplicationStateSchema,
-  Application,
   DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 
@@ -15,12 +19,7 @@ const States = {
   prerequisites: 'prerequisites',
   draft: 'draft',
 }
-type ReferenceTemplateEvent =
-  | { type: DefaultEvents.APPROVE }
-  | { type: DefaultEvents.REJECT }
-  | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
+type ReferenceTemplateEvent = { type: DefaultEvents.APPROVE }
 
 enum Roles {
   APPLICANT = 'applicant',
@@ -47,13 +46,26 @@ const template: ApplicationTemplate<
           name: 'Skilyrði',
           progress: 0,
           status: 'draft',
-          lifecycle: {
-            shouldBeListed: false,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          roles: [],
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              // formLoader: () =>
+              //   import('../forms/Prerequisites').then((module) =>
+              //     Promise.resolve(module.Prerequisites),
+              //   ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              delete: true,
+              api: [NationalRegistryUserApi, UserProfileApi],
+            },
+          ],
         },
       },
       [States.draft]: {
@@ -68,10 +80,9 @@ const template: ApplicationTemplate<
     },
   },
   stateMachineOptions: {},
-  mapUserToRole(
-    nationalId: string,
-    application: Application,
-  ): ApplicationRole | undefined {
+  mapUserToRole(): ApplicationRole | undefined {
+    //nationalId: string,
+    //application: Application,
     return Roles.APPLICANT
   },
 }
