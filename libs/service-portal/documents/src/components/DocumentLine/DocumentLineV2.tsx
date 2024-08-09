@@ -170,7 +170,6 @@ export const DocumentLine: FC<Props> = ({
 
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
-  const isArchived = activeArchive || archiveSuccess
 
   return (
     <Box className={styles.wrapper} ref={wrapperRef}>
@@ -254,31 +253,18 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {(hasFocusOrHover || isBookmarked || isArchived) &&
+            {(hasFocusOrHover || isBookmarked) &&
               !postLoading &&
               !fileLoading &&
               !asFrame && (
                 <FavAndStash
                   bookmarked={isBookmarked}
-                  archived={isArchived}
                   onFav={
                     isBookmarked || hasFocusOrHover
                       ? async (e) => {
                           e.stopPropagation()
                           await submitMailAction(
                             isBookmarked ? 'unbookmark' : 'bookmark',
-                            documentLine.id,
-                          )
-                          refetch(fetchObject)
-                        }
-                      : undefined
-                  }
-                  onStash={
-                    isArchived || hasFocusOrHover
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isArchived ? 'unarchive' : 'archive',
                             documentLine.id,
                           )
                           refetch(fetchObject)
