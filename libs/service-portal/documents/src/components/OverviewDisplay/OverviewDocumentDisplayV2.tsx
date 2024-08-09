@@ -1,4 +1,5 @@
 import { FC } from 'react'
+import { toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import useWindowSize from 'react-use/lib/useWindowSize'
@@ -23,6 +24,9 @@ export const DocumentDisplay: FC<Props> = (props) => {
   const isDesktop = width > theme.breakpoints.lg
 
   if (props.error?.message) {
+    if (!isDesktop) {
+      toast.error(props.error?.message, { toastId: 'single-doc-error' })
+    }
     if (props.error?.code === 'single' && !isDesktop) {
       return null
     }
