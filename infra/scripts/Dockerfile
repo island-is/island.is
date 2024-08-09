@@ -1,11 +1,11 @@
-ARG DOCKER_REGISTRY=public.ecr.aws
-FROM ${DOCKER_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS runner
+ARG DOCKER_REGISTRY=public.ecr.aws/docker
 ARG NODE_IMAGE_TAG=latest
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS runner
 
 RUN apk add postgresql-client bash
 
 
-FROM ${DOCKER_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} AS build
+FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS build
 ENV NODE_OPTIONS=--openssl-legacy-provider
 WORKDIR /app/infra
 
