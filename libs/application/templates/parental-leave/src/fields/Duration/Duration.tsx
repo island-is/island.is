@@ -12,7 +12,7 @@ import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 
-import Slider from '../components/Slider'
+import { Slider } from '@island.is/application/ui-components'
 import {
   getApplicationAnswers,
   calculateEndDateForPeriodWithStartAndLength,

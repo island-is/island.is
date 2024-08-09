@@ -26,3 +26,4 @@ export { ActionCardListFormField } from './ActionCardListFormField/ActionCardLis
 export { TableRepeaterFormField } from './TableRepeaterFormField/TableRepeaterFormField'
 export { FindVehicleFormField } from './FindVehicleFormField/FindVehicleFormField'
 export { StaticTableFormField } from './StaticTableFormField/StaticTableFormField'
+export { SliderFormField } from './SliderFormField/SliderFormField'

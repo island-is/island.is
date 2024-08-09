@@ -15,7 +15,7 @@ import { CallToAction } from './StateMachine'
 import { Colors, theme } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
-import React from 'react'
+import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
 import { Locale } from '@island.is/shared/types'
@@ -210,6 +210,7 @@ export enum FieldTypes {
   HIDDEN_INPUT_WITH_WATCHED_VALUE = 'HIDDEN_INPUT_WITH_WATCHED_VALUE',
   FIND_VEHICLE = 'FIND_VEHICLE',
   STATIC_TABLE = 'STATIC_TABLE',
+  SLIDER = 'SLIDER',
 }
 
 export enum FieldComponents {
@@ -241,6 +242,7 @@ export enum FieldComponents {
   HIDDEN_INPUT = 'HiddenInputFormField',
   FIND_VEHICLE = 'FindVehicleFormField',
   STATIC_TABLE = 'StaticTableFormField',
+  SLIDER = 'SliderFormField',
 }
 
 export interface CheckboxField extends BaseField {
@@ -607,6 +609,43 @@ export interface StaticTableField extends BaseField {
     | ((application: Application) => { label: StaticText; value: StaticText }[])
 }
 
+export interface SliderField extends BaseField {
+  readonly type: FieldTypes.SLIDER
+  readonly color?: Colors
+  component: FieldComponents.SLIDER
+  min: number
+  max: MaybeWithApplicationAndField<number>
+  step?: number
+  snap?: boolean
+  trackStyle?: CSSProperties
+  calculateCellStyle: (index: number) => CSSProperties
+  showLabel?: boolean
+  showMinMaxLabels?: boolean
+  showRemainderOverlay?: boolean
+  showProgressOverlay?: boolean
+  showToolTip?: boolean
+  label: {
+    singular: FormText
+    plural: FormText
+  }
+  rangeDates?: {
+    start: {
+      date: string
+      message: string
+    }
+    end: {
+      date: string
+      message: string
+    }
+  }
+  currentIndex?: number
+  onChange?: (index: number) => void
+  onChangeEnd?(index: number): void
+  labelMultiplier?: number
+  id: string
+  saveAsString?: boolean
+}
+
 export type Field =
   | CheckboxField
   | CustomField
@@ -638,3 +677,4 @@ export type Field =
   | HiddenInputField
   | FindVehicleField
   | StaticTableField
+  | SliderField
