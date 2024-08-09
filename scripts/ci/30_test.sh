@@ -12,7 +12,7 @@ set -euxo pipefail
 : "${FLAKY_TEST_RETRIES:=3}"
 
 # Default to big old-space, and more options for testing, but allow overriding
-NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
+NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=strict --trace-warnings  --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
 EXTRA_OPTS=""
 
 FLAKY_TESTS=(
@@ -24,7 +24,6 @@ if [[ " ${FLAKY_TESTS[*]} " == *" ${APP} "* ]]; then
 else
   IS_FLAKY_TEST=false
 fi
-
 
 projects_uncollectible_coverage=(
   "application-templates-no-debt-certificate"
@@ -48,7 +47,7 @@ export DD_CIVISIBILITY_AGENTLESS_ENABLED \
 
 FLAKY_TEST_RETRIES=$(if [[ "$IS_FLAKY_TEST" == true ]]; then echo "$FLAKY_TEST_RETRIES"; else echo 1; fi)
 
-for ((i=1; i<=FLAKY_TEST_RETRIES; i++)); do
+for ((i = 1; i <= FLAKY_TEST_RETRIES; i++)); do
   echo "Running test ${APP} (attempt: ${i}/${FLAKY_TEST_RETRIES})"
   if yarn run test "${APP}" ${EXTRA_OPTS} --verbose --no-watchman "$@"; then
     exit 0
