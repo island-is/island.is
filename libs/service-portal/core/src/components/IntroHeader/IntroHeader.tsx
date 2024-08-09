@@ -5,6 +5,7 @@ import {
   Text,
   LoadingDots,
   GridColumnProps,
+  Box,
 } from '@island.is/island-ui/core'
 import { IntroHeaderProps } from '@island.is/portals/core'
 import InstitutionPanel from '../InstitutionPanel/InstitutionPanel'
@@ -39,7 +40,11 @@ export const IntroHeader = (props: IntroHeaderProps & Props) => {
   const columnSpan = isMobile ? '8/8' : props.narrow ? '4/8' : '5/8'
 
   if (props.loading) {
-    return <LoadingDots />
+    return (
+      <Box marginBottom={marginBottom ?? 4}>
+        <LoadingDots />
+      </Box>
+    )
   }
 
   return (

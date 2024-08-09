@@ -21,6 +21,7 @@ import { sessionsNavigation } from '@island.is/service-portal/sessions'
 import { consentNavigation } from '@island.is/service-portal/consent'
 import { ServicePortalPaths } from '@island.is/service-portal/core'
 import { socialInsuranceMaintenanceNavigation } from '@island.is/service-portal/social-insurance-maintenance'
+import { lawAndOrderNavigation } from '@island.is/service-portal/law-and-order'
 
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
@@ -55,5 +56,6 @@ export const MAIN_NAVIGATION: PortalNavigationItem = {
     occupationalLicensesNavigation,
     airDiscountNavigation,
     educationNavigation,
+    lawAndOrderNavigation,
   ],
 }

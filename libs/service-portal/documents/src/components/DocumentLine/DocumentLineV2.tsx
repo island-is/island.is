@@ -2,10 +2,14 @@ import cn from 'classnames'
 import format from 'date-fns/format'
 import { FC, useEffect, useRef, useState } from 'react'
 
-import { DocumentV2, DocumentV2Content } from '@island.is/api/schema'
+import {
+  DocumentV2,
+  DocumentV2Actions,
+  DocumentV2Content,
+} from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { m } from '@island.is/service-portal/core'
+import { ConfirmationModal, m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../utils/messages'
@@ -17,12 +21,13 @@ import {
   useLocation,
 } from 'react-router-dom'
 import { DocumentsPaths } from '../../lib/paths'
-import { FavAndStash } from '../FavAndStash'
+import { FavAndStash } from '../FavAndStash/FavAndStash'
 import { useIsChildFocusedorHovered } from '../../hooks/useIsChildFocused'
 import { useGetDocumentInboxLineV2LazyQuery } from '../../screens/Overview/Overview.generated'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
+import UrgentTag from '../UrgentTag/UrgentTag'
 
 interface Props {
   documentLine: DocumentV2
@@ -47,6 +52,7 @@ export const DocumentLine: FC<Props> = ({
 }) => {
   const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
+  const [isModalVisible, setModalVisible] = useState(false)
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const location = useLocation()
@@ -54,6 +60,7 @@ export const DocumentLine: FC<Props> = ({
   const { id } = useParams<{
     id: string
   }>()
+  const isUrgent = documentLine.isUrgent ?? false
 
   const {
     submitMailAction,
@@ -72,6 +79,9 @@ export const DocumentLine: FC<Props> = ({
     localRead,
   } = useDocumentContext()
 
+  const toggleModal = () => {
+    setModalVisible(!isModalVisible)
+  }
   const wrapperRef = useRef(null)
   const avatarRef = useRef(null)
 
@@ -86,7 +96,10 @@ export const DocumentLine: FC<Props> = ({
     setHasAvatarFocus(isAvatarFocused)
   }, [isAvatarFocused])
 
-  const displayPdf = (content?: DocumentV2Content) => {
+  const displayPdf = (
+    content?: DocumentV2Content,
+    actions?: Array<DocumentV2Actions>,
+  ) => {
     setActiveDocument({
       document: {
         type: content?.type,
@@ -100,6 +113,7 @@ export const DocumentLine: FC<Props> = ({
       date: date,
       img,
       categoryId: documentLine.categoryId ?? undefined,
+      actions: actions,
     })
     window.scrollTo({
       top: 0,
@@ -126,8 +140,9 @@ export const DocumentLine: FC<Props> = ({
           )
         } else {
           const docContent = data?.documentV2?.content
+          const actions = data?.documentV2?.actions ?? undefined
           if (docContent) {
-            displayPdf(docContent)
+            displayPdf(docContent, actions)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
           } else {
@@ -165,7 +180,11 @@ export const DocumentLine: FC<Props> = ({
     if (match?.params?.id && match?.params?.id !== documentLine?.id) {
       navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
-    getDocument()
+    if (isUrgent) {
+      toggleModal()
+    } else {
+      getDocument()
+    }
   }
 
   const unread = !documentLine.opened && !localRead.includes(documentLine.id)
@@ -223,78 +242,154 @@ export const DocumentLine: FC<Props> = ({
           />
         </div>
         <Box
-          width="full"
           display="flex"
-          flexDirection="column"
-          paddingLeft={2}
-          minWidth={0}
+          position="relative"
+          borderColor="blue200"
+          borderBottomWidth="standard"
+          borderTopWidth={includeTopBorder ? 'standard' : undefined}
+          paddingX={2}
+          paddingTop="p2"
+          paddingBottom={isUrgent ? 'p1' : 'p2'}
+          width="full"
+          className={cn(styles.docline, {
+            [styles.active]: active,
+            [styles.unread]: unread,
+          })}
         >
-          {active && <div className={styles.fakeBorder} />}
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="small" truncate>
-              {documentLine.sender?.name ?? ''}
-            </Text>
-            <Text variant="small">{date}</Text>
-          </Box>
-          <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <button
-              onClick={async () => onLineClick()}
-              aria-label={formatMessage(m.openDocumentAriaLabel, {
-                subject: documentLine.subject,
-              })}
-              type="button"
-              id={active ? `button-${documentLine.id}` : undefined}
-              className={styles.docLineButton}
+          <div ref={avatarRef} className={styles.avatar}>
+            <AvatarImage
+              img={img}
+              onClick={(e) => {
+                e.stopPropagation()
+                if (documentLine.id && setSelectLine) {
+                  setSelectLine(documentLine.id)
+                }
+              }}
+              avatar={
+                (hasAvatarFocus || selected) && !asFrame ? (
+                  <Box
+                    display="flex"
+                    alignItems="center"
+                    justifyContent="center"
+                    background={selected ? 'blue400' : 'blue300'}
+                    borderRadius="circle"
+                    className={styles.checkCircle}
+                  >
+                    <Icon icon="checkmark" color="white" type="filled" />
+                  </Box>
+                ) : undefined
+              }
+              background={
+                hasAvatarFocus
+                  ? asFrame
+                    ? 'white'
+                    : 'blue200'
+                  : documentLine.opened
+                  ? 'blue100'
+                  : 'white'
+              }
+            />
+          </div>
+          <Box
+            width="full"
+            display="flex"
+            flexDirection="column"
+            paddingLeft={2}
+            minWidth={0}
+          >
+            {active && <div className={styles.fakeBorder} />}
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
             >
-              <Text
-                fontWeight={unread ? 'medium' : 'regular'}
-                color="blue400"
-                truncate
-              >
-                {documentLine.subject}
+              <Text variant="medium" truncate>
+                {documentLine.sender?.name ?? ''}
               </Text>
-            </button>
-            {(hasFocusOrHover || isBookmarked || isArchived) &&
-              !postLoading &&
-              !fileLoading &&
-              !asFrame && (
-                <FavAndStash
-                  bookmarked={isBookmarked}
-                  archived={isArchived}
-                  onFav={
-                    isBookmarked || hasFocusOrHover
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isBookmarked ? 'unbookmark' : 'bookmark',
-                            documentLine.id,
-                          )
-                          refetch(fetchObject)
-                        }
-                      : undefined
-                  }
-                  onStash={
-                    isArchived || hasFocusOrHover
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isArchived ? 'unarchive' : 'archive',
-                            documentLine.id,
-                          )
-                          refetch(fetchObject)
-                        }
-                      : undefined
-                  }
-                />
-              )}
-            {(postLoading || fileLoading) && (
+              <Text variant="medium">{date}</Text>
+            </Box>
+            <Box
+              display="flex"
+              flexDirection="row"
+              justifyContent="spaceBetween"
+            >
+              <button
+                onClick={async () => onLineClick()}
+                aria-label={formatMessage(m.openDocumentAriaLabel, {
+                  subject: documentLine.subject,
+                })}
+                type="button"
+                id={active ? `button-${documentLine.id}` : undefined}
+                className={styles.docLineButton}
+              >
+                <Text
+                  fontWeight={unread ? 'medium' : 'regular'}
+                  color="blue400"
+                  truncate
+                >
+                  {documentLine.subject}
+                </Text>
+              </button>
+
               <Box display="flex" alignItems="center">
-                <LoadingDots single />
+                {(postLoading || fileLoading) && (
+                  <Box display="flex" alignItems="center">
+                    <LoadingDots single />
+                  </Box>
+                )}
+                {(hasFocusOrHover || isBookmarked || isArchived) &&
+                  !postLoading &&
+                  !fileLoading &&
+                  !asFrame && (
+                    <FavAndStash
+                      bookmarked={isBookmarked}
+                      archived={isArchived}
+                      onFav={
+                        isBookmarked || hasFocusOrHover
+                          ? async (e) => {
+                              e.stopPropagation()
+                              await submitMailAction(
+                                isBookmarked ? 'unbookmark' : 'bookmark',
+                                documentLine.id,
+                              )
+                              refetch(fetchObject)
+                            }
+                          : undefined
+                      }
+                      onStash={
+                        isArchived || hasFocusOrHover
+                          ? async (e) => {
+                              e.stopPropagation()
+                              await submitMailAction(
+                                isArchived ? 'unarchive' : 'archive',
+                                documentLine.id,
+                              )
+                              refetch(fetchObject)
+                            }
+                          : undefined
+                      }
+                    />
+                  )}
+                {isUrgent && <UrgentTag />}
               </Box>
-            )}
+            </Box>
           </Box>
         </Box>
       </Box>
+      {isModalVisible && (
+        <ConfirmationModal
+          onSubmit={() => {
+            setModalVisible(false)
+            getDocument()
+          }}
+          onCancel={() => setModalVisible(false)}
+          onClose={toggleModal}
+          loading={false}
+          modalText={formatMessage(m.acknowledgeText, {
+            arg: documentLine.sender.name,
+          })}
+        />
+      )}
     </Box>
   )
 }

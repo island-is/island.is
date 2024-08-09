@@ -46,6 +46,7 @@ import {
   UniversityCareers,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  JudicialSystemServicePortal,
   Frigg,
 } from '../../../infra/src/dsl/xroad'
 
@@ -425,6 +426,7 @@ export const serviceSetup = (services: {
       SignatureCollection,
       SocialInsuranceAdministration,
       OfficialJournalOfIceland,
+      JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
       Frigg,
     )

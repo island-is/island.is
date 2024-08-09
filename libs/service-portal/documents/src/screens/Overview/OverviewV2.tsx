@@ -19,7 +19,7 @@ import debounce from 'lodash/debounce'
 import DocumentsFilter from '../../components/DocumentFilter/DocumentsFilterV2'
 import DocumentLine from '../../components/DocumentLine/DocumentLineV2'
 import { useKeyDown } from '../../hooks/useKeyDown'
-import { FavAndStash } from '../../components/FavAndStash'
+import { FavAndStash } from '../../components/FavAndStash/FavAndStash'
 import { messages } from '../../utils/messages'
 import DocumentDisplay from '../../components/OverviewDisplay/OverviewDocumentDisplayV2'
 import { DocumentsPaths } from '../../lib/paths'
@@ -161,7 +161,7 @@ export const ServicePortalDocumentsV2 = () => {
               padding={2}
             >
               <Box display="flex">
-                <Box className={styles.checkboxWrap} marginRight={3}>
+                <Box className={styles.checkboxWrap} marginRight={2}>
                   {!activeArchive && (
                     <Checkbox
                       name="checkbox-select-all"

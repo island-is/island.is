@@ -1,4 +1,8 @@
-import { DocumentDetails, DocumentV2Content } from '@island.is/api/schema'
+import {
+  DocumentDetails,
+  DocumentV2Content,
+  DocumentV2Actions,
+} from '@island.is/api/schema'
 
 type ActiveDoc = {
   id: string
@@ -9,6 +13,7 @@ type ActiveDoc = {
   img?: string
   categoryId?: string
   senderNatReg?: string
+  actions?: Array<DocumentV2Actions>
 }
 
 export type ActiveDocumentType = {
