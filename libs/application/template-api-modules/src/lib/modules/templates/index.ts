@@ -24,6 +24,8 @@ import { ExamplePaymentActionsModule } from './example-payment-actions/examplePa
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
+import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
+import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery/financial-statement-cemetery.service'
 import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
@@ -164,6 +166,7 @@ export const modules = [
   DrivingSchoolConfirmationModule,
   PassportModule,
   OperatingLicenseModule,
+  FinancialStatementCemeteryTemplateModule,
   FinancialStatementsInaoTemplateModule,
   NoDebtCertificateModule,
   InheritanceReportModule,
@@ -234,6 +237,7 @@ export const services = [
   DrivingSchoolConfirmationService,
   PassportService,
   OperatingLicenseService,
+  FinancialStatementCemeteryTemplateService,
   FinancialStatementsInaoTemplateService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
