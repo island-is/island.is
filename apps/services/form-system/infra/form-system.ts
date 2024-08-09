@@ -14,5 +14,6 @@ export const serviceSetup = (): ServiceBuilder<'services-form-system'> =>
     .liveness('/liveness')
     .readiness('/readiness')
     .db()
+    .seed()
     .migrations()
     .grantNamespaces('islandis')
