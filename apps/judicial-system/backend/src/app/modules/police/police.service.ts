@@ -68,7 +68,7 @@ const getChapter = (category?: string): number | undefined => {
 const getCategory = (code?: string | null): CaseFileCategory | undefined => {
   switch (code) {
     case 'REIKN':
-      return CaseFileCategory.COST_BREAKDOWN
+      return CaseFileCategory.INVOICE
     case 'RVSK':
       return CaseFileCategory.COST_BREAKDOWN
     default:

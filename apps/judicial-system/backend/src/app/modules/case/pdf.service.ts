@@ -78,7 +78,8 @@ export class PdfService {
       ?.filter(
         (caseFile) =>
           caseFile.policeCaseNumber === policeCaseNumber &&
-          caseFile.category === CaseFileCategory.CASE_FILE &&
+          (caseFile.category === CaseFileCategory.CASE_FILE ||
+            caseFile.category === CaseFileCategory.INVOICE) &&
           caseFile.type === 'application/pdf' &&
           caseFile.key &&
           caseFile.chapter !== null &&
