@@ -5,7 +5,8 @@ export interface NationalRegistrySpouse {
   name: string
   nationalId: string
   maritalStatus: string
-  lastModified?: Date | null
+  /** @deprecated */
+  // lastModified?: Date | null // Removed in v3
   birthplace?: NationalRegistryBirthplace | null
   citizenship?: {
     code: string | null
