@@ -54,6 +54,7 @@ export enum ApplicationTypes {
   PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
   PRESIDENTIAL_LIST_SIGNING = 'PresidentialListSigning',
   PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
+  PARLIAMENTARY_LIST_SIGNING = 'ParliamentaryListSigning',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -294,6 +295,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: {
     slug: 'althingis-medmaelasofnun',
     translation: 'plc.application',
+  },
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
+    slug: 'maela-med-althingisframbodi',
+    translation: 'pls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
