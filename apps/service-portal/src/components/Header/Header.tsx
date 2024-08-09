@@ -114,6 +114,7 @@ export const Header = ({ position }: Props) => {
                               type="span"
                               variant="utility"
                               unfocusable
+                              aria-label={formatMessage(m.openDocuments)}
                             />
                             <span className={helperStyles.srOnly}>
                               {formatMessage(m.openDocuments)}
