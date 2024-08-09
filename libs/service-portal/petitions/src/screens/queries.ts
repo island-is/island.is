@@ -88,6 +88,12 @@ export const GetEndorsements = gql`
   query endorsementSystemGetEndorsements($input: PaginatedEndorsementInput!) {
     endorsementSystemGetEndorsements(input: $input) {
       totalCount
+      pageInfo {
+        hasPreviousPage
+        hasNextPage
+        startCursor
+        endCursor
+      }
       data {
         id
         endorser

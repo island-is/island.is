@@ -2,14 +2,6 @@ import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 import { useState } from 'react'
 
-interface PetitionListResponse {
-  endorsementSystemGetGeneralPetitionLists: any
-}
-
-interface PetitionListEndorsementsResponse {
-  endorsementSystemGetGeneralPetitionEndorsements: any
-}
-
 const GetGeneralPetitionLists = gql`
   query endorsementSystemGetGeneralPetitionLists(
     $input: EndorsementPaginationInput!
@@ -36,27 +28,9 @@ const GetGeneralPetitionLists = gql`
   }
 `
 
-const GetGeneralPetitionListEndorsements = gql`
-  query endorsementSystemGetGeneralPetitionEndorsements(
-    $input: PaginatedEndorsementInput!
-  ) {
-    endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
-      totalCount
-      data {
-        id
-        endorser
-        created
-        meta {
-          fullName
-        }
-      }
-    }
-  }
-`
-
 export const useGetPetitionLists = () => {
   const [pagination, setPagination] = useState({ after: '', before: '' })
-  const { data, loading, error, fetchMore } = useQuery<PetitionListResponse>(
+  const { data, loading, error, fetchMore } = useQuery(
     GetGeneralPetitionLists,
     {
       variables: {
@@ -122,24 +96,4 @@ export const useGetPetitionLists = () => {
     loadPreviousPage,
     pageInfo: data?.endorsementSystemGetGeneralPetitionLists.pageInfo,
   }
-}
-
-export const useGetPetitionListEndorsements = (listId: string) => {
-  const { data: endorsementListsResponse } =
-    useQuery<PetitionListEndorsementsResponse>(
-      GetGeneralPetitionListEndorsements,
-      {
-        variables: {
-          input: {
-            listId: listId,
-            limit: 1000,
-          },
-        },
-      },
-    )
-
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ??
-    []
-  )
 }
