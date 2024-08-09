@@ -7,7 +7,7 @@ This library was generated with [Nx](https://nx.dev).
 Get fresh AWS credentials, and then open six (6) terminal windows.
 
 1. `sh scripts/run-es-proxy.sh`
-2. `docker-compose -f apps/services/regulations-admin-backend/docker-compose.yml up`  
+2. `docker compose -f apps/services/regulations-admin-backend/docker-compose.yml up`  
    (for setup see [the README.md](../../../services/../../apps/services/regulations-admin-backend/Readme.md))
 3. `yarn start regulations-admin-backend`
 4. `yarn start api`
