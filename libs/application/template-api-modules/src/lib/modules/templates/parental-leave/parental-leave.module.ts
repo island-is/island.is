@@ -19,7 +19,7 @@ export class ParentalLeaveModule {
       imports: [
         VMSTModule,
         SharedTemplateAPIModule.register(config),
-        SmsModule.register(config.smsOptions),
+        SmsModule,
         ApplicationApiCoreModule,
         NationalRegistryClientModule,
       ],
