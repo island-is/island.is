@@ -30,6 +30,7 @@ import { useAuth } from '@island.is/auth/react'
 import { useLocale } from '@island.is/localization'
 import { MessageDescriptor } from 'react-intl'
 import FormStepper from '../components/FormStepper'
+import { getFormComponent } from '../utils'
 
 export const FormShell: FC<
   React.PropsWithChildren<{
@@ -71,7 +72,7 @@ export const FormShell: FC<
   } = state.form
   const showProgressTag = mode !== FormModes.DRAFT
   const currentScreen = screens[activeScreen]
-  const FormLogo = form.logo
+  const FormLogo = getFormComponent(form.logo, storedApplication)
 
   const getDraftSectionCurrentScreen = (): number | undefined => {
     const currentDraftScreenSection = sections.find(

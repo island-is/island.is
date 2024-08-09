@@ -1,19 +1,15 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-
 import { Text, Box, Input } from '@island.is/island-ui/core'
-
-import { DescriptionText } from '..'
 import {
   FAFieldBaseProps,
   SummaryComment as SummaryCommentType,
 } from '../../lib/types'
-import withLogo from '../Logo/Logo'
 import { childrenForm } from '../../lib/messages'
-
 import { ChildInput } from './ChildInput'
 import { sortChildrenUnderAgeByAge } from '../../lib/utils'
 import { Controller, useFormContext } from 'react-hook-form'
+import DescriptionText from '../../components/DescriptionText/DescriptionText'
 
 const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -23,6 +19,7 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   const childrenExternalData = externalData.childrenCustodyInformation.data
   const childrenInfo = sortChildrenUnderAgeByAge(childrenExternalData)
   const summaryCommentType = SummaryCommentType.CHILDRENCOMMENT
+  console.log(childrenExternalData)
 
   return (
     <>
@@ -94,4 +91,4 @@ const ChildrenForm = ({ application, field, errors }: FAFieldBaseProps) => {
   )
 }
 
-export default withLogo(ChildrenForm)
+export default ChildrenForm

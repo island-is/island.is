@@ -1,8 +1,10 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  Application,
   DataProviderItem,
   ExternalData,
   FieldTypes,
+  FormComponent,
   FormItemTypes,
   FormValue,
   RecordObject,
@@ -149,4 +151,35 @@ export function parseMessage(message?: string) {
   }
 
   return message
+}
+
+function isFunctionalComponent(
+  component: FormComponent | undefined,
+): component is React.FC<React.PropsWithChildren<unknown>> {
+  if (!component || !component.prototype) return false
+  return typeof component === 'function' && !('length' in component.prototype)
+}
+
+function isFunctionReturningComponent(
+  component: FormComponent | undefined,
+): component is (
+  application: Application,
+) => React.FC<React.PropsWithChildren<unknown>> | null | undefined {
+  if (!component) return false
+  return typeof component === 'function' && 'length' in component
+}
+
+export function getFormComponent(
+  component: FormComponent | undefined,
+  application: Application,
+) {
+  if (isFunctionalComponent(component)) {
+    return component
+  }
+
+  if (isFunctionReturningComponent(component)) {
+    return component(application)
+  }
+
+  return null
 }
