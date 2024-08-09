@@ -51,6 +51,7 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { defaultWatsonConfig, watsonConfig } from './config'
+import { useLocale } from '@island.is/localization'
 
 interface LifeEventPageProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
@@ -202,6 +203,7 @@ export const LifeEventPage: Screen<LifeEventPageProps> = ({
                             const cardUrl = linkResolver(
                               thing?.type as LinkType,
                               [thing?.slug ?? ''],
+                              locale,
                             )
                             return cardUrl?.href && cardUrl?.href.length > 0 ? (
                               <Tag
