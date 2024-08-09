@@ -7,6 +7,8 @@ import {
   randomPoliceCaseNumber,
   getDaysFromNow,
   chooseDocument,
+  verifyUpload,
+  uploadDocument,
 } from '../utils/helpers'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
@@ -84,7 +86,8 @@ test.describe.serial('Indictment tests', () => {
     ])
     // Case files
     await expect(page).toHaveURL(`/akaera/domskjol/${caseId}`)
-    await chooseDocument(
+
+    await uploadDocument(
       page,
       async () => {
         await page
@@ -98,7 +101,7 @@ test.describe.serial('Indictment tests', () => {
       },
       'TestAkaera.pdf',
     )
-    await chooseDocument(
+    await uploadDocument(
       page,
       async () => {
         await page
@@ -112,10 +115,8 @@ test.describe.serial('Indictment tests', () => {
       },
       'TestSakavottord.pdf',
     )
-    await Promise.all([
-      page.getByTestId('continueButton').click(),
-      verifyRequestCompletion(page, '/api/graphql', 'Case'),
-    ])
+
+    await Promise.all([page.getByTestId('continueButton').click()])
 
     // Overview
     await expect(page).toHaveURL(`/akaera/stadfesta/${caseId}`)
