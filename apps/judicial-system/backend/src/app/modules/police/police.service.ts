@@ -42,8 +42,6 @@ export enum PoliceDocumentType {
   RVDO = 'RVDO', // Dómur
   RVAS = 'RVAS', // Ákæra
   RVMG = 'RVMG', // Málsgögn
-  RVSK = 'RVSK', // Sakarkostnaður
-  REIKN = 'REIKN', // Reikningur
 }
 
 export interface PoliceDocument {
