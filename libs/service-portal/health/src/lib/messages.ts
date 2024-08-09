@@ -944,4 +944,58 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
     defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
+  vaccinations: {
+    id: 'sp.health:vaccinations',
+    defaultMessage: 'Bólusetningar',
+  },
+  vaccinationsIntro: {
+    id: 'sp.health:vaccinations-intro',
+    defaultMessage:
+      'Bólusetning er ónæmisaðgerð sem ætlað er að koma í veg fyrir alvarlegan smitsjúkdóm. Hér getur þú séð lista yfir bóluefni sem þú hefur fengið, stöðu bólusetningar og aðrar upplýsingar.',
+  },
+  generalVaccinations: {
+    id: 'sp.health:general-vaccinations',
+    defaultMessage: 'Almennar bólusetningar',
+  },
+  otherVaccinations: {
+    id: 'sp.health:other-vaccinations',
+    defaultMessage: 'Aðrar bólusetningar',
+  },
+  landlaeknirVaccinationsTooltip: {
+    id: 'sp.health:landlaeknir-tooltip',
+    defaultMessage:
+      'Landlæknir hefur umsjón með gögnum um þínar bólusetningar.',
+  },
+  readAboutVaccinations: {
+    id: 'sp.health:read-about-vaccinations',
+    defaultMessage: 'Lesa  um bólusetningar',
+  },
+  makeVaccinationAppointment: {
+    id: 'sp.health:make-vaccination-appointment',
+    defaultMessage: 'Panta tíma í bólusetningu',
+  },
+  vaccinatedFor: {
+    id: 'sp.health:vaccinated-for',
+    defaultMessage: 'Bólusett gegn',
+  },
+  vaccinatedLast: {
+    id: 'sp.health:vaccinated-last',
+    defaultMessage: 'Síðast',
+  },
+  vaccinatedStatus: {
+    id: 'sp.health:vaccinated-status',
+    defaultMessage: 'Staða',
+  },
+  noVaccinesRegistered: {
+    id: 'sp.health:no-vaccines-registered',
+    defaultMessage: 'Engar bólusetningar skráðar',
+  },
+  years: {
+    id: 'sp.health:years',
+    defaultMessage: 'ára',
+  },
+  months: {
+    id: 'sp.health:months',
+    defaultMessage: 'mán.',
+  },
 })
