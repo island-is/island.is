@@ -1,10 +1,10 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../../lib/messages'
-import Signees from './signees'
+import { m } from '../../../../lib/messages'
 import { useLocation } from 'react-router-dom'
-import { useGetSignatureList } from '../../../hooks'
+import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
+import Signees from './SigneesOverview'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')

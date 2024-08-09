@@ -56,7 +56,18 @@ export const informationNavigation: PortalNavigationItem = {
       path: InformationPaths.Lists,
       children: [
         {
-          name: m.signatureCollectionLists,
+          name: m.signatureCollectionParliamentaryLists,
+          path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
+          children: [
+            {
+              name: m.viewSignatureList,
+              navHide: true,
+              path: SignatureCollectionPaths.ViewParliamentaryList,
+            },
+          ],
+        },
+        {
+          name: m.signatureCollectionPresidentialLists,
           path: SignatureCollectionPaths.SignatureCollectionLists,
           children: [
             {
