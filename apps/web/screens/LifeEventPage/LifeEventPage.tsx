@@ -51,7 +51,6 @@ import { createNavigation } from '@island.is/web/utils/navigation'
 import { webRichText } from '@island.is/web/utils/richText'
 
 import { defaultWatsonConfig, watsonConfig } from './config'
-import { useLocale } from '@island.is/localization'
 
 interface LifeEventPageProps {
   lifeEvent: GetLifeEventQuery['getLifeEventPage']
