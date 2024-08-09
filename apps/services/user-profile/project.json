@@ -74,7 +74,7 @@
     "codegen/backend-schema": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "cross-env INIT_SCHEMA=true yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
+        "command": "cross-env INIT_SCHEMA=true ISLYKILL_SERVICE_PASSPHRASE=mock ISLYKILL_CERT=tmp/islyklar.empty yarn ts-node -P apps/services/user-profile/tsconfig.app.json apps/services/user-profile/src/buildOpenApi.ts"
       },
       "outputs": ["{projectRoot}/src/openapi.yaml"]
     },
