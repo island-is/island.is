@@ -25,7 +25,7 @@ import {
   useUpdateVehicleMileageMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useBrowser } from '../../lib/useBrowser'
+import { useBrowser } from '../../lib/use-browser'
 import { showAndroidPrompt } from '../../lib/show-picker'
 import { MileageCell } from './components/mileage-cell'
 import { isAndroid, isIos } from '../../utils/devices'

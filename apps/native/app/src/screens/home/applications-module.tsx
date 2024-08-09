@@ -16,7 +16,7 @@ import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import { Application } from '../../graphql/types/schema'
 import { navigateTo } from '../../lib/deep-linking'
-import { useBrowser } from '../../lib/useBrowser'
+import { useBrowser } from '../../lib/use-browser'
 import { getApplicationUrl } from '../../utils/applications-utils'
 import { useTheme } from 'styled-components'
 

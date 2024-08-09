@@ -15,6 +15,7 @@ import {
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
   Application,
@@ -121,6 +122,9 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     // Sync push tokens and unseen notifications
     void syncToken()
     void checkUnseen()
+
+    // Handle initial notification
+    handleInitialNotification()
   }, [])
 
   const refetch = useCallback(async () => {
