@@ -198,6 +198,8 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
     let currentChapter: number | undefined | null
     let currentOrderWithinChapter: number | undefined | null
 
+    console.log('PoliceCaseFiles', policeCaseFileList)
+
     const filesToUpload = policeCaseFileList
       .filter((p) => selectedFiles.some((f) => f.id === p.id))
       .sort((p1, p2) => (p1.chapter ?? -1) - (p2.chapter ?? -1))
