@@ -661,6 +661,18 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ekkert netfang skráð',
     description: 'No email address registered',
   },
+  invalidPhoneNumber: {
+    id: 'application.system:core.fetch.data.invalidPhoneNumber',
+    defaultMessage: 'Ógilt símanúmer',
+    description: 'Invalid phone number',
+  },
+  invalidPhoneNumberDescription: {
+    id: 'application.system:core.fetch.data.invalidPhoneNumberDescription#markdown',
+    defaultMessage:
+      'Skráð símanúmer hjá Ísland.is er ekki gilt. Vinsamlegast skráðu það á [mínum síðum]({link}).',
+    description:
+      'You do not have a valid phone number registered at Ísland.is. Please register a phone number on mínar síður',
+  },
   noEmailFoundDescription: {
     id: 'application.system:core.fetch.data.noEmailError.description#markdown',
     defaultMessage:
