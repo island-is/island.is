@@ -18,10 +18,12 @@ import {
 import { MessageService } from '@island.is/judicial-system/message'
 
 import { awsS3ModuleConfig, AwsS3Service } from '../../aws-s3'
+import { InternalCaseService } from '../../case'
 import { CourtService } from '../../court'
 import { DefendantService } from '../../defendant'
 import { eventModuleConfig, EventService } from '../../event'
 import { InstitutionService } from '../../institution'
+import { UserService } from '../../user'
 import { InstitutionNotificationService } from '../institutionNotification.service'
 import { InternalNotificationController } from '../internalNotification.controller'
 import { InternalNotificationService } from '../internalNotification.service'
@@ -69,6 +71,18 @@ export const createTestingNotificationModule = async () => {
         useValue: { useIntl: async () => ({ formatMessage }) },
       },
       {
+        provide: InternalCaseService,
+        useValue: {
+          countIndictmentsWaitingForConfirmation: jest.fn(),
+        },
+      },
+      {
+        provide: UserService,
+        useValue: {
+          getUsersWhoCanConfirmIndictments: jest.fn(),
+        },
+      },
+      {
         provide: LOGGER_PROVIDER,
         useValue: {
           debug: jest.fn(),
@@ -98,6 +112,8 @@ export const createTestingNotificationModule = async () => {
     .compile()
 
   const context = {
+    userService: notificationModule.get(UserService),
+    internalCaseService: notificationModule.get(InternalCaseService),
     messageService: notificationModule.get(MessageService),
     defendantService: notificationModule.get(DefendantService),
     emailService: notificationModule.get(EmailService),
