@@ -7,6 +7,9 @@ export const serviceSetup = (services: {
     .namespace('judicial-system')
     .image('judicial-system-scheduler')
     .env({
+      SQS_QUEUE_NAME: 'sqs-judicial-system',
+      SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq',
+      SQS_REGION: 'eu-west-1',
       BACKEND_URL: ref((h) => `http://${h.svc(services.backend)}`),
       TIME_TO_LIVE_MINUTES: '30',
     })

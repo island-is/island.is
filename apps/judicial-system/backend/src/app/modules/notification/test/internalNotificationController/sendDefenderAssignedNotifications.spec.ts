@@ -17,7 +17,7 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
@@ -32,7 +32,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send defender assigned notifications', () => {
@@ -59,7 +59,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
     givenWhenThen = async (
       caseId: string,
       theCase: Case,
-      notificationDto: SendInternalNotificationDto,
+      notificationDto: CaseNotificationDto,
     ) => {
       const then = {} as Then
 
@@ -78,7 +78,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending defender assigned notifications', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -126,7 +126,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending defender data is missing', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -150,7 +150,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('record notification', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -188,7 +188,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('returns that the notification was sent', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -218,7 +218,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('only send notification once to defender', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -263,7 +263,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('should send email to every defender', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -292,7 +292,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('should only send one email to each defender', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -346,7 +346,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending assigned defender notifications in a restriction case', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -393,7 +393,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending assigned defender without national id notifications in a restriction case', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }
@@ -439,7 +439,7 @@ describe('InternalNotificationController - Send defender assigned notifications'
   })
 
   describe('when sending notifications in an investigation case', () => {
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.DEFENDER_ASSIGNED,
     }

@@ -91,7 +91,7 @@ export class EventService {
     private readonly logger: Logger,
   ) {}
 
-  postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
+  async postEvent(event: CaseEvent, theCase: Case, eventOnly = false) {
     try {
       if (!this.config.url) {
         return
@@ -138,7 +138,7 @@ export class EventService {
             }`
           : ''
 
-      fetch(`${this.config.url}`, {
+      await fetch(`${this.config.url}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({
@@ -162,7 +162,7 @@ export class EventService {
     }
   }
 
-  postErrorEvent(
+  async postErrorEvent(
     message: string,
     info: { [key: string]: string | boolean | Date | undefined },
     reason: Error,
@@ -181,7 +181,7 @@ export class EventService {
         }
       }
 
-      fetch(`${this.config.errorUrl}`, {
+      await fetch(`${this.config.errorUrl}`, {
         method: 'POST',
         headers: { 'Content-type': 'application/json' },
         body: JSON.stringify({

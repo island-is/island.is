@@ -4,7 +4,7 @@ import { SQSClient } from '@aws-sdk/client-sqs'
 
 import { User } from '@island.is/judicial-system/types'
 
-import { CaseMessage, MessageType } from '../message'
+import { Message, MessageType } from '../message'
 import { createTestingMessageModule } from './createTestingMessageModule'
 
 interface Then {
@@ -12,7 +12,7 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (messages: CaseMessage[]) => Promise<Then>
+type GivenWhenThen = (messages: Message[]) => Promise<Then>
 
 describe('MessageService - Send messages to queue', () => {
   let setMocks: (mocks: unknown[]) => void
@@ -28,7 +28,7 @@ describe('MessageService - Send messages to queue', () => {
     mockQueueUrl = queueUrl
     mockSqs = sqs
 
-    givenWhenThen = async (messages: CaseMessage[]) => {
+    givenWhenThen = async (messages: Message[]) => {
       const then = {} as Then
 
       try {
@@ -70,7 +70,7 @@ describe('MessageService - Send messages to queue', () => {
   )
 
   describe('message not posted to queue', () => {
-    const message = { caseId: uuid() } as CaseMessage
+    const message = { caseId: uuid() } as Message
     let then: Then
 
     beforeEach(async () => {

@@ -112,4 +112,16 @@ export class UserService {
 
     return this.findById(userId)
   }
+
+  getUsersWhoCanConfirmIndictments(
+    prosecutorsOfficeId: string,
+  ): Promise<User[]> {
+    return this.userModel.findAll({
+      where: {
+        active: true,
+        canConfirmIndictment: true,
+        institutionId: prosecutorsOfficeId,
+      },
+    })
+  }
 }

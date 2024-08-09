@@ -15,7 +15,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
-import { CaseMessage } from './message'
+import { Message } from './message'
 import { messageModuleConfig } from './message.config'
 
 @Injectable()
@@ -148,10 +148,10 @@ export class MessageService {
   }
 
   private async handleMessage(
-    callback: (message: CaseMessage) => Promise<boolean>,
+    callback: (message: Message) => Promise<boolean>,
     sqsMessage: SqsMessage,
   ): Promise<void> {
-    const message: CaseMessage = JSON.parse(sqsMessage.Body ?? '')
+    const message: Message = JSON.parse(sqsMessage.Body ?? '')
 
     // The maximum delay is 900 seconds, but we want to be able to wait much longer
     const now = Date.now()
@@ -193,7 +193,7 @@ export class MessageService {
   }
 
   async sendMessagesToQueue(
-    messages: CaseMessage[],
+    messages: Message[],
     isRetry = false,
   ): Promise<void> {
     const MAX_BATCH_SIZE = 10
@@ -238,7 +238,7 @@ export class MessageService {
   }
 
   async receiveMessagesFromQueue(
-    callback: (message: CaseMessage) => Promise<boolean>,
+    callback: (message: Message) => Promise<boolean>,
   ): Promise<void> {
     return this.sqs
       .send(

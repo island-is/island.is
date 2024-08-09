@@ -5,7 +5,7 @@ import { ApiProperty } from '@nestjs/swagger'
 import type { User } from '@island.is/judicial-system/types'
 import { NotificationType } from '@island.is/judicial-system/types'
 
-export class SendInternalNotificationDto {
+export class CaseNotificationDto {
   @IsNotEmpty()
   @IsObject()
   @ApiProperty({ type: Object })
