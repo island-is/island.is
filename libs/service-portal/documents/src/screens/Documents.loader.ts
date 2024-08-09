@@ -2,9 +2,9 @@ import { Query } from '@island.is/api/schema'
 import { gql } from '@apollo/client'
 import { matchPath } from 'react-router'
 import type { WrappedLoaderFn } from '@island.is/portals/core'
-import { pageSize } from './Overview/Overview'
 import { DocumentsPaths } from '../lib/paths'
 import { ServicePortalPaths } from '@island.is/service-portal/core'
+import { pageSize } from '../hooks/useDocumentList'
 
 export const GET_PAGE_NUMBER_QUERY = gql`
   query GetDocumentPageNumber($input: DocumentInput!) {
