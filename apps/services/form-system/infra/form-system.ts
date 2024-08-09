@@ -15,4 +15,4 @@ export const serviceSetup = (): ServiceBuilder<'services-form-system'> =>
     .readiness('/readiness')
     .db()
     .migrations()
-    .grantNamespaces('islandis', 'form-system-service')
+    .grantNamespaces('islandis')
