@@ -58,7 +58,7 @@ export const getAppealExpirationInfo = (
       ? strings.appealExpirationDate
       : strings.appealDateExpired
 
-  return { message, data: formatDate(expiryDate, 'P') }
+  return { message, data: formatDate(expiryDate) }
 }
 
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
