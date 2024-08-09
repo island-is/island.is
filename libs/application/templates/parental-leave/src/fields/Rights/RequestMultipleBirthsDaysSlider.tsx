@@ -1,5 +1,5 @@
 import React, { FC, useState } from 'react'
-import { FieldBaseProps } from '@island.is/application/types'
+import { FieldBaseProps, BoxChartKey } from '@island.is/application/types'
 import { Controller, useFormContext } from 'react-hook-form'
 import { Box } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
@@ -11,11 +11,11 @@ import {
 } from '../../lib/parentalLeaveUtils'
 import { parentalLeaveFormMessages } from '../../lib/messages'
 import Slider from '../components/Slider'
-import BoxChart, { BoxChartKey } from '../components/BoxChart'
 import { defaultMonths, daysInMonth } from '../../config'
 import { formatText } from '@island.is/application/core'
 import { NO } from '../../constants'
 import { useEffectOnce } from 'react-use'
+import { BoxChartFormField } from '@island.is/application/ui-fields'
 
 const RequestMultipleBirthsDaysSlider: FC<
   React.PropsWithChildren<FieldBaseProps>
@@ -95,21 +95,23 @@ const RequestMultipleBirthsDaysSlider: FC<
             )}
           />
         </Box>
-        <BoxChart
+        <BoxChartFormField
           application={application}
-          boxes={Math.ceil(maxMonths)}
-          calculateBoxStyle={(index) => {
-            if (index < defaultMonths) {
-              return 'blue'
-            }
+          field={{
+            boxes: Math.ceil(maxMonths),
+            calculateBoxStyle: (index) => {
+              if (index < defaultMonths) {
+                return 'blue'
+              }
 
-            if (index < requestedMonths) {
-              return 'purpleWithLines'
-            }
+              if (index < requestedMonths) {
+                return 'purpleWithLines'
+              }
 
-            return 'grayWithLines'
+              return 'grayWithLines'
+            },
+            keys: boxChartKeys as BoxChartKey[],
           }}
-          keys={boxChartKeys as BoxChartKey[]}
         />
       </Box>
     </>
