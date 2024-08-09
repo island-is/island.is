@@ -2,27 +2,28 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  buildSubmitField,
 } from '@island.is/application/core'
+import { DefaultEvents } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
-import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { newPrimarySchoolMessages } from '../../lib/messages'
 import {
   canApply,
   getApplicationExternalData,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../lib/newPrimarySchoolUtils'
 
 export const childrenSubSection = buildSubSection({
   id: 'childrenSubSection',
-  title: newPrimarySchoolMessages.childrenNParents.childrenSubSectionTitle,
+  title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
   children: [
     buildMultiField({
       id: 'childrenMultiField',
-      title: newPrimarySchoolMessages.childrenNParents.childrenSubSectionTitle,
-      description:
-        newPrimarySchoolMessages.childrenNParents.childrenDescription,
+      title: newPrimarySchoolMessages.pre.childrenSubSectionTitle,
+      description: newPrimarySchoolMessages.pre.childrenDescription,
       children: [
         buildRadioField({
           id: 'childNationalId',
-          title: newPrimarySchoolMessages.childrenNParents.childrenRadioTitle,
+          title: newPrimarySchoolMessages.pre.childrenRadioTitle,
           options: (application) => {
             const { children } = getApplicationExternalData(
               application.externalData,
@@ -39,6 +40,19 @@ export const childrenSubSection = buildSubSection({
               })
           },
           required: true,
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: '',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: newPrimarySchoolMessages.pre.startApplication,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

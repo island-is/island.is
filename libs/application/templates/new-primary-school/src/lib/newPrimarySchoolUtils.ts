@@ -5,21 +5,21 @@ import {
   FormValue,
   YesOrNo,
 } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 import * as kennitala from 'kennitala'
 import {
   Child,
   ChildInformation,
+  FriggChildInformation,
   Parents,
   Person,
   RelativesRow,
+  SelectOption,
   SiblingsRow,
 } from '../types'
 import {
-  FoodAllergiesOptions,
-  FoodIntolerancesOptions,
   Gender,
   ReasonForApplicationOptions,
-  RelationOptions,
   SiblingRelationOptions,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
@@ -92,7 +92,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const foodAllergies = getValueViaPath(
     answers,
     'allergiesAndIntolerances.foodAllergies',
-  ) as FoodAllergiesOptions[]
+  ) as string[]
 
   const hasFoodIntolerances = getValueViaPath(
     answers,
@@ -102,7 +102,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const foodIntolerances = getValueViaPath(
     answers,
     'allergiesAndIntolerances.foodIntolerances',
-  ) as FoodIntolerancesOptions[]
+  ) as string[]
 
   const isUsingEpiPen = getValueViaPath(
     answers,
@@ -224,6 +224,11 @@ export const getApplicationExternalData = (
     'childrenCustodyInformation.data.otherParent.fullName',
   ) as string
 
+  const childInformation = getValueViaPath(
+    externalData,
+    'childInformation.data',
+  ) as FriggChildInformation
+
   return {
     children,
     applicantName,
@@ -232,6 +237,7 @@ export const getApplicationExternalData = (
     applicantPostalCode,
     applicantCity,
     otherParentName,
+    childInformation,
   }
 }
 
@@ -273,37 +279,6 @@ export const hasOtherParent = (
 ): boolean => {
   const otherParent = getOtherParent({ answers, externalData } as Application)
   return !!otherParent
-}
-
-export const getRelationOptions = () => [
-  {
-    value: RelationOptions.GRANDPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparent,
-  },
-  {
-    value: RelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSibling,
-  },
-  {
-    value: RelationOptions.STEPPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationStepparent,
-  },
-  {
-    value: RelationOptions.RELATIVE,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelative,
-  },
-  {
-    value: RelationOptions.FRIEND_OR_OTHER,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationFriendOrOther,
-  },
-]
-
-export const getRelationOptionLabel = (value: RelationOptions) => {
-  const relationOptions = getRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getReasonForApplicationOptions = () => [
@@ -382,21 +357,6 @@ export const getSiblingRelationOptionLabel = (
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
-export const getGenderOptions = () => [
-  {
-    value: Gender.MALE,
-    label: newPrimarySchoolMessages.shared.male,
-  },
-  {
-    value: Gender.FEMALE,
-    label: newPrimarySchoolMessages.shared.female,
-  },
-  {
-    value: Gender.OTHER,
-    label: newPrimarySchoolMessages.shared.otherGender,
-  },
-]
-
 export const formatGender = (genderCode?: string): Gender | undefined => {
   switch (genderCode) {
     case '1':
@@ -413,77 +373,10 @@ export const formatGender = (genderCode?: string): Gender | undefined => {
   }
 }
 
-export const getGenderOptionLabel = (value: Gender) => {
-  const genderOptions = getGenderOptions()
-  return genderOptions.find((option) => option.value === value)?.label ?? ''
-}
-
-export const getFoodAllergiesOptions = () => [
-  {
-    value: FoodAllergiesOptions.EGG_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.eggAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.FISH_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.fishAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.PENUT_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.nutAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.WHEAT_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.wheatAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.MILK_ALLERGY,
-    label: newPrimarySchoolMessages.differentNeeds.milkAllergy,
-  },
-  {
-    value: FoodAllergiesOptions.OTHER,
-    label: newPrimarySchoolMessages.differentNeeds.other,
-  },
-]
-
-export const getFoodAllergiesOptionsLabel = (value: FoodAllergiesOptions) => {
-  const foodAllergiesOptions = getFoodAllergiesOptions()
-  return (
-    foodAllergiesOptions.find((option) => option.value === value)?.label ?? ''
-  )
-}
-
-export const getFoodIntolerancesOptions = () => [
-  {
-    value: FoodIntolerancesOptions.LACTOSE_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.lactoseIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.GLUTEN_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.glutenIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.MSG_INTOLERANCE,
-    label: newPrimarySchoolMessages.differentNeeds.msgIntolerance,
-  },
-  {
-    value: FoodIntolerancesOptions.OTHER,
-    label: newPrimarySchoolMessages.differentNeeds.other,
-  },
-]
-
-export const getFoodIntolerancesOptionsLabel = (
-  value: FoodIntolerancesOptions,
-) => {
-  const foodIntolerancesOptions = getFoodIntolerancesOptions()
-  return (
-    foodIntolerancesOptions.find((option) => option.value === value)?.label ??
-    ''
-  )
-}
-
 export const getOptionsListByType = async (
   apolloClient: ApolloClient<object>,
   type: string,
+  lang: Locale,
 ) => {
   const { data } = await apolloClient.query<
     FriggOptionsQuery,
@@ -499,10 +392,24 @@ export const getOptionsListByType = async (
 
   return (
     data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, id }) => {
-        const content = value.find(({ language }) => language === 'is')?.content
-        return { value: id ?? '', label: content ?? '' }
+      options.flatMap(({ value, key }) => {
+        let content = value.find(({ language }) => language === lang)?.content
+        if (!content) {
+          content = value.find(({ language }) => language === 'is')?.content
+        }
+        return { value: key ?? '', label: content ?? '' }
       }),
     ) ?? []
   )
+}
+
+export const getSelectedOptionLabel = (
+  options: SelectOption[],
+  key?: string,
+) => {
+  if (key === undefined) {
+    return undefined
+  }
+
+  return options.find((option) => option.value === key)?.label
 }

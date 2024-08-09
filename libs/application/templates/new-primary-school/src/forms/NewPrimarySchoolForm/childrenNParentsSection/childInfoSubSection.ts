@@ -1,7 +1,7 @@
 import {
+  buildCustomField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
@@ -11,9 +11,9 @@ import {
   formatGender,
   getApplicationAnswers,
   getApplicationExternalData,
-  getGenderOptions,
   getSelectedChild,
 } from '../../../lib/newPrimarySchoolUtils'
+import { OptionsType } from '../../../lib/constants'
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',
@@ -30,7 +30,8 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.fullName,
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application)?.fullName,
+            getApplicationExternalData(application.externalData)
+              .childInformation.name,
         }),
         buildTextField({
           id: 'childInfo.nationalId',
@@ -39,7 +40,8 @@ export const childInfoSubSection = buildSubSection({
           format: '######-####',
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application)?.nationalId,
+            getApplicationExternalData(application.externalData)
+              .childInformation.nationalId,
         }),
         buildTextField({
           id: 'childInfo.address.streetAddress',
@@ -74,22 +76,47 @@ export const childInfoSubSection = buildSubSection({
             getApplicationExternalData(application.externalData).applicantCity,
         }),
         buildTextField({
-          id: 'childInfo.chosenName',
-          title: newPrimarySchoolMessages.childrenNParents.childInfoChosenName,
+          id: 'childInfo.preferredName',
+          title:
+            newPrimarySchoolMessages.childrenNParents.childInfoPreferredName,
           width: 'half',
-        }),
-        buildSelectField({
-          id: 'childInfo.gender',
-          title: newPrimarySchoolMessages.childrenNParents.childInfoGender,
-          placeholder:
-            newPrimarySchoolMessages.childrenNParents
-              .childInfoGenderPlaceholder,
-          width: 'half',
-          // TODO: Nota gögn fá Júní
-          options: getGenderOptions(),
           defaultValue: (application: Application) =>
-            formatGender(getSelectedChild(application)?.genderCode),
+            getApplicationExternalData(application.externalData)
+              .childInformation.preferredName ?? undefined,
         }),
+        buildCustomField(
+          {
+            id: 'childInfo.gender',
+            title: newPrimarySchoolMessages.childrenNParents.childInfoGender,
+            width: 'half',
+            component: 'FriggOptionsAsyncSelectField',
+            defaultValue: (application: Application) =>
+              formatGender(getSelectedChild(application)?.genderCode),
+          },
+          {
+            placeholder:
+              newPrimarySchoolMessages.childrenNParents
+                .childInfoGenderPlaceholder,
+            optionsType: OptionsType.GENDER,
+            isMulti: false,
+          },
+        ),
+        buildCustomField(
+          {
+            id: 'childInfo.pronouns',
+            title: newPrimarySchoolMessages.childrenNParents.childInfoPronouns,
+            component: 'FriggOptionsAsyncSelectField',
+            defaultValue: (application: Application) =>
+              getApplicationExternalData(application.externalData)
+                .childInformation.pronouns,
+          },
+          {
+            optionsType: OptionsType.PRONOUN,
+            placeholder:
+              newPrimarySchoolMessages.childrenNParents
+                .childInfoPronounsPlaceholder,
+          },
+        ),
         buildRadioField({
           id: 'childInfo.differentPlaceOfResidence',
           title:

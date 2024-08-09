@@ -3,12 +3,8 @@ import * as kennitala from 'kennitala'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
 import {
-  FoodAllergiesOptions,
-  FoodIntolerancesOptions,
   ReasonForApplicationOptions,
-  RelationOptions,
   SiblingRelationOptions,
-  Gender,
 } from './constants'
 import { errorMessages } from './messages'
 
@@ -28,7 +24,9 @@ export const dataSchema = z.object({
   childNationalId: z.string().min(1),
   childInfo: z
     .object({
-      gender: z.nativeEnum(Gender).optional(),
+      gender: z.string().optional(),
+      preferredName: z.string().optional(),
+      pronouns: z.array(z.string()).optional(),
       differentPlaceOfResidence: z.enum([YES, NO]),
       placeOfResidence: z
         .object({
@@ -71,7 +69,7 @@ export const dataSchema = z.object({
         nationalId: z.string().refine((n) => kennitala.isValid(n), {
           params: errorMessages.nationalId,
         }),
-        relation: z.nativeEnum(RelationOptions),
+        relation: z.string(),
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
@@ -160,10 +158,8 @@ export const dataSchema = z.object({
     .object({
       hasFoodAllergies: z.array(z.string()),
       hasFoodIntolerances: z.array(z.string()),
-      foodAllergies: z.array(z.nativeEnum(FoodAllergiesOptions)).optional(),
-      foodIntolerances: z
-        .array(z.nativeEnum(FoodIntolerancesOptions))
-        .optional(),
+      foodAllergies: z.array(z.string()).optional(),
+      foodIntolerances: z.array(z.string()).optional(),
       isUsingEpiPen: z.array(z.string()),
     })
     .refine(

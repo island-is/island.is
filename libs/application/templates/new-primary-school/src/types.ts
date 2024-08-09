@@ -1,6 +1,6 @@
 import {
-  Gender,
-  RelationOptions,
+  MembershipOrganizationType,
+  MembershipRole,
   SiblingRelationOptions,
 } from './lib/constants'
 
@@ -8,7 +8,7 @@ export interface RelativesRow {
   fullName: string
   phoneNumber: string
   nationalId: string
-  relation: RelationOptions
+  relation: string
   canPickUpChild: string[]
 }
 
@@ -36,8 +36,9 @@ export type ChildInformation = {
     postalCode: string
     city: string
   }
-  gender: Gender
-  chosenName: string
+  gender: string
+  preferredName: string
+  pronouns: string[]
   differentPlaceOfResidence: string
   placeOfResidence?: {
     streetAddress: string
@@ -60,4 +61,53 @@ export type Person = {
 export type Parents = {
   parent1: Person
   parent2: Person
+}
+
+export type SelectOption = {
+  label: string
+  value: string
+}
+
+export type Agent = {
+  id: string
+  name: string
+  role: string
+  email: string
+  phone: string
+  nationalId: string
+}
+
+export type Membership = {
+  id: string
+  role: MembershipRole
+  beginDate: Date
+  endDate: Date | null
+  organization?: MembershipOrganization
+}
+
+export type MembershipOrganization = {
+  id: string
+  nationalId: string
+  name: string
+  type: MembershipOrganizationType
+}
+
+export type FriggChildInformation = {
+  id: string
+  name: string
+  email: string
+  agents: Agent[]
+  pronouns: string[]
+  nationalId: string
+  gradeLevels: string[]
+  memberships: Membership[]
+  primaryOrgId: object
+  preferredName: object | null
+  address?: {
+    id: string
+    street: string
+    municipality?: object
+    zip: string
+    country?: object
+  }
 }

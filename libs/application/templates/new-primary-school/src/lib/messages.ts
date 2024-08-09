@@ -105,26 +105,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
-    male: {
-      id: 'dess.nps.application:gender.male',
-      defaultMessage: 'Karlkyns',
-      description: 'Male',
-    },
-    female: {
-      id: 'dess.nps.application:gender.female',
-      defaultMessage: 'Kvenkyns',
-      description: 'Female',
-    },
-    otherGender: {
-      id: 'dess.nps.application:gender.other',
-      defaultMessage: 'Kynsegin/Annað',
-      description: 'non-binary/Other',
-    },
   }),
 
   pre: defineMessages({
     externalDataSection: {
       id: 'dess.nps.application:external.data.section',
+      defaultMessage: 'Forsendur',
+      description: 'Prerequisites',
+    },
+    externalDataSubSection: {
+      id: 'dess.nps.application:external.data.sub.section',
       defaultMessage: 'Gagnaöflun',
       description: 'Data collection',
     },
@@ -167,6 +157,23 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Hefja umsókn',
       description: 'Start application',
     },
+
+    // Children
+    childrenSubSectionTitle: {
+      id: 'dess.nps.application:prerequisites.children.sub.section.title',
+      defaultMessage: 'Börn',
+      description: 'Children',
+    },
+    childrenDescription: {
+      id: 'dess.nps.application:prerequisites.childrenDescription#markdown',
+      defaultMessage: `Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef þú sérð ekki barnið þitt hér, þá bendum við þér að hafa samband við Þjóðskrá. \n\nAthugaðu að einungis er hægt að sækja um fyrir eitt barn í einu. Ef skrá á tvö börn svo sem tvíbura er hægt að fara beint í að skrá annað barn þegar búið er að skrá það fyrra.`,
+      description: `According to the Registers Iceland database you have the following children. If you do not see your child in this process, please contact the Registers Iceland. \n\nPlease note that you can only apply for one child at a time. If you have two children, such as twins, you can proceed to register the second child directly after completing the registration for the first one.`,
+    },
+    childrenRadioTitle: {
+      id: 'dess.nps.application:prerequisites.childrenRadioTitle',
+      defaultMessage: 'Veldu barn fyrir umsóknina',
+      description: 'Select child for the application',
+    },
   }),
 
   childrenNParents: defineMessages({
@@ -174,23 +181,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.section.title',
       defaultMessage: 'Börn og foreldrar',
       description: 'Children and parents',
-    },
-
-    // Children
-    childrenSubSectionTitle: {
-      id: 'dess.nps.application:childrenNParents.children.sub.section.title',
-      defaultMessage: 'Börn',
-      description: 'Children',
-    },
-    childrenDescription: {
-      id: 'dess.nps.application:childrenNParents.childrenDescription#markdown',
-      defaultMessage: `Samkvæmt uppflettingu í Þjóðskrá hefur þú forsjá með eftirfarandi barni/börnum. Ef þú sérð ekki barnið þitt hér, þá bendum við þér að hafa samband við Þjóðskrá. \n\nAthugaðu að einungis er hægt að sækja um fyrir eitt barn í einu. Ef skrá á tvö börn svo sem tvíbura er hægt að fara beint í að skrá annað barn þegar búið er að skrá það fyrra.`,
-      description: `According to the Registers Iceland database you have the following children. If you do not see your child in this process, please contact the Registers Iceland. \n\nPlease note that you can only apply for one child at a time. If you have two children, such as twins, you can proceed to register the second child directly after completing the registration for the first one.`,
-    },
-    childrenRadioTitle: {
-      id: 'dess.nps.application:childrenNParents.childrenRadioTitle',
-      defaultMessage: 'Veldu barn fyrir umsóknina',
-      description: 'Select child for the application',
     },
 
     // Child information
@@ -210,10 +200,20 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
       description: 'Check that the information is correct before proceeding.',
     },
-    childInfoChosenName: {
-      id: 'dess.nps.application:childrenNParents.child.info.chosen.name',
+    childInfoPreferredName: {
+      id: 'dess.nps.application:childrenNParents.child.info.preferred.name',
       defaultMessage: 'Valið nafn',
       description: 'Preferred name',
+    },
+    childInfoPronouns: {
+      id: 'dess.nps.application:childrenNParents.child.info.pronouns',
+      defaultMessage: 'Fornafn',
+      description: 'Pronoun',
+    },
+    childInfoPronounsPlaceholder: {
+      id: 'dess.nps.application:childrenNParents.child.info.pronouns.placeholder',
+      defaultMessage: 'Veldu fornafn',
+      description: 'Select pronoun',
     },
     childInfoGender: {
       id: 'dess.nps.application:childrenNParents.child.info.gender',
@@ -298,31 +298,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.relatives.delete.relative',
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
-    },
-    relativesRelationGrandparent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.grandparent',
-      defaultMessage: 'Afi/amma',
-      description: 'Grandparent',
-    },
-    relativesRelationSibling: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.sibling',
-      defaultMessage: 'Systkini',
-      description: 'Sibling',
-    },
-    relativesRelationStepparent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.stepparent',
-      defaultMessage: 'Stjúpforeldri',
-      description: 'Stepparent',
-    },
-    relativesRelationRelative: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.relative',
-      defaultMessage: 'Frændfólk',
-      description: 'Relative',
-    },
-    relativesRelationFriendOrOther: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.friend.or.other',
-      defaultMessage: 'Vinafólk/annað',
-      description: 'Friend/other',
     },
     relativesCanPickUpChild: {
       id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',
@@ -605,51 +580,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:different.needs.uses.epinephrine.pen',
       defaultMessage: 'Notar adrenalínpenna',
       description: 'Uses epinephrine pen',
-    },
-    eggAllergy: {
-      id: 'dess.nps.application:different.needs.egg.allergy',
-      defaultMessage: 'Eggjaofnæmi',
-      description: 'Egg allergy',
-    },
-    fishAllergy: {
-      id: 'dess.nps.application:different.needs.fish.allergy',
-      defaultMessage: 'Fiskiofnæmi',
-      description: 'Fish allergy',
-    },
-    nutAllergy: {
-      id: 'dess.nps.application:different.needs.nut.allergy',
-      defaultMessage: 'Hnetuofnæmi',
-      description: 'Nut allergy',
-    },
-    wheatAllergy: {
-      id: 'dess.nps.application:different.needs.wheat.allergy',
-      defaultMessage: 'Hveitiofnæmi',
-      description: 'Wheat allergy',
-    },
-    milkAllergy: {
-      id: 'dess.nps.application:different.needs.milk.allergy',
-      defaultMessage: 'Mjólkurofnæmi',
-      description: 'Milk allergy',
-    },
-    other: {
-      id: 'dess.nps.application:different.needs.other',
-      defaultMessage: 'Annað',
-      description: 'Other',
-    },
-    lactoseIntolerance: {
-      id: 'dess.nps.application:different.needs.lactose.intolerance',
-      defaultMessage: 'Mjólkursykuróþol',
-      description: 'Lactose intolerance',
-    },
-    glutenIntolerance: {
-      id: 'dess.nps.application:different.needs.gluten.intolerance',
-      defaultMessage: 'Glútenóþol',
-      description: 'Gluten intolerance',
-    },
-    msgIntolerance: {
-      id: 'dess.nps.application:different.needs.msg.intolerance',
-      defaultMessage: 'MSG-óþol',
-      description: 'MSG intolerance',
     },
 
     // Support
