@@ -22,3 +22,4 @@ export const serviceSetup = (services: {
       staging: { schedule: '0 2 * * *' },
       prod: { schedule: '0 2 * * *' },
     })
+    .serviceAccount('judicial-system-scheduler')
