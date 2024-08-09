@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+
 import { PaginatedDelegationProviderDto } from './dto/paginated-delegation-provider.dto'
 import { DelegationProviderModel } from './models/delegation-provider.model'
 import { DelegationTypeModel } from './models/delegation-type.model'
@@ -34,5 +35,18 @@ export class DelegationProviderService {
         endCursor: '',
       },
     }
+  }
+
+  async findProviders(delegationTypes: string[]): Promise<string[]> {
+    if (!delegationTypes) return []
+
+    return (
+      await this.delegationTypeModel.findAll({
+        where: {
+          id: delegationTypes,
+        },
+        attributes: ['providerId'],
+      })
+    ).map((dt) => dt.providerId)
   }
 }

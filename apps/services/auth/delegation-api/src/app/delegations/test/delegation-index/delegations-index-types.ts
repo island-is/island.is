@@ -1,4 +1,5 @@
 import { User } from '@island.is/auth-nest-tools'
+import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
 import {
   CreateApiScope,
   CreateClient,
@@ -6,8 +7,8 @@ import {
   CreateDomain,
   CreatePersonalRepresentativeDelegation,
 } from '@island.is/services/auth/testing'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
 
 export const clientId = '@island.is/webapp'
 export const domainName = '@island.is'
@@ -75,6 +76,7 @@ export class TestCase {
       grantToProcuringHolders: procurationHolderScopes.includes(s),
       allowExplicitDelegationGrant: customScopes.includes(s),
       grantToPersonalRepresentatives: representativeScopes.includes(s),
+      supportedDelegationTypes: this.supportedDelegationTypes(s),
     }))
   }
 
@@ -110,5 +112,23 @@ export class TestCase {
         rightTypes: d.rightTypes,
       }),
     )
+  }
+
+  supportedDelegationTypes = (scopeName: string): AuthDelegationType[] => {
+    const result = []
+
+    if (legalGuardianScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.LegalGuardian)
+    }
+    if (procurationHolderScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.ProcurationHolder)
+    }
+    if (customScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.Custom)
+    }
+    if (representativeScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.PersonalRepresentative)
+    }
+    return result
   }
 }

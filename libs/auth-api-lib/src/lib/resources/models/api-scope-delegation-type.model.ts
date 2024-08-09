@@ -1,4 +1,6 @@
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
+  BelongsTo,
   Column,
   CreatedAt,
   DataType,
@@ -8,10 +10,9 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
-import { ApiScope } from './api-scope.model'
 import { DelegationTypeModel } from '../../delegations/models/delegation-type.model'
+import { ApiScope } from './api-scope.model'
 
 @Table({
   tableName: 'api_scope_delegation_types',
@@ -34,6 +35,9 @@ export class ApiScopeDelegationType extends Model {
   @ForeignKey(() => DelegationTypeModel)
   @ApiProperty()
   delegationType!: string
+
+  @BelongsTo(() => DelegationTypeModel)
+  delegationTypeModel?: DelegationTypeModel
 
   @CreatedAt
   @ApiProperty()

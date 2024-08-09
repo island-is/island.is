@@ -1,32 +1,32 @@
-import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
-import { Sequelize } from 'sequelize-typescript'
 import { Type } from '@nestjs/common'
+import { getConnectionToken, getModelToken } from '@nestjs/sequelize'
 import faker from 'faker'
+import { Sequelize } from 'sequelize-typescript'
 
-import { TestApp, truncate } from '@island.is/testing/nest'
-import { createNationalRegistryUser } from '@island.is/testing/fixtures'
 import {
-  DelegationsIndexService,
+  actorSubjectIdType,
+  audkenniProvider,
+  Delegation,
   DelegationIndex,
   DelegationIndexMeta,
-  Delegation,
-  DelegationScope,
-  audkenniProvider,
   delegationProvider,
-  actorSubjectIdType,
+  DelegationScope,
+  DelegationsIndexService,
   UserIdentitiesService,
 } from '@island.is/auth-api-lib'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { FixtureFactory } from '@island.is/services/auth/testing'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import { createNationalRegistryUser } from '@island.is/testing/fixtures'
+import { TestApp, truncate } from '@island.is/testing/nest'
 
+import { setupWithAuth } from '../../../../../test/setup'
 import { indexingTestCases, prRight1 } from './delegation-index-test-cases'
 import { domainName, TestCase, user } from './delegations-index-types'
-import { setupWithAuth } from '../../../../../test/setup'
 
 const testDate = new Date(2024, 2, 1)
 
@@ -385,6 +385,7 @@ describe('DelegationsIndexService', () => {
             name: testDelegationScope,
             domainName: domainName,
             allowExplicitDelegationGrant: true,
+            supportedDelegationTypes: [AuthDelegationType.Custom],
             isAccessControlled: false,
           })
 

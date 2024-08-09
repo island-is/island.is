@@ -10,6 +10,7 @@ import {
 import {
   expectMatchingDelegations,
   findExpectedDelegationModels,
+  findExpectedDelegationModelsOld,
   FixtureFactory,
 } from '@island.is/services/auth/testing'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -230,7 +231,7 @@ describe('MeDelegationsController filters', () => {
 
   it('GET /v1/me/delegations/:id should not filter expired scopes', async () => {
     // Arrange
-    const expectedModel = await findExpectedDelegationModels(
+    const expectedModel = await findExpectedDelegationModelsOld(
       factory.get(Delegation),
       delegations.variedValidity.id,
     )
@@ -516,7 +517,7 @@ describe('MeDelegationController company filters', () => {
 
   it('GET /v1/me/delegations/:id should return empty delegation if user has access to domain but no delegation scopes', async () => {
     // Arrange
-    const expectedModel = await findExpectedDelegationModels(
+    const expectedModel = await findExpectedDelegationModelsOld(
       factory.get(Delegation),
       delegations.otherScope.id,
       [],

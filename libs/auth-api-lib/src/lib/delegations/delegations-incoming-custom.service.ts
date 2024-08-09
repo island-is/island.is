@@ -2,6 +2,7 @@ import { Inject, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import * as kennitala from 'kennitala'
 import uniqBy from 'lodash/uniqBy'
+import { Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -14,9 +15,13 @@ import {
 } from '@island.is/clients/rsk/company-registry'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuditService } from '@island.is/nest/audit'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 
+import { ApiScopeDelegationType } from '../resources/models/api-scope-delegation-type.model'
+import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
 import { ApiScope } from '../resources/models/api-scope.model'
+import { ApiScopeInfo } from './delegations-incoming.service'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
 import { DelegationScope } from './models/delegation-scope.model'
@@ -24,9 +29,6 @@ import { Delegation } from './models/delegation.model'
 import { DelegationValidity } from './types/delegationValidity'
 import { partitionWithIndex } from './utils/partitionWithIndex'
 import { getScopeValidityWhereClause } from './utils/scopes'
-import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
-import { Op } from 'sequelize'
-import { ApiScopeInfo } from './delegations-incoming.service'
 
 export const UNKNOWN_NAME = 'Óþekkt nafn'
 
@@ -88,8 +90,10 @@ export class DelegationsIncomingCustomService {
     clientAllowedApiScopes: ApiScopeInfo[],
     requireApiScopes?: boolean,
   ): Promise<MergedDelegationDTO[]> {
-    const customApiScopes = clientAllowedApiScopes.filter(
-      (s) => s.allowExplicitDelegationGrant,
+    const customApiScopes = clientAllowedApiScopes.filter((s) =>
+      s.supportedDelegationTypes?.some(
+        (dt) => dt.delegationType == AuthDelegationType.Custom,
+      ),
     )
     if (requireApiScopes && !(customApiScopes && customApiScopes.length > 0)) {
       return []
@@ -178,8 +182,16 @@ export class DelegationsIncomingCustomService {
               required: true,
               where: {
                 enabled: true,
-                allowExplicitDelegationGrant: true,
               },
+              include: [
+                {
+                  model: ApiScopeDelegationType,
+                  required: true,
+                  where: {
+                    delegationType: AuthDelegationType.Custom,
+                  },
+                },
+              ],
             },
           ],
         },

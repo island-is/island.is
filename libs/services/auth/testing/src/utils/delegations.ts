@@ -1,19 +1,22 @@
-import faker from 'faker'
 import { expect } from '@jest/globals'
+import faker from 'faker'
 
 import {
   ApiScope,
+  ApiScopeDelegationType,
   Delegation,
   DelegationDTO,
   DelegationProviderModel,
   DelegationScope,
   DelegationTypeModel,
 } from '@island.is/auth-api-lib'
-import { CreateDelegation } from '../fixtures/delegation.fixture'
 import {
   AuthDelegationProvider,
+  AuthDelegationType,
   getPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
+
+import { CreateDelegation } from '../fixtures/delegation.fixture'
 
 const compareById = (a: { id?: string | null }, b: { id?: string | null }) => {
   // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
@@ -79,6 +82,60 @@ export async function findExpectedDelegationModels(
   allowedScopes?: string[],
 ): Promise<DelegationDTO[]>
 export async function findExpectedDelegationModels(
+  model: typeof Delegation,
+  modelIds: string | string[],
+  allowedScopes?: string[],
+): Promise<DelegationDTO | DelegationDTO[]> {
+  const expectedModels = await model.findAll({
+    where: {
+      id: modelIds,
+    },
+    include: [
+      {
+        model: DelegationScope,
+        as: 'delegationScopes',
+        include: [
+          {
+            model: ApiScope,
+            as: 'apiScope',
+            include: [
+              {
+                model: ApiScopeDelegationType,
+                where: { delegationType: AuthDelegationType.Custom },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  })
+
+  if (allowedScopes) {
+    for (const expectedModel of expectedModels) {
+      expectedModel.delegationScopes = expectedModel.delegationScopes?.filter(
+        (s) => allowedScopes.includes(s.scopeName),
+      )
+    }
+  }
+
+  if (Array.isArray(modelIds)) {
+    return expectedModels.map((delegation) => delegation.toDTO())
+  } else {
+    return expectedModels[0].toDTO()
+  }
+}
+
+export async function findExpectedDelegationModelsOld(
+  model: typeof Delegation,
+  modelIds: string,
+  allowedScopes?: string[],
+): Promise<DelegationDTO>
+export async function findExpectedDelegationModelsOld(
+  model: typeof Delegation,
+  modelIds: string[],
+  allowedScopes?: string[],
+): Promise<DelegationDTO[]>
+export async function findExpectedDelegationModelsOld(
   model: typeof Delegation,
   modelIds: string | string[],
   allowedScopes?: string[],
