@@ -496,10 +496,8 @@ jobs:
           echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
           echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
         continue-on-error: true
-
       - uses: actions/checkout@v3
         if: steps.gather.outcome == 'success'
-
       - uses: actions/setup-node@v4
         with:
           node-version-file: 'package.json'
@@ -595,15 +593,6 @@ jobs:
       NODE_IMAGE_TAG: ${{ needs.prepare.outputs.NODE_IMAGE_TAG }}
     steps:
       - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version-file: 'infra/package.json'
-
-      - name: Setup yarn
-        run: corepack enable
 
       - name: Docker login
         run: ./scripts/ci/docker-login-ecr.sh

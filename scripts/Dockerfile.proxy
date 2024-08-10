@@ -1,5 +1,5 @@
-ARG DOCKER_REGISTRY=docker.io
-FROM $DOCKER_REGISTRY/alpine/k8s:1.20.7 as base
+ARG DOCKER_IMAGE_REGISTRY=docker.io
+FROM $DOCKER_IMAGE_REGISTRY/alpine/k8s:1.20.7 as base
 
 RUN addgroup runners && adduser -D runner -G runners
 RUN mkdir -p /home/runner/.kube && chown runner:runners /home/runner/.kube

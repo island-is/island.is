@@ -1,25 +1,21 @@
-ARG DOCKER_REGISTRY=public.ecr.aws/docker
-ARG NODE_IMAGE_TAG=latest
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS runner
+ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
+ARG NODE_IMAGE_TAG
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} as runner
 
 RUN apk add postgresql-client bash
 
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} as build
 
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} AS build
 ENV NODE_OPTIONS=--openssl-legacy-provider
-WORKDIR /app/infra
 
-
-# System dependencies
-RUN corepack enable
-
-COPY infra/package.json infra/yarn.lock /app/infra/
+ADD infra/package.json infra/yarn.lock /app/infra/
 COPY .yarn/ ./.yarn
+WORKDIR /app/infra
 RUN yarn install --immutable
 
-COPY infra/ /app/infra/
-COPY apps /app/apps/
-COPY libs /app/libs/
+ADD infra/ /app/infra/
+ADD apps /app/apps/
+ADD libs /app/libs/
 
 RUN ./node_modules/.bin/ncc build src/feature-env.ts -o /app/dist/feature-env
 RUN ./node_modules/.bin/ncc build src/secrets.ts -o /app/dist/secrets

@@ -1,19 +1,18 @@
 # This is a multi-stage Dockerfile which contains all CI-related operations as well as images to be deployed in production
 ARG PLAYWRIGHT_VERSION
-ARG DOCKER_REGISTRY=public.ecr.aws/docker
-ARG NODE_IMAGE_TAG=latest
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} as deps
+ARG DOCKER_IMAGE_REGISTRY=public.ecr.aws
+ARG NODE_IMAGE_TAG
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} as deps
 
 RUN apk add -U git
 
 WORKDIR /build
 
 # Adding and installing packages
-RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
-RUN corepack enable
-COPY package.json yarn.lock .yarnrc.yml ./
-COPY apps/native/app/package.json ./apps/native/app/
+ADD package.json yarn.lock .yarnrc.yml ./
+ADD apps/native/app/package.json ./apps/native/app/
 COPY .yarn/ ./.yarn
+RUN apk add --update --no-cache python3 build-base gcc && ln -sf /usr/bin/python3 /usr/bin/python
 RUN CI=true yarn install --immutable
 
 FROM deps as src
@@ -23,7 +22,7 @@ RUN wget -O /tmp/jq-linux64 https://github.com/stedolan/jq/releases/download/jq-
   mv /tmp/jq-linux64 /usr/bin/jq
 
 # image with the source code
-COPY . .
+ADD . .
 
 FROM src as builder
 ARG APP
@@ -34,7 +33,7 @@ ENV NODE_OPTIONS="--max-old-space-size=8192"
 
 RUN yarn run build ${APP} --prod
 
-FROM ${DOCKER_REGISTRY}/library/node:${NODE_IMAGE_TAG} as output-base
+FROM ${DOCKER_IMAGE_REGISTRY}/docker/library/node:${NODE_IMAGE_TAG} as output-base
 # this is base image for containers that are to be deployed
 ARG GIT_BRANCH
 ARG GIT_SHA
@@ -84,7 +83,7 @@ COPY --from=builder /build/${APP_DIST_HOME} /webapp/
 
 ENTRYPOINT [ "node", "main.js" ]
 
-FROM $DOCKER_REGISTRY/nginx/nginx:1.21-alpine as output-static
+FROM $DOCKER_IMAGE_REGISTRY/nginx/nginx:1.21-alpine as output-static
 ARG APP
 ARG APP_DIST_HOME
 ARG GIT_BRANCH
@@ -103,9 +102,9 @@ RUN apk update && \
   apk upgrade && \
   apk add bash nodejs
 
-COPY scripts/dockerfile-assets/nginx/* /etc/nginx/templates
-COPY scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
-COPY scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
+ADD scripts/dockerfile-assets/nginx/* /etc/nginx/templates
+ADD scripts/dockerfile-assets/bash/extract-environment.sh /docker-entrypoint.d
+ADD scripts/dockerfile-assets/bash/extract-environment.js /docker-entrypoint.d
 COPY --from=builder /build/${APP_DIST_HOME} /usr/share/nginx/html
 
 FROM output-base as output-jest
@@ -143,7 +142,7 @@ COPY ${APP_HOME}/package.json .
 RUN chown -R pwuser:pwuser .
 
 USER pwuser
-COPY .yarnrc.yml ./
+ADD .yarnrc.yml ./
 RUN mkdir ./.yarn
 COPY .yarn/releases ./.yarn/releases
 RUN yarn install
