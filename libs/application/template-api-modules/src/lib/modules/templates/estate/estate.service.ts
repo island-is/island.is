@@ -201,6 +201,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
     let estateData = externalData.estates?.find(
       (estate) => estate.caseNumber === answers.estateInfoSelection,
     )
+    // TODO: Remove the singular estate property in the future when
+    //       legacy applications clear out of the system
     estateData = estateData ?? externalData.estate ?? undefined
     if (!estateData) {
       throw new Error(
@@ -209,6 +211,8 @@ export class EstateTemplateService extends BaseTemplateApiService {
     }
 
     const uploadData = generateRawUploadData(answers, estateData, application)
+    // We deep copy the pdfData since the transform function
+    // for the PDF creation mutates the object
     const pdfData = structuredClone(uploadData)
 
     const attachments: Attachment[] = []
@@ -222,6 +226,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
       content: pdfBuffer.toString('base64'),
     })
 
+    // Retrieve attachments from the application and attach them to the upload data
     const dateStr = new Date(Date.now()).toISOString().substring(0, 10)
     for (let i = 0; i < AttachmentPaths.length; i++) {
       const { path, prefix } = AttachmentPaths[i]
