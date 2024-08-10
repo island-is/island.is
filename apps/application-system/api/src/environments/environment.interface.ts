@@ -1,7 +1,6 @@
 import type { AuthConfig } from '@island.is/auth-nest-tools'
 import { TemplateAPIConfig } from '@island.is/application/template-api-modules'
 import { AuditOptions } from '@island.is/nest/audit'
-import { SmsServiceOptions } from '@island.is/nova-sms'
 
 export interface Environment<
   TemplateAPISubset extends keyof TemplateAPIConfig = keyof TemplateAPIConfig,
@@ -12,8 +11,9 @@ export interface Environment<
   baseApiUrl: string
   audit: AuditOptions
   auth: AuthConfig
-  templateApi: Pick<TemplateAPIConfig, TemplateAPISubset>
   smsOptions?: SmsServiceOptions
+  templateApi: Pick<TemplateAPIConfig, TemplateAPISubset>
+  templateApi: TemplateAPIConfig
   contentful: {
     accessToken: string
   }
