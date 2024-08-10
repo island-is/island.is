@@ -45,7 +45,7 @@ export class FileService {
     @Inject(ApplicationFilesConfig.KEY)
     private config: ConfigType<typeof ApplicationFilesConfig>,
     private readonly signingService: SigningService,
-    private readonly aws: AwsService,
+    private readonly awsService: AwsService,
   ) {}
 
   async generatePdf(application: Application, pdfType: PdfTypes) {
@@ -54,16 +54,16 @@ export class FileService {
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
     const bucket = this.getBucketName()
 
-    if ((await this.aws.fileExists(bucket, fileName)) === false) {
+    if ((await this.awsService.fileExists(bucket, fileName)) === false) {
       const content = await this.createFile(application, pdfType)
-      await this.aws.uploadFile(content, bucket, fileName, {
+      await this.awsService.uploadFile(content, bucket, fileName, {
         ContentEncoding: 'base64',
         ContentDisposition: 'inline',
         ContentType: 'application/pdf',
       })
     }
 
-    return await this.aws.getPresignedUrl(bucket, fileName)
+    return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   async uploadSignedFile(
@@ -79,7 +79,7 @@ export class FileService {
       .waitForSignature(DokobitFileName[pdfType], documentToken)
       .then(async (file) => {
         const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
-        await this.aws.uploadFile(
+        await this.awsService.uploadFile(
           Buffer.from(file, 'binary'),
           bucket,
           s3FileName,
@@ -130,7 +130,7 @@ export class FileService {
 
     const fileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
 
-    return await this.aws.getPresignedUrl(bucket, fileName)
+    return await this.awsService.getPresignedUrl(bucket, fileName)
   }
 
   private async createFile(application: Application, pdfType: PdfTypes) {
@@ -148,7 +148,7 @@ export class FileService {
   ) {
     const bucket = this.getBucketName()
     const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
-    const fileContent = await this.aws.getFileEncoded({
+    const fileContent = await this.awsService.getFileEncoded({
       bucket,
       fileName: s3FileName,
       encoding: 'binary',
@@ -227,7 +227,7 @@ export class FileService {
 
   async getAttachmentPresignedURL(fileName: string) {
     const { bucket, key } = AmazonS3URI(fileName)
-    const url = await this.aws.getPresignedUrl(bucket, key)
+    const url = await this.awsService.getPresignedUrl(bucket, key)
     return { url }
   }
 
@@ -253,7 +253,7 @@ export class FileService {
 
         try {
           this.logger.info(`Deleting attachment ${s3key} from bucket ${bucket}`)
-          await this.aws.deleteObject(bucket, s3key)
+          await this.awsService.deleteObject(bucket, s3key)
           result = {
             ...result,
             deleted: result.deleted++,

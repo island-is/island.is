@@ -14,7 +14,7 @@ export interface AttachmentData {
 
 @Injectable()
 export class ApplicationAttachmentService {
-  constructor(private readonly aws: AwsService) {}
+  constructor(private readonly awsService: AwsService) {}
 
   public async getFiles(
     application: Application,
@@ -61,7 +61,8 @@ export class ApplicationAttachmentService {
           logger.info('Failed to get url from application state')
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
-        const fileContent = (await this.aws.getFileBase64({ s3Uri: url })) ?? ''
+        const fileContent =
+          (await this.awsService.getFileBase64({ s3Uri: url })) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),

@@ -39,7 +39,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     @Inject(PRESIGNED_BUCKET) private readonly presignedBucket: string,
     private readonly smsService: SmsService,
-    private readonly aws: AwsService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.CHILDREN_RESIDENCE_CHANGE)
   }
@@ -49,7 +49,7 @@ export class ChildrenResidenceChangeService extends BaseTemplateApiService {
     const { nationalRegistry } = externalData
     const applicant = nationalRegistry.data
     const s3FileName = `children-residence-change/${application.id}.pdf`
-    const file = await this.aws.getFile({
+    const file = await this.awsService.getFile({
       bucket: this.presignedBucket,
       fileName: s3FileName,
     })

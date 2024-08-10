@@ -38,7 +38,7 @@ export class SharedTemplateApiService {
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
     private readonly paymentService: PaymentService,
-    private readonly aws: AwsService,
+    private readonly awsService: AwsService,
   ) {}
 
   async createAssignToken(application: Application, expiresIn: number) {
@@ -261,8 +261,9 @@ export class SharedTemplateApiService {
         [key: string]: string
       }
     )[attachmentKey]
-    if (encoding) return await this.aws.getFileEncoded({ fileName, encoding })
-    return await this.aws.getFile({ fileName })
+    if (encoding)
+      return await this.awsService.getFileEncoded({ fileName, encoding })
+    return await this.awsService.getFile({ fileName })
   }
 
   async getAttachmentContentAsBase64(

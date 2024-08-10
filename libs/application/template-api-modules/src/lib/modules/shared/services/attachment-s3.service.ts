@@ -13,7 +13,7 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  constructor(private readonly aws: AwsService) {}
+  constructor(private readonly awsService: AwsService) {}
 
   /**
    * This function retrieves files from an application based on provided attachment keys.
@@ -79,7 +79,7 @@ export class AttachmentS3Service {
     fileName: string,
   ): Promise<string | undefined> {
     try {
-      return this.aws.getFileBase64({ fileName })
+      return this.awsService.getFileBase64({ fileName })
     } catch (error) {
       logger.error(error)
       return undefined

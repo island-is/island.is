@@ -45,7 +45,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
-    private readonly aws: AwsService,
+    private readonly awsService: AwsService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -375,7 +375,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getPdf(key: string) {
     this.logger.debug('Getting pdf', { key })
-    const file = await this.aws.getFileBase64({
+    const file = await this.awsService.getFileBase64({
       bucket: this.attachmentBucket,
       fileName: key,
     })

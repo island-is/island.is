@@ -23,7 +23,7 @@ export class HealthInsuranceService extends BaseTemplateApiService {
   constructor(
     private documentApi: DocumentApi,
     private personApi: PersonApi,
-    private readonly aws: AwsService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.HEALTH_INSURANCE)
   }
@@ -64,7 +64,7 @@ export class HealthInsuranceService extends BaseTemplateApiService {
     const xml = await insuranceToXML(
       inputs.vistaskjal,
       inputs.attachmentNames,
-      this.aws,
+      this.awsService,
     )
 
     try {

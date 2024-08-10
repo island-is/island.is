@@ -64,7 +64,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly syslumennService: SyslumennService,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly aws: AwsService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.P_SIGN)
   }
@@ -187,7 +187,7 @@ export class PSignSubmissionService extends BaseTemplateApiService {
   private async getAttachments({
     application,
   }: TemplateApiModuleActionProps): Promise<string> {
-    const attacher = new AttachmentS3Service(this.aws)
+    const attacher = new AttachmentS3Service(this.awsService)
     const attachments = await attacher.getFiles(
       application,
       'photo.attachments',
@@ -206,6 +206,6 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       }
     )[attachmentKey]
 
-    return (await this.aws.getFileBase64({ fileName })) ?? ''
+    return (await this.awsService.getFileBase64({ fileName })) ?? ''
   }
 }
