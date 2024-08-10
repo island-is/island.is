@@ -7,7 +7,6 @@ import {
 import { User } from '@island.is/auth-nest-tools'
 import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
-import { SmsServiceOptions } from '@island.is/nova-sms'
 
 import type { Locale } from '@island.is/shared/types'
 import { Attachment } from 'nodemailer/lib/mailer'

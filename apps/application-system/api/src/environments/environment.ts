@@ -5,14 +5,12 @@ type EnvironmentKeys =
   | 'baseApiUrl'
   | 'clientLocationOrigin'
   | 'email'
-  | 'emailOptions'
   | 'generalPetition'
   | 'islykill'
   | 'jwtSecret'
   | 'presignBucket'
   | 'userProfile'
   | 'xRoadBasePathWithEnv'
-  | 'smsOptions'
 
 const devConfig: Environment<EnvironmentKeys> = {
   production: false,
