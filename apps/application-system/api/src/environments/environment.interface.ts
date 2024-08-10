@@ -11,9 +11,7 @@ export interface Environment<
   baseApiUrl: string
   audit: AuditOptions
   auth: AuthConfig
-  smsOptions?: SmsServiceOptions
   templateApi: Pick<TemplateAPIConfig, TemplateAPISubset>
-  templateApi: TemplateAPIConfig
   contentful: {
     accessToken: string
   }
