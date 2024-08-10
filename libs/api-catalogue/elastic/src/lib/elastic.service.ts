@@ -45,7 +45,7 @@ export class ElasticService {
     logger.info('Bulk insert', services)
 
     if (services.length) {
-      const bulk: (Service | { index: { index: string; _id: string } })[] =
+      const bulk: (Service | { index: { _index: string; _id: string } })[] =
         services.flatMap((service) => [
           {
             index: {
