@@ -51,19 +51,19 @@ describe('DelegationsIndexService', () => {
     await factory.createClient(testCase.client)
 
     await Promise.all(
-      testCase.apiScopes.flatMap((scope) => factory.createApiScope(scope)),
+      testCase.apiScopes.map((scope) => factory.createApiScope(scope)),
     )
 
     // create custom delegations
     await Promise.all(
-      testCase.customDelegations.flatMap((delegation) =>
+      testCase.customDelegations.map((delegation) =>
         factory.createCustomDelegation(delegation),
       ),
     )
 
     // create personal representation delegations
     await Promise.all(
-      testCase.personalRepresentativeDelegation.flatMap((d) =>
+      testCase.personalRepresentativeDelegation.map((d) =>
         factory.createPersonalRepresentativeDelegation(d),
       ),
     )

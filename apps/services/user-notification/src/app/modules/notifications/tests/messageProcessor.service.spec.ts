@@ -64,7 +64,7 @@ describe('MessageProcessorService', () => {
       module.get<NotificationsService>(NotificationsService)
   })
 
-  it('should be defined', async () => {
+  it('should be defined', () => {
     expect(service).toBeDefined()
   })
 

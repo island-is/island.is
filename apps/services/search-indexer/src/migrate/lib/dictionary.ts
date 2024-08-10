@@ -30,7 +30,7 @@ const getDictionaryFile = async (
   sha: string,
   locale: ElasticsearchIndexLocale,
   analyzer: string,
-) => {
+): Promise<NodeJS.ReadableStream> => {
   const response = await fetch(
     `https://github.com/${environment.dictRepo}/blob/${sha}/${locale}/${analyzer}.txt?raw=true`,
   )

@@ -45,15 +45,16 @@ export class ElasticService {
     logger.info('Bulk insert', services)
 
     if (services.length) {
-      const bulk = services.flatMap((service) => [
-        {
-          index: {
-            _index: this.indexName,
-            _id: service.id,
+      const bulk: (Service | { index: { index: string; _id: string } })[] =
+        services.flatMap((service) => [
+          {
+            index: {
+              _index: this.indexName,
+              _id: service.id,
+            },
           },
-        },
-        service,
-      ])
+          service,
+        ])
 
       const client = await this.getClient()
       await client.bulk({

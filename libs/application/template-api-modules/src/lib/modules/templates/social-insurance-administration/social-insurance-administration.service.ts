@@ -71,18 +71,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return result
   }
 
-  async getPdf(key: string) {
-    this.logger.debug('Getting pdf', { key })
-    const file = await this.aws.getFileBase64({
-      bucket: this.attachmentBucket,
-      fileName: key,
-    })
-    if (!file) {
-      throw new Error('File content was undefined')
-    }
-    return file
-  }
-
   private async getAdditionalAttachments(
     application: Application,
   ): Promise<Array<Attachment>> {
@@ -383,6 +371,18 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     return attachments
+  }
+
+  async getPdf(key: string) {
+    this.logger.debug('Getting pdf', { key })
+    const file = await this.aws.getFileBase64({
+      bucket: this.attachmentBucket,
+      fileName: key,
+    })
+    if (!file) {
+      throw new Error('File content was undefined')
+    }
+    return file
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {

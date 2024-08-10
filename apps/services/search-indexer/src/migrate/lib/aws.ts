@@ -325,6 +325,10 @@ const checkIfAwsEsPackageExists = async (
   return foundPackage?.PackageID ?? null
 }
 
+/*
+createAwsEsPackages should only run when we are updating, we can therefore assume no assigned packages exist in AWS ES for this version
+We run a remove packages for this version function to handle failed partial updates that might not have associated the package to the domain
+*/
 export interface AwsEsPackage {
   packageName?: string
   packageId: string
@@ -411,6 +415,7 @@ const dissociatePackageWithAwsEsSearchDomain = async (packageId: string) => {
   logger.info('Disassociating package from AWS ES domain', params)
   const dissociatePackageCommand = new DissociatePackageCommand(params)
   const result = await awsEs.send(dissociatePackageCommand)
+  // This used to be 'DISSOCIATED', but that was never a valid status 🤷
   await waitForPackageStatus(packageId, DomainPackageStatus.DISSOCIATING)
   return result
 }
