@@ -1,8 +1,8 @@
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
 import { VaccinationsWrapper } from './wrapper/VaccinationsWrapper'
-import { VaccinationsTable } from './tables/VaccinationsTable'
 import { generalVaccinationsData } from './dataStructure'
+import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
 
 export const VaccinationsGeneral = () => {
   const loading = false
@@ -21,7 +21,7 @@ export const VaccinationsGeneral = () => {
             borderRadius="standard"
           />
         )}
-        <VaccinationsTable data={data} />
+        <SortedVaccinationsTable data={data} />
       </Box>
     </VaccinationsWrapper>
   )
