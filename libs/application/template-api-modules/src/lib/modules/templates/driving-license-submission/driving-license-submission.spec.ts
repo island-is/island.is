@@ -12,10 +12,11 @@ import { DrivingLicenseSubmissionService } from './driving-license-submission.se
 import {
   AdapterService,
   EmailService,
-  EMAIL_OPTIONS,
+  emailModuleConfig,
 } from '@island.is/email-service'
 import { DrivingLicenseService } from '@island.is/api/domains/driving-license'
 import { ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
 
 describe('DrivingLicenseSubmissionService', () => {
@@ -23,6 +24,12 @@ describe('DrivingLicenseSubmissionService', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [emailModuleConfig],
+        }),
+      ],
       providers: [
         DrivingLicenseSubmissionService,
         EmailService,
@@ -38,15 +45,6 @@ describe('DrivingLicenseSubmissionService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
-        },
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: {
-            useTestAccount: true,
-            options: {
-              region: 'region',
-            },
-          },
         },
         {
           provide: ConfigService,
