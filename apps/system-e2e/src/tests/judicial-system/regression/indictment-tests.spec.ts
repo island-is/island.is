@@ -6,8 +6,6 @@ import { test } from '../utils/judicialSystemTest'
 import {
   randomPoliceCaseNumber,
   getDaysFromNow,
-  chooseDocument,
-  verifyUpload,
   uploadDocument,
 } from '../utils/helpers'
 
