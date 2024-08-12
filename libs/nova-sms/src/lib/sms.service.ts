@@ -9,7 +9,7 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import { smsModuleConfig } from './sms.config'
 
-interface NovaResponse {
+export interface NovaResponse {
   Code: number
   Message: string
 }
