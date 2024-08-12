@@ -23,8 +23,8 @@ export class License {
   @Field({ nullable: true })
   issuerTitle?: string
 
-  @Field()
-  profession!: string
+  @Field({ nullable: true })
+  profession?: string
 
   @Field({ nullable: true })
   permit?: string

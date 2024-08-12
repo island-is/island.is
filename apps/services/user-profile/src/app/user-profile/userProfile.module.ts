@@ -5,7 +5,6 @@ import { UserTokenController } from './userToken.controller'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { SmsModule } from '@island.is/nova-sms'
-import environment from '../../environments/environment'
 import { EmailModule } from '@island.is/email-service'
 import { SmsVerification } from './smsVerification.model'
 import { EmailVerification } from './emailVerification.model'
@@ -22,8 +21,8 @@ import { UserDeviceTokens } from './userDeviceTokens.model'
       UserProfile,
       UserDeviceTokens,
     ]),
-    EmailModule.register(environment.emailOptions),
-    SmsModule.register(environment.smsOptions),
+    EmailModule,
+    SmsModule,
   ],
   controllers: [
     UserProfileController,
