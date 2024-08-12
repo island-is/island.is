@@ -16,15 +16,20 @@ import { UserInfoLine } from '@island.is/service-portal/core'
 import { useMemo, useState } from 'react'
 import ExpandableLine from '../ExpandableLine/ExpandableLine'
 
-const tagColorMap: Record<GenericUserLicenseDataFieldTagColor, string> = {
-  red: 'red600',
-  yellow: 'yellow600',
-  green: 'mint600',
+const getTagColor = (
+  color: GenericUserLicenseDataFieldTagColor,
+): 'red600' | 'yellow600' | 'mint600' | undefined => {
+  switch (color) {
+    case 'red':
+      return 'red600'
+    case 'yellow':
+      return 'yellow600'
+    case 'green':
+      return 'mint600'
+    default:
+      return
+  }
 }
-
-const getTagColor = (color: GenericUserLicenseDataFieldTagColor) =>
-  tagColorMap[color]
-
 export const LicenseDataFields = ({
   fields,
   licenseType,
