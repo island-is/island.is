@@ -112,4 +112,8 @@ export const messages = defineMessages({
     id: 'sp.documents:success-unarchive-message',
     defaultMessage: 'Skjal tekið úr geymslu',
   },
+  documentSearchLabel: {
+    id: 'sp.documents:search-label',
+    defaultMessage: 'Leita',
+  },
 })
