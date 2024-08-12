@@ -122,7 +122,6 @@ const InfoCard: FC<Props> = (props) => {
             <Box marginBottom={defenders ? [2, 2, 3, 3] : 0} marginTop={1}>
               {defendants.items.map((defendant) => (
                 <DefendantInfo
-                  key={defendant.id}
                   defendant={defendant}
                   displayDefenderInfo={!defenders}
                   displayAppealExpirationInfo={

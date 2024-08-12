@@ -13,22 +13,11 @@ interface Section {
 interface Item {
   id: string // Used as a key
   title: string
-  values: string[]
+  values: string[] | React.ReactNode[]
 }
 
 interface Props {
   sections: Section[]
-}
-
-export const defendantsSection: Section = {
-  id: 'defendants-section',
-  items: [
-    {
-      id: 'defendants-item',
-      title: 'Varnaraðilar',
-      values: ['sad', 'asd'],
-    },
-  ],
 }
 
 const InfoCardNew: React.FC<Props> = (props) => {

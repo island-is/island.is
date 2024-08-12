@@ -11,6 +11,11 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  capitalize,
+  formatDate,
+  readableIndictmentSubtypes,
+} from '@island.is/judicial-system/formatters'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -29,9 +34,10 @@ import {
   useIndictmentsLawsBroken,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardNew, {
-  defendantsSection,
-} from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard__new'
+import { DefendantInfo } from '@island.is/judicial-system-web/src/components/InfoCard/DefendantInfo/DefendantInfo'
+import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard__new'
+import { strings as aa } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardIndictment.strings'
 import {
   CaseState,
   CaseTransition,
@@ -162,7 +168,7 @@ const Overview: FC = () => {
               title={formatMessage(strings.indictmentDeniedExplanationTitle)}
               message={workingCase.indictmentDeniedExplanation}
               type="info"
-            ></AlertMessage>
+            />
           </Box>
         )}
         {workingCase.indictmentReturnedExplanation && (
@@ -202,19 +208,117 @@ const Overview: FC = () => {
           <InfoCardActiveIndictment />
           <InfoCardNew
             sections={[
-              defendantsSection,
+              ...(workingCase.defendants
+                ? [
+                    {
+                      id: 'defendant-section',
+                      items: [
+                        {
+                          id: 'defendant-item',
+                          title: capitalize(
+                            workingCase.defendants.length > 1
+                              ? formatMessage(core.indictmentDefendants)
+                              : formatMessage(core.indictmentDefendant, {
+                                  gender: workingCase.defendants[0].gender,
+                                }),
+                          ),
+                          values: workingCase.defendants.map((defendant) => (
+                            <DefendantInfo
+                              defendant={defendant}
+                              displayDefenderInfo
+                            />
+                          )),
+                        },
+                      ],
+                    },
+                  ]
+                : []),
               {
-                id: 'something-else-section',
+                id: 'case-info-section',
                 items: [
                   {
-                    title: 'qweqwe',
-                    values: ['qweqwe', 'qweqwe'],
-                    id: 'smmmtnghs',
+                    title: formatMessage(strings.indictmentCreated),
+                    values: [formatDate(workingCase.created, 'PP')],
+                    id: 'indictment-created-item',
                   },
-                  { title: 'qweqwe', values: ['qwe'], id: 'smthngels' },
+                  {
+                    title: formatMessage(strings.prosecutor),
+                    values: [
+                      NameAndEmail(
+                        workingCase.prosecutor?.name,
+                        workingCase.prosecutor?.email,
+                      ),
+                    ],
+                    id: 'prosector-item',
+                  },
+                  {
+                    title: formatMessage(core.policeCaseNumber),
+                    values:
+                      workingCase.policeCaseNumbers?.map((n) => (
+                        <Text key={n}>{n}</Text>
+                      )) || [],
+                    id: 'police-case-number-item',
+                  },
+                  {
+                    title: formatMessage(core.court),
+                    values: [workingCase.court?.name || ''],
+                    id: 'court-item',
+                  },
+                  {
+                    title: formatMessage(aa.offence),
+                    values: [
+                      <>
+                        {readableIndictmentSubtypes(
+                          workingCase.policeCaseNumbers,
+                          workingCase.indictmentSubtypes,
+                        ).map((subtype, index) => (
+                          <Text key={`${subtype}-${index}`}>
+                            {capitalize(subtype)}
+                          </Text>
+                        ))}
+                      </>,
+                    ],
+                    id: 'offence-item',
+                  },
                 ],
                 columns: 2,
               },
+              ...(workingCase.mergedCases && workingCase.mergedCases.length > 0
+                ? workingCase.mergedCases.map((mergedCase) => ({
+                    id: mergedCase.id,
+                    items: [
+                      {
+                        id: 'merged-case-police-case-number-item',
+                        title: formatMessage(core.policeCaseNumber),
+                        values:
+                          mergedCase.policeCaseNumbers?.map((n) => (
+                            <Text key={n}>{n}</Text>
+                          )) || [],
+                      },
+                      {
+                        id: 'merged-case-court-case-number-item',
+                        title: formatMessage(aa.mergedFromTitle),
+                        values: [<Text>{mergedCase.courtCaseNumber}</Text>],
+                      },
+                      {
+                        id: 'merged-case-prosecutor-item',
+                        title: formatMessage(core.prosecutor),
+                        values: [mergedCase.prosecutorsOffice?.name || ''],
+                      },
+                      {
+                        id: 'merged-case-judge-item',
+                        title: formatMessage(core.judge),
+                        values: [mergedCase.judge?.name || ''],
+                      },
+                      {
+                        id: 'merged-case-court-item',
+                        title: formatMessage(core.court),
+                        values: [mergedCase.court?.name || ''],
+                      },
+                    ],
+                    columns: 2,
+                  }))
+                : []),
             ]}
           />
         </Box>
