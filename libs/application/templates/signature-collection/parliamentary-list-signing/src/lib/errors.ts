@@ -21,7 +21,7 @@ export const errorMessages = {
     },
     summary: {
       id: 'slc.application:error.citizenship.summary#markdown',
-      defaultMessage: 'Þú þarft að vera með íslenkst ríkisfang',
+      defaultMessage: 'Þú þarft að vera með íslenskt ríkisfang',
       description: '',
     },
   }),
