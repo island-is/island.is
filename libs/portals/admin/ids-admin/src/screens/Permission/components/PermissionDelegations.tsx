@@ -11,12 +11,14 @@ import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
 import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
+import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 
 const FIELD_PREFIX = 'field-'
 
 export const PermissionDelegations = () => {
   const { formatMessage } = useLocale()
   const { selectedPermission, permission } = usePermission()
+  const { isSuperAdmin } = useSuperAdmin()
   const {
     isAccessControlled,
     grantToAuthenticatedUser,
@@ -113,7 +115,8 @@ export const PermissionDelegations = () => {
     >
       <Stack space={4}>
         {providers.map((provider) =>
-          !provider ? null : (
+          !provider ||
+          (!isSuperAdmin && provider.id === 'talsmannagrunnur') ? null : (
             <Stack space={2} key={provider.id}>
               <div>
                 <Text variant="h5" as="h4" paddingBottom={1}>

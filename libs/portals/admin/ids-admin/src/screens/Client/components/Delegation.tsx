@@ -128,9 +128,9 @@ const Delegation = ({
       ])}
     >
       <Stack space={4}>
-        {providers.map((provider) => {
-          return !provider ? null : !isSuperAdmin &&
-            provider.id === 'talsmannagrunnur' ? null : (
+        {providers.map((provider) =>
+          !provider ||
+          (!isSuperAdmin && provider.id === 'talsmannagrunnur') ? null : (
             <Stack space={2} key={provider.id}>
               <div>
                 <Text variant="h5" as="h4" paddingBottom={1}>
@@ -162,8 +162,8 @@ const Delegation = ({
                 )}
               </Stack>
             </Stack>
-          )
-        })}
+          ),
+        )}
         <Stack space={3}>
           <Text variant="h5" as="h4">
             {formatMessage(m.additionalSettingsLabel)}
