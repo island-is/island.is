@@ -58,11 +58,10 @@ export const DocumentLine: FC<Props> = ({
   const {
     submitMailAction,
     loading: postLoading,
-    archiveSuccess,
     bookmarkSuccess,
   } = useMailAction()
 
-  const { activeArchive, fetchObject, refetch } = useDocumentList()
+  const { fetchObject, refetch } = useDocumentList()
 
   const {
     setActiveDocument,
