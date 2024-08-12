@@ -22,8 +22,8 @@ export class SharedTemplateAPIModule {
         ConfigModule.forRoot({
           load: [configuration],
         }),
-        EmailModule.register(config.emailOptions),
-        SmsModule.register(config.smsOptions),
+        EmailModule,
+        SmsModule,
         ApplicationApiCoreModule,
         AwsModule,
         PaymentModule,

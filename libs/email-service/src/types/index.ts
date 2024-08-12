@@ -57,7 +57,7 @@ interface SubtitleComponent {
 
 interface SpacerComponent {
   component: 'Spacer'
-  context?: {}
+  context?: object
 }
 
 interface TextWithLinkComponent {

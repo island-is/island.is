@@ -7,6 +7,9 @@ import {
   GetCaseCommentsResponse,
   GetPriceRequest,
   CasePriceResponse,
+  GetPdfUrlResponse,
+  GetPdfUrlByApplicationIdRequest,
+  GetPdfByApplicationIdRequest,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -38,6 +41,38 @@ export class OfficialJournalOfIcelandApplicationClientService {
     } catch (error) {
       return Promise.reject(false)
     }
+  }
+
+  async getPdfUrl(
+    params: GetPdfUrlByApplicationIdRequest,
+  ): Promise<GetPdfUrlResponse> {
+    return await this.ojoiApplicationApi.getPdfUrlByApplicationId(params)
+  }
+
+  async getPdf(params: GetPdfByApplicationIdRequest): Promise<Buffer> {
+    const streamableFile = await this.ojoiApplicationApi.getPdfByApplicationId(
+      params,
+    )
+
+    const isStreamable = (
+      streamableFile: any,
+    ): streamableFile is { getStream: () => NodeJS.ReadableStream } =>
+      typeof streamableFile.getStream === 'function'
+
+    if (!isStreamable(streamableFile)) {
+      throw new Error('Error reading streamable file')
+    }
+
+    const chunks: Uint8Array[] = [] // Change the type of 'chunks' to 'Uint8Array[]'
+    for await (const chunk of streamableFile.getStream()) {
+      if (typeof chunk === 'string') {
+        chunks.push(Buffer.from(chunk))
+      } else {
+        chunks.push(chunk)
+      }
+    }
+
+    return Buffer.concat(chunks)
   }
 
   async getPrice(params: GetPriceRequest): Promise<CasePriceResponse> {

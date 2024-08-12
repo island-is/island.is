@@ -7,7 +7,7 @@ import {
   ProfileCard,
 } from '@island.is/island-ui/core'
 import { FormatMessage, useLocale } from '@island.is/localization'
-import NotFilledOut from '../NotFilledOut'
+import { m } from '../../lib/messages'
 
 type Props = {
   field: {
@@ -28,6 +28,13 @@ export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
   field,
 }) => {
   const { formatMessage } = useLocale()
+
+  const notFilledOut = (
+    <Box marginY={3}>
+      <p style={{ fontStyle: 'italic' }}>{formatMessage(m.notFilledOut)}</p>
+    </Box>
+  )
+
   return (
     <GridRow>
       {field.props.cards(application).length ? (
@@ -47,15 +54,13 @@ export const Cards: FC<React.PropsWithChildren<FieldBaseProps & Props>> = ({
                   />
                 </Box>
               ) : (
-                <NotFilledOut />
+                notFilledOut
               )}
             </GridColumn>
           )
         })
       ) : (
-        <GridColumn>
-          <NotFilledOut />
-        </GridColumn>
+        <GridColumn>{notFilledOut}</GridColumn>
       )}
     </GridRow>
   )

@@ -256,6 +256,12 @@ export class CaseController {
       update.appealRulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
     }
 
+    if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {
+      throw new BadRequestException(
+        'Cannot merge case that is not in a received state',
+      )
+    }
+
     return this.caseService.update(theCase, update, user) as Promise<Case> // Never returns undefined
   }
 
@@ -459,6 +465,33 @@ export class CaseController {
     this.logger.debug(`Getting case ${caseId} by id`)
 
     return theCase
+  }
+
+  @UseGuards(JwtAuthGuard, CaseExistsGuard)
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get('case/:caseId/connectedCases')
+  @ApiOkResponse({ type: [Case], description: 'Gets all connected cases' })
+  async getConnectedCases(
+    @Param('caseId') caseId: string,
+    @CurrentCase() theCase: Case,
+  ): Promise<Case[]> {
+    this.logger.debug(`Getting connected cases for case ${caseId}`)
+
+    if (!theCase.defendants || theCase.defendants.length === 0) {
+      return []
+    }
+
+    const connectedCases = await Promise.all(
+      theCase.defendants.map((defendant) =>
+        this.caseService.getConnectedIndictmentCases(theCase.id, defendant),
+      ),
+    )
+
+    return connectedCases.flat()
   }
 
   @UseGuards(

@@ -1,6 +1,7 @@
 import {
   Box,
   Button,
+  Checkbox,
   Column,
   Columns,
   DatePicker,
@@ -11,11 +12,12 @@ import { useLocale } from '@island.is/localization'
 import { LawChaptersSelect } from './LawChaptersSelect'
 import { useDraftingState } from '../state/useDraftingState'
 import { RegulationDraftTypes } from '../types'
-import { getNextWorkday } from '../utils'
+import { getNextWorkday, getMinPublishDate } from '../utils'
 
 export const EditMeta = () => {
   const { formatMessage: t } = useLocale()
   const { draft, actions } = useDraftingState()
+  const { updateState } = actions
 
   const type = draft.type
   const typeName =
@@ -29,7 +31,7 @@ export const EditMeta = () => {
   return (
     <>
       <Columns space={3} collapseBelow="lg">
-        <Column>
+        <Column width="6/12">
           <Box marginBottom={3}>
             <Input
               label={t(msg.type)}
@@ -43,8 +45,50 @@ export const EditMeta = () => {
             />
           </Box>
         </Column>
-
-        <Column>
+      </Columns>
+      <Box marginBottom={3}>
+        <Columns space={3} collapseBelow="lg">
+          <Column width="4/12">
+            {/* idealPublishDate Input */}
+            <DatePicker
+              size="sm"
+              label={t(msg.idealPublishDate)}
+              placeholderText={t(msg.idealPublishDate_default)}
+              minDate={getMinPublishDate(
+                draft.fastTrack.value,
+                draft.signatureDate.value,
+              )}
+              selected={draft.idealPublishDate.value}
+              handleChange={(date: Date) =>
+                updateState('idealPublishDate', date)
+              }
+              hasError={
+                draft.idealPublishDate.showError &&
+                !!draft.idealPublishDate.error
+              }
+              errorMessage={
+                draft.idealPublishDate.error && t(draft.idealPublishDate.error)
+              }
+              backgroundColor="blue"
+            />
+          </Column>
+          <Column width="4/12">
+            {/* Request fastTrack */}
+            <Box display="flex" height="full" alignItems="center">
+              <Checkbox
+                label={t(msg.applyForFastTrack)}
+                labelVariant="default"
+                checked={draft.fastTrack.value}
+                onChange={() => {
+                  updateState('fastTrack', !draft.fastTrack.value)
+                }}
+              />
+            </Box>
+          </Column>
+        </Columns>
+      </Box>
+      <Columns space={3} collapseBelow="lg">
+        <Column width="4/12">
           <Box marginBottom={3}>
             <DatePicker
               size="sm"

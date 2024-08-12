@@ -33,6 +33,7 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 type FlatListItem =
   | GenericUserLicense
@@ -53,9 +54,15 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
-        rightButtons: initialized
-          ? getRightButtons({ screen: 'Wallet', theme: theme as any })
-          : [],
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        leftButtons: [
+          {
+            id: ButtonRegistry.ScanLicenseButton,
+            testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
+            icon: require('../../assets/icons/navbar-scan.png'),
+            color: theme.color.blue400,
+          },
+        ],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -127,7 +134,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({ screen: 'Wallet' }),
+    rightButtons: getRightButtons(),
     queryResult: [res, resPassport],
     refetching,
   })

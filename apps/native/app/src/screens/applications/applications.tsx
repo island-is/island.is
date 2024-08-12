@@ -25,6 +25,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { useBrowser } from '../../lib/useBrowser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { testIDs } from '../../utils/test-ids'
+import { getRightButtons } from '../../utils/get-main-root'
 import { ApplicationsModule } from '../home/applications-module'
 import { isIos } from '../../utils/devices'
 
@@ -42,6 +43,7 @@ const { useNavigationOptions, getNavigationOptions } =
         searchBar: {
           visible: false,
         },
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -98,6 +100,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   useConnectivityIndicator({
     componentId,
+    rightButtons: getRightButtons(),
     refetching,
     queryResult: [applicationsRes, res],
   })

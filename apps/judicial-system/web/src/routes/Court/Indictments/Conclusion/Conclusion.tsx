@@ -40,6 +40,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
 
 const courtSessionOptions = [
@@ -136,6 +137,11 @@ const Conclusion: FC = () => {
           break
         case IndictmentDecision.COMPLETING:
           update.indictmentRulingDecision = selectedDecision
+          update.mergeCaseId =
+            selectedDecision === CaseIndictmentRulingDecision.MERGE
+              ? workingCase.mergeCase?.id
+              : null
+
           break
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
@@ -232,13 +238,20 @@ const Conclusion: FC = () => {
                   file.status === 'done',
               )
             )
-          case CaseIndictmentRulingDecision.FINE:
           case CaseIndictmentRulingDecision.CANCELLATION:
-          case CaseIndictmentRulingDecision.MERGE:
+          case CaseIndictmentRulingDecision.FINE:
             return uploadFiles.some(
               (file) =>
                 file.category === CaseFileCategory.COURT_RECORD &&
                 file.status === 'done',
+            )
+          case CaseIndictmentRulingDecision.MERGE:
+            return Boolean(
+              uploadFiles.some(
+                (file) =>
+                  file.category === CaseFileCategory.COURT_RECORD &&
+                  file.status === 'done',
+              ) && workingCase.mergeCase?.id,
             )
           default:
             return false
@@ -469,6 +482,19 @@ const Conclusion: FC = () => {
             </BlueBox>
           </Box>
         )}
+        {selectedDecision &&
+          selectedDecision === CaseIndictmentRulingDecision.MERGE && (
+            <Box marginBottom={5}>
+              <SectionHeading
+                title={formatMessage(strings.connectedCaseNumbersTitle)}
+                required
+              />
+              <SelectConnectedCase
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+              />
+            </Box>
+          )}
         {selectedAction && (
           <Box
             component="section"
