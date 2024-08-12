@@ -67,32 +67,29 @@ const LicenseDetail = () => {
           genericLicense?.payload?.metadata?.title ??
           formatMessage(coreMessages.licenseNavTitle)
         }
-        introComponent={
-          genericLicense?.payload?.metadata?.description &&
-          genericLicense?.payload?.metadata?.description
-            .map((message, index) => {
-              if (!message.linkInText) {
-                return (
-                  <Text key={`intro-header-text-${index}`}>
-                    {message.text}
-                    <br />
-                  </Text>
-                )
-              }
-              if (message.linkInText && message.linkIconType) {
-                return (
-                  <LinkButton
-                    key={`intro-header-button-${index}`}
-                    variant="text"
-                    to={message.linkInText}
-                    text={message.text}
-                  />
-                )
-              }
-              return null
-            })
-            .filter(isDefined)
-        }
+        introComponent={genericLicense?.payload?.metadata?.description
+          ?.map((message, index) => {
+            if (!message.linkInText) {
+              return (
+                <Text key={`intro-header-text-${index}`}>
+                  {message.text}
+                  <br />
+                </Text>
+              )
+            }
+            if (message.linkInText && message.linkIconType) {
+              return (
+                <LinkButton
+                  key={`intro-header-button-${index}`}
+                  variant="text"
+                  to={message.linkInText}
+                  text={message.text}
+                />
+              )
+            }
+            return null
+          })
+          .filter(isDefined)}
         marginBottom={4}
       >
         {genericLicense?.payload?.metadata.alert ? (
@@ -119,28 +116,26 @@ const LicenseDetail = () => {
               {genericLicense.license.pkpassStatus ===
                 GenericUserLicensePkPassStatus.Available &&
                 licenseType && <PkPass licenseType={licenseType} />}
-              {genericLicense?.payload?.metadata.links &&
-                genericLicense.payload.metadata.links
-                  .map((link, index) => {
-                    if (link.label && link.value && link.type) {
-                      return (
-                        <LinkButton
-                          variant="button"
-                          key={`${type}-license-button-${index}`}
-                          to={link.value}
-                          text={link.label}
-                          icon={
-                            link.type ===
-                            GenericUserLicenseMetaLinksType.Download
-                              ? 'download'
-                              : 'open'
-                          }
-                        />
-                      )
-                    }
-                    return null
-                  })
-                  .filter(isDefined)}
+              {genericLicense?.payload?.metadata.links
+                ?.map((link, index) => {
+                  if (link.label && link.value && link.type) {
+                    return (
+                      <LinkButton
+                        variant="button"
+                        key={`${type}-license-button-${index}`}
+                        to={link.value}
+                        text={link.label}
+                        icon={
+                          link.type === GenericUserLicenseMetaLinksType.Download
+                            ? 'download'
+                            : 'open'
+                        }
+                      />
+                    )
+                  }
+                  return null
+                })
+                .filter(isDefined)}
             </Inline>
           </Box>
         ) : undefined}

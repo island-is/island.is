@@ -69,29 +69,24 @@ export class PassportMapper implements GenericLicenseMapper {
       IdentityDocument | IdentityDocumentChild
     >
 
-    const mappedLicenses: Array<GenericLicenseMappedPayloadResponse> = []
-    typedPayload.forEach((t) => {
-      if (isChildPassport(t)) {
-        const childDocuments = this.mapChildDocument(t, formatMessage)
-        childDocuments.forEach((document) => {
-          mappedLicenses.push({
-            licenseName: formatMessage(m.passport),
-            type: 'child',
-            payload: document,
-          })
+    const mappedLicenses: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload
+        .map((t) => {
+          if (isChildPassport(t)) {
+            return this.mapChildDocument(t, formatMessage).map((document) => ({
+              licenseName: formatMessage(m.passport),
+              type: 'child' as const,
+              payload: document,
+            }))
+          } else {
+            return {
+              licenseName: formatMessage(m.passport),
+              type: 'user' as const,
+              payload: this.mapDocument(t, formatMessage),
+            }
+          }
         })
-      } else {
-        mappedLicenses.push({
-          licenseName: formatMessage(m.passport),
-          type: 'user',
-          payload: this.mapDocument(t, formatMessage),
-        })
-      }
-    })
-
-    if (!mappedLicenses.some((m) => m.type === 'user')) {
-      mappedLicenses.push(emptyPassport)
-    }
+        .flat()
 
     return mappedLicenses
   }
