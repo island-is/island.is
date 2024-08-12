@@ -37,7 +37,9 @@ export const petitionListLoader: WrappedLoaderFn = ({ client }) => {
         variables: {
           input: {
             listId: params.listId,
-            limit: 1000,
+            // changing limit for admin to ensure all endorsements
+            // are fetched for the download file feature
+            limit: 1000000,
           },
         },
       })
