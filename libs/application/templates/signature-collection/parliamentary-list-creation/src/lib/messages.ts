@@ -26,7 +26,7 @@ export const m = defineMessages({
   introDescription: {
     id: 'plc.application:introDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pharetra euismod nibh, non ornare urna auctor vitae. Sed eget viverra erat. Praesent venenatis orci nec faucibus tincidunt. Nam ultrices metus nec tortor euismod fermentum. Vivamus efficitur leo eget ultricies pellentesque.',
+      'Þú ert að fara að stofna meðmælasöfnun fyrir stjórnmálasamtök vegna Alþingiskosninga. Athugaðu að óheimilt er að afrita, miðla eða nýta upplýsingar um meðmælendur í nokkrum öðrum tilgangi en að safna þeim til þess að skila inn framboði.',
     description: '',
   },
 
@@ -77,7 +77,7 @@ export const m = defineMessages({
   /* Upplýsingar um meðmælalista */
   listInformationSection: {
     id: 'plc.application:listInformationSection',
-    defaultMessage: 'Upplýsingar um meðmælalista',
+    defaultMessage: 'Upplýsingar um stjórnmálasamtök og tengilið',
     description: '',
   },
   listInformationDescription: {
@@ -93,12 +93,12 @@ export const m = defineMessages({
   },
   listHeader: {
     id: 'plc.application:listHeader',
-    defaultMessage: 'Framboð',
+    defaultMessage: 'Stjórnmálasamtök',
     description: '',
   },
   applicantActorHeader: {
     id: 'plc.application:applicantActorHeader',
-    defaultMessage: 'Stofnandi (? - tbd)',
+    defaultMessage: 'Tengiliður',
     description: '',
   },
   name: {
@@ -108,7 +108,7 @@ export const m = defineMessages({
   },
   listName: {
     id: 'plc.application:listName',
-    defaultMessage: 'Heiti framboðs',
+    defaultMessage: 'Heiti stjórnmálasamtaka',
     description: '',
   },
   listLetter: {
@@ -165,7 +165,7 @@ export const m = defineMessages({
   },
   selectConstituencyDescription: {
     id: 'plc.application:selectConstituencyDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    defaultMessage: 'Hægt er að velja eitt eða fleiri kjördæmi eftir því hvort stjórnmálasamtökin ætli sér að bjóða fram í öllum kjördæmum eða færri kjördæmum.',
     description: '',
   },
 
@@ -175,9 +175,9 @@ export const m = defineMessages({
     defaultMessage: 'Ábyrgðar-/umsjónaraðilar',
     description: '',
   },
-  managersAndSupervisorsDescription: {
-    id: 'plc.application:managersAndSupervisorsDescription',
-    defaultMessage: 'Veljið ábyrgðar-/umsjónaraðila',
+  managersAndSupervisorsTitle: {
+    id: 'plc.application:managersAndSupervisorsTitle',
+    defaultMessage: 'Veljið ábyrgðar- og umsjónaraðila',
     description: '',
   },
   managers: {
@@ -187,7 +187,7 @@ export const m = defineMessages({
   },
   managersDescription: {
     id: 'plc.application:managersDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    defaultMessage: 'Ábyrgðaraðili hefur aðgang að söfnunum í öllum kjördæmum og getur bætt við og eytt umsjónaraðilum. Ábyrgðaraðili getur slegið inn kennitölur meðmælenda af blaði í viðeigandi kjördæmum.',
     description: '',
   },
   addManager: {
@@ -204,7 +204,7 @@ export const m = defineMessages({
   },
   supervisorsDescription: {
     id: 'plc.application:supervisorsDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    defaultMessage: 'Umsjónaraðili sér aðeins þau kjördæmi sem honum hefur verið úthlutað og getur slegið inn kennitölur meðmælenda af blaði í þeim kjördæmum.',
     description: '',
   },
   addSupervisor: {
@@ -227,12 +227,12 @@ export const m = defineMessages({
   },
   applicantOverviewHeader: {
     id: 'plc.application:applicantOverviewHeader',
-    defaultMessage: 'Upplýsingar um stofnanda',
+    defaultMessage: 'Upplýsingar um tengilið',
     description: '',
   },
   listOverviewHeader: {
     id: 'plc.application:listOverviewHeader',
-    defaultMessage: 'Upplýsingar um framboð',
+    defaultMessage: 'Upplýsingar um stjórnmálasamtök',
     description: '',
   },
   listsOverviewHeader: {
@@ -258,9 +258,9 @@ export const m = defineMessages({
     description: '',
   },
   listCreatedDescription: {
-    id: 'plc.application:listCreatedDescription',
+    id: 'plc.application:listCreatedDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus feugiat lacus at nisl dignissim, ut scelerisque eros rhoncus. Donec maximus gravida sapien, sit amet hendrerit diam dignissim ut.',
+      'Hægt er að fylgjast með stöðu meðmæla eftir kjördæmum á Mínum síðum. Einnig er hægt að veita umboð til ábyrgðaraðila og umsjónaraðila á Mínum síðum. Meðmælendur sjá sín meðmæli á Mínum síðum á Ísland.is. Framboðsfresti lýkur xx. mánuð og þá lokar sjálfkrafa fyrir söfnun meðmæla.',
     description: '',
   },
   nextSteps: {
@@ -271,7 +271,7 @@ export const m = defineMessages({
   nextStepsDescription: {
     id: 'plc.application:nextStepsDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus feugiat lacus at nisl dignissim, ut scelerisque eros rhoncus. Donec maximus gravida sapien, sit amet hendrerit diam dignissim ut.',
+      'Nú er hægt að safna meðmælum! Hægt er að afrita og deila hlekknum til fólks svo þau geti á einfaldan hátt mælt með stjórnmálasamtökunum í viðeigandi kjördæmi.',
     description: '',
   },
   shareList: {
