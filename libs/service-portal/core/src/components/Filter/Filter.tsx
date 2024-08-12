@@ -48,6 +48,8 @@ export interface FilterProps {
   popoverFlip?: boolean
 
   additionalFilters?: ReactNode
+
+  largeButton?: boolean
 }
 
 /**
@@ -79,6 +81,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   children,
   popoverFlip = true,
   fullWidthInput = false,
+  largeButton = false,
   additionalFilters,
 }) => {
   const dialog = useDialogState()
@@ -124,6 +127,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
                   borderRadius="large"
                   tabIndex={-1}
                   marginLeft={fullWidthInput ? 2 : undefined}
+                  className={largeButton ? styles.lgBtn : undefined}
                   {...popover}
                 >
                   <Button
