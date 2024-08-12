@@ -38,10 +38,10 @@ export type Supervisor = {
 
 // These will be fetched later
 export const Constituencies = [
-  'Norðausturkjördæmi',
   'Norðvesturkjördæmi',
-  'Reykjavíkurkjördæmi norður',
-  'Reykjavíkurkjördæmi suður',
+  'Norðausturkjördæmi',
   'Suðurkjördæmi',
   'Suðvesturkjördæmi',
+  'Reykjavíkurkjördæmi suður',
+  'Reykjavíkurkjördæmi norður',
 ]
