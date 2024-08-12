@@ -17,10 +17,12 @@ export const infoCardTitleContainer = style({
   borderBottom: `2px solid ${theme.color.blue200}`,
 })
 
-export const twoCols = style({
+export const grid = style({
   display: 'grid',
   gap: theme.spacing[2],
+})
 
+export const twoCols = style({
   '@media': {
     [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
       gridTemplateColumns: '1fr 1fr',
