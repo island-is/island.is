@@ -10,7 +10,7 @@ interface Section {
   columns?: number
 }
 
-interface Item {
+export interface Item {
   id: string // Used as a key
   title: string
   values: string[] | React.ReactNode[]
