@@ -1,23 +1,11 @@
-import { Injectable } from '@nestjs/common'
-import { ApplicationApi, CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
-import {
-  ApplicationStatus,
-  CourseSeason,
-  DegreeType,
-  FieldType,
-  IApplication,
-  ICourse,
-  IProgram,
-  ModeOfDelivery,
-  Requirement,
-  Season,
-  mapStringToEnum,
-} from '@island.is/university-gateway'
-import { logger } from '@island.is/logging'
-import { mapUglaPrograms } from './utils/mapUglaPrograms'
-import { mapUglaCourses } from './utils/mapUglaCourses'
-import { mapUglaApplication } from './utils/mapUglaApplication'
-import { AttachmentKey, InlineResponse2004 } from '../../gen/fetch'
+import {Injectable} from '@nestjs/common'
+import {ApplicationApi, CoursesApi, ProgramsApi} from '../../gen/fetch/apis'
+import {ApplicationStatus, IApplication, ICourse, IProgram,} from '@island.is/university-gateway'
+import {logger} from '@island.is/logging'
+import {mapUglaPrograms} from './utils/mapUglaPrograms'
+import {mapUglaCourses} from './utils/mapUglaCourses'
+import {mapUglaApplication} from './utils/mapUglaApplication'
+import {InlineResponse2004} from '../../gen/fetch'
 
 @Injectable()
 export class UniversityOfIcelandApplicationClient {
@@ -55,7 +43,7 @@ export class UniversityOfIcelandApplicationClient {
   async createApplication(
     application: IApplication,
   ): Promise<InlineResponse2004> {
-    const mappedApplication = mapUglaApplication(
+    const mappedApplication = await mapUglaApplication(
       application,
       (courseExternalId: string, e: Error) => {
         logger.error(
@@ -65,24 +53,9 @@ export class UniversityOfIcelandApplicationClient {
       },
     )
 
-    const response = await this.applicationApi.applicationsPost(
+    return await this.applicationApi.applicationsPost(
       mappedApplication,
     )
-
-    application.attachments?.filter(Boolean).forEach(async (attachment) => {
-      const attachmentKey = attachment?.fileType
-        ? AttachmentKey[attachment.fileType as keyof typeof AttachmentKey] ||
-          undefined
-        : undefined
-      const requestParams = {
-        guid: application.id,
-        attachment: attachment?.blob,
-        attachmentKey,
-      }
-      await this.applicationApi.applicationsAttachmentsGuidPost(requestParams)
-    })
-
-    return response
   }
 
   async updateApplicationStatus(externalId: string, status: ApplicationStatus) {

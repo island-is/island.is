@@ -264,6 +264,7 @@ export class UniversityService extends BaseTemplateApiService {
   ): Promise<{ fileName: string; fileType: string; blob: Blob }[]> {
     return await Promise.all(
       attachments?.map(async (file) => {
+        //todo change to getAttachmentWithSignedUrl
         const blob =
           await this.sharedTemplateAPIService.getAttachmentContentAsBlob(
             application,
