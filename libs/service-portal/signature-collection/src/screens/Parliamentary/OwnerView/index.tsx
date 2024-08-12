@@ -11,6 +11,7 @@ import {
 import { constituencies } from '../../../lib/constants'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
+import AddManager from './AddManager'
 
 const OwnerView = () => {
   const navigate = useNavigate()
@@ -59,9 +60,7 @@ const OwnerView = () => {
             {'Ábyrgðaraðilar' + ' '}
             <Tooltip placement="right" text={'info'} color="blue400" />
           </Text>
-          <Button variant="utility" icon="add" iconType="outline">
-            Bæta við
-          </Button>
+          <AddManager collectionId={'1'} />
         </Box>
         <T.Table>
           <T.Head>
