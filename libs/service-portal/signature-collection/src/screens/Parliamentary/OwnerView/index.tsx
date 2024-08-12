@@ -9,8 +9,12 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { constituencies } from '../../../lib/constants'
+import { useNavigate } from 'react-router-dom'
+import { SignatureCollectionPaths } from '../../../lib/paths'
 
 const OwnerView = () => {
+  const navigate = useNavigate()
+
   return (
     <Stack space={3}>
       <Box display={'flex'} justifyContent={'spaceBetween'} marginBottom={3}>
@@ -32,6 +36,15 @@ const OwnerView = () => {
           cta={{
             label: 'Sýsla með lista',
             variant: 'text',
+            icon: 'arrowForward',
+            onClick: () => {
+              navigate(
+                SignatureCollectionPaths.ViewParliamentaryList.replace(
+                  ':id',
+                  '1',
+                ),
+              )
+            },
           }}
         />
       ))}

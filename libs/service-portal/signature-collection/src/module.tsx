@@ -13,6 +13,9 @@ const SignatureListsPresidential = lazy(() => import('./screens/Presidential'))
 const ViewListPresidential = lazy(() =>
   import('./screens/Presidential/OwnerView/ViewList'),
 )
+const ViewListParliamentary = lazy(() =>
+  import('./screens/Parliamentary/OwnerView/ViewList'),
+)
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollectionLists,
@@ -35,6 +38,12 @@ export const signatureCollectionModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
         element: <SignatureListsParliamentary />,
+      },
+      {
+        name: m.signatureCollectionPresidentialLists,
+        path: SignatureCollectionPaths.ViewParliamentaryList,
+        enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        element: <ViewListParliamentary />,
       },
       {
         name: m.signatureCollectionPresidentialLists,
