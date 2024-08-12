@@ -20,6 +20,7 @@ export const IdentityDocumentApi = defineTemplateApi({
 export const UserInfoApi = UserProfileApi.configure({
   params: {
     catchMock: true,
+    validatePhoneNumber: true,
   },
 })
 
