@@ -89,12 +89,9 @@ test.describe.serial('Indictment tests', () => {
       page,
       async () => {
         await page
-          .locator('section')
-          .filter({
-            hasText:
-              'Ákæra *Dragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
-          })
-          .locator('button')
+          .getByText(
+            'Ákæra *Dragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
+          )
           .click()
       },
       'TestAkaera.pdf',
@@ -103,12 +100,9 @@ test.describe.serial('Indictment tests', () => {
       page,
       async () => {
         await page
-          .locator('section')
-          .filter({
-            hasText:
-              'Sakavottorð *Dragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
-          })
-          .locator('button')
+          .getByText(
+            'Sakavottorð *Dragðu gögn hingað til að hlaða uppVelja gögn til að hlaða upp',
+          )
           .click()
       },
       'TestSakavottord.pdf',
