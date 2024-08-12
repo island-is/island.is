@@ -5,7 +5,6 @@ import { EndorsementListController } from './endorsementList.controller'
 import { EndorsementListService } from './endorsementList.service'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 
-import { environment } from '../../../environments'
 import { EmailModule } from '@island.is/email-service'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 
@@ -13,7 +12,7 @@ import { NationalRegistryV3ClientModule } from '@island.is/clients/national-regi
   imports: [
     NationalRegistryV3ClientModule,
     SequelizeModule.forFeature([EndorsementList, Endorsement]),
-    EmailModule.register(environment.emailOptions),
+    EmailModule,
   ],
   controllers: [EndorsementListController],
   providers: [EndorsementListService],

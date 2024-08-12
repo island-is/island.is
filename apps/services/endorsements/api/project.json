@@ -50,6 +50,13 @@
         "buildTarget": "services-endorsements-api:build"
       }
     },
+    "cleanup": {
+      "executor": "@nx/js:node",
+      "options": {
+        "buildTarget": "services-endorsements-api:build",
+        "args": ["--job", "cleanup"]
+      }
+    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
@@ -64,7 +71,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d --build",
+        "command": "docker compose up -d --build",
         "cwd": "apps/services/endorsements/api"
       }
     },

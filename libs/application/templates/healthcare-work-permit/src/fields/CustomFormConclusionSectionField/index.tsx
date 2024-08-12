@@ -17,6 +17,7 @@ import { confirmation } from '../../lib/messages'
 import { conclusionMessages } from '@island.is/application/ui-forms'
 import { PermitProgram } from '../../lib'
 import { HealthcareWorkPermitAnswers } from '../..'
+import format from 'date-fns/format'
 
 interface PdfFile {
   base64: string
@@ -111,6 +112,7 @@ export const CustomFormConclusionSectionField = (props: FieldBaseProps) => {
             const data = application.externalData.submitApplication.data as {
               base64String: string
             }[]
+            const formattedDate = format(new Date(), 'yyyy-MM-dd')
             // This should only ever be at most 2 files, in order license -> license number (when license number is applicable)
             return data.map((x, index) => ({
               base64: x.base64String,
@@ -121,7 +123,10 @@ export const CustomFormConclusionSectionField = (props: FieldBaseProps) => {
                     : `Leyfisnúmer`,
                 en: index === 0 ? `License to practice` : `License number`,
               },
-              filename: index === 0 ? `starfsleyfi_.pdf` : `leyfisnumer_.pdf`,
+              filename:
+                index === 0
+                  ? `starfsleyfi_${formattedDate}.pdf`
+                  : `leyfisnumer_${formattedDate}.pdf`,
             }))
           },
           setViewPdfFile: (file: PdfFile) => {
