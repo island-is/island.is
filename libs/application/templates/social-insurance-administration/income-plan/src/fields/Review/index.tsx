@@ -135,7 +135,7 @@ export const Review: FC<ReviewScreenProps> = ({
                 onClick={() => handleSubmit('EDIT')}
               >
                 {formatMessage(
-                  socialInsuranceAdministrationMessage.confirm.editButton,
+                  incomePlanFormMessage.confirm.buttonEdit,
                 )}
               </Button>
             )}
