@@ -153,7 +153,7 @@ export const EditReviewOverview = (props: EditReviewOverviewProps) => {
         </Text>
       </OverviewItem>
 
-      <OverviewItem label={t(editorMsgs.idealPublishDate)} step="signature">
+      <OverviewItem label={t(editorMsgs.idealPublishDate)} step="meta">
         <Text>
           {formatDate(draft.idealPublishDate.value) ||
             t(editorMsgs.idealPublishDate_default)}

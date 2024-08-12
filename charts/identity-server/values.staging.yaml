@@ -703,6 +703,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    PASSKEY_CORE_ALLOWED_ORIGINS: '["island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_RP_ID: 'island.is'
     PASSKEY_CORE_RP_NAME: 'Island.is'
@@ -779,7 +780,6 @@ services-auth-public-api:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

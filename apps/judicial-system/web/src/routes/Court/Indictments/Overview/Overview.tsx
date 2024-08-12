@@ -6,6 +6,7 @@ import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
+  ConnectedCaseFilesAccordionItem,
   CourtCaseInfo,
   FormContentContainer,
   FormContext,
@@ -23,7 +24,9 @@ import {
   CaseState,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
 
@@ -31,6 +34,8 @@ const IndictmentOverview = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound, setWorkingCase } =
     useContext(FormContext)
+  const { updateDefendantState, updateDefendant } = useDefendants()
+
   const { formatMessage } = useIntl()
   const lawsBroken = useIndictmentsLawsBroken(workingCase)
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
@@ -39,8 +44,26 @@ const IndictmentOverview = () => {
   const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   const handleNavigationTo = useCallback(
-    (destination: string) => router.push(`${destination}/${workingCase.id}`),
-    [router, workingCase.id],
+    async (destination: string) => {
+      if (workingCase.defendants) {
+        const promises = workingCase.defendants.map((defendant) =>
+          updateDefendant({
+            caseId: workingCase.id,
+            defendantId: defendant.id,
+            subpoenaType: defendant.subpoenaType,
+          }),
+        )
+
+        const allDataSentToServer = await Promise.all(promises)
+
+        if (!allDataSentToServer.every(Boolean)) {
+          return
+        }
+      }
+
+      router.push(`${destination}/${workingCase.id}`)
+    },
+    [router, updateDefendant, workingCase.defendants, workingCase.id],
   )
 
   return (
@@ -81,9 +104,29 @@ const IndictmentOverview = () => {
             <IndictmentsLawsBrokenAccordionItem workingCase={workingCase} />
           </Box>
         )}
+        {workingCase.mergedCases &&
+          workingCase.mergedCases.length > 0 &&
+          workingCase.mergedCases.map((mergedCase) => (
+            <Box marginBottom={5} key={mergedCase.id}>
+              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+            </Box>
+          ))}
         {workingCase.caseFiles && (
           <Box component="section" marginBottom={10}>
             <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+        )}
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={5}>
+            {
+              <SubpoenaType
+                defendants={workingCase.defendants}
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                updateDefendantState={updateDefendantState}
+                required={false}
+              />
+            }
           </Box>
         )}
       </FormContentContainer>
