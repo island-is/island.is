@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
@@ -67,17 +67,19 @@ const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
 
   return (
     <>
-      <Text variant="h4">
-        {defenders[0].sessionArrangement ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? formatMessage(strings.spokesperson)
-          : uniqueDefenders.length > 1
-          ? formatMessage(strings.defenders)
-          : formatMessage(strings.defender)}
-      </Text>
+      {uniqueDefenders.length > 1 ? (
+        <Text as="div">{`${formatMessage(strings.defenders)}: `}</Text>
+      ) : (
+        <Text as="span">
+          {defenders[0].sessionArrangement ===
+          SessionArrangements.ALL_PRESENT_SPOKESPERSON
+            ? `${formatMessage(strings.spokesperson)}: `
+            : `${formatMessage(strings.defender)}: `}
+        </Text>
+      )}
       {uniqueDefenders.map((defender, index) =>
-        defender?.name ? (
-          <Box display="flex" key={defender.name} role="paragraph">
+        defender.name ? (
+          <Box display="inlineFlex" key={defender.name} role="paragraph">
             <Text as="span">{defender.name}</Text>
             {defender.email && <Text as="span" whiteSpace="pre">{`, `}</Text>}
             {NameAndEmail(null, defender.email)}
