@@ -165,7 +165,8 @@ export const m = defineMessages({
   },
   selectConstituencyDescription: {
     id: 'plc.application:selectConstituencyDescription',
-    defaultMessage: 'Hægt er að velja eitt eða fleiri kjördæmi eftir því hvort stjórnmálasamtökin ætli sér að bjóða fram í öllum kjördæmum eða færri kjördæmum.',
+    defaultMessage:
+      'Hægt er að velja eitt eða fleiri kjördæmi eftir því hvort stjórnmálasamtökin ætli sér að bjóða fram í öllum kjördæmum eða færri kjördæmum.',
     description: '',
   },
 
@@ -187,7 +188,8 @@ export const m = defineMessages({
   },
   managersDescription: {
     id: 'plc.application:managersDescription',
-    defaultMessage: 'Ábyrgðaraðili hefur aðgang að söfnunum í öllum kjördæmum og getur bætt við og eytt umsjónaraðilum. Ábyrgðaraðili getur slegið inn kennitölur meðmælenda af blaði í viðeigandi kjördæmum.',
+    defaultMessage:
+      'Ábyrgðaraðili hefur aðgang að söfnunum í öllum kjördæmum og getur bætt við og eytt umsjónaraðilum. Ábyrgðaraðili getur slegið inn kennitölur meðmælenda af blaði í viðeigandi kjördæmum.',
     description: '',
   },
   addManager: {
@@ -204,7 +206,8 @@ export const m = defineMessages({
   },
   supervisorsDescription: {
     id: 'plc.application:supervisorsDescription',
-    defaultMessage: 'Umsjónaraðili sér aðeins þau kjördæmi sem honum hefur verið úthlutað og getur slegið inn kennitölur meðmælenda af blaði í þeim kjördæmum.',
+    defaultMessage:
+      'Umsjónaraðili sér aðeins þau kjördæmi sem honum hefur verið úthlutað og getur slegið inn kennitölur meðmælenda af blaði í þeim kjördæmum.',
     description: '',
   },
   addSupervisor: {
