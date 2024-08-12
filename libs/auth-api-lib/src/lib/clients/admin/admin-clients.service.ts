@@ -273,6 +273,7 @@ export class AdminClientsService {
     clientId: string,
     input: AdminPatchClientDto,
   ): Promise<AdminClientDto> {
+    console.log('update', input)
     if (Object.keys(input).length === 0) {
       throw new BadRequestException('No fields provided to update.')
     }
@@ -656,6 +657,20 @@ export class AdminClientsService {
     const superUserUpdatedFields = updatedFields.filter((field) =>
       superUserFields.includes(field),
     )
+
+    // Verify that the user is super admin, so they can update PersonalRepresentative in the delegation type
+    const allDelegationTypes = [
+      ...(input.removedDelegationTypes ?? []),
+      ...(input.addedDelegationTypes ?? []),
+    ]
+
+    if (!isSuperUser && allDelegationTypes && allDelegationTypes.length > 0) {
+      for (const delegationType of allDelegationTypes) {
+        if (delegationType.startsWith('PersonalRepresentative:')) {
+          return false
+        }
+      }
+    }
 
     if (superUserUpdatedFields.length === 0) {
       // There are no superuser fields to update
