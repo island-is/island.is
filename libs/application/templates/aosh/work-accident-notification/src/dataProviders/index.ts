@@ -1,1 +1,5 @@
-export { IdentityApi, UserProfileApi } from '@island.is/application/types'
+export {
+  IdentityApi,
+  UserProfileApi,
+  NationalRegistryUserApi,
+} from '@island.is/application/types'

@@ -6,7 +6,7 @@ import {
   coreMessages,
 } from '@island.is/application/core'
 import { externalData } from '../../lib/messages/externalData'
-import { IdentityApi, UserProfileApi } from '../../dataProviders'
+import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
@@ -14,9 +14,10 @@ export const prerequisitesSection = buildSection({
   title: externalData.dataProvider.sectionTitle,
   children: [
     buildExternalDataProvider({
+      id: 'externalData',
       title: externalData.dataProvider.pageTitle,
-      id: 'approveExternalData',
       subTitle: externalData.dataProvider.subTitle,
+      checkboxLabel: externalData.dataProvider.checkboxLabel,
       submitField: buildSubmitField({
         id: 'submit',
         placement: 'footer',
@@ -32,7 +33,7 @@ export const prerequisitesSection = buildSection({
       }),
       dataProviders: [
         buildDataProviderItem({
-          provider: IdentityApi,
+          provider: NationalRegistryUserApi,
           title: externalData.nationalRegistry.title,
           subTitle: externalData.nationalRegistry.subTitle,
         }),

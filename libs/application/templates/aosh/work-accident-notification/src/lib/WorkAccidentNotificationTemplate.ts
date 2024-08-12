@@ -12,36 +12,30 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  ApplicationConfigurations,
+  Application,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
-
-const States = {
-  prerequisites: 'prerequisites',
-  draft: 'draft',
-}
-type ReferenceTemplateEvent = { type: DefaultEvents.APPROVE }
-
-enum Roles {
-  APPLICANT = 'applicant',
-  ASSIGNEE = 'assignee',
-}
+import { Roles, States, Events } from './constants'
 
 const template: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<ReferenceTemplateEvent>,
-  ReferenceTemplateEvent
+  ApplicationStateSchema<Events>,
+  Events
 > = {
   type: ApplicationTypes.WORK_ACCIDENT_NOTIFICATION,
   name: '',
   institution: '',
-  translationNamespaces: [],
+  translationNamespaces: [
+    ApplicationConfigurations.WorkAccidentNotification.translation,
+  ],
   dataSchema: z.object({}),
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
-    initial: States.prerequisites,
+    initial: States.PREREQUISITES,
     states: {
-      [States.prerequisites]: {
+      [States.PREREQUISITES]: {
         meta: {
           name: 'Skilyrði',
           progress: 0,
@@ -50,10 +44,10 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              // formLoader: () =>
-              //   import('../forms/Prerequisites').then((module) =>
-              //     Promise.resolve(module.Prerequisites),
-              //   ),
+              formLoader: () =>
+                import('../forms/Prerequisites').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
@@ -67,23 +61,43 @@ const template: ApplicationTemplate<
             },
           ],
         },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.DRAFT },
+        },
       },
-      [States.draft]: {
+      [States.DRAFT]: {
         meta: {
           name: 'Umsókn um ....',
           progress: 0.25,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
-          roles: [],
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/WorkAccidentNotificationForm/index').then(
+                  (module) =>
+                    Promise.resolve(module.WorkAccidentNotificationForm),
+                ),
+              write: 'all',
+              delete: true,
+            },
+          ],
         },
       },
     },
   },
   stateMachineOptions: {},
-  mapUserToRole(): ApplicationRole | undefined {
-    //nationalId: string,
-    //application: Application,
-    return Roles.APPLICANT
+  mapUserToRole(
+    id: string,
+    application: Application,
+  ): ApplicationRole | undefined {
+    console.log('THE ID: ', application.applicant)
+
+    if (id === application.applicant) {
+      return Roles.APPLICANT
+    }
+    return undefined
   },
 }
 

@@ -9,7 +9,7 @@ export const externalData = {
     },
     pageTitle: {
       id: 'aosh.wan.application:externalData.dataProvider.pageTitle',
-      defaultMessage: 'Tilkynning um eigendaskipti',
+      defaultMessage: 'Tilkynning um vinnuslys',
       description: `Application's name`,
     },
     subTitle: {
@@ -17,11 +17,17 @@ export const externalData = {
       defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
       description: 'he following data will be retrieved electronically',
     },
-    submitButton: {
-      id: 'aosh.wan.application:externalData.dataProvider.submitButton',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Continue to application',
+    checkboxLabel: {
+      id: 'aosh.wan.application:externalData.dataProvider.checkboxLabel',
+      defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+      description:
+        'Agreement of having read the above statements regarding data fetching',
     },
+    // submitButton: {
+    //   id: 'aosh.wan.application:externalData.dataProvider.submitButton',
+    //   defaultMessage: 'Hefja umsókn',
+    //   description: 'Continue to application',
+    // },
   }),
   nationalRegistry: defineMessages({
     title: {

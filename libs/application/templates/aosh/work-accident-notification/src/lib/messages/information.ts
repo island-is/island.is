@@ -19,5 +19,24 @@ export const information = {
       description: 'Description of information page',
     },
   }),
-  labels: {},
+  labels: {
+    company: defineMessages({
+      sectionTitle: {
+        id: 'aosh.wan.application:information.general.sectionTitle',
+        defaultMessage: 'Fyrirtækið',
+        description: 'Title of company informaiton section',
+      },
+      pageTitle: {
+        id: 'aosh.wan.application:information.general.pageTitle',
+        defaultMessage: 'Fyrirtækið',
+        description: 'Title of company informaiton section',
+      },
+      description: {
+        id: 'aosh.wan.application:information.general.description',
+        defaultMessage:
+          'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
+        description: 'Description of company information page',
+      },
+    }),
+  },
 }
