@@ -58,7 +58,7 @@ export const AvatarImage: FC<Props> = ({
             [`${imageClass}`]: imageClass,
           })}
           src={img}
-          alt="document"
+          alt=""
         />
       )}
     </Box>

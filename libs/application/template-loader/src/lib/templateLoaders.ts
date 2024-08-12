@@ -63,6 +63,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/mortgage-certificate'),
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
     import('@island.is/application/templates/no-debt-certificate'),
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: () =>
+    import('@island.is/application/templates/financial-statement-cemetery'),
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
     import('@island.is/application/templates/financial-statements-inao'),
   [ApplicationTypes.OPERATING_LICENSE]: () =>
@@ -136,6 +138,10 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
   [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: () =>
     import(
       '@island.is/application/templates/signature-collection/presidential-list-signing'
+    ),
+  [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/parliamentary-list-creation'
     ),
   [ApplicationTypes.CITIZENSHIP]: () =>
     import(

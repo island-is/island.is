@@ -162,33 +162,37 @@ export const ServicePortalDocumentsV2 = () => {
             >
               <Box display="flex">
                 <Box className={styles.checkboxWrap} marginRight={3}>
-                  {!activeArchive && (
-                    <Checkbox
-                      name="checkbox-select-all"
-                      aria-label={formatMessage(messages.selectAll)}
-                      checked={selectedLines.length > 0}
-                      onChange={(e) => {
-                        if (e.target.checked) {
-                          const allDocumentIds = filteredDocuments.map(
-                            (item) => item.id,
-                          )
-                          setSelectedLines([...allDocumentIds])
-                        } else {
-                          setSelectedLines([])
-                        }
-                      }}
-                    />
-                  )}
+                  <Checkbox
+                    name="checkbox-select-all"
+                    aria-label={formatMessage(messages.selectAll)}
+                    checked={selectedLines.length > 0}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        const allDocumentIds = filteredDocuments.map(
+                          (item) => item.id,
+                        )
+                        setSelectedLines([...allDocumentIds])
+                      } else {
+                        setSelectedLines([])
+                      }
+                    }}
+                  />
                 </Box>
                 {selectedLines.length > 0 ? null : (
                   <Text variant="eyebrow">{formatMessage(m.info)}</Text>
                 )}
               </Box>
 
-              {selectedLines.length > 0 && !activeArchive ? (
+              {selectedLines.length > 0 ? (
                 <FavAndStash
                   loading={batchActionLoading}
-                  onStash={() => submitBatchAction('archive', selectedLines)}
+                  onStash={() =>
+                    submitBatchAction(
+                      activeArchive ? 'unarchive' : 'archive',
+                      selectedLines,
+                    )
+                  }
+                  archived={activeArchive}
                   onFav={() => submitBatchAction('bookmark', selectedLines)}
                   onRead={() => submitBatchAction('read', selectedLines)}
                 />
