@@ -2,13 +2,16 @@ import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
-import { Box, Tag, TagVariant, Text } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
+  getIndictmentRulingDecisionTag,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -83,21 +86,9 @@ const Summary: FC = () => {
     [[] as CaseFile[], [] as CaseFile[]],
   )
 
-  const getRulingDecisionTagColor = (
-    indictmentRulingDecision: CaseIndictmentRulingDecision,
-  ): TagVariant => {
-    switch (indictmentRulingDecision) {
-      case CaseIndictmentRulingDecision.FINE:
-        return 'mint'
-      case CaseIndictmentRulingDecision.CANCELLATION:
-        return 'rose'
-      case CaseIndictmentRulingDecision.DISMISSAL:
-        return 'blue'
-      case CaseIndictmentRulingDecision.RULING:
-      default:
-        return 'darkerBlue'
-    }
-  }
+  const indictmentRulingTag = getIndictmentRulingDecisionTag(
+    workingCase.indictmentRulingDecision,
+  )
 
   return (
     <PageLayout
@@ -114,19 +105,10 @@ const Summary: FC = () => {
 
           {workingCase.indictmentRulingDecision && (
             <Box marginTop={2}>
-              <Tag
-                variant={getRulingDecisionTagColor(
-                  workingCase.indictmentRulingDecision,
-                )}
-                outlined
-                disabled
-                truncate
-              >
-                {formatMessage(strings.indictmentRulingDecisionTagText, {
-                  indictmentRulingDecision:
-                    workingCase.indictmentRulingDecision,
-                })}
-              </Tag>
+              <CaseTag
+                color={indictmentRulingTag.color}
+                text={formatMessage(indictmentRulingTag.text)}
+              />
             </Box>
           )}
         </Box>
@@ -144,6 +126,13 @@ const Summary: FC = () => {
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
         </Box>
+        {workingCase.mergedCases &&
+          workingCase.mergedCases.length > 0 &&
+          workingCase.mergedCases.map((mergedCase) => (
+            <Box marginBottom={5} key={mergedCase.id}>
+              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+            </Box>
+          ))}
         <SectionHeading title={formatMessage(strings.caseFiles)} />
         {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
           <Box marginBottom={5}>

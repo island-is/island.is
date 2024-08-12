@@ -7,11 +7,7 @@ import {
 } from '@island.is/application/types'
 import { SharedTemplateApiService } from '../../shared'
 import { CriminalRecordSubmissionService } from './criminal-record-submission.service'
-import {
-  AdapterService,
-  EmailService,
-  EMAIL_OPTIONS,
-} from '@island.is/email-service'
+import { AdapterService } from '@island.is/email-service'
 import {
   SyslumennService,
   SyslumennClientModule,

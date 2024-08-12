@@ -173,6 +173,7 @@ export const slices = gql`
         }
       }
     }
+    dividerOnTop
   }
 
   fragment FaqListFields on FaqList {
@@ -534,6 +535,7 @@ export const slices = gql`
     intro
     defaultFieldNamespace
     fields {
+      id
       title
       name
       placeholder
@@ -546,6 +548,7 @@ export const slices = gql`
     aboutYouHeadingText
     questionsHeadingText
     recipientFormFieldDecider {
+      id
       title
       placeholder
       type
@@ -835,6 +838,7 @@ export const slices = gql`
     xAxisValueType
     customStyleConfig
     reduceAndRoundValue
+    yAxisLabel
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {
