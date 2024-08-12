@@ -59,7 +59,7 @@ const IncomePlanTemplate: ApplicationTemplate<
           actionCard: {
             historyLogs: [
               {
-                logMessage: historyMessages.applicationStarted,
+                logMessage: historyMessages.incomePlanStarted,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
@@ -111,7 +111,7 @@ const IncomePlanTemplate: ApplicationTemplate<
             },
             historyLogs: {
               onEvent: DefaultEvents.SUBMIT,
-              logMessage: historyMessages.applicationSent,
+              logMessage: historyMessages.incomePlanSent,
             },
           },
           roles: [
@@ -154,7 +154,7 @@ const IncomePlanTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: coreSIAStatesMessages.applicationEdited,
+                logMessage: statesMessages.incomePlanEdited,
               },
             ],
           },
