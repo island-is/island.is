@@ -1,8 +1,8 @@
 import { join } from 'path'
 
-import { Message } from '../types'
-import { createTestingEmailModule } from './test/createTestingEmailModule'
-import { EmailService } from './email.service'
+import { Message } from '../../types'
+import { EmailService } from '../email.service'
+import { createTestingEmailModule } from './createTestingEmailModule'
 
 const testAccount = {
   smtp: {
@@ -80,7 +80,7 @@ describe('EmailService', () => {
             context: {
               src: join(
                 __dirname,
-                '../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/logo.jpg',
+                '../../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/logo.jpg',
               ),
             },
           },
@@ -89,7 +89,7 @@ describe('EmailService', () => {
             context: {
               src: join(
                 __dirname,
-                '../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/child.jpg',
+                '../../../../application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets/child.jpg',
               ),
             },
           },

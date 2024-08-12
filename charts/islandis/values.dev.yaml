@@ -1392,6 +1392,11 @@ endorsement-system-api-cleanup-worker:
     DB_NAME: 'services_endorsements_api'
     DB_REPLICAS_HOST: 'postgres-applications-reader.internal'
     DB_USER: 'services_endorsements_api'
+    EMAIL_FROM_ADDRESS: 'development@island.is'
+    EMAIL_FROM_NAME: 'devland.is'
+    EMAIL_REGION: 'eu-west-1'
+    IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
+    IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NATIONAL_REGISTRY_B2C_CLIENT_ID: 'b464afdd-056b-406d-b650-6d41733cfeb7'
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
@@ -2491,6 +2496,19 @@ services-form-system:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-form-system'
   initContainer:
     containers:
+      - args:
+          - 'sequelize-cli'
+          - 'db:seed:all'
+        command:
+          - 'npx'
+        name: 'seed'
+        resources:
+          limits:
+            cpu: '200m'
+            memory: '256Mi'
+          requests:
+            cpu: '50m'
+            memory: '128Mi'
       - args:
           - 'sequelize-cli'
           - 'db:migrate'
