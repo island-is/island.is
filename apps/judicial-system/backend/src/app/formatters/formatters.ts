@@ -105,14 +105,14 @@ export const formatCourtHeadsUpSmsNotification = (
 
   const arrestDateText = arrestDate
     ? formatMessage(notifications.courtHeadsUp.arrestDateText, {
-        date: formatDate(arrestDate, 'P'),
+        date: formatDate(arrestDate),
         time: formatDate(arrestDate, 'p'),
       })
     : undefined
 
   const requestedCourtDateText = requestedCourtDate
     ? formatMessage(notifications.courtHeadsUp.requestedCourtDateText, {
-        date: formatDate(requestedCourtDate, 'P'),
+        date: formatDate(requestedCourtDate),
         time: formatDate(requestedCourtDate, 'p'),
       })
     : undefined
@@ -517,12 +517,12 @@ export const formatCourtRevokedSmsNotification = (
   // Court date
   const courtDateText = courtDate
     ? formatMessage(notifications.courtRevoked.courtDate, {
-        date: formatDate(courtDate, 'P'),
+        date: formatDate(courtDate),
         time: formatDate(courtDate, 'p'),
       })
     : requestedCourtDate
     ? formatMessage(notifications.courtRevoked.requestedCourtDate, {
-        date: formatDate(requestedCourtDate, 'P'),
+        date: formatDate(requestedCourtDate),
         time: formatDate(requestedCourtDate, 'p'),
       })
     : undefined

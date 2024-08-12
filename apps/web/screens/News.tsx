@@ -1,61 +1,59 @@
 /* eslint-disable jsx-a11y/anchor-is-valid */
 import capitalize from 'lodash/capitalize'
-import cn from 'classnames'
-import { useRouter } from 'next/router'
 import NextLink from 'next/link'
-import { Screen } from '../types'
-import { Image, Slice as SliceType } from '@island.is/island-ui/contentful'
-import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
+import { useRouter } from 'next/router'
+
 import {
   Box,
-  Text,
-  Stack,
-  Breadcrumbs,
   BreadCrumbItem,
-  Pagination,
+  Breadcrumbs,
+  Button,
+  Divider,
   Hidden,
   Link,
   Navigation,
   NavigationItem,
+  Pagination,
   ResponsiveSpace,
-  Button,
+  Stack,
   Tag,
-  Divider,
+  Text,
 } from '@island.is/island-ui/core'
+import {
+  HeadWithSocialSharing,
+  NewsArticle,
+  NewsCard,
+  Webreader,
+} from '@island.is/web/components'
+import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
+import { useNamespace } from '@island.is/web/hooks'
+import { useDateUtils } from '@island.is/web/i18n/useDateUtils'
 import { withMainLayout } from '@island.is/web/layouts/main'
+
+import {
+  ContentLanguage,
+  GenericTag,
+  GetNamespaceQuery,
+  GetNewsDatesQuery,
+  GetNewsQuery,
+  GetSingleNewsItemQuery,
+  QueryGetNamespaceArgs,
+  QueryGetNewsArgs,
+  QueryGetNewsDatesArgs,
+  QueryGetSingleNewsArgs,
+} from '../graphql/schema'
+import useContentfulId from '../hooks/useContentfulId'
+import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
+import { Screen } from '../types'
+import { CustomNextError } from '../units/errors'
+import { getIntParam } from '../utils/queryParams'
+import { SidebarLayout } from './Layouts/SidebarLayout'
 import {
   GET_NAMESPACE_QUERY,
   GET_NEWS_DATES_QUERY,
   GET_NEWS_QUERY,
   GET_SINGLE_NEWS_ITEM_QUERY,
 } from './queries'
-import { SidebarLayout } from './Layouts/SidebarLayout'
-import {
-  GetNewsDatesQuery,
-  QueryGetNewsDatesArgs,
-  GetNewsQuery,
-  QueryGetNewsArgs,
-  ContentLanguage,
-  QueryGetNamespaceArgs,
-  GetNamespaceQuery,
-  GetSingleNewsItemQuery,
-  QueryGetSingleNewsArgs,
-  GenericTag,
-} from '../graphql/schema'
-import {
-  NewsCard,
-  HeadWithSocialSharing,
-  Webreader,
-  NewsArticle,
-} from '@island.is/web/components'
-import { useNamespace } from '@island.is/web/hooks'
-import { LinkType, useLinkResolver } from '../hooks/useLinkResolver'
-import { FRONTPAGE_NEWS_TAG_ID } from '@island.is/web/constants'
-import { CustomNextError } from '../units/errors'
-import useContentfulId from '../hooks/useContentfulId'
-import { webRichText } from '../utils/richText'
-
-import * as styles from './News.css'
 
 const PERPAGE = 10
 
@@ -407,25 +405,14 @@ const createDatesMap = (datesList: string[]) => {
   )
 }
 
-const getIntParam = (s: string | string[]) => {
-  const i = parseInt(Array.isArray(s) ? s[0] : s, 10)
-  if (!isNaN(i)) return i
-}
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-expect-error make web strict
 NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
   const slug = query.slug as string
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
-  const year = getIntParam(query.y)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
-  const month = year && getIntParam(query.m)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-expect-error make web strict
-  const selectedPage = getIntParam(query.page) ?? 1
+  const year = getIntParam(query.y, { minValue: 1000, maxValue: 9999 })
+  const month = year && getIntParam(query.m, { minValue: 1, maxValue: 12 })
+  const selectedPage = getIntParam(query.page, { minValue: 1 }) ?? 1
   const tag = (query.tag as string) ?? FRONTPAGE_NEWS_TAG_ID
-
   const [
     {
       data: { getNewsDates: newsDatesList },
@@ -479,10 +466,7 @@ NewsListNew.getProps = async ({ apolloClient, locale, query }) => {
       })
       // map data here to reduce data processing in component
       .then((variables) => {
-        // map data here to reduce data processing in component
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error make web strict
-        return JSON.parse(variables.data.getNamespace.fields)
+        return JSON.parse(variables?.data?.getNamespace?.fields || '{}')
       }),
   ])
 

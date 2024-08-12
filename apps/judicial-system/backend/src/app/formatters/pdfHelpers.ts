@@ -246,7 +246,7 @@ export const addIndictmentConfirmation = (
   )
   doc.font('Times-Roman')
   doc.text(
-    formatDate(confirmation.date, 'P') || '',
+    formatDate(confirmation.date) || '',
     coatOfArmsX + coatOfArmsWidth + titleWidth - calculatePt(55),
     pageMargin + titleHeight + calculatePt(32),
     {
