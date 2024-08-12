@@ -26,10 +26,6 @@ const prodConfig = {
   emailOptions: {
     fromEmail: process.env.SEND_FROM_EMAIL,
     replyToEmail: process.env.SEND_FROM_EMAIL,
-    useTestAccount: false,
-    options: {
-      region: process.env.EMAIL_REGION ?? '',
-    },
   },
   oskBaseUrl: process.env.OSK_BASE_URL,
   applicationSystemBaseUrl: process.env.APPLICATION_SYSTEM_BASE_URL,
@@ -62,10 +58,6 @@ const devConfig = {
   emailOptions: {
     fromEmail: process.env.SEND_FROM_EMAIL,
     replyToEmail: process.env.SEND_FROM_EMAIL,
-    useTestAccount: (process.env.EMAIL_USE_TEST_ACCOUNT ?? 'true') === 'true',
-    options: {
-      region: process.env.EMAIL_REGION ?? '',
-    },
   },
   oskBaseUrl: process.env.OSK_BASE_URL ?? 'http://localhost:4200',
   applicationSystemBaseUrl:
