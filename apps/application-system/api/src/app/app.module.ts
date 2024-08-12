@@ -52,6 +52,8 @@ import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
+import { smsModuleConfig } from '@island.is/nova-sms'
+import { emailModuleConfig } from '@island.is/email-service'
 
 @Module({
   imports: [
@@ -105,6 +107,8 @@ import { FriggClientConfig } from '@island.is/clients/mms/frigg'
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         FriggClientConfig,
+        smsModuleConfig,
+        emailModuleConfig,
       ],
     }),
   ],

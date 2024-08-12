@@ -90,6 +90,7 @@ const Summary: FC = () => {
       case CaseIndictmentRulingDecision.FINE:
         return 'mint'
       case CaseIndictmentRulingDecision.CANCELLATION:
+      case CaseIndictmentRulingDecision.MERGE:
         return 'rose'
       case CaseIndictmentRulingDecision.DISMISSAL:
         return 'blue'
