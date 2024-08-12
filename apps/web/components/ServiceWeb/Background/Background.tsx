@@ -98,7 +98,7 @@ export const Background = ({
         break
       case 'default':
       default:
-        setComponent(<Default namespace={namespace}/>)
+        setComponent(<Default namespace={namespace} />)
         break
     }
   }, [small, variation, namespace])
