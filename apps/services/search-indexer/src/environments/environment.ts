@@ -6,7 +6,6 @@ export interface Environment {
   esDomain: string
   s3Bucket: string
   s3Folder: string
-  awsRegion: string
   dictRepo: string
   locales: ElasticsearchIndexLocale[]
   configPath: string
@@ -17,7 +16,6 @@ export const environment: Environment =
     ? {
         elasticNode: process.env.ELASTIC_NODE,
         s3Bucket: process.env.S3_BUCKET,
-        awsRegion: process.env.AWS_REGION,
         esDomain: process.env.ELASTIC_DOMAIN,
         dictRepo: 'island-is/elasticsearch-dictionaries',
         s3Folder: '',
@@ -27,7 +25,6 @@ export const environment: Environment =
     : {
         elasticNode: process.env.ELASTIC_NODE || '',
         s3Bucket: process.env.S3_BUCKET,
-        awsRegion: process.env.AWS_REGION,
         esDomain: process.env.ELASTIC_DOMAIN,
         s3Folder: '',
         dictRepo: 'island-is/elasticsearch-dictionaries',
