@@ -1,4 +1,4 @@
-# clients-mms-grade
+# clients-mms-grade - Primary school data
 
 This library was generated with [Nx](https://nx.dev).
 

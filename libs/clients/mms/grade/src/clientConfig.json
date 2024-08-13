@@ -123,7 +123,10 @@
           "framfaraTexti": {
             "$ref": "#/components/schemas/GradeResultViewModel"
           },
-          "einkunnir": { "type": "array", "items": { "type": "string" } },
+          "einkunnir": {
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/GradeTypeResultViewModel" }
+          },
           "ordOgTalnadaemi": {
             "$ref": "#/components/schemas/GradeResultViewModel"
           }
