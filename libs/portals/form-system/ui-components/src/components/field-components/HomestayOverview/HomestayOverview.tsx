@@ -9,12 +9,15 @@ import {
   Text,
   RadioButton,
   Box,
-  Input
+  Input,
 } from '@island.is/island-ui/core'
 import { SingleValue } from 'react-select'
 import { icelandicLocale } from './icelandicLocale'
 import * as styles from './styles.css'
-import { addCurrencyFormatting, getSumFromArray } from '../../../utils/currencyFormatter'
+import {
+  addCurrencyFormatting,
+  getSumFromArray,
+} from '../../../utils/currencyFormatter'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
 
@@ -57,8 +60,8 @@ export const HomestayOverview = () => {
 
   const handleDateChange = (dates: DateObject[]) => {
     setSelectedDates(dates)
-    if (dates.filter(d => d.monthIndex === currentMonth).length === 0) {
-      setMonthArray(prev => {
+    if (dates.filter((d) => d.monthIndex === currentMonth).length === 0) {
+      setMonthArray((prev) => {
         const newArr = [...prev]
         newArr[currentMonth] = ''
         return newArr
@@ -66,10 +69,13 @@ export const HomestayOverview = () => {
     }
   }
 
-  const handleMonthChange = (date: DateObject) => setCurrentMonth(date.month.index)
+  const handleMonthChange = (date: DateObject) =>
+    setCurrentMonth(date.month.index)
 
-  const handleMonthTotalChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setMonthArray(prev => {
+  const handleMonthTotalChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setMonthArray((prev) => {
       const newArray = [...prev]
       newArray[currentMonth] = addCurrencyFormatting(e)
       return newArray
@@ -77,12 +83,12 @@ export const HomestayOverview = () => {
   }
 
   const monthName = icelandicLocale.months[currentMonth][0]
-  const selectedDatesThisMonth = selectedDates.filter(d => d.monthIndex === currentMonth).length
+  const selectedDatesThisMonth = selectedDates.filter(
+    (d) => d.monthIndex === currentMonth,
+  ).length
 
   return (
-    <Box
-      marginRight={2}
-    >
+    <Box marginRight={2}>
       <Stack space={3}>
         <Text variant="h3">{formatMessage(m.homestayOverview)}</Text>
         <Row>
@@ -108,7 +114,7 @@ export const HomestayOverview = () => {
                 <RadioButton
                   label={formatMessage(value ? m.yes : m.no)}
                   large
-                  backgroundColor='white'
+                  backgroundColor="white"
                   onChange={() => handleRadio(value)}
                   checked={radio === value}
                 />
@@ -129,7 +135,9 @@ export const HomestayOverview = () => {
                 highlightToday={false}
                 maxDate={maxDate}
                 minDate={minDate}
-                currentDate={new DateObject({ year: selectedYear, month: 1, day: 1 })}
+                currentDate={
+                  new DateObject({ year: selectedYear, month: 1, day: 1 })
+                }
                 ref={datePickerRef}
                 locale={icelandicLocale}
                 className={styles.calendar}
@@ -149,7 +157,9 @@ export const HomestayOverview = () => {
                   {selectedDatesThisMonth > 0 && (
                     <Input
                       name="monthTotal"
-                      label={`${formatMessage(m.amountIn)} ${monthName.toLowerCase()}`}
+                      label={`${formatMessage(
+                        m.amountIn,
+                      )} ${monthName.toLowerCase()}`}
                       size="sm"
                       onChange={handleMonthTotalChange}
                       value={monthArray[currentMonth]}
@@ -160,7 +170,10 @@ export const HomestayOverview = () => {
                   <Stack space={1}>
                     {[
                       { label: m.totalDays, value: selectedDates.length },
-                      { label: m.totalAmount, value: `${getSumFromArray(monthArray)} kr.` }
+                      {
+                        label: m.totalAmount,
+                        value: `${getSumFromArray(monthArray)} kr.`,
+                      },
                     ].map(({ label, value }) => (
                       <Box
                         key={label.id}
@@ -168,7 +181,9 @@ export const HomestayOverview = () => {
                         flexDirection="row"
                         justifyContent="spaceBetween"
                       >
-                        <Text fontWeight='semiBold'>{`${formatMessage(label)}:`}</Text>
+                        <Text fontWeight="semiBold">{`${formatMessage(
+                          label,
+                        )}:`}</Text>
                         <Text>{value}</Text>
                       </Box>
                     ))}

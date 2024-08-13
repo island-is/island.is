@@ -1,6 +1,22 @@
 import { FormSystemInput } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import { Banknumber, Checkbox, CurrencyField, DatePicker, Email, FileUpload, HomestayOverview, List, MessageWithLink, NationalId, PhoneNumber, PropertyNumber, Radio, TextInput, TimeInput } from '../field-components'
+import {
+  Banknumber,
+  Checkbox,
+  CurrencyField,
+  DatePicker,
+  Email,
+  FileUpload,
+  HomestayOverview,
+  List,
+  MessageWithLink,
+  NationalId,
+  PhoneNumber,
+  PropertyNumber,
+  Radio,
+  TextInput,
+  TimeInput,
+} from '../field-components'
 
 interface Props {
   data: FormSystemInput
@@ -48,10 +64,7 @@ export const FieldComponentsView = ({ data }: Props) => {
   }
 
   return (
-    <Box
-      padding={2}
-      background="blue100"
-    >
+    <Box padding={2} background="blue100">
       {renderComponent()}
     </Box>
   )

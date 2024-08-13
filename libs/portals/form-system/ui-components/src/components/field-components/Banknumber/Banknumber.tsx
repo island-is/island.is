@@ -2,7 +2,7 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Input,
-  Text
+  Text,
 } from '@island.is/island-ui/core'
 import { useRef, useState } from 'react'
 import { FormSystemInput } from '@island.is/api/schema'
@@ -20,7 +20,7 @@ export const Banknumber = ({ item }: Props) => {
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
-    useRef<HTMLInputElement | HTMLTextAreaElement>()
+    useRef<HTMLInputElement | HTMLTextAreaElement>(),
   ]
 
   const { formatMessage } = useIntl()

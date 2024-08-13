@@ -12,7 +12,7 @@ export const Checkbox = ({ item }: Props) => {
       label={item?.name?.is ?? ''}
       checked={item?.inputSettings?.checked ?? false}
       // eslint-disable-next-line @typescript-eslint/no-empty-function
-      onChange={() => { }}
+      onChange={() => {}}
     />
   )
 }

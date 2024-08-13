@@ -1,4 +1,4 @@
-import { FormSystemGroup, FormSystemStep } from "@island.is/api/schema"
+import { FormSystemGroup, FormSystemStep } from '@island.is/api/schema'
 import {
   GridColumn as Column,
   Box,
@@ -15,16 +15,21 @@ interface Props {
   currentGroupIndex: number
 }
 
-export const FormStepper = ({ steps, groups, currentStepIndex, currentGroupIndex }: Props) => {
+export const FormStepper = ({
+  steps,
+  groups,
+  currentStepIndex,
+  currentGroupIndex,
+}: Props) => {
   const groupsByStepGuid = groups.reduce((acc, group) => {
     if (group.stepGuid) {
       if (!acc[group.stepGuid]) {
-        acc[group.stepGuid] = [];
+        acc[group.stepGuid] = []
       }
-      acc[group.stepGuid].push(group);
+      acc[group.stepGuid].push(group)
     }
-    return acc;
-  }, {} as Record<string, FormSystemGroup[]>);
+    return acc
+  }, {} as Record<string, FormSystemGroup[]>)
 
   return (
     <Column span="3/10">
@@ -37,16 +42,22 @@ export const FormStepper = ({ steps, groups, currentStepIndex, currentGroupIndex
               sectionIndex={stepIndex}
               isActive={stepIndex === currentStepIndex}
               theme={FormStepperThemes.BLUE}
-              subSections={
-                (step.guid && groupsByStepGuid[step.guid] ? groupsByStepGuid[step.guid] : []).map((group, groupIndex) => (
-                  <Text
-                    key={`s${stepIndex}g${groupIndex}`}
-                    fontWeight={currentGroupIndex === groups.findIndex(g => g.guid === group.guid) ? 'semiBold' : 'regular'}
-                  >
-                    {group.name?.is ?? ''}
-                  </Text>
-                ))
-              }
+              subSections={(step.guid && groupsByStepGuid[step.guid]
+                ? groupsByStepGuid[step.guid]
+                : []
+              ).map((group, groupIndex) => (
+                <Text
+                  key={`s${stepIndex}g${groupIndex}`}
+                  fontWeight={
+                    currentGroupIndex ===
+                    groups.findIndex((g) => g.guid === group.guid)
+                      ? 'semiBold'
+                      : 'regular'
+                  }
+                >
+                  {group.name?.is ?? ''}
+                </Text>
+              ))}
             />
           ))}
         />

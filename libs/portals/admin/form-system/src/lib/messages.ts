@@ -435,15 +435,16 @@ export const m = defineMessages({
   },
   myDataDescription: {
     id: 'portals-admin.form-system:my-data-description',
-    defaultMessage: 'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+    defaultMessage:
+      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
   },
   templates: {
     id: 'portals-admin.form-system:templates',
-    defaultMessage: 'Forskriftir'
+    defaultMessage: 'Forskriftir',
   },
   newTemplate: {
     id: 'portals-admin.form-system:new-template',
-    defaultMessage: 'Ný forskrift'
+    defaultMessage: 'Ný forskrift',
   },
   // Error messages
   invalidEmail: {

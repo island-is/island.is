@@ -41,7 +41,7 @@ export const formSystemModule: PortalModule = {
         path: FormSystemPaths.FormPreview,
         element: <FormPreview />,
         loader: formPreviewLoader(props),
-      }
+      },
     ]
   },
 }

@@ -16,6 +16,7 @@ export const updateSettings = (
   updateFormSettings({
     variables: {
       input: {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
         id: form.id!,
         formSettingsUpdateDto: {
           id: form.id,

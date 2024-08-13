@@ -15,7 +15,7 @@ import {
   TimeInput,
   Checkbox,
   List,
-  HomestayOverview
+  HomestayOverview,
 } from '@island.is/form-system/ui'
 
 interface Props {

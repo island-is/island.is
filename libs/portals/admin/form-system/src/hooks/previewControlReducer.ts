@@ -1,5 +1,4 @@
-import { FormSystemStep, FormSystemGroup } from "@island.is/api/schema"
-
+import { FormSystemStep, FormSystemGroup } from '@island.is/api/schema'
 
 export type PreviewControlActions =
   | { type: 'INCREMENT' }
@@ -21,52 +20,65 @@ export interface PreviewControlState {
 const getNextIndex = (current: number, max: number) =>
   Math.min(current + 1, max - 1)
 
-const getPreviousIndex = (current: number) =>
-  Math.max(current - 1, 0)
+const getPreviousIndex = (current: number) => Math.max(current - 1, 0)
 
 const updateStep = (state: PreviewControlState, newIndex: number) => ({
   index: newIndex,
-  guid: state.steps[newIndex]?.guid ?? ''
+  guid: state.steps[newIndex]?.guid ?? '',
 })
 
 const updateGroup = (state: PreviewControlState, newIndex: number) => ({
   index: newIndex,
-  guid: state.groups[newIndex]?.guid ?? ''
+  guid: state.groups[newIndex]?.guid ?? '',
 })
 
 const isInputStep = (state: PreviewControlState) =>
-  state.steps.find(step => step.guid === state.currentStep.guid)?.type === 'Input'
-
+  state.steps.find((step) => step.guid === state.currentStep.guid)?.type ===
+  'Input'
 
 export const initialPreviewControlState = (
   steps: FormSystemStep[],
-  groups: FormSystemGroup[]
+  groups: FormSystemGroup[],
 ): PreviewControlState => ({
   steps,
   groups,
   currentStep: updateStep({ steps } as PreviewControlState, 0),
-  currentGroup: updateGroup({ groups } as PreviewControlState, 0)
+  currentGroup: updateGroup({ groups } as PreviewControlState, 0),
 })
 
 export const previewControlReducer = (
   state: PreviewControlState,
-  action: PreviewControlActions
+  action: PreviewControlActions,
 ): PreviewControlState => {
   const { currentStep, currentGroup, steps, groups } = state
 
   switch (action.type) {
     case 'INCREMENT': {
       const newState = { ...state }
-
       if (isInputStep(state)) {
-        const newGroupIndex = getNextIndex(currentGroup.index, groups.length)
-        newState.currentGroup = updateGroup(state, newGroupIndex)
+        if (currentGroup.index < groups.length) {
+          const newGroupIndex = getNextIndex(currentGroup.index, groups.length)
+          newState.currentGroup = updateGroup(state, newGroupIndex)
 
-        if (steps[currentStep.index].guid !== groups[newGroupIndex].stepGuid) {
-          newState.currentStep = updateStep(state, getNextIndex(currentStep.index, steps.length))
+          if (steps[currentStep.index].guid !== groups[newGroupIndex].stepGuid) {
+            newState.currentStep = updateStep(
+              state,
+              getNextIndex(currentStep.index, steps.length),
+            )
+          }
         }
+        if (currentGroup.index === groups.length - 1) {
+          newState.currentStep = updateStep(
+            state,
+            getNextIndex(currentStep.index, steps.length)
+          )
+        }
+
       } else {
-        newState.currentStep = updateStep(state, getNextIndex(currentStep.index, steps.length))
+        newState.currentStep = updateStep(
+          state,
+          getNextIndex(currentStep.index, steps.length),
+        )
       }
 
       return newState
@@ -80,12 +92,26 @@ export const previewControlReducer = (
           const newGroupIndex = getPreviousIndex(currentGroup.index)
           newState.currentGroup = updateGroup(state, newGroupIndex)
 
-          if (steps[currentStep.index].guid !== groups[newGroupIndex].stepGuid) {
-            newState.currentStep = updateStep(state, getPreviousIndex(currentStep.index))
+          if (
+            steps[currentStep.index].guid !== groups[newGroupIndex].stepGuid
+          ) {
+            newState.currentStep = updateStep(
+              state,
+              getPreviousIndex(currentStep.index),
+            )
           }
         }
+        if (currentGroup.index === 0) {
+          newState.currentStep = updateStep(
+            state,
+            getPreviousIndex(currentStep.index),
+          )
+        }
       } else {
-        newState.currentStep = updateStep(state, getPreviousIndex(currentStep.index))
+        newState.currentStep = updateStep(
+          state,
+          getPreviousIndex(currentStep.index),
+        )
       }
 
       return newState

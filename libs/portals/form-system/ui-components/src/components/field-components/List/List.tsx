@@ -1,4 +1,4 @@
-import { FormSystemInput } from '@island.is/api/schema'
+import { FormSystemInput, FormSystemListItem } from '@island.is/api/schema'
 import { useEffect, useState } from 'react'
 import { Select } from '@island.is/island-ui/core'
 import {
@@ -31,17 +31,17 @@ export const List = ({ item }: Props) => {
   const [getZipCodes] = useFormSystemGetZipCodesLazyQuery()
   const [getTradesProfessions] = useFormSystemGetTradesProfessionsLazyQuery()
 
-  const mapToListItems = (items: any[]): ListItem[] =>
+  const mapToListItems = (items: FormSystemListItem[]): ListItem[] =>
     items?.map((item) => ({
       label: item?.label?.is ?? '',
-      value: item?.label?.is ?? ''
+      value: item?.label?.is ?? '',
     })) ?? []
-
 
   useEffect(() => {
     const type = item.inputSettings?.listType
 
     const fetchAndSetList = async (
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       fetcher: () => Promise<any>,
       dataKey: string,
     ) => {

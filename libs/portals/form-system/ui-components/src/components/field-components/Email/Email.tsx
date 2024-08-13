@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react'
+import { useState } from 'react'
 import { Input, Stack, Text } from '@island.is/island-ui/core'
 import { FormSystemInput } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'

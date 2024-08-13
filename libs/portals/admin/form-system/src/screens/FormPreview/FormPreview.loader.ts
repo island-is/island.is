@@ -1,11 +1,17 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import { FormSystemFormResponse } from '@island.is/api/schema'
 import { ApolloClient, NormalizedCacheObject } from '@apollo/client'
-import { FormSystemGetFormDocument, FormSystemGetFormQuery } from '../Form/Form.generated'
-import { FormSystemGetInputDocument, FormSystemGetInputQuery } from '../Form/GetInput.generated'
+import {
+  FormSystemGetFormDocument,
+  FormSystemGetFormQuery,
+} from '../Form/Form.generated'
+import {
+  FormSystemGetInputDocument,
+  FormSystemGetInputQuery,
+} from '../Form/GetInput.generated'
 
 export interface FormPreviewLoader {
-  formBuilder: FormSystemFormResponse,
+  formBuilder: FormSystemFormResponse
   client: ApolloClient<NormalizedCacheObject>
 }
 
@@ -36,7 +42,7 @@ export const formPreviewLoader: WrappedLoaderFn = ({ client }) => {
     const updatedInputs = formBuilder.form?.inputsList?.length
       ? await Promise.all(
         formBuilder.form.inputsList.map(async (input) => {
-          const { data: updatedInput, error: inputError } =
+          const { data: updatedInput } =
             await client.query<FormSystemGetInputQuery>({
               query: FormSystemGetInputDocument,
               fetchPolicy: 'network-only',

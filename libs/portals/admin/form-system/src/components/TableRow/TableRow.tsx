@@ -104,9 +104,7 @@ export const TableRow = ({
           <ColumnText text={name ? name : ''} />
         </Column>
         <Column span="2/12">
-          <ColumnText
-            text={dateObj ? format(dateObj, 'dd.MM.yyyy') : ''}
-          />
+          <ColumnText text={dateObj ? format(dateObj, 'dd.MM.yyyy') : ''} />
         </Column>
         <Column span="1/12">
           <Box display="flex">
@@ -151,14 +149,17 @@ export const TableRow = ({
                   title: formatMessage(m.preview),
                   onClick: () => {
                     navigate(
-                      FormSystemPaths.FormPreview.replace(':formId', String(id)),
+                      FormSystemPaths.FormPreview.replace(
+                        ':formId',
+                        String(id),
+                      ),
                       {
                         state: {
                           formId: id,
                         },
                       },
                     )
-                  }
+                  },
                 },
                 {
                   title: formatMessage(m.copy),

@@ -5,15 +5,10 @@ interface Props {
 }
 
 export const DatePicker = ({ name }: Props) => {
-
   return (
     <Box marginTop={2} width="half">
       <Dp
-        label={
-          name === ''
-            ? 'Dagssetning'
-            : name
-        }
+        label={name === '' ? 'Dagssetning' : name}
         placeholderText="Veldu dagsetningu"
       />
     </Box>

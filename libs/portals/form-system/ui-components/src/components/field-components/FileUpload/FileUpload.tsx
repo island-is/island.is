@@ -28,9 +28,7 @@ export const FileUpload = ({ item }: Props) => {
     // Check whether upload will exceed limit and if so, prevent it
     const currentAmount = item?.inputSettings?.amount ?? 0
     if (fileList.length + uploadFilesWithKey.length > currentAmount) {
-      setError(
-        `${formatMessage(m.maxFileError)} ${item.inputSettings?.amount}`,
-      )
+      setError(`${formatMessage(m.maxFileError)} ${item.inputSettings?.amount}`)
       return
     }
     setError('')
