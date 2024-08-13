@@ -63,7 +63,7 @@ const InfoCard: FC<Props> = (props) => {
         {defendants && (
           <>
             <Text variant="h4">{defendants.title}</Text>
-            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0} marginTop={1}>
+            <Box marginTop={1}>
               {defendants.items.map((defendant) => (
                 <DefendantInfo
                   key={defendant.id}

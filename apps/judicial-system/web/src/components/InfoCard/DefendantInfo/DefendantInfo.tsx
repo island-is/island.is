@@ -71,7 +71,7 @@ const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
   )
 
   return (
-    <Box display="flex">
+    <Box display="flex" component="p">
       {uniqueDefenders.length > 1 ? (
         <Text as="div">{`${formatMessage(strings.defenders)}: `}</Text>
       ) : (
@@ -84,7 +84,7 @@ const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
       )}
       {uniqueDefenders.map((defender, index) =>
         defender.name ? (
-          <Box display="inlineFlex" key={defender.name} role="paragraph">
+          <Box display="inlineFlex" key={defender.name} component="span">
             {RenderPersonalData(
               defender.name,
               defender.email,
