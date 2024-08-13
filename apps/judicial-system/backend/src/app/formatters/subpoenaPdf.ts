@@ -52,17 +52,15 @@ export const createSubpoena = (
   setTitle(doc, formatMessage(strings.title))
   addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
 
-  if (dateLog) {
-    addNormalRightAlignedText(
-      doc,
-      `${formatDate(new Date(dateLog.created), 'PPP')}`,
-      'Times-Roman',
-    )
-  }
+  addNormalRightAlignedText(
+    doc,
+    `${formatDate(new Date(dateLog?.created ?? new Date()), 'PPP')}`,
+    'Times-Roman',
+  )
 
-  arraignmentDate = arraignmentDate || dateLog?.date
-  location = location || dateLog?.location
-  subpoenaType = subpoenaType || defendant.subpoenaType
+  arraignmentDate = arraignmentDate ?? dateLog?.date
+  location = location ?? dateLog?.location
+  subpoenaType = subpoenaType ?? defendant.subpoenaType
 
   if (theCase.court?.name) {
     addNormalText(
