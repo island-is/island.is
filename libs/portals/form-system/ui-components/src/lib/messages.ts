@@ -23,7 +23,7 @@ export const m = defineMessages({
   },
   nameEnglish: {
     id: 'portals-admin.form-system:name-english',
-    defaultMessage: 'Heiti (enska)',
+    defaultMessage: 'Heiti á ensku',
   },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
@@ -31,7 +31,7 @@ export const m = defineMessages({
   },
   applicationNameEnglish: {
     id: 'portals-admin.form-system:application-name-english',
-    defaultMessage: 'Heiti umsóknar (enska)',
+    defaultMessage: 'Heiti umsóknar á ensku',
   },
   description: {
     id: 'portals-admin.form-system:description',
@@ -39,7 +39,7 @@ export const m = defineMessages({
   },
   descriptionEnglish: {
     id: 'portals-admin.form-system:description-english',
-    defaultMessage: 'Lýsing (enska)',
+    defaultMessage: 'Lýsing á ensku',
   },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
@@ -138,6 +138,14 @@ export const m = defineMessages({
   saveAndContinue: {
     id: 'portals-admin.form-system:save-and-continue',
     defaultMessage: 'Vista og halda áfram',
+  },
+  continue: {
+    id: 'portals-admin.form-system:continue',
+    defaultMessage: 'Halda áfram',
+  },
+  back: {
+    id: 'portals-admin.form-system:back',
+    defaultMessage: 'Til baka',
   },
   addStep: {
     id: 'portals-admin.form-system:add-step',
@@ -271,7 +279,7 @@ export const m = defineMessages({
   },
   buttonTextEnglish: {
     id: 'portals-admin.form-system:button-text-english',
-    defaultMessage: 'Hnappatexti (enska)',
+    defaultMessage: 'Hnappatexti á ensku',
   },
   url: {
     id: 'portals-admin.form-system:url',
@@ -295,7 +303,7 @@ export const m = defineMessages({
   },
   infoEnglish: {
     id: 'portals-admin.form-system:info-english',
-    defaultMessage: 'Upplýsingabóla (enska)',
+    defaultMessage: 'Upplýsingabóla á ensku',
   },
   addListItem: {
     id: 'portals-admin.form-system:add-list-item',
@@ -448,6 +456,30 @@ export const m = defineMessages({
   totalAmount: {
     id: 'portals-admin-form-system:total-amount',
     defaultMessage: 'Heildarupphæð'
+  },
+  dataFetch: {
+    id: 'portals-admin.form-system:data-fetch',
+    defaultMessage: 'Gagnaöflun',
+  },
+  personalInfoFetch: {
+    id: 'portals-admin.form-system:personal-info-fetch',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+  },
+  myData: {
+    id: 'portals-admin.form-system:my-data',
+    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+  },
+  myDataDescription: {
+    id: 'portals-admin.form-system:my-data-description',
+    defaultMessage: 'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+  },
+  infoAbout: {
+    id: 'portals-admin.form-system:info-about',
+    defaultMessage: 'Upplýsingar um',
+  },
+  confirmDataFetch: {
+    id: 'portals-admin.form-system:confirm-data-fetch',
+    defaultMessage: 'Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu'
   },
   // Error messages
   invalidEmail: {

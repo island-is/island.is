@@ -1,1 +1,5 @@
 export * from './field-components'
+export { PremisesPreview } from './PremisesPreview/PremisesPreview'
+export { FormStepper } from './FormStepper/FormStepper'
+export { RelevantPartiesView } from './RelevantPartiesView/RelevantPartiesView'
+export { FieldComponentsView } from './FieldComponentsView/FieldComponentsView'

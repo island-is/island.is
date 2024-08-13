@@ -22,6 +22,7 @@ export const MessageWithLink = ({ item }: Props) => {
       padding={4}
       background="white"
       alignItems="center"
+      borderRadius="standard"
     >
       <Box display="flex" flexDirection="column">
         <Box paddingBottom={1}>

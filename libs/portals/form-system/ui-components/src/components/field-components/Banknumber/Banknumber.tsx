@@ -2,6 +2,7 @@ import {
   GridRow as Row,
   GridColumn as Column,
   Input,
+  Text
 } from '@island.is/island-ui/core'
 import { useRef, useState } from 'react'
 import { FormSystemInput } from '@island.is/api/schema'
@@ -64,59 +65,62 @@ export const Banknumber = ({ item }: Props) => {
   }
 
   return (
-    <Column>
-      <Row marginTop={2}>
-        <Column span="4/12">
-          <Input
-            ref={
-              inputRefs[0] as React.RefObject<
-                HTMLInputElement | HTMLTextAreaElement
-              >
-            }
-            label={formatMessage(m.bank)}
-            type="number"
-            value={bank}
-            maxLength={4}
-            name=""
-            onChange={(e) => handleChange(0, e.target.value)}
-            onBlur={(e) => setBank(addLeadingZeros(e.target.value, 4))}
-            required={item?.isRequired ?? false}
-          />
-        </Column>
-        <Column span="2/12">
-          <Input
-            ref={
-              inputRefs[1] as React.RefObject<
-                HTMLInputElement | HTMLTextAreaElement
-              >
-            }
-            label={formatMessage(m.ledger)}
-            maxLength={2}
-            type="number"
-            value={ledger}
-            name=""
-            onChange={(e) => handleChange(1, e.target.value)}
-            onBlur={(e) => setLedger(addLeadingZeros(e.target.value, 2))}
-            required={item?.isRequired ?? false}
-          />
-        </Column>
-        <Column span="4/12">
-          <Input
-            ref={
-              inputRefs[2] as React.RefObject<
-                HTMLInputElement | HTMLTextAreaElement
-              >
-            }
-            label={formatMessage(m.accountNumber)}
-            type="number"
-            value={account}
-            name=""
-            onChange={(e) => handleChange(2, e.target.value)}
-            onBlur={(e) => setAccount(addLeadingZeros(e.target.value, 6))}
-            required={item?.isRequired ?? false}
-          />
-        </Column>
-      </Row>
-    </Column>
+    <div>
+      <Text variant="h5">{item?.name?.is}</Text>
+      <Column>
+        <Row marginTop={2}>
+          <Column span="4/12">
+            <Input
+              ref={
+                inputRefs[0] as React.RefObject<
+                  HTMLInputElement | HTMLTextAreaElement
+                >
+              }
+              label={formatMessage(m.bank)}
+              type="number"
+              value={bank}
+              maxLength={4}
+              name=""
+              onChange={(e) => handleChange(0, e.target.value)}
+              onBlur={(e) => setBank(addLeadingZeros(e.target.value, 4))}
+              required={item?.isRequired ?? false}
+            />
+          </Column>
+          <Column span="2/12">
+            <Input
+              ref={
+                inputRefs[1] as React.RefObject<
+                  HTMLInputElement | HTMLTextAreaElement
+                >
+              }
+              label={formatMessage(m.ledger)}
+              maxLength={2}
+              type="number"
+              value={ledger}
+              name=""
+              onChange={(e) => handleChange(1, e.target.value)}
+              onBlur={(e) => setLedger(addLeadingZeros(e.target.value, 2))}
+              required={item?.isRequired ?? false}
+            />
+          </Column>
+          <Column span="4/12">
+            <Input
+              ref={
+                inputRefs[2] as React.RefObject<
+                  HTMLInputElement | HTMLTextAreaElement
+                >
+              }
+              label={formatMessage(m.accountNumber)}
+              type="number"
+              value={account}
+              name=""
+              onChange={(e) => handleChange(2, e.target.value)}
+              onBlur={(e) => setAccount(addLeadingZeros(e.target.value, 6))}
+              required={item?.isRequired ?? false}
+            />
+          </Column>
+        </Row>
+      </Column>
+    </div>
   )
 }

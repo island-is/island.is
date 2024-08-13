@@ -18,7 +18,7 @@ export const PhoneNumber = ({ item }: Props) => {
       <Column>
         <PhoneInput
           label={formatMessage(m.phoneNumber)}
-          placeholder="Símanúmer"
+          placeholder={formatMessage(m.phoneNumber)}
           name="phoneNumber"
           required={item.isRequired ?? false}
         />

@@ -40,14 +40,15 @@ export const PremisesPreview = ({ documents }: Props) => {
           {documents?.map(d => (
             <Box display="flex" flexDirection="column">
               <Text fontWeight="semiBold" color="blue600">{d?.name?.is}</Text>
-              <Text>Upplýsingar um {d?.description?.is?.toLowerCase()}</Text>
+              <Text>{formatMessage(m.infoAbout)} {d?.description?.is?.toLowerCase()}</Text>
             </Box>
           ))}
           <Box
             background="white"
           >
+
             <Checkbox
-              label="Ég skil að ofangreindra gagna verður aflað í umsóknarferlinu"
+              label={formatMessage(m.confirmDataFetch)}
               large
               backgroundColor="white"
             />

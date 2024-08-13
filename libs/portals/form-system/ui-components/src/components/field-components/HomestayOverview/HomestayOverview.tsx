@@ -23,7 +23,7 @@ interface YearOption {
   label: string
 }
 
-export const HomestayOverview: React.FC = () => {
+export const HomestayOverview = () => {
   const { formatMessage } = useIntl()
   const datePickerRef = useRef(null)
   const currentYear = new Date().getFullYear()
@@ -80,101 +80,105 @@ export const HomestayOverview: React.FC = () => {
   const selectedDatesThisMonth = selectedDates.filter(d => d.monthIndex === currentMonth).length
 
   return (
-    <Stack space={3}>
-      <Text variant="h3">{formatMessage(m.homestayOverview)}</Text>
-      <Row>
-        <Col span="3/10">
-          <Select
-            label="Veldu ár"
-            options={yearOptions}
-            defaultValue={yearOptions[0]}
-            onChange={handleYearSelect}
-            size="sm"
-          />
-        </Col>
-      </Row>
-      <Row>
-        <Col>
-          <Text>{formatMessage(m.homestayOverviewRadio)}</Text>
-        </Col>
-      </Row>
-      <Row>
-        {[true, false].map((value) => (
-          <Col key={value.toString()} span="5/10">
-            <Box onClick={() => handleRadio(value)}>
-              <RadioButton
-                label={formatMessage(value ? m.yes : m.no)}
-                large
-                backgroundColor='white'
-                onChange={() => handleRadio(value)}
-                checked={radio === value}
-              />
-            </Box>
-          </Col>
-        ))}
-      </Row>
-      {radio && (
+    <Box
+      marginRight={2}
+    >
+      <Stack space={3}>
+        <Text variant="h3">{formatMessage(m.homestayOverview)}</Text>
         <Row>
-          <Col span="5/10">
-            <Calendar
-              multiple
-              key={selectedYear}
-              value={selectedDates}
-              onChange={handleDateChange}
-              format="DD/MM/YY"
-              disableYearPicker
-              highlightToday={false}
-              maxDate={maxDate}
-              minDate={minDate}
-              currentDate={new DateObject({ year: selectedYear, month: 1, day: 1 })}
-              ref={datePickerRef}
-              locale={icelandicLocale}
-              className={styles.calendar}
-              shadow={false}
-              onMonthChange={handleMonthChange}
+          <Col span="3/10">
+            <Select
+              label="Veldu ár"
+              options={yearOptions}
+              defaultValue={yearOptions[0]}
+              onChange={handleYearSelect}
+              size="sm"
             />
           </Col>
-          <Col span="5/10">
-            <Box
-              display="flex"
-              justifyContent="spaceBetween"
-              flexDirection="column"
-              style={{ height: '100%' }}
-            >
-              <Stack space={4}>
-                <Text variant="h3">{monthName}</Text>
-                {selectedDatesThisMonth > 0 && (
-                  <Input
-                    name="monthTotal"
-                    label={`${formatMessage(m.amountIn)} ${monthName.toLowerCase()}`}
-                    size="sm"
-                    onChange={handleMonthTotalChange}
-                    value={monthArray[currentMonth]}
-                  />
-                )}
-              </Stack>
-              <Box>
-                <Stack space={1}>
-                  {[
-                    { label: m.totalDays, value: selectedDates.length },
-                    { label: m.totalAmount, value: `${getSumFromArray(monthArray)} kr.` }
-                  ].map(({ label, value }) => (
-                    <Box
-                      key={label.id}
-                      display="flex"
-                      flexDirection="row"
-                      justifyContent="spaceBetween"
-                    >
-                      <Text fontWeight='semiBold'>{`${formatMessage(label)}:`}</Text>
-                      <Text>{value}</Text>
-                    </Box>
-                  ))}
-                </Stack>
-              </Box>
-            </Box>
+        </Row>
+        <Row>
+          <Col>
+            <Text>{formatMessage(m.homestayOverviewRadio)}</Text>
           </Col>
         </Row>
-      )}
-    </Stack>
+        <Row>
+          {[true, false].map((value) => (
+            <Col key={value.toString()} span="5/10">
+              <Box onClick={() => handleRadio(value)}>
+                <RadioButton
+                  label={formatMessage(value ? m.yes : m.no)}
+                  large
+                  backgroundColor='white'
+                  onChange={() => handleRadio(value)}
+                  checked={radio === value}
+                />
+              </Box>
+            </Col>
+          ))}
+        </Row>
+        {radio && (
+          <Row>
+            <Col span="5/10">
+              <Calendar
+                multiple
+                key={selectedYear}
+                value={selectedDates}
+                onChange={handleDateChange}
+                format="DD/MM/YY"
+                disableYearPicker
+                highlightToday={false}
+                maxDate={maxDate}
+                minDate={minDate}
+                currentDate={new DateObject({ year: selectedYear, month: 1, day: 1 })}
+                ref={datePickerRef}
+                locale={icelandicLocale}
+                className={styles.calendar}
+                shadow={false}
+                onMonthChange={handleMonthChange}
+              />
+            </Col>
+            <Col span="4/10" offset="1/12">
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                flexDirection="column"
+                style={{ height: '100%' }}
+              >
+                <Stack space={4}>
+                  <Text variant="h3">{monthName}</Text>
+                  {selectedDatesThisMonth > 0 && (
+                    <Input
+                      name="monthTotal"
+                      label={`${formatMessage(m.amountIn)} ${monthName.toLowerCase()}`}
+                      size="sm"
+                      onChange={handleMonthTotalChange}
+                      value={monthArray[currentMonth]}
+                    />
+                  )}
+                </Stack>
+                <Box>
+                  <Stack space={1}>
+                    {[
+                      { label: m.totalDays, value: selectedDates.length },
+                      { label: m.totalAmount, value: `${getSumFromArray(monthArray)} kr.` }
+                    ].map(({ label, value }) => (
+                      <Box
+                        key={label.id}
+                        display="flex"
+                        flexDirection="row"
+                        justifyContent="spaceBetween"
+                      >
+                        <Text fontWeight='semiBold'>{`${formatMessage(label)}:`}</Text>
+                        <Text>{value}</Text>
+                      </Box>
+                    ))}
+                  </Stack>
+                </Box>
+              </Box>
+            </Col>
+          </Row>
+        )}
+      </Stack>
+    </Box>
   )
 }

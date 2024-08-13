@@ -19,12 +19,14 @@ import {
 } from '../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '../../lib/messages'
+// eslint-disable-next-line no-restricted-imports
+import { format, parseISO } from 'date-fns'
 
 interface Props {
   id?: number | null
   name?: string
   created?: Date
-  lastModified?: Date
+  lastModified?: string
   org?: number | null
   state?: number
   options?: string
@@ -53,7 +55,10 @@ export const TableRow = ({
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
-  const { formatMessage, formatDate } = useIntl()
+  const { formatMessage } = useIntl()
+
+  const dateObj = lastModified && parseISO(lastModified)
+
   const header = () => (
     <>
       <Box className={styles.header}>
@@ -100,11 +105,7 @@ export const TableRow = ({
         </Column>
         <Column span="2/12">
           <ColumnText
-            text={formatDate(lastModified ? lastModified : new Date(), {
-              day: 'numeric',
-              month: 'numeric',
-              year: 'numeric',
-            })}
+            text={dateObj ? format(dateObj, 'dd.MM.yyyy') : ''}
           />
         </Column>
         <Column span="1/12">
