@@ -31,14 +31,14 @@ export const VaccinationsWrapper = ({
       {/* Buttons */}
       <Box printHidden display="flex" flexDirection="row" marginBottom={6}>
         <LinkButton
-          to={'https://www.heilsuvera.is/efnisflokkar/lyf-og-bolusetningar/'}
+          to={formatMessage(m.readAboutVaccinationsLink)}
           icon="open"
           variant="button"
           text={formatMessage(m.readAboutVaccinations)}
         />
         <Box marginLeft={1}>
           <LinkButton
-            to={'https://www.heilsuvera.is/efnisflokkar/lyf-og-bolusetningar/'}
+            to={formatMessage(m.makeVaccinationAppointmentLink)}
             icon="open"
             variant="button"
             text={formatMessage(m.makeVaccinationAppointment)}

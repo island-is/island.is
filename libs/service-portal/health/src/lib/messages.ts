@@ -970,9 +970,18 @@ export const messages = defineMessages({
     id: 'sp.health:read-about-vaccinations',
     defaultMessage: 'Lesa  um bólusetningar',
   },
+  readAboutVaccinationsLink: {
+    id: 'sp.health:read-about-vaccinations-link',
+    defaultMessage:
+      'https://www.landlaeknir.is/heilsa/heilsufraedi/bolusetningar/',
+  },
   makeVaccinationAppointment: {
     id: 'sp.health:make-vaccination-appointment',
     defaultMessage: 'Panta tíma í bólusetningu',
+  },
+  makeVaccinationAppointmentLink: {
+    id: 'sp.health:make-vaccination-appointment-link',
+    defaultMessage: 'https://www.heilsuvera.is/',
   },
   vaccinatedFor: {
     id: 'sp.health:vaccinated-for',
