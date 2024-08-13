@@ -21,7 +21,8 @@ BUILD_ARGS=()
 
 echo "APP value: $APP"
 
-if yq e "select(.$APP.armBetaEnrolled == true) | length > 0" charts/islandis/values.prod.yaml; then
+# if yq e "select(.$APP.armBetaEnrolled == true) | length > 0" charts/islandis/values.prod.yaml; then
+if grep -r ".armBetaEnrolled(true)" "$APP_HOME"; then
   PLATFORM=linux/aarch64
 else
   PLATFORM=linux/amd64
