@@ -74,7 +74,7 @@ export async function getOnboardingScreens() {
     })
   }
 
-  // Android needs upfront Notifications permissions
+  // Android needs upfront Notifications permissions in version 33 and above
   if (isIos || androidIsVersion33OrAbove()) {
     screens.push({
       component: {

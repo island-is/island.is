@@ -78,7 +78,7 @@ export function setupNotifications() {
 }
 
 /**
- * Handle initial notification when app is in quit state and opened from a notification
+ * Handle initial notification when app is closed and opened from a notification
  */
 export function handleInitialNotification() {
   // FCMs
