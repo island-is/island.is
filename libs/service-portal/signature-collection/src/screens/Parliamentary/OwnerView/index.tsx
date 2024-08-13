@@ -90,7 +90,7 @@ const OwnerView = () => {
             <T.Row>
               <T.Data>{'Nafni Nafnason'}</T.Data>
               <T.Data>{'010130-3019'}</T.Data>
-              <T.Data>{'Reykjavíkurkjördæmi Suður'}</T.Data>
+              <T.Data>{formatMessage(m.allConstituencies)}</T.Data>
               <T.Data>
                 <Button
                   variant="text"

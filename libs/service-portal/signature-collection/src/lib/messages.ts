@@ -279,6 +279,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsjónaraðilar',
     description: '',
   },
+  add: {
+    id: 'sp.add',
+    defaultMessage: 'Bæta við',
+    description: '',
+  },
   addSupervisor: {
     id: 'sp.addSupervisor',
     defaultMessage: 'Bæta við umsjónaraðila',
@@ -297,6 +302,11 @@ export const m = defineMessages({
   constituency: {
     id: 'sp.constituency',
     defaultMessage: 'Kjördæmi',
+    description: '',
+  },
+  allConstituencies: {
+    id: 'sp.allConstituencies',
+    defaultMessage: 'Öll kjördæmi',
     description: '',
   },
 })

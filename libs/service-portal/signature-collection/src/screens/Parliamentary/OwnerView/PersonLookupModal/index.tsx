@@ -1,10 +1,19 @@
 import { useEffect, useState } from 'react'
-import { Box, Stack, Button, Text, Input } from '@island.is/island-ui/core'
+import {
+  Box,
+  Stack,
+  Button,
+  Text,
+  Input,
+  Checkbox,
+} from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { useIdentityQuery } from '@island.is/service-portal/graphql'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
+import { m } from '../../../../lib/messages'
+import { constituencies } from 'libs/service-portal/signature-collection/src/lib/constants'
 
 const PersonLookupModal = ({
   collectionId,
@@ -60,7 +69,7 @@ const PersonLookupModal = ({
             setModalIsOpen(true)
           }}
         >
-          Bæta við
+          {formatMessage(m.add)}
         </Button>
       </Box>
       <Modal
@@ -77,10 +86,10 @@ const PersonLookupModal = ({
           <InputController
             control={control}
             id="nationalId"
-            label={formatMessage('Kennitala')}
+            label={formatMessage(m.personNationalId)}
             backgroundColor={'blue'}
             name="nationalId"
-            format={'######-####'}
+            format="######-####"
             type="tel"
             defaultValue={nationalIdInput}
             onChange={(e) => {
@@ -90,12 +99,21 @@ const PersonLookupModal = ({
             loading={loading}
           />
           <Input
-            label={formatMessage('Nafn')}
-            backgroundColor={'white'}
-            readOnly
+            label={formatMessage(m.personName)}
+            backgroundColor="white"
             name="name"
             value={name}
+            readOnly
           />
+          {title.includes('umsjón') &&
+            constituencies.map((constituency) => (
+              <Checkbox
+                key={constituency}
+                name="constituency"
+                label={constituency}
+                value={constituency}
+              />
+            ))}
         </Stack>
         <Box display="flex" justifyContent="center" marginY={5}>
           <Button
@@ -103,7 +121,7 @@ const PersonLookupModal = ({
               console.log('todo')
             }}
           >
-            {formatMessage('Bæta við')}
+            {formatMessage(m.add)}
           </Button>
         </Box>
       </Modal>
