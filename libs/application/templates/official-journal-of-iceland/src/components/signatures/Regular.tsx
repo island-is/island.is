@@ -2,17 +2,9 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { useLocale } from '@island.is/localization'
-import {
-  InputFields,
-  OJOIFieldBaseProps,
-  RegularSignatureState,
-} from '../../lib/types'
+import { InputFields } from '../../lib/types'
 import cloneDeep from 'lodash/cloneDeep'
-import {
-  INITIAL_ANSWERS,
-  SIGNATURE_INDEX,
-  MEMBER_INDEX,
-} from '../../lib/constants'
+import { SIGNATURE_INDEX, MEMBER_INDEX } from '../../lib/constants'
 import { getErrorViaPath } from '@island.is/application/core'
 import { signatures } from '../../lib/messages/signatures'
 import {
@@ -20,124 +12,108 @@ import {
   InputController,
 } from '@island.is/shared/form-fields'
 
-type LocalState = typeof INITIAL_ANSWERS['signature']
-
-type Props = Pick<OJOIFieldBaseProps, 'errors'> & {
-  state: LocalState
-  setState: (state: LocalState) => void
-  addSignature?: boolean
-}
-
-type Institution = NonNullable<RegularSignatureState>[0]
-
-type InstitutionMember = NonNullable<Institution['members']>[0]
-
-type MemberKey = keyof InstitutionMember
-
-type InstitutionKey = keyof Omit<Institution, 'members'>
-
-export const RegularSignature = ({ state, setState, errors }: Props) => {
+export const RegularSignature = () => {
   const { formatMessage: f } = useLocale()
 
-  const onChangeMember = (
-    institutionIndex: number,
-    memberIndex: number,
-    key: MemberKey,
-    value: string,
-  ) => {
-    const clonedState = cloneDeep(state)
-    const institution = clonedState.regular.find(
-      (_, index) => index === institutionIndex,
-    )
+  // const onChangeMember = (
+  //   institutionIndex: number,
+  //   memberIndex: number,
+  //   key: MemberKey,
+  //   value: string,
+  // ) => {
+  //   const clonedState = cloneDeep(state)
+  //   const institution = clonedState.regular.find(
+  //     (_, index) => index === institutionIndex,
+  //   )
 
-    if (!institution) return
+  //   if (!institution) return
 
-    const member = institution?.members.find(
-      (_, index) => index === memberIndex,
-    )
+  //   const member = institution?.members.find(
+  //     (_, index) => index === memberIndex,
+  //   )
 
-    if (!member) return
+  //   if (!member) return
 
-    const updatedMember = { ...member, [key]: value }
-    institution.members.splice(memberIndex, 1, updatedMember)
-    clonedState.regular.splice(institutionIndex, 1, institution)
-    setState(clonedState)
-  }
+  //   const updatedMember = { ...member, [key]: value }
+  //   institution.members.splice(memberIndex, 1, updatedMember)
+  //   clonedState.regular.splice(institutionIndex, 1, institution)
+  //   setState(clonedState)
+  // }
 
-  const onRemoveMember = (institutionIndex: number, memberIndex: number) => {
-    const clonedState = cloneDeep(state)
-    const institution = clonedState.regular.find(
-      (_, index) => index === institutionIndex,
-    )
+  // const onRemoveMember = (institutionIndex: number, memberIndex: number) => {
+  //   const clonedState = cloneDeep(state)
+  //   const institution = clonedState.regular.find(
+  //     (_, index) => index === institutionIndex,
+  //   )
 
-    if (!institution) return
+  //   if (!institution) return
 
-    institution.members.splice(memberIndex, 1)
-    clonedState.regular.splice(institutionIndex, 1, institution)
-    setState(clonedState)
-  }
+  //   institution.members.splice(memberIndex, 1)
+  //   clonedState.regular.splice(institutionIndex, 1, institution)
+  //   setState(clonedState)
+  // }
 
-  const onAddMember = (institutionIndex: number) => {
-    const clonedState = cloneDeep(state)
-    const institution = clonedState.regular.find(
-      (_, index) => index === institutionIndex,
-    )
+  // const onAddMember = (institutionIndex: number) => {
+  //   const clonedState = cloneDeep(state)
+  //   const institution = clonedState.regular.find(
+  //     (_, index) => index === institutionIndex,
+  //   )
 
-    if (!institution) return
+  //   if (!institution) return
 
-    institution.members.push({
-      above: '',
-      name: '',
-      after: '',
-      below: '',
-    })
-    clonedState.regular.splice(institutionIndex, 1, institution)
-    setState(clonedState)
-  }
+  //   institution.members.push({
+  //     above: '',
+  //     name: '',
+  //     after: '',
+  //     below: '',
+  //   })
+  //   clonedState.regular.splice(institutionIndex, 1, institution)
+  //   setState(clonedState)
+  // }
 
-  const onChangeInstitution = (
-    institutionIndex: number,
-    key: InstitutionKey,
-    value: string,
-  ) => {
-    const clonedState = cloneDeep(state)
-    const institution = clonedState.regular.find(
-      (_, index) => index === institutionIndex,
-    )
+  // const onChangeInstitution = (
+  //   institutionIndex: number,
+  //   key: InstitutionKey,
+  //   value: string,
+  // ) => {
+  //   const clonedState = cloneDeep(state)
+  //   const institution = clonedState.regular.find(
+  //     (_, index) => index === institutionIndex,
+  //   )
 
-    if (!institution) return
+  //   if (!institution) return
 
-    const updatedInstitution = { ...institution, [key]: value }
-    clonedState.regular.splice(institutionIndex, 1, updatedInstitution)
-    setState(clonedState)
-  }
+  //   const updatedInstitution = { ...institution, [key]: value }
+  //   clonedState.regular.splice(institutionIndex, 1, updatedInstitution)
+  //   setState(clonedState)
+  // }
 
-  const onRemoveInstitution = (institutionIndex: number) => {
-    const clonedState = cloneDeep(state)
-    clonedState.regular.splice(institutionIndex, 1)
-    setState(clonedState)
-  }
+  // const onRemoveInstitution = (institutionIndex: number) => {
+  //   const clonedState = cloneDeep(state)
+  //   clonedState.regular.splice(institutionIndex, 1)
+  //   setState(clonedState)
+  // }
 
-  const onAddInstitution = () => {
-    const clonedState = cloneDeep(state)
-    clonedState.regular.push({
-      institution: '',
-      date: '',
-      members: [
-        {
-          above: '',
-          name: '',
-          after: '',
-          below: '',
-        },
-      ],
-    })
-    setState(clonedState)
-  }
+  // const onAddInstitution = () => {
+  //   const clonedState = cloneDeep(state)
+  //   clonedState.regular.push({
+  //     institution: '',
+  //     date: '',
+  //     members: [
+  //       {
+  //         above: '',
+  //         name: '',
+  //         after: '',
+  //         below: '',
+  //       },
+  //     ],
+  //   })
+  //   setState(clonedState)
+  // }
 
   return (
     <Box className={styles.signatureWrapper}>
-      {state.regular.map((institution, index) => {
+      {/* {state.regular.map((institution, index) => {
         const institutionPath =
           InputFields.signature.regular.institution.replace(
             SIGNATURE_INDEX,
@@ -290,7 +266,7 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
         <Button variant="utility" icon="add" onClick={onAddInstitution}>
           {f(signatures.buttons.addInstitution)}
         </Button>
-      </Box>
+      </Box> */}
     </Box>
   )
 }

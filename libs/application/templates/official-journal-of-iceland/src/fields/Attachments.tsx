@@ -15,9 +15,8 @@ export const Attachments = ({ application, errors }: OJOIFieldBaseProps) => {
   // TODO: Create wrapper around file upload component to handle file upload
 
   return (
-    <>
-      <FormGroup>
-        <Box width="full">
+    <FormGroup>
+      {/* <Box width="full">
           <FileUploadController
             application={application as unknown as Application}
             id={InputFields.attachments.files}
@@ -58,8 +57,7 @@ export const Attachments = ({ application, errors }: OJOIFieldBaseProps) => {
               }
             />
           </Box>
-        </Box>
-      </FormGroup>
-    </>
+        </Box> */}
+    </FormGroup>
   )
 }

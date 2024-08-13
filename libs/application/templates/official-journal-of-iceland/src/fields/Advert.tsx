@@ -3,7 +3,6 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { useCallback, useEffect, useState } from 'react'
 import { ADVERT_QUERY, TYPES_QUERY } from '../graphql/queries'
-import { DEBOUNCE_INPUT_TIMER, INITIAL_ANSWERS } from '../lib/constants'
 import {
   InputFields,
   OfficialJournalOfIcelandGraphqlResponse,
@@ -24,7 +23,6 @@ import { OfficialJournalOfIcelandAdvert } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 import * as styles from './Advert.css'
 
-type LocalState = typeof INITIAL_ANSWERS['advert']
 type TypeResonse = OfficialJournalOfIcelandGraphqlResponse<'types'>
 
 type SelectedAdvertResponse = OfficialJournalOfIcelandGraphqlResponse<
@@ -63,97 +61,20 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
 
   const [types, setTypes] = useState<{ label: string; value: string }[]>([])
 
-  const [state, setState] = useState<LocalState>({
-    department: answers.advert?.department ?? '',
-    type: answers.advert?.type ?? '',
-    title: answers.advert?.title ?? '',
-    document: answers.advert?.document ?? '',
-    subType: answers.advert?.subType ?? '',
-    template: answers.advert?.template ?? '',
-  })
-
-  const updateState = useCallback((newState: typeof state) => {
-    setState((prev) => ({ ...prev, ...newState }))
-  }, [])
-
-  const updateHandler = useCallback(async () => {
-    await updateApplication({
-      variables: {
-        locale,
-        input: {
-          skipValidation: true,
-          id: application.id,
-          answers: {
-            ...application.answers,
-            advert: state,
-          },
-        },
-      },
-    })
-  }, [application.answers, application.id, locale, state, updateApplication])
-
-  useEffect(() => {
-    updateHandler()
-  }, [updateHandler])
-
-  const debouncedStateUpdate = debounce(updateState, DEBOUNCE_INPUT_TIMER)
-
-  useEffect(() => {
-    const fetchTypes = async () => {
-      await lazyTypesQuery({
-        variables: {
-          params: {
-            department: state.department,
-          },
-        },
-        onCompleted: (data) => {
-          return setTypes(
-            data.officialJournalOfIcelandTypes.types.map((t) => ({
-              label: t.title,
-              value: t.id,
-            })),
-          )
-        },
-      })
-    }
-
-    fetchTypes()
-  }, [lazyTypesQuery, state.department])
-
-  useEffect(() => {
-    const fetchAdvert = async () => {
-      if (selectedAdvertId) {
-        const { data } = await lazyAdvertQuery({
-          variables: {
-            params: {
-              id: selectedAdvertId,
-            },
-          },
-        })
-
-        if (data) {
-          const { advert } = data.officialJournalOfIcelandAdvert
-          setState({
-            department: advert.department.id,
-            type: advert.type.id,
-            title: advert.title,
-            document: advert.document.html,
-            subType: '',
-            template: '',
-          })
-
-          setValue(InputFields.advert.department, advert.department.id)
-          setValue(InputFields.advert.type, advert.type.id)
-          setValue(InputFields.advert.title, advert.title)
-          setValue(InputFields.advert.document, advert.document.html)
-        }
-      }
-    }
-
-    if (selectedAdvertId) {
-      fetchAdvert()
-    }
-  }, [lazyAdvertQuery, selectedAdvertId, setValue])
+  // const updateHandler = useCallback(async () => {
+  //   await updateApplication({
+  //     variables: {
+  //       locale,
+  //       input: {
+  //         id: application.id,
+  //         answers: {
+  //           ...application.answers,
+  //           advert: state,
+  //         },
+  //       },
+  //     },
+  //   })
+  // }, [application.answers, application.id, locale, updateApplication])
 
   if (loadingAdvert) {
     return (
@@ -169,7 +90,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
 
   return (
     <>
-      <FormGroup>
+      {/* <FormGroup>
         <Box className={styles.inputWrapper}>
           <SelectController
             key={state.department}
@@ -269,7 +190,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             }
           />
         </Box>
-      </FormGroup>
+      </FormGroup> */}
     </>
   )
 }

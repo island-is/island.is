@@ -61,7 +61,7 @@ export const partialSchema = z.object({
     })
     .refine((schema) => schema.approveExternalData === AnswerOption.YES, {
       params: error.dataGathering,
-      path: ['requirements', 'approveExternalData'],
+      path: ['approveExternalData'],
     }),
   advert: advertSchema,
   signatures: z.array(signatureSchema).optional(),

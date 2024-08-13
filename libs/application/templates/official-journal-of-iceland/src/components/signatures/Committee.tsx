@@ -1,80 +1,56 @@
-import { Box, Text, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
-import { useLocale } from '@island.is/localization'
-import {
-  CommitteeSignatureState,
-  InputFields,
-  OJOIFieldBaseProps,
-} from '../../lib/types'
-import cloneDeep from 'lodash/cloneDeep'
-import {
-  DatePickerController,
-  InputController,
-} from '@island.is/shared/form-fields'
-import { INITIAL_ANSWERS, MEMBER_INDEX } from '../../lib/constants'
-import { getErrorViaPath } from '@island.is/application/core'
-import { signatures } from '../../lib/messages/signatures'
 
-type ChairmanKey = keyof NonNullable<CommitteeSignatureState>['chairman']
-type MemberKey = keyof NonNullable<CommitteeSignatureState>['members'][0]
+export const CommitteeSignature = () => {
+  // const { formatMessage: f } = useLocale()
 
-type LocalState = typeof INITIAL_ANSWERS['signature']
-type Props = Pick<OJOIFieldBaseProps, 'errors'> & {
-  state: LocalState
-  setState: (state: LocalState) => void
-  addSignature?: boolean
-}
+  // const onCommitteeChairmanChange = (key: ChairmanKey, value: string) => {
+  //   const newState = cloneDeep(state)
+  //   newState.committee.chairman[key] = value
+  //   setState(newState)
+  // }
 
-export const CommitteeSignature = ({ state, setState, errors }: Props) => {
-  const { formatMessage: f } = useLocale()
+  // const onCommitteMemberChange = (
+  //   index: number,
+  //   key: MemberKey,
+  //   value: string,
+  // ) => {
+  //   const newState = cloneDeep(state)
+  //   if (!newState.committee.members) return
+  //   newState.committee.members[index][key] = value
+  //   setState(newState)
+  // }
 
-  const onCommitteeChairmanChange = (key: ChairmanKey, value: string) => {
-    const newState = cloneDeep(state)
-    newState.committee.chairman[key] = value
-    setState(newState)
-  }
+  // const onCommitteeChange = (
+  //   key: keyof Omit<CommitteeSignatureState, 'members' | 'chairman'>,
+  //   value: string,
+  // ) => {
+  //   const newState = cloneDeep(state)
+  //   newState.committee[key] = value
+  //   setState(newState)
+  // }
 
-  const onCommitteMemberChange = (
-    index: number,
-    key: MemberKey,
-    value: string,
-  ) => {
-    const newState = cloneDeep(state)
-    if (!newState.committee.members) return
-    newState.committee.members[index][key] = value
-    setState(newState)
-  }
+  // const onAddCommitteeMember = () => {
+  //   const newState = cloneDeep(state)
+  //   if (!newState.committee.members) return
+  //   newState.committee.members.push({
+  //     name: '',
+  //     below: '',
+  //   })
+  //   setState(newState)
+  // }
 
-  const onCommitteeChange = (
-    key: keyof Omit<CommitteeSignatureState, 'members' | 'chairman'>,
-    value: string,
-  ) => {
-    const newState = cloneDeep(state)
-    newState.committee[key] = value
-    setState(newState)
-  }
-
-  const onAddCommitteeMember = () => {
-    const newState = cloneDeep(state)
-    if (!newState.committee.members) return
-    newState.committee.members.push({
-      name: '',
-      below: '',
-    })
-    setState(newState)
-  }
-
-  const onRemoveCommitteeMember = (index: number) => {
-    const newState = cloneDeep(state)
-    if (!newState.committee.members) return
-    newState.committee.members.splice(index, 1)
-    setState(newState)
-  }
+  // const onRemoveCommitteeMember = (index: number) => {
+  //   const newState = cloneDeep(state)
+  //   if (!newState.committee.members) return
+  //   newState.committee.members.splice(index, 1)
+  //   setState(newState)
+  // }
 
   return (
     <Box className={styles.signatureWrapper}>
-      <Box
+      {/* <Box
         display="flex"
         flexDirection="row"
         flexWrap="wrap"
@@ -276,7 +252,7 @@ export const CommitteeSignature = ({ state, setState, errors }: Props) => {
             {f(signatures.buttons.addCommitteeMember)}
           </Button>
         </Box>
-      </Box>
+      </Box> */}
     </Box>
   )
 }

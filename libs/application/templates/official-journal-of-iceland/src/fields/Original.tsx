@@ -11,7 +11,7 @@ export const Original = (props: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
   return (
     <FormGroup>
-      <FileUploadController
+      {/* <FileUploadController
         application={props.application as unknown as Application}
         id={InputFields.original.files}
         accept={UPLOAD_ACCEPT}
@@ -23,7 +23,7 @@ export const Original = (props: OJOIFieldBaseProps) => {
           props.errors &&
           getErrorViaPath(props.errors, InputFields.original.files)
         }
-      />
+      /> */}
     </FormGroup>
   )
 }

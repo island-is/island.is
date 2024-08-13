@@ -1,5 +1,5 @@
 import { useUserInfo } from '@island.is/auth/react'
-import { Stack } from '@island.is/island-ui/core'
+import { Box, Stack } from '@island.is/island-ui/core'
 import { useQuery } from '@apollo/client'
 import { Property } from '../components/property/Property'
 import {
@@ -16,41 +16,42 @@ import { addWeekdays } from '../lib/utils'
 export const Summary = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f, formatDate } = useLocale()
 
-  const user = useUserInfo()
+  // const user = useUserInfo()
 
-  const { answers } = application
+  // const { answers } = application
 
-  const { data, loading } = useQuery(TYPE_QUERY, {
-    variables: {
-      params: {
-        id: application?.answers?.advert?.type,
-      },
-    },
-  })
+  // const { data, loading } = useQuery(TYPE_QUERY, {
+  //   variables: {
+  //     params: {
+  //       id: application?.answers?.advert?.type,
+  //     },
+  //   },
+  // })
 
-  const { data: priceData } = useQuery(GET_PRICE_QUERY, {
-    variables: { id: application.id },
-  })
+  // const { data: priceData } = useQuery(GET_PRICE_QUERY, {
+  //   variables: { id: application.id },
+  // })
 
-  const price =
-    priceData?.officialJournalOfIcelandApplicationGetPrice?.price ?? 0
+  // const price =
+  //   priceData?.officialJournalOfIcelandApplicationGetPrice?.price ?? 0
 
-  const type = data?.officialJournalOfIcelandType?.type?.title
+  // const type = data?.officialJournalOfIcelandType?.type?.title
 
-  const { data: department } = useQuery(DEPARTMENT_QUERY, {
-    variables: {
-      params: {
-        id: answers?.advert?.department,
-      },
-    },
-  })
+  // const { data: department } = useQuery(DEPARTMENT_QUERY, {
+  //   variables: {
+  //     params: {
+  //       id: answers?.advert?.department,
+  //     },
+  //   },
+  // })
 
-  const today = new Date()
-  const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
+  // const today = new Date()
+  // const estimatedDate = addWeekdays(today, MINIMUM_WEEKDAYS)
 
   return (
     <Stack space={0} dividers>
-      <Property name={f(summary.properties.sender)} value={user.profile.name} />
+      <Box></Box>
+      {/* <Property name={f(summary.properties.sender)} value={user.profile.name} />
       <Property name={f(summary.properties.type)} value={type} />
       <Property
         name={f(summary.properties.title)}
@@ -74,7 +75,7 @@ export const Summary = ({ application }: OJOIFieldBaseProps) => {
         value={answers?.publishing?.contentCategories
           .map((c) => c.label)
           .join(', ')}
-      />
+      /> */}
     </Stack>
   )
 }
