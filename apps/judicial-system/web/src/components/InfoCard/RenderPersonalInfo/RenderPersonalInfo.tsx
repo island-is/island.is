@@ -8,10 +8,10 @@ const RenderPersonalData = (
   phoneNumber?: string | null,
   breakSpaces = true,
 ) => (
-  <Box display={breakSpaces ? 'block' : 'flex'}>
+  <Box display={breakSpaces ? 'block' : 'flex'} dataTestId="personalInfo">
     {name && (
       <Text key={name} whiteSpace="pre">{`${name}${
-        email && !breakSpaces ? `, ` : ''
+        (email || phoneNumber) && !breakSpaces ? `, ` : ''
       }`}</Text>
     )}
     {email && (
@@ -22,7 +22,9 @@ const RenderPersonalData = (
       </LinkV2>
     )}
     {phoneNumber && (
-      <Text key={phoneNumber} whiteSpace="pre">{`, ${phoneNumber}`}</Text>
+      <Text key={phoneNumber} whiteSpace="pre">
+        {phoneNumber}
+      </Text>
     )}
   </Box>
 )
