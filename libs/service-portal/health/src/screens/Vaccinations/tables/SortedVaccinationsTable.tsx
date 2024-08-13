@@ -1,4 +1,4 @@
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { SortableTable, formatDate } from '@island.is/service-portal/core'
 import { messages } from '../../../lib/messages'
 import { Vaccine } from '../dataStructure'
@@ -11,6 +11,7 @@ interface Props {
   data: Array<Vaccine>
 }
 export const SortedVaccinationsTable = ({ data }: Props) => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const headerDataDetail: Array<DetailHeader> = [
     {

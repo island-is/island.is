@@ -1,4 +1,4 @@
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { Box, Hidden } from '@island.is/island-ui/core'
 import {
   HEALTH_DIRECTORATE_SLUG,
@@ -17,6 +17,7 @@ export const VaccinationsWrapper = ({
   children: React.ReactNode
   pathname?: string
 }) => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
   return (

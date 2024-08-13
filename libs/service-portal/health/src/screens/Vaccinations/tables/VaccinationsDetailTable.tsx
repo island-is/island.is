@@ -1,9 +1,10 @@
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { LinkButton } from '@island.is/service-portal/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
-import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../../lib/messages'
 import { DetailTable } from '../../../utils/types'
+
 import * as styles from './VaccinationsTable.css'
 
 export const VaccinationsDetailTable = ({
@@ -11,6 +12,7 @@ export const VaccinationsDetailTable = ({
   headerData,
   rowData,
 }: DetailTable) => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   return (
     <Box padding={3} background="blue100">

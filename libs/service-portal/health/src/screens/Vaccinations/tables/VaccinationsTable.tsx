@@ -1,6 +1,6 @@
 import { Box, Table as T, Tag } from '@island.is/island-ui/core'
 import { messages } from '../../../lib/messages'
-import { useLocale } from '@island.is/localization'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import { ExpandHeader, ExpandRow } from '@island.is/service-portal/core'
 import { VaccinationsDetailTable } from './VaccinationsDetailTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
@@ -12,6 +12,7 @@ interface Props {
 }
 
 export const VaccinationsTable = ({ data }: Props) => {
+  useNamespaces('sp.health')
   const { formatMessage } = useLocale()
   const headerData: Array<DetailHeader> = [
     {
