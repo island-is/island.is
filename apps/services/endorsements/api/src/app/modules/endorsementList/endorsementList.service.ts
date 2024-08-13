@@ -3,6 +3,7 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
+  ForbiddenException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Op, Sequelize } from 'sequelize'
@@ -24,6 +25,9 @@ import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
+import csvStringify from 'csv-stringify/lib/sync';
+import { S3 } from 'aws-sdk'
+
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -40,6 +44,7 @@ export class EndorsementListService {
     @Inject(EmailService)
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
+    private s3 = new S3()
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -665,4 +670,107 @@ export class EndorsementListService {
       return { success: false }
     }
   }
+   ///////////////////////////////////////////////
+  // async generatePDF(listId: string, user: User): Promise<Buffer> {
+  //   const list = await this.getEndorsementList(listId, user);
+  //   return this.createPDF(list);
+  // }
+
+  async generateCSV(listId: string, user: User): Promise<string> {
+    const list = await this.getEndorsementList(listId, user);
+    return this.createCSV(list);
+  }
+
+  private async getEndorsementList(listId: string, user: User): Promise<EndorsementList> {
+    const list = await this.endorsementListModel.findOne({
+      where: { id: listId },
+      include: [{ 
+        model: Endorsement,      
+        attributes: ['created', 'meta'],
+      }],
+    });
+
+    if (!list) {
+      throw new NotFoundException('Endorsement list not found');
+    }
+
+    const isListOwner = list.owner === user.nationalId;
+    const isAdmin = this.hasAdminScope(user);
+
+    if (!isListOwner && !isAdmin) {
+      throw new ForbiddenException('You are not allowed to access this resource');
+    }
+
+    return list;
+  }
+
+  private async createCSV(list: EndorsementList): Promise<string> {
+    const endorsements = list.endorsements || [];
+
+    // Generate CSV data
+    const data = endorsements.map((endorsement) => ({
+      dateCreated: endorsement.created.toISOString(),
+      fullName: endorsement.meta.fullName,
+      locality: endorsement.meta.locality,
+    }));
+
+    const csvContent = csvStringify(data, { header: true });
+
+    // Define S3 bucket and object key
+    const bucketName = "bov" //process.env.AWS_S3_BUCKET_NAME;
+    const key = `endorsement-lists/${list.id}-TEST.csv`;
+
+    // Upload CSV to S3
+    await this.s3
+      .putObject({
+        Bucket: bucketName,
+        Key: key,
+        Body: csvContent,
+        ContentType: 'text/csv',
+      })
+      .promise();
+
+    // Generate a presigned URL
+    const presignedUrl = this.s3.getSignedUrl('getObject', {
+      Bucket: bucketName,
+      Key: key,
+      Expires: 60 * 60, // URL expires in 1 hour
+    });
+
+    return presignedUrl;
+  }
+
+  // private createCSV(list: EndorsementList): string {
+  //   const endorsements = list.endorsements || [];
+  
+  //   const data = endorsements.map((endorsement) => ({
+  //     dateCreated: endorsement.created.toISOString(),
+  //     fullName: endorsement.meta.fullName,
+  //     locality: endorsement.meta.locality,
+  //   }));
+  
+  //   return csvStringify(data, { header: true });
+  // }
+  
+
+  // private createPDF(list: EndorsementList): Buffer {
+  //   const doc = new PDFDocument();
+  //   const chunks: Buffer[] = [];
+
+  //   doc.on('data', chunk => chunks.push(chunk));
+  //   doc.on('end', () => Buffer.concat(chunks));
+
+  //   doc.fontSize(12).text(`Endorsement List: ${list.title}`, { align: 'center' });
+
+  //   list.endorsements.forEach((endorsement) => {
+  //     doc.text(`Date: ${endorsement.created}`);
+  //     doc.text(`Full Name: ${endorsement.meta.fullName}`);
+  //     doc.text(`Locality: ${endorsement.meta.locality}`);
+  //     doc.moveDown();
+  //   });
+
+  //   doc.end();
+
+  //   return Buffer.concat(chunks);
+  // }
 }

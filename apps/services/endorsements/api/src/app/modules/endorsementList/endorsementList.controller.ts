@@ -7,6 +7,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
@@ -47,12 +48,15 @@ import { EndorsementListInterceptor } from './interceptors/endorsementList.inter
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { Response } from 'express';
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
   PaginationDto,
 ) {}
 
+
+const BIG_TEST_LIST = "0d22628d-e8d9-4ba9-aeac-683ba7817d49"
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
@@ -357,5 +361,37 @@ export class EndorsementListController {
       endorsementList.id,
       query.emailAddress,
     )
+  }
+
+  // @Get('download-pdf')
+  // @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
+  // async downloadPDF(
+  //   @Param('listId') listId: string,
+  //   @CurrentUser() user: User,
+  //   @Res() res: Response,
+  // ) {
+  //   const pdfBuffer = await this.endorsementListService.generatePDF(listId, user);
+  //   res.set({
+  //     'Content-Type': 'application/pdf',
+  //     'Content-Disposition': `attachment; filename="endorsement-list-${listId}.pdf"`,
+  //     'Content-Length': pdfBuffer.length,
+  //   });
+  //   res.end(pdfBuffer);
+  // }
+
+  @Get(':listId/download-csv')
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
+  async downloadCSV(
+    @Param('listId') listId: string,
+    @CurrentUser() user: User,
+    @Res() res: Response,
+  ) {
+    const csvData = await this.endorsementListService.generateCSV(listId, user);
+    res.set({
+      'Content-Type': 'text/csv',
+      'Content-Disposition': `attachment; filename="endorsement-list-${listId}.csv"`,
+      'Content-Length': Buffer.byteLength(csvData),
+    });
+    res.end(csvData);
   }
 }
