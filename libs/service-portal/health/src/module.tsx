@@ -59,7 +59,7 @@ const OrganDonation = lazy(() =>
 )
 
 const OrganDonationRegistration = lazy(() =>
-  import('./screens/OrganDonationRegistration/OrganDonationRegistration'),
+  import('./screens/OrganDonationRegistration/RegistrationForm'),
 )
 
 export const healthModule: PortalModule = {

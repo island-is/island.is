@@ -982,4 +982,16 @@ export const messages = defineMessages({
     defaultMessage:
       'Textareitur má ekki vera tómur sé þessi valkostur valinn. ',
   },
+  other: {
+    id: 'sp.health:other-lower-case',
+    defaultMessage: 'annað',
+  },
+  registrationComplete: {
+    id: 'sp.health:registration-complete',
+    defaultMessage: 'Skráning tókst',
+  },
+  registrationFailed: {
+    id: 'sp.health:registration-failed',
+    defaultMessage: 'Skráning mistókst',
+  },
 })

@@ -10,10 +10,14 @@ interface OrganDonor {
   data: Data
 }
 
+export interface OptionsLimitations {
+  value: string
+  type: string
+}
 export interface OptionsOptions {
   id: string
   title: string
-  limitations?: string[]
+  limitations?: Array<OptionsLimitations>
 }
 
 interface OptionsData {
@@ -60,15 +64,15 @@ export const getOptions = (locale: Locale) => {
           title:
             'Ég heimila líffæragjöf, en heimildin nær ekki til eftirtalinna líffæra:',
           limitations: [
-            'Bris',
-            'Lifur',
-            'Hjarta',
-            'Lungu',
-            'Hornhimna',
-            'Nýru',
-            'Húð',
-            'Þarmar',
-            'Annað',
+            { value: 'Bris', type: 'checkbox' },
+            { value: 'Lifur', type: 'checkbox' },
+            { value: 'Hjarta', type: 'checkbox' },
+            { value: 'Lungu', type: 'checkbox' },
+            { value: 'Hornhimna', type: 'checkbox' },
+            { value: 'Nýru', type: 'checkbox' },
+            { value: 'Húð', type: 'checkbox' },
+            { value: 'Þarmar', type: 'checkbox' },
+            { value: 'Annað', type: 'input' },
           ],
         },
         {
@@ -90,15 +94,15 @@ export const getOptions = (locale: Locale) => {
           title:
             'I authorize organ donation, but the authorization does not cover the following organs:',
           limitations: [
-            'Pancreas',
-            'Liver',
-            'Heart',
-            'Lungs',
-            'Cornea',
-            'Kidney',
-            'Húð',
-            'Þarmar',
-            'Other',
+            { value: 'Pancreas', type: 'checkbox' },
+            { value: 'Liver', type: 'checkbox' },
+            { value: 'Heart', type: 'checkbox' },
+            { value: 'Lungs', type: 'checkbox' },
+            { value: 'Cornea', type: 'checkbox' },
+            { value: 'Kidney', type: 'checkbox' },
+            { value: 'Skin', type: 'checkbox' },
+            { value: 'Intestines', type: 'checkbox' },
+            { value: 'Other', type: 'input' },
           ],
         },
         {
