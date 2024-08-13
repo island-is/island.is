@@ -4,10 +4,14 @@ import { User } from '@island.is/auth-nest-tools'
 import { FamilyCompulsorySchoolCareer } from './models/familyCareer.model'
 import { mapCareer } from './educationMapper'
 import { isDefined } from '@island.is/shared/utils'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
 
 @Injectable()
-export class EducationService {
-  constructor(private readonly gradeService: GradeClientService) {}
+export class EducationServiceV2 {
+  constructor(
+    private readonly gradeService: GradeClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+  ) {}
 
   async familyCareers(
     user: User,

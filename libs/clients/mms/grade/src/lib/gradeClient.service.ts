@@ -1,5 +1,5 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { GradesApi } from '../../gen/fetch'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import {
@@ -11,12 +11,14 @@ import {
   mapStudentAssessmentsDto,
 } from './dto/familyAssessments.dto'
 import { isDefined } from '@island.is/shared/utils'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class GradeClientService {
   constructor(
     private readonly api: GradesApi,
     private readonly nationalRegistryService: NationalRegistryV3ClientService,
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   private apiWithAuth = (user: User) =>
@@ -62,6 +64,13 @@ export class GradeClientService {
         })
         .filter(isDefined) ?? []),
     ]
+
+    const l = await this.apiWithAuth(
+      user,
+    ).publicGradeV2ControllerGetStudentAssessment({
+      nationalId: user.nationalId,
+    })
+    this.logger.debug('data', l)
 
     return Promise.all(
       family.map(async (person) => {

@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { CompulsorySchoolGradeLevelExamResults } from './gradeLevelExamResults'
+import { CompulsorySchoolGradeLevelExamResults } from './gradeLevelExamResults.model'
 
 @ObjectType('EducationCompulsorySchoolStudentCareer')
 export class StudentCareer {

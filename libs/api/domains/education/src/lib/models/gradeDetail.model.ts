@@ -2,8 +2,8 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('EducationCompulsorySchoolGradeDetail')
 export class GradeDetail {
-  @Field(() => Int)
-  grade!: number
+  @Field()
+  grade!: string
 
   @Field(() => Int, { nullable: true })
   weight?: number

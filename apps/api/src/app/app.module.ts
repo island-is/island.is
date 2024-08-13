@@ -23,6 +23,7 @@ import { DocumentModule } from '@island.is/api/domains/documents'
 import { DrivingLicenseModule } from '@island.is/api/domains/driving-license'
 import { DrivingLicenseBookModule } from '@island.is/api/domains/driving-license-book'
 import { EducationModule } from '@island.is/api/domains/education'
+import { EducationV2Module } from '@island.is/api/domains/education'
 import { SocialInsuranceModule } from '@island.is/api/domains/social-insurance'
 import { ElectronicRegistrationsModule } from '@island.is/api/domains/electronic-registration-statistics'
 import {
@@ -228,6 +229,7 @@ const environment = getConfig
       },
       fileDownloadBucket: environment.education.fileDownloadBucket!,
     }),
+    EducationV2Module,
     ApplicationModule.register({
       baseApiUrl: environment.applicationSystem.baseApiUrl!,
     }),
