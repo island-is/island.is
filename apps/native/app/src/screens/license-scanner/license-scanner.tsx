@@ -41,6 +41,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { ComponentRegistry } from '../../utils/component-registry'
 import { isIos } from '../../utils/devices'
 import { isJWT } from '../../utils/token'
+import { authStore } from '../../stores/auth-store'
 
 const BottomRight = styled.View`
   position: absolute;
@@ -213,6 +214,12 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
   useEffect(() => {
     // Request camera permission on mount
     void requestPermission()
+    if (!isIos) {
+      // Opening camera on android triggers the lock screen, so we need to prevent the lock screen from showing
+      authStore.setState({
+        noLockScreenUntilNextAppStateActive: true,
+      })
+    }
   }, [])
 
   useEffect(() => {
