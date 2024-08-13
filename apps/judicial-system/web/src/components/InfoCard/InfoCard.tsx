@@ -1,7 +1,7 @@
 import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Icon, IconMapIcon, LinkV2, Text } from '@island.is/island-ui/core'
+import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import {
   Defendant,
   SessionArrangements,
@@ -11,8 +11,8 @@ import {
   DefendantInfo,
   DefendantInfoActionButton,
 } from './DefendantInfo/DefendantInfo'
+import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
 import { strings } from './InfoCard.strings'
-import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
 
 interface Defender {
@@ -46,17 +46,6 @@ interface Props {
   additionalDataSections?: DataSection[]
 }
 
-export const NameAndEmail = (name?: string | null, email?: string | null) => [
-  ...(name ? [<Text key={name}>{name}</Text>] : []),
-  ...(email
-    ? [
-        <LinkV2 href={`mailto:${email}`} key={email} className={link}>
-          <Text as="span">{email}</Text>
-        </LinkV2>,
-      ]
-    : []),
-]
-
 const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
   const { formatMessage } = useIntl()
 
@@ -80,7 +69,7 @@ const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
           <Box display="flex" key={defender.name} role="paragraph">
             <Text as="span">{defender.name}</Text>
             {defender.email && <Text as="span" whiteSpace="pre">{`, `}</Text>}
-            {NameAndEmail(null, defender.email)}
+            {RenderPersonalData(null, defender.email)}
             <Text as="span">
               {defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''}
             </Text>

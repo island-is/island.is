@@ -39,7 +39,7 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
@@ -140,7 +140,7 @@ const Overview = () => {
               },
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: NameAndEmail(
+                value: RenderPersonalData(
                   workingCase.prosecutor?.name,
                   workingCase.prosecutor?.email,
                 ),
