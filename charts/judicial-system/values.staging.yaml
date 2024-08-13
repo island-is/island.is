@@ -16,6 +16,7 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 judicial-system-api:
+  armBetaEnrolled: false
   enabled: true
   env:
     ALLOW_AUTH_BYPASS: 'true'
@@ -103,6 +104,7 @@ judicial-system-api:
     create: true
     name: 'judicial-system-api'
 judicial-system-backend:
+  armBetaEnrolled: false
   enabled: true
   env:
     BLOCKED_API_INTEGRATION: 'COURT,POLICE_CASE'
@@ -240,6 +242,7 @@ judicial-system-backend:
     create: true
     name: 'judicial-system-backend'
 judicial-system-digital-mailbox-api:
+  armBetaEnrolled: false
   enabled: true
   env:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
@@ -315,6 +318,7 @@ judicial-system-message-handler:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -377,6 +381,7 @@ judicial-system-message-handler:
     create: true
     name: 'judicial-system-message-handler'
 judicial-system-robot-api:
+  armBetaEnrolled: false
   enabled: true
   env:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
@@ -450,6 +455,7 @@ judicial-system-scheduler:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -511,6 +517,7 @@ judicial-system-scheduler:
     create: true
     name: 'judicial-system-scheduler'
 judicial-system-web:
+  armBetaEnrolled: false
   enabled: true
   env:
     API_URL: 'https://judicial-system.staging01.devland.is'
@@ -575,6 +582,7 @@ judicial-system-web:
     allowPrivilegeEscalation: false
     privileged: false
 judicial-system-xrd-api:
+  armBetaEnrolled: false
   enabled: true
   env:
     AUDIT_TRAIL_GROUP_NAME: 'k8s/judicial-system/audit-log'
