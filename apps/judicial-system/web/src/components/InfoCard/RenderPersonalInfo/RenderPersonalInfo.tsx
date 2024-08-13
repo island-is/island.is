@@ -15,11 +15,16 @@ const RenderPersonalData = (
       }`}</Text>
     )}
     {email && (
-      <LinkV2 href={`mailto:${email}`} className={link} key={email}>
+      <>
+        <LinkV2 href={`mailto:${email}`} className={link} key={email}>
+          <Text as="span" whiteSpace="pre">
+            {email}
+          </Text>
+        </LinkV2>
         <Text as="span" whiteSpace="pre">
-          {`${email}${phoneNumber ? `, ` : ''}`}
+          {phoneNumber ? `, ` : ''}
         </Text>
-      </LinkV2>
+      </>
     )}
     {phoneNumber && (
       <Text key={phoneNumber} whiteSpace="pre">

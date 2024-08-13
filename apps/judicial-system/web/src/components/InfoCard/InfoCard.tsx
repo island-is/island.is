@@ -70,6 +70,7 @@ const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
             defender.name,
             defender.email,
             defender.phoneNumber,
+            false,
           )
         ) : (
           <Text key={`defender_not_registered_${index}`}>
