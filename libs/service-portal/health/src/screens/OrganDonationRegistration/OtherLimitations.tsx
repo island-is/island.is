@@ -31,7 +31,7 @@ export const OtherLimitations = ({ value }: OptionsLimitations) => {
       {checked && (
         <GridContainer>
           <GridRow>
-            <GridColumn span="5/7">
+            <GridColumn span={['7/7', '5/7']}>
               <Box marginY="gutter">
                 <Input
                   id="organ-donation-limitation"
