@@ -15,7 +15,7 @@ echo "APP value: $APP"
 if yq e "select(.$APP.armBetaEnrolled == true) | length > 0" charts/islandis/values.prod.yaml; then
   PLATFORM=linux/aarch64
 else
-  PLATFORM=linux/amd64
+  PLATFORM=linux/aarch64
 fi
 
 docker buildx create --driver docker-container --use || true
