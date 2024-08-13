@@ -116,10 +116,9 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: messages.organDonation,
       path: HealthPaths.HealthOrganDonation,
-      navHide: true,
       children: [
         {
-          name: messages.organDonation,
+          name: messages.changeRegistration,
           path: HealthPaths.HealthOrganDonationRegistration,
           navHide: true,
         },
