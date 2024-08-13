@@ -115,6 +115,7 @@ export function prepareServiceForEnv(
     cmds: serviceDef.cmds,
     readiness: serviceDef.readiness,
     podDisruptionBudget: serviceDef.podDisruptionBudget,
+    armBetaEnrolled: serviceDef.armBetaEnrolled,
   }
 
   if (serviceDef.postgres) {

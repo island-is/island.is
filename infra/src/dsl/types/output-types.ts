@@ -135,6 +135,8 @@ export interface HelmService {
   }
   extra?: Hash
   files?: string[]
+
+  armBetaEnrolled?: boolean
 }
 
 export interface LocalrunService {

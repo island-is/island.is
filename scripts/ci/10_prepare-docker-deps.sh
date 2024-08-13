@@ -10,10 +10,16 @@ mkdir -p "$PROJECT_ROOT"/cache
 
 NODE_IMAGE_TAG=${NODE_IMAGE_TAG:-$(./scripts/ci/get-node-version.mjs)}
 
+if grep -r ".armBetaEnrolled(true)" "$APP_HOME"; then
+  PLATFORM=linux/aarch64
+else
+  PLATFORM=linux/amd64
+fi
+
 docker buildx create --driver docker-container --use || true
 
 docker buildx build \
-  --platform=linux/amd64 \
+  --platform=$PLATFORM \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache \
   --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \
   -f "${DIR}"/Dockerfile \
@@ -21,7 +27,7 @@ docker buildx build \
   "$PROJECT_ROOT"
 
 docker buildx build \
-  --platform=linux/amd64 \
+  --platform=$PLATFORM \
   --cache-from=type=local,src="$PROJECT_ROOT"/cache \
   --cache-to=type=local,dest="$PROJECT_ROOT"/cache_output \
   --build-arg NODE_IMAGE_TAG="$NODE_IMAGE_TAG" \

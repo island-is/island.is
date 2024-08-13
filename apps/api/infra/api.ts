@@ -464,4 +464,5 @@ export const serviceSetup = (services: {
       'application-system',
       'consultation-portal',
     )
+    .armBetaEnrolled(true)
 }

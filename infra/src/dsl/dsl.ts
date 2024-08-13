@@ -68,6 +68,7 @@ export class ServiceBuilder<ServiceType extends string> {
       ingress: {},
       namespace: 'islandis',
       serviceAccountEnabled: false,
+      armBetaEnrolled: false,
       securityContext: {
         privileged: false,
         allowPrivilegeEscalation: false,
@@ -256,6 +257,11 @@ export class ServiceBuilder<ServiceType extends string> {
     this.serviceDef.replicaCount = replicaCount
     return this
   }
+
+  armBetaEnrolled(enabled: boolean) {
+    this.serviceDef.armBetaEnrolled = enabled
+    return this
+  } 
 
   private stripPostfix(name: string): string
   private stripPostfix(
