@@ -17,6 +17,9 @@ export const useVehicles = () => {
         },
       },
       fetchPolicy: 'cache-first',
+      onError: (error: unknown) => {
+        console.error('Error fetching vehicles:', error)
+      },
     })
   }
 
