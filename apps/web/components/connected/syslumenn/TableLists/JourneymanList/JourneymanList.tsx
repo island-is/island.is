@@ -262,6 +262,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                 <T.Row>
                   <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
                   <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
+                  <T.HeadData>{n('dateOfPublication', 'Útgáfuár')}</T.HeadData>
                   <T.HeadData align="right">
                     {n('dateOfPublication', 'Útgáfuár')}
                   </T.HeadData>
@@ -285,16 +286,11 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                           </Box>
                         </T.Data>
                         <T.Data>
-                          {licences.dateOfPublication && (
-                            <Box>
-                              <Text textAlign="right" variant="small">
-                                {format(
-                                  new Date(licences.dateOfPublication),
-                                  'yyyy',
-                                )}
-                              </Text>
-                            </Box>
-                          )}
+                          <Box>
+                            <Text textAlign="right" variant="small">
+                              {licences.nationalId}
+                            </Text>
+                          </Box>
                         </T.Data>
                       </T.Row>
                     )
