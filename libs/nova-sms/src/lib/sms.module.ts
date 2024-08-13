@@ -1,19 +1,9 @@
-import { DynamicModule } from '@nestjs/common'
+import { Module } from '@nestjs/common'
 
-import { SmsService, SmsServiceOptions, SMS_OPTIONS } from './sms.service'
+import { SmsService } from './sms.service'
 
-export class SmsModule {
-  static register(options: SmsServiceOptions): DynamicModule {
-    return {
-      module: SmsModule,
-      providers: [
-        {
-          provide: SMS_OPTIONS,
-          useFactory: () => options,
-        },
-        SmsService,
-      ],
-      exports: [SmsService],
-    }
-  }
-}
+@Module({
+  providers: [SmsService],
+  exports: [SmsService],
+})
+export class SmsModule {}
