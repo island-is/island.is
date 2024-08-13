@@ -261,7 +261,7 @@ export class ServiceBuilder<ServiceType extends string> {
   armBetaEnrolled(enabled: boolean) {
     this.serviceDef.armBetaEnrolled = enabled
     return this
-  } 
+  }
 
   private stripPostfix(name: string): string
   private stripPostfix(
