@@ -200,12 +200,14 @@ export const healthModule: PortalModule = {
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonation,
+      key: 'HealthOrganDonation',
       enabled: true, //userInfo.scopes.includes(ApiScope.meDetails), // TODO: Change to correct scope!
       element: <OrganDonation />,
     },
     {
       name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
+      key: 'HealthOrganDonation',
       enabled: true, //userInfo.scopes.includes(), // TODO: Change to correct scope!
       element: <OrganDonationRegistration />,
     },
