@@ -7,7 +7,6 @@ import { SmsModule } from '@island.is/nova-sms'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { environment } from '../../../environments'
 import { CaseModule, CourtModule, DefendantModule, EventModule } from '../index'
 import { Notification } from './models/notification.model'
 import { InternalNotificationController } from './internalNotification.controller'
@@ -16,8 +15,8 @@ import { NotificationService } from './notification.service'
 
 @Module({
   imports: [
-    EmailModule.register(environment.emailOptions),
-    SmsModule.register(environment.smsOptions),
+    EmailModule,
+    SmsModule,
     CmsTranslationsModule,
     MessageModule,
     forwardRef(() => CaseModule),
