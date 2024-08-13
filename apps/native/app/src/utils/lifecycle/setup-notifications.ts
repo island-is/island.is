@@ -15,8 +15,8 @@ export async function handleNotificationResponse({
   notification,
 }: NotificationResponse) {
   const link =
-    notification.request.content.data?.link ??
-    notification.request.content.data?.clickActionUrl
+    notification.request.content.data?.clickActionUrl ??
+    notification.request.content.data?.link
 
   if (
     typeof link === 'string' &&
