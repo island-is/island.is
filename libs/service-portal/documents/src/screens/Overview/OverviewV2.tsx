@@ -164,6 +164,7 @@ export const ServicePortalDocumentsV2 = () => {
                 <Box className={styles.checkboxWrap} marginRight={3}>
                   <Checkbox
                     name="checkbox-select-all"
+                    aria-label={formatMessage(messages.selectAll)}
                     checked={selectedLines.length > 0}
                     onChange={(e) => {
                       if (e.target.checked) {
@@ -248,8 +249,10 @@ export const ServicePortalDocumentsV2 = () => {
                     totalPages={totalPages}
                     renderLink={(page, className, children) => (
                       <button
+                        type="button"
                         className={className}
                         onClick={handlePageChange.bind(null, page)}
+                        aria-label={formatMessage(messages.goToPage, { page })}
                       >
                         {children}
                       </button>
