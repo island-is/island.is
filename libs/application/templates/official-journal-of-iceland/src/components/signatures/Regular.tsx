@@ -10,7 +10,7 @@ import {
 import cloneDeep from 'lodash/cloneDeep'
 import {
   INITIAL_ANSWERS,
-  INSTITUTION_INDEX,
+  SIGNATURE_INDEX,
   MEMBER_INDEX,
 } from '../../lib/constants'
 import { getErrorViaPath } from '@island.is/application/core'
@@ -140,12 +140,12 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
       {state.regular.map((institution, index) => {
         const institutionPath =
           InputFields.signature.regular.institution.replace(
-            INSTITUTION_INDEX,
+            SIGNATURE_INDEX,
             `${index}`,
           )
 
         const datePath = InputFields.signature.regular.date.replace(
-          INSTITUTION_INDEX,
+          SIGNATURE_INDEX,
           `${index}`,
         )
 
@@ -197,16 +197,16 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
               </Text>
               {institution.members?.map((signature, i) => {
                 const abovePath = InputFields.signature.regular.members.above
-                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(SIGNATURE_INDEX, `${index}`)
                   .replace(MEMBER_INDEX, `${i}`)
                 const namePath = InputFields.signature.regular.members.name
-                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(SIGNATURE_INDEX, `${index}`)
                   .replace(MEMBER_INDEX, `${i}`)
                 const afterPath = InputFields.signature.regular.members.after
-                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(SIGNATURE_INDEX, `${index}`)
                   .replace(MEMBER_INDEX, `${i}`)
                 const belowPath = InputFields.signature.regular.members.below
-                  .replace(INSTITUTION_INDEX, `${index}`)
+                  .replace(SIGNATURE_INDEX, `${index}`)
                   .replace(MEMBER_INDEX, `${i}`)
 
                 return (

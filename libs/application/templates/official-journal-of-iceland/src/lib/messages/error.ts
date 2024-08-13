@@ -1,6 +1,16 @@
 import { defineMessages } from 'react-intl'
 
 export const error = defineMessages({
+  applicationValidationError: {
+    id: 'ojoi.application:error.applicationValidationError',
+    defaultMessage: 'Umsókn er ekki rétt útfyllt',
+    description: 'Error message when application is not valid',
+  },
+  signaturesValidationError: {
+    id: 'ojoi.application:error.signaturesValidationError',
+    defaultMessage: 'Undirskriftir eru ekki réttar',
+    description: 'Error message when signatures are not valid',
+  },
   dataSubmissionErrorTitle: {
     id: 'ojoi.application:error.dataSubmissionErrorTitle',
     defaultMessage: 'Villa kom upp við vistun gagna',

@@ -15,9 +15,8 @@ export enum AnswerOption {
 export const MINIMUM_WEEKDAYS = 10
 
 export enum Routes {
-  TEST = 'test',
-  COMMENTS = 'comments',
   REQUIREMENTS = 'requirements',
+  COMMENTS = 'comments',
   ADVERT = 'advert',
   SIGNATURE = 'signature',
   ATTACHMENTS = 'attachments',
@@ -38,7 +37,7 @@ export enum TypeIds {
 }
 
 export const MEMBER_INDEX = '{memberIndex}'
-export const INSTITUTION_INDEX = '{institutionIndex}'
+export const SIGNATURE_INDEX = '{institutionIndex}'
 
 export const INTERVAL_TIMER = 3000
 export const DEBOUNCE_INPUT_TIMER = 333
@@ -46,68 +45,4 @@ export const DEBOUNCE_INPUT_TIMER = 333
 export enum FileNames {
   DOCUMENT = 'document',
   ADDITIONS = 'additions',
-}
-
-export const INITIAL_ANSWERS = {
-  [Routes.TEST]: {
-    name: '',
-    department: '',
-    job: '',
-  },
-  [Routes.REQUIREMENTS]: {
-    approveExternalData: false,
-  },
-  [Routes.ADVERT]: {
-    department: '',
-    type: '',
-    subType: '',
-    title: '',
-    template: '',
-    document: '',
-  },
-  [Routes.SIGNATURE]: {
-    type: 'regular',
-    signature: '',
-    regular: [
-      {
-        institution: '',
-        date: '',
-        members: [
-          {
-            above: '',
-            name: '',
-            below: '',
-            after: '',
-          },
-        ],
-      },
-    ],
-    committee: {
-      institution: '',
-      date: '',
-      chairman: {
-        above: '',
-        name: '',
-        after: '',
-        below: '',
-      },
-      members: [
-        {
-          name: '',
-          below: '',
-        },
-      ],
-    },
-    additional: '',
-  },
-  [Routes.ATTACHMENTS]: {
-    files: [],
-    fileNames: [],
-  },
-  [Routes.PUBLISHING]: {
-    date: '',
-    contentCategories: [],
-    communicationChannels: [],
-    message: '',
-  },
 }

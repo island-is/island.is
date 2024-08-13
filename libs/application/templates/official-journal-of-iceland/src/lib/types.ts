@@ -1,71 +1,42 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
-import { type answerSchemas } from './dataSchema'
-import { INSTITUTION_INDEX, MEMBER_INDEX, Routes } from './constants'
+import { SIGNATURE_INDEX, MEMBER_INDEX, Routes } from './constants'
 import {
   OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'
+import { partialSchema } from './dataSchema'
 
 export const InputFields = {
-  [Routes.TEST]: {
-    name: 'test.name',
-    department: 'test.department',
-    job: 'test.job',
-  },
   [Routes.REQUIREMENTS]: {
     approveExternalData: 'requirements.approveExternalData',
   },
   [Routes.ADVERT]: {
-    department: 'advert.department',
-    type: 'advert.type',
-    subType: 'advert.subType',
+    departmentId: 'advert.department',
+    typeId: 'advert.type',
     title: 'advert.title',
-    template: 'advert.template',
-    document: 'advert.document',
+    html: 'advert.document',
+    requestedDate: 'advert.requestedDate',
+    categories: 'advert.categories',
+    channels: 'advert.channels',
+    message: 'advert.message',
   },
   [Routes.SIGNATURE]: {
-    type: 'signature.type',
-    contents: 'signature.contents',
-    regular: {
-      institution: `signature.regular-${INSTITUTION_INDEX}.institution`,
-      date: `signature.regular-${INSTITUTION_INDEX}.date`,
-      members: {
-        above: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.above`,
-        name: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.name`,
-        below: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.below`,
-        after: `signature.regular-${INSTITUTION_INDEX}.members-${MEMBER_INDEX}.after`,
-      },
-    },
-    committee: {
-      institution: 'signature.committee.institution',
-      date: 'signature.committee.date',
-      chairman: {
-        above: 'signature.committee.chairman.above',
-        name: 'signature.committee.chairman.name',
-        after: 'signature.committee.chairman.after',
-        below: 'signature.committee.chairman.below',
-      },
-      members: {
-        name: `signature.committee.members-${MEMBER_INDEX}.name`,
-        below: `signature.committee.members-${MEMBER_INDEX}.below`,
-      },
-    },
+    institution: `signature-${SIGNATURE_INDEX}.institution`,
+    date: `signature-${SIGNATURE_INDEX}.date`,
     additonalSignature: 'signature.additonalSignature',
-  },
-  [Routes.ATTACHMENTS]: {
-    files: 'additionsAndDocuments.files',
-    fileNames: 'additionsAndDocuments.fileNames',
-  },
-  [Routes.ORIGINAL]: {
-    files: 'original.files',
-  },
-  [Routes.PUBLISHING]: {
-    date: 'publishing.date',
-    fastTrack: 'publishing.fastTrack',
-    contentCategories: 'publishing.contentCategories',
-    communicationChannels: 'publishing.communicationChannels',
-    message: 'publishing.message',
+    chairman: {
+      above: 'signature.chairman.above',
+      name: 'signature.chairman.name',
+      after: 'signature.chairman.after',
+      below: 'signature.chairman.below',
+    },
+    members: {
+      above: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.above`,
+      name: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.name`,
+      below: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.below`,
+      after: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.after`,
+    },
   },
 }
 
@@ -83,16 +54,6 @@ type Option = {
 export type AdvertOption<Key extends string> = {
   [key in Key]: Array<Option>
 }
-
-export type SignatureType = 'regular' | 'committee'
-
-export type RegularSignatureState = NonNullable<
-  answerSchemas['signature']['regular']
->
-export type CommitteeSignatureState = NonNullable<
-  answerSchemas['signature']['committee']
->
-
 export enum TemplateApiActions {
   departments = 'getDepartments',
   types = 'getAdvertTypes',
@@ -109,7 +70,7 @@ export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
 type StatusProvider = 'success' | 'failure'
 
-export type ErrorSchema = NestedType<answerSchemas>
+export type ErrorSchema = NestedType<partialSchema>
 
 export interface ExternalData {
   departments: {
@@ -117,7 +78,6 @@ export interface ExternalData {
     date: string
     status: StatusProvider
   }
-
   types: {
     data: AdvertOption<'types'>
     date: string
@@ -133,7 +93,7 @@ export interface ExternalData {
 export type OJOIApplication = Override<
   Application,
   {
-    answers: Partial<answerSchemas>
+    answers: partialSchema
     externalData: ExternalData
   }
 >
