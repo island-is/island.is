@@ -1556,11 +1556,11 @@ PODS:
     - React-Core
   - SocketRocket (0.7.0)
   - SSZipArchive (2.2.3)
-  - VisionCamera (4.3.2):
-    - VisionCamera/Core (= 4.3.2)
-    - VisionCamera/React (= 4.3.2)
-  - VisionCamera/Core (4.3.2)
-  - VisionCamera/React (4.3.2):
+  - VisionCamera (4.5.1):
+    - VisionCamera/Core (= 4.5.1)
+    - VisionCamera/React (= 4.5.1)
+  - VisionCamera/Core (4.5.1)
+  - VisionCamera/React (4.5.1):
     - React-Core
   - Yoga (0.0.0)
 
@@ -2029,7 +2029,7 @@ SPEC CHECKSUMS:
   RNSVG: 43b64ed39c14ce830d840903774154ca0c1f27ec
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
-  VisionCamera: 2c4cb89c573c5d54d1191e433bd224998d3b14b7
+  VisionCamera: 104de00dce2e04dec51bfb6027eff0312fa3174e
   Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
 PODFILE CHECKSUM: 6edb7e5e876d07218fb4a9d2c4413758111b9710

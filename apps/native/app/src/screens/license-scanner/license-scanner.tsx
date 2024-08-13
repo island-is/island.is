@@ -136,7 +136,7 @@ export const LicenseScannerScreen: NavigationFunctionComponent = ({
       zoom.value = interpolate(
         z,
         [1, 10],
-        [device?.minZoom ?? 1, device?.maxZoom ?? 2],
+        [device?.minZoom ?? 1, 12],
         Extrapolation.CLAMP,
       )
     })

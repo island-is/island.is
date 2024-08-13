@@ -87,7 +87,7 @@
     "react-native-share": "7.1.1",
     "react-native-spotlight-search": "2.0.0",
     "react-native-svg": "15.2.0",
-    "react-native-vision-camera": "4.3.2",
+    "react-native-vision-camera": "4.5.1",
     "react-native-webview": "13.8.6",
     "styled-components": "6.1.11",
     "zustand": "3.5.12"
