@@ -320,7 +320,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
               marginBottom={2}
               key={vehicle.permno + '_currentbox'}
               id={vehicle.permno + '_currentbox'}
-              //  id="vehicles.allVehicles"
             >
               <ActionCard
                 key={vehicle.permno}
