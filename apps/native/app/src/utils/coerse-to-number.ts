@@ -21,5 +21,5 @@ export const coerceToNumber = (input: string | number): number => {
   const parsedNumber = Number(trimmedInput)
 
   // Return the number or NaN if conversion failed
-  return isNaN(parsedNumber) ? NaN : parsedNumber
+  return Number.isNaN(parsedNumber) ? NaN : parsedNumber
 }
