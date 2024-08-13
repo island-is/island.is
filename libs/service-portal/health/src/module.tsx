@@ -199,18 +199,21 @@ export const healthModule: PortalModule = {
     {
       name: hm.vaccinations,
       path: HealthPaths.HealthVaccinations,
+      key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare), // TODO: Add correct scope
       element: <VaccinationsGeneral />,
     },
     {
       name: hm.generalVaccinations,
       path: HealthPaths.HealthVaccinationsGeneral,
+      key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare), // TODO: Add correct scope
       element: <VaccinationsGeneral />,
     },
     {
       name: hm.otherVaccinations,
       path: HealthPaths.HealthVaccinationsOther,
+      key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare), // TODO: Add correct scope
       element: <VaccinationsOther />,
     },
