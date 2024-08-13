@@ -21,6 +21,18 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Tekjuáætlun',
       description: 'Income Plan',
     },
+    isNotEligibleTitle: {
+      id: 'ip.application:is.not.eligible.title',
+      defaultMessage: 'Ekki er opið fyrir skráningu á tekjuáætlun',
+      description: 'Registration for income plan is not open',
+    },
+    isNotEligibleDescription: {
+      id: 'ip.application:is.not.eligible.description#markdown',
+      defaultMessage:
+        '* Það eru innan við 10 dagar síðan síðasta tekjuáætlun þín var tekin í vinnslu hjá Tryggingastofnun.\n\nEf þú telur það ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        '* It has been less than 10 days since your last income plan was processed by the Social Insurance Administration.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+    },
   }),
 
   info: defineMessages({

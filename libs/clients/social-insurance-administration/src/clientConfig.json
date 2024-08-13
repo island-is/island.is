@@ -605,6 +605,113 @@
         }
       }
     },
+    "/api/protected/v1/DeathBenefits/spousalinfo": {
+      "get": {
+        "tags": ["DeathBenefits"],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/Documents/documents/{documentId}": {
       "get": {
         "tags": ["Documents"],
@@ -1283,8 +1390,135 @@
                 }
               }
             }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/IncomePlan/TemporaryCalculations": {
+      "post": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns temporary calculations (bráðabirgðaútreikningur) based on the submitted income plan",
+        "requestBody": {
+          "description": "The income plan to use as a basis for the temporary calculations",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
           },
-          "204": { "description": "No Content" }
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.PaymentPlan.PaymentPlanDto"
+                }
+              }
+            }
+          }
         }
       }
     },
@@ -2092,11 +2326,64 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
+        "type": "object",
+        "properties": {
+          "incomeYear": { "type": "integer", "format": "int32" },
+          "incomeTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto": {
+        "type": "object",
+        "properties": {
+          "incomeTypeNumber": { "type": "integer", "format": "int32" },
+          "incomeTypeCode": { "type": "string", "nullable": true },
+          "incomeTypeName": { "type": "string", "nullable": true },
+          "currencyCode": { "type": "string", "nullable": true },
+          "incomeCategoryNumber": { "type": "integer", "format": "int32" },
+          "incomeCategoryCode": { "type": "string", "nullable": true },
+          "incomeCategoryName": { "type": "string", "nullable": true },
+          "amountJan": { "type": "number", "format": "double" },
+          "amountFeb": { "type": "number", "format": "double" },
+          "amountMar": { "type": "number", "format": "double" },
+          "amountApr": { "type": "number", "format": "double" },
+          "amountMay": { "type": "number", "format": "double" },
+          "amountJun": { "type": "number", "format": "double" },
+          "amountJul": { "type": "number", "format": "double" },
+          "amountAug": { "type": "number", "format": "double" },
+          "amountSep": { "type": "number", "format": "double" },
+          "amountOct": { "type": "number", "format": "double" },
+          "amountNov": { "type": "number", "format": "double" },
+          "amountDec": { "type": "number", "format": "double" }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
           "month": { "type": "integer", "format": "int32" },
           "amount": { "type": "number", "format": "double", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.UseCase.DeathBenefits.Models.ExternalSpousalInfo": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "nationalId": { "type": "string", "nullable": true },
+          "dateOfDeath": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "cohabitationLessThan1Year": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -2203,6 +2490,11 @@
             "type": "string",
             "description": "If the applicant is not eligible, a reason why he is not eligible is included",
             "nullable": true
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "If the applicant is not eligible, a code representing the reason why",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2289,12 +2581,14 @@
           "year": {
             "type": "integer",
             "description": "The year of the income plan",
-            "format": "int32"
+            "format": "int32",
+            "nullable": true
           },
           "registrationDate": {
             "type": "string",
             "description": "The date when the income plan was registered",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "status": {
             "type": "string",
@@ -2320,14 +2614,39 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomeTypeLine": {
         "type": "object",
         "properties": {
-          "name": {
+          "incomeCategoryNumber": {
+            "type": "integer",
+            "description": "The number of the income category",
+            "format": "int32"
+          },
+          "incomeCategoryName": {
+            "type": "string",
+            "description": "The name of the income category",
+            "nullable": true
+          },
+          "incomeCategoryCode": {
+            "type": "string",
+            "description": "The code of the income type",
+            "nullable": true
+          },
+          "incomeTypeNumber": {
+            "type": "integer",
+            "description": "The number of the income type",
+            "format": "int32"
+          },
+          "incomeTypeName": {
             "type": "string",
             "description": "The name of the income type in Icelandic (lífeyrissjóður, laun etc.)",
             "nullable": true
           },
+          "incomeTypeCode": {
+            "type": "string",
+            "description": "The code of the income type",
+            "nullable": true
+          },
           "totalSum": {
             "type": "integer",
-            "description": "The total annual sum of this payment type, ie. the amount paid per year",
+            "description": "The total annual sum of this income type, ie. the amount earned per year",
             "format": "int32"
           },
           "currency": {
@@ -2360,9 +2679,34 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxIncomeTypeDto": {
         "type": "object",
         "properties": {
-          "incomeType": {
+          "incomeTypeNumber": {
+            "type": "integer",
+            "description": "The income type number, e.g. 5808",
+            "format": "int64"
+          },
+          "incomeTypeName": {
             "type": "string",
-            "description": "The income type key and description, e.g. \"21 Laun\"",
+            "description": "The income type name, e.g. \"Laun\"",
+            "nullable": true
+          },
+          "incomeTypeCode": {
+            "type": "string",
+            "description": "The income type code, e.g. \"21F�O\"",
+            "nullable": true
+          },
+          "categoryNumber": {
+            "type": "integer",
+            "description": "Income type category number",
+            "format": "int64"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Income type category name, e.g. \"Atvinnutekjur\", \"Fj�rmagnstekjur\" etc.",
+            "nullable": true
+          },
+          "categoryCode": {
+            "type": "string",
+            "description": "Income type category code",
             "nullable": true
           },
           "january": { "type": "number", "format": "double", "nullable": true },

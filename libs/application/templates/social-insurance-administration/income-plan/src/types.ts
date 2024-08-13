@@ -13,7 +13,12 @@ export interface withholdingTax {
 }
 
 interface withholdingTaxIncomeType {
-  incomeType?: string | null
+  incomeTypeNumber?: number | null
+  incomeTypeName?: string | null
+  incomeTypeCode?: string | null
+  categoryNumber?: number | null
+  categoryName?: string | null
+  categoryCode?: string | null
   january?: number | null
   february?: number | null
   march?: number | null
@@ -44,7 +49,12 @@ export interface latestIncomePlan {
 }
 
 interface incomeType {
-  name: string
   currency: string
   totalSum: number
+  incomeTypeCode: string
+  incomeTypeName: string
+  incomeTypeNumber: number
+  incomeCategoryCode: string
+  incomeCategoryName: string
+  incomeCategoryNumber: number
 }
