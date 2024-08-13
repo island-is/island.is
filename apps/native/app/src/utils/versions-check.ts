@@ -1,5 +1,5 @@
 import { Platform } from 'react-native'
-import { coerceToNumber } from './coerse-to-number'
+import { coerceToNumber } from './coerce-to-number'
 import { isAndroid } from './devices'
 
 /**
