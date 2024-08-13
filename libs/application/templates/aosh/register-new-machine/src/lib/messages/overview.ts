@@ -51,5 +51,10 @@ export const overview = {
       defaultMessage: 'Engin umráðamaður skráður',
       description: 'Overview no operator registered',
     },
+    approveButton: {
+      id: 'aosh.rnm.application:overview.labels.approveButton',
+      defaultMessage: 'Áfram',
+      description: 'Location approve button text',
+    },
   }),
 }

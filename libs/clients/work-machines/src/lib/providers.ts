@@ -18,6 +18,7 @@ import {
   MachineTypesApi,
   MachinesApi,
   MachinesDocumentApi,
+  TechnicalInfoApi,
 } from '../../gen/fetch'
 import { WorkMachinesClientConfig } from './workMachines.config'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -117,10 +118,14 @@ export const apiProviders = [
     provide: MachineParentCategoriesApi,
     acceptHeader: 'application/json',
   },
-
   {
     api: MachineSubCategoriesApi,
     provide: MachineSubCategoriesApi,
+    acceptHeader: 'application/json',
+  },
+  {
+    api: TechnicalInfoApi,
+    provide: TechnicalInfoApi,
     acceptHeader: 'application/json',
   },
 ].map(({ api, provide, acceptHeader }) => ({

@@ -2,6 +2,7 @@ import {
   MachineModelDto,
   MachineParentCategoryDetailsDto,
   MachineSubCategoryDto,
+  TechInfoItemDto,
   WorkMachinesClientService,
 } from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
@@ -179,5 +180,12 @@ export class WorkMachinesService {
     parentCategory: string,
   ): Promise<MachineSubCategoryDto[]> {
     return this.machineService.getMachineSubCategories(auth, { parentCategory })
+  }
+
+  async getTechnicalInfoInputs(
+    auth: User,
+    parentCategory: string,
+  ): Promise<TechInfoItemDto[]> {
+    return this.machineService.getTechnicalInfoInputs(auth, { parentCategory })
   }
 }

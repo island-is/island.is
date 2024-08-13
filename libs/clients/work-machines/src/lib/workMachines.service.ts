@@ -7,6 +7,8 @@ import {
   ApiMachineStatusChangePostRequest,
   ApiMachineSubCategoriesGetRequest,
   ApiMachinesGetRequest,
+  ApiMachinesPostRequest,
+  ApiTechnicalInfoInputsGetRequest,
   ExcelRequest,
   GetMachineRequest,
   MachineCategoryApi,
@@ -30,6 +32,8 @@ import {
   MachinesApi,
   MachinesDocumentApi,
   MachinesFriendlyHateaosDto,
+  TechInfoItemDto,
+  TechnicalInfoApi,
 } from '../../gen/fetch'
 import {
   MachineDto,
@@ -62,6 +66,7 @@ export class WorkMachinesClientService {
     private readonly machineModelsApi: MachineModelsApi,
     private readonly machineParentCategoriesApi: MachineParentCategoriesApi,
     private readonly machineSubCategoriesApi: MachineSubCategoriesApi,
+    private readonly technicalInfoApi: TechnicalInfoApi,
   ) {}
 
   private machinesApiWithAuth = (user: User) =>
@@ -114,6 +119,10 @@ export class WorkMachinesClientService {
 
   private machineSubCategoriesApiWithAuth(auth: Auth) {
     return this.machineSubCategoriesApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  private technicalReadOnlyApiWithAuth(auth: Auth) {
+    return this.technicalInfoApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   getWorkMachines = async (
@@ -306,5 +315,20 @@ export class WorkMachinesClientService {
     return await this.machineSubCategoriesApiWithAuth(
       auth,
     ).apiMachineSubCategoriesGet(requestParameters)
+  }
+
+  async getTechnicalInfoInputs(
+    auth: Auth,
+    requestParameters: ApiTechnicalInfoInputsGetRequest,
+  ): Promise<TechInfoItemDto[]> {
+    return await this.technicalReadOnlyApiWithAuth(
+      auth,
+    ).apiTechnicalInfoInputsGet(requestParameters)
+  }
+
+  async addNewMachine(auth: User, requestParameters: ApiMachinesPostRequest) {
+    return await this.machinesApiWithAuth(auth).apiMachinesPost(
+      requestParameters,
+    )
   }
 }

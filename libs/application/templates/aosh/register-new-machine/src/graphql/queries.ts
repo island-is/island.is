@@ -25,3 +25,16 @@ export const MACHINE_SUB_CATEGORIES = `
     }
   }
 `
+
+export const TECHNICAL_INFO_INPUTS = `
+  query GetTechnicalInfoInputs($parentCategory: String!) {
+    getTechnicalInfoInputs(parentCategory: $parentCategory) {
+      variableName
+      label
+      type
+      required
+      maxLength
+      values
+    }
+  }
+`

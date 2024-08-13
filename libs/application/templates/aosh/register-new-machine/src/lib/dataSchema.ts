@@ -1,24 +1,25 @@
 import { NO, YES } from '@island.is/application/types'
 import { z } from 'zod'
+import { NEW, USED } from '../shared/types'
 
 const PersonInformationSchema = z.object({
-  name: z.string(),
-  nationalId: z.string(),
-  address: z.string(),
-  postCode: z.string(),
-  phone: z.string(),
-  email: z.string(),
+  name: z.string().min(1),
+  nationalId: z.string().min(1),
+  address: z.string().min(1),
+  postCode: z.string().min(1),
+  phone: z.string().min(1),
+  email: z.string().min(1),
 })
 
 const BasicInformationSchema = z.object({
-  productionCountry: z.string(),
-  productionYear: z.string(),
-  productionNumber: z.string(),
-  markedCE: z.string(),
-  preRegistration: z.string(),
-  isUsed: z.string(),
-  location: z.string(),
-  cargoFileNumber: z.string(),
+  productionCountry: z.string().min(1),
+  productionYear: z.string().min(1),
+  productionNumber: z.string().min(1),
+  markedCE: z.enum([YES, NO]).refine((v) => v.length > 0),
+  preRegistration: z.enum([YES, NO]).refine((v) => v.length > 0),
+  isUsed: z.enum([NEW, USED]).refine((v) => v.length > 0),
+  location: z.string().min(1),
+  cargoFileNumber: z.string().min(1),
 })
 
 const AboutMachineSchema = z.object({
@@ -51,11 +52,17 @@ export const NewMachineAnswersSchema = z.object({
     basicInformation: BasicInformationSchema.optional(),
     streetRegistration: z
       .object({
-        registerToTraffic: z.enum([YES, NO]),
-        size: z.enum(['A', 'B', 'D']),
+        registerToTraffic: z.enum([YES, NO]).refine((v) => v.length > 0),
+        size: z.enum(['1', '2', '3']),
       })
       .optional(),
   }),
+  techInfo: z.array(
+    z.object({
+      value: z.string().optional(),
+      variableName: z.string().optional(),
+    }),
+  ),
 })
 
 export type NewMachineAnswers = z.TypeOf<typeof NewMachineAnswersSchema>

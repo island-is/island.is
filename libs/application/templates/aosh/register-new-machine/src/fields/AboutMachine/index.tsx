@@ -1,24 +1,13 @@
 import { FieldBaseProps } from '@island.is/application/types'
-import {
-  AlertMessage,
-  AsyncSearch,
-  Box,
-  GridColumn,
-  GridRow,
-  Select,
-  Text,
-} from '@island.is/island-ui/core'
-import { FC, useCallback, useEffect, useState } from 'react'
-import { gql, useLazyQuery, useMutation } from '@apollo/client'
+import { Box, GridColumn, GridRow, Select } from '@island.is/island-ui/core'
+import { FC, useEffect, useState } from 'react'
+import { gql, useLazyQuery } from '@apollo/client'
 import { machine } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import debounce from 'lodash/debounce'
-import { getValueViaPath } from '@island.is/application/core'
-import { Controller, useFormContext } from 'react-hook-form'
-import { MACHINE_MODELS, MACHINE_SUB_CATEGORIES } from '../../graphql/queries'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useLazyMachineCategory } from '../../hooks/useLazyMachineCategory'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
+import { Controller } from 'react-hook-form'
+import { MACHINE_SUB_CATEGORIES } from '../../graphql/queries'
 
 export const machineSubCategories = gql`
   ${MACHINE_SUB_CATEGORIES}
@@ -28,13 +17,23 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
   props,
 ) => {
   const { application, field, setBeforeSubmitCallback } = props
-  const { formatMessage, locale } = useLocale()
+  const { formatMessage } = useLocale()
 
   const machineParentCategories = getValueViaPath(
     application.externalData,
     'machineParentCategories.data',
     [],
   ) as { name: string }[]
+  const machineType = getValueViaPath(
+    application.answers,
+    'machine.aboutMachine.type',
+    '',
+  ) as string
+  const machineModel = getValueViaPath(
+    application.answers,
+    'machine.aboutMachine.model',
+    '',
+  ) as string
   const machineCategory = getValueViaPath(
     application.answers,
     'machine.aboutMachine.category',
@@ -51,18 +50,15 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
     false,
   ) as boolean
 
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-
-  const [machineModels, setMachineModels] =
-    useState<{ value: string; label: string }[]>()
   const [category, setCategory] = useState<string>(machineCategory)
   const [subCategory, setSubCategory] = useState<string>(machineSubCategory)
   const [subCategories, setSubCategories] = useState<string[]>([])
   const [subCategoryDisabled, setSubCategoryDisabled] = useState<boolean>(
     fromService || (!fromService && !subCategory.length),
   )
+  const [type, setType] = useState<string>(machineType)
+  const [model, setModel] = useState<string>(machineModel)
   const [displayError, setDisplayError] = useState<boolean>(false)
-  const { setValue } = useFormContext()
 
   const [runQuery, { loading }] = useLazyQuery(machineSubCategories, {
     onCompleted(result) {
@@ -75,25 +71,8 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
           }),
         )
       }
-      // const models = result.getMachineModels.map(
-      //   (machineModel: { name: string }) => {
-      //     return {
-      //       value: machineModel.name,
-      //       label: machineModel.name,
-      //     }
-      //   },
-      // )
-      // setMachineModels(models)
-      // if (models.length > 0) {
-      //   setDisabled(false)
-      // } else {
-      //   setDisplayError(true)
-      // }
     },
     onError() {
-      // setMachineModels([])
-      // setDisplayError(true)
-      // setDisabled(true)
       // Something happens? Maybe a message to the user?
     },
   })
@@ -115,25 +94,19 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
     }
   }, [category])
 
-  // setBeforeSubmitCallback?.(async () => {
-  //   // Call updateApplication for basicInformation.type and basicInformation.model
-  //   if (type !== undefined) {
-  //     // Get information for basicInformation here and updateApplication
-  //     await updateApplication({
-  //       variables: {
-  //         input: {
-  //           id: application.id,
-  //           answers: {
-
-  //             ...application.answers,
-  //           }
-  //         },
-  //         locale,
-  //       }
-  //     })
-  //   }
-  //   return [true, null]
-  // })
+  setBeforeSubmitCallback?.(async () => {
+    if (
+      type.length === 0 ||
+      model.length === 0 ||
+      category.length === 0 ||
+      subCategory.length === 0
+    ) {
+      console.log('hello here')
+      setDisplayError(true)
+      return [false, '']
+    }
+    return [true, null]
+  })
 
   return (
     <Box paddingTop={2}>
@@ -145,6 +118,12 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
             backgroundColor="blue"
             required
             disabled={fromService}
+            onChange={(e) => setType(e.target.value)}
+            error={
+              displayError && type.length === 0
+                ? formatMessage(coreErrorMessages.defaultError)
+                : undefined
+            }
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']}>
@@ -154,6 +133,12 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
             backgroundColor="blue"
             required
             disabled={fromService}
+            onChange={(e) => setModel(e.target.value)}
+            error={
+              displayError && model.length === 0
+                ? formatMessage(coreErrorMessages.defaultError)
+                : undefined
+            }
           />
         </GridColumn>
       </GridRow>
@@ -161,7 +146,7 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
         <GridColumn span={['1/1', '1/2']}>
           <Controller
             name={`${field.id}.category`}
-            render={() => {
+            render={({ field: { onChange } }) => {
               return (
                 <Select
                   id={`${field.id}.category`}
@@ -171,14 +156,18 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   options={machineParentCategories.map(({ name }) => {
                     return { value: name, label: name }
                   })}
-                  onChange={(option) =>
+                  onChange={(option) => {
+                    onChange(option?.value)
                     option && setCategoryValue(option.value)
-                  }
+                  }}
                   value={
                     category ? { value: category, label: category } : undefined
                   }
                   backgroundColor="blue"
                   isDisabled={fromService}
+                  required
+                  hasError={displayError && category.length === 0}
+                  errorMessage={formatMessage(coreErrorMessages.defaultError)}
                 />
               )
             }}
@@ -212,6 +201,9 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
                     option && setSubCategory(option.value)
                   }}
                   backgroundColor="blue"
+                  required
+                  hasError={displayError && subCategory.length === 0}
+                  errorMessage={formatMessage(coreErrorMessages.defaultError)}
                 />
               )
             }}

@@ -2,8 +2,10 @@ import {
   buildCustomField,
   buildMultiField,
   buildSection,
+  buildSubmitField,
 } from '@island.is/application/core'
 import { overview } from '../../lib/messages'
+import { DefaultEvents } from '@island.is/application/types'
 
 export const OverviewSection = buildSection({
   id: 'overviewSection',
@@ -18,6 +20,18 @@ export const OverviewSection = buildSection({
           id: 'overview',
           title: '',
           component: 'Overview',
+        }),
+        buildSubmitField({
+          id: 'submit',
+          placement: 'footer',
+          title: overview.labels.approveButton,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: overview.labels.approveButton,
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

@@ -9,6 +9,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { information, machine } from '../../../lib/messages'
+import { NEW, USED } from '../../../shared/types'
 
 export const MachineBasicInformation = buildSubSection({
   id: 'machineBasicInformation',
@@ -24,47 +25,11 @@ export const MachineBasicInformation = buildSubSection({
           title: machine.labels.basicMachineInformation.aboutTitle,
           titleVariant: 'h5',
         }),
-        // buildTextField({
-        //   id: 'machine.aboutMachine.type',
-        //   title: machine.labels.basicMachineInformation.type,
-        //   width: 'half',
-        //   required: true,
-        // }),
-        // buildTextField({
-        //   id: 'machine.aboutMachine.model',
-        //   title: machine.labels.basicMachineInformation.model,
-        //   width: 'half',
-        //   required: true,
-        // }),
         buildCustomField({
           id: 'machine.aboutMachine',
           title: '',
           component: 'AboutMachine',
         }),
-        // buildSelectField({
-        //   id: 'machine.aboutMachine.category',
-        //   title: machine.labels.basicMachineInformation.category,
-        //   width: 'half',
-        //   required: true,
-        //   options: [
-        //     {
-        //       value: 'lyftarar',
-        //       label: 'Lyftarar',
-        //     },
-        //   ],
-        // }),
-        // buildSelectField({
-        //   id: 'machine.aboutMachine.subcategory',
-        //   title: machine.labels.basicMachineInformation.subcategory,
-        //   width: 'half',
-        //   required: true,
-        //   options: [
-        //     {
-        //       value: 'JF',
-        //       label: 'JF Lyftarar með skotbómu',
-        //     },
-        //   ],
-        // }),
         buildDescriptionField({
           id: 'machine.basicInformation.basicInformationTitle',
           title: machine.labels.basicMachineInformation.basicInformationTitle,
@@ -82,6 +47,7 @@ export const MachineBasicInformation = buildSubSection({
           title: machine.labels.basicMachineInformation.productionYear,
           width: 'half',
           required: true,
+          variant: 'number',
         }),
         buildTextField({
           id: 'machine.basicInformation.productionNumber',
@@ -128,11 +94,11 @@ export const MachineBasicInformation = buildSubSection({
           required: true,
           options: [
             {
-              value: 'new',
+              value: NEW,
               label: 'Ný',
             },
             {
-              value: 'used',
+              value: USED,
               label: 'Notuð',
             },
           ],

@@ -32,6 +32,7 @@ import { MachineModel } from './models/machineModel'
 import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
 import { MachineCategory } from './models/machineCategory'
 import { MachineSubCategory } from './models/machineSubCategory'
+import { TechInfoItem } from './models/techInfoItem'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
@@ -168,5 +169,15 @@ export class WorkMachinesResolver {
       auth,
       parentCategory,
     )
+  }
+
+  @Scopes(ApiScope.vinnueftirlitid)
+  @Query(() => [TechInfoItem])
+  @Audit()
+  async getTechnicalInfoInputs(
+    @CurrentUser() auth: User,
+    @Args('parentCategory') parentCategory: string,
+  ) {
+    return this.workMachinesService.getTechnicalInfoInputs(auth, parentCategory)
   }
 }

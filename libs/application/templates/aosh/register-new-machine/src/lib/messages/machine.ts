@@ -51,6 +51,16 @@ export const machine = {
         defaultMessage: 'Engin gerð fannst fyrir tiltekna tegund.',
         description: `Machine type warning alert message description`,
       },
+      unknownType: {
+        id: 'aosh.rnm.application:machine.labels.machineType.unknownType',
+        defaultMessage: 'Finn ekki tegund',
+        description: `Machine type unknown type message`,
+      },
+      unknownModel: {
+        id: 'aosh.rnm.application:machine.labels.machineType.unknownModel',
+        defaultMessage: 'Finn ekki gerð',
+        description: `Machine type unknown model message`,
+      }
     }),
     basicMachineInformation: defineMessages({
       sectionTitle: {

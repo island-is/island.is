@@ -52,6 +52,7 @@ export const ImporterInformationSubSection = buildSubSection({
           id: 'importerInformation.importer.address',
           title: information.labels.importer.address,
           width: 'half',
+          required: true,
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
@@ -63,6 +64,8 @@ export const ImporterInformationSubSection = buildSubSection({
           id: 'importerInformation.importer.postCode',
           title: information.labels.importer.postCode,
           width: 'half',
+          required: true,
+          variant: 'number',
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
@@ -87,6 +90,7 @@ export const ImporterInformationSubSection = buildSubSection({
           title: information.labels.importer.email,
           width: 'half',
           variant: 'email',
+          required: true,
           defaultValue: (application: Application) =>
             getValueViaPath(
               application.externalData,
@@ -120,30 +124,36 @@ export const ImporterInformationSubSection = buildSubSection({
           id: 'importerInformation.owner.name',
           title: information.labels.owner.name,
           width: 'half',
+          required: true,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
         buildTextField({
           id: 'importerInformation.owner.nationalId',
           title: information.labels.owner.nationalId,
           width: 'half',
+          required: true,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
         buildTextField({
           id: 'importerInformation.owner.address',
           title: information.labels.owner.address,
           width: 'half',
+          required: true,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
         buildTextField({
           id: 'importerInformation.owner.postCode',
           title: information.labels.owner.postCode,
+          variant: 'number',
           width: 'half',
+          required: true,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
-        buildTextField({
+        buildPhoneField({
           id: 'importerInformation.owner.phone',
           title: information.labels.owner.phone,
           width: 'half',
+          required: true,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
         buildTextField({
@@ -151,6 +161,7 @@ export const ImporterInformationSubSection = buildSubSection({
           title: information.labels.owner.email,
           width: 'half',
           variant: 'email',
+          required: true,
           condition: (answer: FormValue) => isOwnerOtherThanImporter(answer),
         }),
       ],

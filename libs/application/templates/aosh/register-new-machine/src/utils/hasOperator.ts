@@ -4,7 +4,7 @@ import { FormValue, NO, YES } from '@island.is/application/types'
 export const hasOperator = (answers: FormValue) => {
   const hasOperator = getValueViaPath(
     answers,
-    'importerInformation.hasOperator',
+    'operatorInformation.hasOperator',
     NO,
   ) as typeof NO | typeof YES
 

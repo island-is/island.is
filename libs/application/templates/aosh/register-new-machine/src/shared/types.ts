@@ -9,13 +9,25 @@ export type Machine = {
   ownerNumber?: string
 }
 
+export type TechInfoItem = {
+  variableName?: string
+  label?: string
+  type?: string
+  required?: boolean
+  maxLength?: string
+  values?: string[]
+}
+
 export enum Status {
   TEMPORARY = 'Temporary',
   PERMANENT = 'Permanent',
 }
 
 export enum Plate {
-  A = 'A',
-  B = 'B',
-  D = 'D',
+  A = '1',
+  B = '2',
+  D = '3',
 }
+
+export const NEW = 'new'
+export const USED = 'used'

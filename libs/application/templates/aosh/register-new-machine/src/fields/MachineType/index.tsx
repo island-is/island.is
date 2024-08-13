@@ -193,13 +193,24 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   label={formatMessage(machine.labels.machineType.type)}
                   icon="search"
                   options={[
-                    { value: 'unknown', label: 'Finn ekki tegund' },
+                    {
+                      value: 'unknown',
+                      label: formatMessage(
+                        machine.labels.machineType.unknownType,
+                      ),
+                    },
                   ].concat(
                     machineTypes.map(({ name }) => {
                       return { value: name, label: name }
                     }),
                   )}
-                  value={{ value: value, label: value }}
+                  value={{
+                    value: value,
+                    label:
+                      value === 'unknown'
+                        ? formatMessage(machine.labels.machineType.unknownType)
+                        : value,
+                  }}
                   onChange={(option) => {
                     onChange(option?.value)
                     option && setMachineType(option.value)
@@ -223,12 +234,23 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   isLoading={loading}
                   options={
                     machineModels &&
-                    [{ value: 'unknown', label: 'Finn ekki tegund' }].concat(
-                      machineModels,
-                    )
+                    [
+                      {
+                        value: 'unknown',
+                        label: formatMessage(
+                          machine.labels.machineType.unknownModel,
+                        ),
+                      },
+                    ].concat(machineModels)
                   }
                   isDisabled={disabled}
-                  value={{ value: model ?? '', label: model ?? '' }}
+                  value={{
+                    value: model ?? '',
+                    label:
+                      model === 'unknown'
+                        ? formatMessage(machine.labels.machineType.unknownModel)
+                        : model ?? '',
+                  }}
                   onChange={(option) => {
                     onChange(option?.value)
                     option && setModel(option.value)

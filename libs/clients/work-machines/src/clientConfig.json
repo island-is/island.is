@@ -858,97 +858,6 @@
         }
       }
     },
-    "/api/Machines/{id}": {
-      "get": {
-        "tags": ["Machines"],
-        "operationId": "GetMachineDefault",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ValidationProblemDetails"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "406": {
-            "description": "Not Acceptable",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "422": {
-            "description": "Unprocessable Content",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Internal Server Error",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemDetails"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
     "/api/MachinesDocument": {
       "get": {
         "tags": ["MachinesDocument"],
@@ -1298,6 +1207,35 @@
         }
       }
     },
+    "/api/TechnicalInfo/Inputs": {
+      "get": {
+        "tags": ["TechnicalInfo"],
+        "parameters": [
+          {
+            "name": "parentCategory",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TechInfoItemDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/TechnicalInfo/BearingCables": {
       "get": {
         "tags": ["TechnicalInfo"],
@@ -1309,7 +1247,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1329,7 +1267,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1349,7 +1287,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1369,7 +1307,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1389,7 +1327,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1409,7 +1347,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1429,7 +1367,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1449,7 +1387,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/TechInfoItemDto"
+                    "$ref": "#/components/schemas/TechInfoListItemDto"
                   }
                 }
               }
@@ -1865,11 +1803,10 @@
           "isPreRegistered",
           "locationOfMachine",
           "model",
-          "owner",
           "parentCategory",
           "serialNumber",
           "streetRegistrationRequested",
-          "supervisor",
+          "technicalInfo",
           "type",
           "used",
           "yearOfProduction"
@@ -1934,15 +1871,19 @@
             "type": "boolean"
           },
           "plateSize": {
-            "type": "string",
-            "nullable": true
+            "$ref": "#/components/schemas/PlateSize"
+          },
+          "technicalInfo": {
+            "minLength": 1,
+            "type": "string"
           }
         },
         "additionalProperties": false
       },
       "MachineStatusEnum": {
-        "enum": ["Temporary", "Permanent"],
-        "type": "string"
+        "enum": [3, 4],
+        "type": "integer",
+        "format": "int32"
       },
       "MachineStatusUpdateDto": {
         "type": "object",
@@ -2177,8 +2118,8 @@
             "type": "string"
           },
           "postalCode": {
-            "minLength": 1,
-            "type": "string"
+            "type": "integer",
+            "format": "int32"
           },
           "gsm": {
             "minLength": 1,
@@ -2192,8 +2133,9 @@
         "additionalProperties": false
       },
       "PlateSize": {
-        "enum": ["A", "B", "D"],
-        "type": "string"
+        "enum": [1, 2, 3],
+        "type": "integer",
+        "format": "int32"
       },
       "ProblemDetails": {
         "type": "object",
@@ -2225,6 +2167,39 @@
       "TechInfoItemDto": {
         "type": "object",
         "properties": {
+          "variableName": {
+            "type": "string",
+            "nullable": true
+          },
+          "label": {
+            "type": "string",
+            "nullable": true
+          },
+          "type": {
+            "type": "string",
+            "nullable": true
+          },
+          "required": {
+            "type": "boolean"
+          },
+          "maxLength": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "values": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TechInfoListItemDto": {
+        "type": "object",
+        "properties": {
           "id": {
             "type": "integer",
             "format": "int32"
@@ -2232,466 +2207,6 @@
           "name": {
             "type": "string",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoCarLiftDto": {
-        "required": [
-          "baseType",
-          "cableDiameter",
-          "liftHeight",
-          "maxWeight",
-          "numberOfPosts"
-        ],
-        "type": "object",
-        "properties": {
-          "maxWeight": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "liftHeight": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "baseType": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberOfPosts": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cableDiameter": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoCraneDto": {
-        "required": ["powerSource"],
-        "type": "object",
-        "properties": {
-          "maxWeightInTonMeters": {
-            "type": "number",
-            "format": "float"
-          },
-          "maxWeightInKilogram": {
-            "type": "number",
-            "format": "float"
-          },
-          "liftHeightInMillimeters": {
-            "type": "number",
-            "format": "float"
-          },
-          "boomLengthInMeters": {
-            "type": "number",
-            "format": "float"
-          },
-          "powerSource": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ownWeight": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "licensePlate": {
-            "type": "string",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoForkliftDto": {
-        "required": [
-          "centerLoad",
-          "enginePower",
-          "liftHeightInMillimeters",
-          "maxLiftWeightKilogram",
-          "powerSource"
-        ],
-        "type": "object",
-        "properties": {
-          "powerSource": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "enginePower": {
-            "type": "number",
-            "format": "float"
-          },
-          "ownWeight": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxLiftWeightKilogram": {
-            "type": "number",
-            "format": "float"
-          },
-          "centerLoad": {
-            "type": "number",
-            "format": "float"
-          },
-          "liftHeightInMillimeters": {
-            "type": "number",
-            "format": "float"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoPersonOrProductElevatorDto": {
-        "required": [
-          "datePutInUse",
-          "elevatorArea",
-          "liftHeight",
-          "liftingEquipment",
-          "maxSpeed",
-          "maxWeightKilogram",
-          "maxWeightPeople",
-          "numberOfFloors",
-          "personToNotify"
-        ],
-        "type": "object",
-        "properties": {
-          "liftingEquipment": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "liftHeight": {
-            "type": "number",
-            "format": "float"
-          },
-          "numberOfFloors": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "personToNotify": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "elevatorArea": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxWeightKilogram": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxWeightPeople": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxSpeed": {
-            "type": "number",
-            "format": "float"
-          },
-          "runningSpeeds": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "datePutInUse": {
-            "type": "string",
-            "format": "date-time"
-          },
-          "numberOfLoadBearingCables": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cableDiameter": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxHeightInElevatorTunnel": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "pitDepthInElevatorTunnel": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoPressureEquipmentOrContainerDto": {
-        "required": ["capacity", "chemical", "licensePlate", "maxPressure"],
-        "type": "object",
-        "properties": {
-          "capacity": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment1": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment2": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment3": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment4": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment5": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment6": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment7": {
-            "type": "number",
-            "format": "float"
-          },
-          "capacityCompartment8": {
-            "type": "number",
-            "format": "float"
-          },
-          "workingPressure": {
-            "type": "number",
-            "format": "float"
-          },
-          "maxPressure": {
-            "type": "number",
-            "format": "float"
-          },
-          "safetyValvePressure": {
-            "type": "number",
-            "format": "float"
-          },
-          "chemical": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "vottunarflokkur": {
-            "type": "string",
-            "nullable": true
-          },
-          "licensePlate": {
-            "minLength": 1,
-            "type": "string"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoSkiliftDto": {
-        "required": [
-          "diameterOfPullingCable",
-          "heightDifferenceOfEndStops",
-          "lengthOfLift",
-          "liftingEquipment",
-          "maxSpeed",
-          "numberOfPassengersGoingUp",
-          "performance",
-          "runningSpeeds",
-          "steepestAngleInPercents",
-          "stoppingDistance"
-        ],
-        "type": "object",
-        "properties": {
-          "lengthOfLift": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "performance": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxSpeed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "runningSpeeds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "numberOfPassengersGoingUp": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "heightDifferenceOfEndStops": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "steepestAngleInPercents": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "diameterOfPullingCable": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "stoppingDistance": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "liftingEquipment": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoSteamKettleDto": {
-        "required": [
-          "capacity",
-          "maxPressure",
-          "performanceInKilogramsPerHour",
-          "performanceInKiloWatts",
-          "powerSource",
-          "safetyValvePressure",
-          "workingPressure"
-        ],
-        "type": "object",
-        "properties": {
-          "performanceInKiloWatts": {
-            "type": "number",
-            "format": "float"
-          },
-          "performanceInKilogramsPerHour": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "capacity": {
-            "type": "number",
-            "format": "float"
-          },
-          "heatPower": {
-            "type": "number",
-            "format": "float"
-          },
-          "workingPressure": {
-            "type": "number",
-            "format": "float"
-          },
-          "maxPressure": {
-            "type": "number",
-            "format": "float"
-          },
-          "safetyValvePressure": {
-            "type": "number",
-            "format": "float"
-          },
-          "powerSource": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "preheater": {
-            "type": "boolean"
-          },
-          "pumps": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "superheater": {
-            "type": "boolean"
-          },
-          "heatingEquipment": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          },
-          "chemical": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoTravelingMachineDto": {
-        "required": ["enginePower", "ownWeight", "powerSource"],
-        "type": "object",
-        "properties": {
-          "powerSource": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "enginePower": {
-            "type": "number",
-            "format": "float"
-          },
-          "ownWeight": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "cO2Emission": {
-            "type": "number",
-            "format": "double"
-          },
-          "licensePlate": {
-            "type": "string",
-            "nullable": true
-          },
-          "maxLiftHeight": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoUnusualMachineDto": {
-        "required": ["powerSource"],
-        "type": "object",
-        "properties": {
-          "powerSource": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "ownWeight": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxSpeed": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "runningSpeeds": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxWeightInKilograms": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxWeightInPersons": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "other": {
-            "type": "string",
-            "nullable": true
-          },
-          "liftHeight": {
-            "type": "integer",
-            "format": "int32"
-          }
-        },
-        "additionalProperties": false
-      },
-      "TechnicalInfoWorkElevatorOrPeopleBasketDto": {
-        "required": ["maxWeightKilogram", "maxWeightPeople", "powerSource"],
-        "type": "object",
-        "properties": {
-          "maxWeightKilogram": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "maxWeightPeople": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "powerSource": {
-            "type": "integer",
-            "format": "int32"
           }
         },
         "additionalProperties": false
