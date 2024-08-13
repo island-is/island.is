@@ -35,7 +35,7 @@ import {
 import { statesMessages } from '../lib/messages'
 import { dataSchema } from './dataSchema'
 import { getApplicationExternalData } from './incomePlanUtils'
-import { incomePlanFormMessage } from './messages'
+import { historyMessages, incomePlanFormMessage } from './messages'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -55,6 +55,14 @@ const IncomePlanTemplate: ApplicationTemplate<
         meta: {
           name: States.PREREQUISITES,
           status: 'draft',
+          actionCard: {
+            historyLogs: [
+              {
+                logMessage: historyMessages.incomePlanStarted,
+                onEvent: DefaultEvents.SUBMIT,
+              },
+            ],
+          },
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -100,6 +108,10 @@ const IncomePlanTemplate: ApplicationTemplate<
             tag: {
               label: coreSIAStatesMessages.inProgressTag,
             },
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: historyMessages.incomePlanSent,
+            },
           },
           roles: [
             {
@@ -141,7 +153,7 @@ const IncomePlanTemplate: ApplicationTemplate<
             historyLogs: [
               {
                 onEvent: DefaultEvents.EDIT,
-                logMessage: coreSIAStatesMessages.applicationEdited,
+                logMessage: statesMessages.incomePlanEdited,
               },
             ],
           },
