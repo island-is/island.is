@@ -151,6 +151,7 @@ export const Review: FC<ReviewScreenProps> = ({
         </Box>
       )}
       <ReviewGroup
+        isLast
         isEditable={editable}
         editAction={() => goToScreen?.('incomePlanTable')}
       >

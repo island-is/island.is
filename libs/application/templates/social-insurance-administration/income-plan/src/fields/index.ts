@@ -1,2 +1,2 @@
 export { Review } from './Review'
-export { PrintScreen } from './PrintScreen'
+export { TemporaryCalculationTable } from './TemporaryCalculationTable'

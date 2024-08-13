@@ -1,43 +1,41 @@
 import {
-  ApplicationTemplate,
-  ApplicationContext,
-  ApplicationStateSchema,
-  Application,
-  ApplicationTypes,
-  ApplicationConfigurations,
-  ApplicationRole,
-  DefaultEvents,
-  NationalRegistryUserApi,
-  UserProfileApi,
-} from '@island.is/application/types'
-
-import {
-  EphemeralStateLifeCycle,
   DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { dataSchema } from './dataSchema'
-import { incomePlanFormMessage } from './messages'
-import {
-  socialInsuranceAdministrationMessage,
-  statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { statesMessages } from '../lib/messages'
-import {
-  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
-  SocialInsuranceAdministrationCurrenciesApi,
-  SocialInsuranceAdministrationLatestIncomePlan,
-  SocialInsuranceAdministrationTemporaryCalculation,
-  SocialInsuranceAdministrationWithholdingTaxApi,
-} from '../dataProviders'
-import { assign } from 'xstate'
-import { getApplicationExternalData } from './incomePlanUtils'
-import set from 'lodash/set'
 import {
   Events,
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  statesMessages as coreSIAStatesMessages,
+  socialInsuranceAdministrationMessage,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  Application,
+  ApplicationConfigurations,
+  ApplicationContext,
+  ApplicationRole,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
+  DefaultEvents,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
+import set from 'lodash/set'
+import { assign } from 'xstate'
+import {
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationWithholdingTaxApi,
+} from '../dataProviders'
+import { statesMessages } from '../lib/messages'
+import { dataSchema } from './dataSchema'
+import { getApplicationExternalData } from './incomePlanUtils'
+import { incomePlanFormMessage } from './messages'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -47,7 +45,7 @@ const IncomePlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.INCOME_PLAN,
   name: incomePlanFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces: [ApplicationConfigurations.IncomePlan.translation],
+  translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -84,7 +82,6 @@ const IncomePlanTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationWithholdingTaxApi,
                 SocialInsuranceAdministrationLatestIncomePlan,
-                SocialInsuranceAdministrationTemporaryCalculation,
               ],
               delete: true,
             },

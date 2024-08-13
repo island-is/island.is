@@ -5,23 +5,22 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   DefaultEvents,
   Form,
   FormModes,
-  UserProfileApi,
   NationalRegistryUserApi,
+  UserProfileApi,
 } from '@island.is/application/types'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { incomePlanFormMessage } from '../lib/messages'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationLatestIncomePlan,
-  SocialInsuranceAdministrationTemporaryCalculation,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
+import { incomePlanFormMessage } from '../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
@@ -92,10 +91,6 @@ export const PrerequisitesForm: Form = buildForm({
               provider: SocialInsuranceAdministrationLatestIncomePlan,
               title: '',
             }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationTemporaryCalculation,
-              title: '',
-            }),      
             buildDataProviderItem({
               id: 'sia.privacy',
               title:

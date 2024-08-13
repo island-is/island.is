@@ -150,12 +150,14 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanLatestIncomePlanGet()
   }
 
-async getTemporaryCalculations(
+  async getTemporaryCalculations(
     user: User,
-    parameters: ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
+    parameters: ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest['trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto'],
   ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
     return this.incomePlanApiWithAuth(
       user,
-    ).apiProtectedV1IncomePlanTemporaryCalculationsPost(parameters)
+    ).apiProtectedV1IncomePlanTemporaryCalculationsPost({
+      trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto: parameters,
+    })
   }
 }

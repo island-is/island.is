@@ -1,10 +1,10 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
 import {
-  categorizedIncomeTypes,
-  incomePlanRow,
-  withholdingTax,
-  latestIncomePlan,
+  CategorizedIncomeTypes,
+  IncomePlanRow,
+  WithholdingTax,
+  LatestIncomePlan,
 } from '../types'
 
 export const getApplicationExternalData = (
@@ -14,7 +14,7 @@ export const getApplicationExternalData = (
     externalData,
     'socialInsuranceAdministrationCategorizedIncomeTypes.data',
     [],
-  ) as categorizedIncomeTypes[]
+  ) as CategorizedIncomeTypes[]
 
   const currencies = getValueViaPath(
     externalData,
@@ -24,12 +24,12 @@ export const getApplicationExternalData = (
   const withholdingTax = getValueViaPath(
     externalData,
     'socaialInsuranceAdministrationWithholdingTax.data',
-  ) as withholdingTax
+  ) as WithholdingTax
 
   const latestIncomePlan = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationLatestIncomePlan.data',
-  ) as latestIncomePlan
+  ) as LatestIncomePlan
 
   const temporaryCalculation = getValueViaPath(
     externalData,
@@ -50,12 +50,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'incomePlanTable',
     [],
-  ) as incomePlanRow[]
+  ) as IncomePlanRow[]
 
   return { income }
 }
 
-const getOneInstanceOfCategory = (categories: categorizedIncomeTypes[]) => {
+const getOneInstanceOfCategory = (categories: CategorizedIncomeTypes[]) => {
   return [
     ...new Map(
       categories.map((category) => [category.categoryName, category]),

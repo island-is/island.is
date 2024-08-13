@@ -360,7 +360,7 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.INCOME_PLAN]: {
     slug: 'tekjuaaetlun',
-    translation: 'ip.application',
+    translation: ['ip.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',

@@ -1,4 +1,6 @@
-export interface categorizedIncomeTypes {
+import { RatioType } from './lib/constants'
+
+export interface CategorizedIncomeTypes {
   categoryCode?: string | null
   categoryName?: string | null
   categoryNumber?: number
@@ -7,12 +9,12 @@ export interface categorizedIncomeTypes {
   incomeTypeNumber?: number
 }
 
-export interface withholdingTax {
+export interface WithholdingTax {
   year?: number
-  incomeTypes?: Array<withholdingTaxIncomeType> | null
+  incomeTypes?: Array<WithholdingTaxIncomeType> | null
 }
 
-interface withholdingTaxIncomeType {
+interface WithholdingTaxIncomeType {
   incomeType?: string | null
   january?: number | null
   february?: number | null
@@ -29,21 +31,38 @@ interface withholdingTaxIncomeType {
   total?: number | null
 }
 
-export interface incomePlanRow {
+export interface IncomePlanRow {
+  incomeCategories: string
   incomeTypes: string
-  incomePerYear: string
   currency: string
+  income: RatioType
+  equalForeignIncomePerMonth?: string
+  equalIncomePerMonth?: string
+  incomePerYear: string
+  unevenIncomePerYear?: string
+  january?: string
+  february?: string
+  march?: string
+  april?: string
+  may?: string
+  june?: string
+  july?: string
+  august?: string
+  september?: string
+  october?: string
+  november?: string
+  december?: string
 }
 
-export interface latestIncomePlan {
-  year: string
+export interface LatestIncomePlan {
+  year: number
   origin: string
   status: string
-  incomeTypeLines: incomeType[]
+  incomeTypeLines: IncomeType[]
   registrationDate: string
 }
 
-interface incomeType {
+interface IncomeType {
   name: string
   currency: string
   totalSum: number

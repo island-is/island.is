@@ -20,6 +20,8 @@ import {
 import { PensionCalculationInput } from './dtos/pensionCalculation.input'
 import { PensionCalculationResponse } from './models/pensionCalculation.model'
 import { Payments } from './models/payments.model'
+import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
+import { TemporaryCalculation } from './models/temporaryCalculation.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -53,5 +55,13 @@ export class SocialInsuranceResolver {
   @BypassAuth()
   async getPensionCalculation(@Args('input') input: PensionCalculationInput) {
     return this.service.getPensionCalculation(input)
+  }
+
+  @Query(() => TemporaryCalculation)
+  async getTemporaryCalculations(
+    @Args('input') input: TemporaryCalculationInput,
+    @CurrentUser() user: User,
+  ) {
+    return this.service.getTemporaryCalculations(user, input)
   }
 }
