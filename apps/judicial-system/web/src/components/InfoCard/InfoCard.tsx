@@ -1,5 +1,4 @@
 import React, { FC } from 'react'
-import { useIntl } from 'react-intl'
 
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import {
@@ -11,20 +10,14 @@ import {
   DefendantInfo,
   DefendantInfoActionButton,
 } from './DefendantInfo/DefendantInfo'
-import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
-import { strings } from './InfoCard.strings'
 import * as styles from './InfoCard.css'
 
-interface Defender {
+export interface Defender {
   name?: string | null
   defenderNationalId?: string | null
   sessionArrangement?: SessionArrangements | null
   email?: string | null
   phoneNumber?: string | null
-}
-
-interface UniqueDefendersProps {
-  defenders: Defender[]
 }
 
 export interface DataSection {
@@ -44,42 +37,6 @@ interface Props {
   defenders?: Defender[]
   icon?: IconMapIcon
   additionalDataSections?: DataSection[]
-}
-
-const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
-  const { formatMessage } = useIntl()
-
-  const uniqueDefenders = defenders?.filter(
-    (defender, index, self) =>
-      index === self.findIndex((d) => d.email === defender.email),
-  )
-
-  return (
-    <>
-      <Text variant="h4">
-        {defenders[0].sessionArrangement ===
-        SessionArrangements.ALL_PRESENT_SPOKESPERSON
-          ? formatMessage(strings.spokesperson)
-          : uniqueDefenders.length > 1
-          ? formatMessage(strings.defenders)
-          : formatMessage(strings.defender)}
-      </Text>
-      {uniqueDefenders.map((defender, index) =>
-        defender?.name ? (
-          RenderPersonalData(
-            defender.name,
-            defender.email,
-            defender.phoneNumber,
-            false,
-          )
-        ) : (
-          <Text key={`defender_not_registered_${index}`}>
-            {formatMessage(strings.noDefender)}
-          </Text>
-        ),
-      )}
-    </>
-  )
 }
 
 const InfoCard: FC<Props> = (props) => {
@@ -119,12 +76,12 @@ const InfoCard: FC<Props> = (props) => {
                     defendants.defendantInfoActionButton
                   }
                   displayVerdictViewDate={defendants.displayVerdictViewDate}
+                  defenders={defenders}
                 />
               ))}
             </Box>
           </>
         )}
-        {defenders && <UniqueDefenders defenders={defenders} />}
       </Box>
       <Box className={styles.infoCardDataContainer}>
         {data.map((dataItem, index) => {
