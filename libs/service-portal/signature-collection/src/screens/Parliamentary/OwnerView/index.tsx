@@ -11,31 +11,38 @@ import {
 import { constituencies } from '../../../lib/constants'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
-import AddManager from './AddManager'
+import PersonLookupModal from './PersonLookupModal'
+import { format } from 'path'
+import { useLocale } from '@island.is/localization'
+import { m } from '../../../lib/messages'
 
 const OwnerView = () => {
   const navigate = useNavigate()
+  const { formatMessage } = useLocale()
 
   return (
     <Stack space={3}>
-      <Box display={'flex'} justifyContent={'spaceBetween'} marginBottom={3}>
-        <Button variant="ghost" icon="open" iconType="outline">
-          Stofna meðmælasöfnun
-        </Button>
+      <Box
+        display="flex"
+        justifyContent="spaceBetween"
+        alignItems="baseline"
+        marginTop={3}
+      >
+        <Text variant="h4">{formatMessage(m.myListsDescription)}</Text>
         <AlertMessage type="info" message="Söfnun lýkur 16.10.2024" />
       </Box>
       {constituencies.map((c: string, index: number) => (
         <ActionCard
           key={index}
           backgroundColor="white"
-          heading={'Flokkur 1 - ' + c}
+          heading={'Listi A - ' + c}
           progressMeter={{
             currentProgress: 10,
             maxProgress: 350,
             withLabel: true,
           }}
           cta={{
-            label: 'Sýsla með lista',
+            label: formatMessage(m.viewList),
             variant: 'text',
             icon: 'arrowForward',
             onClick: () => {
@@ -49,25 +56,33 @@ const OwnerView = () => {
           }}
         />
       ))}
-      <Box marginTop={5}>
+      <Box marginTop={7}>
         <Box
-          display={'flex'}
-          justifyContent={'spaceBetween'}
+          display="flex"
+          justifyContent="spaceBetween"
           alignItems="baseline"
           marginBottom={3}
         >
-          <Text variant="h5">
-            {'Ábyrgðaraðilar' + ' '}
-            <Tooltip placement="right" text={'info'} color="blue400" />
+          <Text variant="h4">
+            {formatMessage(m.managers) + ' '}
+            <Tooltip
+              placement="right"
+              text="info"
+              color="blue400"
+              iconSize="medium"
+            />
           </Text>
-          <AddManager collectionId={'1'} />
+          <PersonLookupModal
+            collectionId={'1'}
+            title={formatMessage(m.addManager)}
+          />
         </Box>
         <T.Table>
           <T.Head>
             <T.Row>
-              <T.HeadData>{'Nafn'}</T.HeadData>
-              <T.HeadData>{'Kennitala'}</T.HeadData>
-              <T.HeadData>{'Kjördæmi'}</T.HeadData>
+              <T.HeadData>{formatMessage(m.personName)}</T.HeadData>
+              <T.HeadData>{formatMessage(m.personNationalId)}</T.HeadData>
+              <T.HeadData>{formatMessage(m.constituency)}</T.HeadData>
               <T.HeadData></T.HeadData>
             </T.Row>
           </T.Head>
@@ -79,27 +94,10 @@ const OwnerView = () => {
               <T.Data>
                 <Button
                   variant="text"
-                  icon="pencil"
+                  icon="trash"
                   iconType="outline"
                   size="small"
-                >
-                  Breyta
-                </Button>
-              </T.Data>
-            </T.Row>
-            <T.Row>
-              <T.Data>{'Nafni Nafnason 2'}</T.Data>
-              <T.Data>{'010130-3019'}</T.Data>
-              <T.Data>{'Norðvestur'}</T.Data>
-              <T.Data>
-                <Button
-                  variant="text"
-                  icon="pencil"
-                  iconType="outline"
-                  size="small"
-                >
-                  Breyta
-                </Button>
+                />
               </T.Data>
             </T.Row>
           </T.Body>

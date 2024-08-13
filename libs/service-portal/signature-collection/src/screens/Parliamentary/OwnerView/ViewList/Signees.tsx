@@ -29,7 +29,7 @@ const Signees = () => {
   const pageSize = 10
 
   useEffect(() => {
-    if (!loadingSignees) {
+    if (!loadingSignees && listSignees.length) {
       setSignees(listSignees)
     }
   }, [listSignees])

@@ -11,8 +11,9 @@ import { m } from '../../../../lib/messages'
 import { useLocation } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
-import Signees from './SigneesOverview'
+import Signees from './Signees'
 import CancelCollection from '../../../Presidential/OwnerView/CancelCollection'
+import PersonLookupModal from '../PersonLookupModal'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
@@ -37,9 +38,9 @@ const ViewList = () => {
           <Box>
             <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
             {/*<Text>
-                {format(new Date(listInfo.startTime), 'dd.MM.yyyy') +
-                  ' - ' +
-                  format(new Date(listInfo.endTime), 'dd.MM.yyyy')}
+                {format(new Date(listInfo.startTime), "dd.MM.yyyy") +
+                  " - " +
+                  format(new Date(listInfo.endTime), "dd.MM.yyyy")}
               </Text>*/}
           </Box>
           <Box marginTop={[2, 0]}>
@@ -71,25 +72,26 @@ const ViewList = () => {
         {/* Umsjónaraðilar */}
         <Box>
           <Box
-            display={'flex'}
-            justifyContent={'spaceBetween'}
+            display="flex"
+            justifyContent="spaceBetween"
             alignItems="baseline"
             marginBottom={3}
           >
-            <Text variant="h5">
-              {'Umsjónaraðilar' + ' '}
-              <Tooltip placement="right" text={'info'} color="blue400" />
+            <Text variant="h4">
+              {formatMessage(m.supervisors) + ' '}
+              <Tooltip placement="right" text="info" color="blue400" />
             </Text>
-            <Button variant="utility" icon="add" iconType="outline">
-              Bæta við
-            </Button>
+            <PersonLookupModal
+              collectionId={'1'}
+              title={formatMessage(m.addSupervisor)}
+            />
           </Box>
           <T.Table>
             <T.Head>
               <T.Row>
-                <T.HeadData>{'Nafn'}</T.HeadData>
-                <T.HeadData>{'Kennitala'}</T.HeadData>
-                <T.HeadData>{'Kjördæmi'}</T.HeadData>
+                <T.HeadData>{formatMessage(m.personName)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.personNationalId)}</T.HeadData>
+                <T.HeadData>{formatMessage(m.constituency)}</T.HeadData>
                 <T.HeadData></T.HeadData>
               </T.Row>
             </T.Head>
@@ -101,27 +103,10 @@ const ViewList = () => {
                 <T.Data>
                   <Button
                     variant="text"
-                    icon="pencil"
+                    icon="trash"
                     iconType="outline"
                     size="small"
-                  >
-                    Breyta
-                  </Button>
-                </T.Data>
-              </T.Row>
-              <T.Row>
-                <T.Data>{'Nafni Nafnason 2'}</T.Data>
-                <T.Data>{'010130-3019'}</T.Data>
-                <T.Data>{'Norðvestur'}</T.Data>
-                <T.Data>
-                  <Button
-                    variant="text"
-                    icon="pencil"
-                    iconType="outline"
-                    size="small"
-                  >
-                    Breyta
-                  </Button>
+                  />
                 </T.Data>
               </T.Row>
             </T.Body>

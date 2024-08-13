@@ -1,15 +1,48 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Box, Stack, Button, Text, Input } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
+import { useIdentityQuery } from '@island.is/service-portal/graphql'
+import { InputController } from '@island.is/shared/form-fields'
+import { useForm } from 'react-hook-form'
 
-const AddManager = ({ collectionId }: { collectionId: string }) => {
+const PersonLookupModal = ({
+  collectionId,
+  title,
+}: {
+  collectionId: string
+  title: string
+}) => {
   const { formatMessage } = useLocale()
+  const { control } = useForm()
 
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
   const [name, setName] = useState('')
+
+  const { data, loading } = useIdentityQuery({
+    variables: {
+      input: {
+        nationalId: nationalIdInput,
+      },
+    },
+    skip: nationalIdInput.length !== 10,
+  })
+
+  useEffect(() => {
+    if (!loading) {
+      if (nationalIdInput.length === 10 && data?.identity?.name) {
+        setName(data.identity.name)
+      } else {
+        setName('')
+        setNationalIdNotFound(nationalIdInput.length === 10)
+        if (nationalIdInput.length !== 10) {
+          setNationalIdInput('')
+        }
+      }
+    }
+  }, [nationalIdInput, loading])
 
   return (
     <Box>
@@ -31,23 +64,30 @@ const AddManager = ({ collectionId }: { collectionId: string }) => {
         </Button>
       </Box>
       <Modal
-        id="createCollection"
+        id="addManager"
         isVisible={modalIsOpen}
         label={''}
+        initialVisibility={false}
         onCloseModal={() => setModalIsOpen(false)}
       >
         <Text marginBottom={5} variant="h2">
-          {formatMessage('Bæta við ábyrgðaraðila')}
+          {title}
         </Text>
         <Stack space={3}>
-          <Input
+          <InputController
+            control={control}
+            id="nationalId"
             label={formatMessage('Kennitala')}
             backgroundColor={'blue'}
             name="nationalId"
-            value={nationalIdInput}
+            format={'######-####'}
+            type="tel"
+            defaultValue={nationalIdInput}
             onChange={(e) => {
-              setNationalIdInput(e.target.value)
+              setNationalIdInput(e.target.value.replace(/\W/g, ''))
             }}
+            error={nationalIdNotFound ? formatMessage('Not found') : undefined}
+            loading={loading}
           />
           <Input
             label={formatMessage('Nafn')}
@@ -71,4 +111,4 @@ const AddManager = ({ collectionId }: { collectionId: string }) => {
   )
 }
 
-export default AddManager
+export default PersonLookupModal

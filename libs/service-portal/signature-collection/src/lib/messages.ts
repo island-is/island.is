@@ -248,6 +248,11 @@ export const m = defineMessages({
   },
 
   /* Parliamentary */
+  parliamentaryElectionsTitle: {
+    id: 'sp.parliamentaryElectionsTitle',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
   pageTitleParliamentary: {
     id: 'sp.pageTitleParliamentary',
     defaultMessage: 'Meðmælasöfnun fyrir Alþingiskosningar',
@@ -257,6 +262,41 @@ export const m = defineMessages({
     id: 'sp.pageDescriptionParliamentary',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+    description: '',
+  },
+  managers: {
+    id: 'sp.managers',
+    defaultMessage: 'Ábyrgðaraðilar',
+    description: '',
+  },
+  addManager: {
+    id: 'sp.addManager',
+    defaultMessage: 'Bæta við ábyrgðaraðila',
+    description: '',
+  },
+  supervisors: {
+    id: 'sp.supervisors',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  addSupervisor: {
+    id: 'sp.addSupervisor',
+    defaultMessage: 'Bæta við umsjónaraðila',
+    description: '',
+  },
+  personName: {
+    id: 'sp.personName',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  personNationalId: {
+    id: 'sp.personNationalId',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  constituency: {
+    id: 'sp.constituency',
+    defaultMessage: 'Kjördæmi',
     description: '',
   },
 })

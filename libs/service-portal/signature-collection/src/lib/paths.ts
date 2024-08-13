@@ -1,8 +1,11 @@
 export enum SignatureCollectionPaths {
   RootPath = '/min-gogn/listar',
-  SignatureCollectionParliamentaryLists = '/min-gogn/listar/althingis-medmaelasofnun',
-  SignatureCollectionLists = '/min-gogn/listar/medmaelasofnun',
 
+  // Parliamentary
+  SignatureCollectionParliamentaryLists = '/min-gogn/listar/althingis-medmaelasofnun',
   ViewParliamentaryList = '/min-gogn/listar/althingis-medmaelasofnun/:id',
+
+  // Presidential
+  SignatureCollectionLists = '/min-gogn/listar/medmaelasofnun',
   ViewList = '/min-gogn/listar/medmaelasofnun/:id',
 }
