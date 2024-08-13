@@ -286,6 +286,18 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                           </Box>
                         </T.Data>
                         <T.Data>
+                          {licences.dateOfPublication && (
+                            <Box>
+                              <Text variant="small">
+                                {format(
+                                  new Date(licences.dateOfPublication),
+                                  'yyyy',
+                                )}
+                              </Text>
+                            </Box>
+                          )}
+                        </T.Data>
+                        <T.Data>
                           <Box>
                             <Text textAlign="right" variant="small">
                               {licences.nationalId}
