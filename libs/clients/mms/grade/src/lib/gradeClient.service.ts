@@ -65,13 +65,6 @@ export class GradeClientService {
         .filter(isDefined) ?? []),
     ]
 
-    const l = await this.apiWithAuth(
-      user,
-    ).publicGradeV2ControllerGetStudentAssessment({
-      nationalId: user.nationalId,
-    })
-    this.logger.debug('data', l)
-
     return Promise.all(
       family.map(async (person) => {
         const assessmentData = await this.apiWithAuth(
