@@ -11,20 +11,15 @@ import {
   DefendantInfo,
   DefendantInfoActionButton,
 } from './DefendantInfo/DefendantInfo'
-import { strings } from './InfoCard.strings'
 import { link } from '../MarkdownWrapper/MarkdownWrapper.css'
 import * as styles from './InfoCard.css'
 
-interface Defender {
+export interface Defender {
   name?: string | null
   defenderNationalId?: string | null
   sessionArrangement?: SessionArrangements | null
   email?: string | null
   phoneNumber?: string | null
-}
-
-interface UniqueDefendersProps {
-  defenders: Defender[]
 }
 
 export interface DataSection {
@@ -46,56 +41,24 @@ interface Props {
   additionalDataSections?: DataSection[]
 }
 
-export const NameAndEmail = (name?: string | null, email?: string | null) => [
-  ...(name ? [<Text key={name}>{name}</Text>] : []),
-  ...(email
-    ? [
-        <LinkV2 href={`mailto:${email}`} key={email} className={link}>
-          <Text as="span">{email}</Text>
-        </LinkV2>,
-      ]
-    : []),
-]
-
-const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
-  const { formatMessage } = useIntl()
-
-  const uniqueDefenders = defenders?.filter(
-    (defender, index, self) =>
-      index === self.findIndex((d) => d.email === defender.email),
-  )
-
-  return (
-    <>
-      {uniqueDefenders.length > 1 ? (
-        <Text as="div">{`${formatMessage(strings.defenders)}: `}</Text>
-      ) : (
-        <Text as="span">
-          {defenders[0].sessionArrangement ===
-          SessionArrangements.ALL_PRESENT_SPOKESPERSON
-            ? `${formatMessage(strings.spokesperson)}: `
-            : `${formatMessage(strings.defender)}: `}
-        </Text>
-      )}
-      {uniqueDefenders.map((defender, index) =>
-        defender.name ? (
-          <Box display="inlineFlex" key={defender.name} role="paragraph">
-            <Text as="span">{defender.name}</Text>
-            {defender.email && <Text as="span" whiteSpace="pre">{`, `}</Text>}
-            {NameAndEmail(null, defender.email)}
-            <Text as="span">
-              {defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''}
-            </Text>
-          </Box>
-        ) : (
-          <Text key={`defender_not_registered_${index}`}>
-            {formatMessage(strings.noDefender)}
-          </Text>
-        ),
-      )}
-    </>
-  )
-}
+export const NameAndEmail = (
+  name?: string | null,
+  email?: string | null,
+  breakSpaces = true,
+) => (
+  <Box display={breakSpaces ? 'block' : 'flex'}>
+    {name && (
+      <Text key={name} whiteSpace="pre">{`${name}${
+        email && !breakSpaces ? `, ` : ''
+      }`}</Text>
+    )}
+    {email && (
+      <LinkV2 href={`mailto:${email}`} className={link} key={email}>
+        <Text as="span">{email}</Text>
+      </LinkV2>
+    )}
+  </Box>
+)
 
 const InfoCard: FC<Props> = (props) => {
   const {
@@ -116,12 +79,12 @@ const InfoCard: FC<Props> = (props) => {
       <Box
         className={(defendants || defenders) && styles.infoCardTitleContainer}
         marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={defenders && [2, 2, 2, 2]}
+        paddingBottom={defenders && [2, 2, 3, 3]}
       >
         {defendants && (
           <>
             <Text variant="h4">{defendants.title}</Text>
-            <Box marginBottom={defenders ? [2, 2, 3, 3] : 0} marginTop={1}>
+            <Box marginTop={1}>
               {defendants.items.map((defendant) => (
                 <DefendantInfo
                   defendant={defendant}
@@ -133,12 +96,12 @@ const InfoCard: FC<Props> = (props) => {
                     defendants.defendantInfoActionButton
                   }
                   displayVerdictViewDate={defendants.displayVerdictViewDate}
+                  defenders={defenders}
                 />
               ))}
             </Box>
           </>
         )}
-        {defenders && <UniqueDefenders defenders={defenders} />}
       </Box>
       <Box className={styles.infoCardDataContainer}>
         {data.map((dataItem, index) => {

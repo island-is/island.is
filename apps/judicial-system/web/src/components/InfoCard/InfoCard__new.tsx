@@ -1,3 +1,4 @@
+import { FC, ReactNode } from 'react'
 import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -13,14 +14,14 @@ interface Section {
 export interface Item {
   id: string // Used as a key
   title: string
-  values: string[] | React.ReactNode[]
+  values: string[] | ReactNode[]
 }
 
 interface Props {
   sections: Section[]
 }
 
-const InfoCardNew: React.FC<Props> = (props) => {
+const InfoCardNew: FC<Props> = (props) => {
   const { sections } = props
 
   return (
