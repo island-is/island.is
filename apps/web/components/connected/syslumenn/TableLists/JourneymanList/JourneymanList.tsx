@@ -270,7 +270,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                   <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
                   <T.HeadData>{n('dateOfPublication', 'Útgáfuár')}</T.HeadData>
                   <T.HeadData align="right">
-                    {n('dateOfPublication', 'Útgáfuár')}
+                    {n('nationalId', 'Kennitala')}
                   </T.HeadData>
                 </T.Row>
               </T.Head>
