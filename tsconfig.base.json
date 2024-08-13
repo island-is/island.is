@@ -98,6 +98,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statement-individual-election": [
+        "libs/api/domains/financial-statement-individual-election/src/index.ts"
+      ],
       "@island.is/api/domains/financial-statements-inao": [
         "libs/api/domains/financial-statements-inao/src/index.ts"
       ],
@@ -368,6 +371,12 @@
       ],
       "@island.is/application/templates/financial-statement-cemetery": [
         "libs/application/templates/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election": [
+        "libs/application/templates/financial-statement-individual-election/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election/types": [
+        "libs/application/templates/financial-statement-individual-election/src/types/types.ts"
       ],
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
@@ -1102,10 +1111,9 @@
       "financial-statement-cemetery": [
         "libs/application/templates/financial-statement-cemetery/src/index.ts"
       ],
-      "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "portals/form-system/ui-components": [
         "libs/portals/form-system/ui-components/src/index.ts"
-      ],
+      ]
     }
   }
 }
