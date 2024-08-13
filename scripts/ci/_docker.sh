@@ -31,7 +31,7 @@ fi
 mkargs() {
   local local_cache="${1:-local-cache=yes}"
   BUILD_ARGS=(
-    --platform=$PLATFORM
+    --platform="$PLATFORM"
     --file="${DIR}/$DOCKERFILE"
     --target="$TARGET"
     "${PUBLISH_TO_REGISTRY[@]}"
