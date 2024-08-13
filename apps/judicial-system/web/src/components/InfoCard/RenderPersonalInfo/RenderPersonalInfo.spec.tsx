@@ -63,7 +63,7 @@ describe('RenderPersonalInfo', () => {
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
-      /^Joe, joe@smo.is, 111-1111$/,
+      /^Joe, joe@smo.is, s. 111-1111$/,
     )
   })
 
@@ -85,7 +85,7 @@ describe('RenderPersonalInfo', () => {
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
-      /^Joe, 111-1111$/,
+      /^Joe, s. 111-1111$/,
     )
   })
 
@@ -107,7 +107,7 @@ describe('RenderPersonalInfo', () => {
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
-      /^joe@smo.is, 111-1111$/,
+      /^joe@smo.is, s. 111-1111$/,
     )
   })
 
@@ -171,7 +171,7 @@ describe('RenderPersonalInfo', () => {
 
     // Assert
     expect(await screen.findByTestId('personalInfo')).toHaveTextContent(
-      /^111-1111$/,
+      /^s. 111-1111$/,
     )
   })
 })

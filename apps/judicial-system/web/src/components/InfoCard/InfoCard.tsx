@@ -66,14 +66,11 @@ const UniqueDefenders: FC<UniqueDefendersProps> = ({ defenders }) => {
       </Text>
       {uniqueDefenders.map((defender, index) =>
         defender?.name ? (
-          <Box display="flex" key={defender.name} role="paragraph">
-            <Text as="span">{defender.name}</Text>
-            {defender.email && <Text as="span" whiteSpace="pre">{`, `}</Text>}
-            {RenderPersonalData(null, defender.email)}
-            <Text as="span">
-              {defender.phoneNumber ? `, s. ${defender.phoneNumber}` : ''}
-            </Text>
-          </Box>
+          RenderPersonalData(
+            defender.name,
+            defender.email,
+            defender.phoneNumber,
+          )
         ) : (
           <Text key={`defender_not_registered_${index}`}>
             {formatMessage(strings.noDefender)}

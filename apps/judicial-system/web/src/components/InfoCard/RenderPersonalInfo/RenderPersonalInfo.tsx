@@ -23,7 +23,7 @@ const RenderPersonalData = (
     )}
     {phoneNumber && (
       <Text key={phoneNumber} whiteSpace="pre">
-        {phoneNumber}
+        {`s. ${phoneNumber}`}
       </Text>
     )}
   </Box>
