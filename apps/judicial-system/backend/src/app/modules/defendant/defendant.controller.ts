@@ -165,7 +165,7 @@ export class DefendantController {
     @Query('subpoenaType') subpoenaType?: SubpoenaType,
   ): Promise<void> {
     this.logger.debug(
-      `Getting the subpoena for defendant ${defendantId} og case ${caseId} as a pdf document`,
+      `Getting the subpoena for defendant ${defendantId} of case ${caseId} as a pdf document`,
     )
 
     const pdf = await this.pdfService.getSubpoenaPdf(
