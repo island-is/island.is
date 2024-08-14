@@ -55,7 +55,7 @@ describe('DefendantInfo', () => {
       expect(dataSections.message.id).toStrictEqual(
         'judicial.system.core:info_card.defendant_info.appeal_expiration_date',
       )
-      expect(dataSections.data).toStrictEqual('5.08.2024')
+      expect(dataSections.data).toStrictEqual('05.08.2024')
     })
 
     test('should return the correct string if appeal expiration date is in the past', () => {
@@ -67,7 +67,7 @@ describe('DefendantInfo', () => {
       expect(dataSections.message.id).toStrictEqual(
         'judicial.system.core:info_card.defendant_info.appeal_date_expired',
       )
-      expect(dataSections.data).toStrictEqual('7.07.2024')
+      expect(dataSections.data).toStrictEqual('07.07.2024')
     })
   })
 })

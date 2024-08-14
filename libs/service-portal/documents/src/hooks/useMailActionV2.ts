@@ -91,7 +91,9 @@ export const useMailAction = () => {
             if (refetch) {
               refetch(fetchObject)
             }
-            toast.success(formatMessage(docMessages.successArchiveMulti))
+            if (action === 'archive') {
+              toast.success(formatMessage(docMessages.successArchiveMulti))
+            }
           } else {
             toast.error(formatMessage(m.errorTitle))
           }
