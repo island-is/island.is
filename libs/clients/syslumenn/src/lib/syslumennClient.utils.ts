@@ -565,6 +565,7 @@ export const mapProfessionRight = (
   return {
     name: professionRight.nafn,
     profession: professionRight.starfsrettindi,
+    nationalId: professionRight.kennitala,
   }
 }
 

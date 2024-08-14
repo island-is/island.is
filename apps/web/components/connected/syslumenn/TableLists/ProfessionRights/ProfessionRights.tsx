@@ -33,7 +33,7 @@ import { GET_PROFESSION_RIGHTS_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof ProfessionRight)[] = ['name']
+const SEARCH_KEYS: (keyof ProfessionRight)[] = ['name', 'nationalId']
 
 interface ProfessionRightsProps {
   slice: ConnectedComponent
@@ -110,12 +110,14 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
         const headerRow = [
           n('csvHeaderName', 'Nafn') as string,
           n('csvHeaderProfession', 'Starf') as string,
+          n('csvHeaderNationalId', 'Kennitala'),
         ]
         const dataRows = []
         for (const item of list) {
           dataRows.push([
             item.name ?? '', // Nafn
             item.profession ?? '', // Starf
+            item.nationalId ?? '',
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -259,6 +261,9 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
                 <T.Row>
                   <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
                   <T.HeadData>{n('profession', 'Starf')}</T.HeadData>
+                  <T.HeadData align="right">
+                    {n('nationalId', 'Kennitala')}
+                  </T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
@@ -276,6 +281,13 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
                         <T.Data>
                           <Box>
                             <Text variant="small">{item.profession}</Text>
+                          </Box>
+                        </T.Data>
+                        <T.Data>
+                          <Box>
+                            <Text variant="small" textAlign="right">
+                              {item.nationalId}
+                            </Text>
                           </Box>
                         </T.Data>
                       </T.Row>
