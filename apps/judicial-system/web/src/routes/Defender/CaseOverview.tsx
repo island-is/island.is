@@ -41,7 +41,7 @@ import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import { NameAndEmail } from '../../components/InfoCard/InfoCard'
+import RenderPersonalData from '../../components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 
@@ -165,7 +165,7 @@ export const CaseOverview = () => {
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: NameAndEmail(
+                  value: RenderPersonalData(
                     workingCase.prosecutor?.name,
                     workingCase.prosecutor?.email,
                   ),
@@ -174,7 +174,7 @@ export const CaseOverview = () => {
                   ? [
                       {
                         title: formatMessage(core.judge),
-                        value: NameAndEmail(
+                        value: RenderPersonalData(
                           workingCase.judge?.name,
                           workingCase.judge?.email,
                         ),
@@ -194,7 +194,7 @@ export const CaseOverview = () => {
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: NameAndEmail(
+                        value: RenderPersonalData(
                           workingCase.registrar?.name,
                           workingCase.registrar?.email,
                         ),
@@ -215,15 +215,13 @@ export const CaseOverview = () => {
                     }
                   : undefined
               }
-              defenders={[
-                {
-                  name: workingCase.defenderName ?? '',
-                  defenderNationalId: workingCase.defenderNationalId,
-                  sessionArrangement: workingCase.sessionArrangements,
-                  email: workingCase.defenderEmail,
-                  phoneNumber: workingCase.defenderPhoneNumber,
-                },
-              ]}
+              defender={{
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              }}
               courtOfAppealData={
                 workingCase.appealCaseNumber
                   ? [
