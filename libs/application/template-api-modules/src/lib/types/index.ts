@@ -9,28 +9,16 @@ import { IslykillApiModuleConfig } from '@island.is/clients/islykill'
 import { Message } from '@island.is/email-service'
 
 import type { Locale } from '@island.is/shared/types'
+import { Attachment } from 'nodemailer/lib/mailer'
 
 export interface BaseTemplateAPIModuleConfig {
   xRoadBasePathWithEnv: string
   jwtSecret: string
   clientLocationOrigin: string
-  emailOptions: {
-    useTestAccount: boolean
-    useNodemailerApp?: boolean
-    options?: {
-      region: string
-    }
-  }
   baseApiUrl: string
   email: {
     sender: string
     address: string
-  }
-  smsOptions: {
-    url: string
-    username: string
-    password: string
-    acceptUnauthorized?: boolean
   }
   attachmentBucket: string
   presignBucket: string
@@ -77,7 +65,7 @@ export type EmailTemplateGenerator = (
 
 export type AttachmentEmailTemplateGenerator = (
   props: EmailTemplateGeneratorProps,
-  fileContent: string,
+  fileContent: Attachment['content'],
   email: string,
 ) => Message
 
@@ -119,3 +107,8 @@ export interface SmsMessage {
   phoneNumber: string
   message: string
 }
+
+export type ApplicationSubmittedEmail<T> = (
+  props: EmailTemplateGeneratorProps,
+  recipient: T,
+) => Message
