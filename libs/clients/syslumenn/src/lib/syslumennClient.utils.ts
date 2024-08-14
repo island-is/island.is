@@ -556,6 +556,7 @@ export const mapJourneymanLicence = (
     name: licence.nafn,
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
+    nationalId: licence.kennitala,
   }
 }
 

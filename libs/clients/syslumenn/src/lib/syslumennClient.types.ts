@@ -397,6 +397,7 @@ export interface JourneymanLicence {
   name?: string
   dateOfPublication?: Date
   profession?: string
+  nationalId?: string
 }
 
 export interface ProfessionRight {
