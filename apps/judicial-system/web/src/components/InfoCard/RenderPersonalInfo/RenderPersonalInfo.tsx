@@ -21,7 +21,7 @@ const RenderPersonalData = (
   breakSpaces = true,
 ) => (
   <Box
-    display={breakSpaces ? 'block' : 'flex'}
+    display={breakSpaces ? 'block' : ['block', 'block', 'block', 'flex']}
     dataTestId="personalInfo"
     component="p"
   >

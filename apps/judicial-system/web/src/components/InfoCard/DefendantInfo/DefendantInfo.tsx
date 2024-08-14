@@ -103,7 +103,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           </Box>
         )}
         {defendant.defenderName || defender ? (
-          <Box display="flex">
+          <Box display={['block', 'block', 'block', 'flex']}>
             <Text as="span" whiteSpace="pre">
               {defender?.sessionArrangement ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON
