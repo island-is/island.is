@@ -1,7 +1,7 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 
-@ObjectType()
-export class MachineCategory {
+@ObjectType('WorkMachinesCategory')
+export class Category {
   @Field(() => String, { nullable: true })
   name?: string | null
 

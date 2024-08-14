@@ -1,6 +1,6 @@
 import { ObjectType, Field } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('WorkMachinesTechInfoItem')
 export class TechInfoItem {
   @Field(() => String, { nullable: true })
   variableName?: string | null

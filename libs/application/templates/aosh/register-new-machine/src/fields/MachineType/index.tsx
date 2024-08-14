@@ -121,6 +121,8 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
         ? await getMachineCategoryCallback(type, model)
         : undefined
 
+    console.log(response)
+
     const category =
       response?.getMachineParentCategoryByTypeAndModel?.name ?? ''
     const subcategory =

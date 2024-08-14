@@ -1,13 +1,13 @@
 import { Field, InputType } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
 
-@InputType('GetMachineParentCategoryByTypeAndModelInput')
+@InputType('WorkMachinesParentCategoryByTypeAndModelInput')
 export class GetMachineParentCategoryByTypeAndModelInput {
   @Field()
   @IsString()
   type!: string
 
-  @Field(() => String)
+  @Field()
   @IsString()
   model!: string
 }

@@ -295,6 +295,7 @@ export class WorkMachinesClientService {
     auth: Auth,
     requestParameters: ApiMachineParentCategoriesTypeModelGetRequest,
   ): Promise<MachineParentCategoryDetailsDto> {
+    console.log(requestParameters.model, requestParameters.type)
     return await this.machineParentCategoriesApiWithAuth(
       auth,
     ).apiMachineParentCategoriesTypeModelGet(requestParameters)

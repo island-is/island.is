@@ -28,10 +28,10 @@ import {
   Features,
 } from '@island.is/nest/feature-flags'
 import { MachineDetails } from './models/machineDetails'
-import { MachineModel } from './models/machineModel'
+import { Model } from './models/model'
 import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
-import { MachineCategory } from './models/machineCategory'
-import { MachineSubCategory } from './models/machineSubCategory'
+import { Category } from './models/category'
+import { SubCategory } from './models/subCategory'
 import { TechInfoItem } from './models/techInfoItem'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
@@ -136,7 +136,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => [MachineModel])
+  @Query(() => [Model])
   @Audit()
   async getMachineModels(
     @CurrentUser() auth: User,
@@ -146,7 +146,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => MachineCategory)
+  @Query(() => Category)
   @Audit()
   async getMachineParentCategoryByTypeAndModel(
     @CurrentUser() auth: User,
@@ -159,7 +159,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => [MachineSubCategory])
+  @Query(() => [SubCategory])
   @Audit()
   async getMachineSubCategories(
     @CurrentUser() auth: User,
