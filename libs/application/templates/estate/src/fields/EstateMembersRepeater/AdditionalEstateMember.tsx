@@ -43,8 +43,6 @@ export const AdditionalEstateMember = ({
   relationWithApplicantOptions: { value: string; label: string }[]
   error: Record<string, string>
 }) => {
-
-
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
