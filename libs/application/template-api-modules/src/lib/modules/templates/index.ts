@@ -24,8 +24,12 @@ import { ExamplePaymentActionsModule } from './example-payment-actions/examplePa
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
+import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
+import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery/financial-statement-cemetery.service'
 import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
 import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
+import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
+import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
 import { FundingGovernmentProjectsModule } from './funding-government-projects/funding-government-projects.module'
 import { FundingGovernmentProjectsService } from './funding-government-projects/funding-government-projects.service'
 import { GeneralFishingLicenseModule } from './general-fishing-license/general-fishing-license.module'
@@ -152,8 +156,6 @@ export const modules = [
   AccidentNotificationModule,
   GeneralPetitionModule,
   CriminalRecordSubmissionModule,
-  GeneralFishingLicenseModule,
-  DataProtectionComplaintModule,
   PSignSubmissionModule,
   AnnouncementOfDeathModule,
   ExamplePaymentActionsModule,
@@ -164,7 +166,9 @@ export const modules = [
   DrivingSchoolConfirmationModule,
   PassportModule,
   OperatingLicenseModule,
+  FinancialStatementCemeteryTemplateModule,
   FinancialStatementsInaoTemplateModule,
+  FinancialStatementIndividualElectionModule,
   NoDebtCertificateModule,
   InheritanceReportModule,
   EstateTemplateModule,
@@ -178,7 +182,6 @@ export const modules = [
   OrderVehicleLicensePlateModule,
   OrderVehicleRegistrationCertificateModule,
   TransferOfVehicleOwnershipModule,
-  EstateTemplateModule,
   PassportAnnulmentModule,
   EuropeanHealthInsuranceCardModule,
   DrivingLicenseBookUpdateInstructorModule,
@@ -223,8 +226,6 @@ export const services = [
   AccidentNotificationService,
   GeneralPetitionService,
   CriminalRecordSubmissionService,
-  GeneralFishingLicenseService,
-  DataProtectionComplaintService,
   PSignSubmissionService,
   AnnouncementOfDeathService,
   ExamplePaymentActionsService,
@@ -234,7 +235,9 @@ export const services = [
   DrivingSchoolConfirmationService,
   PassportService,
   OperatingLicenseService,
+  FinancialStatementCemeteryTemplateService,
   FinancialStatementsInaoTemplateService,
+  FinancialStatementIndividualElectionService,
   MarriageConditionsSubmissionService,
   NoDebtCertificateService,
   InheritanceReportService,
@@ -249,7 +252,6 @@ export const services = [
   OrderVehicleLicensePlateService,
   OrderVehicleRegistrationCertificateService,
   TransferOfVehicleOwnershipService,
-  EstateTemplateService,
   PassportAnnulmentService,
   EuropeanHealthInsuranceCardService,
   DrivingLicenseBookUpdateInstructorService,

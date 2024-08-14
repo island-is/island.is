@@ -179,7 +179,6 @@ export const Overview = () => {
                   {fm(strings.reviewerSubtitle, {
                     indictmentAppealDeadline: formatDate(
                       workingCase.indictmentAppealDeadline,
-                      'P',
                     ),
                   })}
                 </Text>

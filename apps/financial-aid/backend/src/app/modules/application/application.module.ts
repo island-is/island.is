@@ -5,7 +5,6 @@ import { ApplicationModel } from './models/application.model'
 import { EmailModule } from '@island.is/email-service'
 import { ApplicationController } from './application.controller'
 import { ApplicationService } from './application.service'
-import { environment } from '../../../environments'
 import {
   AmountModule,
   MunicipalityModule,
@@ -20,7 +19,7 @@ import {
   imports: [
     forwardRef(() => StaffModule),
     forwardRef(() => FileModule),
-    EmailModule.register(environment.emailOptions),
+    EmailModule,
     forwardRef(() => ApplicationEventModule),
     forwardRef(() => ChildrenModule),
     forwardRef(() => MunicipalityModule),
