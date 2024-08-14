@@ -5,6 +5,30 @@ import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Category } from './category.model'
 import { Type } from './type.model'
 
+@ObjectType('DocumentV2Message')
+export class Message {
+  @Field({ nullable: true })
+  type?: string
+
+  @Field({ nullable: true })
+  message?: string
+}
+
+@ObjectType('DocumentV2Actions')
+export class Actions {
+  @Field({ nullable: true })
+  title?: string
+
+  @Field({ nullable: true })
+  type?: string
+
+  @Field({ nullable: true })
+  data?: string
+
+  @Field(() => String, { nullable: true })
+  icon?: string
+}
+
 @ObjectType('DocumentV2')
 export class Document {
   @Field(() => ID)
@@ -45,6 +69,15 @@ export class Document {
     description: 'URL in download service. For downloading PDFs',
   })
   downloadUrl?: string
+
+  @Field(() => Message, { nullable: true })
+  alertMessage?: Message
+
+  @Field(() => [Actions], { nullable: true })
+  actions?: Array<Actions>
+
+  @Field(() => Boolean, { nullable: true })
+  isUrgent?: boolean
 }
 
 @ObjectType('DocumentsV2')

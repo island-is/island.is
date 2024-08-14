@@ -1577,6 +1577,10 @@ export const m = defineMessages({
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
   },
+  urgent: {
+    id: 'service-portal:urgent',
+    defaultMessage: 'Áríðandi',
+  },
   openErrand: {
     id: 'sp.law-and-order:open-errand',
     defaultMessage: 'Opna erindi',
