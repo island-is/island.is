@@ -252,7 +252,7 @@ export const ActionCard: React.FC<React.PropsWithChildren<ActionCardProps>> = ({
     return (
       !!hasCTA && (
         <Box
-          paddingTop={tag.label ? 'gutter' : 0}
+          paddingTop={tag.label || secondaryTag?.label ? 'gutter' : 0}
           display="flex"
           justifyContent={['flexStart', 'flexEnd']}
           alignItems="center"

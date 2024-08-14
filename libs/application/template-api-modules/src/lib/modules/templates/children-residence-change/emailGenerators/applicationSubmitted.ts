@@ -8,12 +8,13 @@ import {
   ulStyles,
   liStyles,
 } from './consts'
+import { Address, Attachment } from 'nodemailer/lib/mailer'
 
 interface ApplicationSubmittedEmail {
   (
     props: EmailTemplateGeneratorProps,
-    fileContent: string,
-    recipientEmail: string,
+    fileContent: Attachment['content'],
+    recipientEmail: Address['address'],
     syslumennName: string,
     caseNumber?: string,
   ): SendMailOptions
