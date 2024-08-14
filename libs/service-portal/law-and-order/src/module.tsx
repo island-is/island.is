@@ -5,6 +5,7 @@ import { Navigate } from 'react-router-dom'
 import { m } from '@island.is/service-portal/core'
 import { Components } from './lib/const'
 import { lazy } from 'react'
+import { Features } from '@island.is/feature-flags'
 
 const IndexComponent = lazy(() => import('./screens/index'))
 
@@ -12,6 +13,7 @@ export const lawAndOrderModule: PortalModule = {
   //TODO: Replace with correct scope! .lawAndOrder
 
   name: m.lawAndOrder,
+  featureFlag: Features.servicePortalLawAndOrderModuleEnabled,
   routes: ({ userInfo }) => [
     {
       name: m.lawAndOrder,
