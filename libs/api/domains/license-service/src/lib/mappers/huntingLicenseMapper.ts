@@ -1,37 +1,45 @@
 import { Locale } from '@island.is/shared/types'
 import {
-  GenericLicenseDataField,
   GenericLicenseDataFieldType,
-  GenericLicenseLabels,
+  GenericLicenseMappedPayloadResponse,
   GenericLicenseMapper,
-  GenericUserLicensePayload,
+  GenericUserLicenseMetaLinksType,
 } from '../licenceService.type'
 import { HuntingLicenseDto } from '@island.is/clients/hunting-license'
-import { getLabel } from '../utils/translations'
-import { Injectable } from '@nestjs/common'
-import { format } from 'kennitala'
-import dateFormat from 'date-fns/format'
+import { Inject, Injectable } from '@nestjs/common'
 import { isDefined } from '@island.is/shared/utils'
-import capitalize from 'lodash/capitalize'
-import { DEFAULT_LICENSE_ID } from '../licenseService.constants'
-
-const formatDate = (date: Date) => dateFormat(date, 'dd.MM.yyyy')
+import {
+  DEFAULT_LICENSE_ID,
+  LICENSE_NAMESPACE,
+} from '../licenseService.constants'
+import { IntlService } from '@island.is/cms-translations'
+import { m } from '../messages'
+import { format as formatNationalId } from 'kennitala'
+import { expiryTag, formatDate, capitalize } from '../utils'
+import { GenericLicenseDataField } from '../dto/GenericLicenseDataField.dto'
+import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 @Injectable()
 export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
-  parsePayload(
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly intlService: IntlService,
+  ) {}
+  async parsePayload(
     payload: Array<unknown>,
     locale: Locale = 'is',
-    labels?: GenericLicenseLabels,
-  ): Array<GenericUserLicensePayload> {
-    if (!payload) return []
+  ): Promise<Array<GenericLicenseMappedPayloadResponse>> {
+    if (!payload) return Promise.resolve([])
 
     const typedPayload = payload as Array<HuntingLicenseDto>
 
-    const label = labels?.labels
+    const { formatMessage } = await this.intlService.useIntl(
+      [LICENSE_NAMESPACE],
+      locale,
+    )
 
-    const mappedPayload: Array<GenericUserLicensePayload> = typedPayload.map(
-      (t) => {
+    const mappedPayload: Array<GenericLicenseMappedPayloadResponse> =
+      typedPayload.map((t) => {
         let address = t.holderAddress
         if (t.holderCity) {
           address += `, ${t.holderCity}`
@@ -39,51 +47,53 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
 
         const data: Array<GenericLicenseDataField> = [
           {
-            name: getLabel('basicInfoLicense', locale, label),
+            name: formatMessage(m.basicInfoLicense),
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('personName', locale, label),
+            label: formatMessage(m.personName),
             value: t.holderName ?? '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('nationalId', locale, label),
-            value: t.holderNationalId ? format(t.holderNationalId) : '',
+            label: formatMessage(m.nationalId),
+            value: t.holderNationalId
+              ? formatNationalId(t.holderNationalId)
+              : '',
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('legalAddress', locale, label),
+            label: formatMessage(m.legalAddress),
             value: address,
           },
           {
             type: GenericLicenseDataFieldType.Value,
-            label: getLabel('cardNumber', locale, label),
+            label: formatMessage(m.cardNumber),
             value: t.number ?? '',
           },
           t.validFrom
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('publishedDate', locale, label),
+                label: formatMessage(m.publishedDate),
                 value: formatDate(t.validFrom),
               }
             : undefined,
           t.validFrom && t.validTo
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('validDuration', locale, label),
+                label: formatMessage(m.validDuration),
                 value: `${formatDate(t.validFrom)} - ${formatDate(t.validTo)}`,
               }
             : undefined,
           t.permitFor?.length
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('huntingPermitValidFor', locale, label),
+                label: formatMessage(m.huntingPermitValidFor),
                 value: t.permitFor?.map((p) => capitalize(p))?.join(', ') ?? '',
               }
             : undefined,
           t.benefits?.length
             ? {
                 type: GenericLicenseDataFieldType.Value,
-                label: getLabel('huntingPermitBenefits', locale, label),
+                label: formatMessage(m.huntingPermitBenefits),
                 value:
                   t.benefits?.map((b) => capitalize(b.land))?.join(', ') ?? '',
               }
@@ -91,25 +101,47 @@ export class HuntingLicensePayloadMapper implements GenericLicenseMapper {
         ].filter(isDefined)
 
         return {
-          data,
-          rawData: JSON.stringify(t),
-          metadata: {
-            licenseNumber: t.number?.toString() ?? '',
-            licenseId: DEFAULT_LICENSE_ID,
-            expired: !t.isValid,
-            expireDate: t.validTo ? t.validTo.toISOString() : undefined,
-            links: [
-              {
-                label: getLabel('renewHuntingLicense', locale, label),
-                value:
-                  t.renewalUrl ??
-                  'https://innskraning.island.is/?id=gogn.ust.is',
-              },
-            ],
+          licenseName: formatMessage(m.huntingCard),
+          type: 'user',
+          payload: {
+            data,
+            rawData: JSON.stringify(t),
+            metadata: {
+              licenseNumber: t.number ?? '',
+              subtitle: formatMessage(m.licenseNumberVariant, {
+                arg: t.number ?? formatMessage(m.unknown),
+              }),
+              licenseId: DEFAULT_LICENSE_ID,
+              expired: !t.isValid,
+              expireDate: t.validTo ? t.validTo.toISOString() : undefined,
+              displayTag: expiryTag(
+                formatMessage,
+                !t.isValid,
+                t.validTo &&
+                  formatMessage(m.validUntil, {
+                    arg: formatDate(t.validTo),
+                  }),
+              ),
+              links: [
+                {
+                  label: formatMessage(m.renewLicense, {
+                    arg: formatMessage(m.huntingCard).toLowerCase(),
+                  }),
+                  value:
+                    t.renewalUrl ??
+                    'https://innskraning.island.is/?id=gogn.ust.is',
+                  type: GenericUserLicenseMetaLinksType.External,
+                },
+              ],
+              name: formatMessage(m.huntingCard),
+              title: formatMessage(m.yourHuntingCard),
+              description: [
+                { text: formatMessage(m.huntingLicenseDescription) },
+              ],
+            },
           },
         }
-      },
-    )
+      })
 
     return mappedPayload
   }
