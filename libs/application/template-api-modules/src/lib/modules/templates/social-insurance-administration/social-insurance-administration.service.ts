@@ -527,7 +527,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (isRunningOnEnvironment('local')) {
       res.incomeTypes = [
         {
-          incomeType: 'Ökutækjastyrkur',
+          incomeTypeNumber: 2,
+          incomeTypeName: 'Lífeyrissjóður',
+          incomeTypeCode: '43',
+          categoryNumber: 2,
+          categoryName: 'Lífeyrissjóðstekjur',
+          categoryCode: '2',
           january: 103062,
           february: 103488,
           march: 103318,
@@ -543,7 +548,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
           total: 414563,
         },
         {
-          incomeType: 'Laun',
+          incomeTypeNumber: 1,
+          incomeTypeName: 'Laun',
+          incomeTypeCode: '21',
+          categoryNumber: 1,
+          categoryName: 'Atvinnutekjur',
+          categoryCode: '1',
           january: 53133,
           february: 53133,
           march: 53133,
