@@ -148,8 +148,11 @@ export class FileService {
   ) {
     const bucket = this.getBucketName()
     const s3FileName = `${BucketTypePrefix[pdfType]}/${application.id}.pdf`
-    const s3File = await this.awsService.getFile(bucket, s3FileName)
-    const fileContent = s3File.Body?.toString('binary')
+    const fileContent = await this.awsService.getFileEncoded({
+      bucket,
+      fileName: s3FileName,
+      encoding: 'binary',
+    })
 
     const { phoneNumber, name, title } = this.getSigningOptionsFromApplication(
       application,

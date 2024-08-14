@@ -106,10 +106,7 @@ import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
-import {
-  OfficialJournalOfIcelandApplicationClientConfig,
-  OfficialJournalOfIcelandApplicationClientModule,
-} from '@island.is/clients/official-journal-of-iceland/application'
+import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
@@ -196,6 +193,7 @@ import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
 import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
 import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
+import { emailModuleConfig } from '@island.is/email-service'
 
 const environment = getConfig
 
@@ -421,6 +419,7 @@ const environment = getConfig
         CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
+        emailModuleConfig,
       ],
     }),
   ],
