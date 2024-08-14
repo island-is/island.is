@@ -492,23 +492,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
 
     if (application.typeId === ApplicationTypes.SURVIVORS_BENEFITS) {
-      // TODO: Implement sendApplication for SURVIVORS_BENEFITS
-      console.log(
-        '------- sendApplication SURVIVORS_BENEFITS not implemented -------',
+      const attachments = await this.getSBAttachments(application)
+
+      const survivorsBenefitsDTO = transformApplicationToSurvivorsBenefitsDTO(
+        application,
+        attachments,
       )
-      // const attachments = await this.getSBAttachments(application)
 
-      // const survivorsBenefitsDTO = transformApplicationToSurvivorsBenefitsDTO(
-      //   application,
-      //   attachments,
-      // )
-
-      // const response = await this.siaClientService.sendApplication(
-      //   auth,
-      //   survivorsBenefitsDTO,
-      //   application.typeId.toLowerCase(),
-      // )
-      // return response
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        survivorsBenefitsDTO,
+        DeathBenefits,
+      )
+      return response
     }
   }
 

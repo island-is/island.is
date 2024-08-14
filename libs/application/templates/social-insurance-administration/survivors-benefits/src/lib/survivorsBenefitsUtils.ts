@@ -97,13 +97,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const deceasedSpouseName = getValueViaPath(
     answers,
-    'deceasedSpouseInfo.name',
+    notIcelandic ? 'deceasedSpouseInfo.manualName' : 'deceasedSpouseInfo.name',
   ) as string
 
-  const deceasedSpouseNationalId = getValueViaPath(
-    answers,
-    'deceasedSpouseInfo.nationalId',
-  ) as string
+  const deceasedSpouseNationalId = notIcelandic
+    ? ''
+    : (getValueViaPath(answers, 'deceasedSpouseInfo.nationalId') as string)
 
   const deceasedSpouseDate = getValueViaPath(
     answers,

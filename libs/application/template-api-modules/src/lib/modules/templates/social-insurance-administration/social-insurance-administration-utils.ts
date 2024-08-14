@@ -35,6 +35,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 
 import {
+  ChildInformation,
   getApplicationAnswers as getSBApplicationAnswers,
   getApplicationExternalData as getSBApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/survivors-benefits'
@@ -330,7 +331,7 @@ export const transformApplicationToSurvivorsBenefitsDTO = (
     tempAnswers,
     isExpectingChild,
   } = getSBApplicationAnswers(application.answers)
-  const { bankInfo, userProfileEmail } = getSBApplicationExternalData(
+  const { bankInfo, userProfileEmail, children } = getSBApplicationExternalData(
     application.externalData,
   )
 
@@ -367,6 +368,8 @@ export const transformApplicationToSurvivorsBenefitsDTO = (
     },
     uploads,
     comment,
+    deceasedNationalId: deceasedSpouseNationalId,
+    childrenNationalIds: getChildrenNationalIds(children),
   }
 
   return survivorsBenefitsDTO
@@ -377,6 +380,10 @@ export const getMonthNumber = (monthName: string): number => {
   const monthNumber = parse(monthName, 'MMMM', new Date())
   return monthNumber.getMonth() + 1
 }
+
+export const getChildrenNationalIds = (
+  children: ChildInformation[],
+): string[] => children.map(({ nationalId }) => nationalId)
 
 export const getApplicationType = (application: Application): string => {
   const { applicationType } = getOAPApplicationAnswers(application.answers)

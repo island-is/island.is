@@ -410,9 +410,11 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                   title: '',
                   condition: (answers) =>
                     !getApplicationAnswers(answers).notIcelandic,
+                  required: true,
                 }),
                 buildTextField({
-                  id: 'deceasedSpouseInfo.name',
+                  id: 'deceasedSpouseInfo.manualName',
+                  required: true,
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
                   condition: (answers) =>
                     !!getApplicationAnswers(answers).notIcelandic,

@@ -103,6 +103,8 @@ export interface ApplicationDTO {
   uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
   employment?: string
   employers?: Array<Employer>
+  deceasedNationalId?: string
+  childrenNationalIds?: string[]
 }
 
 export enum DocumentTypeEnum {
