@@ -56,8 +56,8 @@ query GenericLicenseCollection(
         status
         updated
       }
-      errorCode
-      errorMessage
+      code
+      message
       extraData
     }
   }

@@ -167,8 +167,8 @@ export class LicenseService {
             status: GenericUserLicenseFetchStatus.Error,
             updated: new Date().getTime().toString(),
           },
-          errorCode: licensesFetchResponse.error.code,
-          errorMessage: licensesFetchResponse.error.message,
+          code: licensesFetchResponse.error.code,
+          message: licensesFetchResponse.error.message,
           extraData: licensesFetchResponse.error.data,
         },
       }

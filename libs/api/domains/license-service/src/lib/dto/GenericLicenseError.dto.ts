@@ -15,10 +15,10 @@ export class GenericLicenseError {
   provider?: GenericLicenseProvider
 
   @Field(() => Int, { nullable: true })
-  errorCode?: number
+  code?: number
 
   @Field({ nullable: true })
-  errorMessage?: string
+  message?: string
 
   @Field({ nullable: true })
   extraData?: string
