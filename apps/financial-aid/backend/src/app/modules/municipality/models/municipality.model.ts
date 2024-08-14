@@ -137,6 +137,7 @@ export class MunicipalityModel extends Model<Municipality> {
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(ChildrenAid),
+    defaultValue: ChildrenAid.NOTDEFINED,
   })
   @ApiProperty({ enum: ChildrenAid })
   childrenAid: ChildrenAid
