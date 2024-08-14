@@ -40,6 +40,7 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { ClientDelegationType } from '../models/client-delegation-type.model'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -656,6 +657,24 @@ export class AdminClientsService {
     const superUserUpdatedFields = updatedFields.filter((field) =>
       superUserFields.includes(field),
     )
+
+    // Verify that the user is super admin, so they can update PersonalRepresentative in the delegation type
+    const allDelegationTypes = [
+      ...(input.removedDelegationTypes ?? []),
+      ...(input.addedDelegationTypes ?? []),
+    ]
+
+    if (!isSuperUser && allDelegationTypes.length > 0) {
+      for (const delegationType of allDelegationTypes) {
+        if (
+          delegationType.startsWith(
+            `${AuthDelegationType.PersonalRepresentative}:`,
+          )
+        ) {
+          return false
+        }
+      }
+    }
 
     if (superUserUpdatedFields.length === 0) {
       // There are no superuser fields to update
