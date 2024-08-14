@@ -56,13 +56,12 @@ export const getOptions = (locale: Locale) => {
       options: [
         {
           id: '1',
-          title:
-            'Við andlát mitt er heimilt að nota líffærin mín til ígræðslu.',
+          title: 'Við andlát mitt má nota líffæri mín til líffæragjafa.',
         },
         {
           id: '2',
           title:
-            'Ég heimila líffæragjöf, en heimildin nær ekki til eftirtalinna líffæra:',
+            'Ég gef leyfi fyrir líffæragjöf að undanskildum eftirfarandi líffærum:',
           limitations: [
             { value: 'Hjarta', type: 'checkbox' },
             { value: 'Lungu', type: 'checkbox' },
@@ -70,14 +69,14 @@ export const getOptions = (locale: Locale) => {
             { value: 'Nýru', type: 'checkbox' },
             { value: 'Bris', type: 'checkbox' },
             { value: 'Þarmar', type: 'checkbox' },
-            { value: 'Annað', type: 'checkbox' },
+            // { value: 'Annað', type: 'checkbox' },
             { value: 'Hornhimna', type: 'checkbox' },
-            { value: 'Annað', type: 'input' },
+            // { value: 'Annað', type: 'input' },
           ],
         },
         {
           id: '3',
-          title: 'Ég heimila ekki líffæragjöf.',
+          title: 'Ég banna líffæragjöf.',
         },
       ],
     },
@@ -100,9 +99,9 @@ export const getOptions = (locale: Locale) => {
             { value: 'Kidneys', type: 'checkbox' },
             { value: 'Pancreas', type: 'checkbox' },
             { value: 'Intestines', type: 'checkbox' },
-            { value: 'Other', type: 'checkbox' },
+            // { value: 'Other', type: 'checkbox' },
             { value: 'Cornea', type: 'checkbox' },
-            { value: 'Other', type: 'input' },
+            // { value: 'Other', type: 'input' },
           ],
         },
         {

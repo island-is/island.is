@@ -951,7 +951,7 @@ export const messages = defineMessages({
   organDonationDescription: {
     id: 'sp.health:organ-donation-description',
     defaultMessage:
-      'Íslendingar byggja löggjöf sína um líffæragjafir á ætluðu samþykki og  erum við því öll sjálfkrafa líffæragjafar. Við getum bjargað lífi annarra með því að gefa þeim líffæri. ',
+      'Íslendingar eru sjálfkrafa skráðir líffæragjafar. Þau sem vilja geta breytt afstöðu sinni.',
   },
   readAboutOrganDonation: {
     id: 'sp.health:read-about-organ-donation',

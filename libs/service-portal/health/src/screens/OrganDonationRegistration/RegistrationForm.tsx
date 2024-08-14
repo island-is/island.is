@@ -50,7 +50,7 @@ export const Form2 = () => {
         intro={formatMessage(messages.organDonationDescription)}
       />
       <Text variant="eyebrow" color="purple400" marginBottom={1}>
-        {formatMessage(messages.changeRegistration)}
+        {formatMessage(messages.changeTake)}
       </Text>
       <form onSubmit={onSubmit}>
         <Stack space={2}>
