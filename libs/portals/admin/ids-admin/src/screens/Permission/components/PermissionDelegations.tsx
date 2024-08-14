@@ -2,6 +2,7 @@ import React from 'react'
 
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Hidden, Stack, Text } from '@island.is/island-ui/core'
+import { AuthDelegationProvider } from '@island.is/shared/types'
 
 import { usePermission } from '../PermissionContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
@@ -116,7 +117,9 @@ export const PermissionDelegations = () => {
       <Stack space={4}>
         {providers.map((provider) =>
           !provider ||
-          (!isSuperAdmin && provider.id === 'talsmannagrunnur') ? null : (
+          (!isSuperAdmin &&
+            provider.id ===
+              AuthDelegationProvider.PersonalRepresentativeRegistry) ? null : (
             <Stack space={2} key={provider.id}>
               <div>
                 <Text variant="h5" as="h4" paddingBottom={1}>

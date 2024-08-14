@@ -53,7 +53,6 @@ export class MeScopesController {
     resources: (scopes) => scopes.map((scope) => scope.name),
   })
   findAllByTenantId(@Param('tenantId') id: string): Promise<AdminScopeDTO[]> {
-    console.log('FINDING THE SCOPES')
     return this.adminScopeService.findAllByTenantId(id)
   }
 
