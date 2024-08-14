@@ -16,8 +16,8 @@ import {
   CreateGroupInput,
   DeleteGroupInput,
   UpdateGroupInput,
-} from '../../dto/groups.input'
-import { Group } from '../../models/group.model'
+} from '../../dto/OLDgroups.input'
+import { Group } from '../../models/OLDgroup.model'
 import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
@@ -26,7 +26,7 @@ export class GroupsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: GroupsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

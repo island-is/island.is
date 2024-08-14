@@ -14,8 +14,8 @@ import {
   DeleteStepInput,
   GetStepInput,
   UpdateStepInput,
-} from '../../dto/steps.input'
-import { Step } from '../../models/step.model'
+} from '../../dto/OLDsteps.input'
+import { Step } from '../../models/OLDstep.model'
 import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
@@ -24,7 +24,7 @@ export class StepsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: StepsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

@@ -1,28 +1,28 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { FormsService } from './forms.service'
-import { FormResponse } from '../../models/formResponse.model'
+import { FormResponse } from '../../models/OLDformResponse.model'
 import {
   CreateFormInput,
   GetFormInput,
   GetFormsInput,
   UpdateFormInput,
   DeleteFormInput,
-} from '../../dto/forms.input'
+} from '../../dto/OLDforms.input'
 import {
   CurrentUser,
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { FormListResponse } from '../../models/formListResponse.model'
+import { FormListResponse } from '../../models/OLDformListResponse.model'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-import { UpdateFormSettingsInput } from '../../dto/updateFormSettings.input'
+import { UpdateFormSettingsInput } from '../../dto/OLDupdateFormSettings.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) {}
+  constructor(private readonly formsService: FormsService) { }
 
   @Query(() => FormResponse, {
     name: 'formSystemGetForm',

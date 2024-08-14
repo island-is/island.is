@@ -1783,7 +1783,10 @@
           "forms": {
             "type": "array",
             "items": {
-              "type": "array"
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/Form"
+              }
             }
           },
           "applicantTypeNameSuggestions": {
@@ -2483,46 +2486,48 @@
             "type": "string"
           },
           "minValue": {
-            "type": "object"
+            "type": "number"
           },
           "maxValue": {
-            "type": "object"
+            "type": "number"
           },
           "minLength": {
-            "type": "object"
+            "type": "number"
           },
           "maxLength": {
-            "type": "object"
+            "type": "number"
           },
           "minDate": {
-            "type": "object"
+            "format": "date-time",
+            "type": "string"
           },
           "maxDate": {
-            "type": "object"
+            "format": "date-time",
+            "type": "string"
           },
           "minAmount": {
-            "type": "object"
+            "type": "string"
           },
           "maxAmount": {
-            "type": "object"
+            "type": "string"
           },
           "year": {
-            "type": "object"
+            "type": "number"
           },
           "hasLink": {
-            "type": "object"
+            "type": "boolean"
           },
           "url": {
-            "type": "object"
+            "type": "string"
           },
           "buttonText": {
-            "type": "object"
+            "type": "string"
           },
           "hasPropertyInput": {
-            "type": "object"
+            "type": "boolean"
           },
           "hasPropertyList": {
-            "type": "object"
+            "type": "boolean"
           },
           "list": {
             "type": "array",
@@ -2542,13 +2547,13 @@
             ]
           },
           "fileTypes": {
-            "type": "object"
+            "type": "string"
           },
           "fileMaxSize": {
-            "type": "object"
+            "type": "number"
           },
           "maxFiles": {
-            "type": "object"
+            "type": "number"
           },
           "timeInterval": {
             "type": "string",

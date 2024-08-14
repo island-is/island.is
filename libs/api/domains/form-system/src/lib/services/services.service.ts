@@ -6,8 +6,8 @@ import {
   ApiServicesFasteignFasteignanumerGetRequest,
   ServicesApi,
 } from '@island.is/clients/form-system'
-import { List } from '../../models/services.model'
-import { GetPropertyInput } from '../../dto/services.input'
+import { List } from '../../models/OLDservices.model'
+import { GetPropertyInput } from '../../dto/OLDservices.input'
 import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
@@ -16,7 +16,7 @@ export class FormSystemService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private servicesApi: ServicesApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

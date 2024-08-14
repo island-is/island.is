@@ -5,8 +5,8 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { FormSystemService } from './services.service'
-import { List } from '../../models/services.model'
-import { GetPropertyInput } from '../../dto/services.input'
+import { List } from '../../models/OLDservices.model'
+import { GetPropertyInput } from '../../dto/OLDservices.input'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 
@@ -14,7 +14,7 @@ import { UseGuards } from '@nestjs/common'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormSystemServicesResolver {
-  constructor(private readonly formSystemServices: FormSystemService) {}
+  constructor(private readonly formSystemServices: FormSystemService) { }
 
   @Query(() => List, {
     name: 'formSystemGetCountries',

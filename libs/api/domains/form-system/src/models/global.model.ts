@@ -1,10 +1,19 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('FormSystemLanguageType')
-export class LanguageType {
+@ObjectType('NestedObjectEntry')
+export class NestedObjectEntry {
   @Field(() => String, { nullable: true })
-  is?: string | null
+  key?: string
+
+  @Field(() => [KeyValuePair], { nullable: true })
+  value?: KeyValuePair[]
+}
+
+@ObjectType('KeyValuePair')
+export class KeyValuePair {
+  @Field(() => String, { nullable: true })
+  key?: string
 
   @Field(() => String, { nullable: true })
-  en?: string | null
+  value?: string
 }

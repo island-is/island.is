@@ -9,8 +9,8 @@ import {
   CreateInputInput,
   DeleteInputInput,
   UpdateInputInput,
-} from '../../dto/inputs.input'
-import { Input } from '../../models/input.model'
+} from '../../dto/OLDinputs.input'
+import { Input } from '../../models/OLDinput.model'
 import { InputsService } from './inputs.service'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
@@ -19,7 +19,7 @@ import { UseGuards } from '@nestjs/common'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class InputsResolver {
-  constructor(private readonly inputsService: InputsService) {}
+  constructor(private readonly inputsService: InputsService) { }
 
   @Query(() => Input, {
     name: 'formSystemGetInput',

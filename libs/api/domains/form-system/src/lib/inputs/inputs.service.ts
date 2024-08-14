@@ -16,8 +16,8 @@ import {
   CreateInputInput,
   DeleteInputInput,
   UpdateInputInput,
-} from '../../dto/inputs.input'
-import { Input } from '../../models/input.model'
+} from '../../dto/OLDinputs.input'
+import { Input } from '../../models/OLDinput.model'
 import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
@@ -26,7 +26,7 @@ export class InputsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: InputsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

@@ -6,8 +6,8 @@ import {
   ApiOrganizationsPostRequest,
   OrganizationsApi,
 } from '@island.is/clients/form-system'
-import { CreateOrganizationInput } from '../../dto/organization.input'
-import { Organization } from '../../models/organization.model'
+import { CreateOrganizationInput } from '../../dto/OLDorganization.input'
+import { Organization } from '../../models/OLDorganization.model'
 import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
@@ -16,7 +16,7 @@ export class OrganizationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private organizationsApi: OrganizationsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

@@ -9,8 +9,8 @@ import {
   DeleteStepInput,
   GetStepInput,
   UpdateStepInput,
-} from '../../dto/steps.input'
-import { Step } from '../../models/step.model'
+} from '../../dto/OLDsteps.input'
+import { Step } from '../../models/OLDstep.model'
 import { StepsService } from './steps.service'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
@@ -19,7 +19,7 @@ import { UseGuards } from '@nestjs/common'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class StepsResolver {
-  constructor(private readonly stepsService: StepsService) {}
+  constructor(private readonly stepsService: StepsService) { }
 
   @Query(() => Step, {
     name: 'formSystemGetStep',

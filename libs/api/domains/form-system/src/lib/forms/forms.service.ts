@@ -18,10 +18,10 @@ import {
   GetFormInput,
   GetFormsInput,
   UpdateFormInput,
-} from '../../dto/forms.input'
-import { FormResponse } from '../../models/formResponse.model'
-import { FormListResponse } from '../../models/formListResponse.model'
-import { UpdateFormSettingsInput } from '../../dto/updateFormSettings.input'
+} from '../../dto/OLDforms.input'
+import { FormResponse } from '../../models/OLDformResponse.model'
+import { FormListResponse } from '../../models/OLDformListResponse.model'
+import { UpdateFormSettingsInput } from '../../dto/OLDupdateFormSettings.input'
 import { handle4xx } from '../../utils/errorHandler'
 
 @Injectable()
@@ -30,7 +30,7 @@ export class FormsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private formsApi: FormsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

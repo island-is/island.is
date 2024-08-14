@@ -1,23 +1,24 @@
-import { InputType, Field, ID } from '@nestjs/graphql'
-import { LanguageTypeInput } from './language.input'
+import { Field, InputType, Int } from "@nestjs/graphql";
+import { LanguageType } from "../models/LanguageType.model"
+
 
 @InputType('FormSystemListItemInput')
 export class ListItemInput {
-  @Field(() => ID, { nullable: true })
-  guid?: string
+  @Field(() => String, { nullable: true })
+  id?: string
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  label?: LanguageTypeInput
+  @Field(() => LanguageType, { nullable: true })
+  label?: LanguageType
 
-  @Field(() => LanguageTypeInput, { nullable: true })
-  description?: LanguageTypeInput
+  @Field(() => LanguageType, { nullable: true })
+  description?: LanguageType
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => String, { nullable: true })
+  value?: string
+
+  @Field(() => Int, { nullable: true })
   displayOrder?: number
 
   @Field(() => Boolean, { nullable: true })
   isSelected?: boolean
-
-  @Field(() => String, { nullable: true })
-  value?: string
 }
