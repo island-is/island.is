@@ -163,7 +163,7 @@ export const VehicleDetailScreen: NavigationFunctionComponent<{
             <Input
               loading={inputLoading}
               label={intl.formatMessage({ id: 'vehicleDetail.vehicleWeight' })}
-              value={`${technicalInfo?.vehicleWeight} kg`}
+              value={`${technicalInfo?.vehicleWeight ?? ''} kg`}
             />
             {technicalInfo?.totalWeight ? (
               <Input
