@@ -2,14 +2,25 @@ import messaging from '@react-native-firebase/messaging'
 import { Button, CancelButton, Illustration, Onboarding } from '@ui'
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
+import { PermissionsAndroid } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import allow from '../../assets/icons/allow.png'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
 import { testIDs } from '../../utils/test-ids'
+import { androidIsVersion33OrAbove } from '../../utils/versions-check'
 
 async function requestUserPermission() {
   const authStatus = await messaging().requestPermission()
+
+  if (androidIsVersion33OrAbove()) {
+    const granted = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+    )
+
+    return granted === PermissionsAndroid.RESULTS.GRANTED
+  }
+
   return (
     authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
     authStatus === messaging.AuthorizationStatus.PROVISIONAL

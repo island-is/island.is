@@ -12,9 +12,10 @@ import { ExamplePaymentActionsService } from './examplePaymentActions.service'
 import {
   AdapterService,
   EmailService,
-  EMAIL_OPTIONS,
+  emailModuleConfig,
 } from '@island.is/email-service'
 import { ConfigService } from '@nestjs/config'
+import { ConfigModule } from '@island.is/nest/config'
 import { createApplication } from '@island.is/application/testing'
 
 describe('ExamplePaymentActionsService', () => {
@@ -22,6 +23,12 @@ describe('ExamplePaymentActionsService', () => {
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
+      imports: [
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [emailModuleConfig],
+        }),
+      ],
       providers: [
         ExamplePaymentActionsService,
         EmailService,
@@ -29,15 +36,6 @@ describe('ExamplePaymentActionsService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
-        },
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: {
-            useTestAccount: true,
-            options: {
-              region: 'region',
-            },
-          },
         },
         {
           provide: ConfigService,

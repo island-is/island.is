@@ -92,6 +92,14 @@ export const messages = defineMessages({
     id: 'sp.documents:mark-as-bulk-selection',
     defaultMessage: 'Merkja skjal fyrir fjöldaframkvæmd',
   },
+  goToPage: {
+    id: 'sp.documents:go-to-page',
+    defaultMessage: 'Fara á síðu {page}',
+  },
+  selectAll: {
+    id: 'sp.documents:select-all',
+    defaultMessage: 'Velja allt',
+  },
   successArchiveMulti: {
     id: 'sp.documents:success-archive-messages',
     defaultMessage: 'Skjöl sett í geymslu',
@@ -103,5 +111,9 @@ export const messages = defineMessages({
   successUnarchive: {
     id: 'sp.documents:success-unarchive-message',
     defaultMessage: 'Skjal tekið úr geymslu',
+  },
+  documentSearchLabel: {
+    id: 'sp.documents:search-label',
+    defaultMessage: 'Leita',
   },
 })
