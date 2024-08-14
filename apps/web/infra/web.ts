@@ -74,5 +74,6 @@ export const serviceSetup = (services: {
       'consultation-portal',
       'search-indexer',
     )
+    .armBetaEnrolled(true)
   return web
 }

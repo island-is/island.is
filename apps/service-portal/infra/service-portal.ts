@@ -68,3 +68,4 @@ export const serviceSetup = (services: {
       'user-notification',
       'identity-server',
     )
+    .armBetaEnrolled(true)

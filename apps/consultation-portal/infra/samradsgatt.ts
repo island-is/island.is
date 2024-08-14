@@ -68,5 +68,6 @@ export const serviceSetup = (services: {
         paths: ['/samradsgatt'],
       },
     })
+    .armBetaEnrolled(true)
   return consultationService
 }
