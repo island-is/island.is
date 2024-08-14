@@ -40,6 +40,7 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { ClientDelegationType } from '../models/client-delegation-type.model'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -273,7 +274,6 @@ export class AdminClientsService {
     clientId: string,
     input: AdminPatchClientDto,
   ): Promise<AdminClientDto> {
-    console.log('update', input)
     if (Object.keys(input).length === 0) {
       throw new BadRequestException('No fields provided to update.')
     }
@@ -664,9 +664,13 @@ export class AdminClientsService {
       ...(input.addedDelegationTypes ?? []),
     ]
 
-    if (!isSuperUser && allDelegationTypes && allDelegationTypes.length > 0) {
+    if (!isSuperUser && allDelegationTypes.length > 0) {
       for (const delegationType of allDelegationTypes) {
-        if (delegationType.startsWith('PersonalRepresentative:')) {
+        if (
+          delegationType.startsWith(
+            `${AuthDelegationType.PersonalRepresentative}:`,
+          )
+        ) {
           return false
         }
       }
