@@ -5,7 +5,7 @@
 #
 #####################################################################
 auth-admin-web:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     BASE_URL: 'https://innskra.island.is/admin'
@@ -210,7 +210,7 @@ namespaces:
     - 'identity-server-delegation'
     - 'personal-representative'
 services-auth-admin-api:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     DB_HOST: 'postgres-ids.internal'
@@ -279,7 +279,7 @@ services-auth-admin-api:
     allowPrivilegeEscalation: false
     privileged: false
 services-auth-delegation-api:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
@@ -490,7 +490,7 @@ services-auth-ids-api-cleanup:
   args:
     - 'main.js'
     - '--job=cleanup'
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   command:
     - 'node'
   enabled: true
@@ -547,7 +547,7 @@ services-auth-ids-api-cleanup:
     allowPrivilegeEscalation: false
     privileged: false
 services-auth-personal-representative:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
@@ -625,7 +625,7 @@ services-auth-personal-representative:
     allowPrivilegeEscalation: false
     privileged: false
 services-auth-personal-representative-public:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     DB_HOST: 'postgres-ids.internal'
@@ -696,7 +696,7 @@ services-auth-personal-representative-public:
     allowPrivilegeEscalation: false
     privileged: false
 services-auth-public-api:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'

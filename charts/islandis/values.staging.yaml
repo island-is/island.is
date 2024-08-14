@@ -569,7 +569,7 @@ api:
 application-system-api:
   args:
     - 'main.js'
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   command:
     - 'node'
   enabled: true
@@ -981,7 +981,7 @@ application-system-form:
     allowPrivilegeEscalation: false
     privileged: false
 consultation-portal:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     API_URL: 'http://web-api.islandis.svc.cluster.local'
@@ -1050,7 +1050,7 @@ consultation-portal:
     allowPrivilegeEscalation: false
     privileged: false
 download-service:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
@@ -1384,7 +1384,7 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 icelandic-names-registry-backend:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -1653,7 +1653,7 @@ namespaces:
     - 'services-sessions'
     - 'services-university-gateway'
 portals-admin:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     BASEPATH: '/stjornbord'
@@ -1947,7 +1947,7 @@ search-indexer-service:
     create: true
     name: 'search-indexer'
 service-portal:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   enabled: true
   env:
     BASEPATH: '/minarsidur'
@@ -3235,7 +3235,7 @@ user-notification-worker:
     create: true
     name: 'user-notification-worker'
 web:
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   basicAuth: '/k8s/web/basic_auth'
   enabled: true
   env:
