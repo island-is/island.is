@@ -290,6 +290,10 @@ export const m = defineMessages({
     id: 'service.portal:vehicles-lookup',
     defaultMessage: 'Uppfletting í ökutækjaskrá',
   },
+  vehiclesBulkMileage: {
+    id: 'service.portal:vehicles-bulk-mileage',
+    defaultMessage: 'Magnskráning kílómetrastöðu',
+  },
   vehiclesDrivingLessons: {
     id: 'service.portal:vehicles-driving-lessons',
     defaultMessage: 'Ökunám',

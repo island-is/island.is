@@ -54,6 +54,10 @@ const VehicleMileage = lazy(() =>
   import('./screens/VehicleMileage/VehicleMileage'),
 )
 
+const VehicleBulkMileage = lazy(() =>
+  import('./screens/VehicleBulkMileage/VehicleBulkMileage'),
+)
+
 export const assetsModule: PortalModule = {
   name: 'Fasteignir',
   routes: ({ userInfo, ...rest }) => {
@@ -127,6 +131,13 @@ export const assetsModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.vehicles),
         key: 'VehicleMileage',
         element: <VehicleMileage />,
+      },
+      {
+        name: m.vehiclesBulkMileage,
+        path: AssetsPaths.AssetsVehiclesBulkMileage,
+        enabled: userInfo.scopes.includes(ApiScope.vehicles),
+        // key: 'VehicleBulkMileage',
+        element: <VehicleBulkMileage />,
       },
       {
         name: m.vehiclesLookup,

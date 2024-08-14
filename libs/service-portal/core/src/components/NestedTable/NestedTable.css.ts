@@ -16,3 +16,21 @@ export const white = style({
 export const titleCol = style({
   paddingLeft: theme.spacing[2],
 })
+
+export const wrapper = style({
+  display: 'grid',
+  background: theme.color.blue100,
+  padding: `0 ${theme.spacing[3]}px ${theme.spacing[3]}px ${theme.spacing[3]}px`,
+})
+
+export const td = style({
+  width: 'max-content',
+})
+
+export const alignTd = style({
+  marginLeft: 'auto',
+})
+
+export const noBorder = style({
+  border: 'none',
+})
