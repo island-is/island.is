@@ -34,7 +34,7 @@ interface Props {
     displayAppealExpirationInfo?: boolean
     displayVerdictViewDate?: boolean
   }
-  defenders?: Defender[]
+  defender?: Defender
   icon?: IconMapIcon
   additionalDataSections?: DataSection[]
 }
@@ -44,7 +44,7 @@ const InfoCard: FC<Props> = (props) => {
     courtOfAppealData,
     data,
     defendants,
-    defenders,
+    defender,
     icon,
     additionalDataSections,
   } = props
@@ -56,9 +56,9 @@ const InfoCard: FC<Props> = (props) => {
       data-testid="infoCard"
     >
       <Box
-        className={(defendants || defenders) && styles.infoCardTitleContainer}
-        marginBottom={(defendants || defenders) && [2, 2, 3, 3]}
-        paddingBottom={defenders && [2, 2, 2, 2]}
+        className={(defendants || defender) && styles.infoCardTitleContainer}
+        marginBottom={(defendants || defender) && [2, 2, 3, 3]}
+        paddingBottom={defender && [2, 2, 2, 2]}
       >
         {defendants && (
           <>
@@ -68,7 +68,6 @@ const InfoCard: FC<Props> = (props) => {
                 <DefendantInfo
                   key={defendant.id}
                   defendant={defendant}
-                  displayDefenderInfo={!defenders}
                   displayAppealExpirationInfo={
                     defendants.displayAppealExpirationInfo
                   }
@@ -76,7 +75,7 @@ const InfoCard: FC<Props> = (props) => {
                     defendants.defendantInfoActionButton
                   }
                   displayVerdictViewDate={defendants.displayVerdictViewDate}
-                  defenders={defenders}
+                  defender={defender}
                 />
               ))}
             </Box>
