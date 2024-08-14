@@ -4,6 +4,6 @@ import { companySection } from './companySection'
 
 export const informationSection = buildSection({
   id: 'informationSection',
-  title: information.general.sectionTitle,
+  title: information.labels.company.sectionTitle,
   children: [companySection],
 })
