@@ -72,7 +72,7 @@ const Empty = () => {
   const theme = useTheme()
   const intl = useIntl()
   return (
-    <View style={{ marginBottom: theme.spacing[4], height: 280 }}>
+    <View style={{ marginBottom: theme.spacing[4] }}>
       <Problem
         type="no_data"
         title={intl.formatMessage({ id: 'airDiscount.emptyListTitle' })}
