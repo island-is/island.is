@@ -103,7 +103,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           </Box>
         )}
         {defendant.defenderName || defender ? (
-          <>
+          <Box display="flex">
             <Text as="span" whiteSpace="pre">
               {defender?.sessionArrangement ===
               SessionArrangements.ALL_PRESENT_SPOKESPERSON
@@ -116,7 +116,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
               defendant.defenderPhoneNumber || defender?.phoneNumber,
               false,
             )}
-          </>
+          </Box>
         ) : (
           <Text>{`${formatMessage(strings.defender)}: ${formatMessage(
             strings.noDefender,
