@@ -20,10 +20,23 @@ export const user = createCurrentUser({
   client: clientId,
 })
 
-export const legalGuardianScopes = ['lg1', 'lg2']
-export const procurationHolderScopes = ['ph1', 'ph2']
-export const customScopes = ['cu1', 'cu2', 'cu-od1']
-export const representativeScopes = ['pr1', 'pr2']
+const legalGuardianScope1 = 'lg1'
+const legalGuardianScope2 = 'lg2'
+const procurationHolderScope1 = 'ph1'
+const procurationHolderScope2 = 'ph2'
+const customScope1 = 'cu1'
+const customScope2 = 'cu2'
+const customScopeOtherDomain = 'cu-od1'
+const representativeScope1 = 'pr1'
+const representativeScope2 = 'pr2'
+
+export const legalGuardianScopes = [legalGuardianScope1, legalGuardianScope2]
+export const procurationHolderScopes = [
+  procurationHolderScope1,
+  procurationHolderScope2,
+]
+export const customScopes = [customScope1, customScope2, customScopeOtherDomain]
+export const representativeScopes = [representativeScope1, representativeScope2]
 
 export interface ITestCaseOptions {
   fromChildren?: string[]
@@ -83,7 +96,8 @@ export class TestCase {
       name: s,
       description: s,
       displayName: s,
-      domainName: s.includes('-od') ? this.otherDomainName : this.domainName,
+      domainName:
+        s === customScopeOtherDomain ? this.otherDomainName : this.domainName,
       grantToLegalGuardians: legalGuardianScopes.includes(s),
       grantToProcuringHolders: procurationHolderScopes.includes(s),
       allowExplicitDelegationGrant: customScopes.includes(s),

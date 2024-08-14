@@ -74,13 +74,20 @@ describe('DelegationsController', () => {
       clientId: '@island.is/webapp',
     })
 
+    const scopeValid1 = 'scope/valid1'
+    const scopeValid2 = 'scope/valid2'
+    const scopeValid1and2 = 'scope/valid1and2'
+    const scopeUnactiveType = 'scope/unactiveType'
+    const scopeOutdated = 'scope/outdated'
+    const disabledScope = 'disabledScope'
+
     client.allowedScopes = Object.values([
-      'scope/valid1',
-      'scope/valid2',
-      'scope/valid1and2',
-      'scope/unactiveType',
-      'scope/outdated',
-      'disabledScope',
+      scopeValid1,
+      scopeValid2,
+      scopeValid1and2,
+      scopeUnactiveType,
+      scopeOutdated,
+      disabledScope,
     ]).map((s) => ({
       clientId: client.clientId,
       scopeName: s,
@@ -529,12 +536,12 @@ describe('DelegationsController', () => {
       describe('and given we have a combination of scopes for personal representative', () => {
         type scopesType = [name: string, enabled: boolean, rightTypes: string[]]
         const scopes: scopesType[] = [
-          ['scope/valid1', true, ['valid1']],
-          ['scope/valid2', true, ['valid2']],
-          ['scope/valid1and2', true, ['valid1', 'valid2']],
-          ['scope/unactiveType', true, ['unactivated']],
-          ['scope/outdated', true, ['outdated']],
-          ['disabledScope', false, ['valid1']],
+          [scopeValid1, true, ['valid1']],
+          [scopeValid2, true, ['valid2']],
+          [scopeValid1and2, true, ['valid1', 'valid2']],
+          [scopeUnactiveType, true, ['unactivated']],
+          [scopeOutdated, true, ['outdated']],
+          [disabledScope, false, ['valid1']],
         ]
 
         beforeAll(async () => {
@@ -580,11 +587,11 @@ describe('DelegationsController', () => {
         })
 
         describe.each([
-          [['valid1'], ['scope/valid1', 'scope/valid1and2']],
-          [['valid2'], ['scope/valid2', 'scope/valid1and2']],
+          [['valid1'], [scopeValid1, scopeValid1and2]],
+          [['valid2'], [scopeValid2, scopeValid1and2]],
           [
             ['valid1', 'valid2'],
-            ['scope/valid1', 'scope/valid2', 'scope/valid1and2'],
+            [scopeValid1, scopeValid2, scopeValid1and2],
           ],
           [[], []],
           // [['unactivated'], []],
