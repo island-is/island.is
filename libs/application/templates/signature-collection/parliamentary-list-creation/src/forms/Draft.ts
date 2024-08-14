@@ -161,7 +161,7 @@ export const Draft: Form = buildForm({
       children: [
         buildMultiField({
           id: 'managers',
-          title: m.managersAndSupervisors,
+          title: m.managersAndSupervisorsTitle,
           description: '',
           children: [
             buildTableRepeaterField({
