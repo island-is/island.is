@@ -25,6 +25,8 @@ import * as styles from './Advert.css'
 import { useDepartments } from '../hooks/useDepartments'
 import { OJOISelectController } from '../components/input/OJOISelectController'
 import { useTypes } from '../hooks/useTypes'
+import { OJOIInputController } from '../components/input/OJOIInputController'
+import { OJOIHtmlController } from '../components/input/OJOIHtmlController'
 
 type TypeResonse = OfficialJournalOfIcelandGraphqlResponse<'types'>
 
@@ -109,138 +111,68 @@ export const Advert = ({ application }: OJOIFieldBaseProps) => {
   )
 
   return (
-    <FormGroup>
-      <Box className={styles.inputWrapper}>
-        <OJOISelectController
-          applicationId={application.id}
-          name={InputFields.advert.departmentId}
-          label={advert.inputs.department.label}
-          placeholder={advert.inputs.department.placeholder}
-          loading={loadingDepartments}
-          options={departments?.map((d) => ({
-            label: d.title,
-            value: d.id,
-          }))}
-          onChange={(value) => handleDepartmentChange(value)}
-        />
-      </Box>
-      <Box className={styles.inputWrapper}>
-        <OJOISelectController
-          applicationId={application.id}
-          name={InputFields.advert.typeId}
-          label={advert.inputs.type.label}
-          placeholder={advert.inputs.type.placeholder}
-          loading={loadingTypes}
-          disabled={!types}
-          defaultValue={localTypeId}
-          options={types?.map((d) => ({
-            label: d.title,
-            value: d.id,
-          }))}
-          onChange={(value) => setLocalTypeId(value)}
-        />
-      </Box>
-      {/*
+    <>
+      <FormGroup>
         <Box className={styles.inputWrapper}>
-          <SelectController
-            key={state.department}
-            id={InputFields.advert.department}
-            name={InputFields.advert.department}
-            label={f(advert.inputs.department.label)}
-            placeholder={f(advert.inputs.department.placeholder)}
-            options={departments}
-            defaultValue={state.department}
-            size="sm"
-            backgroundColor="blue"
-            onSelect={(opt) => {
-              return setState((prev) => ({
-                ...prev,
-                department: opt.value,
-                type: '',
-              }))
-            }}
-            error={
-              errors && getErrorViaPath(errors, InputFields.advert.department)
-            }
+          <OJOISelectController
+            applicationId={application.id}
+            name={InputFields.advert.departmentId}
+            label={advert.inputs.department.label}
+            placeholder={advert.inputs.department.placeholder}
+            loading={loadingDepartments}
+            options={departments?.map((d) => ({
+              label: d.title,
+              value: d.id,
+            }))}
+            onChange={(value) => handleDepartmentChange(value)}
           />
         </Box>
-        {loadingTypes ? (
-          <Box className={styles.inputWrapper}>
-            <SkeletonLoader
-              borderRadius="standard"
-              display="block"
-              height={inputHeight}
-            />
-          </Box>
-        ) : (
-          <Box className={styles.inputWrapper}>
-            <SelectController
-              id={InputFields.advert.type}
-              name={InputFields.advert.type}
-              label={f(advert.inputs.type.label)}
-              placeholder={f(advert.inputs.type.placeholder)}
-              options={types}
-              defaultValue={state.type}
-              size="sm"
-              backgroundColor="blue"
-              onSelect={(opt) =>
-                setState((prev) => ({ ...prev, type: opt.value }))
-              }
-              error={errors && getErrorViaPath(errors, InputFields.advert.type)}
-            />
-          </Box>
-        )}
+        <Box className={styles.inputWrapper}>
+          <OJOISelectController
+            applicationId={application.id}
+            name={InputFields.advert.typeId}
+            label={advert.inputs.type.label}
+            placeholder={advert.inputs.type.placeholder}
+            loading={loadingTypes}
+            disabled={!types}
+            defaultValue={localTypeId}
+            options={types?.map((d) => ({
+              label: d.title,
+              value: d.id,
+            }))}
+            onChange={(value) => setLocalTypeId(value)}
+          />
+        </Box>
         <Box>
-          <InputController
-            id={InputFields.advert.title}
+          <OJOIInputController
+            applicationId={application.id}
             name={InputFields.advert.title}
-            label={f(advert.inputs.title.label)}
-            placeholder={f(advert.inputs.title.placeholder)}
-            defaultValue={state.title}
-            size="sm"
-            textarea
-            rows={4}
-            backgroundColor="blue"
-            onChange={(e) =>
-              debouncedStateUpdate({ ...state, title: e.target.value })
-            }
-            error={errors && getErrorViaPath(errors, InputFields.advert.title)}
+            label={advert.inputs.title.label}
+            defaultValue={application.answers.advert.title}
+            placeholder={advert.inputs.title.placeholder}
+            textarea={true}
           />
         </Box>
       </FormGroup>
-      <FormGroup title={f(advert.headings.materialForPublication)}>
+
+      <FormGroup title={advert.headings.materialForPublication}>
         <Box className={styles.inputWrapper}>
-          <InputController
-            id={InputFields.advert.template}
-            name={InputFields.advert.template}
-            label={f(advert.inputs.template.label)}
-            placeholder={f(advert.inputs.template.placeholder)}
-            defaultValue={state.template}
-            size="sm"
-            backgroundColor="blue"
-            onChange={(e) =>
-              debouncedStateUpdate({
-                ...state,
-                template: e.target.value,
-              })
-            }
-            error={
-              errors && getErrorViaPath(errors, InputFields.advert.template)
-            }
+          <OJOISelectController
+            name={'other.template'}
+            label={advert.inputs.template.label}
+            placeholder={advert.inputs.template.placeholder}
+            applicationId={application.id}
+            disabled={true}
           />
         </Box>
         <Box>
-          <HTMLEditor
-            title={f(advert.inputs.editor.label)}
-            name={InputFields.advert.document}
-            value={state.document as HTMLText}
-            onChange={(value) => setState({ ...state, document: value })}
-            error={
-              errors && getErrorViaPath(errors, InputFields.advert.document)
-            }
+          <OJOIHtmlController
+            applicationId={application.id}
+            name={InputFields.advert.html}
+            defaultValue={application.answers.advert.html}
           />
         </Box>
-        */}
-    </FormGroup>
+      </FormGroup>
+    </>
   )
 }

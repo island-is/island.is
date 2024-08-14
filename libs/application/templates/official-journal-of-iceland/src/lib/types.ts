@@ -15,7 +15,7 @@ export const InputFields = {
     departmentId: 'advert.departmentId',
     typeId: 'advert.typeId',
     title: 'advert.title',
-    html: 'advert.document',
+    html: 'advert.html',
     requestedDate: 'advert.requestedDate',
     categories: 'advert.categories',
     channels: 'advert.channels',
