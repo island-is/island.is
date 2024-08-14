@@ -93,16 +93,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
             {defendant.address && `, ${defendant.address}`}
           </Text>
         </span>
-        {displayAppealExpirationInfo && (
-          <Box>
-            <Text as="span">
-              {formatMessage(appealExpirationInfo.message, {
-                appealExpirationDate: appealExpirationInfo.data,
-              })}
-            </Text>
-          </Box>
-        )}
-        {defendant.defenderName || defender ? (
+        {defendant.defenderName || defender?.name ? (
           <Box display={['block', 'block', 'block', 'flex']}>
             <Text as="span" whiteSpace="pre">
               {defender?.sessionArrangement ===
@@ -121,6 +112,15 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
           <Text>{`${formatMessage(strings.defender)}: ${formatMessage(
             strings.noDefender,
           )}`}</Text>
+        )}
+        {displayAppealExpirationInfo && (
+          <Box>
+            <Text as="span">
+              {formatMessage(appealExpirationInfo.message, {
+                appealExpirationDate: appealExpirationInfo.data,
+              })}
+            </Text>
+          </Box>
         )}
         {displayVerdictViewDate && (
           <Text>
