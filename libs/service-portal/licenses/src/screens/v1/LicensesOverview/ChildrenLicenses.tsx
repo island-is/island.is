@@ -8,7 +8,7 @@ import {
 
 import { Box } from '@island.is/island-ui/core'
 
-import LicenseCards from '../../components/LicenseCards/LicenseCards'
+import LicenseCards from '../../../components/LicenseCards/LicenseCards'
 import { IdentityDocumentModelChild } from '@island.is/api/schema'
 
 interface Props {
