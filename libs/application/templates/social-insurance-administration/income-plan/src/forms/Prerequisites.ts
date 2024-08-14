@@ -1,7 +1,9 @@
 import {
   buildDataProviderItem,
+  buildDescriptionField,
   buildExternalDataProvider,
   buildForm,
+  buildMultiField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
@@ -17,10 +19,12 @@ import {
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 import { incomePlanFormMessage } from '../lib/messages'
+import { isEligible } from '../lib/incomePlanUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
@@ -92,6 +96,10 @@ export const PrerequisitesForm: Form = buildForm({
               title: '',
             }),
             buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+              title: '',
+            }),
+            buildDataProviderItem({
               id: 'sia.privacy',
               title:
                 socialInsuranceAdministrationMessage.pre
@@ -99,6 +107,27 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle:
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationPrivacyDescription,
+            }),
+          ],
+        }),
+        buildMultiField({
+          id: 'isNotEligible',
+          title: incomePlanFormMessage.pre.isNotEligibleTitle,
+          condition: (_, externalData) => {
+            // Show if applicant is not eligible
+            return !isEligible(externalData)
+          },
+          children: [
+            buildDescriptionField({
+              id: 'isNotEligible10Days',
+              title: '',
+              description: incomePlanFormMessage.pre.isNotEligibleDescription,
+            }),
+            // Empty submit field to hide all buttons in the footer
+            buildSubmitField({
+              id: '',
+              title: '',
+              actions: [],
             }),
           ],
         }),

@@ -29,12 +29,13 @@ import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 import { statesMessages } from '../lib/messages'
 import { dataSchema } from './dataSchema'
-import { getApplicationExternalData } from './incomePlanUtils'
+import { getApplicationExternalData, isEligible } from './incomePlanUtils'
 import { historyMessages, incomePlanFormMessage } from './messages'
 
 const IncomePlanTemplate: ApplicationTemplate<
@@ -90,13 +91,23 @@ const IncomePlanTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationWithholdingTaxApi,
                 SocialInsuranceAdministrationLatestIncomePlan,
+                SocialInsuranceAdministrationIsApplicantEligibleApi,
               ],
               delete: true,
             },
           ],
         },
         on: {
-          SUBMIT: States.DRAFT,
+          SUBMIT: [
+            {
+              target: States.DRAFT,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
+            },
+            {
+              actions: 'setApproveExternalData',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
@@ -204,20 +215,23 @@ const IncomePlanTemplate: ApplicationTemplate<
 
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
           latestIncomePlan.incomeTypeLines.map((income, i) => {
-            set(answers, `incomePlanTable[${i}].incomeTypes`, income.name)
+            set(
+              answers,
+              `incomePlanTable[${i}].incomeTypes`,
+              income.incomeTypeName,
+            )
             set(
               answers,
               `incomePlanTable[${i}].incomePerYear`,
               String(income.totalSum),
             )
             set(answers, `incomePlanTable[${i}].currency`, income.currency)
-            set(answers, `incomePlanTable[${i}].income`, 'yearly') // er þetta ok?
-            // vantar að fá sent til baka category
-            // set(
-            //   answers,
-            //   `incomePlanTable[${i}].incomeCategories`,
-            //   'Atvinnutekjur',
-            // )
+            set(answers, `incomePlanTable[${i}].income`, 'yearly')
+            set(
+              answers,
+              `incomePlanTable[${i}].incomeCategories`,
+              income.incomeCategoryName,
+            )
           })
         } else {
           withholdingTax &&
@@ -225,7 +239,7 @@ const IncomePlanTemplate: ApplicationTemplate<
               set(
                 answers,
                 `incomePlanTable[${i}].incomeTypes`,
-                income.incomeType,
+                income.incomeTypeName,
               )
               set(
                 answers,
@@ -235,10 +249,9 @@ const IncomePlanTemplate: ApplicationTemplate<
               set(answers, `incomePlanTable[${i}].currency`, 'IKR')
               set(answers, `incomePlanTable[${i}].income`, 'yearly')
               set(
-                // eigum eftir að fá þetta til baka úr þjónustunni
                 answers,
                 `incomePlanTable[${i}].incomeCategories`,
-                'Atvinnutekjur',
+                income.categoryName,
               )
 
               set(answers, `incomePlanTable[${i}].january`, income.january)

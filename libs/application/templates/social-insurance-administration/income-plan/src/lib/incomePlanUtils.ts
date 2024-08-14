@@ -36,12 +36,18 @@ export const getApplicationExternalData = (
     'SocialInsuranceAdministrationTemporaryCalculation.data',
   )
 
+  const isEligible = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
+  ) as boolean
+
   return {
     categorizedIncomeTypes,
     currencies,
     withholdingTax,
     latestIncomePlan,
     temporaryCalculation,
+    isEligible,
   }
 }
 
@@ -93,4 +99,9 @@ export const getTypesOptions = (
         label: item.incomeTypeName || '',
       }
     })
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+  return isEligible
 }
