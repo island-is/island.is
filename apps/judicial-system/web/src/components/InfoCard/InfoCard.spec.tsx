@@ -15,6 +15,7 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
             defender={{
               name: 'Joe',
               sessionArrangement: SessionArrangements.ALL_PRESENT,
@@ -35,6 +36,7 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
             defender={{
               name: 'Joe',
               phoneNumber: '555-5555',
@@ -60,6 +62,7 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
             defender={{
               name: 'Joe',
               email: 'joe@joe.is',
@@ -82,11 +85,13 @@ describe('InfoCard', () => {
 
   test('should display a message saying that a defender has not been set if the defender info is missing', async () => {
     // Arrange
+
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
             defender={{
               name: '',
               defenderNationalId: '',
@@ -100,6 +105,8 @@ describe('InfoCard', () => {
     )
 
     // Act and Assert
-    expect(await screen.findByText('Hefur ekki verið skráður')).toBeTruthy()
+    expect(
+      await screen.findByText('Verjandi: Hefur ekki verið skráður'),
+    ).toBeTruthy()
   })
 })
