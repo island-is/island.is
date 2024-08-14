@@ -17,9 +17,19 @@ export class OfficialJournalOfIcelandApplicationService {
   async postComment(input: PostCommentInput) {
     return this.ojoiApplicationService.postComment({
       id: input.id,
-      postApplicationComment: {
-        comment: input.comment,
-      },
+      // comment: input.comment,
+    })
+  }
+
+  async getPdfUrl(id: string) {
+    return this.ojoiApplicationService.getPdfUrl({
+      id,
+    })
+  }
+
+  async getPdf(id: string) {
+    return this.ojoiApplicationService.getPdf({
+      id,
     })
   }
 

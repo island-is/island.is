@@ -48,6 +48,7 @@ type ChildKeys = Pick<
   | 'appealJudge2Id'
   | 'appealJudge3Id'
   | 'indictmentReviewerId'
+  | 'mergeCaseId'
 >
 
 export type UpdateCase = Omit<UpdateCaseInput, 'id'> & {
@@ -66,6 +67,7 @@ const isChildKey = (key: keyof UpdateCaseInput): key is keyof ChildKeys => {
     'appealJudge2Id',
     'appealJudge3Id',
     'indictmentReviewerId',
+    'mergeCaseId',
   ].includes(key)
 }
 
@@ -80,6 +82,7 @@ const childof: { [Property in keyof ChildKeys]-?: keyof Case } = {
   appealJudge2Id: 'appealJudge2',
   appealJudge3Id: 'appealJudge3',
   indictmentReviewerId: 'indictmentReviewer',
+  mergeCaseId: 'mergeCase',
 }
 
 const overwrite = (update: UpdateCase): UpdateCase => {

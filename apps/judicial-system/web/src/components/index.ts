@@ -10,6 +10,7 @@ export {
   default as CheckboxList,
   type CheckboxInfo,
 } from './CheckboxList/CheckboxList'
+export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export { default as ContextMenu } from './ContextMenu/ContextMenu'
@@ -63,7 +64,11 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as OverviewHeader } from './OverviewHeader/OverviewHeader'
 export { default as TagAppealState } from './TagAppealState/TagAppealState'
 export { default as TagCaseState } from './TagCaseState/TagCaseState'
-
+export { default as CaseTag } from './Tags/CaseTag'
+export {
+  getIndictmentRulingDecisionTag,
+  getIndictmentCaseStateTag,
+} from './Tags/utils'
 export {
   SigningModal,
   useRequestRulingSignature,

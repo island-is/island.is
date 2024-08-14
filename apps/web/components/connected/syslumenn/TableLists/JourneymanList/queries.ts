@@ -7,6 +7,7 @@ export const GET_JOURNEYMAN_LICENCES_QUERY = gql`
         name
         dateOfPublication
         profession
+        nationalId
       }
     }
   }

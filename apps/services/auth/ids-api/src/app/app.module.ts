@@ -20,6 +20,7 @@ import {
 } from '@island.is/nest/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
+import { smsModuleConfig } from '@island.is/nova-sms'
 
 import { environment } from '../environments'
 import { ClientsModule } from './clients/clients.module'
@@ -66,6 +67,7 @@ import { PasskeysModule } from './passkeys/passkeys.module'
         XRoadConfig,
         PasskeysCoreConfig,
         NationalRegistryV3ClientConfig,
+        smsModuleConfig,
       ],
     }),
   ],
