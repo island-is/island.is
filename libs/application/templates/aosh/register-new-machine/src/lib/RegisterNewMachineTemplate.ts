@@ -223,7 +223,6 @@ const getBuyerNationalId = (application: Application) => {
     ) as string
     return buyerNationalId
   } catch (error) {
-    console.error(error)
     return ''
   }
 }

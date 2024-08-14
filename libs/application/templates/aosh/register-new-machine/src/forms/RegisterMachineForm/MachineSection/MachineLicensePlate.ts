@@ -1,7 +1,6 @@
 import {
   NO,
   YES,
-  buildCustomField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -17,7 +16,7 @@ import { canRegisterToTraffic } from '../../../utils'
 export const MachineLicensePlate = buildSubSection({
   id: 'streetRegistrationSection',
   title: licensePlate.general.title,
-  // condition: (answers) => canRegisterToTraffic(answers),
+  condition: (answers) => canRegisterToTraffic(answers),
   children: [
     buildMultiField({
       id: 'streetRegistration',

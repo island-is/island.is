@@ -16,9 +16,11 @@ import {
 } from '../../lib/messages'
 import {
   canMaybeRegisterToTraffic,
+  canRegisterToTraffic,
   getBasicMachineInformation,
   getPersonInformationForOverview,
   getStreetRegistrationInformation,
+  getTechnicalInformation,
   hasOperator,
   isOwnerOtherThanImporter,
 } from '../../utils'
@@ -30,7 +32,6 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { formatMessage } = useLocale()
 
   const onClick = (page: string) => {
-    console.log(page)
     if (goToScreen) goToScreen(page)
   }
 
@@ -122,6 +123,7 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <ReviewGroup
         handleClick={() => onClick('machineTechnicalInformationMultiField')}
         editMessage={formatMessage(overview.labels.editMessage)}
+        isLast={!canRegisterToTraffic(application.answers)}
       >
         <KeyValueFormField
           application={application}
@@ -131,32 +133,33 @@ export const Overview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             component: FieldComponents.KEY_VALUE,
             title: '',
             label: machine.labels.technicalMachineInformation.overviewTitle,
-            value: 'Setja upp upplýsingar einhvernvegin frá þjónustu',
+            value: getTechnicalInformation(application.answers),
           }}
         />
       </ReviewGroup>
 
-      {/* add when we have correct answers canRegisterToTraffic(answers) */}
-      <ReviewGroup
-        handleClick={() => onClick('streetRegistration')}
-        editMessage={formatMessage(overview.labels.editMessage)}
-        isLast
-      >
-        <KeyValueFormField
-          application={application}
-          field={{
-            ...props.field,
-            type: FieldTypes.KEY_VALUE,
-            component: FieldComponents.KEY_VALUE,
-            title: '',
-            label: licensePlate.general.title,
-            value: getStreetRegistrationInformation(
-              application.answers,
-              formatMessage,
-            ),
-          }}
-        />
-      </ReviewGroup>
+      {canRegisterToTraffic(application.answers) && (
+        <ReviewGroup
+          handleClick={() => onClick('streetRegistration')}
+          editMessage={formatMessage(overview.labels.editMessage)}
+          isLast
+        >
+          <KeyValueFormField
+            application={application}
+            field={{
+              ...props.field,
+              type: FieldTypes.KEY_VALUE,
+              component: FieldComponents.KEY_VALUE,
+              title: '',
+              label: licensePlate.general.title,
+              value: getStreetRegistrationInformation(
+                application.answers,
+                formatMessage,
+              ),
+            }}
+          />
+        </ReviewGroup>
+      )}
 
       {canMaybeRegisterToTraffic(application.answers) && (
         <AlertMessage

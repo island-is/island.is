@@ -4,10 +4,13 @@ import { FormValue } from '@island.is/application/types'
 const maybeAllowedCategories = ['IA', 'IF', 'IM', 'JL', 'KG']
 
 export const canMaybeRegisterToTraffic = (answers: FormValue) => {
-  const machineCategory = getValueViaPath(
+  const registrationNumberPrefix = getValueViaPath(
     answers,
-    'machine.basicInformation.category',
-  )
+    'machine.aboutMachine.registrationNumberPrefix',
+    '',
+  ) as string
 
-  return maybeAllowedCategories.some((category) => category === machineCategory)
+  return maybeAllowedCategories.some(
+    (category) => category === registrationNumberPrefix,
+  )
 }

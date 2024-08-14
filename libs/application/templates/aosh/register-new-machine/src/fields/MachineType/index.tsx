@@ -1,7 +1,6 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
-  AsyncSearch,
   Box,
   GridColumn,
   GridRow,
@@ -11,9 +10,7 @@ import {
 import { FC, useCallback, useEffect, useState } from 'react'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
 import { machine } from '../../lib/messages'
-import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import debounce from 'lodash/debounce'
 import { getValueViaPath } from '@island.is/application/core'
 import { Controller, useFormContext } from 'react-hook-form'
 import { MACHINE_MODELS, MACHINE_CATEGORY } from '../../graphql/queries'
@@ -91,7 +88,6 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
       setMachineModels([])
       setDisplayError(true)
       setDisabled(true)
-      // Something happens? Maybe a message to the user?
     },
   })
 
@@ -129,6 +125,9 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
       response?.getMachineParentCategoryByTypeAndModel?.name ?? ''
     const subcategory =
       response?.getMachineParentCategoryByTypeAndModel?.subCategoryName ?? ''
+    const registrationNumberPrefix =
+      response?.getMachineParentCategoryByTypeAndModel
+        ?.registrationNumberPrefix ?? ''
 
     setValue(
       'machine.aboutMachine.type',
@@ -140,6 +139,10 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
     )
     setValue('machine.aboutMachine.category', category)
     setValue('machine.aboutMachine.subcategory', subcategory)
+    setValue(
+      'machine.aboutMachine.registrationNumberPrefix',
+      registrationNumberPrefix,
+    )
     setValue(
       'machine.aboutMachine.fromService',
       !!(category.length && subcategory.length),
@@ -156,6 +159,7 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
                 model: model && model !== 'unknown' ? model : '',
                 category,
                 subcategory,
+                registrationNumberPrefix: registrationNumberPrefix,
                 fromService: !!(category.length && subcategory.length),
               },
               machineType: {

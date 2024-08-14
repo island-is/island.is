@@ -6,7 +6,7 @@ import { machine } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
-import { Controller } from 'react-hook-form'
+import { Controller, useFormContext } from 'react-hook-form'
 import { MACHINE_SUB_CATEGORIES } from '../../graphql/queries'
 
 export const machineSubCategories = gql`
@@ -18,6 +18,7 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
 ) => {
   const { application, field, setBeforeSubmitCallback } = props
   const { formatMessage } = useLocale()
+  const { control, register, setValue } = useFormContext()
 
   const machineParentCategories = getValueViaPath(
     application.externalData,
@@ -52,7 +53,11 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   const [category, setCategory] = useState<string>(machineCategory)
   const [subCategory, setSubCategory] = useState<string>(machineSubCategory)
-  const [subCategories, setSubCategories] = useState<string[]>([])
+  const [subCategories, setSubCategories] = useState<
+    { subCat: string; registrationNumberPrefix: string }[]
+  >([])
+  const [registrationNumberPrefix, setRegistrationNumberPrefix] =
+    useState<string>('')
   const [subCategoryDisabled, setSubCategoryDisabled] = useState<boolean>(
     fromService || (!fromService && !subCategory.length),
   )
@@ -62,18 +67,19 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   const [runQuery, { loading }] = useLazyQuery(machineSubCategories, {
     onCompleted(result) {
-      console.log(result)
       if (result?.getMachineSubCategories) {
         setSubCategoryDisabled(false)
         setSubCategories(
-          result.getMachineSubCategories.map((subCat: { name: string }) => {
-            return subCat.name
-          }),
+          result.getMachineSubCategories.map(
+            (subCat: { name: string; registrationNumberPrefix: string }) => {
+              return {
+                subCat: subCat.name,
+                registrationNumberPrefix: subCat.registrationNumberPrefix,
+              }
+            },
+          ),
         )
       }
-    },
-    onError() {
-      // Something happens? Maybe a message to the user?
     },
   })
 
@@ -101,10 +107,10 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
       category.length === 0 ||
       subCategory.length === 0
     ) {
-      console.log('hello here')
       setDisplayError(true)
       return [false, '']
     }
+    setValue(`${field.id}.registrationNumberPrefix`, registrationNumberPrefix)
     return [true, null]
   })
 
@@ -186,10 +192,10 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   options={
                     fromService && subCategory
                       ? [{ value: subCategory, label: subCategory }]
-                      : subCategories.map((name) => {
+                      : subCategories.map((cat) => {
                           return {
-                            value: name,
-                            label: name,
+                            value: cat.subCat,
+                            label: cat.subCat,
                           }
                         })
                   }
@@ -199,6 +205,12 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
                   onChange={(option) => {
                     onChange(option?.value)
                     option && setSubCategory(option.value)
+                    option &&
+                      setRegistrationNumberPrefix(
+                        subCategories.find(
+                          ({ subCat }) => subCat === option.value,
+                        )?.registrationNumberPrefix ?? '',
+                      )
                   }}
                   backgroundColor="blue"
                   required
@@ -210,6 +222,17 @@ export const AboutMachine: FC<React.PropsWithChildren<FieldBaseProps>> = (
           />
         </GridColumn>
       </GridRow>
+      <Controller
+        name={`${field.id}.registrationNumberPrefix`}
+        control={control}
+        render={() => (
+          <input
+            type="hidden"
+            value={registrationNumberPrefix}
+            {...register(`${field.id}.registrationNumberPrefix`)}
+          />
+        )}
+      />
     </Box>
   )
 }

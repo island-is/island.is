@@ -29,4 +29,9 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in prerequisites',
   },
+  connectionError: {
+    id: 'aosh.rnm.application:connectionError',
+    defaultMessage: 'Ekki náðist að sækja gögnin',
+    description: 'Was not able to get data',
+  },
 })

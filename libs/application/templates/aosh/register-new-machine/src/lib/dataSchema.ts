@@ -27,7 +27,14 @@ const AboutMachineSchema = z.object({
   model: z.string().optional(),
   category: z.string().optional(),
   subcategory: z.string().optional(),
+  registrationNumberPrefix: z.string().optional(),
   fromService: z.boolean().optional(),
+})
+
+const TechInfoSchema = z.object({
+  value: z.string().optional(),
+  variableName: z.string().optional(),
+  label: z.string().optional(),
 })
 
 export const NewMachineAnswersSchema = z.object({
@@ -57,15 +64,11 @@ export const NewMachineAnswersSchema = z.object({
       })
       .optional(),
   }),
-  techInfo: z.array(
-    z.object({
-      value: z.string().optional(),
-      variableName: z.string().optional(),
-    }),
-  ),
+  techInfo: z.array(TechInfoSchema),
 })
 
 export type NewMachineAnswers = z.TypeOf<typeof NewMachineAnswersSchema>
 export type PersonInformation = z.TypeOf<typeof PersonInformationSchema>
 export type BasicInformation = z.TypeOf<typeof BasicInformationSchema>
 export type AboutMachine = z.TypeOf<typeof AboutMachineSchema>
+export type TechInfo = z.TypeOf<typeof TechInfoSchema>

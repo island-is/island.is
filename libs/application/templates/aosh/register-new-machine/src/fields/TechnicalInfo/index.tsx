@@ -1,31 +1,22 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import {
   AlertMessage,
-  AsyncSearch,
   Box,
   GridColumn,
   GridRow,
   LoadingDots,
-  Select,
   Text,
 } from '@island.is/island-ui/core'
-import { FC, useCallback, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { gql, useLazyQuery, useMutation } from '@apollo/client'
-import { machine } from '../../lib/messages'
-import { InputController } from '@island.is/shared/form-fields'
 import { useLocale } from '@island.is/localization'
-import debounce from 'lodash/debounce'
 import { getValueViaPath } from '@island.is/application/core'
-import { Controller, useFormContext } from 'react-hook-form'
-import {
-  MACHINE_MODELS,
-  MACHINE_SUB_CATEGORIES,
-  TECHNICAL_INFO_INPUTS,
-} from '../../graphql/queries'
+import { useFormContext } from 'react-hook-form'
+import { TECHNICAL_INFO_INPUTS } from '../../graphql/queries'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { useLazyMachineCategory } from '../../hooks/useLazyMachineCategory'
 import { TechInfoItem } from '../../shared/types'
 import { formFieldMapper } from './formFieldMapper'
+import { application as applicationMessage } from '../../lib/messages'
 
 export const technicalInfoInputs = gql`
   ${TECHNICAL_INFO_INPUTS}
@@ -50,26 +41,23 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
 
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
-  const [machineModels, setMachineModels] =
-    useState<{ value: string; label: string }[]>()
-  const [category, setCategory] = useState<string>(machineCategory)
   const [techInfoItems, setTechInfoItems] = useState<TechInfoItem[]>()
   const [displayError, setDisplayError] = useState<boolean>(false)
-  const { setValue, register, watch } = useFormContext()
+  const [connectionError, setConnectionError] = useState<boolean>(false)
+  const { setValue, watch } = useFormContext()
   const watchTechInfoFields = watch(`${field.id}`)
 
   const [runQuery, { loading }] = useLazyQuery(technicalInfoInputs, {
     onCompleted(result) {
-      console.log(result)
+      setConnectionError(false)
       if (result?.getTechnicalInfoInputs) {
         setTechInfoItems(result?.getTechnicalInfoInputs)
+      } else {
+        setConnectionError(true)
       }
-      // float/int -> number
-      // has values -> select
-      // bool -> já/nei
     },
     onError() {
-      // Something happens? Maybe a message to the user?
+      setConnectionError(true)
     },
   })
 
@@ -80,22 +68,26 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
         parentCategory: machineCategory,
       },
     })
-  }, [category])
-  console.log(watchTechInfoFields)
+  }, [machineCategory])
 
   setBeforeSubmitCallback?.(async () => {
     // Renna yfir listan í techInfoItems og finna í listanum watchTechInfoFields
     // Ef það er required þá tékka hvort það sé útfyllt
     // Síðan setja í answers með nafninu og value
     setDisplayError(false)
-    const techInfoAnswer = techInfoItems?.map(({ variableName, required }) => {
-      const answer = variableName ? watchTechInfoFields[variableName] : ''
-      if (required && answer.length === 0) {
-        setDisplayError(true)
-        return 'error'
-      }
-      return { variableName, value: answer }
-    })
+    const techInfoAnswer = techInfoItems?.map(
+      ({ variableName, required, label }, index) => {
+        const answer = variableName ? watchTechInfoFields[variableName] : ''
+        if (required && answer.length === 0) {
+          setDisplayError(true)
+          return 'error'
+        }
+        setValue(`techInfo[${index}].variableName`, variableName)
+        setValue(`techInfo[${index}].value`, answer)
+        setValue(`techInfo[${index}].label`, label)
+        return { variableName, value: answer, label }
+      },
+    )
 
     if (techInfoAnswer?.some((val) => val === 'error')) {
       return [false, '']
@@ -106,8 +98,8 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
         input: {
           id: application.id,
           answers: {
-            techInfo: techInfoAnswer,
             ...application.answers,
+            techInfo: techInfoAnswer,
           },
         },
         locale,
@@ -143,6 +135,12 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
           )
         })}
       </GridRow>
+      {connectionError && (
+        <AlertMessage
+          type="error"
+          message={formatMessage(applicationMessage.connectionError)}
+        />
+      )}
     </Box>
   )
 }
