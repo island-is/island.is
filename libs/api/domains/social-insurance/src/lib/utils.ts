@@ -13,7 +13,7 @@ import addYears from 'date-fns/addYears'
 import differenceInMonths from 'date-fns/differenceInMonths'
 import differenceInYears from 'date-fns/differenceInYears'
 import { CustomPage } from '@island.is/cms'
-import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
 
 const basePensionTypeMapping: Record<BasePensionType, number> = {
   [BasePensionType.Retirement]: 1, // Ellilífeyrir

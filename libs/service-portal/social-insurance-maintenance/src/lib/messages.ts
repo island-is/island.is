@@ -22,6 +22,14 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-plan',
     defaultMessage: 'Greiðsluáætlun',
   },
+  incomePlan: {
+    id: 'sp.social-insurance-maintenance:income-plan',
+    defaultMessage: 'Tekjuáætlun',
+  },
+  incomePlanDetail: {
+    id: 'sp.social-insurance-maintenance:income-plan-detail',
+    defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
+  },
   paymentsReasoning: {
     id: 'sp.social-insurance-maintenance:payments-reasoning',
     defaultMessage: 'Forsendur greiðslna',
@@ -57,5 +65,21 @@ export const m = defineMessages({
   noPaymentHistoryFound: {
     id: 'sp.social-insurance-maintenance:no-payment-history-found',
     defaultMessage: 'Engin greiðslusaga fannst',
+  },
+  viewIncomePlan: {
+    id: 'sp.social-insurance-maintenance:view-income-plan',
+    defaultMessage: 'Skoða tekjuáætlun',
+  },
+  incomeType: {
+    id: 'sp.social-insurance-maintenance:income-type',
+    defaultMessage: 'Tekjutegund',
+  },
+  annualIncome: {
+    id: 'sp.social-insurance-maintenance:annual-income',
+    defaultMessage: 'Tekjur á ári',
+  },
+  currency: {
+    id: 'sp.social-insurance-maintenance:currency',
+    defaultMessage: 'Gjaldmiðill',
   },
 })

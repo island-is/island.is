@@ -10,16 +10,17 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { PensionCalculationInput } from './dtos/pensionCalculation.input'
-import { PensionCalculationResponse } from './models/pensionCalculation.model'
+import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
 import {
   getPensionCalculationHighlightedItems,
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
-import { PaymentGroup } from './models/paymentGroup.model'
-import { PaymentPlan } from './models/paymentPlan.model'
-import { Payments } from './models/payments.model'
-import { mapToPaymentGroupType } from './models/paymentGroupType.model'
+import { PaymentGroup } from './models/payments/paymentGroup.model'
+import { PaymentPlan } from './models/payments/paymentPlan.model'
+import { Payments } from './models/payments/payments.model'
+import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
+import { IncomePlan } from './models/income/incomePlan.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -118,6 +119,31 @@ export class SocialInsuranceService {
       totalPaymentsReceived: paymentPlan.paidOut ?? undefined,
       totalPaymentsSubtraction: paymentPlan.subtracted ?? undefined,
       paymentGroups,
+    }
+  }
+
+  async getIncomePlan(user: User): Promise<IncomePlan | undefined> {
+    const data = await this.socialInsuranceApi.getLatestIncomePlan(user)
+
+    if (!data?.registrationDate || !data?.status || !data.incomeTypeLines) {
+      return
+    }
+
+    return {
+      registrationDate: data.registrationDate,
+      status: data.status,
+      incomeCategories: data.incomeTypeLines
+        .map((i) => {
+          if (!i.incomeCategoryName || !i.totalSum || !i.currency) {
+            return undefined
+          }
+          return {
+            name: i.incomeCategoryName,
+            annualSum: i.totalSum,
+            currency: i.currency,
+          }
+        })
+        .filter(isDefined),
     }
   }
 

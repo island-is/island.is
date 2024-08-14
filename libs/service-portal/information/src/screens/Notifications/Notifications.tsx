@@ -118,7 +118,7 @@ const UserNotifications = () => {
           </Column>
           <Column width="content">
             <LinkButton
-              variant="button"
+              variant="utility"
               icon="settings"
               to={InformationPaths.Settings}
               text={formatMessage(m.mySettings)}

@@ -1,0 +1,6 @@
+query getIncomePlanDetail {
+  socialInsuranceIncomePlan {
+    registrationDate
+    status
+  }
+}

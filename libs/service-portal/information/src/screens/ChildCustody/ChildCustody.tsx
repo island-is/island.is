@@ -117,7 +117,7 @@ const ChildCustody = () => {
                         <LinkButton
                           to={formatMessage(urls.contactThjodskra)}
                           text={formatMessage(spmm.childRegisterModalButton)}
-                          variant="button"
+                          variant="utility"
                           icon="receipt"
                         />
 

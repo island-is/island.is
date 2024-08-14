@@ -1,0 +1,9 @@
+query getIncomePlan {
+  socialInsuranceIncomePlan {
+    incomeCategories {
+      name
+      annualSum
+      currency
+    }
+  }
+}

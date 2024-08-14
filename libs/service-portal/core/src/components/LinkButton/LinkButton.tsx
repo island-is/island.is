@@ -6,12 +6,13 @@ import * as styles from './LinkButton.css'
 interface SharedProps {
   to: string
   text: string
+  size?: ButtonProps['size']
   skipOutboundTrack?: boolean
 }
 
 type Props =
   | {
-      variant?: 'button'
+      variant?: 'primary' | 'ghost' | 'utility'
       icon?: ButtonProps['icon']
     }
   | {
@@ -26,6 +27,7 @@ type LinkButtonProps = SharedProps & Props
 
 export const LinkButton = ({
   variant = 'text',
+  size,
   to,
   text,
   icon,
@@ -41,7 +43,7 @@ export const LinkButton = ({
       >
         <Button
           as="span"
-          size="small"
+          size={size ?? 'small'}
           variant="text"
           unfocusable
           icon={isExternal ? 'open' : undefined}
@@ -62,10 +64,10 @@ export const LinkButton = ({
         colorScheme="default"
         icon={icon}
         iconType="outline"
-        size="default"
+        size={size ?? 'default'}
         type="text"
         as="span"
-        variant="utility"
+        variant={variant ?? 'utility'}
         unfocusable
       >
         {text}

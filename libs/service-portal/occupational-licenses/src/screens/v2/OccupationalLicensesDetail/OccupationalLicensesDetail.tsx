@@ -94,7 +94,7 @@ const OccupationalLicenseDetail = () => {
                   return (
                     <LinkButton
                       key={`button-link-${index}`}
-                      variant="button"
+                      variant="utility"
                       to={
                         a.type === OccupationalLicensesV2LinkType.DOCUMENT
                           ? DocumentsPaths.ElectronicDocumentSingle.replace(
