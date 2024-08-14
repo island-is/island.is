@@ -111,11 +111,8 @@ export class PoliceService {
     malsnumer: z.string(),
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
-<<<<<<< HEAD
     tegundSkjals: z.optional(this.policeCaseFileType),
-=======
     skjalasnid: z.optional(z.string()),
->>>>>>> 3e20d8706145f5a8ea2a4f7b61499ca54bfc1c67
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
