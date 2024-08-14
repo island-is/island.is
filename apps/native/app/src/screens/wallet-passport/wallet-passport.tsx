@@ -27,7 +27,7 @@ import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useGetIdentityDocumentQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { useBrowser } from '../../lib/useBrowser'
+import { useBrowser } from '../../lib/use-browser'
 
 const Information = styled.ScrollView`
   flex: 1;
