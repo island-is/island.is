@@ -3210,6 +3210,9 @@
         "nafn": {
           "type": "string"
         },
+        "kennitala": {
+          "type": "string"
+        },
         "idngrein": {
           "type": "string"
         },
@@ -3430,6 +3433,9 @@
       "type": "object",
       "properties": {
         "nafn": {
+          "type": "string"
+        },
+        "kennitala": {
           "type": "string"
         },
         "starfsrettindi": {
@@ -4626,6 +4632,10 @@
         },
         "malsvari": {
           "$ref": "#/definitions/Malsvari"
+        },
+        "arfshlutfall": {
+          "type": "number",
+          "format": "decimal"
         }
       }
     },
