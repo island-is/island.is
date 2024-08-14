@@ -474,7 +474,7 @@ jobs:
     runs-on: ec2-runners
     container:
       image: public.ecr.aws/m3u4c4h9/island-is/actions-runner-public:latest
-    timeout-minutes: 60
+    timeout-minutes: 180
     if: needs.prepare.outputs.BUILD_CHUNKS
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
