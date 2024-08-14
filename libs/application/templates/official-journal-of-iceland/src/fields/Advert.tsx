@@ -24,6 +24,7 @@ import { useFormContext } from 'react-hook-form'
 import * as styles from './Advert.css'
 import { useDepartments } from '../hooks/useDepartments'
 import { OJOISelectController } from '../components/input/OJOISelectController'
+import { useTypes } from '../hooks/useTypes'
 
 type TypeResonse = OfficialJournalOfIcelandGraphqlResponse<'types'>
 
@@ -32,13 +33,13 @@ type SelectedAdvertResponse = OfficialJournalOfIcelandGraphqlResponse<
   OfficialJournalOfIcelandAdvert
 >
 
-type Props = OJOIFieldBaseProps & {
-  selectedAdvertId: string | null
-}
-
-export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
-  const { formatMessage: f, locale } = useLocale()
+export const Advert = ({ application }: OJOIFieldBaseProps) => {
   const { departments, loading: loadingDepartments } = useDepartments()
+  const {
+    useLazyTypes,
+    types,
+    loading: loadingTypes,
+  } = useTypes({ initalDepartmentId: application.answers.advert.departmentId })
 
   // const { answers, externalData } = application
 
@@ -90,6 +91,23 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
   //   )
   // }
 
+  const [localTypeId, setLocalTypeId] = useState<string | undefined>(
+    application.answers.advert.typeId,
+  )
+  const handleDepartmentChange = useCallback(
+    (value: string) => {
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      useLazyTypes({
+        params: {
+          department: value,
+          pageSize: 100,
+        },
+      })
+      setLocalTypeId(undefined)
+    },
+    [useLazyTypes],
+  )
+
   return (
     <FormGroup>
       <Box className={styles.inputWrapper}>
@@ -103,6 +121,23 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             label: d.title,
             value: d.id,
           }))}
+          onChange={(value) => handleDepartmentChange(value)}
+        />
+      </Box>
+      <Box className={styles.inputWrapper}>
+        <OJOISelectController
+          applicationId={application.id}
+          name={InputFields.advert.typeId}
+          label={advert.inputs.type.label}
+          placeholder={advert.inputs.type.placeholder}
+          loading={loadingTypes}
+          disabled={!types}
+          defaultValue={localTypeId}
+          options={types?.map((d) => ({
+            label: d.title,
+            value: d.id,
+          }))}
+          onChange={(value) => setLocalTypeId(value)}
         />
       </Box>
       {/*

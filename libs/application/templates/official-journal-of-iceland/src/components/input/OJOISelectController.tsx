@@ -5,6 +5,8 @@ import { MessageDescriptor } from 'react-intl'
 import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
+import { InputFields } from '../../lib/types'
+import { useState } from 'react'
 
 type OJOISelectControllerOption = {
   label: string
@@ -19,6 +21,8 @@ type Props = {
   defaultValue?: string
   loading?: boolean
   applicationId: string
+  disabled?: boolean
+  onChange?: (value: string) => void
 }
 
 export const OJOISelectController = ({
@@ -29,6 +33,8 @@ export const OJOISelectController = ({
   defaultValue,
   loading,
   applicationId,
+  disabled,
+  onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
   const { updateApplication, application } = useApplication({ applicationId })
@@ -39,11 +45,17 @@ export const OJOISelectController = ({
   const labelText = typeof label === 'string' ? label : f(label)
 
   const handleChange = (value: string) => {
-    const { answers } = application
+    const currentAnswers = structuredClone(application.answers)
+    const newAnswers = set(currentAnswers, name, value)
 
-    const newAnswers = set({ ...answers }, name, value)
+    // we must reset the selected typeId if the department changes
+    if (name === InputFields.advert.departmentId) {
+      set(newAnswers, InputFields.advert.typeId, '')
+    }
 
     updateApplication(newAnswers)
+
+    onChange && onChange(value)
   }
 
   if (loading) {
@@ -66,6 +78,7 @@ export const OJOISelectController = ({
       backgroundColor="blue"
       options={options}
       defaultValue={defaultValue}
+      disabled={disabled}
       onSelect={(opt) => handleChange(opt.value)}
     />
   )

@@ -29,7 +29,7 @@ export const AdvertScreen = (props: OJOIFieldBaseProps) => {
         </Button>
       }
     >
-      <Advert {...props} selectedAdvertId={selectedAdvertId} />
+      <Advert {...props} />
       <Signatures {...props} />
       <AdvertModal
         setSelectedAdvertId={setSelectedAdvertId}
