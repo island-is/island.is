@@ -13,6 +13,8 @@ import {
 import { isDefined } from '@island.is/shared/utils'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
+const LOG_CATEGORY = 'clients-mms-grade'
+
 @Injectable()
 export class GradeClientService {
   constructor(
@@ -38,13 +40,22 @@ export class GradeClientService {
 
   async getUserFamilyStudentAssessments(
     user: User,
-  ): Promise<Array<StudentAssessmentsDto>> {
-    const userData = await this.nationalRegistryService.getAllDataIndividual(
-      user.nationalId,
-    )
+  ): Promise<Array<StudentAssessmentsDto> | null> {
+    const userData = await this.nationalRegistryService
+      .getAllDataIndividual(user.nationalId)
+      .catch((e) => {
+        this.logger.warn('National registry info fetch failed for user', {
+          error: e,
+          category: LOG_CATEGORY,
+        })
+        return null
+      })
 
     if (!userData?.nafn || !userData?.kennitala) {
-      return []
+      this.logger.warn('National registry info missing data. Returning null', {
+        category: LOG_CATEGORY,
+      })
+      return null
     }
 
     const family: Array<{ name: string; nationalId: string }> = [
