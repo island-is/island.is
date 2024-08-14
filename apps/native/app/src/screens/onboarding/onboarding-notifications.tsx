@@ -5,14 +5,14 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import allow from '../../assets/icons/allow.png'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
-import { requestPostNotificationsPermission } from '../../utils/permissions'
+import { requestNotificationsPermission } from '../../utils/permissions'
 import { testIDs } from '../../utils/test-ids'
 
 export const OnboardingNotificationsScreen: NavigationFunctionComponent =
   () => {
     const intl = useIntl()
     const onAllowPress = () => {
-      requestPostNotificationsPermission().then(() => {
+      requestNotificationsPermission().then(() => {
         preferencesStore.setState(() => ({ hasOnboardedNotifications: true }))
         return nextOnboardingStep()
       })

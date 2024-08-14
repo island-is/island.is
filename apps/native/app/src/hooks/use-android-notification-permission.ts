@@ -2,7 +2,7 @@ import { useEffect } from 'react'
 import { PermissionsAndroid } from 'react-native'
 import { useGetProfileQuery } from '../graphql/types/schema'
 import { usePreferencesStore } from '../stores/preferences-store'
-import { requestAndroidPostNotificationsPermission } from '../utils/permissions'
+import { requestAndroidNotificationsPermission } from '../utils/permissions'
 import { androidIsVersion33OrAbove } from '../utils/versions-check'
 
 /**
@@ -28,7 +28,7 @@ export const useAndroidNotificationPermission = () => {
         PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
       ).then((granted) => {
         if (!granted) {
-          requestAndroidPostNotificationsPermission()
+          requestAndroidNotificationsPermission()
         }
       })
     }
