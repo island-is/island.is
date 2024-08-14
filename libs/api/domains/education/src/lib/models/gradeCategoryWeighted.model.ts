@@ -9,6 +9,6 @@ export class GradeCategoryWeighted implements GradeCategory {
   @Field()
   label!: string
 
-  @Field(() => Grade, { nullable: true })
+  @Field(() => Grade)
   grade!: Grade
 }
