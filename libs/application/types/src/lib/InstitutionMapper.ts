@@ -123,7 +123,15 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
     slug: InstitutionTypes.FJARSYSLA_RIKISINS,
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
     slug: InstitutionTypes.RIKISENDURSKODUN,
   },
@@ -216,6 +224,10 @@ export const institutionMapper = {
     slug: InstitutionTypes.THJODSKRA,
   },
   [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+  },
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },

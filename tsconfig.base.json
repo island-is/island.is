@@ -98,6 +98,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statement-individual-election": [
+        "libs/api/domains/financial-statement-individual-election/src/index.ts"
+      ],
       "@island.is/api/domains/financial-statements-inao": [
         "libs/api/domains/financial-statements-inao/src/index.ts"
       ],
@@ -369,6 +372,15 @@
       "@island.is/application/templates/financial-aid": [
         "libs/application/templates/financial-aid/src/index.ts"
       ],
+      "@island.is/application/templates/financial-statement-cemetery": [
+        "libs/application/templates/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election": [
+        "libs/application/templates/financial-statement-individual-election/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election/types": [
+        "libs/application/templates/financial-statement-individual-election/src/types/types.ts"
+      ],
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
       ],
@@ -467,6 +479,9 @@
       ],
       "@island.is/application/templates/signature-collection/parliamentary-list-creation": [
         "libs/application/templates/signature-collection/parliamentary-list-creation/src/index.ts"
+      ],
+      "@island.is/application/templates/signature-collection/parliamentary-list-signing": [
+        "libs/application/templates/signature-collection/parliamentary-list-signing/src/index.ts"
       ],
       "@island.is/application/templates/signature-collection/presidential-list-creation": [
         "libs/application/templates/signature-collection/presidential-list-creation/src/index.ts"
@@ -1083,7 +1098,10 @@
       "@island.is/university-gateway": ["libs/university-gateway/src/index.ts"],
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
-      "@island.is/web/component*": ["apps/web/component*/real.ts"]
+      "@island.is/web/component*": ["apps/web/component*/real.ts"],
+      "api/domains/financial-statement-cemetery": [
+        "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ]
     }
   }
 }

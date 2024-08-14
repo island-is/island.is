@@ -24,10 +24,13 @@ If you want to contribute to the repository, please make sure to follow [this gu
 
 ## Prerequisites
 
-- You have Node installed `^14.17.0` and Yarn at `^1.22.0`.
+- You have Node installed `^20.15.0` and Yarn at `^3.2.3`.
 - You have [Docker](https://docs.docker.com/desktop/) installed.
 - You have [direnv](https://direnv.net/) installed.
 - You have [Java](https://www.java.com/en/download/manual.jsp) `>= 1.8` installed (for schema generation).
+- You have [CMake](https://cmake.org/) installed.
+- You have [gcc](https://gcc.gnu.org/) installed (Linux MacOs).
+- You have [g++](https://gcc.gnu.org/) installed (Linux MacOs).
 
 {% hint style="info" %}
 If you are running on Windows we recommend using [Docker and WSL2](https://docs.docker.com/desktop/windows/wsl/)
