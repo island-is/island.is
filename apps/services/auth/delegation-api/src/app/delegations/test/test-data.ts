@@ -1,14 +1,15 @@
-import {
-  createCurrentUser,
-  createNationalId,
-} from '@island.is/testing/fixtures'
+import addDays from 'date-fns/addDays'
+
 import { AuthScope } from '@island.is/auth/scopes'
 import {
   CreateCustomDelegation,
   CreateDomain,
 } from '@island.is/services/auth/testing'
-import addDays from 'date-fns/addDays'
 import { AuthDelegationType } from '@island.is/shared/types'
+import {
+  createCurrentUser,
+  createNationalId,
+} from '@island.is/testing/fixtures'
 
 // TODO: Refactor to use satisfied operator in TypeScript 4.9
 const createDomain = (domain: CreateDomain): CreateDomain => domain
@@ -42,16 +43,36 @@ export const testDomains = {
   main: createDomain({
     name: 'main',
     apiScopes: [
-      { name: testScopes.mainValid, allowExplicitDelegationGrant: true },
-      { name: testScopes.mainFuture, allowExplicitDelegationGrant: true },
-      { name: testScopes.mainExpired, allowExplicitDelegationGrant: true },
-      { name: testScopes.mainNotAllowed, allowExplicitDelegationGrant: false },
+      {
+        name: testScopes.mainValid,
+        allowExplicitDelegationGrant: true,
+        supportedDelegationTypes: [AuthDelegationType.Custom],
+      },
+      {
+        name: testScopes.mainFuture,
+        allowExplicitDelegationGrant: true,
+        supportedDelegationTypes: [AuthDelegationType.Custom],
+      },
+      {
+        name: testScopes.mainExpired,
+        allowExplicitDelegationGrant: true,
+        supportedDelegationTypes: [AuthDelegationType.Custom],
+      },
+      {
+        name: testScopes.mainNotAllowed,
+        allowExplicitDelegationGrant: false,
+        supportedDelegationTypes: [AuthDelegationType.Custom],
+      },
     ],
   }),
   other: createDomain({
     name: 'other',
     apiScopes: [
-      { name: testScopes.otherValid, allowExplicitDelegationGrant: true },
+      {
+        name: testScopes.otherValid,
+        allowExplicitDelegationGrant: true,
+        supportedDelegationTypes: [AuthDelegationType.Custom],
+      },
     ],
   }),
 }
