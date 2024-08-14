@@ -42,20 +42,20 @@ export const formLoader: WrappedLoaderFn = ({ client }) => {
     const formBuilder = formData.formSystemGetForm
     const updatedInputs = formBuilder.form?.inputsList?.length
       ? await Promise.all(
-          formBuilder.form.inputsList.map(async (input) => {
-            const { data: updatedInput, error: inputError } =
-              await client.query<FormSystemGetInputQuery>({
-                query: FormSystemGetInputDocument,
-                fetchPolicy: 'network-only',
-                variables: {
-                  input: {
-                    id: Number(input?.id),
-                  },
+        formBuilder.form.inputsList.map(async (input) => {
+          const { data: updatedInput } =
+            await client.query<FormSystemGetInputQuery>({
+              query: FormSystemGetInputDocument,
+              fetchPolicy: 'network-only',
+              variables: {
+                input: {
+                  id: Number(input?.id),
                 },
-              })
-            return updatedInput?.formSystemGetInput
-          }),
-        )
+              },
+            })
+          return updatedInput?.formSystemGetInput
+        }),
+      )
       : []
     const updatedFormBuilder = {
       ...formBuilder,

@@ -23,7 +23,7 @@ export const m = defineMessages({
   },
   nameEnglish: {
     id: 'portals-admin.form-system:name-english',
-    defaultMessage: 'Heiti (enska)',
+    defaultMessage: 'Heiti á ensku',
   },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
@@ -31,7 +31,7 @@ export const m = defineMessages({
   },
   applicationNameEnglish: {
     id: 'portals-admin.form-system:application-name-english',
-    defaultMessage: 'Heiti umsóknar (enska)',
+    defaultMessage: 'Heiti umsóknar á ensku',
   },
   description: {
     id: 'portals-admin.form-system:description',
@@ -39,7 +39,7 @@ export const m = defineMessages({
   },
   descriptionEnglish: {
     id: 'portals-admin.form-system:description-english',
-    defaultMessage: 'Lýsing (enska)',
+    defaultMessage: 'Lýsing á ensku',
   },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
@@ -267,7 +267,7 @@ export const m = defineMessages({
   },
   buttonTextEnglish: {
     id: 'portals-admin.form-system:button-text-english',
-    defaultMessage: 'Hnappatexti (enska)',
+    defaultMessage: 'Hnappatexti á ensku',
   },
   url: {
     id: 'portals-admin.form-system:url',
@@ -291,7 +291,7 @@ export const m = defineMessages({
   },
   infoEnglish: {
     id: 'portals-admin.form-system:info-english',
-    defaultMessage: 'Upplýsingabóla (enska)',
+    defaultMessage: 'Upplýsingabóla á ensku',
   },
   addListItem: {
     id: 'portals-admin.form-system:add-list-item',
@@ -364,6 +364,87 @@ export const m = defineMessages({
   getJson: {
     id: 'portals-admin.form-system:get-json',
     defaultMessage: 'Sækja JSON',
+  },
+  address: {
+    id: 'portals-admin.form-system:address',
+    defaultMessage: 'Heimilisfang',
+  },
+  city: {
+    id: 'portals-admin.form-system:city',
+    defaultMessage: 'Staður',
+  },
+  properties: {
+    id: 'portals-admin.form-system:properties',
+    defaultMessage: 'Eignir',
+  },
+  chooseProperty: {
+    id: 'portals-admin.form-system:choose-property',
+    defaultMessage: 'Veldu eign',
+  },
+  enterPropertyNumber: {
+    id: 'portals-admin.form-system:enter-property-number',
+    defaultMessage: 'Sláðu inn fasteignanúmer',
+  },
+  propertyChoice: {
+    id: 'portals-admin.form-system:property-choice',
+    defaultMessage: 'Velja fasteign',
+  },
+  propertyNumberInput: {
+    id: 'portals-admin.form-system:property-number-input',
+    defaultMessage: 'Skrá fasteignanúmer',
+  },
+  addGroupHover: {
+    id: 'portals-admin.form-system:add-step-hover',
+    defaultMessage: 'Bæta við hópi',
+  },
+  addInputHover: {
+    id: 'portals-admin.form-system:add-input-hover',
+    defaultMessage: 'Bæta við innslætti',
+  },
+  areYouSure: {
+    id: 'portals-admin.form-system:are-you-sure',
+    defaultMessage: 'Ertu viss?',
+  },
+  completelySure: {
+    id: 'portals-admin.form-system:completely-sure',
+    defaultMessage: 'Alveg viss?',
+  },
+  confirm: {
+    id: 'portals-admin.form-system:confirm',
+    defaultMessage: 'Staðfesta',
+  },
+  cancel: {
+    id: 'portals-admin.form-system:cancel',
+    defaultMessage: 'Hætta við',
+  },
+  delete: {
+    id: 'portals-admin.form-system:delete',
+    defaultMessage: 'Eyða',
+  },
+  dataFetch: {
+    id: 'portals-admin.form-system:data-fetch',
+    defaultMessage: 'Gagnaöflun',
+  },
+  personalInfoFetch: {
+    id: 'portals-admin.form-system:personal-info-fetch',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt',
+  },
+  myData: {
+    id: 'portals-admin.form-system:my-data',
+    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+  },
+  myDataDescription: {
+    id: 'portals-admin.form-system:my-data-description',
+    defaultMessage:
+      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+  },
+  templates: {
+    id: 'portals-admin.form-system:templates',
+    defaultMessage: 'Forskriftir',
+  },
+  newTemplate: {
+    id: 'portals-admin.form-system:new-template',
+    defaultMessage: 'Ný forskrift',
   },
   // Error messages
   invalidEmail: {

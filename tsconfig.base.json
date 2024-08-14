@@ -860,6 +860,12 @@
         "libs/financial-aid/shared/src/lib/index.ts"
       ],
       "@island.is/form-system": ["libs/portals/admin/form-system/src/index.ts"],
+      "@island.is/form-system/graphql": [
+        "libs/portals/form-system/graphql/src/index.ts"
+      ],
+      "@island.is/form-system/ui": [
+        "libs/portals/form-system/ui-components/src/index.ts"
+      ],
       "@island.is/icelandic-names-registry-types": [
         "libs/icelandic-names-registry/types/src/index.ts"
       ],
@@ -906,6 +912,9 @@
       ],
       "@island.is/judicial-system/types": [
         "libs/judicial-system/types/src/index.ts"
+      ],
+      "@island.is/libs/portals/form-system": [
+        "libs/portals/form-system/src/index.ts"
       ],
       "@island.is/localization": ["libs/localization/src/index.ts"],
       "@island.is/logging": ["libs/logging/src/index.ts"],
@@ -1098,6 +1107,12 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "financial-statement-cemetery": [
+        "libs/application/templates/financial-statement-cemetery/src/index.ts"
+      ],
+      "portals/form-system/ui-components": [
+        "libs/portals/form-system/ui-components/src/index.ts"
       ]
     }
   }

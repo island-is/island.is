@@ -6,7 +6,8 @@ import { useIntl } from 'react-intl'
 import { m } from '../../../../lib/messages'
 
 export const Premises = () => {
-  const { control, documentTypes, updateSettings } = useContext(ControlContext)
+  const { control, documentTypes, updateSettings, controlDispatch } =
+    useContext(ControlContext)
   const [formDocumentTypes, setFormDocumentTypes] = useState<
     FormSystemDocumentType[]
   >(
@@ -27,6 +28,12 @@ export const Premises = () => {
         ].filter((d) => d !== undefined) as FormSystemDocumentType[])
     setFormDocumentTypes(newDocumentTypes)
     updateSettings({ ...control.form, documentTypes: newDocumentTypes })
+    controlDispatch({
+      type: 'CHANGE_FORM_SETTINGS',
+      payload: {
+        newForm: { ...control.form, documentTypes: newDocumentTypes },
+      },
+    })
   }
 
   const { formatMessage } = useIntl()
@@ -49,6 +56,7 @@ export const Premises = () => {
               large
               checked={formDocumentTypes?.some((f) => f?.id === d?.id)}
               onChange={() => handleCheckboxChange(d?.id ?? -1)}
+              backgroundColor="blue"
             />
           )
         })}

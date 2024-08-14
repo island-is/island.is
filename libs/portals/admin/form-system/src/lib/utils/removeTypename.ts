@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 export const removeTypename = (obj: any): any => {
   if (typeof obj !== 'object' || obj == null) {
     return obj
@@ -5,6 +7,7 @@ export const removeTypename = (obj: any): any => {
   if (Array.isArray(obj)) {
     return obj.map(removeTypename)
   }
+
   const newObj: { [key: string]: any } = {}
   for (const [key, value] of Object.entries(obj)) {
     if (key !== '__typename') {

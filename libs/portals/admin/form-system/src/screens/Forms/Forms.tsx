@@ -4,9 +4,12 @@ import { FormSystemPaths } from '../../lib/paths'
 import { TableRow } from '../../components/TableRow/TableRow'
 import { useFormSystemGetFormsQuery } from './Forms.generated'
 import { useFormSystemCreateFormMutation } from './CreateForm.generated'
+import { useIntl } from 'react-intl'
+import { m } from '../../lib/messages'
 
 export const Forms = () => {
   const navigate = useNavigate()
+  const { formatMessage } = useIntl()
 
   const { data, loading, error } = useFormSystemGetFormsQuery({
     variables: {
@@ -30,7 +33,7 @@ export const Forms = () => {
       <div>
         {/* Title and buttons  */}
         <div>
-          <Text variant="h2">Forskriftir</Text>
+          <Text variant="h2">{formatMessage(m.templates)}</Text>
         </div>
         <Box marginTop={5}>
           <Inline space={2}>
@@ -49,15 +52,10 @@ export const Forms = () => {
                 )
               }}
             >
-              Ný forskrift
-            </Button>
-            <Button variant="ghost" size="medium">
-              Hlaða inn forskrift
+              {formatMessage(m.newTemplate)}
             </Button>
           </Inline>
         </Box>
-
-        <Box marginTop={5}></Box>
 
         <Box marginTop={5}>
           <Box width="half"></Box>
@@ -73,6 +71,7 @@ export const Forms = () => {
                 org={f?.organization?.id}
                 isHeader={false}
                 translated={f?.isTranslated ?? false}
+                lastModified={f?.lastChanged ?? ''}
               />
             )
           })}
