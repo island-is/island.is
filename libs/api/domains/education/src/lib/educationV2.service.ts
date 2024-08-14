@@ -4,7 +4,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { FamilyCompulsorySchoolCareer } from './models/familyCareer.model'
 import { mapCareer } from './educationMapper'
 import { isDefined } from '@island.is/shared/utils'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 @Injectable()
 export class EducationServiceV2 {
