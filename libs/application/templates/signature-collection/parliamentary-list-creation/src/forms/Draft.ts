@@ -128,6 +128,26 @@ export const Draft: Form = buildForm({
                 return data?.email
               },
             }),
+            buildDescriptionField({
+              id: 'collectionHeader',
+              title: m.collectionHeader,
+              titleVariant: 'h3',
+              space: 'containerGutter',
+            }),
+            buildTextField({
+              id: 'collection.dateFrom',
+              title: m.collectionDateFrom,
+              width: 'half',
+              readOnly: true,
+              defaultValue: new Date().toLocaleDateString('is-IS'),
+            }),
+            buildTextField({
+              id: 'collection.dateTil',
+              title: m.collectionDateTil,
+              width: 'half',
+              readOnly: true,
+              defaultValue: new Date().toLocaleDateString('is-IS'),
+            }),
           ],
         }),
       ],
@@ -161,7 +181,7 @@ export const Draft: Form = buildForm({
       children: [
         buildMultiField({
           id: 'managers',
-          title: m.managersAndSupervisorsTitle,
+          title: m.managersAndSupervisors,
           description: '',
           children: [
             buildTableRepeaterField({
