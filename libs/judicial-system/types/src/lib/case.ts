@@ -415,23 +415,6 @@ export const getStatementDeadline = (appealReceived: Date): string => {
   ).toISOString()
 }
 
-export const prosecutorCanSelectDefenderForInvestigationCase = (
-  type?: CaseType | null,
-): boolean => {
-  return Boolean(
-    type &&
-      [
-        CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-        CaseType.EXPULSION_FROM_HOME,
-        CaseType.PAROLE_REVOCATION,
-        CaseType.PSYCHIATRIC_EXAMINATION,
-        CaseType.RESTRAINING_ORDER,
-        CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-        CaseType.OTHER,
-      ].includes(type),
-  )
-}
-
 export const isIndictmentCaseState = (
   state: string,
 ): state is IndictmentCaseState => {
