@@ -12,8 +12,8 @@ export const InputFields = {
     approveExternalData: 'requirements.approveExternalData',
   },
   [Routes.ADVERT]: {
-    departmentId: 'advert.department',
-    typeId: 'advert.type',
+    departmentId: 'advert.departmentId',
+    typeId: 'advert.typeId',
     title: 'advert.title',
     html: 'advert.document',
     requestedDate: 'advert.requestedDate',

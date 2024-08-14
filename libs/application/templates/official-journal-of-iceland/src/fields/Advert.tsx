@@ -22,6 +22,8 @@ import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
 import { OfficialJournalOfIcelandAdvert } from '@island.is/api/schema'
 import { useFormContext } from 'react-hook-form'
 import * as styles from './Advert.css'
+import { useDepartments } from '../hooks/useDepartments'
+import { OJOISelectController } from '../components/input/OJOISelectController'
 
 type TypeResonse = OfficialJournalOfIcelandGraphqlResponse<'types'>
 
@@ -36,30 +38,30 @@ type Props = OJOIFieldBaseProps & {
 
 export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
   const { formatMessage: f, locale } = useLocale()
-  const { answers, externalData } = application
+  const { departments, loading: loadingDepartments } = useDepartments()
 
-  const inputHeight = 64
+  // const { answers, externalData } = application
 
-  const departments = externalData.departments.data.departments
-    .map((d) => {
-      return {
-        slug: d.slug,
-        label: d.title,
-        value: d.id,
-      }
-    })
-    .filter((d) => d.slug !== 'tolublod')
+  // const departments = externalData.departments.data.departments
+  //   .map((d) => {
+  //     return {
+  //       slug: d.slug,
+  //       label: d.title,
+  //       value: d.id,
+  //     }
+  //   })
+  //   .filter((d) => d.slug !== 'tolublod')
 
-  const { setValue } = useFormContext()
+  // const { setValue } = useFormContext()
 
-  const [updateApplication] = useMutation(UPDATE_APPLICATION)
-  const [lazyTypesQuery, { loading: loadingTypes }] =
-    useLazyQuery<TypeResonse>(TYPES_QUERY)
+  // const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  // const [lazyTypesQuery, { loading: loadingTypes }] =
+  //   useLazyQuery<TypeResonse>(TYPES_QUERY)
 
-  const [lazyAdvertQuery, { loading: loadingAdvert }] =
-    useLazyQuery<SelectedAdvertResponse>(ADVERT_QUERY)
+  // const [lazyAdvertQuery, { loading: loadingAdvert }] =
+  //   useLazyQuery<SelectedAdvertResponse>(ADVERT_QUERY)
 
-  const [types, setTypes] = useState<{ label: string; value: string }[]>([])
+  // const [types, setTypes] = useState<{ label: string; value: string }[]>([])
 
   // const updateHandler = useCallback(async () => {
   //   await updateApplication({
@@ -76,21 +78,34 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
   //   })
   // }, [application.answers, application.id, locale, updateApplication])
 
-  if (loadingAdvert) {
-    return (
-      <SkeletonLoader
-        space={2}
-        repeat={5}
-        borderRadius="standard"
-        display="block"
-        height={inputHeight}
-      />
-    )
-  }
+  // if (loadingAdvert) {
+  //   return (
+  //     <SkeletonLoader
+  //       space={2}
+  //       repeat={5}
+  //       borderRadius="standard"
+  //       display="block"
+  //       height={inputHeight}
+  //     />
+  //   )
+  // }
 
   return (
-    <>
-      {/* <FormGroup>
+    <FormGroup>
+      <Box className={styles.inputWrapper}>
+        <OJOISelectController
+          applicationId={application.id}
+          name={InputFields.advert.departmentId}
+          label={advert.inputs.department.label}
+          placeholder={advert.inputs.department.placeholder}
+          loading={loadingDepartments}
+          options={departments?.map((d) => ({
+            label: d.title,
+            value: d.id,
+          }))}
+        />
+      </Box>
+      {/*
         <Box className={styles.inputWrapper}>
           <SelectController
             key={state.department}
@@ -190,7 +205,7 @@ export const Advert = ({ application, errors, selectedAdvertId }: Props) => {
             }
           />
         </Box>
-      </FormGroup> */}
-    </>
+        */}
+    </FormGroup>
   )
 }

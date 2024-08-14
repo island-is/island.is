@@ -46,3 +46,5 @@ export enum FileNames {
   DOCUMENT = 'document',
   ADDITIONS = 'additions',
 }
+
+export const OJOJ_INPUT_HEIGHT = 64
