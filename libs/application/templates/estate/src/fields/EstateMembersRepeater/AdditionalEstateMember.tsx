@@ -4,6 +4,7 @@ import {
   CheckboxController,
   DatePickerController,
   InputController,
+  PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import * as kennitala from 'kennitala'
@@ -42,6 +43,8 @@ export const AdditionalEstateMember = ({
   relationWithApplicantOptions: { value: string; label: string }[]
   error: Record<string, string>
 }) => {
+
+
   const { formatMessage } = useLocale()
   const fieldIndex = `${fieldName}[${index}]`
   const nameField = `${fieldIndex}.name`
@@ -54,6 +57,8 @@ export const AdditionalEstateMember = ({
   const enabledField = `${fieldIndex}.enabled`
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
+
+  console.log('phone', phoneField)
 
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
@@ -214,13 +219,12 @@ export const AdditionalEstateMember = ({
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
+              <PhoneInputController
                 id={phoneField}
                 name={phoneField}
                 label={formatMessage(m.phone)}
-                defaultValue={field.phone || ''}
+                //defaultValue={field.phone || ''}
                 backgroundColor="blue"
-                format={'###-####'}
                 error={error?.phone}
                 required={!noContactInfo}
               />
@@ -269,12 +273,11 @@ export const AdditionalEstateMember = ({
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
+                <PhoneInputController
                   id={advocatePhone}
                   name={advocatePhone}
                   label={formatMessage(m.phone)}
                   backgroundColor="blue"
-                  format="###-####"
                   error={(error?.advocate as unknown as ErrorValue)?.phone}
                   size="sm"
                   required
