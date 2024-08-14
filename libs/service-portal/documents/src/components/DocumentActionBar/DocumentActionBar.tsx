@@ -79,7 +79,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             >
               <Button
                 circle
-                icon="archive"
+                icon="fileTrayEmpty"
                 iconType={isArchived ? 'filled' : 'outline'}
                 onClick={async () => {
                   await submitMailAction(isArchived ? 'unarchive' : 'archive')
