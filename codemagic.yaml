@@ -17,7 +17,7 @@ definitions:
   shared_envs: &shared_envs
     XCODE_WORKSPACE: 'IslandApp.xcworkspace'
     CM_CLONE_DEPTH: 200
-    NODE_OPTIONS: '--max_old_space_size=8192'
+    NODE_OPTIONS: '--max-old-space-size=8192'
   scripts:
     - &check_changes
       name: Check changes since last build
