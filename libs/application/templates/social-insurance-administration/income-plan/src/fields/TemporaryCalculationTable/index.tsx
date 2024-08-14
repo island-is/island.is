@@ -28,11 +28,12 @@ export const TemporaryCalculationTable: FC<
   const { formatMessage } = useLocale()
 
   const { income } = getApplicationAnswers(application.answers)
-  const { latestIncomePlan, categorizedIncomeTypes } =
-    getApplicationExternalData(application.externalData)
+  const { categorizedIncomeTypes } = getApplicationExternalData(
+    application.externalData,
+  )
 
   const input = {
-    incomeYear: latestIncomePlan.year,
+    incomeYear: new Date().getFullYear(),
     incomeTypes: income.map((income) => {
       const incomeType = categorizedIncomeTypes.filter(
         (item) => item.incomeTypeName === income.incomeTypes,
@@ -49,20 +50,33 @@ export const TemporaryCalculationTable: FC<
         ...(income.income === RatioType.MONTHLY &&
         income?.unevenIncomePerYear?.[0] === YES
           ? {
-              amountJan: income.january,
-              amountFeb: income.february,
-              amountMar: income.march,
-              amountApr: income.april,
-              amountMay: income.may,
-              amountJun: income.june,
-              amountJul: income.july,
-              amountAug: income.august,
-              amountSep: income.september,
-              amountOct: income.october,
-              amountNov: income.november,
-              amountDec: income.december,
+              amountJan: Number(income.january),
+              amountFeb: Number(income.february),
+              amountMar: Number(income.march),
+              amountApr: Number(income.april),
+              amountMay: Number(income.may),
+              amountJun: Number(income.june),
+              amountJul: Number(income.july),
+              amountAug: Number(income.august),
+              amountSep: Number(income.september),
+              amountOct: Number(income.october),
+              amountNov: Number(income.november),
+              amountDec: Number(income.december),
             }
-          : {}),
+          : {
+              amountJan: Math.round(Number(income.incomePerYear) / 12),
+              amountFeb: Math.round(Number(income.incomePerYear) / 12),
+              amountMar: Math.round(Number(income.incomePerYear) / 12),
+              amountApr: Math.round(Number(income.incomePerYear) / 12),
+              amountMay: Math.round(Number(income.incomePerYear) / 12),
+              amountJun: Math.round(Number(income.incomePerYear) / 12),
+              amountJul: Math.round(Number(income.incomePerYear) / 12),
+              amountAug: Math.round(Number(income.incomePerYear) / 12),
+              amountSep: Math.round(Number(income.incomePerYear) / 12),
+              amountOct: Math.round(Number(income.incomePerYear) / 12),
+              amountNov: Math.round(Number(income.incomePerYear) / 12),
+              amountDec: Math.round(Number(income.incomePerYear) / 12),
+            }),
       }
     }),
   }
@@ -94,6 +108,23 @@ export const TemporaryCalculationTable: FC<
             socialInsuranceAdministrationMessage.shared.alertTitle,
           )}
           message={formatMessage(coreErrorMessages.failedDataProvider)}
+        />
+      </Box>
+    )
+  }
+
+  // TODO: Skoða betur hvað á að gera þegar skilar tómu obj
+  if (!data?.getTemporaryCalculations?.paidOut) {
+    return (
+      <Box marginY={3}>
+        <AlertMessage
+          type="warning"
+          title={formatMessage(
+            socialInsuranceAdministrationMessage.shared.alertTitle,
+          )}
+          message={
+            'Tekjur eru yfir viðmiðum fyrir greiðslur. Ekki er hægt að birta bráðabirgðaútreikning.'
+          }
         />
       </Box>
     )
