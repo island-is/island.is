@@ -18,6 +18,10 @@ export class EducationServiceV2 {
   ): Promise<FamilyCompulsorySchoolCareer | null> {
     const data = await this.gradeService.getUserFamilyStudentAssessments(user)
 
+    if (!data) {
+      return null
+    }
+
     const userData = data.find((d) => d.nationalId === user.nationalId)
     const familyData = data.filter((d) => d.nationalId !== user.nationalId)
 
@@ -26,10 +30,10 @@ export class EducationServiceV2 {
     }
 
     return {
-      userCareer: mapCareer(userData),
+      userCareer: mapCareer(userData, false),
       familyMemberCareers: familyData
         .filter((d) => d.nationalId !== user.nationalId)
-        .map((data) => mapCareer(data))
+        .map((data) => mapCareer(data, true))
         .filter(isDefined),
     }
   }

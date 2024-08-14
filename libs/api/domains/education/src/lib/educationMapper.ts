@@ -4,6 +4,7 @@ import { StudentCareer } from './models/studentCareer.model'
 
 export const mapCareer = (
   data: StudentAssessmentsDto,
+  isChildOfUser?: boolean,
 ): StudentCareer | undefined => {
   const { firstAssessmentYear, lastAssessmentYear } =
     data.assessmentsOverview.assessmentsYearSpan
@@ -11,7 +12,7 @@ export const mapCareer = (
   return {
     nationalId: data?.nationalId,
     name: data?.name,
-    isChildOfUser: false,
+    isChildOfUser,
     examDateSpan:
       generateExamDateSpan(firstAssessmentYear, lastAssessmentYear) ?? '',
     examResults: (data?.assessmentsOverview.assessments ?? []).map((a) => ({
