@@ -144,11 +144,19 @@ export class WorkMachinesClientService {
   getDocuments = (user: User, input: ExcelRequest): Promise<Blob> =>
     this.docApi.withMiddleware(new AuthMiddleware(user as Auth)).excel(input)
 
-  async getMachines(auth: User): Promise<MachinesWithTotalCount> {
-    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+  async getMachines(
+    auth: User,
+    parameters?: ApiMachinesGetRequest,
+  ): Promise<MachinesWithTotalCount> {
+    const defaultOptions = {
       onlyShowOwnedMachines: true,
       pageSize: 20,
       pageNumber: 1,
+    }
+
+    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+      ...defaultOptions,
+      ...parameters,
     })
     return {
       machines:
@@ -171,10 +179,15 @@ export class WorkMachinesClientService {
     auth: User,
     regNumber: string,
     rel: string,
+    parameters?: ApiMachinesGetRequest,
   ): Promise<MachineDto> {
-    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+    const defaultOptions = {
       onlyShowOwnedMachines: true,
       searchQuery: regNumber,
+    }
+    const result = await this.machinesApiWithAuth(auth).apiMachinesGet({
+      ...defaultOptions,
+      ...parameters,
     })
 
     return await this.getMachineDetail(auth, result?.value?.[0]?.id || '', rel)

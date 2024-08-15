@@ -10,6 +10,7 @@ platform :ios, '13.4'
 prepare_react_native_project!
 
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
+$VCEnableLocation = false
 
 linkage = ENV['USE_FRAMEWORKS']
 if linkage != nil
