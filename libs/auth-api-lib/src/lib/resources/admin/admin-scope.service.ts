@@ -387,7 +387,25 @@ export class AdminScopeService {
   ): Promise<boolean> {
     const isSuperUser = user.scope.includes(AdminPortalScope.idsAdminSuperUser)
 
+    // Check if none SuperUser is trying to update PersonalRepresentative fields
+    const allDelegationTypes = [
+      ...(input.addedDelegationTypes ?? []),
+      ...(input.removedDelegationTypes ?? []),
+    ]
+
+    const isPersonalRepresentativeUpdate = allDelegationTypes.some(
+      (delegationType) =>
+        delegationType.startsWith(
+          `${AuthDelegationType.PersonalRepresentative}:`,
+        ),
+    )
+
+    if (isPersonalRepresentativeUpdate && !isSuperUser) {
+      return false
+    }
+
     const updatedFields = Object.keys(input)
+
     const superUserUpdatedFields = updatedFields.filter((field) =>
       superUserScopeFields.includes(field),
     )

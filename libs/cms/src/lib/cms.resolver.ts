@@ -564,10 +564,10 @@ export class CmsResolver {
   }
 
   @CacheControl(defaultCache)
-  @Query(() => SupportCategory)
+  @Query(() => SupportCategory, { nullable: true })
   getSupportCategory(
     @Args('input') input: GetSupportCategoryInput,
-  ): Promise<SupportCategory> {
+  ): Promise<SupportCategory | null> {
     return this.cmsContentfulService.getSupportCategory(input)
   }
 

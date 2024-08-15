@@ -17,6 +17,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { environment } from '../environments/environment'
 import { UserNotificationsConfig } from '../config'
 import { CmsConfig } from '@island.is/clients/cms'
+import { emailModuleConfig } from '@island.is/email-service'
 
 @Module({
   imports: [
@@ -38,6 +39,7 @@ import { CmsConfig } from '@island.is/clients/cms'
         IdsClientConfig,
         AuthDelegationApiClientConfig,
         CmsConfig,
+        emailModuleConfig,
       ],
     }),
     NotificationsModule,

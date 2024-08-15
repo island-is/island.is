@@ -71,4 +71,6 @@ declare module 'styled-components' {
     }
     color: Color
   }
+
+  export type StyledProps<P> = P & ExecutionContext
 }
