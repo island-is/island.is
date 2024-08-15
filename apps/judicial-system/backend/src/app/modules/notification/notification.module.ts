@@ -7,7 +7,6 @@ import { SmsModule } from '@island.is/nova-sms'
 
 import { MessageModule } from '@island.is/judicial-system/message'
 
-import { environment } from '../../../environments'
 import {
   CaseModule,
   CourtModule,
@@ -26,8 +25,8 @@ import { NotificationDispatchService } from './notificationDispatch.service'
 
 @Module({
   imports: [
-    EmailModule.register(environment.emailOptions),
-    SmsModule.register(environment.smsOptions),
+    EmailModule,
+    SmsModule,
     CmsTranslationsModule,
     MessageModule,
     InstitutionModule,
