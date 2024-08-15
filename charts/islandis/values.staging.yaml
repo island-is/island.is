@@ -813,7 +813,7 @@ application-system-api-worker:
     - 'main.js'
     - '--job'
     - 'worker'
-  armBetaEnrolled: false
+  armBetaEnrolled: true
   command:
     - 'node'
   enabled: true
