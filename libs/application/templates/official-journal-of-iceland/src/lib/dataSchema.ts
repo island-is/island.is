@@ -12,11 +12,10 @@ const memberSchema = z
   })
   .partial()
 
-const signatureSchema = z
+export const signatureSchema = z
   .object({
     date: z.string(),
     institution: z.string(),
-    chairman: z.string(),
     members: z.array(memberSchema),
     additionalSignature: z.string(),
     html: z.string(),
@@ -54,6 +53,13 @@ const attachmentSchema = z.object({
   fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]),
 })
 
+const miscSchema = z
+  .object({
+    signatureType: z.string(),
+    selectedTemplate: z.string(),
+  })
+  .partial()
+
 export const partialSchema = z.object({
   requirements: z
     .object({
@@ -64,7 +70,15 @@ export const partialSchema = z.object({
       path: ['approveExternalData'],
     }),
   advert: advertSchema,
-  signatures: z.array(signatureSchema).optional(),
+  signatures: z
+    .object({
+      regular: z.array(signatureSchema),
+      committee: signatureSchema.extend({
+        chairman: memberSchema,
+      }),
+    })
+    .partial(),
+  misc: miscSchema,
   attachments: z.array(attachmentSchema).optional(),
 })
 

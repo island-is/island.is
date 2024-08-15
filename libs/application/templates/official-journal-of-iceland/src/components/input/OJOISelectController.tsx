@@ -6,7 +6,6 @@ import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import { InputFields } from '../../lib/types'
-import { useState } from 'react'
 
 type OJOISelectControllerOption = {
   label: string

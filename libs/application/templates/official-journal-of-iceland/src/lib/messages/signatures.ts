@@ -84,7 +84,7 @@ export const signatures = {
       },
       placeholder: {
         id: 'ojoi.application:signatures.inputs.institution.placeholder',
-        defaultMessage: 'Veldu stofnun',
+        defaultMessage: 'Nafn stofnunar eða staðsetning',
         description: 'Placeholder for the institution input',
       },
     }),

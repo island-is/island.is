@@ -1,272 +1,156 @@
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, DatePicker, Input } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
-import { useLocale } from '@island.is/localization'
 import { InputFields } from '../../lib/types'
-import cloneDeep from 'lodash/cloneDeep'
-import { SIGNATURE_INDEX, MEMBER_INDEX } from '../../lib/constants'
-import { getErrorViaPath } from '@island.is/application/core'
 import { signatures } from '../../lib/messages/signatures'
+import { useState } from 'react'
 import {
-  DatePickerController,
-  InputController,
-} from '@island.is/shared/form-fields'
+  DEBOUNCE_INPUT_TIMER,
+  DEFAULT_REGULAR_SIGNATURE_COUNT,
+  DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
+} from '../../lib/constants'
+import { useLocale } from '@island.is/localization'
+import { useApplication } from '../../hooks/useUpdateApplication'
+import set from 'lodash/set'
+import debounce from 'lodash/debounce'
+import { getValueViaPath } from '@island.is/application/core'
+import * as z from 'zod'
+import { signatureSchema } from '../../lib/dataSchema'
+import { getEmptyMember, getRegularSignature } from '../../lib/utils'
 
-export const RegularSignature = () => {
+type SignatureSchema = z.infer<typeof signatureSchema>
+
+type Props = {
+  applicationId: string
+}
+
+type SignatureProperties =
+  | 'institution'
+  | 'date'
+  | 'member'
+  | 'html'
+  | 'additionalSignature'
+export const RegularSignature = ({ applicationId }: Props) => {
   const { formatMessage: f } = useLocale()
+  const { updateApplication, application } = useApplication({
+    applicationId,
+  })
 
-  // const onChangeMember = (
-  //   institutionIndex: number,
-  //   memberIndex: number,
-  //   key: MemberKey,
-  //   value: string,
-  // ) => {
-  //   const clonedState = cloneDeep(state)
-  //   const institution = clonedState.regular.find(
-  //     (_, index) => index === institutionIndex,
-  //   )
-
-  //   if (!institution) return
-
-  //   const member = institution?.members.find(
-  //     (_, index) => index === memberIndex,
-  //   )
-
-  //   if (!member) return
-
-  //   const updatedMember = { ...member, [key]: value }
-  //   institution.members.splice(memberIndex, 1, updatedMember)
-  //   clonedState.regular.splice(institutionIndex, 1, institution)
-  //   setState(clonedState)
-  // }
-
-  // const onRemoveMember = (institutionIndex: number, memberIndex: number) => {
-  //   const clonedState = cloneDeep(state)
-  //   const institution = clonedState.regular.find(
-  //     (_, index) => index === institutionIndex,
-  //   )
-
-  //   if (!institution) return
-
-  //   institution.members.splice(memberIndex, 1)
-  //   clonedState.regular.splice(institutionIndex, 1, institution)
-  //   setState(clonedState)
-  // }
-
-  // const onAddMember = (institutionIndex: number) => {
-  //   const clonedState = cloneDeep(state)
-  //   const institution = clonedState.regular.find(
-  //     (_, index) => index === institutionIndex,
-  //   )
-
-  //   if (!institution) return
-
-  //   institution.members.push({
-  //     above: '',
-  //     name: '',
-  //     after: '',
-  //     below: '',
-  //   })
-  //   clonedState.regular.splice(institutionIndex, 1, institution)
-  //   setState(clonedState)
-  // }
-
-  // const onChangeInstitution = (
-  //   institutionIndex: number,
-  //   key: InstitutionKey,
-  //   value: string,
-  // ) => {
-  //   const clonedState = cloneDeep(state)
-  //   const institution = clonedState.regular.find(
-  //     (_, index) => index === institutionIndex,
-  //   )
-
-  //   if (!institution) return
-
-  //   const updatedInstitution = { ...institution, [key]: value }
-  //   clonedState.regular.splice(institutionIndex, 1, updatedInstitution)
-  //   setState(clonedState)
-  // }
-
-  // const onRemoveInstitution = (institutionIndex: number) => {
-  //   const clonedState = cloneDeep(state)
-  //   clonedState.regular.splice(institutionIndex, 1)
-  //   setState(clonedState)
-  // }
-
-  // const onAddInstitution = () => {
-  //   const clonedState = cloneDeep(state)
-  //   clonedState.regular.push({
-  //     institution: '',
-  //     date: '',
-  //     members: [
-  //       {
-  //         above: '',
-  //         name: '',
-  //         after: '',
-  //         below: '',
-  //       },
-  //     ],
-  //   })
-  //   setState(clonedState)
-  // }
-
-  return (
-    <Box className={styles.signatureWrapper}>
-      {/* {state.regular.map((institution, index) => {
-        const institutionPath =
-          InputFields.signature.regular.institution.replace(
-            SIGNATURE_INDEX,
-            `${index}`,
-          )
-
-        const datePath = InputFields.signature.regular.date.replace(
-          SIGNATURE_INDEX,
-          `${index}`,
-        )
-
-        return (
-          <Box className={styles.institutionWrapper} key={index}>
-            <Box className={styles.institution}>
-              <Box flexGrow={1}>
-                <InputController
-                  id={institutionPath}
-                  name={institutionPath}
-                  label={f(signatures.inputs.institution.label)}
-                  defaultValue={institution.institution}
-                  backgroundColor="blue"
-                  onChange={(e) =>
-                    onChangeInstitution(index, 'institution', e.target.value)
-                  }
-                  error={errors && getErrorViaPath(errors, institutionPath)}
-                  size="sm"
-                />
-              </Box>
-              <Box flexGrow={1}>
-                <DatePickerController
-                  id={datePath}
-                  name={datePath}
-                  label={f(signatures.inputs.date.label)}
-                  placeholder={f(signatures.inputs.date.placeholder)}
-                  backgroundColor="blue"
-                  size="sm"
-                  locale="is"
-                  defaultValue={institution.date}
-                  onChange={(date) => onChangeInstitution(index, 'date', date)}
-                  error={errors && getErrorViaPath(errors, datePath)}
-                />
-              </Box>
-              <Box className={styles.removeInputGroup}>
-                {index > 0 && (
-                  <Button
-                    variant="utility"
-                    icon="trash"
-                    iconType="outline"
-                    onClick={() => onRemoveInstitution(index)}
-                  />
-                )}
-              </Box>
-            </Box>
-            <Box className={styles.wrapper}>
-              <Text variant="h5" marginBottom={2}>
-                {f(signatures.headings.signedBy)}
-              </Text>
-              {institution.members?.map((signature, i) => {
-                const abovePath = InputFields.signature.regular.members.above
-                  .replace(SIGNATURE_INDEX, `${index}`)
-                  .replace(MEMBER_INDEX, `${i}`)
-                const namePath = InputFields.signature.regular.members.name
-                  .replace(SIGNATURE_INDEX, `${index}`)
-                  .replace(MEMBER_INDEX, `${i}`)
-                const afterPath = InputFields.signature.regular.members.after
-                  .replace(SIGNATURE_INDEX, `${index}`)
-                  .replace(MEMBER_INDEX, `${i}`)
-                const belowPath = InputFields.signature.regular.members.below
-                  .replace(SIGNATURE_INDEX, `${index}`)
-                  .replace(MEMBER_INDEX, `${i}`)
-
-                return (
-                  <Box className={styles.inputGroup} key={`${index}-${i}`}>
-                    <Box className={styles.inputWrapper}>
-                      <InputController
-                        id={abovePath}
-                        label={f(signatures.inputs.above.label)}
-                        defaultValue={signature.above}
-                        backgroundColor="blue"
-                        size="sm"
-                        onChange={(e) =>
-                          onChangeMember(index, i, 'above', e.target.value)
-                        }
-                        error={errors && getErrorViaPath(errors, abovePath)}
-                      />
-                      <InputController
-                        id={afterPath}
-                        label={f(signatures.inputs.after.label)}
-                        defaultValue={signature.after}
-                        backgroundColor="blue"
-                        size="sm"
-                        onChange={(e) =>
-                          onChangeMember(index, i, 'after', e.target.value)
-                        }
-                        error={errors && getErrorViaPath(errors, afterPath)}
-                      />
-                    </Box>
-                    <Box className={styles.inputWrapper}>
-                      <InputController
-                        id={namePath}
-                        label={f(signatures.inputs.name.label)}
-                        defaultValue={signature.name}
-                        backgroundColor="blue"
-                        size="sm"
-                        onChange={(e) =>
-                          onChangeMember(index, i, 'name', e.target.value)
-                        }
-                        error={errors && getErrorViaPath(errors, namePath)}
-                      />
-                      <InputController
-                        id={belowPath}
-                        label={f(signatures.inputs.below.label)}
-                        defaultValue={signature.below}
-                        backgroundColor="blue"
-                        size="sm"
-                        onChange={(e) =>
-                          onChangeMember(index, i, 'below', e.target.value)
-                        }
-                        error={errors && getErrorViaPath(errors, belowPath)}
-                      />
-                    </Box>
-                    <Box className={styles.removeInputGroup}>
-                      {i > 0 && (
-                        <Button
-                          variant="utility"
-                          icon="trash"
-                          iconType="outline"
-                          onClick={() => onRemoveMember(index, i)}
-                        />
-                      )}
-                    </Box>
-                  </Box>
-                )
-              })}
-              <Box marginTop={2}>
-                <Button
-                  size="small"
-                  icon="add"
-                  variant="utility"
-                  onClick={() => onAddMember(index)}
-                >
-                  {f(signatures.buttons.addPerson)}
-                </Button>
-              </Box>
-            </Box>
-          </Box>
-        )
-      })}
-      <Box marginTop={2}>
-        <Button variant="utility" icon="add" onClick={onAddInstitution}>
-          {f(signatures.buttons.addInstitution)}
-        </Button>
-      </Box> */}
-    </Box>
+  const [signatureCount, setSignatureCount] = useState(
+    DEFAULT_REGULAR_SIGNATURE_COUNT,
   )
+  const [memberCount, setMemberCount] = useState(
+    DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
+  )
+
+  const initalState = useState<SignatureSchema[]>(
+    Array.isArray(
+      getValueViaPath(application.answers, InputFields.signature.regular),
+    )
+      ? (getValueViaPath(
+          application.answers,
+          InputFields.signature.regular,
+        ) as SignatureSchema[])
+      : getRegularSignature(signatureCount, memberCount),
+  )
+
+  console.log(initalState)
+
+  const onUpdateSignature = (
+    value: any,
+    key: SignatureProperties,
+    index: number,
+    memberIndex?: number,
+  ) => {
+    switch (key) {
+      case 'institution':
+      case 'date': {
+        const currentAnswers = structuredClone(application.answers)
+      }
+    }
+  }
+
+  const debouncedSignatureUpdate = debounce(
+    onUpdateSignature,
+    DEBOUNCE_INPUT_TIMER,
+  )
+
+  const onSignatureChangeHandler = (
+    value: any,
+    key: SignatureProperties,
+    index: number,
+  ) => {
+    debouncedSignatureUpdate.cancel()
+
+    debouncedSignatureUpdate(value, key, index)
+  }
+
+  return Array.from({ length: signatureCount }).map((_, index) => {
+    return (
+      <Box className={styles.signatureWrapper}>
+        <Box className={styles.institution}>
+          <Box flexGrow={1}>
+            <Input
+              name={`signature.regular.institution.${index}`}
+              label={f(signatures.inputs.institution.label)}
+              placeholder={f(signatures.inputs.institution.placeholder)}
+              size="sm"
+              backgroundColor="blue"
+              onChange={(e) =>
+                onSignatureChangeHandler(e.target.value, 'institution', index)
+              }
+            />
+          </Box>
+          <Box flexGrow={1}>
+            <DatePicker
+              name={`signature.regular.date.${index}`}
+              label={f(signatures.inputs.date.label)}
+              placeholderText={f(signatures.inputs.date.placeholder)}
+              size="sm"
+              backgroundColor="blue"
+              handleChange={(date) =>
+                onSignatureChangeHandler(date.toString(), 'date', index)
+              }
+            />
+          </Box>
+        </Box>
+        <Box className={styles.wrapper}>
+          {Array.from({ length: memberCount }).map((_, memberIndex) => {
+            return (
+              <Box className={styles.inputGroup}>
+                <Box className={styles.inputWrapper}>
+                  <Input
+                    name={`signature.regular.member.above.${index}.${memberIndex}`}
+                    label={f(signatures.inputs.above.label)}
+                    size="sm"
+                    backgroundColor="blue"
+                  />
+                  <Input
+                    name={`signature.regular.member.after.${index}.${memberIndex}`}
+                    label={f(signatures.inputs.after.label)}
+                    size="sm"
+                    backgroundColor="blue"
+                  />
+                </Box>
+                <Box className={styles.inputWrapper}>
+                  <Input
+                    name={`signature.regular.member.name.${index}.${memberIndex}`}
+                    label={f(signatures.inputs.name.label)}
+                    size="sm"
+                    backgroundColor="blue"
+                  />
+                  <Input
+                    name={`signature.regular.member.below.${index}.${memberIndex}`}
+                    label={f(signatures.inputs.below.label)}
+                    size="sm"
+                    backgroundColor="blue"
+                  />
+                </Box>
+              </Box>
+            )
+          })}
+        </Box>
+      </Box>
+    )
+  })
 }

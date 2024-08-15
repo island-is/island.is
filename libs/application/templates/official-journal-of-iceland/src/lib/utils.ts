@@ -45,3 +45,22 @@ export const getNextAvailableDate = (date: Date): Date => {
   }
   return getNextAvailableDate(addDays(date, 1))
 }
+
+export const getEmptyMember = () => ({
+  name: '',
+  title: '',
+  institution: '',
+  date: '',
+})
+
+export const getRegularSignature = (
+  signatureCount: number,
+  memberCount: number,
+) =>
+  Array.from({ length: signatureCount }).map(() => ({
+    institution: '',
+    date: '',
+    members: Array.from({ length: memberCount }).map(() => getEmptyMember()),
+    additionalSignature: '',
+    html: '',
+  }))

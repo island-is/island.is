@@ -48,3 +48,19 @@ export enum FileNames {
 }
 
 export const OJOJ_INPUT_HEIGHT = 64
+
+export type SignatureType = 'regular' | 'committee'
+export enum SignatureTypes {
+  REGULAR = 'regular',
+  COMMITTEE = 'committee',
+}
+
+export const MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 1
+export const DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT = 2
+export const MAXIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 10
+export const MINIMUM_REGULAR_SIGNATURE_COUNT = 1
+export const DEFAULT_REGULAR_SIGNATURE_COUNT = 1
+export const MAXIMUM_REGULAR_SIGNATURE_COUNT = 3
+export const MINIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
+export const DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT = 2
+export const MAXIMUM_COMMITTEE_SIGNATURE_MEMBER_COUNT = 10

@@ -1,8 +1,11 @@
 import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  DatePickerController,
+  InputController,
+} from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
-import { OJOJ_INPUT_HEIGHT, DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
+import { DEBOUNCE_INPUT_TIMER, OJOJ_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import debounce from 'lodash/debounce'
@@ -15,11 +18,10 @@ type Props = {
   loading?: boolean
   applicationId: string
   disabled?: boolean
-  textarea?: boolean
   onChange?: (value: string) => void
 }
 
-export const OJOIInputController = ({
+export const OJOIDateController = ({
   name,
   label,
   placeholder,
@@ -27,7 +29,6 @@ export const OJOIInputController = ({
   loading,
   applicationId,
   disabled,
-  textarea,
   onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
@@ -49,12 +50,10 @@ export const OJOIInputController = ({
 
   const debounceHandleChange = debounce(handleChange, DEBOUNCE_INPUT_TIMER)
 
-  const onChangeHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
+  const onChangeHandler = (value: string) => {
     debounceHandleChange.cancel()
 
-    debounceHandleChange(e.target.value)
+    debounceHandleChange(value)
   }
 
   if (loading) {
@@ -68,17 +67,16 @@ export const OJOIInputController = ({
   }
 
   return (
-    <InputController
+    <DatePickerController
       id={name}
       name={name}
       label={labelText}
       placeholder={placeholderText}
       size="sm"
+      locale="is"
       backgroundColor="blue"
       defaultValue={defaultValue}
       disabled={disabled}
-      textarea={textarea}
-      rows={4}
       onChange={onChangeHandler}
     />
   )

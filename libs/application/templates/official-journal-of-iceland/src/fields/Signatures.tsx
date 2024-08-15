@@ -2,197 +2,82 @@ import { useLocale } from '@island.is/localization'
 import { FormGroup } from '../components/form/FormGroup'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
 import { signatures } from '../lib/messages/signatures'
+import { useState } from 'react'
+import { SignatureType, SignatureTypes } from '../lib/constants'
 import { Tabs } from '@island.is/island-ui/core'
 import { CommitteeSignature } from '../components/signatures/Committee'
 import { RegularSignature } from '../components/signatures/Regular'
-import { useCallback, useEffect, useState } from 'react'
-import { useMutation } from '@apollo/client'
-import { UPDATE_APPLICATION } from '@island.is/application/graphql'
-import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
-import debounce from 'lodash/debounce'
-import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
-import { signatureConfig } from '../components/htmlEditor/config/signatureConfig'
-import { useFormContext } from 'react-hook-form'
-import { AdditionalSignature } from '../components/signatures/Additional'
+import { useApplication } from '../hooks/useUpdateApplication'
+import set from 'lodash/set'
 
-export const Signatures = ({ application, errors }: OJOIFieldBaseProps) => {
-  const { formatMessage: f, locale } = useLocale()
+export const Signatures = ({ application }: OJOIFieldBaseProps) => {
+  const { formatMessage: f } = useLocale()
+  const { updateApplication } = useApplication({
+    applicationId: application.id,
+  })
 
-  const { answers } = application
+  const [selectedTab, setSelectedTab] = useState<SignatureType>(
+    (application.answers?.misc?.signatureType as SignatureType) ??
+      SignatureTypes.REGULAR,
+  )
 
-  // const { setValue } = useFormContext()
+  const tabs = [
+    {
+      id: SignatureTypes.REGULAR,
+      label: f(signatures.tabs.regular),
+      content: <RegularSignature applicationId={application.id} />,
+    },
+    {
+      id: SignatureTypes.COMMITTEE,
+      label: f(signatures.tabs.committee),
+      content: <CommitteeSignature />,
+    },
+  ]
 
-  // const [updateApplication] = useMutation(UPDATE_APPLICATION)
+  const onTabChangeHandler = (tabId: string) => {
+    if (Object.values(SignatureTypes).includes(tabId as SignatureTypes)) {
+      setSelectedTab(tabId as SignatureType)
 
-  // const [selectedTab, setSelectedTab] = useState<string>(
-  //   answers?.signature?.type ?? 'regular',
-  // )
+      const currentAnswers = structuredClone(application.answers)
+      const newAnswers = set(
+        currentAnswers,
+        InputFields.other.signatureType,
+        tabId,
+      )
 
-  // const [state, setState] = useState<LocalState>({
-  //   type: answers?.signature?.type ?? 'regular',
-  //   signature: answers?.signature?.signature ?? '',
-  //   regular: answers?.signature?.regular ?? [
-  //     {
-  //       institution: '',
-  //       date: '',
-  //       members: [
-  //         {
-  //           name: '',
-  //           above: '',
-  //           after: '',
-  //           below: '',
-  //         },
-  //       ],
-  //     },
-  //   ],
-  //   committee: answers?.signature?.committee ?? {
-  //     institution: '',
-  //     date: '',
-  //     chairman: {
-  //       name: '',
-  //       above: '',
-  //       after: '',
-  //       below: '',
-  //     },
-  //     members: [
-  //       {
-  //         below: '',
-  //         name: '',
-  //       },
-  //     ],
-  //   },
-  //   additional: answers?.signature?.additional ?? '',
-  // })
-
-  // setValue('signature', state)
-
-  // const updateHandler = useCallback(async () => {
-  //   await updateApplication({
-  //     variables: {
-  //       locale,
-  //       input: {
-  //         skipValidation: true,
-  //         id: application.id,
-  //         answers: {
-  //           ...application.answers,
-  //           signature: {
-  //             type: state.type,
-  //             signature: state.signature,
-  //             regular: state.regular,
-  //             committee: state.committee,
-  //             additional: state.additional,
-  //           },
-  //         },
-  //       },
-  //     },
-  //   })
-  // }, [application.answers, application.id, locale, state, updateApplication])
-
-  // const updateAdditionalSignature = useCallback((newSignature: string) => {
-  //   setState((prev) => {
-  //     return {
-  //       ...prev,
-  //       additional: newSignature,
-  //     }
-  //   })
-  // }, [])
-
-  // const debouncedAdditionalSignatureUpdate = debounce(
-  //   updateAdditionalSignature,
-  //   DEBOUNCE_INPUT_TIMER,
-  // )
-
-  // const updateState = useCallback((newState: typeof state) => {
-  //   setState((prev) => {
-  //     return {
-  //       ...prev,
-  //       ...newState,
-  //       signature:
-  //         newState.type === 'regular'
-  //           ? regularSignatureTemplate({
-  //               signatureGroups: newState.regular,
-  //               additionalSignature: newState.additional,
-  //             })
-  //           : committeeSignatureTemplate({
-  //               signature: newState.committee,
-  //               additionalSignature: newState.additional,
-  //             }),
-  //     }
-  //   })
-  // }, [])
-
-  // const debouncedStateUpdate = debounce(updateState, DEBOUNCE_INPUT_TIMER)
-
-  // const preview =
-  //   selectedTab === 'regular'
-  //     ? regularSignatureTemplate({
-  //         signatureGroups: state.regular,
-  //         additionalSignature: state.additional,
-  //       })
-  //     : committeeSignatureTemplate({
-  //         signature: state.committee,
-  //         additionalSignature: state.additional,
-  //       })
-
-  // useEffect(() => {
-  //   updateHandler()
-  // }, [updateHandler])
-
-  // const tabs = [
-  //   {
-  //     id: 'regular',
-  //     label: f(signatures.tabs.regular),
-  //     content: (
-  //       <RegularSignature
-  //         state={state}
-  //         errors={errors}
-  //         setState={debouncedStateUpdate}
-  //       />
-  //     ),
-  //   },
-  //   {
-  //     id: 'committee',
-  //     label: f(signatures.tabs.committee),
-  //     content: (
-  //       <CommitteeSignature
-  //         errors={errors}
-  //         state={state}
-  //         setState={debouncedStateUpdate}
-  //       />
-  //     ),
-  //   },
-  // ]
+      updateApplication(newAnswers)
+    }
+  }
 
   return (
-    <FormGroup
-      title={f(signatures.general.title)}
-      intro={f(signatures.general.intro)}
-    >
-      {/* <Tabs
+    <>
+      <FormGroup
+        title={f(signatures.general.title)}
+        intro={f(signatures.general.intro)}
+      >
+        <Tabs
           selected={selectedTab}
-          onChange={(id) => {
-            updateState({ ...state, type: id })
-            setValue(InputFields.signature.type, id)
-            setSelectedTab(id)
-          }}
           tabs={tabs}
           label={f(signatures.general.title)}
+          contentBackground="white"
+          onChange={onTabChangeHandler}
         />
-        <AdditionalSignature
+        {/* <AdditionalSignature
           application={application}
           errors={errors}
           setSignature={debouncedAdditionalSignatureUpdate}
           signature={state.additional}
-        />
+        /> */}
       </FormGroup>
-      <FormGroup title={f(signatures.headings.preview)}>
+      {/* <FormGroup title={f(signatures.headings.preview)}>
         <HTMLEditor
           key={selectedTab}
           value={preview}
           config={signatureConfig}
           readOnly={true}
           name={InputFields.signature.contents}
-        /> */}
-    </FormGroup>
+          />
+    </FormGroup> */}
+    </>
   )
 }

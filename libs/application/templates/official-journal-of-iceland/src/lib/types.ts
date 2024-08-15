@@ -1,5 +1,5 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
-import { SIGNATURE_INDEX, MEMBER_INDEX, Routes } from './constants'
+import { Routes } from './constants'
 import {
   OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertEntity,
@@ -22,21 +22,12 @@ export const InputFields = {
     message: 'advert.message',
   },
   [Routes.SIGNATURE]: {
-    institution: `signature-${SIGNATURE_INDEX}.institution`,
-    date: `signature-${SIGNATURE_INDEX}.date`,
-    additonalSignature: 'signature.additonalSignature',
-    chairman: {
-      above: 'signature.chairman.above',
-      name: 'signature.chairman.name',
-      after: 'signature.chairman.after',
-      below: 'signature.chairman.below',
-    },
-    members: {
-      above: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.above`,
-      name: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.name`,
-      below: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.below`,
-      after: `signature-${SIGNATURE_INDEX}.member-${MEMBER_INDEX}.after`,
-    },
+    regular: 'signature.regular',
+    comittee: 'signature.comittee',
+  },
+  other: {
+    signatureType: 'misc.signatureType',
+    selectedTemplate: 'misc.selectedTemplate',
   },
 }
 

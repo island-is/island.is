@@ -7,6 +7,7 @@ import { Box } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import debounce from 'lodash/debounce'
+import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
 
 type Props = {
   applicationId: string
@@ -38,7 +39,7 @@ export const OJOIHtmlController = ({
     onChange && onChange(value)
   }
 
-  const debouncedHandleChange = debounce(handleChange, 500)
+  const debouncedHandleChange = debounce(handleChange, DEBOUNCE_INPUT_TIMER)
   const onChangeHandler = () => {
     debouncedHandleChange.cancel()
     debouncedHandleChange(valueRef.current())
