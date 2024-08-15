@@ -173,6 +173,43 @@ export const IncomePlanForm: Form = buildForm({
                   readonly: (_, activeField) => {
                     return activeField?.income === RatioType.MONTHLY
                   },
+                  updateValueObj: {
+                    valueModifier: (_, activeField) => {
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.currency === ISK
+                      ) {
+                        return (
+                          Number(activeField?.equalIncomePerMonth) * 12
+                        ).toString()
+                      }
+
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.currency !== ISK
+                      ) {
+                        return (
+                          Number(activeField?.equalForeignIncomePerMonth) * 12
+                        ).toString()
+                      }
+                      return undefined
+                    },
+                    watchValue: (_, activeField) => {
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.currency === ISK
+                      ) {
+                        return 'equalIncomePerMonth'
+                      }
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.currency !== ISK
+                      ) {
+                        return 'equalForeignIncomePerMonth'
+                      }
+                      return undefined
+                    },
+                  },
                   suffix: '',
                   condition: (_, activeField) => {
                     return (
