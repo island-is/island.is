@@ -1,6 +1,9 @@
 import { User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientService,
+  IncomePlanStatus as IncomeStatus,
+} from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
   CustomPageUniqueIdentifier,
@@ -21,6 +24,7 @@ import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { IncomePlan } from './models/income/incomePlan.model'
+import { IncomePlanStatus } from './socialInsurance.type'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -131,7 +135,7 @@ export class SocialInsuranceService {
 
     return {
       registrationDate: data.registrationDate,
-      status: data.status,
+      status: this.parseIncomePlanStatus(data.status),
       incomeCategories: data.incomeTypeLines
         .map((i) => {
           if (!i.incomeCategoryName || !i.totalSum || !i.currency) {
@@ -169,6 +173,19 @@ export class SocialInsuranceService {
     return {
       highlightedItems,
       groups,
+    }
+  }
+
+  parseIncomePlanStatus = (status: IncomeStatus): IncomePlanStatus => {
+    switch (status) {
+      case 'Accepted':
+        return IncomePlanStatus.ACCEPTED
+      case 'InProgress':
+        return IncomePlanStatus.IN_PROGRESS
+      case 'Cancelled':
+        return IncomePlanStatus.CANCELLED
+      default:
+        return IncomePlanStatus.UNKNOWN
     }
   }
 }

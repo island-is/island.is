@@ -2,8 +2,9 @@ export { SocialInsuranceAdministrationClientModule } from './lib/socialInsurance
 export { SocialInsuranceAdministrationClientService } from './lib/socialInsuranceAdministrationClient.service'
 export { SocialInsuranceAdministrationClientConfig } from './lib/socialInsuranceAdministrationClient.config'
 export {
-  ApplicationDTO,
   DocumentTypeEnum,
   Employer,
+  IncomePlanStatus,
 } from './lib/socialInsuranceAdministrationClient.type'
+export { ApplicationDTO } from './lib/dto/application.dto'
 export * from '../gen/fetch'

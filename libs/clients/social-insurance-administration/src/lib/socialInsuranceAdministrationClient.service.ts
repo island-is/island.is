@@ -12,12 +12,12 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '../../gen/fetch'
 import { handle404 } from '@island.is/clients/middlewares'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
+import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -65,12 +65,16 @@ export class SocialInsuranceAdministrationClientService {
       .catch(handle404)
   }
 
-  async getLatestIncomePlan(
-    user: User,
-  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto | null> {
-    return await this.incomePlanApiWithAuth(user)
+  async getLatestIncomePlan(user: User): Promise<IncomePlanDto | null> {
+    const incomePlan = await this.incomePlanApiWithAuth(user)
       .apiProtectedV1IncomePlanLatestIncomePlanGet()
       .catch(handle404)
+
+    if (!incomePlan) {
+      return null
+    }
+
+    return mapIncomePlanDto(incomePlan) ?? null
   }
 
   sendApplication(
