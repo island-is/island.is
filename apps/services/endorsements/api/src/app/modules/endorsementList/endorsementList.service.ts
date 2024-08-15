@@ -26,7 +26,9 @@ import getStream from 'get-stream'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
 import csvStringify from 'csv-stringify/lib/sync';
-import { S3 } from 'aws-sdk'
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
+
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -44,7 +46,7 @@ export class EndorsementListService {
     @Inject(EmailService)
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
-    private s3 = new S3()
+    private s3 = new S3Client()
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -720,22 +722,22 @@ export class EndorsementListService {
     const bucketName = "bov" //process.env.AWS_S3_BUCKET_NAME;
     const key = `endorsement-lists/${list.id}-TEST.csv`;
 
-    // Upload CSV to S3
-    await this.s3
-      .putObject({
-        Bucket: bucketName,
-        Key: key,
-        Body: csvContent,
-        ContentType: 'text/csv',
-      })
-      .promise();
-
-    // Generate a presigned URL
-    const presignedUrl = this.s3.getSignedUrl('getObject', {
+    // write file
+    await this.s3.send(new PutObjectCommand({
       Bucket: bucketName,
       Key: key,
-      Expires: 60 * 60, // URL expires in 1 hour
-    });
+      Body: csvContent,
+      ContentType: 'text/csv',
+    }));
+
+    // get presigned URL
+    const presignedUrl = getSignedUrl(this.s3, new PutObjectCommand({
+      Bucket: bucketName,
+      Key: key,
+      Expires: new Date(Date.now() + 60 * 60 * 1000),
+    }));
+    
+
 
     return presignedUrl;
   }
