@@ -4,6 +4,7 @@ import {
   Stack,
   Button,
   Table as T,
+  Hidden,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -47,23 +48,25 @@ const IncomePlanDetail = () => {
         />
       ) : (
         <Stack space={2}>
-          <Inline space={2}>
-            <Button
-              variant="utility"
-              size="small"
-              onClick={() => window.print()}
-              icon="print"
-              iconType="filled"
-            >
-              {formatMessage(coreMessages.print)}
-            </Button>
-            <LinkButton
-              to="bloblo"
-              text="Breyta tekjuáætlun"
-              icon="open"
-              variant="utility"
-            />
-          </Inline>
+          <Hidden print>
+            <Inline space={2}>
+              <Button
+                variant="utility"
+                size="small"
+                onClick={() => window.print()}
+                icon="print"
+                iconType="filled"
+              >
+                {formatMessage(coreMessages.print)}
+              </Button>
+              <LinkButton
+                to="bloblo"
+                text="Breyta tekjuáætlun"
+                icon="open"
+                variant="utility"
+              />
+            </Inline>
+          </Hidden>
           <T.Table>
             <T.Head>
               <T.Row>
@@ -95,7 +98,9 @@ const IncomePlanDetail = () => {
           )}
         </Stack>
       )}
-      <FootNote serviceProviderSlug="tryggingastofnun" />
+      <Hidden print>
+        <FootNote serviceProviderSlug="tryggingastofnun" />
+      </Hidden>
     </Box>
   )
 }
