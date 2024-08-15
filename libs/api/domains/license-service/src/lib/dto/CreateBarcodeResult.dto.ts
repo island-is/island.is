@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, Int } from '@nestjs/graphql'
 
 @ObjectType('CreateBarcodeResult')
 export class CreateBarcodeResult {
@@ -7,7 +7,7 @@ export class CreateBarcodeResult {
   })
   token!: string
 
-  @Field(() => Number, {
+  @Field(() => Int, {
     description: 'Barcode expire time in seconds',
   })
   expiresIn!: number
