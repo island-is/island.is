@@ -19,7 +19,7 @@ import {
   PageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { shouldUseAppealWithdrawnRoutes } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -116,14 +116,14 @@ const CourtOfAppealOverview = () => {
                 },
                 {
                   title: formatMessage(core.prosecutorPerson),
-                  value: NameAndEmail(
+                  value: RenderPersonalData(
                     workingCase.prosecutor?.name,
                     workingCase.prosecutor?.email,
                   ),
                 },
                 {
                   title: formatMessage(core.judge),
-                  value: NameAndEmail(
+                  value: RenderPersonalData(
                     workingCase.judge?.name,
                     workingCase.judge?.email,
                   ),
@@ -132,7 +132,7 @@ const CourtOfAppealOverview = () => {
                   ? [
                       {
                         title: formatMessage(core.registrar),
-                        value: NameAndEmail(
+                        value: RenderPersonalData(
                           workingCase.registrar?.name,
                           workingCase.registrar.email,
                         ),
