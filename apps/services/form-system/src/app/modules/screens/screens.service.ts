@@ -1,11 +1,13 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Screen } from './models/screen.model'
 import { InjectModel } from '@nestjs/sequelize'
-import { Field } from '../fields/models/field.model'
 import { CreateScreenDto } from './models/dto/createScreen.dto'
 import { UpdateScreenDto } from './models/dto/updateScreen.dto'
 import { ScreenDto } from './models/dto/screen.dto'
 import { UpdateScreensDisplayOrderDto } from './models/dto/updateScreensDisplayOrder.dto'
+import defaults from 'lodash/defaults'
+import pick from 'lodash/pick'
+import zipObject from 'lodash/zipObject'
 
 @Injectable()
 export class ScreensService {
@@ -14,31 +16,29 @@ export class ScreensService {
     private readonly screenModel: typeof Screen,
   ) {}
 
-  async findAll(): Promise<Screen[]> {
-    return await this.screenModel.findAll()
-  }
-
-  async findOne(id: string): Promise<Screen> {
-    const screen = await this.screenModel.findByPk(id, { include: [Field] })
-
-    if (!screen) {
-      throw new NotFoundException(`Screen with id '${id}' not found`)
-    }
-
-    return screen
-  }
-
-  async create(createScreenDto: CreateScreenDto): Promise<Screen> {
+  async create(createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     const screen = createScreenDto as Screen
     const newScreen: Screen = new this.screenModel(screen)
-    return await newScreen.save()
+    await newScreen.save()
+
+    const keys = ['id', 'sectionId']
+    const screenDto: ScreenDto = defaults(
+      pick(newScreen, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as ScreenDto
+
+    return screenDto
   }
 
   async update(
     id: string,
     updateScreenDto: UpdateScreenDto,
   ): Promise<ScreenDto> {
-    const screen = await this.findOne(id)
+    const screen = await this.screenModel.findByPk(id)
+
+    if (!screen) {
+      throw new NotFoundException(`Screen with id '${id}' not found`)
+    }
 
     screen.name = updateScreenDto.name
     screen.multiset = updateScreenDto.multiset
@@ -47,14 +47,19 @@ export class ScreensService {
 
     await screen.save()
 
-    const screenDto: ScreenDto = {
-      id: screen.id,
-      sectionId: screen.sectionId,
-      name: screen.name,
-      displayOrder: screen.displayOrder,
-      multiset: screen.multiset,
-      callRuleset: screen.callRuleset,
-    }
+    const keys = [
+      'id',
+      'sectionId',
+      'name',
+      'displayOrder',
+      'isHidden',
+      'multiset',
+      'callRuleset',
+    ]
+    const screenDto: ScreenDto = defaults(
+      pick(screen, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as ScreenDto
 
     return screenDto
   }
@@ -84,7 +89,12 @@ export class ScreensService {
   }
 
   async delete(id: string): Promise<void> {
-    const screen = await this.findOne(id)
-    screen?.destroy()
+    const screen = await this.screenModel.findByPk(id)
+
+    if (!screen) {
+      throw new NotFoundException(`Screen with id '${id}' not found`)
+    }
+
+    screen.destroy()
   }
 }
