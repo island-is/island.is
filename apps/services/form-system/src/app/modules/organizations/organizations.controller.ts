@@ -13,7 +13,7 @@ import { OrganizationsService } from './organizations.service'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Documentation } from '@island.is/nest/swagger'
 // import { OrganizationsDto } from './models/dto/organizations.dto'
-import { OrganizationsResponse } from './models/dto/organizations.response.dto'
+import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
 
 @ApiTags('organizations')
@@ -31,9 +31,9 @@ export class OrganizationsController {
   @Get()
   @Documentation({
     description: 'Get all Organizations',
-    response: { status: 200, type: [OrganizationsResponse] },
+    response: { status: 200, type: [OrganizationsResponseDto] },
   })
-  async findAll(): Promise<OrganizationsResponse> {
+  async findAll(): Promise<OrganizationsResponseDto> {
     return await this.organizationsService.findAll()
   }
 

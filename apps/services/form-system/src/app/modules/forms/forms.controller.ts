@@ -26,7 +26,6 @@ export class FormsController {
     description: 'Create new form',
   })
   async create(@Body() createFormDto: CreateFormDto): Promise<FormResponseDto> {
-    console.log('blee')
     const formResponse = await this.formsService.create(createFormDto)
     if (!formResponse) {
       throw new Error('Error')

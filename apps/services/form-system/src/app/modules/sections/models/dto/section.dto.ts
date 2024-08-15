@@ -19,6 +19,12 @@ export class SectionDto {
   @ApiPropertyOptional({ type: LanguageType })
   waitingText?: LanguageType
 
+  @ApiProperty()
+  isHidden!: boolean
+
+  @ApiProperty()
+  isCompleted!: boolean
+
   @ApiPropertyOptional({ type: [ScreenDto] })
   screens?: ScreenDto[]
 }

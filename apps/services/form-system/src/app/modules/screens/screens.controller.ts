@@ -11,7 +11,7 @@ import {
 } from '@nestjs/common'
 import { ScreensService } from './screens.service'
 import { CreateScreenDto } from './models/dto/createScreen.dto'
-import { Screen } from './models/screen.model'
+// import { Screen } from './models/screen.model'
 import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
 import { UpdateScreenDto } from './models/dto/updateScreen.dto'
@@ -24,7 +24,7 @@ export class ScreensController {
   constructor(private readonly screensService: ScreensService) {}
 
   @Post()
-  create(@Body() createScreenDto: CreateScreenDto): Promise<Screen> {
+  create(@Body() createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     return this.screensService.create(createScreenDto)
   }
 
@@ -40,9 +40,9 @@ export class ScreensController {
   @Get(':id')
   @Documentation({
     description: 'Get Screen by id',
-    response: { status: 200, type: Screen },
+    response: { status: 200, type: ScreenDto },
   })
-  async findOne(@Param('id') id: string): Promise<Screen> {
+  async findOne(@Param('id') id: string): Promise<ScreenDto> {
     const screen = await this.screensService.findOne(id)
     if (!screen) {
       throw new NotFoundException(`Screen not found`)

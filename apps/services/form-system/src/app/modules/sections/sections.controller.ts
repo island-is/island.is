@@ -24,7 +24,7 @@ export class SectionsController {
   constructor(private readonly sectionsService: SectionsService) {}
 
   @Post()
-  create(@Body() createSectionDto: CreateSectionDto): Promise<Section> {
+  create(@Body() createSectionDto: CreateSectionDto): Promise<SectionDto> {
     return this.sectionsService.create(createSectionDto)
   }
 
@@ -37,19 +37,19 @@ export class SectionsController {
   //   return await this.sectionsService.findAll()
   // }
 
-  @Get(':id')
-  @Documentation({
-    description: 'Get Section by id',
-    response: { status: 200, type: Section },
-  })
-  async findOne(@Param('id') id: string): Promise<Section> {
-    const section = await this.sectionsService.findOne(id)
-    if (!section) {
-      throw new NotFoundException(`Section not found`)
-    }
+  // @Get(':id')
+  // @Documentation({
+  //   description: 'Get Section by id',
+  //   response: { status: 200, type: Section },
+  // })
+  // async findOne(@Param('id') id: string): Promise<Section> {
+  //   const section = await this.sectionsService.findOne(id)
+  //   if (!section) {
+  //     throw new NotFoundException(`Section not found`)
+  //   }
 
-    return section
-  }
+  //   return section
+  // }
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {

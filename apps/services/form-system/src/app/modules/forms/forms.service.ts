@@ -67,7 +67,7 @@ export class FormsService {
       'stopProgressOnValidatingScreen',
     ]
 
-    const formsResponseDto: FormResponseDto = {
+    const formResponseDto: FormResponseDto = {
       forms: forms.map((form) => {
         return defaults(
           pick(form, keys),
@@ -76,7 +76,7 @@ export class FormsService {
       }),
     }
 
-    return formsResponseDto
+    return formResponseDto
   }
 
   async findOne(id: string): Promise<FormResponseDto | null> {

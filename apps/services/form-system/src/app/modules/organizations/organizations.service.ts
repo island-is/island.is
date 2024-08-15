@@ -3,26 +3,26 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Form } from '../forms/models/form.model'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Organization } from './models/organization.model'
-import { OrganizationsMapper } from './models/organizations.mapper'
+// import { OrganizationsMapper } from './models/organizations.mapper'
 // import { OrganizationDto } from './models/dto/organization.dto'
-import { OrganizationsResponse } from './models/dto/organizations.response.dto'
+import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
 import { defaults, pick, zipObject } from 'lodash'
+import { FormDto } from '../forms/models/dto/form.dto'
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     @InjectModel(Organization)
-    private readonly organizationModel: typeof Organization,
-    private readonly organizationsMapper: OrganizationsMapper,
+    private readonly organizationModel: typeof Organization, // private readonly organizationsMapper: OrganizationsMapper,
   ) {}
 
-  async findAll(): Promise<OrganizationsResponse> {
+  async findAll(): Promise<OrganizationsResponseDto> {
     const organizations = await this.organizationModel.findAll()
 
     const organizationsDto: OrganizationDto[] = []
 
-    const keys = ['name', 'nationalId']
+    const keys = ['id', 'name', 'nationalId']
     organizations.map((organization) => {
       organizationsDto.push(
         defaults(
@@ -32,8 +32,8 @@ export class OrganizationsService {
       )
     })
 
-    const organizationsResponse: OrganizationsResponse =
-      new OrganizationsResponse()
+    const organizationsResponse: OrganizationsResponseDto =
+      new OrganizationsResponseDto()
     organizationsResponse.organizations = organizationsDto
 
     return organizationsResponse
@@ -48,8 +48,30 @@ export class OrganizationsService {
       throw new NotFoundException(`Organization with id ${id} not found`)
     }
 
-    const organizationDto =
-      this.organizationsMapper.mapOrganizationToOrganizationDto(organization)
+    const keys = ['id', 'name', 'nationalId']
+    const organizationDto: OrganizationDto = defaults(
+      pick(organization, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as OrganizationDto
+
+    const formKeys = [
+      'id',
+      'name',
+      'slug',
+      'invalidationDate',
+      'created',
+      'modified',
+      'isTranslated',
+      'applicationDaysToRemove',
+      'stopProgressOnValidatingScreen',
+    ]
+
+    organizationDto.forms = organization.forms?.map((form) => {
+      return defaults(
+        pick(form, formKeys),
+        zipObject(formKeys, Array(formKeys.length).fill(null)),
+      ) as FormDto
+    })
 
     return organizationDto
   }
@@ -63,8 +85,11 @@ export class OrganizationsService {
     )
     await newOrganzation.save()
 
-    const organizationDto =
-      this.organizationsMapper.mapOrganizationToOrganizationDto(newOrganzation)
+    const keys = ['id', 'name', 'nationalId']
+    const organizationDto: OrganizationDto = defaults(
+      pick(newOrganzation, keys),
+      zipObject(keys, Array(keys.length).fill(null)),
+    ) as OrganizationDto
 
     return organizationDto
   }

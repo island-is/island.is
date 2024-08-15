@@ -16,6 +16,9 @@ export class ScreenDto {
   displayOrder!: number
 
   @ApiProperty()
+  isHidden!: boolean
+
+  @ApiProperty()
   multiset!: number
 
   @ApiProperty()
