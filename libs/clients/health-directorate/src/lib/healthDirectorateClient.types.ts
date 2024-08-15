@@ -1,4 +1,9 @@
-import { Nam } from '../../gen/fetch'
+import {
+  Nam,
+  StarfsleyfiAMinumSidumApi,
+  UmsoknStarfsleyfiApi,
+  VottordApi,
+} from '../../gen/fetch'
 
 export interface HealthcareLicense {
   professionId: string
@@ -55,3 +60,10 @@ export interface HealthcareWorkPermitRequest {
   citizenship: string
   education: Nam[]
 }
+
+export type Scope = '@landlaeknir.is/starfsleyfi'
+
+export type Api =
+  | typeof StarfsleyfiAMinumSidumApi
+  | typeof VottordApi
+  | typeof UmsoknStarfsleyfiApi
