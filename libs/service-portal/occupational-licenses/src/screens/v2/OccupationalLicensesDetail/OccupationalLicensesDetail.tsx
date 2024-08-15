@@ -72,7 +72,6 @@ const OccupationalLicenseDetail = () => {
                   if (!a) {
                     return null
                   }
-
                   if (a.type === OccupationalLicensesV2LinkType.FILE) {
                     return (
                       <Button

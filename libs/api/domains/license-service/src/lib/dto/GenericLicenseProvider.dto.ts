@@ -12,4 +12,16 @@ export class GenericLicenseProvider {
     description: 'ID of license provider',
   })
   id!: GenericLicenseProviderId
+
+  @Field({
+    nullable: true,
+    description: 'Contentful reference id',
+  })
+  referenceId?: string
+
+  @Field({ nullable: true })
+  providerName?: string
+
+  @Field({ nullable: true })
+  providerLogo?: string
 }

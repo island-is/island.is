@@ -332,4 +332,13 @@ export const m = defineMessages({
     id: 'sp.license:url-apply-passport',
     defaultMessage: 'https://island.is/vegabref',
   },
+  errorFetchingLicenses: {
+    id: 'sp.license:error-fetch-licenses',
+    defaultMessage: 'Ekki tókst að sækja gögn um öll skírteini',
+  },
+  errorFetchingLicensesDetail: {
+    id: 'sp.license:error-fetch-licenses-detail',
+    defaultMessage:
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginguna.',
+  },
 })
