@@ -15,4 +15,5 @@ export default {
   coverageDirectory: '<rootDir>/coverage/libs/auth-api-lib',
   globals: {},
   displayName: 'auth-api-lib',
+  collectCoverageFrom: ['src/**/*.ts'],
 }
