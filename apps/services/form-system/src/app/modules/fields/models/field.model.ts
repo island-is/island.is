@@ -1,4 +1,3 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CreationOptional } from 'sequelize'
 import {
   Column,
@@ -23,7 +22,6 @@ export class Field extends Model<Field> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -31,15 +29,12 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -47,7 +42,6 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: 0,
   })
-  @ApiProperty()
   displayOrder!: number
 
   @Column({
@@ -55,7 +49,6 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
   @Column({
@@ -63,7 +56,6 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isHidden!: boolean
 
   @Column({
@@ -71,7 +63,6 @@ export class Field extends Model<Field> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isPartOfMultiset!: boolean
 
   @ForeignKey(() => Screen)
@@ -83,7 +74,6 @@ export class Field extends Model<Field> {
   screenId!: string
 
   @HasOne(() => FieldSettings)
-  @ApiPropertyOptional({ type: FieldSettings })
   fieldSettings?: FieldSettings
 
   @ForeignKey(() => FieldType)
@@ -93,6 +83,5 @@ export class Field extends Model<Field> {
     defaultValue: 'default',
     field: 'field_type',
   })
-  @ApiProperty()
   fieldType!: string
 }
