@@ -35,6 +35,7 @@ import { ManualSyncService } from './importers/manual.service'
 import { ManualChapterItemSyncService } from './importers/manualChapterItem.service'
 import { CustomPageSyncService } from './importers/customPage.service'
 import { GenericListItemSyncService } from './importers/genericListItem.service'
+import { TeamListSyncService } from './importers/teamList.service'
 
 export interface PostSyncOptions {
   folderHash: string
@@ -82,6 +83,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
     private readonly manualChapterItemSyncService: ManualChapterItemSyncService,
     private readonly customPageSyncService: CustomPageSyncService,
     private readonly genericListItemSyncService: GenericListItemSyncService,
+    private readonly teamListSyncService: TeamListSyncService,
   ) {
     this.contentSyncProviders = [
       this.articleSyncService,
@@ -107,6 +109,7 @@ export class CmsSyncService implements ContentSearchImporter<PostSyncOptions> {
       this.manualChapterItemSyncService,
       this.customPageSyncService,
       this.genericListItemSyncService,
+      this.teamListSyncService,
     ]
   }
 
