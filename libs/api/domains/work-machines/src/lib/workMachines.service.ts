@@ -145,7 +145,9 @@ export class WorkMachinesService {
     regNumber: string,
     rel: string,
   ): Promise<MachineDto> {
-    return this.machineService.getMachineByRegno(auth, regNumber, rel)
+    return this.machineService.getMachineByRegno(auth, regNumber, rel, {
+      showDeregisteredMachines: true,
+    })
   }
 
   async isPaymentRequired(auth: User, regNumber: string): Promise<boolean> {
