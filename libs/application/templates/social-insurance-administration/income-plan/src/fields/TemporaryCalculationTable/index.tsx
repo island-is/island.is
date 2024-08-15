@@ -113,7 +113,6 @@ export const TemporaryCalculationTable: FC<
     )
   }
 
-  // TODO: Skoða betur hvað á að gera þegar skilar tómu obj
   if (!data?.getTemporaryCalculations?.paidOut) {
     return (
       <Box marginY={3}>
@@ -122,9 +121,7 @@ export const TemporaryCalculationTable: FC<
           title={formatMessage(
             socialInsuranceAdministrationMessage.shared.alertTitle,
           )}
-          message={
-            'Tekjur eru yfir viðmiðum fyrir greiðslur. Ekki er hægt að birta bráðabirgðaútreikning.'
-          }
+          message={formatMessage(incomePlanFormMessage.info.noPayments)}
         />
       </Box>
     )

@@ -61,7 +61,7 @@ export const incomePlanFormMessage: MessageDir = {
     temporaryCalculationTitle: {
       id: 'ip.application:temorary.calculation.title',
       defaultMessage: 'Bráðabirgðaútreikningur',
-      description: 'Preliminary calculation',
+      description: 'Temporary calculation',
     },
     tableHeaderOne: {
       id: 'ip.application:table.header.one',
@@ -83,22 +83,7 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage:
         'Bráðabirgðareikningi er ætlað að hjálpa umsækjendum að átta sig á mögulegum greiðslum ef breytingar verða á tekjum þeirra. Of- eða vangreiðslur eru ekki sýndar í þessum bráðabirgðaútreikningi en ef um inneign er að ræða verður hún greidd út á meðan ofgreiddar bætur bíða uppgjörs.',
       description:
-        'Preliminary calculation is intended to help the applicant understand possible payments if their income changes. Overpayments or underpayments are not shown in this preliminary calculation, but if there is credit, it will be paid out while the overpayment is pending settlement.',
-    },
-    taxedTableHeader: {
-      id: 'ip.application:taxed.table.header',
-      defaultMessage: 'Skattskyldar greiðslur',
-      description: 'Taxed payments',
-    },
-    untaxedTableHeader: {
-      id: 'ip.application:untaxed.table.header',
-      defaultMessage: 'Óskattskyldar greiðslur',
-      description: 'Untaxed payments',
-    },
-    deductionsTableHeader: {
-      id: 'ip.application:deductions.table.header',
-      defaultMessage: 'Frádráttur',
-      description: 'Deductions',
+        'Temporary calculation is intended to help the applicant understand possible payments if their income changes. Overpayments or underpayments are not shown in this temporary calculation, but if there is credit, it will be paid out while the overpayment is pending settlement.',
     },
     paidTableHeader: {
       id: 'ip.application:paid.table.header',
@@ -111,6 +96,11 @@ export const incomePlanFormMessage: MessageDir = {
         'Útreikningur staðgreiðslu miðast við eftirfarandi forsendur: \n* Almenna reglan er sú að greiðslur frá Tryggingastofnun eru settar í lægsta mögulega skattþrep miðað við tekjuáætlun. Hægt er að óska eftir breytingu skattþreps inni á mínum síðum TR. \n* Persónuafsláttur miðast við 100% nýtingu skattkorts',
       description:
         'Calculations of tax payments are based on the following assumptions: \n*Transl',
+    },
+    noPayments: {
+      id: 'ip.application:no.payments',
+      defaultMessage: 'Engar greiðslur samkvæmt bráðabirgðaútreikningi.',
+      description: 'No payments according to temporary calculation.',
     },
   }),
 
