@@ -35,3 +35,21 @@ export const infoCardAdditionalSectionContainer = style({
     },
   },
 })
+
+export const infoCardContainerNew = style({
+  background: theme.color.blue100,
+  borderRadius: theme.border.radius.large,
+})
+
+export const grid = style({
+  display: 'grid',
+  gap: theme.spacing[2],
+})
+
+export const twoCols = style({
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.lg}px)`]: {
+      gridTemplateColumns: '1fr 1fr',
+    },
+  },
+})
