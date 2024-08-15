@@ -198,6 +198,7 @@ export const slices = gql`
     json
     configJson
     componentType: type
+    translationStrings
   }
 
   fragment StatisticsFields on Statistics {

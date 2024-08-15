@@ -3761,6 +3761,9 @@ export interface ISliceConnectedComponentFields {
     | 'KilometerFee'
     | 'SpecificHousingBenefitSupportCalculator'
     | 'GrindavikResidentialPropertyPurchaseCalculator'
+    | 'Ums/CostOfLivingCalculator'
+    | 'Sveinslisti/JourneymanList'
+    | 'Starfsrettindi/ProfessionRights'
     | undefined
 
   /** Localized JSON */
@@ -3768,6 +3771,9 @@ export interface ISliceConnectedComponentFields {
 
   /** Config */
   config?: Record<string, any> | undefined
+
+  /** Translation namespace */
+  translationNamespace?: INamespace | undefined
 }
 
 export interface ISliceConnectedComponent

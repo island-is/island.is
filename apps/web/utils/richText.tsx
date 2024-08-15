@@ -1,3 +1,5 @@
+import { IntlProvider } from 'react-intl'
+
 import {
   FaqList,
   FaqListProps,
@@ -69,6 +71,7 @@ import {
   TableSlice as TableSliceSchema,
   TwoColumnText,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
@@ -85,6 +88,8 @@ export const webRenderConnectedComponent = (
   slice: ConnectedComponent & { componentType?: string },
 ) => {
   const data = slice.json ?? {}
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { activeLocale } = useI18n()
 
   switch (slice.componentType) {
     case 'Fiskistofa/ShipSearch':
@@ -123,7 +128,9 @@ export const webRenderConnectedComponent = (
       return <MasterList slice={slice} />
     case 'Vinnueftirlitid/Namskeid':
       return (
-        <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
+        </IntlProvider>
       )
     case 'KilometerFee':
       return <KilometerFee slice={slice} />
