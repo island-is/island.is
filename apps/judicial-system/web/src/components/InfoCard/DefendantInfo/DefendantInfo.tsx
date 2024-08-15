@@ -72,7 +72,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
     defendant.serviceRequirement,
   )
 
-  console.log(defender)
   return (
     <div
       key={defendant.id}
