@@ -19,24 +19,20 @@ export class InternalDeliveryService {
   ) {}
 
   async deliver(
-    user: User,
-    caseId: string,
     what: string,
-    body: { [key: string]: unknown } = {},
+    user?: User,
+    body?: { [key: string]: unknown },
   ): Promise<boolean> {
-    this.logger.debug(`Posting ${what} for case ${caseId}`)
+    this.logger.debug(`Posting ${what}`)
 
-    return fetch(
-      `${this.config.backendUrl}/api/internal/case/${caseId}/${what}`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          authorization: `Bearer ${this.config.backendAccessToken}`,
-        },
-        body: JSON.stringify({ ...body, user }),
+    return fetch(what, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        authorization: `Bearer ${this.config.backendAccessToken}`,
       },
-    )
+      body: JSON.stringify({ ...body, user }),
+    })
       .then(async (res) => {
         const response = await res.json()
 
@@ -44,17 +40,14 @@ export class InternalDeliveryService {
           throw response
         }
 
-        this.logger.debug(`Posted ${what} for case ${caseId}`)
+        this.logger.debug(`Posted ${what}`)
 
         return true
       })
       .catch((reason) => {
-        this.logger.info(
-          `Failed to post ${what} for case ${caseId} - attempting retry`,
-          {
-            reason,
-          },
-        )
+        this.logger.info(`Failed to post ${what} - attempting retry`, {
+          reason,
+        })
 
         return false
       })
