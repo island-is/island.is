@@ -24,7 +24,7 @@ import { createTestingNotificationModule } from '../createTestingNotificationMod
 import { randomDate } from '../../../../test'
 import { Case } from '../../../case'
 import { Institution } from '../../../institution/institution.model'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification, Recipient } from '../../models/notification.model'
 import { notificationModuleConfig } from '../../notification.config'
@@ -37,7 +37,7 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ready for court notifications for restriction and investigation cases', () => {

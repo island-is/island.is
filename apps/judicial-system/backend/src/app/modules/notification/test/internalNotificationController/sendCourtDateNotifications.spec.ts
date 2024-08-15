@@ -12,7 +12,7 @@ import {
 import { createTestingNotificationModule } from '../createTestingNotificationModule'
 
 import { Case } from '../../../case'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
 
@@ -25,7 +25,7 @@ interface Then {
 
 type GivenWhenThen = (
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send court date notifications', () => {
@@ -51,7 +51,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
     givenWhenThen = async (
       theCase: Case,
-      notificationDto: SendInternalNotificationDto,
+      notificationDto: CaseNotificationDto,
     ) => {
       const then = {} as Then
 
@@ -67,7 +67,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
   describe('notification sent', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.COURT_DATE,
     }
@@ -117,7 +117,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
   describe('link not sent to defender', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.COURT_DATE,
     }
@@ -166,7 +166,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
   describe('notification sent for postponed indictment', () => {
     let then: Then
 
-    const notificationDto: SendInternalNotificationDto = {
+    const notificationDto: CaseNotificationDto = {
       user: { id: userId } as User,
       type: NotificationType.COURT_DATE,
     }
