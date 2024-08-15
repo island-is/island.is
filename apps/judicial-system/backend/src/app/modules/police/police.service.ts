@@ -91,6 +91,9 @@ export class PoliceService {
   private agent: Agent
   private throttle = Promise.resolve({} as UploadPoliceCaseFileResponse)
 
+  private policeCaseFileType = z.object({
+    kodi: z.string().nullish(),
+  })
   private policeCaseFileStructure = z.object({
     rvMalSkjolMals_ID: z.number(),
     heitiSkjals: z.string(),
@@ -98,6 +101,7 @@ export class PoliceService {
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
     skjalasnid: z.optional(z.string()),
+    tegundSkjals: z.optional(this.policeCaseFileType),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -257,6 +261,7 @@ export class PoliceService {
                 policeCaseNumber: file.malsnumer,
                 chapter: getChapter(file.domsSkjalsFlokkun),
                 displayDate: file.dagsStofnad,
+                type: file.tegundSkjals?.kodi,
               })
             }
           })
