@@ -28,14 +28,14 @@ export class ScreensController {
     return this.screensService.create(createScreenDto)
   }
 
-  @Get()
-  @Documentation({
-    description: 'Get all Screens',
-    response: { status: 200, type: [Screen] },
-  })
-  async findAll(): Promise<Screen[]> {
-    return await this.screensService.findAll()
-  }
+  // @Get()
+  // @Documentation({
+  //   description: 'Get all Screens',
+  //   response: { status: 200, type: [Screen] },
+  // })
+  // async findAll(): Promise<Screen[]> {
+  //   return await this.screensService.findAll()
+  // }
 
   @Get(':id')
   @Documentation({

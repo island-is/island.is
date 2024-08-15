@@ -15,9 +15,9 @@ export class SectionsService {
     private readonly sectionModel: typeof Section,
   ) {}
 
-  async findAll(): Promise<Section[]> {
-    return await this.sectionModel.findAll()
-  }
+  // async findAll(): Promise<Section[]> {
+  //   return await this.sectionModel.findAll()
+  // }
 
   async findOne(id: string): Promise<Section> {
     const section = await this.sectionModel.findByPk(id, {

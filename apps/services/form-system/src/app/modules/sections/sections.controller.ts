@@ -28,14 +28,14 @@ export class SectionsController {
     return this.sectionsService.create(createSectionDto)
   }
 
-  @Get()
-  @Documentation({
-    description: 'Get all Sections',
-    response: { status: 200, type: [Section] },
-  })
-  async findAll(): Promise<Section[]> {
-    return await this.sectionsService.findAll()
-  }
+  // @Get()
+  // @Documentation({
+  //   description: 'Get all Sections',
+  //   response: { status: 200, type: [Section] },
+  // })
+  // async findAll(): Promise<Section[]> {
+  //   return await this.sectionsService.findAll()
+  // }
 
   @Get(':id')
   @Documentation({

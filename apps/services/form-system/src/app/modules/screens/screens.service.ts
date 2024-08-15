@@ -14,9 +14,9 @@ export class ScreensService {
     private readonly screenModel: typeof Screen,
   ) {}
 
-  async findAll(): Promise<Screen[]> {
-    return await this.screenModel.findAll()
-  }
+  // async findAll(): Promise<Screen[]> {
+  //   return await this.screenModel.findAll()
+  // }
 
   async findOne(id: string): Promise<Screen> {
     const screen = await this.screenModel.findByPk(id, { include: [Field] })

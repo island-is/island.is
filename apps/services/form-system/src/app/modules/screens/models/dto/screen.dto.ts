@@ -1,5 +1,6 @@
-import { ApiProperty } from '@nestjs/swagger'
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
+import { FieldDto } from '../../../fields/models/dto/field.dto'
 
 export class ScreenDto {
   @ApiProperty()
@@ -19,4 +20,7 @@ export class ScreenDto {
 
   @ApiProperty()
   callRuleset!: boolean
+
+  @ApiPropertyOptional({ type: [FieldDto] })
+  fields?: FieldDto[]
 }

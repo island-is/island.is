@@ -1,30 +1,30 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { FieldSettingsDto } from '../../../fieldSettings/models/dto/fieldSettings.dto'
-import { FieldTypes } from '../../../../enums/fieldTypes'
+// import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+// import { LanguageType } from '../../../../dataTypes/languageType.model'
+// import { FieldSettingsDto } from '../../../fieldSettings/models/dto/fieldSettings.dto'
+// import { FieldTypes } from '../../../../enums/fieldTypes'
 
-export class ApplicationFieldDto {
-  @ApiProperty()
-  id!: string
+// export class ApplicationFieldDto {
+//   @ApiProperty()
+//   id!: string
 
-  @ApiProperty()
-  screenId!: string
+//   @ApiProperty()
+//   screenId!: string
 
-  @ApiProperty({ type: LanguageType })
-  name!: LanguageType
+//   @ApiProperty({ type: LanguageType })
+//   name!: LanguageType
 
-  @ApiProperty()
-  displayOrder!: number
+//   @ApiProperty()
+//   displayOrder!: number
 
-  @ApiProperty({ type: LanguageType })
-  description!: LanguageType
+//   @ApiProperty({ type: LanguageType })
+//   description!: LanguageType
 
-  @ApiProperty()
-  isPartOfMultiset!: boolean
+//   @ApiProperty()
+//   isPartOfMultiset!: boolean
 
-  @ApiPropertyOptional({ type: FieldSettingsDto })
-  fieldSettings?: FieldSettingsDto
+//   @ApiPropertyOptional({ type: FieldSettingsDto })
+//   fieldSettings?: FieldSettingsDto
 
-  @ApiProperty({ enum: FieldTypes })
-  fieldType!: string
-}
+//   @ApiProperty({ enum: FieldTypes })
+//   fieldType!: string
+// }

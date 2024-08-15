@@ -1,33 +1,71 @@
-import { Injectable } from '@nestjs/common'
+import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Form } from '../forms/models/form.model'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Organization } from './models/organization.model'
+import { OrganizationsMapper } from './models/organizations.mapper'
+// import { OrganizationDto } from './models/dto/organization.dto'
+import { OrganizationsResponse } from './models/dto/organizations.response.dto'
+import { OrganizationDto } from './models/dto/organization.dto'
+import { defaults, pick, zipObject } from 'lodash'
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     @InjectModel(Organization)
     private readonly organizationModel: typeof Organization,
+    private readonly organizationsMapper: OrganizationsMapper,
   ) {}
 
-  async findAll(): Promise<Organization[]> {
-    return await this.organizationModel.findAll()
+  async findAll(): Promise<OrganizationsResponse> {
+    const organizations = await this.organizationModel.findAll()
+
+    const organizationsDto: OrganizationDto[] = []
+
+    const keys = ['name', 'nationalId']
+    organizations.map((organization) => {
+      organizationsDto.push(
+        defaults(
+          pick(organization, keys),
+          zipObject(keys, Array(keys.length).fill(null)),
+        ) as OrganizationDto,
+      )
+    })
+
+    const organizationsResponse: OrganizationsResponse =
+      new OrganizationsResponse()
+    organizationsResponse.organizations = organizationsDto
+
+    return organizationsResponse
   }
 
-  async findOne(id: string): Promise<Organization | null> {
-    const form = await this.organizationModel.findByPk(id, { include: [Form] })
+  async findOne(id: string): Promise<OrganizationDto> {
+    const organization = await this.organizationModel.findByPk(id, {
+      include: [Form],
+    })
 
-    return form
+    if (!organization) {
+      throw new NotFoundException(`Organization with id ${id} not found`)
+    }
+
+    const organizationDto =
+      this.organizationsMapper.mapOrganizationToOrganizationDto(organization)
+
+    return organizationDto
   }
 
   async create(
     createOrganizationDto: CreateOrganizationDto,
-  ): Promise<Organization> {
+  ): Promise<OrganizationDto> {
     const organization = createOrganizationDto as Organization
     const newOrganzation: Organization = new this.organizationModel(
       organization,
     )
-    return await newOrganzation.save()
+    await newOrganzation.save()
+
+    const organizationDto =
+      this.organizationsMapper.mapOrganizationToOrganizationDto(newOrganzation)
+
+    return organizationDto
   }
 }

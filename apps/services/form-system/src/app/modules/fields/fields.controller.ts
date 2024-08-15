@@ -10,7 +10,7 @@ import {
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { FieldsService } from './fields.service'
-import { Field } from './models/field.model'
+// import { Field } from './models/field.model'
 import { CreateFieldDto } from './models/dto/createField.dto'
 import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
@@ -28,14 +28,14 @@ export class FieldsController {
     return this.fieldsService.create(createFieldDto)
   }
 
-  @Get()
-  @Documentation({
-    description: 'Get all Fields',
-    response: { status: 200, type: [Field] },
-  })
-  async findAll(): Promise<Field[]> {
-    return await this.fieldsService.findAll()
-  }
+  // @Get()
+  // @Documentation({
+  //   description: 'Get all Fields',
+  //   response: { status: 200, type: [Field] },
+  // })
+  // async findAll(): Promise<Field[]> {
+  //   return await this.fieldsService.findAll()
+  // }
 
   @Get(':id')
   @Documentation({

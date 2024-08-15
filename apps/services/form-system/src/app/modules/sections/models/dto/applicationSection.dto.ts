@@ -1,24 +1,25 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { LanguageType } from '../../../../dataTypes/languageType.model'
-import { ApplicationScreenDto } from '../../../screens/models/dto/applicationScreen.dto'
-import { SectionTypes } from '../../../../enums/sectionTypes'
+// import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+// import { LanguageType } from '../../../../dataTypes/languageType.model'
+// // import { ApplicationScreenDto } from '../../../screens/models/dto/applicationScreen.dto'
+// import { SectionTypes } from '../../../../enums/sectionTypes'
+// import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 
-export class ApplicationSectionDto {
-  @ApiProperty()
-  id!: string
+// export class ApplicationSectionDto {
+//   @ApiProperty()
+//   id!: string
 
-  @ApiProperty({ type: LanguageType })
-  name!: LanguageType
+//   @ApiProperty({ type: LanguageType })
+//   name!: LanguageType
 
-  @ApiProperty({ enum: SectionTypes })
-  sectionType!: string
+//   @ApiProperty({ enum: SectionTypes })
+//   sectionType!: string
 
-  @ApiProperty()
-  displayOrder!: number
+//   @ApiProperty()
+//   displayOrder!: number
 
-  @ApiPropertyOptional({ type: LanguageType })
-  waitingText?: LanguageType
+//   @ApiPropertyOptional({ type: LanguageType })
+//   waitingText?: LanguageType
 
-  @ApiProperty({ type: [ApplicationScreenDto] })
-  screens!: ApplicationScreenDto[]
-}
+//   @ApiProperty({ type: [ScreenDto] })
+//   screens!: ScreenDto[]
+// }
