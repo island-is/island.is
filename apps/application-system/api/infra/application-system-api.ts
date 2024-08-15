@@ -113,6 +113,7 @@ export const workerSetup =
         limits: { cpu: '400m', memory: '768Mi' },
         requests: { cpu: '100m', memory: '384Mi' },
       })
+      .armBetaEnrolled(true)
 
 export const serviceSetup = (services: {
   documentsService: ServiceBuilder<'services-documents'>
