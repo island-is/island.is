@@ -6,6 +6,7 @@ import {
   Locale,
   MeDonorStatusApi,
   OrganDonorDto,
+  OrganDto,
 } from './gen/fetch'
 
 @Injectable()
@@ -45,7 +46,7 @@ export class HealthDirectorateOrganDonationService {
   public async getDonationExceptions(
     auth: Auth,
     input: Locale,
-  ): Promise<unknown | null> {
+  ): Promise<Array<OrganDto> | null> {
     const donationExceptions = await this.donationExceptionsApi
       .withMiddleware(new AuthMiddleware(auth))
       .donationExceptionControllerGetOrgans({ locale: input })
