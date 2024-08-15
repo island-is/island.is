@@ -10,25 +10,25 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   DelegationDTO,
-  DelegationScope,
   DelegationScopeService,
   DelegationsIncomingService,
+  DelegationsIndexService,
   DelegationsService,
   MergedDelegationDTO,
-  DelegationsIndexService,
 } from '@island.is/auth-api-lib'
-import type { User } from '@island.is/auth-nest-tools'
 import {
   CurrentUser,
   IdsUserGuard,
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import { AuthDelegationType } from '@island.is/shared/types'
+
+import type { Logger } from '@island.is/logging'
+import type { User } from '@island.is/auth-nest-tools'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('delegations')
@@ -66,17 +66,9 @@ export class DelegationsController {
   @Version('2')
   @Get()
   @ApiOkResponse({ isArray: true })
-  async findAllToV2(
-    @CurrentUser() user: User,
-    @Query(
-      'requestedScopes',
-      new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
-    )
-    requestedScopes: Array<string>,
-  ): Promise<MergedDelegationDTO[]> {
+  async findAllToV2(@CurrentUser() user: User): Promise<MergedDelegationDTO[]> {
     const delegations = await this.delegationsIncomingService.findAllAvailable({
       user,
-      requestedScopes,
     })
 
     // don't fail the request if indexing fails
@@ -92,57 +84,30 @@ export class DelegationsController {
   @Scopes('@identityserver.api/authentication')
   @Get('scopes')
   @ApiOkResponse({ isArray: true })
-  async findAllScopesTo(
+  findAllScopesTo(
     @CurrentUser() user: User,
     @Query('fromNationalId') fromNationalId: string,
     @Query(
       'delegationType',
       new ParseArrayPipe({ optional: true, items: String, separator: ',' }),
     )
-    delegationType: Array<AuthDelegationType>,
+    delegationType: Array<string>,
   ): Promise<string[]> {
-    const scopePromises = []
-
-    if (delegationType.includes(AuthDelegationType.ProcurationHolder))
-      scopePromises.push(this.delegationScopeService.findAllProcurationScopes())
-
-    if (delegationType.includes(AuthDelegationType.LegalGuardian))
-      scopePromises.push(
-        this.delegationScopeService.findAllLegalGuardianScopes(),
-      )
-
-    if (delegationType.includes(AuthDelegationType.PersonalRepresentative))
-      scopePromises.push(
-        this.delegationScopeService.findPersonalRepresentativeScopes(
-          user.nationalId,
-          fromNationalId,
-        ),
-      )
-
-    if (delegationType.includes(AuthDelegationType.Custom))
-      scopePromises.push(
-        this.delegationScopeService
-          .findAllValidCustomScopesTo(user.nationalId, fromNationalId)
-          .then((delegationScopes: DelegationScope[]) =>
-            delegationScopes.map((ds) => ds.scopeName),
-          ),
-      )
-
-    const scopeSets = await Promise.all(scopePromises)
-
-    let scopes = ([] as string[]).concat(...scopeSets)
-
     if (
-      scopes.length > 0 ||
-      delegationType.includes(AuthDelegationType.ProcurationHolder) ||
-      delegationType.includes(AuthDelegationType.LegalGuardian)
+      delegationType?.some(
+        (dt) => dt === AuthDelegationType.PersonalRepresentative,
+      )
     ) {
-      scopes = [
-        ...scopes,
-        ...(await this.delegationScopeService.findAllAutomaticScopes()),
-      ]
+      // TODO: For backwards compatibility with IDS, add PersonalRepresentative:postholf type. Then remove this.
+      delegationType.push(
+        AuthDelegationType.PersonalRepresentative + ':postholf',
+      )
     }
 
-    return [...new Set(scopes)]
+    return this.delegationScopeService.findAllScopesTo(
+      user,
+      fromNationalId,
+      delegationType,
+    )
   }
 }
