@@ -7,7 +7,7 @@ import {
   m as coreMessage,
   ISLAND_SYSLUMENN_SLUG,
 } from '@island.is/service-portal/core'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
 import { Locale } from '@island.is/shared/types'
 import {
@@ -19,11 +19,12 @@ import {
 import { Query } from '@island.is/api/schema'
 import { Box, Tabs } from '@island.is/island-ui/core'
 import { usePassport } from '@island.is/service-portal/graphql'
-import UserLicenses from './UserLicenses'
-import ChildrenLicenses from './ChildrenLicenses'
+
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 import { useState, useEffect } from 'react'
 import { OrganizationSlugType } from '@island.is/shared/constants'
+import UserLicenses from './UserLicenses'
+import ChildrenLicenses from './ChildrenLicenses'
 
 const dataFragment = gql`
   fragment genericLicenseDataFieldFragment on GenericLicenseDataField {

@@ -6,17 +6,17 @@ import {
   CardLoader,
   formatDate,
 } from '@island.is/service-portal/core'
-import { m } from '../../lib/messages'
+import { m } from '../../../lib/messages'
 import { GenericLicenseType } from '@island.is/service-portal/graphql'
 import {
   GenericUserLicense,
   IdentityDocumentModel,
 } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
-import { getPathFromType, getTitleAndLogo } from '../../utils/dataMapper'
+import { getPathFromType, getTitleAndLogo } from '../../../utils/dataMapper'
 
-import LicenseCards from '../../components/LicenseCards/LicenseCards'
-import { getExpiresIn } from '../../utils/dateUtils'
+import LicenseCards from '../../../components/LicenseCards/LicenseCards'
+import { getExpiresIn } from '../../../utils/dateUtils'
 
 interface Props {
   isLoading: boolean
