@@ -199,7 +199,7 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
-    order: [['created', 'ASC']],
+    order: [['created', 'DESC']],
     separate: true,
   },
   {
