@@ -5,7 +5,6 @@ import { ScreenDto } from '../../../screens/models/dto/screen.dto'
 import { FieldDto } from '../../../fields/models/dto/field.dto'
 import { SectionDto } from '../../../sections/models/dto/section.dto'
 import { CertificationTypeDto } from '../../../certifications/models/dto/certificationType.dto'
-// import { FormCertificationTypeDto } from '../../../certifications/models/dto/formCertificationType.dto'
 
 export class FormDto {
   @ApiProperty()

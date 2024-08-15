@@ -9,10 +9,8 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
-// import { Organization } from './models/organization.model'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Documentation } from '@island.is/nest/swagger'
-// import { OrganizationsDto } from './models/dto/organizations.dto'
 import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
 

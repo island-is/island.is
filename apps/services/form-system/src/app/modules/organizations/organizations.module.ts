@@ -4,7 +4,6 @@ import { OrganizationsService } from './organizations.service'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { Organization } from './models/organization.model'
 import { ApplicantTypeNameSuggestion } from '../applicants/models/applicantTypeNameSuggestion.model'
-// import { OrganizationsMapper } from './models/organizations.mapper'
 
 @Module({
   imports: [

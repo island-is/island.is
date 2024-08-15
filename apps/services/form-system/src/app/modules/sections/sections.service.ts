@@ -2,8 +2,6 @@ import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Section } from './models/section.model'
 import { CreateSectionDto } from './models/dto/createSection.dto'
-import { Screen } from '../screens/models/screen.model'
-import { Field } from '../fields/models/field.model'
 import { UpdateSectionDto } from './models/dto/updateSection.dto'
 import { SectionDto } from './models/dto/section.dto'
 import { UpdateSectionsDisplayOrderDto } from './models/dto/updateSectionsDisplayOrder.dto'
@@ -15,28 +13,6 @@ export class SectionsService {
     @InjectModel(Section)
     private readonly sectionModel: typeof Section,
   ) {}
-
-  // async findAll(): Promise<Section[]> {
-  //   return await this.sectionModel.findAll()
-  // }
-
-  // async findOne(id: string): Promise<Section> {
-  //   const section = await this.sectionModel.findByPk(id, {
-  //     include: [
-  //       {
-  //         model: Screen,
-  //         as: 'screens',
-  //         include: [{ model: Field, as: 'fields' }],
-  //       },
-  //     ],
-  //   })
-
-  //   if (!section) {
-  //     throw new NotFoundException(`Section with id '${id}' not found`)
-  //   }
-
-  //   return section
-  // }
 
   async create(createSectionDto: CreateSectionDto): Promise<SectionDto> {
     const section = createSectionDto as Section

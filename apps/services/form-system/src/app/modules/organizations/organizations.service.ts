@@ -3,8 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { Form } from '../forms/models/form.model'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Organization } from './models/organization.model'
-// import { OrganizationsMapper } from './models/organizations.mapper'
-// import { OrganizationDto } from './models/dto/organization.dto'
 import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
 import { OrganizationDto } from './models/dto/organization.dto'
 import { defaults, pick, zipObject } from 'lodash'
@@ -14,7 +12,7 @@ import { FormDto } from '../forms/models/dto/form.dto'
 export class OrganizationsService {
   constructor(
     @InjectModel(Organization)
-    private readonly organizationModel: typeof Organization, // private readonly organizationsMapper: OrganizationsMapper,
+    private readonly organizationModel: typeof Organization,
   ) {}
 
   async findAll(): Promise<OrganizationsResponseDto> {

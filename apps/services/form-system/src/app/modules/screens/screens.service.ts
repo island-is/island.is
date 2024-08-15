@@ -1,7 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { Screen } from './models/screen.model'
 import { InjectModel } from '@nestjs/sequelize'
-import { Field } from '../fields/models/field.model'
 import { CreateScreenDto } from './models/dto/createScreen.dto'
 import { UpdateScreenDto } from './models/dto/updateScreen.dto'
 import { ScreenDto } from './models/dto/screen.dto'
@@ -14,34 +13,6 @@ export class ScreensService {
     @InjectModel(Screen)
     private readonly screenModel: typeof Screen,
   ) {}
-
-  // async findAll(): Promise<Screen[]> {
-  //   return await this.screenModel.findAll()
-  // }
-
-  async findOne(id: string): Promise<ScreenDto> {
-    const screen = await this.screenModel.findByPk(id, { include: [Field] })
-
-    if (!screen) {
-      throw new NotFoundException(`Screen with id '${id}' not found`)
-    }
-
-    const keys = [
-      'id',
-      'sectionId',
-      'name',
-      'displayOrder',
-      'isHidden',
-      'multiset',
-      'callRuleset',
-    ]
-    const screenDto: ScreenDto = defaults(
-      pick(screen, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as ScreenDto
-
-    return screenDto
-  }
 
   async create(createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     const screen = createScreenDto as Screen

@@ -2,16 +2,13 @@ import {
   Body,
   Controller,
   Post,
-  Get,
   Delete,
   Param,
-  NotFoundException,
   Put,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { SectionsService } from './sections.service'
 import { CreateSectionDto } from './models/dto/createSection.dto'
-import { Section } from './models/section.model'
 import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
 import { UpdateSectionDto } from './models/dto/updateSection.dto'
@@ -27,29 +24,6 @@ export class SectionsController {
   create(@Body() createSectionDto: CreateSectionDto): Promise<SectionDto> {
     return this.sectionsService.create(createSectionDto)
   }
-
-  // @Get()
-  // @Documentation({
-  //   description: 'Get all Sections',
-  //   response: { status: 200, type: [Section] },
-  // })
-  // async findAll(): Promise<Section[]> {
-  //   return await this.sectionsService.findAll()
-  // }
-
-  // @Get(':id')
-  // @Documentation({
-  //   description: 'Get Section by id',
-  //   response: { status: 200, type: Section },
-  // })
-  // async findOne(@Param('id') id: string): Promise<Section> {
-  //   const section = await this.sectionsService.findOne(id)
-  //   if (!section) {
-  //     throw new NotFoundException(`Section not found`)
-  //   }
-
-  //   return section
-  // }
 
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {

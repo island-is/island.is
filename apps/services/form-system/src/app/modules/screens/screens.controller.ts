@@ -1,17 +1,14 @@
 import {
   Controller,
   Post,
-  Get,
   Delete,
   Body,
   Param,
-  NotFoundException,
   Put,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
 import { ScreensService } from './screens.service'
 import { CreateScreenDto } from './models/dto/createScreen.dto'
-// import { Screen } from './models/screen.model'
 import { Documentation } from '@island.is/nest/swagger'
 import { ApiTags } from '@nestjs/swagger'
 import { UpdateScreenDto } from './models/dto/updateScreen.dto'
@@ -26,29 +23,6 @@ export class ScreensController {
   @Post()
   create(@Body() createScreenDto: CreateScreenDto): Promise<ScreenDto> {
     return this.screensService.create(createScreenDto)
-  }
-
-  // @Get()
-  // @Documentation({
-  //   description: 'Get all Screens',
-  //   response: { status: 200, type: [Screen] },
-  // })
-  // async findAll(): Promise<Screen[]> {
-  //   return await this.screensService.findAll()
-  // }
-
-  @Get(':id')
-  @Documentation({
-    description: 'Get Screen by id',
-    response: { status: 200, type: ScreenDto },
-  })
-  async findOne(@Param('id') id: string): Promise<ScreenDto> {
-    const screen = await this.screensService.findOne(id)
-    if (!screen) {
-      throw new NotFoundException(`Screen not found`)
-    }
-
-    return screen
   }
 
   @Put(':id')
