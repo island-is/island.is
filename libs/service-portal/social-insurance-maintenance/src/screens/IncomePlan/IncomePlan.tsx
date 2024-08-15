@@ -2,6 +2,7 @@ import { Box, Inline, Stack } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
+  CardLoader,
   FootNote,
   IntroHeader,
   LinkButton,
@@ -41,6 +42,10 @@ const IncomePlan = () => {
           message={formatMessage(coreMessages.noDataFoundDetail)}
           imgSrc="./assets/images/sofa.svg"
         />
+      ) : loading ? (
+        <Box marginBottom={2}>
+          <CardLoader />
+        </Box>
       ) : (
         <Stack space={2}>
           <Inline space={2}>

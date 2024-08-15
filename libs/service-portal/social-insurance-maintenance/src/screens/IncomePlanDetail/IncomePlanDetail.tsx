@@ -7,6 +7,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
+  EmptyTable,
   FootNote,
   IntroHeader,
   LinkButton,
@@ -72,17 +73,26 @@ const IncomePlanDetail = () => {
               </T.Row>
             </T.Head>
             <T.Body>
-              {data?.socialInsuranceIncomePlan?.incomeCategories.map(
-                (category, index) => (
-                  <T.Row key={index}>
-                    <T.Data>{category.name}</T.Data>
-                    <T.Data>{amountFormat(category.annualSum)}</T.Data>
-                    <T.Data>{category.currency}</T.Data>
-                  </T.Row>
-                ),
-              )}
+              {data?.socialInsuranceIncomePlan &&
+                !loading &&
+                !error &&
+                data.socialInsuranceIncomePlan.incomeCategories.map(
+                  (category, index) => (
+                    <T.Row key={index}>
+                      <T.Data>{category.name}</T.Data>
+                      <T.Data>{amountFormat(category.annualSum)}</T.Data>
+                      <T.Data>{category.currency}</T.Data>
+                    </T.Row>
+                  ),
+                )}
             </T.Body>
           </T.Table>
+          {!data?.socialInsuranceIncomePlan?.incomeCategories && (
+            <EmptyTable
+              loading={loading}
+              message={formatMessage(m.noPaymentsFound)}
+            />
+          )}
         </Stack>
       )}
       <FootNote serviceProviderSlug="tryggingastofnun" />
