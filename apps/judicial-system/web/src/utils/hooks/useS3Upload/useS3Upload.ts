@@ -337,20 +337,18 @@ const useS3Upload = (caseId: string) => {
             }
 
             const newFileId = await addFileToCaseState({
-              policeCaseNumber: file.policeCaseNumber,
+              ...file,
               key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
               size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
-              ...file,
             })
 
             callback(
               {
+                ...file,
                 size: uploadPoliceCaseFileData.uploadPoliceCaseFile.size,
                 key: uploadPoliceCaseFileData.uploadPoliceCaseFile.key,
                 percent: 100,
                 status: 'done',
-                policeCaseNumber: file.policeCaseNumber,
-                ...file,
               },
               // We need to set the id so we are able to delete the file later
               newFileId,
