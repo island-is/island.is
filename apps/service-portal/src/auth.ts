@@ -50,6 +50,7 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.healthHealthcare,
   ApiScope.healthRightsStatus,
   ApiScope.healthDentists,
+  ApiScope.healthVaccinations,
   ApiScope.signatureCollection,
 ]
 
