@@ -262,15 +262,13 @@ export const Overview = () => {
                   }
                 : undefined
             }
-            defenders={[
-              {
-                name: workingCase.defenderName ?? '',
-                defenderNationalId: workingCase.defenderNationalId,
-                sessionArrangement: workingCase.sessionArrangements,
-                email: workingCase.defenderEmail,
-                phoneNumber: workingCase.defenderPhoneNumber,
-              },
-            ]}
+            defender={{
+              name: workingCase.defenderName ?? '',
+              defenderNationalId: workingCase.defenderNationalId,
+              sessionArrangement: workingCase.sessionArrangements,
+              email: workingCase.defenderEmail,
+              phoneNumber: workingCase.defenderPhoneNumber,
+            }}
           />
         </Box>
         {workingCase.description && (
