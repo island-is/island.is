@@ -14,14 +14,14 @@ import {
   m as coreMessages,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { useGetIncomePlanQuery } from './IncomePlan.generated'
+import { useGetIncomePlanDetailQuery } from './IncomePlanDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
 const IncomePlanDetail = () => {
   useNamespaces('sp.social-insurance-maintenance')
   const { formatMessage } = useLocale()
 
-  const { data, loading, error } = useGetIncomePlanQuery()
+  const { data, loading, error } = useGetIncomePlanDetailQuery()
 
   return (
     <Box>

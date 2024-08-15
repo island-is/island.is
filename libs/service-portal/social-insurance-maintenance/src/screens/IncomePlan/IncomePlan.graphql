@@ -1,4 +1,4 @@
-query getIncomePlanDetail {
+query getIncomePlan {
   socialInsuranceIncomePlan {
     registrationDate
     status

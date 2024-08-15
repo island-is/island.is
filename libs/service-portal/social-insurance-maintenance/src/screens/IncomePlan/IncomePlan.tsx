@@ -9,10 +9,10 @@ import {
   formatDate,
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
-import { useGetIncomePlanQuery } from './IncomePlan.generated'
 import { Problem } from '@island.is/react-spa/shared'
 import parseISO from 'date-fns/parseISO'
 import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
+import { useGetIncomePlanQuery } from './IncomePlan.generated'
 
 const IncomePlan = () => {
   useNamespaces('sp.social-insurance-maintenance')

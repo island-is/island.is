@@ -1,4 +1,4 @@
-query getIncomePlan {
+query getIncomePlanDetail {
   socialInsuranceIncomePlan {
     incomeCategories {
       name
