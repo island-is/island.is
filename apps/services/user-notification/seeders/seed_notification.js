@@ -11,12 +11,8 @@ module.exports = {
           sender_id: '5212120630',
           template_id: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
           args: JSON.stringify([
-            {
-              key: 'organization',
-              value: 'REPLACEDBYSENDERID',
-              key: 'documentId',
-              value: '1234567890',
-            },
+            { key: 'organization', value: 'REPLACEDBYSENDERID' },
+            { key: 'documentId', value: '1234567890' },
           ]),
           created: new Date(),
           updated: new Date(),
@@ -29,12 +25,8 @@ module.exports = {
           sender_id: '5701740619',
           template_id: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
           args: JSON.stringify([
-            {
-              key: 'organization',
-              value: 'REPLACEDBYSENDERID',
-              key: 'documentId',
-              value: '1234567890',
-            },
+            { key: 'organization', value: 'REPLACEDBYSENDERID' },
+            { key: 'documentId', value: '1234567890' },
           ]),
           created: new Date(),
           updated: new Date(),
