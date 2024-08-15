@@ -41,7 +41,7 @@ import {
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
 import {
   CaseState,
   CaseTransition,
@@ -193,7 +193,7 @@ export const Overview = () => {
                 ? [
                     {
                       title: formatMessage(core.judge),
-                      value: NameAndEmail(
+                      value: RenderPersonalData(
                         workingCase.judge?.name,
                         workingCase.judge?.email,
                       ),
@@ -214,7 +214,7 @@ export const Overview = () => {
                 ? [
                     {
                       title: formatMessage(core.registrar),
-                      value: NameAndEmail(
+                      value: RenderPersonalData(
                         workingCase.registrar?.name,
                         workingCase.registrar?.email,
                       ),
@@ -223,7 +223,7 @@ export const Overview = () => {
                 : []),
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: NameAndEmail(
+                value: RenderPersonalData(
                   workingCase.prosecutor?.name,
                   workingCase.prosecutor?.email,
                 ),

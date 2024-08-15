@@ -10,7 +10,8 @@ import {
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import InfoCard, { NameAndEmail } from './InfoCard'
+import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
+import InfoCard from './InfoCard'
 import { strings } from './InfoCardIndictment.strings'
 
 const InfoCardActiveIndictment = () => {
@@ -26,7 +27,7 @@ const InfoCardActiveIndictment = () => {
         },
         {
           title: formatMessage(strings.prosecutor),
-          value: NameAndEmail(
+          value: RenderPersonalData(
             workingCase.prosecutor?.name,
             workingCase.prosecutor?.email,
           ),
