@@ -100,8 +100,8 @@ import { UniversityCareersModule } from '@island.is/api/domains/university-caree
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
-  VaccinationsClientConfig,
-  OrganDonationClientConfig,
+  HealthDirectorateVaccinationsClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
@@ -386,8 +386,8 @@ const environment = getConfig
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         HealthDirectorateClientConfig,
-        VaccinationsClientConfig,
-        OrganDonationClientConfig,
+        HealthDirectorateVaccinationsClientConfig,
+        HealthDirectorateOrganDonationClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,

@@ -11,13 +11,13 @@ import { HealthDirectorateOrganDonationService } from './clients/organ-donation/
 
 @Module({
   providers: [
+    HealthDirectorateClientService,
+    HealthDirectorateVaccinationsService,
+    HealthDirectorateOrganDonationService,
     OrganDonorApiProvider,
     OrganExceptionsApiProvider,
     VaccinationsApiProvider,
     ...exportedApis,
-    HealthDirectorateClientService,
-    HealthDirectorateVaccinationsService,
-    HealthDirectorateOrganDonationService,
   ],
   exports: [
     HealthDirectorateClientService,
