@@ -1,5 +1,5 @@
 export { MessageType, messageEndpoint } from './lib/message'
-export type { CaseMessage } from './lib/message'
+export { type Message } from './lib/message'
 export { MessageModule } from './lib/message.module'
 export { MessageService } from './lib/message.service'
 export { messageModuleConfig } from './lib/message.config'

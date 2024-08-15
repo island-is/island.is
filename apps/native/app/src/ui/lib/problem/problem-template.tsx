@@ -80,6 +80,7 @@ const Host = styled.View<{
 
   padding: ${({ theme }) => theme.spacing[2]}px;
   ${({ noContainer, theme }) => noContainer && `margin: ${theme.spacing[2]}px;`}
+  min-height: 280px;
 `
 
 const Tag = styled(Typography)<{
