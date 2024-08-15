@@ -15,12 +15,11 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
-            defenders={[
-              {
-                name: 'Joe',
-                sessionArrangement: SessionArrangements.ALL_PRESENT,
-              },
-            ]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
+            defender={{
+              name: 'Joe',
+              sessionArrangement: SessionArrangements.ALL_PRESENT,
+            }}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -37,13 +36,12 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
-            defenders={[
-              {
-                name: 'Joe',
-                phoneNumber: '555-5555',
-                sessionArrangement: SessionArrangements.ALL_PRESENT,
-              },
-            ]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
+            defender={{
+              name: 'Joe',
+              phoneNumber: '555-5555',
+              sessionArrangement: SessionArrangements.ALL_PRESENT,
+            }}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -64,14 +62,13 @@ describe('InfoCard', () => {
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
-            defenders={[
-              {
-                name: 'Joe',
-                email: 'joe@joe.is',
-                phoneNumber: '455-5544',
-                sessionArrangement: SessionArrangements.ALL_PRESENT,
-              },
-            ]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
+            defender={{
+              name: 'Joe',
+              email: 'joe@joe.is',
+              phoneNumber: '455-5544',
+              sessionArrangement: SessionArrangements.ALL_PRESENT,
+            }}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -86,67 +83,30 @@ describe('InfoCard', () => {
     ).toBeTruthy()
   })
 
-  test('should display multiple defenders', async () => {
-    // Arrange
-    render(
-      <MockedProvider>
-        <LocaleProvider locale="is" messages={{}}>
-          <InfoCard
-            data={[]}
-            defenders={[
-              {
-                name: 'Joe',
-                email: 'joe@joe.is',
-                phoneNumber: '455-5544',
-                sessionArrangement: SessionArrangements.ALL_PRESENT,
-              },
-              {
-                name: 'Melissa',
-                email: 'mel@issa.is',
-                phoneNumber: '411-1114',
-              },
-            ]}
-          />
-        </LocaleProvider>
-      </MockedProvider>,
-    )
-
-    // Act and Assert
-    expect(
-      await screen.findByText(
-        (_, element) => element?.textContent === 'Joe, joe@joe.is, s. 455-5544',
-      ),
-    ).toBeTruthy()
-    expect(
-      await screen.findByText(
-        (_, element) =>
-          element?.textContent === 'Melissa, mel@issa.is, s. 411-1114',
-      ),
-    ).toBeTruthy()
-  })
-
   test('should display a message saying that a defender has not been set if the defender info is missing', async () => {
     // Arrange
+
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
             data={[]}
-            defenders={[
-              {
-                name: '',
-                defenderNationalId: '',
-                email: '',
-                phoneNumber: '',
-                sessionArrangement: SessionArrangements.ALL_PRESENT,
-              },
-            ]}
+            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
+            defender={{
+              name: '',
+              defenderNationalId: '',
+              email: '',
+              phoneNumber: '',
+              sessionArrangement: SessionArrangements.ALL_PRESENT,
+            }}
           />
         </LocaleProvider>
       </MockedProvider>,
     )
 
     // Act and Assert
-    expect(await screen.findByText('Hefur ekki verið skráður')).toBeTruthy()
+    expect(
+      await screen.findByText('Verjandi: Hefur ekki verið skráður'),
+    ).toBeTruthy()
   })
 })

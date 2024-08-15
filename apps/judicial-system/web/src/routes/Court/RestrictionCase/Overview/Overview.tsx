@@ -183,14 +183,12 @@ export const JudgeOverview = () => {
                   }
                 : undefined
             }
-            defenders={[
-              {
-                name: workingCase.defenderName ?? '',
-                email: workingCase.defenderEmail,
-                sessionArrangement: workingCase.sessionArrangements,
-                phoneNumber: workingCase.defenderPhoneNumber,
-              },
-            ]}
+            defender={{
+              name: workingCase.defenderName ?? '',
+              email: workingCase.defenderEmail,
+              sessionArrangement: workingCase.sessionArrangements,
+              phoneNumber: workingCase.defenderPhoneNumber,
+            }}
           />
         </Box>
         <Box marginBottom={5}>
