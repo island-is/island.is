@@ -56,8 +56,6 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
-  console.log('phone', phoneField)
-
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
 
@@ -221,7 +219,6 @@ export const AdditionalEstateMember = ({
                 id={phoneField}
                 name={phoneField}
                 label={formatMessage(m.phone)}
-                //defaultValue={field.phone || ''}
                 backgroundColor="blue"
                 error={error?.phone}
                 required={!noContactInfo}
