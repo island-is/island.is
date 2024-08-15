@@ -56,7 +56,8 @@ export const generalPetitionNotificationEmail: GeneralPetitionNotificationEmail 
                 <span>Tímabil lista: ${dateFrom} - ${dateTil} </span><br/>
                 <span>Stofnandi lista: ${applicant.fullName} </span><br/>
                 <span>Netfang stofnenda: ${answers.email} </span><br/>
-                <span>Sími notenda: ${answers.phone} </span><br/>
+                <span>Sími notenda: ${answers.phone} </span><br/><br/>
+                <span>Undirskriftarlistar í þinni umsjá er að finna undir Mínar upplýsingar á Mínum síðum á Ísland.is</span><br/><br/>
                 <span>Kær kveðja, <br/> Ísland.is</span><br/>`,
             },
           },

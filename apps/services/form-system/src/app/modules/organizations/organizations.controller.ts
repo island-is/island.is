@@ -9,9 +9,10 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
-import { Organization } from './models/organization.model'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Documentation } from '@island.is/nest/swagger'
+import { OrganizationsResponseDto } from './models/dto/organizations.response.dto'
+import { OrganizationDto } from './models/dto/organization.dto'
 
 @ApiTags('organizations')
 @Controller({ path: 'organizations', version: ['1', VERSION_NEUTRAL] })
@@ -21,30 +22,30 @@ export class OrganizationsController {
   @Post()
   create(
     @Body() createOrganizationDto: CreateOrganizationDto,
-  ): Promise<Organization> {
+  ): Promise<OrganizationDto> {
     return this.organizationsService.create(createOrganizationDto)
   }
 
   @Get()
   @Documentation({
     description: 'Get all Organizations',
-    response: { status: 200, type: [Organization] },
+    response: { status: 200, type: [OrganizationsResponseDto] },
   })
-  async findAll(): Promise<Organization[]> {
+  async findAll(): Promise<OrganizationsResponseDto> {
     return await this.organizationsService.findAll()
   }
 
   @Get(':id')
   @Documentation({
     description: 'Get Organization by id',
-    response: { status: 200, type: Organization },
+    response: { status: 200, type: OrganizationDto },
   })
-  async findOne(@Param('id') id: string): Promise<Organization> {
-    const form = await this.organizationsService.findOne(id)
-    if (!form) {
+  async findOne(@Param('id') id: string): Promise<OrganizationDto> {
+    const organization = await this.organizationsService.findOne(id)
+    if (!organization) {
       throw new NotFoundException(`Organization not found`)
     }
 
-    return form
+    return organization
   }
 }
