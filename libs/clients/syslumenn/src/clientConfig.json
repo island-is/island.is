@@ -3491,6 +3491,9 @@
         "aaetladurFjoldi": {
           "type": "integer",
           "format": "int32"
+        },
+        "stadur": {
+          "type": "string"
         }
       }
     },
