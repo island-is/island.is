@@ -422,6 +422,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 buildDateField({
                   id: 'deceasedSpouseInfo.date',
                   title: survivorsBenefitsFormMessage.info.deceasedSpouseDate,
+                  condition: (answers) =>
+                    !!getApplicationAnswers(answers).notIcelandic,
                 }),
               ],
             }),
