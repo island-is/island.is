@@ -52,8 +52,7 @@ export const SelectProperty: FC<
   const handleRemoveProperty = (index: number) => remove(index)
 
   setBeforeSubmitCallback?.(async () => {
-    if (fields.length > 10) {
-      // Set error message to user
+    if (fields.length > maxProperties) {
       return [false, '']
     }
     return [true, null]
