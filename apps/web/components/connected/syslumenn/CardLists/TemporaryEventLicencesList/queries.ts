@@ -13,6 +13,7 @@ export const GET_TEMPORARY_EVENT_LICENCES = gql`
       licenseResponsible
       maximumNumberOfGuests
       estimatedNumberOfGuests
+      location
     }
   }
 `
