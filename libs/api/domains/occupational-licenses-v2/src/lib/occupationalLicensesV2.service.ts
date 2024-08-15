@@ -7,6 +7,7 @@ import { DistrictCommissionersLicensesService } from '@island.is/clients/distric
 import {
   HealthDirectorateClientService,
   HealthDirectorateLicenseToPractice,
+  HealthDirectorateOrganDonationService,
 } from '@island.is/clients/health-directorate'
 import { OrganizationSlugType } from '@island.is/shared/constants'
 import { License } from './models/license.model'
@@ -38,6 +39,7 @@ export class OccupationalLicensesV2Service {
   constructor(
     private readonly dcService: DistrictCommissionersLicensesService,
     private readonly healthService: HealthDirectorateClientService,
+    private readonly healthOrganDonationService: HealthDirectorateOrganDonationService,
     private readonly mmsApi: MMSApi,
     @Inject(DownloadServiceConfig.KEY)
     private readonly downloadService: ConfigType<typeof DownloadServiceConfig>,

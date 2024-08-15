@@ -3,7 +3,12 @@ import {
   StarfsleyfiAMinumSidumApi,
   UmsoknStarfsleyfiApi,
   VottordApi,
-} from '../../gen/fetch'
+} from './clients/occupational-license/gen/fetch'
+import {
+  DonationExceptionsApi,
+  MeDonorStatusApi,
+} from './clients/organ-donation/gen/fetch'
+import { MeVaccinationsApi } from './clients/vaccinations/gen/fetch'
 
 export interface HealthcareLicense {
   professionId: string
@@ -67,3 +72,12 @@ export type Api =
   | typeof StarfsleyfiAMinumSidumApi
   | typeof VottordApi
   | typeof UmsoknStarfsleyfiApi
+  | typeof MeDonorStatusApi
+  | typeof DonationExceptionsApi
+  | typeof MeVaccinationsApi
+
+export enum HealthDirectorateApisId {
+  ORGAN_DONATION = 'organ-donation',
+  VACCINATIONS = 'vaccinations',
+  OCCUPATIONAL_LICENSE = 'occupational-license-and-certificate',
+}

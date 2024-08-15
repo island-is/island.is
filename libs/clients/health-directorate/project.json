@@ -14,23 +14,59 @@
         "jestConfig": "libs/clients/health-directorate/jest.config.ts"
       }
     },
-    "update-openapi-document": {
+    "update-openapi-document/organ-donation": {
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/clientConfig.json",
-          "prettier --write src/clientConfig.json"
+          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/lib/clients/organ-donation/clientConfig.json",
+          "prettier --write src/lib/clients/organ-donation/clientConfig.json"
         ],
         "parallel": false,
-        "cwd": "libs/clients/health-directorate"
+        "cwd": "libs/clients/health-directorate/src/lib/clients/organ-donation"
       }
     },
-    "codegen/backend-client": {
+    "codegen/backend-client/organ-donation": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn openapi-generator -o libs/clients/health-directorate/gen/fetch -i libs/clients/health-directorate/src/clientConfig.json"
+        "command": "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/organ-donation/gen/fetch -i libs/clients/health-directorate/src/lib/clients/organ-donation/clientConfig.json"
       },
-      "outputs": ["{projectRoot}/gen/fetch"]
+      "outputs": ["{projectRoot}/**/gen/fetch"]
+    },
+    "update-openapi-document/vaccinations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/lib/clients/vaccinations/clientConfig.json",
+          "prettier --write src/lib/clients/vaccinations/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/health-directorate/src/lib/clients/vaccinations"
+      }
+    },
+    "codegen/backend-client/vaccinations": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/vaccinations/gen/fetch -i libs/clients/health-directorate/src/lib/clients/vaccinations/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/**/gen/fetch"]
+    },
+    "update-openapi-document/occupational-license": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H 'X-Road-Client: IS-DEV/GOV/10000/island-is-client' http://localhost:8081/r1/IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/getOpenAPI?serviceCode=landlaeknir > src/lib/clients/occupational-license/clientConfig.json",
+          "prettier --write src/lib/clients/occupational-license/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/health-directorate/src/lib/clients/occupational-license"
+      }
+    },
+    "codegen/backend-client/occupational-license": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/health-directorate/src/lib/clients/occupational-license/gen/fetch -i libs/clients/health-directorate/src/lib/clients/occupational-license/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/**/gen/fetch"]
     }
   }
 }
