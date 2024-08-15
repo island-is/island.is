@@ -1,10 +1,19 @@
 import { NO, YES } from '@island.is/application/types'
 import { z } from 'zod'
 import { NEW, USED } from '../shared/types'
+import * as kennitala from 'kennitala'
 
 const PersonInformationSchema = z.object({
   name: z.string().min(1),
-  nationalId: z.string().min(1),
+  nationalId: z
+    .string()
+    .refine(
+      (nationalId) =>
+        (nationalId &&
+          kennitala.isValid(nationalId) &&
+          kennitala.isCompany(nationalId)) ||
+        nationalId === '',
+    ),
   address: z.string().min(1),
   postCode: z.string().min(1),
   phone: z.string().min(1),
@@ -15,9 +24,9 @@ const BasicInformationSchema = z.object({
   productionCountry: z.string().min(1),
   productionYear: z.string().min(1),
   productionNumber: z.string().min(1),
-  markedCE: z.enum([YES, NO]).refine((v) => v.length > 0),
+  markedCE: z.enum([YES, NO]),
   preRegistration: z.enum([YES, NO]).refine((v) => v.length > 0),
-  isUsed: z.enum([NEW, USED]).refine((v) => v.length > 0),
+  isUsed: z.enum([NEW, USED]),
   location: z.string().min(1),
   cargoFileNumber: z.string().min(1),
 })
@@ -59,7 +68,7 @@ export const NewMachineAnswersSchema = z.object({
     basicInformation: BasicInformationSchema.optional(),
     streetRegistration: z
       .object({
-        registerToTraffic: z.enum([YES, NO]).refine((v) => v.length > 0),
+        registerToTraffic: z.enum([YES, NO]),
         size: z.enum(['1', '2', '3']),
       })
       .optional(),
