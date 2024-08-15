@@ -1,19 +1,22 @@
 import { coreMessages, formatText } from '@island.is/application/core'
 import {
+  Application,
   FieldBaseProps,
   TableRepeaterField,
+  TableRepeaterItem,
 } from '@island.is/application/types'
+import { NationalIdWithName } from '@island.is/application/ui-components'
 import {
-  Stack,
+  AlertMessage,
   Box,
   Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Stack,
   Table as T,
   Text,
-  Icon,
   Tooltip,
-  GridRow,
-  GridColumn,
-  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -24,9 +27,8 @@ import {
   RadioController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
-import { NationalIdWithName } from '@island.is/application/ui-components'
 import { handleCustomMappedValues } from './utils'
 
 interface Props extends FieldBaseProps {
@@ -115,16 +117,6 @@ export const TableRepeaterFormField: FC<Props> = ({
 
   const handleEditItem = (index: number) => {
     setActiveIndex(index)
-  }
-
-  const getFieldError = (id: string) => {
-    /**
-     * Errors that occur in a field-array have incorrect typing
-     * This hack is needed to get the correct type
-     */
-    const errorList = error as unknown as Record<string, string>[] | undefined
-    const errors = errorList?.[activeIndex]
-    return errors?.[id]
   }
 
   const formatTableValue = (key: string, item: Record<string, string>) => {
@@ -242,102 +234,17 @@ export const TableRepeaterFormField: FC<Props> = ({
                 </Text>
               )}
               <GridRow rowGap={[2, 2, 2, 3]}>
-                {items.map((item) => {
-                  const {
-                    component,
-                    id: itemId,
-                    backgroundColor = 'blue',
-                    label = '',
-                    placeholder = '',
-                    options,
-                    width = 'full',
-                    condition,
-                    readonly = false,
-                    ...props
-                  } = item
-                  const isHalfColumn = component !== 'radio' && width === 'half'
-                  const isThirdColumn =
-                    component !== 'radio' && width === 'third'
-                  const span = isHalfColumn
-                    ? '1/2'
-                    : isThirdColumn
-                    ? '1/3'
-                    : '1/1'
-                  const Component = componentMapper[component]
-                  const id = `${data.id}[${activeIndex}].${itemId}`
-                  const activeValues =
-                    activeIndex >= 0 && values ? values[activeIndex] : undefined
-
-                  let translatedOptions: any = []
-                  if (typeof options === 'function') {
-                    translatedOptions = options(application, activeValues)
-                  } else {
-                    translatedOptions = options?.map((option) => ({
-                      ...option,
-                      label: formatText(
-                        option.label,
-                        application,
-                        formatMessage,
-                      ),
-                      ...(option.tooltip && {
-                        tooltip: formatText(
-                          option.tooltip,
-                          application,
-                          formatMessage,
-                        ),
-                      }),
-                    }))
-                  }
-
-                  let Readonly: boolean | undefined
-                  if (typeof readonly === 'function') {
-                    Readonly = readonly(application, activeValues)
-                  } else {
-                    Readonly = readonly
-                  }
-
-                  if (condition && !condition(application, activeValues)) {
-                    return null
-                  }
-
-                  return (
-                    <GridColumn key={id} span={['1/1', '1/1', '1/1', span]}>
-                      {component === 'radio' && label && (
-                        <Text
-                          variant="h4"
-                          as="h4"
-                          id={id + 'title'}
-                          marginBottom={3}
-                        >
-                          {formatText(label, application, formatMessage)}
-                        </Text>
-                      )}
-                      <Component
-                        id={id}
-                        name={id}
-                        label={formatText(label, application, formatMessage)}
-                        options={translatedOptions}
-                        placeholder={formatText(
-                          placeholder,
-                          application,
-                          formatMessage,
-                        )}
-                        split={width === 'half' ? '1/2' : '1/1'}
-                        error={getFieldError(itemId)}
-                        control={methods.control}
-                        readOnly={Readonly}
-                        backgroundColor={backgroundColor}
-                        onChange={() => {
-                          if (error) {
-                            methods.clearErrors(id)
-                          }
-                        }}
-                        application={application}
-                        {...props}
-                      />
-                    </GridColumn>
-                  )
-                })}
+                {items.map((item) => (
+                  <Item
+                    key={`${data.id}[${activeIndex}].${item.id}`}
+                    application={application}
+                    error={error}
+                    item={item}
+                    dataId={data.id}
+                    activeIndex={activeIndex}
+                    values={values}
+                  />
+                ))}
               </GridRow>
               <Box display="flex" justifyContent="flexEnd">
                 <Button
@@ -370,5 +277,133 @@ export const TableRepeaterFormField: FC<Props> = ({
         )}
       </Box>
     </Box>
+  )
+}
+
+interface ItemFieldProps {
+  application: Application
+  error?: string
+  item: TableRepeaterItem & { id: string }
+  dataId: string
+  activeIndex: number
+  values: Array<Record<string, string>>
+}
+
+const Item: FC<ItemFieldProps> = ({
+  application,
+  error,
+  item,
+  dataId,
+  activeIndex,
+  values,
+}) => {
+  const { formatMessage } = useLocale()
+  const { setValue, control, clearErrors } = useFormContext()
+
+  const {
+    component,
+    id: itemId,
+    backgroundColor = 'blue',
+    label = '',
+    placeholder = '',
+    options,
+    width = 'full',
+    condition,
+    readonly = false,
+    updateValueObj,
+    ...props
+  } = item
+  const isHalfColumn = component !== 'radio' && width === 'half'
+  const isThirdColumn = component !== 'radio' && width === 'third'
+  const span = isHalfColumn ? '1/2' : isThirdColumn ? '1/3' : '1/1'
+  const Component = componentMapper[component]
+  const id = `${dataId}[${activeIndex}].${itemId}`
+  const activeValues =
+    activeIndex >= 0 && values ? values[activeIndex] : undefined
+
+  let watchedValue: string | undefined
+  if (updateValueObj) {
+    const watchedValueId =
+      typeof updateValueObj.watchValue === 'function'
+        ? updateValueObj.watchValue(application, activeValues)
+        : updateValueObj.watchValue
+
+    if (watchedValueId) {
+      watchedValue = activeValues?.[`${watchedValueId}`]
+    }
+  }
+
+  useEffect(() => {
+    if (updateValueObj && watchedValue) {
+      const finalValue = updateValueObj.valueModifier(application, activeValues)
+
+      if (finalValue) {
+        setValue(id, finalValue)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watchedValue])
+
+  const getFieldError = (id: string) => {
+    /**
+     * Errors that occur in a field-array have incorrect typing
+     * This hack is needed to get the correct type
+     */
+    const errorList = error as unknown as Record<string, string>[] | undefined
+    const errors = errorList?.[activeIndex]
+    return errors?.[id]
+  }
+
+  let translatedOptions: any = []
+  if (typeof options === 'function') {
+    translatedOptions = options(application, activeValues)
+  } else {
+    translatedOptions = options?.map((option) => ({
+      ...option,
+      label: formatText(option.label, application, formatMessage),
+      ...(option.tooltip && {
+        tooltip: formatText(option.tooltip, application, formatMessage),
+      }),
+    }))
+  }
+
+  let Readonly: boolean | undefined
+  if (typeof readonly === 'function') {
+    Readonly = readonly(application, activeValues)
+  } else {
+    Readonly = readonly
+  }
+
+  if (condition && !condition(application, activeValues)) {
+    return null
+  }
+
+  return (
+    <GridColumn span={['1/1', '1/1', '1/1', span]}>
+      {component === 'radio' && label && (
+        <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
+          {formatText(label, application, formatMessage)}
+        </Text>
+      )}
+      <Component
+        id={id}
+        name={id}
+        label={formatText(label, application, formatMessage)}
+        options={translatedOptions}
+        placeholder={formatText(placeholder, application, formatMessage)}
+        split={width === 'half' ? '1/2' : '1/1'}
+        error={getFieldError(itemId)}
+        control={control}
+        readOnly={Readonly}
+        backgroundColor={backgroundColor}
+        onChange={() => {
+          if (error) {
+            clearErrors(id)
+          }
+        }}
+        application={application}
+        {...props}
+      />
+    </GridColumn>
   )
 }
