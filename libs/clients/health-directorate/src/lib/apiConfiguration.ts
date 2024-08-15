@@ -12,48 +12,49 @@ import {
   UmsoknStarfsleyfiApi,
   VottordApi,
 } from '../../gen/fetch'
+import { Api, Scope } from './healthDirectorateClient.types'
+import { ConfigFactory } from './configFactory'
 
-const configFactory = (
-  xRoadConfig: ConfigType<typeof XRoadConfig>,
-  config: ConfigType<typeof HealthDirectorateClientConfig>,
-  idsClientConfig: ConfigType<typeof IdsClientConfig>,
-) => ({
-  fetchApi: createEnhancedFetch({
-    name: 'clients-health-directorate',
-    organizationSlug: 'landlaeknir',
-    timeout: config.fetch.timeout,
-    logErrorResponseBody: true,
-    autoAuth: idsClientConfig.isConfigured
-      ? {
-          mode: 'tokenExchange',
-          issuer: idsClientConfig.issuer,
-          clientId: idsClientConfig.clientId,
-          clientSecret: idsClientConfig.clientSecret,
-          scope: config.fetch.scope,
-        }
-      : undefined,
-  }),
-  basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-  headers: {
-    'X-Road-Client': xRoadConfig.xRoadClient,
-    Accept: 'application/json',
+const apiCollection: Array<{
+  api: Api
+  scopes: Array<Scope>
+  autoAuth: boolean
+}> = [
+  {
+    api: StarfsleyfiAMinumSidumApi,
+    scopes: ['@landlaeknir.is/starfsleyfi'],
+    autoAuth: true,
   },
-})
+  {
+    api: VottordApi,
+    scopes: ['@landlaeknir.is/starfsleyfi'],
+    autoAuth: true,
+  },
+  {
+    api: UmsoknStarfsleyfiApi,
+    scopes: ['@landlaeknir.is/starfsleyfi'],
+    autoAuth: true,
+  },
+]
 
-export const exportedApis = [
-  StarfsleyfiAMinumSidumApi,
-  VottordApi,
-  UmsoknStarfsleyfiApi,
-].map((Api) => ({
-  provide: Api,
+export const apiProvider = apiCollection.map((apiRecord) => ({
+  provide: apiRecord.api,
   scope: LazyDuringDevScope,
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof HealthDirectorateClientConfig>,
     idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) => {
-    return new Api(
-      new Configuration(configFactory(xRoadConfig, config, idsClientConfig)),
+    return new apiRecord.api(
+      new Configuration(
+        ConfigFactory(
+          xRoadConfig,
+          config,
+          idsClientConfig,
+          apiRecord.scopes,
+          apiRecord.autoAuth,
+        ),
+      ),
     )
   },
   inject: [
