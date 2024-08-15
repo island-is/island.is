@@ -480,7 +480,7 @@ services-auth-ids-api:
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
-    PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
+    PASSKEY_CORE_ALLOWED_ORIGINS: '["island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
