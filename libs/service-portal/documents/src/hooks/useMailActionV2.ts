@@ -82,7 +82,7 @@ export const useMailAction = () => {
     action: MailActions,
     messages: string[],
     /**
-     * Have all lines on the last page been selected?
+     * Have all lines been selected?
      */
     selectedAllOnPage?: boolean,
   ) => {
