@@ -60,7 +60,7 @@ export const machine = {
         id: 'aosh.rnm.application:machine.labels.machineType.unknownModel',
         defaultMessage: 'Finn ekki gerð',
         description: `Machine type unknown model message`,
-      }
+      },
     }),
     basicMachineInformation: defineMessages({
       sectionTitle: {
