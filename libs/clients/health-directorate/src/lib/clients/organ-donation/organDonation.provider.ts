@@ -5,56 +5,87 @@ import {
   LazyDuringDevScope,
   XRoadConfig,
 } from '@island.is/nest/config'
-import { OrganDonationClientConfig } from './organDonation.config'
+import { HealthDirectorateOrganDonationClientConfig } from './organDonation.config'
 import {
   Configuration,
   MeDonorStatusApi,
   DonationExceptionsApi,
 } from './gen/fetch'
 
-const configFactory = (
-  xRoadConfig: ConfigType<typeof XRoadConfig>,
-  config: ConfigType<typeof OrganDonationClientConfig>,
-  idsClientConfig: ConfigType<typeof IdsClientConfig>,
-) => ({
-  fetchApi: createEnhancedFetch({
-    name: 'clients-health-directorate-organ-donation',
-    organizationSlug: 'landlaeknir',
-    logErrorResponseBody: true,
-    autoAuth: idsClientConfig.isConfigured
-      ? {
-          mode: 'tokenExchange',
-          issuer: idsClientConfig.issuer,
-          clientId: idsClientConfig.clientId,
-          clientSecret: idsClientConfig.clientSecret,
-          scope: config.scope,
-        }
-      : undefined,
-  }),
-  basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
-  headers: {
-    'X-Road-Client': xRoadConfig.xRoadClient,
-    Accept: 'application/json',
+export const OrganDonorApiProvider = {
+  provide: MeDonorStatusApi,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xRoadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof HealthDirectorateOrganDonationClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) => {
+    return new MeDonorStatusApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-health-directorate-organ-donation',
+          organizationSlug: 'landlaeknir',
+          logErrorResponseBody: true,
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: config.scope,
+              }
+            : undefined,
+        }),
+        basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+        headers: {
+          'X-Road-Client': xRoadConfig.xRoadClient,
+          Accept: 'application/json',
+        },
+      }),
+    )
   },
-})
+  inject: [
+    XRoadConfig.KEY,
+    HealthDirectorateOrganDonationClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
+}
 
-export const exportedApis = [MeDonorStatusApi, DonationExceptionsApi].map(
-  (Api) => ({
-    provide: Api,
-    scope: LazyDuringDevScope,
-    useFactory: (
-      xRoadConfig: ConfigType<typeof XRoadConfig>,
-      config: ConfigType<typeof OrganDonationClientConfig>,
-      idsClientConfig: ConfigType<typeof IdsClientConfig>,
-    ) => {
-      return new Api(
-        new Configuration(configFactory(xRoadConfig, config, idsClientConfig)),
-      )
-    },
-    inject: [
-      XRoadConfig.KEY,
-      OrganDonationClientConfig.KEY,
-      IdsClientConfig.KEY,
-    ],
-  }),
-)
+export const OrganExceptionsApiProvider = {
+  provide: DonationExceptionsApi,
+  scope: LazyDuringDevScope,
+  useFactory: (
+    xRoadConfig: ConfigType<typeof XRoadConfig>,
+    config: ConfigType<typeof HealthDirectorateOrganDonationClientConfig>,
+    idsClientConfig: ConfigType<typeof IdsClientConfig>,
+  ) => {
+    return new DonationExceptionsApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-health-directorate-organ-donation-exceptions',
+          organizationSlug: 'landlaeknir',
+          logErrorResponseBody: true,
+          autoAuth: idsClientConfig.isConfigured
+            ? {
+                mode: 'tokenExchange',
+                issuer: idsClientConfig.issuer,
+                clientId: idsClientConfig.clientId,
+                clientSecret: idsClientConfig.clientSecret,
+                scope: config.scope,
+              }
+            : undefined,
+        }),
+        basePath: `${xRoadConfig.xRoadBasePath}/r1/${config.xroadPath}`,
+        headers: {
+          'X-Road-Client': xRoadConfig.xRoadClient,
+          Accept: 'application/json',
+        },
+      }),
+    )
+  },
+  inject: [
+    XRoadConfig.KEY,
+    HealthDirectorateOrganDonationClientConfig.KEY,
+    IdsClientConfig.KEY,
+  ],
+}

@@ -2,8 +2,8 @@ export { HealthDirectorateClientModule } from './lib/healthDirectorateClient.mod
 export * from './lib/healthDirectorateClient.types'
 export * from './lib/clients/occupational-license/gen/fetch/models'
 export {
-  VaccinationsClientConfig,
-  OrganDonationClientConfig,
+  HealthDirectorateVaccinationsClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateClientConfig,
   HealthDirectorateClientService,
   HealthDirectorateOrganDonationService,

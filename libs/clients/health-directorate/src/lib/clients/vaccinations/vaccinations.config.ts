@@ -1,8 +1,23 @@
-import { ClientConfigFactory } from '../../configFactory'
+import { defineConfig } from '@island.is/nest/config'
+import * as z from 'zod'
 
-export const VaccinationsClientConfig = ClientConfigFactory(
-  'VACCINATIONS',
-  [], // TODO: Add correct scope
-  'HEALTH_DIRECTORATE',
-  'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
-)
+const schema = z.object({
+  xroadPath: z.string(),
+  scope: z.array(z.string()),
+})
+
+export const HealthDirectorateVaccinationsClientConfig = defineConfig<
+  z.infer<typeof schema>
+>({
+  name: 'HealthDirectorateVaccinationsClientConfig',
+  schema,
+  load(env) {
+    return {
+      xroadPath: env.required(
+        'XROAD_HEALTH_DIRECTORATE_PATH',
+        'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
+      ),
+      scope: [],
+    }
+  },
+})

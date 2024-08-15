@@ -2,5 +2,5 @@ export * from './occupational-license'
 export * from './vaccinations'
 export {
   HealthDirectorateOrganDonationService,
-  OrganDonationClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
 } from './organ-donation'
