@@ -22,7 +22,7 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  CaseMessage,
+  Message,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -557,7 +557,7 @@ export class CaseService {
   private getDeliverDefendantToCourtMessages(
     theCase: Case,
     user: TUser,
-  ): CaseMessage[] {
+  ): Message[] {
     const messages =
       theCase.defendants?.map((defendant) => ({
         type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
@@ -572,7 +572,7 @@ export class CaseService {
   private getDeliverProsecutorToCourtMessages(
     theCase: Case,
     user: TUser,
-  ): CaseMessage[] {
+  ): Message[] {
     const messages = [
       {
         type: MessageType.DELIVERY_TO_COURT_PROSECUTOR,
@@ -587,7 +587,7 @@ export class CaseService {
   private getDeliverAssignedRolesToCourtOfAppealsMessages(
     user: TUser,
     theCase: Case,
-  ): CaseMessage[] {
+  ): Message[] {
     return [
       {
         type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_ASSIGNED_ROLES,
@@ -615,7 +615,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: CaseMessage[] = [
+    const messages: Message[] = [
       {
         type: MessageType.NOTIFICATION,
         user,
@@ -670,7 +670,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const message: CaseMessage = {
+    const message: Message = {
       type: MessageType.DELIVERY_TO_COURT_REQUEST,
       user,
       caseId: theCase.id,
@@ -687,13 +687,14 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const deliverCaseFilesRecordToCourtMessages =
-      theCase.policeCaseNumbers.map<CaseMessage>((policeCaseNumber) => ({
+    const deliverCaseFilesRecordToCourtMessages = theCase.policeCaseNumbers.map(
+      (policeCaseNumber) => ({
         type: MessageType.DELIVERY_TO_COURT_CASE_FILES_RECORD,
         user,
         caseId: theCase.id,
         elementId: policeCaseNumber,
-      }))
+      }),
+    )
 
     const caseFilesCategories = isTrafficViolationCase(theCase)
       ? [CaseFileCategory.CRIMINAL_RECORD, CaseFileCategory.COST_BREAKDOWN]
@@ -844,7 +845,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: CaseMessage[] = [
+    const messages: Message[] = [
       {
         type: MessageType.NOTIFICATION,
         user,
@@ -868,7 +869,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: CaseMessage[] = [
+    const messages: Message[] = [
       {
         type: MessageType.NOTIFICATION,
         user,
@@ -888,10 +889,7 @@ export class CaseService {
     return this.messageService.sendMessagesToQueue(messages)
   }
 
-  private getRevokeNotificationMessages(
-    user: TUser,
-    theCase: Case,
-  ): CaseMessage[] {
+  private getRevokeNotificationMessages(user: TUser, theCase: Case): Message[] {
     return [
       {
         type: MessageType.NOTIFICATION,
@@ -941,7 +939,7 @@ export class CaseService {
       return
     }
 
-    const messages: CaseMessage[] =
+    const messages: Message[] =
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
@@ -987,7 +985,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: CaseMessage[] =
+    const messages: Message[] =
       theCase.caseFiles
         ?.filter(
           (caseFile) =>
@@ -1090,7 +1088,7 @@ export class CaseService {
     theCase: Case,
     user: TUser,
   ): Promise<void> {
-    const messages: CaseMessage[] =
+    const messages: Message[] =
       theCase.caseFiles
         ?.filter(
           (caseFile) =>

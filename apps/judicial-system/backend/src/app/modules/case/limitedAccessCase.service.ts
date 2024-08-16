@@ -14,11 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import {
-  CaseMessage,
-  MessageService,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -276,7 +272,7 @@ export class LimitedAccessCaseService {
       )
     }
 
-    const messages: CaseMessage[] = []
+    const messages = []
 
     if (update.appealState === CaseAppealState.APPEALED) {
       theCase.caseFiles
