@@ -3,6 +3,7 @@ import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { ApolloError } from "@apollo/client";
 import { ApplicationsApi } from '@island.is/clients/form-system'
+import { CreateApplicationInput } from "../../dto/application.input";
 
 @Injectable()
 export class ApplicationsService {
@@ -26,4 +27,6 @@ export class ApplicationsService {
   private applicationsApiWithAuth(auth: User) {
     return this.applicationsApi.withMiddleware(new AuthMiddleware(auth))
   }
+
+  async createApplication(auth: User, input: CreateApplicationInput)
 }
