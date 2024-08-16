@@ -370,23 +370,33 @@ const TemporaryEventLicencesList: FC<
                           )}
                       </Text>
 
-                      {temporaryEventLicence.estimatedNumberOfGuests && (
-                        <Text>
-                          {n(
-                            'licenseEstimatedNumberOfGuests',
-                            'Áætlaður fjöldi gesta',
-                          )}
-                          : {temporaryEventLicence.estimatedNumberOfGuests}
-                        </Text>
-                      )}
+                      {typeof temporaryEventLicence.estimatedNumberOfGuests ===
+                        'number' &&
+                        temporaryEventLicence.estimatedNumberOfGuests > 0 && (
+                          <Text>
+                            {n(
+                              'licenseEstimatedNumberOfGuests',
+                              'Áætlaður fjöldi gesta',
+                            )}
+                            : {temporaryEventLicence.estimatedNumberOfGuests}
+                          </Text>
+                        )}
 
-                      {temporaryEventLicence.maximumNumberOfGuests && (
+                      {typeof temporaryEventLicence.maximumNumberOfGuests ===
+                        'number' &&
+                        temporaryEventLicence.maximumNumberOfGuests > 0 && (
+                          <Text>
+                            {n(
+                              'licenseMaximumNumberOfGuests',
+                              'Hámarksfjöldi gesta',
+                            )}
+                            : {temporaryEventLicence.maximumNumberOfGuests}
+                          </Text>
+                        )}
+                      {temporaryEventLicence.location && (
                         <Text>
-                          {n(
-                            'licenseMaximumNumberOfGuests',
-                            'Hámarksfjöldi gesta',
-                          )}
-                          : {temporaryEventLicence.maximumNumberOfGuests}
+                          {n('licenceLocationPrefix', 'Staðsetning')}:{' '}
+                          {temporaryEventLicence.location}
                         </Text>
                       )}
                     </Box>
