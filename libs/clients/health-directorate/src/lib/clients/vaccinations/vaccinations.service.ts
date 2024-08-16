@@ -3,7 +3,6 @@ import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   DiseaseVaccinationDto,
-  MeVaccinationControllerGetVaccinationForDiseaseRequest,
   MeVaccinationControllerGetVaccinationsForDiseasesRequest,
   MeVaccinationsApi,
   VaccinationDto,
