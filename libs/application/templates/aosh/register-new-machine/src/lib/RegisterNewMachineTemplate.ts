@@ -187,19 +187,6 @@ const template: ApplicationTemplate<
       },
     },
   },
-  stateMachineOptions: {
-    actions: {
-      assignUsers: assign((context) => {
-        const { application } = context
-
-        const buyerNationalId = getBuyerNationalId(application)
-        if (buyerNationalId !== null && buyerNationalId !== '') {
-          set(application, 'assignees', [buyerNationalId])
-        }
-        return context
-      }),
-    },
-  },
   mapUserToRole(
     id: string,
     application: Application,
@@ -213,16 +200,3 @@ const template: ApplicationTemplate<
 }
 
 export default template
-
-const getBuyerNationalId = (application: Application) => {
-  try {
-    const buyerNationalId = getValueViaPath(
-      application.answers,
-      'buyer.nationalId',
-      '',
-    ) as string
-    return buyerNationalId
-  } catch (error) {
-    return ''
-  }
-}

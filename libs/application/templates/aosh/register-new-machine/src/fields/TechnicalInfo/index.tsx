@@ -124,13 +124,13 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
         {techInfoItems?.map((item) => {
           return (
             <GridColumn key={item.variableName} span={['1/1', '1/2']}>
-              {formFieldMapper(
+              {formFieldMapper({
                 item,
                 props,
                 displayError,
                 watchTechInfoFields,
                 formatMessage,
-              )}
+              })}
             </GridColumn>
           )
         })}

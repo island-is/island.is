@@ -3,25 +3,23 @@ import {
   SelectFormField,
   TextFormField,
 } from '@island.is/application/ui-fields'
-import { TechInfoItem } from '../../shared/types'
+import { FormFieldMapperType } from '../../shared/types'
 import {
-  FieldBaseProps,
   FieldComponents,
   FieldTypes,
-  FormatMessage,
   NO,
   YES,
 } from '@island.is/application/types'
 import { information } from '../../lib/messages'
 import { coreErrorMessages } from '@island.is/application/core'
 
-export const formFieldMapper = (
-  item: TechInfoItem,
-  props: FieldBaseProps,
-  displayError: boolean,
-  watchTechInfoFields: any,
-  formatMessage: FormatMessage,
-) => {
+export const formFieldMapper = ({
+  item,
+  props,
+  displayError,
+  watchTechInfoFields,
+  formatMessage,
+}: FormFieldMapperType) => {
   const { variableName, label, type, required, maxLength, values } = item
   const { application, field } = props
   const error =

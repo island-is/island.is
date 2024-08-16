@@ -1,3 +1,5 @@
+import { FieldBaseProps, FormatMessage } from '@island.is/application/types'
+
 export type TechInfoItem = {
   variableName?: string
   label?: string
@@ -5,6 +7,14 @@ export type TechInfoItem = {
   required?: boolean
   maxLength?: string
   values?: string[]
+}
+
+export type FormFieldMapperType = {
+  item: TechInfoItem
+  props: FieldBaseProps
+  displayError: boolean
+  watchTechInfoFields: any
+  formatMessage: FormatMessage
 }
 
 export enum Status {
