@@ -33,19 +33,19 @@ export const VaccinationsTable = ({ data }: Props) => {
 
   const headerDataDetail: Array<DetailHeader> = [
     {
-      value: 'Nr.',
+      value: formatMessage(messages.vaccinesTableHeaderNr),
     },
     {
-      value: 'Dags.',
+      value: formatMessage(messages.vaccinesTableHeaderDate),
     },
     {
-      value: 'Aldur',
+      value: formatMessage(messages.vaccinesTableHeaderAge),
     },
     {
-      value: 'Bóluefni',
+      value: formatMessage(messages.vaccinesTableHeaderVaccine),
     },
     {
-      value: 'Staður',
+      value: formatMessage(messages.vaccinesTableHeaderLocation),
     },
   ]
 

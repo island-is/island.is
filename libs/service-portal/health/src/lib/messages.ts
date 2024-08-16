@@ -1007,4 +1007,24 @@ export const messages = defineMessages({
     id: 'sp.health:months',
     defaultMessage: 'mán.',
   },
+  vaccinesTableHeaderNr: {
+    id: 'sp.health:vaccines-table-header-nr',
+    defaultMessage: 'Nr.',
+  },
+  vaccinesTableHeaderDate: {
+    id: 'sp.health:vaccines-table-header-date',
+    defaultMessage: 'Dags.',
+  },
+  vaccinesTableHeaderAge: {
+    id: 'sp.health:vaccines-table-header-age',
+    defaultMessage: 'Aldur',
+  },
+  vaccinesTableHeaderVaccine: {
+    id: 'sp.health:vaccines-table-header-vaccine',
+    defaultMessage: 'Bóluefni',
+  },
+  vaccinesTableHeaderLocation: {
+    id: 'sp.health:vaccines-table-header-location',
+    defaultMessage: 'Staður',
+  },
 })

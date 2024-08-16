@@ -29,7 +29,7 @@ type SortableTableProps = {
   title?: string
   tagOutlined?: boolean
   expandable?: boolean // Uses "children" key for expandable rows
-  sortByKey?: string // Starting sort key, use one of keys in SortableData
+  defaultSortByKey?: string // Starting sort key, use one of keys in SortableData
 }
 
 const useSortableData = <T,>(
@@ -72,7 +72,7 @@ const useSortableData = <T,>(
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
-    { direction: 'ascending', key: props.sortByKey ?? 'name' },
+    { direction: 'ascending', key: props.defaultSortByKey ?? 'name' },
   )
   const [headerSorted, setHeaderSorted] = useState<string[]>([])
 
@@ -159,47 +159,45 @@ export const SortableTable = (props: SortableTableProps) => {
           {items.map((item) => {
             const { id, name, tag, children, ...itemObject } = item
             const valueItems = Object.values(itemObject)
-            // eslint-disable-next-line no-lone-blocks
-            {
-              return props.expandable ? (
-                <ExpandRow
-                  key={id}
-                  data={valueItems.map((valueItem, i) => ({
-                    value:
-                      valueItems.length - 1 === i && tag ? (
+
+            return props.expandable ? (
+              <ExpandRow
+                key={id}
+                data={valueItems.map((valueItem, i) => ({
+                  value:
+                    valueItems.length - 1 === i && tag ? (
+                      <Tag variant={tag} outlined={props.tagOutlined}>
+                        {valueItem}
+                      </Tag>
+                    ) : (
+                      valueItem
+                    ),
+                  align: valueItems.slice(-2).includes(valueItem)
+                    ? 'right'
+                    : 'left',
+                }))}
+              >
+                {children}
+              </ExpandRow>
+            ) : (
+              <T.Row key={id}>
+                <T.Data>{name}</T.Data>
+                {valueItems.map((valueItem, i) => {
+                  const lastItem = valueItems.length - 1 === i
+                  return (
+                    <T.Data key={`body-${id}-${i}`}>
+                      {lastItem && tag ? (
                         <Tag variant={tag} outlined={props.tagOutlined}>
                           {valueItem}
                         </Tag>
                       ) : (
                         valueItem
-                      ),
-                    align: valueItems.slice(-2).includes(valueItem)
-                      ? 'right'
-                      : 'left',
-                  }))}
-                >
-                  {children}
-                </ExpandRow>
-              ) : (
-                <T.Row key={id}>
-                  <T.Data>{name}</T.Data>
-                  {valueItems.map((valueItem, i) => {
-                    const lastItem = valueItems.length - 1 === i
-                    return (
-                      <T.Data key={`body-${id}-${i}`}>
-                        {lastItem && tag ? (
-                          <Tag variant={tag} outlined={props.tagOutlined}>
-                            {valueItem}
-                          </Tag>
-                        ) : (
-                          valueItem
-                        )}
-                      </T.Data>
-                    )
-                  })}
-                </T.Row>
-              )
-            }
+                      )}
+                    </T.Data>
+                  )
+                })}
+              </T.Row>
+            )
           })}
           {props.footer ? (
             <T.Row>

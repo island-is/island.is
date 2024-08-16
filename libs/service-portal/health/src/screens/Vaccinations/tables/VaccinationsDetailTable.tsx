@@ -1,6 +1,6 @@
 import { Box, Table as T, Text } from '@island.is/island-ui/core'
-import { LinkButton } from '@island.is/service-portal/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { EmptyTable, LinkButton } from '@island.is/service-portal/core'
+import { useNamespaces } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import { messages as m } from '../../../lib/messages'
 import { DetailTable } from '../../../utils/types'
@@ -13,7 +13,6 @@ export const VaccinationsDetailTable = ({
   rowData,
 }: DetailTable) => {
   useNamespaces('sp.health')
-  const { formatMessage } = useLocale()
   return (
     <Box padding={3} background="blue100">
       <T.Table
@@ -50,13 +49,7 @@ export const VaccinationsDetailTable = ({
           </T.Body>
         )}
       </T.Table>
-      {rowData === undefined && (
-        <Box background="white" className={styles.noVaccinesText}>
-          <Text variant="default" color="dark400">
-            {formatMessage(m.noVaccinesRegistered)}
-          </Text>
-        </Box>
-      )}
+      {rowData === undefined && <EmptyTable message={m.noVaccinesRegistered} />}
       <Box marginTop={2} paddingLeft={2}>
         <ul color="black">
           {footerText.map((item, i) => (

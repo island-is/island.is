@@ -40,7 +40,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
       }}
       tagOutlined
       expandable
-      sortByKey="vaccine"
+      defaultSortByKey="vaccine"
       items={
         data?.map((item, i) => ({
           id: item?.diseaseId ?? `${i}`,
