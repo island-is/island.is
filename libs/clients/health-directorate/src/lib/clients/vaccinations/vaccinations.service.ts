@@ -1,16 +1,22 @@
 import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   DiseaseVaccinationDto,
   MeVaccinationControllerGetVaccinationsForDiseasesRequest,
   MeVaccinationsApi,
   VaccinationDto,
 } from './gen/fetch'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
+const LOG_CATEGORY = 'health-directorate-vaccinations-api'
 @Injectable()
 export class HealthDirectorateVaccinationsService {
-  constructor(private readonly vaccinationsApi: MeVaccinationsApi) {}
+  constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly vaccinationsApi: MeVaccinationsApi,
+  ) {}
 
   private vaccinationsApiWithAuth(auth: Auth) {
     return this.vaccinationsApi.withMiddleware(new AuthMiddleware(auth))
@@ -24,6 +30,9 @@ export class HealthDirectorateVaccinationsService {
       .catch(handle404)
 
     if (!vaccines) {
+      this.logger.warn('No vaccines returned', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -39,6 +48,9 @@ export class HealthDirectorateVaccinationsService {
       .catch(handle404)
 
     if (!disease) {
+      this.logger.warn('No vaccines diseases returned', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 

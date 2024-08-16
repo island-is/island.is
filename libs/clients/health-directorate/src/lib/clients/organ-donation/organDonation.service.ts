@@ -1,6 +1,6 @@
 import { AuthMiddleware, Auth } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import {
   DonationExceptionsApi,
   Locale,
@@ -8,10 +8,14 @@ import {
   OrganDonorDto,
   OrganDto,
 } from './gen/fetch'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+import type { Logger } from '@island.is/logging'
 
+const LOG_CATEGORY = 'health-directorate-organ-donation-api'
 @Injectable()
 export class HealthDirectorateOrganDonationService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     private readonly organDonationApi: MeDonorStatusApi,
     private readonly donationExceptionsApi: DonationExceptionsApi,
   ) {}
@@ -26,6 +30,9 @@ export class HealthDirectorateOrganDonationService {
       .catch(handle404)
 
     if (!organDonation) {
+      this.logger.warn('No organ donations data returned', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
@@ -40,7 +47,11 @@ export class HealthDirectorateOrganDonationService {
       .meDonorStatusControllerUpdateOrganDonorStatus({
         updateOrganDonorDto: input,
       })
-      .catch(handle404)
+      .catch((error) => {
+        throw new Error(
+          `health-directorate-organ-donation-client: upload organ donation status failed ${error.type}`,
+        )
+      })
   }
 
   public async getDonationExceptions(
@@ -53,6 +64,9 @@ export class HealthDirectorateOrganDonationService {
       .catch(handle404)
 
     if (!donationExceptions) {
+      this.logger.warn('No organ donations exceptions returned', {
+        category: LOG_CATEGORY,
+      })
       return null
     }
 
