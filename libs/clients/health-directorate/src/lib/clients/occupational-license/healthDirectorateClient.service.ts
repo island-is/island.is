@@ -7,7 +7,7 @@ import {
   UmsoknStarfsleyfiApi,
   UtbuaStarfsleyfiSkjalResponse,
   VottordApi,
-} from '../../gen/fetch'
+} from './gen/fetch'
 import {
   HealthcareLicense,
   HealthcareLicenseCertificate,
@@ -15,7 +15,7 @@ import {
   HealthcareWorkPermitRequest,
   HealthDirectorateLicenseStatus,
   HealthDirectorateLicenseToPractice,
-} from './healthDirectorateClient.types'
+} from '../../healthDirectorateClient.types'
 import { isDefined } from '@island.is/shared/utils'
 import format from 'date-fns/format'
 import { handle404 } from '@island.is/clients/middlewares'
