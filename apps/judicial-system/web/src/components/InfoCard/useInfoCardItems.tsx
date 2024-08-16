@@ -44,7 +44,14 @@ const useInfoCardItems = () => {
     ),
     values: workingCase.defendants
       ? workingCase.defendants.map((defendant) => (
-          <DefendantInfo defendant={defendant} />
+          <DefendantInfo
+            defendant={defendant}
+            defender={{
+              name: workingCase.defenderName,
+              email: workingCase.defenderEmail,
+              phoneNumber: workingCase.defenderPhoneNumber,
+            }}
+          />
         ))
       : [],
   })
