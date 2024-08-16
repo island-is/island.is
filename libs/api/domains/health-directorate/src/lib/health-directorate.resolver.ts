@@ -10,6 +10,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
 import {
   DonationException,
   DonorStatus,
@@ -21,17 +22,20 @@ import { HealthDirectorateService } from './health-directorate.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
+@Audit({ namespace: '@island.is/api/health-directorate' })
 @Resolver()
 export class HealthDirectorateResolver {
   constructor(private api: HealthDirectorateService) {}
 
   /* Organ Donation */
   @Query(() => DonorStatus)
+  @Audit()
   getDonorStatus(@CurrentUser() user: User): Promise<DonorStatus> {
     return this.api.getDonorStatus(user)
   }
 
   @Query(() => DonationException)
+  @Audit()
   getDonationExceptions(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
@@ -41,6 +45,7 @@ export class HealthDirectorateResolver {
   }
 
   @Mutation()
+  @Audit()
   async updateDonorStatus(
     @Args('input') input: DonorStatusInput,
     @CurrentUser() user: User,
@@ -50,6 +55,7 @@ export class HealthDirectorateResolver {
 
   /* Vaccinations */
   @Query(() => [Vaccinations])
+  @Audit()
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
     locale: Locale = 'is',
