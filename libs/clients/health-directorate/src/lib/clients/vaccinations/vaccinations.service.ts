@@ -19,10 +19,9 @@ export class HealthDirectorateVaccinationsService {
 
   public async getVaccinations(
     auth: Auth,
-    input: MeVaccinationControllerGetVaccinationsForDiseasesRequest,
-  ): Promise<Array<DiseaseVaccinationDto> | null> {
+  ): Promise<Array<VaccinationDto> | null> {
     const vaccines = await this.vaccinationsApiWithAuth(auth)
-      .meVaccinationControllerGetVaccinationsForDiseases(input)
+      .meVaccinationControllerGetVaccinations()
       .catch(handle404)
 
     if (!vaccines) {
@@ -34,10 +33,10 @@ export class HealthDirectorateVaccinationsService {
 
   public async getVaccinationDiseaseDetail(
     auth: Auth,
-    input: MeVaccinationControllerGetVaccinationForDiseaseRequest,
-  ): Promise<DiseaseVaccinationDto | null> {
+    input: MeVaccinationControllerGetVaccinationsForDiseasesRequest,
+  ): Promise<Array<DiseaseVaccinationDto> | null> {
     const disease = await this.vaccinationsApiWithAuth(auth)
-      .meVaccinationControllerGetVaccinationForDisease(input)
+      .meVaccinationControllerGetVaccinationsForDiseases(input)
       .catch(handle404)
 
     if (!disease) {
