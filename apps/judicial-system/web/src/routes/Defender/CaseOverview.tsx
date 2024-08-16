@@ -5,10 +5,6 @@ import { useRouter } from 'next/router'
 import { AlertMessage, Box, Button, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
-  capitalize,
-  formatCaseType,
-} from '@island.is/judicial-system/formatters'
-import {
   isCompletedCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -24,7 +20,6 @@ import {
   conclusion,
   FormContentContainer,
   FormContext,
-  InfoCard,
   InfoCardCaseScheduled,
   MarkdownWrapper,
   Modal,
@@ -39,9 +34,9 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
-import RenderPersonalData from '../../components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
+import InfoCardNew from '../../components/InfoCard/InfoCardNew'
+import useInfoCardItems from '../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
 
@@ -61,6 +56,20 @@ export const CaseOverview = () => {
       () => setModalVisible('ConfirmAppealAfterDeadline'),
       () => setModalVisible('ConfirmStatementAfterDeadline'),
     )
+  const {
+    defendants,
+    policeCaseNumbers,
+    courtCaseNumber,
+    prosecutorsOffice,
+    court,
+    prosecutor,
+    judge,
+    caseType,
+    registrar,
+    appealCaseNumber,
+    appealAssistant,
+    appealJudges,
+  } = useInfoCardItems()
   const router = useRouter()
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
@@ -141,127 +150,46 @@ export const CaseOverview = () => {
               </Box>
             )}
           <Box marginBottom={6}>
-            <InfoCard
-              data={[
+            <InfoCardNew
+              sections={[
                 {
-                  title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers?.map((n) => (
-                    <Text key={n}>{n}</Text>
-                  )),
+                  id: 'defendants-section',
+                  items: [defendants(workingCase.type)],
                 },
                 {
-                  title: formatMessage(core.courtCaseNumber),
-                  value:
-                    workingCase.courtCaseNumber ??
-                    formatMessage(strings.noCourtNumber),
+                  id: 'case-info-section',
+                  items: [
+                    policeCaseNumbers,
+                    courtCaseNumber,
+                    prosecutorsOffice,
+                    court,
+                    prosecutor(workingCase.type),
+                    ...(workingCase.judge ? [judge] : []),
+                    ...(isInvestigationCase(workingCase.type)
+                      ? [caseType]
+                      : []),
+                    ...(workingCase.registrar ? [registrar] : []),
+                  ],
+                  columns: 2,
                 },
-                {
-                  title: formatMessage(core.prosecutor),
-                  value: `${workingCase.prosecutorsOffice?.name}`,
-                },
-                {
-                  title: formatMessage(core.court),
-                  value: workingCase.court?.name,
-                },
-                {
-                  title: formatMessage(core.prosecutorPerson),
-                  value: RenderPersonalData(
-                    workingCase.prosecutor?.name,
-                    workingCase.prosecutor?.email,
-                  ),
-                },
-                ...(workingCase.judge
+                ...(workingCase.appealCaseNumber
                   ? [
                       {
-                        title: formatMessage(core.judge),
-                        value: RenderPersonalData(
-                          workingCase.judge?.name,
-                          workingCase.judge?.email,
-                        ),
-                      },
-                    ]
-                  : []),
-                // Conditionally add this field based on case type
-                ...(isInvestigationCase(workingCase.type)
-                  ? [
-                      {
-                        title: formatMessage(core.caseType),
-                        value: capitalize(formatCaseType(workingCase.type)),
-                      },
-                    ]
-                  : []),
-                ...(workingCase.registrar
-                  ? [
-                      {
-                        title: formatMessage(core.registrar),
-                        value: RenderPersonalData(
-                          workingCase.registrar?.name,
-                          workingCase.registrar?.email,
-                        ),
+                        id: 'court-of-appeal-section',
+                        items: [
+                          appealCaseNumber,
+                          ...(appealAssistant ? [appealAssistant] : []),
+                          ...(workingCase.appealJudge1 &&
+                          workingCase.appealJudge2 &&
+                          workingCase.appealJudge3
+                            ? [appealJudges]
+                            : []),
+                        ],
+                        columns: 2,
                       },
                     ]
                   : []),
               ]}
-              defendants={
-                workingCase.defendants
-                  ? {
-                      title: capitalize(
-                        formatMessage(core.defendant, {
-                          suffix:
-                            workingCase.defendants.length > 1 ? 'ar' : 'i',
-                        }),
-                      ),
-                      items: workingCase.defendants,
-                    }
-                  : undefined
-              }
-              defender={{
-                name: workingCase.defenderName ?? '',
-                defenderNationalId: workingCase.defenderNationalId,
-                sessionArrangement: workingCase.sessionArrangements,
-                email: workingCase.defenderEmail,
-                phoneNumber: workingCase.defenderPhoneNumber,
-              }}
-              courtOfAppealData={
-                workingCase.appealCaseNumber
-                  ? [
-                      {
-                        title: formatMessage(core.appealCaseNumberHeading),
-                        value: workingCase.appealCaseNumber,
-                      },
-                      ...(workingCase.appealAssistant
-                        ? [
-                            {
-                              title: formatMessage(core.appealAssistantHeading),
-                              value: workingCase.appealAssistant.name,
-                            },
-                          ]
-                        : []),
-                      ...(workingCase.appealJudge1 &&
-                      workingCase.appealJudge2 &&
-                      workingCase.appealJudge3
-                        ? [
-                            {
-                              title: formatMessage(core.appealJudgesHeading),
-                              value: (
-                                <>
-                                  {sortByIcelandicAlphabet([
-                                    workingCase.appealJudge1.name || '',
-                                    workingCase.appealJudge2.name || '',
-                                    workingCase.appealJudge3.name || '',
-                                  ]).map((judge, index) => (
-                                    <Text key={`${judge}_${index}`}>
-                                      {judge}
-                                    </Text>
-                                  ))}
-                                </>
-                              ),
-                            },
-                          ]
-                        : []),
-                    ]
-                  : undefined
-              }
             />
           </Box>
           {isCompletedCase(workingCase.state) && (
@@ -282,7 +210,6 @@ export const CaseOverview = () => {
             </Box>
           )}
           <AppealCaseFilesOverview />
-
           {(workingCase.requestSharedWithDefender ===
             RequestSharedWithDefender.READY_FOR_COURT ||
             workingCase.requestSharedWithDefender ===

@@ -564,6 +564,7 @@ export const SignedVerdictOverview: FC = () => {
                             ? [appealJudges]
                             : []),
                         ],
+                        columns: 2,
                       },
                     ]
                   : []),
