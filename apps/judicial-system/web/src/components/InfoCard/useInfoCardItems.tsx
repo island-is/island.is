@@ -2,14 +2,16 @@ import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Text } from '@island.is/island-ui/core'
+import * as constants from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatCaseType,
   formatDate,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { EventType, isRestrictionCase } from '@island.is/judicial-system/types'
+import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import { requestCourtDate } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   CaseType,
@@ -168,6 +170,19 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const requestedCourtDate: Item = {
+    id: 'requested-court-date-item',
+    title: formatMessage(requestCourtDate.heading),
+    values: [
+      `${capitalize(
+        formatDate(workingCase.requestedCourtDate, 'PPPP', true) ?? '',
+      )} eftir kl. ${formatDate(
+        workingCase.requestedCourtDate,
+        constants.TIME_FORMAT,
+      )}`,
+    ],
+  }
+
   const mergeCase: Item = {
     id: 'merge-case-item',
     title: formatMessage(strings.indictmentMergedTitle),
@@ -271,6 +286,7 @@ const useInfoCardItems = () => {
     caseType,
     registrar,
     offence,
+    requestedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,
     mergedCaseCourtCaseNumber,

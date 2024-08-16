@@ -11,15 +11,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  formatCaseType,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   icCourtOverview,
-  requestCourtDate,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
@@ -32,14 +27,14 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
   InfoCardCaseScheduled,
   PageHeader,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
+import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardNew'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   UploadState,
@@ -56,6 +51,14 @@ const Overview = () => {
   const { user } = useContext(UserContext)
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
+  const {
+    defendants,
+    policeCaseNumbers,
+    prosecutorsOffice,
+    requestedCourtDate,
+    prosecutor,
+    caseType,
+  } = useInfoCardItems()
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -116,59 +119,24 @@ const Overview = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCard
-            data={[
+          <InfoCardNew
+            sections={[
               {
-                title: formatMessage(core.policeCaseNumber),
-                value: workingCase.policeCaseNumbers?.map((n) => (
-                  <Text key={n}>{n}</Text>
-                )),
+                id: 'defendants-section',
+                items: [defendants(workingCase.type)],
               },
               {
-                title: formatMessage(core.prosecutor),
-                value: `${workingCase.prosecutorsOffice?.name}`,
-              },
-              {
-                title: formatMessage(requestCourtDate.heading),
-                value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
-                    '',
-                )} eftir kl. ${formatDate(
-                  workingCase.requestedCourtDate,
-                  constants.TIME_FORMAT,
-                )}`,
-              },
-              {
-                title: formatMessage(core.prosecutorPerson),
-                value: RenderPersonalData(
-                  workingCase.prosecutor?.name,
-                  workingCase.prosecutor?.email,
-                ),
-              },
-              {
-                title: formatMessage(core.caseType),
-                value: capitalize(formatCaseType(workingCase.type)),
+                id: 'case-info-section',
+                items: [
+                  policeCaseNumbers,
+                  prosecutorsOffice,
+                  requestedCourtDate,
+                  prosecutor(workingCase.type),
+                  caseType,
+                ],
+                columns: 2,
               },
             ]}
-            defendants={
-              workingCase.defendants
-                ? {
-                    title: capitalize(
-                      formatMessage(core.defendant, {
-                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-                      }),
-                    ),
-                    items: workingCase.defendants,
-                  }
-                : undefined
-            }
-            defender={{
-              name: workingCase.defenderName,
-              defenderNationalId: workingCase.defenderNationalId,
-              sessionArrangement: workingCase.sessionArrangements,
-              email: workingCase.defenderEmail,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
           />
         </Box>
         <>
