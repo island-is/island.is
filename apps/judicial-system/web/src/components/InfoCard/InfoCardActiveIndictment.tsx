@@ -27,7 +27,7 @@ const InfoCardActiveIndictment = () => {
           ? [
               {
                 id: 'defendant-section',
-                items: [defendants],
+                items: [defendants(workingCase.type)],
               },
             ]
           : []),
@@ -35,7 +35,7 @@ const InfoCardActiveIndictment = () => {
           id: 'case-info-section',
           items: [
             indictmentCreated,
-            prosecutor,
+            prosecutor(workingCase.type),
             policeCaseNumbers,
             court,
             offences,
