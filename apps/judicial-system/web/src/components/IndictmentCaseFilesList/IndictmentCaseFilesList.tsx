@@ -82,8 +82,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
     (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
   )
   const others = cf?.filter(
-    (file) =>
-      file.category === CaseFileCategory.CASE_FILE && !file.policeCaseNumber,
+    (file) => file.category === CaseFileCategory.CASE_FILE,
   )
   const rulings = cf?.filter(
     (file) => file.category === CaseFileCategory.RULING,
