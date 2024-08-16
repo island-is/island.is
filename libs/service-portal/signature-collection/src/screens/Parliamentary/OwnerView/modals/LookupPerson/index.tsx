@@ -89,7 +89,11 @@ const LookupPerson = ({
             onChange={(e) => {
               setNationalIdInput(e.target.value.replace(/\W/g, ''))
             }}
-            error={nationalIdNotFound ? formatMessage(m.nationalIdInvalid) : undefined}
+            error={
+              nationalIdNotFound
+                ? formatMessage(m.nationalIdInvalid)
+                : undefined
+            }
             loading={loading}
           />
           <Input

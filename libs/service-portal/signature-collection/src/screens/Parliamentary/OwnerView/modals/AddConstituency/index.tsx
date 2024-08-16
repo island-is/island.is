@@ -41,10 +41,7 @@ const AddConstituencyModal = () => {
         </Text>
         {constituencies.map((constituency) => (
           <Box key={constituency} marginBottom={3}>
-            <Checkbox
-              label={constituency}
-              value={constituency}
-            />
+            <Checkbox label={constituency} value={constituency} />
           </Box>
         ))}
         <Box marginTop={5}>
