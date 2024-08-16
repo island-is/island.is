@@ -19,6 +19,6 @@ import { AwsModule } from '@island.is/nest/aws'
   ],
   controllers: [EndorsementListController],
   providers: [EndorsementListService],
-  exports: [EndorsementListService,],
+  exports: [EndorsementListService],
 })
 export class EndorsementListModule {}

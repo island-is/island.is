@@ -48,15 +48,14 @@ import { EndorsementListInterceptor } from './interceptors/endorsementList.inter
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
-import { Response } from 'express';
+import { Response } from 'express'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
   PaginationDto,
 ) {}
 
-
-const BIG_TEST_LIST = "0d22628d-e8d9-4ba9-aeac-683ba7817d49"
+const BIG_TEST_LIST = '0d22628d-e8d9-4ba9-aeac-683ba7817d49'
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
@@ -386,6 +385,6 @@ export class EndorsementListController {
     @Param('listId') listId: string,
     @CurrentUser() user: User,
   ) {
-    await this.endorsementListService.generateCSV(listId, user);
+    await this.endorsementListService.generateCSV(listId, user)
   }
 }

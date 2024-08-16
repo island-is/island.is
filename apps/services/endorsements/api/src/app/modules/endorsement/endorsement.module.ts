@@ -14,7 +14,7 @@ import { AwsModule } from '@island.is/nest/aws'
     NationalRegistryV3ClientModule,
     SequelizeModule.forFeature([Endorsement, EndorsementList]),
     EmailModule,
-    AwsModule
+    AwsModule,
   ],
   controllers: [EndorsementController],
   providers: [EndorsementService, EndorsementListService],

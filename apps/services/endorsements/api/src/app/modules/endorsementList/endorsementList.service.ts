@@ -25,10 +25,7 @@ import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
-import csvStringify from 'csv-stringify/lib/sync';
-
-
-
+import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 
@@ -674,82 +671,88 @@ export class EndorsementListService {
       return { success: false }
     }
   }
-   ///////////////////////////////////////////////
+  ///////////////////////////////////////////////
   // async generatePDF(listId: string, user: User): Promise<Buffer> {
   //   const list = await this.getEndorsementList(listId, user);
   //   return this.createPDF(list);
   // }
 
-
-  async generateFile(listId: string, user: User, fileType:string): Promise<string> {
+  async generateFile(
+    listId: string,
+    user: User,
+    fileType: string,
+  ): Promise<string> {
     // get the data and check if list belongs to user or user is admin
     // package the data for filetype
     // upload to s3
     // get the presigned url
     // return the url
-    const list = await this.getEndorsementList(listId, user);
+    const list = await this.getEndorsementList(listId, user)
     if (fileType === 'csv') {
-      return this.createCSV(list);
+      return this.createCSV(list)
     } else if (fileType === 'pdf') {
-      return "pdf";
+      return 'pdf'
     } else {
-      throw new BadRequestException('Invalid file type');
-    } 
+      throw new BadRequestException('Invalid file type')
+    }
   }
-    
-
-
-
 
   async generateCSV(listId: string, user: User): Promise<string> {
-    const list = await this.getEndorsementList(listId, user);
-    return this.createCSV(list);
+    const list = await this.getEndorsementList(listId, user)
+    return this.createCSV(list)
   }
 
-  private async getEndorsementList(listId: string, user: User): Promise<EndorsementList> {
+  private async getEndorsementList(
+    listId: string,
+    user: User,
+  ): Promise<EndorsementList> {
     const list = await this.endorsementListModel.findOne({
       where: { id: listId }, // and is owner or admin.................................................
-      include: [{ 
-        model: Endorsement,      
-        attributes: ['created', 'meta'],
-      }],
-    });
+      include: [
+        {
+          model: Endorsement,
+          attributes: ['created', 'meta'],
+        },
+      ],
+    })
 
     if (!list) {
-      throw new NotFoundException('Endorsement list not found');
+      throw new NotFoundException('Endorsement list not found')
     }
 
-    const isListOwner = list.owner === user.nationalId;
-    const isAdmin = this.hasAdminScope(user);
+    const isListOwner = list.owner === user.nationalId
+    const isAdmin = this.hasAdminScope(user)
 
     if (!isListOwner && !isAdmin) {
-      throw new ForbiddenException('You are not allowed to access this resource');
+      throw new ForbiddenException(
+        'You are not allowed to access this resource',
+      )
     }
 
-    return list;
+    return list
   }
 
   private async createCSV(list: EndorsementList): Promise<string> {
-    const endorsements = list.endorsements || [];
+    const endorsements = list.endorsements || []
 
     // Generate CSV data
     const data = endorsements.map((endorsement) => ({
       dateCreated: endorsement.created.toISOString(),
       fullName: endorsement.meta.fullName,
       locality: endorsement.meta.locality,
-    }));
+    }))
 
-    const csvContent = csvStringify(data, { header: true });
-    const csvContentBuffer = Buffer.from(csvContent, 'utf-8');
+    const csvContent = csvStringify(data, { header: true })
+    const csvContentBuffer = Buffer.from(csvContent, 'utf-8')
 
     // Define S3 bucket and object key
-    const bucketName = "bov" //process.env.AWS_S3_BUCKET_NAME;
-    const key = `endorsement-lists/${list.id}-TEST.csv`;
+    const bucketName = 'bov' //process.env.AWS_S3_BUCKET_NAME;
+    const key = `endorsement-lists/${list.id}-TEST.csv`
 
     // write file
     await this.awsService.uploadFile(csvContentBuffer, bucketName, key, {
       ContentType: 'text/csv',
-    });
+    })
 
     // get presigned URL
     // const presignedUrl = getSignedUrl(this.s3Service, new PutObjectCommand({
@@ -757,24 +760,21 @@ export class EndorsementListService {
     //   Key: key,
     //   Expires: new Date(Date.now() + 60 * 60 * 1000),
     // }));
-    
 
-
-    return "bob";
+    return 'bob'
   }
 
   // private createCSV(list: EndorsementList): string {
   //   const endorsements = list.endorsements || [];
-  
+
   //   const data = endorsements.map((endorsement) => ({
   //     dateCreated: endorsement.created.toISOString(),
   //     fullName: endorsement.meta.fullName,
   //     locality: endorsement.meta.locality,
   //   }));
-  
+
   //   return csvStringify(data, { header: true });
   // }
-  
 
   // private createPDF(list: EndorsementList): Buffer {
   //   const doc = new PDFDocument();
