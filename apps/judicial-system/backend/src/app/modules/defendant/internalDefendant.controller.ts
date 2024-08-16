@@ -67,13 +67,13 @@ export class InternalDefendantController {
     type: Defendant,
     description: 'Assigns defense choice to defendant',
   })
-  async assignDefender(
+  async updateDefendant(
     @Param('caseId') caseId: string,
     @Param('defendantNationalId') defendantNationalId: string,
     @CurrentCase() theCase: Case,
     @Body() updatedDefendantChoice: UpdateDefendantDto,
   ): Promise<Defendant> {
-    this.logger.debug(`Assigning defense choice to defendant in case ${caseId}`)
+    this.logger.debug(`Updating defendant info for ${caseId}`)
 
     const updatedDefendant = await this.defendantService.updateByNationalId(
       theCase.id,

@@ -4,6 +4,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { MessageModule } from '@island.is/judicial-system/message'
 
 import { CaseModule } from '../case/case.module'
+import { ExplanatoryComment } from '../case/models/explanatoryComment.model'
 import { CourtModule } from '../court/court.module'
 import { Defendant } from './models/defendant.model'
 import { DefendantController } from './defendant.controller'
@@ -15,7 +16,7 @@ import { InternalDefendantController } from './internalDefendant.controller'
     MessageModule,
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
-    SequelizeModule.forFeature([Defendant]),
+    SequelizeModule.forFeature([Defendant, ExplanatoryComment]),
   ],
   controllers: [DefendantController, InternalDefendantController],
   providers: [DefendantService],
