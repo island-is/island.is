@@ -26,9 +26,11 @@ import getStream from 'get-stream'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
 import csvStringify from 'csv-stringify/lib/sync';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
+
+
+
+import { AwsService } from '@island.is/nest/aws'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -46,7 +48,7 @@ export class EndorsementListService {
     @Inject(EmailService)
     private emailService: EmailService,
     private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
-    private s3 = new S3Client()
+    private readonly awsService: AwsService,
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -678,6 +680,27 @@ export class EndorsementListService {
   //   return this.createPDF(list);
   // }
 
+
+  async generateFile(listId: string, user: User, fileType:string): Promise<string> {
+    // get the data and check if list belongs to user or user is admin
+    // package the data for filetype
+    // upload to s3
+    // get the presigned url
+    // return the url
+    const list = await this.getEndorsementList(listId, user);
+    if (fileType === 'csv') {
+      return this.createCSV(list);
+    } else if (fileType === 'pdf') {
+      return "pdf";
+    } else {
+      throw new BadRequestException('Invalid file type');
+    } 
+  }
+    
+
+
+
+
   async generateCSV(listId: string, user: User): Promise<string> {
     const list = await this.getEndorsementList(listId, user);
     return this.createCSV(list);
@@ -685,7 +708,7 @@ export class EndorsementListService {
 
   private async getEndorsementList(listId: string, user: User): Promise<EndorsementList> {
     const list = await this.endorsementListModel.findOne({
-      where: { id: listId },
+      where: { id: listId }, // and is owner or admin.................................................
       include: [{ 
         model: Endorsement,      
         attributes: ['created', 'meta'],
@@ -717,29 +740,27 @@ export class EndorsementListService {
     }));
 
     const csvContent = csvStringify(data, { header: true });
+    const csvContentBuffer = Buffer.from(csvContent, 'utf-8');
 
     // Define S3 bucket and object key
     const bucketName = "bov" //process.env.AWS_S3_BUCKET_NAME;
     const key = `endorsement-lists/${list.id}-TEST.csv`;
 
     // write file
-    await this.s3.send(new PutObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-      Body: csvContent,
+    await this.awsService.uploadFile(csvContentBuffer, bucketName, key, {
       ContentType: 'text/csv',
-    }));
+    });
 
     // get presigned URL
-    const presignedUrl = getSignedUrl(this.s3, new PutObjectCommand({
-      Bucket: bucketName,
-      Key: key,
-      Expires: new Date(Date.now() + 60 * 60 * 1000),
-    }));
+    // const presignedUrl = getSignedUrl(this.s3Service, new PutObjectCommand({
+    //   Bucket: bucketName,
+    //   Key: key,
+    //   Expires: new Date(Date.now() + 60 * 60 * 1000),
+    // }));
     
 
 
-    return presignedUrl;
+    return "bob";
   }
 
   // private createCSV(list: EndorsementList): string {

@@ -381,17 +381,11 @@ export class EndorsementListController {
 
   @Get(':listId/download-csv')
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
+  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
   async downloadCSV(
     @Param('listId') listId: string,
     @CurrentUser() user: User,
-    @Res() res: Response,
   ) {
-    const csvData = await this.endorsementListService.generateCSV(listId, user);
-    res.set({
-      'Content-Type': 'text/csv',
-      'Content-Disposition': `attachment; filename="endorsement-list-${listId}.csv"`,
-      'Content-Length': Buffer.byteLength(csvData),
-    });
-    res.end(csvData);
+    await this.endorsementListService.generateCSV(listId, user);
   }
 }
