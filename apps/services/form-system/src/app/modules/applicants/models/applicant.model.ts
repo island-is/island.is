@@ -1,4 +1,3 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CreationOptional } from 'sequelize'
 import {
   Column,
@@ -20,22 +19,18 @@ export class Applicant extends Model<Applicant> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
     type: DataType.DATE,
     allowNull: true,
   })
-  @ApiPropertyOptional()
   lastLogin?: Date
 
   @Column({
@@ -43,7 +38,6 @@ export class Applicant extends Model<Applicant> {
     allowNull: false,
     defaultValue: '',
   })
-  @ApiProperty()
   name!: string
 
   @Column({
@@ -51,35 +45,30 @@ export class Applicant extends Model<Applicant> {
     allowNull: false,
     defaultValue: '',
   })
-  @ApiProperty()
   nationalId!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
   email!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
   phoneNumber!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
   address!: string
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  @ApiProperty()
   municipality!: string
 
   @Column({
@@ -88,7 +77,6 @@ export class Applicant extends Model<Applicant> {
     values: Object.values(ApplicantTypes),
     defaultValue: ApplicantTypes.INDIVIDUAL,
   })
-  @ApiProperty({ enum: ApplicantTypes })
   applicantType!: string
 
   @ForeignKey(() => Application)
