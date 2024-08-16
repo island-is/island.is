@@ -309,4 +309,42 @@ export const m = defineMessages({
     defaultMessage: 'Öll kjördæmi',
     description: '',
   },
+  addConstituency: {
+    id: 'sp.addConstituency',
+    defaultMessage: 'Bæta við kjördæmi',
+    description: '',
+  },
+  addConstituencyDescriprion: {
+    id: 'sp.addConstituencyDescriprion',
+    defaultMessage:
+      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at semet nunc efficitur.',
+    description: '',
+  },
+  addConstituencyAlertInfo: {
+    id: 'sp.addConstituencyAlertInfo',
+    defaultMessage:
+      'Athugið að skrá þarf viðeigandi ábyrgðar-/umsjónaraðila á yfirlitssíðu fyrir ný kjördæmi.',
+    description: '',
+  },
+  deleteManager: {
+    id: 'sp.deleteManager',
+    defaultMessage: 'Eyða ábyrgðaraðila',
+    description: '',
+  },
+  deleteManagerDescription: {
+    id: 'sp.deleteManagerDescription',
+    defaultMessage:
+      'Þú ert að fara að taka Nafna Nafnason af lista yfir ábyrgðaraðilum. Ertu viss um að þú viljir halda áfram?',
+    description: '',
+  },
+  delete: {
+    id: 'sp.delete',
+    defaultMessage: 'Eyða',
+    description: '',
+  },
+  save: {
+    id: 'sp.save',
+    defaultMessage: 'Vista',
+    description: '',
+  },
 })

@@ -1,11 +1,4 @@
-import {
-  Box,
-  Stack,
-  Text,
-  Table as T,
-  Button,
-  Tooltip,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
 import { useLocation } from 'react-router-dom'
@@ -13,7 +6,6 @@ import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from './Signees'
 import CancelCollection from '../../../Presidential/OwnerView/CancelCollection'
-import PersonLookupModal from '../PersonLookupModal'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
@@ -30,9 +22,7 @@ const ViewList = () => {
       {/*!loadingList && !!listInfo && (*/}
       <Stack space={5}>
         <Box>
-          <Text variant="h3">
-            {listInfo?.candidate.name + ' - ' + listInfo?.area.name}
-          </Text>
+          <Text variant="h3">{'Listi A'}</Text>
         </Box>
         <Box display={['block', 'flex']} justifyContent="spaceBetween">
           <Box>
@@ -69,49 +59,6 @@ const ViewList = () => {
         </Box>
         <Signees />
 
-        {/* Umsjónaraðilar */}
-        <Box>
-          <Box
-            display="flex"
-            justifyContent="spaceBetween"
-            alignItems="baseline"
-            marginBottom={3}
-          >
-            <Text variant="h4">
-              {formatMessage(m.supervisors) + ' '}
-              <Tooltip placement="right" text="info" color="blue400" />
-            </Text>
-            <PersonLookupModal
-              collectionId={'1'}
-              title={formatMessage(m.addSupervisor)}
-            />
-          </Box>
-          <T.Table>
-            <T.Head>
-              <T.Row>
-                <T.HeadData>{formatMessage(m.personName)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.personNationalId)}</T.HeadData>
-                <T.HeadData>{formatMessage(m.constituency)}</T.HeadData>
-                <T.HeadData></T.HeadData>
-              </T.Row>
-            </T.Head>
-            <T.Body>
-              <T.Row>
-                <T.Data>{'Nafni Nafnason'}</T.Data>
-                <T.Data>{'010130-3019'}</T.Data>
-                <T.Data>{'Reykjavíkurkjördæmi Suður'}</T.Data>
-                <T.Data>
-                  <Button
-                    variant="text"
-                    icon="trash"
-                    iconType="outline"
-                    size="small"
-                  />
-                </T.Data>
-              </T.Row>
-            </T.Body>
-          </T.Table>
-        </Box>
         <CancelCollection collectionId={'1'} />
       </Stack>
       {/*)}*/}

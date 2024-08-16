@@ -12,15 +12,17 @@ import { useLocale } from '@island.is/localization'
 import { useIdentityQuery } from '@island.is/service-portal/graphql'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
-import { m } from '../../../../lib/messages'
+import { m } from '../../../../../lib/messages'
 import { constituencies } from 'libs/service-portal/signature-collection/src/lib/constants'
 
-const PersonLookupModal = ({
+const LookupPerson = ({
   collectionId,
   title,
+  withConstituencies,
 }: {
   collectionId: string
   title: string
+  withConstituencies?: boolean
 }) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
@@ -105,7 +107,7 @@ const PersonLookupModal = ({
             value={name}
             readOnly
           />
-          {title.includes('umsjón') &&
+          {withConstituencies &&
             constituencies.map((constituency) => (
               <Checkbox
                 key={constituency}
@@ -116,17 +118,11 @@ const PersonLookupModal = ({
             ))}
         </Stack>
         <Box display="flex" justifyContent="center" marginY={5}>
-          <Button
-            onClick={() => {
-              console.log('todo')
-            }}
-          >
-            {formatMessage(m.add)}
-          </Button>
+          <Button>{formatMessage(m.add)}</Button>
         </Box>
       </Modal>
     </Box>
   )
 }
 
-export default PersonLookupModal
+export default LookupPerson
