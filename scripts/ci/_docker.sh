@@ -19,10 +19,19 @@ DOCKER_LOCAL_CACHE="${DOCKER_LOCAL_CACHE:-true}"
 
 BUILD_ARGS=()
 
+echo "APP value: $APP"
+
+# if yq e "select(.$APP.armBetaEnrolled == true) | length > 0" charts/islandis/values.prod.yaml; then
+if grep -r ".armBetaEnrolled(true)" "$APP_HOME"; then
+  PLATFORM=linux/aarch64
+else
+  PLATFORM=linux/amd64
+fi
+
 mkargs() {
   local local_cache="${1:-local-cache=yes}"
   BUILD_ARGS=(
-    --platform=linux/amd64
+    --platform="$PLATFORM"
     --file="${DIR}/$DOCKERFILE"
     --target="$TARGET"
     "${PUBLISH_TO_REGISTRY[@]}"

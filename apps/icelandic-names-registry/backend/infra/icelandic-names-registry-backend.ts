@@ -18,3 +18,4 @@ export const serviceSetup =
       .grantNamespaces('islandis')
       .liveness('/liveness')
       .readiness('/liveness')
+      .armBetaEnrolled(true)

@@ -5,6 +5,7 @@
 #
 #####################################################################
 air-discount-scheme-api:
+  armBetaEnrolled: false
   enabled: true
   env:
     AUTH_AUDIENCE: 'loftbru.dev01.devland.is'
@@ -82,6 +83,7 @@ air-discount-scheme-api:
     create: true
     name: 'air-discount-scheme-api'
 air-discount-scheme-backend:
+  armBetaEnrolled: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -193,6 +195,7 @@ air-discount-scheme-backend:
     allowPrivilegeEscalation: false
     privileged: false
 air-discount-scheme-web:
+  armBetaEnrolled: false
   enabled: true
   env:
     API_URL: 'http://web-air-discount-scheme-api'
@@ -270,6 +273,7 @@ api:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
     - 'main.js'
+  armBetaEnrolled: true
   command:
     - 'node'
   enabled: true
@@ -567,6 +571,7 @@ api:
 application-system-api:
   args:
     - 'main.js'
+  armBetaEnrolled: true
   command:
     - 'node'
   enabled: true
@@ -810,6 +815,7 @@ application-system-api-worker:
     - 'main.js'
     - '--job'
     - 'worker'
+  armBetaEnrolled: true
   command:
     - 'node'
   enabled: true
@@ -907,6 +913,7 @@ application-system-api-worker:
     create: true
     name: 'application-system-api-worker'
 application-system-form:
+  armBetaEnrolled: false
   enabled: true
   env:
     BASEPATH: '/umsoknir'
@@ -975,6 +982,7 @@ application-system-form:
     allowPrivilegeEscalation: false
     privileged: false
 consultation-portal:
+  armBetaEnrolled: true
   enabled: true
   env:
     API_URL: 'http://web-api.islandis.svc.cluster.local'
@@ -1042,6 +1050,7 @@ consultation-portal:
     allowPrivilegeEscalation: false
     privileged: false
 contentful-apps:
+  armBetaEnrolled: false
   enabled: true
   env:
     LOG_LEVEL: 'info'
@@ -1106,6 +1115,7 @@ contentful-apps:
     create: true
     name: 'contentful-apps'
 contentful-entry-tagger-service:
+  armBetaEnrolled: false
   enabled: true
   env:
     LOG_LEVEL: 'info'
@@ -1172,6 +1182,7 @@ contentful-entry-tagger-service:
     create: true
     name: 'contentful-entry-tagger'
 download-service:
+  armBetaEnrolled: true
   enabled: true
   env:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
@@ -1274,6 +1285,7 @@ endorsement-system-api:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
     - 'main.js'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -1384,6 +1396,7 @@ endorsement-system-api-cleanup-worker:
     - '--no-experimental-fetch'
     - 'main.js'
     - '--job=cleanup'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -1491,6 +1504,7 @@ endorsement-system-api-cleanup-worker:
     create: true
     name: 'endorsement-system-api-cleanup-worker'
 external-contracts-tests:
+  armBetaEnrolled: false
   enabled: true
   env:
     LOG_LEVEL: 'info'
@@ -1551,6 +1565,7 @@ github-actions-cache:
     - '--tls-min-v1.0'
     - '--no-experimental-fetch'
     - 'main.js'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -1629,6 +1644,7 @@ global:
       AWS_REGION: 'eu-west-1'
       NPM_CONFIG_UPDATE_NOTIFIER: 'false'
 icelandic-names-registry-backend:
+  armBetaEnrolled: true
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -1719,6 +1735,7 @@ icelandic-names-registry-backend:
     allowPrivilegeEscalation: false
     privileged: false
 island-ui-storybook:
+  armBetaEnrolled: false
   enabled: true
   env:
     LOG_LEVEL: 'info'
@@ -1777,6 +1794,7 @@ island-ui-storybook:
     allowPrivilegeEscalation: false
     privileged: false
 license-api:
+  armBetaEnrolled: false
   enabled: true
   env:
     HUNTING_LICENSE_PASS_TEMPLATE_ID: '1da72d52-a93a-4d0f-8463-1933a2bd210b'
@@ -1898,6 +1916,7 @@ namespaces:
     - 'contentful-apps'
     - 'services-university-gateway'
 portals-admin:
+  armBetaEnrolled: true
   enabled: true
   env:
     BASEPATH: '/stjornbord'
@@ -1962,6 +1981,7 @@ portals-admin:
     allowPrivilegeEscalation: false
     privileged: false
 regulations-admin-backend:
+  armBetaEnrolled: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -2055,6 +2075,7 @@ regulations-admin-backend:
     allowPrivilegeEscalation: false
     privileged: false
 search-indexer-service:
+  armBetaEnrolled: false
   enabled: true
   env:
     AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: 'loftbru.dev01.devland.is'
@@ -2188,6 +2209,7 @@ search-indexer-service:
     create: true
     name: 'search-indexer'
 service-portal:
+  armBetaEnrolled: true
   enabled: true
   env:
     BASEPATH: '/minarsidur'
@@ -2258,6 +2280,7 @@ service-portal:
     allowPrivilegeEscalation: false
     privileged: false
 service-portal-api:
+  armBetaEnrolled: false
   enabled: true
   env:
     AUTH_DELEGATION_API_URL: 'http://web-services-auth-delegation-api.identity-server-delegation.svc.cluster.local'
@@ -2384,6 +2407,7 @@ service-portal-api:
     create: true
     name: 'service-portal-api'
 services-documents:
+  armBetaEnrolled: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -2462,6 +2486,7 @@ services-documents:
     allowPrivilegeEscalation: false
     privileged: false
 services-form-system:
+  armBetaEnrolled: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -2552,6 +2577,7 @@ services-form-system:
     allowPrivilegeEscalation: false
     privileged: false
 services-sessions:
+  armBetaEnrolled: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -2622,6 +2648,7 @@ services-sessions-cleanup:
   args:
     - 'main.js'
     - '--job=cleanup'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -2683,6 +2710,7 @@ services-sessions-worker:
   args:
     - 'main.js'
     - '--job=worker'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -2777,6 +2805,7 @@ services-sessions-worker:
 services-university-gateway:
   args:
     - 'main.js'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -2906,6 +2935,7 @@ services-university-gateway-worker:
     - 'main.js'
     - '--job'
     - 'worker'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -2987,6 +3017,7 @@ services-university-gateway-worker:
     create: true
     name: 'services-university-gateway-worker'
 skilavottord-web:
+  armBetaEnrolled: false
   enabled: true
   env:
     API_URL: 'http://web-skilavottord-ws'
@@ -3054,6 +3085,7 @@ skilavottord-web:
     allowPrivilegeEscalation: false
     privileged: false
 skilavottord-ws:
+  armBetaEnrolled: false
   enabled: true
   env:
     DB_HOST: 'postgres-applications.internal'
@@ -3153,6 +3185,7 @@ user-notification:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -3256,6 +3289,7 @@ user-notification-cleanup-worker:
     - '--no-experimental-fetch'
     - 'main.js'
     - '--job=cleanup'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -3348,6 +3382,7 @@ user-notification-worker:
     - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true
@@ -3461,6 +3496,7 @@ user-notification-worker:
     create: true
     name: 'user-notification-worker'
 web:
+  armBetaEnrolled: true
   enabled: true
   env:
     API_URL: 'http://web-api'
@@ -3535,6 +3571,7 @@ xroad-collector:
   args:
     - '--no-experimental-fetch'
     - 'main.js'
+  armBetaEnrolled: false
   command:
     - 'node'
   enabled: true

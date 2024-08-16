@@ -74,4 +74,5 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-admin-api'> => {
       'nginx-ingress-internal',
       'islandis',
     )
+    .armBetaEnrolled(true)
 }

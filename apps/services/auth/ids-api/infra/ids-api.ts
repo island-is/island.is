@@ -143,3 +143,4 @@ export const cleanupSetup = (): ServiceBuilder<typeof cleanupId> =>
       staging: schedule,
       prod: schedule,
     })
+    .armBetaEnrolled(true)

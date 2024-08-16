@@ -88,6 +88,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       },
     },
     securityContext,
+    armBetaEnrolled: serviceDef.armBetaEnrolled,
   }
   if (!hackListForNonExistentTracer.includes(serviceDef.name)) {
     result.env.NODE_OPTIONS += ' -r dd-trace/init'

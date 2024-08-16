@@ -91,4 +91,5 @@ export const serviceSetup = (services: {
       },
     })
     .grantNamespaces('nginx-ingress-internal', 'islandis', 'service-portal')
+    .armBetaEnrolled(true)
 }

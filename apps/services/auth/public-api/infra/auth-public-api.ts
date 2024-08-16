@@ -120,4 +120,5 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
         memory: '256Mi',
       },
     })
+    .armBetaEnrolled(true)
 }
