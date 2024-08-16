@@ -1,10 +1,10 @@
 import { Field, InputType, Int } from "@nestjs/graphql";
-import { LanguageType } from "../models/LanguageType.model";
 import { FormCertificationTypeInput } from "./formCertificationType.input";
 import { FormApplicantInput } from "./formApplicant.input";
 import { SectionInput } from "./section.input";
 import { ScreenInput } from "./screen.input";
 import { FieldInput } from "./field.input";
+import { LanguageTypeInput } from "./languageType.input";
 
 @InputType('FormSystemFormInput')
 export class FormInput {
@@ -14,8 +14,8 @@ export class FormInput {
   @Field(() => String, { nullable: true })
   organizationId?: string
 
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
 
   @Field(() => String, { nullable: true })
   slug?: string
@@ -41,8 +41,8 @@ export class FormInput {
   @Field(() => Boolean, { nullable: true })
   stopProgressOnValidatingScreen?: boolean
 
-  @Field(() => LanguageType, { nullable: true })
-  completedMessage?: LanguageType
+  @Field(() => LanguageTypeInput, { nullable: true })
+  completedMessage?: LanguageTypeInput
 
   @Field(() => [FormCertificationTypeInput], { nullable: true })
   certificationTypes?: FormCertificationTypeInput[]

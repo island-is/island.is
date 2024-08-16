@@ -1,9 +1,9 @@
 import { Field, InputType, registerEnumType } from "@nestjs/graphql";
-import { LanguageType } from "../models/LanguageType.model";
-import { FormCertificationTypeDtoTypeEnum } from "@island.is/clients/form-system";
+import { CertificationTypeDtoTypeEnum } from "@island.is/clients/form-system";
+import { LanguageTypeInput } from "./languageType.input";
 
-registerEnumType(FormCertificationTypeDtoTypeEnum, {
-  name: 'FormSystemFormCertificationTypeDtoTypeEnum'
+registerEnumType(CertificationTypeDtoTypeEnum, {
+  name: 'FormSystemCertificationTypeDtoTypeEnum'
 })
 
 @InputType('FormSystemFormCertificationTypeInput')
@@ -11,14 +11,14 @@ export class FormCertificationTypeInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
 
-  @Field(() => LanguageType, { nullable: true })
-  description?: LanguageType
+  @Field(() => LanguageTypeInput, { nullable: true })
+  description?: LanguageTypeInput
 
-  @Field(() => FormCertificationTypeDtoTypeEnum, { nullable: true })
-  type?: FormCertificationTypeDtoTypeEnum
+  @Field(() => CertificationTypeDtoTypeEnum, { nullable: true })
+  type?: CertificationTypeDtoTypeEnum
 
 
 

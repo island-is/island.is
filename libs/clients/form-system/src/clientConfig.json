@@ -237,7 +237,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/Organization"
+                    "$ref": "#/components/schemas/OrganizationsResponseDto"
                   }
                 }
               }
@@ -309,7 +309,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/Organization"
+                  "$ref": "#/components/schemas/OrganizationDto"
                 }
               }
             }
@@ -380,7 +380,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
+                  "$ref": "#/components/schemas/FormResponseDto"
                 }
               }
             }
@@ -411,7 +411,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormsListDto"
+                  "$ref": "#/components/schemas/FormResponseDto"
                 }
               }
             }
@@ -482,7 +482,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FormResponse"
+                  "$ref": "#/components/schemas/FormResponseDto"
                 }
               }
             }
@@ -577,69 +577,6 @@
           "sections"
         ]
       },
-      "get": {
-        "operationId": "SectionsController_findAll",
-        "description": "Get all Sections",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Section"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "sections"
-        ]
-      },
       "put": {
         "operationId": "SectionsController_updateDisplayOrder",
         "description": "Update display order of sections",
@@ -705,75 +642,6 @@
       }
     },
     "/sections/{id}": {
-      "get": {
-        "operationId": "SectionsController_findOne",
-        "description": "Get Section by id",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Section"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "sections"
-        ]
-      },
       "delete": {
         "operationId": "SectionsController_delete",
         "parameters": [
@@ -850,69 +718,6 @@
           "screens"
         ]
       },
-      "get": {
-        "operationId": "ScreensController_findAll",
-        "description": "Get all Screens",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Screen"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "screens"
-        ]
-      },
       "put": {
         "operationId": "ScreensController_updateDisplayOrder",
         "description": "Update display order of screens",
@@ -978,75 +783,6 @@
       }
     },
     "/screens/{id}": {
-      "get": {
-        "operationId": "ScreensController_findOne",
-        "description": "Get Screen by id",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Screen"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": [
-          "screens"
-        ]
-      },
       "put": {
         "operationId": "ScreensController_update",
         "parameters": [
@@ -1117,69 +853,6 @@
         "responses": {
           "201": {
             "description": ""
-          }
-        },
-        "tags": [
-          "fields"
-        ]
-      },
-      "get": {
-        "operationId": "FieldsController_findAll",
-        "description": "Get all Fields",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/Field"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
           }
         },
         "tags": [
@@ -1723,130 +1396,7 @@
           "nationalId"
         ]
       },
-      "ApplicantTypeNameSuggestion": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "nameSuggestion": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "applicantType": {
-            "type": "string",
-            "enum": [
-              "individual",
-              "individualWithDelegationFromIndividual",
-              "individualWithDelegationFromLegalEntity",
-              "individualWithProcuration",
-              "individualGivingDelegation",
-              "legalEntity"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "created",
-          "modified",
-          "nameSuggestion",
-          "applicantType"
-        ]
-      },
-      "Organization": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "nationalId": {
-            "type": "string"
-          },
-          "forms": {
-            "type": "array",
-            "items": {
-              "type": "array",
-              "items": {
-                "$ref": "#/components/schemas/Form"
-              }
-            }
-          },
-          "applicantTypeNameSuggestions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicantTypeNameSuggestion"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "created",
-          "modified",
-          "nationalId",
-          "forms",
-          "applicantTypeNameSuggestions"
-        ]
-      },
-      "HttpProblemResponse": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "object",
-            "description": "A URI reference that identifies the problem type"
-          },
-          "title": {
-            "type": "string",
-            "description": "A short, human-readable summary of the problem type"
-          },
-          "status": {
-            "type": "number",
-            "description": "The HTTP status code"
-          },
-          "detail": {
-            "type": "string",
-            "description": "A human-readable explanation specific to this occurrence of the problem"
-          },
-          "instance": {
-            "type": "string",
-            "description": "A URI reference that identifies the specific occurrence of the problem."
-          }
-        },
-        "required": [
-          "type",
-          "title"
-        ]
-      },
-      "CreateFormDto": {
-        "type": "object",
-        "properties": {
-          "organizationId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "organizationId"
-        ]
-      },
-      "FormCertificationTypeDto": {
+      "CertificationTypeDto": {
         "type": "object",
         "properties": {
           "id": {
@@ -1902,69 +1452,6 @@
           "id",
           "applicantType",
           "name"
-        ]
-      },
-      "SectionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "sectionType": {
-            "type": "string",
-            "enum": [
-              "premises",
-              "parties",
-              "input",
-              "payment"
-            ]
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "waitingText": {
-            "$ref": "#/components/schemas/LanguageType"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "sectionType",
-          "displayOrder"
-        ]
-      },
-      "ScreenDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "sectionId": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "multiset": {
-            "type": "number"
-          },
-          "callRuleset": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "sectionId",
-          "name",
-          "displayOrder",
-          "multiset",
-          "callRuleset"
         ]
       },
       "ListItemDto": {
@@ -2130,6 +1617,93 @@
           "fieldType"
         ]
       },
+      "ScreenDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "sectionId": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "displayOrder": {
+            "type": "number"
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
+          "multiset": {
+            "type": "number"
+          },
+          "callRuleset": {
+            "type": "boolean"
+          },
+          "fields": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FieldDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "sectionId",
+          "name",
+          "displayOrder",
+          "isHidden",
+          "multiset",
+          "callRuleset"
+        ]
+      },
+      "SectionDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "sectionType": {
+            "type": "string",
+            "enum": [
+              "premises",
+              "parties",
+              "input",
+              "payment"
+            ]
+          },
+          "displayOrder": {
+            "type": "number"
+          },
+          "waitingText": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "isHidden": {
+            "type": "boolean"
+          },
+          "isCompleted": {
+            "type": "boolean"
+          },
+          "screens": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ScreenDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "sectionType",
+          "displayOrder",
+          "isHidden",
+          "isCompleted"
+        ]
+      },
       "FormDto": {
         "type": "object",
         "properties": {
@@ -2175,7 +1749,7 @@
           "certificationTypes": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormCertificationTypeDto"
+              "$ref": "#/components/schemas/CertificationTypeDto"
             }
           },
           "applicants": {
@@ -2214,6 +1788,85 @@
           "applicationDaysToRemove",
           "derivedFrom",
           "stopProgressOnValidatingScreen"
+        ]
+      },
+      "OrganizationDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "name": {
+            "$ref": "#/components/schemas/LanguageType"
+          },
+          "nationalId": {
+            "type": "string"
+          },
+          "forms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FormDto"
+            }
+          }
+        },
+        "required": [
+          "id",
+          "name",
+          "nationalId"
+        ]
+      },
+      "OrganizationsResponseDto": {
+        "type": "object",
+        "properties": {
+          "organizations": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/OrganizationDto"
+            }
+          }
+        },
+        "required": [
+          "organizations"
+        ]
+      },
+      "HttpProblemResponse": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "type": "object",
+            "description": "A URI reference that identifies the problem type"
+          },
+          "title": {
+            "type": "string",
+            "description": "A short, human-readable summary of the problem type"
+          },
+          "status": {
+            "type": "number",
+            "description": "The HTTP status code"
+          },
+          "detail": {
+            "type": "string",
+            "description": "A human-readable explanation specific to this occurrence of the problem"
+          },
+          "instance": {
+            "type": "string",
+            "description": "A URI reference that identifies the specific occurrence of the problem."
+          }
+        },
+        "required": [
+          "type",
+          "title"
+        ]
+      },
+      "CreateFormDto": {
+        "type": "object",
+        "properties": {
+          "organizationId": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "organizationId"
         ]
       },
       "FieldTypeDto": {
@@ -2271,37 +1924,6 @@
           "isCommon"
         ]
       },
-      "CertificationTypeDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "type": {
-            "type": "string",
-            "enum": [
-              "estateGuardianshipCertificateStamped",
-              "estateGuardianshipCertificateUnstamped",
-              "residenceCertificate",
-              "indebtednessCertificate",
-              "criminalRecordStamped",
-              "criminalRecordUnstamped"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "description",
-          "type"
-        ]
-      },
       "ListTypeDto": {
         "type": "object",
         "properties": {
@@ -2329,7 +1951,7 @@
           "isCommon"
         ]
       },
-      "FormResponse": {
+      "FormResponseDto": {
         "type": "object",
         "properties": {
           "form": {
@@ -2352,77 +1974,14 @@
             "items": {
               "$ref": "#/components/schemas/ListTypeDto"
             }
-          }
-        },
-        "required": [
-          "form",
-          "fieldTypes",
-          "certificationTypes",
-          "listTypes"
-        ]
-      },
-      "FormsListFormDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
           },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "slug": {
-            "type": "string"
-          },
-          "invalidationDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "isTranslated": {
-            "type": "boolean"
-          },
-          "applicationDaysToRemove": {
-            "type": "number"
-          },
-          "derivedFrom": {
-            "type": "number"
-          },
-          "stopProgressOnValidatingScreen": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "slug",
-          "created",
-          "modified",
-          "isTranslated",
-          "applicationDaysToRemove",
-          "derivedFrom",
-          "stopProgressOnValidatingScreen"
-        ]
-      },
-      "FormsListDto": {
-        "type": "object",
-        "properties": {
           "forms": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/FormsListFormDto"
+              "$ref": "#/components/schemas/FormDto"
             }
           }
-        },
-        "required": [
-          "forms"
-        ]
+        }
       },
       "CreateSectionDto": {
         "type": "object",
@@ -2433,294 +1992,6 @@
         },
         "required": [
           "formId"
-        ]
-      },
-      "ListItem": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "label": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "isSelected": {
-            "type": "boolean"
-          }
-        },
-        "required": [
-          "id",
-          "created",
-          "modified",
-          "label",
-          "displayOrder",
-          "isSelected"
-        ]
-      },
-      "FieldSettings": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "minValue": {
-            "type": "number"
-          },
-          "maxValue": {
-            "type": "number"
-          },
-          "minLength": {
-            "type": "number"
-          },
-          "maxLength": {
-            "type": "number"
-          },
-          "minDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "maxDate": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "minAmount": {
-            "type": "string"
-          },
-          "maxAmount": {
-            "type": "string"
-          },
-          "year": {
-            "type": "number"
-          },
-          "hasLink": {
-            "type": "boolean"
-          },
-          "url": {
-            "type": "string"
-          },
-          "buttonText": {
-            "type": "string"
-          },
-          "hasPropertyInput": {
-            "type": "boolean"
-          },
-          "hasPropertyList": {
-            "type": "boolean"
-          },
-          "list": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ListItem"
-            }
-          },
-          "listType": {
-            "type": "string",
-            "enum": [
-              "custom",
-              "municipalities",
-              "countries",
-              "postalCodes",
-              "mastersTrades",
-              "registrationCategoriesOfActivities"
-            ]
-          },
-          "fileTypes": {
-            "type": "string"
-          },
-          "fileMaxSize": {
-            "type": "number"
-          },
-          "maxFiles": {
-            "type": "number"
-          },
-          "timeInterval": {
-            "type": "string",
-            "enum": [
-              "minutely",
-              "quarterly",
-              "halfHourly",
-              "hourly"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "created",
-          "modified"
-        ]
-      },
-      "Field": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isHidden": {
-            "type": "boolean"
-          },
-          "isPartOfMultiset": {
-            "type": "boolean"
-          },
-          "fieldSettings": {
-            "$ref": "#/components/schemas/FieldSettings"
-          },
-          "fieldType": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "created",
-          "modified",
-          "displayOrder",
-          "description",
-          "isHidden",
-          "isPartOfMultiset",
-          "fieldType"
-        ]
-      },
-      "Screen": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "isHidden": {
-            "type": "boolean"
-          },
-          "multiset": {
-            "type": "number"
-          },
-          "callRuleset": {
-            "type": "boolean"
-          },
-          "fields": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Field"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "created",
-          "modified",
-          "displayOrder",
-          "isHidden",
-          "multiset",
-          "callRuleset",
-          "fields"
-        ]
-      },
-      "Section": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "created": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "modified": {
-            "format": "date-time",
-            "type": "string"
-          },
-          "sectionType": {
-            "type": "string",
-            "enum": [
-              "premises",
-              "parties",
-              "input",
-              "payment"
-            ]
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "waitingText": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isHidden": {
-            "type": "boolean"
-          },
-          "isCompleted": {
-            "type": "boolean"
-          },
-          "screens": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/Screen"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "created",
-          "modified",
-          "sectionType",
-          "displayOrder",
-          "isHidden",
-          "isCompleted"
         ]
       },
       "UpdateSectionDto": {
@@ -3039,165 +2310,10 @@
           "listItemsDisplayOrderDto"
         ]
       },
-      "OrganizationDto": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "nationalId": {
-            "type": "string"
-          }
-        },
-        "required": [
-          "name",
-          "nationalId"
-        ]
-      },
-      "ApplicationFieldDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "screenId": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "description": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "isPartOfMultiset": {
-            "type": "boolean"
-          },
-          "fieldSettings": {
-            "$ref": "#/components/schemas/FieldSettingsDto"
-          },
-          "fieldType": {
-            "type": "string",
-            "enum": [
-              "default",
-              "email",
-              "propertyNumber",
-              "iskNumberbox",
-              "checkbox",
-              "datePicker",
-              "numberbox",
-              "payer",
-              "nationaIdEstate",
-              "phoneNumber",
-              "message",
-              "radioButtons",
-              "document",
-              "bankAccount",
-              "nationalId",
-              "homestayNumber",
-              "iskSumbox",
-              "dropdownList",
-              "nationalIdAll",
-              "timeInput",
-              "homestayOverview",
-              "payment",
-              "textbox"
-            ]
-          }
-        },
-        "required": [
-          "id",
-          "screenId",
-          "name",
-          "displayOrder",
-          "description",
-          "isPartOfMultiset",
-          "fieldType"
-        ]
-      },
-      "ApplicationScreenDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "sectionId": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "multiset": {
-            "type": "number"
-          },
-          "callRuleset": {
-            "type": "boolean"
-          },
-          "fields": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationFieldDto"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "sectionId",
-          "name",
-          "displayOrder",
-          "multiset",
-          "callRuleset",
-          "fields"
-        ]
-      },
-      "ApplicationSectionDto": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "string"
-          },
-          "name": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "sectionType": {
-            "type": "string",
-            "enum": [
-              "premises",
-              "parties",
-              "input",
-              "payment"
-            ]
-          },
-          "displayOrder": {
-            "type": "number"
-          },
-          "waitingText": {
-            "$ref": "#/components/schemas/LanguageType"
-          },
-          "screens": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ApplicationScreenDto"
-            }
-          }
-        },
-        "required": [
-          "id",
-          "name",
-          "sectionType",
-          "displayOrder",
-          "screens"
-        ]
-      },
       "ApplicationDto": {
         "type": "object",
         "properties": {
-          "applicationId": {
+          "id": {
             "type": "string"
           },
           "organization": {
@@ -3220,7 +2336,7 @@
           "sections": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/ApplicationSectionDto"
+              "$ref": "#/components/schemas/SectionDto"
             }
           }
         }

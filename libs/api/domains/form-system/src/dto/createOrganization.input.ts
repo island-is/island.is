@@ -1,10 +1,10 @@
 import { Field, InputType } from "@nestjs/graphql";
-import { LanguageType } from "../models/LanguageType.model";
+import { LanguageTypeInput } from "./languageType.input";
 
 @InputType('FormSystemCreateOrganizationInput')
 export class CreateOrganizationInput {
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
 
   @Field(() => String, { nullable: true })
   nationalId?: string

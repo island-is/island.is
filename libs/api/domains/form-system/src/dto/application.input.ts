@@ -1,11 +1,12 @@
 import { Field, InputType } from "@nestjs/graphql";
 import { OrganizationInput } from "./organization.input";
-import { ApplicationSectionInput } from "./applicationSection.input";
+import { SectionInput } from "./section.input";
+
 
 @InputType('FormSystemApplicationInput')
 export class ApplicationInput {
   @Field(() => String, { nullable: true })
-  applicationId?: string
+  id?: string
 
   @Field(() => OrganizationInput, { nullable: true })
   organization?: OrganizationInput
@@ -22,6 +23,6 @@ export class ApplicationInput {
   @Field(() => Date, { nullable: true })
   modified?: Date
 
-  @Field(() => [ApplicationSectionInput], { nullable: true })
-  sections?: ApplicationSectionInput[]
+  @Field(() => [SectionInput], { nullable: true })
+  sections?: SectionInput[]
 }

@@ -1,6 +1,7 @@
 import { Field, InputType, Int, registerEnumType } from "@nestjs/graphql";
 import { SectionDtoSectionTypeEnum } from "@island.is/clients/form-system";
-import { LanguageType } from "../models/LanguageType.model";
+import { LanguageTypeInput } from "./languageType.input";
+import { ScreenInput } from "./screen.input";
 
 registerEnumType(SectionDtoSectionTypeEnum, {
   name: 'FormSystemSectionDtoSectionTypeEnum'
@@ -11,8 +12,8 @@ export class SectionInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => LanguageType, { nullable: true })
-  name?: LanguageType
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
 
   @Field(() => SectionDtoSectionTypeEnum, { nullable: true })
   sectionType?: SectionDtoSectionTypeEnum
@@ -20,6 +21,15 @@ export class SectionInput {
   @Field(() => Int, { nullable: true })
   displayOrder?: number
 
-  @Field(() => LanguageType, { nullable: true })
-  waitingText?: LanguageType
+  @Field(() => LanguageTypeInput, { nullable: true })
+  waitingText?: LanguageTypeInput
+
+  @Field(() => Boolean, { nullable: true })
+  isHidden?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  isCompleted?: boolean
+
+  @Field(() => [ScreenInput], { nullable: true })
+  screens?: ScreenInput[]
 }

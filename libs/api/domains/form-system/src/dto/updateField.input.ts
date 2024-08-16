@@ -1,4 +1,4 @@
-import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 import { FieldDtoFieldTypeEnum } from '@island.is/clients/form-system'
 import { FieldSettingsInput } from './fieldSettings.input'
 import { LanguageTypeInput } from './languageType.input'
@@ -7,19 +7,10 @@ registerEnumType(FieldDtoFieldTypeEnum, {
   name: 'FormSystemFieldDtoFieldTypeEnum'
 })
 
-@InputType('FormSystemFieldInput')
-export class FieldInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  screenId?: string
-
+@InputType('FormSystemUpdateFieldInput')
+export class UpdateFieldInput {
   @Field(() => LanguageTypeInput, { nullable: true })
   name?: LanguageTypeInput
-
-  @Field(() => Int, { nullable: true })
-  displayOrder?: number
 
   @Field(() => LanguageTypeInput, { nullable: true })
   description?: LanguageTypeInput
