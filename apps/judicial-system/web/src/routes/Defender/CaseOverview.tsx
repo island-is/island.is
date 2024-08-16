@@ -35,7 +35,7 @@ import {
 import { api } from '@island.is/judicial-system-web/src/services'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import InfoCardNew from '../../components/InfoCard/InfoCardNew'
+import InfoCard from '../../components/InfoCard/InfoCard'
 import useInfoCardItems from '../../components/InfoCard/useInfoCardItems'
 import { strings } from './CaseOverview.strings'
 import * as styles from './CaseOverview.css'
@@ -150,7 +150,7 @@ export const CaseOverview = () => {
               </Box>
             )}
           <Box marginBottom={6}>
-            <InfoCardNew
+            <InfoCard
               sections={[
                 {
                   id: 'defendants-section',

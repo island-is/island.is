@@ -35,7 +35,7 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardNew'
+import InfoCard from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
@@ -127,7 +127,7 @@ export const JudgeOverview = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardNew
+          <InfoCard
             sections={[
               {
                 id: 'defendants-section',

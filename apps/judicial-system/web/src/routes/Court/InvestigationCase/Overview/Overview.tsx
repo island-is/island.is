@@ -28,12 +28,12 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoCard,
   PageHeader,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardNew'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { CaseState } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -119,7 +119,7 @@ const Overview = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardNew
+          <InfoCard
             sections={[
               {
                 id: 'defendants-section',

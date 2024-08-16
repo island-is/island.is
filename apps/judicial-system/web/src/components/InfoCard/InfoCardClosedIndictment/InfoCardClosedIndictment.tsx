@@ -3,7 +3,7 @@ import { FC, useContext } from 'react'
 import { EventType } from '../../../graphql/schema'
 import { FormContext } from '../../FormProvider/FormProvider'
 import { DefendantInfoActionButton } from '../DefendantInfo/DefendantInfo'
-import InfoCardNew from '../InfoCardNew'
+import InfoCard from '../InfoCard'
 import useInfoCardItems from '../useInfoCardItems'
 
 export interface Props {
@@ -41,7 +41,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
   )?.created
 
   return (
-    <InfoCardNew
+    <InfoCard
       sections={[
         {
           id: 'defendants-section',

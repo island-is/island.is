@@ -40,6 +40,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoCard,
   MarkdownWrapper,
   Modal,
   PageHeader,
@@ -51,7 +52,6 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardNew'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseAppealState,
@@ -529,7 +529,7 @@ export const SignedVerdictOverview: FC = () => {
             </Box>
           )}
           <Box marginBottom={6}>
-            <InfoCardNew
+            <InfoCard
               sections={[
                 {
                   id: 'defendants-section',

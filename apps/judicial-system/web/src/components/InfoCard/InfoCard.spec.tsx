@@ -2,14 +2,10 @@ import React from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import {
-  CaseType,
-  SessionArrangements,
-} from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
 import { DefendantInfo } from './DefendantInfo/DefendantInfo'
-import InfoCardNew from './InfoCardNew'
+import InfoCard from './InfoCard'
 
 describe('InfoCard', () => {
   test('should display the assigned defender name if that info is provided even though the defender email is not', async () => {
@@ -17,7 +13,7 @@ describe('InfoCard', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <InfoCardNew
+          <InfoCard
             sections={[
               {
                 id: 'sec_id',
@@ -48,7 +44,7 @@ describe('InfoCard', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <InfoCardNew
+          <InfoCard
             sections={[
               {
                 id: 'sec_id',
@@ -90,7 +86,7 @@ describe('InfoCard', () => {
           render(
           <MockedProvider>
             <LocaleProvider locale="is" messages={{}}>
-              <InfoCardNew
+              <InfoCard
                 sections={[
                   {
                     id: 'sec_id',
@@ -134,7 +130,7 @@ describe('InfoCard', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <InfoCardNew
+          <InfoCard
             sections={[
               {
                 id: 'sec_id',

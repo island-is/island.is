@@ -21,7 +21,7 @@ interface Props {
   sections: Section[]
 }
 
-const InfoCardNew: FC<Props> = (props) => {
+const InfoCard: FC<Props> = (props) => {
   const { sections } = props
 
   return (
@@ -62,4 +62,4 @@ const InfoCardNew: FC<Props> = (props) => {
   )
 }
 
-export default InfoCardNew
+export default InfoCard

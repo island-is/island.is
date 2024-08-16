@@ -25,7 +25,7 @@ import {
   DefendantInfoActionButton,
 } from './DefendantInfo/DefendantInfo'
 import RenderPersonalData from './RenderPersonalInfo/RenderPersonalInfo'
-import { Item } from './InfoCardNew'
+import { Item } from './InfoCard'
 import { strings } from './InfoCardIndictment.strings'
 
 const useInfoCardItems = () => {

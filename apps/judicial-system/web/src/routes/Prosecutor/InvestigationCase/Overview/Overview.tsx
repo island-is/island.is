@@ -28,6 +28,7 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoCard,
   Modal,
   PageHeader,
   PageLayout,
@@ -35,7 +36,6 @@ import {
   ProsecutorCaseInfo,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardNew'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseState,
@@ -173,7 +173,7 @@ export const Overview = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCardNew
+          <InfoCard
             sections={[
               {
                 id: 'defendants-section',

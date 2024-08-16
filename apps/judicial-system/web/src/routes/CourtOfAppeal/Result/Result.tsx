@@ -10,13 +10,13 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoCard,
   MarkdownWrapper,
   PageHeader,
   PageLayout,
   ReopenModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardNew'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
@@ -96,7 +96,7 @@ const CourtOfAppealResult = () => {
             </Box>
           )}
           <Box marginBottom={5}>
-            <InfoCardNew
+            <InfoCard
               sections={[
                 {
                   id: 'defendants-section',

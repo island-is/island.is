@@ -1,7 +1,7 @@
 import React, { useContext } from 'react'
 
 import { FormContext } from '../FormProvider/FormProvider'
-import InfoCardNew from './InfoCardNew'
+import InfoCard from './InfoCard'
 import useInfoCardItems from './useInfoCardItems'
 
 const InfoCardActiveIndictment = () => {
@@ -21,7 +21,7 @@ const InfoCardActiveIndictment = () => {
   } = useInfoCardItems()
 
   return (
-    <InfoCardNew
+    <InfoCard
       sections={[
         ...(workingCase.defendants
           ? [
