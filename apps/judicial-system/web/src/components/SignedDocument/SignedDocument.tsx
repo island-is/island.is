@@ -21,7 +21,7 @@ const SignedDocument = (props: Props) => {
       <div className={styles.textContainer}>
         <Text>
           {formatMessage(signedDocument, {
-            date: formatDate(signingDate, 'dd.MM.yyyy'),
+            date: formatDate(signingDate),
             time: formatDate(signingDate, 'HH:mm'),
           })}
         </Text>

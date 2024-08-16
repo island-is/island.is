@@ -91,6 +91,7 @@
 /libs/api/domains/signature-collection                                                                   @island-is/juni
 /libs/clients/signature-collection                                                                       @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection                    @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/general-petition                        @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -170,7 +171,7 @@ codemagic.yaml                                                                  
 /libs/clients/national-registry/v3/                                                                      @island-is/hugsmidjan
 /libs/clients/district-commissioners-licenses/                                                           @island-is/hugsmidjan
 /libs/clients/regulations/                                                                               @island-is/hugsmidjan
-/libs/clients/vehicles/                                                                                  @island-is/hugsmidjan
+/libs/clients/vehicles/                                                                                  @island-is/hugsmidjan @island-is/stefna
 /libs/clients/vehicles-mileage/                                                                          @island-is/hugsmidjan
 /libs/clients/user-notification/                                                                         @island-is/hugsmidjan
 /libs/clients/passports/                                                                                 @island-is/hugsmidjan
@@ -265,6 +266,7 @@ codemagic.yaml                                                                  
 /libs/island-ui/                                                                                         @island-is/island-ui
 
 /apps/consultation-portal/                                                                               @island-is/advania
+/apps/services/form-system/                                                                              @island-is/advania
 /libs/clients/consultation-portal/                                                                       @island-is/advania
 /libs/api/domains/consultation-portal/                                                                   @island-is/advania
 

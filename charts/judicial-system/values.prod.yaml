@@ -458,6 +458,9 @@ judicial-system-scheduler:
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SQS_DEAD_LETTER_QUEUE_NAME: 'sqs-judicial-system-dlq'
+    SQS_QUEUE_NAME: 'sqs-judicial-system'
+    SQS_REGION: 'eu-west-1'
     TIME_TO_LIVE_MINUTES: '30'
   grantNamespaces:
     - 'nginx-ingress-external'
@@ -484,6 +487,8 @@ judicial-system-scheduler:
   namespace: 'judicial-system'
   podDisruptionBudget:
     maxUnavailable: 1
+  podSecurityContext:
+    fsGroup: 65534
   pvcs: []
   replicaCount:
     default: 1
@@ -503,6 +508,11 @@ judicial-system-scheduler:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+  serviceAccount:
+    annotations:
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::251502586493:role/judicial-system-scheduler'
+    create: true
+    name: 'judicial-system-scheduler'
 judicial-system-web:
   enabled: true
   env:
