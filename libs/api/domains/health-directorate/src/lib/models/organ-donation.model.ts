@@ -27,12 +27,6 @@ export class DonorStatusInput {
   exceptionComment?: string
 }
 
-@ObjectType('HealthDirectorateOrganDonationExceptionInput')
-export class DonationExceptionInput {
-  @Field()
-  locale!: 'is' | 'en'
-}
-
 @ObjectType('HealthDirectorateOrganDonationExceptionObject')
 export class DonationExceptionObject {
   @Field({ nullable: true })

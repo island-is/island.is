@@ -1,1 +1,1 @@
-export * from './lib/api-domains-health-directorate'
+export * from './lib/health-directorate.resolver'

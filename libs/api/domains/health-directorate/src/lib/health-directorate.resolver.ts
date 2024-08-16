@@ -9,39 +9,52 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { DisabilityLicenseService } from '@island.is/clients/disability-license'
 import { ApiScope } from '@island.is/auth/scopes'
 import {
   DonationException,
-  DonationExceptionInput,
   DonorStatus,
   DonorStatusInput,
 } from './models/organ-donation.model'
+import type { Locale } from '@island.is/shared/types'
+import { Vaccinations } from './models/vaccinations.model'
+import { HealthDirectorateService } from './health-directorate.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(ApiScope.internal)
 @Resolver()
 export class HealthDirectorateResolver {
-  constructor(private disabilityLicenseApi: DisabilityLicenseService) {}
+  constructor(private api: HealthDirectorateService) {}
 
+  /* Organ Donation */
   @Query(() => DonorStatus)
   getDonorStatus(@CurrentUser() user: User): Promise<DonorStatus> {
-    return Promise.resolve({} as DonorStatus)
+    return this.api.getDonorStatus(user)
   }
 
   @Query(() => DonationException)
   getDonationExceptions(
-    @Args('input') input: DonationExceptionInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DonationException> {
-    return Promise.resolve({} as DonationException)
+    return this.api.getDonationExceptions(user, locale)
   }
 
-  @Mutation(() => DonorStatus)
-  async endorsementSystemCreateEndorsementList(
+  @Mutation()
+  async updateDonorStatus(
     @Args('input') input: DonorStatusInput,
     @CurrentUser() user: User,
-  ): Promise<DonorStatus> {
-    return {} as DonorStatus
+  ): Promise<void> {
+    return this.api.updateDonorStatus(user, input)
+  }
+
+  /* Vaccinations */
+  @Query(() => [Vaccinations])
+  getVaccinations(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Array<Vaccinations>> {
+    return this.api.getVaccinations(user, locale)
   }
 }
