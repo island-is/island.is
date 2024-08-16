@@ -34,8 +34,8 @@ export const mapPoliceCaseFileToPoliceCaseFileCheck = (
   policeCaseNumber: file.policeCaseNumber,
   chapter: file.chapter,
   displayDate: file.displayDate,
-  checked: false,
   type: file.type,
+  checked: false,
 })
 
 interface Props {

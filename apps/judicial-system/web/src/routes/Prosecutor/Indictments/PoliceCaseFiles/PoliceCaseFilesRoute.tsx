@@ -270,7 +270,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
           handleUpload(
             addUploadFiles(
               files,
-              CaseFileCategory.CASE_FILE,
+              CaseFileCategory.CASE_FILE_RECORD,
               undefined,
               policeCaseNumber,
             ),
@@ -315,6 +315,7 @@ const PoliceUploadListMemo: FC<PoliceUploadListMenuProps> = memo(
     caseOrigin,
   }) => {
     const { formatMessage } = useIntl()
+
     return (
       <Box paddingBottom={4}>
         {policeCaseNumbers?.map((policeCaseNumber, index) => (

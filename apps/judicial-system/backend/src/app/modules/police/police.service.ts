@@ -261,7 +261,7 @@ export class PoliceService {
                 policeCaseNumber: file.malsnumer,
                 chapter: getChapter(file.domsSkjalsFlokkun),
                 displayDate: file.dagsStofnad,
-                type: file.tegundSkjals?.kodi,
+                type: file.tegundSkjals?.kodi ?? undefined,
               })
             }
           })

@@ -18,5 +18,5 @@ export class PoliceCaseFile {
   readonly displayDate?: string
 
   @Field(() => String, { nullable: true })
-  readonly type?: string | null
+  readonly type?: string
 }

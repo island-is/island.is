@@ -17,6 +17,6 @@ export class PoliceCaseFile {
   @ApiPropertyOptional({ type: String })
   displayDate?: string
 
-  @ApiPropertyOptional({ type: String, nullable: true })
-  type?: string | null
+  @ApiPropertyOptional({ type: String })
+  type?: string
 }
