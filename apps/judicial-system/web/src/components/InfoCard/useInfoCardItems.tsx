@@ -50,6 +50,7 @@ const useInfoCardItems = () => {
               name: workingCase.defenderName,
               email: workingCase.defenderEmail,
               phoneNumber: workingCase.defenderPhoneNumber,
+              sessionArrangement: workingCase.sessionArrangements,
             }}
           />
         ))
