@@ -191,7 +191,9 @@ export const filterSupportCategories = (
           slug: SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID,
           title:
             namespace?.['sjukratryggingarEuropeanHealthInsuranceCard'] ||
-            (locale === 'is' ? 'Evrópska sjúkratryggingakortið' : 'The European Health Insurance Card'),
+            (locale === 'is'
+              ? 'Evrópska sjúkratryggingakortið'
+              : 'The European Health Insurance Card'),
         },
       ])
   }
