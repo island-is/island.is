@@ -9,7 +9,7 @@ import {
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../../../lib/messages'
-import { constituencies } from 'libs/service-portal/signature-collection/src/lib/constants'
+import { constituencies } from '../../../../../lib/constants'
 
 const AddConstituencyModal = () => {
   const { formatMessage } = useLocale()

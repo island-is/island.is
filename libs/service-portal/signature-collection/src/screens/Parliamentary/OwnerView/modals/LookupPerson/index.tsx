@@ -13,7 +13,7 @@ import { useIdentityQuery } from '@island.is/service-portal/graphql'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
 import { m } from '../../../../../lib/messages'
-import { constituencies } from 'libs/service-portal/signature-collection/src/lib/constants'
+import { constituencies } from '../../../../../lib/constants'
 
 const LookupPerson = ({
   collectionId,
