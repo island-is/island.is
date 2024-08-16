@@ -12,8 +12,14 @@ import {
 } from '@nestjs/common'
 import { ApiOkResponse, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger'
 
+import { JudicialSystemScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
-import { CurrentUser, IdsUserGuard } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  Scopes,
+  ScopesGuard,
+} from '@island.is/auth-nest-tools'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
@@ -42,7 +48,8 @@ const ApiLocaleQuery = applyDecorators(
 
 @Controller('api')
 @ApiTags('cases')
-@UseGuards(IdsUserGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
+@Scopes(JudicialSystemScope.lawAndOrder)
 export class CaseController {
   constructor(
     private readonly caseService: CaseService,
