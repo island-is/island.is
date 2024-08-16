@@ -183,6 +183,19 @@ const useInfoCardItems = () => {
     ],
   }
 
+  const confirmedCourtDate: Item = {
+    id: 'confirmed-court-date-item',
+    title: formatMessage(core.confirmedCourtDate),
+    values: [
+      `${capitalize(
+        formatDate(workingCase.arraignmentDate?.date, 'PPPP', true) ?? '',
+      )} kl. ${formatDate(
+        workingCase.arraignmentDate?.date,
+        constants.TIME_FORMAT,
+      )}`,
+    ],
+  }
+
   const mergeCase: Item = {
     id: 'merge-case-item',
     title: formatMessage(strings.indictmentMergedTitle),
@@ -310,6 +323,7 @@ const useInfoCardItems = () => {
     registrar,
     offence,
     requestedCourtDate,
+    confirmedCourtDate,
     mergeCase,
     mergedCasePoliceCaseNumbers,
     mergedCaseCourtCaseNumber,
