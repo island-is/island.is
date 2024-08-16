@@ -50,13 +50,6 @@
         "buildTarget": "services-endorsements-api:build"
       }
     },
-    "cleanup": {
-      "executor": "@nx/js:node",
-      "options": {
-        "buildTarget": "services-endorsements-api:build",
-        "args": ["--job", "cleanup"]
-      }
-    },
     "lint": {
       "executor": "@nx/eslint:lint"
     },
