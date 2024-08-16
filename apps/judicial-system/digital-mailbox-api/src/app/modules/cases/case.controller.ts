@@ -42,7 +42,7 @@ const ApiLocaleQuery = applyDecorators(
     name: 'locale',
     required: false,
     description: 'The requested locale of the response. Defaults to Icelandic.',
-    schema: { type: 'string', enum: ['is', 'en'] },
+    type: String,
   }),
 )
 
