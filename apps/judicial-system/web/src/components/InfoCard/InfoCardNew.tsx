@@ -25,7 +25,7 @@ const InfoCardNew: FC<Props> = (props) => {
   const { sections } = props
 
   return (
-    <Box className={styles.infoCardContainerNew} paddingX={[2, 2, 3, 3]}>
+    <Box className={styles.infoCardContainer} paddingX={[2, 2, 3, 3]}>
       {sections.map((section, index) => (
         <Box
           className={cn(

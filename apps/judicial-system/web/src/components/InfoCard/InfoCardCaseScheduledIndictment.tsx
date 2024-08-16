@@ -9,7 +9,7 @@ import {
   Institution,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import InfoCard from './InfoCard'
+import BlueBoxWithIcon from '../BlueBoxWithIcon/BlueBoxWithIcon'
 import InfoCardCaseScheduled from './InfoCardCaseScheduled'
 import { strings } from './InfoCardCaseScheduledIndictment.strings'
 
@@ -35,7 +35,7 @@ const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
 
   return indictmentDecision ? (
     indictmentDecision === IndictmentDecision.POSTPONING ? (
-      <InfoCard
+      <BlueBoxWithIcon
         data={[
           {
             title: formatMessage(strings.postponingTitle),
@@ -47,7 +47,7 @@ const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
         icon="calendar"
       />
     ) : indictmentDecision === IndictmentDecision.POSTPONING_UNTIL_VERDICT ? (
-      <InfoCard
+      <BlueBoxWithIcon
         data={[
           {
             title: formatMessage(strings.schedulingUntilVerdictTitle),

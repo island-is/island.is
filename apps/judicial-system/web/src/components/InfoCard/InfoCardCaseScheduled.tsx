@@ -5,7 +5,7 @@ import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Institution } from '../../graphql/schema'
-import InfoCard from './InfoCard'
+import BlueBoxWithIcon from '../BlueBoxWithIcon/BlueBoxWithIcon'
 import { strings } from './InfoCardCaseScheduled.strings'
 
 interface Props {
@@ -20,7 +20,7 @@ const InfoCardCaseScheduled: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   return (
-    <InfoCard
+    <BlueBoxWithIcon
       data={[
         {
           title: title ?? formatMessage(strings.scheduled),
