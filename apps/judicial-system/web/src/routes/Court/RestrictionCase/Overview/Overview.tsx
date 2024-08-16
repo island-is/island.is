@@ -11,12 +11,11 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   laws,
   rcCourtOverview,
-  requestCourtDate,
   restrictionsV2,
   titles,
 } from '@island.is/judicial-system-web/messages'
@@ -30,14 +29,14 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCard,
   InfoCardCaseScheduled,
   PageHeader,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
+import InfoCardNew from '@island.is/judicial-system-web/src/components/InfoCard/InfoCardNew'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
   CaseState,
@@ -59,6 +58,13 @@ export const JudgeOverview = () => {
   const id = router.query.id
 
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
+  const {
+    defendants,
+    prosecutor,
+    prosecutorsOffice,
+    requestedCourtDate,
+    parentCaseValidToDate,
+  } = useInfoCardItems()
 
   const [isDraftingConclusion, setIsDraftingConclusion] = useState<boolean>()
 
@@ -121,74 +127,22 @@ export const JudgeOverview = () => {
             </Box>
           )}
         <Box component="section" marginBottom={5}>
-          <InfoCard
-            data={[
+          <InfoCardNew
+            sections={[
               {
-                title: formatMessage(core.prosecutor),
-                value: `${workingCase.prosecutorsOffice?.name}`,
+                id: 'defendants-section',
+                items: [defendants(workingCase.type)],
               },
               {
-                title: formatMessage(requestCourtDate.heading),
-                value: `${capitalize(
-                  formatDate(workingCase.requestedCourtDate, 'PPPP', true) ??
-                    '',
-                )} eftir kl. ${formatDate(
-                  workingCase.requestedCourtDate,
-                  constants.TIME_FORMAT,
-                )}`,
-              },
-              {
-                title: formatMessage(core.prosecutorPerson),
-                value: RenderPersonalData(
-                  workingCase.prosecutor?.name,
-                  workingCase.prosecutor?.email,
-                ),
-              },
-              {
-                title: workingCase.parentCase
-                  ? formatMessage(core.pastRestrictionCase, {
-                      caseType: workingCase.type,
-                    })
-                  : formatMessage(core.arrestDate),
-                value: workingCase.parentCase
-                  ? `${capitalize(
-                      formatDate(
-                        workingCase.parentCase.validToDate,
-                        'PPPP',
-                        true,
-                      ) ?? '',
-                    )} kl. ${formatDate(
-                      workingCase.parentCase.validToDate,
-                      constants.TIME_FORMAT,
-                    )}`
-                  : workingCase.arrestDate
-                  ? `${capitalize(
-                      formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
-                    )} kl. ${formatDate(
-                      workingCase.arrestDate,
-                      constants.TIME_FORMAT,
-                    )}`
-                  : 'Var ekki skráður',
+                id: 'case-info-section',
+                items: [
+                  prosecutorsOffice,
+                  requestedCourtDate,
+                  prosecutor(workingCase.type),
+                  parentCaseValidToDate,
+                ],
               },
             ]}
-            defendants={
-              workingCase.defendants
-                ? {
-                    title: capitalize(
-                      formatMessage(core.defendant, {
-                        suffix: workingCase.defendants.length > 1 ? 'ar' : 'i',
-                      }),
-                    ),
-                    items: workingCase.defendants,
-                  }
-                : undefined
-            }
-            defender={{
-              name: workingCase.defenderName ?? '',
-              email: workingCase.defenderEmail,
-              sessionArrangement: workingCase.sessionArrangements,
-              phoneNumber: workingCase.defenderPhoneNumber,
-            }}
           />
         </Box>
         <Box marginBottom={5}>

@@ -273,6 +273,29 @@ const useInfoCardItems = () => {
     values: [formatDate(date, 'PP')],
   })
 
+  const parentCaseValidToDate: Item = {
+    id: 'parent-case-valid-to-date-item',
+    title: workingCase.parentCase
+      ? formatMessage(core.pastRestrictionCase, {
+          caseType: workingCase.type,
+        })
+      : formatMessage(core.arrestDate),
+    values: [
+      workingCase.parentCase
+        ? `${capitalize(
+            formatDate(workingCase.parentCase.validToDate, 'PPPP', true) ?? '',
+          )} kl. ${formatDate(
+            workingCase.parentCase.validToDate,
+            constants.TIME_FORMAT,
+          )}`
+        : workingCase.arrestDate
+        ? `${capitalize(
+            formatDate(workingCase.arrestDate, 'PPPP', true) ?? '',
+          )} kl. ${formatDate(workingCase.arrestDate, constants.TIME_FORMAT)}`
+        : 'Var ekki skráður',
+    ],
+  }
+
   return {
     defendants,
     indictmentCreated,
@@ -299,6 +322,7 @@ const useInfoCardItems = () => {
     indictmentReviewer,
     indictmentReviewDecision,
     indictmentReviewedDate,
+    parentCaseValidToDate,
   }
 }
 
