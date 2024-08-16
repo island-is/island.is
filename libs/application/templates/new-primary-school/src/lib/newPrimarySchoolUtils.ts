@@ -24,9 +24,9 @@ import {
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
 
-//import { ApolloClient } from '@apollo/client'
-//import { friggOptionsQuery } from '../graphql/queries'
-//import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
+import { ApolloClient } from '@apollo/client'
+import { friggOptionsQuery } from '../graphql/queries'
+import { FriggOptionsQuery, FriggOptionsQueryVariables } from '../types/schema'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const childNationalId = getValueViaPath(answers, 'childNationalId') as string
@@ -373,7 +373,7 @@ export const formatGender = (genderCode?: string): Gender | undefined => {
   }
 }
 
-/*export const getOptionsListByType = async (
+export const getOptionsListByType = async (
   apolloClient: ApolloClient<object>,
   type: string,
   lang: Locale,
@@ -401,7 +401,7 @@ export const formatGender = (genderCode?: string): Gender | undefined => {
       }),
     ) ?? []
   )
-}*/
+}
 
 export const getSelectedOptionLabel = (
   options: SelectOption[],
