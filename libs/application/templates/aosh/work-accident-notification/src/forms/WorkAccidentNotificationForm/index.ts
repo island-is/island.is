@@ -4,6 +4,7 @@ import { informationSection } from './InformationSection'
 import { Logo } from '../../assets/Logo'
 
 import { externalData } from '../../lib/messages/externalData'
+import { accidentSection } from './AccidentSection'
 
 export const WorkAccidentNotificationForm: Form = buildForm({
   id: 'WorkAccidentNotificationFormsDraft',
@@ -19,5 +20,6 @@ export const WorkAccidentNotificationForm: Form = buildForm({
       children: [],
     }),
     informationSection,
+    accidentSection,
   ],
 })
