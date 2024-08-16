@@ -79,6 +79,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       return null
     }
   }
+
   return (
     <>
       <SectionHeading

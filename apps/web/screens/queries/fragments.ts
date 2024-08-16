@@ -271,6 +271,17 @@ export const slices = gql`
   fragment TeamListFields on TeamList {
     __typename
     id
+    variant
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
     teamMembers {
       name
       title
@@ -535,6 +546,7 @@ export const slices = gql`
     intro
     defaultFieldNamespace
     fields {
+      id
       title
       name
       placeholder
@@ -547,6 +559,7 @@ export const slices = gql`
     aboutYouHeadingText
     questionsHeadingText
     recipientFormFieldDecider {
+      id
       title
       placeholder
       type

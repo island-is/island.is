@@ -44,7 +44,7 @@ export const mapCustomPage = ({
   return {
     typename: 'CustomPage',
     id: sys.id,
-    uniqueIdentifier: fields.uniqueIdentifier,
+    uniqueIdentifier: fields.uniqueIdentifier || '',
     alertBanner: fields.alertBanner ? mapAlertBanner(fields.alertBanner) : null,
     configJson: fields.configJson,
     translationStrings: fields.translationNamespace?.fields?.strings || {},
