@@ -2,6 +2,9 @@ import { Injectable } from '@nestjs/common'
 import {
   HealthDirectorateVaccinationsService,
   HealthDirectorateOrganDonationService,
+  OrganDonorDto,
+  VaccinationDto,
+  organLocale,
 } from '@island.is/clients/health-directorate'
 import { Auth } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
@@ -10,12 +13,8 @@ import {
   DonorStatus,
   DonorStatusInput,
 } from './models/organ-donation.model'
-import {
-  OrganDonorDto,
-  Locale as organLocale,
-} from 'libs/clients/health-directorate/src/lib/clients/organ-donation'
+
 import { Vaccinations } from './models/vaccinations.model'
-import { VaccinationDto } from 'libs/clients/health-directorate/src/lib/clients'
 
 @Injectable()
 export class HealthDirectorateService {
