@@ -70,12 +70,6 @@ export const survivorsBenefitsFormMessage: MessageDir = {
       defaultMessage: 'Dánardagur',
       description: 'Date of death',
     },
-    deceasedSpouseNotIcelandic: {
-      id: 'sb.application:deceased.spouse.not.icelandic',
-      defaultMessage: 'látinn maki/sambúðaraðili ekki með íslenska kennitölu',
-      description:
-        'deceased spouse/cohabitant does not have an Icelandic social security number',
-    },
     deceasedSpouseName: {
       id: 'sb.application:deceased.spouse.name',
       defaultMessage: 'Nafn',

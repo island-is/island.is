@@ -149,34 +149,13 @@ export const dataSchema = z.object({
     ),
   deceasedSpouseInfo: z
     .object({
-      notIcelandic: z.array(z.string()),
       nationalId: z.string().optional(),
       name: z.string().optional(),
-      manualName: z.string().optional(),
-      date: z.string(),
     })
-    .partial()
     .refine(
-      ({ nationalId, notIcelandic }) =>
-        !notIcelandic?.includes(YES)
-          ? nationalId && kennitala.isPerson(nationalId)
-          : true,
+      ({ nationalId }) => (nationalId ? kennitala.isPerson(nationalId) : false),
       {
         path: ['nationalId'],
-      },
-    )
-    .refine(
-      ({ name, notIcelandic }) =>
-        !notIcelandic?.includes(YES) ? !!name : true,
-      {
-        path: ['name'],
-      },
-    )
-    .refine(
-      ({ notIcelandic, manualName }) =>
-        notIcelandic?.includes(YES) ? !!manualName : true,
-      {
-        path: ['manualName'],
       },
     ),
   expectingChild: z.object({

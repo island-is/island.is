@@ -90,24 +90,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'fileUploadAdditionalFilesRequired.additionalDocumentsRequired',
   ) as FileType[]
 
-  const notIcelandic = getValueViaPath(
-    answers,
-    'deceasedSpouseInfo.notIcelandic[0]',
-  ) as YesOrNo
-
   const deceasedSpouseName = getValueViaPath(
     answers,
-    notIcelandic ? 'deceasedSpouseInfo.manualName' : 'deceasedSpouseInfo.name',
+    'deceasedSpouseInfo.name',
   ) as string
 
-  const deceasedSpouseNationalId = notIcelandic
-    ? ''
-    : (getValueViaPath(answers, 'deceasedSpouseInfo.nationalId') as string)
-
-  const deceasedSpouseDate = getValueViaPath(
+  const deceasedSpouseNationalId = getValueViaPath(
     answers,
-    'deceasedSpouseInfo.date',
-  ) as Date
+    'deceasedSpouseInfo.nationalId',
+  ) as string
 
   const tempAnswers = getValueViaPath(
     answers,
@@ -137,10 +128,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     spouseAllowanceUsage,
     taxLevel,
     additionalAttachmentsRequired,
-    notIcelandic,
     deceasedSpouseName,
     deceasedSpouseNationalId,
-    deceasedSpouseDate,
     tempAnswers,
     isExpectingChild,
   }

@@ -391,39 +391,10 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 !getApplicationExternalData(externalData)
                   .deceasedSpouseNationalId,
               children: [
-                buildCheckboxField({
-                  id: 'deceasedSpouseInfo.notIcelandic',
-                  title: '',
-                  backgroundColor: 'white',
-                  large: false,
-                  options: [
-                    {
-                      value: YES,
-                      label:
-                        survivorsBenefitsFormMessage.info
-                          .deceasedSpouseNotIcelandic,
-                    },
-                  ],
-                }),
                 buildNationalIdWithNameField({
                   id: 'deceasedSpouseInfo',
                   title: '',
-                  condition: (answers) =>
-                    !getApplicationAnswers(answers).notIcelandic,
                   required: true,
-                }),
-                buildTextField({
-                  id: 'deceasedSpouseInfo.manualName',
-                  required: true,
-                  title: survivorsBenefitsFormMessage.info.deceasedSpouseName,
-                  condition: (answers) =>
-                    !!getApplicationAnswers(answers).notIcelandic,
-                }),
-                buildDateField({
-                  id: 'deceasedSpouseInfo.date',
-                  title: survivorsBenefitsFormMessage.info.deceasedSpouseDate,
-                  condition: (answers) =>
-                    !!getApplicationAnswers(answers).notIcelandic,
                 }),
               ],
             }),

@@ -324,12 +324,7 @@ export const transformApplicationToSurvivorsBenefitsDTO = (
     spouseAllowance,
     spouseAllowanceUsage,
     taxLevel,
-    notIcelandic,
-    deceasedSpouseName,
     deceasedSpouseNationalId,
-    deceasedSpouseDate,
-    tempAnswers,
-    isExpectingChild,
   } = getSBApplicationAnswers(application.answers)
   const { bankInfo, userProfileEmail, children } = getSBApplicationExternalData(
     application.externalData,
