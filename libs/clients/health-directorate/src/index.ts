@@ -8,4 +8,8 @@ export {
   HealthDirectorateClientService,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
+  OrganDonorDto,
+  Locale,
+  organLocale,
+  VaccinationDto,
 } from './lib/clients'
