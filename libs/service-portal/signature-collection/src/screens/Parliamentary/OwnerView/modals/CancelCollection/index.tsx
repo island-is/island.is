@@ -1,11 +1,11 @@
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../../../lib/messages'
+import { m } from '../../../../../lib/messages'
 import { Modal } from '@island.is/service-portal/core'
 import { useState } from 'react'
-import { useGetListsForUser, useIsOwner } from '../../../../hooks'
+import { useGetListsForUser, useIsOwner } from '../../../../../hooks'
 import { useMutation } from '@apollo/client'
-import { cancelCollectionMutation } from '../../../../hooks/graphql/mutations'
+import { cancelCollectionMutation } from '../../../../../hooks/graphql/mutations'
 import { SignatureCollectionSuccess } from '@island.is/api/schema'
 
 const CancelCollection = ({ collectionId }: { collectionId: string }) => {

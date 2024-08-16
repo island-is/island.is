@@ -17,41 +17,32 @@ const AddConstituencyModal = () => {
 
   return (
     <Box>
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        alignItems="flexEnd"
-        style={{ minWidth: '150px' }}
+      <Button
+        variant="utility"
+        icon="add"
+        onClick={() => {
+          setModalIsOpen(true)
+        }}
       >
-        <Button
-          variant="utility"
-          icon="add"
-          iconType="outline"
-          onClick={() => {
-            setModalIsOpen(true)
-          }}
-        >
-          {formatMessage(m.add)}
-        </Button>
-      </Box>
+        {formatMessage(m.add)}
+      </Button>
       <Modal
         id="addConstituency"
         isVisible={modalIsOpen}
-        label={''}
         initialVisibility={false}
         onCloseModal={() => setModalIsOpen(false)}
+        label={''}
       >
         <Text marginBottom={2} variant="h2">
           {formatMessage(m.addConstituency)}
         </Text>
         <Text marginBottom={5} variant="default">
-          {formatMessage(m.addConstituencyDescriprion)}
+          {formatMessage(m.addConstituencyDescription)}
         </Text>
         {constituencies.map((constituency) => (
           <Box key={constituency} marginBottom={3}>
             <Checkbox
               label={constituency}
-              name={constituency}
               value={constituency}
             />
           </Box>

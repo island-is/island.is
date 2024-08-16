@@ -14,7 +14,6 @@ const EditPerson = () => {
       <Button
         variant="text"
         icon="pencil"
-        iconType="outline"
         size="small"
         onClick={() => {
           setModalIsOpen(true)
@@ -23,9 +22,9 @@ const EditPerson = () => {
       <Modal
         id="editSupervisor"
         isVisible={modalIsOpen}
-        label={''}
         initialVisibility={false}
         onCloseModal={() => setModalIsOpen(false)}
+        label={''}
       >
         <Stack space={3}>
           <Input
@@ -46,7 +45,6 @@ const EditPerson = () => {
             <Checkbox
               key={constituency}
               label={constituency}
-              name={constituency}
               value={constituency}
             />
           ))}

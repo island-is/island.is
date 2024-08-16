@@ -13,7 +13,6 @@ const DeletePersonModal = () => {
       <Button
         variant="text"
         icon="trash"
-        iconType="outline"
         size="small"
         onClick={() => setModalIsOpen(true)}
       />

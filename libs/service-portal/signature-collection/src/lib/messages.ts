@@ -299,6 +299,11 @@ export const m = defineMessages({
     defaultMessage: 'Kennitala',
     description: '',
   },
+  nationalIdInvalid: {
+    id: 'sp.nationalIdInvalid',
+    defaultMessage: 'Ógild kennitala',
+    description: '',
+  },
   constituency: {
     id: 'sp.constituency',
     defaultMessage: 'Kjördæmi',
@@ -314,8 +319,8 @@ export const m = defineMessages({
     defaultMessage: 'Bæta við kjördæmi',
     description: '',
   },
-  addConstituencyDescriprion: {
-    id: 'sp.addConstituencyDescriprion',
+  addConstituencyDescription: {
+    id: 'sp.addConstituencyDescription',
     defaultMessage:
       ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at semet nunc efficitur.',
     description: '',

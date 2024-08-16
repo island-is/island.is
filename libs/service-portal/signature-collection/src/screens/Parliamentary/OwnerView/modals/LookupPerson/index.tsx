@@ -57,29 +57,21 @@ const LookupPerson = ({
 
   return (
     <Box>
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        alignItems="flexEnd"
-        style={{ minWidth: '150px' }}
+      <Button
+        variant="utility"
+        icon="add"
+        onClick={() => {
+          setModalIsOpen(true)
+        }}
       >
-        <Button
-          variant="utility"
-          icon="add"
-          iconType="outline"
-          onClick={() => {
-            setModalIsOpen(true)
-          }}
-        >
-          {formatMessage(m.add)}
-        </Button>
-      </Box>
+        {formatMessage(m.add)}
+      </Button>
       <Modal
-        id="addManager"
+        id="lookupPerson"
         isVisible={modalIsOpen}
-        label={''}
         initialVisibility={false}
         onCloseModal={() => setModalIsOpen(false)}
+        label={''}
       >
         <Text marginBottom={5} variant="h2">
           {title}
@@ -97,7 +89,7 @@ const LookupPerson = ({
             onChange={(e) => {
               setNationalIdInput(e.target.value.replace(/\W/g, ''))
             }}
-            error={nationalIdNotFound ? formatMessage('Not found') : undefined}
+            error={nationalIdNotFound ? formatMessage(m.nationalIdInvalid) : undefined}
             loading={loading}
           />
           <Input
@@ -111,7 +103,6 @@ const LookupPerson = ({
             constituencies.map((constituency) => (
               <Checkbox
                 key={constituency}
-                name="constituency"
                 label={constituency}
                 value={constituency}
               />
