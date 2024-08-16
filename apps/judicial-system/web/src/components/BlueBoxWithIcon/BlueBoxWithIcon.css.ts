@@ -2,13 +2,13 @@ import { style } from '@vanilla-extract/css'
 
 import { theme } from '@island.is/island-ui/theme'
 
-export const infoCardContainer = style({
+export const container = style({
   position: 'relative',
   background: theme.color.blue100,
   borderRadius: theme.border.radius.large,
 })
 
-export const infoCardDataContainer = style({
+export const dataContainer = style({
   display: 'grid',
   gap: theme.spacing[2],
 

@@ -17,8 +17,8 @@ const BlueBoxWithIcon: FC<Props> = (props) => {
   const { data, icon } = props
 
   return (
-    <Box className={styles.infoCardContainer} padding={[2, 2, 3, 3]}>
-      <Box className={styles.infoCardDataContainer}>
+    <Box className={styles.container} padding={[2, 2, 3, 3]}>
+      <Box className={styles.dataContainer}>
         {data.map((dataItem, index) => {
           return (
             <Box
