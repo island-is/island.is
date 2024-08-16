@@ -1,32 +1,23 @@
-import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
-import { ConfigType } from '@nestjs/config'
-import { HealthDirectorateClientConfig } from './healthDirectorateClient.config'
-import { Scope } from './healthDirectorateClient.types'
-import { createEnhancedFetch } from '@island.is/clients/middlewares'
+import { defineConfig } from '@island.is/nest/config'
+import * as z from 'zod'
+import { HealthDirectorateApisId } from './healthDirectorateClient.types'
 
-export const ConfigFactory = (
-  xroadConfig: ConfigType<typeof XRoadConfig>,
-  config: ConfigType<typeof HealthDirectorateClientConfig>,
-  idsClientConfig: ConfigType<typeof IdsClientConfig>,
-  scopes: Array<Scope>,
-  autoAuth: boolean,
-) => ({
-  fetchApi: createEnhancedFetch({
-    name: 'clients-health-directorate',
-    organizationSlug: 'landlaeknir',
-    autoAuth:
-      autoAuth && idsClientConfig.isConfigured
-        ? {
-            mode: 'tokenExchange',
-            issuer: idsClientConfig.issuer,
-            clientId: idsClientConfig.clientId,
-            clientSecret: idsClientConfig.clientSecret,
-            scope: scopes,
-          }
-        : undefined,
-  }),
-  basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-  headers: {
-    'X-Road-Client': xroadConfig.xRoadClient,
-  },
+const schema = z.object({
+  xroadPath: z.string(),
+  scope: z.array(z.string()),
 })
+
+export const ClientConfigFactory = (
+  apiIndex: keyof typeof HealthDirectorateApisId,
+  scope: Array<string>,
+  XRoadPath: string,
+  backupXRoad?: string,
+) =>
+  defineConfig<z.infer<typeof schema>>({
+    name: `${HealthDirectorateApisId[apiIndex]}ClientConfig`,
+    schema,
+    load: (env) => ({
+      xroadPath: env.required(`XROAD_${XRoadPath}_PATH`, backupXRoad),
+      scope,
+    }),
+  })
