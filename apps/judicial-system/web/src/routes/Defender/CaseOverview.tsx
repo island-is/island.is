@@ -15,12 +15,12 @@ import {
   AppealCaseFilesOverview,
   CaseDates,
   CaseResentExplanation,
+  CaseScheduledCard,
   CaseTitleInfoAndTags,
   Conclusion,
   conclusion,
   FormContentContainer,
   FormContext,
-  InfoCardCaseScheduled,
   MarkdownWrapper,
   Modal,
   PageHeader,
@@ -142,7 +142,7 @@ export const CaseOverview = () => {
             workingCase.arraignmentDate?.date &&
             workingCase.court && (
               <Box component="section" marginBottom={5}>
-                <InfoCardCaseScheduled
+                <CaseScheduledCard
                   court={workingCase.court}
                   courtDate={workingCase.arraignmentDate.date}
                   courtRoom={workingCase.arraignmentDate.location}

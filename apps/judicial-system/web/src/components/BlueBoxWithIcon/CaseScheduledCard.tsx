@@ -5,8 +5,8 @@ import { Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { Institution } from '../../graphql/schema'
-import BlueBoxWithIcon from '../BlueBoxWithIcon/BlueBoxWithIcon'
-import { strings } from './InfoCardCaseScheduled.strings'
+import BlueBoxWithIcon from './BlueBoxWithIcon'
+import { strings } from './CaseScheduledCard.strings'
 
 interface Props {
   court: Institution
@@ -15,7 +15,7 @@ interface Props {
   title?: string | null
 }
 
-const InfoCardCaseScheduled: FC<Props> = (props) => {
+const CaseScheduledCard: FC<Props> = (props) => {
   const { court, courtDate, courtRoom, title } = props
   const { formatMessage } = useIntl()
 
@@ -44,4 +44,4 @@ const InfoCardCaseScheduled: FC<Props> = (props) => {
   )
 }
 
-export default InfoCardCaseScheduled
+export default CaseScheduledCard

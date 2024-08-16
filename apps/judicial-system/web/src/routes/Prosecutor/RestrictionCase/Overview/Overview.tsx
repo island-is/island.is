@@ -25,11 +25,11 @@ import {
   AccordionListItem,
   CaseFileList,
   CaseResubmitModal,
+  CaseScheduledCard,
   CommentsAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
-  InfoCardCaseScheduled,
   Modal,
   PageHeader,
   PageLayout,
@@ -172,7 +172,7 @@ export const Overview = () => {
           workingCase.arraignmentDate?.date &&
           workingCase.court && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduled
+              <CaseScheduledCard
                 court={workingCase.court}
                 courtDate={workingCase.arraignmentDate.date}
                 courtRoom={workingCase.arraignmentDate.location}

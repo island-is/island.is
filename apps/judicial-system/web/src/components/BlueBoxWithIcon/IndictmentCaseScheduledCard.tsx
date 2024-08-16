@@ -9,9 +9,9 @@ import {
   Institution,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import BlueBoxWithIcon from '../BlueBoxWithIcon/BlueBoxWithIcon'
-import InfoCardCaseScheduled from './InfoCardCaseScheduled'
-import { strings } from './InfoCardCaseScheduledIndictment.strings'
+import BlueBoxWithIcon from './BlueBoxWithIcon'
+import CaseScheduledCard from './CaseScheduledCard'
+import { strings } from './IndictmentCaseScheduledCard.strings'
 
 interface Props {
   court: Institution
@@ -22,7 +22,7 @@ interface Props {
   courtSessionType?: CourtSessionType | null
 }
 
-const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
+const IndictmentCaseScheduledCard: FC<Props> = (props) => {
   const {
     court,
     indictmentDecision,
@@ -62,7 +62,7 @@ const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
       />
     ) : (
       // indictmentDecision === IndictmentDecision.SCHEDULING
-      <InfoCardCaseScheduled
+      <CaseScheduledCard
         court={court}
         courtDate={courtDate}
         courtRoom={courtRoom}
@@ -70,7 +70,7 @@ const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
       />
     )
   ) : (
-    <InfoCardCaseScheduled
+    <CaseScheduledCard
       court={court}
       courtDate={courtDate}
       courtRoom={courtRoom}
@@ -78,4 +78,4 @@ const InfoCardCaseScheduledIndictment: FC<Props> = (props) => {
   )
 }
 
-export default InfoCardCaseScheduledIndictment
+export default IndictmentCaseScheduledCard
