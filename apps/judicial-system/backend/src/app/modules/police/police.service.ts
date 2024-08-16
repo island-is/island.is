@@ -97,6 +97,7 @@ export class PoliceService {
     malsnumer: z.string(),
     domsSkjalsFlokkun: z.optional(z.string()),
     dagsStofnad: z.optional(z.string()),
+    skjalasnid: z.optional(z.string()),
   })
   private readonly crimeSceneStructure = z.object({
     vettvangur: z.optional(z.string()),
@@ -252,9 +253,7 @@ export class PoliceService {
             if (!files.find((item) => item.id === id)) {
               files.push({
                 id,
-                name: file.heitiSkjals.endsWith('.pdf')
-                  ? file.heitiSkjals
-                  : `${file.heitiSkjals}.pdf`,
+                name: `${file.heitiSkjals}${file.skjalasnid ?? '.pdf'}`,
                 policeCaseNumber: file.malsnumer,
                 chapter: getChapter(file.domsSkjalsFlokkun),
                 displayDate: file.dagsStofnad,

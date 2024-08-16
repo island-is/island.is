@@ -1,12 +1,4 @@
-export const capitalizeEveryWord = (s: string) => {
-  if (typeof s !== 'string') return ''
+import capitalize from 'lodash/capitalize'
 
-  const arr = s.split(' ')
-
-  const capitalized = arr.map(
-    (item) => item.charAt(0).toUpperCase() + item.slice(1).toLowerCase(),
-  )
-
-  const word = capitalized.join(' ')
-  return word
-}
+export const capitalizeEveryWord = (str: string): string =>
+  str.split(' ').map(capitalize).join(' ')
