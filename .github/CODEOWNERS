@@ -134,6 +134,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
+/libs/api/domains/health-directorate/                                                                    @island-is/hugsmidjan
 /libs/api/domains/hms-loans/                                                                             @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan @island-is/aranja
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan @island-is/origo
