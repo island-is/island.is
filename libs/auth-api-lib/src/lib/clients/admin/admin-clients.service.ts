@@ -176,6 +176,13 @@ export class AdminClientsService {
         clientType: clientDto.clientType,
         clientName: clientDto.clientName,
         ...omit(clientDto, superUserFields),
+        supportedDelegationTypes: clientDto.supportedDelegationTypes?.filter(
+          (dt) => {
+            return !dt.startsWith(
+              `${AuthDelegationType.PersonalRepresentative}`,
+            )
+          },
+        ),
       }
     }
 

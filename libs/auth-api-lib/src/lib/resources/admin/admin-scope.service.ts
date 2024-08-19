@@ -114,6 +114,7 @@ export class AdminScopeService {
   async createScope(
     tenantId: string,
     input: AdminCreateScopeDto,
+    user: User,
   ): Promise<AdminScopeDTO> {
     if (
       !validatePermissionId({
@@ -154,6 +155,19 @@ export class AdminScopeService {
 
     if (!displayName || !description) {
       throw new BadRequestException(translatedValuesErrorMsg)
+    }
+
+    if (!this.isSuperAdmin(user)) {
+      input = {
+        ...input,
+        ...omit(input, superUserScopeFields),
+        supportedDelegationTypes: input.supportedDelegationTypes?.filter(
+          (delegationType) =>
+            !delegationType.startsWith(
+              AuthDelegationType.PersonalRepresentative,
+            ),
+        ),
+      }
     }
 
     await this.sequelize.transaction(async (transaction) => {
@@ -546,5 +560,9 @@ export class AdminScopeService {
         },
       )
     }
+  }
+
+  private isSuperAdmin = (user: User) => {
+    return user.scope.includes(AdminPortalScope.idsAdminSuperUser)
   }
 }
