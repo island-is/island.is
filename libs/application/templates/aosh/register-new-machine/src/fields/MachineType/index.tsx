@@ -62,7 +62,6 @@ export const MachineType: FC<React.PropsWithChildren<FieldBaseProps>> = (
           model,
         },
       })
-      console.log(data, type, model)
       return data
     },
     [getMachineCategory],
