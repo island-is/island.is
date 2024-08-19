@@ -20,9 +20,14 @@ export const UserNotificationsConfig = defineConfig({
   name: 'UserNotificationsApi',
   schema,
   load(env) {
+    const rawFirebaseCredentials = env.required('FIREBASE_CREDENTIALS', '')
+    const cleanedFirebaseCredentials = rawFirebaseCredentials
+      .replace(/\\n/g, '')
+      .replace(/\\"/g, '"')
+    const isWorker = processJob() === 'worker'
     return {
-      isWorker: processJob() === 'worker',
-      firebaseCredentials: env.required('FIREBASE_CREDENTIALS', ''),
+      isWorker,
+      firebaseCredentials: cleanedFirebaseCredentials,
       servicePortalClickActionUrl:
         env.optional('SERVICE_PORTAL_CLICK_ACTION_URL') ??
         'https://island.is/minarsidur',
