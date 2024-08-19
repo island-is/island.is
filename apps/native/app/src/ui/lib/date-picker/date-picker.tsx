@@ -52,9 +52,17 @@ const DateSelected = styled(Typography)<{ empty: boolean }>`
 
 interface DatePickerProps {
   label: string
+  placeholder?: string
+  minimumDate?: Date
+  maximumDate?: Date
 }
 
-export function DatePickerButton({ label }: DatePickerProps) {
+export function DatePickerInput({
+  label,
+  placeholder,
+  maximumDate,
+  minimumDate,
+}: DatePickerProps) {
   const intl = useIntl()
   const [date, setDate] = useState(new Date())
   const [openDatePicker, setOpenDatePicker] = useState(false)
@@ -66,9 +74,7 @@ export function DatePickerButton({ label }: DatePickerProps) {
         <View>
           <Label variant="eyebrow">{label}</Label>
           <DateSelected empty={!dateSelected}>
-            {!dateSelected
-              ? intl.formatMessage({ id: 'inbox.filterDatePlaceholder' })
-              : intl.formatDate(date)}
+            {!dateSelected ? placeholder ?? '' : intl.formatDate(date)}
           </DateSelected>
         </View>
         <Image source={calendarIcon} style={{}} />
@@ -76,7 +82,8 @@ export function DatePickerButton({ label }: DatePickerProps) {
       <DatePicker
         mode="date"
         title={null}
-        maximumDate={new Date()}
+        maximumDate={maximumDate}
+        minimumDate={minimumDate}
         modal
         open={openDatePicker}
         date={date}

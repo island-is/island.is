@@ -37,6 +37,7 @@ const Content = styled.View``
 interface AccordionItemProps {
   children: React.ReactNode
   title: string
+  startOpen?: boolean
   icon?: React.ReactNode
 }
 
@@ -54,8 +55,14 @@ const toggleAnimation = {
   },
 }
 
-export function AccordionItem({ children, title, icon }: AccordionItemProps) {
-  const [isOpen, setIsOpen] = useState(false)
+export function AccordionItem({
+  children,
+  title,
+  icon,
+  startOpen = false,
+}: AccordionItemProps) {
+  const [isOpen, setIsOpen] = useState(startOpen)
+  const [shouldStartOpen, setStartOpen] = useState(startOpen)
   const animationController = useRef(new Animated.Value(0)).current
 
   const toggleListItem = () => {
@@ -66,6 +73,9 @@ export function AccordionItem({ children, title, icon }: AccordionItemProps) {
     }
     Animated.timing(animationController, config).start()
     LayoutAnimation.configureNext(toggleAnimation)
+    if (startOpen && isOpen) {
+      setStartOpen(false)
+    }
     setIsOpen(!isOpen)
   }
 
@@ -82,14 +92,20 @@ export function AccordionItem({ children, title, icon }: AccordionItemProps) {
           style={{
             flexDirection: 'row',
             justifyContent: 'space-between',
-            margin: isOpen ? -2 : 0,
+            margin: 0,
           }}
         >
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             {icon && <Icon>{icon}</Icon>}
             <Typography variant="heading5">{title}</Typography>
           </View>
-          <PlusMinus style={{ transform: [{ rotate: arrowTransform }] }}>
+          <PlusMinus
+            style={{
+              // If accordion should start open, don't transform the icon since then
+              // the minus will be displayed transformed to -90deg
+              transform: shouldStartOpen ? [] : [{ rotate: arrowTransform }],
+            }}
+          >
             <Image
               source={isOpen ? minus : plus}
               style={{ width: 16, height: 16 }}

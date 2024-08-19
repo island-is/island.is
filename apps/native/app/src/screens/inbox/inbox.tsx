@@ -155,6 +155,7 @@ type Filters = {
   bookmarked?: boolean
   subjectContains?: string
   senderNationalId?: string[]
+  categoryIds?: string[]
 }
 
 function applyFilters(filters?: Filters) {
@@ -164,6 +165,7 @@ function applyFilters(filters?: Filters) {
     opened: filters?.opened ? false : undefined,
     subjectContains: filters?.subjectContains ?? '',
     senderNationalId: filters?.senderNationalId ?? [],
+    categoryIds: filters?.categoryIds ?? [],
   }
 }
 
@@ -443,7 +445,8 @@ export const InboxScreen: NavigationFunctionComponent<{
     )
   }
 
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with
+  // bottom tabs https://github.com/wix/react-native-navigation/issues/6717
   if (hiddenContent) {
     return null
   }
@@ -495,8 +498,10 @@ export const InboxScreen: NavigationFunctionComponent<{
                     opened,
                     archived,
                     bookmarked,
-                    senders: availableSenders,
-                    categories: availableCategories,
+                    availableSenders,
+                    availableCategories,
+                    selectedSendersIncoming: senderNationalId,
+                    selectedCategoriesIncoming: categoryIds,
                   })
                 }}
               />
@@ -514,7 +519,11 @@ export const InboxScreen: NavigationFunctionComponent<{
                 onPress={onPressMarkAllAsRead}
               />
             </ListHeaderWrapper>
-            {opened || archived || bookmarked ? (
+            {opened ||
+            archived ||
+            bookmarked ||
+            senderNationalId.length ||
+            categoryIds.length ? (
               <TagsWrapper>
                 {opened && (
                   <Tag
@@ -549,6 +558,42 @@ export const InboxScreen: NavigationFunctionComponent<{
                     }
                   />
                 )}
+                {!!senderNationalId.length &&
+                  senderNationalId.map((sender) => {
+                    const name = availableSenders.find((s) => s.id === sender)
+                    return (
+                      <Tag
+                        title={name?.name ?? ''}
+                        closable
+                        onClose={() =>
+                          Navigation.updateProps(componentId, {
+                            senderNationalId: senderNationalId.filter(
+                              (id) => id !== sender,
+                            ),
+                          })
+                        }
+                      />
+                    )
+                  })}
+                {!!categoryIds.length &&
+                  categoryIds.map((categoryId) => {
+                    const name = availableCategories.find(
+                      (category) => category.id === categoryId,
+                    )
+                    return (
+                      <Tag
+                        title={name?.name ?? ''}
+                        closable
+                        onClose={() =>
+                          Navigation.updateProps(componentId, {
+                            senderNationalId: categoryIds.filter(
+                              (id) => id !== categoryId,
+                            ),
+                          })
+                        }
+                      />
+                    )
+                  })}
               </TagsWrapper>
             ) : null}
           </>
