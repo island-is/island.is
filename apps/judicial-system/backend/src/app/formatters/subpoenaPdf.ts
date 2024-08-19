@@ -2,7 +2,11 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import {
   DateType,
   DistrictCourtLocation,
@@ -97,7 +101,9 @@ export const createSubpoena = (
   addNormalText(
     doc,
     theCase.prosecutor
-      ? `                     (${theCase.prosecutor.name} ${theCase.prosecutor.title})`
+      ? `                     (${theCase.prosecutor.name} ${lowercase(
+          theCase.prosecutor.title,
+        )})`
       : 'Ekki skráður',
     'Times-Roman',
   )
