@@ -215,15 +215,13 @@ export const CaseOverview = () => {
                     }
                   : undefined
               }
-              defenders={[
-                {
-                  name: workingCase.defenderName ?? '',
-                  defenderNationalId: workingCase.defenderNationalId,
-                  sessionArrangement: workingCase.sessionArrangements,
-                  email: workingCase.defenderEmail,
-                  phoneNumber: workingCase.defenderPhoneNumber,
-                },
-              ]}
+              defender={{
+                name: workingCase.defenderName ?? '',
+                defenderNationalId: workingCase.defenderNationalId,
+                sessionArrangement: workingCase.sessionArrangements,
+                email: workingCase.defenderEmail,
+                phoneNumber: workingCase.defenderPhoneNumber,
+              }}
               courtOfAppealData={
                 workingCase.appealCaseNumber
                   ? [

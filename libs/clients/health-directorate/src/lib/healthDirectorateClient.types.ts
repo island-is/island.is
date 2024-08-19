@@ -1,9 +1,4 @@
-import {
-  Nam,
-  StarfsleyfiAMinumSidumApi,
-  UmsoknStarfsleyfiApi,
-  VottordApi,
-} from '../../gen/fetch'
+import { Nam } from './clients/occupational-license/gen/fetch'
 
 export interface HealthcareLicense {
   professionId: string
@@ -63,7 +58,8 @@ export interface HealthcareWorkPermitRequest {
 
 export type Scope = '@landlaeknir.is/starfsleyfi'
 
-export type Api =
-  | typeof StarfsleyfiAMinumSidumApi
-  | typeof VottordApi
-  | typeof UmsoknStarfsleyfiApi
+export enum HealthDirectorateApisId {
+  ORGAN_DONATION = 'organDonation',
+  VACCINATIONS = 'vaccinations',
+  OCCUPATIONAL_LICENSE = 'occupational-license-and-certificate',
+}
