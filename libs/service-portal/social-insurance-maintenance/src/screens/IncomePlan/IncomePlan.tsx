@@ -75,6 +75,7 @@ const IncomePlan = () => {
 
   const { data, loading, error } = useGetIncomePlanQuery()
 
+  console.log(`${document.location.origin}umsoknir/tekjuaaetlun`)
   return (
     <Box>
       <IntroHeader
@@ -112,7 +113,9 @@ const IncomePlan = () => {
               variant="utility"
             />
             <LinkButton
-              to="bloblo"
+              to={`${document.location.origin}/${formatMessage(
+                m.incomePlanModifyLink,
+              )}`}
               text={formatMessage(m.modifyIncomePlan)}
               disabled={
                 !data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible

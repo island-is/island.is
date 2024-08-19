@@ -72,7 +72,9 @@ const IncomePlanDetail = () => {
                 {formatMessage(coreMessages.print)}
               </Button>
               <LinkButton
-                to="bloblo"
+                to={`${document.location.origin}/${formatMessage(
+                  m.incomePlanModifyLink,
+                )}`}
                 text={formatMessage(m.modifyIncomePlan)}
                 disabled={
                   !data?.socialInsuranceIncomePlan?.isEligibleForChange

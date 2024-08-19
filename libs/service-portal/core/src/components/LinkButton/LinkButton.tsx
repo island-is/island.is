@@ -37,69 +37,65 @@ export const LinkButton = ({
 }: LinkButtonProps) => {
   const isExternal = isExternalLink(to)
   if (variant === 'text') {
-    return (
+    return disabled ? (
+      <Button
+        size={size ?? 'small'}
+        unfocusable
+        disabled
+        icon={isExternal ? 'open' : undefined}
+        iconType={isExternal ? 'outline' : undefined}
+      >
+        {text}
+      </Button>
+    ) : (
       <LinkResolver
         className={styles.link}
         skipOutboundTrack={skipOutboundTrack}
         href={to}
       >
-        {disabled ? (
-          <Button
-            size={size ?? 'small'}
-            unfocusable
-            disabled
-            icon={isExternal ? 'open' : undefined}
-            iconType={isExternal ? 'outline' : undefined}
-          >
-            {text}
-          </Button>
-        ) : (
-          <Button
-            as="span"
-            size={size ?? 'small'}
-            variant="text"
-            unfocusable
-            icon={isExternal ? 'open' : undefined}
-            iconType={isExternal ? 'outline' : undefined}
-          >
-            {text}
-          </Button>
-        )}
+        <Button
+          as="span"
+          size={size ?? 'small'}
+          variant="text"
+          unfocusable
+          icon={isExternal ? 'open' : undefined}
+          iconType={isExternal ? 'outline' : undefined}
+        >
+          {text}
+        </Button>
       </LinkResolver>
     )
   }
-  return (
+  return disabled ? (
+    <Button
+      colorScheme="default"
+      icon={icon}
+      iconType="outline"
+      size={size ?? 'default'}
+      disabled
+      variant={variant ?? 'utility'}
+      unfocusable
+    >
+      {text}
+    </Button>
+  ) : (
     <LinkResolver
       skipOutboundTrack={skipOutboundTrack}
       className={styles.link}
       href={to}
     >
-      {disabled ? (
-        <Button
-          colorScheme="default"
-          icon={icon}
-          iconType="outline"
-          size={size ?? 'default'}
-          disabled
-          variant={variant ?? 'utility'}
-          unfocusable
-        >
-          {text}
-        </Button>
-      ) : (
-        <Button
-          colorScheme="default"
-          icon={icon}
-          iconType="outline"
-          size={size ?? 'default'}
-          type="text"
-          as="span"
-          variant={variant ?? 'utility'}
-          unfocusable
-        >
-          {text}
-        </Button>
-      )}
+      <Button
+        colorScheme="default"
+        icon={icon}
+        iconType="outline"
+        size={size ?? 'default'}
+        type="text"
+        as="span"
+        variant={variant ?? 'utility'}
+        unfocusable
+      >
+        {text}
+      </Button>
     </LinkResolver>
   )
 }

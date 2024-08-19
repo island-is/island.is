@@ -43,7 +43,11 @@ export const m = defineMessages({
   incomePlanModifyUnavailableText: {
     id: 'sp.social-insurance-maintenance:income-plan-modify-unavailable',
     defaultMessage:
-      'Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. ',
+      'Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
+  },
+  incomePlanModifyLink: {
+    id: 'sp.social-insurance-maintenance:income-plan-modify-link',
+    defaultMessage: 'umsoknir/tekjuaaetlun',
   },
   paymentsReasoning: {
     id: 'sp.social-insurance-maintenance:payments-reasoning',
