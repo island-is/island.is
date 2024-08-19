@@ -1101,6 +1101,9 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "api/domains/health-directorate": [
+        "libs/api/domains/health-directorate/src/index.ts"
       ]
     }
   }
