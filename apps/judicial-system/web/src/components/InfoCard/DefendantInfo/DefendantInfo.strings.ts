@@ -44,4 +44,14 @@ export const strings = defineMessages({
     description:
       'Notað til að láta vita að enginn verjandi er skráður í ákæru.',
   },
+  spokesperson: {
+    id: 'judicial.system.core:info_card.spokesperson',
+    defaultMessage: 'Talsmaður',
+    description: 'Notaður sem titill á "talsmanni" á upplýsingaspjaldi máls.',
+  },
+  noDefender: {
+    id: 'judicial.system.core:info_card.no_defender',
+    defaultMessage: 'Hefur ekki verið skráður',
+    description: 'Notaður sem texti þegar enginn verjandi er skráður.',
+  },
 })

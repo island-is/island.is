@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
 import { CreationOptional, NonAttribute } from 'sequelize'
 import {
   BelongsToMany,
@@ -25,7 +24,6 @@ export class Organization extends Model<Organization> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -33,15 +31,12 @@ export class Organization extends Model<Organization> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -49,15 +44,12 @@ export class Organization extends Model<Organization> {
     allowNull: false,
     defaultValue: '',
   })
-  @ApiProperty()
   nationalId!: string
 
   @HasMany(() => Form)
-  @ApiProperty({ type: [Form] })
   forms?: Form[]
 
   @HasMany(() => ApplicantTypeNameSuggestion)
-  @ApiProperty({ type: [ApplicantTypeNameSuggestion] })
   applicantTypeNameSuggestions?: ApplicantTypeNameSuggestion[]
 
   @BelongsToMany(() => FieldType, {

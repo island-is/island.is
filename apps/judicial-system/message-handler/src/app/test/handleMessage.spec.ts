@@ -4,7 +4,7 @@ import { uuid } from 'uuidv4'
 import type { Logger } from '@island.is/logging'
 
 import {
-  CaseMessage,
+  Message,
   messageEndpoint,
   MessageService,
   MessageType,
@@ -23,13 +23,12 @@ interface Then {
   error: Error
 }
 
-type GivenWhenThen = (message: CaseMessage) => Promise<Then>
+type GivenWhenThen = (message: Message) => Promise<Then>
 
 describe('MessageHandlerService - Handle message', () => {
+  const type = MessageType.NOTIFICATION // just a random type
   const config = appModuleConfig()
   const logger = { debug: jest.fn() } as unknown as Logger
-  const user = { id: uuid() } as User
-  const caseId = uuid()
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -39,7 +38,7 @@ describe('MessageHandlerService - Handle message', () => {
       json: jest.fn().mockResolvedValueOnce({ delivered: true }),
     })
 
-    givenWhenThen = async (message: CaseMessage) => {
+    givenWhenThen = async (message: Message) => {
       const messageHandlerService = new MessageHandlerService(
         undefined as unknown as MessageService,
         new InternalDeliveryService(config, logger),
@@ -64,12 +63,36 @@ describe('MessageHandlerService - Handle message', () => {
 
   describe('handle message', () => {
     let then: Then
-    const type = MessageType.DELIVERY_TO_COURT_PROSECUTOR
 
     beforeEach(async () => {
       then = await givenWhenThen({
         type,
-        user,
+      })
+    })
+
+    it('should handle message', async () => {
+      expect(fetch).toHaveBeenCalledWith(
+        `${config.backendUrl}/api/internal/${messageEndpoint[type]}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${config.backendAccessToken}`,
+          },
+          body: JSON.stringify({}),
+        },
+      )
+      expect(then.result).toBe(true)
+    })
+  })
+
+  describe('handle message with case id', () => {
+    const caseId = uuid()
+    let then: Then
+
+    beforeEach(async () => {
+      then = await givenWhenThen({
+        type,
         caseId,
       })
     })
@@ -83,7 +106,7 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ user }),
+          body: JSON.stringify({}),
         },
       )
       expect(then.result).toBe(true)
@@ -91,14 +114,13 @@ describe('MessageHandlerService - Handle message', () => {
   })
 
   describe('handle message with element id', () => {
-    let then: Then
-    const type = MessageType.DELIVERY_TO_COURT_DEFENDANT
+    const caseId = uuid()
     const elementId = uuid()
+    let then: Then
 
     beforeEach(async () => {
       then = await givenWhenThen({
         type,
-        user,
         caseId,
         elementId,
       })
@@ -113,37 +135,40 @@ describe('MessageHandlerService - Handle message', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ user }),
+          body: JSON.stringify({}),
         },
       )
       expect(then.result).toBe(true)
     })
   })
 
-  describe('handle message with body', () => {
+  describe('handle message extra info', () => {
+    const user = { id: uuid() } as User
+    const caseId = uuid()
+    const elementId = uuid()
+    const body = { something: uuid() }
     let then: Then
-    const messageType = MessageType.NOTIFICATION
-    const notificationType = NotificationType.HEADS_UP
 
     beforeEach(async () => {
       then = await givenWhenThen({
-        type: messageType,
+        type,
         user,
         caseId,
-        body: { type: notificationType },
+        elementId,
+        body,
       })
     })
 
     it('should handle message', async () => {
       expect(fetch).toHaveBeenCalledWith(
-        `${config.backendUrl}/api/internal/case/${caseId}/${messageEndpoint[messageType]}`,
+        `${config.backendUrl}/api/internal/case/${caseId}/${messageEndpoint[type]}/${elementId}`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${config.backendAccessToken}`,
           },
-          body: JSON.stringify({ type: notificationType, user }),
+          body: JSON.stringify({ ...body, user }),
         },
       )
       expect(then.result).toBe(true)

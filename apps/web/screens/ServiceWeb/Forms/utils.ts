@@ -54,6 +54,9 @@ export enum SjukratryggingarCategories {
 
   // Túlkaþjónusta
   TULKATHJONUSTA = 'tulkathjonusta',
+
+  // Evrópska sjúkratryggingakortið
+  EVROPSKA_SJUKRATRYGGINGAKORTID = 'evropska_sjukratryggingakortid',
 }
 
 export enum DirectorateOfImmigrationCategories {
@@ -178,6 +181,19 @@ export const filterSupportCategories = (
           title:
             namespace?.['sjukratryggingarInterpretationServices'] ||
             (locale === 'is' ? 'Túlkaþjónusta' : 'Interpretation services'),
+        },
+        {
+          id: SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID,
+          importance: 0,
+          __typename: 'SupportCategory',
+          description: '',
+          organization: organization,
+          slug: SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID,
+          title:
+            namespace?.['sjukratryggingarEuropeanHealthInsuranceCard'] ||
+            (locale === 'is'
+              ? 'Evrópska sjúkratryggingakortið'
+              : 'The European Health Insurance Card'),
         },
       ])
   }

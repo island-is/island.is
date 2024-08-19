@@ -35,6 +35,7 @@ export enum Features {
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
+  registerNewMachine = 'isRegisterNewMachineEnabled',
   FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
   ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
   FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
@@ -58,6 +59,9 @@ export enum Features {
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
+  //New License service fetch enabled
+  licensesV2 = 'isLicensesV2Enabled',
 
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',

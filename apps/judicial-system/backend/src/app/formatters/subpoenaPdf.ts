@@ -2,7 +2,11 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import {
+  formatDate,
+  formatDOB,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import {
   DateType,
   DistrictCourtLocation,
@@ -52,17 +56,15 @@ export const createSubpoena = (
   setTitle(doc, formatMessage(strings.title))
   addNormalText(doc, `${theCase.court?.name}`, 'Times-Bold', true)
 
-  if (dateLog) {
-    addNormalRightAlignedText(
-      doc,
-      `${formatDate(new Date(dateLog.created), 'PPP')}`,
-      'Times-Roman',
-    )
-  }
+  addNormalRightAlignedText(
+    doc,
+    `${formatDate(new Date(dateLog?.modified ?? new Date()), 'PPP')}`,
+    'Times-Roman',
+  )
 
-  arraignmentDate = arraignmentDate || dateLog?.date
-  location = location || dateLog?.location
-  subpoenaType = subpoenaType || defendant.subpoenaType
+  arraignmentDate = arraignmentDate ?? dateLog?.date
+  location = location ?? dateLog?.location
+  subpoenaType = subpoenaType ?? defendant.subpoenaType
 
   if (theCase.court?.name) {
     addNormalText(
@@ -99,7 +101,9 @@ export const createSubpoena = (
   addNormalText(
     doc,
     theCase.prosecutor
-      ? `                     (${theCase.prosecutor.name} ${theCase.prosecutor.title})`
+      ? `                     (${theCase.prosecutor.name} ${lowercase(
+          theCase.prosecutor.title,
+        )})`
       : 'Ekki skráður',
     'Times-Roman',
   )
@@ -112,7 +116,7 @@ export const createSubpoena = (
     addNormalText(
       doc,
       formatMessage(strings.arraignmentDate, {
-        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPP'),
+        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPPp'),
       }),
       'Times-Bold',
     )
