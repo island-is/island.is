@@ -14,11 +14,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { formatNationalId } from '@island.is/judicial-system/formatters'
-import {
-  CaseMessage,
-  MessageService,
-  MessageType,
-} from '@island.is/judicial-system/message'
+import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
@@ -189,12 +185,13 @@ export const include: Includeable[] = [
         CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
         CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
         CaseFileCategory.APPEAL_RULING,
+        CaseFileCategory.APPEAL_COURT_RECORD,
         CaseFileCategory.COURT_RECORD,
         CaseFileCategory.INDICTMENT,
         CaseFileCategory.CRIMINAL_RECORD,
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
-        CaseFileCategory.APPEAL_COURT_RECORD,
+        CaseFileCategory.CASE_FILE_RECORD,
       ],
     },
   },
@@ -276,7 +273,7 @@ export class LimitedAccessCaseService {
       )
     }
 
-    const messages: CaseMessage[] = []
+    const messages = []
 
     if (update.appealState === CaseAppealState.APPEALED) {
       theCase.caseFiles

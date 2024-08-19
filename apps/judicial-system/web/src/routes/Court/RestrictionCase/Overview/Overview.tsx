@@ -37,7 +37,7 @@ import {
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import RenderPersonalData from '@island.is/judicial-system-web/src/components/InfoCard/RenderPersonalInfo/RenderPersonalInfo'
 import {
   CaseLegalProvisions,
   CaseState,
@@ -139,7 +139,7 @@ export const JudgeOverview = () => {
               },
               {
                 title: formatMessage(core.prosecutorPerson),
-                value: NameAndEmail(
+                value: RenderPersonalData(
                   workingCase.prosecutor?.name,
                   workingCase.prosecutor?.email,
                 ),
@@ -183,14 +183,12 @@ export const JudgeOverview = () => {
                   }
                 : undefined
             }
-            defenders={[
-              {
-                name: workingCase.defenderName ?? '',
-                email: workingCase.defenderEmail,
-                sessionArrangement: workingCase.sessionArrangements,
-                phoneNumber: workingCase.defenderPhoneNumber,
-              },
-            ]}
+            defender={{
+              name: workingCase.defenderName ?? '',
+              email: workingCase.defenderEmail,
+              sessionArrangement: workingCase.sessionArrangements,
+              phoneNumber: workingCase.defenderPhoneNumber,
+            }}
           />
         </Box>
         <Box marginBottom={5}>

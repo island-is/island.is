@@ -1,0 +1,30 @@
+{
+  "name": "application-templates-aosh-register-new-machine",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/aosh/register-new-machine/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/linter:eslint",
+      "outputs": ["{options.outputFile}"],
+      "options": {
+        "lintFilePatterns": [
+          "libs/application/templates/aosh/register-new-machine/**/*.{ts,tsx,js,jsx}"
+        ]
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/aosh/register-new-machine/src/**/*.{js,ts,tsx}'"
+      }
+    },
+    "configurations": {
+      "ci": {
+        "ci": true,
+        "codeCoverage": true
+      }
+    }
+  }
+}

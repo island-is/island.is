@@ -12,7 +12,8 @@ import { core } from '@island.is/judicial-system-web/messages'
 import { IndictmentCaseReviewDecision } from '../../../graphql/schema'
 import { FormContext } from '../../FormProvider/FormProvider'
 import { DefendantInfoActionButton } from '../DefendantInfo/DefendantInfo'
-import InfoCard, { DataSection, NameAndEmail } from '../InfoCard'
+import InfoCard, { DataSection } from '../InfoCard'
+import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import { strings } from '../InfoCardIndictment.strings'
 
 export interface Props {
@@ -103,14 +104,14 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
         },
         {
           title: formatMessage(strings.prosecutor),
-          value: NameAndEmail(
+          value: RenderPersonalData(
             workingCase.prosecutor?.name,
             workingCase.prosecutor?.email,
           ),
         },
         {
           title: formatMessage(core.judge),
-          value: NameAndEmail(
+          value: RenderPersonalData(
             workingCase.judge?.name,
             workingCase.judge?.email,
           ),
