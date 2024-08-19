@@ -109,6 +109,12 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Yfirlit ákæru skjá hjá saksóknara í ákærum',
       }),
+      addFiles: defineMessage({
+        id: 'judicial.system.core:titles.prosecutor.indictments.add_files',
+        defaultMessage: 'Bæta við gögnum - Réttarvörslugátt',
+        description:
+          'Notaður sem titill fyrir Bæta við gögnum skjá hjá saksóknara í ákærum',
+      }),
     },
   },
   court: {
