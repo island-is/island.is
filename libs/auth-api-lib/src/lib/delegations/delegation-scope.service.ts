@@ -141,7 +141,6 @@ export class DelegationScopeService {
           model: ApiScope,
           where: {
             enabled: true,
-            alsoForDelegatedUser: false,
           },
           include: [
             {
