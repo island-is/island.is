@@ -1,5 +1,6 @@
 import {
   Box,
+  Button,
   DatePicker,
   Input,
   SkeletonLoader,
@@ -24,6 +25,7 @@ import {
   regularSignatureSchema,
   signatureInstitutionSchema,
 } from '../../lib/dataSchema'
+import { RemoveRegularSignature } from './RemoveRegularSignature'
 type Props = {
   applicationId: string
   type: SignatureType
@@ -154,6 +156,12 @@ export const InstitutionSignature = ({
             }
           />
         </Box>
+        {signatureIndex !== undefined && (
+          <RemoveRegularSignature
+            applicationId={applicationId}
+            signatureIndex={signatureIndex}
+          />
+        )}
       </Box>
     </Box>
   )

@@ -12,6 +12,7 @@ import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
 import { memberItemSchema, regularSignatureSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
+import { RemoveRegularMember } from './RemoveRegularMember'
 
 type Props = {
   applicationId: string
@@ -158,6 +159,12 @@ export const RegularMember = ({
           }
         />
       </Box>
+      <RemoveRegularMember
+        key={`signature.${signatureIndex}.remove.${memberIndex}`}
+        applicationId={applicationId}
+        signatureIndex={signatureIndex}
+        memberIndex={memberIndex}
+      />
     </Box>
   )
 }

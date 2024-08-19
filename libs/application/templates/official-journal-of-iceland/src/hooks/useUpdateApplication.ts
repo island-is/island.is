@@ -54,6 +54,7 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     updateData,
     updateLoading,
     updateError,
+    isLoading: applicationLoading || updateLoading,
     updateApplication,
     refetchApplication,
   }

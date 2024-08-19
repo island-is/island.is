@@ -1,6 +1,6 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
-import { z } from 'zod'
+import { any, z } from 'zod'
 import { committeeSignatureSchema, regularSignatureSchema } from './dataSchema'
 
 export const countDaysAgo = (date: Date) => {
@@ -106,3 +106,8 @@ export const getSignatureDefaultValues = (signature: any, index?: number) => {
 
   return { institution: signature.institution, date: signature.date }
 }
+
+export const isRegularSignature = (
+  any: unknown,
+): any is z.infer<typeof regularSignatureSchema> =>
+  regularSignatureSchema.safeParse(any).success
