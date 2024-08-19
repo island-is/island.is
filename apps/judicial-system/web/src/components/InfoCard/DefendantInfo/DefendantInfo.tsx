@@ -9,10 +9,17 @@ import {
   SessionArrangements,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { Defender } from '../InfoCard'
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
 import { strings } from './DefendantInfo.strings'
 import * as styles from './DefendantInfo.css'
+
+interface Defender {
+  name?: string | null
+  defenderNationalId?: string | null
+  sessionArrangement?: SessionArrangements | null
+  email?: string | null
+  phoneNumber?: string | null
+}
 
 export type DefendantInfoActionButton = {
   text: string
@@ -74,7 +81,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
 
   return (
     <div
-      key={defendant.id}
       className={
         defendantInfoActionButton
           ? styles.gridRow.withButton
