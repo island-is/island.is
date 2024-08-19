@@ -11,11 +11,13 @@ export class ApplicationsController {
 
   @Get()
   @Documentation({
-    description: 'Get application preview',
+    description: 'Get application',
     response: { status: 200, type: ApplicationDto },
   })
-  getPreview(@Param('formId') formId: string): ApplicationDto {
-    return this.applicationsService.getPreview(formId)
+  async getPreview(
+    @Param('applicationId') applicationId: string,
+  ): Promise<ApplicationDto> {
+    return this.applicationsService.getApplication(applicationId)
   }
 
   @Documentation({

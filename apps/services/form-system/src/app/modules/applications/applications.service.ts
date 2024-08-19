@@ -34,7 +34,15 @@ export class ApplicationsService {
     return applicationDto
   }
 
-  getPreview(formId: string): ApplicationDto {
+  async getApplication(applicationId: string): Promise<ApplicationDto> {
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
     return new ApplicationDto()
   }
 
