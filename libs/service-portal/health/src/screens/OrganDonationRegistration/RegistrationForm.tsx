@@ -49,15 +49,17 @@ export const Form2 = () => {
   })
   const { data: status } = useGetDonorStatusQuery()
 
-  const exceptions = data?.getDonationExceptions.values
+  const exceptions =
+    data?.HealthDirectorateOrganDonationGetDonationExceptions.values
   const [radioValue, setRadioValue] = useState<string | undefined>()
 
   useEffect(() => {
     if (radioValue === undefined) {
       setRadioValue(
-        status?.getDonorStatus.isDonor
+        status?.HealthDirectorateOrganDonationGetDonorStatus.isDonor
           ? OPT_IN
-          : (status?.getDonorStatus?.exceptionComment?.length ?? 0) > 0
+          : (status?.HealthDirectorateOrganDonationGetDonorStatus
+              ?.exceptionComment?.length ?? 0) > 0
           ? OPT_IN_EXCEPTIONS
           : OPT_OUT,
       )

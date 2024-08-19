@@ -1,5 +1,5 @@
 query getDonorStatus {
-  getDonorStatus {
+  HealthDirectorateOrganDonationGetDonorStatus {
     isDonor
     exceptions
     exceptionComment
@@ -8,7 +8,7 @@ query getDonorStatus {
 }
 
 query getOrganDonationExceptions($locale: String) {
-  getDonationExceptions(locale: $locale) {
+  HealthDirectorateOrganDonationGetDonationExceptions(locale: $locale) {
     values {
       id
       name
@@ -19,5 +19,5 @@ query getOrganDonationExceptions($locale: String) {
 mutation updateOrganDonationInfo(
   $input: HealthDirectorateOrganDonorStatusInput!
 ) {
-  updateDonorStatus(input: $input)
+  HealthDirectorateOrganDonationUpdateDonorStatus(input: $input)
 }

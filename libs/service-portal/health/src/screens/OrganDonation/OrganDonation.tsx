@@ -14,7 +14,7 @@ const OrganDonation = () => {
 
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetDonorStatusQuery()
-  const donorStatus = data?.getDonorStatus
+  const donorStatus = data?.HealthDirectorateOrganDonationGetDonorStatus
 
   const exceptionText: string =
     donorStatus?.exceptions?.length && donorStatus.exceptions.length > 0
