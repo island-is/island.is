@@ -576,7 +576,7 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                 <Text variant="eyebrow" fontWeight="semiBold" color="blue400">
                   {n('totalText', activeLocale === 'is' ? 'Samtals' : 'Total')}
                 </Text>
-                <Box paddingLeft={2} textAlign={'right'}>
+                <Box paddingLeft={2} textAlign="right">
                   <Text fontWeight="semiBold">
                     {numberFormatter.format(getTotal())}{' '}
                     {n(
