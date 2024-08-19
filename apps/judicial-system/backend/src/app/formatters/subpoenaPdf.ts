@@ -58,7 +58,7 @@ export const createSubpoena = (
 
   addNormalRightAlignedText(
     doc,
-    `${formatDate(new Date(dateLog?.created ?? new Date()), 'PPP')}`,
+    `${formatDate(new Date(dateLog?.modified ?? new Date()), 'PPP')}`,
     'Times-Roman',
   )
 
@@ -116,7 +116,7 @@ export const createSubpoena = (
     addNormalText(
       doc,
       formatMessage(strings.arraignmentDate, {
-        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPP'),
+        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPPp'),
       }),
       'Times-Bold',
     )
