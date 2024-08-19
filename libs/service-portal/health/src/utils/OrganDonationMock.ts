@@ -11,7 +11,7 @@ interface OrganDonor {
 }
 
 export interface OptionsLimitations {
-  value: string
+  name: string
   type: string
 }
 export interface OptionsOptions {
@@ -63,15 +63,15 @@ export const getOptions = (locale: Locale) => {
           title:
             'Ég gef leyfi fyrir líffæragjöf að undanskildum eftirfarandi líffærum:',
           limitations: [
-            { value: 'Hjarta', type: 'checkbox' },
-            { value: 'Lungu', type: 'checkbox' },
-            { value: 'Lifur', type: 'checkbox' },
-            { value: 'Nýru', type: 'checkbox' },
-            { value: 'Bris', type: 'checkbox' },
-            { value: 'Þarmar', type: 'checkbox' },
-            // { value: 'Annað', type: 'checkbox' },
-            { value: 'Hornhimna', type: 'checkbox' },
-            // { value: 'Annað', type: 'input' },
+            { name: 'Hjarta', type: 'checkbox' },
+            { name: 'Lungu', type: 'checkbox' },
+            { name: 'Lifur', type: 'checkbox' },
+            { name: 'Nýru', type: 'checkbox' },
+            { name: 'Bris', type: 'checkbox' },
+            { name: 'Þarmar', type: 'checkbox' },
+            // { name: 'Annað', type: 'checkbox' },
+            { name: 'Hornhimna', type: 'checkbox' },
+            // { name: 'Annað', type: 'input' },
           ],
         },
         {
@@ -93,15 +93,15 @@ export const getOptions = (locale: Locale) => {
           title:
             'I authorize organ donation, but the authorization does not cover the following organs:',
           limitations: [
-            { value: 'Heart', type: 'checkbox' },
-            { value: 'Lungs', type: 'checkbox' },
-            { value: 'Liver', type: 'checkbox' },
-            { value: 'Kidneys', type: 'checkbox' },
-            { value: 'Pancreas', type: 'checkbox' },
-            { value: 'Intestines', type: 'checkbox' },
-            // { value: 'Other', type: 'checkbox' },
-            { value: 'Cornea', type: 'checkbox' },
-            // { value: 'Other', type: 'input' },
+            { name: 'Heart', type: 'checkbox' },
+            { name: 'Lungs', type: 'checkbox' },
+            { name: 'Liver', type: 'checkbox' },
+            { name: 'Kidneys', type: 'checkbox' },
+            { name: 'Pancreas', type: 'checkbox' },
+            { name: 'Intestines', type: 'checkbox' },
+            // { name: 'Other', type: 'checkbox' },
+            { name: 'Cornea', type: 'checkbox' },
+            // { name: 'Other', type: 'input' },
           ],
         },
         {

@@ -12,9 +12,10 @@ import React, { useState } from 'react'
 import { OptionsLimitations } from '../../utils/OrganDonationMock'
 import { messages } from '../..'
 import { useLocale, useNamespaces } from '@island.is/localization'
+import { HealthDirectorateOrganDonationExceptionObject } from '@island.is/api/schema'
 
 interface LimitationsProps {
-  data: OptionsLimitations[]
+  data: HealthDirectorateOrganDonationExceptionObject[]
 }
 
 const Limitations = ({ data }: LimitationsProps) => {
@@ -28,7 +29,7 @@ const Limitations = ({ data }: LimitationsProps) => {
     )
   }
 
-  const input = data.find((x) => x.type === 'input')
+  //const input = data.find((x) => x.type === 'input')
 
   return (
     <Box marginTop={2} position="relative">
@@ -36,31 +37,33 @@ const Limitations = ({ data }: LimitationsProps) => {
         <Divider />
         <Box display="flex" flexDirection="row" flexWrap="wrap" width="full">
           {data?.map(
-            (y, yi) =>
-              y.type === 'checkbox' && (
-                <Box
-                  key={`organ-donation-limitation-${yi}`}
-                  width="half"
-                  marginY="smallGutter"
-                >
-                  <Checkbox
-                    id={`organ-registration-form-${y.value.toLowerCase()}`}
-                    name={`selected-limitations-${y.value.toLowerCase()}`}
-                    label={y.value}
-                    value={y.value.toLowerCase()}
-                    onChange={(e) =>
-                      handleCheckboxChange(
-                        y.value.toLowerCase(),
-                        e.target.checked,
-                      )
-                    }
-                  />
-                </Box>
-              ),
+            (y, yi) => (
+              // y.type === 'checkbox' && (
+              <Box
+                key={`organ-donation-limitation-${yi}`}
+                width="half"
+                marginY="smallGutter"
+              >
+                <Checkbox
+                  id={`organ-registration-form-${y.name?.toLowerCase() ?? ''}`}
+                  name={`selected-limitations-${y.name?.toLowerCase() ?? ''}`}
+                  label={y.name}
+                  value={y.name?.toLowerCase() ?? ''}
+                  onChange={(e) =>
+                    handleCheckboxChange(
+                      y.name?.toLowerCase() ?? '',
+                      e.target.checked,
+                    )
+                  }
+                />
+              </Box>
+            ),
+            // ),
           )}
         </Box>
       </Stack>
-      {input && checked.includes(input.value.toLowerCase()) && (
+      {/* This is commented out because of feature that was removed. May be included later on */}
+      {/* {input && checked.includes(input.name.toLowerCase()) && (
         <GridContainer>
           <GridRow>
             <GridColumn span={['7/7', '5/7']}>
@@ -79,7 +82,7 @@ const Limitations = ({ data }: LimitationsProps) => {
             </GridColumn>
           </GridRow>
         </GridContainer>
-      )}
+      )} */}
     </Box>
   )
 }

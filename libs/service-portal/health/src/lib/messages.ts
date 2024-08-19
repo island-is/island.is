@@ -994,4 +994,25 @@ export const messages = defineMessages({
     id: 'sp.health:registration-failed',
     defaultMessage: 'Skráning mistókst',
   },
+  iAmOrganDonor: {
+    id: 'sp.health:i-am-organ-donor',
+    defaultMessage: 'Ég er líffæragjafi.',
+  },
+  iAmNotOrganDonor: {
+    id: 'sp.health:i-am-not-organ-donor',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  organDonationRegistrationOptIn: {
+    id: 'sp.health:organ-donation-registration-opt-in',
+    defaultMessage: 'Við andlát mitt má nota líffæri mín til líffæragjafa.',
+  },
+  organDonationRegistrationException: {
+    id: 'sp.health:organ-donation-registration-exception',
+    defaultMessage:
+      'Ég gef leyfi fyrir líffæragjöf að undanskildum eftirfarandi líffærum:',
+  },
+  organDonationRegistrationOptOut: {
+    id: 'sp.health:organ-donation-registration-opt-out',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
 })

@@ -1,0 +1,23 @@
+query getDonorStatus {
+  getDonorStatus {
+    isDonor
+    exceptions
+    exceptionComment
+    registrationDate
+  }
+}
+
+query getOrganDonationExceptions($locale: String) {
+  getDonationExceptions(locale: $locale) {
+    values {
+      id
+      name
+    }
+  }
+}
+
+mutation updateOrganDonationInfo(
+  $input: HealthDirectorateOrganDonorStatusInput!
+) {
+  updateDonorStatus(input: $input)
+}

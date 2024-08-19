@@ -1,5 +1,4 @@
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { getOrganDonor } from '../../utils/OrganDonationMock'
 import {
   ActionCard,
   IntroHeader,
@@ -9,19 +8,29 @@ import { messages as m } from '../../lib/messages'
 import { Button, Box, Text } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
 import { Problem } from '@island.is/react-spa/shared'
+import { useGetDonorStatusQuery } from './OrganDonation.generated'
 const OrganDonation = () => {
   useNamespaces('sp.health')
 
-  const { formatMessage, lang } = useLocale()
-  const { data, loading, error } = getOrganDonor(lang)
+  const { formatMessage } = useLocale()
+  const { data, loading, error } = useGetDonorStatusQuery()
+  const donorStatus = data?.getDonorStatus
 
+  const exceptionText: string =
+    donorStatus?.exceptions?.length && donorStatus.exceptions.length > 0
+      ? [
+          donorStatus?.exceptionComment,
+
+          donorStatus?.exceptions?.join(', '),
+        ].join(':') ?? ''
+      : donorStatus?.exceptionComment ?? ''
   return (
     <Box>
       <IntroHeader
         title={formatMessage(m.organDonation)}
         intro={formatMessage(m.organDonationDescription)}
       />
-      {!error && !loading && data.data !== null && (
+      {!error && !loading && donorStatus !== null && (
         <>
           <Box>
             <LinkResolver
@@ -48,8 +57,12 @@ const OrganDonation = () => {
               {formatMessage(m.takeOnOrganDonation)}
             </Text>
             <ActionCard
-              heading={data.data.title}
-              text={data.data.description}
+              heading={
+                donorStatus?.isDonor
+                  ? formatMessage(m.iAmOrganDonor)
+                  : formatMessage(m.iAmNotOrganDonor)
+              }
+              text={exceptionText}
               cta={{
                 url: HealthPaths.HealthOrganDonationRegistration,
                 label: formatMessage(m.changeTake),
@@ -59,7 +72,7 @@ const OrganDonation = () => {
           </Box>
         </>
       )}
-      {error && !loading && <Problem error={undefined} noBorder={false} />}
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && data === null && (
         <Problem type="no_data" noBorder={false} />
       )}
