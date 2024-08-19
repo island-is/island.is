@@ -18,6 +18,8 @@ import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { GET_UMS_COST_OF_LIVING_CALCULATOR } from '@island.is/web/screens/queries/UmsCostOfLivingCalculator'
 
+import * as styles from './UmsCostOfLivingCalculator.css'
+
 interface CalculatedFieldWrapperProps {
   title: string
   value: number | undefined
@@ -58,11 +60,15 @@ const CalculatedFieldWrapper = ({
 }: CalculatedFieldWrapperProps) => {
   return (
     <Stack space={1}>
-      <Text variant="eyebrow" fontWeight="semiBold">
-        {title}
-      </Text>
-      <Box paddingLeft={2}>
-        <Text fontWeight="semiBold">{numberFormatter.format(value ?? 0)}</Text>
+      <Box className={styles.readOnlyValues}>
+        <Text variant="eyebrow" fontWeight="semiBold">
+          {title}
+        </Text>
+        <Box paddingLeft={2}>
+          <Text fontWeight="semiBold">
+            {numberFormatter.format(value ?? 0)}
+          </Text>
+        </Box>
       </Box>
     </Stack>
   )
@@ -525,7 +531,7 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                     label={n(
                       'propertyTaxesLabel',
                       activeLocale === 'is'
-                        ? 'Fasteigna-/vatns-/frv.gjöld'
+                        ? 'Fasteigna-,vatns-,fráveitugjöld'
                         : 'Property taxes',
                     )}
                   />
@@ -562,13 +568,25 @@ const UmsCostOfLivingCalculator = ({ slice }: CostOfLivingCalculatorProps) => {
                 </Stack>
               </Box>
             </Stack>
-
-            <Text variant="default" fontWeight="semiBold">
-              {n('totalText', activeLocale === 'is' ? 'Samtals' : 'Total')}
-              {': '}
-              {numberFormatter.format(getTotal())}{' '}
-              {n('currencyText', activeLocale === 'is' ? 'krónur' : 'ISK')}
-            </Text>
+            <Stack space={2}>
+              <Text variant="h3" fontWeight="semiBold">
+                {n('totalText', activeLocale === 'is' ? 'Samtals' : 'Total')}
+              </Text>
+              <Box className={styles.total}>
+                <Text variant="eyebrow" fontWeight="semiBold" color="blue400">
+                  {n('totalText', activeLocale === 'is' ? 'Samtals' : 'Total')}
+                </Text>
+                <Box paddingLeft={2} textAlign="right">
+                  <Text fontWeight="semiBold">
+                    {numberFormatter.format(getTotal())}{' '}
+                    {n(
+                      'currencyText',
+                      activeLocale === 'is' ? 'krónur' : 'ISK',
+                    )}
+                  </Text>
+                </Box>
+              </Box>
+            </Stack>
           </Stack>
         )}
       </Box>

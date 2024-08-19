@@ -1,4 +1,10 @@
-import { WorkMachinesClientService } from '@island.is/clients/work-machines'
+import {
+  MachineModelDto,
+  MachineParentCategoryDetailsDto,
+  MachineSubCategoryDto,
+  TechInfoItemDto,
+  WorkMachinesClientService,
+} from '@island.is/clients/work-machines'
 import { User } from '@island.is/auth-nest-tools'
 import {
   WorkMachine,
@@ -12,6 +18,7 @@ import { GetDocumentsInput } from './dto/getDocuments.input'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MachineDto } from '@island.is/clients/work-machines'
+import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
 @Injectable()
 export class WorkMachinesService {
   constructor(
@@ -154,5 +161,33 @@ export class WorkMachinesService {
     return (
       (await this.machineService.isPaymentRequired(auth, regNumber)) || false
     )
+  }
+
+  async getMachineModels(auth: User, type: string): Promise<MachineModelDto[]> {
+    return this.machineService.getMachineModels(auth, { tegund: type })
+  }
+
+  async getMachineParentCategoriesTypeModelGet(
+    auth: User,
+    input: GetMachineParentCategoryByTypeAndModelInput,
+  ): Promise<MachineParentCategoryDetailsDto> {
+    return this.machineService.getMachineParentCategoriesTypeModel(auth, {
+      type: input.type,
+      model: input.model,
+    })
+  }
+
+  async getMachineSubCategories(
+    auth: User,
+    parentCategory: string,
+  ): Promise<MachineSubCategoryDto[]> {
+    return this.machineService.getMachineSubCategories(auth, { parentCategory })
+  }
+
+  async getTechnicalInfoInputs(
+    auth: User,
+    parentCategory: string,
+  ): Promise<TechInfoItemDto[]> {
+    return this.machineService.getTechnicalInfoInputs(auth, { parentCategory })
   }
 }
