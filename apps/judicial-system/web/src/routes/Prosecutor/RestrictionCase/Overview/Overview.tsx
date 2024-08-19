@@ -11,7 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
   errors,
@@ -300,8 +300,10 @@ export const Overview = () => {
         <Box className={styles.prosecutorContainer}>
           <Text variant="h3">
             {workingCase.prosecutor
-              ? `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`
-              : `${user?.name} ${user?.title}`}
+              ? `${workingCase.prosecutor.name} ${lowercase(
+                  workingCase.prosecutor.title,
+                )}`
+              : `${user?.name} ${lowercase(user?.title)}`}
           </Text>
         </Box>
         <Box marginBottom={10}>
