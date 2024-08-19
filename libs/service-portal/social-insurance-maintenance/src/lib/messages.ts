@@ -28,7 +28,12 @@ export const m = defineMessages({
   },
   incomePlanDetail: {
     id: 'sp.social-insurance-maintenance:income-plan-detail',
-    defaultMessage: 'Yfirlit yfir núverandi tekjuáætlun',
+    defaultMessage:
+      'Hér fyrir neðan er yfirlit yfir þá tekjuáætlun sem er í gildi. Ef þú óskar eftir því að breyta henni þarftu að velja ‘breyta tekjuáætlun’.',
+  },
+  modifyIncomePlan: {
+    id: 'sp.social-insurance-maintenance:income-plan-modify',
+    defaultMessage: 'Breyta tekjuáætlun',
   },
   paymentsReasoning: {
     id: 'sp.social-insurance-maintenance:payments-reasoning',
@@ -70,6 +75,10 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:view-income-plan',
     defaultMessage: 'Skoða tekjuáætlun',
   },
+  submitIncomePlan: {
+    id: 'sp.social-insurance-maintenance:submit-income-plan',
+    defaultMessage: 'Senda inn tekjuáætlun',
+  },
   incomeType: {
     id: 'sp.social-insurance-maintenance:income-type',
     defaultMessage: 'Tekjutegund',
@@ -81,5 +90,13 @@ export const m = defineMessages({
   currency: {
     id: 'sp.social-insurance-maintenance:currency',
     defaultMessage: 'Gjaldmiðill',
+  },
+  receivedInProgress: {
+    id: 'sp.social-insurance-maintenance:received-in-progress',
+    defaultMessage: 'Móttekið til vinnslu',
+  },
+  noActiveIncomePlan: {
+    id: 'sp.social-insurance-maintenance:no-active-income-plan',
+    defaultMessage: 'Engin gild tekjuáætlun',
   },
 })

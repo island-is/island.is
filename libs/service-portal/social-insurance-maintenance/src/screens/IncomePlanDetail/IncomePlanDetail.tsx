@@ -24,12 +24,11 @@ const IncomePlanDetail = () => {
   const { formatMessage } = useLocale()
 
   const { data, loading, error } = useGetIncomePlanDetailQuery()
-
   return (
     <Box>
       <IntroHeader
-        title={formatMessage(coreMessages.paymentPlan)}
-        intro={formatMessage(coreMessages.incomePlanDescription)}
+        title={formatMessage(coreMessages.latestIncomePlan)}
+        intro={formatMessage(m.incomePlanDetail)}
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
           coreMessages.socialInsuranceTooltip,
@@ -61,9 +60,14 @@ const IncomePlanDetail = () => {
               </Button>
               <LinkButton
                 to="bloblo"
-                text="Breyta tekjuáætlun"
+                text={formatMessage(m.modifyIncomePlan)}
+                disabled={
+                  !data?.socialInsuranceIncomePlan?.isEligibleForChange
+                    .isEligible
+                }
                 icon="open"
-                variant="utility"
+                variant="primary"
+                size="small"
               />
             </Inline>
           </Hidden>

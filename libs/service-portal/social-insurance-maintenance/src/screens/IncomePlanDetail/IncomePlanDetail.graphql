@@ -1,5 +1,9 @@
 query getIncomePlanDetail {
   socialInsuranceIncomePlan {
+    isEligibleForChange {
+      isEligible
+      reason
+    }
     incomeCategories {
       name
       annualSum

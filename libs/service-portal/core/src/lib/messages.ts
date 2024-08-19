@@ -143,9 +143,17 @@ export const m = defineMessages({
     id: 'service.portal:approved',
     defaultMessage: 'Samþykkt',
   },
+  processed: {
+    id: 'service.portal:processed',
+    defaultMessage: 'Afgreitt',
+  },
   rejected: {
     id: 'service.portal:rejected',
     defaultMessage: 'Hafnað',
+  },
+  unknown: {
+    id: 'service.portal:unknown',
+    defaultMessage: 'Óþekkt',
   },
   view: {
     id: 'service.portal:view',

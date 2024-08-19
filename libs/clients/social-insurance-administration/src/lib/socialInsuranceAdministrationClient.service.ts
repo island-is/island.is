@@ -115,7 +115,9 @@ export class SocialInsuranceAdministrationClientService {
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
     return this.applicantApiWithAuth(
       user,
-    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({ applicationType })
+    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
+      applicationType,
+    })
   }
 
   async getCurrencies(user: User): Promise<Array<string>> {

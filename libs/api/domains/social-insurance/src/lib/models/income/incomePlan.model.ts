@@ -6,6 +6,7 @@ import {
 } from '@nestjs/graphql'
 import { IncomeCategory } from './category.model'
 import { IncomePlanStatus } from '../../socialInsurance.type'
+import { IncomePlanEligbility } from './incomePlanEligibility.model'
 
 registerEnumType(IncomePlanStatus, { name: 'SocialInsuranceIncomePlanStatus' })
 
@@ -16,6 +17,9 @@ export class IncomePlan {
 
   @Field(() => IncomePlanStatus)
   status!: IncomePlanStatus
+
+  @Field(() => IncomePlanEligbility, { nullable: true })
+  isEligibleForChange?: IncomePlanEligbility
 
   @Field(() => [IncomeCategory])
   incomeCategories!: Array<IncomeCategory>

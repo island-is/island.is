@@ -7,6 +7,7 @@ interface SharedProps {
   to: string
   text: string
   size?: ButtonProps['size']
+  disabled?: ButtonProps['disabled']
   skipOutboundTrack?: boolean
 }
 
@@ -31,6 +32,7 @@ export const LinkButton = ({
   to,
   text,
   icon,
+  disabled,
   skipOutboundTrack,
 }: LinkButtonProps) => {
   const isExternal = isExternalLink(to)
@@ -41,16 +43,28 @@ export const LinkButton = ({
         skipOutboundTrack={skipOutboundTrack}
         href={to}
       >
-        <Button
-          as="span"
-          size={size ?? 'small'}
-          variant="text"
-          unfocusable
-          icon={isExternal ? 'open' : undefined}
-          iconType={isExternal ? 'outline' : undefined}
-        >
-          {text}
-        </Button>
+        {disabled ? (
+          <Button
+            size={size ?? 'small'}
+            unfocusable
+            disabled
+            icon={isExternal ? 'open' : undefined}
+            iconType={isExternal ? 'outline' : undefined}
+          >
+            {text}
+          </Button>
+        ) : (
+          <Button
+            as="span"
+            size={size ?? 'small'}
+            variant="text"
+            unfocusable
+            icon={isExternal ? 'open' : undefined}
+            iconType={isExternal ? 'outline' : undefined}
+          >
+            {text}
+          </Button>
+        )}
       </LinkResolver>
     )
   }
@@ -60,18 +74,32 @@ export const LinkButton = ({
       className={styles.link}
       href={to}
     >
-      <Button
-        colorScheme="default"
-        icon={icon}
-        iconType="outline"
-        size={size ?? 'default'}
-        type="text"
-        as="span"
-        variant={variant ?? 'utility'}
-        unfocusable
-      >
-        {text}
-      </Button>
+      {disabled ? (
+        <Button
+          colorScheme="default"
+          icon={icon}
+          iconType="outline"
+          size={size ?? 'default'}
+          disabled
+          variant={variant ?? 'utility'}
+          unfocusable
+        >
+          {text}
+        </Button>
+      ) : (
+        <Button
+          colorScheme="default"
+          icon={icon}
+          iconType="outline"
+          size={size ?? 'default'}
+          type="text"
+          as="span"
+          variant={variant ?? 'utility'}
+          unfocusable
+        >
+          {text}
+        </Button>
+      )}
     </LinkResolver>
   )
 }

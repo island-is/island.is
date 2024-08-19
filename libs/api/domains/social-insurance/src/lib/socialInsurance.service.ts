@@ -25,6 +25,7 @@ import { Payments } from './models/payments/payments.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { IncomePlan } from './models/income/incomePlan.model'
 import { IncomePlanStatus } from './socialInsurance.type'
+import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -148,6 +149,17 @@ export class SocialInsuranceService {
           }
         })
         .filter(isDefined),
+    }
+  }
+
+  async getIncomePlanChangeEligibility(
+    user: User,
+  ): Promise<IncomePlanEligbility> {
+    const data = await this.socialInsuranceApi.getIsEligible(user, 'incomeplan')
+
+    return {
+      isEligible: data.isEligible ?? undefined,
+      reason: data.reason ?? undefined,
     }
   }
 
