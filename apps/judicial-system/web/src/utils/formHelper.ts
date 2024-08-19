@@ -50,8 +50,11 @@ export const validateAndSetErrorMessage = (
 ) => {
   const validation = validations.validate([[value, validationsToRun]])
 
-  if (!validation.isValid && errorMessageSetter) {
+  if (errorMessageSetter) {
     errorMessageSetter(validation.errorMessage)
+  }
+
+  if (!validation.isValid) {
     return false
   }
 
