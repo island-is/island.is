@@ -12,6 +12,7 @@ import { User } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { validateClientId } from '@island.is/auth/shared'
 import { NoContentException } from '@island.is/nest/problem'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 import { AdminScopeDTO } from '../../resources/admin/dto/admin-scope.dto'
 import { AdminTranslationService } from '../../resources/admin/services/admin-translation.service'
@@ -40,7 +41,7 @@ import {
   superUserFields,
 } from './dto/admin-patch-client.dto'
 import { ClientDelegationType } from '../models/client-delegation-type.model'
-import { AuthDelegationType } from '@island.is/shared/types'
+import { filterPersonalRepresentative } from '../../resources/utils/personalRepresentativeFilter'
 
 export const clientBaseAttributes: Partial<Client> = {
   absoluteRefreshTokenLifetime: 8 * 60 * 60, // 8 hours
@@ -175,13 +176,11 @@ export class AdminClientsService {
         clientId: clientDto.clientId,
         clientType: clientDto.clientType,
         clientName: clientDto.clientName,
+        // Remove defined super admin fields
         ...omit(clientDto, superUserFields),
-        supportedDelegationTypes: clientDto.supportedDelegationTypes?.filter(
-          (dt) => {
-            return !dt.startsWith(
-              `${AuthDelegationType.PersonalRepresentative}`,
-            )
-          },
+        // Remove personal representative from delegation types since it is not allowed for non-super admins
+        supportedDelegationTypes: filterPersonalRepresentative(
+          clientDto.supportedDelegationTypes ?? [],
         ),
       }
     }
