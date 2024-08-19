@@ -31,8 +31,8 @@ export const CarRecyclingForm: Form = buildForm({
             id: 'vehicles',
             childInputIds: [
               'vehicles.selectedVehicles',
-              'vehicles.allVehicles',
               'vehicles.canceledVehicles',
+              'permnoSearch',
             ],
             title: carRecyclingMessages.cars.sectionTitle,
             component: 'VehiclesOverview',

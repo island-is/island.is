@@ -18,42 +18,75 @@ import {
 } from '@island.is/judicial-system/message'
 
 import { Case, CaseHasExistedGuard, CurrentCase } from '../case'
-import { SendInternalNotificationDto } from './dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from './dto/caseNotification.dto'
+import { InstitutionNotificationDto } from './dto/institutionNotification.dto'
+import { NotificationDto } from './dto/notification.dto'
 import { DeliverResponse } from './models/deliver.response'
-import { NotificationService } from './notification.service'
+import { InstitutionNotificationService } from './institutionNotification.service'
+import { InternalNotificationService } from './internalNotification.service'
+import { NotificationDispatchService } from './notificationDispatch.service'
 
-@UseGuards(TokenGuard, CaseHasExistedGuard)
-@Controller(
-  `api/internal/case/:caseId/${messageEndpoint[MessageType.NOTIFICATION]}`,
-)
+@UseGuards(TokenGuard)
+@Controller('api/internal')
 @ApiTags('internal notifications')
 export class InternalNotificationController {
   constructor(
-    private readonly notificationService: NotificationService,
+    private readonly internalNotificationService: InternalNotificationService,
+    private readonly notificationDispatchService: NotificationDispatchService,
+    private readonly institutionNotificationService: InstitutionNotificationService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Post()
+  @Post(`case/:caseId/${messageEndpoint[MessageType.NOTIFICATION]}`)
+  @UseGuards(CaseHasExistedGuard)
   @ApiCreatedResponse({
     type: DeliverResponse,
     description: 'Sends a new notification for an existing case',
   })
-  async sendCaseNotification(
+  sendCaseNotification(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,
-    @Body() notificationDto: SendInternalNotificationDto,
+    @Body() notificationDto: CaseNotificationDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
       `Sending ${notificationDto.type} notification for case ${caseId}`,
     )
 
-    const { notificationSent } =
-      await this.notificationService.sendCaseNotification(
-        notificationDto.type,
-        theCase,
-        notificationDto.user,
-      )
+    return this.internalNotificationService.sendCaseNotification(
+      notificationDto.type,
+      theCase,
+      notificationDto.user,
+    )
+  }
 
-    return { delivered: notificationSent }
+  @Post(messageEndpoint[MessageType.NOTIFICATION])
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Sends a new notification',
+  })
+  sendNotification(
+    @Body() notificationDto: InstitutionNotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Sending ${notificationDto.type} notification`)
+
+    return this.institutionNotificationService.sendNotification(
+      notificationDto.type,
+      notificationDto.prosecutorsOfficeId,
+    )
+  }
+
+  @Post(messageEndpoint[MessageType.NOTIFICATION_DISPATCH])
+  @ApiCreatedResponse({
+    type: DeliverResponse,
+    description: 'Dispatches notifications',
+  })
+  dispatchNotification(
+    @Body() notificationDto: NotificationDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(`Dispatching ${notificationDto.type} notification`)
+
+    return this.notificationDispatchService.dispatchNotification(
+      notificationDto.type,
+    )
   }
 }

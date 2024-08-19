@@ -1,4 +1,3 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { CreationOptional, DataTypes } from 'sequelize'
 import {
   Column,
@@ -23,7 +22,6 @@ export class Section extends Model<Section> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -31,15 +29,12 @@ export class Section extends Model<Section> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -48,7 +43,6 @@ export class Section extends Model<Section> {
     values: Object.values(SectionTypes),
     defaultValue: 'input',
   })
-  @ApiProperty({ enum: SectionTypes })
   sectionType!: string
 
   @Column({
@@ -56,7 +50,6 @@ export class Section extends Model<Section> {
     allowNull: false,
     defaultValue: 0,
   })
-  @ApiProperty()
   displayOrder!: number
 
   @Column({
@@ -64,7 +57,6 @@ export class Section extends Model<Section> {
     allowNull: true,
     defaultValue: () => new LanguageType(),
   })
-  @ApiPropertyOptional({ type: LanguageType })
   waitingText?: LanguageType
 
   @Column({
@@ -72,7 +64,6 @@ export class Section extends Model<Section> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isHidden!: boolean
 
   @Column({
@@ -80,11 +71,9 @@ export class Section extends Model<Section> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isCompleted!: boolean
 
   @HasMany(() => Screen)
-  @ApiPropertyOptional({ type: [Screen] })
   screens?: Screen[]
 
   @ForeignKey(() => Form)

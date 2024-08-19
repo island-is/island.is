@@ -19,16 +19,13 @@ import { ListType } from '../lists/models/listType.model'
 import { Organization } from '../organizations/models/organization.model'
 import { SectionDto } from '../sections/models/dto/section.dto'
 import { Section } from '../sections/models/section.model'
-import { FormCertificationTypeDto } from '../certifications/models/dto/formCertificationType.dto'
 import { CertificationTypeDto } from '../certifications/models/dto/certificationType.dto'
 import { CertificationType } from '../certifications/models/certificationType.model'
 import { CreateFormDto } from './models/dto/createForm.dto'
 import { FormDto } from './models/dto/form.dto'
-import { FormResponse } from './models/dto/form.response.dto'
+import { FormResponseDto } from './models/dto/form.response.dto'
 import { Form } from './models/form.model'
 import { ListItem } from '../listItems/models/listItem.model'
-import { FormsListDto } from './models/dto/formsList.dto'
-import { FormsListFormDto } from './models/dto/formsListForm.dto'
 import { createFormTranslations } from '../translations/form'
 import { createSectionTranslations } from '../translations/section'
 
@@ -50,7 +47,7 @@ export class FormsService {
     private readonly fieldSettingsMapper: FieldSettingsMapper,
   ) {}
 
-  async findAll(organizationId: string): Promise<FormsListDto> {
+  async findAll(organizationId: string): Promise<FormResponseDto> {
     const forms = await this.formModel.findAll({
       where: { organizationId: organizationId },
     })
@@ -67,19 +64,19 @@ export class FormsService {
       'stopProgressOnValidatingScreen',
     ]
 
-    const formsListDto: FormsListDto = {
+    const formResponseDto: FormResponseDto = {
       forms: forms.map((form) => {
         return defaults(
           pick(form, keys),
           zipObject(keys, Array(keys.length).fill(null)),
-        ) as FormsListFormDto
+        ) as FormDto
       }),
     }
 
-    return formsListDto
+    return formResponseDto
   }
 
-  async findOne(id: string): Promise<FormResponse | null> {
+  async findOne(id: string): Promise<FormResponseDto | null> {
     const form = await this.findById(id)
 
     if (!form) {
@@ -90,7 +87,7 @@ export class FormsService {
     return formResponse
   }
 
-  async create(createFormDto: CreateFormDto): Promise<FormResponse | null> {
+  async create(createFormDto: CreateFormDto): Promise<FormResponseDto | null> {
     const { organizationId } = createFormDto
 
     if (!organizationId) {
@@ -163,8 +160,8 @@ export class FormsService {
     return form
   }
 
-  private async buildFormResponse(form: Form): Promise<FormResponse> {
-    const response: FormResponse = {
+  private async buildFormResponse(form: Form): Promise<FormResponseDto> {
+    const response: FormResponseDto = {
       form: this.setArrays(form),
       fieldTypes: await this.getFieldTypes(form.organizationId),
       certificationTypes: await this.getCertificationTypes(form.organizationId),
@@ -300,7 +297,7 @@ export class FormsService {
             formCertificationTypeKeys,
             Array(formCertificationTypeKeys.length).fill(null),
           ),
-        ) as FormCertificationTypeDto,
+        ) as CertificationTypeDto,
       )
     })
 

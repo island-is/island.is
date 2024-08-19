@@ -271,6 +271,17 @@ export const slices = gql`
   fragment TeamListFields on TeamList {
     __typename
     id
+    variant
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
     teamMembers {
       name
       title

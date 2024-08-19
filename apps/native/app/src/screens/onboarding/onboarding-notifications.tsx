@@ -1,4 +1,3 @@
-import messaging from '@react-native-firebase/messaging'
 import { Button, CancelButton, Illustration, Onboarding } from '@ui'
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -6,21 +5,14 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import allow from '../../assets/icons/allow.png'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
+import { requestNotificationsPermission } from '../../utils/permissions'
 import { testIDs } from '../../utils/test-ids'
-
-async function requestUserPermission() {
-  const authStatus = await messaging().requestPermission()
-  return (
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL
-  )
-}
 
 export const OnboardingNotificationsScreen: NavigationFunctionComponent =
   () => {
     const intl = useIntl()
     const onAllowPress = () => {
-      requestUserPermission().then(() => {
+      requestNotificationsPermission().then(() => {
         preferencesStore.setState(() => ({ hasOnboardedNotifications: true }))
         return nextOnboardingStep()
       })

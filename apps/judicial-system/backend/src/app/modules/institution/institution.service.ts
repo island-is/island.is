@@ -1,6 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
+import { InstitutionType } from '@island.is/judicial-system/types'
+
 import { Institution } from './institution.model'
 
 @Injectable()
@@ -20,10 +22,10 @@ export class InstitutionService {
     })
   }
 
-  async getAll(): Promise<Institution[]> {
+  async getAll(type?: InstitutionType): Promise<Institution[]> {
     return this.institutionModel.findAll({
       order: ['name'],
-      where: { active: true },
+      where: { active: true, ...(type ? { type } : {}) },
     })
   }
 }
