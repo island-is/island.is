@@ -28,4 +28,8 @@ export enum HealthPaths {
 
   HealthCenter = '/heilsa/heilsugaesla',
   HealthCenterRegistration = '/heilsa/heilsugaesla/skraning',
+
+  HealthVaccinations = '/heilsa/bolusetningar',
+  HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
+  HealthVaccinationsOther = '/heilsa/bolusetningar/adrar',
 }
