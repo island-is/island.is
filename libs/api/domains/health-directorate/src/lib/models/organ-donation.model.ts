@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from '@nestjs/graphql'
+import { ObjectType, Field, Int, InputType } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateOrganDonorStatus')
 export class DonorStatus {
@@ -15,7 +15,7 @@ export class DonorStatus {
   registrationDate?: Date
 }
 
-@ObjectType('HealthDirectorateOrganDonorStatusInput')
+@InputType('HealthDirectorateOrganDonorStatusInput')
 export class DonorStatusInput {
   @Field(() => Boolean)
   isDonor!: boolean
