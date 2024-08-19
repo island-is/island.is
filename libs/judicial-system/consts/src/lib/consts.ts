@@ -189,6 +189,7 @@ export const INDICTMENTS_TRAFFIC_VIOLATION_ROUTE = '/akaera/akaera'
 export const INDICTMENTS_CASE_FILES_ROUTE = '/akaera/domskjol'
 export const INDICTMENTS_OVERVIEW_ROUTE = '/akaera/stadfesta'
 export const CLOSED_INDICTMENT_OVERVIEW_ROUTE = '/akaera/yfirlit'
+export const INDICTMENTS_ADD_FILES_ROUTE = '/akaera/gogn'
 //#endregion Prosecutor user routes
 
 //#region Admin user routes
