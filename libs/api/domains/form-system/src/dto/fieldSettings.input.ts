@@ -45,7 +45,7 @@ export class FieldSettingsInput {
   @Field(() => Boolean, { nullable: true })
   hasPropertyList?: boolean
 
-  @Field(() => [ListItemInput], { nullable: true })
+  @Field(() => [ListItemInput], { nullable: 'itemsAndList' })
   list?: ListItemInput[]
 
   @Field(() => String, { nullable: true })

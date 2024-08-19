@@ -7,6 +7,39 @@ registerEnumType(SectionDtoSectionTypeEnum, {
   name: 'FormSystemSectionDtoSectionTypeEnum'
 })
 
+@InputType('FormSystemSectionDisplayOrderInput')
+export class SectionDisplayOrderInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+}
+
+@InputType('FormSystemUpdateSectionInput')
+export class UpdateSectionInput {
+  @Field(() => LanguageTypeInput, { nullable: true })
+  name?: LanguageTypeInput
+
+  @Field(() => LanguageTypeInput, { nullable: true })
+  waitingText?: LanguageTypeInput
+}
+
+@InputType('FormSystemDeleteSectionInput')
+export class DeleteSectionInput {
+  @Field(() => String, { nullable: true })
+  id?: string
+}
+
+@InputType('FormSystemUpdateSectionsDisplayOrderInput')
+export class UpdateSectionsDisplayOrderInput {
+  @Field(() => [SectionDisplayOrderInput], { nullable: 'itemsAndList' })
+  sectionsDisplayOrderDto?: SectionDisplayOrderInput[]
+}
+
+@InputType('FormSystemCreateSectionInput')
+export class CreateSectionInput {
+  @Field(() => String, { nullable: true })
+  formId?: string
+}
+
 @InputType('FormSystemSectionInput')
 export class SectionInput {
   @Field(() => String, { nullable: true })
@@ -30,6 +63,6 @@ export class SectionInput {
   @Field(() => Boolean, { nullable: true })
   isCompleted?: boolean
 
-  @Field(() => [ScreenInput], { nullable: true })
+  @Field(() => [ScreenInput], { nullable: 'itemsAndList' })
   screens?: ScreenInput[]
 }

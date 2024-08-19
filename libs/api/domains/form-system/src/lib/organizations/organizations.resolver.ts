@@ -1,14 +1,14 @@
-import { Args, Mutation, Resolver } from '@nestjs/graphql'
-import { OrganizationsService } from './organizations.services'
-import { CreateOrganizationInput } from '../../dto/OLDorganization.input'
+import { UseGuards } from '@nestjs/common'
+import { Args, Mutation, Resolver, Query } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Organization } from '../../models/OLDorganization.model'
 import { Audit } from '@island.is/nest/audit'
-import { UseGuards } from '@nestjs/common'
+import { OrganizationsService } from './organizations.service'
+import { Organization } from '../../models/organization.model'
+import { GetOrganizationInput } from '../../dto/organization.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -16,14 +16,23 @@ import { UseGuards } from '@nestjs/common'
 export class OrganizationsResolver {
   constructor(private readonly organizationsService: OrganizationsService) { }
 
-  @Mutation(() => Organization, {
-    name: 'formSystemCreateOrganization',
+  @Query(() => Organization, {
+    name: 'formSystemGetOrganization',
   })
-  async postOrganization(
-    @Args('input', { type: () => CreateOrganizationInput })
-    input: CreateOrganizationInput,
+  async getOrganization(
+    @Args('input', { type: () => GetOrganizationInput }) input: GetOrganizationInput,
     @CurrentUser() user: User,
   ): Promise<Organization> {
-    return this.organizationsService.postOrganization(user, input)
+    return this.organizationsService.getOrganization(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'formSystemCreateOrganization',
+  })
+  async createOrganization(
+    @Args('input', { type: () => GetOrganizationInput }) input: GetOrganizationInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.organizationsService.createOrganization(user, input)
   }
 }

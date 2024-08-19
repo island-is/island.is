@@ -8,6 +8,12 @@ export class CreateApplicationInput {
   slug?: string
 }
 
+@InputType('FormSystemGetApplicationInput')
+export class GetApplicationInput {
+  @Field(() => String, { nullable: true })
+  formId?: string
+}
+
 @InputType('FormSystemApplicationInput')
 export class ApplicationInput {
   @Field(() => String, { nullable: true })
@@ -28,6 +34,6 @@ export class ApplicationInput {
   @Field(() => Date, { nullable: true })
   modified?: Date
 
-  @Field(() => [SectionInput], { nullable: true })
+  @Field(() => [SectionInput], { nullable: 'itemsAndList' })
   sections?: SectionInput[]
 }

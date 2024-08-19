@@ -1,35 +1,18 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable, Inject } from "@nestjs/common";
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
-import {
-  ApiFormsFormIdDeleteRequest,
-  ApiFormsFormIdGetRequest,
-  ApiFormsFormIdPutRequest,
-  ApiFormsOrganizationOrganizationIdGetRequest,
-  FormUpdateDto,
-  FormsApi,
-  ApiFormsFormIdSettingsPutRequest,
-  FormSettingsUpdateDto,
-} from '@island.is/clients/form-system'
-import { ApolloError } from '@apollo/client'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import {
-  CreateFormInput,
-  DeleteFormInput,
-  GetFormInput,
-  GetFormsInput,
-  UpdateFormInput,
-} from '../../dto/OLDforms.input'
-import { FormResponse } from '../../models/OLDformResponse.model'
-import { FormListResponse } from '../../models/OLDformListResponse.model'
-import { UpdateFormSettingsInput } from '../../dto/OLDupdateFormSettings.input'
-import { handle4xx } from '../../utils/errorHandler'
+import { ApolloError } from "@apollo/client";
+import { handle4xx } from "../../utils/errorHandler";
+import { FormsApi, FormsControllerCreateRequest, FormsControllerDeleteRequest, FormsControllerFindAllRequest, FormsControllerFindOneRequest } from '@island.is/clients/form-system'
+import { CreateFormInput, DeleteFormInput, GetAllFormsInput, GetFormInput } from "../../dto/form.input";
+import { Form, FormResponse } from "../../models/form.model";
 
 @Injectable()
 export class FormsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private formsApi: FormsApi,
+    private formsService: FormsApi
   ) { }
 
   // eslint-disable-next-line
@@ -44,108 +27,63 @@ export class FormsService {
   }
 
   private formsApiWithAuth(auth: User) {
-    return this.formsApi.withMiddleware(new AuthMiddleware(auth))
+    return this.formsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
-    const request: ApiFormsFormIdGetRequest = {
-      formId: input.id,
-    }
-
+  async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .apiFormsFormIdGet(request)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to get form from Id'),
+      .formsControllerCreate(
+        input as FormsControllerCreateRequest
       )
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-    return response as FormResponse
-  }
-
-  async getForms(auth: User, input: GetFormsInput): Promise<FormListResponse> {
-    const request: ApiFormsOrganizationOrganizationIdGetRequest = {
-      organizationId: input.organizationId,
-    }
-    const response = await this.formsApiWithAuth(auth)
-      .apiFormsOrganizationOrganizationIdGet(request)
-      .catch((e) =>
-        handle4xx(
-          e,
-          this.handleError,
-          'failed to get forms from organization Id',
-        ),
-      )
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-
-    return response as FormListResponse
-  }
-
-  async postForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
-    const request: ApiFormsOrganizationOrganizationIdGetRequest = {
-      organizationId: input.organizationId,
-    }
-    const response = await this.formsApiWithAuth(auth)
-      .apiFormsOrganizationIdPost(request)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
 
     if (!response || response instanceof ApolloError) {
       return {}
     }
 
-    return response
+    return response as FormResponse
   }
 
   async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
-    const request: ApiFormsFormIdDeleteRequest = {
-      formId: input.id,
-    }
-    await this.formsApiWithAuth(auth)
-      .apiFormsFormIdDelete(request)
+    const response = await this.formsApiWithAuth(auth)
+      .formsControllerDelete(
+        input as FormsControllerDeleteRequest
+      )
       .catch((e) => handle4xx(e, this.handleError, 'failed to delete form'))
 
-    return
-  }
-
-  async updateForm(auth: User, input: UpdateFormInput): Promise<void> {
-    const formattedForm = {
-      ...input.form,
-      id: input.formId,
-      inputsList: input.form?.inputsList?.map((input) => {
-        return input
-      }),
+    if (!response || response instanceof ApolloError) {
+      return
     }
-
-    const request: ApiFormsFormIdPutRequest = {
-      formId: input.formId,
-      formUpdateDto: formattedForm as FormUpdateDto,
-    }
-    await this.formsApiWithAuth(auth)
-      .apiFormsFormIdPut(request)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update form'))
 
     return
   }
 
-  async updateFormSettings(
-    auth: User,
-    input: UpdateFormSettingsInput,
-  ): Promise<void> {
-    const request: ApiFormsFormIdSettingsPutRequest = {
-      formId: input.id,
-      formSettingsUpdateDto:
-        input.formSettingsUpdateDto as FormSettingsUpdateDto,
-    }
-    await this.formsApiWithAuth(auth)
-      .apiFormsFormIdSettingsPut(request)
-      .catch((e) =>
-        handle4xx(e, this.handleError, 'failed to update form settings'),
+  async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth)
+      .formsControllerFindOne(
+        input as FormsControllerFindOneRequest
       )
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
 
-    return
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+
+    return response as Form
   }
+
+  async getAllForms(auth: User, input: GetAllFormsInput): Promise<FormResponse> {
+    const response = await this.formsApiWithAuth(auth)
+      .formsControllerFindAll(
+        input as FormsControllerFindAllRequest
+      )
+      .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
+
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+
+    return response as FormResponse
+  }
+
 }

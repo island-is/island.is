@@ -1,22 +1,14 @@
+import { UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
-import { FormsService } from './forms.service'
-import { FormResponse } from '../../models/OLDformResponse.model'
-import {
-  CreateFormInput,
-  GetFormInput,
-  GetFormsInput,
-  UpdateFormInput,
-  DeleteFormInput,
-} from '../../dto/OLDforms.input'
 import {
   CurrentUser,
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { FormListResponse } from '../../models/OLDformListResponse.model'
 import { Audit } from '@island.is/nest/audit'
-import { UseGuards } from '@nestjs/common'
-import { UpdateFormSettingsInput } from '../../dto/OLDupdateFormSettings.input'
+import { FormsService } from './forms.service'
+import { CreateFormInput, DeleteFormInput, GetAllFormsInput, GetFormInput } from '../../dto/form.input'
+import { FormResponse } from '../../models/form.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -24,61 +16,17 @@ import { UpdateFormSettingsInput } from '../../dto/OLDupdateFormSettings.input'
 export class FormsResolver {
   constructor(private readonly formsService: FormsService) { }
 
-  @Query(() => FormResponse, {
-    name: 'formSystemGetForm',
-  })
-  async getForm(
-    @Args('input', { type: () => GetFormInput }) input: GetFormInput,
-    @CurrentUser() user: User,
-  ): Promise<FormResponse> {
-    return this.formsService.getForm(user, input)
-  }
-
-  @Query(() => FormListResponse, {
-    name: 'formSystemGetForms',
-  })
-  async getForms(
-    @Args('input', { type: () => GetFormsInput }) input: GetFormsInput,
-    @CurrentUser() user: User,
-  ): Promise<FormListResponse> {
-    return this.formsService.getForms(user, input)
-  }
-
-  @Mutation(() => FormResponse, {
+  @Mutation(() => Boolean, {
     name: 'formSystemCreateForm',
   })
   async createForm(
     @Args('input', { type: () => CreateFormInput }) input: CreateFormInput,
     @CurrentUser() user: User,
   ): Promise<FormResponse> {
-    return this.formsService.postForm(user, input)
+    return this.formsService.createForm(user, input)
   }
 
   @Mutation(() => Boolean, {
-    nullable: true,
-    name: 'formSystemUpdateForm',
-  })
-  async updateForm(
-    @Args('input', { type: () => UpdateFormInput }) input: UpdateFormInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.formsService.updateForm(user, input)
-  }
-
-  @Mutation(() => Boolean, {
-    nullable: true,
-    name: 'formSystemUpdateFormSettings',
-  })
-  async updateFormSettings(
-    @Args('input', { type: () => UpdateFormSettingsInput })
-    input: UpdateFormSettingsInput,
-    @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.formsService.updateFormSettings(user, input)
-  }
-
-  @Mutation(() => Boolean, {
-    nullable: true,
     name: 'formSystemDeleteForm',
   })
   async deleteForm(
@@ -87,4 +35,25 @@ export class FormsResolver {
   ): Promise<void> {
     return this.formsService.deleteForm(user, input)
   }
+
+  @Query(() => FormResponse, {
+    name: 'formSystemGetForm',
+  })
+  async getForm(
+    @Args('id', { type: () => GetFormInput }) id: GetFormInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.getForm(user, id)
+  }
+
+  @Query(() => FormResponse, {
+    name: 'formSystemGetAllForms',
+  })
+  async getAllForms(
+    @Args('input', { type: () => GetAllFormsInput }) input: GetAllFormsInput,
+    @CurrentUser() user: User,
+  ): Promise<FormResponse> {
+    return this.formsService.getAllForms(user, input)
+  }
+
 }

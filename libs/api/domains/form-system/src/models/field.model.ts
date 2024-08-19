@@ -1,5 +1,7 @@
 import { Field as FieldType, Int, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './LanguageType.model'
+import { FieldDtoFieldTypeEnum } from '@island.is/clients/form-system'
+import { FieldSettings } from './fieldSettings.model'
 
 
 @ObjectType('FormSystemField')
@@ -7,14 +9,11 @@ export class Field {
   @FieldType(() => String, { nullable: true })
   id?: string
 
+  @FieldType(() => String, { nullable: true })
+  screenId?: string
+
   @FieldType(() => LanguageType, { nullable: true })
   name?: LanguageType
-
-  @FieldType(() => Date, { nullable: true })
-  created?: Date
-
-  @FieldType(() => Date, { nullable: true })
-  modified?: Date
 
   @FieldType(() => Int, { nullable: true })
   displayOrder?: number
@@ -23,10 +22,12 @@ export class Field {
   description?: LanguageType
 
   @FieldType(() => Boolean, { nullable: true })
-  isHidden?: boolean
+  isPartOfMultiset?: boolean
 
-  @FieldType(() => Boolean, { nullable: true })
-  isPartOfMultiSet?: boolean
+  @FieldType(() => FieldSettings, { nullable: true })
+  fieldSettings?: FieldSettings
 
+  @FieldType(() => FieldDtoFieldTypeEnum, { nullable: true })
+  fieldType?: FieldDtoFieldTypeEnum
 }
 
