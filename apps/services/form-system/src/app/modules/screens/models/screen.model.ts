@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -22,7 +21,6 @@ export class Screen extends Model<Screen> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -30,15 +28,12 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -46,7 +41,6 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: 0,
   })
-  @ApiProperty()
   displayOrder!: number
 
   @Column({
@@ -54,7 +48,6 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isHidden!: boolean
 
   @Column({
@@ -62,7 +55,6 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: 0,
   })
-  @ApiProperty()
   multiset!: number
 
   @Column({
@@ -70,11 +62,9 @@ export class Screen extends Model<Screen> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   callRuleset!: boolean
 
   @HasMany(() => Field)
-  @ApiProperty({ type: [Field] })
   fields?: Field[]
 
   @ForeignKey(() => Section)
