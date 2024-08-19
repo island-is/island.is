@@ -12,6 +12,6 @@ import { GradeCategoryWeighted } from './gradeCategoryWeighted.model'
   },
 })
 export abstract class GradeCategory {
-  @Field() //t.d. "Lesskilningur"
+  @Field()
   label!: string
 }

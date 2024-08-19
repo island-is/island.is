@@ -5,7 +5,7 @@ import { Grade } from './grade.model'
 
 @ObjectType('EducationCompulsorySchoolCourse')
 export class Course {
-  @Field() //t.d. "Enska"
+  @Field()
   label!: string
 
   @Field(() => Grade, { nullable: true })

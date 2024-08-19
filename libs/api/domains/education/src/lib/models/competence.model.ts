@@ -2,9 +2,9 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('EducationCompulsorySchoolCourseCompetence')
 export class CourseCompetence {
-  @Field() //B+
+  @Field()
   competencyGrade!: string
 
-  @Field({ nullable: true }) // A1
+  @Field({ nullable: true })
   competenceStatus?: string
 }
