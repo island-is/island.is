@@ -34,10 +34,10 @@ export const Vehicles = ({
         </Box>
       )}
 
-      {selectedVehicles.map((vehicle, index) => {
+      {selectedVehicles.map((vehicle) => {
         return (
           <Box
-            key={index}
+            key={vehicle.permno + '-selected'}
             position="relative"
             border="standard"
             borderRadius="large"
@@ -49,7 +49,7 @@ export const Vehicles = ({
           >
             <Box>
               <Label>{formatMessage(vehicle.permno || '')}</Label>
-              {vehicle.make}, {vehicle.color}
+              {vehicle.make}, {vehicle.color || vehicle.colorName}
             </Box>
 
             {vehicle.mileage && isNumber(+vehicle.mileage) && (
@@ -66,13 +66,13 @@ export const Vehicles = ({
 
       {canceledVehicles.map((vehicle) => {
         return (
-          <Box paddingBottom={'gutter'}>
+          <Box key={vehicle.permno + '-canceled-box'} paddingBottom={'gutter'}>
             <ActionCard
               backgroundColor="red"
               headingVariant="h4"
-              key={vehicle.permno}
+              key={vehicle.permno + '-canceled'}
               heading={vehicle.permno || ''}
-              text={`${vehicle.make}, ${vehicle.color}`}
+              text={`${vehicle.make}, ${vehicle.color || vehicle.colorName}`}
               tag={{
                 label: formatMessage(carRecyclingMessages.review.canceled),
                 variant: 'red',

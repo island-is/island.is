@@ -1,5 +1,6 @@
-import { User } from '@island.is/auth-nest-tools'
 import { ClientAllowedScope } from '@island.is/auth-api-lib'
+import { User } from '@island.is/auth-nest-tools'
+import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
 import {
   CreateApiScope,
   CreateApiScopeUserAccess,
@@ -7,21 +8,35 @@ import {
   CreateCustomDelegation,
   CreateDomain,
 } from '@island.is/services/auth/testing'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { GetIndividualRelationships } from '@island.is/clients-rsk-relationships'
 
 export const clientId = '@island.is/webapp'
 export const domainName = '@island.is'
+export const otherDomainName = '@otherdomain.is'
 export const user = createCurrentUser({
   nationalIdType: 'person',
   scope: ['@identityserver.api/authentication'],
   client: clientId,
 })
 
-export const legalGuardianScopes = ['lg1', 'lg2']
-export const procurationHolderScopes = ['ph1', 'ph2']
-export const customScopes = ['cu1', 'cu2']
-export const representativeScopes = ['pr1', 'pr2']
+const legalGuardianScope1 = 'lg1'
+const legalGuardianScope2 = 'lg2'
+const procurationHolderScope1 = 'ph1'
+const procurationHolderScope2 = 'ph2'
+const customScope1 = 'cu1'
+const customScope2 = 'cu2'
+const customScopeOtherDomain = 'cu-od1'
+const representativeScope1 = 'pr1'
+const representativeScope2 = 'pr2'
+
+export const legalGuardianScopes = [legalGuardianScope1, legalGuardianScope2]
+export const procurationHolderScopes = [
+  procurationHolderScope1,
+  procurationHolderScope2,
+]
+export const customScopes = [customScope1, customScope2, customScopeOtherDomain]
+export const representativeScopes = [representativeScope1, representativeScope2]
 
 export interface ITestCaseOptions {
   fromChildren?: string[]
@@ -32,10 +47,12 @@ export interface ITestCaseOptions {
   protectedScopes?: string[]
   scopeAccess?: [string, string][]
   expectedFrom: string[]
+  expectedTypes?: AuthDelegationType[]
 }
 
 export class TestCase {
   domainName = domainName
+  otherDomainName = otherDomainName
   user: User
   client: CreateClient
   fromChildren: string[]
@@ -46,6 +63,7 @@ export class TestCase {
   protectedScopes: string[]
   scopeAccess: [string, string][]
   expectedFrom: string[]
+  expectedTypes?: AuthDelegationType[]
 
   constructor(client: CreateClient, options: ITestCaseOptions) {
     this.client = client
@@ -62,10 +80,15 @@ export class TestCase {
     this.protectedScopes = options.protectedScopes ?? []
     this.scopeAccess = options.scopeAccess ?? []
     this.expectedFrom = options.expectedFrom
+    this.expectedTypes = options.expectedTypes
   }
 
-  get domain(): CreateDomain {
-    return { name: this.domainName }
+  get domains(): CreateDomain[] {
+    const domains = [{ name: this.domainName }]
+    if (this.otherDomainName) {
+      domains.push({ name: this.otherDomainName })
+    }
+    return domains
   }
 
   get apiScopes(): CreateApiScope[] {
@@ -73,12 +96,14 @@ export class TestCase {
       name: s,
       description: s,
       displayName: s,
-      domainName: this.domainName,
+      domainName:
+        s === customScopeOtherDomain ? this.otherDomainName : this.domainName,
       grantToLegalGuardians: legalGuardianScopes.includes(s),
       grantToProcuringHolders: procurationHolderScopes.includes(s),
       allowExplicitDelegationGrant: customScopes.includes(s),
       grantToPersonalRepresentatives: representativeScopes.includes(s),
       isAccessControlled: this.protectedScopes.includes(s),
+      supportedDelegationTypes: this.supportedDelegationTypes(s),
     }))
   }
 
@@ -118,5 +143,23 @@ export class TestCase {
       nationalId: access[0],
       scope: access[1],
     }))
+  }
+
+  supportedDelegationTypes = (scopeName: string): AuthDelegationType[] => {
+    const result = []
+
+    if (legalGuardianScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.LegalGuardian)
+    }
+    if (procurationHolderScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.ProcurationHolder)
+    }
+    if (customScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.Custom)
+    }
+    if (representativeScopes.includes(scopeName)) {
+      result.push(AuthDelegationType.PersonalRepresentative)
+    }
+    return result
   }
 }

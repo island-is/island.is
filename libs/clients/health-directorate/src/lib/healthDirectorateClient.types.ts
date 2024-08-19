@@ -1,4 +1,4 @@
-import { Nam } from '../../gen/fetch'
+import { Nam } from './clients/occupational-license/gen/fetch'
 
 export interface HealthcareLicense {
   professionId: string
@@ -54,4 +54,12 @@ export interface HealthcareWorkPermitRequest {
   idProfession: string
   citizenship: string
   education: Nam[]
+}
+
+export type Scope = '@landlaeknir.is/starfsleyfi'
+
+export enum HealthDirectorateApisId {
+  ORGAN_DONATION = 'organDonation',
+  VACCINATIONS = 'vaccinations',
+  OCCUPATIONAL_LICENSE = 'occupational-license-and-certificate',
 }
