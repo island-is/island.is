@@ -56,6 +56,7 @@ const useInfoCardItems = () => {
     values: workingCase.defendants
       ? workingCase.defendants.map((defendant) => (
           <DefendantInfo
+            key={defendant.id}
             defendant={defendant}
             defender={{
               name: workingCase.defenderName,

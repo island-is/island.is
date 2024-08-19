@@ -81,7 +81,6 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
 
   return (
     <div
-      key={defendant.id}
       className={
         defendantInfoActionButton
           ? styles.gridRow.withButton
