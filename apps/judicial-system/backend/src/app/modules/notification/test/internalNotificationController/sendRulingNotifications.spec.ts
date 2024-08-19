@@ -19,7 +19,7 @@ import { createTestingNotificationModule } from '../createTestingNotificationMod
 
 import { Case } from '../../../case'
 import { Defendant, DefendantService } from '../../../defendant'
-import { SendInternalNotificationDto } from '../../dto/sendInternalNotification.dto'
+import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { notificationModuleConfig } from '../../notification.config'
 
@@ -33,12 +33,12 @@ interface Then {
 type GivenWhenThen = (
   caseId: string,
   theCase: Case,
-  notificationDto: SendInternalNotificationDto,
+  notificationDto: CaseNotificationDto,
 ) => Promise<Then>
 
 describe('InternalNotificationController - Send ruling notifications', () => {
   const userId = uuid()
-  const notificationDto: SendInternalNotificationDto = {
+  const notificationDto: CaseNotificationDto = {
     user: { id: userId } as User,
     type: NotificationType.RULING,
   }

@@ -20,7 +20,7 @@ import {
 import type { User } from '@island.is/judicial-system/types'
 
 import { Case, CaseExistsGuard, CaseWriteGuard, CurrentCase } from '../case'
-import { SendNotificationDto } from './dto/sendNotification.dto'
+import { NotificationDto } from './dto/notification.dto'
 import {
   courtOfAppealsAssistantNotificationRule,
   courtOfAppealsJudgeNotificationRule,
@@ -63,14 +63,15 @@ export class NotificationController {
     @Param('caseId') caseId: string,
     @CurrentHttpUser() user: User,
     @CurrentCase() theCase: Case,
-    @Body() notification: SendNotificationDto,
+    @Body() notificationDto: NotificationDto,
   ): Promise<SendNotificationResponse> {
     this.logger.debug(
-      `Adding ${notification.type} notification for case ${caseId} to queue`,
+      `Adding ${notificationDto.type} notification for case ${caseId} to queue`,
     )
 
-    return this.notificationService.addMessagesForNotificationToQueue(
-      notification,
+    return this.notificationService.addNotificationMessagesToQueue(
+      notificationDto.type,
+      notificationDto.eventOnly,
       theCase,
       user,
     )
