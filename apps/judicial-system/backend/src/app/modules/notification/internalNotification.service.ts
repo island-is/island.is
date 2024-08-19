@@ -27,6 +27,7 @@ import {
   formatDate,
   getAppealResultTextByValue,
   getHumanReadableCaseIndictmentRulingDecision,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseAppealRulingDecision,
@@ -1110,7 +1111,7 @@ export class InternalNotificationService extends BaseNotificationService {
             caseType: theCase.type,
             actorInstitution: user.institution?.name,
             actorName: user.name,
-            actorTitle: user.title,
+            actorTitle: lowercase(user.title),
             courtCaseNumber: theCase.courtCaseNumber,
             defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
@@ -1126,7 +1127,7 @@ export class InternalNotificationService extends BaseNotificationService {
             caseType: theCase.type,
             actorInstitution: user.institution?.name,
             actorName: user.name,
-            actorTitle: user.title,
+            actorTitle: lowercase(user.title),
             courtCaseNumber: theCase.courtCaseNumber,
             defenderHasAccessToRvg: Boolean(theCase.defenderNationalId),
             linkStart: `<a href="${formatDefenderRoute(
@@ -1158,7 +1159,7 @@ export class InternalNotificationService extends BaseNotificationService {
           caseType: theCase.type,
           actorInstitution: user.institution?.name,
           actorName: user.name,
-          actorTitle: user.title,
+          actorTitle: lowercase(user.title),
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
@@ -1169,7 +1170,7 @@ export class InternalNotificationService extends BaseNotificationService {
           caseType: theCase.type,
           actorInstitution: user.institution?.name,
           actorName: user.name,
-          actorTitle: user.title,
+          actorTitle: lowercase(user.title),
           courtCaseNumber: theCase.courtCaseNumber,
           linkStart: `<a href="${this.config.clientUrl}${SIGNED_VERDICT_OVERVIEW_ROUTE}/${theCase.id}">`,
           linkEnd: '</a>',
