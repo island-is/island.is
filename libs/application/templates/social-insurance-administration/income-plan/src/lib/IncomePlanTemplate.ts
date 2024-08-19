@@ -31,13 +31,19 @@ import {
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 import { assign } from 'xstate'
-import { getApplicationExternalData, isEligible } from './incomePlanUtils'
+import {
+  getApplicationExternalData,
+  isEligible,
+  getApplicationAnswers,
+} from './incomePlanUtils'
 import set from 'lodash/set'
+import unset from 'lodash/unset'
 import {
   Events,
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { RatioType, YES } from './constants'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -112,6 +118,7 @@ const IncomePlanTemplate: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['unsetIncomePlan'],
         meta: {
           name: States.DRAFT,
           status: 'draft',
@@ -215,7 +222,7 @@ const IncomePlanTemplate: ApplicationTemplate<
         )
 
         if (latestIncomePlan && latestIncomePlan.status === 'Accepted') {
-          latestIncomePlan.incomeTypeLines.map((income, i) => {
+          latestIncomePlan.incomeTypeLines.forEach((income, i) => {
             set(
               answers,
               `incomePlanTable[${i}].incomeTypes`,
@@ -236,7 +243,7 @@ const IncomePlanTemplate: ApplicationTemplate<
           })
         } else {
           withholdingTax &&
-            withholdingTax.incomeTypes?.map((income, i) => {
+            withholdingTax.incomeTypes?.forEach((income, i) => {
               set(
                 answers,
                 `incomePlanTable[${i}].incomeTypes`,
@@ -269,6 +276,54 @@ const IncomePlanTemplate: ApplicationTemplate<
               set(answers, `incomePlanTable[${i}].december`, income.december)
             })
         }
+
+        return context
+      }),
+      unsetIncomePlan: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const { incomePlan } = getApplicationAnswers(answers)
+
+        incomePlan.forEach((income, index) => {
+          if (
+            (income.income === RatioType.MONTHLY &&
+              income.unevenIncomePerYear?.[0] === YES) ||
+            income.income === RatioType.YEARLY
+          ) {
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].equalIncomePerMonth`,
+            )
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].equalForeignIncomePerMonth`,
+            )
+          }
+          if (
+            (income.income === RatioType.MONTHLY &&
+              income.unevenIncomePerYear?.[0] !== YES) ||
+            income.income === RatioType.YEARLY
+          ) {
+            unset(application.answers, `incomePlanTable[${index}].january`)
+            unset(application.answers, `incomePlanTable[${index}].february`)
+            unset(application.answers, `incomePlanTable[${index}].march`)
+            unset(application.answers, `incomePlanTable[${index}].april`)
+            unset(application.answers, `incomePlanTable[${index}].may`)
+            unset(application.answers, `incomePlanTable[${index}].june`)
+            unset(application.answers, `incomePlanTable[${index}].july`)
+            unset(application.answers, `incomePlanTable[${index}].august`)
+            unset(application.answers, `incomePlanTable[${index}].september`)
+            unset(application.answers, `incomePlanTable[${index}].october`)
+            unset(application.answers, `incomePlanTable[${index}].november`)
+            unset(application.answers, `incomePlanTable[${index}].december`)
+          }
+          if (income.income === RatioType.YEARLY) {
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].unevenIncomePerYear`,
+            )
+          }
+        })
 
         return context
       }),

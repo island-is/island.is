@@ -144,7 +144,8 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
-                      activeField?.currency !== ISK
+                      activeField?.currency !== ISK &&
+                      activeField?.unevenIncomePerYear?.[0] !== YES
                     )
                   },
                 },
@@ -159,7 +160,8 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
-                      activeField?.currency === ISK
+                      activeField?.currency === ISK &&
+                      activeField?.unevenIncomePerYear?.[0] !== YES
                     )
                   },
                 },
@@ -173,7 +175,27 @@ export const IncomePlanForm: Form = buildForm({
                     return activeField?.income === RatioType.MONTHLY
                   },
                   updateValueObj: {
-                    valueModifier: (_, activeField) => {
+                    valueModifier: (activeField) => {
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.unevenIncomePerYear?.[0] === YES
+                      ) {
+                        return (
+                          Number(activeField?.january ?? 0) +
+                          Number(activeField?.february ?? 0) +
+                          Number(activeField?.march ?? 0) +
+                          Number(activeField?.april ?? 0) +
+                          Number(activeField?.may ?? 0) +
+                          Number(activeField?.june ?? 0) +
+                          Number(activeField?.july ?? 0) +
+                          Number(activeField?.august ?? 0) +
+                          Number(activeField?.september ?? 0) +
+                          Number(activeField?.october ?? 0) +
+                          Number(activeField?.november ?? 0) +
+                          Number(activeField?.december ?? 0)
+                        ).toString()
+                      }
+
                       if (
                         activeField?.income === RatioType.MONTHLY &&
                         activeField?.currency === ISK
@@ -191,9 +213,29 @@ export const IncomePlanForm: Form = buildForm({
                           Number(activeField?.equalForeignIncomePerMonth) * 12
                         ).toString()
                       }
+
                       return undefined
                     },
-                    watchValue: (_, activeField) => {
+                    watchValues: (activeField) => {
+                      if (
+                        activeField?.income === RatioType.MONTHLY &&
+                        activeField?.unevenIncomePerYear?.[0] === YES
+                      ) {
+                        return [
+                          'january',
+                          'february',
+                          'march',
+                          'april',
+                          'may',
+                          'june',
+                          'july',
+                          'august',
+                          'september',
+                          'october',
+                          'november',
+                          'december',
+                        ]
+                      }
                       if (
                         activeField?.income === RatioType.MONTHLY &&
                         activeField?.currency === ISK
@@ -246,7 +288,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.january,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -262,7 +304,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.february,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -278,7 +320,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.march,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -294,7 +336,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.april,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -310,7 +352,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.may,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -326,7 +368,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.june,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -342,7 +384,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.july,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -358,7 +400,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.august,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -374,7 +416,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.september,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -390,7 +432,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.october,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -406,7 +448,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.november,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',
@@ -422,7 +464,7 @@ export const IncomePlanForm: Form = buildForm({
                   label: socialInsuranceAdministrationMessage.months.desember,
                   width: 'third',
                   type: 'number',
-                  backgroundColor: 'white',
+                  backgroundColor: 'blue',
                   displayInTable: false,
                   currency: true,
                   suffix: '',

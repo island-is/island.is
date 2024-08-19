@@ -321,28 +321,40 @@ const Item: FC<ItemFieldProps> = ({
   const activeValues =
     activeIndex >= 0 && values ? values[activeIndex] : undefined
 
-  let watchedValue: string | undefined
+  let watchedValues: string | (string | undefined)[] | undefined
   if (updateValueObj) {
-    const watchedValueId =
-      typeof updateValueObj.watchValue === 'function'
-        ? updateValueObj.watchValue(application, activeValues)
-        : updateValueObj.watchValue
+    const watchedValuesId =
+      typeof updateValueObj.watchValues === 'function'
+        ? updateValueObj.watchValues(activeValues)
+        : updateValueObj.watchValues
 
-    if (watchedValueId) {
-      watchedValue = activeValues?.[`${watchedValueId}`]
+    if (watchedValuesId) {
+      if (Array.isArray(watchedValuesId)) {
+        watchedValues = watchedValuesId.map((value) => {
+          return activeValues?.[`${value}`]
+        })
+      } else {
+        watchedValues = activeValues?.[`${watchedValuesId}`]
+      }
     }
   }
 
   useEffect(() => {
-    if (updateValueObj && watchedValue) {
-      const finalValue = updateValueObj.valueModifier(application, activeValues)
+    if (
+      updateValueObj &&
+      watchedValues &&
+      (Array.isArray(watchedValues)
+        ? !watchedValues.every((value) => value === undefined)
+        : true)
+    ) {
+      const finalValue = updateValueObj.valueModifier(activeValues)
 
       if (finalValue) {
         setValue(id, finalValue)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedValue])
+  }, [JSON.stringify(watchedValues)])
 
   const getFieldError = (id: string) => {
     /**

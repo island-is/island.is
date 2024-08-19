@@ -95,16 +95,13 @@ export type TableRepeaterItem = {
         activeField?: Record<string, string>,
       ) => boolean)
   updateValueObj?: {
-    valueModifier: (
-      application: Application,
-      activeField?: Record<string, string>,
-    ) => unknown
-    watchValue:
+    valueModifier: (activeField?: Record<string, string>) => unknown
+    watchValues:
       | string
+      | string[]
       | ((
-          application: Application,
           activeField?: Record<string, string>,
-        ) => string | undefined)
+        ) => string | string[] | undefined)
   }
 } & (
   | {

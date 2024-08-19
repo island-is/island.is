@@ -46,13 +46,13 @@ export const getApplicationExternalData = (
 }
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const income = getValueViaPath(
+  const incomePlan = getValueViaPath(
     answers,
     'incomePlanTable',
     [],
   ) as incomePlanRow[]
 
-  return { income }
+  return { incomePlan }
 }
 
 const getOneInstanceOfCategory = (categories: categorizedIncomeTypes[]) => {
