@@ -141,6 +141,7 @@ export const JudgeOverview = () => {
                   prosecutor(workingCase.type),
                   parentCaseValidToDate,
                 ],
+                columns: 2,
               },
             ]}
           />
