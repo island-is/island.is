@@ -23,6 +23,7 @@ export enum ApiScope {
   intellectualProperties = '@island.is/assets/ip',
   healthDentists = '@island.is/health/dentists',
   healthRightsStatus = '@island.is/health/rights-status',
+  healthVaccinations = '@island.is/health/vaccinations',
   workMachines = '@island.is/work-machines',
   vinnueftirlitid = '@island.is/applications/ver',
   samgongustofaVehicles = '@island.is/applications/samgongustofa-vehicles',
