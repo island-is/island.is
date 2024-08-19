@@ -26,8 +26,8 @@ export class VaccinationsDetail {
   @Field(() => VaccinationsAge, { nullable: true })
   vaccinationsAge?: VaccinationsAge
 
-  @Field(() => Object, { nullable: true })
-  generalComment?: object
+  @Field({ nullable: true })
+  generalComment?: string
 
   @Field(() => Boolean, { nullable: true })
   rejected?: boolean
