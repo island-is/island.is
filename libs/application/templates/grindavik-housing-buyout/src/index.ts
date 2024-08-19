@@ -10,5 +10,4 @@ export type {
 } from './types'
 
 export * from './lib/messages'
-
 export default GrindavikHousingBuyoutTemplate

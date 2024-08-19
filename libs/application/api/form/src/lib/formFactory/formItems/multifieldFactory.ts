@@ -1,4 +1,9 @@
-import { FieldTypes, MultiField } from '@island.is/application/types'
+import {
+  Field,
+  FieldTypes,
+  MultiField,
+  TextField,
+} from '@island.is/application/types'
 import { FormItemDto } from '../../dto/form.dto'
 import { IFormItemFactory } from './IFormItemFactory'
 import { DescriptionFieldFactory } from '../fields/descriptionFieldFactory'
@@ -37,6 +42,7 @@ export class MultiFieldFactory implements IFormItemFactory {
       children: [],
       fields: [],
       type: item.type,
+      isPage: true,
     }
 
     item.children.forEach((child) => {

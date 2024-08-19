@@ -13,6 +13,7 @@ import {
   startForm,
   fields,
 } from '@island.is/application/utils'
+import { GrindavikHousingBuyoutForm } from './testTemplate'
 
 const draftForm = startForm({ title: 'Í vinnslu' })
   .startSection({ title: 'Í vinnslu' })
@@ -66,6 +67,8 @@ const dataProviders = [
   subTitle?: string
 }[]
 
+const s = GrindavikHousingBuyoutForm
+
 export const newTypeOfApplication = applicationBuilder({
   applicatonType: ApplicationTypes.NEW_TYPE_OF_APPLICATION,
   institution: InstitutionTypes.STAFRAENT_ISLAND,
@@ -80,7 +83,7 @@ export const newTypeOfApplication = applicationBuilder({
   )
   .addState(
     draft
-      .setForm(draftForm)
+      .setForm(GrindavikHousingBuyoutForm)
       .addTransition(DefaultEvents.SUBMIT, completed.name),
   )
   .addState(completed.setForm(completedForm))

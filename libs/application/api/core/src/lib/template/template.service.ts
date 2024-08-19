@@ -40,9 +40,9 @@ export class TemplateService {
   async getApplicationTranslationNamespaces(
     application: Application,
   ): Promise<string[]> {
-    const template = await this.getApplicationTemplate(application.typeId)
+    // const template = await this.getApplicationTemplate(application.typeId)
 
     // We load the core namespace for the application system + the ones defined in the application template
-    return ['application.system', ...(template?.translationNamespaces ?? [])]
+    return ['application.system']
   }
 }

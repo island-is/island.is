@@ -210,9 +210,12 @@ export class ApplicationTemplateHelper<
     const stateInformation = this.getApplicationStateInformation(
       this.application.state,
     )
+
     if (!stateInformation) return undefined
 
-    return stateInformation.roles?.find(({ id }) => id === role)
+    const s = stateInformation.roles?.find(({ id }) => id === role)
+
+    return s
   }
 
   async applyAnswerValidators(

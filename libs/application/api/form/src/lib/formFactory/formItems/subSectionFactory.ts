@@ -19,11 +19,15 @@ export class SubSectionFactory implements IFormItemFactory {
       title: this.contextService.formatText(item.title),
       type: FormItemTypes.SUB_SECTION,
       children: [],
+      isPage: false,
       //condition
     }
+
     if (!item.children) {
       return subSectionDto
     }
+
+    subSectionDto.isPage = true
 
     item.children.forEach((child: SectionChildren) => {
       if (child.type === FormItemTypes.MULTI_FIELD) {

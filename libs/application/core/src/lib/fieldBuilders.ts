@@ -1,3 +1,4 @@
+/* eslint-disable func-style */
 import {
   AlertMessageField,
   Application,
@@ -44,9 +45,10 @@ import {
   HiddenInputField,
 } from '@island.is/application/types'
 
-import { Colors } from '@island.is/island-ui/theme'
-import { SpanType } from '@island.is/island-ui/core/types'
 import { coreDefaultFieldMessages } from './messages'
+
+type SpanType = 'full' | 'half' | 'third' | ('quarter' & any)
+type Colors = 'blue' | ('white' & any)
 
 const extractCommonFields = (
   data: Omit<BaseField, 'type' | 'component' | 'children'>,

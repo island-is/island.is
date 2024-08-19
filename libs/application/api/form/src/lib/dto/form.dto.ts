@@ -177,6 +177,11 @@ export class FormItemDto implements IFormItem {
   @IsArray()
   @Expose()
   dataProviders?: DataProviderItemDto[]
+
+  @ApiPropertyOptional()
+  @IsBoolean()
+  @Expose()
+  isPage?: boolean
 }
 
 export class FormDto implements IForm {

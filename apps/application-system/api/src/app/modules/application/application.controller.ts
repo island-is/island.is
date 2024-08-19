@@ -52,6 +52,7 @@ import {
   ScopesGuard,
   Scopes,
   CurrentUser,
+  BypassAuth,
 } from '@island.is/auth-nest-tools'
 import { ApplicationScope } from '@island.is/auth/scopes'
 import { IntlService } from '@island.is/cms-translations'
@@ -98,8 +99,9 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { BypassDelegation } from './guards/bypass-delegation.decorator'
 import { ApplicationActionService } from './application-action.service'
+import { FormDto, FormService } from '@island.is/application/api/form'
 
-@UseGuards(IdsUserGuard, ScopesGuard, DelegationGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('applications')
 @ApiHeader({
   name: 'authorization',
@@ -130,6 +132,7 @@ export class ApplicationController<
     private readonly templateApiActionRunner: TemplateApiActionRunner,
     private readonly templateService: TemplateService,
     private readonly applicationActionService: ApplicationActionService,
+    private readonly formService: FormService,
   ) {}
 
   @Scopes(ApplicationScope.read)
@@ -152,6 +155,40 @@ export class ApplicationController<
     )
 
     return existingApplication
+  }
+
+  @Get('applications/form/:id/:nationalId')
+  @ApiOkResponse({ type: FormDto })
+  @BypassAuth()
+  @BypassDelegation()
+  async getForm(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Param('nationalId') nationalId: string,
+    @CurrentLocale() locale: Locale,
+  ): Promise<any> {
+    const existingApplication = (await this.applicationService.findOneById(
+      id,
+      nationalId,
+    )) as BaseApplication
+    const namespaces =
+      await this.templateService.getApplicationTranslationNamespaces(
+        existingApplication,
+      )
+    const intl = await this.intlService.useIntl(namespaces, locale)
+
+    const form = await this.formService.getFormByApplicationId(
+      nationalId,
+      existingApplication,
+      intl.formatMessage,
+    )
+
+    if (!form) {
+      throw new NotFoundException(
+        `Form for application with id ${id} not found`,
+      )
+    }
+
+    return form
   }
 
   @Scopes(ApplicationScope.read)

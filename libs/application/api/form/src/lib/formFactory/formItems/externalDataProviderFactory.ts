@@ -16,6 +16,7 @@ export class ExternalDataProviderFactory implements IFormItemFactory {
       title: this.contextService.formatText(item.title),
       type: FormItemTypes.EXTERNAL_DATA_PROVIDER,
       children: [],
+      isPage: true,
       dataProviders: item.dataProviders.map((dp) => ({
         id: dp.id,
         title: this.contextService.formatText(dp.title),
