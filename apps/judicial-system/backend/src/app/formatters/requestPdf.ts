@@ -7,6 +7,7 @@ import {
   formatCaseType,
   formatDate,
   formatNationalId,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseType,
@@ -194,9 +195,9 @@ const constructRestrictionRequestPdf = (
   addEmptyLines(doc)
   addNormalText(
     doc,
-    `${theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)} ${
-      theCase.prosecutor?.title ?? ''
-    }`,
+    `${
+      theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+    } ${lowercase(theCase.prosecutor?.title)}`,
     'Times-Bold',
   )
   addFooter(doc)
@@ -392,9 +393,9 @@ const constructInvestigationRequestPdf = (
 
   addNormalText(
     doc,
-    `${theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)} ${
-      theCase.prosecutor?.title ?? ''
-    }`,
+    `${
+      theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+    } ${lowercase(theCase.prosecutor?.title)}`,
     'Times-Bold',
   )
   addFooter(doc)
