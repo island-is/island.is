@@ -7,7 +7,7 @@ export const MACHINE_MODELS = `
 `
 
 export const MACHINE_CATEGORY = `
-  query GetMachineCategory($input: GetMachineParentCategoryByTypeAndModelInput!) {
+  query GetMachineCategory($input: WorkMachinesParentCategoryByTypeAndModelInput!) {
     getMachineParentCategoryByTypeAndModel(input: $input) {
       name
       subCategoryName
