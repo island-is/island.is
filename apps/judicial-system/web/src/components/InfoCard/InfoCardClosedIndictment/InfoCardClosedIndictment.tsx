@@ -66,6 +66,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
             judge,
             offence,
           ],
+          columns: 2,
         },
         ...(workingCase.indictmentReviewer?.name
           ? [
@@ -80,6 +81,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                     ? [indictmentReviewedDate(reviewedDate)]
                     : []),
                 ],
+                columns: 2,
               },
             ]
           : []),
