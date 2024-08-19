@@ -73,6 +73,7 @@ export enum ApplicationTypes {
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  MACHINE_REGISTRATION = 'MachineRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -375,5 +376,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
     translation: ['dess.nps.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MACHINE_REGISTRATION]: {
+    slug: 'nyskraning-taekis',
+    translation: ['aosh.rnm.application'],
   },
 }
