@@ -2,14 +2,12 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { signatures } from '../../lib/messages/signatures'
 import { useLocale } from '@island.is/localization'
 import { useApplication } from '../../hooks/useUpdateApplication'
-import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
-import { regularSignatureSchema } from '../../lib/dataSchema'
 import {
   MAXIMUM_REGULAR_SIGNATURE_MEMBER_COUNT,
   MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT,
 } from '../../lib/constants'
-import { getEmptyMember } from '../../lib/utils'
+import { getEmptyMember, getRegularAnswers } from '../../lib/utils'
 import set from 'lodash/set'
 
 type Props = {
@@ -24,30 +22,24 @@ export const AddRegularMember = ({ applicationId, signatureIndex }: Props) => {
   })
 
   const onAddMember = () => {
-    const currentAnswers = structuredClone(application.answers)
-    const signature = getValueViaPath(
-      currentAnswers,
-      InputFields.signature.regular,
+    const { signature, currentAnswers } = getRegularAnswers(
+      structuredClone(application.answers),
     )
 
-    const isRegularSignature = regularSignatureSchema.safeParse(signature)
-
-    if (isRegularSignature.success) {
-      const doesSignatureExist = isRegularSignature.data?.at(signatureIndex)
+    if (signature) {
+      const doesSignatureExist = signature.at(signatureIndex)
 
       if (doesSignatureExist !== undefined) {
-        const updatedRegularSignature = isRegularSignature.data?.map(
-          (signature, index) => {
-            if (index === signatureIndex) {
-              return {
-                ...signature,
-                members: [...(signature.members ?? []), getEmptyMember()],
-              }
+        const updatedRegularSignature = signature.map((signature, index) => {
+          if (index === signatureIndex) {
+            return {
+              ...signature,
+              members: [...(signature.members ?? []), getEmptyMember()],
             }
+          }
 
-            return signature
-          },
-        )
+          return signature
+        })
 
         const updatedAnswers = set(
           currentAnswers,
@@ -61,14 +53,11 @@ export const AddRegularMember = ({ applicationId, signatureIndex }: Props) => {
   }
 
   const getCurrentCount = () => {
-    const currentAnswers = getValueViaPath(
-      application.answers,
-      InputFields.signature.regular,
+    const { signature } = getRegularAnswers(
+      structuredClone(application.answers),
     )
-
-    const isRegularSignature = regularSignatureSchema.safeParse(currentAnswers)
-    if (isRegularSignature.success) {
-      const doesSignatureExist = isRegularSignature.data?.at(signatureIndex)
+    if (signature) {
+      const doesSignatureExist = signature?.at(signatureIndex)
 
       if (doesSignatureExist !== undefined) {
         return doesSignatureExist.members?.length ?? 0

@@ -2,17 +2,13 @@ import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { InstitutionSignature } from './Institution'
-import {
-  DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT,
-  SignatureTypes,
-} from '../../lib/constants'
+import { SignatureTypes } from '../../lib/constants'
 import { CommitteeMember } from './CommitteeMember'
-import { getValueViaPath } from '@island.is/application/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
-import { committeeSignatureSchema } from '../../lib/dataSchema'
-import { InputFields } from '../../lib/types'
-import { getCommitteeSignature } from '../../lib/utils'
+import { isCommitteeSignature } from '../../lib/utils'
 import { Chairman } from './Chairman'
+import { getValueViaPath } from '@island.is/application/core'
+import { InputFields } from '../../lib/types'
 
 type Props = {
   applicationId: string
@@ -24,21 +20,21 @@ export const CommitteeSignature = ({ applicationId }: Props) => {
   })
 
   const getSignature = () => {
-    const currentSignature = getValueViaPath(
+    const currentAnswers = getValueViaPath(
       application.answers,
       InputFields.signature.committee,
     )
 
-    const parsed = committeeSignatureSchema.safeParse(currentSignature)
-
-    if (parsed.success) {
-      return parsed.data
+    if (isCommitteeSignature(currentAnswers)) {
+      return currentAnswers
     }
-
-    return getCommitteeSignature(DEFAULT_COMMITTEE_SIGNATURE_MEMBER_COUNT)
   }
 
   const signature = getSignature()
+
+  if (!signature) {
+    return null
+  }
 
   return (
     <Box className={styles.signatureWrapper}>

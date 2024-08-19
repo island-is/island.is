@@ -6,8 +6,6 @@ import { baseConfig } from '../htmlEditor/config/baseConfig'
 import { Box } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
-import debounce from 'lodash/debounce'
-import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
 
 type Props = {
   applicationId: string
@@ -22,7 +20,9 @@ export const OJOIHtmlController = ({
   onChange,
   defaultValue,
 }: Props) => {
-  const { updateApplication, application } = useApplication({ applicationId })
+  const { debouncedOnUpdateApplicationHandler, application } = useApplication({
+    applicationId,
+  })
 
   const valueRef = useRef(() => defaultValue as HTMLText)
 
@@ -34,15 +34,12 @@ export const OJOIHtmlController = ({
     const currentAnswers = structuredClone(application.answers)
     const newAnswers = set(currentAnswers, name, value)
 
-    updateApplication(newAnswers)
-
     onChange && onChange(value)
+    return newAnswers
   }
 
-  const debouncedHandleChange = debounce(handleChange, DEBOUNCE_INPUT_TIMER)
   const onChangeHandler = () => {
-    debouncedHandleChange.cancel()
-    debouncedHandleChange(valueRef.current())
+    return handleChange(valueRef.current())
   }
 
   return (
@@ -56,8 +53,8 @@ export const OJOIHtmlController = ({
         classes={classes}
         fileUploader={fileUploader}
         valueRef={valueRef}
-        onChange={onChangeHandler}
-        onBlur={onChangeHandler}
+        onChange={() => debouncedOnUpdateApplicationHandler(onChangeHandler())}
+        onBlur={() => debouncedOnUpdateApplicationHandler(onChangeHandler())}
       />
     </Box>
   )

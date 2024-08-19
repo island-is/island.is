@@ -1,14 +1,13 @@
 import {
   Box,
-  Button,
   DatePicker,
   Input,
   SkeletonLoader,
 } from '@island.is/island-ui/core'
 import {
-  DEBOUNCE_INPUT_TIMER,
   OJOJ_INPUT_HEIGHT,
   SignatureType,
+  SignatureTypes,
 } from '../../lib/constants'
 import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
@@ -16,15 +15,16 @@ import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
-import debounce from 'lodash/debounce'
 import * as styles from './Signatures.css'
-import { getSignatureDefaultValues } from '../../lib/utils'
-import { z } from 'zod'
 import {
-  committeeSignatureSchema,
-  regularSignatureSchema,
-  signatureInstitutionSchema,
-} from '../../lib/dataSchema'
+  getCommitteeAnswers,
+  getRegularAnswers,
+  getSignatureDefaultValues,
+  isCommitteeSignature,
+  isRegularSignature,
+} from '../../lib/utils'
+import { z } from 'zod'
+import { signatureInstitutionSchema } from '../../lib/dataSchema'
 import { RemoveRegularSignature } from './RemoveRegularSignature'
 type Props = {
   applicationId: string
@@ -40,40 +40,35 @@ export const InstitutionSignature = ({
   signatureIndex,
 }: Props) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication, application, applicationLoading } = useApplication(
-    {
-      applicationId,
-    },
-  )
+  const {
+    debouncedOnUpdateApplicationHandler,
+    application,
+    applicationLoading,
+  } = useApplication({
+    applicationId,
+  })
 
   const handleInstitutionChange = (
     value: string,
     key: SignatureInstitutionKeys,
     signatureIndex?: number,
   ) => {
-    const currentAnswers = structuredClone(application.answers)
+    const { signature, currentAnswers } =
+      type === SignatureTypes.COMMITTEE
+        ? getCommitteeAnswers(application.answers)
+        : getRegularAnswers(application.answers)
 
-    const signature = getValueViaPath(
-      currentAnswers,
-      InputFields.signature[type],
-    )
-
-    const isRegularSignature = regularSignatureSchema.safeParse(signature)
-    const isCommitteeSignature = committeeSignatureSchema.safeParse(signature)
-
-    if (isRegularSignature.success && signatureIndex !== undefined) {
-      const updatedRegularSignature = isRegularSignature.data?.map(
-        (signature, index) => {
-          if (index === signatureIndex) {
-            return {
-              ...signature,
-              [key]: value,
-            }
+    if (isRegularSignature(signature)) {
+      const updatedRegularSignature = signature?.map((signature, index) => {
+        if (index === signatureIndex) {
+          return {
+            ...signature,
+            [key]: value,
           }
+        }
 
-          return signature
-        },
-      )
+        return signature
+      })
 
       const updatedSignatures = set(
         currentAnswers,
@@ -81,35 +76,23 @@ export const InstitutionSignature = ({
         updatedRegularSignature,
       )
 
-      updateApplication(updatedSignatures)
+      return updatedSignatures
     }
 
-    if (isCommitteeSignature.success) {
+    if (isCommitteeSignature(signature)) {
       const updatedCommitteeSignature = set(
         currentAnswers,
         InputFields.signature[type],
         {
-          ...isCommitteeSignature.data,
+          ...signature,
           [key]: value,
         },
       )
 
-      updateApplication(updatedCommitteeSignature)
+      return updatedCommitteeSignature
     }
-  }
 
-  const debounceHandleInstitutionChange = debounce(
-    handleInstitutionChange,
-    DEBOUNCE_INPUT_TIMER,
-  )
-
-  const onChangeHandler = (
-    value: string,
-    key: SignatureInstitutionKeys,
-    signatureIndex?: number,
-  ) => {
-    debounceHandleInstitutionChange.cancel()
-    debounceHandleInstitutionChange(value, key, signatureIndex)
+    return currentAnswers
   }
 
   if (applicationLoading) {
@@ -135,7 +118,13 @@ export const InstitutionSignature = ({
             defaultValue={institution}
             backgroundColor="blue"
             onChange={(e) =>
-              onChangeHandler(e.target.value, 'institution', signatureIndex)
+              debouncedOnUpdateApplicationHandler(
+                handleInstitutionChange(
+                  e.target.value,
+                  'institution',
+                  signatureIndex,
+                ),
+              )
             }
           />
         </Box>
@@ -152,7 +141,13 @@ export const InstitutionSignature = ({
             selected={date ? new Date(date) : undefined}
             handleCloseCalendar={(date) =>
               date &&
-              onChangeHandler(date.toISOString(), 'date', signatureIndex)
+              debouncedOnUpdateApplicationHandler(
+                handleInstitutionChange(
+                  date.toISOString(),
+                  'date',
+                  signatureIndex,
+                ),
+              )
             }
           />
         </Box>

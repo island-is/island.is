@@ -6,6 +6,8 @@ import {
 import { useLocale } from '@island.is/localization'
 import { partialSchema } from '../lib/dataSchema'
 import { OJOIApplication } from '../lib/types'
+import debounce from 'lodash/debounce'
+import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
 
 type OJOIUseApplicationParams = {
   applicationId?: string
@@ -33,7 +35,8 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     { data: updateData, loading: updateLoading, error: updateError },
   ] = useMutation(UPDATE_APPLICATION)
 
-  const updateApplication = async (input: partialSchema) => {
+  const updateApplication = async (input: partialSchema, cb?: () => void) => {
+    console.log('updateApplication', input)
     await mutation({
       variables: {
         locale,
@@ -45,6 +48,21 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
         },
       },
     })
+
+    cb && cb()
+  }
+
+  const debouncedUpdateApplication = debounce(
+    updateApplication,
+    DEBOUNCE_INPUT_TIMER,
+  )
+
+  const debouncedOnUpdateApplicationHandler = (
+    input: partialSchema,
+    cb?: () => void,
+  ) => {
+    debouncedUpdateApplication.cancel()
+    debouncedUpdateApplication(input, cb)
   }
 
   return {
@@ -55,6 +73,7 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
     updateLoading,
     updateError,
     isLoading: applicationLoading || updateLoading,
+    debouncedOnUpdateApplicationHandler,
     updateApplication,
     refetchApplication,
   }

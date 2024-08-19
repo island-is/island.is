@@ -5,14 +5,8 @@ import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
 import { InputFields } from '../../lib/types'
 import set from 'lodash/set'
-import { getValueViaPath } from '@island.is/application/core'
-import { getEmptyMember } from '../../lib/utils'
-import debounce from 'lodash/debounce'
-import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
-import {
-  committeeSignatureSchema,
-  memberItemSchema,
-} from '../../lib/dataSchema'
+import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
+import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
 
@@ -30,7 +24,7 @@ export const CommitteeMember = ({
   member,
 }: Props) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication, application } = useApplication({
+  const { debouncedOnUpdateApplicationHandler, application } = useApplication({
     applicationId,
   })
 
@@ -39,19 +33,14 @@ export const CommitteeMember = ({
     key: keyof MemberProperties,
     memberIndex: number,
   ) => {
-    const currentAnswers = structuredClone(application.answers)
-
-    const signature = getValueViaPath(
-      currentAnswers,
-      InputFields.signature.committee,
+    const { signature, currentAnswers } = getCommitteeAnswers(
+      application.answers,
     )
 
-    const isCommitteeSignature = committeeSignatureSchema.safeParse(signature)
-
-    if (isCommitteeSignature.success && isCommitteeSignature.data) {
+    if (signature) {
       const updatedCommitteeSignature = {
-        ...isCommitteeSignature.data,
-        members: isCommitteeSignature?.data?.members?.map((m, i) => {
+        ...signature,
+        members: signature?.members?.map((m, i) => {
           if (i === memberIndex) {
             return {
               ...m,
@@ -69,22 +58,10 @@ export const CommitteeMember = ({
         updatedCommitteeSignature,
       )
 
-      updateApplication(updatedSignatures)
+      return updatedSignatures
     }
-  }
 
-  const debouncedMemberUpdate = debounce(
-    handleMemberChange,
-    DEBOUNCE_INPUT_TIMER,
-  )
-
-  const onMemberChangeHandler = (
-    value: string,
-    key: keyof MemberProperties,
-    memberIndex: number,
-  ) => {
-    debouncedMemberUpdate.cancel()
-    debouncedMemberUpdate(value, key, memberIndex)
+    return currentAnswers
   }
 
   if (!member) {
@@ -99,7 +76,9 @@ export const CommitteeMember = ({
           label={f(signatures.inputs.name.label)}
           defaultValue={member.name}
           onChange={(e) =>
-            onMemberChangeHandler(e.target.value, 'name', memberIndex)
+            debouncedOnUpdateApplicationHandler(
+              handleMemberChange(e.target.value, 'name', memberIndex),
+            )
           }
         />
         <SignatureMember
@@ -107,7 +86,9 @@ export const CommitteeMember = ({
           label={f(signatures.inputs.below.label)}
           defaultValue={member.below}
           onChange={(e) =>
-            onMemberChangeHandler(e.target.value, 'below', memberIndex)
+            debouncedOnUpdateApplicationHandler(
+              handleMemberChange(e.target.value, 'below', memberIndex),
+            )
           }
         />
       </Box>

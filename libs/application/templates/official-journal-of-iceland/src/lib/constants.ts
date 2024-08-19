@@ -55,6 +55,7 @@ export enum SignatureTypes {
   COMMITTEE = 'committee',
 }
 
+export const ONE = 1
 export const MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 1
 export const DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT = 1
 export const MAXIMUM_REGULAR_SIGNATURE_MEMBER_COUNT = 10

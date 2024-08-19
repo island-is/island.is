@@ -18,6 +18,28 @@ export const RemoveRegularSignature = ({
     applicationId,
   })
 
+  const onRemove = () => {
+    const currentAnswers = structuredClone(application.answers)
+    const signature = getValueViaPath(
+      currentAnswers,
+      InputFields.signature.regular,
+    )
+
+    if (isRegularSignature(signature)) {
+      const updatedRegularSignature = signature?.filter(
+        (_, index) => index !== signatureIndex,
+      )
+
+      const updatedSignatures = set(
+        currentAnswers,
+        InputFields.signature.regular,
+        updatedRegularSignature,
+      )
+
+      updateApplication(updatedSignatures)
+    }
+  }
+
   return (
     <Button
       variant="utility"
@@ -25,27 +47,7 @@ export const RemoveRegularSignature = ({
       icon="trash"
       iconType="outline"
       disabled={signatureIndex === 0}
-      onClick={() => {
-        const currentAnswers = structuredClone(application.answers)
-        const signature = getValueViaPath(
-          currentAnswers,
-          InputFields.signature.regular,
-        )
-
-        if (isRegularSignature(signature)) {
-          const updatedRegularSignature = signature?.filter(
-            (_, index) => index !== signatureIndex,
-          )
-
-          const updatedSignatures = set(
-            currentAnswers,
-            InputFields.signature.regular,
-            updatedRegularSignature,
-          )
-
-          updateApplication(updatedSignatures)
-        }
-      }}
+      onClick={onRemove}
     />
   )
 }

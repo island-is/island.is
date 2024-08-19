@@ -1,7 +1,6 @@
 import { Application, FieldBaseProps } from '@island.is/application/types'
 import { Routes } from './constants'
 import {
-  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandPaging,
 } from '@island.is/api/schema'

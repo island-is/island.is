@@ -32,7 +32,9 @@ export const OJOIDateController = ({
   onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication, application } = useApplication({ applicationId })
+  const { debouncedOnUpdateApplicationHandler, application } = useApplication({
+    applicationId,
+  })
 
   const placeholderText =
     typeof placeholder === 'string' ? placeholder : f(placeholder)
@@ -43,17 +45,7 @@ export const OJOIDateController = ({
     const currentAnswers = structuredClone(application.answers)
     const newAnswers = set(currentAnswers, name, value)
 
-    updateApplication(newAnswers)
-
-    onChange && onChange(value)
-  }
-
-  const debounceHandleChange = debounce(handleChange, DEBOUNCE_INPUT_TIMER)
-
-  const onChangeHandler = (value: string) => {
-    debounceHandleChange.cancel()
-
-    debounceHandleChange(value)
+    return newAnswers
   }
 
   if (loading) {
@@ -77,7 +69,12 @@ export const OJOIDateController = ({
       backgroundColor="blue"
       defaultValue={defaultValue}
       disabled={disabled}
-      onChange={onChangeHandler}
+      onChange={(e) =>
+        debouncedOnUpdateApplicationHandler(
+          handleChange(e),
+          onChange && (() => onChange(e)),
+        )
+      }
     />
   )
 }

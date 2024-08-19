@@ -50,7 +50,6 @@ export const RemoveRegularMember = ({
             return signature
           },
         )
-        console.log(isRegularSignature.data?.at(0)?.members?.length)
 
         const updatedAnswers = set(
           currentAnswers,

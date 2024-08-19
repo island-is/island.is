@@ -2,6 +2,8 @@ import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
 import { any, z } from 'zod'
 import { committeeSignatureSchema, regularSignatureSchema } from './dataSchema'
+import { getValueViaPath } from '@island.is/application/core'
+import { InputFields, OJOIApplication } from './types'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -111,3 +113,48 @@ export const isRegularSignature = (
   any: unknown,
 ): any is z.infer<typeof regularSignatureSchema> =>
   regularSignatureSchema.safeParse(any).success
+
+export const isCommitteeSignature = (
+  any: unknown,
+): any is z.infer<typeof committeeSignatureSchema> =>
+  committeeSignatureSchema.safeParse(any).success
+
+export const getCommitteeAnswers = (answers: OJOIApplication['answers']) => {
+  const currentAnswers = structuredClone(answers)
+  const signature = getValueViaPath(
+    currentAnswers,
+    InputFields.signature.committee,
+  )
+
+  if (isCommitteeSignature(signature)) {
+    return {
+      currentAnswers,
+      signature,
+    }
+  }
+
+  return {
+    currentAnswers,
+    signature: null,
+  }
+}
+
+export const getRegularAnswers = (answers: OJOIApplication['answers']) => {
+  const currentAnswers = structuredClone(answers)
+  const signature = getValueViaPath(
+    currentAnswers,
+    InputFields.signature.regular,
+  )
+
+  if (isRegularSignature(signature)) {
+    return {
+      currentAnswers,
+      signature,
+    }
+  }
+
+  return {
+    currentAnswers,
+    signature: null,
+  }
+}

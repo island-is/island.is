@@ -5,14 +5,10 @@ import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
 import { InputFields } from '../../lib/types'
 import set from 'lodash/set'
-import { getValueViaPath } from '@island.is/application/core'
-import { getEmptyMember } from '../../lib/utils'
+import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
 import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
-import {
-  committeeSignatureSchema,
-  memberItemSchema,
-} from '../../lib/dataSchema'
+import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
 
@@ -25,24 +21,19 @@ type MemberProperties = ReturnType<typeof getEmptyMember>
 
 export const Chairman = ({ applicationId, member }: Props) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication, application } = useApplication({
+  const { application, debouncedOnUpdateApplicationHandler } = useApplication({
     applicationId,
   })
 
   const handleChairmanChange = (value: string, key: keyof MemberProperties) => {
-    const currentAnswers = structuredClone(application.answers)
-
-    const signature = getValueViaPath(
-      currentAnswers,
-      InputFields.signature.regular,
+    const { signature, currentAnswers } = getCommitteeAnswers(
+      application.answers,
     )
 
-    const isCommitteeSignature = committeeSignatureSchema.safeParse(signature)
-
-    if (isCommitteeSignature.success && isCommitteeSignature.data) {
+    if (signature) {
       const updatedRegularSignature = {
-        ...isCommitteeSignature.data,
-        chairman: { ...isCommitteeSignature.data.chairman, [key]: value },
+        ...signature,
+        chairman: { ...signature.chairman, [key]: value },
       }
 
       const updatedSignatures = set(
@@ -51,21 +42,10 @@ export const Chairman = ({ applicationId, member }: Props) => {
         updatedRegularSignature,
       )
 
-      updateApplication(updatedSignatures)
+      return updatedSignatures
     }
-  }
 
-  const debouncedMemberUpdate = debounce(
-    handleChairmanChange,
-    DEBOUNCE_INPUT_TIMER,
-  )
-
-  const onChairmanChangeHandler = (
-    value: string,
-    key: keyof MemberProperties,
-  ) => {
-    debouncedMemberUpdate.cancel()
-    debouncedMemberUpdate(value, key)
+    return currentAnswers
   }
 
   if (!member) {
@@ -79,13 +59,21 @@ export const Chairman = ({ applicationId, member }: Props) => {
           name={`signature.regular.member.above.chairman`}
           label={f(signatures.inputs.above.label)}
           defaultValue={member.above}
-          onChange={(e) => onChairmanChangeHandler(e.target.value, 'above')}
+          onChange={(e) =>
+            debouncedOnUpdateApplicationHandler(
+              handleChairmanChange(e.target.value, 'above'),
+            )
+          }
         />
         <SignatureMember
           name={`signature.regular.member.after`}
           label={f(signatures.inputs.after.label)}
           defaultValue={member.after}
-          onChange={(e) => onChairmanChangeHandler(e.target.value, 'after')}
+          onChange={(e) =>
+            debouncedOnUpdateApplicationHandler(
+              handleChairmanChange(e.target.value, 'after'),
+            )
+          }
         />
       </Box>
       <Box className={styles.inputWrapper}>
@@ -93,13 +81,21 @@ export const Chairman = ({ applicationId, member }: Props) => {
           name={`signature.regular.member.name`}
           label={f(signatures.inputs.name.label)}
           defaultValue={member.name}
-          onChange={(e) => onChairmanChangeHandler(e.target.value, 'name')}
+          onChange={(e) =>
+            debouncedOnUpdateApplicationHandler(
+              handleChairmanChange(e.target.value, 'name'),
+            )
+          }
         />
         <SignatureMember
           name={`signature.regular.member.below`}
           label={f(signatures.inputs.below.label)}
           defaultValue={member.below}
-          onChange={(e) => onChairmanChangeHandler(e.target.value, 'below')}
+          onChange={(e) =>
+            debouncedOnUpdateApplicationHandler(
+              handleChairmanChange(e.target.value, 'below'),
+            )
+          }
         />
       </Box>
     </Box>

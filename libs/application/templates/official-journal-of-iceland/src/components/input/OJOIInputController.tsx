@@ -2,10 +2,9 @@ import { SkeletonLoader } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { MessageDescriptor } from 'react-intl'
-import { OJOJ_INPUT_HEIGHT, DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
+import { OJOJ_INPUT_HEIGHT } from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import set from 'lodash/set'
-import debounce from 'lodash/debounce'
 
 type Props = {
   name: string
@@ -31,7 +30,9 @@ export const OJOIInputController = ({
   onChange,
 }: Props) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication, application } = useApplication({ applicationId })
+  const { debouncedOnUpdateApplicationHandler, application } = useApplication({
+    applicationId,
+  })
 
   const placeholderText =
     typeof placeholder === 'string' ? placeholder : f(placeholder)
@@ -42,19 +43,7 @@ export const OJOIInputController = ({
     const currentAnswers = structuredClone(application.answers)
     const newAnswers = set(currentAnswers, name, value)
 
-    updateApplication(newAnswers)
-
-    onChange && onChange(value)
-  }
-
-  const debounceHandleChange = debounce(handleChange, DEBOUNCE_INPUT_TIMER)
-
-  const onChangeHandler = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    debounceHandleChange.cancel()
-
-    debounceHandleChange(e.target.value)
+    return newAnswers
   }
 
   if (loading) {
@@ -79,7 +68,12 @@ export const OJOIInputController = ({
       disabled={disabled}
       textarea={textarea}
       rows={4}
-      onChange={onChangeHandler}
+      onChange={(e) =>
+        debouncedOnUpdateApplicationHandler(
+          handleChange(e.target.value),
+          onChange && (() => onChange(e.target.value)),
+        )
+      }
     />
   )
 }

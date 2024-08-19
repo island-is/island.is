@@ -4,11 +4,16 @@ import { Box, Button } from '@island.is/island-ui/core'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
-import { getRegularSignature, isRegularSignature } from '../../lib/utils'
+import {
+  getRegularAnswers,
+  getRegularSignature,
+  isRegularSignature,
+} from '../../lib/utils'
 import set from 'lodash/set'
 import {
   DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
   MAXIMUM_REGULAR_SIGNATURE_COUNT,
+  ONE,
 } from '../../lib/constants'
 
 type Props = {
@@ -22,23 +27,20 @@ export const AddRegularSignature = ({ applicationId }: Props) => {
   })
 
   const onAddInstitution = () => {
-    const currentAnswers = structuredClone(application.answers)
-
-    const signature = getValueViaPath(
-      currentAnswers,
-      InputFields.signature.regular,
+    const { signature, currentAnswers } = getRegularAnswers(
+      structuredClone(application.answers),
     )
 
-    if (isRegularSignature(signature)) {
+    if (signature) {
       const newSignature = getRegularSignature(
-        1,
+        ONE,
         DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
       )?.pop()
 
       const updatedAnswers = set(
         currentAnswers,
         InputFields.signature.regular,
-        [...(signature ?? []), newSignature],
+        [...signature, newSignature],
       )
 
       updateApplication(updatedAnswers)

@@ -1,23 +1,14 @@
-import { Box, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { InputFields } from '../../lib/types'
-import {
-  DEFAULT_REGULAR_SIGNATURE_COUNT,
-  DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-  MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT,
-  OJOJ_INPUT_HEIGHT as OJOI_INPUT_HEIGHT,
-  SignatureTypes,
-} from '../../lib/constants'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { getValueViaPath } from '@island.is/application/core'
-import { regularSignatureSchema } from '../../lib/dataSchema'
 import { InstitutionSignature } from './Institution'
 import { RegularMember } from './RegularMember'
-import { getRegularSignature } from '../../lib/utils'
+import { isRegularSignature } from '../../lib/utils'
 import { AddRegularMember } from './AddRegularMember'
 import { AddRegularSignature } from './AddRegularSignature'
-import { RemoveRegularMember } from './RemoveRegularMember'
 
 type Props = {
   applicationId: string
@@ -29,27 +20,21 @@ export const RegularSignature = ({ applicationId }: Props) => {
   })
 
   const getSignature = () => {
-    const currentSignature = getValueViaPath(
+    const currentAnswers = getValueViaPath(
       application.answers,
-      InputFields.signature.regular,
+      InputFields.signature.committee,
     )
 
-    const parsed = regularSignatureSchema.safeParse(currentSignature)
-
-    if (parsed.success) {
-      return parsed.data
+    if (isRegularSignature(currentAnswers)) {
+      return currentAnswers
     }
-
-    return getRegularSignature(
-      DEFAULT_REGULAR_SIGNATURE_COUNT,
-      DEFAULT_REGULAR_SIGNATURE_MEMBER_COUNT,
-    )
   }
 
   const signature = getSignature()
 
-  if (!signature)
-    return <SkeletonLoader space={2} repeat={3} height={OJOI_INPUT_HEIGHT} />
+  if (!signature) {
+    return null
+  }
 
   return (
     <>
