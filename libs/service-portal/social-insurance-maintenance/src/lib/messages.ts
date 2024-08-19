@@ -35,6 +35,16 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:income-plan-modify',
     defaultMessage: 'Breyta tekjuáætlun',
   },
+  incomePlanModifyUnavailable: {
+    id: 'sp.social-insurance-maintenance:income-plan-modify-unavailable',
+    defaultMessage:
+      'Ekki er hægt að gera breytingar á tekjuáætlun sem stendur.',
+  },
+  incomePlanModifyUnavailableText: {
+    id: 'sp.social-insurance-maintenance:income-plan-modify-unavailable',
+    defaultMessage:
+      'Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis. ',
+  },
   paymentsReasoning: {
     id: 'sp.social-insurance-maintenance:payments-reasoning',
     defaultMessage: 'Forsendur greiðslna',
@@ -98,5 +108,14 @@ export const m = defineMessages({
   noActiveIncomePlan: {
     id: 'sp.social-insurance-maintenance:no-active-income-plan',
     defaultMessage: 'Engin gild tekjuáætlun',
+  },
+  incomePlanLink: {
+    id: 'sp.social-insurance-maintenance:income-plan-link',
+    defaultMessage:
+      'https://island.is/tekjuaaetlun-tr-upplysingar-um-tekjur-lifeyristhega',
+  },
+  incomePlanLinkText: {
+    id: 'sp.social-insurance-maintenance:income-plan-link-text',
+    defaultMessage: 'Hvað er tekjuáætlun?',
   },
 })

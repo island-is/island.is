@@ -1,5 +1,9 @@
 query getIncomePlan {
   socialInsuranceIncomePlan {
+    isEligibleForChange {
+      isEligible
+      reason
+    }
     registrationDate
     status
   }

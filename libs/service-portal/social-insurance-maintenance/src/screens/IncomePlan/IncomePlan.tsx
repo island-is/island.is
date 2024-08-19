@@ -1,4 +1,4 @@
-import { Box, Inline, Stack } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Inline, Stack } from '@island.is/island-ui/core'
 import {
   FormatMessage,
   useLocale,
@@ -94,22 +94,33 @@ const IncomePlan = () => {
         </Box>
       ) : (
         <Stack space={2}>
+          {!error &&
+            !loading &&
+            !data?.socialInsuranceIncomePlan?.isEligibleForChange
+              .isEligible && (
+              <AlertMessage
+                type="info"
+                title={formatMessage(m.incomePlanModifyUnavailable)}
+                message={formatMessage(m.incomePlanModifyUnavailableText)}
+              />
+            )}
           <Inline space={2}>
             <LinkButton
-              to="bleble"
-              text="Hvað er tekjuáætlun?"
+              to={formatMessage(m.incomePlanLink)}
+              text={formatMessage(m.incomePlanLinkText)}
               icon="open"
               variant="utility"
             />
-            {data?.socialInsuranceIncomePlan && (
-              <LinkButton
-                to="bloblo"
-                text="Breyta tekjuáætlun"
-                icon="open"
-                variant="primary"
-                size="small"
-              />
-            )}
+            <LinkButton
+              to="bloblo"
+              text={formatMessage(m.modifyIncomePlan)}
+              disabled={
+                !data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible
+              }
+              icon="open"
+              variant="primary"
+              size="small"
+            />
           </Inline>
           {data?.socialInsuranceIncomePlan ? (
             <ActionCard

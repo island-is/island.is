@@ -5,6 +5,7 @@ import {
   Button,
   Table as T,
   Hidden,
+  AlertMessage,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
@@ -47,6 +48,18 @@ const IncomePlanDetail = () => {
         />
       ) : (
         <Stack space={2}>
+          <Hidden print>
+            {!loading &&
+              !error &&
+              !data?.socialInsuranceIncomePlan?.isEligibleForChange
+                .isEligible && (
+                <AlertMessage
+                  type="info"
+                  title={formatMessage(m.incomePlanModifyUnavailable)}
+                  message={formatMessage(m.incomePlanModifyUnavailableText)}
+                />
+              )}
+          </Hidden>
           <Hidden print>
             <Inline space={2}>
               <Button
