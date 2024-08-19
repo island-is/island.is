@@ -25,7 +25,7 @@ export class InstitutionService {
   async getAll(type?: InstitutionType): Promise<Institution[]> {
     return this.institutionModel.findAll({
       order: ['name'],
-      where: { active: true, type },
+      where: { active: true, ...(type ? { type } : {}) },
     })
   }
 }
