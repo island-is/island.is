@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Input } from '@island.is/island-ui/core'
@@ -11,7 +11,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './CaseNumberInput.strings'
 
-const CaseNumberInput = () => {
+const CaseNumberInput: FC = () => {
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const [appealCaseNumberErrorMessage, setAppealCaseNumberErrorMessage] =
