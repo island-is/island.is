@@ -11,7 +11,7 @@ import { Problem } from '@island.is/react-spa/shared'
 export const VaccinationsOther = () => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetVaccinationsQuery()
-  const vaccinations = data?.getVaccinations
+  const vaccinations = data?.HealthDirectorateVaccinationsGetVaccinations
   return (
     <VaccinationsWrapper pathname={HealthPaths.HealthVaccinationsOther}>
       <Box>

@@ -28,13 +28,17 @@ export class HealthDirectorateResolver {
   constructor(private api: HealthDirectorateService) {}
 
   /* Organ Donation */
-  @Query(() => DonorStatus)
+  @Query(() => DonorStatus, {
+    name: 'HealthDirectorateOrganDonationGetDonorStatus',
+  })
   @Audit()
   getDonorStatus(@CurrentUser() user: User): Promise<DonorStatus> {
     return this.api.getDonorStatus(user)
   }
 
-  @Query(() => DonationException)
+  @Query(() => DonationException, {
+    name: 'HealthDirectorateOrganDonationGetDonationExceptions',
+  })
   @Audit()
   getDonationExceptions(
     @Args('locale', { type: () => String, nullable: true })
@@ -44,7 +48,10 @@ export class HealthDirectorateResolver {
     return this.api.getDonationExceptions(user, locale)
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, {
+    nullable: true,
+    name: 'HealthDirectorateOrganDonationUpdateDonorStatus',
+  })
   @Audit()
   async updateDonorStatus(
     @Args('input') input: DonorStatusInput,
@@ -54,7 +61,9 @@ export class HealthDirectorateResolver {
   }
 
   /* Vaccinations */
-  @Query(() => [Vaccinations])
+  @Query(() => [Vaccinations], {
+    name: 'HealthDirectorateVaccinationsGetVaccinations',
+  })
   @Audit()
   getVaccinations(
     @Args('locale', { type: () => String, nullable: true })
