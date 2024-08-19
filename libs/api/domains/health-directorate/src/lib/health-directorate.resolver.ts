@@ -44,7 +44,7 @@ export class HealthDirectorateResolver {
     return this.api.getDonationExceptions(user, locale)
   }
 
-  @Mutation(() => Boolean)
+  @Mutation(() => Boolean, { nullable: true })
   @Audit()
   async updateDonorStatus(
     @Args('input') input: DonorStatusInput,
