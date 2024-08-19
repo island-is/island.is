@@ -19,6 +19,7 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
+  courtSessionTypeNames,
   isIndictmentCase,
   isInvestigationCase,
   isRestrictionCase,
@@ -249,6 +250,9 @@ export const formatPostponedCourtDateEmailNotification = (
     courtName: theCase.court?.name ?? '',
     courtCaseNumber: theCase.courtCaseNumber,
     courtDate: formatDate(courtDate.date, 'PPPp')?.replace(' kl.', ', kl.'),
+    courtSessionTypeName: theCase.courtSessionType
+      ? courtSessionTypeNames[theCase.courtSessionType]
+      : 'Óþekkt',
     courtRoomText,
     judgeText,
     hasAccessToRvg: Boolean(overviewUrl),

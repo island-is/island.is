@@ -24,6 +24,7 @@ import {
 
 import { nowFactory } from '../../../factories'
 import { Case } from '../models/case.model'
+import { DateLog } from '../models/dateLog.model'
 
 const canProsecutionUserAccessCase = (
   theCase: Case,
@@ -269,9 +270,7 @@ const canDefenceUserAccessCase = (theCase: Case, user: User): boolean => {
     return false
   }
 
-  const arraignmentDate = theCase.dateLogs?.find(
-    (d) => d.dateType === DateType.ARRAIGNMENT_DATE,
-  )?.date
+  const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
 
   // Check submitted case access
   const canDefenderAccessSubmittedCase =
