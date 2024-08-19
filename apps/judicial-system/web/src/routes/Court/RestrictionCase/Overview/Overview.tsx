@@ -30,12 +30,12 @@ import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  InfoCard,
   PageHeader,
   PageLayout,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import InfoCard from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
 import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseLegalProvisions,
