@@ -29,12 +29,7 @@ export const VaccinationsOther = () => {
         {!error && !loading && vaccinations !== undefined && (
           <SortedVaccinationsTable data={vaccinations} />
         )}
-        {!loading && error && (
-          <Problem
-            tag={formatMessage(m.healthDirectorateErrorTag)}
-            title={formatMessage(m.healthDirectorateErrorTitle)}
-          />
-        )}
+        {!loading && error && <Problem error={error} noBorder={false} />}
       </Box>
     </VaccinationsWrapper>
   )
