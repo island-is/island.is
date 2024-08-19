@@ -7,13 +7,7 @@ const PersonInformationSchema = z.object({
   name: z.string().min(1),
   nationalId: z
     .string()
-    .refine(
-      (nationalId) =>
-        (nationalId &&
-          kennitala.isValid(nationalId) &&
-          kennitala.isCompany(nationalId)) ||
-        nationalId === '',
-    ),
+    .refine((nationalId) => nationalId && kennitala.isValid(nationalId)),
   address: z.string().min(1),
   postCode: z.string().min(1),
   phone: z.string().min(1),
