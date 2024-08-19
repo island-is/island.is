@@ -38,6 +38,8 @@ export interface incomePlanRow {
   incomeTypes: string
   incomePerYear: string
   currency: string
+  income: string
+  incomeCategories: string
 }
 
 export interface latestIncomePlan {

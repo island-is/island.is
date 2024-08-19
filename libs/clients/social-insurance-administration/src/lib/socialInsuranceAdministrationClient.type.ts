@@ -83,6 +83,34 @@ export interface Months {
   december?: number
 }
 
+
+export interface IncomePlanInfo {
+  incomeYear: number
+  incomeTypes: Array<IncomeTypes>
+}
+
+export interface IncomeTypes {
+  incomeTypeNumber: number,
+  incomeTypeCode: string,
+  incomeTypeName: string,
+  currencyCode: string,
+  incomeCategoryNumber: number,
+  incomeCategoryCode: string,
+  incomeCategoryName: string,
+  amountJan: number,
+  amountFeb: number,
+  amountMar: number,
+  amountApr: number,
+  amountMay: number,
+  amountJun: number,
+  amountJul: number,
+  amountAug: number,
+  amountSep: number,
+  amountOct: number,
+  amountNov: number,
+  amountDec: number,
+}
+
 export interface ApplicationDTO {
   period?: Period
   comment?: string
@@ -100,6 +128,7 @@ export interface ApplicationDTO {
   uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
   employment?: string
   employers?: Array<Employer>
+  incomePlan?: IncomePlanInfo
 }
 
 export enum DocumentTypeEnum {

@@ -34,6 +34,7 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
+  transformApplicationToIncomePlanDTO,
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
@@ -455,6 +456,22 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         additionalSupportForTheElderlyDTO,
         application.typeId.toLowerCase(),
       )
+      return response
+    }
+
+    if (
+      application.typeId === ApplicationTypes.INCOME_PLAN
+    ) {
+      const incomePlanDTO = transformApplicationToIncomePlanDTO(application)
+      console.log('income plan DTO ', incomePlanDTO)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        incomePlanDTO,
+        application.typeId.toLowerCase(),
+      )
+
+      console.log('response ', response)
       return response
     }
   }

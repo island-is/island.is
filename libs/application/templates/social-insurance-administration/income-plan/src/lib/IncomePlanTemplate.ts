@@ -9,6 +9,7 @@ import {
   DefaultEvents,
   NationalRegistryUserApi,
   UserProfileApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 
 import {
@@ -34,6 +35,7 @@ import { assign } from 'xstate'
 import { getApplicationExternalData, isEligible } from './incomePlanUtils'
 import set from 'lodash/set'
 import {
+  Actions,
   Events,
   Roles,
   States,
@@ -125,6 +127,12 @@ const IncomePlanTemplate: ApplicationTemplate<
               logMessage: historyMessages.incomePlanSent,
             },
           },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
