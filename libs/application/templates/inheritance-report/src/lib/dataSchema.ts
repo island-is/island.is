@@ -774,6 +774,7 @@ export const inheritanceReportSchema = z.object({
       },
     ),
   confirmAction: z.array(z.enum([YES])).length(1),
+  applicationInfoConfirmation: z.array(z.enum([YES])).length(1),
 })
 
 export type InheritanceReport = z.TypeOf<typeof inheritanceReportSchema>

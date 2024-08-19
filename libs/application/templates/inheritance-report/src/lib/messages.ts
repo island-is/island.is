@@ -150,6 +150,11 @@ export const m = defineMessages({
     defaultMessage: 'Upplýsingar',
     description: 'Upplýsinga skjár titill',
   },
+  applicationInfoConfirmationText: {
+    id: 'ir.application:applicationInfoConfirmationText',
+    defaultMessage: 'Ég staðfesti að ég er með allar þessar upplýsingar og get fyllt út umsóknina',
+    description: 'Texti fyrir staðfestingu á upplýsingum',
+  },
   applicationInfoText: {
     id: 'ir.application:applicationInfoTexts#markdown',
     defaultMessage: 'Upplýsinga Texti',
