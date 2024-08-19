@@ -30,7 +30,7 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
     {
       id: SignatureTypes.COMMITTEE,
       label: f(signatures.tabs.committee),
-      content: <CommitteeSignature />,
+      content: <CommitteeSignature applicationId={application.id} />,
     },
   ]
 

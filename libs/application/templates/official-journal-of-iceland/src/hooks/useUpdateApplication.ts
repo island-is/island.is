@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/graphql'
 import { useLocale } from '@island.is/localization'
 import { partialSchema } from '../lib/dataSchema'
+import { OJOIApplication } from '../lib/types'
 
 type OJOIUseApplicationParams = {
   applicationId?: string
@@ -47,7 +48,7 @@ export const useApplication = ({ applicationId }: OJOIUseApplicationParams) => {
   }
 
   return {
-    application: application?.applicationApplication,
+    application: application?.applicationApplication as OJOIApplication,
     applicationLoading,
     applicationError,
     updateData,

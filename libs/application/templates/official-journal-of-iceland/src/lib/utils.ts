@@ -1,5 +1,7 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
+import { z } from 'zod'
+import { committeeSignatureSchema, regularSignatureSchema } from './dataSchema'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -48,15 +50,16 @@ export const getNextAvailableDate = (date: Date): Date => {
 
 export const getEmptyMember = () => ({
   name: '',
-  title: '',
-  institution: '',
-  date: '',
+  above: '',
+  after: '',
+  before: '',
+  below: '',
 })
 
 export const getRegularSignature = (
   signatureCount: number,
   memberCount: number,
-) =>
+): z.infer<typeof regularSignatureSchema> =>
   Array.from({ length: signatureCount }).map(() => ({
     institution: '',
     date: '',
@@ -64,3 +67,42 @@ export const getRegularSignature = (
     additionalSignature: '',
     html: '',
   }))
+
+export const getCommitteeSignature = (
+  memberCount: number,
+): z.infer<typeof committeeSignatureSchema> => ({
+  institution: '',
+  date: '',
+  chairman: getEmptyMember(),
+  members: Array.from({ length: memberCount }).map(() => getEmptyMember()),
+  additionalSignature: '',
+  html: '',
+})
+
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export const getSignatureDefaultValues = (signature: any, index?: number) => {
+  if (signature === undefined) {
+    return { institution: '', date: '' }
+  }
+
+  const isRegularSignature = regularSignatureSchema.safeParse(signature)
+
+  if (isRegularSignature.success) {
+    if (index === undefined) {
+      return { institution: '', date: '' }
+    }
+
+    const { data } = isRegularSignature
+
+    if (data === undefined) {
+      return { institution: '', date: '' }
+    }
+
+    return {
+      institution: data[index].institution,
+      date: data[index].date,
+    }
+  }
+
+  return { institution: signature.institution, date: signature.date }
+}

@@ -22,8 +22,8 @@ export const InputFields = {
     message: 'advert.message',
   },
   [Routes.SIGNATURE]: {
-    regular: 'signature.regular',
-    comittee: 'signature.comittee',
+    regular: 'signatures.regular',
+    committee: 'signatures.committee',
   },
   other: {
     signatureType: 'misc.signatureType',
@@ -31,20 +31,6 @@ export const InputFields = {
   },
 }
 
-export type LocalError = {
-  type: string
-  message: string
-}
-
-type Option = {
-  id: string
-  title: string
-  slug: string
-}
-
-export type AdvertOption<Key extends string> = {
-  [key in Key]: Array<Option>
-}
 export enum TemplateApiActions {
   departments = 'getDepartments',
   types = 'getAdvertTypes',
@@ -59,33 +45,12 @@ export type NestedType<T> = {
 
 export type Override<T1, T2> = Omit<T1, keyof T2> & T2
 
-type StatusProvider = 'success' | 'failure'
-
 export type ErrorSchema = NestedType<partialSchema>
-
-export interface ExternalData {
-  departments: {
-    data: AdvertOption<'departments'>
-    date: string
-    status: StatusProvider
-  }
-  types: {
-    data: AdvertOption<'types'>
-    date: string
-    status: StatusProvider
-  }
-  submitApplication: {
-    data: { application: OfficialJournalOfIcelandAdvert }
-    date: string
-    status: StatusProvider
-  }
-}
 
 export type OJOIApplication = Override<
   Application,
   {
     answers: partialSchema
-    externalData: ExternalData
   }
 >
 

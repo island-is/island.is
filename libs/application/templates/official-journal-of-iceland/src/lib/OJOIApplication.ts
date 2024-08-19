@@ -99,18 +99,6 @@ const OJOITemplate: ApplicationTemplate<
           status: 'inprogress',
           progress: 0.66,
           lifecycle: pruneAfterDays(90),
-          onEntry: [
-            defineTemplateApi({
-              action: TemplateApiActions.departments,
-              externalDataId: 'departments',
-              order: 1,
-            }),
-            defineTemplateApi({
-              action: TemplateApiActions.types,
-              externalDataId: 'types',
-              order: 2,
-            }),
-          ],
           roles: [
             {
               id: Roles.APPLICANT,

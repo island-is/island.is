@@ -2,23 +2,37 @@ import { z } from 'zod'
 import { error } from './messages'
 import { AnswerOption, FileNames } from './constants'
 
-const memberSchema = z
+export const memberItemSchema = z
   .object({
-    name: z.string(),
-    before: z.string(),
-    below: z.string(),
-    above: z.string(),
-    after: z.string(),
+    name: z.string().optional(),
+    before: z.string().optional(),
+    below: z.string().optional(),
+    above: z.string().optional(),
+    after: z.string().optional(),
   })
   .partial()
 
-export const signatureSchema = z
+export const membersSchema = z.array(memberItemSchema).optional()
+
+export const regularSignatureItemSchema = z
   .object({
-    date: z.string(),
-    institution: z.string(),
-    members: z.array(memberSchema),
-    additionalSignature: z.string(),
-    html: z.string(),
+    date: z.string().optional(),
+    institution: z.string().optional(),
+    members: membersSchema.optional(),
+    additionalSignature: z.string().optional(),
+    html: z.string().optional(),
+  })
+  .partial()
+
+export const regularSignatureSchema = z
+  .array(regularSignatureItemSchema)
+  .optional()
+
+export const signatureInstitutionSchema = z.enum(['institution', 'date'])
+
+export const committeeSignatureSchema = regularSignatureItemSchema
+  .extend({
+    chairman: memberItemSchema.optional(),
   })
   .partial()
 
@@ -31,32 +45,34 @@ const channelSchema = z
 
 const advertSchema = z
   .object({
-    departmentId: z.string(),
-    typeId: z.string(),
-    title: z.string(),
-    html: z.string(),
-    requestedDate: z.string(),
-    categories: z.array(z.string()),
-    channels: z.array(channelSchema),
-    message: z.string(),
+    departmentId: z.string().optional(),
+    typeId: z.string().optional(),
+    title: z.string().optional(),
+    html: z.string().optional(),
+    requestedDate: z.string().optional(),
+    categories: z.array(z.string()).optional(),
+    channels: z.array(channelSchema).optional(),
+    message: z.string().optional(),
   })
   .partial()
 
 const fileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
+  name: z.string().optional(),
+  key: z.string().optional(),
   url: z.string().optional(),
 })
 
-const attachmentSchema = z.object({
-  files: z.array(fileSchema),
-  fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]),
-})
+const attachmentSchema = z
+  .object({
+    files: z.array(fileSchema).optional(),
+    fileNames: z.enum([FileNames.ADDITIONS, FileNames.DOCUMENT]).optional(),
+  })
+  .partial()
 
 const miscSchema = z
   .object({
-    signatureType: z.string(),
-    selectedTemplate: z.string(),
+    signatureType: z.string().optional(),
+    selectedTemplate: z.string().optional(),
   })
   .partial()
 
@@ -69,16 +85,15 @@ export const partialSchema = z.object({
       params: error.dataGathering,
       path: ['approveExternalData'],
     }),
-  advert: advertSchema,
+  advert: advertSchema.optional(),
   signatures: z
     .object({
-      regular: z.array(signatureSchema),
-      committee: signatureSchema.extend({
-        chairman: memberSchema,
-      }),
+      regular: z.array(regularSignatureItemSchema).optional(),
+      committee: committeeSignatureSchema.optional(),
     })
-    .partial(),
-  misc: miscSchema,
+    .partial()
+    .optional(),
+  misc: miscSchema.optional(),
   attachments: z.array(attachmentSchema).optional(),
 })
 
@@ -97,7 +112,7 @@ const advertValidation = (advert: z.infer<typeof advertSchema>) => {
   return true
 }
 
-const memberValidation = (members?: z.infer<typeof memberSchema>[]) => {
+const memberValidation = (members?: z.infer<typeof memberItemSchema>[]) => {
   if (!members || members.length === 0) {
     return false
   }
@@ -111,7 +126,9 @@ const memberValidation = (members?: z.infer<typeof memberSchema>[]) => {
   return true
 }
 
-const signatureValidation = (signatures: z.infer<typeof signatureSchema>[]) => {
+const signatureValidation = (
+  signatures: z.infer<typeof regularSignatureItemSchema>[],
+) => {
   if (!signatures || signatures.length === 0) {
     return false
   }
@@ -135,13 +152,31 @@ const validationSchema = z.object({
     path: ['advert'],
   }),
   signature: z
-    .array(signatureSchema)
+    .array(regularSignatureItemSchema)
     .refine((signatures) => signatureValidation(signatures), {
       params: error.signaturesValidationError,
       path: ['signatures'],
     }),
 })
 
+type Flatten<T> = T extends any[] ? T[number] : T
+
+type MapProps<T> = {
+  [K in keyof T]: T[K]
+}
+
 export type partialSchema = z.infer<typeof partialSchema>
 
+export type partialRegularSignatureSchema = Flatten<
+  z.infer<typeof regularSignatureItemSchema>
+>
+
+export type partialCommitteeSignatureSchema = MapProps<
+  z.infer<typeof committeeSignatureSchema>
+>
+
 export type validationSchema = z.infer<typeof validationSchema>
+
+export const signatureProperties = committeeSignatureSchema.keyof()
+
+export const sharedSignatureProperties = signatureProperties

@@ -1,6 +1,8 @@
+/* eslint-disable func-style */
 import isNumber from 'lodash/isNumber'
 import set from 'lodash/set'
 import { ZodEffects, ZodIssueCode, ZodIssue } from 'zod'
+import { getValueViaPath } from '../lib/formUtils'
 
 import {
   Schema,
@@ -16,6 +18,7 @@ import { AnswerValidationError } from './AnswerValidator'
 
 function populateError(
   error: ZodIssue[],
+  answers: FormValue,
   pathToError: string | undefined,
   formatMessage: FormatMessage,
 ) {
@@ -24,6 +27,7 @@ function populateError(
     const defaultZodError = element.message === 'Invalid input'
     const path = pathToError || element.path
     let message = formatMessage(coreErrorMessages.defaultError)
+    console.info(element)
     if (element.code === ZodIssueCode.custom) {
       const namespaceRegex = /^\w*\.\w*:.*/g
       const includeNamespace = element?.params?.id?.match(namespaceRegex)?.[0]
@@ -59,7 +63,7 @@ export function validateAnswers({
     }
   } catch (e) {
     const zodErrors: ZodIssue[] = e.errors
-    return populateError(zodErrors, e.path, formatMessage)
+    return populateError(zodErrors, answers, e.path, formatMessage)
   }
   return undefined
 }
