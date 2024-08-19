@@ -3,9 +3,10 @@ import { HealthPaths } from '../../lib/paths'
 import { VaccinationsWrapper } from './wrapper/VaccinationsWrapper'
 import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
 import { useGetVaccinationsQuery } from './Vaccinations.generated'
-import { EmptyTable, ErrorScreen } from '@island.is/service-portal/core'
+import { EmptyTable } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { messages as m } from '../../lib/messages'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const VaccinationsOther = () => {
   const { formatMessage } = useLocale()
@@ -29,7 +30,7 @@ export const VaccinationsOther = () => {
           <SortedVaccinationsTable data={vaccinations} />
         )}
         {!loading && error && (
-          <ErrorScreen
+          <Problem
             tag={formatMessage(m.healthDirectorateErrorTag)}
             title={formatMessage(m.healthDirectorateErrorTitle)}
           />
