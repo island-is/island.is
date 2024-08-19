@@ -6,9 +6,10 @@ import { tagSelector } from '../../../utils/tagSelector'
 import { VaccinationsDetailTable } from './VaccinationsDetailTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
 import { ATC_URL_BASE } from '../../../utils/constants'
+import { HealthDirectorateVaccinations } from '@island.is/api/schema'
 
 interface Props {
-  data: Array<Vaccine>
+  data: Array<HealthDirectorateVaccinations>
 }
 export const SortedVaccinationsTable = ({ data }: Props) => {
   useNamespaces('sp.health')
@@ -63,16 +64,16 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                     },
                     {
                       value: [
-                        vaccination.vaccinationAge.years,
+                        vaccination.vaccinationsAge?.years,
                         formatMessage(messages.years),
-                        vaccination.vaccinationAge.months,
+                        vaccination.vaccinationsAge?.months,
                         formatMessage(messages.months),
                       ]
                         .filter(Boolean)
                         .join(' '),
                     },
                     {
-                      value: vaccination.vaccineName,
+                      value: vaccination.code ?? '',
                       type: 'link',
                       url: ATC_URL_BASE + vaccination.code,
                     },
@@ -82,10 +83,10 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                   ]
                 },
               )}
-              footerText={item.comments}
+              footerText={item.comments ?? []}
             />
           ),
-          status: item?.vaccinationStatusName ?? '',
+          status: item?.vaccinationsStatusName ?? '',
           tag: tagSelector(item?.vaccinationStatus ?? ''),
         })) ?? []
       }

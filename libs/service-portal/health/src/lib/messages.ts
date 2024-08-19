@@ -1027,4 +1027,13 @@ export const messages = defineMessages({
     id: 'sp.health:vaccines-table-header-location',
     defaultMessage: 'Staður',
   },
+  healthDirectorateErrorTag: {
+    id: 'sp.health:health-directorate-error-tag',
+    defaultMessage: 'Villa',
+  },
+  healthDirectorateErrorTitle: {
+    id: 'sp.health:health-directorate-error-title',
+    defaultMessage:
+      'Ekki tókst að sækja gögn frá Embætti Landlæknis. Vinsamlegast reynið aftur síðar',
+  },
 })

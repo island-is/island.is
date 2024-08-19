@@ -1,14 +1,16 @@
 import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { HealthPaths } from '../../lib/paths'
 import { VaccinationsWrapper } from './wrapper/VaccinationsWrapper'
-import { otherVaccinationsData } from './dataStructure'
 import { SortedVaccinationsTable } from './tables/SortedVaccinationsTable'
+import { useGetVaccinationsQuery } from './Vaccinations.generated'
+import { EmptyTable, ErrorScreen } from '@island.is/service-portal/core'
+import { useLocale } from '@island.is/localization'
+import { messages as m } from '../../lib/messages'
 
 export const VaccinationsOther = () => {
-  const loading = false
-  const data = otherVaccinationsData
-  // Fetch data here
-
+  const { formatMessage } = useLocale()
+  const { data, loading, error } = useGetVaccinationsQuery()
+  const vaccinations = data?.getVaccinations
   return (
     <VaccinationsWrapper pathname={HealthPaths.HealthVaccinationsOther}>
       <Box>
@@ -20,7 +22,18 @@ export const VaccinationsOther = () => {
             borderRadius="standard"
           />
         )}
-        <SortedVaccinationsTable data={data} />
+        {!error && vaccinations?.length === 0 && (
+          <EmptyTable message={formatMessage(m.noVaccinesRegistered)} />
+        )}
+        {!error && !loading && vaccinations !== undefined && (
+          <SortedVaccinationsTable data={vaccinations} />
+        )}
+        {!loading && error && (
+          <ErrorScreen
+            tag={formatMessage(m.healthDirectorateErrorTag)}
+            title={formatMessage(m.healthDirectorateErrorTitle)}
+          />
+        )}
       </Box>
     </VaccinationsWrapper>
   )
