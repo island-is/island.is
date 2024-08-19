@@ -24,7 +24,7 @@ const IncomePlan = () => {
   return (
     <Box>
       <IntroHeader
-        title={formatMessage(coreMessages.paymentPlan)}
+        title={formatMessage(coreMessages.incomePlan)}
         intro={formatMessage(coreMessages.incomePlanDescription)}
         serviceProviderSlug={'tryggingastofnun'}
         serviceProviderTooltip={formatMessage(
