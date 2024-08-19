@@ -54,6 +54,14 @@ const PaymentParticipation = lazy(() =>
 )
 const PaymentOverview = lazy(() => import('./screens/Payments/PaymentOverview'))
 
+const OrganDonation = lazy(() =>
+  import('./screens/OrganDonation/OrganDonation'),
+)
+
+const OrganDonationRegistration = lazy(() =>
+  import('./screens/OrganDonationRegistration/RegistrationForm'),
+)
+
 const VaccinationsGeneral = lazy(() =>
   import('./screens/Vaccinations/VaccinationsGeneral'),
 )
@@ -61,6 +69,7 @@ const VaccinationsGeneral = lazy(() =>
 const VaccinationsOther = lazy(() =>
   import('./screens/Vaccinations/VaccinationsOther'),
 )
+
 export const healthModule: PortalModule = {
   name: 'Heilsa',
   enabled: ({ isCompany }) => !isCompany,
@@ -197,24 +206,38 @@ export const healthModule: PortalModule = {
       element: <DentistRegistration />,
     },
     {
+      name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonation,
+      key: 'HealthOrganDonation',
+      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      element: <OrganDonation />,
+    },
+    {
+      name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonationRegistration,
+      key: 'HealthOrganDonation',
+      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      element: <OrganDonationRegistration />,
+    },
+    {
       name: hm.vaccinations,
       path: HealthPaths.HealthVaccinations,
       key: 'HealthVaccinations',
-      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations), // TODO: Add correct scope
+      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <VaccinationsGeneral />,
     },
     {
       name: hm.generalVaccinations,
       path: HealthPaths.HealthVaccinationsGeneral,
       key: 'HealthVaccinations',
-      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations), // TODO: Add correct scope
+      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <VaccinationsGeneral />,
     },
     {
       name: hm.otherVaccinations,
       path: HealthPaths.HealthVaccinationsOther,
       key: 'HealthVaccinations',
-      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations), // TODO: Add correct scope
+      enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <VaccinationsOther />,
     },
   ],

@@ -944,6 +944,77 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-calculator-add-to-purchase-label',
     defaultMessage: 'Bæta {arg} við lyfjakaupalista',
   },
+  organDonation: {
+    id: 'sp.health:organ-donation',
+    defaultMessage: 'Líffæragjöf',
+  },
+  organDonationDescription: {
+    id: 'sp.health:organ-donation-description',
+    defaultMessage:
+      'Íslendingar eru sjálfkrafa skráðir líffæragjafar. Þau sem vilja geta breytt afstöðu sinni.',
+  },
+  readAboutOrganDonation: {
+    id: 'sp.health:read-about-organ-donation',
+    defaultMessage: 'Lesa um líffæragjöf',
+  },
+  takeOnOrganDonation: {
+    id: 'sp.health:take-on-organ-donation',
+    defaultMessage: 'Afstaða til líffæragjafar',
+  },
+  changeTake: {
+    id: 'sp.health:change-take',
+    defaultMessage: 'Breyta afstöðu',
+  },
+  organDonationLink: {
+    id: 'sp.health:organ-donation-link',
+    defaultMessage: 'https://island.is/liffaeragjof',
+  },
+  organRegistrationOtherLabel: {
+    id: 'sp.health:organ-registration-other-label',
+    defaultMessage: 'Skrifaðu hér',
+  },
+  organRegistrationOtherText: {
+    id: 'sp.health:organ-registration-other-text',
+    defaultMessage: 'Vinsamlegast skráðu hvaða líffæri hér',
+  },
+  organLimitationsError: {
+    id: 'sp.health:organ-limitations-error',
+    defaultMessage:
+      'Textareitur má ekki vera tómur sé þessi valkostur valinn. ',
+  },
+  other: {
+    id: 'sp.health:other-lower-case',
+    defaultMessage: 'annað',
+  },
+  registrationComplete: {
+    id: 'sp.health:registration-complete',
+    defaultMessage: 'Skráning tókst',
+  },
+  registrationFailed: {
+    id: 'sp.health:registration-failed',
+    defaultMessage: 'Skráning mistókst',
+  },
+  iAmOrganDonor: {
+    id: 'sp.health:i-am-organ-donor',
+    defaultMessage: 'Ég er líffæragjafi.',
+  },
+  iAmNotOrganDonor: {
+    id: 'sp.health:i-am-not-organ-donor',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
+  organDonationRegistrationOptIn: {
+    id: 'sp.health:organ-donation-registration-opt-in',
+    defaultMessage: 'Við andlát mitt má nota líffæri mín til líffæragjafa.',
+  },
+  organDonationRegistrationException: {
+    id: 'sp.health:organ-donation-registration-exception',
+    defaultMessage:
+      'Ég gef leyfi fyrir líffæragjöf að undanskildum eftirfarandi líffærum:',
+  },
+  organDonationRegistrationOptOut: {
+    id: 'sp.health:organ-donation-registration-opt-out',
+    defaultMessage: 'Ég banna líffæragjöf.',
+  },
   vaccinations: {
     id: 'sp.health:vaccinations',
     defaultMessage: 'Bólusetningar',
