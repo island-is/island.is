@@ -152,7 +152,8 @@ export const m = defineMessages({
   },
   applicationInfoConfirmationText: {
     id: 'ir.application:applicationInfoConfirmationText',
-    defaultMessage: 'Ég staðfesti að ég er með allar þessar upplýsingar og get fyllt út umsóknina',
+    defaultMessage:
+      'Ég staðfesti að ég er með allar þessar upplýsingar og get fyllt út umsóknina',
     description: 'Texti fyrir staðfestingu á upplýsingum',
   },
   applicationInfoText: {

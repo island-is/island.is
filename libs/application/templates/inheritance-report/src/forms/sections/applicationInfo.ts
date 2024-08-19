@@ -26,11 +26,9 @@ export const applicationInfo = buildSection({
         buildCheckboxField({
           id: 'applicationInfoConfirmation',
           title: '',
-          options: [
-            { value: YES, label: m.applicationInfoConfirmationText },
-          ],
+          options: [{ value: YES, label: m.applicationInfoConfirmationText }],
         }),
-      ]
-    }), 
+      ],
+    }),
   ],
 })
