@@ -74,14 +74,14 @@ export const m = defineMessages({
     description: '',
   },
 
-  /* Upplýsingar um meðmælalista */
-  listInformationSection: {
-    id: 'pls.application:listInformationSection',
-    defaultMessage: 'Upplýsingar um meðmælalista',
+  /* Mæla með framboði */
+  signListViewTitle: {
+    id: 'pls.application:signListViewTitle',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
-  listInformationDescription: {
-    id: 'pls.application:listInformationDescription#markdown',
+  signListViewDescription: {
+    id: 'pls.application:signListViewDescription#markdown',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
     description: '',

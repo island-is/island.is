@@ -433,6 +433,7 @@ export const StandardForm = ({
       case SjukratryggingarCategories.ONNUR_THJONUSTA_SJUKRATRYGGINGA:
       case SjukratryggingarCategories.HJUKRUNARHEIMILI:
       case SjukratryggingarCategories.TULKATHJONUSTA:
+      case SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID:
         fields = (
           <GridColumn span="12/12" paddingBottom={3}>
             <BasicInput

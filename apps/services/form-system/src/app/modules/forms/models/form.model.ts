@@ -11,7 +11,6 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Section } from '../../sections/models/section.model'
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { Organization } from '../../organizations/models/organization.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FormApplicant } from '../../applicants/models/formApplicant.model'
@@ -26,7 +25,6 @@ export class Form extends Model<Form> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -34,7 +32,6 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @Column({
@@ -46,15 +43,12 @@ export class Form extends Model<Form> {
   slug!: string
 
   @Column
-  @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -62,14 +56,12 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isTranslated!: boolean
 
   @Column({
     type: DataType.INTEGER,
     defaultValue: 60,
   })
-  @ApiProperty()
   applicationDaysToRemove!: number
 
   @Column({
@@ -77,7 +69,6 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: 0,
   })
-  @ApiProperty()
   derivedFrom!: number
 
   @Column({
@@ -85,7 +76,6 @@ export class Form extends Model<Form> {
     allowNull: false,
     defaultValue: true,
   })
-  @ApiProperty()
   stopProgressOnValidatingScreen!: boolean
 
   @Column({
@@ -93,15 +83,12 @@ export class Form extends Model<Form> {
     allowNull: true,
     defaultValue: () => new LanguageType(),
   })
-  @ApiPropertyOptional({ type: LanguageType })
   completedMessage?: LanguageType
 
   @HasMany(() => Section)
-  @ApiProperty({ type: [Section] })
   sections!: Section[]
 
   @HasMany(() => FormApplicant)
-  @ApiPropertyOptional({ type: [FormApplicant] })
   applicants?: FormApplicant[]
 
   @ForeignKey(() => Organization)
