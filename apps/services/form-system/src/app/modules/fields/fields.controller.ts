@@ -27,20 +27,6 @@ export class FieldsController {
     return this.fieldsService.create(createFieldDto)
   }
 
-  @Get(':id')
-  @Documentation({
-    description: 'Get Field by id',
-    response: { status: 200, type: FieldDto },
-  })
-  async findOne(@Param('id') id: string): Promise<FieldDto> {
-    const field = await this.fieldsService.findOne(id)
-    if (!field) {
-      throw new NotFoundException(`Field not found`)
-    }
-
-    return field
-  }
-
   @Put(':id')
   async update(
     @Param('id') id: string,
