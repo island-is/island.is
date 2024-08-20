@@ -39,7 +39,7 @@ export class SharedTemplateApiService {
     private readonly applicationService: BaseTemplateApiApplicationService,
     private readonly paymentService: PaymentService,
     private readonly awsService: AwsService,
-  ) {}
+  ) { }
 
   async createAssignToken(application: Application, expiresIn: number) {
     const token = await this.applicationService.createAssignToken(
@@ -292,16 +292,12 @@ export class SharedTemplateApiService {
       return Promise.reject('expiration must be positive')
     }
 
-    const bucket = this.configService.get('attachmentBucket')
+    const bucket = this.configService.get('attachmentBucket') as string | undefined
 
     if (bucket == undefined) {
       return Promise.reject('could not find s3 bucket')
     }
 
-    return this.s3.getSignedUrlPromise('getObject', {
-      Bucket: bucket,
-      Expires: expiration,
-      Key: key,
-    })
+    return this.awsService.getPresignedUrl(bucket, key, expiration);
   }
 }
