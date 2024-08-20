@@ -50,18 +50,14 @@ export class SignatureCollectionAdminClientService {
   }
 
   async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
-    console.log('DRILLING THIS')
     const list = await this.getList(listId, auth)
-    console.log('DRILLED THAT')
     const { status } = await this.currentCollection(auth)
     return this.sharedService.getListStatus(list, status)
   }
 
   async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
-    console.log('DOING THIS')
     const listStatus = await this.listStatus(listId, auth)
     // Can only toggle list if it is in review or reviewed
-    console.log('DONE THAT')
     if (
       listStatus === ListStatus.InReview ||
       listStatus === ListStatus.Reviewed
