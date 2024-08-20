@@ -63,8 +63,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/mortgage-certificate'),
   [ApplicationTypes.NO_DEBT_CERTIFICATE]: () =>
     import('@island.is/application/templates/no-debt-certificate'),
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: () =>
+    import('@island.is/application/templates/financial-statement-cemetery'),
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
     import('@island.is/application/templates/financial-statements-inao'),
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: () =>
+    import(
+      '@island.is/application/templates/financial-statement-individual-election'
+    ),
   [ApplicationTypes.OPERATING_LICENSE]: () =>
     import('@island.is/application/templates/operating-license'),
   [ApplicationTypes.MARRIAGE_CONDITIONS]: () =>
@@ -137,6 +143,14 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import(
       '@island.is/application/templates/signature-collection/presidential-list-signing'
     ),
+  [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/parliamentary-list-creation'
+    ),
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: () =>
+    import(
+      '@island.is/application/templates/signature-collection/parliamentary-list-signing'
+    ),
   [ApplicationTypes.CITIZENSHIP]: () =>
     import(
       '@island.is/application/templates/directorate-of-immigration/citizenship'
@@ -181,6 +195,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/health-insurance-declaration'),
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: () =>
     import('@island.is/application/templates/new-primary-school'),
+  [ApplicationTypes.MACHINE_REGISTRATION]: () =>
+    import('@island.is/application/templates/aosh/register-new-machine'),
 }
 
 export default templates

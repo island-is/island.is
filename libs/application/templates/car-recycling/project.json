@@ -3,15 +3,11 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/car-recycling/src",
   "projectType": "library",
+  "tags": ["lib:application-system", "scope:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/car-recycling/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/linter:eslint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -28,7 +24,12 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/car-recycling/src/lib/messages.ts"
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/car-recycling/codegen.yml"
+      }
     }
-  },
-  "tags": ["lib:application-system", "scope:application-system"]
+  }
 }

@@ -2,7 +2,6 @@
 import {
   isIndictmentCase,
   isTrafficViolationCase,
-  prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
@@ -10,6 +9,7 @@ import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
   CaseType,
+  DateLog,
   DefenderChoice,
   IndictmentDecision,
   SessionArrangements,
@@ -199,8 +199,7 @@ export const isDefendantStepValidIC = (
       policeCaseNumbers.length > 0 &&
       workingCase.type === caseType &&
       !someDefendantIsInvalid(workingCase) &&
-      (prosecutorCanSelectDefenderForInvestigationCase(workingCase.type) &&
-      workingCase.defenderName
+      (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
       validate([
@@ -333,18 +332,23 @@ export const isReceptionAndAssignmentStepValid = (
 
 export const isCourtHearingArrangemenstStepValidRC = (
   workingCase: Case,
-  courtDate?: string | null,
+  arraignmentDate?: DateLog,
 ): boolean => {
   return validate([
     [workingCase.defenderEmail, ['email-format']],
     [workingCase.defenderPhoneNumber, ['phonenumber']],
-    [courtDate ?? workingCase.arraignmentDate?.date, ['empty', 'date-format']],
+    [
+      arraignmentDate
+        ? arraignmentDate.date
+        : workingCase.arraignmentDate?.date,
+      ['empty', 'date-format'],
+    ],
   ]).isValid
 }
 
 export const isCourtHearingArrangementsStepValidIC = (
   workingCase: Case,
-  courtDate?: string | null,
+  arraignmentDate?: DateLog,
 ): boolean => {
   return Boolean(
     workingCase.sessionArrangements &&
@@ -352,7 +356,9 @@ export const isCourtHearingArrangementsStepValidIC = (
         [workingCase.defenderEmail, ['email-format']],
         [workingCase.defenderPhoneNumber, ['phonenumber']],
         [
-          courtDate ?? workingCase.arraignmentDate?.date,
+          arraignmentDate
+            ? arraignmentDate.date
+            : workingCase.arraignmentDate?.date,
           ['empty', 'date-format'],
         ],
       ]).isValid,
@@ -414,16 +420,22 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
 
 export const isSubpoenaStepValid = (
   workingCase: Case,
-  courtDate?: string | null,
-  courtRoom?: string | null,
+  arraignmentDate?: DateLog,
 ): boolean => {
   return (
     validate([
       [
-        courtDate ?? workingCase.arraignmentDate?.date,
+        arraignmentDate
+          ? arraignmentDate.date
+          : workingCase.arraignmentDate?.date,
         ['empty', 'date-format'],
       ],
-      [courtRoom ?? workingCase.arraignmentDate?.location, ['empty']],
+      [
+        arraignmentDate
+          ? arraignmentDate.location
+          : workingCase.arraignmentDate?.location,
+        ['empty'],
+      ],
     ]).isValid &&
     Boolean(
       workingCase.defendants?.every((defendant) => defendant.subpoenaType),

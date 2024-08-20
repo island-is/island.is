@@ -40,6 +40,7 @@ import {
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import SelectConnectedCase from './SelectConnectedCase'
 import { strings } from './Conclusion.strings'
 
 const courtSessionOptions = [
@@ -136,6 +137,11 @@ const Conclusion: FC = () => {
           break
         case IndictmentDecision.COMPLETING:
           update.indictmentRulingDecision = selectedDecision
+          update.mergeCaseId =
+            selectedDecision === CaseIndictmentRulingDecision.MERGE
+              ? workingCase.mergeCase?.id
+              : null
+
           break
         case IndictmentDecision.REDISTRIBUTING:
           update.judgeId = null
@@ -232,12 +238,20 @@ const Conclusion: FC = () => {
                   file.status === 'done',
               )
             )
-          case CaseIndictmentRulingDecision.FINE:
           case CaseIndictmentRulingDecision.CANCELLATION:
+          case CaseIndictmentRulingDecision.FINE:
             return uploadFiles.some(
               (file) =>
                 file.category === CaseFileCategory.COURT_RECORD &&
                 file.status === 'done',
+            )
+          case CaseIndictmentRulingDecision.MERGE:
+            return Boolean(
+              uploadFiles.some(
+                (file) =>
+                  file.category === CaseFileCategory.COURT_RECORD &&
+                  file.status === 'done',
+              ) && workingCase.mergeCase?.id,
             )
           default:
             return false
@@ -379,7 +393,7 @@ const Conclusion: FC = () => {
               <CourtArrangements
                 handleCourtDateChange={handleCourtDateChange}
                 handleCourtRoomChange={handleCourtRoomChange}
-                courtDate={courtDate}
+                courtDate={workingCase.courtDate}
                 blueBox={false}
               />
             </BlueBox>
@@ -437,6 +451,21 @@ const Conclusion: FC = () => {
                   label={formatMessage(strings.dismissal)}
                 />
               </Box>
+              <Box marginBottom={2}>
+                <RadioButton
+                  id="decision-merge"
+                  name="decision"
+                  checked={
+                    selectedDecision === CaseIndictmentRulingDecision.MERGE
+                  }
+                  onChange={() => {
+                    setSelectedDecision(CaseIndictmentRulingDecision.MERGE)
+                  }}
+                  large
+                  backgroundColor="white"
+                  label={formatMessage(strings.merge)}
+                />
+              </Box>
               <RadioButton
                 id="decision-cancellation"
                 name="decision"
@@ -453,6 +482,19 @@ const Conclusion: FC = () => {
             </BlueBox>
           </Box>
         )}
+        {selectedDecision &&
+          selectedDecision === CaseIndictmentRulingDecision.MERGE && (
+            <Box marginBottom={5}>
+              <SectionHeading
+                title={formatMessage(strings.connectedCaseNumbersTitle)}
+                required
+              />
+              <SelectConnectedCase
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+              />
+            </Box>
+          )}
         {selectedAction && (
           <Box
             component="section"

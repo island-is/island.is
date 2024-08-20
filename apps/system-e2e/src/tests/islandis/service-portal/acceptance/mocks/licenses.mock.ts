@@ -455,7 +455,7 @@ export const loadLicensesXroadMocks = async () => {
         categories: [
           {
             id: 68446262,
-            nr: '5u84961',
+            nr: 'A',
             categoryName: 'Big big trucks',
             publishDate: new Date('2017-04-22T15:30:23Z'),
             dateTo: new Date('2030-04-22T15:30:23Z'),
@@ -524,7 +524,7 @@ export const loadLicensesXroadMocks = async () => {
         licenseNumber: '987654321',
         properties: [
           {
-            category: 'testCatA',
+            category: 'A',
             typeOfFirearm: 'cannon',
             name: 'Howitzer',
             serialNumber: '1337',
@@ -533,7 +533,7 @@ export const loadLicensesXroadMocks = async () => {
             limitation: 'aint no brakes',
           },
           {
-            category: 'testCatB',
+            category: 'B',
             typeOfFirearm: 'laserrailgun',
             name: 'Macguffin',
             serialNumber: '010101',
@@ -552,8 +552,18 @@ export const loadLicensesXroadMocks = async () => {
     apiPath: '/api/FirearmApplication/Categories',
     response: [
       new Response().withJSONBody({
-        testCatA: 'bibbiddí boo',
-        testCatB: 'babbbada',
+        'Flokkur A':
+          '1. Haglabyssum nr. 12 og minni, þó eigi sjálfvirkum eða hálfsjálfvirkum.\n2. Rifflum cal. 22 (long rifle og minni), þ.m.t. loftrifflum, þó eigi sjálfvirkum eða hálfsjálfvirkum.',
+        'Flokkur B':
+          'Leyfi fyrir rifflum með hlaupvídd allt að cal. 30 og hálfsjálfvirkum haglabyssum skal ekki veitt nema sérstakar ástæður mæli með því, enda hafi umsækjandi haft skotvopnaleyfi í a.m.k. eitt ár.',
+        'Flokkur C':
+          'Leyfi fyrir skotvopnum sem sérstaklega eru ætluð til minkaveiða eða meindýraeyðingar (t.d. skammbyssur fyrir haglaskot) má aðeins veita að fenginni umsögn veiðistjóra. Áskilið er að umsækjandi hafi haft aukin skotvopnaréttindi (B flokkur) í eitt ár. Slík leyfi vegna þeirra sem stunda minkaveiðar skal ekki veita til að eignast skotvopn heldur einungis til láns eða leigu. Lögreglustjóri skal senda slíkar umsóknir með umsögn sinni ríkislögreglustjóra til ákvörðunar.',
+        'Flokkur D':
+          'Leyfi sem sérstaklega er veitt einstaklingi eða skotfélagi fyrir skammbyssum vegna íþróttaskotfimi sbr. 11. gr. Lögreglustjóri skal senda slíkar umsóknir með umsögn sinni ríkislögreglustjóra til ákvörðunar.',
+        'Flokkur E':
+          'Leyfi lögreglustjóra til að hlaða skothylki til eigin nota í þau skotvopn sem viðkomandi hefur leyfi fyrir, enda sé að öðru leyti heimilt að nota slík skotfæri hér á landi.',
+        'Flokkur S':
+          'Söfnunarleyfi sbr. 20. gr. Reglugerð um skotvopn, skotfæri o.fl.',
       }),
     ],
   })

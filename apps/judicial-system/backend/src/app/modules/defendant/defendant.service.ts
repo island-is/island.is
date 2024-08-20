@@ -13,7 +13,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { formatNationalId } from '@island.is/judicial-system/formatters'
 import {
-  CaseMessage,
+  Message,
   MessageService,
   MessageType,
 } from '@island.is/judicial-system/message'
@@ -43,7 +43,7 @@ export class DefendantService {
   private getMessageForSendDefendantsNotUpdatedAtCourtNotification(
     theCase: Case,
     user: User,
-  ): CaseMessage {
+  ): Message {
     return {
       type: MessageType.NOTIFICATION,
       user,
@@ -55,7 +55,7 @@ export class DefendantService {
   private getMessageForDeliverDefendantToCourt(
     defendant: Defendant,
     user: User,
-  ): CaseMessage {
+  ): Message {
     const message = {
       type: MessageType.DELIVERY_TO_COURT_DEFENDANT,
       user,

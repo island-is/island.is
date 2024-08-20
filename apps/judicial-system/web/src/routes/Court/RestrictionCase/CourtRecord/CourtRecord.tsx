@@ -12,6 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { lowercase } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import {
   closedCourt,
@@ -85,7 +86,9 @@ export const CourtRecord: FC = () => {
     if (workingCase.courtAttendees !== '') {
       if (workingCase.prosecutor) {
         autofillAttendees.push(
-          `${workingCase.prosecutor.name} ${workingCase.prosecutor.title}`,
+          `${workingCase.prosecutor.name} ${lowercase(
+            workingCase.prosecutor.title,
+          )}`,
         )
       }
 
@@ -490,19 +493,18 @@ export const CourtRecord: FC = () => {
                     maxDate={new Date()}
                     selectedDate={workingCase.courtEndTime}
                     onChange={(date: Date | undefined, valid: boolean) => {
-                      setAndSendCaseToServer(
-                        [
-                          {
-                            courtEndTime:
-                              date && valid
-                                ? formatDateForServer(date)
-                                : undefined,
-                            force: true,
-                          },
-                        ],
-                        workingCase,
-                        setWorkingCase,
-                      )
+                      if (date && valid) {
+                        setAndSendCaseToServer(
+                          [
+                            {
+                              courtEndTime: formatDateForServer(date),
+                              force: true,
+                            },
+                          ],
+                          workingCase,
+                          setWorkingCase,
+                        )
+                      }
                     }}
                     blueBox={false}
                     required

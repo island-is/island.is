@@ -1,8 +1,10 @@
 {
   "name": "services-university-gateway",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/services/university-gateway/src",
   "projectType": "application",
   "prefix": "services-university-gateway",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -52,12 +54,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/university-gateway/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "worker": {
       "executor": "@nx/js:node",
@@ -69,7 +66,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/services/university-gateway"
       }
     },
@@ -108,7 +105,9 @@
         "cwd": "apps/services/university-gateway"
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
@@ -131,10 +130,8 @@
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/services/university-gateway"],
       "options": {
-        "jestConfig": "apps/services/university-gateway/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/university-gateway/jest.config.ts"
       }
     }
-  },
-  "tags": ["scope:nest"]
+  }
 }

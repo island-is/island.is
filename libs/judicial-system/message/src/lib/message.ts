@@ -7,6 +7,7 @@ export enum MessageType {
   DELIVERY_TO_COURT_INDICTMENT_INFO = 'DELIVERY_TO_COURT_INDICTMENT_INFO',
   DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES = 'DELIVERY_TO_COURT_INDICTMENT_COURT_ROLES',
   DELIVERY_TO_COURT_INDICTMENT_DEFENDER = 'DELIVERY_TO_COURT_INDICTMENT_DEFENDER',
+  DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE = 'DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE',
   DELIVERY_TO_COURT_CASE_FILE = 'DELIVERY_TO_COURT_CASE_FILE',
   DELIVERY_TO_COURT_CASE_FILES_RECORD = 'DELIVERY_TO_COURT_CASE_FILES_RECORD',
   DELIVERY_TO_COURT_REQUEST = 'DELIVERY_TO_COURT_REQUEST',
@@ -23,8 +24,8 @@ export enum MessageType {
   DELIVERY_TO_POLICE_CASE_FILES_RECORD = 'DELIVERY_TO_POLICE_CASE_FILES_RECORD',
   DELIVERY_TO_POLICE_SIGNED_RULING = 'DELIVERY_TO_POLICE_SIGNED_RULING',
   DELIVERY_TO_POLICE_APPEAL = 'DELIVERY_TO_POLICE_APPEAL',
-  // TODO: Archive confirmted generated indictments
   NOTIFICATION = 'NOTIFICATION',
+  NOTIFICATION_DISPATCH = 'NOTIFICATION_DISPATCH',
 }
 
 export const messageEndpoint: { [key in MessageType]: string } = {
@@ -35,6 +36,8 @@ export const messageEndpoint: { [key in MessageType]: string } = {
     'deliverIndictmentCourtRolesToCourt',
   DELIVERY_TO_COURT_INDICTMENT_INFO: 'deliverIndictmentInfoToCourt',
   DELIVERY_TO_COURT_INDICTMENT_DEFENDER: 'deliverIndictmentDefenderToCourt',
+  DELIVERY_TO_COURT_INDICTMENT_CANCELLATION_NOTICE:
+    'deliverIndictmentCancellationNoticeToCourt',
   DELIVERY_TO_COURT_CASE_FILE: 'deliverCaseFileToCourt',
   DELIVERY_TO_COURT_CASE_FILES_RECORD: 'deliverCaseFilesRecordToCourt',
   DELIVERY_TO_COURT_REQUEST: 'deliverRequestToCourt',
@@ -54,12 +57,13 @@ export const messageEndpoint: { [key in MessageType]: string } = {
   DELIVERY_TO_POLICE_SIGNED_RULING: 'deliverSignedRulingToPolice',
   DELIVERY_TO_POLICE_APPEAL: 'deliverAppealToPolice',
   NOTIFICATION: 'notification',
+  NOTIFICATION_DISPATCH: 'notification/dispatch',
 }
 
-export type CaseMessage = {
+export type Message = {
   type: MessageType
-  user: User
-  caseId: string
+  user?: User
+  caseId?: string
   elementId?: string
   body?: { [key: string]: unknown }
   numberOfRetries?: number

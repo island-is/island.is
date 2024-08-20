@@ -1,16 +1,17 @@
-import { User } from '@island.is/auth-nest-tools'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { Inject, Injectable, Logger } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
-import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
-import { ApiScopeInfo } from './delegations-incoming.service'
-import { DelegationDTO } from './dto/delegation.dto'
+import { User } from '@island.is/auth-nest-tools'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+
+import { ApiScopeUserAccess } from '../resources/models/api-scope-user-access.model'
+import { ApiScopeInfo } from './delegations-incoming.service'
+import { DelegationDTO } from './dto/delegation.dto'
 
 @Injectable()
 export class IncomingDelegationsCompanyService {
@@ -27,8 +28,10 @@ export class IncomingDelegationsCompanyService {
     clientAllowedApiScopes?: ApiScopeInfo[],
     requireApiScopes?: boolean,
   ): Promise<DelegationDTO[]> {
-    const procuringHolderApiScopes = clientAllowedApiScopes?.filter(
-      (s) => s.grantToProcuringHolders,
+    const procuringHolderApiScopes = clientAllowedApiScopes?.filter((s) =>
+      s.supportedDelegationTypes?.some(
+        (dt) => dt.delegationType == AuthDelegationType.ProcurationHolder,
+      ),
     )
     if (
       requireApiScopes &&

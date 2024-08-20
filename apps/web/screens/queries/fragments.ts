@@ -173,6 +173,7 @@ export const slices = gql`
         }
       }
     }
+    dividerOnTop
   }
 
   fragment FaqListFields on FaqList {
@@ -270,6 +271,17 @@ export const slices = gql`
   fragment TeamListFields on TeamList {
     __typename
     id
+    variant
+    filterTags {
+      id
+      title
+      slug
+      genericTagGroup {
+        id
+        title
+        slug
+      }
+    }
     teamMembers {
       name
       title
@@ -420,6 +432,7 @@ export const slices = gql`
       url
     }
     dividerOnTop
+    onlyUseOneTitle
   }
 
   fragment MultipleStatisticsFields on MultipleStatistics {
@@ -533,6 +546,7 @@ export const slices = gql`
     intro
     defaultFieldNamespace
     fields {
+      id
       title
       name
       placeholder
@@ -545,6 +559,7 @@ export const slices = gql`
     aboutYouHeadingText
     questionsHeadingText
     recipientFormFieldDecider {
+      id
       title
       placeholder
       type
@@ -834,6 +849,7 @@ export const slices = gql`
     xAxisValueType
     customStyleConfig
     reduceAndRoundValue
+    yAxisLabel
   }
 
   fragment ChartNumberBoxFields on ChartNumberBox {

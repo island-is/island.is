@@ -131,7 +131,7 @@ export class UniversityApplicationService {
         nationalId: user.nationalId,
         universityId: university.id,
         programId: program.id,
-        programModeOfDeliveryId: programModeOfDelivery.id,
+        programModeOfDelivery: programModeOfDelivery.modeOfDelivery,
         status: ApplicationStatus.IN_REVIEW,
         externalId: 'testid124',
       })

@@ -104,6 +104,7 @@ export interface TemporaryEventLicence {
   licenseResponsible?: string
   maximumNumberOfGuests?: number
   estimatedNumberOfGuests?: number
+  location?: string
 }
 
 /**
@@ -187,11 +188,11 @@ export enum PersonType {
 export interface MortgageCertificate {
   contentBase64: string
   apiMessage?: string | undefined
+  propertyNumber?: string | undefined
 }
 
 export interface MortgageCertificateValidation {
   propertyNumber: string
-  isFromSearch?: boolean
   exists: boolean
   hasKMarking: boolean
 }
@@ -337,6 +338,42 @@ export interface PropertyDetail {
   unitsOfUse?: UnitsOfUseModel
 }
 
+export interface ManyPropertyDetail {
+  propertyNumber?: string
+  propertyType?: string
+  realEstate?: Array<RealEstateDetail>
+  vehicle?: VehicleDetail
+  ship?: ShipDetail
+}
+
+export interface RealEstateDetail {
+  propertyNumber: string
+  usage: string
+  defaultAddress: string
+}
+
+export interface VehicleDetail {
+  licencePlate: string
+  propertyNumber: string
+  manufacturer: string
+  manufacturerType: string
+  color: string
+  dateOfRegistration: Date
+}
+
+export interface ShipDetail {
+  shipRegistrationNumber: string
+  usageType: string
+  name: string
+  initialRegistrationDate: Date
+  mainMeasurements: ShipMeasurements
+}
+
+interface ShipMeasurements {
+  length: string
+  bruttoWeightTons: string
+}
+
 interface PropertyLocation {
   display?: string
 }
@@ -361,6 +398,7 @@ export interface JourneymanLicence {
   name?: string
   dateOfPublication?: Date
   profession?: string
+  nationalId?: string
 }
 
 export interface ProfessionRight {

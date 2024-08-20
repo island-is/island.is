@@ -16,7 +16,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/use-browser'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'
@@ -68,6 +68,7 @@ function getChromeVersion(): Promise<number> {
 
 export const LoginScreen: NavigationFunctionComponent = ({ componentId }) => {
   const authStore = useAuthStore()
+  const { openBrowser } = useBrowser()
   const intl = useIntl()
   const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [authState, setAuthState] = useState<{

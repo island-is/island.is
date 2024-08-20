@@ -28,6 +28,7 @@ import { strings } from './IndictmentCaseFilesList.strings'
 
 interface Props {
   workingCase: Case
+  displayHeading?: boolean
 }
 
 interface RenderFilesProps {
@@ -57,7 +58,10 @@ export const RenderFiles: FC<Props & RenderFilesProps> = ({
   )
 }
 
-const IndictmentCaseFilesList: FC<Props> = ({ workingCase }) => {
+const IndictmentCaseFilesList: FC<Props> = ({
+  workingCase,
+  displayHeading = true,
+}) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
@@ -78,8 +82,7 @@ const IndictmentCaseFilesList: FC<Props> = ({ workingCase }) => {
     (file) => file.category === CaseFileCategory.COST_BREAKDOWN,
   )
   const others = cf?.filter(
-    (file) =>
-      file.category === CaseFileCategory.CASE_FILE && !file.policeCaseNumber,
+    (file) => file.category === CaseFileCategory.CASE_FILE,
   )
   const rulings = cf?.filter(
     (file) => file.category === CaseFileCategory.RULING,
@@ -93,7 +96,9 @@ const IndictmentCaseFilesList: FC<Props> = ({ workingCase }) => {
 
   return (
     <>
-      <SectionHeading title={formatMessage(strings.title)} />
+      {displayHeading && (
+        <SectionHeading title={formatMessage(strings.title)} />
+      )}
       {indictments && indictments.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>

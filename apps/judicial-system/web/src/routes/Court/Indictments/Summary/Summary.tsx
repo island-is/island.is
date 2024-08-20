@@ -6,9 +6,12 @@ import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
+  getIndictmentRulingDecisionTag,
   InfoCardClosedIndictment,
   Modal,
   PageHeader,
@@ -83,6 +86,10 @@ const Summary: FC = () => {
     [[] as CaseFile[], [] as CaseFile[]],
   )
 
+  const indictmentRulingTag = getIndictmentRulingDecisionTag(
+    workingCase.indictmentRulingDecision,
+  )
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -91,8 +98,20 @@ const Summary: FC = () => {
       onNavigationTo={handleNavigationTo}
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
+
       <FormContentContainer>
-        <PageTitle>{formatMessage(strings.title)}</PageTitle>
+        <Box display="flex" justifyContent="spaceBetween">
+          <PageTitle>{formatMessage(strings.title)}</PageTitle>
+
+          {workingCase.indictmentRulingDecision && (
+            <Box marginTop={2}>
+              <CaseTag
+                color={indictmentRulingTag.color}
+                text={formatMessage(indictmentRulingTag.text)}
+              />
+            </Box>
+          )}
+        </Box>
         <Box component="section" marginBottom={1}>
           <Text variant="h2" as="h2">
             {formatMessage(core.caseNumber, {
@@ -107,6 +126,13 @@ const Summary: FC = () => {
         <Box component="section" marginBottom={6}>
           <InfoCardClosedIndictment />
         </Box>
+        {workingCase.mergedCases &&
+          workingCase.mergedCases.length > 0 &&
+          workingCase.mergedCases.map((mergedCase) => (
+            <Box marginBottom={5} key={mergedCase.id}>
+              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+            </Box>
+          ))}
         <SectionHeading title={formatMessage(strings.caseFiles)} />
         {(rulingFiles.length > 0 || courtRecordFiles.length > 0) && (
           <Box marginBottom={5}>

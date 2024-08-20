@@ -72,7 +72,6 @@ const OccupationalLicenseDetail = () => {
                   if (!a) {
                     return null
                   }
-
                   if (a.type === OccupationalLicensesV2LinkType.FILE) {
                     return (
                       <Button
@@ -134,6 +133,13 @@ const OccupationalLicenseDetail = () => {
             label={formatMessage(om.nameOfIndividual)}
             content={license?.licenseHolderName ?? ''}
           />
+          {license?.licenseNumber && (
+            <UserInfoLine
+              loading={loading}
+              label={formatMessage(om.licenseNumber)}
+              content={license?.licenseNumber ?? ''}
+            />
+          )}
           {(license?.dateOfBirth || loading) && (
             <UserInfoLine
               loading={loading}
