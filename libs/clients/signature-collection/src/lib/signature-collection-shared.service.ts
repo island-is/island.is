@@ -82,6 +82,7 @@ export class SignatureCollectionSharedClientService {
       })
       return mapList(list, umbodList)
     } catch (error) {
+      console.log('Error fetching list', error)
       throw new NotFoundException('List not found')
     }
   }
@@ -103,6 +104,16 @@ export class SignatureCollectionSharedClientService {
     ownedLists,
     areas,
   }: CanCreateInput): Success {
+    console.log('What are we collecting here?')
+    console.log({
+      requirementsMet,
+      canCreateInfo,
+      isPresidential,
+      isActive,
+      ownedLists,
+      areas,
+    })
+
     // can create if requirements met and collection is active
     // if collection is presidential and user has no lists otherwise does not have lists for all areas of collection
     const alreadyOwnsAllLists = isPresidential

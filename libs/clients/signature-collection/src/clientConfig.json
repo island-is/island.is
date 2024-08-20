@@ -870,7 +870,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
+                }
               }
             }
           },
@@ -900,7 +902,9 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/MedmaelalistiDTO" }
+                "schema": {
+                  "$ref": "#/components/schemas/MedmaelalistiBaseDTO"
+                }
               }
             }
           },
@@ -1479,6 +1483,9 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaeliDTO" }
           },
+          "listabokstafur": {
+            "$ref": "#/components/schemas/ListabokstafurBaseDTO"
+          },
           "frambod": { "$ref": "#/components/schemas/FrambodBaseDTO" },
           "medmaelalistar": {
             "type": "array",
@@ -1633,6 +1640,15 @@
           "medmaelasofnun": {
             "$ref": "#/components/schemas/MedmaelasofnunBaseDTO"
           }
+        },
+        "additionalProperties": false
+      },
+      "ListabokstafurBaseDTO": {
+        "required": ["frambodNafn", "stafur"],
+        "type": "object",
+        "properties": {
+          "frambodNafn": { "type": "string" },
+          "stafur": { "type": "string" }
         },
         "additionalProperties": false
       },

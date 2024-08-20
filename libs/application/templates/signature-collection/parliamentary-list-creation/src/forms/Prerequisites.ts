@@ -17,7 +17,7 @@ import {
 
 import { m } from '../lib/messages'
 import Logo from '../../assets/Logo'
-import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
+import { ParliamentaryCollectionApi, CandidateApi } from '../dataProviders'
 
 export const Prerequisites: Form = buildForm({
   id: 'CreateListPrerequisites',
@@ -83,12 +83,12 @@ export const Prerequisites: Form = buildForm({
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: CurrentCollectionApi,
+              provider: ParliamentaryCollectionApi,
               title: '',
               subTitle: '',
             }),
             buildDataProviderItem({
-              provider: OwnerRequirementsApi,
+              provider: CandidateApi,
               title: '',
               subTitle: '',
             }),

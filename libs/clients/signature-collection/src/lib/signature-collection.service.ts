@@ -190,8 +190,6 @@ export class SignatureCollectionClientService {
     if (filteredAreas.length !== candidacy.umbodList?.length) {
       throw new Error('Not all lists created')
     }
-    console.log('HERE COMES THE CANDIDACY WOWEE')
-    console.log(JSON.stringify(candidacy))
     return { slug: 'frambodWowee' }
   }
 
@@ -382,6 +380,11 @@ export class SignatureCollectionClientService {
       ownedLists,
       isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,
       candidate,
+      hasPartyBallotLetter: !!user.maFrambodInfo?.medListabokstaf,
+      partyBallotLetterInfo: {
+        letter: user.listabokstafur?.stafur ?? '',
+        name: user.listabokstafur?.frambodNafn ?? '',
+      },
     }
   }
 
