@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -362,29 +363,37 @@ export class EndorsementListController {
     )
   }
 
-  // @Get('download-pdf')
-  // @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
-  // async downloadPDF(
-  //   @Param('listId') listId: string,
-  //   @CurrentUser() user: User,
-  //   @Res() res: Response,
-  // ) {
-  //   const pdfBuffer = await this.endorsementListService.generatePDF(listId, user);
-  //   res.set({
-  //     'Content-Type': 'application/pdf',
-  //     'Content-Disposition': `attachment; filename="endorsement-list-${listId}.pdf"`,
-  //     'Content-Length': pdfBuffer.length,
-  //   });
-  //   res.end(pdfBuffer);
-  // }
-
-  @Get(':listId/download-csv')
+  @ApiOperation({
+    summary: 'Export an endorsement list as PDF or CSV',
+  })
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
-  @BypassAuth() // NOTE you cant use @Audit() and @BypassAuth() together
-  async downloadCSV(
-    @Param('listId') listId: string,
-    @CurrentUser() user: User,
-  ) {
-    await this.endorsementListService.generateCSV(listId, user)
+  @HasAccessGroup(AccessGroup.Owner)
+  @ApiParam({ name: 'listId', type: String })
+  @ApiParam({ name: 'fileType', type: String, enum: ['pdf', 'csv'] })
+  @ApiOkResponse({ description: 'Presigned URL for the exported file', type: String })
+  @Get(':listId/export/:fileType')
+  @Audit()
+  async exportEndorsementList(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+    @Param('fileType') fileType: 'pdf' | 'csv',
+    @CurrentUser() user: User, // Get the current user
+  ): Promise<{ url: string }> {
+    if (!['pdf', 'csv'].includes(fileType)) {
+      throw new BadRequestException('Invalid file type. Allowed values are "pdf" or "csv".')
+    }
+  
+    return await this.endorsementListService.exportList(
+      endorsementList.id,
+      user,
+      fileType,
+    )
   }
+  
+
+  
 }
