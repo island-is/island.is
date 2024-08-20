@@ -65,7 +65,7 @@ export class InternalDefendantController {
   @Patch('defense/:defendantNationalId')
   @ApiOkResponse({
     type: Defendant,
-    description: 'Assigns defense choice to defendant',
+    description: 'Updates defendant information by case and national id',
   })
   async updateDefendant(
     @Param('caseId') caseId: string,
