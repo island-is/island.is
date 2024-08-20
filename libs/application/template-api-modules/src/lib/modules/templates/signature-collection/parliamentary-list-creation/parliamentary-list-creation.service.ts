@@ -88,8 +88,6 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
         }
       })
 
-    console.log(JSON.stringify(result))
-
     return {
       success: true,
     }
