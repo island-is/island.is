@@ -673,7 +673,6 @@ export class EndorsementListService {
       return { success: false }
     }
   }
-  
 
   async exportList(
     listId: string,
@@ -682,60 +681,80 @@ export class EndorsementListService {
   ): Promise<{ url: string }> {
     // get total endorements count from database
     const total = await this.endorsementModel.count({
-      where: { },
+      where: {},
     })
     console.log('total', total)
-    this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId });
-  
-    const isAdmin = this.hasAdminScope(user);
-  
-     // Fetch the endorsement list and associated endorsements
-  const endorsementList = await this.endorsementListModel.findOne({
-    where: {
-      id: listId,
-      ...(isAdmin ? {} : { owner: user.nationalId }), // Restrict to owner if not admin
-    },
-    include: [
-      {
-        model: Endorsement,
-        // attributes: [
-        //   'created',
-        //   [Sequelize.literal(`"Endorsement"."meta"->>'fullName'`), 'fullName'],
-        //   [Sequelize.literal(`"Endorsement"."meta"->>'locality'`), 'locality'],
-        // ],
-        required: false, // Include the list even if there are no endorsements
+    this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId })
+
+    const isAdmin = this.hasAdminScope(user)
+
+    // Fetch the endorsement list and associated endorsements
+    const endorsementList = await this.endorsementListModel.findOne({
+      where: {
+        id: listId,
+        ...(isAdmin ? {} : { owner: user.nationalId }), // Restrict to owner if not admin
       },
-    ],
-    attributes: ['id', 'title', 'description', 'openedDate', 'closedDate', 'owner'],
-  });
-  
+      include: [
+        {
+          model: Endorsement,
+          // attributes: [
+          //   'created',
+          //   [Sequelize.literal(`"Endorsement"."meta"->>'fullName'`), 'fullName'],
+          //   [Sequelize.literal(`"Endorsement"."meta"->>'locality'`), 'locality'],
+          // ],
+          required: false, // Include the list even if there are no endorsements
+        },
+      ],
+      attributes: [
+        'id',
+        'title',
+        'description',
+        'openedDate',
+        'closedDate',
+        'owner',
+      ],
+    })
+
     if (!endorsementList) {
-      this.logger.warn(`Endorsement list ${listId} not found or access denied`, { listId });
-      throw new NotFoundException(`Endorsement list ${listId} not found or access denied.`);
+      this.logger.warn(
+        `Endorsement list ${listId} not found or access denied`,
+        { listId },
+      )
+      throw new NotFoundException(
+        `Endorsement list ${listId} not found or access denied.`,
+      )
     }
-  
-    this.logger.info(`List endorsement count: ${endorsementList.endorsements?.length || 0}`, { listId });
-  
-    let fileBuffer: Buffer;
-    let fileExtension: string;
+
+    this.logger.info(
+      `List endorsement count: ${endorsementList.endorsements?.length || 0}`,
+      { listId },
+    )
+
+    let fileBuffer: Buffer
+    let fileExtension: string
     if (fileType === 'pdf') {
-      const ownerName = await this.getOwnerInfo(endorsementList.id, endorsementList.owner);
-      fileBuffer = await this.createDocumentBuffer(endorsementList, ownerName);
-      fileExtension = 'pdf';
+      const ownerName = await this.getOwnerInfo(
+        endorsementList.id,
+        endorsementList.owner,
+      )
+      fileBuffer = await this.createDocumentBuffer(endorsementList, ownerName)
+      fileExtension = 'pdf'
     } else if (fileType === 'csv') {
-      fileBuffer = this.createCSV(endorsementList);
-      fileExtension = 'csv';
+      fileBuffer = this.createCSV(endorsementList)
+      fileExtension = 'csv'
     } else {
-      throw new BadRequestException('Invalid file type');
+      throw new BadRequestException('Invalid file type')
     }
-  
-    this.logger.info(`File buffer size: ${fileBuffer.length}`, { listId });
-  
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
-    const filename = `${listId}-${timestamp}.${fileExtension}`;
-  
-    this.logger.info(`Uploading file to S3 with filename ${filename}`, { listId });
-  
+
+    this.logger.info(`File buffer size: ${fileBuffer.length}`, { listId })
+
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
+    const filename = `${listId}-${timestamp}.${fileExtension}`
+
+    this.logger.info(`Uploading file to S3 with filename ${filename}`, {
+      listId,
+    })
+
     await this.awsService.uploadFile(
       fileBuffer,
       EXPORTS_BUCKET_NAME,
@@ -743,37 +762,33 @@ export class EndorsementListService {
       {
         ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
       },
-    );
-  
+    )
+
     const url = await this.awsService.getPresignedUrl(
       EXPORTS_BUCKET_NAME,
       filename,
       60 * 60,
-    );
-  
-    return { url };
+    )
+
+    return { url }
   }
-  
 
+  // Method to create CSV from endorsement list
+  private createCSV(endorsementList: EndorsementList): Buffer {
+    // Ensure endorsements is always an array
+    const endorsements = endorsementList.endorsements ?? []
 
-// Method to create CSV from endorsement list
-private createCSV(endorsementList: EndorsementList): Buffer {
-  // Ensure endorsements is always an array
-  const endorsements = endorsementList.endorsements ?? [];
+    // Map over the endorsements array
+    const records = endorsements.map((endorsement) => ({
+      Dagsetning: endorsement.created.toLocaleDateString('is-IS'),
+      Nafn: endorsement.meta?.fullName, //|| 'Nafn ótilgreint',/// ..................
+      Sveitafélag: endorsement.meta?.locality, // || 'Unknown locality',.................
+    }))
 
-  // Map over the endorsements array
-  const records = endorsements.map((endorsement) => ({
-    Dagsetning: endorsement.created.toLocaleDateString('is-IS'),
-    Nafn: endorsement.meta?.fullName, //|| 'Nafn ótilgreint',/// ..................
-    Sveitafélag: endorsement.meta?.locality // || 'Unknown locality',.................
-  }));
+    // Convert the records to a CSV string
+    const csvString = csvStringify(records, { header: true })
 
-  // Convert the records to a CSV string
-  const csvString = csvStringify(records, { header: true });
-
-  // Convert the CSV string to a Buffer and return it
-  return Buffer.from(csvString, 'utf-8');
-}
-
- 
+    // Convert the CSV string to a Buffer and return it
+    return Buffer.from(csvString, 'utf-8')
+  }
 }
