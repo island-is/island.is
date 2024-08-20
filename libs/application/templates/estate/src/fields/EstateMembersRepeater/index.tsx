@@ -19,6 +19,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import {
   CheckboxController,
   InputController,
+  PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import { format as formatNationalId } from 'kennitala'
@@ -267,13 +268,12 @@ export const EstateMembersRepeater: FC<
                     />
                   </GridColumn>
                   <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                    <InputController
+                    <PhoneInputController
                       id={`${id}[${index}].phone`}
                       name={`${id}[${index}].phone`}
                       label={formatMessage(m.phone)}
                       backgroundColor="blue"
                       disabled={!member.enabled}
-                      format="###-####"
                       defaultValue={member.phone || ''}
                       error={error && error[index] && error[index].phone}
                       required={noContact !== YES}
@@ -387,17 +387,19 @@ export const EstateMembersRepeater: FC<
       }, [] as JSX.Element[])}
       {fields.map((member: GenericFormField<EstateMember>, index) => {
         return (
-          <Box key={member.id} hidden={member.initial}>
-            <AdditionalEstateMember
-              application={application}
-              field={member}
-              fieldName={id}
-              index={index}
-              relationOptions={relations}
-              relationWithApplicantOptions={relationsWithApplicant}
-              remove={remove}
-              error={error && error[index] ? error[index] : null}
-            />
+          <Box>
+            {!member.initial && (
+              <AdditionalEstateMember
+                application={application}
+                field={member}
+                fieldName={id}
+                index={index}
+                relationOptions={relations}
+                relationWithApplicantOptions={relationsWithApplicant}
+                remove={remove}
+                error={error && error[index] ? error[index] : null}
+              />
+            )}
           </Box>
         )
       })}

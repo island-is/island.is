@@ -63,7 +63,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/judicial-system/backend"
       }
     },
@@ -108,7 +108,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/messages/**/*.ts'"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/judicial-system/backend/src/app/{messages/**/*,**/*.strings}.ts'"
       }
     }
   }

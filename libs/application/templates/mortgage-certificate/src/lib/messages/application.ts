@@ -13,6 +13,13 @@ export const application = {
       description: "Institution's name",
     },
   }),
+  values: defineMessages({
+    maxPropertiesValue: {
+      id: 'mc.application:application.values.maxPropertiesValue',
+      defaultMessage: '10',
+      description: 'Max properties value',
+    },
+  }),
   labels: defineMessages({
     continue: {
       id: 'mc.application:application.labels.continue',
