@@ -9,6 +9,8 @@ import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
 import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
 import * as z from 'zod'
+import { RemoveCommitteeMember } from './RemoveComitteeMember'
+import { getValueViaPath } from '@island.is/application/core'
 
 type Props = {
   applicationId: string
@@ -68,28 +70,52 @@ export const CommitteeMember = ({
     return null
   }
 
+  const getMemberCount = () => {
+    const { signature } = getCommitteeAnswers(application.answers)
+
+    if (signature) {
+      return signature.members?.length ?? 0
+    }
+
+    return 0
+  }
+
+  const isLast = memberIndex === getMemberCount() - 1
+
   return (
-    <Box className={styles.inputGroup}>
-      <Box className={styles.inputWrapper}>
-        <SignatureMember
-          name={`signature.committee.member.name.${memberIndex}`}
-          label={f(signatures.inputs.name.label)}
-          defaultValue={member.name}
-          onChange={(e) =>
-            debouncedOnUpdateApplicationHandler(
-              handleMemberChange(e.target.value, 'name', memberIndex),
-            )
-          }
-        />
-        <SignatureMember
-          name={`signature.committee.member.below.${memberIndex}`}
-          label={f(signatures.inputs.below.label)}
-          defaultValue={member.below}
-          onChange={(e) =>
-            debouncedOnUpdateApplicationHandler(
-              handleMemberChange(e.target.value, 'below', memberIndex),
-            )
-          }
+    <Box className={styles.committeeInputGroup}>
+      <Box
+        className={
+          isLast ? styles.committeInputWrapperLast : styles.committeInputWrapper
+        }
+      >
+        <Box flexGrow={1}>
+          <SignatureMember
+            name={`signature.committee.member.name.${memberIndex}`}
+            label={f(signatures.inputs.name.label)}
+            defaultValue={member.name}
+            onChange={(e) =>
+              debouncedOnUpdateApplicationHandler(
+                handleMemberChange(e.target.value, 'name', memberIndex),
+              )
+            }
+          />
+        </Box>
+        <Box flexGrow={1}>
+          <SignatureMember
+            name={`signature.committee.member.below.${memberIndex}`}
+            label={f(signatures.inputs.below.label)}
+            defaultValue={member.below}
+            onChange={(e) =>
+              debouncedOnUpdateApplicationHandler(
+                handleMemberChange(e.target.value, 'below', memberIndex),
+              )
+            }
+          />
+        </Box>
+        <RemoveCommitteeMember
+          applicationId={applicationId}
+          memberIndex={memberIndex}
         />
       </Box>
     </Box>

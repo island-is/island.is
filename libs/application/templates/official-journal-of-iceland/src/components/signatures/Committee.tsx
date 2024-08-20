@@ -1,4 +1,4 @@
-import { Box } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 
 import * as styles from './Signatures.css'
 import { InstitutionSignature } from './Institution'
@@ -10,12 +10,16 @@ import { Chairman } from './Chairman'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
 import { AdditionalSignature } from './Additional'
+import { useLocale } from '@island.is/localization'
+import { signatures } from '../../lib/messages/signatures'
+import { AddCommitteeMember } from './AddCommitteeMember'
 
 type Props = {
   applicationId: string
 }
 
 export const CommitteeSignature = ({ applicationId }: Props) => {
+  const { formatMessage: f } = useLocale()
   const { application } = useApplication({
     applicationId,
   })
@@ -44,16 +48,22 @@ export const CommitteeSignature = ({ applicationId }: Props) => {
           applicationId={applicationId}
           type={SignatureTypes.COMMITTEE}
         />
+        <Chairman applicationId={applicationId} member={signature.chairman} />
         <Box className={styles.wrapper}>
-          <Chairman applicationId={applicationId} member={signature.chairman} />
-          {signature?.members?.map((member, index) => (
-            <CommitteeMember
-              key={index}
-              applicationId={applicationId}
-              memberIndex={index}
-              member={member}
-            />
-          ))}
+          <Text variant="h5" marginBottom={2}>
+            {f(signatures.headings.committeeMembers)}
+          </Text>
+          <Box className={styles.committeeInputGroupWrapper}>
+            {signature?.members?.map((member, index) => (
+              <CommitteeMember
+                key={index}
+                applicationId={applicationId}
+                memberIndex={index}
+                member={member}
+              />
+            ))}
+            <AddCommitteeMember applicationId={applicationId} />
+          </Box>
         </Box>
       </Box>
       <AdditionalSignature

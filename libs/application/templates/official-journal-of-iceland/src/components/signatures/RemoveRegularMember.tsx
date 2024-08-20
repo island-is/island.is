@@ -1,12 +1,10 @@
 import { Box, Button } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import { useApplication } from '../../hooks/useUpdateApplication'
-import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
-import { regularSignatureSchema } from '../../lib/dataSchema'
 import { MINIMUM_REGULAR_SIGNATURE_MEMBER_COUNT } from '../../lib/constants'
 import set from 'lodash/set'
 import * as styles from './Signatures.css'
+import { getRegularAnswers } from '../../lib/utils'
 
 type Props = {
   applicationId: string
@@ -24,32 +22,22 @@ export const RemoveRegularMember = ({
   })
 
   const onRemoveMember = () => {
-    const currentAnswers = structuredClone(application.answers)
-    const signature = getValueViaPath(
-      currentAnswers,
-      InputFields.signature.regular,
-    )
+    const { currentAnswers, signature } = getRegularAnswers(application.answers)
 
-    const isRegularSignature = regularSignatureSchema.safeParse(signature)
-
-    if (isRegularSignature.success) {
-      const doesSignatureExist = isRegularSignature.data?.at(signatureIndex)
+    if (signature) {
+      const doesSignatureExist = signature.at(signatureIndex)
 
       if (doesSignatureExist !== undefined) {
-        const updatedRegularSignature = isRegularSignature.data?.map(
-          (signature, index) => {
-            if (index === signatureIndex) {
-              return {
-                ...signature,
-                members: signature.members?.filter(
-                  (_, mi) => mi !== memberIndex,
-                ),
-              }
+        const updatedRegularSignature = signature.map((signature, index) => {
+          if (index === signatureIndex) {
+            return {
+              ...signature,
+              members: signature.members?.filter((_, mi) => mi !== memberIndex),
             }
+          }
 
-            return signature
-          },
-        )
+          return signature
+        })
 
         const updatedAnswers = set(
           currentAnswers,
