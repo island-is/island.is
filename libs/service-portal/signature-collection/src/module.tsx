@@ -2,7 +2,6 @@ import { lazy } from 'react'
 import { m } from '@island.is/service-portal/core'
 import { PortalModule, PortalRoute } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from './lib/paths'
-import { Features } from '@island.is/feature-flags'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Navigate } from 'react-router-dom'
 
@@ -19,7 +18,6 @@ const ViewListParliamentary = lazy(() =>
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollectionLists,
-  featureFlag: Features.servicePortalSignatureCollection,
   routes: ({ userInfo }) => {
     const applicationRoutes: PortalRoute[] = [
       {
@@ -27,33 +25,35 @@ export const signatureCollectionModule: PortalModule = {
         path: SignatureCollectionPaths.RootPath,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: (
-          <Navigate
-            to={SignatureCollectionPaths.SignatureCollectionParliamentaryLists}
-            replace
-          />
+          /* Default path to general petitions since these are always ongoing */
+          <Navigate to={SignatureCollectionPaths.GeneralPetitions} replace />
         ),
       },
       {
         name: m.signatureCollectionParliamentaryLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionParliamentaryLists,
+        key: 'ParliamentaryLists',
         element: <SignatureListsParliamentary />,
       },
       {
         name: m.signatureCollectionPresidentialLists,
         path: SignatureCollectionPaths.ViewParliamentaryList,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
+        key: 'ParliamentaryLists',
         element: <ViewListParliamentary />,
       },
       {
         name: m.signatureCollectionPresidentialLists,
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         path: SignatureCollectionPaths.SignatureCollectionLists,
+        key: 'PresidentialLists',
         element: <SignatureListsPresidential />,
       },
       {
         name: m.signatureCollectionPresidentialLists,
         path: SignatureCollectionPaths.ViewList,
+        key: 'PresidentialLists',
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: <ViewListPresidential />,
       },
