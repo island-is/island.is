@@ -9,7 +9,7 @@ import set from 'lodash/set'
 type Props = {
   name: string
   label: string | MessageDescriptor
-  placeholder: string | MessageDescriptor
+  placeholder?: string | MessageDescriptor
   defaultValue?: string
   loading?: boolean
   applicationId: string
@@ -34,8 +34,11 @@ export const OJOIInputController = ({
     applicationId,
   })
 
-  const placeholderText =
-    typeof placeholder === 'string' ? placeholder : f(placeholder)
+  const placeholderText = placeholder
+    ? typeof placeholder === 'string'
+      ? placeholder
+      : f(placeholder)
+    : ''
 
   const labelText = typeof label === 'string' ? label : f(label)
 

@@ -23,6 +23,10 @@ export const InputFields = {
   [Routes.SIGNATURE]: {
     regular: 'signatures.regular',
     committee: 'signatures.committee',
+    additionalSignature: {
+      regular: 'signatures.additionalSignature.regular',
+      committee: 'signatures.additionalSignature.committee',
+    },
   },
   other: {
     signatureType: 'misc.signatureType',

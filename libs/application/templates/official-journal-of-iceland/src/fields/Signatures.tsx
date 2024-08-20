@@ -9,12 +9,16 @@ import { CommitteeSignature } from '../components/signatures/Committee'
 import { RegularSignature } from '../components/signatures/Regular'
 import { useApplication } from '../hooks/useUpdateApplication'
 import set from 'lodash/set'
+import { HTMLEditor } from '../components/htmlEditor/HTMLEditor'
+import { getSignatureMarkup } from '../lib/utils'
 
 export const Signatures = ({ application }: OJOIFieldBaseProps) => {
   const { formatMessage: f } = useLocale()
-  const { updateApplication } = useApplication({
-    applicationId: application.id,
-  })
+  const { updateApplication, application: currentApplication } = useApplication(
+    {
+      applicationId: application.id,
+    },
+  )
 
   const [selectedTab, setSelectedTab] = useState<SignatureType>(
     (application.answers?.misc?.signatureType as SignatureType) ??
@@ -62,22 +66,18 @@ export const Signatures = ({ application }: OJOIFieldBaseProps) => {
           contentBackground="white"
           onChange={onTabChangeHandler}
         />
-        {/* <AdditionalSignature
-          application={application}
-          errors={errors}
-          setSignature={debouncedAdditionalSignatureUpdate}
-          signature={state.additional}
-        /> */}
       </FormGroup>
-      {/* <FormGroup title={f(signatures.headings.preview)}>
+      <FormGroup title={f(signatures.headings.preview)}>
         <HTMLEditor
+          name="signaturePreview"
           key={selectedTab}
-          value={preview}
-          config={signatureConfig}
+          value={getSignatureMarkup({
+            signatures: currentApplication.answers.signatures,
+            type: selectedTab as SignatureTypes,
+          })}
           readOnly={true}
-          name={InputFields.signature.contents}
-          />
-    </FormGroup> */}
+        />
+      </FormGroup>
     </>
   )
 }

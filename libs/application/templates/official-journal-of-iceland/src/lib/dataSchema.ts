@@ -88,6 +88,10 @@ export const partialSchema = z.object({
   advert: advertSchema.optional(),
   signatures: z
     .object({
+      additionalSignature: z.object({
+        committee: z.string().optional(),
+        regular: z.string().optional(),
+      }),
       regular: z.array(regularSignatureItemSchema).optional(),
       committee: committeeSignatureSchema.optional(),
     })

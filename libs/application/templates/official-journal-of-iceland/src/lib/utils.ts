@@ -1,9 +1,18 @@
 import addDays from 'date-fns/addDays'
 import addYears from 'date-fns/addYears'
-import { any, z } from 'zod'
-import { committeeSignatureSchema, regularSignatureSchema } from './dataSchema'
+import { z } from 'zod'
+import {
+  committeeSignatureSchema,
+  memberItemSchema,
+  partialSchema,
+  regularSignatureSchema,
+} from './dataSchema'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputFields, OJOIApplication } from './types'
+import { HTMLText } from '@island.is/regulations-tools/types'
+import format from 'date-fns/format'
+import is from 'date-fns/locale/is'
+import { SignatureTypes } from './constants'
 
 export const countDaysAgo = (date: Date) => {
   const now = new Date()
@@ -157,4 +166,114 @@ export const getRegularAnswers = (answers: OJOIApplication['answers']) => {
     currentAnswers,
     signature: null,
   }
+}
+
+const getMembersMarkup = (member: z.infer<typeof memberItemSchema>) => {
+  if (!member.name) return ''
+
+  const styleObject = {
+    marginBottom: member.below ? '0' : '1.5em',
+  }
+
+  const aboveMarkup = member.above
+    ? `<p style="margin-bottom: ${styleObject.marginBottom}" margins align="center">${member.above}</p>`
+    : ''
+  const afterMarkup = member.after ? ` ${member.after}` : ''
+  const belowMarkup = member.below
+    ? `<p align="center">${member.below}</p>`
+    : ''
+
+  return `
+    <div class="signature__member">
+      ${aboveMarkup}
+      <p style="margin-bottom: ${styleObject.marginBottom}" align="center"><strong>${member.name}</strong>${afterMarkup}</p>
+      ${belowMarkup}
+    </div>
+  `
+}
+
+const signatureTemplate = (
+  signatures: z.infer<typeof regularSignatureSchema>,
+  additionalSignature?: string,
+  chairman?: z.infer<typeof memberItemSchema>,
+) => {
+  const markup = signatures
+    ?.map((signature) => {
+      const membersCount = Math.min(signature.members?.length ?? 1, 3)
+      const styleObject = {
+        display: membersCount > 1 ? 'grid' : 'block',
+        gridTemplateColumns:
+          membersCount === 1
+            ? '1fr'
+            : membersCount === 2 || membersCount === 4
+            ? '1fr 1fr'
+            : '1fr 1fr 1fr',
+      }
+
+      const date = signature.date
+        ? format(new Date(signature.date), 'dd. MMM yyyy.', { locale: is })
+        : ''
+
+      const chairmanMarkup = chairman
+        ? `<div style="margin-bottom: 1.5em;">${getMembersMarkup(
+            chairman,
+          )}</div>`
+        : ''
+
+      const membersMarkup = signature.members
+        ?.map((member) => getMembersMarkup(member))
+        .join('')
+
+      return `
+  <div class="signature">
+    <p align="center"><em>${signature.institution} ${date}</em></p>
+    ${chairmanMarkup}
+    <div style="margin-bottom: 1.5em; display: ${styleObject.display}; grid-template-columns: ${styleObject.gridTemplateColumns};" class="signature__content">
+    ${membersMarkup}
+    </div>
+  </div>
+  `
+    })
+    .join('')
+
+  const additionalMarkup = additionalSignature
+    ? `<p style="font-size: 16px;" align="right"><em>${additionalSignature}</em></p>`
+    : ''
+
+  return `${markup}${additionalMarkup}` as HTMLText
+}
+
+export const getSignatureMarkup = ({
+  signatures,
+  type,
+}: {
+  signatures: z.infer<typeof partialSchema>['signatures']
+  type: SignatureTypes
+}) => {
+  if (signatures === undefined) {
+    return ''
+  }
+
+  if (
+    type === SignatureTypes.REGULAR &&
+    isRegularSignature(signatures.regular)
+  ) {
+    return signatureTemplate(
+      signatures.regular,
+      signatures.additionalSignature?.regular,
+    )
+  }
+
+  if (
+    type === SignatureTypes.COMMITTEE &&
+    isCommitteeSignature(signatures.committee)
+  ) {
+    return signatureTemplate(
+      [signatures.committee],
+      signatures.additionalSignature?.committee,
+      signatures.committee.chairman,
+    )
+  }
+
+  return ''
 }

@@ -1,15 +1,13 @@
 import { Box } from '@island.is/island-ui/core'
-import * as styles from './Signatures.css'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { useLocale } from '@island.is/localization'
 import { signatures } from '../../lib/messages/signatures'
 import { InputFields } from '../../lib/types'
-import set from 'lodash/set'
 import { getCommitteeAnswers, getEmptyMember } from '../../lib/utils'
-import debounce from 'lodash/debounce'
-import { DEBOUNCE_INPUT_TIMER } from '../../lib/constants'
 import { memberItemSchema } from '../../lib/dataSchema'
 import { SignatureMember } from './Member'
+import set from 'lodash/set'
+import * as styles from './Signatures.css'
 import * as z from 'zod'
 
 type Props = {
@@ -31,15 +29,15 @@ export const Chairman = ({ applicationId, member }: Props) => {
     )
 
     if (signature) {
-      const updatedRegularSignature = {
+      const updatedCommitteeSignature = {
         ...signature,
         chairman: { ...signature.chairman, [key]: value },
       }
 
       const updatedSignatures = set(
         currentAnswers,
-        InputFields.signature.regular,
-        updatedRegularSignature,
+        InputFields.signature.committee,
+        updatedCommitteeSignature,
       )
 
       return updatedSignatures
@@ -56,7 +54,7 @@ export const Chairman = ({ applicationId, member }: Props) => {
     <Box className={styles.inputGroup}>
       <Box className={styles.inputWrapper}>
         <SignatureMember
-          name={`signature.regular.member.above.chairman`}
+          name={`signature.comittee.member.above.chairman`}
           label={f(signatures.inputs.above.label)}
           defaultValue={member.above}
           onChange={(e) =>
@@ -66,7 +64,7 @@ export const Chairman = ({ applicationId, member }: Props) => {
           }
         />
         <SignatureMember
-          name={`signature.regular.member.after`}
+          name={`signature.comittee.member.after`}
           label={f(signatures.inputs.after.label)}
           defaultValue={member.after}
           onChange={(e) =>
@@ -78,7 +76,7 @@ export const Chairman = ({ applicationId, member }: Props) => {
       </Box>
       <Box className={styles.inputWrapper}>
         <SignatureMember
-          name={`signature.regular.member.name`}
+          name={`signature.comittee.member.name`}
           label={f(signatures.inputs.name.label)}
           defaultValue={member.name}
           onChange={(e) =>
@@ -88,7 +86,7 @@ export const Chairman = ({ applicationId, member }: Props) => {
           }
         />
         <SignatureMember
-          name={`signature.regular.member.below`}
+          name={`signature.comittee.member.below`}
           label={f(signatures.inputs.below.label)}
           defaultValue={member.below}
           onChange={(e) =>

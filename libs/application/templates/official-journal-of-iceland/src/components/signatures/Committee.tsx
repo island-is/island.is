@@ -9,6 +9,7 @@ import { isCommitteeSignature } from '../../lib/utils'
 import { Chairman } from './Chairman'
 import { getValueViaPath } from '@island.is/application/core'
 import { InputFields } from '../../lib/types'
+import { AdditionalSignature } from './Additional'
 
 type Props = {
   applicationId: string
@@ -37,22 +38,28 @@ export const CommitteeSignature = ({ applicationId }: Props) => {
   }
 
   return (
-    <Box className={styles.signatureWrapper}>
-      <InstitutionSignature
-        applicationId={applicationId}
-        type={SignatureTypes.COMMITTEE}
-      />
-      <Box className={styles.wrapper}>
-        <Chairman applicationId={applicationId} member={signature.chairman} />
-        {signature?.members?.map((member, index) => (
-          <CommitteeMember
-            key={index}
-            applicationId={applicationId}
-            memberIndex={index}
-            member={member}
-          />
-        ))}
+    <>
+      <Box className={styles.signatureWrapper}>
+        <InstitutionSignature
+          applicationId={applicationId}
+          type={SignatureTypes.COMMITTEE}
+        />
+        <Box className={styles.wrapper}>
+          <Chairman applicationId={applicationId} member={signature.chairman} />
+          {signature?.members?.map((member, index) => (
+            <CommitteeMember
+              key={index}
+              applicationId={applicationId}
+              memberIndex={index}
+              member={member}
+            />
+          ))}
+        </Box>
       </Box>
-    </Box>
+      <AdditionalSignature
+        applicationId={applicationId}
+        name={InputFields.signature.additionalSignature.committee}
+      />
+    </>
   )
 }

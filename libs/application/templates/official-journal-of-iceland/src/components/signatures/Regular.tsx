@@ -9,6 +9,7 @@ import { RegularMember } from './RegularMember'
 import { isRegularSignature } from '../../lib/utils'
 import { AddRegularMember } from './AddRegularMember'
 import { AddRegularSignature } from './AddRegularSignature'
+import { AdditionalSignature } from './Additional'
 
 type Props = {
   applicationId: string
@@ -22,7 +23,7 @@ export const RegularSignature = ({ applicationId }: Props) => {
   const getSignature = () => {
     const currentAnswers = getValueViaPath(
       application.answers,
-      InputFields.signature.committee,
+      InputFields.signature.regular,
     )
 
     if (isRegularSignature(currentAnswers)) {
@@ -68,6 +69,10 @@ export const RegularSignature = ({ applicationId }: Props) => {
         )
       })}
       <AddRegularSignature applicationId={applicationId} />
+      <AdditionalSignature
+        applicationId={applicationId}
+        name={InputFields.signature.additionalSignature.regular}
+      />
     </>
   )
 }

@@ -24,7 +24,9 @@ export const OJOIHtmlController = ({
     applicationId,
   })
 
-  const valueRef = useRef(() => defaultValue as HTMLText)
+  const valueRef = useRef(() =>
+    defaultValue ? (defaultValue as HTMLText) : ('' as HTMLText),
+  )
 
   const fileUploader = (): EditorFileUploader => async (blob) => {
     throw new Error('Not implemented')
