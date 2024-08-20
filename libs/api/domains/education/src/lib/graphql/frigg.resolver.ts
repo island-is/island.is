@@ -39,11 +39,4 @@ export class FriggResolver {
   ): Promise<OrganizationModel[]> {
     return this.friggClientService.getAllSchoolsByMunicipality(user)
   }
-
-  @Query(() => [FriggOrganizationModel], { nullable: true })
-  friggSchoolsByMunicipality2(
-    @CurrentUser() user: User,
-  ): Promise<OrganizationModel[]> {
-    return this.friggClientService.getAllSchoolsByMunicipality(user)
-  }
 }
