@@ -385,7 +385,7 @@ const useS3Upload = (caseId: string) => {
           id: fileId,
         },
       }
-      const resopnse: { success: boolean; __typename: 'DeleteFileResponse' } = {
+      const response: { success: boolean; __typename: 'DeleteFileResponse' } = {
         success: true,
         __typename: 'DeleteFileResponse',
       }
@@ -393,11 +393,11 @@ const useS3Upload = (caseId: string) => {
       return limitedAccess
         ? limitedAccessDeleteFile({
             variables,
-            optimisticResponse: { limitedAccessDeleteFile: resopnse },
+            optimisticResponse: { limitedAccessDeleteFile: response },
           })
         : deleteFile({
             variables,
-            optimisticResponse: { deleteFile: resopnse },
+            optimisticResponse: { deleteFile: response },
           })
     },
     [caseId, limitedAccess, limitedAccessDeleteFile, deleteFile],

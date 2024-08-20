@@ -425,7 +425,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   }
 
   const handleDelete = (fileId: string) => {
-    handleRemove({ id: fileId } as TUploadFile, (file: TUploadFile) =>
+    handleRemove({ id: fileId } as TUploadFile, (file) =>
       setReorderableItems((prev) => prev.filter((item) => item.id !== file.id)),
     )
   }

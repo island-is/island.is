@@ -1,23 +1,104 @@
-import { FC } from 'react'
+import { FC, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 
-import { ReorderableItem } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
+import { TUploadFile, useFileList, useS3Upload } from '../../utils/hooks'
+import { useUpdateFilesMutation } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
+import { FormContext } from '../FormProvider/FormProvider'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
+export interface UploadFile {
+  id: string
+  created?: string | null
+  displayText?: string | null
+  userGeneratedFilename?: string | null
+  displayDate?: string | null
+  canOpen?: boolean
+}
 interface Props {
-  files: ReorderableItem[]
-  onOpen: (id: string) => void
-  onRename: (id: string, name?: string, displayDate?: string) => void
-  onDelete: (id: string) => void
+  files: UploadFile[]
 }
 
 const UploadFiles: FC<Props> = (props) => {
-  const { files, onOpen, onRename, onDelete } = props
+  const { files } = props
+  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const { workingCase } = useContext(FormContext)
+
   const { formatMessage } = useIntl()
+
+  const { onOpen } = useFileList({ caseId: workingCase.id })
+  const { handleRemove } = useS3Upload(workingCase.id)
+  const [updateFilesMutation] = useUpdateFilesMutation()
+
+  useEffect(() => {
+    setFileList(files)
+  }, [files])
+
+  const handleDelete = (id: string) => {
+    handleRemove({ id } as TUploadFile, (file) => {
+      setFileList((prev) => prev.filter((item) => item.id !== file.id))
+    })
+  }
+
+  const handleRename = async (
+    fileId: string,
+    newName?: string,
+    newDisplayDate?: string,
+  ) => {
+    let newDate: Date | null = null
+    const fileInReorderableItems = fileList.findIndex(
+      (item) => item.id === fileId,
+    )
+
+    if (fileInReorderableItems === -1) {
+      return
+    }
+
+    if (newDisplayDate) {
+      const [day, month, year] = newDisplayDate.split('.')
+      newDate = parseISO(`${year}-${month}-${day}`)
+
+      if (!isValid(newDate)) {
+        toast.error(formatMessage(strings.invalidDateErrorMessage))
+        return
+      }
+    }
+
+    setFileList((prev) => {
+      const newReorderableItems = [...prev]
+      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
+        newName
+      newReorderableItems[fileInReorderableItems].displayDate = newDate
+        ? newDate.toISOString()
+        : newReorderableItems[fileInReorderableItems].displayDate
+
+      return newReorderableItems
+    })
+
+    const { errors } = await updateFilesMutation({
+      variables: {
+        input: {
+          caseId: workingCase.id,
+          files: [
+            {
+              id: fileId,
+              userGeneratedFilename: newName,
+              ...(newDate && { displayDate: newDate.toISOString() }),
+            },
+          ],
+        },
+      },
+    })
+
+    if (errors) {
+      toast.error(formatMessage(strings.renameFailedErrorMessage))
+    }
+  }
 
   return (
     <div className={styles.container}>
@@ -34,14 +115,14 @@ const UploadFiles: FC<Props> = (props) => {
           {formatMessage(strings.buttonText)}
         </Button>
       </Box>
-      {files.map((file) => (
+      {fileList.map((file) => (
         <Box key={file.id} marginBottom={1} width="full">
           <EditableCaseFile
             enableDrag={false}
             caseFile={file}
             onOpen={onOpen}
-            onRename={onRename}
-            onDelete={onDelete}
+            onRename={handleRename}
+            onDelete={handleDelete}
           />
         </Box>
       ))}

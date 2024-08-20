@@ -7,19 +7,13 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { Box, Icon, Input, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
+import { UploadFile } from '../UploadFiles/UploadFiles'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 
 interface Props {
   enableDrag: boolean
-  caseFile: {
-    id: string
-    created?: string | null
-    displayDate?: string | null
-    displayText?: string | null
-    canOpen?: boolean
-    userGeneratedFilename?: string | null
-  }
+  caseFile: UploadFile
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void

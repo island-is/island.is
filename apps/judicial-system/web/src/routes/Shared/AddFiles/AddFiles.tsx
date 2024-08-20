@@ -13,10 +13,6 @@ import {
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
-  useFileList,
-  useS3Upload,
-} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AddFiles.strings'
 
@@ -25,8 +21,6 @@ const AddFiles: FC = () => {
     useContext(FormContext)
 
   const { formatMessage } = useIntl()
-  const { onOpen } = useFileList({ caseId: workingCase.id })
-  const { handleRemove } = useS3Upload(workingCase.id)
 
   return (
     <PageLayout
@@ -50,18 +44,8 @@ const AddFiles: FC = () => {
               id: 'asd',
               displayText: 'sdasd',
               displayDate: new Date().toISOString(),
-              isDivider: false,
-              isHeading: false,
-              canOpen: true,
             },
           ]}
-          onOpen={onOpen}
-          onDelete={(id) =>
-            handleRemove(id, () => {
-              console.log('asda')
-            })
-          }
-          onRename={() => console.log('asda')}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
