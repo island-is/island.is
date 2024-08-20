@@ -12,4 +12,11 @@ export const container = style({
 
   padding: `${theme.spacing[10]}px`,
   marginBottom: `${theme.spacing[10]}px`,
+  transition: 'border-color 0.2s ease-in-out',
+
+  selectors: {
+    '&:hover': {
+      borderColor: theme.color.blue400,
+    },
+  },
 })

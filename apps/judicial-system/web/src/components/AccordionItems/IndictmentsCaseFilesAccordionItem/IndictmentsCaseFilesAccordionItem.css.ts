@@ -17,6 +17,5 @@ export const reorderGroup = style({
 
 export const reorderItem = style({
   position: 'relative',
-  borderRadius: theme.border.radius.large,
   overflow: 'hidden',
 })

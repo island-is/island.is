@@ -20,14 +20,13 @@ interface Props {
     canOpen?: boolean
     userGeneratedFilename?: string | null
   }
-  onReorder: (id?: string) => void
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
-  const { caseFile, enableDrag, onDelete, onRename, onOpen, onReorder } = props
+  const { caseFile, enableDrag, onOpen, onRename, onDelete } = props
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -70,7 +69,7 @@ const EditableCaseFile: FC<Props> = (props) => {
           <Icon icon="menu" color="blue400" />
         </Box>
       )}
-      <Box width="full">
+      <Box width="full" paddingLeft={enableDrag ? 0 : 2}>
         <AnimatePresence initial={false} mode="wait">
           {isEditing ? (
             <motion.div
@@ -166,7 +165,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </span>
                 </Text>
                 {caseFile.canOpen && (
-                  <Box marginLeft={2}>
+                  <Box marginLeft={1}>
                     <Icon icon="open" type="outline" size="small" />
                   </Box>
                 )}

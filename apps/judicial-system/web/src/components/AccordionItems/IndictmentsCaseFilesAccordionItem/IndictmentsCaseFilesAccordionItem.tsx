@@ -170,7 +170,6 @@ const renderChapter = (chapter: number, name?: string | null) => (
 
 const CaseFile: FC<CaseFileProps> = (props) => {
   const { caseFile, onReorder, onOpen, onRename, onDelete } = props
-  const { formatMessage } = useIntl()
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
@@ -237,7 +236,6 @@ const CaseFile: FC<CaseFileProps> = (props) => {
           onDelete={onDelete}
           onOpen={onOpen}
           onRename={onRename}
-          onReorder={onReorder}
         />
       )}
     </Reorder.Item>
