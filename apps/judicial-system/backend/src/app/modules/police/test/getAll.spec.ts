@@ -80,8 +80,9 @@ describe('PoliceController - Get all', () => {
               dagsStofnad: '2020-01-01',
               domsSkjalsFlokkun: 'dsf1',
               rvMalSkjolMals_ID: 1,
-              heitiSkjals: 'Name 1.pdf',
+              heitiSkjals: 'Name 1',
               malsnumer: 'malsnumer1',
+              skjalasnid: '.pdf',
             },
             {
               dagsStofnad: '2020-01-01',

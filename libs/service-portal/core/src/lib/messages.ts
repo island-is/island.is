@@ -345,6 +345,15 @@ export const m = defineMessages({
     defaultMessage: 'Valmynd',
     id: 'service.portal:menu',
   },
+  menuButtonAria: {
+    id: 'service.portal:menu-button-aria',
+    description: 'Lýsing á notendavalmynd fyrir skjálesara',
+    defaultMessage: 'Valmynd fyrir yfirlit',
+  },
+  notificationButtonAria: {
+    id: 'service.portal:notification-button-aria',
+    defaultMessage: 'Valmynd fyrir tilkynningar',
+  },
   middleLinksTitle: {
     defaultMessage: 'Þjónustuflokkar',
     id: 'service.portal:footer-middle-links-title',
@@ -1554,5 +1563,9 @@ export const m = defineMessages({
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
+  },
+  submit: {
+    id: 'service.portal:submit',
+    defaultMessage: 'Staðfesta',
   },
 })

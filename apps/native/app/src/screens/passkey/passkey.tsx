@@ -21,7 +21,7 @@ import { preferencesStore } from '../../stores/preferences-store'
 import { useRegisterPasskey } from '../../lib/passkeys/useRegisterPasskey'
 import { useAuthenticatePasskey } from '../../lib/passkeys/useAuthenticatePasskey'
 import { authStore } from '../../stores/auth-store'
-import { useBrowser } from '../../lib/useBrowser'
+import { useBrowser } from '../../lib/use-browser'
 import { addPasskeyAsLoginHint } from '../../lib/passkeys/helpers'
 
 const Text = styled.View`

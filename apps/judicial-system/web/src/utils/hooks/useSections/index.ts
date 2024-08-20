@@ -542,7 +542,7 @@ const useSections = (
                 ? false
                 : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
               onClick:
-                !isActive(constants.INDICTMENTS_CASE_FILE_ROUTE) &&
+                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [

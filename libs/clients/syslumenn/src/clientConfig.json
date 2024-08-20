@@ -3210,6 +3210,9 @@
         "nafn": {
           "type": "string"
         },
+        "kennitala": {
+          "type": "string"
+        },
         "idngrein": {
           "type": "string"
         },
@@ -3432,6 +3435,9 @@
         "nafn": {
           "type": "string"
         },
+        "kennitala": {
+          "type": "string"
+        },
         "starfsrettindi": {
           "type": "string"
         }
@@ -3485,6 +3491,9 @@
         "aaetladurFjoldi": {
           "type": "integer",
           "format": "int32"
+        },
+        "stadur": {
+          "type": "string"
         }
       }
     },
@@ -4626,6 +4635,10 @@
         },
         "malsvari": {
           "$ref": "#/definitions/Malsvari"
+        },
+        "arfshlutfall": {
+          "type": "number",
+          "format": "decimal"
         }
       }
     },

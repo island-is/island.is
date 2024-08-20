@@ -67,7 +67,7 @@ const FinanceStatus = () => {
   const financeStatusData: FinanceStatusDataType =
     statusQuery.data?.getFinanceStatus || {}
 
-  function getChargeTypeTotal() {
+  const getChargeTypeTotal = () => {
     const organizationChargeTypes = financeStatusData?.organizations?.map(
       (org) => org.chargeTypes,
     )
@@ -93,13 +93,6 @@ const FinanceStatus = () => {
 
   return (
     <Box marginTop={[1, 1, 2, 2, 4]} marginBottom={[6, 6, 10]}>
-      <FinanceIntro
-        text={formatMessage({
-          id: 'sp.finance-status:intro',
-          defaultMessage:
-            'Hér sérð þú sundurliðun skulda og/eða inneigna hjá ríkissjóði og stofnunum.',
-        })}
-      />
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && (
         <Stack space={2}>
