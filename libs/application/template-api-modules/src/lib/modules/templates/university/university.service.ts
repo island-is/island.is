@@ -127,58 +127,58 @@ export class UniversityService extends BaseTemplateApiService {
     const notFinishedData =
       educationOptionChosen === UniversityApplicationTypes.NOTFINISHED
         ? {
-          schoolName: answers.educationDetails.notFinishedDetails?.school,
-          degree: answers.educationDetails.notFinishedDetails?.degreeLevel,
-          moreDetails:
-            answers.educationDetails.notFinishedDetails?.moreDetails,
-        }
+            schoolName: answers.educationDetails.notFinishedDetails?.school,
+            degree: answers.educationDetails.notFinishedDetails?.degreeLevel,
+            moreDetails:
+              answers.educationDetails.notFinishedDetails?.moreDetails,
+          }
         : undefined
     const exemptionData =
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
-          degreeAttachments: await this.getAttachmentUrls(
-            answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
-              (x, i) => {
-                const type = this.mapFileTypes(i)
-                return {
-                  name: x.name,
-                  key: x.key,
-                  type: type,
-                }
-              },
+            degreeAttachments: await this.getAttachmentUrls(
+              answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
+                (x, i) => {
+                  const type = this.mapFileTypes(i)
+                  return {
+                    name: x.name,
+                    key: x.key,
+                    type: type,
+                  }
+                },
+              ),
             ),
-          ),
-          moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
-        }
+            moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
+          }
         : undefined
     const thirdLevelData =
       educationOptionChosen === UniversityApplicationTypes.THIRDLEVEL
         ? {
-          schoolName: answers.educationDetails.thirdLevelDetails?.school,
-          degree: answers.educationDetails.thirdLevelDetails?.degreeLevel,
-          degreeName: answers.educationDetails.thirdLevelDetails?.degreeMajor,
-          degreeCountry:
-            answers.educationDetails.thirdLevelDetails?.degreeCountry,
-          finishedUnits:
-            answers.educationDetails.thirdLevelDetails?.finishedUnits,
-          degreeStartDate:
-            answers.educationDetails.thirdLevelDetails?.beginningDate,
-          degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
-          moreDetails:
-            answers.educationDetails.thirdLevelDetails?.moreDetails,
-          degreeAttachments: await this.getAttachmentUrls(
-            answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
-              (x, i) => {
-                const type = this.mapFileTypes(i)
-                return {
-                  name: x.name,
-                  key: x.key,
-                  type: type,
-                }
-              },
+            schoolName: answers.educationDetails.thirdLevelDetails?.school,
+            degree: answers.educationDetails.thirdLevelDetails?.degreeLevel,
+            degreeName: answers.educationDetails.thirdLevelDetails?.degreeMajor,
+            degreeCountry:
+              answers.educationDetails.thirdLevelDetails?.degreeCountry,
+            finishedUnits:
+              answers.educationDetails.thirdLevelDetails?.finishedUnits,
+            degreeStartDate:
+              answers.educationDetails.thirdLevelDetails?.beginningDate,
+            degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
+            moreDetails:
+              answers.educationDetails.thirdLevelDetails?.moreDetails,
+            degreeAttachments: await this.getAttachmentUrls(
+              answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
+                (x, i) => {
+                  const type = this.mapFileTypes(i)
+                  return {
+                    name: x.name,
+                    key: x.key,
+                    type: type,
+                  }
+                },
+              ),
             ),
-          ),
-        }
+          }
         : undefined
     const finishedDataPromises =
       (answers.educationDetails.finishedDetails &&
@@ -229,27 +229,27 @@ export class UniversityService extends BaseTemplateApiService {
     }
 
     const createApplicationDto: UniversityApplicationControllerCreateApplicationRequest =
-    {
-      createApplicationDto: {
-        applicationId: application.id,
-        universityId: answers.programInformation.university,
-        programId: answers.programInformation.program,
-        modeOfDelivery: mapStringToEnum(
-          answers.modeOfDeliveryInformation.chosenMode,
-          CreateApplicationDtoModeOfDeliveryEnum,
-          'CreateApplicationDtoModeOfDeliveryEnum',
-        ),
-        applicant: user,
-        educationOption: mapStringToEnum(
-          educationOptionChosen,
-          CreateApplicationDtoEducationOptionEnum,
-          'CreateApplicationDtoEducationOptionEnum',
-        ),
-        educationList: combinedEducationList,
-        workExperienceList: [],
-        extraFieldList: [],
-      },
-    }
+      {
+        createApplicationDto: {
+          applicationId: application.id,
+          universityId: answers.programInformation.university,
+          programId: answers.programInformation.program,
+          modeOfDelivery: mapStringToEnum(
+            answers.modeOfDeliveryInformation.chosenMode,
+            CreateApplicationDtoModeOfDeliveryEnum,
+            'CreateApplicationDtoModeOfDeliveryEnum',
+          ),
+          applicant: user,
+          educationOption: mapStringToEnum(
+            educationOptionChosen,
+            CreateApplicationDtoEducationOptionEnum,
+            'CreateApplicationDtoEducationOptionEnum',
+          ),
+          educationList: combinedEducationList,
+          workExperienceList: [],
+          extraFieldList: [],
+        },
+      }
     await this.universityApplicationApiWithAuth(
       auth,
     ).universityApplicationControllerCreateApplication(createApplicationDto)
