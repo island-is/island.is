@@ -15,7 +15,6 @@ import {
 } from '@island.is/service-portal/core'
 import { m } from '../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
-import parseISO from 'date-fns/parseISO'
 import { SocialInsuranceMaintenancePaths } from '../../lib/paths'
 import { useGetIncomePlanQuery } from './IncomePlan.generated'
 import { SocialInsuranceIncomePlanStatus } from '@island.is/api/schema'
@@ -75,7 +74,6 @@ const IncomePlan = () => {
 
   const { data, loading, error } = useGetIncomePlanQuery()
 
-  console.log(`${document.location.origin}umsoknir/tekjuaaetlun`)
   return (
     <Box>
       <IntroHeader
@@ -97,6 +95,7 @@ const IncomePlan = () => {
         <Stack space={2}>
           {!error &&
             !loading &&
+            data?.socialInsuranceIncomePlan &&
             !data?.socialInsuranceIncomePlan?.isEligibleForChange
               .isEligible && (
               <AlertMessage
@@ -112,18 +111,21 @@ const IncomePlan = () => {
               icon="open"
               variant="utility"
             />
-            <LinkButton
-              to={`${document.location.origin}/${formatMessage(
-                m.incomePlanModifyLink,
-              )}`}
-              text={formatMessage(m.modifyIncomePlan)}
-              disabled={
-                !data?.socialInsuranceIncomePlan?.isEligibleForChange.isEligible
-              }
-              icon="open"
-              variant="primary"
-              size="small"
-            />
+            {data?.socialInsuranceIncomePlan && (
+              <LinkButton
+                to={`${document.location.origin}/${formatMessage(
+                  m.incomePlanModifyLink,
+                )}`}
+                text={formatMessage(m.modifyIncomePlan)}
+                disabled={
+                  !data?.socialInsuranceIncomePlan?.isEligibleForChange
+                    .isEligible
+                }
+                icon="open"
+                variant="primary"
+                size="small"
+              />
+            )}
           </Inline>
           {data?.socialInsuranceIncomePlan ? (
             <ActionCard
@@ -169,7 +171,9 @@ const IncomePlan = () => {
               borderColor="blue200"
               cta={{
                 label: formatMessage(m.submitIncomePlan),
-                url: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
+                url: `${document.location.origin}/${formatMessage(
+                  m.incomePlanModifyLink,
+                )}`,
                 variant: 'primary',
                 size: 'medium',
                 icon: 'open',
