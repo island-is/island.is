@@ -117,7 +117,11 @@ export const webRenderConnectedComponent = (
     case 'AircraftSearch':
       return <AircraftSearch slice={slice} />
     case 'DrivingInstructorList':
-      return <DrivingInstructorList slice={slice} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <DrivingInstructorList slice={slice} />
+        </IntlProvider>
+      )
     case 'PlateAvailableSearch':
       return <PlateAvailableSearch slice={slice} />
     case 'HousingBenefitCalculator':
