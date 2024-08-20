@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
+import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
@@ -31,7 +32,33 @@ const UploadFiles: FC<Props> = (props) => {
       </Box>
       {files.map((file, index) => (
         <Box key={index} marginBottom={1}>
-          <Text>{file.name}</Text>
+          <EditableCaseFile
+            enableDrag={false}
+            caseFile={{
+              id: '',
+              created: undefined,
+              displayDate: undefined,
+              displayText: file.name,
+              canOpen: undefined,
+              userGeneratedFilename: undefined,
+            }}
+            onReorder={function (id?: string): void {
+              throw new Error('Function not implemented.')
+            }}
+            onOpen={function (id: string): void {
+              throw new Error('Function not implemented.')
+            }}
+            onRename={function (
+              id: string,
+              name?: string,
+              displayDate?: string,
+            ): void {
+              throw new Error('Function not implemented.')
+            }}
+            onDelete={function (id: string): void {
+              throw new Error('Function not implemented.')
+            }}
+          />
         </Box>
       ))}
     </div>

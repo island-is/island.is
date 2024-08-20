@@ -12,6 +12,7 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
+import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 
 import { strings } from './AddFiles.strings'
 
@@ -37,6 +38,7 @@ const AddFiles: FC = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        <UploadFiles files={[{ name: 'asdasd' }]} />
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
