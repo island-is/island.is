@@ -424,7 +424,7 @@ export const Draft: Form = buildForm({
                       formatNationalId(s.supervisor.nationalId) +
                       ' - ' +
                       (s.constituency as unknown as string[])
-                        .map((e) => e.split('|')[1])
+                        .map((c) => c.split('|')[1])
                         .join(', '),
                   )
                   .join('\n')
