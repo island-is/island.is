@@ -68,6 +68,12 @@ export class Delegation extends Model<
 
   @Column({
     type: DataType.STRING,
+    allowNull: true,
+  })
+  createdByNationalId?: string
+
+  @Column({
+    type: DataType.STRING,
     allowNull: false,
     defaultValue: DEFAULT_DOMAIN,
   })

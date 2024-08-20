@@ -214,6 +214,7 @@ export class DelegationsOutgoingService {
         fromNationalId: user.nationalId,
         toNationalId: createDelegation.toNationalId,
         domainName: createDelegation.domainName,
+        createdByNationalId: user.actor?.nationalId ?? user.nationalId,
         // TODO: should not persist names with the delegation
         // should always look it up to avoid being out of sync
         fromDisplayName,
