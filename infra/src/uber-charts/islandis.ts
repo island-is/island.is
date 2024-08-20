@@ -8,6 +8,7 @@ import {
   serviceSetup as appSystemApiSetup,
   workerSetup as appSystemApiWorkerSetup,
 } from '../../../apps/application-system/api/infra/application-system-api'
+import { serviceSetup as appSystemFormSetup } from '../../../apps/application-system/form/infra/application-system-form'
 
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
 import { serviceSetup as servicePortalSetup } from '../../../apps/service-portal/infra/service-portal'
@@ -113,6 +114,7 @@ const api = apiSetup({
   userNotificationService,
 })
 const servicePortal = servicePortalSetup({ graphql: api })
+const appSystemForm = appSystemFormSetup({ api: api })
 const web = webSetup({ api: api })
 const searchIndexer = searchIndexerSetup()
 const contentfulEntryTagger = contentfulEntryTaggerSetup()
@@ -143,6 +145,7 @@ const externalContractsTests = externalContractsTestsSetup()
 export const Services: EnvironmentServices = {
   prod: [
     appSystemApi,
+    appSystemForm,
     servicePortal,
     servicePortalApi,
     adminPortal,
@@ -178,6 +181,7 @@ export const Services: EnvironmentServices = {
   ],
   staging: [
     appSystemApi,
+    appSystemForm,
     servicePortal,
     servicePortalApi,
     adminPortal,
@@ -211,6 +215,7 @@ export const Services: EnvironmentServices = {
   ],
   dev: [
     appSystemApi,
+    appSystemForm,
     servicePortal,
     servicePortalApi,
     adminPortal,
