@@ -113,10 +113,10 @@ class CreateApplicationFileDto {
 
   @IsString()
   @ApiProperty({
-    description: 'Blob for file',
+    description: 'A public download link to a s3 file',
     example: '',
   })
-  blob!: Blob
+  url!: string
 }
 
 class CreateApplicationEducationDto {
