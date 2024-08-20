@@ -1,4 +1,5 @@
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
@@ -28,16 +29,36 @@ const UploadFiles: FC<Props> = (props) => {
   const { files } = props
   const [fileList, setFileList] = useState<UploadFile[]>([])
   const { workingCase } = useContext(FormContext)
-
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-  const { handleRemove } = useS3Upload(workingCase.id)
+  const { handleRemove, update } = useS3Upload(workingCase.id)
   const [updateFilesMutation] = useUpdateFilesMutation()
 
   useEffect(() => {
     setFileList(files)
   }, [files])
+
+  const mapFileToUploadFile = (files: File[]): UploadFile[] => {
+    return files.map((file) => ({
+      id: file.name,
+      displayText: file.name,
+      created: new Date().toISOString(),
+    }))
+  }
+
+  const onDrop = useCallback(
+    (acceptedFiles: File[]) => {
+      update(acceptedFiles)
+      setFileList((prev) => [...prev, ...mapFileToUploadFile(acceptedFiles)])
+    },
+    [update],
+  )
+
+  const { getRootProps, getInputProps, open } = useDropzone({
+    accept: 'application/pdf',
+    onDrop,
+  })
 
   const handleDelete = (id: string) => {
     handleRemove({ id } as TUploadFile, (file) => {
@@ -100,8 +121,9 @@ const UploadFiles: FC<Props> = (props) => {
     }
   }
 
+  console.log(fileList)
   return (
-    <div className={styles.container}>
+    <div className={styles.container} {...getRootProps}>
       <Box marginBottom={1}>
         <Text variant="h4" as="h4">
           {formatMessage(strings.heading)}
@@ -111,7 +133,12 @@ const UploadFiles: FC<Props> = (props) => {
         <Text>{formatMessage(strings.acceptFiles)}</Text>
       </Box>
       <Box marginBottom={3}>
-        <Button variant="ghost" size="small" icon="attach">
+        <Button
+          variant="ghost"
+          size="small"
+          icon="attach"
+          onClick={() => open()}
+        >
           {formatMessage(strings.buttonText)}
         </Button>
       </Box>
@@ -126,6 +153,7 @@ const UploadFiles: FC<Props> = (props) => {
           />
         </Box>
       ))}
+      <input {...getInputProps()} />
     </div>
   )
 }

@@ -177,7 +177,7 @@ const uploadToS3 = (
       if (request.status >= 200 && request.status < 300) {
         resolve(file)
       } else {
-        reject('Failed to upload file to S3')
+        reject('Failed to upload file to S3' + request.status)
       }
     })
 
@@ -233,6 +233,50 @@ const useS3Upload = (caseId: string) => {
       return createdFile.id
     },
     [limitedAccess, limitedAccessCreateFile, createFile, caseId],
+  )
+
+  const update = useCallback(
+    async (files: any[]) => {
+      const mutation = limitedAccess
+        ? limitedAccessCreatePresignedPost
+        : createPresignedPost
+
+      const getPresignedPost = async (file: TUploadFile) => {
+        const { data } = await mutation({
+          variables: {
+            input: {
+              caseId,
+              fileName: file.name.normalize(),
+              type: file.type ?? '',
+            },
+          },
+        })
+
+        const presignedPost = limitedAccess
+          ? (data as LimitedAccessCreatePresignedPostMutation)
+              ?.limitedAccessCreatePresignedPost
+          : (data as CreatePresignedPostMutation)?.createPresignedPost
+
+        if (!presignedPost?.fields?.key) {
+          throw Error('Failed to get presigned post')
+        }
+
+        return presignedPost
+      }
+
+      files.map(async (file) => {
+        const presignedPost = await getPresignedPost(file)
+        uploadToS3(file, presignedPost, () => {
+          console.log('update')
+        })
+      })
+    },
+    [
+      caseId,
+      createPresignedPost,
+      limitedAccess,
+      limitedAccessCreatePresignedPost,
+    ],
   )
 
   const handleUpload = useCallback(
@@ -432,6 +476,7 @@ const useS3Upload = (caseId: string) => {
     handleRetry,
     handleRemove,
     handleUploadFromPolice,
+    update,
   }
 }
 

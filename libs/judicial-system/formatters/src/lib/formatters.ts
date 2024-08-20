@@ -29,7 +29,6 @@ export const formatDate = (
   shortenDayName?: boolean,
 ): string | undefined => {
   const theDate: Date = getAsDate(date)
-  console.log(theDate, date)
 
   if (isValid(theDate)) {
     const formattedDate = format(theDate, formatPattern, {
