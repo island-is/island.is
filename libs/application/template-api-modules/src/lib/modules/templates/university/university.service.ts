@@ -127,68 +127,65 @@ export class UniversityService extends BaseTemplateApiService {
     const notFinishedData =
       educationOptionChosen === UniversityApplicationTypes.NOTFINISHED
         ? {
-            schoolName: answers.educationDetails.notFinishedDetails?.school,
-            degree: answers.educationDetails.notFinishedDetails?.degreeLevel,
-            moreDetails:
-              answers.educationDetails.notFinishedDetails?.moreDetails,
-          }
+          schoolName: answers.educationDetails.notFinishedDetails?.school,
+          degree: answers.educationDetails.notFinishedDetails?.degreeLevel,
+          moreDetails:
+            answers.educationDetails.notFinishedDetails?.moreDetails,
+        }
         : undefined
     const exemptionData =
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
-              answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
-                (x, i) => {
-                  const type = this.mapFileTypes(i)
-                  return {
-                    name: x.name,
-                    key: x.key,
-                    type: type,
-                  }
-                },
-              ),
+          degreeAttachments: await this.getAttachmentUrls(
+            answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
+              (x, i) => {
+                const type = this.mapFileTypes(i)
+                return {
+                  name: x.name,
+                  key: x.key,
+                  type: type,
+                }
+              },
             ),
-            moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
-          }
+          ),
+          moreDetails: answers.educationDetails.exemptionDetails?.moreDetails,
+        }
         : undefined
     const thirdLevelData =
       educationOptionChosen === UniversityApplicationTypes.THIRDLEVEL
         ? {
-            schoolName: answers.educationDetails.thirdLevelDetails?.school,
-            degree: answers.educationDetails.thirdLevelDetails?.degreeLevel,
-            degreeName: answers.educationDetails.thirdLevelDetails?.degreeMajor,
-            degreeCountry:
-              answers.educationDetails.thirdLevelDetails?.degreeCountry,
-            finishedUnits:
-              answers.educationDetails.thirdLevelDetails?.finishedUnits,
-            degreeStartDate:
-              answers.educationDetails.thirdLevelDetails?.beginningDate,
-            degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
-            moreDetails:
-              answers.educationDetails.thirdLevelDetails?.moreDetails,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
-              answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
-                (x, i) => {
-                  const type = this.mapFileTypes(i)
-                  return {
-                    name: x.name,
-                    key: x.key,
-                    type: type,
-                  }
-                },
-              ),
+          schoolName: answers.educationDetails.thirdLevelDetails?.school,
+          degree: answers.educationDetails.thirdLevelDetails?.degreeLevel,
+          degreeName: answers.educationDetails.thirdLevelDetails?.degreeMajor,
+          degreeCountry:
+            answers.educationDetails.thirdLevelDetails?.degreeCountry,
+          finishedUnits:
+            answers.educationDetails.thirdLevelDetails?.finishedUnits,
+          degreeStartDate:
+            answers.educationDetails.thirdLevelDetails?.beginningDate,
+          degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
+          moreDetails:
+            answers.educationDetails.thirdLevelDetails?.moreDetails,
+          degreeAttachments: await this.getAttachmentUrls(
+            answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
+              (x, i) => {
+                const type = this.mapFileTypes(i)
+                return {
+                  name: x.name,
+                  key: x.key,
+                  type: type,
+                }
+              },
             ),
-          }
+          ),
+        }
         : undefined
     const finishedDataPromises =
       (answers.educationDetails.finishedDetails &&
         answers.educationDetails.finishedDetails.map(async (item) => {
           return {
             ...item,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
+            degreeAttachments: await this.getAttachmentUrls(
               item.degreeAttachments?.map((x, i) => {
                 const type = this.mapFileTypes(i)
                 return {
@@ -232,49 +229,44 @@ export class UniversityService extends BaseTemplateApiService {
     }
 
     const createApplicationDto: UniversityApplicationControllerCreateApplicationRequest =
-      {
-        createApplicationDto: {
-          applicationId: application.id,
-          universityId: answers.programInformation.university,
-          programId: answers.programInformation.program,
-          modeOfDelivery: mapStringToEnum(
-            answers.modeOfDeliveryInformation.chosenMode,
-            CreateApplicationDtoModeOfDeliveryEnum,
-            'CreateApplicationDtoModeOfDeliveryEnum',
-          ),
-          applicant: user,
-          educationOption: mapStringToEnum(
-            educationOptionChosen,
-            CreateApplicationDtoEducationOptionEnum,
-            'CreateApplicationDtoEducationOptionEnum',
-          ),
-          educationList: combinedEducationList,
-          workExperienceList: [],
-          extraFieldList: [],
-        },
-      }
+    {
+      createApplicationDto: {
+        applicationId: application.id,
+        universityId: answers.programInformation.university,
+        programId: answers.programInformation.program,
+        modeOfDelivery: mapStringToEnum(
+          answers.modeOfDeliveryInformation.chosenMode,
+          CreateApplicationDtoModeOfDeliveryEnum,
+          'CreateApplicationDtoModeOfDeliveryEnum',
+        ),
+        applicant: user,
+        educationOption: mapStringToEnum(
+          educationOptionChosen,
+          CreateApplicationDtoEducationOptionEnum,
+          'CreateApplicationDtoEducationOptionEnum',
+        ),
+        educationList: combinedEducationList,
+        workExperienceList: [],
+        extraFieldList: [],
+      },
+    }
     await this.universityApplicationApiWithAuth(
       auth,
     ).universityApplicationControllerCreateApplication(createApplicationDto)
   }
 
-  private async getFilesFromAttachment(
-    application: ApplicationWithAttachments,
+  private async getAttachmentUrls(
     attachments?: { name: string; key: string; type: string }[],
-  ): Promise<{ fileName: string; fileType: string; blob: Blob }[]> {
+  ): Promise<{ fileName: string; fileType: string; url: string }[]> {
+    const expiry = 36000;
+
     return await Promise.all(
       attachments?.map(async (file) => {
-        //todo change to getAttachmentWithSignedUrl
-        const blob =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBlob(
-            application,
-            file.key,
-          )
         return {
           fileName: file.name,
           fileType: file.type,
-          blob,
-        }
+          url: await this.sharedTemplateAPIService.getAttachmentUrl(file.key, expiry),
+        };
       }) || [],
     )
   }

@@ -1,12 +1,9 @@
-import {ApplicationTypes, FieldType, IApplication, IApplicationAttachment} from '@island.is/university-gateway'
+import {ApplicationTypes, IApplication, IApplicationAttachment} from '@island.is/university-gateway'
 import {
   ApplicationsAttachments,
   ApplicationsPostRequest,
   AttachmentKey,
-  InlineResponse2002Data,
-  InlineResponse2002ExtraApplicationFields
 } from '../../../gen/fetch'
-import {AttachmentS3Service} from "@island.is/application/template-api-modules";
 
 export const mapUglaApplication = async (
   application: IApplication,
@@ -67,12 +64,10 @@ export const mapUglaApplication = async (
 
 const mapApplicationAttachments = async (attachments: Array<IApplicationAttachment | undefined>): Promise<Array<ApplicationsAttachments>> => {
   return await Promise.all(attachments.filter(Boolean).map(async (attachment) => {
-    const url = await AttachmentS3Service.generateSignedUrl(attachment.blob, 60)
-
     return {
-      url: url,
-      attachmentKey: AttachmentKey[attachment.fileType as keyof typeof AttachmentKey],
-      fileName: attachment.fileName
+      url: attachment?.url,
+      attachmentKey: AttachmentKey[attachment?.fileType as keyof typeof AttachmentKey],
+      fileName: attachment?.fileName
     } as ApplicationsAttachments
   }))
 

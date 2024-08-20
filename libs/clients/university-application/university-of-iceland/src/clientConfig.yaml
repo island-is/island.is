@@ -175,40 +175,6 @@ paths:
                                 type: 'string'
                               required:
                                 type: 'boolean'
-                        extraApplicationTextsIs:
-                          type: 'array'
-                          items:
-                            type: 'object'
-                            properties:
-                              toptext:
-                                type: 'string'
-                              sociallife:
-                                type: 'string'
-                              forYou:
-                                type: 'string'
-                              exchangeStudy:
-                                type: 'string'
-                              work:
-                                type: 'string'
-                              about:
-                                type: 'string'
-                        extraApplicationTextsEn:
-                          type: 'array'
-                          items:
-                            type: 'object'
-                            properties:
-                              toptext:
-                                type: 'string'
-                              sociallife:
-                                type: 'string'
-                              forYou:
-                                type: 'string'
-                              exchangeStudy:
-                                type: 'string'
-                              work:
-                                type: 'string'
-                              about:
-                                type: 'string'
                         kjorsvid:
                           type: 'array'
                           items:
