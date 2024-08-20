@@ -113,6 +113,33 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: messages.vaccinations,
+      path: HealthPaths.HealthVaccinations,
+      children: [
+        {
+          name: messages.generalVaccinations,
+          path: HealthPaths.HealthVaccinationsGeneral,
+          navHide: true,
+        },
+        {
+          name: messages.otherVaccinations,
+          path: HealthPaths.HealthVaccinationsOther,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.organDonation,
+      path: HealthPaths.HealthOrganDonation,
+      children: [
+        {
+          name: messages.changeRegistration,
+          path: HealthPaths.HealthOrganDonationRegistration,
+          navHide: true,
+        },
+      ],
+    },
   ],
   description: m.healthDescription,
 }

@@ -100,16 +100,15 @@ import { UniversityCareersModule } from '@island.is/api/domains/university-caree
 import { UserNotificationClientConfig } from '@island.is/clients/user-notification'
 import {
   HealthDirectorateClientConfig,
+  HealthDirectorateVaccinationsClientConfig,
+  HealthDirectorateOrganDonationClientConfig,
   HealthDirectorateClientModule,
 } from '@island.is/clients/health-directorate'
 import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
-import {
-  OfficialJournalOfIcelandApplicationClientConfig,
-  OfficialJournalOfIcelandApplicationClientModule,
-} from '@island.is/clients/official-journal-of-iceland/application'
+import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
 import { IcelandicGovernmentInstitutionVacanciesClientConfig } from '@island.is/clients/icelandic-government-institution-vacancies'
@@ -170,6 +169,7 @@ import { SocialInsuranceAdministrationClientConfig } from '@island.is/clients/so
 import { UniversityGatewayApiClientConfig } from '@island.is/clients/university-gateway-api'
 import { FormSystemClientConfig } from '@island.is/clients/form-system'
 import { FormSystemModule } from '@island.is/api/domains/form-system'
+import { HealthDirectorateModule } from '@island.is/api/domains/health-directorate'
 
 import { VehiclesMileageClientConfig } from '@island.is/clients/vehicles-mileage'
 import { getConfig } from './environments'
@@ -192,6 +192,9 @@ import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { FriggClientConfig } from '@island.is/clients/mms/frigg'
+import { UmbodsmadurSkuldaraModule } from '@island.is/api/domains/umbodsmadur-skuldara'
+import { UmbodsmadurSkuldaraClientConfig } from '@island.is/clients/ums-cost-of-living-calculator'
+import { emailModuleConfig } from '@island.is/email-service'
 
 const environment = getConfig
 
@@ -322,6 +325,8 @@ const environment = getConfig
     AuthAdminModule,
     HousingBenefitCalculatorModule,
     SignatureCollectionModule,
+    UmbodsmadurSkuldaraModule,
+    HealthDirectorateModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -383,6 +388,8 @@ const environment = getConfig
         JudicialAdministrationClientConfig,
         CommunicationsConfig,
         HealthDirectorateClientConfig,
+        HealthDirectorateVaccinationsClientConfig,
+        HealthDirectorateOrganDonationClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
         InnaClientConfig,
@@ -413,6 +420,8 @@ const environment = getConfig
         VmstClientConfig,
         HealthInsuranceV2ClientConfig,
         CriminalRecordClientConfig,
+        UmbodsmadurSkuldaraClientConfig,
+        emailModuleConfig,
       ],
     }),
   ],

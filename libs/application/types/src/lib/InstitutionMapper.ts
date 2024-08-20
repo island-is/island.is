@@ -123,7 +123,15 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.FJARSYSLA_RIKISINS,
     slug: InstitutionTypes.FJARSYSLA_RIKISINS,
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
     slug: InstitutionTypes.RIKISENDURSKODUN,
   },
@@ -131,7 +139,7 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },
-  [ApplicationTypes.OPERATING_LCENSE]: {
+  [ApplicationTypes.OPERATING_LICENSE]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
   },
@@ -207,11 +215,19 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.URVINNSLUSJODUR,
     slug: InstitutionTypes.URVINNSLUSJODUR,
   },
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+  },
+  [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+  },
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },
@@ -271,6 +287,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
     slug: InstitutionTypes.DOMSMALARADUNEYTID,
   },
+  [ApplicationTypes.ID_CARD]: {
+    nationalId: InstitutionNationalIds.SYSLUMENN,
+    slug: InstitutionTypes.SYSLUMENN,
+  },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     nationalId: InstitutionNationalIds.SJUKRATRYGGINGAR_ISLANDS,
     slug: InstitutionTypes.SJUKRATRYGGINGAR_ISLANDS,
@@ -282,5 +302,9 @@ export const institutionMapper = {
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+  },
+  [ApplicationTypes.MACHINE_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
   },
 }

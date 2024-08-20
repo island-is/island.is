@@ -54,6 +54,9 @@ export enum SjukratryggingarCategories {
 
   // Túlkaþjónusta
   TULKATHJONUSTA = 'tulkathjonusta',
+
+  // Evrópska sjúkratryggingakortið
+  EVROPSKA_SJUKRATRYGGINGAKORTID = 'evropska_sjukratryggingakortid',
 }
 
 export enum DirectorateOfImmigrationCategories {
@@ -83,6 +86,15 @@ export enum DirectorateOfImmigrationCategories {
 
   // Aðstoð við sjálfviljuga heimför
   ASSISTED_VOLUNTARY_RETURN = 'adstod-vid-sjalfviljuga-heimfor',
+}
+
+export enum FiskistofaCategories {
+  STRANDVEIDAR = '6vPorSHCBf4o22rhbHedHR',
+  VEIDILEYFI = '5QmuK7Ns1wgpEUWTetbLGb',
+  AFLASKRANING = '4D5Fhl2YedrTOJ7PTMYeo0',
+  FISKVEIDAR = '5i5oQMp8r2oE43bYNPeZig',
+  UTFLUTNINGUR = '6sE8R2mNldfv9ZEHGv5FA',
+  VEIDIHEIMILDIR = '1agbWJCHTDVfVR4yQZPaEK',
 }
 
 export const filterSupportCategories = (
@@ -169,6 +181,19 @@ export const filterSupportCategories = (
           title:
             namespace?.['sjukratryggingarInterpretationServices'] ||
             (locale === 'is' ? 'Túlkaþjónusta' : 'Interpretation services'),
+        },
+        {
+          id: SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID,
+          importance: 0,
+          __typename: 'SupportCategory',
+          description: '',
+          organization: organization,
+          slug: SjukratryggingarCategories.EVROPSKA_SJUKRATRYGGINGAKORTID,
+          title:
+            namespace?.['sjukratryggingarEuropeanHealthInsuranceCard'] ||
+            (locale === 'is'
+              ? 'Evrópska sjúkratryggingakortið'
+              : 'The European Health Insurance Card'),
         },
       ])
   }

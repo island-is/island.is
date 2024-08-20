@@ -95,7 +95,6 @@ export enum CaseState {
   WAITING_FOR_CONFIRMATION = 'WAITING_FOR_CONFIRMATION',
   SUBMITTED = 'SUBMITTED',
   RECEIVED = 'RECEIVED',
-  MAIN_HEARING = 'MAIN_HEARING',
   WAITING_FOR_CANCELLATION = 'WAITING_FOR_CANCELLATION',
   COMPLETED = 'COMPLETED',
   ACCEPTED = 'ACCEPTED',
@@ -109,7 +108,6 @@ export enum IndictmentCaseState {
   WAITING_FOR_CONFIRMATION = CaseState.WAITING_FOR_CONFIRMATION,
   SUBMITTED = CaseState.SUBMITTED,
   RECEIVED = CaseState.RECEIVED,
-  MAIN_HEARING = CaseState.MAIN_HEARING,
   WAITING_FOR_CANCELLATION = CaseState.WAITING_FOR_CANCELLATION,
   COMPLETED = CaseState.COMPLETED,
   DELETED = CaseState.DELETED,
@@ -141,7 +139,6 @@ export enum CaseTransition {
   ASK_FOR_CANCELLATION = 'ASK_FOR_CANCELLATION',
   RECEIVE = 'RECEIVE',
   RETURN_INDICTMENT = 'RETURN_INDICTMENT',
-  REDISTRIBUTE = 'REDISTRIBUTE',
   COMPLETE = 'COMPLETE',
   ACCEPT = 'ACCEPT',
   REJECT = 'REJECT',
@@ -162,7 +159,6 @@ export enum IndictmentCaseTransition {
   ASK_FOR_CANCELLATION = CaseTransition.ASK_FOR_CANCELLATION,
   RECEIVE = CaseTransition.RECEIVE,
   RETURN_INDICTMENT = CaseTransition.RETURN_INDICTMENT,
-  REDISTRIBUTE = CaseTransition.REDISTRIBUTE,
   COMPLETE = CaseTransition.COMPLETE,
   DELETE = CaseTransition.DELETE,
 }
@@ -223,6 +219,7 @@ export enum CaseDecision {
 
 export enum IndictmentDecision {
   POSTPONING = 'POSTPONING',
+  SCHEDULING = 'SCHEDULING',
   POSTPONING_UNTIL_VERDICT = 'POSTPONING_UNTIL_VERDICT',
   COMPLETING = 'COMPLETING',
   REDISTRIBUTING = 'REDISTRIBUTING',
@@ -244,6 +241,7 @@ export enum CaseIndictmentRulingDecision {
   FINE = 'FINE',
   DISMISSAL = 'DISMISSAL',
   CANCELLATION = 'CANCELLATION',
+  MERGE = 'MERGE',
 }
 
 export enum IndictmentCaseReviewDecision {
@@ -274,6 +272,30 @@ export enum ServiceRequirement {
   REQUIRED = 'REQUIRED',
   NOT_REQUIRED = 'NOT_REQUIRED',
   NOT_APPLICABLE = 'NOT_APPLICABLE',
+}
+
+export enum CourtSessionType {
+  MAIN_HEARING = 'MAIN_HEARING',
+  OTHER = 'OTHER',
+  APPRAISER_SUMMONS = 'APPRAISER_SUMMONS',
+  VERDICT = 'VERDICT',
+  MAIN_HEARING_CONTINUATION = 'MAIN_HEARING_CONTINUATION',
+  HEARING = 'HEARING',
+  ORAL_ARGUMENTS = 'ORAL_ARGUMENTS',
+  RULING = 'RULING',
+  ARRAIGNMENT = 'ARRAIGNMENT',
+}
+
+export const courtSessionTypeNames = {
+  MAIN_HEARING: 'Aðalmeðferð',
+  OTHER: 'Annað',
+  APPRAISER_SUMMONS: 'Dómkvaðning matsmanna',
+  VERDICT: 'Dómsuppsaga',
+  MAIN_HEARING_CONTINUATION: 'Framhald aðalmeðferðar',
+  HEARING: 'Fyrirtaka',
+  ORAL_ARGUMENTS: 'Munnlegur málflutningur',
+  RULING: 'Uppkvaðning úrskurðar',
+  ARRAIGNMENT: 'Þingfesting',
 }
 
 export const indictmentCases = [CaseType.INDICTMENT]
@@ -355,7 +377,6 @@ export const hasIndictmentCaseBeenSubmittedToCourt = (
       [
         CaseState.SUBMITTED,
         CaseState.RECEIVED,
-        CaseState.MAIN_HEARING,
         ...completedIndictmentCaseStates,
       ].includes(state),
   )
@@ -392,23 +413,6 @@ export const getStatementDeadline = (appealReceived: Date): string => {
   return new Date(
     new Date(appealReceived).setDate(appealReceived.getDate() + 1),
   ).toISOString()
-}
-
-export const prosecutorCanSelectDefenderForInvestigationCase = (
-  type?: CaseType | null,
-): boolean => {
-  return Boolean(
-    type &&
-      [
-        CaseType.ELECTRONIC_DATA_DISCOVERY_INVESTIGATION,
-        CaseType.EXPULSION_FROM_HOME,
-        CaseType.PAROLE_REVOCATION,
-        CaseType.PSYCHIATRIC_EXAMINATION,
-        CaseType.RESTRAINING_ORDER,
-        CaseType.RESTRAINING_ORDER_AND_EXPULSION_FROM_HOME,
-        CaseType.OTHER,
-      ].includes(type),
-  )
 }
 
 export const isIndictmentCaseState = (

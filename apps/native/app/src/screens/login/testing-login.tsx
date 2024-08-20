@@ -18,7 +18,8 @@ import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
 import testinglogo from '../../assets/logo/testing-logo-64w.png'
 import { environments, isTestingApp, useConfig } from '../../config'
-import { openBrowser } from '../../lib/rn-island'
+import { useBrowser } from '../../lib/use-browser'
+import { openNativeBrowser } from '../../lib/rn-island'
 import { showPicker } from '../../lib/show-picker'
 import { useAuthStore } from '../../stores/auth-store'
 import {
@@ -85,6 +86,7 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
 }) => {
   const authStore = useAuthStore()
   const { environment = environments.prod, cognito } = useEnvironmentStore()
+  const { openBrowser } = useBrowser()
   const intl = useIntl()
   const [isLoggingIn, setIsLoggingIn] = useState(false)
   const [authState, setAuthState] = useState<{
@@ -378,7 +380,7 @@ function DebugInfo({ componentId }: { componentId: string }) {
       state: 'state',
     }
     const url = `${config.cognitoUrl}?${new URLSearchParams(params)}`
-    return openBrowser(url, componentId)
+    return openNativeBrowser(url, componentId)
   }
 
   return (

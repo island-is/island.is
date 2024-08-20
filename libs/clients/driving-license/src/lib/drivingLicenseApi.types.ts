@@ -28,16 +28,21 @@ export interface Disqualification {
   from?: Date | null
 }
 
+export interface Remark {
+  code: string
+  description: string
+}
 export interface DriversLicense {
   id: number
   name: string
   issued?: Date | null
   expires?: Date | null
   categories: DriversLicenseCategory[]
-  remarks?: string[]
+  remarks?: Remark[]
   disqualification?: Disqualification | null
   birthCountry?: string | null
   publishPlaceName?: string | null
+  comments?: LicenseComments[] | null
 }
 
 export interface RemarkCode {

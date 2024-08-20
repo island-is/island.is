@@ -25,7 +25,7 @@ const getAsDate = (date: Date | string | undefined | null): Date => {
 
 export const formatDate = (
   date: Date | string | undefined | null,
-  formatPattern: string,
+  formatPattern = 'dd.MM.yyyy',
   shortenDayName?: boolean,
 ): string | undefined => {
   const theDate: Date = getAsDate(date)
@@ -54,7 +54,7 @@ export const capitalize = (text?: string | null): string => {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-export const lowercase = (text?: string): string => {
+export const lowercase = (text?: string | null): string => {
   if (!text) {
     return ''
   }

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -18,9 +18,9 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   Modal,
   PageHeader,
   PageLayout,
@@ -32,6 +32,7 @@ import {
 import {
   CaseState,
   CaseTransition,
+  IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -39,7 +40,7 @@ import DenyIndictmentCaseModal from './DenyIndictmentCaseModal/DenyIndictmentCas
 import { overview as strings } from './Overview.strings'
 import * as styles from './Overview.css'
 
-const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Overview: FC<unknown> = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -63,9 +64,7 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
   const isIndictmentSubmitted = workingCase.state === CaseState.SUBMITTED
   const isIndictmentWaitingForCancellation =
     workingCase.state === CaseState.WAITING_FOR_CANCELLATION
-  const isIndictmentReceived =
-    workingCase.state === CaseState.RECEIVED ||
-    workingCase.state === CaseState.MAIN_HEARING
+  const isIndictmentReceived = workingCase.state === CaseState.RECEIVED
 
   const userCanSendIndictmentToCourt =
     Boolean(user?.canConfirmIndictment) &&
@@ -178,17 +177,21 @@ const Overview: React.FC<React.PropsWithChildren<unknown>> = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
-        {workingCase.state === CaseState.RECEIVED &&
-          workingCase.court &&
-          latestDate?.date && (
+        {workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
+              <IndictmentCaseScheduledCard
                 court={workingCase.court}
+                indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
                 courtRoom={latestDate.location}
                 postponedIndefinitelyExplanation={
                   workingCase.postponedIndefinitelyExplanation
                 }
+                courtSessionType={workingCase.courtSessionType}
               />
             </Box>
           )}

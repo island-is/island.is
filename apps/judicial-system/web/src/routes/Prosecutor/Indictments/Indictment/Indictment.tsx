@@ -17,6 +17,7 @@ import {
   PageLayout,
   PageTitle,
   PdfButton,
+  ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -76,7 +77,7 @@ export const getIndictmentIntroductionAutofill = (
     : []
 }
 
-const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Indictment = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -311,6 +312,7 @@ const Indictment: React.FC<React.PropsWithChildren<unknown>> = () => {
       />
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.heading)}</PageTitle>
+        <ProsecutorCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={3}>
           <SectionHeading
             title={formatMessage(strings.indictmentIntroductionTitle)}

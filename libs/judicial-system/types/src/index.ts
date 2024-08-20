@@ -68,13 +68,17 @@ export {
   isCompletedCase,
   hasIndictmentCaseBeenSubmittedToCourt,
   getStatementDeadline,
-  prosecutorCanSelectDefenderForInvestigationCase,
   isIndictmentCaseState,
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
   DistrictCourtLocation,
+  CourtSessionType,
+  courtSessionTypeNames,
 } from './lib/case'
+
+export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
+
 export type {
   CrimeScene,
   CrimeSceneMap,

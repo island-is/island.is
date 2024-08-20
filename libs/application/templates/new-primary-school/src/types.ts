@@ -1,8 +1,6 @@
 import {
-  Gender,
   MembershipOrganizationType,
   MembershipRole,
-  RelationOptions,
   SiblingRelationOptions,
 } from './lib/constants'
 
@@ -10,7 +8,7 @@ export interface RelativesRow {
   fullName: string
   phoneNumber: string
   nationalId: string
-  relation: RelationOptions
+  relation: string
   canPickUpChild: string[]
 }
 
@@ -38,8 +36,9 @@ export type ChildInformation = {
     postalCode: string
     city: string
   }
-  gender: Gender
-  chosenName: string
+  gender: string
+  preferredName: string
+  pronouns: string[]
   differentPlaceOfResidence: string
   placeOfResidence?: {
     streetAddress: string

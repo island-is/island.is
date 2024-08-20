@@ -1,6 +1,6 @@
 import { PDFFont, PDFPage } from 'pdf-lib'
 
-import { formatDate } from '@island.is/judicial-system/formatters'
+import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 
 import { coatOfArms } from './coatOfArms'
 import { policeStar } from './policeStar'
@@ -197,7 +197,7 @@ export const addIndictmentConfirmation = (
   drawTextWithEllipsis(
     doc,
     `${confirmation.actor}${
-      confirmation.title ? `, ${confirmation.title}` : ''
+      confirmation.title ? `, ${lowercase(confirmation.title)}` : ''
     }`,
     titleX,
     pageMargin + titleHeight + calculatePt(32),
@@ -246,7 +246,7 @@ export const addIndictmentConfirmation = (
   )
   doc.font('Times-Roman')
   doc.text(
-    formatDate(confirmation.date, 'P') || '',
+    formatDate(confirmation.date) || '',
     coatOfArmsX + coatOfArmsWidth + titleWidth - calculatePt(55),
     pageMargin + titleHeight + calculatePt(32),
     {

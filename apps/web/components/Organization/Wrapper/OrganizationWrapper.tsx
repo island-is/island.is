@@ -129,6 +129,7 @@ interface WrapperProps {
 
 interface HeaderProps {
   organizationPage: OrganizationPage
+  isSubpage?: boolean
 }
 
 const darkThemes = ['hms']
@@ -194,7 +195,7 @@ export const getThemeConfig = (
 
 export const OrganizationHeader: React.FC<
   React.PropsWithChildren<HeaderProps>
-> = ({ organizationPage }) => {
+> = ({ organizationPage, isSubpage }) => {
   const { linkResolver } = useLinkResolver()
   const namespace = useMemo(
     () => JSON.parse(organizationPage?.organization?.namespace?.fields || '{}'),
@@ -244,6 +245,7 @@ export const OrganizationHeader: React.FC<
     titleSectionPaddingLeft: organizationPage.themeProperties
       .titleSectionPaddingLeft as ResponsiveSpace,
     mobileBackground: organizationPage.themeProperties.mobileBackgroundColor,
+    isSubpage: isSubpage && n('smallerSubpageHeader', false),
   }
 
   switch (organizationPage.theme) {
@@ -269,7 +271,12 @@ export const OrganizationHeader: React.FC<
         />
       )
     case 'digital_iceland':
-      return (
+      return n('useDefaultDigitalIcelandHeader', false) ? (
+        <DefaultHeader
+          {...defaultProps}
+          titleClassName={styles.digitalIcelandHeaderTitle}
+        />
+      ) : (
         <DigitalIcelandHeader
           organizationPage={organizationPage}
           logoAltText={logoAltText}
@@ -913,7 +920,10 @@ export const OrganizationWrapper: React.FC<
         imageWidth={pageFeaturedImage?.width?.toString()}
         imageHeight={pageFeaturedImage?.height?.toString()}
       />
-      <OrganizationHeader organizationPage={organizationPage} />
+      <OrganizationHeader
+        organizationPage={organizationPage}
+        isSubpage={isSubpage}
+      />
       {!minimal && (
         <SidebarLayout
           paddingTop={[2, 2, 9]}

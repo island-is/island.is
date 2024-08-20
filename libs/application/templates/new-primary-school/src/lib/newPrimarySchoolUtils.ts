@@ -30,7 +30,6 @@ import {
 import {
   Gender,
   ReasonForApplicationOptions,
-  RelationOptions,
   SiblingRelationOptions,
 } from './constants'
 import { newPrimarySchoolMessages } from './messages'
@@ -299,37 +298,6 @@ export const hasOtherParent = (
   return !!otherParent
 }
 
-export const getRelationOptions = () => [
-  {
-    value: RelationOptions.GRANDPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationGrandparent,
-  },
-  {
-    value: RelationOptions.SIBLING,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationSibling,
-  },
-  {
-    value: RelationOptions.STEPPARENT,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationStepparent,
-  },
-  {
-    value: RelationOptions.RELATIVE,
-    label: newPrimarySchoolMessages.childrenNParents.relativesRelationRelative,
-  },
-  {
-    value: RelationOptions.FRIEND_OR_OTHER,
-    label:
-      newPrimarySchoolMessages.childrenNParents.relativesRelationFriendOrOther,
-  },
-]
-
-export const getRelationOptionLabel = (value: RelationOptions) => {
-  const relationOptions = getRelationOptions()
-  return relationOptions.find((option) => option.value === value)?.label ?? ''
-}
-
 export const getReasonForApplicationOptions = () => [
   {
     value: ReasonForApplicationOptions.TRANSFER_OF_LEGAL_DOMICILE,
@@ -406,21 +374,6 @@ export const getSiblingRelationOptionLabel = (
   return relationOptions.find((option) => option.value === value)?.label ?? ''
 }
 
-export const getGenderOptions = () => [
-  {
-    value: Gender.MALE,
-    label: newPrimarySchoolMessages.shared.male,
-  },
-  {
-    value: Gender.FEMALE,
-    label: newPrimarySchoolMessages.shared.female,
-  },
-  {
-    value: Gender.OTHER,
-    label: newPrimarySchoolMessages.shared.otherGender,
-  },
-]
-
 export const formatGender = (genderCode?: string): Gender | undefined => {
   switch (genderCode) {
     case '1':
@@ -435,11 +388,6 @@ export const formatGender = (genderCode?: string): Gender | undefined => {
     default:
       return undefined
   }
-}
-
-export const getGenderOptionLabel = (value: Gender) => {
-  const genderOptions = getGenderOptions()
-  return genderOptions.find((option) => option.value === value)?.label ?? ''
 }
 
 export const getOptionsListByType = async (

@@ -115,10 +115,10 @@ identity-server:
     NODE_OPTIONS: '--max-old-space-size=1843 -r dd-trace/init'
     PersistenceSettings__BaseAddress: 'http://web-services-auth-ids-api'
     PersistenceSettings__DelegationsCacheEnabled: 'true'
-    PersistenceSettings__SessionsBaseAddress: 'https://sessions-api.internal.island.is'
     RedisSettings__Address: 'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com'
     RedisSettings__Port: '6379'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
+    SessionsApiSettings__BaseAddress: 'https://sessions-api.internal.island.is'
   files:
     - 'ids-signing.pfx'
   grantNamespaces: []
@@ -278,6 +278,8 @@ services-auth-admin-api:
 services-auth-delegation-api:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
@@ -374,6 +376,7 @@ services-auth-ids-api:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentity.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=691 -r dd-trace/init'
     NOVA_ACCEPT_UNAUTHORIZED: 'false'
+    PASSKEY_CORE_ALLOWED_ORIGINS: '["island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_MAX_AGE_DAYS: '365'
     PASSKEY_CORE_RP_ID: 'island.is'
@@ -475,7 +478,6 @@ services-auth-ids-api:
     NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD'
     NOVA_URL: '/k8s/services-auth/NOVA_URL'
     NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME'
-    PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
@@ -493,7 +495,7 @@ services-auth-ids-api-cleanup:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=921 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -527,7 +529,7 @@ services-auth-ids-api-cleanup:
   resources:
     limits:
       cpu: '400m'
-      memory: '512Mi'
+      memory: '1024Mi'
     requests:
       cpu: '100m'
       memory: '256Mi'
@@ -541,6 +543,8 @@ services-auth-ids-api-cleanup:
 services-auth-personal-representative:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
@@ -548,7 +552,7 @@ services-auth-personal-representative:
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/auth-api'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
     XROAD_BASE_PATH: 'http://securityserver.island.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.island.is/r1/IS'
@@ -602,10 +606,10 @@ services-auth-personal-representative:
   resources:
     limits:
       cpu: '400m'
-      memory: '256Mi'
+      memory: '512Mi'
     requests:
       cpu: '100m'
-      memory: '192Mi'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
@@ -622,7 +626,7 @@ services-auth-personal-representative-public:
     DB_USER: 'servicesauth'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=230 -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 -r dd-trace/init'
     SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   grantNamespaces: []
   grantNamespacesEnabled: false
@@ -673,10 +677,10 @@ services-auth-personal-representative-public:
   resources:
     limits:
       cpu: '400m'
-      memory: '256Mi'
+      memory: '512Mi'
     requests:
       cpu: '100m'
-      memory: '192Mi'
+      memory: '256Mi'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
@@ -686,6 +690,8 @@ services-auth-personal-representative-public:
 services-auth-public-api:
   enabled: true
   env:
+    COMPANY_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379"]'
+    COMPANY_REGISTRY_XROAD_PROVIDER_ID: 'IS/GOV/5402696029/Skatturinn/ft-v1'
     DB_HOST: 'postgres-ids.internal'
     DB_NAME: 'servicesauth'
     DB_REPLICAS_HOST: 'postgres-ids.internal'
@@ -694,6 +700,7 @@ services-auth-public-api:
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=345 -r dd-trace/init'
+    PASSKEY_CORE_ALLOWED_ORIGINS: '["island.is","android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0","android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU"]'
     PASSKEY_CORE_CHALLENGE_TTL_MS: '120000'
     PASSKEY_CORE_RP_ID: 'island.is'
     PASSKEY_CORE_RP_NAME: 'Island.is'
@@ -770,7 +777,6 @@ services-auth-public-api:
     DB_PASS: '/k8s/servicesauth/DB_PASSWORD'
     IDENTITY_SERVER_CLIENT_SECRET: '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET'
     NATIONAL_REGISTRY_IDS_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
-    PASSKEY_CORE_ALLOWED_ORIGINS: '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

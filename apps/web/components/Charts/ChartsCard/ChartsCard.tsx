@@ -98,7 +98,7 @@ export const ChartsCard: React.FC<
               <Text variant="h3" color="dark400">
                 {/*
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict */}
+// @ts-expect-error make web strict */}
                 <Hyphen>{graphTitle}</Hyphen>
               </Text>
               {graphDescription && (

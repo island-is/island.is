@@ -17,7 +17,6 @@ export enum Features {
   alcoholTaxRedemption = 'isAlcoholTaxRedemptionEnabled',
   consultationPortalApplication = 'isConsultationPortalEnabled',
   childrenResidenceChangeV2 = 'isChildrenResidenceChangeV2Enabled',
-  signatureListCreation = 'isSignatureListCreationEnabled',
   citizenship = 'isCitizenshipEnabled',
   energyFunds = 'isEnergyFundsEnabled',
   complaintsToAlthingiOmbudsman = 'isComplaintToAlthingiOmbudsmanEnabled',
@@ -32,9 +31,14 @@ export enum Features {
   grindavikHousingBuyout = 'isGrindavikHousingBuyoutEnabled',
   RequestInspection = 'isRequestInspectionForMachineEnabled',
   officialJournalOfIceland = 'isOfficialJournalOfIcelandEnabled',
+  idCardApplication = 'isIdCardApplicationEnabled',
   StreetRegistration = 'isStreetRegistrationEnabled',
   HealthInsuranceDeclaration = 'isHealthInsuranceDeclarationEnabled',
   newPrimarySchool = 'isNewPrimarySchoolEnabled',
+  registerNewMachine = 'isRegisterNewMachineEnabled',
+  FinancialStatementCemetery = 'isFinancialStatementCemeteryEnabled',
+  ParliamentaryElectionApplication = 'isParliamentaryElectionApplicationEnabled',
+  FinancialStatementIndividualElectionEnabled = 'isFinancialStatementIndividualElectionEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -54,6 +58,9 @@ export enum Features {
 
   //Occupational License Health directorate fetch enabled
   occupationalLicensesV2 = 'isOccupationalLicensesV2Enabled',
+
+  //New License service fetch enabled
+  licensesV2 = 'isLicensesV2Enabled',
 
   //Possible universities
   isUniversityOfAkureyriEnabled = 'isUniversityOfAkureyriEnabled',

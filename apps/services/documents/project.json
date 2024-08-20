@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/documents/src",
   "projectType": "application",
   "prefix": "services-documents",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -48,23 +49,19 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/services/documents/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/services/documents/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/documents/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/documents"]
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/services/documents"
       }
     },
@@ -89,7 +86,8 @@
         "cwd": "apps/services/documents"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

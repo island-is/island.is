@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/user-profile/src",
   "projectType": "application",
   "prefix": "services-user-profile",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -53,16 +54,12 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/services/user-profile/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/services/user-profile/jest.config.ts",
-        "passWithNoTests": true,
         "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/user-profile"]
@@ -70,7 +67,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/services/user-profile"
       }
     },
@@ -123,8 +120,9 @@
         "parallel": true
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "service-service-portal-api": {}
-  },
-  "tags": ["scope:nest"]
+  }
 }

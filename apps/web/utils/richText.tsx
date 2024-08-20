@@ -1,10 +1,11 @@
 import {
   FaqList,
-  FaqListProps,
+  type FaqListProps,
   renderConnectedComponent,
   richText,
   SectionWithImage,
-  SliceType,
+  type SliceType,
+  type TeamListProps,
 } from '@island.is/island-ui/contentful'
 import {
   defaultRenderComponentObject,
@@ -25,7 +26,7 @@ import {
   DrivingInstructorList,
   EmailSignup,
   Form,
-  GenericList,
+  GenericListWrapper,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -44,6 +45,7 @@ import {
   SpecificHousingBenefitSupportCalculator,
   StraddlingStockCalculator,
   TableSlice,
+  TeamListSlice,
   TemporaryEventLicencesList,
   TwoColumnTextSlice,
 } from '@island.is/web/components'
@@ -67,6 +69,7 @@ import {
   Slice,
   SliceDropdown as SliceDropdownSchema,
   TableSlice as TableSliceSchema,
+  TeamList,
   TwoColumnText,
 } from '@island.is/web/graphql/schema'
 
@@ -74,6 +77,9 @@ import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/co
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
+import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
+import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
 import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
@@ -128,6 +134,12 @@ export const webRenderConnectedComponent = (
       return <SpecificHousingBenefitSupportCalculator slice={slice} />
     case 'GrindavikResidentialPropertyPurchaseCalculator':
       return <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
+    case 'Sveinslisti/JourneymanList':
+      return <JourneymanList slice={slice} />
+    case 'Starfsrettindi/ProfessionRights':
+      return <ProfessionRights slice={slice} />
+    case 'Ums/CostOfLivingCalculator':
+      return <UmsCostOfLivingCalculator slice={slice} />
     default:
       break
   }
@@ -189,11 +201,19 @@ const defaultRenderComponent = {
   ),
   Form: (slice: FormSchema) => <Form form={slice} />,
   GenericList: (slice: GenericListSchema) => (
-    <GenericList
+    <GenericListWrapper
       id={slice.id}
       searchInputPlaceholder={slice.searchInputPlaceholder}
       itemType={slice.itemType}
       filterTags={slice.filterTags}
+    />
+  ),
+  TeamList: (slice: TeamList) => (
+    <TeamListSlice
+      id={slice.id}
+      teamMembers={slice.teamMembers as TeamListProps['teamMembers']}
+      filterTags={slice.filterTags}
+      variant={slice.variant as 'accordion' | 'card'}
     />
   ),
 }

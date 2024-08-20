@@ -398,8 +398,9 @@ const useSections = (
     user?: User,
   ): RouteSection => {
     const { id, type, state } = workingCase
-    const caseHasBeenReceivedByCourt =
-      state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING
+    const substepsShouldBeHidden =
+      state === CaseState.RECEIVED ||
+      state === CaseState.WAITING_FOR_CANCELLATION
     const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {
@@ -408,10 +409,9 @@ const useSections = (
         isProsecutionUser(user) &&
         isIndictmentCase(type) &&
         state !== CaseState.RECEIVED &&
-        state !== CaseState.MAIN_HEARING &&
         !isCompletedCase(state),
       // Prosecutor can only view the overview when case has been received by court
-      children: caseHasBeenReceivedByCourt
+      children: substepsShouldBeHidden
         ? []
         : [
             {
@@ -538,11 +538,11 @@ const useSections = (
                 ),
               ),
               href: `${constants.INDICTMENTS_CASE_FILES_ROUTE}/${id}`,
-              isActive: caseHasBeenReceivedByCourt
+              isActive: substepsShouldBeHidden
                 ? false
                 : isActive(constants.INDICTMENTS_CASE_FILES_ROUTE),
               onClick:
-                !isActive(constants.INDICTMENTS_CASE_FILE_ROUTE) &&
+                !isActive(constants.INDICTMENTS_CASE_FILES_ROUTE) &&
                 validateFormStepper(
                   isValid,
                   [
@@ -899,8 +899,7 @@ const useSections = (
     return {
       name: formatMessage(sections.indictmentsCourtSection.title),
       isActive:
-        (isProsecutionUser(user) &&
-          (state === CaseState.RECEIVED || state === CaseState.MAIN_HEARING)) ||
+        (isProsecutionUser(user) && state === CaseState.RECEIVED) ||
         ((isDistrictCourtUser(user) || isDefenceUser(user)) &&
           !isCompletedCase(state)),
       children: isDistrictCourtUser(user)

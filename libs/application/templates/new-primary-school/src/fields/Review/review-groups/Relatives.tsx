@@ -9,10 +9,12 @@ import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
+import { useFriggOptions } from '../../../hooks/useFriggOptions'
+import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
-  getRelationOptionLabel,
+  getSelectedOptionLabel,
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
@@ -24,12 +26,14 @@ export const Relatives = ({
   const { formatMessage } = useLocale()
   const { relatives } = getApplicationAnswers(application.answers)
 
+  const relationFriggOptions = useFriggOptions(OptionsType.RELATION)
+
   const rows = relatives.map((r) => {
     return [
       r.fullName,
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
       formatKennitala(r.nationalId),
-      getRelationOptionLabel(r.relation),
+      getSelectedOptionLabel(relationFriggOptions, r.relation) ?? '',
       r.canPickUpChild?.includes(YES)
         ? newPrimarySchoolMessages.shared.yes
         : newPrimarySchoolMessages.shared.no,

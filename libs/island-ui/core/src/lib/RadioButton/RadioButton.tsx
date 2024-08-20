@@ -35,6 +35,7 @@ export interface RadioButtonProps {
   subLabel?: React.ReactNode
   /** illustration can only be used if the 'large' prop set to true */
   illustration?: React.FC<React.PropsWithChildren<unknown>>
+  hasIllustration?: boolean
 }
 
 interface AriaError {
@@ -63,6 +64,7 @@ export const RadioButton = ({
   large,
   dataTestId,
   backgroundColor,
+  hasIllustration,
 }: RadioButtonProps & TestSupport) => {
   const errorId = `${id}-error`
   const ariaError = hasError
@@ -72,7 +74,81 @@ export const RadioButton = ({
       }
     : {}
 
-  return (
+  return hasIllustration ? (
+    <Box
+      className={cn(styles.container)}
+      background={
+        large && backgroundColor ? backgroundColors[backgroundColor] : undefined
+      }
+      height="full"
+    >
+      <input
+        className={styles.input}
+        type="radio"
+        name={name}
+        disabled={disabled}
+        id={id}
+        data-testid={dataTestId}
+        onChange={onChange}
+        value={value}
+        checked={checked}
+        {...(ariaError as AriaError)}
+      />
+      <Box
+        display="flex"
+        alignItems="flexStart"
+        flexDirection="column"
+        justifyContent="spaceBetween"
+      >
+        {Illustration && (
+          <Box>
+            <Illustration />
+          </Box>
+        )}
+        <label
+          className={cn(styles.label, {
+            [styles.radioButtonLabelDisabled]: disabled,
+            [styles.largeLabel]: large,
+          })}
+          htmlFor={id}
+        >
+          <div
+            className={cn(styles.radioButton, {
+              [styles.radioButtonChecked]: checked,
+              [styles.radioButtonError]: hasError,
+              [styles.radioButtonDisabled]: disabled,
+            })}
+          >
+            <div className={styles.checkMark} />
+          </div>
+          <span className={styles.labelText}>
+            <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
+              {label}
+            </Text>
+            {subLabel && (
+              <Text
+                as="span"
+                marginTop="smallGutter"
+                fontWeight="regular"
+                variant="small"
+              >
+                {subLabel}
+              </Text>
+            )}
+          </span>
+        </label>
+        {hasError && errorMessage && (
+          <div
+            id={errorId}
+            className={styles.errorMessage}
+            aria-live="assertive"
+          >
+            {errorMessage}
+          </div>
+        )}
+      </Box>
+    </Box>
+  ) : (
     <Box
       className={cn(styles.container, {
         [styles.large]: large,
@@ -114,7 +190,7 @@ export const RadioButton = ({
           <Text as="span" fontWeight={checked ? 'semiBold' : 'light'}>
             {label}
           </Text>
-          {subLabel && large && (
+          {subLabel && (
             <Text
               as="span"
               marginTop="smallGutter"

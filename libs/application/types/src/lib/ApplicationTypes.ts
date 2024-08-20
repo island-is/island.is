@@ -30,8 +30,10 @@ export enum ApplicationTypes {
   MORTGAGE_CERTIFICATE = 'MortgageCertificate',
   MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
+  FINANCIAL_STATEMENT_CEMETERY = 'FinancialStatementCemetery',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
-  OPERATING_LCENSE = 'OperatingLicense',
+  FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
+  OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
   ANONYMITY_IN_VEHICLE_REGISTRY = 'AnonymityInVehicleRegistry',
@@ -50,8 +52,10 @@ export enum ApplicationTypes {
   OLD_AGE_PENSION = 'OldAgePension',
   HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
   CAR_RECYCLING = 'CarRecycling',
-  SIGNATURE_LIST_CREATION = 'SignatureListCreation',
-  SIGNATURE_LIST_SIGNING = 'SignatureListSigning',
+  PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
+  PRESIDENTIAL_LIST_SIGNING = 'PresidentialListSigning',
+  PARLIAMENTARY_LIST_CREATION = 'ParliamentaryListCreation',
+  PARLIAMENTARY_LIST_SIGNING = 'ParliamentaryListSigning',
   CITIZENSHIP = 'Citizenship',
   ADDITIONAL_SUPPORT_FOR_THE_ELDERLY = 'AdditionalSupportForTheElderly',
   ENERGY_FUNDS = 'EnergyFunds',
@@ -66,9 +70,11 @@ export enum ApplicationTypes {
   GRINDAVIK_HOUSING_BUYOUT = 'GrindavikHousingBuyout',
   REQUEST_INSPECTION_FOR_MACHINE = 'RequestInspectionForMachine',
   OFFICIAL_JOURNAL_OF_ICELAND = 'OfficialJournalOfIceland',
+  ID_CARD = 'IdCard',
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  MACHINE_REGISTRATION = 'MachineRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -200,11 +206,19 @@ export const ApplicationConfigurations = {
     slug: 'skuldleysisvottord',
     translation: 'ndc.application',
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
+    slug: 'skil-arsreikninga-kirkjugardar',
+    translation: 'fsck.application',
+  },
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
   },
-  [ApplicationTypes.OPERATING_LCENSE]: {
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
+    slug: 'skil-arsreikninga-einstaklingsframbod',
+    translation: 'fsie.application',
+  },
+  [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
     translation: 'ol.application',
   },
@@ -276,13 +290,21 @@ export const ApplicationConfigurations = {
     slug: 'skilavottord',
     translation: 'rf.cr.application',
   },
-  [ApplicationTypes.SIGNATURE_LIST_CREATION]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_CREATION]: {
     slug: 'medmaelasofnun',
     translation: 'slc.application',
   },
-  [ApplicationTypes.SIGNATURE_LIST_SIGNING]: {
+  [ApplicationTypes.PRESIDENTIAL_LIST_SIGNING]: {
     slug: 'maela-med-frambodi',
     translation: 'sls.application',
+  },
+  [ApplicationTypes.PARLIAMENTARY_LIST_CREATION]: {
+    slug: 'althingis-medmaelasofnun',
+    translation: 'plc.application',
+  },
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
+    slug: 'maela-med-althingisframbodi',
+    translation: 'pls.application',
   },
   [ApplicationTypes.CITIZENSHIP]: {
     slug: 'rikisborgararettur',
@@ -344,16 +366,24 @@ export const ApplicationConfigurations = {
     slug: 'stjornartidindi',
     translation: 'ojoi.application',
   },
+  [ApplicationTypes.ID_CARD]: {
+    slug: 'nafnskirteini',
+    translation: 'id.application',
+  },
   [ApplicationTypes.HEALTH_INSURANCE_DECLARATION]: {
     slug: 'tryggingaryfirlysing',
     translation: ['hid.application', 'uiForms.application'],
   },
   [ApplicationTypes.STREET_REGISTRATION]: {
     slug: 'gotuskraning-taekis',
-    translation: 'sr.application',
+    translation: 'aosh.sr.application',
   },
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
     translation: ['dess.nps.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MACHINE_REGISTRATION]: {
+    slug: 'nyskraning-taekis',
+    translation: ['aosh.rnm.application'],
   },
 }

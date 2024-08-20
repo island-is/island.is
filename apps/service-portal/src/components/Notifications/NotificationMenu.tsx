@@ -152,10 +152,7 @@ const NotificationMenu = ({
       isVisible={sideMenuOpen}
       hideOnClickOutside={true}
       hideOnEsc={true}
-      modalLabel={formatMessage({
-        id: 'service.portal:notification-button-aria',
-        defaultMessage: 'Valmynd fyrir tilkynningar',
-      })}
+      modalLabel={formatMessage(m.notificationButtonAria)}
       removeOnClose={true}
       preventBodyScroll={false}
       onVisibilityChange={(visibility: boolean) => {

@@ -8,11 +8,11 @@ export class License {
   @Field()
   licenseId!: string
 
-  @Field()
-  licenseNumber!: string
-
   @Field(() => LicenseType)
   type!: LicenseType
+
+  @Field({ nullable: true })
+  licenseNumber?: string
 
   @Field({ nullable: true })
   legalEntityId?: string
@@ -23,8 +23,8 @@ export class License {
   @Field({ nullable: true })
   issuerTitle?: string
 
-  @Field()
-  profession!: string
+  @Field({ nullable: true })
+  profession?: string
 
   @Field({ nullable: true })
   permit?: string

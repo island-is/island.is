@@ -1,14 +1,14 @@
 import {
   Alert,
-  EmptyList,
   Heading,
   Link,
   LinkText,
+  Problem,
   Skeleton,
   Typography,
 } from '@ui'
 import React from 'react'
-import { SafeAreaView, ScrollView, View, Image } from 'react-native'
+import { SafeAreaView, ScrollView, View } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { FormattedMessage, useIntl } from 'react-intl'
 import styled, { useTheme } from 'styled-components/native'
@@ -22,7 +22,6 @@ import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
 import { Bullet } from '@ui/lib/bullet/bullet'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { AirfaresUsageTable } from './airfares-usage-table'
-import illustrationSrc from '../../assets/illustrations/le_jobs_s5.png'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -71,29 +70,13 @@ const SkeletonItem = () => {
 
 const Empty = () => {
   const theme = useTheme()
+  const intl = useIntl()
   return (
     <View style={{ marginBottom: theme.spacing[4] }}>
-      <EmptyList
-        small
-        title={
-          <FormattedMessage
-            id="airDiscount.emptyListTitle"
-            defaultMessage="Enginn réttur"
-          />
-        }
-        description={
-          <FormattedMessage
-            id="airDiscount.emptyListDescription"
-            defaultMessage="Einungis íbúar landsbyggðarinnar sem eiga lögheimili fjarri höfuðborgarsvæðinu og eyjum eiga rétt á Loftbrú."
-          />
-        }
-        image={
-          <Image
-            source={illustrationSrc}
-            style={{ width: 224, height: 231 }}
-            resizeMode="contain"
-          />
-        }
+      <Problem
+        type="no_data"
+        title={intl.formatMessage({ id: 'airDiscount.emptyListTitle' })}
+        message={intl.formatMessage({ id: 'airDiscount.emptyListDescription' })}
       />
     </View>
   )

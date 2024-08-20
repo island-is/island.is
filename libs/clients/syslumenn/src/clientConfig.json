@@ -595,6 +595,52 @@
         ]
       }
     },
+    "/api/Starfsrettindi/api/Starfsrettindi/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "Starfsrettindi_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StarfsrettindiModel"
+              }
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          },
+          "default": {
+            "x-nullable": false,
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
     "/api/Taekifaerisleyfi/{audkenni}": {
       "get": {
         "tags": ["Syslumenn"],
@@ -1084,6 +1130,68 @@
             "description": "",
             "schema": {
               "$ref": "#/definitions/ProblemDetails"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/KannaKonnunarvottord/{audkenni}": {
+      "get": {
+        "tags": ["Syslumenn"],
+        "operationId": "KannaKonnunarvottord_Get",
+        "parameters": [
+          {
+            "type": "string",
+            "name": "audkenni",
+            "in": "path",
+            "required": true,
+            "x-nullable": false
+          },
+          {
+            "type": "string",
+            "name": "Hjonaefni1",
+            "in": "query",
+            "x-nullable": true
+          },
+          {
+            "type": "string",
+            "name": "Hjonaefni2",
+            "in": "query",
+            "x-nullable": true
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/KonnunarvottordSvar"
+            }
+          },
+          "500": {
+            "x-nullable": false,
+            "description": "Internal server error",
+            "schema": {
+              "$ref": "#/definitions/KonnunarvottordSvar"
+            }
+          },
+          "400": {
+            "x-nullable": false,
+            "description": "Bad request",
+            "schema": {
+              "$ref": "#/definitions/KonnunarvottordSvar"
+            }
+          },
+          "401": {
+            "x-nullable": false,
+            "description": "Unauthorized",
+            "schema": {
+              "$ref": "#/definitions/KonnunarvottordSvar"
             }
           }
         },
@@ -1838,6 +1946,38 @@
             "description": "Success",
             "schema": {
               "$ref": "#/definitions/VottordSkeyti"
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT Token": []
+          }
+        ]
+      }
+    },
+    "/api/InnsiglaSkjol": {
+      "post": {
+        "tags": ["Syslumenn"],
+        "operationId": "InnsiglaSkjol_Post",
+        "consumes": ["application/json", "text/json", "application/*+json"],
+        "parameters": [
+          {
+            "name": "skeyti",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/InnsiglaSkjolSkeyti"
+            },
+            "x-nullable": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "x-nullable": false,
+            "description": "Success",
+            "schema": {
+              "$ref": "#/definitions/InnsigludSkjol"
             }
           }
         },
@@ -2773,14 +2913,14 @@
             "x-nullable": false,
             "description": "Success",
             "schema": {
-              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+              "$ref": "#/definitions/VedbandayfirlitMargirSvarSkeyti"
             }
           },
           "404": {
             "x-nullable": false,
             "description": "NotFound",
             "schema": {
-              "$ref": "#/definitions/VedbandayfirlitSvarSkeyti"
+              "$ref": "#/definitions/VedbandayfirlitMargirSvarSkeyti"
             }
           }
         },
@@ -2830,51 +2970,6 @@
         ]
       }
     },
-    "/api/Vedbokavottord2Regluverki": {
-      "post": {
-        "tags": ["Syslumenn"],
-        "operationId": "Vedbokavottord2Regluverki_Post",
-        "consumes": ["application/json", "text/json", "application/*+json"],
-        "parameters": [
-          {
-            "name": "skilabod",
-            "in": "body",
-            "required": true,
-            "schema": {
-              "$ref": "#/definitions/VedbandayfirlitMargirSkeyti"
-            },
-            "x-nullable": false
-          }
-        ],
-        "responses": {
-          "200": {
-            "x-nullable": false,
-            "description": "Success",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
-              }
-            }
-          },
-          "404": {
-            "x-nullable": false,
-            "description": "NotFound",
-            "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT Token": []
-          }
-        ]
-      }
-    },
     "/api/VedbokavottordRegluverki": {
       "post": {
         "tags": ["Syslumenn"],
@@ -2896,20 +2991,14 @@
             "x-nullable": false,
             "description": "Success",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
-              }
+              "$ref": "#/definitions/VedbandayfirlitRegluverkGeneralSvar"
             }
           },
           "404": {
             "x-nullable": false,
             "description": "NotFound",
             "schema": {
-              "type": "array",
-              "items": {
-                "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
-              }
+              "$ref": "#/definitions/VedbandayfirlitRegluverkGeneralSvar"
             }
           }
         },
@@ -3121,6 +3210,9 @@
         "nafn": {
           "type": "string"
         },
+        "kennitala": {
+          "type": "string"
+        },
         "idngrein": {
           "type": "string"
         },
@@ -3322,6 +3414,9 @@
         "nafn": {
           "type": "string"
         },
+        "kennitala": {
+          "type": "string"
+        },
         "idngrein": {
           "type": "string"
         },
@@ -3330,6 +3425,20 @@
           "format": "date-time"
         },
         "embaetti": {
+          "type": "string"
+        }
+      }
+    },
+    "StarfsrettindiModel": {
+      "type": "object",
+      "properties": {
+        "nafn": {
+          "type": "string"
+        },
+        "kennitala": {
+          "type": "string"
+        },
+        "starfsrettindi": {
           "type": "string"
         }
       }
@@ -3382,6 +3491,9 @@
         "aaetladurFjoldi": {
           "type": "integer",
           "format": "int32"
+        },
+        "stadur": {
+          "type": "string"
         }
       }
     },
@@ -3893,6 +4005,17 @@
         }
       }
     },
+    "KonnunarvottordSvar": {
+      "type": "object",
+      "properties": {
+        "stada": {
+          "type": "string"
+        },
+        "skyring": {
+          "type": "string"
+        }
+      }
+    },
     "BankaupplysingarDanarbusSkeyti": {
       "type": "object",
       "properties": {
@@ -4180,7 +4303,7 @@
     },
     "AlgengTengsl": {
       "type": "object",
-      "required": ["oid"],
+      "required": ["oid", "virk"],
       "properties": {
         "oid": {
           "type": "integer",
@@ -4188,6 +4311,9 @@
         },
         "heiti": {
           "type": "string"
+        },
+        "virk": {
+          "type": "boolean"
         }
       }
     },
@@ -4509,6 +4635,10 @@
         },
         "malsvari": {
           "$ref": "#/definitions/Malsvari"
+        },
+        "arfshlutfall": {
+          "type": "number",
+          "format": "decimal"
         }
       }
     },
@@ -4816,6 +4946,40 @@
         },
         "utgafudagur": {
           "type": "string"
+        }
+      }
+    },
+    "InnsigludSkjol": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "skjol": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "InnsiglaSkjolSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skyring": {
+          "type": "string"
+        },
+        "skjol": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
@@ -5548,10 +5712,24 @@
         }
       }
     },
-    "VedbandayfirlitSvarSkeyti": {
+    "VedbandayfirlitMargirSvarSkeyti": {
       "type": "object",
       "properties": {
         "audkenni": {
+          "type": "string"
+        },
+        "skilabodOgSkra": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/SkilaSkeyti"
+          }
+        }
+      }
+    },
+    "SkilaSkeyti": {
+      "type": "object",
+      "properties": {
+        "fastanumer": {
           "type": "string"
         },
         "skilabod": {
@@ -5564,16 +5742,24 @@
     },
     "VedbandayfirlitMargirSkeyti": {
       "type": "object",
-      "required": ["tegundAndlags"],
       "properties": {
         "audkenni": {
           "type": "string"
         },
-        "fastanumer": {
+        "eignir": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/Eign"
           }
+        }
+      }
+    },
+    "Eign": {
+      "type": "object",
+      "required": ["tegundAndlags"],
+      "properties": {
+        "fastanumer": {
+          "type": "string"
         },
         "tegundAndlags": {
           "$ref": "#/definitions/VedbondTegundAndlags"
@@ -5593,6 +5779,20 @@
       ],
       "enum": [0, 1, 2, 3, 4, 5]
     },
+    "VedbandayfirlitSvarSkeyti": {
+      "type": "object",
+      "properties": {
+        "audkenni": {
+          "type": "string"
+        },
+        "skilabod": {
+          "type": "string"
+        },
+        "vedbandayfirlitPDFSkra": {
+          "type": "string"
+        }
+      }
+    },
     "VedbandayfirlitSkeyti": {
       "type": "object",
       "required": ["tegundAndlags"],
@@ -5605,6 +5805,29 @@
         },
         "tegundAndlags": {
           "$ref": "#/definitions/VedbondTegundAndlags"
+        }
+      }
+    },
+    "VedbandayfirlitRegluverkGeneralSvar": {
+      "type": "object",
+      "properties": {
+        "fastanum": {
+          "type": "string"
+        },
+        "tegundEignar": {
+          "type": "string"
+        },
+        "fasteign": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/VedbandayfirlitReguverkiSvarSkeyti"
+          }
+        },
+        "okutaeki": {
+          "$ref": "#/definitions/Okutaeki"
+        },
+        "skip": {
+          "$ref": "#/definitions/Skip"
         }
       }
     },
@@ -5641,6 +5864,407 @@
           "type": "string"
         },
         "embaettiNumer": {
+          "type": "string"
+        }
+      }
+    },
+    "Skip": {
+      "type": "object",
+      "required": [
+        "shipRegistrationNumber",
+        "isOpen",
+        "isLegallyStaffed",
+        "initialRegistrationDate",
+        "constructionYear",
+        "identificationRegistrationDate",
+        "changeDate",
+        "legallyStaffed",
+        "open"
+      ],
+      "properties": {
+        "shipRegistrationNumber": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "isOpen": {
+          "type": "boolean"
+        },
+        "usageType": {
+          "type": "string"
+        },
+        "operationArea": {
+          "type": "string"
+        },
+        "imoNumber": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "isLegallyStaffed": {
+          "type": "boolean"
+        },
+        "initialRegistrationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "constructionYear": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "seaworhiness": {
+          "$ref": "#/definitions/Seaworhiness"
+        },
+        "identification": {
+          "$ref": "#/definitions/Identification"
+        },
+        "mainMeasurements": {
+          "$ref": "#/definitions/Mainmeasurements"
+        },
+        "crew": {
+          "type": "array",
+          "items": {}
+        },
+        "owners": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Owner"
+          }
+        },
+        "passengerPermits": {
+          "type": "array",
+          "items": {}
+        },
+        "insurances": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Insurance"
+          }
+        },
+        "engines": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Engine"
+          }
+        },
+        "fishery": {
+          "$ref": "#/definitions/Fishery"
+        },
+        "constructionPlace": {
+          "type": "string"
+        },
+        "constructionStation": {
+          "type": "string"
+        },
+        "constructionCountry": {
+          "type": "string"
+        },
+        "constructionNumber": {
+          "type": "string"
+        },
+        "identificationRegistrationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "changeDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "hullMaterial": {
+          "type": "string"
+        },
+        "classificationSociety": {
+          "type": "string"
+        },
+        "propellerCount": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "auxiliaryEnginePowerKiloWatts": {
+          "type": "number",
+          "format": "float"
+        },
+        "acOrDc": {
+          "type": "string"
+        },
+        "previousNameOfShip": {
+          "type": "string"
+        },
+        "powerIndicator": {
+          "type": "number",
+          "format": "float"
+        },
+        "otherInfo": {
+          "type": "string"
+        },
+        "maxPropellerDiameter": {
+          "type": "number",
+          "format": "float"
+        },
+        "powerKW": {
+          "type": "number",
+          "format": "float"
+        },
+        "voltage": {
+          "type": "string"
+        },
+        "comments": {
+          "type": "string"
+        },
+        "legallyStaffed": {
+          "type": "boolean"
+        },
+        "open": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Seaworhiness": {
+      "type": "object",
+      "required": ["isValid", "validFrom", "validTo", "valid"],
+      "properties": {
+        "isValid": {
+          "type": "boolean"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validTo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "extendedValidTo": {
+          "type": "string"
+        },
+        "valid": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Identification": {
+      "type": "object",
+      "properties": {
+        "homeHarbor": {
+          "type": "string"
+        },
+        "regionName": {
+          "type": "string"
+        },
+        "regionAcronym": {
+          "type": "string"
+        },
+        "regionNumber": {
+          "type": "string"
+        },
+        "callSign": {
+          "type": "string"
+        }
+      }
+    },
+    "Mainmeasurements": {
+      "type": "object",
+      "properties": {
+        "length": {
+          "type": "number",
+          "format": "float"
+        },
+        "mostLength": {
+          "type": "number",
+          "format": "float"
+        },
+        "width": {
+          "type": "number",
+          "format": "float"
+        },
+        "depth": {
+          "type": "number",
+          "format": "float"
+        },
+        "draft": {
+          "type": "number",
+          "format": "float"
+        },
+        "bruttoGrt": {
+          "type": "number",
+          "format": "float"
+        },
+        "bruttoWeightTons": {
+          "type": "number",
+          "format": "float"
+        },
+        "nettoWeightTons": {
+          "type": "number",
+          "format": "float"
+        }
+      }
+    },
+    "Owner": {
+      "type": "object",
+      "required": ["registrationDate", "lastUpdated", "foreign", "isForeign"],
+      "properties": {
+        "percentage": {
+          "type": "string"
+        },
+        "nationalIdentificationNumber": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "registrationDate": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "lastUpdated": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "documentTitle": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "postalCode": {
+          "type": "string"
+        },
+        "foreign": {
+          "type": "boolean"
+        },
+        "isForeign": {
+          "type": "boolean"
+        }
+      }
+    },
+    "Insurance": {
+      "type": "object",
+      "required": ["validFrom", "validTo", "enabled"],
+      "properties": {
+        "insuranceRegistrationNumber": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "validFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "validTo": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "enabled": {
+          "type": "boolean"
+        },
+        "numberOfInsured": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "comment": {
+          "type": "string"
+        },
+        "amountISK": {
+          "type": "number",
+          "format": "float"
+        },
+        "insuranceType": {
+          "$ref": "#/definitions/Insurancetype"
+        },
+        "insuranceCompany": {
+          "$ref": "#/definitions/Insurancecompany"
+        }
+      }
+    },
+    "Insurancetype": {
+      "type": "object",
+      "required": ["insuranceTypeRegistrationNumber"],
+      "properties": {
+        "insuranceTypeRegistrationNumber": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "code": {
+          "type": "string"
+        }
+      }
+    },
+    "Insurancecompany": {
+      "type": "object",
+      "required": ["insuranceCompanyRegistrationNumber"],
+      "properties": {
+        "insuranceCompanyRegistrationNumber": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "name": {
+          "type": "string"
+        },
+        "nationalIdentificationNumber": {
+          "type": "string"
+        }
+      }
+    },
+    "Engine": {
+      "type": "object",
+      "required": ["power", "year"],
+      "properties": {
+        "manufacturingNumber": {
+          "type": "string"
+        },
+        "power": {
+          "type": "number",
+          "format": "float"
+        },
+        "year": {
+          "type": "integer",
+          "format": "int32"
+        },
+        "usage": {
+          "$ref": "#/definitions/Usage"
+        },
+        "manufacturer": {
+          "$ref": "#/definitions/Manufacturer"
+        }
+      }
+    },
+    "Usage": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Manufacturer": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        }
+      }
+    },
+    "Fishery": {
+      "type": "object",
+      "properties": {
+        "identityNumber": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "address": {
+          "type": "string"
+        },
+        "postalCode": {
           "type": "string"
         }
       }

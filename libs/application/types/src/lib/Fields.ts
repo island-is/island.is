@@ -60,6 +60,16 @@ export type TableRepeaterFields =
   | 'radio'
   | 'checkbox'
   | 'date'
+  | 'nationalIdWithName'
+
+type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
+
+type TableRepeaterOptions =
+  | RepeaterOption[]
+  | ((
+      application: Application,
+      activeField: Record<string, string>,
+    ) => RepeaterOption[] | [])
 
 export type TableRepeaterItem = {
   component: TableRepeaterFields
@@ -69,15 +79,21 @@ export type TableRepeaterItem = {
   displayInTable?: boolean
   label?: StaticText
   placeholder?: StaticText
-  options?: { label: StaticText; value: string }[]
+  options?: TableRepeaterOptions
   backgroundColor?: 'blue' | 'white'
-  width?: 'half' | 'full'
+  width?: 'half' | 'full' | 'third'
   required?: boolean
   condition?: (
     application: Application,
     activeField?: Record<string, string>,
   ) => boolean
   dataTestId?: string
+  readonly?:
+    | boolean
+    | ((
+        application: Application,
+        activeField?: Record<string, string>,
+      ) => boolean)
 } & (
   | {
       component: 'input'
@@ -88,6 +104,7 @@ export type TableRepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
+      suffix?: string
     }
   | {
       component: 'date'
@@ -102,8 +119,8 @@ export type TableRepeaterItem = {
   | {
       component: 'select'
       label: StaticText
-      options: { label: StaticText; value: string }[]
       isSearchable?: boolean
+      isMulti?: boolean
     }
   | {
       component: 'radio'
@@ -112,6 +129,9 @@ export type TableRepeaterItem = {
   | {
       component: 'checkbox'
       large?: boolean
+    }
+  | {
+      component: 'nationalIdWithName'
     }
 )
 
@@ -268,6 +288,8 @@ export interface RadioField extends BaseField {
   largeButtons?: boolean
   required?: boolean
   space?: BoxProps['paddingTop']
+  hasIllustration?: boolean
+  widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 
@@ -384,6 +406,7 @@ export interface KeyValueField extends BaseField {
   divider?: boolean
   paddingX?: BoxProps['padding']
   paddingY?: BoxProps['padding']
+  paddingBottom?: BoxProps['padding']
 }
 
 export interface CustomField extends BaseField {
@@ -435,7 +458,7 @@ export interface LinkField extends BaseField {
   readonly type: FieldTypes.LINK
   component: FieldComponents.LINK
   s3key?: FormText
-  link?: string
+  link?: FormText
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
@@ -449,15 +472,19 @@ export interface PaymentChargeOverviewField extends BaseField {
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
+type ImageWidthProps = 'full' | 'auto' | '50%'
+type ImagePositionProps = 'left' | 'right' | 'center'
+
 export interface ImageField extends BaseField {
   readonly type: FieldTypes.IMAGE
   component: FieldComponents.IMAGE
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
   alt?: string
-  imageWidth?: 'full' | 'auto'
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
+  imageWidth?: ImageWidthProps | Array<ImageWidthProps>
+  imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
 export interface PdfLinkButtonField extends BaseField {
@@ -473,6 +500,8 @@ export interface PdfLinkButtonField extends BaseField {
     filename: string
   }[]
   setViewPdfFile?: (file: { base64: string; filename: string }) => void
+  viewPdfFile?: boolean
+  downloadButtonTitle?: StaticText
 }
 
 export interface NationalIdWithNameField extends BaseField {

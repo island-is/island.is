@@ -1,9 +1,13 @@
 import { NestFactory } from '@nestjs/core'
 
+import { LoggingModule } from '@island.is/logging'
+
 import { AppModule, AppService } from './app'
 
-async function bootstrap() {
-  const app = await NestFactory.createApplicationContext(AppModule)
+const bootstrap = async () => {
+  const app = await NestFactory.createApplicationContext(AppModule, {
+    logger: LoggingModule.createLogger(),
+  })
   app.enableShutdownHooks()
   const service = app.get(AppService)
   await service.run()

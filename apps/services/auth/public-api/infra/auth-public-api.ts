@@ -50,14 +50,26 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-public-api'> => {
       PASSKEY_CORE_RP_NAME: 'Island.is',
       PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
       REDIS_NODES: REDIS_NODE_CONFIG,
+      COMPANY_REGISTRY_XROAD_PROVIDER_ID: {
+        dev: 'IS-DEV/GOV/10006/Skatturinn/ft-v1',
+        staging: 'IS-TEST/GOV/5402696029/Skatturinn/ft-v1',
+        prod: 'IS/GOV/5402696029/Skatturinn/ft-v1',
+      },
+      COMPANY_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
+      PASSKEY_CORE_ALLOWED_ORIGINS: json([
+        // Origin for iOS app.
+        'island.is',
+        // Origin for Android test app
+        'android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0',
+        // Origin for Android prod app
+        'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
+      ]),
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
         '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
       NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
         '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
-      PASSKEY_CORE_ALLOWED_ORIGINS:
-        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS',
     })
     .xroad(Base, Client, RskProcuring)
     .ingress({

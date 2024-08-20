@@ -3,23 +3,23 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/license-service/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/api/domains/license-service/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/license-service"],
       "options": {
-        "jestConfig": "libs/api/domains/license-service/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/license-service/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/api/domains/license-service/src/lib/messages.ts'"
       }
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

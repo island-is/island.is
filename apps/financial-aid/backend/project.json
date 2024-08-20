@@ -4,6 +4,7 @@
   "sourceRoot": "apps/financial-aid/backend/src",
   "projectType": "application",
   "prefix": "financial-aid-backend",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -47,24 +48,20 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/financial-aid/backend/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/financial-aid/backend/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/financial-aid/backend"]
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/financial-aid/backend"
       }
     },
@@ -96,7 +93,8 @@
         "cwd": "apps/financial-aid/backend"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }
