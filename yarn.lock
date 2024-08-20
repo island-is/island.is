@@ -14878,7 +14878,7 @@ __metadata:
 
 "@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::locator=island.is%40workspace%3A.":
   version: 10.2.0
-  resolution: "@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::version=10.2.0&hash=aeebab&locator=island.is%40workspace%3A."
+  resolution: "@nestjs/terminus@patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch::version=10.2.0&hash=fb72aa&locator=island.is%40workspace%3A."
   dependencies:
     boxen: 5.1.2
     check-disk-space: 3.4.0
@@ -14927,7 +14927,7 @@ __metadata:
       optional: true
     typeorm:
       optional: true
-  checksum: e7d412de26628e132bb255e89744ccd4bad72468a1b8247c77e4f556a959e26db2d4f72474c0b799ad5fcd87d79a92b678996aca665b941e01556803d499ee39
+  checksum: 5d8a7acf53d1fa2f8bc5fe5c08ba4c83c1961cd537ea3fc23034f4bafb9aa977de031ae4e23691ea0e94aa03f97023c229f86a8f129820211fd1c85612403fa5
   languageName: node
   linkType: hard
 
