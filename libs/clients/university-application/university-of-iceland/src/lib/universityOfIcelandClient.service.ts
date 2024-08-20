@@ -58,7 +58,7 @@ export class UniversityOfIcelandApplicationClient {
       },
     )
 
-    return await this.applicationApi.applicationsPost(mappedApplication)
+    return this.applicationApi.applicationsPost(mappedApplication)
   }
 
   async updateApplicationStatus(externalId: string, status: ApplicationStatus) {
