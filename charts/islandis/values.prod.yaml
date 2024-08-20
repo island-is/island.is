@@ -1280,6 +1280,7 @@ endorsement-system-api:
     EMAIL_FROM_ADDRESS: 'noreply@island.is'
     EMAIL_FROM_NAME: 'island.is'
     EMAIL_REGION: 'eu-west-1'
+    EXPORTS_BUCKET_NAME: 'island-is-prod-exports-endorsement-system'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
     LOG_LEVEL: 'info'

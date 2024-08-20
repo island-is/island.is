@@ -1156,6 +1156,7 @@ endorsement-system-api:
     EMAIL_FROM_ADDRESS: 'development@island.is'
     EMAIL_FROM_NAME: 'devland.is'
     EMAIL_REGION: 'eu-west-1'
+    EXPORTS_BUCKET_NAME: 'island-is-staging-exports-endorsement-system'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
