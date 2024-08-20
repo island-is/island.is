@@ -39,7 +39,7 @@ const testStatusResponse = {
   },
 }
 
-jest.mock('form-data', function () {
+jest.mock('form-data', () => {
   return function () {
     this.append = jest.fn(function (key: string, value: string) {
       this[key] = value
@@ -48,29 +48,32 @@ jest.mock('form-data', function () {
   }
 })
 
-const fetchMock = jest.fn(function (
-  url: RequestInfo,
-  // The init argument is needed for the mock to work
-  init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
-) {
-  switch (url) {
-    case testSignUrl:
-      return {
-        json: async function () {
-          return testSignResponse
-        },
-      }
-    case testStatusUrl:
-      return {
-        json: async function () {
-          return testStatusResponse
-        },
-      }
-    default:
-      throw new Error()
-  }
-})
-jest.mock('node-fetch', function () {
+const fetchMock = jest.fn(
+  (
+    url: RequestInfo,
+    // The init argument is needed for the mock to work
+    init?: RequestInit, // eslint-disable-line @typescript-eslint/no-unused-vars
+  ) => {
+    switch (url) {
+      case testSignUrl:
+        return {
+          json: async function () {
+            return testSignResponse
+          },
+        }
+      case testStatusUrl:
+        return {
+          json: async function () {
+            return testStatusResponse
+          },
+        }
+      default:
+        throw new Error()
+    }
+  },
+)
+
+jest.mock('node-fetch', () => {
   return async function (url: RequestInfo, init: RequestInit) {
     return fetchMock(url, init)
   }
@@ -143,5 +146,5 @@ describe('SigningService', () => {
 
     // Verify sign status
     expect(fetchMock).toHaveBeenCalledWith(testStatusUrl, undefined)
-  })
+  }, 5500)
 })

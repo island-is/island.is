@@ -6,5 +6,5 @@ export const HeilbrigdisstofnunSudurlandsHeader = Header
 
 export const HeilbrigdisstofnunSudurlandsFooter = dynamic(
   () => import('./HeilbrigdisstofnunSudurlandsFooter'),
-  { ssr: true },
+  { ssr: false },
 )

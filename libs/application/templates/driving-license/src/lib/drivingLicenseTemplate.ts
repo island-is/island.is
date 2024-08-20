@@ -21,10 +21,18 @@ import {
   ExistingApplicationApi,
   InstitutionNationalIds,
   Application,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
-import { ApiActions } from '../shared'
-import { Events, States, Roles } from './constants'
+import {
+  Events,
+  States,
+  Roles,
+  BE,
+  B_TEMP,
+  B_FULL,
+  ApiActions,
+} from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationFeatureFlags,
@@ -32,17 +40,22 @@ import {
 } from './getApplicationFeatureFlags'
 import { m } from './messages'
 import { hasCompletedPrerequisitesStep } from './utils'
-import { SyslumadurPaymentCatalogApi } from '../dataProviders'
+import { GlassesCheckApi, SyslumadurPaymentCatalogApi } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 
 const getCodes = (application: Application) => {
-  const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+  const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
     application.answers,
     'applicationFor',
     'B-full',
   )
 
-  const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+  const chargeItemCode =
+    applicationFor === 'B-full'
+      ? 'AY110'
+      : applicationFor === BE
+      ? 'AY115'
+      : 'AY114'
 
   if (!chargeItemCode) {
     throw new Error('No selected charge item code')
@@ -50,15 +63,30 @@ const getCodes = (application: Application) => {
   return [chargeItemCode]
 }
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE]
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE,
-  name: m.applicationForDrivingLicense,
+  name: (application) =>
+    application.answers.applicationFor === BE
+      ? m.applicationForBELicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_TEMP
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForTempLicenseTitle.defaultMessage
+      : application.answers.applicationFor === B_FULL
+      ? m.applicationForDrivingLicense.defaultMessage +
+        ' - ' +
+        m.applicationForFullLicenseTitle.defaultMessage
+      : m.applicationForDrivingLicense.defaultMessage,
   institution: m.nationalCommissionerOfPolice,
   dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -87,6 +115,8 @@ const template: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseFeatureFlags.ALLOW_LICENSE_SELECTION
                     ],
+                  allowBELicense:
+                    featureFlags[DrivingLicenseFeatureFlags.ALLOW_BE_LICENSE],
                 })
               },
               write: 'all',
@@ -96,6 +126,7 @@ const template: ApplicationTemplate<
                 TeachersApi,
                 UserProfileApi,
                 SyslumadurPaymentCatalogApi,
+                GlassesCheckApi,
                 CurrentLicenseApi.configure({
                   params: {
                     useLegacyVersion: true,

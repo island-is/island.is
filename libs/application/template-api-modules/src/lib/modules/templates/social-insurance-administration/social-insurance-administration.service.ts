@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { TemplateApiError } from '@island.is/nest/problem'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -20,14 +19,12 @@ import {
   getApplicationAnswers as getHSApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
-import { S3 } from 'aws-sdk'
 import {
   getApplicationType,
   transformApplicationToHouseholdSupplementDTO,
@@ -37,18 +34,18 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
+import { AwsService } from '@island.is/nest/aws'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
 export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly awsService: AwsService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -377,16 +374,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getPdf(key: string) {
-    const file = await this.s3
-      .getObject({ Bucket: this.attachmentBucket, Key: key })
-      .promise()
-    const fileContent = file.Body as Buffer
-
-    if (!fileContent) {
+    this.logger.debug('Getting pdf', { key })
+    const file = await this.awsService.getFileBase64({
+      bucket: this.attachmentBucket,
+      fileName: key,
+    })
+    if (!file) {
       throw new Error('File content was undefined')
     }
-
-    return fileContent.toString('base64')
+    return file
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {
@@ -487,16 +483,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       if (!res.phoneNumber) {
         res.phoneNumber = '888-8888'
       }
-    }
-
-    if (!res.emailAddress) {
-      throw new TemplateApiError(
-        {
-          title: errorMessages.noEmailFound,
-          summary: errorMessages.noEmailFoundDescription,
-        },
-        500,
-      )
     }
 
     return res

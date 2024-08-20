@@ -1,9 +1,5 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
-import {
-  ConfigType,
-  IdsClientConfig,
-  XRoadConfig,
-} from '@island.is/nest/config'
+import { ConfigType, XRoadConfig } from '@island.is/nest/config'
 import { AlthingiOmbudsmanClientConfig } from './clients-althingi-ombudsman.config'
 import { Configuration } from '../gen/fetch/dev'
 
@@ -12,7 +8,6 @@ export const ApiConfiguration = {
   useFactory: (
     xRoadConfig: ConfigType<typeof XRoadConfig>,
     config: ConfigType<typeof AlthingiOmbudsmanClientConfig>,
-    idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) =>
     new Configuration({
       fetchApi: createEnhancedFetch({
@@ -26,9 +21,5 @@ export const ApiConfiguration = {
         'X-Road-Client': xRoadConfig.xRoadClient,
       },
     }),
-  inject: [
-    XRoadConfig.KEY,
-    AlthingiOmbudsmanClientConfig.KEY,
-    IdsClientConfig.KEY,
-  ],
+  inject: [XRoadConfig.KEY, AlthingiOmbudsmanClientConfig.KEY],
 }

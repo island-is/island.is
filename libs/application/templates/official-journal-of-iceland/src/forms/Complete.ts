@@ -18,7 +18,7 @@ import {
 import { complete } from '../lib/messages/complete'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 export const Complete: Form = buildForm({
-  id: 'OfficialJournalOfIcelandApplication',
+  id: 'OfficialJournalOfIcelandAdvertOfIcelandApplication',
   title: 'Skilyrði',
   mode: FormModes.COMPLETED,
   renderLastScreenBackButton: true,

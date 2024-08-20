@@ -1,13 +1,6 @@
 import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
-
-interface PetitionListResponse {
-  endorsementSystemGetGeneralPetitionLists: any
-}
-
-interface PetitionListEndorsementsResponse {
-  endorsementSystemGetGeneralPetitionEndorsements: any
-}
+import { useState } from 'react'
 
 const GetGeneralPetitionLists = gql`
   query endorsementSystemGetGeneralPetitionLists(
@@ -27,6 +20,7 @@ const GetGeneralPetitionLists = gql`
         description
         closedDate
         openedDate
+        endorsementCounter
         adminLock
         meta
         owner
@@ -35,57 +29,72 @@ const GetGeneralPetitionLists = gql`
   }
 `
 
-const GetGeneralPetitionListEndorsements = gql`
-  query endorsementSystemGetGeneralPetitionEndorsements(
-    $input: PaginatedEndorsementInput!
-  ) {
-    endorsementSystemGetGeneralPetitionEndorsements(input: $input) {
-      totalCount
-      data {
-        id
-        endorser
-        created
-        meta {
-          fullName
-        }
-      }
-    }
-  }
-`
-
 export const useGetPetitionLists = () => {
-  const { data: endorsementListsResponse } = useQuery<PetitionListResponse>(
+  const [pagination, setPagination] = useState({ after: '', before: '' })
+  const { data, loading, error, fetchMore } = useQuery(
     GetGeneralPetitionLists,
     {
       variables: {
         input: {
-          limit: 20,
+          tags: 'generalPetition',
+          after: pagination.after,
+          before: pagination.before,
+          limit: 10,
         },
       },
     },
   )
 
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionLists ?? []
-  )
-}
-
-export const useGetPetitionListEndorsements = (listId: string) => {
-  const { data: endorsementListsResponse } =
-    useQuery<PetitionListEndorsementsResponse>(
-      GetGeneralPetitionListEndorsements,
-      {
+  const loadNextPage = () => {
+    if (data?.endorsementSystemGetGeneralPetitionLists.pageInfo.hasNextPage) {
+      setPagination({
+        ...pagination,
+        after: data.endorsementSystemGetGeneralPetitionLists.pageInfo.endCursor,
+        before: '',
+      })
+      fetchMore({
         variables: {
           input: {
-            listId: listId,
-            limit: 1000,
+            tags: 'generalPetition',
+            limit: 10,
+            after:
+              data.endorsementSystemGetGeneralPetitionLists.pageInfo.endCursor,
           },
         },
-      },
-    )
+      })
+    }
+  }
 
-  return (
-    endorsementListsResponse?.endorsementSystemGetGeneralPetitionEndorsements ??
-    []
-  )
+  const loadPreviousPage = () => {
+    if (
+      data?.endorsementSystemGetGeneralPetitionLists.pageInfo.hasPreviousPage
+    ) {
+      setPagination({
+        ...pagination,
+        after: '',
+        before:
+          data.endorsementSystemGetGeneralPetitionLists.pageInfo.startCursor,
+      })
+      fetchMore({
+        variables: {
+          input: {
+            tags: 'generalPetition',
+            limit: 10,
+            before:
+              data.endorsementSystemGetGeneralPetitionLists.pageInfo
+                .startCursor,
+          },
+        },
+      })
+    }
+  }
+
+  return {
+    data: data?.endorsementSystemGetGeneralPetitionLists?.data ?? [],
+    loading,
+    error,
+    loadNextPage,
+    loadPreviousPage,
+    pageInfo: data?.endorsementSystemGetGeneralPetitionLists.pageInfo,
+  }
 }

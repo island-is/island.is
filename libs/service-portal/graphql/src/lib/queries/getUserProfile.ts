@@ -9,9 +9,11 @@ export const USER_PROFILE = gql`
       email
       bankInfo
       emailStatus
+      emailVerified
       mobileStatus
-      modified
+      mobilePhoneNumberVerified
       emailNotifications
+      needsNudge
     }
   }
 `

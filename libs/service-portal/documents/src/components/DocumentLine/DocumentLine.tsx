@@ -9,7 +9,7 @@ import {
 } from '@island.is/api/schema'
 import { Box, Text, LoadingDots, Icon } from '@island.is/island-ui/core'
 import { dateFormat } from '@island.is/shared/constants'
-import { ServicePortalPaths, m } from '@island.is/service-portal/core'
+import { m } from '@island.is/service-portal/core'
 import * as styles from './DocumentLine.css'
 import { gql, useLazyQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'

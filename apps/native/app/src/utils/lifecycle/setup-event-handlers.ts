@@ -1,16 +1,17 @@
-import { getPresentedNotificationsAsync } from 'expo-notifications'
+import { addEventListener } from '@react-native-community/netinfo'
+import { impactAsync, ImpactFeedbackStyle } from 'expo-haptics'
 import {
   AppState,
   AppStateStatus,
   DeviceEventEmitter,
   Linking,
-  Platform,
 } from 'react-native'
 import { Navigation } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { evaluateUrl, navigateTo } from '../../lib/deep-linking'
 import { authStore } from '../../stores/auth-store'
 import { environmentStore } from '../../stores/environment-store'
+import { offlineStore } from '../../stores/offline-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { uiStore } from '../../stores/ui-store'
 import {
@@ -18,9 +19,9 @@ import {
   showAppLockOverlay,
   skipAppLock,
 } from '../app-lock'
-import { ButtonRegistry } from '../component-registry'
+import { ButtonRegistry, ComponentRegistry as CR } from '../component-registry'
+import { isIos } from '../devices'
 import { handleQuickAction } from '../quick-actions'
-import { handleNotificationResponse } from './setup-notifications'
 
 let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 
@@ -55,7 +56,7 @@ export function setupEventHandlers() {
     }
   })
 
-  if (Platform.OS === 'ios') {
+  if (isIos) {
     SpotlightSearch.searchItemTapped((url) => {
       navigateTo(url)
     })
@@ -82,58 +83,51 @@ export function setupEventHandlers() {
   })
 
   AppState.addEventListener('change', (status: AppStateStatus) => {
-    const {
-      lockScreenComponentId,
-      lockScreenActivatedAt,
-      noLockScreenUntilNextAppStateActive,
-    } = authStore.getState()
+    const { noLockScreenUntilNextAppStateActive } = authStore.getState()
     const { appLockTimeout } = preferencesStore.getState()
-
-    if (status === 'active') {
-      getPresentedNotificationsAsync().then((notifications) => {
-        notifications.forEach((notification) =>
-          handleNotificationResponse({
-            notification,
-            actionIdentifier: 'NOOP',
-          }),
-        )
-      })
-    }
 
     if (!skipAppLock()) {
       if (noLockScreenUntilNextAppStateActive) {
         authStore.setState({ noLockScreenUntilNextAppStateActive: false })
         return
       }
+      clearTimeout(backgroundAppLockTimeout)
 
       if (status === 'background' || status === 'inactive') {
-        if (Platform.OS === 'ios') {
-          // Add a small delay for those accidental backgrounds in iOS
+        // Add a small delay for those accidental backgrounds in iOS
+        if (isIos) {
           backgroundAppLockTimeout = setTimeout(() => {
-            if (!lockScreenComponentId) {
+            const { lockScreenComponentId, lockScreenActivatedAt } =
+              authStore.getState()
+
+            if (!lockScreenComponentId && !lockScreenActivatedAt) {
               showAppLockOverlay({ status })
-            } else {
+            } else if (lockScreenComponentId) {
               Navigation.updateProps(lockScreenComponentId, { status })
             }
           }, 100)
         } else {
-          if (!lockScreenComponentId) {
+          // set timeout does not work properly on android when app is in background
+          const { lockScreenComponentId, lockScreenActivatedAt } =
+            authStore.getState()
+
+          if (!lockScreenComponentId && !lockScreenActivatedAt) {
             showAppLockOverlay({ status })
-          } else {
+          } else if (lockScreenComponentId) {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
         }
       }
 
       if (status === 'active') {
-        clearTimeout(backgroundAppLockTimeout)
-
+        const { lockScreenComponentId, lockScreenActivatedAt } =
+          authStore.getState()
         if (lockScreenComponentId) {
           if (
             lockScreenActivatedAt !== undefined &&
             lockScreenActivatedAt + appLockTimeout > Date.now()
           ) {
-            hideAppLockOverlay()
+            hideAppLockOverlay(lockScreenComponentId)
           } else {
             Navigation.updateProps(lockScreenComponentId, { status })
           }
@@ -141,6 +135,22 @@ export function setupEventHandlers() {
       }
     }
   })
+
+  const handleOfflineButtonClick = () => {
+    const offlineState = offlineStore.getState()
+
+    if (!offlineState.bannerVisible) {
+      void impactAsync(ImpactFeedbackStyle.Heavy)
+      void Navigation.showOverlay({
+        component: {
+          id: CR.OfflineBanner,
+          name: CR.OfflineBanner,
+        },
+      })
+    } else {
+      void Navigation.dismissOverlay(CR.OfflineBanner)
+    }
+  }
 
   // handle navigation topBar buttons
   Navigation.events().registerNavigationButtonPressedListener(
@@ -152,10 +162,27 @@ export function setupEventHandlers() {
           return navigateTo('/notifications')
         case ButtonRegistry.ScanLicenseButton:
           return navigateTo('/license-scanner')
+        case ButtonRegistry.OfflineButton:
+          return handleOfflineButtonClick()
       }
     },
   )
 
   // Handle quick actions
   DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)
+
+  // Subscribe to network status changes
+  addEventListener(({ isConnected, type }) => {
+    const offlineStoreState = offlineStore.getState()
+
+    if (!isConnected) {
+      offlineStoreState.actions.setNetInfoNoConnection()
+    } else {
+      offlineStoreState.actions.setIsConnected(true)
+
+      if (!offlineStoreState.pastIsConnected) {
+        offlineStoreState.actions.resetConnectionState()
+      }
+    }
+  })
 }

@@ -55,7 +55,7 @@ export const en: TranslatedMessages = {
   'onboarding.pinKeypad.accessibilityLabel.fingerprint': 'Use fingerprint',
   'onboarding.pinKeypad.accessibilityLabel.delete': 'Delete character',
 
-  // peronal info screen
+  // personal info screen
   'personalInfo.screenTitle': 'Personal info',
 
   // user
@@ -77,12 +77,16 @@ export const en: TranslatedMessages = {
   'settings.usersettings.email': 'Email',
   'settings.usersettings.bankinfo': 'Bank info',
   'settings.communication.groupTitle': 'Notifications and communication',
-  'settings.communication.newDocumentsNotifications':
-    'Get notifications of new documents',
-  'settings.communication.appUpdatesNotifications':
-    'Get notifications about app updates',
-  'settings.communication.applicationsNotifications':
-    'Get notifications about application status updates',
+  'settings.communication.newNotificationsEmailLabel': 'Notifications in email',
+  'settings.communication.newNotificationsEmailDescription':
+    'Government agencies can send you notifications in email.',
+  'settings.communication.newNotificationsErrorTitle': 'Error',
+  'settings.communication.newNotificationsErrorDescription':
+    'Failed to update settings',
+  'settings.communication.newNotificationsInAppLabel':
+    'Notifications in the Island.is app',
+  'settings.communication.newNotificationsInAppDescription':
+    'Government agencies can send you notifications in the Island.is app.',
   'settings.security.privacyTitle': 'Privacy Policy',
   'settings.security.privacySubTitle': 'Digital Iceland',
   'settings.security.groupTitle': 'Security and privacy',
@@ -91,6 +95,18 @@ export const en: TranslatedMessages = {
   'settings.security.useBiometricsLabel': 'Use {biometricType}',
   'settings.security.useBiometricsDescription':
     'With {biometricType} you don’t need to enter PIN',
+  'settings.security.createPasskeyLabel': 'Create a passkey',
+  'settings.security.createPasskeyDescription':
+    'To automatically sign in to Island.is through the app in this device',
+  'settings.security.removePasskeyLabel': 'Delete passkey',
+  'settings.security.removePasskeyDescription':
+    'By deleting your passkey you skip signing in automatically to Island.is with the app',
+  'settings.security.removePasskeyPromptTitle':
+    'Do you want to delete the passkey?',
+  'settings.security.removePasskeyPromptDescription':
+    'By deleting your passkey you can not sign in automatically to Island.is with the app',
+  'settings.security.removePasskeyButton': 'Delete',
+  'settings.security.removePasskeyCancelButton': 'Cancel',
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
@@ -101,6 +117,15 @@ export const en: TranslatedMessages = {
   'settings.about.codePushLabel': 'Updates',
   'settings.about.codePushLoading': 'Loading...',
   'settings.about.codePushUpToDate': 'The app is up to date',
+  'settings.about.codePushUpToDateTitle': 'Up to date',
+  'settings.about.codePushUpdateCancelledTitle': 'Update cancelled',
+  'settings.about.codePushUpdateCancelledDescription':
+    'The update was cancelled',
+  'settings.about.codePushUpdateInstalledTitle': 'Update installed',
+  'settings.about.codePushUpdateInstalledDescription':
+    'The app has been updated',
+  'settings.about.codePushUpdateErrorTitle': 'Unknown error',
+  'settings.about.codePushUpdateErrorDescription': 'An unknown error occurred',
 
   // user: personal info
   'user.natreg.infoBox': 'Your registration at Registers Iceland',
@@ -143,8 +168,9 @@ export const en: TranslatedMessages = {
   'home.screenTitle': 'Overview',
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
-  'home.notifications': 'Notifications',
+  'home.inbox': 'Latest in inbox',
   'home.welcomeText': 'Hi',
+  'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':
     'Now you can see information about vehicles, assets and your family in the app in addition to documents and licenses.',
   'home.onboardingModule.card2':
@@ -169,10 +195,16 @@ export const en: TranslatedMessages = {
   'inbox.emptyListTitle': 'There are currently no documents',
   'inbox.emptyListDescription':
     'When you receive electronic documents from the government, they will appear here.',
-  'inbox.filterButtonTitle': 'Open filter',
+  'inbox.filterButtonTitle': 'Filter',
   'inbox.filterOpenedTagTitle': 'Unread',
   'inbox.filterArchivedTagTitle': 'Archived',
   'inbox.filterStarredTagTitle': 'Starred',
+  'inbox.markAllAsReadPromptTitle': 'Do you want to mark all as read?',
+  'inbox.markAllAsReadPromptDescription': 'This action cannot be undone',
+  'inbox.markAllAsReadPromptCancel': 'Cancel',
+  'inbox.markAllAsReadPromptConfirm': 'Mark all as read',
+  'inbox.cardNoInboxDocuments':
+    'When you receive mail in your mailbox, it will appear here.',
 
   // inbox filters
   'inboxFilters.screenTitle': 'Filter documents',
@@ -183,6 +215,7 @@ export const en: TranslatedMessages = {
   // document detail
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
+  'documentDetail.errorUnknown': 'Error occurred while loading document',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
@@ -273,9 +306,12 @@ export const en: TranslatedMessages = {
 
   // notifications
   'notifications.screenTitle': 'Notifications',
-
-  // notification detail
-  'notificationDetail.screenTitle': 'Notification',
+  'notifications.markAllAsRead': 'Mark all as read',
+  'notifications.settings': 'My settings',
+  'notifications.errorUnknown': 'Error occurred while loading notifications',
+  'notifications.emptyListTitle': 'No notifications',
+  'notifications.emptyListDescription':
+    'When you receive notifications, they will appear here.',
 
   // profile
   'profile.screenTitle': 'More',
@@ -500,4 +536,30 @@ export const en: TranslatedMessages = {
   'airDiscount.emptyListTitle': 'No benefits',
   'airDiscount.emptyListDescription':
     'Only inhabitants with a legal domicile in rural areas far away from the Capital area and on islands are eligible for a discount with Loftbru. (see map on loftbru.is)',
+
+  // offline
+  'offline.title': 'No internet connection',
+  'offline.message': 'Information has not been updated.',
+
+  // problem
+  'problem.error.tag': 'Error',
+  'problem.error.title': 'Service is temporarily down',
+  'problem.error.message': 'Please try again later',
+  'problem.noData.title': 'No data',
+  'problem.noData.message':
+    'If you believe you have data that should appear here, please contact service provider.',
+  'problem.offline.title': 'No internet connection',
+  'problem.offline.message':
+    'An error occurred while communicating with the service provider',
+
+  // passkeys
+  'passkeys.headingTitle': 'Sign in with Island.is app',
+  'passkeys.openUrlHeadingSubtitle':
+    'You are opening Island.is in a browser. Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.headingSubtitle':
+    'Do you want to create a passkey to sign in automatically with the app?',
+  'passkeys.createButton': 'Create a passkey',
+  'passkeys.skipButton': 'Skip',
+  'passkeys.errorRegistering': 'Error',
+  'passkeys.errorRegisteringMessage': 'Could not create a passkey',
 }

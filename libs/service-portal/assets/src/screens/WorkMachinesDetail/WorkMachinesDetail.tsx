@@ -38,6 +38,7 @@ const OrderedLinks = [
   WorkMachinesAction.REQUEST_INSPECTION,
   WorkMachinesAction.REGISTER_FOR_TRAFFIC,
   WorkMachinesAction.CHANGE_STATUS,
+  WorkMachinesAction.SUPERVISOR_CHANGE,
 ]
 
 const WorkMachinesDetail = () => {

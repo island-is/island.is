@@ -58,7 +58,7 @@ export const PassportSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,
-              'currentPassportItem.data',
+              'applicantInformation.data.currentPassportItem',
               undefined,
             ) as TravelDocumentViewModel | undefined
 
@@ -73,7 +73,7 @@ export const PassportSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,
-              'currentPassportItem.data',
+              'applicantInformation.data.currentPassportItem',
               undefined,
             ) as TravelDocumentViewModel | undefined
 
@@ -88,7 +88,7 @@ export const PassportSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,
-              'currentPassportItem.data',
+              'applicantInformation.data.currentPassportItem',
               undefined,
             ) as TravelDocumentViewModel | undefined
 
@@ -115,7 +115,7 @@ export const PassportSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,
-              'currentPassportItem.data',
+              'applicantInformation.data.currentPassportItem',
               undefined,
             ) as TravelDocumentViewModel | undefined
 
@@ -152,7 +152,7 @@ export const PassportSubSection = buildSubSection({
           defaultValue: (application: Application) => {
             const passport = getValueViaPath(
               application.externalData,
-              'currentPassportItem.data',
+              'applicantInformation.data.currentPassportItem',
               undefined,
             ) as TravelDocumentViewModel | undefined
 

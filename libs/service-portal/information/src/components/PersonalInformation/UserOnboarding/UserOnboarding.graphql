@@ -8,6 +8,6 @@ query GetUserProfile {
     bankInfo
     emailStatus
     mobileStatus
-    modified
+    needsNudge
   }
 }

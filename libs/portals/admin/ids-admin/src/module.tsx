@@ -28,9 +28,6 @@ const ClientScreen = lazy(() => import('./screens/Client/Client'))
 const CreateClient = lazy(() =>
   import('./screens/Client/CreateClient/CreateClient'),
 )
-const PublishClient = lazy(() =>
-  import('./screens/Client/PublishClient/PublishClient'),
-)
 
 // Permissions
 const Permissions = lazy(() => import('./screens/Permissions/Permissions'))

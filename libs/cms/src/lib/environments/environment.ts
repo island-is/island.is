@@ -24,6 +24,8 @@ export default {
     'manual',
     'manualChapter',
     'customPage',
+    'genericListItem',
+    'teamList',
   ],
   nestedContentTypes: [
     'alertBanner',
@@ -99,6 +101,7 @@ export default {
     'iconBullet',
     'numberBulletSection',
     'numberBullet',
+    'genericList',
   ],
   // Content types that have the 'activeTranslations' JSON field
   localizedContentTypes: ['article'],

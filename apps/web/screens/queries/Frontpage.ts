@@ -42,6 +42,15 @@ export const GET_FRONTPAGE_QUERY = gql`
           url
           title
         }
+        featured {
+          title
+          attention
+          thing {
+            slug
+            type
+          }
+        }
+        seeMoreText
       }
       namespace {
         fields

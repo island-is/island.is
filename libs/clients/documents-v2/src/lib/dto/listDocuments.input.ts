@@ -1,6 +1,6 @@
 export type ListDocumentsInputDto = {
   nationalId: string
-  senderNationalId?: string
+  senderNationalId?: string[]
   dateFrom?: Date
   dateTo?: Date
   categoryId?: string

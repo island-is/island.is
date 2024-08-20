@@ -1,5 +1,5 @@
-query NationalRegistryPerson($api: String, $useFakeData: Boolean) {
-  nationalRegistryPerson(api: $api, useFakeData: $useFakeData) {
+query NationalRegistryPerson($useFakeData: Boolean) {
+  nationalRegistryPerson(useFakeData: $useFakeData) {
     nationalId
     fullName
     gender

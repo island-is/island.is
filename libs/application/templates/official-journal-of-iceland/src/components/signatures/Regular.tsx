@@ -152,39 +152,44 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
         return (
           <Box className={styles.institutionWrapper} key={index}>
             <Box className={styles.institution}>
-              <InputController
-                id={institutionPath}
-                name={institutionPath}
-                label={f(signatures.inputs.institution.label)}
-                defaultValue={institution.institution}
-                backgroundColor="blue"
-                onChange={(e) =>
-                  onChangeInstitution(index, 'institution', e.target.value)
-                }
-                error={errors && getErrorViaPath(errors, institutionPath)}
-                size="sm"
-              />
-              <DatePickerController
-                id={datePath}
-                name={datePath}
-                label={f(signatures.inputs.date.label)}
-                placeholder={f(signatures.inputs.date.placeholder)}
-                backgroundColor="blue"
-                size="sm"
-                locale="is"
-                defaultValue={institution.date}
-                onChange={(date) => onChangeInstitution(index, 'date', date)}
-                error={errors && getErrorViaPath(errors, datePath)}
-              />
-              {index > 0 && (
-                <Box className={styles.removeInputGroup}>
+              <Box flexGrow={1}>
+                <InputController
+                  id={institutionPath}
+                  name={institutionPath}
+                  label={f(signatures.inputs.institution.label)}
+                  defaultValue={institution.institution}
+                  backgroundColor="blue"
+                  onChange={(e) =>
+                    onChangeInstitution(index, 'institution', e.target.value)
+                  }
+                  error={errors && getErrorViaPath(errors, institutionPath)}
+                  size="sm"
+                />
+              </Box>
+              <Box flexGrow={1}>
+                <DatePickerController
+                  id={datePath}
+                  name={datePath}
+                  label={f(signatures.inputs.date.label)}
+                  placeholder={f(signatures.inputs.date.placeholder)}
+                  backgroundColor="blue"
+                  size="sm"
+                  locale="is"
+                  defaultValue={institution.date}
+                  onChange={(date) => onChangeInstitution(index, 'date', date)}
+                  error={errors && getErrorViaPath(errors, datePath)}
+                />
+              </Box>
+              <Box className={styles.removeInputGroup}>
+                {index > 0 && (
                   <Button
                     variant="utility"
                     icon="trash"
+                    iconType="outline"
                     onClick={() => onRemoveInstitution(index)}
                   />
-                </Box>
-              )}
+                )}
+              </Box>
             </Box>
             <Box className={styles.wrapper}>
               <Text variant="h5" marginBottom={2}>
@@ -219,19 +224,6 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                         error={errors && getErrorViaPath(errors, abovePath)}
                       />
                       <InputController
-                        id={namePath}
-                        label={f(signatures.inputs.name.label)}
-                        defaultValue={signature.name}
-                        backgroundColor="blue"
-                        size="sm"
-                        onChange={(e) =>
-                          onChangeMember(index, i, 'name', e.target.value)
-                        }
-                        error={errors && getErrorViaPath(errors, namePath)}
-                      />
-                    </Box>
-                    <Box className={styles.inputWrapper}>
-                      <InputController
                         id={afterPath}
                         label={f(signatures.inputs.after.label)}
                         defaultValue={signature.after}
@@ -241,6 +233,19 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                           onChangeMember(index, i, 'after', e.target.value)
                         }
                         error={errors && getErrorViaPath(errors, afterPath)}
+                      />
+                    </Box>
+                    <Box className={styles.inputWrapper}>
+                      <InputController
+                        id={namePath}
+                        label={f(signatures.inputs.name.label)}
+                        defaultValue={signature.name}
+                        backgroundColor="blue"
+                        size="sm"
+                        onChange={(e) =>
+                          onChangeMember(index, i, 'name', e.target.value)
+                        }
+                        error={errors && getErrorViaPath(errors, namePath)}
                       />
                       <InputController
                         id={belowPath}
@@ -253,14 +258,15 @@ export const RegularSignature = ({ state, setState, errors }: Props) => {
                         }
                         error={errors && getErrorViaPath(errors, belowPath)}
                       />
+                    </Box>
+                    <Box className={styles.removeInputGroup}>
                       {i > 0 && (
-                        <Box className={styles.removeInputGroup}>
-                          <Button
-                            variant="utility"
-                            icon="trash"
-                            onClick={() => onRemoveMember(index, i)}
-                          />
-                        </Box>
+                        <Button
+                          variant="utility"
+                          icon="trash"
+                          iconType="outline"
+                          onClick={() => onRemoveMember(index, i)}
+                        />
                       )}
                     </Box>
                   </Box>

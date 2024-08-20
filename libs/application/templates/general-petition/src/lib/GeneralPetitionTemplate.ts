@@ -9,12 +9,16 @@ import {
   defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { ApiModuleActions, States, Roles } from '../constants'
 import { GeneralPetitionSchema } from './dataSchema'
 import { m } from './messages'
 
 type Events = { type: DefaultEvents.SUBMIT }
+
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.GENERAL_PETITION]
 
 const GeneralPetitionTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -24,6 +28,7 @@ const GeneralPetitionTemplate: ApplicationTemplate<
   type: ApplicationTypes.GENERAL_PETITION,
   name: m.applicationName,
   dataSchema: GeneralPetitionSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

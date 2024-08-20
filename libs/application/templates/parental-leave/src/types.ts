@@ -55,6 +55,7 @@ export interface FileUpload {
   adoption?: Files[]
   employmentTerminationCertificateFile?: Files[]
   file?: Files[]
+  changeEmployerFile?: Files[]
 }
 
 export interface VMSTPeriod {
@@ -64,6 +65,8 @@ export interface VMSTPeriod {
   firstPeriodStart: string
   paid: boolean
   rightsCodePeriod: string
+  days: string
+  approved: boolean
 }
 
 export interface Period {
@@ -75,6 +78,8 @@ export interface Period {
   daysToUse?: string
   rawIndex?: number
   rightCodePeriod?: string
+  paid?: boolean
+  approved?: boolean
 }
 
 export interface Payment {

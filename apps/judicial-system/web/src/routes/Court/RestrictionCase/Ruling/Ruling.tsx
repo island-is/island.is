@@ -107,7 +107,7 @@ export const getConclusionAutofill = (
       })
 }
 
-export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
+export const Ruling = () => {
   const {
     workingCase,
     setWorkingCase,
@@ -142,7 +142,7 @@ export const Ruling: React.FC<React.PropsWithChildren<unknown>> = () => {
       [
         {
           introduction: formatMessage(m.sections.introduction.autofill, {
-            date: formatDate(workingCase.courtDate, 'PPP'),
+            date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
           courtCaseFacts: formatMessage(

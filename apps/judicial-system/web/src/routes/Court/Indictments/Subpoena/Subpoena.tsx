@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -15,43 +15,65 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  PdfButton,
   SectionHeading,
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import { NotificationType } from '@island.is/judicial-system-web/src/graphql/schema'
+import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
-  formatDateForServer,
   useCase,
+  useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { hasSentNotification } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
 
-const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
+const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
-  const { courtDate, handleCourtDateChange, courtDateHasChanged } =
-    useCourtArrangements(workingCase)
-  const { setAndSendCaseToServer, sendNotification } = useCase()
+  const {
+    courtDate,
+    courtDateHasChanged,
+    handleCourtDateChange,
+    handleCourtRoomChange,
+    sendCourtDateToServer,
+  } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
+  const { sendNotification } = useCase()
+
+  const isArraignmentDone = Boolean(workingCase.indictmentDecision)
 
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
-      await setAndSendCaseToServer(
-        [
-          {
-            courtDate: courtDate
-              ? formatDateForServer(new Date(courtDate))
-              : undefined,
-            force: true,
-          },
-        ],
-        workingCase,
-        setWorkingCase,
-      )
+      if (isArraignmentDone) {
+        router.push(`${destination}/${workingCase.id}`)
+        return
+      }
+
+      const promises: Promise<boolean | undefined>[] = [sendCourtDateToServer()]
+
+      if (workingCase.defendants) {
+        workingCase.defendants.forEach((defendant) => {
+          promises.push(
+            updateDefendant({
+              caseId: workingCase.id,
+              defendantId: defendant.id,
+              subpoenaType: defendant.subpoenaType,
+            }),
+          )
+        })
+      }
+
+      const allDataSentToServer = await Promise.all(promises)
+
+      if (!allDataSentToServer.every((result) => result)) {
+        return
+      }
 
       if (
         hasSentNotification(
@@ -66,11 +88,11 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
       }
     },
     [
+      isArraignmentDone,
+      sendCourtDateToServer,
       workingCase,
-      setAndSendCaseToServer,
-      courtDate,
-      setWorkingCase,
       courtDateHasChanged,
+      updateDefendant,
     ],
   )
 
@@ -88,16 +110,53 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={10}>
+        {workingCase.defendants && (
+          <Box component="section" marginBottom={5}>
+            {
+              <SubpoenaType
+                defendants={workingCase.defendants}
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+                updateDefendantState={updateDefendantState}
+              />
+            }
+          </Box>
+        )}
+        <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.courtArrangementsHeading)}
           />
           <CourtArrangements
-            workingCase={workingCase}
-            setWorkingCase={setWorkingCase}
             handleCourtDateChange={handleCourtDateChange}
-            selectedCourtDate={courtDate}
+            handleCourtRoomChange={handleCourtRoomChange}
+            courtDate={workingCase.arraignmentDate}
+            dateTimeDisabled={isArraignmentDone}
+            courtRoomDisabled={isArraignmentDone}
+            courtRoomRequired
           />
+        </Box>
+        <Box component="section" marginBottom={10}>
+          {workingCase.defendants?.map((defendant, index) => (
+            <Box
+              key={defendant.id}
+              marginBottom={
+                index + 1 === workingCase.defendants?.length ? 0 : 2
+              }
+            >
+              <PdfButton
+                caseId={workingCase.id}
+                title={`Fyrirkall - ${defendant.name} - PDF`}
+                pdfType="subpoena"
+                disabled={
+                  !courtDate?.date ||
+                  !courtDate?.location ||
+                  !defendant.subpoenaType
+                }
+                elementId={defendant.id}
+                queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
+              />
+            </Box>
+          ))}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
@@ -105,10 +164,14 @@ const Subpoena: React.FC<React.PropsWithChildren<unknown>> = () => {
           nextButtonIcon="arrowForward"
           previousUrl={`${constants.INDICTMENTS_RECEPTION_AND_ASSIGNMENT_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase}
-          onNextButtonClick={() =>
+          onNextButtonClick={() => {
             handleNavigationTo(constants.INDICTMENTS_DEFENDER_ROUTE)
+          }}
+          nextButtonText={
+            isArraignmentDone
+              ? undefined
+              : formatMessage(strings.nextButtonText)
           }
-          nextButtonText={formatMessage(strings.nextButtonText)}
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>

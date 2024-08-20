@@ -4,7 +4,7 @@ import Header from './HeilbrigdisstofnunAusturlandsHeader'
 
 export const HeilbrigdisstofnunAusturlandsFooter = dynamic(
   () => import('./HeilbrigdisstofnunAusturlandsFooter'),
-  { ssr: true },
+  { ssr: false },
 )
 
 export const HeilbrigdisstofnunAusturlandsHeader = Header

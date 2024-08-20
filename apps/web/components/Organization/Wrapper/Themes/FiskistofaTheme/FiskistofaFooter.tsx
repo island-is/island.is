@@ -2,20 +2,19 @@ import { ReactNode } from 'react'
 import cn from 'classnames'
 import { BLOCKS } from '@contentful/rich-text-types'
 
+import { SliceType } from '@island.is/island-ui/contentful'
 import {
-  Box,
   GridColumn,
   GridContainer,
   GridRow,
   Hyphen,
   Text,
 } from '@island.is/island-ui/core'
-import { FooterItem } from '@island.is/web/graphql/schema'
-import { useWindowSize } from '@island.is/web/hooks/useViewport'
 import { theme } from '@island.is/island-ui/theme'
-import { SliceType } from '@island.is/island-ui/contentful'
-import { webRichText } from '@island.is/web/utils/richText'
+import { FooterItem } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
+import { useWindowSize } from '@island.is/web/hooks/useViewport'
+import { webRichText } from '@island.is/web/utils/richText'
 
 import * as styles from './FiskistofaFooter.css'
 
@@ -35,11 +34,11 @@ const FiskistofaFooter = ({
 
   return (
     <footer>
-      <Box className={styles.container}>
+      <div className={styles.container}>
         <GridContainer className={styles.mainColumn}>
           <GridColumn>
             <GridRow>
-              <Box marginLeft={2}>
+              <div className={styles.marginLeft}>
                 <img
                   src={n(
                     'fiskistofaFooterLogo',
@@ -47,7 +46,7 @@ const FiskistofaFooter = ({
                   )}
                   alt="fiskistofa-logo"
                 />
-              </Box>
+              </div>
             </GridRow>
             <GridRow marginTop={2} className={styles.linkRow}>
               {footerItems.slice(0, 3).map((item, idx) => (
@@ -91,7 +90,7 @@ const FiskistofaFooter = ({
                       ),
                     },
                   })}
-                  <Box className={styles.iconContainer}>
+                  <div className={styles.iconContainer}>
                     <img
                       src={n(
                         'fiskistofaGraenSkrefLogo',
@@ -121,13 +120,13 @@ const FiskistofaFooter = ({
                         [styles.bsiLogoMobile]: isMobile,
                       })}
                     />
-                  </Box>
+                  </div>
                 </GridColumn>
               )}
             </GridRow>
           </GridColumn>
         </GridContainer>
-      </Box>
+      </div>
     </footer>
   )
 }

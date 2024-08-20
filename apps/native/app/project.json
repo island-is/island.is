@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/native/app/src",
   "projectType": "application",
+  "tags": ["scope:js"],
   "generators": {},
   "targets": {
     "serve": {
@@ -27,20 +28,17 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/native/app/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "codegen/frontend-client": {
       "executor": "nx:run-commands",
       "options": {
         "parallel": false,
         "command": "graphql-codegen --config apps/native/app/codegen.yml"
-      },
-      "outputs": ["{projectRoot}/src/graphql/types/schema.ts"]
+      }
     },
-    "docker-native": {}
-  },
-  "tags": ["scope:js"]
+    "docker-native": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-native`"
+    }
+  }
 }

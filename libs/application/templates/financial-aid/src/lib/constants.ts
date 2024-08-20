@@ -30,6 +30,8 @@ export enum Routes {
   INCOMEFILES = 'incomeFiles',
   SUMMARY = 'summary',
   CONFIRMATION = 'confirmation',
+  CHILDRENSCHOOLINFO = 'childrenSchoolInfo',
+  CHILDRENFILES = 'childrenFiles',
   SPOUSEACCECPTCONTRACT = 'spouseAcceptContract',
   SPOUSEINCOME = 'spouseIncome',
   SPOUSEINCOMEFILES = 'spouseIncomeFiles',

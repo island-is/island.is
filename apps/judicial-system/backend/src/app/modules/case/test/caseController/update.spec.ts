@@ -9,6 +9,8 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
+  CommentType,
+  DateType,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -26,6 +28,8 @@ import { FileService } from '../../../file'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
 import { Case } from '../../models/case.model'
+import { DateLog } from '../../models/dateLog.model'
+import { ExplanatoryComment } from '../../models/explanatoryComment.model'
 
 jest.mock('../../../../factories')
 
@@ -68,6 +72,8 @@ describe('CaseController - Update', () => {
   let mockFileService: FileService
   let transaction: Transaction
   let mockCaseModel: typeof Case
+  let mockDateLogModel: typeof DateLog
+  let mockExplanatoryCommentModel: typeof ExplanatoryComment
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
@@ -77,6 +83,8 @@ describe('CaseController - Update', () => {
       fileService,
       sequelize,
       caseModel,
+      dateLogModel,
+      explanatoryCommentModel,
       caseController,
     } = await createTestingCaseModule()
 
@@ -84,6 +92,8 @@ describe('CaseController - Update', () => {
     mockUserService = userService
     mockFileService = fileService
     mockCaseModel = caseModel
+    mockDateLogModel = dateLogModel
+    mockExplanatoryCommentModel = explanatoryCommentModel
 
     const mockTransaction = sequelize.transaction as jest.Mock
     transaction = {} as Transaction
@@ -180,6 +190,7 @@ describe('CaseController - Update', () => {
 
     it('should delete a case file', () => {
       expect(mockFileService.deleteCaseFile).toHaveBeenCalledWith(
+        theCase,
         caseFile,
         transaction,
       )
@@ -395,7 +406,6 @@ describe('CaseController - Update', () => {
       const caseToUpdate = { courtCaseNumber }
       const policeCaseNumber1 = uuid()
       const policeCaseNumber2 = uuid()
-      const coverLetterId = uuid()
       const indictmentId = uuid()
       const criminalRecordId = uuid()
       const costBreakdownId = uuid()
@@ -405,12 +415,6 @@ describe('CaseController - Update', () => {
         type,
         policeCaseNumbers: [policeCaseNumber1, policeCaseNumber2],
         caseFiles: [
-          {
-            id: coverLetterId,
-            key: uuid(),
-            state: CaseFileState.STORED_IN_RVG,
-            category: CaseFileCategory.COVER_LETTER,
-          },
           {
             id: indictmentId,
             key: uuid(),
@@ -482,12 +486,6 @@ describe('CaseController - Update', () => {
             user,
             caseId,
             elementId: policeCaseNumber2,
-          },
-          {
-            type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
-            user,
-            caseId,
-            elementId: coverLetterId,
           },
           {
             type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
@@ -737,6 +735,192 @@ describe('CaseController - Update', () => {
           caseId,
         },
       ])
+    })
+  })
+
+  describe('appeal case number updated with appeal files', () => {
+    const appealCaseNumber = uuid()
+    const caseToUpdate = { appealCaseNumber }
+    const caseFile1Id = uuid()
+    const caseFile2Id = uuid()
+    const caseFile3Id = uuid()
+    const caseFile4Id = uuid()
+    const caseFile5Id = uuid()
+    const caseFile6Id = uuid()
+    const caseFiles = [
+      caseFile,
+      {
+        id: caseFile1Id,
+        caseId,
+        category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT,
+        key: uuid(),
+      },
+      {
+        id: caseFile2Id,
+        caseId,
+        category: CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT_CASE_FILE,
+        key: uuid(),
+      },
+      {
+        id: caseFile3Id,
+        caseId,
+        category: CaseFileCategory.PROSECUTOR_APPEAL_CASE_FILE,
+        key: uuid(),
+      },
+      {
+        id: caseFile4Id,
+        caseId,
+        category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+        key: uuid(),
+      },
+      {
+        id: caseFile5Id,
+        caseId,
+        category: CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+        key: uuid(),
+      },
+      {
+        id: caseFile6Id,
+        caseId,
+        category: CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        key: uuid(),
+      },
+    ]
+    const updatedCase = {
+      ...theCase,
+      type: CaseType.RESTRAINING_ORDER,
+      appealCaseNumber,
+      caseFiles,
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(
+        caseId,
+        user,
+        {
+          ...theCase,
+          appealCaseNumber: uuid(),
+          caseFiles,
+        } as Case,
+        caseToUpdate,
+      )
+    })
+
+    it('should post to queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId,
+          elementId: caseFile1Id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId,
+          elementId: caseFile2Id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId,
+          elementId: caseFile3Id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId,
+          elementId: caseFile4Id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId,
+          elementId: caseFile5Id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_CASE_FILE,
+          user,
+          caseId,
+          elementId: caseFile6Id,
+        },
+        {
+          type: MessageType.DELIVERY_TO_COURT_OF_APPEALS_RECEIVED_DATE,
+          user,
+          caseId,
+        },
+      ])
+    })
+  })
+
+  describe('arraignment date updated', () => {
+    const arraignmentDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = { arraignmentDate }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockDateLogModel.create).toHaveBeenCalledWith(
+        { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
+        { transaction },
+      )
+    })
+  })
+
+  describe('court date updated', () => {
+    const courtDate = { date: new Date(), location: uuid() }
+    const caseToUpdate = { courtDate }
+    const updatedCase = {
+      ...theCase,
+      dateLogs: [{ dateType: DateType.COURT_DATE, ...courtDate }],
+    }
+
+    beforeEach(async () => {
+      const mockFindOne = mockCaseModel.findOne as jest.Mock
+      mockFindOne.mockResolvedValueOnce(updatedCase)
+
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockDateLogModel.create).toHaveBeenCalledWith(
+        { dateType: DateType.COURT_DATE, caseId, ...courtDate },
+        { transaction },
+      )
+
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: MessageType.NOTIFICATION,
+          user,
+          caseId,
+          body: { type: NotificationType.COURT_DATE },
+        },
+      ])
+    })
+  })
+
+  describe('postponed indefinitely explanation updated', () => {
+    const postponedIndefinitelyExplanation = uuid()
+    const caseToUpdate = { postponedIndefinitelyExplanation }
+
+    beforeEach(async () => {
+      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+    })
+
+    it('should update case', () => {
+      expect(mockExplanatoryCommentModel.create).toHaveBeenCalledWith(
+        {
+          commentType: CommentType.POSTPONED_INDEFINITELY_EXPLANATION,
+          caseId,
+          comment: postponedIndefinitelyExplanation,
+        },
+        { transaction },
+      )
     })
   })
 })

@@ -5,7 +5,7 @@ import { persist } from 'zustand/middleware'
 import create, { State } from 'zustand/vanilla'
 import islandLogoSrc from '../assets/logo/logo-64w.png'
 import organizations from '../graphql/cache/organizations.json'
-import { client } from '../graphql/client'
+import { getApolloClientAsync } from '../graphql/client'
 import { ListOrganizationsDocument } from '../graphql/types/schema'
 import { lowerCase } from '../lib/lowercase'
 
@@ -59,17 +59,22 @@ export const organizationsStore = create<OrganizationsStore>(
             orgs.find((o) => o.logo?.title === 'Skjaldarmerki')
           c = match?.logo?.url
           if (c) {
-            logoCache.set(forName, c)
+            if (!c.startsWith('https://')) {
+              logoCache.set(forName, `https:${c}`)
+            } else {
+              logoCache.set(forName, c)
+            }
           }
         }
         const url =
           c ??
           'https://images.ctfassets.net/8k0h54kbe6bj/6XhCz5Ss17OVLxpXNVDxAO/d3d6716bdb9ecdc5041e6baf68b92ba6/coat_of_arms.svg'
-        const uri = `${url}?w=${size}&h=${size}&fit=pad&bg=white&fm=png`
+        const uri = `${url}?w=${size}&h=${size}&fit=pad&fm=png`
         return { uri }
       },
       actions: {
         updateOriganizations: async () => {
+          const client = await getApolloClientAsync()
           const querySub = client
             .watchQuery({ query: ListOrganizationsDocument })
             .subscribe(({ data }) => {

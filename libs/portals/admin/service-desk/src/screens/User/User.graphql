@@ -1,0 +1,15 @@
+query GetUserProfileByNationalId($nationalId: String!) {
+  UserProfileAdminProfile(nationalId: $nationalId) {
+    nationalId
+    email
+    emailVerified
+    mobilePhoneNumber
+    mobilePhoneNumberVerified
+    lastNudge
+    nextNudge
+    fullName
+    documentNotifications
+    emailNotifications
+    locale
+  }
+}

@@ -4,6 +4,7 @@ import env from '../../../../lib/environment'
 import { isDocumentLink, renderDocFileName } from '../../utils'
 import localization from '../../Case.json'
 import * as styles from './DocFileName.css'
+import { useIsMobile } from '../../../../hooks'
 
 interface Props {
   doc: Document
@@ -11,6 +12,7 @@ interface Props {
 }
 
 const DocFileName = ({ doc, isAdvice = false }: Props) => {
+  const { isMobile } = useIsMobile()
   const loc = localization['caseDocuments']
   const isLink = isDocumentLink(doc)
   const icon = isLink ? 'link' : 'document'
@@ -38,7 +40,12 @@ const DocFileName = ({ doc, isAdvice = false }: Props) => {
       newTab
     >
       <>
-        <Tooltip placement="right" as="span" text={name} fullWidth>
+        <Tooltip
+          placement={isMobile ? 'bottom' : 'right'}
+          as="span"
+          text={name}
+          fullWidth={isMobile ? false : true}
+        >
           <span>{linkDesc}</span>
         </Tooltip>
         <Icon

@@ -1,9 +1,10 @@
-import * as s from './RegulationDisplay.css'
+import React from 'react'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
-import React from 'react'
-import { HTMLBox } from './HTMLBox'
 import { RegulationMaybeDiff } from '@island.is/regulations'
+
+import { HTMLBox } from './HTMLBox'
+import * as s from './RegulationDisplay.css'
 
 export type CommentsBoxProps = {
   title: string

@@ -9,7 +9,7 @@ import {
   buildTextField,
   buildSubSection,
 } from '@island.is/application/core'
-import { Form, FormModes } from '@island.is/application/types'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
 
 import Logo from '../assets/Logo'
 import {
@@ -94,12 +94,12 @@ export const EmployerApproval: Form = buildForm({
                     {
                       name: employerFormMessages.buttonReject,
                       type: 'subtle',
-                      event: 'REJECT',
+                      event: DefaultEvents.REJECT,
                     },
                     {
                       name: coreMessages.buttonApprove,
                       type: 'primary',
-                      event: 'APPROVE',
+                      event: DefaultEvents.APPROVE,
 
                       // TODO: enable this when we could get 'applicationFundId' from externalData
 
@@ -112,12 +112,12 @@ export const EmployerApproval: Form = buildForm({
                 }),
               ],
             }),
+            buildDescriptionField({
+              id: 'final.approve',
+              title: coreMessages.thanks,
+              description: coreMessages.thanksDescription,
+            }),
           ],
-        }),
-        buildDescriptionField({
-          id: 'final.approve',
-          title: coreMessages.thanks,
-          description: coreMessages.thanksDescription,
         }),
       ],
     }),

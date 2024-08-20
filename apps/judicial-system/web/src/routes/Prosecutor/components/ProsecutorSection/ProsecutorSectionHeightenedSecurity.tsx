@@ -16,9 +16,7 @@ import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import ProsecutorSectionHeading from './ProsecutorSectionHeading'
 import { strings } from './ProsecutorSectionHeightenedSecurity.strings'
 
-const ProsecutorSectionHeightenedSecurity: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const ProsecutorSectionHeightenedSecurity = () => {
   const { formatMessage } = useIntl()
   const router = useRouter()
 

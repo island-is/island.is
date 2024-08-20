@@ -11,6 +11,7 @@ import { sectionExistingApplication } from './sectionExistingApplication'
 export const getForm = ({
   allowFakeData = false,
   allowPickLicense = false,
+  allowBELicense = false,
 }): Form =>
   buildForm({
     id: 'DrivingLicenseApplicationPrerequisitesForm',
@@ -27,7 +28,7 @@ export const getForm = ({
           ...(allowFakeData ? [sectionFakeData] : []),
           sectionExternalData,
           sectionExistingApplication,
-          ...(allowPickLicense ? [sectionApplicationFor] : []),
+          ...(allowPickLicense ? [sectionApplicationFor(allowBELicense)] : []),
           sectionRequirements,
         ],
       }),

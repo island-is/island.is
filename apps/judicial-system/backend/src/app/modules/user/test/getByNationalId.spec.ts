@@ -74,7 +74,7 @@ describe('UserController - Get by national id', () => {
 
     beforeEach(async () => {
       const mockFindOne = mockUserModel.findOne as jest.Mock
-      mockFindOne.mockReturnValueOnce(user)
+      mockFindOne.mockResolvedValueOnce(user)
 
       then = await givenWhenThen(nationalId)
     })

@@ -1,3 +1,4 @@
+import { useApolloClient } from '@apollo/client'
 import { Button, NavigationBarSheet, TextField, Typography } from '@ui'
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -6,7 +7,6 @@ import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { client } from '../../graphql/client'
 import {
   CreateSmsVerificationDocument,
   CreateSmsVerificationMutation,
@@ -20,6 +20,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -38,6 +39,7 @@ export const EditPhoneScreen: NavigationFunctionComponent<{
   phone?: string
 }> = ({ componentId, phone }) => {
   useNavigationOptions(componentId)
+  const client = useApolloClient()
   const intl = useIntl()
   const [loading, setLoading] = useState(false)
   const userProfile = useGetProfileQuery()

@@ -3,15 +3,7 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import {
-  capitalize,
-  formatDate,
-  lowercase,
-} from '@island.is/judicial-system/formatters'
-import {
-  CaseState,
-  type IndictmentConfirmation,
-} from '@island.is/judicial-system/types'
+import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 
 import { nowFactory } from '../factories'
 import { indictment } from '../messages'
@@ -24,6 +16,7 @@ import {
   addNormalPlusJustifiedText,
   addNormalPlusText,
   addNormalText,
+  IndictmentConfirmation,
   setTitle,
 } from './pdfHelpers'
 
@@ -81,21 +74,16 @@ export const createIndictment = async (
 
   setTitle(doc, title)
 
-  if (theCase.state === CaseState.SUBMITTED && confirmation) {
-    addIndictmentConfirmation(
-      doc,
-      confirmation.actor,
-      confirmation.institution,
-      confirmation.date,
-    )
+  if (confirmation) {
+    addIndictmentConfirmation(doc, confirmation)
   }
 
-  addEmptyLines(doc, 4, doc.page.margins.left)
+  addEmptyLines(doc, 6, doc.page.margins.left)
 
   addGiganticHeading(doc, heading, 'Times-Roman')
   addNormalPlusText(doc, ' ')
   setLineCap(2)
-  addNormalPlusText(doc, theCase.indictmentIntroduction || '')
+  addNormalPlusText(doc, theCase.indictmentIntroduction ?? '')
 
   const hasManyCounts =
     theCase.indictmentCounts && theCase.indictmentCounts.length > 1
@@ -104,20 +92,17 @@ export const createIndictment = async (
 
     if (hasManyCounts) {
       addNormalPlusCenteredText(doc, `${roman(index + 1)}.`)
-      addNormalPlusJustifiedText(
-        doc,
-        capitalize(count.incidentDescription || ''),
-      )
+      addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
     } else {
-      addNormalPlusJustifiedText(doc, count.incidentDescription || '')
+      addNormalPlusJustifiedText(doc, count.incidentDescription ?? '')
     }
     addEmptyLines(doc)
-    addNormalPlusJustifiedText(doc, count.legalArguments || '')
-    addNormalText(doc, `M: ${count.policeCaseNumber || ''}`)
+    addNormalPlusJustifiedText(doc, count.legalArguments ?? '')
+    addNormalText(doc, `M: ${count.policeCaseNumber ?? ''}`)
   })
 
   addEmptyLines(doc, 2)
-  addNormalPlusJustifiedText(doc, theCase.demands || '')
+  addNormalPlusJustifiedText(doc, theCase.demands ?? '')
   addEmptyLines(doc, 2)
   addNormalPlusCenteredText(
     doc,

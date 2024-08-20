@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class ArchiveResponse {
-  @ApiProperty()
+  @ApiProperty({ type: Boolean })
   caseArchived!: boolean
 }

@@ -81,6 +81,10 @@ export const general = defineMessages({
     id: 'ojoi.application:general.submitApplication',
     defaultMessage: 'Senda til birtingar',
   },
+  sendApplication: {
+    id: 'ojoi.application:general.sendApplication',
+    defaultMessage: 'Senda umsókn',
+  },
   redirectToServicePortal: {
     id: 'ojoi.application:general.redirectToServicePortal',
     defaultMessage: 'Til baka á mínar síður',

@@ -1,4 +1,5 @@
 import {
+  defineTemplateApi,
   InstitutionNationalIds,
   PaymentCatalogApi,
 } from '@island.is/application/types'
@@ -18,4 +19,8 @@ export const SyslumadurPaymentCatalogApi = PaymentCatalogApi.configure({
     organizationId: InstitutionNationalIds.SYSLUMENN,
   },
   externalDataId: 'payment',
+})
+
+export const GlassesCheckApi = defineTemplateApi({
+  action: 'glassesCheck',
 })

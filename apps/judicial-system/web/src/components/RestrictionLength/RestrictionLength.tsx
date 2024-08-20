@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
@@ -25,7 +25,7 @@ interface Props {
   handleValidToDateChange: (date: Date | undefined, valid: boolean) => void
 }
 
-const RestrictionLength: React.FC<Props> = (props) => {
+const RestrictionLength: FC<Props> = (props) => {
   const {
     workingCase,
     handleIsolationChange,

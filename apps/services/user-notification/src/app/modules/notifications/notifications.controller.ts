@@ -1,81 +1,33 @@
 import { InjectQueue, QueueService } from '@island.is/message-queue'
-import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
-  Inject,
   Body,
-  Get,
-  Param,
-  Query,
-  UseInterceptors,
-  Version,
-  VERSION_NEUTRAL,
   Controller,
+  Get,
+  Inject,
+  Param,
   Post,
-  HttpCode,
+  Query,
+  Version,
 } from '@nestjs/common'
-import {
-  ApiOkResponse,
-  ApiBody,
-  ApiExtraModels,
-  getSchemaPath,
-  ApiOperation,
-} from '@nestjs/swagger'
+import { ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CreateNotificationDto } from './dto/createNotification.dto'
-import { CreateNotificationResponse } from './dto/createNotification.response'
-
-import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
 import { Documentation } from '@island.is/nest/swagger'
-import { HnippTemplate } from './dto/hnippTemplate.response'
 
+import { CreateNotificationResponse } from './dto/createNotification.response'
+import { CreateHnippNotificationDto } from './dto/createHnippNotification.dto'
+import { HnippTemplate } from './dto/hnippTemplate.response'
 import { NotificationsService } from './notifications.service'
+import type { Locale } from '@island.is/shared/types'
 
 @Controller('notifications')
-@ApiExtraModels(CreateNotificationDto)
-@UseInterceptors(CacheInterceptor)
+@ApiTags('notifications')
 export class NotificationsController {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly notificationsService: NotificationsService,
     @InjectQueue('notifications') private queue: QueueService,
   ) {}
-
-  // redirecting legacy endpoint to new one with fixed values
-  @ApiBody({
-    schema: {
-      type: 'object',
-      oneOf: [{ $ref: getSchemaPath(CreateNotificationDto) }],
-    },
-  })
-  @ApiOkResponse({ type: CreateNotificationResponse })
-  @ApiOperation({ deprecated: true })
-  @HttpCode(201)
-  @Post()
-  @Version(VERSION_NEUTRAL)
-  async createDeprecatedNotification(
-    @Body() body: CreateNotificationDto,
-  ): Promise<CreateNotificationResponse> {
-    this.logger.info('Creating notification', {
-      recipient: body.recipient,
-      organization: body.organization,
-      documentId: body.documentId,
-    })
-    return this.createHnippNotification({
-      recipient: body.recipient,
-      templateId: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
-      args: [
-        {
-          key: 'organization',
-          value: body.organization,
-        },
-        {
-          key: 'documentId',
-          value: body.documentId,
-        },
-      ],
-    })
-  }
 
   @Documentation({
     summary: 'Fetches all notification templates',
@@ -86,7 +38,8 @@ export class NotificationsController {
         locale: {
           required: false,
           type: 'string',
-          example: 'is-IS',
+          description: 'locale',
+          example: 'en',
         },
       },
     },
@@ -94,9 +47,9 @@ export class NotificationsController {
   @Get('/templates')
   @Version('1')
   async getNotificationTemplates(
-    @Query('locale') locale: string,
+    @Query('locale') locale?: Locale,
   ): Promise<HnippTemplate[]> {
-    this.logger.info(`Fetching hnipp template for locale: ${locale}`)
+    this.logger.info(`Fetching hnipp templates for locale: ${locale}`)
     return await this.notificationsService.getTemplates(locale)
   }
 
@@ -105,18 +58,19 @@ export class NotificationsController {
     includeNoContentResponse: true,
     response: { status: 200, type: HnippTemplate },
     request: {
-      query: {
-        locale: {
-          required: false,
-          type: 'string',
-          example: 'is-IS',
-        },
-      },
       params: {
         templateId: {
           type: 'string',
           description: 'ID of the template',
           example: 'HNIPP.POSTHOLF.NEW_DOCUMENT',
+        },
+      },
+      query: {
+        locale: {
+          required: false,
+          type: 'string',
+          description: 'locale',
+          example: 'en',
         },
       },
     },
@@ -126,7 +80,7 @@ export class NotificationsController {
   async getNotificationTemplate(
     @Param('templateId')
     templateId: string,
-    @Query('locale') locale: string,
+    @Query('locale') locale: Locale,
   ): Promise<HnippTemplate> {
     return await this.notificationsService.getTemplate(templateId, locale)
   }
@@ -142,20 +96,15 @@ export class NotificationsController {
     @Body() body: CreateHnippNotificationDto,
   ): Promise<CreateNotificationResponse> {
     await this.notificationsService.validate(body.templateId, body.args)
-
     const id = await this.queue.add(body)
-
-    const records: Record<string, string> = {}
-
+    const flattenedArgs: Record<string, string> = {}
     for (const arg of body.args) {
-      records[arg.key] = arg.value
+      flattenedArgs[arg.key] = arg.value
     }
-
     this.logger.info('Message queued', {
       messageId: id,
-      ...records,
-      templateId: body.templateId,
-      recipient: body.recipient,
+      ...flattenedArgs,
+      ...body,
     })
 
     return {

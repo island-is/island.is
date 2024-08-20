@@ -31,9 +31,9 @@ const FileSchema = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicantInfo: z.object({
-    email: z.string().email(),
-    phonenumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
+  applicant: z.object({
+    email: z.string().email().min(1),
+    phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
       params: errorMessages.phoneNumber,
     }),
   }),

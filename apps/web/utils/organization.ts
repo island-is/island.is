@@ -1,7 +1,8 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 
 import { OrganizationPage, OrganizationTheme } from '../graphql/schema'
-import { linkResolver } from '../hooks'
+import { linkResolver, pathIsRoute } from '../hooks'
+import { isLocale } from '../i18n/I18n'
 
 // TODO: Perhaps add this functionality to the linkResolver
 export const getOrganizationLink = (
@@ -45,4 +46,17 @@ export const getBackgroundStyle = (
       ${background.gradientEndColor} 123.07%),
       linear-gradient(180deg, rgba(0,0,0,0.5) 0%, rgba(0, 0, 0, 0) 70%)`
   return background.backgroundColor ?? ''
+}
+
+export const extractOrganizationSlugFromPathname = (
+  pathname: string,
+  locale: Locale,
+) => {
+  const isOrganizationPage = pathIsRoute(pathname, 'organizations', locale)
+  if (!isOrganizationPage) {
+    return ''
+  }
+  const segments = pathname.split('/').filter((x) => x)
+  const localeSegment = isLocale(segments[0]) ? segments[0] : ''
+  return (localeSegment ? segments[2] : segments[1]) ?? ''
 }

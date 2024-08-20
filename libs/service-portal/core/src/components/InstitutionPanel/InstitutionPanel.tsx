@@ -8,21 +8,23 @@ interface InstitutionPanelProps {
   title?: string
   img?: string
   linkHref: string
+  linkLabel?: string
   imgContainerDisplay?: BoxProps['display']
   loading?: boolean
   backgroundColor?: 'purple100' | 'blue100' | 'white'
   tooltipText?: string
   tooltipVariant?: 'white' | 'dark' | 'light'
-  fixedImageWidth?: boolean
+  isSvg?: boolean
 }
 
 export const InstitutionPanel = ({
   img,
   linkHref,
+  linkLabel,
   imgContainerDisplay,
   loading = false,
   backgroundColor = 'purple100',
-  fixedImageWidth = false,
+  isSvg = false,
   tooltipText,
   title,
   tooltipVariant = 'light',
@@ -58,13 +60,13 @@ export const InstitutionPanel = ({
         ) : (
           <Box display="flex" flexDirection="row" alignItems="center">
             <Box
-              component="img"
               alt=""
+              component="img"
               src={img ? img : './assets/images/skjaldarmerki.svg'}
               width={isMobile ? undefined : 'full'}
               height={isMobile ? undefined : 'full'}
               marginRight={isMobile ? 2 : 0}
-              className={fixedImageWidth ? styles.fixedImage : styles.image}
+              className={isSvg ? styles.fixedImage : styles.image}
             />
             {title && (
               <Text variant="h4" as="p" color="purple600" lineHeight="xl">
@@ -89,6 +91,7 @@ export const InstitutionPanel = ({
   return linkHref !== '' ? (
     <a
       href={linkHref}
+      aria-label={linkLabel ?? tooltipText ?? title}
       target="_blank"
       rel="noreferrer noopener"
       className={styles.link}

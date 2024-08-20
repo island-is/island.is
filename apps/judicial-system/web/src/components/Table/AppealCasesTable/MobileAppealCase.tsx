@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -18,7 +18,7 @@ interface Props {
   isLoading?: boolean
 }
 
-const MobileAppealCase: React.FC<Props> = ({
+const MobileAppealCase: FC<Props> = ({
   theCase,
   onClick,
   children,

@@ -111,17 +111,23 @@ export const RealEstateRepeater: FC<
           ]
         }, [] as JSX.Element[])}
       </GridRow>
-      {fields.map((field: AssetFormField, index) => (
-        <Box key={field.id} hidden={field.initial}>
-          <AdditionalRealEstate
-            field={field}
-            fieldName={id}
-            remove={handleRemoveProperty}
-            index={index}
-            error={error && error[index] ? error[index] : null}
-          />
-        </Box>
-      ))}
+      {fields.map((field: AssetFormField, index) => {
+        if (field.initial) {
+          return null
+        }
+
+        return (
+          <Box key={field.id}>
+            <AdditionalRealEstate
+              field={field}
+              fieldName={id}
+              remove={handleRemoveProperty}
+              index={index}
+              error={error && error[index] ? error[index] : null}
+            />
+          </Box>
+        )
+      })}
       <Box marginTop={1}>
         <Button
           variant="text"

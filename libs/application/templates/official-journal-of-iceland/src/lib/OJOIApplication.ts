@@ -21,6 +21,7 @@ import set from 'lodash/set'
 export enum ApplicationStates {
   REQUIREMENTS = 'requirements',
   DRAFT = 'draft',
+  DRAFT_RETRY = 'draft_retry',
   SUBMITTED = 'submitted',
   COMPLETE = 'complete',
 }
@@ -29,18 +30,15 @@ enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee',
 }
-
-type Events =
+type OJOIEvents =
   | { type: DefaultEvents.APPROVE }
   | { type: DefaultEvents.REJECT }
   | { type: DefaultEvents.SUBMIT }
-  | { type: DefaultEvents.ASSIGN }
-  | { type: DefaultEvents.EDIT }
 
 const OJOITemplate: ApplicationTemplate<
   ApplicationContext,
-  ApplicationStateSchema<Events>,
-  Events
+  ApplicationStateSchema<OJOIEvents>,
+  OJOIEvents
 > = {
   type: ApplicationTypes.OFFICIAL_JOURNAL_OF_ICELAND,
   name: general.applicationName,
@@ -95,6 +93,7 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.DRAFT]: {
+        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'inprogress',
@@ -125,10 +124,66 @@ const OJOITemplate: ApplicationTemplate<
               actions: [
                 {
                   event: DefaultEvents.SUBMIT,
-                  name: 'Senda umsókn',
+                  name: general.sendApplication,
                   type: 'primary',
                 },
               ],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          SUBMIT: [
+            {
+              target: ApplicationStates.SUBMITTED,
+            },
+          ],
+        },
+      },
+      [ApplicationStates.DRAFT_RETRY]: {
+        meta: {
+          name: general.applicationName.defaultMessage,
+          status: 'inprogress',
+          progress: 0.66,
+          lifecycle: pruneAfterDays(90),
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.departments,
+              externalDataId: 'departments',
+              order: 1,
+            }),
+            defineTemplateApi({
+              action: TemplateApiActions.types,
+              externalDataId: 'types',
+              order: 2,
+            }),
+          ],
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              read: 'all',
+              write: 'all',
+              delete: true,
+              formLoader: () =>
+                import('../forms/DraftRetry').then((val) =>
+                  Promise.resolve(val.DraftRetry),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: general.sendApplication,
+                  type: 'primary',
+                },
+              ],
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -141,26 +196,31 @@ const OJOITemplate: ApplicationTemplate<
         },
       },
       [ApplicationStates.SUBMITTED]: {
-        entry: 'assignToInstitution',
         meta: {
           name: general.applicationName.defaultMessage,
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(90),
           onEntry: defineTemplateApi({
-            action: TemplateApiActions.submitApplication,
+            action: TemplateApiActions.postApplication,
             shouldPersistToExternalData: true,
-            externalDataId: 'submitApplication',
+            externalDataId: 'successfullyPosted',
             throwOnError: false,
           }),
           roles: [
             {
               id: Roles.APPLICANT,
               read: 'all',
+              write: 'all',
               formLoader: () =>
                 import('../forms/Submitted').then((val) =>
                   Promise.resolve(val.Submitted),
                 ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },
@@ -169,7 +229,7 @@ const OJOITemplate: ApplicationTemplate<
             target: ApplicationStates.COMPLETE,
           },
           [DefaultEvents.REJECT]: {
-            target: ApplicationStates.DRAFT,
+            target: ApplicationStates.DRAFT_RETRY,
           },
         },
       },
@@ -189,6 +249,11 @@ const OJOITemplate: ApplicationTemplate<
                 import('../forms/Complete').then((val) =>
                   Promise.resolve(val.Complete),
                 ),
+            },
+            {
+              id: Roles.ASSIGNEE,
+              read: 'all',
+              write: 'all',
             },
           ],
         },

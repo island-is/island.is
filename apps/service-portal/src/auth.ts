@@ -7,7 +7,6 @@ import {
   EndorsementsScope,
   HmsScope,
   NationalRegistryScope,
-  NotificationsScope,
   UserProfileScope,
 } from '@island.is/auth/scopes'
 
@@ -51,9 +50,9 @@ const SERVICE_PORTAL_SCOPES = [
   ApiScope.healthHealthcare,
   ApiScope.healthRightsStatus,
   ApiScope.healthDentists,
+  ApiScope.healthOrganDonation,
+  ApiScope.healthVaccinations,
   ApiScope.signatureCollection,
-  NotificationsScope.read,
-  NotificationsScope.write,
 ]
 
 const userMocked = process.env.API_MOCKS === 'true'

@@ -20,14 +20,14 @@ export const CategoryItems = ({
   return (
     <>
       <GridContainer>
-        <Text variant="h3" as="h2" id={headingId}>
+        <Text variant="h2" as="h2" id={headingId}>
           {heading}
         </Text>
       </GridContainer>
       <GridItems
         mobileItemWidth={270}
         mobileItemsRows={3}
-        paddingTop={3}
+        paddingTop={4}
         paddingBottom={3}
         insideGridContainer
       >

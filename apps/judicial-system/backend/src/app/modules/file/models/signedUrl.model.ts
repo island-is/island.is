@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class SignedUrl {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   url!: string
 }

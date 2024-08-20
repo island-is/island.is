@@ -3,20 +3,17 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/auth/admin-api/src",
   "projectType": "library",
+  "tags": ["scope:client", "lib:client"],
+  "implicitDependencies": ["services-auth-admin-api"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": ["libs/clients/auth/admin-api/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/auth/admin-api"],
       "options": {
-        "jestConfig": "libs/clients/auth/admin-api/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/auth/admin-api/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -26,7 +23,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["services-auth-admin-api"],
-  "tags": ["scope:client", "lib:client"]
+  }
 }

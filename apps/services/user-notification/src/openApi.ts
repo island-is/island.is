@@ -1,5 +1,5 @@
 import { DocumentBuilder } from '@nestjs/swagger'
-import { NotificationsScope } from '@island.is/auth/scopes'
+import { DocumentsScope } from '@island.is/auth/scopes'
 import { environment } from './environments/environment'
 
 export const openApi = new DocumentBuilder()
@@ -16,8 +16,7 @@ export const openApi = new DocumentBuilder()
         scopes: {
           ['openid']: '',
           ['profile']: '',
-          [NotificationsScope.read]: '',
-          [NotificationsScope.write]: '',
+          [DocumentsScope.main]: '',
         },
         authorizationUrl: `${environment.auth.issuer}/connect/authorize`,
         tokenUrl: `${environment.auth.issuer}/connect/token`,

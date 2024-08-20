@@ -12,12 +12,8 @@ import {
 import * as constants from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
-  CaseAppealDecision,
-  CaseFileCategory,
   isDefenceUser,
   isProsecutionUser,
-  NotificationType,
-  UserRole,
 } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -32,6 +28,12 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import RequestAppealRulingNotToBePublishedCheckbox from '@island.is/judicial-system-web/src/components/RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 import RulingDateLabel from '@island.is/judicial-system-web/src/components/RulingDateLabel/RulingDateLabel'
+import {
+  CaseAppealDecision,
+  CaseFileCategory,
+  NotificationType,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useS3Upload,

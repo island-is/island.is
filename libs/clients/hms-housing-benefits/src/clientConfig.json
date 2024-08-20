@@ -54,6 +54,13 @@
             "schema": { "type": "string" }
           },
           {
+            "name": "payments",
+            "in": "query",
+            "description": "Show payments only if true, else also show final settlements.",
+            "style": "form",
+            "schema": { "type": "boolean" }
+          },
+          {
             "name": "version",
             "in": "path",
             "required": true,

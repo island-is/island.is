@@ -15,6 +15,7 @@ import {
   CurrentApplicationApi,
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
+  ChildrenCustodyInformationApi,
   MunicipalityApi,
   TaxDataApi,
 } from '../dataProviders'
@@ -42,6 +43,11 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
+              title: '',
+              subTitle: '',
+            }),
+            buildDataProviderItem({
+              provider: ChildrenCustodyInformationApi,
               title: '',
               subTitle: '',
             }),

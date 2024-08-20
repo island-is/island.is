@@ -1,7 +1,6 @@
 import { coreMessages, formatText } from '@island.is/application/core'
 import {
   FieldBaseProps,
-  StaticText,
   TableRepeaterField,
 } from '@island.is/application/types'
 import {
@@ -27,6 +26,8 @@ import {
 } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { NationalIdWithName } from '@island.is/application/ui-components'
+import { handleCustomMappedValues } from './utils'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -38,6 +39,7 @@ const componentMapper = {
   checkbox: CheckboxController,
   date: DatePickerController,
   radio: RadioController,
+  nationalIdWithName: NationalIdWithName,
 }
 
 export const TableRepeaterFormField: FC<Props> = ({
@@ -59,6 +61,9 @@ export const TableRepeaterFormField: FC<Props> = ({
     addItemButtonText = coreMessages.buttonAdd,
     saveItemButtonText = coreMessages.reviewButtonSubmit,
     removeButtonTooltipText = coreMessages.deleteFieldText,
+    editButtonTooltipText = coreMessages.editFieldText,
+    editField = false,
+    maxRows,
   } = data
 
   const items = Object.keys(rawItems).map((key) => ({
@@ -81,6 +86,10 @@ export const TableRepeaterFormField: FC<Props> = ({
   const tableHeader = table?.header ?? tableItems.map((item) => item.label)
   const tableRows = table?.rows ?? tableItems.map((item) => item.id)
   const staticData = getStaticTableData?.(application)
+  const canAddItem = maxRows ? savedFields.length < maxRows : true
+
+  // check for components that might need some custom value mapping
+  const customMappedValues = handleCustomMappedValues(tableItems, values)
 
   const handleSaveItem = async (index: number) => {
     const isValid = await methods.trigger(`${data.id}[${index}]`, {
@@ -102,6 +111,10 @@ export const TableRepeaterFormField: FC<Props> = ({
     if (activeIndex === index) setActiveIndex(-1)
     if (activeIndex > index) setActiveIndex(activeIndex - 1)
     remove(index)
+  }
+
+  const handleEditItem = (index: number) => {
+    setActiveIndex(index)
   }
 
   const getFieldError = (id: string) => {
@@ -183,11 +196,38 @@ export const TableRepeaterFormField: FC<Props> = ({
                             />
                           </button>
                         </Tooltip>
+                        {editField && (
+                          <Tooltip
+                            placement="left"
+                            text={formatText(
+                              editButtonTooltipText,
+                              application,
+                              formatMessage,
+                            )}
+                          >
+                            <button
+                              type="button"
+                              onClick={() => handleEditItem(index)}
+                            >
+                              <Icon
+                                icon="pencil"
+                                color="dark200"
+                                type="outline"
+                                size="small"
+                              />
+                            </button>
+                          </Tooltip>
+                        )}
                       </Box>
                     </T.Data>
                     {tableRows.map((item, idx) => (
                       <T.Data key={`${item}-${idx}`}>
-                        {formatTableValue(item, values[index])}
+                        {formatTableValue(
+                          item,
+                          customMappedValues.length
+                            ? customMappedValues[index]
+                            : values[index],
+                        )}
                       </T.Data>
                     ))}
                   </T.Row>
@@ -212,19 +252,49 @@ export const TableRepeaterFormField: FC<Props> = ({
                     options,
                     width = 'full',
                     condition,
+                    readonly = false,
                     ...props
                   } = item
                   const isHalfColumn = component !== 'radio' && width === 'half'
-                  const span = isHalfColumn ? '1/2' : '1/1'
+                  const isThirdColumn =
+                    component !== 'radio' && width === 'third'
+                  const span = isHalfColumn
+                    ? '1/2'
+                    : isThirdColumn
+                    ? '1/3'
+                    : '1/1'
                   const Component = componentMapper[component]
                   const id = `${data.id}[${activeIndex}].${itemId}`
                   const activeValues =
                     activeIndex >= 0 && values ? values[activeIndex] : undefined
 
-                  const translatedOptions = options?.map((option) => ({
-                    ...option,
-                    label: formatText(option.label, application, formatMessage),
-                  }))
+                  let translatedOptions: any = []
+                  if (typeof options === 'function') {
+                    translatedOptions = options(application, activeValues)
+                  } else {
+                    translatedOptions = options?.map((option) => ({
+                      ...option,
+                      label: formatText(
+                        option.label,
+                        application,
+                        formatMessage,
+                      ),
+                      ...(option.tooltip && {
+                        tooltip: formatText(
+                          option.tooltip,
+                          application,
+                          formatMessage,
+                        ),
+                      }),
+                    }))
+                  }
+
+                  let Readonly: boolean | undefined
+                  if (typeof readonly === 'function') {
+                    Readonly = readonly(application, activeValues)
+                  } else {
+                    Readonly = readonly
+                  }
 
                   if (condition && !condition(application, activeValues)) {
                     return null
@@ -255,12 +325,14 @@ export const TableRepeaterFormField: FC<Props> = ({
                         split={width === 'half' ? '1/2' : '1/1'}
                         error={getFieldError(itemId)}
                         control={methods.control}
+                        readOnly={Readonly}
                         backgroundColor={backgroundColor}
                         onChange={() => {
                           if (error) {
                             methods.clearErrors(id)
                           }
                         }}
+                        application={application}
                         {...props}
                       />
                     </GridColumn>
@@ -284,6 +356,7 @@ export const TableRepeaterFormField: FC<Props> = ({
                 type="button"
                 onClick={handleNewItem}
                 icon="add"
+                disabled={!canAddItem}
               >
                 {formatText(addItemButtonText, application, formatMessage)}
               </Button>

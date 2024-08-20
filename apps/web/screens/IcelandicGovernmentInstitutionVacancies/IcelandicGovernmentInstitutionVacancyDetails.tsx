@@ -15,6 +15,7 @@ import {
   Webreader,
 } from '@island.is/web/components'
 import {
+  CustomPageUniqueIdentifier,
   GetIcelandicGovernmentInstitutionVacancyDetailsQuery,
   GetIcelandicGovernmentInstitutionVacancyDetailsQueryVariables,
   GetNamespaceQuery,
@@ -28,6 +29,7 @@ import { Screen } from '@island.is/web/types'
 import { CustomNextError } from '@island.is/web/units/errors'
 import { webRichText } from '@island.is/web/utils/richText'
 
+import { withCustomPageWrapper } from '../CustomPage/CustomPageWrapper'
 import SidebarLayout from '../Layouts/SidebarLayout'
 import { GET_NAMESPACE_QUERY } from '../queries'
 import { GET_ICELANDIC_GOVERNMENT_INSTITUTION_VACANCY_DETAILS } from '../queries/IcelandicGovernmentInstitutionVacancies'
@@ -398,15 +400,15 @@ IcelandicGovernmentInstitutionVacancyDetails.getProps = async ({
     namespaceResponse?.data?.getNamespace?.fields || '{}',
   ) as Record<string, string>
 
-  if (namespace['display404']) {
-    throw new CustomNextError(404, 'Vacancies on Ísland.is are turned off')
-  }
-
   return {
     vacancy,
     namespace,
-    customAlertBanner: namespace['customAlertBanner'],
   }
 }
 
-export default withMainLayout(IcelandicGovernmentInstitutionVacancyDetails)
+export default withMainLayout(
+  withCustomPageWrapper(
+    CustomPageUniqueIdentifier.Vacancies,
+    IcelandicGovernmentInstitutionVacancyDetails,
+  ),
+)

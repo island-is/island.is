@@ -1,28 +1,10 @@
 const devConfig = {
   production: false,
   port: 3366,
-  email: {
-    fromEmail: 'noreply@island.is',
-    fromName: 'island.is',
-    replyToEmail: 'noreply@island.is',
-    replyToName: 'island.is',
-    servicePortalBaseUrl:
-      process.env.SERVICE_PORTAL_BASE_URL ?? 'http://localhost:4200',
-  },
-  smsOptions: {
-    url: 'https://smsapi.devnova.is',
-    username: 'IslandIs_User_Development',
-    password: process.env.NOVA_PASSWORD,
-    acceptUnauthorized: true,
-  },
   islykillConfig: {
-    cert: process.env.ISLYKILL_CERT,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-  },
-  emailOptions: {
-    useTestAccount: true,
-    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
+    cert: process.env.ISLYKILL_CERT ?? '',
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
   },
   audit: {
     defaultNamespace: '@island.is/user-profile',
@@ -31,39 +13,17 @@ const devConfig = {
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??
       'https://identity-server.dev01.devland.is',
-    audience: '@island.is',
-  },
-  worker: {
-    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
-      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
-      : 3000,
+    audience: ['@island.is', '@admin.island.is'],
   },
 }
 
 const prodConfig = {
   production: true,
   port: 3333,
-  email: {
-    fromEmail: process.env.EMAIL_FROM,
-    fromName: process.env.EMAIL_FROM_NAME,
-    servicePortalBaseUrl: process.env.SERVICE_PORTAL_BASE_URL,
-  },
-  smsOptions: {
-    url: process.env.NOVA_URL,
-    username: process.env.NOVA_USERNAME,
-    password: process.env.NOVA_PASSWORD,
-    acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
-  },
   islykillConfig: {
-    cert: process.env.ISLYKILL_CERT,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-  },
-  emailOptions: {
-    useTestAccount: false,
-    options: {
-      region: process.env.EMAIL_REGION,
-    },
+    cert: process.env.ISLYKILL_CERT ?? '',
+    basePath: process.env.ISLYKILL_SERVICE_BASEPATH ?? '',
+    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE ?? '',
   },
   audit: {
     defaultNamespace: '@island.is/user-profile',
@@ -71,13 +31,8 @@ const prodConfig = {
     serviceName: 'services-user-profile',
   },
   auth: {
-    issuer: process.env.IDENTITY_SERVER_ISSUER_URL,
-    audience: '@island.is',
-  },
-  worker: {
-    processPageSize: process.env.USER_PROFILE_WORKER_PAGE_SIZE
-      ? Number(process.env.USER_PROFILE_WORKER_PAGE_SIZE)
-      : 3000,
+    issuer: process.env.IDENTITY_SERVER_ISSUER_URL ?? '',
+    audience: ['@island.is', '@admin.island.is'],
   },
 }
 

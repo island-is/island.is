@@ -4,13 +4,15 @@ import { QueueService } from './queue.service'
 import { DAY, MINUTE } from './time'
 import { clientConfig, deleteQueues, makeQueueConfig } from './testHelpers'
 
-beforeEach(deleteQueues)
-
 describe('QueueService', () => {
+  beforeEach(async () => {
+    await deleteQueues()
+  })
+
   it('creates queues on onApplicationBootstrap', async () => {
     const config = makeQueueConfig()
     const client = new ClientService(clientConfig, logger)
-    const queue = new QueueService(client, config, logger)
+    const queue = new QueueService(client, config)
     await queue.onApplicationBootstrap()
 
     expect(queue.url).toBeTruthy()
@@ -23,7 +25,7 @@ describe('QueueService', () => {
   it('updates queue attributes when queue config changes', async () => {
     const config = makeQueueConfig()
     const client = new ClientService(clientConfig, logger)
-    await new QueueService(client, config, logger).onApplicationBootstrap()
+    await new QueueService(client, config).onApplicationBootstrap()
 
     const newConfig = {
       ...config,
@@ -31,7 +33,7 @@ describe('QueueService', () => {
       visibilityTimeout: MINUTE,
     }
 
-    const queue = new QueueService(client, newConfig, logger)
+    const queue = new QueueService(client, newConfig)
     await queue.onApplicationBootstrap()
 
     const attributes = await client.getQueueAttributes(queue.url, [

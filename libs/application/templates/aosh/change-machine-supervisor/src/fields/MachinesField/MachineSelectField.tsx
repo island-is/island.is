@@ -48,6 +48,7 @@ export const MachineSelectField: FC<
     async (id: string) => {
       const { data } = await getMachineDetails({
         id: id,
+        rel: 'supervisorChange',
       })
       return data
     },

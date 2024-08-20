@@ -1,9 +1,10 @@
-import React, { useCallback, useContext } from 'react'
+import React, { FC, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, RadioButton, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
@@ -15,6 +16,7 @@ import {
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import RequiredStar from '@island.is/judicial-system-web/src/components/RequiredStar/RequiredStar'
 import {
@@ -26,22 +28,46 @@ import {
 import {
   useCase,
   useDefendants,
+  useOnceOn,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isTrafficViolationIndictment } from '@island.is/judicial-system-web/src/utils/stepHelper'
 import { isProcessingStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { ProsecutorSection, SelectCourt } from '../../components'
 import { strings } from './processing.strings'
 import * as styles from './Processing.css'
 
-const Processing: React.FC = () => {
-  const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
-    useContext(FormContext)
-  const { transitionCase } = useCase()
+const Processing: FC = () => {
+  const { user } = useContext(UserContext)
+  const {
+    workingCase,
+    setWorkingCase,
+    isLoadingWorkingCase,
+    caseNotFound,
+    isCaseUpToDate,
+    refreshCase,
+  } = useContext(FormContext)
+  const { updateCase, transitionCase } = useCase()
   const { formatMessage } = useIntl()
   const { updateDefendant, updateDefendantState } = useDefendants()
   const router = useRouter()
-  const isTrafficViolationCaseCheck = isTrafficViolationIndictment(workingCase)
+  const isTrafficViolationCaseCheck = isTrafficViolationCase(workingCase)
+
+  const initialize = useCallback(async () => {
+    if (!workingCase.court) {
+      await updateCase(workingCase.id, {
+        courtId: user?.institution?.defaultCourtId,
+      })
+      refreshCase()
+    }
+  }, [
+    refreshCase,
+    updateCase,
+    user?.institution?.defaultCourtId,
+    workingCase.court,
+    workingCase.id,
+  ])
+
+  useOnceOn(isCaseUpToDate, initialize)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {

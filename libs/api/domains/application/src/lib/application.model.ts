@@ -129,6 +129,36 @@ export class Application {
 
   @Field(() => ApplicationResponseDtoStatusEnum)
   status!: ApplicationResponseDtoStatusEnum
+
+  @Field(() => Boolean, { nullable: true })
+  pruned?: boolean
+}
+
+@ObjectType()
+export class ApplicationStatistics {
+  @Field(() => String)
+  typeid!: string
+
+  @Field(() => Number)
+  count!: number
+
+  @Field(() => Number)
+  draft!: number
+
+  @Field(() => Number)
+  inprogress!: number
+
+  @Field(() => Number)
+  completed!: number
+
+  @Field(() => Number)
+  rejected!: number
+
+  @Field(() => Number)
+  approved!: number
+
+  @Field(() => String)
+  name?: string
 }
 
 @ObjectType()

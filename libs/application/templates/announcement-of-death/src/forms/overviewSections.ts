@@ -371,6 +371,45 @@ export const files: Field[] = [
   ),
 ]
 
+export const firearmApplicant: Field[] = [
+  buildDividerField({
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildDescriptionField({
+    id: 'firearmApplicant',
+    title: m.firearmsTitle,
+    description: m.firearmsDescription,
+    titleVariant: 'h3',
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.firearmsApplicantName,
+    width: 'half',
+    value: ({ answers }) => (answers.firearmApplicant as any)?.name || '',
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.firearmsApplicantNationalId,
+    width: 'half',
+    value: ({ answers }) =>
+      formatNationalId((answers.firearmApplicant as any)?.nationalId || ''),
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.firearmsApplicantPhone,
+    width: 'half',
+    value: ({ answers }) =>
+      formatPhoneNumber((answers.firearmApplicant as any)?.phone || ''),
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.firearmsApplicantEmail,
+    width: 'half',
+    value: ({ answers }) => (answers.firearmApplicant as any)?.email || '',
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+]
+
 export const additionalInfo: Field[] = [
   buildDividerField({}),
   buildDescriptionField({

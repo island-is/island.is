@@ -1,12 +1,13 @@
 import React, { useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Text, Box } from '@island.is/island-ui/core'
+import { Text, Box, AlertMessage, UploadFile } from '@island.is/island-ui/core'
 import {
   getNextPeriod,
   estimatedBreakDown,
   aidCalculator,
   FamilyStatus,
+  ChildrenAid,
 } from '@island.is/financial-aid/shared/lib'
 import { useLocale } from '@island.is/localization'
 
@@ -31,6 +32,7 @@ import {
 import { DirectTaxPaymentsModal } from '..'
 import { findFamilyStatus } from '../../lib/utils'
 import withLogo from '../Logo/Logo'
+import ChildrenInfo from './ChildrenInfo'
 
 const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
   const { formatMessage } = useIntl()
@@ -38,7 +40,6 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
 
   const { id, answers, externalData } = application
   const summaryCommentType = SummaryCommentType.FORMCOMMENT
-
   const [isModalOpen, setIsModalOpen] = useState(false)
 
   const aidAmount = useMemo(() => {
@@ -52,6 +53,24 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       )
     }
   }, [externalData.municipality.data])
+
+  const showAlertMessageAboutChildrenAid =
+    externalData.childrenCustodyInformation.data.length > 0 &&
+    externalData.municipality.data?.childrenAid !== ChildrenAid.NOTDEFINED
+
+  const findFilesRouteFrom = (
+    childrenFiles: UploadFile[],
+    income: ApproveOptions,
+  ) => {
+    if (childrenFiles?.length > 0) {
+      return Routes.CHILDRENFILES
+    }
+    if (income === ApproveOptions.Yes) {
+      return Routes.INCOMEFILES
+    }
+
+    return Routes.TAXRETURNFILES
+  }
 
   return (
     <>
@@ -84,6 +103,33 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         </Box>
       )}
 
+      {showAlertMessageAboutChildrenAid && (
+        <Box marginTop={[4, 4, 5]}>
+          {externalData.municipality.data?.childrenAid ===
+          ChildrenAid.APPLICANT ? (
+            <AlertMessage
+              type="info"
+              message={
+                <Text variant="medium">
+                  {formatMessage(m.summaryForm.childrenAidAlert.aidGoesToUser)}
+                </Text>
+              }
+            />
+          ) : (
+            <AlertMessage
+              type="info"
+              message={
+                <Text variant="medium">
+                  {formatMessage(
+                    m.summaryForm.childrenAidAlert.aidGoesToInstution,
+                  )}
+                </Text>
+              }
+            />
+          )}
+        </Box>
+      )}
+
       <Box marginTop={[4, 4, 5]}>
         <DescriptionText text={m.summaryForm.general.calculationsOverview} />
       </Box>
@@ -93,6 +139,14 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         nationalId={externalData.nationalRegistry.data.nationalId}
         address={formatAddress(externalData.nationalRegistry.data)}
       />
+
+      {answers?.childrenSchoolInfo && answers.childrenSchoolInfo.length > 0 && (
+        <ChildrenInfo
+          childrenSchoolInfo={answers?.childrenSchoolInfo}
+          goToScreen={goToScreen}
+          childrenComment={answers?.childrenComment}
+        />
+      )}
 
       <FormInfo
         items={formItems(answers, externalData)}
@@ -118,11 +172,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
       />
 
       <Files
-        route={
-          answers.income === ApproveOptions.Yes
-            ? Routes.INCOMEFILES
-            : Routes.TAXRETURNFILES
-        }
+        route={findFilesRouteFrom(answers.childrenFiles, answers.income)}
         goToScreen={goToScreen}
         personalTaxReturn={
           externalData.taxData?.data?.municipalitiesPersonalTaxReturn
@@ -130,6 +180,7 @@ const SummaryForm = ({ application, goToScreen }: FAFieldBaseProps) => {
         }
         taxFiles={answers.taxReturnFiles ?? []}
         incomeFiles={answers.incomeFiles ?? []}
+        childrenFiles={answers.childrenFiles ?? []}
         applicationId={id}
       />
 

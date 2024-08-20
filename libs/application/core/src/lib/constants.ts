@@ -32,3 +32,8 @@ export const hasYes = (answer: any) => {
 
   return answer === YES
 }
+
+export const DEFAULT_FILE_SIZE_LIMIT = 10000000 // 10MB
+export const DEFAULT_TOTAL_FILE_SIZE_SUM = 100000000 // 100MB, too high?
+export const DEFAULT_ALLOWED_FILE_TYPES =
+  '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic'

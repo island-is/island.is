@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useState } from 'react'
+import React, { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
@@ -10,7 +10,10 @@ import {
   DefenderNotFound,
   FormContext,
 } from '@island.is/judicial-system-web/src/components'
-import { Defendant } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Defendant,
+  DefenderChoice,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { defender as m } from './Defender.strings'
@@ -19,8 +22,7 @@ interface Props {
   defendant: Defendant
 }
 
-const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { defendant } = props
+const SelectDefender: FC<Props> = ({ defendant }) => {
   const { workingCase, setWorkingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
@@ -49,7 +51,10 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
         defenderPhoneNumber: defendantWaivesRightToCounsel
           ? ''
           : defendant.defenderPhoneNumber,
-        defendantWaivesRightToCounsel,
+        defenderChoice:
+          defendantWaivesRightToCounsel === true
+            ? DefenderChoice.WAIVE
+            : undefined,
       }
 
       setAndSendDefendantToServer(updateDefendantInput, setWorkingCase)
@@ -79,7 +84,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
                 accused: formatMessage(core.indictmentDefendant, { gender }),
               }),
             )}
-            checked={Boolean(defendant.defendantWaivesRightToCounsel)}
+            checked={Boolean(defendant.defenderChoice === DefenderChoice.WAIVE)}
             onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
               toggleDefendantWaivesRightToCounsel(
                 workingCase.id,
@@ -92,7 +97,7 @@ const SelectDefender: React.FC<React.PropsWithChildren<Props>> = (props) => {
           />
         </Box>
         <DefenderInput
-          disabled={defendant.defendantWaivesRightToCounsel}
+          disabled={defendant.defenderChoice === DefenderChoice.WAIVE}
           onDefenderNotFound={setDefenderNotFound}
           defendantId={defendant.id}
         />

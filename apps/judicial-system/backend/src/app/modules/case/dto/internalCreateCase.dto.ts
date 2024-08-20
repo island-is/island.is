@@ -2,6 +2,7 @@ import {
   ArrayMinSize,
   IsArray,
   IsBoolean,
+  IsEnum,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -13,7 +14,7 @@ import { CaseType, Gender } from '@island.is/judicial-system/types'
 
 export class InternalCreateCaseDto {
   @IsNotEmpty()
-  @IsString()
+  @IsEnum(CaseType)
   @ApiProperty({ enum: CaseType })
   readonly type!: CaseType
 
@@ -21,46 +22,46 @@ export class InternalCreateCaseDto {
   @IsArray()
   @ArrayMinSize(1)
   @IsString({ each: true })
-  @ApiProperty()
+  @ApiProperty({ type: String, isArray: true })
   readonly policeCaseNumbers!: string[]
 
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ type: String })
   readonly prosecutorNationalId!: string
 
   @IsNotEmpty()
   @IsString()
-  @ApiProperty()
+  @ApiProperty({ type: String })
   readonly accusedNationalId!: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly accusedName?: string
 
   @IsOptional()
-  @IsString()
+  @IsEnum(Gender)
   @ApiPropertyOptional({ enum: Gender })
   readonly accusedGender?: Gender
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly accusedAddress?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly citizenship?: string
 
   @IsOptional()
   @IsString()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   readonly leadInvestigator?: string
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: Boolean })
   readonly isHeightenedSecurityLevel?: boolean
 }

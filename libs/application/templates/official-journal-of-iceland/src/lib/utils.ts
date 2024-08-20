@@ -6,6 +6,13 @@ import { RecordObject } from '@island.is/application/types'
 import { LocalError } from './types'
 import get from 'lodash/get'
 
+export const countDaysAgo = (date: Date) => {
+  const now = new Date()
+  const diff = now.getTime() - date.getTime()
+
+  return Math.floor(diff / (1000 * 3600 * 24))
+}
+
 const isWeekday = (date: Date) => {
   const day = date.getDay()
   return day !== 0 && day !== 6

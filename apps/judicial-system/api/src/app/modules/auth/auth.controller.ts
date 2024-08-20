@@ -3,10 +3,10 @@ import { Entropy } from 'entropy-string'
 import { CookieOptions, Request, Response } from 'express'
 
 import { Controller, Get, Inject, Query, Req, Res } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   AuditedAction,
@@ -21,60 +21,60 @@ import {
   CSRF_COOKIE_NAME,
   DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
-  IDS_ID_TOKEN,
+  IDS_ID_TOKEN_NAME,
+  PRISON_CASES_ROUTE,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
   InstitutionType,
+  isPrisonSystemUser,
   UserRole,
 } from '@island.is/judicial-system/types'
 
-import { environment } from '../../../environments'
 import { authModuleConfig } from './auth.config'
 import { AuthService } from './auth.service'
 import { AuthUser, Cookie } from './auth.types'
 
 const REDIRECT_COOKIE_NAME = 'judicial-system.redirect'
 
-const defaultCookieOptions: CookieOptions = {
-  secure: environment.production,
-  httpOnly: true,
-  sameSite: 'lax',
-}
-
-const REDIRECT_COOKIE: Cookie = {
-  name: REDIRECT_COOKIE_NAME,
-  options: {
-    ...defaultCookieOptions,
-    sameSite: 'none',
-  },
-}
-
-const ACCESS_TOKEN_COOKIE: Cookie = {
-  name: ACCESS_TOKEN_COOKIE_NAME,
-  options: defaultCookieOptions,
-}
-
-const CODE_VERIFIER_COOKIE: Cookie = {
-  name: CODE_VERIFIER_COOKIE_NAME,
-  options: defaultCookieOptions,
-}
-const CSRF_COOKIE: Cookie = {
-  name: CSRF_COOKIE_NAME,
-  options: {
-    ...defaultCookieOptions,
-    httpOnly: false,
-  },
-}
-
-const ID_TOKEN: Cookie = {
-  name: IDS_ID_TOKEN,
-  options: defaultCookieOptions,
-}
-
 @Controller('api/auth')
 export class AuthController {
+  private readonly defaultCookieOptions: CookieOptions = {
+    httpOnly: true,
+    sameSite: 'lax',
+  }
+
+  private readonly redirectCookie: Cookie = {
+    name: REDIRECT_COOKIE_NAME,
+    options: {
+      ...this.defaultCookieOptions,
+      sameSite: 'none',
+    },
+  }
+
+  private readonly accessTokenCookie: Cookie = {
+    name: ACCESS_TOKEN_COOKIE_NAME,
+    options: this.defaultCookieOptions,
+  }
+
+  private readonly codeVerifierCookie: Cookie = {
+    name: CODE_VERIFIER_COOKIE_NAME,
+    options: this.defaultCookieOptions,
+  }
+  private readonly csrfCookie: Cookie = {
+    name: CSRF_COOKIE_NAME,
+    options: {
+      ...this.defaultCookieOptions,
+      httpOnly: false,
+    },
+  }
+
+  private readonly idToken: Cookie = {
+    name: IDS_ID_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
@@ -84,20 +84,25 @@ export class AuthController {
     private readonly logger: Logger,
     @Inject(authModuleConfig.KEY)
     private readonly config: ConfigType<typeof authModuleConfig>,
-  ) {}
+  ) {
+    this.defaultCookieOptions.secure = this.config.production
+  }
 
   @Get('login')
   login(
-    @Res() res: Response,
     @Query('redirectRoute') redirectRoute: string,
     @Query('nationalId') nationalId: string,
+    @Res() res: Response,
   ) {
     this.logger.debug('Received login request')
 
-    const { name, options } = REDIRECT_COOKIE
+    const { name, options } = this.redirectCookie
 
     res.clearCookie(name, options)
-    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
+    res.clearCookie(
+      this.codeVerifierCookie.name,
+      this.codeVerifierCookie.options,
+    )
 
     // Local development
     if (this.config.allowAuthBypass && nationalId) {
@@ -143,9 +148,9 @@ export class AuthController {
         res
           .cookie(name, { redirectRoute }, options)
           .cookie(
-            CODE_VERIFIER_COOKIE.name,
+            this.codeVerifierCookie.name,
             codeVerifier,
-            CODE_VERIFIER_COOKIE.options,
+            this.codeVerifierCookie.options,
           )
           .redirect(loginUrl)
       }
@@ -161,8 +166,11 @@ export class AuthController {
     this.logger.debug('Received callback request')
 
     const { redirectRoute } = req.cookies[REDIRECT_COOKIE_NAME] ?? {}
-    const codeVerifier = req.cookies[CODE_VERIFIER_COOKIE.name]
-    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
+    const codeVerifier = req.cookies[this.codeVerifierCookie.name]
+    res.clearCookie(
+      this.codeVerifierCookie.name,
+      this.codeVerifierCookie.options,
+    )
 
     try {
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
@@ -203,12 +211,15 @@ export class AuthController {
   logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
 
-    const idToken = req.cookies[ID_TOKEN.name]
+    const idToken = req.cookies[this.idToken.name]
 
-    res.clearCookie(ACCESS_TOKEN_COOKIE.name, ACCESS_TOKEN_COOKIE.options)
-    res.clearCookie(CSRF_COOKIE.name, CSRF_COOKIE.options)
-    res.clearCookie(CODE_VERIFIER_COOKIE.name, CODE_VERIFIER_COOKIE.options)
-    res.clearCookie(ID_TOKEN.name, ID_TOKEN.options)
+    res.clearCookie(this.accessTokenCookie.name, this.accessTokenCookie.options)
+    res.clearCookie(this.csrfCookie.name, this.csrfCookie.options)
+    res.clearCookie(
+      this.codeVerifierCookie.name,
+      this.codeVerifierCookie.options,
+    )
+    res.clearCookie(this.idToken.name, this.idToken.options)
 
     if (idToken) {
       return res.redirect(
@@ -241,6 +252,8 @@ export class AuthController {
             ? DEFENDER_CASES_ROUTE
             : user.institution?.type === InstitutionType.COURT_OF_APPEALS
             ? COURT_OF_APPEAL_CASES_ROUTE
+            : isPrisonSystemUser(user)
+            ? PRISON_CASES_ROUTE
             : CASES_ROUTE,
       }
     } else {
@@ -299,19 +312,19 @@ export class AuthController {
       AuditedAction.LOGIN,
       res
         .cookie(
-          CSRF_COOKIE.name,
+          this.csrfCookie.name,
           csrfToken as string,
           {
-            ...CSRF_COOKIE.options,
+            ...this.csrfCookie.options,
             maxAge: EXPIRES_IN_MILLISECONDS,
           } as CookieOptions,
         )
-        .cookie(ACCESS_TOKEN_COOKIE.name, jwtToken, {
-          ...ACCESS_TOKEN_COOKIE.options,
+        .cookie(this.accessTokenCookie.name, jwtToken, {
+          ...this.accessTokenCookie.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
-        .cookie(ID_TOKEN.name, idToken, {
-          ...ID_TOKEN.options,
+        .cookie(this.idToken.name, idToken, {
+          ...this.idToken.options,
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
         .redirect(redirectRoute),

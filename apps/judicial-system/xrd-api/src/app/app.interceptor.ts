@@ -8,10 +8,10 @@ import {
   Injectable,
   NestInterceptor,
 } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { type ConfigType } from '@island.is/nest/config'
 
 import {
   capitalize,
@@ -22,12 +22,12 @@ import { CaseType } from '@island.is/judicial-system/types'
 import appModuleConfig from './app.config'
 import { Case } from './app.model'
 
-function reportError(
+const reportError = (
   url: string,
   title: { title: string; emoji: string },
   info?: string,
   error?: unknown,
-) {
+) => {
   return fetch(url, {
     method: 'POST',
     headers: { 'Content-type': 'application/json' },

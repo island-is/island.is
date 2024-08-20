@@ -9,6 +9,8 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { EventType, UserRole } from '@island.is/judicial-system/types'
+
 import { Case } from '../../case/models/case.model'
 
 @Table({
@@ -22,33 +24,36 @@ export class EventLog extends Model {
     allowNull: false,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
+  @ApiProperty({ type: String })
   id!: string
 
   @CreatedAt
-  @Column({
-    type: DataType.DATE,
-  })
-  @ApiProperty()
+  @Column({ type: DataType.DATE })
+  @ApiProperty({ type: Date })
   created!: Date
 
-  @Column({ type: DataType.STRING })
-  @ApiProperty()
-  eventType!: string
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(EventType),
+  })
+  @ApiProperty({ enum: EventType })
+  eventType!: EventType
 
   @ForeignKey(() => Case)
   @Column({ type: DataType.UUID, allowNull: true })
-  @ApiPropertyOptional()
+  @ApiPropertyOptional({ type: String })
   caseId?: string
 
-  @Column({
-    type: DataType.STRING,
-    allowNull: true,
-  })
-  @ApiPropertyOptional()
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
   nationalId?: string
 
-  @Column({ type: DataType.STRING, allowNull: true })
-  @ApiPropertyOptional()
-  userRole?: string
+  @Column({
+    type: DataType.ENUM,
+    allowNull: true,
+    values: Object.values(UserRole),
+  })
+  @ApiPropertyOptional({ enum: UserRole })
+  userRole?: UserRole
 }

@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/auth-nest-tools/src",
   "projectType": "library",
+  "tags": ["lib:nest", "scope:nest"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/auth-nest-tools/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/auth-nest-tools/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/auth-nest-tools/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/auth-nest-tools"]
     }
-  },
-  "tags": ["lib:nest", "scope:nest"]
+  }
 }

@@ -9,12 +9,7 @@ interface Props {
   paymentArray: HousingBenefitsPayment[]
 }
 
-const sumKeys = [
-  'paymentBeforeDebt',
-  'paidOfDebt',
-  'paymentActual',
-  'remainDebt',
-]
+const sumKeys = ['paymentBeforeDebt', 'paidOfDebt', 'paymentActual']
 
 export const getTotalFooter = (paymentArray: Props['paymentArray']) => {
   return sumKeys.map((item) =>
@@ -33,16 +28,7 @@ export const HousingBenefitsFooter = ({ paymentArray }: Props) => {
         </T.Data>
         {totalFooter.map((item, i) => {
           return (
-            <T.Data
-              key={sumKeys[i]}
-              style={tableStyles}
-              box={
-                i + 1 === totalFooter.length
-                  ? { textAlign: 'right' }
-                  : undefined
-              }
-              borderColor="white"
-            >
+            <T.Data key={sumKeys[i]} style={tableStyles} borderColor="white">
               <Text fontWeight="semiBold">{amountFormat(item)}</Text>
             </T.Data>
           )

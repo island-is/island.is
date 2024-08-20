@@ -3,14 +3,18 @@ import React, { useMemo, useState } from 'react'
 import {
   InputModal,
   NumberInput,
+  PercentageInput,
 } from '@island.is/financial-aid-web/veita/src/components'
 import { useRouter } from 'next/router'
 import {
   aidCalculator,
   Amount,
   calculateAcceptedAidFinalAmount,
+  calculateFinalTaxAmount,
   calculateTaxOfAmount,
+  ChildrenAid,
   FamilyStatus,
+  getMonth,
   HomeCircumstances,
   Municipality,
   showSpouseData,
@@ -27,11 +31,15 @@ interface Props {
   homeCircumstances: HomeCircumstances
   familyStatus: FamilyStatus
   applicationMunicipality: Municipality
+  hasApplicantChildren: boolean
+  decemberCompensation: number
+  appliedMonth: number
 }
 
 interface calculationsState {
   amount: number
   income?: number
+  childrenAidAmount?: number
   personalTaxCreditPercentage?: number
   secondPersonalTaxCredit: number
   showSecondPersonalTaxCredit: boolean
@@ -39,6 +47,7 @@ interface calculationsState {
   hasSubmitError: boolean
   deductionFactor: Array<{ description: string; amount: number }>
   comment: string
+  decemberAidAmount?: number
 }
 
 const AcceptModal = ({
@@ -48,10 +57,17 @@ const AcceptModal = ({
   homeCircumstances,
   familyStatus,
   applicationMunicipality,
+  hasApplicantChildren,
+  decemberCompensation,
+  appliedMonth,
 }: Props) => {
   const router = useRouter()
-
   const maximumInputLength = 6
+
+  const hasDecemberAid = getMonth(appliedMonth, 'en') === 'November'
+  const hasChildrenAid =
+    applicationMunicipality.childrenAid === ChildrenAid.APPLICANT &&
+    hasApplicantChildren
 
   const aidAmount = useMemo(() => {
     if (applicationMunicipality && homeCircumstances) {
@@ -76,8 +92,21 @@ const AcceptModal = ({
     )
   }
 
+  const calculateDecemberAid = (
+    hasDecemberAid: boolean,
+    aidAmount: number,
+    decemberCompensation: number,
+  ) => {
+    if (hasDecemberAid) {
+      const aidPercentage = aidAmount / 100
+      return aidPercentage * decemberCompensation
+    }
+    return 0
+  }
+
   const [state, setState] = useState<calculationsState>({
     amount: aidAmount,
+    childrenAidAmount: undefined,
     income: undefined,
     personalTaxCreditPercentage: undefined,
     secondPersonalTaxCredit: 0,
@@ -86,6 +115,11 @@ const AcceptModal = ({
     hasError: false,
     hasSubmitError: false,
     comment: '',
+    decemberAidAmount: calculateDecemberAid(
+      hasDecemberAid,
+      aidAmount,
+      decemberCompensation,
+    ),
   })
 
   const sumValues = state.deductionFactor.reduce(
@@ -95,19 +129,30 @@ const AcceptModal = ({
 
   const checkingValue = (element?: number) => (element ? element : 0)
 
-  const finalAmount = calculateAcceptedAidFinalAmount(
-    state.amount - checkingValue(state.income) - sumValues,
+  const amount =
+    (state.amount || 0) -
+    checkingValue(state.income) -
+    sumValues +
+    (state.decemberAidAmount || 0)
+
+  const taxAmountWithPersonalTax = calculateFinalTaxAmount(
+    amount,
     checkingValue(state.personalTaxCreditPercentage),
     state.secondPersonalTaxCredit,
   )
 
-  const taxAmount = calculateTaxOfAmount(
-    (state.amount || 0) - checkingValue(state.income) - sumValues,
+  const finalAmount = calculateAcceptedAidFinalAmount(
+    amount,
+    taxAmountWithPersonalTax,
+    state.childrenAidAmount || 0,
   )
+
+  const taxAmount = calculateTaxOfAmount(amount)
 
   const areRequiredFieldsFilled =
     state.income === undefined ||
     state.personalTaxCreditPercentage === undefined ||
+    (hasChildrenAid && state.childrenAidAmount === undefined) ||
     !finalAmount ||
     finalAmount === 0
 
@@ -121,12 +166,14 @@ const AcceptModal = ({
       {
         applicationId: router.query.id as string,
         aidAmount: state.amount,
+        childrenAidAmount: state.childrenAidAmount,
         income: state.income,
         personalTaxCredit: state.personalTaxCreditPercentage ?? 0,
         spousePersonalTaxCredit: state.secondPersonalTaxCredit,
         tax: taxAmount,
         finalAmount: finalAmount,
         deductionFactors: state.deductionFactor,
+        decemberAidAmount: state.decemberAidAmount,
       },
       state.comment,
     )
@@ -155,6 +202,54 @@ const AcceptModal = ({
           maximumInputLength={maximumInputLength}
         />
       </Box>
+
+      {hasDecemberAid && (
+        <Box marginBottom={3}>
+          <NumberInput
+            label="Desember uppbót"
+            placeholder="Sláðu inn upphæð desember uppbótar"
+            id="decemberAidAmountInput"
+            name="decemberAidAmountInput"
+            value={
+              state?.decemberAidAmount
+                ? state?.decemberAidAmount.toString()
+                : ''
+            }
+            onUpdate={(input) => {
+              setState({ ...state, decemberAidAmount: input, hasError: false })
+            }}
+            maximumInputLength={maximumInputLength}
+          />
+        </Box>
+      )}
+
+      {hasChildrenAid && (
+        <Box marginBottom={3}>
+          <NumberInput
+            label="Styrkur vegna barna"
+            placeholder="Sláðu inn upphæð"
+            id="childrenAidAmountInput"
+            name="childrenAidAmountInput"
+            value={
+              state?.childrenAidAmount
+                ? state?.childrenAidAmount.toString()
+                : ''
+            }
+            onUpdate={(input) => {
+              setState({
+                ...state,
+                childrenAidAmount: input,
+                hasError: false,
+              })
+            }}
+            maximumInputLength={maximumInputLength}
+            hasError={state.hasError && state.childrenAidAmount === undefined}
+          />
+          <Text variant="small" fontWeight="semiBold" marginBottom={1}>
+            ATH. ekki er tekinn skattur af styrk barna
+          </Text>
+        </Box>
+      )}
 
       <Box marginBottom={3}>
         <NumberInput
@@ -261,48 +356,50 @@ const AcceptModal = ({
       </Box>
 
       <Box marginBottom={3}>
-        <Input
-          label="Persónuafsláttur"
-          placeholder="Sláðu inn prósentuhlutfall"
+        <PercentageInput
           id="personalTaxCredit"
           name="personalTaxCredit"
-          value={Number(state.personalTaxCreditPercentage).toString()}
-          type="number"
-          onChange={(e) => {
-            if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
-              setState({
-                ...state,
-                hasError: false,
-                personalTaxCreditPercentage: Number(e.target.value),
-              })
-            }
-          }}
-          backgroundColor="blue"
+          label="Persónuafsláttur"
+          value={
+            state.personalTaxCreditPercentage
+              ? state.personalTaxCreditPercentage.toString()
+              : ''
+          }
           hasError={
             state.hasError && state.personalTaxCreditPercentage === undefined
+          }
+          onUpdate={(value: number) =>
+            setState({
+              ...state,
+              hasError: false,
+              personalTaxCreditPercentage: value,
+            })
           }
         />
       </Box>
 
       {state.showSecondPersonalTaxCredit && (
         <Box marginBottom={3}>
-          <Input
-            label="Persónuafsláttur"
-            placeholder="Sláðu inn prósentuhlutfall"
+          <PercentageInput
             id="secondPersonalTaxCredit"
             name="secondPersonalTaxCredit"
-            value={Number(state.secondPersonalTaxCredit).toString()}
-            type="number"
-            onChange={(e) => {
-              if (e.target.value.length <= 3 && Number(e.target.value) <= 100) {
-                setState({
-                  ...state,
-                  hasError: false,
-                  secondPersonalTaxCredit: Number(e.target.value),
-                })
-              }
-            }}
-            backgroundColor="blue"
+            placeholder="Sláðu inn prósentuhlutfall"
+            label="Persónuafsláttur"
+            value={
+              state.secondPersonalTaxCredit
+                ? state.secondPersonalTaxCredit.toString()
+                : ''
+            }
+            hasError={
+              state.hasError && state.secondPersonalTaxCredit === undefined
+            }
+            onUpdate={(value: number) =>
+              setState({
+                ...state,
+                hasError: false,
+                secondPersonalTaxCredit: value,
+              })
+            }
           />
         </Box>
       )}
@@ -325,11 +422,21 @@ const AcceptModal = ({
       </Box>
 
       <Box marginBottom={3}>
+        <Box marginBottom={1}>
+          <Input
+            label="Skattur "
+            id="tax"
+            name="tax"
+            value={taxAmount.toLocaleString('de-DE')}
+            readOnly={true}
+          />
+        </Box>
+
         <Input
-          label="Skattur "
+          label="Reiknaður skattur tekið tillit til persónuafsláttar"
           id="tax"
           name="tax"
-          value={taxAmount.toLocaleString('de-DE')}
+          value={taxAmountWithPersonalTax.toLocaleString('de-DE')}
           readOnly={true}
         />
       </Box>

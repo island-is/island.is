@@ -51,7 +51,7 @@ const titleTemplate = (title?: string, date?: string, locale = 'is') => {
   return `
   <p class="signature__title">${title}${title && date ? ', ' : ''}${
     date
-      ? format(new Date(date), 'dd. MMMM yyyy', {
+      ? format(new Date(date), 'd. MMMM yyyy', {
           locale: locale === 'is' ? is : en,
         })
       : ''

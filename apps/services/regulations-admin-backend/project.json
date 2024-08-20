@@ -4,6 +4,7 @@
   "sourceRoot": "apps/services/regulations-admin-backend/src",
   "projectType": "application",
   "prefix": "regulations-admin-backend",
+  "tags": ["scope:nest"],
   "targets": {
     "build": {
       "executor": "@anatine/esbuildnx:build",
@@ -51,12 +52,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/services/regulations-admin-backend/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -64,14 +60,13 @@
         "{workspaceRoot}/coverage/apps/services/regulations-admin-backend"
       ],
       "options": {
-        "jestConfig": "apps/services/regulations-admin-backend/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/services/regulations-admin-backend/jest.config.ts"
       }
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
@@ -110,7 +105,9 @@
         "cwd": "apps/services/regulations-admin-backend"
       }
     },
-    "docker-express": {},
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    },
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
@@ -135,6 +132,5 @@
         "parallel": true
       }
     }
-  },
-  "tags": ["scope:nest"]
+  }
 }

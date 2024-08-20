@@ -65,9 +65,9 @@ export const dataSchema = z.object({
   questions: z.object({
     pensionFund: z.enum([YES, NO]),
   }),
-  applicantInfo: z.object({
-    email: z.string().email(),
-    phonenumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
+  applicant: z.object({
+    email: z.string().email().min(1),
+    phoneNumber: z.string().refine((v) => validateOptionalPhoneNumber(v), {
       params: errorMessages.phoneNumber,
     }),
   }),

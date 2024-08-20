@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { FC, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { IntlShape, useIntl } from 'react-intl'
 
@@ -316,17 +316,14 @@ export const getIncidentDescription = (
   return incidentDescription
 }
 
-export const IndictmentCount: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const {
-    indictmentCount,
-    workingCase,
-    onChange,
-    onDelete,
-    updateIndictmentCountState,
-    setWorkingCase,
-  } = props
+export const IndictmentCount: FC<Props> = ({
+  indictmentCount,
+  workingCase,
+  onChange,
+  onDelete,
+  updateIndictmentCountState,
+  setWorkingCase,
+}) => {
   const { formatMessage } = useIntl()
   const { lawTag } = useIndictmentCounts()
 

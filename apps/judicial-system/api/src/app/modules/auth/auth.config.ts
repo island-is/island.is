@@ -3,6 +3,7 @@ import { defineConfig } from '@island.is/nest/config'
 export const authModuleConfig = defineConfig({
   name: 'AuthModule',
   load: (env) => ({
+    production: env.optional('NODE_ENV') === 'production',
     scope: env.required('AUTH_IDS_SCOPE', 'openid profile'),
     clientId: env.required(
       'AUTH_IDS_CLIENT_ID',

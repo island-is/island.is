@@ -60,7 +60,7 @@ describe('UserController - Create', () => {
 
     beforeEach(async () => {
       const mockCreate = mockUserModel.create as jest.Mock
-      mockCreate.mockReturnValueOnce(user)
+      mockCreate.mockResolvedValueOnce(user)
 
       then = await givenWhenThen()
     })

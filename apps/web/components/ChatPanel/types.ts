@@ -6,9 +6,12 @@ export interface BoostChatPanelProps {
 }
 
 export interface LiveChatIncChatPanelProps {
-  license: number
+  license: string
   version: string
-  group?: number
+  group?: string
+  // Whether the default LiveChatInc launcher is shown
+  showLauncher?: boolean
+  pushUp?: boolean
 }
 
 export interface WatsonChatPanelProps {
@@ -26,7 +29,7 @@ export interface WatsonChatPanelProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   onLoad?: (instance: any) => void
 
-  // Whether the default launcher is shown
+  // Whether the default IBM Watson launcher is shown
   showLauncher?: boolean
 
   // If don't use the default launcher that IBM Watson provides, should the chat bubble launcher be pushed up?
@@ -68,10 +71,10 @@ export type WatsonIntegration =
   | '98ba51da-1677-4881-a133-7ea019ae7b87'
 
   // Samgöngustofa
-  | 'fe12e960-329c-46d5-9ae1-8bd8b8219f43'
+  | 'b0b445a4-4c49-4c79-9731-8d03f49c8cac'
 
   // Samgöngustofa - english
-  | '1e649a3f-9476-4995-ba24-0e72040b0cc0'
+  | 'ee1c15db-7151-4487-bc9a-9f32f1f8ae3b'
 
 export type WatsonServiceInstance =
   // Askur

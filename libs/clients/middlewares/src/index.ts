@@ -4,6 +4,7 @@ export type {
   EnhancedRequest,
   EnhancedRequestInit,
   EnhancedRequestInfo,
+  ApiResponse,
 } from './lib/types'
 export { Request, Response } from './lib/nodeFetch'
 export { FetchError } from './lib/FetchError'

@@ -21,6 +21,7 @@ query GetClient($input: AuthAdminClientInput!) {
       absoluteRefreshTokenLifetime
       slidingRefreshTokenLifetime
       refreshTokenExpiration
+      supportedDelegationTypes
       supportsCustomDelegation
       supportsPersonalRepresentatives
       supportsLegalGuardians

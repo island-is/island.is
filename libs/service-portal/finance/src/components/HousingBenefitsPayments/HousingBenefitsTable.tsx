@@ -9,27 +9,46 @@ import {
   displayMonthOrYear,
 } from '@island.is/service-portal/core'
 import { ExpandRow, ExpandHeader } from '@island.is/service-portal/core'
-import { m as messages } from '../../lib/messages'
-import { HousingBenefitsPayments } from '@island.is/api/schema'
+import { hb, m as messages } from '../../lib/messages'
+import {
+  HousingBenefitsPayment,
+  HousingBenefitsPayments,
+} from '@island.is/api/schema'
 import { HousingBenefitsFooter } from './HousingBenefitsFooter'
-
-export const ITEMS_ON_PAGE = 12
 
 interface Props {
   payments: HousingBenefitsPayments
   page: number
+  itemsOnPage: number
   setPage: (n: number) => void
 }
 
-const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
+const HousingBenefitsTable = ({
+  payments,
+  page,
+  itemsOnPage,
+  setPage,
+}: Props) => {
   const { formatMessage, lang } = useLocale()
 
   const recordsArray = payments.data
 
   const totalPages =
-    payments.totalCount > ITEMS_ON_PAGE
-      ? Math.ceil(payments.totalCount / ITEMS_ON_PAGE)
+    payments.totalCount > itemsOnPage
+      ? Math.ceil(payments.totalCount / itemsOnPage)
       : 0
+
+  const yearTransactionType = (record: HousingBenefitsPayment) => {
+    try {
+      const message =
+        /^\d+$/.test(record?.month ?? '') &&
+        record.transactionType &&
+        formatMessage(hb.transaction?.[record.transactionType])
+      return message ? ' - ' + message : ''
+    } catch (e) {
+      return ''
+    }
+  }
 
   return (
     <>
@@ -53,7 +72,9 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
                 { value: formatDate(record.dateTransfer) },
                 {
                   value: record.month
-                    ? capitalize(displayMonthOrYear(record.month, lang))
+                    ? `${capitalize(
+                        displayMonthOrYear(record.month, lang),
+                      )}${yearTransactionType(record)}`
                     : '',
                 },
                 { value: amountFormat(record.paymentBeforeDebt) },
@@ -102,11 +123,28 @@ const HousingBenefitsTable = ({ payments, page, setPage }: Props) => {
                   },
                   {
                     title: formatMessage(messages.hbTypeOfCalculation),
-                    value: record.calculationType ?? '',
+                    value: record.calculationType
+                      ? formatMessage(hb.calculation?.[record.calculationType])
+                      : '',
                   },
                   {
                     title: formatMessage(messages.hbReductionAssets),
                     value: amountFormat(record.reductionAssets),
+                  },
+                  {
+                    title: formatMessage(messages.hbTypeOfTransaction),
+                    value: record.transactionType
+                      ? formatMessage(hb.transaction?.[record.transactionType])
+                      : '',
+                  },
+                  {
+                    title: formatMessage(messages.hbPaymentType),
+                    value:
+                      record.paymentOrigin === 1
+                        ? formatMessage(messages.paymentOrigin1)
+                        : record.paymentOrigin === 2
+                        ? formatMessage(messages.paymentOrigin2)
+                        : '',
                   },
                 ]}
               />

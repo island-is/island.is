@@ -11,28 +11,28 @@ export class User {
   @Field(() => ID)
   readonly id!: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly created?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly modified?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly name?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly title?: string
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly mobileNumber?: string
 
   @Field(() => UserRole, { nullable: true })
   readonly role?: UserRole
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly email?: string
 
   @Field(() => Institution, { nullable: true })
@@ -41,7 +41,7 @@ export class User {
   @Field(() => Boolean, { nullable: true })
   readonly active?: boolean
 
-  @Field({ nullable: true })
+  @Field(() => String, { nullable: true })
   readonly latestLogin?: string
 
   @Field(() => Int, { nullable: true })

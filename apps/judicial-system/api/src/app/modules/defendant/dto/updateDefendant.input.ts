@@ -1,64 +1,97 @@
-import { Allow } from 'class-validator'
+import { Allow, IsOptional } from 'class-validator'
 
-import { Field, InputType } from '@nestjs/graphql'
+import { Field, ID, InputType } from '@nestjs/graphql'
 
-import { DefendantPlea, Gender } from '@island.is/judicial-system/types'
+import {
+  DefendantPlea,
+  DefenderChoice,
+  Gender,
+  ServiceRequirement,
+  SubpoenaType,
+} from '@island.is/judicial-system/types'
 
 @InputType()
 export class UpdateDefendantInput {
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly caseId!: string
 
   @Allow()
-  @Field()
+  @Field(() => ID)
   readonly defendantId!: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
   readonly noNationalId?: boolean
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly nationalId?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly name?: string
 
   @Allow()
+  @IsOptional()
   @Field(() => Gender, { nullable: true })
   readonly gender?: Gender
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly address?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly citizenship?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderName?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderNationalId?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderEmail?: string
 
   @Allow()
-  @Field({ nullable: true })
+  @IsOptional()
+  @Field(() => String, { nullable: true })
   readonly defenderPhoneNumber?: string
 
   @Allow()
-  @Field(() => Boolean, { nullable: true })
-  readonly defendantWaivesRightToCounsel?: boolean
-
-  @Allow()
+  @IsOptional()
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
+
+  @Allow()
+  @IsOptional()
+  @Field(() => ServiceRequirement, { nullable: true })
+  readonly serviceRequirement?: ServiceRequirement
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly verdictViewDate?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => DefenderChoice, { nullable: true })
+  readonly defenderChoice?: DefenderChoice
+
+  @Allow()
+  @IsOptional()
+  @Field(() => SubpoenaType, { nullable: true })
+  readonly subpoenaType?: SubpoenaType
 }

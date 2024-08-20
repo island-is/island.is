@@ -27,7 +27,7 @@ mutation LimitedAccessUpdateCase($input: UpdateCaseInput!) {
       defenderNationalId
       defenderEmail
       defenderPhoneNumber
-      defendantWaivesRightToCounsel
+      defenderChoice
     }
     defenderName
     defenderNationalId

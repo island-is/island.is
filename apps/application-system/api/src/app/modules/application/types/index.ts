@@ -1,6 +1,6 @@
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
 import { ProviderErrorReason } from '@island.is/shared/problem'
-import { StaticText } from 'static-text'
+import { StaticText } from '@island.is/shared/types'
 
 export interface DecodedAssignmentToken {
   applicationId: string

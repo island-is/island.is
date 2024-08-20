@@ -104,7 +104,7 @@ export const LookupPerson: FC<React.PropsWithChildren<LookupProps>> = ({
             id={`${id}.name`}
             name={`${id}.name`}
             label={formatMessage(m.name)}
-            readOnly
+            disabled
             size={nested ? 'sm' : 'md'}
             error={error?.name ? error?.name : undefined}
           />

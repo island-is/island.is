@@ -6,12 +6,13 @@ import {
 } from '@island.is/application/types'
 import { m } from '../messages'
 import { ConditionFn, DrivingLicense } from '../types'
-import { NO, YES } from '../constants'
 import {
-  DrivingLicenseApplicationFor,
   B_FULL,
   B_TEMP,
-} from '../../shared/constants'
+  DrivingLicenseApplicationFor,
+  NO,
+  YES,
+} from '../constants'
 
 export const allowFakeCondition =
   (result = YES) =>
@@ -20,10 +21,11 @@ export const allowFakeCondition =
 
 export const needsHealthCertificateCondition =
   (result = YES) =>
-  (answers: FormValue) => {
+  (answers: FormValue, externalData: ExternalData) => {
     return (
       Object.values(answers?.healthDeclaration || {}).includes(result) ||
-      answers?.hasHealthRemarks === result
+      answers?.hasHealthRemarks === result ||
+      externalData.glassesCheck?.data === true
     )
   }
 

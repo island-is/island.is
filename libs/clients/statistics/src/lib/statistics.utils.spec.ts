@@ -1,8 +1,13 @@
 import endOfMonth from 'date-fns/endOfMonth'
 import endOfDay from 'date-fns/endOfDay'
+import addMonths from 'date-fns/addMonths'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import format from 'date-fns/format'
-import { processDataFromSource, _tryToGetDate } from './statistics.utils'
+import {
+  processDataFromSource,
+  _tryToGetDate,
+  splitCsvLine,
+} from './statistics.utils'
 
 describe('processDataFromSource', () => {
   it('should process number value csv with month+year labels', () => {
@@ -198,6 +203,34 @@ describe('processDataFromSource', () => {
     // Assert
     expect(processed).toEqual(expected)
   })
+
+  it('should process numbers that are within strings and contain commas', () => {
+    const startDate = new Date(2021, 11)
+
+    const expectedNumberValues = [
+      897, 1333, 1044, 1257, 1151, 1383, 4095, 3004, 3117, 3239, 3169, 2634,
+      2345, 3696, 3515, 3342, 3067, 3537, 3733, 2813, 3200, 374, 662, 926, 770,
+      996, 1001, 1025,
+    ]
+
+    const expected = {
+      data: {
+        test: expectedNumberValues.map((v, i) => ({
+          header: addMonths(endOfMonth(startDate), i).getTime().toString(),
+          value: v,
+        })),
+      },
+    }
+
+    const csv = `
+        ,,,Des 21,Janúar 22,Febrúar 22,Mars 22,Apríl 22,Maí 22,Júní 22,Júlí 22,Ágúst 22,Sept 22,Október 22,Nóvember 22,Desember 22,Janúar 23,Febrúar 23,Mars 23,Apríl 23,Maí 23,Júní 23,Júlí 23,Ágúst 23,Sept 23,Okt 23,Nóv 23,Des 23,Jan 24,Feb 24,Mar 24
+        test,,,897,"1,333","1,044","1,257","1,151","1,383","4,095","3,004","3,117","3,239","3,169","2,634","2,345","3,696","3,515","3,342","3,067","3,537","3,733","2,813","3,200",374,662,926,770,996,"1,001","1,025"
+        `
+
+    const processed = processDataFromSource(csv)
+
+    expect(processed).toEqual(expected)
+  })
 })
 
 describe('_tryToGetDate', () => {
@@ -263,5 +296,29 @@ describe('_tryToGetDate', () => {
         expect(result).toEqual(currentDate)
       }
     }
+  })
+})
+
+describe('splitCsvLine', () => {
+  it('should split normal comma separted line', () => {
+    // Arrange
+    const line = '1,2,3,4'
+
+    // Act
+    const result = splitCsvLine(line)
+
+    // Assert
+    expect(result).toEqual(['1', '2', '3', '4'])
+  })
+
+  it('should split line with commas but skip commas in values surrounded by quotes', () => {
+    // Arrange
+    const line = '1,"2, 3",4'
+
+    // Act
+    const result = splitCsvLine(line)
+
+    // Assert
+    expect(result).toEqual(['1', '2, 3', '4'])
   })
 })

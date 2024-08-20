@@ -91,7 +91,7 @@ export class PoliceController {
   @Post('policeFile')
   @ApiOkResponse({
     type: UploadPoliceCaseFileResponse,
-    description: 'Uploads a police files of a case to AWS S3',
+    description: 'Uploads a police file of a case to AWS S3',
   })
   uploadPoliceCaseFile(
     @Param('caseId') caseId: string,

@@ -46,6 +46,7 @@ export class DeregisterMachineTemplateService extends BaseTemplateApiService {
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
+                'changeStatus',
               )
             }
             return machine

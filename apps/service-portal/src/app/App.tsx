@@ -24,6 +24,7 @@ export const App = () => (
                 portalMeta={{
                   basePath: ServicePortalPaths.Base,
                   portalType: 'my-pages',
+                  portalTitle: 'Mínar síður - Ísland.is',
                 }}
               />
             </FeatureFlagProvider>

@@ -1,6 +1,6 @@
+import { ISODate, nameToSlug, RegName } from '@island.is/regulations'
 import { useLinkResolver } from '@island.is/web/hooks/useLinkResolver'
 import { useDateUtils as _useDateUtils } from '@island.is/web/i18n/useDateUtils'
-import { ISODate, RegName, nameToSlug } from '@island.is/regulations'
 
 export type RegulationSearchKey =
   | 'q'
@@ -16,11 +16,9 @@ export type RegulationSearchFilters = Record<RegulationSearchKey, string>
 // ---------------------------------------------------------------------------
 
 export const useRegulationLinkResolver = () => {
-  // const router = useRouter()
   const utils = useLinkResolver()
 
   return {
-    // router,
     ...utils,
 
     linkToRegulation: (

@@ -151,6 +151,7 @@ const FinanceTransactionPeriodsTableDetail = ({
             value={activeSubjects.filter((v) =>
               subjectsFilter.includes(v.value),
             )}
+            size="xs"
             options={activeSubjects}
             onChange={(val) => {
               setSubjectsFilter(val?.value ? [val.value] : [])

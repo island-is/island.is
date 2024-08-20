@@ -101,7 +101,12 @@ export interface CacheMiddlewareConfig extends CacheConfig {
   logger: Logger
 }
 
-export interface CacheEntry {
+export interface CacheEntryRaw {
   body: string
   policy: CachePolicy.CachePolicyObject
+}
+
+export interface CacheEntry {
+  body: string
+  policy: CachePolicyInternal
 }

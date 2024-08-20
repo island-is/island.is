@@ -46,6 +46,7 @@ export class RequestInspectionTemplateService extends BaseTemplateApiService {
               return await this.workMachineClientService.getMachineDetail(
                 auth,
                 machine.id,
+                'requestInspection',
               )
             }
             return machine

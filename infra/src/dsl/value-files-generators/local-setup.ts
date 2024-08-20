@@ -146,15 +146,6 @@ export const getLocalrunValueFile = async (
                     proxy: {
                       to: target.replace('localhost', 'host.docker.internal'),
                       mode: 'proxyAlways',
-                      // soffia proxy service hack. need to get this proxy to forward host header
-                      // but not really how to do it yet.
-                      ...(target === 'https://localhost:8443'
-                        ? {
-                            injectHeaders: {
-                              Host: 'soffiaprufa.skra.is',
-                            },
-                          }
-                        : {}),
                       predicateGenerators: [
                         {
                           matches: {

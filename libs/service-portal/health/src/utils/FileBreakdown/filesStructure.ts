@@ -187,7 +187,7 @@ export const exportHealthCenterFile = async (
   data: Array<RightsPortalHealthCenterRecord>,
   type: FileTypes,
 ) => {
-  const name = `Heilusgaesla_sundurlidun`
+  const name = `Heilsugaesla_sundurlidun`
   const dataArray = data.map((item) => [
     item.dateFrom ? formatDate(item.dateFrom) : '',
     item.healthCenterName ?? '',

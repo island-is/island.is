@@ -18,12 +18,12 @@ export const renderSecretsCommand = async (service: string) => {
   return renderSecrets(service).catch((error) => {
     if (error.name === 'CredentialsProviderError') {
       logger.error(
-        'Could not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?',
+        '\x1b[33mCould not load AWS credentials from any providers. Did you forget to configure environment variables, aws profile or run `aws sso login`?\x1b[0m',
       )
     } else {
       logger.error(error)
     }
-    return {} as ReturnType<typeof renderSecrets>
+    process.exit(1)
   })
 }
 

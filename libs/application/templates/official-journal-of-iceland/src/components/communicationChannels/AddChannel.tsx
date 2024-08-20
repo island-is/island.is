@@ -6,7 +6,7 @@ import * as styles from './AddChannel.css'
 import { Channel } from './Channel'
 import { FormGroup } from '../form/FormGroup'
 type Props = {
-  onAdd: (channel: Channel) => void
+  onAdd: () => void
   state: Channel
   setState: React.Dispatch<React.SetStateAction<Channel>>
 }
@@ -59,14 +59,7 @@ export const AddChannel = ({ onAdd, state, setState }: Props) => {
           >
             {f(general.cancel)}
           </Button>
-          <Button
-            disabled={!state.email}
-            onClick={() => {
-              onAdd(state)
-              setState({ email: '', phone: '' })
-            }}
-            size="small"
-          >
+          <Button onClick={onAdd} disabled={!state.email} size="small">
             {f(general.saveChanges)}
           </Button>
         </Box>

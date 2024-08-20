@@ -60,17 +60,36 @@ export class AdminClientDto {
   })
   refreshTokenExpiration!: RefreshTokenExpiration
 
-  @ApiProperty()
-  supportsCustomDelegation!: boolean
+  @ApiProperty({
+    description:
+      'The supported delegation types for the client, will be used instead of support delegation type boolean fields',
+    type: [String],
+  })
+  supportedDelegationTypes!: string[]
 
-  @ApiProperty()
-  supportsLegalGuardians!: boolean
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsCustomDelegation?: boolean
 
-  @ApiProperty()
-  supportsProcuringHolders!: boolean
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsLegalGuardians?: boolean
 
-  @ApiProperty()
-  supportsPersonalRepresentatives!: boolean
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsProcuringHolders?: boolean
+
+  @ApiProperty({
+    deprecated: true,
+    description: 'Use supportedDelegationTypes instead',
+  })
+  supportsPersonalRepresentatives?: boolean
 
   @ApiProperty()
   promptDelegations!: boolean
@@ -104,4 +123,11 @@ export class AdminClientDto {
     type: [AdminClientClaimDto],
   })
   customClaims?: AdminClientClaimDto[]
+
+  @ApiProperty({
+    description: 'Array of allowed acr values for the client.',
+    example: '[eidas-loa-high]',
+  })
+  @ApiProperty()
+  allowedAcr!: string[]
 }

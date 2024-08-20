@@ -5,7 +5,7 @@ import {
 import { dataSchema } from '@island.is/application/templates/driving-license'
 import { infer as zinfer } from 'zod'
 
-import { removeCountryCode } from './'
+import { formatPhoneNumber } from './'
 
 export type DrivingLicenseSchema = zinfer<typeof dataSchema>
 
@@ -55,7 +55,7 @@ export const PostTemporaryLicenseWithHealthDeclarationMapper = (
     if (key in propertyMapping) {
       let value = answers[key as keyof DrivingLicenseSchema]
       if (key === 'phone') {
-        value = typeof value === 'string' ? removeCountryCode(value) : value
+        value = typeof value === 'string' ? formatPhoneNumber(value) : value
       }
       const mappedKey = propertyMapping[
         key

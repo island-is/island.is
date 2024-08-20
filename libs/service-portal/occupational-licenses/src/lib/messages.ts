@@ -55,6 +55,10 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:unknown-license',
     defaultMessage: 'Óþekkt',
   },
+  inProgressLicense: {
+    id: 'sp.occupational-licenses:in-progress-license',
+    defaultMessage: 'Í vinnslu',
+  },
   validWithLimitationsLicense: {
     id: 'sp.occupational-licenses:valid-with-limitations-license',
     defaultMessage: 'Í gildi með takmörkunum',
@@ -83,6 +87,10 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:name-of-individual',
     defaultMessage: 'Nafn einstaklings',
   },
+  licenseNumber: {
+    id: 'sp.occupational-licenses:license-number',
+    defaultMessage: 'Skírteinisnúmer',
+  },
   dateOfBirth: {
     id: 'sp.occupational-licenses:date-of-birth',
     defaultMessage: 'Fæðingardagur',
@@ -107,10 +115,15 @@ export const olMessage = defineMessages({
     id: 'sp.occupational-licenses:license-status',
     defaultMessage: 'Staða',
   },
-  fetchOverviewErrorMessage: {
+
+  fetchOverviewError: {
     id: 'sp.occupational-licenses:fetch-overview-error',
+    defaultMessage: 'Ekki tókst að sækja öll gögn',
+  },
+  fetchOverviewErrorDetail: {
+    id: 'sp.occupational-licenses:fetch-overview-error-detail',
     defaultMessage:
-      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja öll gögn. Verið er að vinna í að lagfæra tenginguna.',
+      'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginguna.',
   },
   fetchServerErrorTitle: {
     id: 'sp.occupational-licenses:fetch-server-error-title',
@@ -133,5 +146,26 @@ export const olMessage = defineMessages({
   noLicenses: {
     id: 'sp.occupational-licenses:no-licenses',
     defaultMessage: 'Engin starfsleyfi fundust',
+  },
+  education: {
+    id: 'sp.occupational-licenses:education-issuer',
+    defaultMessage: 'Menntamálastofnun',
+  },
+  districtCommissioners: {
+    id: 'sp.occupational-licenses:district-commissioners-issuer',
+    defaultMessage: 'Sýslumenn',
+  },
+  health: {
+    id: 'sp.occupational-licenses:health-issuer',
+    defaultMessage: 'Landlæknir',
+  },
+  educationLicenseDigitalUnavailable: {
+    id: 'sp.occupational-licenses:education-license-digital-unavailable',
+    defaultMessage: 'Leyfisbréf óaðgengilegt',
+  },
+  educationLicenseDigitalUnavailableDescription: {
+    id: 'sp.occupational-licenses:education-license-digital-unavailable-description',
+    defaultMessage:
+      'Leyfisbréf gefin út fyrir 1. janúar 2020 eru ekki aðgengileg á island.is. Þurfir þú afrit af áður útgefnu leyfisbréfi getur þú sent póst til mennta- og barnamálaráðuneytisins á netfangið mrn@mrn.is. Afrit leyfisbréfa eru send í tölvupósti sem pdf. skjöl.',
   },
 })

@@ -1,4 +1,5 @@
 import React, {
+  FC,
   SetStateAction,
   useCallback,
   useContext,
@@ -48,7 +49,7 @@ interface PropertyValidation {
 
 type InputType = 'defenderEmail' | 'defenderPhoneNumber'
 
-const DefenderInput: React.FC<React.PropsWithChildren<Props>> = ({
+const DefenderInput: FC<Props> = ({
   onDefenderNotFound,
   disabled,
   defendantId,

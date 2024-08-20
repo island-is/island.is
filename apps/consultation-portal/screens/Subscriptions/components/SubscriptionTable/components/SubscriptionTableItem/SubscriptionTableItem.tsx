@@ -5,6 +5,7 @@ import {
   Stack,
   FocusableBox,
   LinkV2,
+  Box,
 } from '@island.is/island-ui/core'
 import { mapIsToEn } from '../../../../../../utils/helpers'
 import * as styles from '../../SubscriptionTable.css'
@@ -21,7 +22,6 @@ interface Props {
   item: SubscriptionTableItemType
   idx: number
   currentTab: Area
-  mdBreakpoint: boolean
   isGeneralSubscription?: boolean
   subscriptionArray: SubscriptionArray
   setSubscriptionArray: (_: SubscriptionArray) => void
@@ -31,7 +31,6 @@ const SubscriptionTableItem = ({
   item,
   idx,
   currentTab,
-  mdBreakpoint,
   isGeneralSubscription,
   subscriptionArray,
   setSubscriptionArray,
@@ -86,6 +85,7 @@ const SubscriptionTableItem = ({
     return (
       <TData
         width={width}
+        height="full"
         borderColor={borderColor}
         box={{
           background: tableRowBackgroundColor(idx),
@@ -114,81 +114,63 @@ const SubscriptionTableItem = ({
     )
   }
 
-  const Stacked = () => {
+  const Stacked = ({
+    upperText,
+    lowerText,
+  }: {
+    upperText: string
+    lowerText: string
+  }) => {
     return (
-      <Stack space={1}>
+      <Stack space={0}>
         <Text variant="medium" fontWeight="semiBold">
-          {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
+          {upperText}
         </Text>
         <Text variant="medium" fontWeight="light">
-          {item.name}
+          {lowerText}
         </Text>
       </Stack>
     )
   }
 
+  const areaIsNotCase = currentTab !== Area.case
+
+  const LabelBox = () => {
+    if (isGeneralSubscription) {
+      return <Stacked upperText={loc.allCases} lowerText={item.name} />
+    }
+    if (areaIsNotCase) {
+      return (
+        <Text variant="medium" fontWeight="semiBold">
+          {item.name}
+        </Text>
+      )
+    }
+    return (
+      <LinkBox>
+        <Stacked upperText={`S-${item.caseNumber}`} lowerText={item.name} />
+      </LinkBox>
+    )
+  }
+
   return (
-    <>
-      <Row key={item.key}>
-        <Data isLastOrFirst isLeft>
-          <Checkbox checked={item.checked} onChange={checkboxHandler} />
-        </Data>
-        {currentTab !== Area.case ? (
-          isGeneralSubscription ? (
-            <Data>
-              <Text variant="medium" fontWeight="semiBold">
-                {loc.allCases}
-              </Text>
-              <Text variant="medium" fontWeight="light">
-                {item.name}
-              </Text>
-            </Data>
-          ) : (
-            <Data>
-              <Text variant="medium" fontWeight="semiBold">
-                {item.name}
-              </Text>
-            </Data>
-          )
-        ) : mdBreakpoint ? (
-          <>
-            <Data>
-              <Text variant="medium" fontWeight="semiBold">
-                {isGeneralSubscription ? loc.allCases : `S-${item.caseNumber}`}
-              </Text>
-            </Data>
-            <Data>
-              {isGeneralSubscription ? (
-                <Text variant="medium" fontWeight="light">
-                  {item.name}
-                </Text>
-              ) : (
-                <LinkBox>
-                  <Text variant="medium" fontWeight="light">
-                    {item.name}
-                  </Text>
-                </LinkBox>
-              )}
-            </Data>
-          </>
-        ) : (
-          <>
-            <Data>
-              {isGeneralSubscription ? (
-                <Stacked />
-              ) : (
-                <LinkBox>
-                  <Stacked />
-                </LinkBox>
-              )}
-            </Data>
-          </>
-        )}
-        <Data isLastOrFirst>
-          <></>
-        </Data>
-      </Row>
-    </>
+    <Row key={item.key}>
+      <Data isLastOrFirst isLeft>
+        <Checkbox
+          label={
+            <Box marginLeft={1}>
+              <LabelBox />
+            </Box>
+          }
+          checked={item.checked}
+          onChange={checkboxHandler}
+          name={`checkbox-for-${item.key}`}
+        />
+      </Data>
+      <Data isLastOrFirst>
+        <></>
+      </Data>
+    </Row>
   )
 }
 

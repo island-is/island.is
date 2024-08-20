@@ -15,6 +15,7 @@ import {
   NationalRegistryUserApi,
   InstitutionNationalIds,
   defineTemplateApi,
+  UserProfileApi,
 } from '@island.is/application/types'
 import {
   coreMessages,
@@ -48,7 +49,6 @@ import {
   getApplicationAnswers,
   isEligible,
 } from './additionalSupportForTheElderlyUtils'
-import { Features } from '@island.is/feature-flags'
 
 const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -61,7 +61,6 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.AdditionalSupportForTheElderly.translation,
   dataSchema,
-  featureFlag: Features.additionalSupportForTheElderlyApplication,
   allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -88,6 +87,11 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
+                UserProfileApi.configure({
+                  params: {
+                    validateEmail: true,
+                  },
+                }),
                 SocialInsuranceAdministrationApplicantApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,

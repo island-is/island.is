@@ -58,8 +58,14 @@ export class DrivingLicenseBookResolver {
   @UseGuards(DrivingInstructorGuard)
   @UseInterceptors(StudentIdInterceptor)
   @Query(() => [DrivingLicenseBookStudentForTeacher])
-  drivingLicenseBookStudentsForTeacher(@CurrentUser() user: User) {
-    return this.drivingLicenseBookService.getStudentsForTeacher(user)
+  drivingLicenseBookStudentsForTeacher(
+    @CurrentUser() user: User,
+    @Args('licenseCategory') licenseCategory: 'B' | 'BE',
+  ) {
+    return this.drivingLicenseBookService.getStudentsForTeacher(
+      user,
+      licenseCategory,
+    )
   }
 
   @UseGuards(DrivingInstructorGuard)

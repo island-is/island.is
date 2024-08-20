@@ -24,4 +24,9 @@ export const defaultFilterValues = {
   bookmarked: false,
 }
 
-export type MailActions = 'archive' | 'unarchive' | 'bookmark' | 'unbookmark'
+export type MailActions =
+  | 'archive'
+  | 'unarchive'
+  | 'bookmark'
+  | 'unbookmark'
+  | 'read'

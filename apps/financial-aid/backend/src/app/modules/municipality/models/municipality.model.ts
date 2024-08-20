@@ -11,7 +11,7 @@ import {
 
 import { ApiProperty } from '@nestjs/swagger'
 
-import { Municipality } from '@island.is/financial-aid/shared/lib'
+import { ChildrenAid, Municipality } from '@island.is/financial-aid/shared/lib'
 
 import { AidModel } from '../../aid/models'
 @Table({
@@ -132,4 +132,21 @@ export class MunicipalityModel extends Model<Municipality> {
   })
   @ApiProperty()
   navPassword?: string
+
+  @Column({
+    type: DataType.ENUM,
+    allowNull: false,
+    values: Object.values(ChildrenAid),
+    defaultValue: ChildrenAid.NOTDEFINED,
+  })
+  @ApiProperty({ enum: ChildrenAid })
+  childrenAid: ChildrenAid
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  @ApiProperty()
+  decemberCompensation: number
 }

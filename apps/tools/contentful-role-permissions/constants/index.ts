@@ -58,6 +58,7 @@ export const DEFAULT_EDITABLE_ENTRY_TYPE_IDS = [
   'teamList',
   'teamMember',
   'namespace',
+  'tableSlice',
 ]
 
 export const DEFAULT_READ_ONLY_ENTRY_IDS = [

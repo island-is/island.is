@@ -33,6 +33,8 @@ export const space = style({
 
 export const pdfAction = style({})
 
+export const htmlDoc = style({})
+
 export const pdfPage = style({
   background: theme.color.blue100,
   padding: theme.spacing[2],
@@ -51,4 +53,8 @@ globalStyle(`${pdfAction} + button`, {
       display: 'flex',
     },
   }),
+})
+
+globalStyle(`${htmlDoc} a`, {
+  color: theme.color.blue400,
 })

@@ -42,10 +42,10 @@ export function showAppLockOverlay({
   if (enforceActivated) {
     // set yesterday
     lockScreenActivatedAt -= 86400 * 1000
-    authStore.setState({
-      lockScreenActivatedAt,
-    })
   }
+  authStore.setState({
+    lockScreenActivatedAt,
+  })
 
   return Navigation.showOverlay({
     component: {
@@ -55,9 +55,9 @@ export function showAppLockOverlay({
   })
 }
 
-export function hideAppLockOverlay() {
-  // Dismiss all overlays
-  Navigation.dismissAllOverlays()
+export function hideAppLockOverlay(lockScreenComponentId: string) {
+  // Dismiss the lock screen
+  void Navigation.dismissOverlay(lockScreenComponentId)
 
   // reset lockscreen parameters
   authStore.setState({

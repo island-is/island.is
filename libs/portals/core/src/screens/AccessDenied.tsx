@@ -3,7 +3,7 @@ import { useAuth } from '@island.is/auth/react'
 import { checkDelegation } from '@island.is/shared/utils'
 
 import { m } from '../lib/messages'
-import { ErrorScreen } from './ErrorScreen/ErrorScreen'
+import { Problem } from '@island.is/react-spa/shared'
 
 export const AccessDenied = () => {
   const { formatMessage } = useLocale()
@@ -11,19 +11,21 @@ export const AccessDenied = () => {
   const isDelegation = user && checkDelegation(user)
 
   return (
-    <ErrorScreen
-      tag={formatMessage(m.accessDenied).toString()}
-      tagVariant="red"
+    <Problem
+      size="large"
+      noBorder={false}
+      tag={formatMessage(m.accessDenied)}
       title={
         isDelegation
           ? formatMessage(m.accessNeeded)
           : formatMessage(m.accessDenied)
       }
-      figure="./assets/images/jobsGrid.svg"
-    >
-      {isDelegation
-        ? formatMessage(m.accessDeniedText)
-        : formatMessage(m.accessNeededText)}
-    </ErrorScreen>
+      message={
+        isDelegation
+          ? formatMessage(m.accessDeniedText)
+          : formatMessage(m.accessNeededText)
+      }
+      imgSrc="./assets/images/jobsGrid.svg"
+    />
   )
 }

@@ -24,7 +24,6 @@ yarn nx run application-system-api:migrate
 and both proxies
 
 ```bash
-kubectl port-forward svc/socat-soffia 8443:443 -n socat
 kubectl -n socat port-forward svc/socat-xroad 8081:80
 ```
 

@@ -5,7 +5,7 @@ import {
   BadRequestException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsementList.model'
@@ -22,10 +22,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 import { EmailService } from '@island.is/email-service'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
-import {
-  IndividualDto,
-  NationalRegistryClientService,
-} from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -42,7 +39,7 @@ export class EndorsementListService {
     private logger: Logger,
     @Inject(EmailService)
     private emailService: EmailService,
-    private readonly nationalRegistryApiV2: NationalRegistryClientService,
+    private readonly nationalRegistryApiV3: NationalRegistryV3ClientService,
   ) {}
 
   hasAdminScope(user: User): boolean {
@@ -79,8 +76,28 @@ export class EndorsementListService {
       after: query.after,
       before: query.before,
       primaryKeyField: 'counter',
-      orderOption: [['counter', 'DESC']],
+      orderOption: [
+        ['endorsementCounter', 'DESC'],
+        ['counter', 'DESC'],
+      ],
       where: where,
+      attributes: {
+        include: [
+          [
+            Sequelize.fn('COUNT', Sequelize.col('endorsements.id')),
+            'endorsementCounter',
+          ],
+        ],
+      },
+      include: [
+        {
+          model: Endorsement,
+          required: false, // Required false for left outer join so that counts come for 0 as well
+          duplicating: false,
+          attributes: [],
+        },
+      ],
+      group: ['EndorsementList.id'],
     })
   }
 
@@ -139,7 +156,10 @@ export class EndorsementListService {
           model: EndorsementList,
           required: true,
           as: 'endorsementList',
-          where: { adminLock: false },
+          where: {
+            adminLock: false,
+            tags: { [Op.contains]: [ENDORSEMENT_SYSTEM_GENERAL_PETITION_TAGS] },
+          },
           attributes: [
             'id',
             'title',
@@ -296,8 +316,8 @@ export class EndorsementListService {
     }
 
     try {
-      const person = await this.nationalRegistryApiV2.getIndividual(owner)
-      return person?.fullName ? person.fullName : ''
+      const person = await this.nationalRegistryApiV3.getName(owner)
+      return person?.fulltNafn ? person.fulltNafn : ''
     } catch (e) {
       if (e instanceof Error) {
         this.logger.warn(

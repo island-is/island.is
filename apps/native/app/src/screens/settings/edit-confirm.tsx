@@ -34,7 +34,7 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
   const intl = useIntl()
   const [text, onChangeText] = React.useState('')
   const { updateUserProfile } = useUpdateUserProfile()
-  const disabled = text?.trim().length < 6
+  const disabled = text?.trim().length < 3
   const [loading, setLoading] = React.useState(false)
 
   const handleConfirm = async () => {
@@ -84,8 +84,8 @@ export const EditConfirmScreen: NavigationFunctionComponent<any> = ({
               label={intl.formatMessage({ id: 'edit.confirm.inputlabel' })}
               value={text}
               onChange={onChangeText}
-              placeholder="000000"
-              maxLength={6}
+              placeholder="000"
+              maxLength={3}
               autoFocus
               keyboardType="number-pad"
               textContentType="oneTimeCode"

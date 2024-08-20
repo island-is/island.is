@@ -177,7 +177,7 @@ export const DentistRegistration = () => {
         title={`${formatMessage(messages.dentistModalTitle)} ${
           selectedDentist?.name
         }`}
-        description={formatMessage(messages.dentistModalDescription)}
+        description=""
         isVisible={!!selectedDentist}
         buttonLoading={loadingTranser}
       />

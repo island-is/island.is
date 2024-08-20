@@ -1,5 +1,18 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
+import {
+  Field,
+  GraphQLISODateTime,
+  Int,
+  ObjectType,
+  registerEnumType,
+} from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
+import {
+  TransactionTypes,
+  CalculationTypes,
+} from '@island.is/clients/hms-housing-benefits'
+
+registerEnumType(TransactionTypes, { name: 'TransactionType' })
+registerEnumType(CalculationTypes, { name: 'CalculationType' })
 
 @ObjectType()
 export class HousingBenefitsPageInfo {
@@ -36,17 +49,17 @@ export class HousingBenefitsPayment {
   @Field(() => String, { nullable: true })
   month?: string | null
 
-  @Field(() => String, { nullable: true })
-  transactionType?: string | null
+  @Field(() => TransactionTypes, { nullable: true })
+  transactionType?: TransactionTypes | null
 
-  @Field(() => String, { nullable: true })
-  calculationType?: string | null
-
-  @Field(() => Int, { nullable: true })
-  paymentActual?: number
+  @Field(() => CalculationTypes, { nullable: true })
+  calculationType?: CalculationTypes | null
 
   @Field(() => String, { nullable: true })
   bankAccountMerged?: string | null
+
+  @Field(() => Int, { nullable: true })
+  paymentActual?: number
 
   @Field(() => Int, { nullable: true })
   paidOfDebt?: number | null

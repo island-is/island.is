@@ -14,7 +14,11 @@ interface Props {
 
 type UniqueProps =
   | {
-      familyRelation?: 'child'
+      familyRelation?: 'custody'
+      baseId: string
+    }
+  | {
+      familyRelation?: 'bio-child'
       baseId: string
     }
   | {
@@ -49,12 +53,23 @@ export const FamilyMemberCard: FC<
         path: InformationPaths.Spouse,
       }
     }
+
+    if (familyRelation === 'custody') {
+      return {
+        label: formatMessage({
+          id: 'sp.family:child',
+          defaultMessage: 'Barn',
+        }),
+        path: InformationPaths.ChildCustody.replace(':baseId', baseId ?? ''),
+      }
+    }
+
     return {
       label: formatMessage({
         id: 'sp.family:child',
         defaultMessage: 'Barn',
       }),
-      path: InformationPaths.Child.replace(':baseId', baseId ?? ''),
+      path: InformationPaths.BioChild.replace(':baseId', baseId ?? ''),
     }
   }
 

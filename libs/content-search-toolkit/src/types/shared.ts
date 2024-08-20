@@ -9,6 +9,7 @@ export enum SortDirection {
 export enum SortField {
   TITLE = 'title',
   POPULAR = 'popular',
+  RELEASE_DATE = 'releaseDate',
 }
 
 export type elasticTagField = {
@@ -27,6 +28,7 @@ export type sortableFields =
   | 'dateCreated'
   | 'title.sort'
   | 'popularityScore'
+  | 'releaseDate'
 
 export type sortRule = {
   [key in sortableFields]?: {

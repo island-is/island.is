@@ -41,11 +41,6 @@ There are additional steps required to run this template locally
 
 - Run `yarn get-secrets service-portal`
 
-2. Socat Þjóðskrá
-
-- Run `kubectl port-forward svc/socat-soffia 8443:443 -n socat`
-- Keep this process running while running the project
-
 ### User Profile Provider (optional)
 
 - Follow the instructions to start the user profule service in the handbook [here](https://docs.devland.is/apps/services/user-profile).

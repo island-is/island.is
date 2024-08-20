@@ -6,8 +6,8 @@ import { handle404 } from '@island.is/clients/middlewares'
 @Injectable()
 export class TherapyService {
   constructor(private api: TherapyApi) {}
-  getTherapies = (user: User) => {
-    return this.api
+  getTherapies = async (user: User) => {
+    return await this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
       .getTherapies()
       .catch(handle404)

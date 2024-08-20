@@ -3,12 +3,9 @@ import parseISO from 'date-fns/parseISO'
 
 import { TagVariant } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
-import { isTrafficViolationCase } from '@island.is/judicial-system/types'
 import {
   CaseAppealState,
   CaseCustodyRestrictions,
-  CaseFileCategory,
-  CaseType,
   DefendantPlea,
   Gender,
   Notification,
@@ -87,23 +84,6 @@ export const createCaseResentExplanation = (
       ? `${workingCase.caseResentExplanation}<br/><br/>`
       : ''
   }Krafa endursend ${formatDate(now, 'PPPp')} - ${explanation}`
-}
-
-export const isTrafficViolationIndictment = (workingCase: Case): boolean => {
-  const isTrafficViolation = isTrafficViolationCase(
-    workingCase.indictmentSubtypes,
-    workingCase.type as CaseType,
-  )
-
-  return Boolean(
-    isTrafficViolation &&
-      !(
-        workingCase.caseFiles &&
-        workingCase.caseFiles.find(
-          (file) => file.category === CaseFileCategory.INDICTMENT,
-        )
-      ),
-  )
 }
 
 export const hasSentNotification = (

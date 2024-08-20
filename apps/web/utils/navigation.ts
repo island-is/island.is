@@ -23,6 +23,7 @@ const isNavigable = (slice: Slice) =>
   // @ts-ignore make web strict
   slice['title'] &&
   slice.__typename !== 'Image' &&
+  slice.__typename !== 'Asset' &&
   // If there's not a showTitle field on the slice or it's set to true we want to show the title
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict

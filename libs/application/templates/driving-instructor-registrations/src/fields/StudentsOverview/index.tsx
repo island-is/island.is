@@ -7,6 +7,7 @@ import {
   Pagination,
   Stack,
   Text,
+  Tabs,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
@@ -21,16 +22,29 @@ import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
 import { format as formatKennitala } from 'kennitala'
 import * as styles from '../style.css'
+import { LicenseCategory } from '../../types/enums'
+import { getValueViaPath } from '@island.is/application/core'
 
-const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
-  application,
-}) => {
+const StudentsOverview: FC<
+  React.PropsWithChildren<FieldBaseProps> & {
+    field: { props: { allowBELicense: boolean } }
+  }
+> = ({ application, field }) => {
+  const { allowBELicense } = field.props
   const { formatMessage } = useLocale()
 
   /* table pagination */
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(0)
-  const { data, loading } = useQuery(InstructorsStudentsQuery)
+  const [currentTab, setCurrentTab] = useState<LicenseCategory>(
+    LicenseCategory.B,
+  )
+  const { data, loading } = useQuery(InstructorsStudentsQuery, {
+    variables: {
+      licenseCategory: currentTab,
+    },
+    fetchPolicy: 'no-cache',
+  })
 
   const [pageStudents, setPageStudents] = useState(
     data ? (data.drivingLicenseBookStudentsForTeacher as Array<Student>) : [],
@@ -41,6 +55,13 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const [studentId, setStudentId] = useState('')
   const [searchTerm, setSearchTerm] = useState('')
   const [filteredStudents, setFilteredStudents] = useState<Array<Student>>()
+
+  const teacherRights = getValueViaPath<string[]>(
+    application.externalData,
+    'getTeacherRights.data.rights',
+  )
+  const showLicenseCategoryTabs =
+    allowBELicense && teacherRights?.includes(LicenseCategory.BE)
 
   const handlePagination = (page: number, students: Array<Student>) => {
     setPage(page)
@@ -76,8 +97,33 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       <Text variant="h2" marginBottom={3}>
         {showStudentOverview
           ? formatMessage(m.studentsOverviewTitle)
-          : formatMessage(m.viewStudentTitle)}
+          : currentTab === LicenseCategory.B
+          ? formatMessage(m.viewStudentTitle)
+          : formatMessage(m.viewBEStudentTitle)}
       </Text>
+      {showStudentOverview && showLicenseCategoryTabs && (
+        <Box marginBottom={5}>
+          <Tabs
+            selected={currentTab}
+            onlyRenderSelectedTab={true}
+            label={''}
+            tabs={[
+              {
+                id: LicenseCategory.B,
+                label: formatMessage(m.studentsOverviewBTab),
+                content: null,
+              },
+              {
+                id: LicenseCategory.BE,
+                label: formatMessage(m.studentsOverviewBETab),
+                content: null,
+              },
+            ]}
+            contentBackground="transparent"
+            onChange={(e: LicenseCategory) => setCurrentTab(e)}
+          />
+        </Box>
+      )}
       {showStudentOverview ? (
         <Stack space={5}>
           <Box
@@ -195,6 +241,7 @@ const StudentsOverview: FC<React.PropsWithChildren<FieldBaseProps>> = ({
           application={application}
           studentNationalId={studentId}
           setShowStudentOverview={setShowStudentOverview}
+          licenseCategory={currentTab}
         />
       )}
     </Box>

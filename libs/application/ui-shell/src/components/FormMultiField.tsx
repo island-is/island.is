@@ -82,11 +82,17 @@ const FormMultiField: FC<
           !IGNORED_HALF_TYPES.includes(field.type) && field?.width === 'half'
         const span = isHalfColumn ? '1/2' : '1/1'
 
+        const typedField = field as FieldDef
+
+        const shouldHideField = typedField?.isNavigable === false
+        const isLastChild = index === children.length - 1
+        const paddingBottom = shouldHideField || isLastChild ? 0 : space
+
         return (
           <GridColumn
             key={field.id || index}
             span={field?.colSpan ? field?.colSpan : ['1/1', '1/1', '1/1', span]}
-            paddingBottom={index === children.length - 1 ? 0 : space}
+            paddingBottom={paddingBottom}
           >
             <Box>
               <FormField

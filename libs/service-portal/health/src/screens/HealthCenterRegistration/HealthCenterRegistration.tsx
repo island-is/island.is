@@ -271,59 +271,65 @@ const HealthCenterRegistration = () => {
             const name = formatHealthCenterName(region)
             const group = filteredHealthCenters[region]
             return (
-              <AccordionItem id={`${region}-${key}`} key={key} label={name}>
-                <T.Table>
-                  <T.Head>
-                    <T.Row>
-                      <T.HeadData>
-                        {formatMessage(messages.healthCenterTitle)}
-                      </T.HeadData>
-                      <T.HeadData>{formatMessage(m.postcode)}</T.HeadData>
-                      <T.HeadData>{formatMessage(m.address)}</T.HeadData>
-                      <T.HeadData />
-                    </T.Row>
-                  </T.Head>
-                  <T.Body>
-                    {group.map((healthCenter, key) => {
-                      return (
-                        <tr
-                          className={styles.tableRowStyle}
-                          key={key}
-                          onMouseEnter={() => setHoverId(healthCenter.id)}
-                          onMouseLeave={() => setHoverId('')}
-                        >
-                          <T.Data>
-                            <Text variant="small">{healthCenter.name}</Text>
-                          </T.Data>
-                          <T.Data>{`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}</T.Data>
-                          <T.Data>{healthCenter.address?.streetAddress}</T.Data>
-                          <T.Data>
-                            <Box
-                              className={styles.saveButtonWrapperStyle({
-                                visible: healthCenter.id === hoverId,
-                              })}
-                            >
-                              <Button
-                                size="small"
-                                variant="text"
-                                icon="pencil"
-                                onClick={() => {
-                                  setSelectedHealthCenter({
-                                    id: healthCenter.id,
-                                    name: healthCenter.name,
-                                  })
-                                }}
+              <Box dataTestId={`accordion-item`}>
+                <AccordionItem id={`${region}-${key}`} key={key} label={name}>
+                  <T.Table>
+                    <T.Head>
+                      <T.Row>
+                        <T.HeadData>
+                          {formatMessage(messages.healthCenterTitle)}
+                        </T.HeadData>
+                        <T.HeadData>{formatMessage(m.postcode)}</T.HeadData>
+                        <T.HeadData>{formatMessage(m.address)}</T.HeadData>
+                        <T.HeadData />
+                      </T.Row>
+                    </T.Head>
+                    <T.Body>
+                      {group.map((healthCenter, key) => {
+                        return (
+                          <tr
+                            className={styles.tableRowStyle}
+                            key={key}
+                            onMouseEnter={() => setHoverId(healthCenter.id)}
+                            onMouseLeave={() => setHoverId('')}
+                          >
+                            <T.Data>
+                              <Text variant="small">{healthCenter.name}</Text>
+                            </T.Data>
+                            <T.Data>{`${healthCenter.address?.postalCode} ${healthCenter.address?.municipality}`}</T.Data>
+                            <T.Data>
+                              {healthCenter.address?.streetAddress}
+                            </T.Data>
+                            <T.Data>
+                              <Box
+                                className={styles.saveButtonWrapperStyle({
+                                  visible: healthCenter.id === hoverId,
+                                })}
                               >
-                                {formatMessage(messages.healthRegistrationSave)}
-                              </Button>
-                            </Box>
-                          </T.Data>
-                        </tr>
-                      )
-                    })}
-                  </T.Body>
-                </T.Table>
-              </AccordionItem>
+                                <Button
+                                  size="small"
+                                  variant="text"
+                                  icon="pencil"
+                                  onClick={() => {
+                                    setSelectedHealthCenter({
+                                      id: healthCenter.id,
+                                      name: healthCenter.name,
+                                    })
+                                  }}
+                                >
+                                  {formatMessage(
+                                    messages.healthRegistrationSave,
+                                  )}
+                                </Button>
+                              </Box>
+                            </T.Data>
+                          </tr>
+                        )
+                      })}
+                    </T.Body>
+                  </T.Table>
+                </AccordionItem>
+              </Box>
             )
           })}
         </Accordion>

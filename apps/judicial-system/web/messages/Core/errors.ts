@@ -117,4 +117,9 @@ export const errors = defineMessages({
     description:
       'Notaður sem skilaboð þegar ekki tókst að sækja gögn úr gagnagrunni',
   },
+  createEventLog: {
+    id: 'judicial.system.core:errors.create_event_log',
+    defaultMessage: 'Upp kom villa við að skrá aðgerð',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að skrá atburð',
+  },
 })

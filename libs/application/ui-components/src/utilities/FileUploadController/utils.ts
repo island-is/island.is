@@ -2,6 +2,8 @@ import { UploadFile } from '@island.is/island-ui/core'
 
 import { S3UploadResponse, ActionTypes, Action } from './types'
 
+export const DEFAULT_TOTAL_MAX_SIZE = 100000000
+
 export const uploadFileToS3 = (
   file: UploadFile,
   dispatch: React.Dispatch<Action>,

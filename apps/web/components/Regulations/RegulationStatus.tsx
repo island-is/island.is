@@ -1,17 +1,18 @@
-import * as s from './RegulationStatus.css'
-
 import React from 'react'
+
+import { LinkV2, Text } from '@island.is/island-ui/core'
 import {
-  ISODate,
   interpolate,
-  toISODate,
+  ISODate,
   RegulationMaybeDiff,
+  toISODate,
 } from '@island.is/regulations'
-import { Link, Text } from '@island.is/island-ui/core'
-import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
-import { RegulationPageTexts } from './RegulationTexts.types'
 import { useNamespaceStrict as useNamespace } from '@island.is/web/hooks'
+
 import { Ball, BallColor } from './Ball'
+import { RegulationPageTexts } from './RegulationTexts.types'
+import { useDateUtils, useRegulationLinkResolver } from './regulationUtils'
+import * as s from './RegulationStatus.css'
 
 // ---------------------------------------------------------------------------
 
@@ -77,13 +78,13 @@ export const RegulationStatus = (props: RegulationStatusProps) => {
       : 'statusLinkToCurrent_long'
     return (
       <small className={s.toCurrent}>
-        <Link
+        <LinkV2
           className={s.linkToCurrent}
           href={linkToRegulation(name)}
           aria-label={txt(labelKey)}
         >
           {txt(textKey)}
-        </Link>
+        </LinkV2>
       </small>
     )
   }

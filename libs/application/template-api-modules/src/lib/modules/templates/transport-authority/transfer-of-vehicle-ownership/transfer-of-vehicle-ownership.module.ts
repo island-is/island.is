@@ -23,6 +23,10 @@ import {
   VehiclesClientModule,
   VehiclesClientConfig,
 } from '@island.is/clients/vehicles'
+import {
+  VehiclesMileageClientConfig,
+  VehiclesMileageClientModule,
+} from '@island.is/clients/vehicles-mileage'
 
 export class TransferOfVehicleOwnershipModule {
   static register(baseConfig: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -35,6 +39,7 @@ export class TransferOfVehicleOwnershipModule {
         VehicleCodetablesClientModule,
         VehicleServiceFjsV1ClientModule,
         VehiclesClientModule,
+        VehiclesMileageClientModule,
         ConfigModule.forRoot({
           isGlobal: true,
           load: [
@@ -43,6 +48,7 @@ export class TransferOfVehicleOwnershipModule {
             VehicleCodetablesClientConfig,
             VehicleServiceFjsV1ClientConfig,
             VehiclesClientConfig,
+            VehiclesMileageClientConfig,
           ],
         }),
       ],

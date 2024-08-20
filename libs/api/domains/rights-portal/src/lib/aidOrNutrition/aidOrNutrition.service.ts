@@ -1,9 +1,7 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { AidsandnutritionApi } from '@island.is/clients/icelandic-health-insurance/rights-portal'
-import { LOGGER_PROVIDER } from '@island.is/logging'
-import type { Logger } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import {
   AidOrNutritionType,
   generateAidOrNutrition,
@@ -13,11 +11,7 @@ import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class AidOrNutritionService {
-  constructor(
-    private api: AidsandnutritionApi,
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-  ) {}
+  constructor(private api: AidsandnutritionApi) {}
 
   async getAidOrNutrition(
     user: User,

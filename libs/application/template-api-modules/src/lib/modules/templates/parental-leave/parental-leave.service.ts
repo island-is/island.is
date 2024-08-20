@@ -1,88 +1,88 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { S3 } from 'aws-sdk'
-import format from 'date-fns/format'
 import addDays from 'date-fns/addDays'
+import format from 'date-fns/format'
 import cloneDeep from 'lodash/cloneDeep'
 
-import type { Attachment, Period } from '@island.is/clients/vmst'
-import {
-  ParentalLeaveApi,
-  ApplicationInformationApi,
-} from '@island.is/clients/vmst'
-import type { Logger } from '@island.is/logging'
-import { LOGGER_PROVIDER } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  ApplicationConfigurations,
+  ADOPTION,
+  ChildInformation,
+  FileType,
+  NO,
+  OTHER_NO_CHILDREN_FOUND,
+  PARENTAL_GRANT,
+  PARENTAL_GRANT_STUDENTS,
+  PARENTAL_LEAVE,
+  PERMANENT_FOSTER_CARE,
+  ParentalRelations,
+  SINGLE,
+  StartDateOptions,
+  States,
+  UnEmployedBenefitTypes,
+  YES,
+  calculatePeriodLength,
+  getAdditionalSingleParentRightsInDays,
+  getApplicationAnswers,
+  getApplicationExternalData,
+  getAvailablePersonalRightsInDays,
+  getAvailableRightsInDays,
+  getMultipleBirthsDays,
+  getUnApprovedEmployers,
+  isParentWithoutBirthParent,
+} from '@island.is/application/templates/parental-leave'
+import {
   Application,
+  ApplicationConfigurations,
   ApplicationTypes,
   YesOrNo,
 } from '@island.is/application/types'
+import type { Attachment, Period } from '@island.is/clients/vmst'
 import {
-  getApplicationAnswers,
-  getAvailableRightsInDays,
-  getAvailablePersonalRightsInDays,
-  YES,
-  NO,
-  StartDateOptions,
-  UnEmployedBenefitTypes,
-  PARENTAL_LEAVE,
-  PARENTAL_GRANT,
-  PARENTAL_GRANT_STUDENTS,
-  getMultipleBirthsDays,
-  SINGLE,
-  getAdditionalSingleParentRightsInDays,
-  getApplicationExternalData,
-  getUnApprovedEmployers,
-  ParentalRelations,
-  ChildInformation,
-  isParentWithoutBirthParent,
-  calculatePeriodLength,
-  PERMANENT_FOSTER_CARE,
-  OTHER_NO_CHILDREN_FOUND,
-  States,
-  ADOPTION,
-} from '@island.is/application/templates/parental-leave'
+  ApplicationInformationApi,
+  ParentalLeaveApi,
+} from '@island.is/clients/vmst'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { SharedTemplateApiService } from '../../shared'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { ConfigService } from '@nestjs/config'
 import {
   BaseTemplateAPIModuleConfig,
   TemplateApiModuleActionProps,
 } from '../../../types'
-import {
-  generateAssignOtherParentApplicationEmail,
-  generateAssignEmployerApplicationEmail,
-  generateOtherParentRejected,
-  generateEmployerRejected,
-  generateApplicationApprovedByEmployerEmail,
-  generateApplicationApprovedByEmployerToEmployerEmail,
-} from './emailGenerators'
-import {
-  generateAssignEmployerApplicationSms,
-  generateAssignOtherParentApplicationSms,
-  generateEmployerRejectedApplicationSms,
-  generateOtherParentRejectedApplicationSms,
-} from './smsGenerators'
-import {
-  transformApplicationToParentalLeaveDTO,
-  getRatio,
-  getRightsCode,
-  checkIfPhoneNumberIsGSM,
-  isParamsActionName,
-  checkActionName,
-  getFromDate,
-} from './parental-leave.utils'
+import { BaseTemplateApiService } from '../../base-template-api.service'
+import { SharedTemplateApiService } from '../../shared'
+import { getConfigValue } from '../../shared/shared.utils'
+import { ChildrenService } from './children/children.service'
 import {
   APPLICATION_ATTACHMENT_BUCKET,
   SIX_MONTHS_IN_SECONDS_EXPIRES,
   apiConstants,
   df,
 } from './constants'
-import { ConfigService } from '@nestjs/config'
-import { getConfigValue } from '../../shared/shared.utils'
-import { BaseTemplateApiService } from '../../base-template-api.service'
-import { ChildrenService } from './children/children.service'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import {
+  generateApplicationApprovedByEmployerEmail,
+  generateApplicationApprovedByEmployerToEmployerEmail,
+  generateAssignEmployerApplicationEmail,
+  generateAssignOtherParentApplicationEmail,
+  generateEmployerRejected,
+  generateOtherParentRejected,
+} from './emailGenerators'
+import {
+  getType,
+  checkIfPhoneNumberIsGSM,
+  getFromDate,
+  getRatio,
+  getRightsCode,
+  transformApplicationToParentalLeaveDTO,
+} from './parental-leave.utils'
+import {
+  generateAssignEmployerApplicationSms,
+  generateAssignOtherParentApplicationSms,
+  generateEmployerRejectedApplicationSms,
+  generateOtherParentRejectedApplicationSms,
+} from './smsGenerators'
+import { AwsService } from '@island.is/nest/aws'
 
 interface VMSTError {
   type: string
@@ -105,8 +105,6 @@ interface AnswerPeriod {
 
 @Injectable()
 export class ParentalLeaveService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private parentalLeaveApi: ParentalLeaveApi,
@@ -117,6 +115,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     private readonly configService: ConfigService<BaseTemplateAPIModuleConfig>,
     private readonly childrenService: ChildrenService,
     private readonly nationalRegistryApi: NationalRegistryClientService,
+    private readonly awsService: AwsService,
   ) {
     super(ApplicationTypes.PARENTAL_LEAVE)
   }
@@ -127,7 +126,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
 
     return {
-      message: Object.entries(e.errors).map(([, values]) => values.join(', ')),
+      message: e.errors
+        ? Object.entries(e.errors).map(([, values]) => values.join(', '))
+        : e.status,
     }
   }
 
@@ -385,16 +386,16 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       )
 
       const Key = `${application.id}/${filename}`
-      const file = await this.s3
-        .getObject({ Bucket: this.attachmentBucket, Key })
-        .promise()
-      const fileContent = file.Body as Buffer
+      const file = await this.awsService.getFileBase64({
+        bucket: this.attachmentBucket,
+        fileName: Key,
+      })
 
-      if (!fileContent) {
+      if (!file) {
         throw new Error('File content was undefined')
       }
 
-      return fileContent.toString('base64')
+      return file
     } catch (e) {
       this.logger.error('Cannot get ' + fileUpload + ' attachment', { e })
       throw new Error('Failed to get the ' + fileUpload + ' attachment')
@@ -416,6 +417,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       noChildrenFoundTypeOfApplication,
       employerLastSixMonths,
       employers,
+      changeEmployerFile,
     } = getApplicationAnswers(application.answers)
     const { applicationFundId } = getApplicationExternalData(
       application.externalData,
@@ -431,7 +433,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       state === States.RESIDENCE_GRANT_APPLICATION
     ) {
       if (residenceGrantFiles) {
-        residenceGrantFiles.forEach(async (item, index) => {
+        residenceGrantFiles.forEach(async (_item, index) => {
           const pdf = await this.getPdf(
             application,
             index,
@@ -444,10 +446,25 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         })
       }
     }
+
+    if (changeEmployerFile) {
+      changeEmployerFile.forEach(async (_item, index) => {
+        const pdf = await this.getPdf(
+          application,
+          index,
+          'fileUpload.changeEmployerFile',
+        )
+        attachments.push({
+          attachmentType: apiConstants.attachments.changeEmployer,
+          attachmentBytes: pdf,
+        })
+      })
+    }
+
     // We don't want to send old files to VMST again
     if (applicationFundId && applicationFundId !== '') {
       if (additionalDocuments) {
-        additionalDocuments.forEach(async (val, i) => {
+        additionalDocuments.forEach(async (_val, i) => {
           const pdf = await this.getPdf(
             application,
             i,
@@ -771,9 +788,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         }
       } catch (e) {
         this.logger.warn(
-          `Could not fetch applicationInformation on applicationId: {applicationId} with error: {error}`
-            .replace(`{${'applicationId'}}`, application.id)
-            .replace(`{${'error'}}`, e),
+          `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
         )
       }
     }
@@ -1376,15 +1391,11 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     return periods
   }
 
-  async sendApplication({
-    application,
-    params = undefined,
-  }: TemplateApiModuleActionProps) {
+  async sendApplication({ application }: TemplateApiModuleActionProps) {
     const {
       isSelfEmployed,
       isReceivingUnemploymentBenefits,
       applicationType,
-      previousState,
       employerLastSixMonths,
       employers,
     } = getApplicationAnswers(application.answers)
@@ -1397,13 +1408,9 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     // }
     const nationalRegistryId = application.applicant
     const attachments = await this.getAttachments(application)
+    const type = getType(application)
 
     try {
-      const actionNameFromParams =
-        previousState === States.RESIDENCE_GRANT_APPLICATION
-          ? isParamsActionName(params)
-          : undefined
-
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1414,7 +1421,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         false, // put false in testData as this is not dummy request
-        checkActionName(application, actionNameFromParams),
+        type,
       )
 
       const response =
@@ -1430,8 +1437,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
       }
 
       // If applicant is sending additional documents then don't need to send email
-      const { actionName } = getApplicationAnswers(application.answers)
-      if (actionName === 'document') {
+      if (type === FileType.DOCUMENT) {
         return
       }
 
@@ -1487,10 +1493,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
   }
 
-  async validateApplication({
-    application,
-    params = undefined,
-  }: TemplateApiModuleActionProps) {
+  async validateApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryId = application.applicant
     const { previousState } = getApplicationAnswers(application.answers)
     /* This is to avoid calling the api every time the user leaves the residenceGrantApplicationNoBirthDate state or residenceGrantApplication state */
@@ -1500,7 +1503,6 @@ export class ParentalLeaveService extends BaseTemplateApiService {
     }
     const attachments = await this.getAttachments(application)
     try {
-      const actionNameFromParams = isParamsActionName(params)
       const periods = await this.createPeriodsDTO(
         application,
         nationalRegistryId,
@@ -1511,7 +1513,7 @@ export class ParentalLeaveService extends BaseTemplateApiService {
         periods,
         attachments,
         true,
-        checkActionName(application, actionNameFromParams),
+        getType(application),
       )
 
       // call SetParentalLeave API with testData: TRUE as this is a dummy request
@@ -1523,8 +1525,27 @@ export class ParentalLeaveService extends BaseTemplateApiService {
 
       return
     } catch (e) {
-      this.logger.error('Failed to validate the parental leave application', e)
+      this.logger.warn('Failed to validate the parental leave application', e)
       throw this.parseErrors(e as VMSTError)
     }
+  }
+
+  async setVMSTPeriods({ application }: TemplateApiModuleActionProps) {
+    try {
+      const applicationInformation =
+        await this.applicationInformationAPI.applicationGetApplicationInformation(
+          {
+            applicationId: application.id,
+          },
+        )
+
+      return applicationInformation.periods
+    } catch (e) {
+      this.logger.warn(
+        `Could not fetch applicationInformation on applicationId: ${application.id} with error: ${e}`,
+      )
+    }
+
+    return null
   }
 }

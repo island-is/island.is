@@ -1,0 +1,248 @@
+import { defineMessages } from 'react-intl'
+
+export const m = {
+  general: defineMessages({
+    seeMore: {
+      id: 'web.ojoi:general.seeMore',
+      defaultMessage: 'Skoða nánar',
+    },
+  }),
+  home: defineMessages({
+    title: {
+      id: 'web.ojoi:home.title',
+      defaultMessage: 'Stjórnartíðindi',
+    },
+    description: {
+      id: 'web.ojoi:home.description',
+      defaultMessage:
+        'Um útgáfu Stjórnartíðinda gilda lög um Stjórnartíðindi og Lögbirtingablað nr. 15/2005.',
+    },
+    featuredImage: {
+      id: 'web.ojoi:home.featuredImage',
+      defaultMessage:
+        'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
+    },
+
+    inputPlaceholder: {
+      id: 'web.ojoi:home.inputPlaceholder',
+      defaultMessage: 'Leitaðu í stjórnartíðindum',
+    },
+    shortcuts: {
+      id: 'web.ojoi:home.shortcuts',
+      defaultMessage: 'Flýtileiðir',
+    },
+    mainCategories: {
+      id: 'web.ojoi:home.mainCategories',
+      defaultMessage: 'Yfirflokkar',
+    },
+    allCategories: {
+      id: 'web.ojoi:home.allCategories',
+      defaultMessage: 'Málaflokkar A-Ö',
+    },
+  }),
+
+  search: defineMessages({
+    title: {
+      id: 'web.ojoi:search.title',
+      defaultMessage: 'Leit í Stjórnartíðindum',
+    },
+    description: {
+      id: 'web.ojoi:search.description',
+      defaultMessage:
+        'Um útgáfu Stjórnartíðinda gilda lög um Stjórnartíðindi og Lögbirtingablað nr. 15/2005.',
+    },
+
+    inputPlaceholder: {
+      id: 'web.ojoi:search.inputPlaceholder',
+      defaultMessage: 'Leit í Stjórnartíðindum',
+    },
+    filterTitle: {
+      id: 'web.ojoi:search.filterTitle',
+      defaultMessage: 'Síun',
+    },
+    clearFilter: {
+      id: 'web.ojoi:search.clearFilter',
+      defaultMessage: 'Hreinsa síun',
+    },
+
+    departmentLabel: {
+      id: 'web.ojoi:search.departmentLabel',
+      defaultMessage: 'Deild',
+    },
+    departmentPlaceholder: {
+      id: 'web.ojoi:search.departmentPlaceholder',
+      defaultMessage: 'Veldu deild',
+    },
+    departmentAll: {
+      id: 'web.ojoi:search.departmentAll',
+      defaultMessage: 'Allar deildir',
+    },
+    typeLabel: {
+      id: 'web.ojoi:search.typeLabel',
+      defaultMessage: 'Tegund',
+    },
+    typePlaceholder: {
+      id: 'web.ojoi:search.typePlaceholder',
+      defaultMessage: 'Veldu tegund',
+    },
+    typeAll: {
+      id: 'web.ojoi:search.typeAll',
+      defaultMessage: 'Allar tegundir',
+    },
+    categoriesLabel: {
+      id: 'web.ojoi:search.categoriesLabel',
+      defaultMessage: 'Málaflokkur',
+    },
+    categoriesPlaceholder: {
+      id: 'web.ojoi:search.categoriesPlaceholder',
+      defaultMessage: 'Veldu málaflokk',
+    },
+    categoriesAll: {
+      id: 'web.ojoi:search.categoriesAll',
+      defaultMessage: 'Allir flokkar',
+    },
+    dateFromLabel: {
+      id: 'web.ojoi:search.dateFromLabel',
+      defaultMessage: 'Dags. frá',
+    },
+    dateFromPlaceholder: {
+      id: 'web.ojoi:search.dateFromPlaceholder',
+      defaultMessage: 'Veldu upphafsdagsetningu',
+    },
+    dateToLabel: {
+      id: 'web.ojoi:search.dateToLabel',
+      defaultMessage: 'Dags. til',
+    },
+    dateToPlaceholder: {
+      id: 'web.ojoi:search.dateToPlaceholder',
+      defaultMessage: 'Veldu lokadagsetningu',
+    },
+    institutionLabel: {
+      id: 'web.ojoi:search.institutionLabel',
+      defaultMessage: 'Stofnun',
+    },
+    institutionPlaceholder: {
+      id: 'web.ojoi:search.institutionPlaceholder',
+      defaultMessage: 'Veldu stofnun',
+    },
+    institutionAll: {
+      id: 'web.ojoi:search.institutionAll',
+      defaultMessage: 'Allir stofnanir',
+    },
+
+    listView: {
+      id: 'web.ojoi:search.listView',
+      defaultMessage: 'Sýna sem lista',
+    },
+    cardView: {
+      id: 'web.ojoi:search.cardView',
+      defaultMessage: 'Sýna sem spjöld',
+    },
+
+    notFoundTitle: {
+      id: 'web.ojoi:search.notFoundTitle',
+      defaultMessage: 'Engin mál fundust',
+    },
+    notFoundMessage: {
+      id: 'web.ojoi:search.notFoundMessage',
+      defaultMessage: 'Vinsamlega endurskoðaðu leitarskilyrði',
+    },
+  }),
+
+  categories: defineMessages({
+    title: {
+      id: 'web.ojoi:categories.title',
+      defaultMessage: 'Málaflokkar Stjórnartíðinda',
+    },
+    description: {
+      id: 'web.ojoi:categories.description',
+      defaultMessage:
+        'Um útgáfu Stjórnartíðinda gilda lög um Stjórnartíðindi og Lögbirtingablað nr. 15/2005.',
+    },
+    searchTitle: {
+      id: 'web.ojoi:categories.searchTitle',
+      defaultMessage: 'Leit',
+    },
+    searchPlaceholder: {
+      id: 'web.ojoi:categories.searchPlaceholder',
+      defaultMessage: 'Leit í flokkum',
+    },
+    filterTitle: {
+      id: 'web.ojoi:categories.filterTitle',
+      defaultMessage: 'Síun',
+    },
+    clearFilter: {
+      id: 'web.ojoi:categories.clearFilter',
+      defaultMessage: 'Hreinsa síun',
+    },
+    departmentLabel: {
+      id: 'web.ojoi:categories.departmentLabel',
+      defaultMessage: 'Deild',
+    },
+    departmentPlaceholder: {
+      id: 'web.ojoi:categories.departmentPlaceholder',
+      defaultMessage: 'Veldu deild',
+    },
+    departmentAll: {
+      id: 'web.ojoi:categories.departmentAll',
+      defaultMessage: 'Allar deildir',
+    },
+    mainCategoryLabel: {
+      id: 'web.ojoi:categories.mainCategoryLabel',
+      defaultMessage: 'Yfirflokkur',
+    },
+    mainCategoryPlaceholder: {
+      id: 'web.ojoi:categories.mainCategoryPlaceholder',
+      defaultMessage: 'Veldu yfirflokk',
+    },
+    mainCategoryAll: {
+      id: 'web.ojoi:categories.mainCategoryAll',
+      defaultMessage: 'Allir flokkar',
+    },
+    notFoundMessage: {
+      id: 'web.ojoi:categories.notFoundMessage',
+      defaultMessage: 'Ekkert fannst fyrir þessi leitarskilyrði',
+    },
+  }),
+
+  advert: defineMessages({
+    title: {
+      id: 'web.ojoi:advert.title',
+      defaultMessage: 'Auglýsing',
+    },
+    description: {
+      id: 'web.ojoi:advert.description',
+      defaultMessage:
+        'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.',
+    },
+
+    sidebarTitle: {
+      id: 'web.ojoi:advert.sidebarTitle',
+      defaultMessage: 'Upplýsingar um auglýsingu',
+    },
+    sidebarDepartment: {
+      id: 'web.ojoi:advert.sidebarDepartment',
+      defaultMessage: 'Deild',
+    },
+    sidebarInstitution: {
+      id: 'web.ojoi:advert.sidebarInstitution',
+      defaultMessage: 'Stofnun',
+    },
+    sidebarCategory: {
+      id: 'web.ojoi:advert.sidebarCategory',
+      defaultMessage: 'Málaflokkur',
+    },
+    signatureDate: {
+      id: 'web.ojoi:advert.signatureDate',
+      defaultMessage: 'Skráningardagur',
+    },
+    publicationDate: {
+      id: 'web.ojoi:advert.publicationDate',
+      defaultMessage: 'Útgáfudagur',
+    },
+    getPdf: {
+      id: 'web.ojoi:advert.getPdf',
+      defaultMessage: 'Sækja PDF',
+    },
+  }),
+}

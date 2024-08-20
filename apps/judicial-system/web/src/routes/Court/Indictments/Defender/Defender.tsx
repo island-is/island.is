@@ -23,7 +23,7 @@ import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/va
 import SelectDefender from './SelectDefender'
 import { defender as m } from './Defender.strings'
 
-const HearingArrangements: React.FC<React.PropsWithChildren<unknown>> = () => {
+const HearingArrangements = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const router = useRouter()
@@ -74,10 +74,10 @@ const HearingArrangements: React.FC<React.PropsWithChildren<unknown>> = () => {
           previousUrl={`${constants.INDICTMENTS_SUBPOENA_ROUTE}/${workingCase.id}`}
           nextIsLoading={isLoadingWorkingCase || isSendingNotification}
           nextButtonText={formatMessage(core.continue)}
-          nextUrl={`${constants.INDICTMENTS_COURT_RECORD_ROUTE}/${workingCase.id}`}
+          nextUrl={`${constants.INDICTMENTS_CONCLUSION_ROUTE}/${workingCase.id}`}
           nextIsDisabled={!stepIsValid}
           onNextButtonClick={() =>
-            handleNavigationTo(constants.INDICTMENTS_COURT_RECORD_ROUTE)
+            handleNavigationTo(constants.INDICTMENTS_CONCLUSION_ROUTE)
           }
         />
       </FormContentContainer>

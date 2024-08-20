@@ -64,7 +64,7 @@ export const PeriodHeaders = [
 export const HousingPaymentsHeaders = [
   'Dags.',
   'Leigumánuður',
-  'Greiðsla fyrir skuld',
+  'Húsnæðisbætur',
   'Greitt af skuld',
   'Greitt út',
   'Staða skuldar',

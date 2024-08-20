@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 
 import { TableSkeleton } from '@island.is/judicial-system-web/src/components/Table'
 
@@ -11,7 +11,7 @@ interface Props {
   testid?: string
 }
 
-const TableContainer: React.FC<Props> = (props) => {
+const TableContainer: FC<Props> = (props) => {
   const { loading, tableHeader, children, testid } = props
 
   if (loading) {

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC } from 'react'
 import { useIntl } from 'react-intl'
 import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
@@ -22,7 +22,7 @@ interface Props {
   isLoading?: boolean
 }
 
-const MobilePastCase: React.FC<Props> = ({
+const MobilePastCase: FC<Props> = ({
   theCase,
   onClick,
   isCourtRole,
@@ -37,11 +37,14 @@ const MobilePastCase: React.FC<Props> = ({
       onClick={onClick}
       tags={[
         <TagCaseState
+          key={theCase.id}
           caseState={theCase.state}
           caseType={theCase.type}
           isCourtRole={isCourtRole}
           isValidToDateInThePast={theCase.isValidToDateInThePast}
           courtDate={theCase.courtDate}
+          indictmentRulingDecision={theCase.indictmentRulingDecision}
+          indictmentDecision={theCase.indictmentDecision}
         />,
       ]}
       isLoading={isLoading}

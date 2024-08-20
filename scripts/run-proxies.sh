@@ -79,12 +79,11 @@ Options:
   -i, --interval N
     Wait N seconds before restarting a proxy (default: 1)
   -p, --port N
-    Local port to bind to (default: 5432 for db, 6379 for redis, 9200 for es, 8443 for soffia, 8081 for xroad)
+    Local port to bind to (default: 5432 for db, 6379 for redis, 9200 for es, 8081 for xroad)
     Only works for single-proxy mode
 
 Proxies:
   es
-  soffia
   xroad
   redis
   db
@@ -177,7 +176,7 @@ parse_cli() {
 
   # Return early if no proxies
   if [ "${#PROXIES[@]}" -eq 0 ]; then
-    PROXIES=("es" "soffia" "xroad" "redis" "db")
+    PROXIES=("es" "xroad" "redis" "db")
     return
   fi
 
@@ -191,7 +190,7 @@ parse_cli() {
   local unknown_proxies
   unknown_proxies=()
   for proxy in "${PROXIES[@]}"; do
-    if ! [[ "$proxy" =~ ^(es|soffia|xroad|redis|db)$ ]]; then
+    if ! [[ "$proxy" =~ ^(es|xroad|redis|db)$ ]]; then
       unknown_proxies+=("$proxy")
     fi
   done
@@ -217,10 +216,6 @@ run-proxy() {
   "es")
     service="es-proxy"
     namespace="es-proxy"
-    ;;
-  "soffia")
-    service="socat-soffia"
-    namespace="socat"
     ;;
   "xroad")
     service="socat-xroad"
@@ -255,9 +250,6 @@ run-redis-proxy() {
 }
 run-es-proxy() {
   run-proxy 9200 "${LOCAL_PORT:=9200}" es "$@"
-}
-run-soffia-proxy() {
-  run-proxy 443 "${LOCAL_PORT:=8443}" soffia
 }
 run-xroad-proxy() {
   run-proxy 80 "${LOCAL_PORT:=8081}" xroad

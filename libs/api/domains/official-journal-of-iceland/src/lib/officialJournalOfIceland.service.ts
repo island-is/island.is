@@ -1,0 +1,68 @@
+import {
+  GetAdvertsRequest,
+  OfficialJournalOfIcelandClientService,
+} from '@island.is/clients/official-journal-of-iceland'
+import { Injectable } from '@nestjs/common'
+import {
+  AdvertSingleParams,
+  QueryParams,
+  TypeQueryParams,
+} from './models/advert.input'
+import {
+  AdvertCategoryResponse,
+  AdvertDepartmentsResponse,
+  AdvertInstitutionsResponse,
+  AdvertMainCategoriesResponse,
+  AdvertResponse,
+  AdvertsResponse,
+  AdvertTypesResponse,
+} from './models/advert.response'
+
+@Injectable()
+export class OfficialJournalOfIcelandService {
+  constructor(
+    private readonly ojoiService: OfficialJournalOfIcelandClientService,
+  ) {}
+
+  async getDepartmentById(params: AdvertSingleParams) {
+    return await this.ojoiService.getDepartmentById(params)
+  }
+
+  async getDepartments(
+    params: QueryParams,
+  ): Promise<AdvertDepartmentsResponse> {
+    return await this.ojoiService.getDepartments(params)
+  }
+
+  async getMainCategories(
+    params: QueryParams,
+  ): Promise<AdvertMainCategoriesResponse> {
+    return await this.ojoiService.getMainCategories(params)
+  }
+
+  async getCategories(params: QueryParams): Promise<AdvertCategoryResponse> {
+    return await this.ojoiService.getCategories(params)
+  }
+
+  async getAdvertTypeById(params: AdvertSingleParams) {
+    return await this.ojoiService.getAdvertTypeById(params)
+  }
+
+  async getAdvertTypes(params: TypeQueryParams): Promise<AdvertTypesResponse> {
+    return await this.ojoiService.getAdvertTypes(params)
+  }
+
+  async getInstitutions(
+    params: QueryParams,
+  ): Promise<AdvertInstitutionsResponse> {
+    return await this.ojoiService.getInstitutions(params)
+  }
+
+  async getAdvertById(params: AdvertSingleParams): Promise<AdvertResponse> {
+    return await this.ojoiService.getAdvertById(params)
+  }
+
+  async getAdverts(input: GetAdvertsRequest): Promise<AdvertsResponse> {
+    return await this.ojoiService.getAdverts(input)
+  }
+}

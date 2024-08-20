@@ -1,4 +1,4 @@
-import { Injectable, Inject } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { ConfigService } from '@nestjs/config'
 import { EmailService } from '@island.is/email-service'
 import {
@@ -7,27 +7,25 @@ import {
   GraphqlGatewayResponse,
 } from '@island.is/application/types'
 import {
-  BaseTemplateAPIModuleConfig,
-  EmailTemplateGenerator,
   AssignmentEmailTemplateGenerator,
+  AssignmentSmsTemplateGenerator,
   AttachmentEmailTemplateGenerator,
   BaseTemplateApiApplicationService,
-  AssignmentSmsTemplateGenerator,
+  BaseTemplateAPIModuleConfig,
+  EmailTemplateGenerator,
   SmsTemplateGenerator,
 } from '../../types'
 import { getConfigValue } from './shared.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { SmsService } from '@island.is/nova-sms'
-import { S3 } from 'aws-sdk'
-import AmazonS3URI from 'amazon-s3-uri'
 import { PaymentService } from '@island.is/application/api/payment'
 import { User } from '@island.is/auth-nest-tools'
 import { ExtraData } from '@island.is/clients/charge-fjs-v2'
+import { AwsService, Encoding } from '@island.is/nest/aws'
 
 @Injectable()
 export class SharedTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
@@ -40,9 +38,8 @@ export class SharedTemplateApiService {
     @Inject(BaseTemplateApiApplicationService)
     private readonly applicationService: BaseTemplateApiApplicationService,
     private readonly paymentService: PaymentService,
-  ) {
-    this.s3 = new S3()
-  }
+    private readonly awsService: AwsService,
+  ) {}
 
   async createAssignToken(application: Application, expiresIn: number) {
     const token = await this.applicationService.createAssignToken(
@@ -153,10 +150,13 @@ export class SharedTemplateApiService {
   async sendEmailWithAttachment(
     templateGenerator: AttachmentEmailTemplateGenerator,
     application: Application,
-    fileContent: string,
+    fileContent: Parameters<AttachmentEmailTemplateGenerator>[1],
     recipientEmail: string,
     locale = 'is',
   ) {
+    this.logger.debug('Sending email with attachment', {
+      applicationId: application.id,
+    })
     const clientLocationOrigin = getConfigValue(
       this.configService,
       'clientLocationOrigin',
@@ -242,26 +242,48 @@ export class SharedTemplateApiService {
     )
   }
 
-  async getAttachmentContentAsBase64(
+  async getS3File(
     application: ApplicationWithAttachments,
     attachmentKey: string,
-  ): Promise<string> {
+  ): Promise<ReturnType<AwsService['getFile']>>
+  async getS3File(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    encoding: Encoding,
+  ): Promise<string | undefined>
+  async getS3File(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+    encoding?: Encoding,
+  ): Promise<ReturnType<AwsService['getFile']> | string | undefined> {
     const fileName = (
       application.attachments as {
         [key: string]: string
       }
     )[attachmentKey]
+    if (encoding)
+      return await this.awsService.getFileEncoded({ fileName, encoding })
+    return await this.awsService.getFile({ fileName })
+  }
 
-    const { bucket, key } = AmazonS3URI(fileName)
+  async getAttachmentContentAsBase64(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<string> {
+    const fileContent = (await this.getS3File(application, attachmentKey))?.Body
+    return fileContent?.transformToString('base64') || ''
+  }
 
-    const uploadBucket = bucket
-    const file = await this.s3
-      .getObject({
-        Bucket: uploadBucket,
-        Key: key,
-      })
-      .promise()
-    const fileContent = file.Body as Buffer
-    return fileContent?.toString('base64') || ''
+  async getAttachmentContentAsBlob(
+    application: ApplicationWithAttachments,
+    attachmentKey: string,
+  ): Promise<Blob> {
+    const file = await this.getS3File(application, attachmentKey)
+    if (!file.Body) {
+      return new Blob([], { type: file.ContentType })
+    }
+    return new Blob([await file.Body.transformToByteArray()], {
+      type: file.ContentType,
+    })
   }
 }

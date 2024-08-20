@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { FC, PropsWithChildren } from 'react'
 
 export type Rect = { width: number; height: number }
 
@@ -21,9 +21,7 @@ const getCurrentViewport = () => {
 
 export const ViewportContext = React.createContext<Rect>(getCurrentViewport())
 
-export const ViewportProvider: React.FC<React.PropsWithChildren<unknown>> = ({
-  children,
-}) => {
+export const ViewportProvider: FC<PropsWithChildren> = ({ children }) => {
   const [state, setState] = React.useState<Rect>(getCurrentViewport())
 
   const handleWindowResize = () => {

@@ -16,19 +16,19 @@ const SvgHome = ({
       {title ? <title id={titleId}>{title}</title> : null}
       <path
         fill="none"
-        stroke="#0061ff"
+        stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.5}
         d="m12.78 19.705 1.45-3.384c.236-.551.838-.916 1.51-.916h7.594c.673 0 1.274.365 1.51.916l1.45 3.384m-13.515 0h13.516m-13.516 0v5.53m13.516-5.53v5.53m-13.516 0h13.516m-13.516 0v1.228h1.229v-1.229m12.287 0v1.229h-1.229v-1.229"
       />
       <path
-        fill="#0061ff"
+        fill="currentColor"
         d="M15.677 23.656a1.054 1.054 0 1 0 0-2.108 1.054 1.054 0 0 0 0 2.108ZM23.558 23.656a1.054 1.054 0 1 0 0-2.108 1.054 1.054 0 0 0 0 2.108Z"
       />
       <g
         fill="none"
-        stroke="#0061ff"
+        stroke="currentColor"
         strokeLinecap="round"
         strokeLinejoin="round"
         strokeWidth={1.5}
@@ -43,7 +43,7 @@ const SvgHome = ({
       <path
         id="ebYEDB473Vf10"
         fill="none"
-        stroke="#0061ff"
+        stroke="currentColor"
         strokeDasharray={8}
         strokeDashoffset={8}
         strokeLinecap="round"

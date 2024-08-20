@@ -1,4 +1,5 @@
-import { style, globalStyle, keyframes } from '@vanilla-extract/css'
+import { globalStyle, keyframes, style } from '@vanilla-extract/css'
+
 import { theme } from '@island.is/island-ui/theme'
 const { spacing, color } = theme
 

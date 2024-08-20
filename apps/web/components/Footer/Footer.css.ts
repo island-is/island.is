@@ -9,7 +9,10 @@ export const fullWidth = style({
   width: '100%',
 })
 
-export const footer = style({})
+export const footer = style({
+  maxWidth: '1342px',
+  margin: '0 auto',
+})
 
 globalStyle(`${footer} a`, {
   wordBreak: 'break-all',

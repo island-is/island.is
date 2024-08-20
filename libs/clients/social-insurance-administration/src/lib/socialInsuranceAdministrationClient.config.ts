@@ -3,9 +3,6 @@ import * as z from 'zod'
 
 const schema = z.object({
   xRoadServicePath: z.string(),
-  fetch: z.object({
-    timeout: z.number().int(),
-  }),
 })
 
 export const SocialInsuranceAdministrationClientConfig = defineConfig({
@@ -16,8 +13,5 @@ export const SocialInsuranceAdministrationClientConfig = defineConfig({
       'XROAD_TR_PATH',
       'IS-DEV/GOV/10008/TR-Protected/external-v1',
     ),
-    fetch: {
-      timeout: env.optionalJSON('XROAD_TR_TIMEOUT') ?? 30000,
-    },
   }),
 })

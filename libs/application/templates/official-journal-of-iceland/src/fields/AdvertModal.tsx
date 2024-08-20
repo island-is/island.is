@@ -4,20 +4,21 @@ import {
   Icon,
   Input,
   ModalBase,
+  Pagination,
   RadioButton,
   SkeletonLoader,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import * as styles from './AdvertModal.css'
+import * as styles from './Advert.css'
 import { useLocale } from '@island.is/localization'
 import { advert, error, general } from '../lib/messages'
 import { useQuery } from '@apollo/client'
 import { ADVERTS_QUERY } from '../graphql/queries'
 import debounce from 'lodash/debounce'
 import { DEBOUNCE_INPUT_TIMER } from '../lib/constants'
-import { ChangeEvent, useState } from 'react'
-import { MinistryOfJusticeGraphqlResponse } from '../lib/types'
+import { ChangeEvent, ReactNode, useState } from 'react'
+import { OfficialJournalOfIcelandGraphqlResponse } from '../lib/types'
 type Props = {
   visible: boolean
   setVisibility: (visibility: boolean) => void
@@ -34,6 +35,7 @@ export const AdvertModal = ({
     string | null
   >(null)
 
+  const [page, setPage] = useState(1)
   const [search, setSearch] = useState('')
 
   const updateSearch = (
@@ -43,9 +45,9 @@ export const AdvertModal = ({
   }
 
   const { data, loading } = useQuery<
-    MinistryOfJusticeGraphqlResponse<'adverts'>
+    OfficialJournalOfIcelandGraphqlResponse<'adverts'>
   >(ADVERTS_QUERY, {
-    variables: { input: { search } },
+    variables: { input: { page: page, search: search, pageSize: 10 } },
   })
 
   const debouncedSearch = debounce(updateSearch, DEBOUNCE_INPUT_TIMER)
@@ -81,7 +83,7 @@ export const AdvertModal = ({
                   onChange={debouncedSearch}
                 />
               </Box>
-              {data?.ministryOfJusticeAdverts.adverts.length ? (
+              {data?.officialJournalOfIcelandAdverts.adverts.length ? (
                 <Box
                   paddingY={1}
                   borderColor="blue200"
@@ -89,15 +91,17 @@ export const AdvertModal = ({
                   borderBottomWidth="standard"
                 >
                   <Stack space={2} dividers="regular">
-                    {data.ministryOfJusticeAdverts.adverts.map((advert, i) => (
-                      <RadioButton
-                        name={advert.id}
-                        key={i}
-                        label={advert.title}
-                        checked={localSelectedAdvertId === advert.id}
-                        onChange={() => setLocalSelectedAdvertId(advert.id)}
-                      />
-                    ))}
+                    {data.officialJournalOfIcelandAdverts.adverts.map(
+                      (advert, i) => (
+                        <RadioButton
+                          name={advert.id}
+                          key={i}
+                          label={advert.title}
+                          checked={localSelectedAdvertId === advert.id}
+                          onChange={() => setLocalSelectedAdvertId(advert.id)}
+                        />
+                      ),
+                    )}
                   </Stack>
                 </Box>
               ) : loading ? (
@@ -105,6 +109,23 @@ export const AdvertModal = ({
               ) : (
                 <Text>{f(error.noResults)}</Text>
               )}
+            </Box>
+            <Box>
+              <Pagination
+                page={page}
+                totalPages={
+                  data?.officialJournalOfIcelandAdverts.paging.totalPages
+                }
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                  >
+                    {children}
+                  </Box>
+                )}
+              />
             </Box>
             <Box className={styles.buttonWrapper}>
               <Button onClick={closeModal} variant="ghost">

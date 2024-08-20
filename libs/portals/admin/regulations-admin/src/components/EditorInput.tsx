@@ -11,6 +11,7 @@ import cn from 'classnames'
 import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { useFileUploader } from '../utils/fileUploader'
+import { fileUrl } from '../utils/dataHooks'
 
 const KB = 1024
 
@@ -80,6 +81,7 @@ export const EditorInput = (props: EditorInputProps) => {
           classes={classes}
           fileUploader={fileUploader()}
           baseText={baseText}
+          uploadUrl={`${fileUrl}/admin-drafts/files/${props.draftId}`}
           onFocus={() => {
             setHasFocus(true)
           }}

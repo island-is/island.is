@@ -17,11 +17,8 @@ export const buildHistoryItems = (
   let historyItems: ApplicationCardHistoryItem[] = []
 
   const actionCardHistory = application.actionCard?.history
-  const lastHistoryItem = actionCardHistory
-    ? actionCardHistory[actionCardHistory.length - 1]
-    : undefined
+  const lastHistoryItem = actionCardHistory ? actionCardHistory[0] : undefined
   const lastHistoryDate = lastHistoryItem?.date
-
   if (application.actionCard?.pendingAction?.title) {
     historyItems.push({
       date: format(

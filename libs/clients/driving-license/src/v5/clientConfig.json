@@ -10,6 +10,173 @@
     "version": "5.0"
   },
   "paths": {
+    "/api/applications/v5/applyfor/be": {
+      "post": {
+        "tags": ["Application"],
+        "summary": "Apply for BE category",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "JWT token",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Application model",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApplicationForBEModel"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationForCategoryDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationForCategoryDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationForCategoryDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/applications/v5/testfinished/{applicationId}": {
+      "post": {
+        "tags": ["Application"],
+        "summary": "Confirm application as done, test finished",
+        "parameters": [
+          {
+            "name": "applicationId",
+            "in": "path",
+            "description": "RLS application id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationFinishedDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationFinishedDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationFinishedDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/codetables/deprivations": {
       "get": {
         "tags": ["Codetables"],
@@ -239,6 +406,315 @@
                   "items": {
                     "$ref": "#/components/schemas/EmbaettiDto"
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/hasqualityphoto": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Check if person has quality marked photo",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/hasqualitysignature": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Check if person has quality marked photo",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "integer",
+                  "format": "int32"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/getqualityphoto": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get quality marked photo for person",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/getqualitysignature": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get quality marked photo for person",
+        "parameters": [
+          {
+            "name": "jwttoken",
+            "in": "header",
+            "description": "Token with national id",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string",
+                  "format": "byte"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          }
+        }
+      }
+    },
+    "/api/imagecontroller/v5/{SSN}/fromnationalregistry": {
+      "get": {
+        "tags": ["Image"],
+        "summary": "Get for all images from thjodskra",
+        "parameters": [
+          {
+            "name": "SSN",
+            "in": "path",
+            "description": "Person social serial number",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "header",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The requested API version",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "default": "5.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ImagesFromThjodskraDto"
                 }
               }
             }
@@ -2092,7 +2568,7 @@
         }
       }
     },
-    "/api/drivinglicense/v5/applications/{SSN}/renewal65": {
+    "/api/drivinglicense/v5/applications/renewal65": {
       "post": {
         "tags": ["Okuskirteini"],
         "summary": "Post renewal request for people 65 year old or older",
@@ -2101,14 +2577,6 @@
             "name": "jwttoken",
             "in": "header",
             "description": "Token with person social security number",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "SSN",
-            "in": "path",
-            "required": true,
             "schema": {
               "type": "string"
             }
@@ -2774,6 +3242,55 @@
   },
   "components": {
     "schemas": {
+      "ApplicationFinishedDto": {
+        "type": "object",
+        "properties": {
+          "licenseId": {
+            "type": "integer",
+            "description": "New license id",
+            "format": "int32",
+            "nullable": true
+          },
+          "result": {
+            "type": "integer",
+            "description": "Result",
+            "format": "int32"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if any",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Dto for application finished"
+      },
+      "ApplicationForCategoryDto": {
+        "type": "object",
+        "properties": {
+          "category": {
+            "type": "string",
+            "description": "Category applied for",
+            "nullable": true
+          },
+          "result": {
+            "type": "boolean",
+            "description": "Can person apply for full license"
+          },
+          "errorCode": {
+            "type": "string",
+            "description": "Error code if can not apply",
+            "nullable": true
+          },
+          "customMessage": {
+            "type": "string",
+            "description": "Custom message",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data transfer object for category application"
+      },
       "CategoryDto": {
         "type": "object",
         "properties": {
@@ -3184,6 +3701,11 @@
             "type": "string",
             "description": "Origin of creation",
             "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District id",
+            "format": "int32"
           }
         },
         "additionalProperties": false,
@@ -3326,6 +3848,53 @@
         },
         "additionalProperties": false,
         "description": "Entity for picture"
+      },
+      "ImageFromThjodskraDto": {
+        "type": "object",
+        "properties": {
+          "content": {
+            "type": "string",
+            "description": "Image content",
+            "nullable": true
+          },
+          "contentLength": {
+            "type": "integer",
+            "description": "Content length",
+            "format": "int32"
+          },
+          "contentDocumentType": {
+            "type": "string",
+            "description": "Content document type",
+            "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "description": "Created",
+            "format": "date-time"
+          },
+          "biometricId": {
+            "type": "string",
+            "description": "BiometricId",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Image with info from thjodskra"
+      },
+      "ImagesFromThjodskraDto": {
+        "type": "object",
+        "properties": {
+          "images": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ImageFromThjodskraDto"
+            },
+            "description": "Array of all images from thjodskra",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "All images from thjodskra dto"
       },
       "InstructorDto": {
         "type": "object",
@@ -3554,6 +4123,38 @@
         "additionalProperties": false,
         "description": "Data transfer object for penalty points"
       },
+      "PostApplicationForBEModel": {
+        "type": "object",
+        "properties": {
+          "userId": {
+            "type": "string",
+            "description": "UserId",
+            "nullable": true
+          },
+          "instructorSSN": {
+            "type": "string",
+            "description": "Driving instructor social security number",
+            "nullable": true
+          },
+          "primaryPhoneNumber": {
+            "type": "string",
+            "description": "Primary phone number",
+            "nullable": true
+          },
+          "studentEmail": {
+            "type": "string",
+            "description": "Student email",
+            "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "Ordering district",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Post application for BE category"
+      },
       "PostNewCollaborative": {
         "type": "object",
         "properties": {
@@ -3638,6 +4239,11 @@
             "type": "string",
             "description": "Address to send license to",
             "nullable": true
+          },
+          "healtCertificate": {
+            "type": "string",
+            "description": "Healt certificate",
+            "nullable": true
           }
         },
         "additionalProperties": false,
@@ -3683,6 +4289,11 @@
             "type": "string",
             "description": "Person social security number",
             "format": "date-time",
+            "nullable": true
+          },
+          "healtCertificate": {
+            "type": "string",
+            "description": "Healt certificate",
             "nullable": true
           }
         },
@@ -4006,6 +4617,11 @@
             "type": "string",
             "description": "Origin of creation",
             "nullable": true
+          },
+          "districtId": {
+            "type": "integer",
+            "description": "District id",
+            "format": "int32"
           }
         },
         "additionalProperties": false,

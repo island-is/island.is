@@ -261,6 +261,11 @@ export const information = {
         defaultMessage: 'Gsm númer',
         description: 'Buyer phone number label',
       },
+      submitButton: {
+        id: 'aosh.tmo.application:information.labels.buyer.submitButton',
+        defaultMessage: 'Staðfesta',
+        description: 'Submit button for buyer',
+      },
     }),
     buyerOperators: defineMessages({
       title: {

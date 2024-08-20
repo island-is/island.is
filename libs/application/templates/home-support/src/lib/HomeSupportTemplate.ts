@@ -43,7 +43,7 @@ const HomeSupportTemplate: ApplicationTemplate<
   type: ApplicationTypes.HOME_SUPPORT,
   name: application.general.name,
   dataSchema: HomeSupportSchema,
-  translationNamespaces: [configuration.translation],
+  translationNamespaces: configuration.translation,
   featureFlag: Features.homeSupport,
   stateMachineConfig: {
     initial: States.PREREQUISITES,

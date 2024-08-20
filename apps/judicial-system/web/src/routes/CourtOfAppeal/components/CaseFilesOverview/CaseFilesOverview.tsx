@@ -12,7 +12,7 @@ import {
 
 import { strings } from './CaseFilesOverview.strings'
 
-const CaseFilesOverview: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CaseFilesOverview = () => {
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()

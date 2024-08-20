@@ -13,6 +13,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
 import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
@@ -25,20 +26,26 @@ import {
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { usePreferencesStore } from '../../stores/preferences-store'
-import { ButtonRegistry } from '../../utils/component-registry'
 import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
+import { ButtonRegistry } from '../../utils/component-registry'
 
 type FlatListItem =
   | GenericUserLicense
   | IdentityDocumentModel
   | { __typename: 'Skeleton'; id: string }
   | { __typename: 'Error'; id: string }
+
+const getSkeletonArr = (): FlatListItem[] =>
+  Array.from({ length: 5 }).map((_, id) => ({
+    id: String(id),
+    __typename: 'Skeleton',
+  }))
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
@@ -90,11 +97,12 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   const theme = useTheme()
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
+  const [hiddenContent, setHiddenContent] = useState(isIos)
 
   // Feature flags
   const showPassport = useFeatureFlag('isPassportEnabled', false)
@@ -105,7 +113,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   // Query list of licenses
   const res = useListLicensesQuery({
-    fetchPolicy: 'network-only',
     variables: {
       input: {
         includedTypes: [
@@ -123,20 +130,18 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   })
 
   // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery({
-    fetchPolicy: 'network-only',
-  })
+  const resPassport = useGetIdentityDocumentQuery()
 
-  useActiveTabItemPress(1, () => {
-    flatListRef.current?.scrollToOffset({
-      offset: -150,
-      animated: true,
-    })
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    queryResult: [res, resPassport],
+    refetching,
   })
 
   // Filter licenses
   const licenseItems = useMemo(() => {
-    if (!res.loading && !res.error) {
+    if ((!res.loading && !res.error) || res.data) {
       return (res.data?.genericLicenses ?? []).filter(({ license }) => {
         if (license.status === 'Unknown') {
           return false
@@ -156,6 +161,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
         return true
       })
     }
+
     return []
   }, [res, showDisability, showPCard, showEhic, showHuntingLicense])
 
@@ -179,21 +185,25 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
-      setLoading(true)
+      setRefetching(true)
       res
         .refetch()
         .then(() => {
           ;(loadingTimeout as any).current = setTimeout(() => {
-            setLoading(false)
+            setRefetching(false)
           }, 1331)
         })
         .catch(() => {
-          setLoading(false)
+          setRefetching(false)
         })
     } catch (err) {
-      setLoading(false)
+      setRefetching(false)
     }
   }, [])
+
+  useNavigationComponentDidAppear(() => {
+    setHiddenContent(false)
+  }, componentId)
 
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
@@ -246,17 +256,23 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   }, [])
 
   const data = useMemo<FlatListItem[]>(() => {
-    if (res.loading && !res.data) {
-      return Array.from({ length: 5 }).map((_, id) => ({
-        id: String(id),
-        __typename: 'Skeleton',
-      }))
+    if (
+      (res.loading && !res.data) ||
+      (resPassport.loading && !resPassport.data)
+    ) {
+      return getSkeletonArr()
     }
+
     return [
       ...licenseItems,
       ...(showPassport ? resPassport?.data?.getIdentityDocument ?? [] : []),
     ] as FlatListItem[]
   }, [licenseItems, resPassport, showPassport, res.loading, res.data])
+
+  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  if (hiddenContent) {
+    return null
+  }
 
   return (
     <>
@@ -270,7 +286,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           bottom: 32,
         }}
         refreshControl={
-          <RefreshControl refreshing={loading} onRefresh={onRefresh} />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
         scrollEventThrottle={16}
         scrollToOverflowEnabled={true}

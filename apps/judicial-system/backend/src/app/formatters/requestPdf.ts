@@ -7,6 +7,7 @@ import {
   formatCaseType,
   formatDate,
   formatNationalId,
+  lowercase,
 } from '@island.is/judicial-system/formatters'
 import {
   CaseType,
@@ -33,10 +34,10 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-function constructRestrictionRequestPdf(
+const constructRestrictionRequestPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -194,9 +195,9 @@ function constructRestrictionRequestPdf(
   addEmptyLines(doc)
   addNormalText(
     doc,
-    `${theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)} ${
-      theCase.prosecutor?.title ?? ''
-    }`,
+    `${
+      theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+    } ${lowercase(theCase.prosecutor?.title)}`,
     'Times-Bold',
   )
   addFooter(doc)
@@ -208,10 +209,10 @@ function constructRestrictionRequestPdf(
   )
 }
 
-function constructInvestigationRequestPdf(
+const constructInvestigationRequestPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   const doc = new PDFDocument({
     size: 'A4',
     margins: {
@@ -392,9 +393,9 @@ function constructInvestigationRequestPdf(
 
   addNormalText(
     doc,
-    `${theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)} ${
-      theCase.prosecutor?.title ?? ''
-    }`,
+    `${
+      theCase.prosecutor?.name ?? formatMessage(m.prosecutor.noProsecutor)
+    } ${lowercase(theCase.prosecutor?.title)}`,
     'Times-Bold',
   )
   addFooter(doc)
@@ -406,27 +407,27 @@ function constructInvestigationRequestPdf(
   )
 }
 
-function constructRequestPdf(
+const constructRequestPdf = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return isRestrictionCase(theCase.type)
     ? constructRestrictionRequestPdf(theCase, formatMessage)
     : constructInvestigationRequestPdf(theCase, formatMessage)
 }
 
-export function getRequestPdfAsString(
+export const getRequestPdfAsString = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<string> {
+): Promise<string> => {
   return constructRequestPdf(theCase, formatMessage).then((buffer) =>
     buffer.toString('binary'),
   )
 }
 
-export function getRequestPdfAsBuffer(
+export const getRequestPdfAsBuffer = (
   theCase: Case,
   formatMessage: FormatMessage,
-): Promise<Buffer> {
+): Promise<Buffer> => {
   return constructRequestPdf(theCase, formatMessage)
 }

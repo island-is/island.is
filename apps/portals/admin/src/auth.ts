@@ -36,6 +36,8 @@ if (userMocked) {
       AdminPortalScope.explicitAirDiscountScheme,
       AdminPortalScope.signatureCollectionManage,
       AdminPortalScope.signatureCollectionProcess,
+      AdminPortalScope.formSystem,
+      AdminPortalScope.formSystemSuperUser,
     ],
     post_logout_redirect_uri: `${window.location.origin}`,
     userStorePrefix: 'ap.',

@@ -1,16 +1,7 @@
 import { PropsWithChildren } from 'react'
 
-import {
-  Box,
-  Button,
-  GridContainer,
-  Hidden,
-  LinkV2,
-  Stack,
-} from '@island.is/island-ui/core'
+import { Box, GridContainer, Stack } from '@island.is/island-ui/core'
 import { HeadWithSocialSharing } from '@island.is/web/components'
-import { useNamespace } from '@island.is/web/hooks'
-import { useI18n } from '@island.is/web/i18n'
 
 import SidebarLayout from '../../Layouts/SidebarLayout'
 import { ManualType } from '../utils'
@@ -28,9 +19,6 @@ export const ManualWrapper = ({
   socialTitle,
   children,
 }: ManualWrapperProps) => {
-  const n = useNamespace(namespace)
-  const { activeLocale } = useI18n()
-
   return (
     <>
       <HeadWithSocialSharing
@@ -39,26 +27,7 @@ export const ManualWrapper = ({
       <GridContainer>
         <Box paddingBottom={6}>
           <Stack space={2}>
-            <Hidden below="xl">
-              <Box flexGrow={1} marginRight={6} overflow={'hidden'}>
-                <LinkV2 href="/">
-                  <Button
-                    preTextIcon="arrowBack"
-                    preTextIconType="filled"
-                    size="small"
-                    type="button"
-                    variant="text"
-                    truncate
-                  >
-                    {n(
-                      'goBack',
-                      activeLocale === 'is' ? 'Til baka' : 'Go back',
-                    )}
-                  </Button>
-                </LinkV2>
-              </Box>
-            </Hidden>
-
+            <Box />
             <SidebarLayout
               flexDirection="rowReverse"
               paddingTop={0}

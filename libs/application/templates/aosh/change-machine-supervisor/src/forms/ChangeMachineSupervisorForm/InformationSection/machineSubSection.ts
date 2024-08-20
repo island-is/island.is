@@ -102,19 +102,6 @@ export const machineSubSection = buildSubSection({
             return machine?.plate || ''
           },
         }),
-        buildDateField({
-          id: 'machine.date',
-          title: information.labels.machine.date,
-          required: false,
-          width: 'half',
-          maxDate: new Date(),
-          minDate: () => {
-            const minDate = new Date()
-            minDate.setDate(minDate.getDate() - 7)
-            return minDate
-          },
-          defaultValue: new Date().toISOString().substring(0, 10),
-        }),
       ],
     }),
   ],

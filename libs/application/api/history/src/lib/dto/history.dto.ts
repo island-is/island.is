@@ -2,7 +2,7 @@ import { IsDate, IsString } from 'class-validator'
 import { ApiProperty } from '@nestjs/swagger'
 import { Expose } from 'class-transformer'
 import { FormatMessage } from '@island.is/application/types'
-import { StaticText } from 'static-text'
+import { StaticText } from '@island.is/shared/types'
 
 export class HistoryResponseDto {
   @ApiProperty()

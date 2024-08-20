@@ -1,9 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger'
 
 export class UploadPoliceCaseFileResponse {
-  @ApiProperty()
+  @ApiProperty({ type: String })
   key!: string
 
-  @ApiProperty()
+  @ApiProperty({ type: Number })
   size!: number
 }

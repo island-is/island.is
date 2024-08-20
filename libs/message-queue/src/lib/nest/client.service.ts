@@ -12,15 +12,19 @@ import {
   SendMessageCommand,
   SetQueueAttributesCommand,
   Message,
+  QueueAttributeName,
 } from '@aws-sdk/client-sqs'
-import type { Logger } from '@island.is/logging'
+import { AbortController } from '@smithy/abort-controller'
+import { type Logger } from '@island.is/logging'
 
 @Injectable()
 export class ClientService {
   private client: SQSClient
+  private receiveMessagesAbortController: AbortController
 
   constructor(config: SQSClientConfig, private logger: Logger) {
     this.client = new SQSClient(config)
+    this.receiveMessagesAbortController = new AbortController()
   }
 
   async add(url: string, message: unknown): Promise<string> {
@@ -51,6 +55,9 @@ export class ClientService {
         MaxNumberOfMessages: maxNumMessages, // max allowed = 10
         WaitTimeSeconds: 20, // max allowed = 20
       }),
+      {
+        abortSignal: this.receiveMessagesAbortController.signal,
+      },
     )
 
     return messages
@@ -70,7 +77,7 @@ export class ClientService {
 
   async getQueueAttributes(
     url: string,
-    attributes: string[],
+    attributes: QueueAttributeName[],
   ): Promise<Record<string, string>> {
     const r = await this.client.send(
       new GetQueueAttributesCommand({
@@ -124,12 +131,15 @@ export class ClientService {
   async syncQueueAttributes(
     name: string,
     url: string,
-    attributes: Record<string, string>,
+    attributes: Record<QueueAttributeName, string>,
   ): Promise<void> {
-    const current = await this.getQueueAttributes(url, Object.keys(attributes))
+    const current = await this.getQueueAttributes(
+      url,
+      Object.keys(attributes) as QueueAttributeName[],
+    )
 
-    const areNotEqual = (k: string) => attributes[k] !== current[k]
-    if (Object.keys(attributes).some(areNotEqual)) {
+    const areNotEqual = (k: QueueAttributeName) => attributes[k] !== current[k]
+    if ((Object.keys(attributes) as QueueAttributeName[]).some(areNotEqual)) {
       this.logger.debug(`Updating "${name}" queue attributes`, attributes)
 
       await this.client.send(
@@ -139,5 +149,14 @@ export class ClientService {
         }),
       )
     }
+  }
+
+  // Dispose of the client and abort any ongoing requests.
+  dispose() {
+    this.logger.debug('Aborting SQS requests')
+    // Causes error when running tests
+    // this.receiveMessagesAbortController.abort()
+    this.logger.debug('Closing SQS client')
+    this.client.destroy()
   }
 }

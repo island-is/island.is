@@ -31,8 +31,8 @@ export const dataSchema = z.object({
         RoleConfirmationEnum.DELEGATE,
       ]),
       electPerson: z.object({
-        electedPersonNationalId: z.string(),
-        electedPersonName: z.string(),
+        nationalId: z.string(),
+        name: z.string(),
       }),
     })
     .partial()
@@ -43,8 +43,7 @@ export const dataSchema = z.object({
     .refine(
       ({ roleConfirmation, electPerson }) =>
         roleConfirmation === RoleConfirmationEnum.DELEGATE && !!electPerson
-          ? electPerson.electedPersonName !== '' &&
-            electPerson.electedPersonNationalId !== ''
+          ? electPerson.name !== '' && electPerson.nationalId !== ''
           : !electPerson
           ? true
           : roleConfirmation === RoleConfirmationEnum.CONTINUE
@@ -52,15 +51,15 @@ export const dataSchema = z.object({
           : false,
       {
         message: m.errorNationalIdNoName.defaultMessage,
-        path: ['electPerson', 'electedPersonNationalId'],
+        path: ['electPerson', 'nationalId'],
       },
     )
     .refine(
       ({ roleConfirmation, electPerson }) =>
         roleConfirmation === RoleConfirmationEnum.DELEGATE && !!electPerson
-          ? electPerson.electedPersonNationalId &&
-            nationalId.isPerson(electPerson.electedPersonNationalId) &&
-            nationalId.info(electPerson.electedPersonNationalId).age >= 18
+          ? electPerson.nationalId &&
+            nationalId.isPerson(electPerson.nationalId) &&
+            nationalId.info(electPerson.nationalId).age >= 18
           : !electPerson
           ? true
           : roleConfirmation === RoleConfirmationEnum.CONTINUE
@@ -68,7 +67,7 @@ export const dataSchema = z.object({
           : false,
       {
         message: m.errorNationalIdIncorrect.defaultMessage,
-        path: ['electPerson', 'electedPersonNationalId'],
+        path: ['electPerson', 'nationalId'],
       },
     ),
 
@@ -77,6 +76,16 @@ export const dataSchema = z.object({
   }),
   applicantEmail: customZodError(z.string().email(), m.errorEmail),
   applicantRelation: customZodError(z.string().min(1), m.errorRelation),
+  firearmApplicant: z
+    .object({
+      nationalId: z.string(),
+      name: z.string(),
+      phone: z.string().refine((v) => isValidPhoneNumber(v), {
+        params: m.errorPhoneNumber,
+      }),
+      email: customZodError(z.string().email(), m.errorEmail),
+    })
+    .optional(),
   assets: z.object({
     assets: z
       .object({
@@ -118,3 +127,5 @@ export const dataSchema = z.object({
     encountered: z.boolean().optional(),
   }),
 })
+
+export type AnnouncementOfDeath = z.TypeOf<typeof dataSchema>

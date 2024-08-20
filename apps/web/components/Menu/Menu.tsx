@@ -28,6 +28,7 @@ interface Props {
   mainLinks: MegaMenuLink[]
   buttonColorScheme?: ButtonTypes['colorScheme']
   onMenuOpen?: () => void
+  organizationSearchFilter?: string
 }
 
 const minarsidurLink = '/minarsidur/'
@@ -39,6 +40,7 @@ export const Menu = ({
   mainLinks,
   buttonColorScheme = 'default',
   onMenuOpen,
+  organizationSearchFilter,
 }: Props) => {
   const searchInput = useRef<HTMLInputElement>()
   const { activeLocale, t } = useI18n()
@@ -146,6 +148,7 @@ export const Menu = ({
           autosuggest={true}
           onRouting={closeModal}
           skipContext
+          organization={organizationSearchFilter}
         />
       )}
     />

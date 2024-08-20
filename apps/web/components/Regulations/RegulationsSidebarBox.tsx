@@ -1,18 +1,18 @@
-import * as styles from './RegulationsSidebarBox.css'
-
 // TODO: make this reuseable component?
 // - <Sidebar> has a bunch of some search specific code and <SidebarBox> is too barebones
+import React, { CSSProperties, ReactNode } from 'react'
+import cn from 'classnames'
 
-import React, { ReactNode, CSSProperties } from 'react'
 import {
   Box,
   Divider,
-  Link,
   LinkProps,
+  LinkV2,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import cn from 'classnames'
+
+import * as styles from './RegulationsSidebarBox.css'
 
 type RegulationsSidebarBoxProps = {
   title: string | React.ReactElement
@@ -67,7 +67,8 @@ export type RegulationsSidebarLinkProps = Pick<LinkProps, 'href'> & {
 }
 
 export const RegulationsSidebarLink = (props: RegulationsSidebarLinkProps) => (
-  <Link href={props.href} pureChildren>
+  <LinkV2 href={props.href} pureChildren>
+    {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
     <a
       className={cn(
         props.className,
@@ -79,5 +80,5 @@ export const RegulationsSidebarLink = (props: RegulationsSidebarLinkProps) => (
     >
       {props.children}
     </a>
-  </Link>
+  </LinkV2>
 )

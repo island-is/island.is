@@ -7,11 +7,17 @@ export const getSelectedMachine = (
   externalData: ExternalData,
   answers: FormValue,
 ) => {
-  const machineId = getValueViaPath(answers, 'pickMachine.id', '') as Machine
-  const machines = getValueViaPath(
+  if (answers.findVehicle) {
+    const machine = getValueViaPath(answers, 'machine') as Machine
+    return machine
+  }
+
+  const machineId = getValueViaPath(answers, 'machine.id', '') as Machine
+  const machinesWithTotal = getValueViaPath(
     externalData,
     'machinesList.data',
     {},
   ) as MachinesWithTotalCount
-  return machines.machines.find((machine) => machine.id === machineId)
+
+  return machinesWithTotal.machines.find((machine) => machine.id === machineId)
 }

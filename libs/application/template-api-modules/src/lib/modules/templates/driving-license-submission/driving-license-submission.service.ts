@@ -1,5 +1,6 @@
 import { Inject, Injectable } from '@nestjs/common'
 import {
+  DrivingLicenseCategory,
   DrivingLicenseService,
   NewDrivingLicenseResult,
 } from '@island.is/api/domains/driving-license'
@@ -22,11 +23,12 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { FetchError } from '@island.is/clients/middlewares'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { User } from '@island.is/auth-nest-tools'
+import { DriverLicenseWithoutImages } from '@island.is/clients/driving-license'
 import {
   PostTemporaryLicenseWithHealthDeclarationMapper,
   DrivingLicenseSchema,
 } from './utils/healthDeclarationMapper'
-import { removeCountryCode } from './utils'
+import { formatPhoneNumber } from './utils'
 
 const calculateNeedsHealthCert = (healthDeclaration = {}) => {
   return !!Object.values(healthDeclaration).find((val) => val === 'yes')
@@ -46,13 +48,18 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
-    const applicationFor = getValueViaPath<'B-full' | 'B-temp'>(
+    const applicationFor = getValueViaPath<'B-full' | 'B-temp' | 'BE'>(
       answers,
       'applicationFor',
       'B-full',
     )
 
-    const chargeItemCode = applicationFor === 'B-full' ? 'AY110' : 'AY114'
+    const chargeItemCode =
+      applicationFor === 'B-full'
+        ? 'AY110'
+        : applicationFor === 'BE'
+        ? 'AY115'
+        : 'AY114'
 
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
@@ -132,7 +139,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     auth: User,
   ): Promise<NewDrivingLicenseResult> {
     const applicationFor =
-      getValueViaPath<'B-full' | 'B-temp'>(answers, 'applicationFor') ??
+      getValueViaPath<'B-full' | 'B-temp' | 'BE'>(answers, 'applicationFor') ??
       'B-full'
 
     const needsHealthCert = calculateNeedsHealthCert(answers.healthDeclaration)
@@ -141,7 +148,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     const jurisdictionId = answers.jurisdiction
     const teacher = answers.drivingInstructor as string
     const email = answers.email as string
-    const phone = removeCountryCode(answers.phone as string)
+    const phone = formatPhoneNumber(answers.phone as string)
 
     const postHealthDeclaration = async (
       nationalId: string,
@@ -168,6 +175,10 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         jurisdictionId: jurisdictionId as number,
         needsToPresentHealthCertificate: needsHealthCert || remarks,
         needsToPresentQualityPhoto: needsQualityPhoto,
+        licenseCategory:
+          applicationFor === 'B-full'
+            ? DrivingLicenseCategory.B
+            : DrivingLicenseCategory.BE,
       })
     } else if (applicationFor === 'B-temp') {
       if (needsHealthCert) {
@@ -183,6 +194,23 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
           teacherNationalId: teacher,
           email: email,
           phone: phone,
+        },
+      )
+    } else if (applicationFor === 'BE') {
+      const instructorSSN = getValueViaPath<string>(
+        answers,
+        'drivingInstructor',
+      )
+      const email = getValueViaPath<string>(answers, 'email')
+      const phone = getValueViaPath<string>(answers, 'phone')
+      return this.drivingLicenseService.applyForBELicense(
+        nationalId,
+        auth.authorization,
+        {
+          jurisdiction: jurisdictionId as number,
+          instructorSSN: instructorSSN ?? '',
+          primaryPhoneNumber: phone ?? '',
+          studentEmail: email ?? '',
         },
       )
     }
@@ -230,5 +258,15 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
         )
       }
     }
+  }
+
+  async glassesCheck({ auth }: TemplateApiModuleActionProps): Promise<boolean> {
+    const licences: DriverLicenseWithoutImages[] =
+      await this.drivingLicenseService.getAllDriverLicenses(auth.authorization)
+    const hasGlasses: boolean = licences.some((license) => {
+      // Visual impairments comments on driving licenses are prefixed with "01."
+      return !!license.comments?.some((comment) => comment.nr?.includes('01.'))
+    })
+    return hasGlasses
   }
 }

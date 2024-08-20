@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
@@ -20,12 +21,13 @@ import {
   useListSearchQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useActiveTabItemPress } from '../../hooks/use-active-tab-item-press'
-import { openBrowser } from '../../lib/rn-island'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useBrowser } from '../../lib/use-browser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
-import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
+import { getRightButtons } from '../../utils/get-main-root'
 import { ApplicationsModule } from '../home/applications-module'
+import { isIos } from '../../utils/devices'
 
 type ListItem =
   | { id: string; __typename: 'Skeleton' }
@@ -75,10 +77,12 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const { openBrowser } = useBrowser()
   const flatListRef = useRef<FlatList>(null)
-  const [loading, setLoading] = useState(false)
+  const [refetching, setRefetching] = useState(false)
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
+  const [hiddenContent, setHiddenContent] = useState(isIos)
 
   const res = useListSearchQuery({
     variables: {
@@ -94,6 +98,17 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   const applicationsRes = useListApplicationsQuery()
 
+  useConnectivityIndicator({
+    componentId,
+    rightButtons: getRightButtons(),
+    refetching,
+    queryResult: [applicationsRes, res],
+  })
+
+  useNavigationComponentDidAppear(() => {
+    setHiddenContent(false)
+  }, componentId)
+
   const data = useMemo<ListItem[]>(() => {
     if (!res.data && res.loading) {
       return Array.from({ length: 8 }).map((_, id) => ({
@@ -102,13 +117,11 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       }))
     }
 
-    if (!res.loading && res.data) {
-      const articles = [
-        ...(res?.data?.searchResults?.items ?? []),
-      ] as SearchArticleFragmentFragment[]
-      return articles.sort((a, b) => a.title.localeCompare(b.title))
-    }
-    return []
+    const articles = [
+      ...(res?.data?.searchResults?.items ?? []),
+    ] as SearchArticleFragmentFragment[]
+
+    return articles.sort((a, b) => a.title.localeCompare(b.title))
   }, [res.data, res.loading])
 
   const renderItem = useCallback(
@@ -132,14 +145,24 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     [],
   )
 
-  useActiveTabItemPress(3, () => {
-    flatListRef.current?.scrollToOffset({
-      offset: -150,
-      animated: true,
-    })
-  })
-
   const keyExtractor = useCallback((item: ListItem) => item.id, [])
+
+  const onRefresh = useCallback(async () => {
+    setRefetching(true)
+
+    try {
+      await res.refetch()
+    } catch (e) {
+      // noop
+    } finally {
+      setRefetching(false)
+    }
+  }, [applicationsRes])
+
+  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  if (hiddenContent) {
+    return null
+  }
 
   return (
     <>
@@ -184,6 +207,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
               loading={applicationsRes.loading}
               componentId={componentId}
               hideAction={true}
+              hideSeeAllButton={true}
             />
             <SafeAreaView style={{ marginHorizontal: 16 }}>
               <Heading>
@@ -193,25 +217,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
           </View>
         }
         refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={() => {
-              setLoading(true)
-              try {
-                res
-                  ?.refetch?.()
-                  ?.then(() => {
-                    setLoading(false)
-                  })
-                  .catch(() => {
-                    setLoading(false)
-                  })
-              } catch (err) {
-                // noop
-                setLoading(false)
-              }
-            }}
-          />
+          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
         }
       />
       <BottomTabsIndicator index={3} total={5} />

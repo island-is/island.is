@@ -14,9 +14,9 @@ import { LocaleProvider, LocaleContext } from '@island.is/localization'
 import { MockedAuthProvider, MockUser } from '@island.is/auth/react'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
-import { ActorDelegationsQuery } from '../../../gen/graphql'
+import { ActorDelegationsQuery } from '../../../gen/schema'
 import { USER_PROFILE } from './userProfile.graphql'
-import { GetUserProfileQuery } from '../../../gen/graphql'
+import { GetUserProfileQuery } from '../../../gen/schema'
 
 const delegation = {
   name: 'Phil',

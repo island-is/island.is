@@ -7,6 +7,7 @@ import {
 } from '@island.is/service-portal/core'
 import { messages as m } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
+import { SECTION_GAP } from '../constants'
 
 export const MedicineWrapper = ({
   children,
@@ -37,7 +38,7 @@ export const MedicineWrapper = ({
           }
         />
       </Hidden>
-      <Box paddingY={4}>{children}</Box>
+      <Box paddingY={SECTION_GAP}>{children}</Box>
     </Box>
   )
 }

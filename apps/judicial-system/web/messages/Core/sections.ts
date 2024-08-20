@@ -250,10 +250,16 @@ export const sections = {
         'Notaður sem texti fyrir Verjenda skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
     courtRecord: {
-      id: 'judicial.system.core:sections.indictments_court_section.court_record',
-      defaultMessage: 'Þingbók og dómur',
+      id: 'judicial.system.core:sections.indictments_court_section.conclusion',
+      defaultMessage: 'Niðurstaða',
       description:
-        'Notaður sem texti fyrir Þingbók og dómur skref í hliðarstiku í ákærum hjá héraðsdómum',
+        'Notaður sem texti fyrir Niðurstaða skref í hliðarstiku í ákærum hjá héraðsdómum',
+    },
+    summary: {
+      id: 'judicial.system.core:sections.indictments_court_section.summary',
+      defaultMessage: 'Samantekt',
+      description:
+        'Notaður sem texti fyrir Samantekt skref í hliðarstiku í ákærum hjá héraðsdómum',
     },
   }),
   extensionSection: defineMessages({

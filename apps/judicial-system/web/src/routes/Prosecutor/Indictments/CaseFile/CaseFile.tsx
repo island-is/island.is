@@ -65,7 +65,7 @@ const CaseFile = () => {
                     workingCase.caseFiles?.filter(
                       (caseFile) =>
                         caseFile.policeCaseNumber === policeCaseNumber &&
-                        caseFile.category === CaseFileCategory.CASE_FILE,
+                        caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
                     ) ?? []
                   }
                   subtypes={workingCase.indictmentSubtypes}
@@ -84,7 +84,7 @@ const CaseFile = () => {
                   policeCaseNumber: policeCaseNumber,
                 })}
                 pdfType="caseFilesRecord"
-                policeCaseNumber={policeCaseNumber}
+                elementId={policeCaseNumber}
               />
             </Box>
           ))}

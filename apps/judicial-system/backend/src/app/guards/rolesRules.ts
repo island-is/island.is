@@ -39,3 +39,7 @@ export const adminRule: RolesRule = UserRole.ADMIN
 
 // Allows defenders to perform any action
 export const defenderRule: RolesRule = UserRole.DEFENDER
+
+// Allows public prosecutor staff to perform any action
+export const publicProsecutorStaffRule: RolesRule =
+  UserRole.PUBLIC_PROSECUTOR_STAFF

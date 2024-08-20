@@ -59,7 +59,7 @@ export const transformApplicationToOldAgePensionDTO = (
     employmentStatus,
     employers,
   } = getOAPApplicationAnswers(application.answers)
-  const { bankInfo, email } = getOAPApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getOAPApplicationExternalData(
     application.externalData,
   )
 
@@ -101,7 +101,7 @@ export const transformApplicationToOldAgePensionDTO = (
       taxLevel: +taxLevel,
     },
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     hasAbroadResidence: YES === residenceHistoryQuestion,
@@ -139,14 +139,14 @@ export const transformApplicationToHouseholdSupplementDTO = (
     householdSupplementHousing,
     householdSupplementChildren,
   } = getHSApplicationAnswers(application.answers)
-  const { bankInfo, email } = getHSApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getHSApplicationExternalData(
     application.externalData,
   )
 
   const householdSupplementDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
@@ -200,14 +200,14 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     personalAllowanceUsage,
     taxLevel,
   } = getASFTEApplicationAnswers(application.answers)
-  const { bankInfo, email } = getASFTEApplicationExternalData(
+  const { bankInfo, userProfileEmail } = getASFTEApplicationExternalData(
     application.externalData,
   )
 
   const additionalSupportForTheElderlyDTO: ApplicationDTO = {
     applicationId: application.id,
     applicantInfo: {
-      email: email,
+      email: userProfileEmail,
       phonenumber: applicantPhonenumber,
     },
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {

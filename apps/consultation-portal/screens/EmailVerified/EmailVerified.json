@@ -8,5 +8,25 @@
     "emailVerifiedText": "Netfang staðfest",
     "text": "Nú geturðu skráð þig í áskrift að málum, hægt er að velja um nokkrar leiðir.",
     "arrowLinkText": "Aftur á forsíðu"
+  },
+  "linkExpired": {
+    "seo": {
+      "title": "Hlekkur útrunninn",
+      "url": "/user/link-expired"
+    },
+    "failText": "Aðgerð tókst ekki",
+    "linkExpiredText": "Hlekkur útrunninn",
+    "text": "Hlekkur er útrunninn, vinsamlegast athugaðu að hlekkur sé ekki eldri en 24 klukkustundir. Vinsamlegast sláðu inn netfang aftur og fáðu nýjan hlekk.",
+    "arrowLinkText": "Aftur á forsíðu"
+  },
+  "notFound": {
+    "seo": {
+      "title": "Eitthvað fór úrskeiðis",
+      "url": "/user/not-found"
+    },
+    "failText": "Aðgerð tókst ekki",
+    "notFoundText": "Eitthvað fór úrskeiðis",
+    "text": "Reyndu aftur eða hafðu samband.",
+    "arrowLinkText": "Aftur á forsíðu"
   }
 }
