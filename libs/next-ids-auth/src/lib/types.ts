@@ -10,4 +10,5 @@ export type AuthUser = User & {
 export type AuthSession = Session & {
   idToken: string
   scope: string[]
+  accessToken: string
 }

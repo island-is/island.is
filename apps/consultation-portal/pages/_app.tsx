@@ -1,17 +1,30 @@
-import { ApolloProvider } from '@apollo/client'
-import { getSession, Provider } from 'next-auth/client'
-import { AppContext } from 'next/app'
-import { AppLayout, PageLoader, AuthProvider } from '../components'
-import initApollo from '../graphql/client'
-import { IsSsrMobileContext } from '../context'
+import { ApolloProvider, NormalizedCacheObject } from '@apollo/client'
+import { GetServerSidePropsContext } from 'next'
+import { Session } from 'next-auth'
+import { SessionProvider } from 'next-auth/react'
 
-const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
+import type { AppProps } from 'next/app'
+
+import { auth } from '../auth'
+import { AppLayout, AuthProvider, PageLoader } from '../components'
+import { IsSsrMobileContext } from '../context'
+import initApollo from '../graphql/client'
+
+type CustomPageProps = {
+  apolloState: NormalizedCacheObject
+  session: Session
+  isMobile: boolean
+}
+
+type ConsultationPortalApplicationProps = AppProps<CustomPageProps>
+
+const ConsultationPortalApplication = ({
+  Component,
+  pageProps,
+}: ConsultationPortalApplicationProps) => {
   return (
     <ApolloProvider client={initApollo(pageProps.apolloState)}>
-      <Provider
-        session={pageProps.session}
-        options={{ clientMaxAge: 120, basePath: '/samradsgatt/api/auth' }}
-      >
+      <SessionProvider session={pageProps.session}>
         <AuthProvider>
           <IsSsrMobileContext.Provider value={pageProps.isMobile}>
             <AppLayout>
@@ -78,26 +91,24 @@ const ConsultationPortalApplication: any = ({ Component, pageProps }) => {
             `}</style>
           </IsSsrMobileContext.Provider>
         </AuthProvider>
-      </Provider>
+      </SessionProvider>
     </ApolloProvider>
   )
 }
 
-ConsultationPortalApplication.getInitialProps = async (
-  appContext: AppContext,
-) => {
-  const { ctx } = appContext
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
   const apolloClient = initApollo({})
   const customContext = {
     ...ctx,
     apolloClient,
   }
+
   const apolloState = apolloClient.cache.extract()
-  const session = await getSession(customContext)
+  const session = await auth(customContext)
 
   const isServer = !!ctx.req
   const userAgent = isServer
-    ? ctx.req.headers['user-agent']
+    ? ctx.req.headers['user-agent'] ?? ''
     : navigator.userAgent
   const isMobile = /(iPad|iPhone|Android|Mobile)/i.test(userAgent) || false
 
