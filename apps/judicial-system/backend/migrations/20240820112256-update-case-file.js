@@ -17,7 +17,7 @@ module.exports = {
 
   async down(queryInterface) {
     return queryInterface.sequelize.transaction((transaction) =>
-      queryInterface.removeColumn('file', 'submitted_by', {
+      queryInterface.removeColumn('case_file', 'submitted_by', {
         transaction,
       }),
     )
