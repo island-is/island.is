@@ -148,22 +148,26 @@ export const EducationGraduationDetail = () => {
               loading={loading}
               content={graduationDate}
             />
-            <InfoLine
-              label={defineMessage({
-                id: 'sp.education-graduation:education-grad-detail-degree',
-                defaultMessage: 'Gráða',
-              })}
-              loading={loading}
-              content={formatNationalId(studentInfo?.degree ?? '')}
-            />
-            <InfoLine
-              label={defineMessage({
-                id: 'sp.education-graduation:education-grad-detail-program',
-                defaultMessage: 'Námsleið',
-              })}
-              loading={loading}
-              content={formatNationalId(studentInfo?.studyProgram ?? '')}
-            />
+            {studentInfo?.degree && (
+              <InfoLine
+                label={defineMessage({
+                  id: 'sp.education-graduation:education-grad-detail-degree',
+                  defaultMessage: 'Gráða',
+                })}
+                loading={loading}
+                content={formatNationalId(studentInfo.degree)}
+              />
+            )}
+            {studentInfo?.studyProgram && (
+              <InfoLine
+                label={defineMessage({
+                  id: 'sp.education-graduation:education-grad-detail-program',
+                  defaultMessage: 'Námsleið',
+                })}
+                loading={loading}
+                content={formatNationalId(studentInfo?.studyProgram ?? '')}
+              />
+            )}
             <InfoLine
               label={defineMessage({
                 id: 'sp.education-graduation:education-grad-detail-faculty',
