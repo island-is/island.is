@@ -82,7 +82,6 @@ export class SignatureCollectionSharedClientService {
       })
       return mapList(list, umbodList)
     } catch (error) {
-      console.log('Error fetching list', error)
       throw new NotFoundException('List not found')
     }
   }
