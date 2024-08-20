@@ -1,11 +1,16 @@
-import {Injectable} from '@nestjs/common'
-import {ApplicationApi, CoursesApi, ProgramsApi} from '../../gen/fetch/apis'
-import {ApplicationStatus, IApplication, ICourse, IProgram,} from '@island.is/university-gateway'
-import {logger} from '@island.is/logging'
-import {mapUglaPrograms} from './utils/mapUglaPrograms'
-import {mapUglaCourses} from './utils/mapUglaCourses'
-import {mapUglaApplication} from './utils/mapUglaApplication'
-import {InlineResponse2004} from '../../gen/fetch'
+import { Injectable } from '@nestjs/common'
+import { ApplicationApi, CoursesApi, ProgramsApi } from '../../gen/fetch/apis'
+import {
+  ApplicationStatus,
+  IApplication,
+  ICourse,
+  IProgram,
+} from '@island.is/university-gateway'
+import { logger } from '@island.is/logging'
+import { mapUglaPrograms } from './utils/mapUglaPrograms'
+import { mapUglaCourses } from './utils/mapUglaCourses'
+import { mapUglaApplication } from './utils/mapUglaApplication'
+import { InlineResponse2004 } from '../../gen/fetch'
 
 @Injectable()
 export class UniversityOfIcelandApplicationClient {
@@ -53,9 +58,7 @@ export class UniversityOfIcelandApplicationClient {
       },
     )
 
-    return await this.applicationApi.applicationsPost(
-      mappedApplication,
-    )
+    return await this.applicationApi.applicationsPost(mappedApplication)
   }
 
   async updateApplicationStatus(externalId: string, status: ApplicationStatus) {

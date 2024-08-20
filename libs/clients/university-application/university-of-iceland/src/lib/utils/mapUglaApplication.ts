@@ -1,4 +1,8 @@
-import {ApplicationTypes, IApplication, IApplicationAttachment} from '@island.is/university-gateway'
+import {
+  ApplicationTypes,
+  IApplication,
+  IApplicationAttachment,
+} from '@island.is/university-gateway'
 import {
   ApplicationsAttachments,
   ApplicationsPostRequest,
@@ -54,7 +58,9 @@ export const mapUglaApplication = async (
       medmaelendur: [], // TODO are we doing this?
       leidbeinandi: undefined, // TODO are we doing this?
       tenglar: [], // TODO are we doing this?
-      attachments: application.attachments ? await mapApplicationAttachments(application.attachments) : undefined,
+      attachments: application.attachments
+        ? await mapApplicationAttachments(application.attachments)
+        : undefined,
       namskeid: undefined, // TODO what is this?
     },
   }
@@ -62,13 +68,17 @@ export const mapUglaApplication = async (
   return uglaApplication
 }
 
-const mapApplicationAttachments = async (attachments: Array<IApplicationAttachment | undefined>): Promise<Array<ApplicationsAttachments>> => {
-  return await Promise.all(attachments.filter(Boolean).map(async (attachment) => {
-    return {
-      url: attachment?.url,
-      attachmentKey: AttachmentKey[attachment?.fileType as keyof typeof AttachmentKey],
-      fileName: attachment?.fileName
-    } as ApplicationsAttachments
-  }))
-
+const mapApplicationAttachments = async (
+  attachments: Array<IApplicationAttachment | undefined>,
+): Promise<Array<ApplicationsAttachments>> => {
+  return await Promise.all(
+    attachments.filter(Boolean).map(async (attachment) => {
+      return {
+        url: attachment?.url,
+        attachmentKey:
+          AttachmentKey[attachment?.fileType as keyof typeof AttachmentKey],
+        fileName: attachment?.fileName,
+      } as ApplicationsAttachments
+    }),
+  )
 }
