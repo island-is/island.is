@@ -84,11 +84,4 @@ export class AttachmentS3Service {
       return undefined
     }
   }
-
-  public generateSignedUrl(url: string, expiration: number): Promise<string> {
-    const { bucket, key } = AmazonS3URI(url)
-    const params = { Bucket: bucket, Expires: expiration, Key: key }
-
-    return this.s3.getSignedUrlPromise('getObject', params)
-  }
 }
