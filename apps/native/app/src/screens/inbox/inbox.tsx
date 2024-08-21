@@ -35,6 +35,8 @@ import {
   useMarkAllDocumentsAsReadMutation,
   DocumentV2,
   useListDocumentsQuery,
+  useGetDocumentsSendersQuery,
+  useGetDocumentsCategoriesQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -73,6 +75,7 @@ const TagsWrapper = styled.View`
   margin-top: -4px;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing[2]}px;
+  flex-wrap: wrap;
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -156,6 +159,8 @@ type Filters = {
   subjectContains?: string
   senderNationalId?: string[]
   categoryIds?: string[]
+  dateFrom?: Date
+  dateTo?: Date
 }
 
 function applyFilters(filters?: Filters) {
@@ -166,6 +171,8 @@ function applyFilters(filters?: Filters) {
     subjectContains: filters?.subjectContains ?? '',
     senderNationalId: filters?.senderNationalId ?? [],
     categoryIds: filters?.categoryIds ?? [],
+    dateFrom: filters?.dateFrom,
+    dateTo: filters?.dateTo,
   }
 }
 
@@ -175,6 +182,8 @@ export const InboxScreen: NavigationFunctionComponent<{
   bookmarked?: boolean
   senderNationalId?: string[]
   categoryIds?: string[]
+  dateFrom?: Date
+  dateTo?: Date
 }> = ({
   componentId,
   opened = false,
@@ -182,6 +191,8 @@ export const InboxScreen: NavigationFunctionComponent<{
   bookmarked = false,
   senderNationalId = [],
   categoryIds = [],
+  dateFrom = undefined,
+  dateTo = undefined,
 }) => {
   useNavigationOptions(componentId)
   const ui = useUiStore()
@@ -206,8 +217,19 @@ export const InboxScreen: NavigationFunctionComponent<{
       subjectContains: queryString,
       senderNationalId,
       categoryIds,
+      dateTo,
+      dateFrom,
     }
-  }, [opened, archived, bookmarked, queryString, senderNationalId, categoryIds])
+  }, [
+    opened,
+    archived,
+    bookmarked,
+    queryString,
+    senderNationalId,
+    categoryIds,
+    dateFrom,
+    dateTo,
+  ])
 
   const [filters, setFilters] = useState(applyFilters(incomingFilters))
 
@@ -216,12 +238,17 @@ export const InboxScreen: NavigationFunctionComponent<{
       input: {
         pageSize: DEFAULT_PAGE_SIZE,
         ...filters,
+        dateFrom: dateFrom?.toISOString(),
+        dateTo: dateTo?.toISOString(),
       },
     },
   })
 
-  const availableSenders = res.data?.documentsV2?.senders ?? []
-  const availableCategories = res.data?.documentsV2?.categories ?? []
+  const senders = useGetDocumentsSendersQuery()
+  const categories = useGetDocumentsCategoriesQuery()
+
+  const availableSenders = senders.data?.getDocumentSenders ?? []
+  const availableCategories = categories.data?.getDocumentCategories ?? []
 
   const [markAllAsRead, { loading: markAllAsReadLoading }] =
     useMarkAllDocumentsAsReadMutation({
@@ -500,8 +527,10 @@ export const InboxScreen: NavigationFunctionComponent<{
                     bookmarked,
                     availableSenders,
                     availableCategories,
-                    selectedSendersIncoming: senderNationalId,
-                    selectedCategoriesIncoming: categoryIds,
+                    selectedSenders: senderNationalId,
+                    selectedCategories: categoryIds,
+                    dateFrom,
+                    dateTo,
                   })
                 }}
               />
@@ -523,7 +552,9 @@ export const InboxScreen: NavigationFunctionComponent<{
             archived ||
             bookmarked ||
             senderNationalId.length ||
-            categoryIds.length ? (
+            categoryIds.length ||
+            dateFrom ||
+            dateTo ? (
               <TagsWrapper>
                 {opened && (
                   <Tag
@@ -563,7 +594,8 @@ export const InboxScreen: NavigationFunctionComponent<{
                     const name = availableSenders.find((s) => s.id === sender)
                     return (
                       <Tag
-                        title={name?.name ?? ''}
+                        key={sender}
+                        title={name?.name?.trim() ?? ''}
                         closable
                         onClose={() =>
                           Navigation.updateProps(componentId, {
@@ -582,11 +614,12 @@ export const InboxScreen: NavigationFunctionComponent<{
                     )
                     return (
                       <Tag
+                        key={categoryId}
                         title={name?.name ?? ''}
                         closable
                         onClose={() =>
                           Navigation.updateProps(componentId, {
-                            senderNationalId: categoryIds.filter(
+                            categoryIds: categoryIds.filter(
                               (id) => id !== categoryId,
                             ),
                           })
@@ -594,6 +627,32 @@ export const InboxScreen: NavigationFunctionComponent<{
                       />
                     )
                   })}
+                {dateFrom && (
+                  <Tag
+                    title={`${intl.formatMessage({
+                      id: 'inbox.filterDateFromLabel',
+                    })} - ${intl.formatDate(dateFrom)}`}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {
+                        dateFrom: undefined,
+                      })
+                    }
+                  />
+                )}
+                {dateTo && (
+                  <Tag
+                    title={`${intl.formatMessage({
+                      id: 'inbox.filterDateToLabel',
+                    })} - ${intl.formatDate(dateTo)}`}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {
+                        dateTo: undefined,
+                      })
+                    }
+                  />
+                )}
               </TagsWrapper>
             ) : null}
           </>

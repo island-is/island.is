@@ -17,16 +17,22 @@ query ListDocuments($input: DocumentsV2DocumentsInput!) {
     data {
       ...ListDocument
     }
-    senders {
-      id
-      name
-    }
-    categories {
-      id
-      name
-    }
     totalCount
     unreadCount
+  }
+}
+
+query GetDocumentsSenders {
+  getDocumentSenders {
+    id
+    name
+  }
+}
+
+query GetDocumentsCategories {
+  getDocumentCategories {
+    id
+    name
   }
 }
 

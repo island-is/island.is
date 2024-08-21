@@ -55,6 +55,8 @@ interface DatePickerProps {
   placeholder?: string
   minimumDate?: Date
   maximumDate?: Date
+  selectedDate?: Date
+  onSelectDate?: (date: Date) => void
 }
 
 export function DatePickerInput({
@@ -62,19 +64,20 @@ export function DatePickerInput({
   placeholder,
   maximumDate,
   minimumDate,
+  onSelectDate,
+  selectedDate,
 }: DatePickerProps) {
   const intl = useIntl()
-  const [date, setDate] = useState(new Date())
+  const [date, setDate] = useState(selectedDate ?? undefined)
   const [openDatePicker, setOpenDatePicker] = useState(false)
-  const [dateSelected, setDateSelected] = useState(false)
 
   return (
     <Host>
       <DateInput onPress={() => setOpenDatePicker(true)}>
         <View>
           <Label variant="eyebrow">{label}</Label>
-          <DateSelected empty={!dateSelected}>
-            {!dateSelected ? placeholder ?? '' : intl.formatDate(date)}
+          <DateSelected empty={!date}>
+            {!date ? placeholder ?? '' : intl.formatDate(date)}
           </DateSelected>
         </View>
         <Image source={calendarIcon} style={{}} />
@@ -86,13 +89,13 @@ export function DatePickerInput({
         minimumDate={minimumDate}
         modal
         open={openDatePicker}
-        date={date}
+        date={date ?? new Date()}
         confirmText={intl.formatMessage({ id: 'inbox.filterDateConfirm' })}
         cancelText={intl.formatMessage({ id: 'inbox.filterDateCancel' })}
         onConfirm={(date) => {
           setOpenDatePicker(false)
           setDate(date)
-          setDateSelected(true)
+          onSelectDate?.(date)
         }}
         onCancel={() => {
           setOpenDatePicker(false)
