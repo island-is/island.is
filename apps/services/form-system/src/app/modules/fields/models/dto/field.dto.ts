@@ -2,6 +2,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../../../../dataTypes/languageType.model'
 import { FieldSettingsDto } from '../../../fieldSettings/models/dto/fieldSettings.dto'
 import { FieldTypes } from '../../../../enums/fieldTypes'
+import { ValueDto } from '../../../values/models/dto/value.dto'
+import { Value } from '../../../values/models/value.model'
 
 export class FieldDto {
   @ApiProperty()
@@ -27,4 +29,7 @@ export class FieldDto {
 
   @ApiProperty({ enum: FieldTypes })
   fieldType!: string
+
+  @ApiProperty({ type: ValueDto })
+  value?: ValueDto
 }
