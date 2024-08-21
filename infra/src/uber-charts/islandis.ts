@@ -136,7 +136,7 @@ const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
 
-  const githubActionsCache = githubActionsCacheSetup()
+const githubActionsCache = githubActionsCacheSetup()
 
 const externalContractsTests = externalContractsTestsSetup()
 
