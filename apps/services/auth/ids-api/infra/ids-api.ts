@@ -75,6 +75,14 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       PASSKEY_CORE_RP_NAME: 'Island.is',
       PASSKEY_CORE_CHALLENGE_TTL_MS: '120000',
       REDIS_NODES: REDIS_NODE_CONFIG,
+      PASSKEY_CORE_ALLOWED_ORIGINS: json([
+        // Origin for iOS app.
+        'island.is',
+        // Origin for Android test app
+        'android:apk-key-hash:JgPeo_F6KYk-ngRa26tO2SsAtMiTBQCc7WtSgN-jRX0',
+        // Origin for Android prod app
+        'android:apk-key-hash:EsLTUu5kaY7XPmMl2f7nbq4amu-PNzdYu3FecNf90wU',
+      ]),
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -82,8 +90,6 @@ export const serviceSetup = (): ServiceBuilder<'services-auth-ids-api'> => {
       NOVA_URL: '/k8s/services-auth/NOVA_URL',
       NOVA_USERNAME: '/k8s/services-auth/NOVA_USERNAME',
       NOVA_PASSWORD: '/k8s/services-auth/NOVA_PASSWORD',
-      PASSKEY_CORE_ALLOWED_ORIGINS:
-        '/k8s/services-auth/PASSKEY_CORE_ALLOWED_ORIGINS',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/services-auth/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })

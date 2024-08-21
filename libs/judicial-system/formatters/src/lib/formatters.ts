@@ -54,7 +54,7 @@ export const capitalize = (text?: string | null): string => {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-export const lowercase = (text?: string): string => {
+export const lowercase = (text?: string | null): string => {
   if (!text) {
     return ''
   }

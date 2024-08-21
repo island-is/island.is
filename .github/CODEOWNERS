@@ -91,6 +91,7 @@
 /libs/api/domains/signature-collection                                                                   @island-is/juni
 /libs/clients/signature-collection                                                                       @island-is/juni
 /libs/application/template-api-modules/src/lib/modules/templates/signature-collection                    @island-is/juni
+/libs/application/template-api-modules/src/lib/modules/templates/general-petition                        @island-is/juni
 
 /apps/portals/admin/                                                                                     @island-is/aranja
 /libs/api/domains/auth-admin/                                                                            @island-is/aranja
@@ -134,6 +135,7 @@ codemagic.yaml                                                                  
 /libs/api/domains/documents/                                                                             @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                               @island-is/hugsmidjan
 /libs/api/domains/assets/                                                                                @island-is/hugsmidjan
+/libs/api/domains/health-directorate/                                                                    @island-is/hugsmidjan
 /libs/api/domains/hms-loans/                                                                             @island-is/hugsmidjan
 /libs/api/domains/license-service/                                                                       @island-is/hugsmidjan @island-is/aranja
 /libs/api/domains/work-machines/                                                                         @island-is/hugsmidjan @island-is/origo
