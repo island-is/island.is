@@ -309,6 +309,7 @@ export class FileService {
       caseId: theCase.id,
       name: fileName,
       userGeneratedFilename: fileName.replace(/\.pdf$/, ''),
+      submittedBy: user.name,
     })
 
     if (
