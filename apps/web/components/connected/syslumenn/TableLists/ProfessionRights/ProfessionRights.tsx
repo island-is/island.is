@@ -29,7 +29,7 @@ import {
   getSortedAndFilteredList,
   prepareCsvString,
 } from '../../utils'
-import { GET_PROFESSION_RIGHTS_QUERY } from './queries'
+import { GET_PROFESSION_RIGHTS_QUERY } from './queries.graphql'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
