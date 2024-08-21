@@ -30,7 +30,7 @@ export const overview = {
       description: 'Overview chosen property label',
     },
     warningAlertTitle: {
-      id: 'mc.application:overview.labels.warningAlertTitle',
+      id: 'mc.application:overview.labels.warningAlertTitle#markdown',
       defaultMessage: 'Ekki tókst að sækja veðbókavottorð fyrir {propertyName}',
       description: 'Overview warning alert message title',
     },
@@ -41,7 +41,7 @@ export const overview = {
       description: 'Overview warning alert message ',
     },
     successAlertTitle: {
-      id: 'mc.application:overview.labels.successAlertTitle',
+      id: 'mc.application:overview.labels.successAlertTitle#markdown',
       defaultMessage:
         'Beiðni um lagfæringu á veðbókarvottorð fyrir {propertyName} hefur verið send sýslumanni',
       description: 'Overview success alert message title',

@@ -16,7 +16,7 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import logo from '../../assets/logo/logo-64w.png'
-import { useBrowser } from '../../lib/useBrowser'
+import { useBrowser } from '../../lib/use-browser'
 import { useAuthStore } from '../../stores/auth-store'
 import { preferencesStore } from '../../stores/preferences-store'
 import { nextOnboardingStep } from '../../utils/onboarding'

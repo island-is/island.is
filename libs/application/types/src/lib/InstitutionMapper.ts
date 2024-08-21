@@ -131,6 +131,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
     slug: InstitutionTypes.RIKISENDURSKODUN,
   },
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
+    nationalId: InstitutionNationalIds.RIKISENDURSKODUN,
+    slug: InstitutionTypes.RIKISENDURSKODUN,
+  },
   [ApplicationTypes.ANNOUNCEMENT_OF_DEATH]: {
     nationalId: InstitutionNationalIds.SYSLUMENN,
     slug: InstitutionTypes.SYSLUMENN,
@@ -223,6 +227,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.THJODSKRA,
     slug: InstitutionTypes.THJODSKRA,
   },
+  [ApplicationTypes.PARLIAMENTARY_LIST_SIGNING]: {
+    nationalId: InstitutionNationalIds.THJODSKRA,
+    slug: InstitutionTypes.THJODSKRA,
+  },
   [ApplicationTypes.CITIZENSHIP]: {
     nationalId: InstitutionNationalIds.UTLENDINGASTOFNUN,
     slug: InstitutionTypes.UTLENDINGASTOFNUN,
@@ -294,5 +302,9 @@ export const institutionMapper = {
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+  },
+  [ApplicationTypes.MACHINE_REGISTRATION]: {
+    nationalId: InstitutionNationalIds.VINNUEFTIRLITID,
+    slug: InstitutionTypes.VINNUEFTIRLITID,
   },
 }

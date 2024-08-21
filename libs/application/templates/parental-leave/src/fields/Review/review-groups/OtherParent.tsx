@@ -50,7 +50,11 @@ export const OtherParent = ({
   return (
     <ReviewGroup
       isEditable={editable && isPrimaryParent}
-      editAction={() => goToScreen?.('otherParentObj')}
+      editAction={() =>
+        goToScreen?.(
+          otherParent === SPOUSE ? 'otherParentSpouse' : 'otherParentObj',
+        )
+      }
     >
       <Stack space={2}>
         {(otherParent === NO || otherParent === SINGLE) && (

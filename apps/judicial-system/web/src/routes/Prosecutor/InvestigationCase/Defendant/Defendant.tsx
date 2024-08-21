@@ -18,7 +18,6 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
-import { prosecutorCanSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
 import {
   core,
   defendant as m,
@@ -406,20 +405,16 @@ const Defendant = () => {
             </Box>
           </Box>
           <AnimatePresence>
-            {prosecutorCanSelectDefenderForInvestigationCase(
-              workingCase.type,
-            ) && (
-              <motion.section
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-              >
-                <DefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              </motion.section>
-            )}
+            <motion.section
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+            >
+              <DefenderInfo
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+              />
+            </motion.section>
           </AnimatePresence>
         </Box>
       </FormContentContainer>

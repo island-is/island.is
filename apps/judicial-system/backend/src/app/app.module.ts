@@ -2,8 +2,10 @@ import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 
 import { signingModuleConfig } from '@island.is/dokobit-signing'
+import { emailModuleConfig } from '@island.is/email-service'
 import { ConfigModule } from '@island.is/nest/config'
 import { ProblemModule } from '@island.is/nest/problem'
+import { smsModuleConfig } from '@island.is/nova-sms'
 
 import {
   SharedAuthModule,
@@ -54,6 +56,8 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
       load: [
         sharedAuthModuleConfig,
         signingModuleConfig,
+        smsModuleConfig,
+        emailModuleConfig,
         courtClientModuleConfig,
         messageModuleConfig,
         caseModuleConfig,

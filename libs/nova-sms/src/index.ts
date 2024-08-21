@@ -1,2 +1,3 @@
-export * from './lib/sms.module'
-export * from './lib/sms.service'
+export { SmsModule } from './lib/sms.module'
+export { SmsService, NovaError } from './lib/sms.service'
+export { smsModuleConfig } from './lib/sms.config'
