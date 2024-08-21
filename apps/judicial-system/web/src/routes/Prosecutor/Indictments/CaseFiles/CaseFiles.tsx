@@ -151,9 +151,7 @@ const CaseFiles = () => {
           />
           <InputFileUpload
             fileList={uploadFiles.filter(
-              (file) =>
-                file.category === CaseFileCategory.CASE_FILE &&
-                !file.policeCaseNumber,
+              (file) => file.category === CaseFileCategory.CASE_FILE,
             )}
             accept={Object.values(fileExtensionWhitelist)}
             header={formatMessage(strings.caseFiles.inputFieldLabel)}

@@ -2,9 +2,9 @@ import React from 'react'
 import { MockedProvider } from '@apollo/client/testing'
 import { render, screen } from '@testing-library/react'
 
-import { SessionArrangements } from '@island.is/judicial-system-web/src/graphql/schema'
 import { LocaleProvider } from '@island.is/localization'
 
+import { DefendantInfo } from './DefendantInfo/DefendantInfo'
 import InfoCard from './InfoCard'
 
 describe('InfoCard', () => {
@@ -14,12 +14,22 @@ describe('InfoCard', () => {
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
-            data={[]}
-            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
-            defender={{
-              name: 'Joe',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
-            }}
+            sections={[
+              {
+                id: 'sec_id',
+                items: [
+                  {
+                    id: 'itm_id',
+                    title: 'Titill',
+                    values: [
+                      <DefendantInfo
+                        defendant={{ id: 'def_id', defenderName: 'Joe' }}
+                      />,
+                    ],
+                  },
+                ],
+              },
+            ]}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -35,13 +45,26 @@ describe('InfoCard', () => {
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
-            data={[]}
-            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
-            defender={{
-              name: 'Joe',
-              phoneNumber: '555-5555',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
-            }}
+            sections={[
+              {
+                id: 'sec_id',
+                items: [
+                  {
+                    id: 'itm_id',
+                    title: 'Titill',
+                    values: [
+                      <DefendantInfo
+                        defendant={{
+                          id: 'def_id',
+                          defenderName: 'Joe',
+                          defenderPhoneNumber: '555-5555',
+                        }}
+                      />,
+                    ],
+                  },
+                ],
+              },
+            ]}
           />
         </LocaleProvider>
       </MockedProvider>,
@@ -60,16 +83,35 @@ describe('InfoCard', () => {
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
-          <InfoCard
-            data={[]}
-            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
-            defender={{
-              name: 'Joe',
-              email: 'joe@joe.is',
-              phoneNumber: '455-5544',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
-            }}
-          />
+          render(
+          <MockedProvider>
+            <LocaleProvider locale="is" messages={{}}>
+              <InfoCard
+                sections={[
+                  {
+                    id: 'sec_id',
+                    items: [
+                      {
+                        id: 'itm_id',
+                        title: 'Titill',
+                        values: [
+                          <DefendantInfo
+                            defendant={{
+                              id: 'def_id',
+                              defenderName: 'Joe',
+                              defenderEmail: 'joe@joe.is',
+                              defenderPhoneNumber: '455-5544',
+                            }}
+                          />,
+                        ],
+                      },
+                    ],
+                  },
+                ]}
+              />
+            </LocaleProvider>
+          </MockedProvider>
+          , )
         </LocaleProvider>
       </MockedProvider>,
     )
@@ -85,20 +127,22 @@ describe('InfoCard', () => {
 
   test('should display a message saying that a defender has not been set if the defender info is missing', async () => {
     // Arrange
-
     render(
       <MockedProvider>
         <LocaleProvider locale="is" messages={{}}>
           <InfoCard
-            data={[]}
-            defendants={{ title: 'Titill', items: [{ id: 'def_id' }] }}
-            defender={{
-              name: '',
-              defenderNationalId: '',
-              email: '',
-              phoneNumber: '',
-              sessionArrangement: SessionArrangements.ALL_PRESENT,
-            }}
+            sections={[
+              {
+                id: 'sec_id',
+                items: [
+                  {
+                    id: 'itm_id',
+                    title: 'Titill',
+                    values: [<DefendantInfo defendant={{ id: 'def_id' }} />],
+                  },
+                ],
+              },
+            ]}
           />
         </LocaleProvider>
       </MockedProvider>,

@@ -283,7 +283,7 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
-    order: [['created', 'ASC']],
+    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -384,7 +384,7 @@ export const caseListInclude: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: { [Op.in]: eventTypes } },
-    order: [['created', 'ASC']],
+    order: [['created', 'DESC']],
     separate: true,
   },
 ]
@@ -697,11 +697,16 @@ export class CaseService {
     )
 
     const caseFilesCategories = isTrafficViolationCase(theCase)
-      ? [CaseFileCategory.CRIMINAL_RECORD, CaseFileCategory.COST_BREAKDOWN]
+      ? [
+          CaseFileCategory.CRIMINAL_RECORD,
+          CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE,
+        ]
       : [
           CaseFileCategory.INDICTMENT,
           CaseFileCategory.CRIMINAL_RECORD,
           CaseFileCategory.COST_BREAKDOWN,
+          CaseFileCategory.CASE_FILE,
         ]
 
     const deliverCaseFileToCourtMessages =
@@ -710,10 +715,8 @@ export class CaseService {
           (caseFile) =>
             caseFile.state === CaseFileState.STORED_IN_RVG &&
             caseFile.key &&
-            ((caseFile.category &&
-              caseFilesCategories.includes(caseFile.category)) ||
-              (caseFile.category === CaseFileCategory.CASE_FILE &&
-                !caseFile.policeCaseNumber)),
+            caseFile.category &&
+            caseFilesCategories.includes(caseFile.category),
         )
         .map((caseFile) => ({
           type: MessageType.DELIVERY_TO_COURT_CASE_FILE,
