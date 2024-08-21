@@ -151,9 +151,8 @@ const PropertyItem = ({
         type: 'validate',
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getProperty, propertyNumberInput, setError, setValue])
-
-  const hasPropertyNumberButEmptyAddress = propertyNumberInput && !address
 
   return (
     <Box position="relative" marginTop={2}>
