@@ -34,7 +34,7 @@ const UploadFiles: FC<Props> = (props) => {
   const { handleRemove, handleUpload, handleRetry } = useS3Upload(
     workingCase.id,
   )
-  const { updateUploadFile, uploadFiles, addUploadFiles } = useUploadFiles(
+  const { updateUploadFile, addUploadFiles, uploadFiles } = useUploadFiles(
     workingCase.caseFiles,
   )
   const [updateFilesMutation] = useUpdateFilesMutation()
@@ -52,7 +52,7 @@ const UploadFiles: FC<Props> = (props) => {
   const onDrop = useCallback(
     async (acceptedFiles: File[]) => {
       handleUpload(
-        addUploadFiles(acceptedFiles, CaseFileCategory.APPEAL_COURT_RECORD),
+        addUploadFiles(acceptedFiles, CaseFileCategory.PROSECUTOR_CASE_FILE),
         updateUploadFile,
       )
     },
@@ -145,18 +145,20 @@ const UploadFiles: FC<Props> = (props) => {
           {formatMessage(strings.buttonText)}
         </Button>
       </Box>
-      {uploadFiles.map((file) => (
-        <Box key={file.id} marginBottom={1} width="full">
-          <EditableCaseFile
-            enableDrag={false}
-            caseFile={mapUpdateFileToEditableCaseFile(file)}
-            onOpen={onOpen}
-            onRename={handleRename}
-            onDelete={handleDelete}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
-          />
-        </Box>
-      ))}
+      {uploadFiles
+        .filter((fl) => fl.category === CaseFileCategory.PROSECUTOR_CASE_FILE)
+        .map((file) => (
+          <Box key={file.id} marginBottom={1} width="full">
+            <EditableCaseFile
+              enableDrag={false}
+              caseFile={mapUpdateFileToEditableCaseFile(file)}
+              onOpen={onOpen}
+              onRename={handleRename}
+              onDelete={handleDelete}
+              onRetry={(file) => handleRetry(file, updateUploadFile)}
+            />
+          </Box>
+        ))}
       <input {...getInputProps()} />
     </div>
   )

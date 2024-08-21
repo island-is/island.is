@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, UploadFile } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -46,9 +46,9 @@ const AddFiles: FC = () => {
         />
         <UploadFiles
           files={
-            workingCase.caseFiles?.filter(
+            (workingCase.caseFiles?.filter(
               (file) => file.category === CaseFileCategory.PROSECUTOR_CASE_FILE,
-            ) || []
+            ) as UploadFile[]) || []
           }
         />
       </FormContentContainer>

@@ -5,7 +5,14 @@ import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, Icon, Input, Text, UploadFile } from '@island.is/island-ui/core'
+import {
+  Box,
+  Icon,
+  Input,
+  LoadingDots,
+  Text,
+  UploadFile,
+} from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
@@ -26,7 +33,6 @@ const EditableCaseFile: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
-  console.log(caseFile)
 
   const [editedFilename, setEditedFilename] = useState<
     string | undefined | null
@@ -176,29 +182,32 @@ const EditableCaseFile: FC<Props> = (props) => {
                 <Box marginRight={1}>
                   <Text variant="small">{displayDate}</Text>
                 </Box>
-                <AnimatePresence>
-                  {caseFile.status === 'error' ? (
-                    <button
-                      onClick={() => onRetry(caseFile as UploadFile)}
-                      className={cn(
-                        styles.editCaseFileButton,
-                        styles.background.secondary,
-                      )}
-                    >
-                      <Icon icon="reload" color="red400" />
-                    </button>
-                  ) : (
-                    <button
-                      onClick={() => setIsEditing(true)}
-                      className={cn(
-                        styles.editCaseFileButton,
-                        styles.background.primary,
-                      )}
-                    >
-                      <Icon icon="pencil" color="blue400" />
-                    </button>
-                  )}
-                </AnimatePresence>
+
+                {caseFile.status === 'uploading' ? (
+                  <Box className={styles.editCaseFileButton}>
+                    <LoadingDots single />
+                  </Box>
+                ) : caseFile.status === 'error' ? (
+                  <button
+                    onClick={() => onRetry(caseFile as UploadFile)}
+                    className={cn(
+                      styles.editCaseFileButton,
+                      styles.background.secondary,
+                    )}
+                  >
+                    <Icon icon="reload" color="red400" />
+                  </button>
+                ) : (
+                  <button
+                    onClick={() => setIsEditing(true)}
+                    className={cn(
+                      styles.editCaseFileButton,
+                      styles.background.primary,
+                    )}
+                  >
+                    <Icon icon="pencil" color="blue400" />
+                  </button>
+                )}
               </Box>
             </motion.div>
           )}

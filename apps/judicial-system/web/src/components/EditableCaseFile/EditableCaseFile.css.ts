@@ -12,6 +12,7 @@ export const caseFileWrapper = style({
   minHeight: '64px',
   borderRadius: theme.border.radius.large,
   border: '1px solid',
+  transition: 'background-color 0.2s ease-in-out',
 })
 
 export const caseFileWrapperStates = styleVariants({
@@ -46,6 +47,9 @@ export const editCaseFileDisplayDate = style({
 })
 
 export const editCaseFileButton = style({
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
   width: '32px',
   height: '34px',
   padding: '4px',
