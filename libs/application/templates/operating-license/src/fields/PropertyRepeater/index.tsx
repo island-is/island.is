@@ -22,8 +22,8 @@ import { SEARCH_FOR_PROPERTY_QUERY } from '../../graphql'
 import { PropertyField } from '../../lib/constants'
 import * as styles from './PropertyRepeater.css'
 import { formatText, getValueViaPath } from '@island.is/application/core'
-import { error as errorMsg } from '../../lib/error'
 import { isValidRealEstate } from '../../lib/utils'
+import { error as errorMsg } from '../../lib/error'
 
 export const PropertyRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   field,
@@ -123,7 +123,7 @@ const PropertyItem = ({
       SEARCH_FOR_PROPERTY_QUERY,
       {
         onCompleted: (data) => {
-          clearErrors(addressField)
+          clearErrors([addressField, spaceNumberField, customerCountField])
           setValue(
             addressField,
             data.searchForProperty?.defaultAddress?.display ?? '',
@@ -134,8 +134,8 @@ const PropertyItem = ({
     )
 
   useEffect(() => {
-    const propertyNumber = propertyNumberInput.trim().toUpperCase()
-    setValue(addressField, '') // Reset address when property number changes
+    const propertyNumber: string = propertyNumberInput.trim().toUpperCase()
+    setValue(address, '') // Reset address when property number changes
 
     if (isValidRealEstate(propertyNumber)) {
       getProperty({
@@ -146,13 +146,15 @@ const PropertyItem = ({
         },
       })
     } else {
-      setError(propertyNumberField, {
+      setError(address, {
         message: formatMessage(m.errorPropertyNumber),
         type: 'validate',
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [getProperty, propertyNumberInput, setError, setValue])
+  }, [getProperty, propertyNumberInput, setError, setValue, addressField])
+
+  const hasPropertyNumberButEmptyAddress = propertyNumberInput && !address
 
   return (
     <Box position="relative" marginTop={2}>
@@ -189,8 +191,10 @@ const PropertyItem = ({
             defaultValue={field.propertyNumber}
             loading={queryLoading}
             error={
-              error?.assetNumber
-                ? formatMessage(m.errorPropertyNumber)
+              hasPropertyNumberButEmptyAddress && !queryLoading
+                ? formatMessage(errorMsg.missingAddressForPropertyNumber)
+                : !propertyNumberInput
+                ? (error as string)
                 : undefined
             }
             placeholder="F1234567"
@@ -215,7 +219,11 @@ const PropertyItem = ({
             backgroundColor="blue"
             format="#########"
             defaultValue={field.spaceNumber?.toString()}
-            error={(error && !spaceNumber) ?? error}
+            error={
+              !spaceNumber && error && typeof error === 'string'
+                ? error
+                : undefined
+            }
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
