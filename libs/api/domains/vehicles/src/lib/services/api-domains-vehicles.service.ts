@@ -28,16 +28,19 @@ import { AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
-import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import isSameDay from 'date-fns/isSameDay'
 import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
-} from '../dto/getVehiclesForUserInput'
-import { VehicleMileageOverview } from '../models/getVehicleMileage.model'
-import isSameDay from 'date-fns/isSameDay'
-import { mileageDetailConstructor } from '../utils/helpers'
+} from '../../dto/getVehiclesForUserInput'
+import { basicVehicleInformationMapper } from '../../utils/basicVehicleInformationMapper'
+import {
+  VehiclesDetail,
+  VehiclesExcel,
+} from '../../models/getVehicleDetail.model'
 import { handle404 } from '@island.is/clients/middlewares'
+import { VehicleMileageOverview } from '../../models/getVehicleMileage.model'
+import { mileageDetailConstructor } from '../../utils/helpers'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 const LOG_CATEGORY = 'vehicle-service'
@@ -196,7 +199,7 @@ export class VehiclesService {
   }
 
   // This is a temporary solution until we can get this information from the SGS API.
-  private async isAllowedMileageRegistration(
+  async isAllowedMileageRegistration(
     auth: User,
     permno: string,
   ): Promise<boolean> {

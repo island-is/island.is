@@ -2,12 +2,14 @@ import { Module } from '@nestjs/common'
 
 import { VehiclesClientModule } from '@island.is/clients/vehicles'
 import { VehiclesMileageClientModule } from '@island.is/clients/vehicles-mileage'
-import { VehiclesResolver } from './api-domains-vehicles.resolver'
-import { VehiclesMileageResolver } from './api-domains-vehicles-mileage.resolver'
-import { VehiclesService } from './api-domains-vehicles.service'
-import { AuthModule } from '@island.is/auth-nest-tools'
-import { VehiclesSharedResolver } from './api-domains-vehicles-shared.resolver'
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { AuthModule } from '@island.is/auth-nest-tools'
+import { VehiclesMileageResolver } from './resolvers/api-domains-vehicles-mileage.resolver'
+import { VehiclesSharedResolver } from './resolvers/api-domains-vehicles-shared.resolver'
+import { VehiclesResolver } from './resolvers/api-domains-vehicles.resolver'
+import { VehiclesService } from './services/api-domains-vehicles.service'
+import { VehicleMileageBulkCollectionResolver } from './resolvers/vehicleMileageBulkCollection.resolver'
+import { BulkMileageService } from './services/bulkMileage.service'
 
 @Module({
   providers: [
@@ -15,6 +17,8 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
     VehiclesSharedResolver,
     VehiclesMileageResolver,
     VehiclesService,
+    BulkMileageService,
+    VehicleMileageBulkCollectionResolver,
   ],
   imports: [
     VehiclesClientModule,

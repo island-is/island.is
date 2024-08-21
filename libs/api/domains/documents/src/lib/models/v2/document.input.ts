@@ -7,7 +7,7 @@ export class DocumentInput {
   @IsString()
   readonly id!: string
 
-  @Field({ nullable: true, description: 'Optional. For logging only.' })
+  @Field({ nullable: true, description: 'Optional. For fefalogging only.' })
   @IsOptional()
   @IsString()
   readonly provider?: string

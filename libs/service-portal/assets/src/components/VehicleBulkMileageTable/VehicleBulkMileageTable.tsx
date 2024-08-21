@@ -15,6 +15,7 @@ import {
 import { messages } from '../../lib/messages'
 import { helperStyles } from '@island.is/island-ui/theme'
 import * as styles from './VehicleBulkMileageTable.css'
+import { VehicleBulkMileageTableRow } from './VehicleBulkMileageTableRow'
 
 interface Props {
   row: Array<{
@@ -22,9 +23,10 @@ interface Props {
     line: string[]
     detail: Array<string[]>
   }>
+  onRowSaveClick: (mileage: number, permNo: string) => void
 }
 
-const VehicleBulkMileageTable = ({ row }: Props) => {
+const VehicleBulkMileageTable = ({ row, onRowSaveClick }: Props) => {
   const { formatMessage, lang } = useLocale()
 
   // const totalPages =
@@ -40,63 +42,17 @@ const VehicleBulkMileageTable = ({ row }: Props) => {
             { value: '', printHidden: true },
             { value: 'Tegund' },
             { value: 'Fastanúmer' },
-            { value: 'Ársnotkun' },
+            { value: 'Síðast skráð' },
             { value: 'Kílómetrastaða' },
             { value: '', printHidden: true },
           ]}
         />
         <T.Body>
           {row.map((item) => (
-            <ExpandRow
-              key="Expand-row-id"
-              data={[
-                ...item.line.map((l) => {
-                  return {
-                    value: l,
-                  }
-                }),
-                {
-                  value: (
-                    <Box className={styles.mwInput}>
-                      <label className={helperStyles.srOnly} htmlFor={item.id}>
-                        Kílómetrastaða
-                      </label>
-                      <Input
-                        type="number"
-                        id={item.id}
-                        name={item.id}
-                        size="xs"
-                        rightAlign
-                        maxLength={12}
-                      />
-                    </Box>
-                  ),
-                },
-                {
-                  value: (
-                    <Button
-                      icon="pencil"
-                      size="small"
-                      type="button"
-                      variant="text"
-                      onClick={() => alert(`Save data: ${item.id}`)}
-                    >
-                      Vista
-                    </Button>
-                  ),
-                },
-              ]}
-            >
-              <NestedFullTable
-                headerArray={[
-                  'Dagsetning',
-                  'Skráning',
-                  'Ársnotkun',
-                  'Kílómetrastaða',
-                ]}
-                data={item.detail.map((det) => det)}
-              />
-            </ExpandRow>
+            <VehicleBulkMileageTableRow
+              {...item}
+              onSaveClick={onRowSaveClick}
+            />
           ))}
         </T.Body>
       </T.Table>

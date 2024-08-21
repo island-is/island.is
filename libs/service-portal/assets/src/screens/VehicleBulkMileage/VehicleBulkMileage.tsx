@@ -14,17 +14,48 @@ import {
   FootNote,
   SAMGONGUSTOFA_SLUG,
   IntroHeader,
+  formatDate,
 } from '@island.is/service-portal/core'
 
 import { vehicleMessage as messages } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
 import VehicleBulkMileageTable from '../../components/VehicleBulkMileageTable/VehicleBulkMileageTable'
-
-const ORIGIN_CODE = 'ISLAND.IS'
+import {
+  useGetVehicleBulkMileageQuery,
+  usePostVehicleBulkMileageMutation,
+} from './VehicleBulkMileage.generated'
 
 const VehicleMileage = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
+
+  const { data, error, loading } = useGetVehicleBulkMileageQuery({
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 10,
+      },
+    },
+  })
+
+  const [postMileage, { loading: mileageLoading, error: mileageError }] =
+    usePostVehicleBulkMileageMutation()
+
+  const onRowSaveClick = (mileage: number, permNo: string) => {
+    console.log(`save ${mileage} mileage for car ${permNo}`)
+    postMileage({
+      variables: {
+        input: {
+          mileage,
+          permNo,
+        },
+      },
+    })
+  }
+
+  if (!data?.vehicleMileageBulkCollection.vehicles) {
+    return null
+  }
 
   return (
     <>
@@ -112,24 +143,26 @@ const VehicleMileage = () => {
           </GridColumn>
         </GridRow>
         <VehicleBulkMileageTable
-          row={[
-            {
-              id: 'aaa',
-              line: ['Tesla Model S', 'XYZ789', '6.333 km'],
-              detail: [
-                ['01.04.2024', 'Aðalskoðum', '6.333 km', '24.639 km'],
-                ['01.02.2022', 'Nýskráning', '221 km', '333 km'],
-              ],
-            },
-            {
-              id: 'bbb',
-              line: ['Mitsubishi Outlander', 'ABC123', '2.221 km'],
-              detail: [
-                ['01.07.2024', 'Aðalskoðum', '2.221 km', '11.639 km'],
-                ['01.02.2024', 'Nýskráning', '221 km', '1.639 km'],
-              ],
-            },
-          ]}
+          onRowSaveClick={onRowSaveClick}
+          row={data.vehicleMileageBulkCollection.vehicles.map((vehicle) => ({
+            id: vehicle.permNo,
+            line: [
+              vehicle.title,
+              vehicle.permNo,
+              vehicle?.latestRegistration?.date
+                ? formatDate(vehicle.latestRegistration.date)
+                : '-',
+            ],
+            detail:
+              vehicle?.mileageRegistrationHistory?.map((reg) => {
+                return [
+                  formatDate(reg.date),
+                  reg.origin,
+                  '-',
+                  reg.mileage.toString(),
+                ]
+              }) ?? [],
+          }))}
         />
       </Box>
 

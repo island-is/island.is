@@ -17,23 +17,23 @@ import {
 import type { User } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
-import { VehiclesService } from './api-domains-vehicles.service'
+import { VehiclesService } from '../services/api-domains-vehicles.service'
 import {
   VehicleMileageDetail,
   VehicleMileageOverview,
   VehicleMileagePutModel,
-} from '../models/getVehicleMileage.model'
-import { GetVehicleMileageInput } from '../dto/getVehicleMileageInput'
+} from '../../models/getVehicleMileage.model'
+import { GetVehicleMileageInput } from '../../dto/getVehicleMileageInput'
 import {
   PostVehicleMileageInput,
   PutVehicleMileageInput,
-} from '../dto/postVehicleMileageInput'
+} from '../../dto/postVehicleMileageInput'
 import {
   FeatureFlagGuard,
   FeatureFlag,
   Features,
 } from '@island.is/nest/feature-flags'
-import { mileageDetailConstructor } from '../utils/helpers'
+import { mileageDetailConstructor } from '../../utils/helpers'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @FeatureFlag(Features.servicePortalVehicleMileagePageEnabled)

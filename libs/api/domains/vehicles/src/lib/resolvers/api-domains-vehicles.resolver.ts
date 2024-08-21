@@ -14,18 +14,21 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { DownloadServiceConfig } from '@island.is/nest/config'
 import type { ConfigType } from '@island.is/nest/config'
-import { VehiclesList, VehiclesListV2 } from '../models/usersVehicles.model'
-import { VehiclesService } from './api-domains-vehicles.service'
-import { GetVehicleDetailInput } from '../dto/getVehicleDetailInput'
-import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
-import { VehiclesVehicleSearch } from '../models/getVehicleSearch.model'
-import { GetPublicVehicleSearchInput } from '../dto/getPublicVehicleSearchInput'
-import { VehiclesPublicVehicleSearch } from '../models/getPublicVehicleSearch.model'
+import { VehiclesList, VehiclesListV2 } from '../../models/usersVehicles.model'
+import { GetVehicleDetailInput } from '../../dto/getVehicleDetailInput'
+import {
+  VehiclesDetail,
+  VehiclesExcel,
+} from '../../models/getVehicleDetail.model'
+import { VehiclesVehicleSearch } from '../../models/getVehicleSearch.model'
+import { GetPublicVehicleSearchInput } from '../../dto/getPublicVehicleSearchInput'
+import { VehiclesPublicVehicleSearch } from '../../models/getPublicVehicleSearch.model'
 import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
-} from '../dto/getVehiclesForUserInput'
-import { GetVehicleSearchInput } from '../dto/getVehicleSearchInput'
+} from '../../dto/getVehiclesForUserInput'
+import { GetVehicleSearchInput } from '../../dto/getVehicleSearchInput'
+import { VehiclesService } from '../services/api-domains-vehicles.service'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 

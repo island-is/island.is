@@ -1,0 +1,31 @@
+query GetVehicleBulkMileage($input: GetBulkMileageVehicleListInput!) {
+  vehicleMileageBulkCollection(input: $input) {
+    pageNumber
+    pageSize
+    totalPages
+    totalRecords
+    vehicles {
+      title
+      permNo
+      canRegisterMileage
+      isCurrentlyEditing
+      canUserRegisterVehicleMileage
+      latestRegistration {
+        date
+        origin
+        mileage
+      }
+      mileageRegistrationHistory {
+        date
+        origin
+        mileage
+      }
+    }
+  }
+}
+
+mutation PostVehicleBulkMileage(
+  $input: VehicleMileageBulkCollectionMileageInput!
+) {
+  vehicleMileageBulkCollectionPostMileage(input: $input)
+}
