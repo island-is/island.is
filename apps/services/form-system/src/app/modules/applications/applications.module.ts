@@ -7,9 +7,10 @@ import { Form } from '../forms/models/form.model'
 import { ApplicationMapper } from './models/application.mapper'
 import { FieldSettingsMapper } from '../fieldSettings/models/fieldSettings.mapper'
 import { ListItemMapper } from '../listItems/models/listItem.mapper'
+import { Value } from '../values/models/value.model'
 
 @Module({
-  imports: [SequelizeModule.forFeature([Application, Form])],
+  imports: [SequelizeModule.forFeature([Application, Form, Value])],
   controllers: [ApplicationsController],
   providers: [
     ApplicationsService,
