@@ -131,13 +131,13 @@ export class SmartSolutionsService {
     }
 
     const updatePass = res.data.updatePass
-    
+
     this.logger.info('PkPass update successful', {
       requestId,
       passId: updatePass.id,
       category: LOG_CATEGORY,
     })
-    
+
     return {
       ok: true,
       data: updatePass,
@@ -233,10 +233,10 @@ export class SmartSolutionsService {
     }
 
     this.logger.info('PkPass revocation successful', {
-        requestId,
-        passId: payload.id,
-        category: LOG_CATEGORY,
-      })
+      requestId,
+      passId: payload.id,
+      category: LOG_CATEGORY,
+    })
 
     return {
       ok: true,
@@ -260,10 +260,10 @@ export class SmartSolutionsService {
       })
       return res
     }
-    
+
     this.logger.info('Pass templates listing successful', {
-        requestId,
-        category: LOG_CATEGORY,
+      requestId,
+      category: LOG_CATEGORY,
     })
 
     return {
