@@ -242,7 +242,7 @@ export function InboxFilterScreen(props: {
               onSelectDate={(date) => setDateFrom(date)}
               selectedDate={dateFrom}
             />
-            {/* <DatePickerInput
+            <DatePickerInput
               label={intl.formatMessage({ id: 'inbox.filterDateToLabel' })}
               placeholder={intl.formatMessage({
                 id: 'inbox.filterDatePlaceholder',
@@ -251,7 +251,7 @@ export function InboxFilterScreen(props: {
               minimumDate={dateFrom}
               onSelectDate={(date) => setDateTo(date)}
               selectedDate={dateTo}
-            /> */}
+            />
           </AccordionItem>
         </Accordion>
       </ScrollView>
