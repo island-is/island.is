@@ -19,6 +19,11 @@
             "output": "./migrations"
           },
           {
+            "glob": "*",
+            "input": "apps/services/form-system/seeders",
+            "output": "./seeders"
+          },
+          {
             "glob": ".sequelizerc",
             "input": "apps/services/form-system",
             "output": "./"
