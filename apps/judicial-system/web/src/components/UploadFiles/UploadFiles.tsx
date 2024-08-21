@@ -31,7 +31,9 @@ const UploadFiles: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-  const { handleRemove, handleUpload } = useS3Upload(workingCase.id)
+  const { handleRemove, handleUpload, handleRetry } = useS3Upload(
+    workingCase.id,
+  )
   const { updateUploadFile, uploadFiles, addUploadFiles } = useUploadFiles(
     workingCase.caseFiles,
   )
@@ -151,6 +153,7 @@ const UploadFiles: FC<Props> = (props) => {
             onOpen={onOpen}
             onRename={handleRename}
             onDelete={handleDelete}
+            onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
         </Box>
       ))}

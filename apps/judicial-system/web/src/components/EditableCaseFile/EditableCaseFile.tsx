@@ -5,7 +5,7 @@ import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, Icon, Input, Text } from '@island.is/island-ui/core'
+import { Box, Icon, Input, Text, UploadFile } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
@@ -18,10 +18,11 @@ interface Props {
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void
+  onRetry: (file: UploadFile) => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
-  const { caseFile, enableDrag, onOpen, onRename, onDelete } = props
+  const { caseFile, enableDrag, onOpen, onRename, onDelete, onRetry } = props
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
@@ -55,9 +56,10 @@ const EditableCaseFile: FC<Props> = (props) => {
 
   return (
     <div
-      className={cn(styles.caseFileWrapper, {
-        [styles.caseFileWrapperError]: caseFile.status === 'error',
-      })}
+      className={cn(
+        styles.caseFileWrapper,
+        styles.caseFileWrapperStates[caseFile.status || 'uploading'],
+      )}
     >
       {enableDrag && (
         <Box
@@ -174,12 +176,29 @@ const EditableCaseFile: FC<Props> = (props) => {
                 <Box marginRight={1}>
                   <Text variant="small">{displayDate}</Text>
                 </Box>
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className={styles.editCaseFileButton}
-                >
-                  <Icon icon="pencil" color="blue400" />
-                </button>
+                <AnimatePresence>
+                  {caseFile.status === 'error' ? (
+                    <button
+                      onClick={() => onRetry(caseFile as UploadFile)}
+                      className={cn(
+                        styles.editCaseFileButton,
+                        styles.background.secondary,
+                      )}
+                    >
+                      <Icon icon="reload" color="red400" />
+                    </button>
+                  ) : (
+                    <button
+                      onClick={() => setIsEditing(true)}
+                      className={cn(
+                        styles.editCaseFileButton,
+                        styles.background.primary,
+                      )}
+                    >
+                      <Icon icon="pencil" color="blue400" />
+                    </button>
+                  )}
+                </AnimatePresence>
               </Box>
             </motion.div>
           )}
