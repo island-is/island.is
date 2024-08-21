@@ -43,7 +43,7 @@ export const PrerequisitesForm: Form = buildForm({
           subTitle:
             socialInsuranceAdministrationMessage.pre.externalDataDescription,
           checkboxLabel:
-            socialInsuranceAdministrationMessage.pre.checkboxProvider,
+            incomePlanFormMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -52,7 +52,7 @@ export const PrerequisitesForm: Form = buildForm({
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: socialInsuranceAdministrationMessage.pre.startApplication,
+                name: incomePlanFormMessage.pre.startIncomePlan,
                 type: 'primary',
               },
             ],
@@ -68,7 +68,7 @@ export const PrerequisitesForm: Form = buildForm({
               provider: UserProfileApi,
               title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+                incomePlanFormMessage.pre.contactInfoDescription,
             }),
             buildDataProviderItem({
               id: 'sia.data',
@@ -76,8 +76,8 @@ export const PrerequisitesForm: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationDataDescription,
+                incomePlanFormMessage.pre
+                  .incomePlanDataDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,

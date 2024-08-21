@@ -49,6 +49,8 @@ const IncomePlanTemplate: ApplicationTemplate<
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: [ApplicationConfigurations.IncomePlan.translation],
   dataSchema,
+  newApplicationButtonLabel: historyMessages.newIncomePlanButtonLabel,
+  applicationText: historyMessages.incomePlanPageTitle,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -124,6 +126,7 @@ const IncomePlanTemplate: ApplicationTemplate<
               onEvent: DefaultEvents.SUBMIT,
               logMessage: historyMessages.incomePlanSent,
             },
+            historyButton: statesMessages.pendingActionButton,
           },
           roles: [
             {
@@ -161,6 +164,7 @@ const IncomePlanTemplate: ApplicationTemplate<
               title: statesMessages.tryggingastofnunSubmittedTitle,
               content: statesMessages.tryggingastofnunSubmittedContent,
               displayStatus: 'info',
+              button: statesMessages.pendingActionButton,
             },
             historyLogs: [
               {
