@@ -36,7 +36,7 @@ import { Application } from '@island.is/application/types'
 import { Problem } from '@island.is/react-spa/shared'
 
 const defaultInstitution: InstitutionOption = {
-  label: 'Allar stofnanir',
+  label: '',
   value: '',
 }
 
@@ -55,6 +55,8 @@ const Overview = () => {
   let focusedApplication: Application | undefined
 
   const { data: orgData, loading: loadingOrg } = useGetOrganizationsQuery()
+
+  defaultInstitution.label = formatMessage(m.defaultInstitutionLabel)
 
   const [filterValue, setFilterValue] =
     useState<FilterValues>(defaultFilterValues)
