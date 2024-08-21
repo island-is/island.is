@@ -22,24 +22,23 @@ import * as styles from './UploadFiles.css'
 
 interface Props {
   files: UploadFile[]
+  onChange: (files: File[]) => void
 }
 
 const UploadFiles: FC<Props> = (props) => {
-  const { files } = props
+  const { files, onChange } = props
   const [fileList, setFileList] = useState<TEditableCaseFile[]>([])
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-  const { handleRemove, handleUpload, handleRetry } = useS3Upload(
-    workingCase.id,
-  )
-  const { updateUploadFile, addUploadFiles, uploadFiles } = useUploadFiles(
-    workingCase.caseFiles,
-  )
+  const { handleRemove, handleRetry } = useS3Upload(workingCase.id)
+  const { updateUploadFile } = useUploadFiles(workingCase.caseFiles)
   const [updateFilesMutation] = useUpdateFilesMutation()
 
-  const mapUpdateFileToEditableCaseFile = (file: UploadFile) => ({
+  const mapUpdateFileToEditableCaseFile = (
+    file: UploadFile,
+  ): TEditableCaseFile => ({
     ...file,
     displayText: file.name,
     displayDate: new Date().toISOString(),
@@ -50,13 +49,10 @@ const UploadFiles: FC<Props> = (props) => {
   }, [files])
 
   const onDrop = useCallback(
-    async (acceptedFiles: File[]) => {
-      handleUpload(
-        addUploadFiles(acceptedFiles, CaseFileCategory.PROSECUTOR_CASE_FILE),
-        updateUploadFile,
-      )
+    (acceptedFiles: File[]) => {
+      onChange(acceptedFiles)
     },
-    [addUploadFiles, handleUpload, updateUploadFile],
+    [onChange],
   )
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -145,20 +141,18 @@ const UploadFiles: FC<Props> = (props) => {
           {formatMessage(strings.buttonText)}
         </Button>
       </Box>
-      {uploadFiles
-        .filter((fl) => fl.category === CaseFileCategory.PROSECUTOR_CASE_FILE)
-        .map((file) => (
-          <Box key={file.id} marginBottom={1} width="full">
-            <EditableCaseFile
-              enableDrag={false}
-              caseFile={mapUpdateFileToEditableCaseFile(file)}
-              onOpen={onOpen}
-              onRename={handleRename}
-              onDelete={handleDelete}
-              onRetry={(file) => handleRetry(file, updateUploadFile)}
-            />
-          </Box>
-        ))}
+      {files.map((file) => (
+        <Box key={file.id} marginBottom={1} width="full">
+          <EditableCaseFile
+            enableDrag={false}
+            caseFile={mapUpdateFileToEditableCaseFile(file)}
+            onOpen={onOpen}
+            onRename={handleRename}
+            onDelete={handleDelete}
+            onRetry={(file) => handleRetry(file, updateUploadFile)}
+          />
+        </Box>
+      ))}
       <input {...getInputProps()} />
     </div>
   )

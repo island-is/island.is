@@ -113,12 +113,13 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
     return uploadFiles
   }
 
-  const updateUploadFile = (file: TUploadFile, newId?: string) =>
+  const updateUploadFile = (file: TUploadFile, newId?: string) => {
     setUploadFiles((previous) =>
       previous.map((f) =>
         f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
       ),
     )
+  }
 
   const removeUploadFile = (file: TUploadFile) =>
     setUploadFiles((previous) =>
@@ -177,7 +178,7 @@ const uploadToS3 = (
       if (request.status >= 200 && request.status < 300) {
         resolve(file)
       } else {
-        reject('Failed to upload file to S3' + request.status)
+        reject('Failed to upload file to S3')
       }
     })
 
@@ -308,6 +309,7 @@ const useS3Upload = (caseId: string) => {
           updateFile({ ...file, status: 'uploading' })
 
           const presignedPost = await getPresignedPost(file)
+          console.log('uploading', file)
 
           await uploadToS3(file, presignedPost, (percent) => {
             updateFile({ ...file, percent })

@@ -1,7 +1,7 @@
-import { FC, useContext } from 'react'
+import { FC, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Text, UploadFile } from '@island.is/island-ui/core'
+import { Box, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -15,14 +15,32 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  useS3Upload,
+  useUploadFiles,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './AddFiles.strings'
 
 const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-
   const { formatMessage } = useIntl()
+
+  const { uploadFiles, addUploadFiles, updateUploadFile } = useUploadFiles(
+    workingCase.caseFiles,
+  )
+  const { handleUpload } = useS3Upload(workingCase.id)
+
+  const handleFileUpload = useCallback(
+    (files: File[]) => {
+      handleUpload(
+        addUploadFiles(files, CaseFileCategory.PROSECUTOR_CASE_FILE),
+        updateUploadFile,
+      )
+    },
+    [addUploadFiles, handleUpload, updateUploadFile],
+  )
 
   return (
     <PageLayout
@@ -45,11 +63,10 @@ const AddFiles: FC = () => {
           description={formatMessage(strings.uploadFilesDescription)}
         />
         <UploadFiles
-          files={
-            (workingCase.caseFiles?.filter(
-              (file) => file.category === CaseFileCategory.PROSECUTOR_CASE_FILE,
-            ) as UploadFile[]) || []
-          }
+          files={uploadFiles.filter(
+            (file) => file.category === CaseFileCategory.PROSECUTOR_CASE_FILE,
+          )}
+          onChange={(files) => handleFileUpload(files)}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
