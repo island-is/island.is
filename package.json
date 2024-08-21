@@ -154,7 +154,6 @@
     "apollo-server-plugin-response-cache": "3.8.2",
     "archiver": "6.0.1",
     "aws-elasticsearch-connector": "9.2.0",
-    "aws-sdk": "2.1651.0",
     "aws4": "1.13.0",
     "axios": "1.7.2",
     "bottleneck": "2.19.5",
