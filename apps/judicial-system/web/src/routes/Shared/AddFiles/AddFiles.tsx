@@ -92,8 +92,6 @@ const AddFiles: FC = () => {
         uploadFiles[fileToUpdate].displayDate = newDate.toISOString()
       }
 
-      console.log('uploadFiles[fileToUpdate]', uploadFiles[fileToUpdate])
-
       updateUploadFile(uploadFiles[fileToUpdate])
 
       const { errors } = await updateFilesMutation({
