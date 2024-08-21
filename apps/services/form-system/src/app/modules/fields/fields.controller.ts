@@ -2,8 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Get,
-  NotFoundException,
   Param,
   Post,
   Put,
