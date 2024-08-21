@@ -14,16 +14,14 @@ const OrganDonation = () => {
 
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetDonorStatusQuery()
-  const donorStatus = data?.HealthDirectorateOrganDonationGetDonorStatus
+  const donorStatus = data?.HealthDirectorateOrganDonation.donor
 
-  const exceptionText: string =
-    donorStatus?.exceptions?.length && donorStatus.exceptions.length > 0
-      ? [
-          donorStatus?.exceptionComment,
-
-          donorStatus?.exceptions?.join(', '),
-        ].join(':') ?? ''
-      : donorStatus?.exceptionComment ?? ''
+  const exceptionText: string = donorStatus?.limitations?.hasLimitations
+    ? [
+        donorStatus?.limitations.comment,
+        donorStatus?.limitations.organList?.join(', '),
+      ].join(':') ?? ''
+    : donorStatus?.limitations?.comment ?? ''
   return (
     <Box>
       <IntroHeader

@@ -11,7 +11,9 @@ import { Problem } from '@island.is/react-spa/shared'
 export const VaccinationsOther = () => {
   const { formatMessage } = useLocale()
   const { data, loading, error } = useGetVaccinationsQuery()
-  const vaccinations = data?.HealthDirectorateVaccinationsGetVaccinations
+  const vaccinations = data?.HealthDirectorateVaccinations.vaccinations
+  const other = vaccinations?.filter((x) => !x.isFeatured)
+
   return (
     <VaccinationsWrapper pathname={HealthPaths.HealthVaccinationsOther}>
       <Box>
@@ -23,11 +25,11 @@ export const VaccinationsOther = () => {
             borderRadius="standard"
           />
         )}
-        {!error && vaccinations?.length === 0 && (
+        {!error && other?.length === 0 && (
           <EmptyTable message={formatMessage(m.noVaccinesRegistered)} />
         )}
-        {!error && !loading && vaccinations !== undefined && (
-          <SortedVaccinationsTable data={vaccinations} />
+        {!error && !loading && other !== undefined && (
+          <SortedVaccinationsTable data={other} />
         )}
         {!loading && error && <Problem error={error} noBorder={false} />}
       </Box>

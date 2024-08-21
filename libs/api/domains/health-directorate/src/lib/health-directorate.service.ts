@@ -8,13 +8,9 @@ import {
 } from '@island.is/clients/health-directorate'
 import { Auth } from '@island.is/auth-nest-tools'
 import type { Locale } from '@island.is/shared/types'
-import {
-  DonationException,
-  DonorStatus,
-  DonorStatusInput,
-} from './models/organ-donation.model'
+import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
-import { Vaccinations } from './models/vaccinations.model'
+import { Info, Vaccination, Vaccinations } from './models/vaccinations.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -24,15 +20,18 @@ export class HealthDirectorateService {
   ) {}
 
   /* Organ Donation */
-  async getDonorStatus(auth: Auth): Promise<DonorStatus> {
+  async getDonorStatus(auth: Auth): Promise<Donor> {
     const data: OrganDonorDto | null =
       await this.organDonationApi.getOrganDonation(auth)
 
-    const donorStatus: DonorStatus = {
+    const donorStatus: Donor = {
       isDonor: data?.isDonor || false,
-      registrationDate: data?.registrationDate,
-      exceptions: data?.exceptions,
-      exceptionComment: data?.exceptionComment,
+      limitations: {
+        hasLimitations:
+          ((data?.exceptions?.length ?? 0) > 0 && data?.isDonor) ?? false,
+        organList: data?.exceptions,
+        comment: data?.exceptionComment,
+      },
     }
     return donorStatus
   }
@@ -40,11 +39,10 @@ export class HealthDirectorateService {
   async getDonationExceptions(
     auth: Auth,
     locale: Locale,
-  ): Promise<DonationException> {
+  ): Promise<Array<Organ>> {
     const lang: organLocale = locale === 'is' ? organLocale.Is : organLocale.En
     const data = await this.organDonationApi.getDonationExceptions(auth, lang)
-    const exceptions: DonationException = { values: [] }
-    exceptions.values =
+    const limitations: Array<Organ> =
       data?.map((item) => {
         return {
           id: item.id,
@@ -52,56 +50,46 @@ export class HealthDirectorateService {
         }
       }) ?? []
 
-    return exceptions
+    return limitations
   }
 
-  async updateDonorStatus(auth: Auth, input: DonorStatusInput): Promise<void> {
-    await this.organDonationApi
-      .updateOrganDonation(auth, {
-        exceptionComment: input.exceptionComment ?? '',
-        isDonor: input.isDonor,
-        exceptions: input.exceptions ?? [],
-        registrationDate: new Date(),
-      })
-      .then(() => {
-        return true
-      })
-      .catch(() => {
-        return false
-      })
+  async updateDonorStatus(auth: Auth, input: DonorInput): Promise<void> {
+    return await this.organDonationApi.updateOrganDonation(auth, {
+      exceptionComment: '',
+      isDonor: input.isDonor,
+      exceptions: input.organLimitations ?? [],
+      registrationDate: new Date(),
+    })
   }
 
   /* Vaccinations */
-  async getVaccinations(
-    auth: Auth,
-    locale: Locale,
-  ): Promise<Array<Vaccinations>> {
-    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(auth, {
-      locale,
-    })
-    const vaccinations: Array<Vaccinations> =
+  async getVaccinations(auth: Auth): Promise<Vaccinations> {
+    const data = await this.vaccinationApi.getVaccinationDiseaseDetail(auth)
+    const vaccinations: Array<Vaccination> =
       data?.map((item) => {
         return {
-          diseaseId: item.diseaseId,
-          diseaseName: item.diseaseName,
-          diseaseDescription: item.diseaseDescription,
-          vaccinationStatus: item.vaccinationStatus,
-          vaccinationsStatusName: item.vaccinationStatusName,
+          id: item.diseaseId,
+          name: item.diseaseName,
+          description: item.diseaseDescription,
+          isFeatured: item.isFeatured,
+          status: item.vaccinationStatus,
+          statusName: item.vaccinationStatusName,
           lastVaccinationDate: item.lastVaccinationDate,
-          vaccinations:
-            item.vaccinations?.map((vaccination: VaccinationDto) => {
+          vaccinationsInfo: item.vaccinations?.map(
+            (vaccination: VaccinationDto) => {
               return {
                 id: vaccination.id,
-                nationalId: vaccination.nationalId,
-                code: vaccination.code,
-                vaccinationDate: vaccination.vaccinationDate,
-                vaccinationsAge: vaccination.vaccinationAge,
-                generalComment: vaccination.generalComment.toString(),
+                name: vaccination.vaccineName,
+                date: vaccination.vaccinationDate,
+                age: vaccination.vaccinationAge,
+                url: vaccination.vaccineUrl,
+                comment: vaccination.generalComment,
                 rejected: vaccination.rejected,
-              }
-            }) ?? [],
+              } as Info
+            },
+          ),
         }
       }) ?? []
-    return vaccinations
+    return { vaccinations }
   }
 }

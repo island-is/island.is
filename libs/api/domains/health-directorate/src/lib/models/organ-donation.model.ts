@@ -1,34 +1,34 @@
-import { ObjectType, Field, Int, InputType } from '@nestjs/graphql'
+import { ObjectType, Field, InputType } from '@nestjs/graphql'
 
-@ObjectType('HealthDirectorateOrganDonorStatus')
-export class DonorStatus {
+@ObjectType('HealthDirectorateOrganDonationLimitations')
+export class Limitations {
+  @Field(() => Boolean)
+  hasLimitations!: boolean
+
+  @Field(() => [String], {
+    nullable: true,
+    description: 'List of organs NOT to donate',
+  })
+  organList?: string[]
+
+  @Field({
+    nullable: true,
+    description: 'Text to display if user does not want to donate all organs',
+  })
+  comment?: string
+}
+
+@ObjectType('HealthDirectorateOrganDonor')
+export class Donor {
   @Field(() => Boolean)
   isDonor!: boolean
 
-  @Field(() => [String], { nullable: true })
-  exceptions?: string[]
-
-  @Field({ nullable: true })
-  exceptionComment?: string
-
-  @Field(() => Date, { nullable: true })
-  registrationDate?: Date
+  @Field(() => Limitations, { nullable: true })
+  limitations?: Limitations
 }
 
-@InputType('HealthDirectorateOrganDonorStatusInput')
-export class DonorStatusInput {
-  @Field(() => Boolean)
-  isDonor!: boolean
-
-  @Field(() => [String], { nullable: true })
-  exceptions?: string[]
-
-  @Field({ nullable: true })
-  exceptionComment?: string
-}
-
-@ObjectType('HealthDirectorateOrganDonationExceptionObject')
-export class DonationExceptionObject {
+@ObjectType('HealthDirectorateOrganDonationOrgan')
+export class Organ {
   @Field({ nullable: true })
   id?: string
 
@@ -36,26 +36,23 @@ export class DonationExceptionObject {
   name?: string
 }
 
-@ObjectType('HealthDirectorateOrganDonationException')
-export class DonationException {
-  @Field(() => [DonationExceptionObject], { nullable: true })
-  values?: DonationExceptionObject[]
+@ObjectType('HealthDirectorateOrganDonation')
+export class OrganDonation {
+  @Field(() => Donor, { nullable: true })
+  donor?: Donor
+
+  @Field(() => [Organ], { nullable: true })
+  organList?: Array<Organ>
+
+  @Field(() => String, { nullable: true })
+  locale?: 'is' | 'en'
 }
 
-@ObjectType('HealthDirectorateError')
-export class HealthDirectorateError {
-  @Field({ nullable: true })
-  type?: string
+@InputType('HealthDirectorateOrganDonorInput')
+export class DonorInput {
+  @Field(() => Boolean)
+  isDonor!: boolean
 
-  @Field({ nullable: true })
-  title?: string
-
-  @Field(() => Int, { nullable: true })
-  status?: number
-
-  @Field({ nullable: true })
-  detail?: string
-
-  @Field({ nullable: true })
-  instance?: string
+  @Field(() => [String], { nullable: true })
+  organLimitations?: string[]
 }

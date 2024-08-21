@@ -4,7 +4,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import {
   DonationExceptionsApi,
   Locale,
-  MeDonorStatusApi,
+  MeOrganDonorStatusApi,
   OrganDonorDto,
   OrganDto,
 } from './gen/fetch'
@@ -16,7 +16,7 @@ const LOG_CATEGORY = 'health-directorate-organ-donation-api'
 export class HealthDirectorateOrganDonationService {
   constructor(
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly organDonationApi: MeDonorStatusApi,
+    private readonly organDonationApi: MeOrganDonorStatusApi,
     private readonly donationExceptionsApi: DonationExceptionsApi,
   ) {}
 
@@ -47,9 +47,9 @@ export class HealthDirectorateOrganDonationService {
       .meDonorStatusControllerUpdateOrganDonorStatus({
         updateOrganDonorDto: input,
       })
-      .catch((error) => {
+      .catch((error: Error) => {
         throw new Error(
-          `health-directorate-organ-donation-client: upload organ donation status failed ${error.type}`,
+          `health-directorate-organ-donation-client: update organ donation status failed ${error.message}`,
         )
       })
   }

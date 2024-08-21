@@ -12,10 +12,10 @@ import React, { useState } from 'react'
 import { OptionsLimitations } from '../../utils/OrganDonationMock'
 import { messages } from '../..'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { HealthDirectorateOrganDonationExceptionObject } from '@island.is/api/schema'
+import { HealthDirectorateOrganDonationOrgan } from '@island.is/api/schema'
 
 interface LimitationsProps {
-  data: HealthDirectorateOrganDonationExceptionObject[]
+  data: HealthDirectorateOrganDonationOrgan[]
 }
 
 const Limitations = ({ data }: LimitationsProps) => {
@@ -45,15 +45,12 @@ const Limitations = ({ data }: LimitationsProps) => {
                 marginY="smallGutter"
               >
                 <Checkbox
-                  id={`organ-registration-form-${y.name?.toLowerCase() ?? ''}`}
-                  name={`selected-limitations-${y.name?.toLowerCase() ?? ''}`}
+                  id={y.id?.toString()}
+                  name={`selected-limitations-${y.id}`}
                   label={y.name}
-                  value={y.name?.toLowerCase() ?? ''}
+                  value={y.id ?? ''}
                   onChange={(e) =>
-                    handleCheckboxChange(
-                      y.name?.toLowerCase() ?? '',
-                      e.target.checked,
-                    )
+                    handleCheckboxChange(y.id ?? '', e.target.checked)
                   }
                 />
               </Box>

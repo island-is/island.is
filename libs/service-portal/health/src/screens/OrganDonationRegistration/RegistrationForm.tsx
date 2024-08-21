@@ -20,8 +20,7 @@ import * as styles from './OrganDonationRegistration.css'
 import Limitations from './Limitations'
 import { useNavigate } from 'react-router-dom'
 import {
-  useGetDonorStatusQuery,
-  useGetOrganDonationExceptionsQuery,
+  useGetOrgansListQuery,
   useUpdateOrganDonationInfoMutation,
 } from '../OrganDonation/OrganDonation.generated'
 
@@ -34,9 +33,18 @@ export const Form2 = () => {
   const OPT_IN_EXCEPTIONS = 'opt-in-exceptions'
   const OPT_OUT = 'opt-out'
 
-  const { data, loading } = useGetOrganDonationExceptionsQuery({
+  const { data, loading } = useGetOrgansListQuery({
     variables: { locale: lang },
   })
+
+  const isDonor = data?.HealthDirectorateOrganDonation.donor?.isDonor
+  const hasLimitations =
+    data?.HealthDirectorateOrganDonation.donor?.limitations?.hasLimitations
+  const donorStatus = isDonor
+    ? hasLimitations
+      ? OPT_IN_EXCEPTIONS
+      : OPT_IN
+    : OPT_OUT
 
   const [updateDonorStatus] = useUpdateOrganDonationInfoMutation({
     onCompleted: () => {
@@ -47,24 +55,14 @@ export const Form2 = () => {
       toast.error(formatMessage(messages.registrationFailed))
     },
   })
-  const { data: status } = useGetDonorStatusQuery()
-
-  const exceptions =
-    data?.HealthDirectorateOrganDonationGetDonationExceptions.values
+  const limitations = data?.HealthDirectorateOrganDonation.organList
   const [radioValue, setRadioValue] = useState<string | undefined>()
 
   useEffect(() => {
     if (radioValue === undefined) {
-      setRadioValue(
-        status?.HealthDirectorateOrganDonationGetDonorStatus.isDonor
-          ? OPT_IN
-          : (status?.HealthDirectorateOrganDonationGetDonorStatus
-              ?.exceptionComment?.length ?? 0) > 0
-          ? OPT_IN_EXCEPTIONS
-          : OPT_OUT,
-      )
+      setRadioValue(donorStatus)
     }
-  }, [status])
+  }, [data])
 
   const onSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
@@ -75,11 +73,12 @@ export const Form2 = () => {
     const limitations = Object.keys(data)
       .filter((key) => key.includes(idKey))
       .map((key) => key.replace(idKey, '').toLowerCase())
+
     await updateDonorStatus({
       variables: {
         input: {
           isDonor: radioValue === OPT_IN || radioValue === OPT_IN_EXCEPTIONS,
-          exceptions: radioValue === OPT_IN_EXCEPTIONS ? limitations : [],
+          organLimitations: radioValue === OPT_IN_EXCEPTIONS ? limitations : [],
         },
       },
     })
@@ -128,10 +127,10 @@ export const Form2 = () => {
               checked={radioValue === OPT_IN_EXCEPTIONS}
               onChange={() => setRadioValue(OPT_IN_EXCEPTIONS)}
             />
-            {exceptions &&
-              exceptions.length > 0 &&
+            {limitations &&
+              limitations.length > 0 &&
               radioValue === OPT_IN_EXCEPTIONS && (
-                <Limitations data={exceptions} />
+                <Limitations data={limitations} />
               )}
           </Box>
           <Box

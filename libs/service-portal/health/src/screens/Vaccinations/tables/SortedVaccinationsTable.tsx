@@ -6,10 +6,10 @@ import { tagSelector } from '../../../utils/tagSelector'
 import { VaccinationsDetailTable } from './VaccinationsDetailTable'
 import { DetailHeader, DetailRow } from '../../../utils/types'
 import { ATC_URL_BASE } from '../../../utils/constants'
-import { HealthDirectorateVaccinations } from '@island.is/api/schema'
+import { HealthDirectorateVaccination } from '@island.is/api/schema'
 
 interface Props {
-  data: Array<HealthDirectorateVaccinations>
+  data: Array<HealthDirectorateVaccination>
 }
 export const SortedVaccinationsTable = ({ data }: Props) => {
   useNamespaces('sp.health')
@@ -44,41 +44,40 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
       defaultSortByKey="vaccine"
       items={
         data?.map((item, i) => ({
-          id: item?.diseaseId ?? `${i}`,
-          name: item?.diseaseName ?? '',
-          vaccine: item?.diseaseName ?? '',
+          id: item?.id ?? `${i}`,
+          name: item?.name ?? '',
+          vaccine: item?.name ?? '',
           date: formatDate(item?.lastVaccinationDate) ?? '',
 
           children: (
             <VaccinationsDetailTable
               headerData={headerDataDetail}
-              rowData={item.vaccinations?.map(
+              rowData={item.vaccinationsInfo?.map(
                 (vaccination, i): Array<DetailRow> => {
                   return [
                     {
                       value: (i + 1).toString(),
                     },
                     {
-                      value:
-                        vaccination.vaccinationDate.toLocaleDateString('is-IS'),
+                      value: vaccination.date.toLocaleDateString('is-IS'),
                     },
                     {
                       value: [
-                        vaccination.vaccinationsAge?.years,
+                        vaccination.age?.years,
                         formatMessage(messages.years),
-                        vaccination.vaccinationsAge?.months,
+                        vaccination.age?.months,
                         formatMessage(messages.months),
                       ]
                         .filter(Boolean)
                         .join(' '),
                     },
                     {
-                      value: vaccination.code ?? '',
+                      value: vaccination.name ?? '',
                       type: 'link',
-                      url: ATC_URL_BASE + vaccination.code,
+                      url: vaccination.url ?? '',
                     },
                     {
-                      value: vaccination.generalComment,
+                      value: vaccination.comment,
                     },
                   ]
                 },
@@ -86,8 +85,8 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
               footerText={item.comments ?? []}
             />
           ),
-          status: item?.vaccinationsStatusName ?? '',
-          tag: tagSelector(item?.vaccinationStatus ?? ''),
+          status: item?.statusName ?? '',
+          tag: tagSelector(item?.status ?? ''),
         })) ?? []
       }
     />

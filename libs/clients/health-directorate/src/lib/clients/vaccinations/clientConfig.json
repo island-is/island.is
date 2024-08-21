@@ -58,14 +58,7 @@
       "get": {
         "operationId": "MeVaccinationController_getVaccinationsForDiseases",
         "description": "Get overview of vaccinations for a user",
-        "parameters": [
-          {
-            "name": "locale",
-            "required": true,
-            "in": "query",
-            "schema": { "type": "string" }
-          }
-        ],
+        "parameters": [],
         "responses": {
           "200": {
             "description": "",
@@ -126,12 +119,6 @@
             "required": true,
             "in": "path",
             "description": "id of the disease",
-            "schema": { "type": "string" }
-          },
-          {
-            "name": "locale",
-            "required": true,
-            "in": "query",
             "schema": { "type": "string" }
           }
         ],
@@ -673,7 +660,8 @@
             "scopes": {
               "openid": "openid",
               "vaccination": "vaccination",
-              "@landlaeknir.is/vaccinations:admin": "Get vaccination data for a user"
+              "@landlaeknir.is/vaccinations:admin": "Manage vaccination data",
+              "@landlaeknir.is/vaccinations": "Get vaccination data for a user"
             }
           }
         }
@@ -689,6 +677,7 @@
           "codingSystem": { "type": "string", "example": "ATC" },
           "codeDescription": { "type": "string", "example": "ATC" },
           "vaccineName": { "type": "string", "example": "ATC" },
+          "vaccineUrl": { "type": "string" },
           "vaccinationDate": {
             "format": "date-time",
             "type": "string",
@@ -698,7 +687,7 @@
             "type": "object",
             "example": { "years": 1, "months": 2 }
           },
-          "generalComment": { "type": "object", "example": "ATC" },
+          "generalComment": { "type": "string" },
           "rejected": { "type": "boolean", "example": false }
         },
         "required": [
@@ -708,6 +697,7 @@
           "codingSystem",
           "codeDescription",
           "vaccineName",
+          "vaccineUrl",
           "vaccinationDate",
           "vaccinationAge",
           "generalComment",
@@ -718,7 +708,7 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
+            "type": "object",
             "description": "A URI reference that identifies the problem type"
           },
           "title": {
@@ -737,12 +727,20 @@
         },
         "required": ["type", "title"]
       },
+      "VaccinationStatusColor": {
+        "type": "string",
+        "enum": ["green", "yellow", "red"]
+      },
       "DiseaseVaccinationDto": {
         "type": "object",
         "properties": {
           "diseaseId": { "type": "string", "example": "tetanus" },
           "diseaseName": { "type": "string", "example": "Stífkrampi" },
           "diseaseDescription": { "type": "string" },
+          "isFeatured": {
+            "type": "boolean",
+            "description": "Is the vaccination scheduled as in \"almenn bólusetning\""
+          },
           "vaccinationStatus": {
             "type": "string",
             "example": "vaccinated",
@@ -758,6 +756,9 @@
             ]
           },
           "vaccinationStatusName": { "type": "string", "example": "Í gildi" },
+          "vaccinationStatusColor": {
+            "$ref": "#/components/schemas/VaccinationStatusColor"
+          },
           "lastVaccinationDate": { "format": "date-time", "type": "string" },
           "vaccinations": {
             "type": "array",
@@ -769,8 +770,10 @@
           "diseaseId",
           "diseaseName",
           "diseaseDescription",
+          "isFeatured",
           "vaccinationStatus",
           "vaccinationStatusName",
+          "vaccinationStatusColor",
           "lastVaccinationDate",
           "vaccinations",
           "comments"
@@ -801,7 +804,7 @@
           "id": { "type": "number" },
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
-          "type": { "type": "string" },
+          "type": { "type": "object" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -865,7 +868,7 @@
             "items": { "type": "number" }
           },
           "isFeatured": { "type": "boolean" },
-          "isScheduled": { "type": "boolean" },
+          "isVisible": { "type": "boolean" },
           "vaccines": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/VaccineDto" }
@@ -885,7 +888,7 @@
           "description",
           "doseSchedule",
           "isFeatured",
-          "isScheduled",
+          "isVisible",
           "vaccines",
           "rules",
           "translations"
@@ -904,7 +907,7 @@
             "items": { "type": "number" }
           },
           "isFeatured": { "type": "boolean" },
-          "isScheduled": { "type": "boolean" },
+          "isVisible": { "type": "boolean" },
           "rules": {
             "type": "array",
             "items": { "$ref": "#/components/schemas/DiseaseRuleDto" }
@@ -919,7 +922,7 @@
         "type": "object",
         "properties": {
           "order": { "type": "number" },
-          "type": { "type": "string" },
+          "type": { "type": "object" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },
@@ -965,7 +968,7 @@
           "id": { "type": "number" },
           "diseaseId": { "type": "string" },
           "order": { "type": "number" },
-          "type": { "type": "string" },
+          "type": { "type": "object" },
           "cond1Type": { "type": "string" },
           "cond1Min": { "type": "number" },
           "cond1Max": { "type": "number" },

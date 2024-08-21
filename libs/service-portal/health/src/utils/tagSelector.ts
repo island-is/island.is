@@ -8,3 +8,12 @@ export const tagSelector = (str: string) => {
 
   return (obj as any)?.[str] || 'blue'
 }
+
+//     Valid = 'valid',
+//     Expired = 'expired',
+//     Complete = 'complete',
+//     Incomplete = 'incomplete',
+//     Undocumented = 'undocumented',
+//     Unvaccinated = 'unvaccinated',
+//     Rejected = 'rejected',
+//     Undetermined = 'undetermined'

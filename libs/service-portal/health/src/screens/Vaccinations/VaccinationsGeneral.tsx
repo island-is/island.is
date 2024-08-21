@@ -13,7 +13,9 @@ export const VaccinationsGeneral = () => {
 
   const { data, loading, error } = useGetVaccinationsQuery()
 
-  const vaccinations = data?.HealthDirectorateVaccinationsGetVaccinations
+  const vaccinations = data?.HealthDirectorateVaccinations.vaccinations
+  const general = vaccinations?.filter((x) => x.isFeatured)
+
   return (
     <VaccinationsWrapper pathname={HealthPaths.HealthVaccinationsGeneral}>
       <Box>
@@ -25,11 +27,11 @@ export const VaccinationsGeneral = () => {
             borderRadius="standard"
           />
         )}
-        {!error && vaccinations?.length === 0 && (
+        {!error && general?.length === 0 && (
           <EmptyTable message={formatMessage(m.noVaccinesRegistered)} />
         )}
-        {!error && !loading && vaccinations !== undefined && (
-          <SortedVaccinationsTable data={vaccinations} />
+        {!error && !loading && general !== undefined && (
+          <SortedVaccinationsTable data={general} />
         )}
         {!loading && error && <Problem error={error} noBorder={false} />}
       </Box>

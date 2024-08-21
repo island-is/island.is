@@ -17,7 +17,7 @@ export const HealthDirectorateOrganDonationClientConfig = defineConfig<
         'XROAD_HEALTH_DIRECTORATE_PATH',
         'IS-DEV/GOV/10015/EmbaettiLandlaeknis-Protected/landlaeknir',
       ),
-      scope: [],
+      scope: ['@landlaeknir.is/organ-donations'],
     }
   },
 })
