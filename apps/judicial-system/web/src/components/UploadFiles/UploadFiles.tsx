@@ -6,13 +6,7 @@ import parseISO from 'date-fns/parseISO'
 
 import { Box, Button, Text, toast, UploadFile } from '@island.is/island-ui/core'
 
-import { CaseFileCategory } from '../../graphql/schema'
-import {
-  TUploadFile,
-  useFileList,
-  useS3Upload,
-  useUploadFiles,
-} from '../../utils/hooks'
+import { TUploadFile, useFileList } from '../../utils/hooks'
 import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 import { useUpdateFilesMutation } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
@@ -23,17 +17,17 @@ import * as styles from './UploadFiles.css'
 interface Props {
   files: UploadFile[]
   onChange: (files: File[]) => void
+  onRetry: (file: TUploadFile) => void
+  onDelete: (file: TUploadFile) => void
 }
 
 const UploadFiles: FC<Props> = (props) => {
-  const { files, onChange } = props
+  const { files, onChange, onRetry, onDelete } = props
   const [fileList, setFileList] = useState<TEditableCaseFile[]>([])
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-  const { handleRemove, handleRetry } = useS3Upload(workingCase.id)
-  const { updateUploadFile } = useUploadFiles(workingCase.caseFiles)
   const [updateFilesMutation] = useUpdateFilesMutation()
 
   const mapUpdateFileToEditableCaseFile = (
@@ -59,12 +53,6 @@ const UploadFiles: FC<Props> = (props) => {
     accept: 'application/pdf',
     onDrop,
   })
-
-  const handleDelete = (id: string) => {
-    handleRemove({ id } as TUploadFile, (file) => {
-      setFileList((prev) => prev.filter((item) => item.id !== file.id))
-    })
-  }
 
   const handleRename = async (
     fileId: string,
@@ -148,8 +136,8 @@ const UploadFiles: FC<Props> = (props) => {
             caseFile={mapUpdateFileToEditableCaseFile(file)}
             onOpen={onOpen}
             onRename={handleRename}
-            onDelete={handleDelete}
-            onRetry={(file) => handleRetry(file, updateUploadFile)}
+            onDelete={onDelete}
+            onRetry={onRetry}
           />
         </Box>
       ))}

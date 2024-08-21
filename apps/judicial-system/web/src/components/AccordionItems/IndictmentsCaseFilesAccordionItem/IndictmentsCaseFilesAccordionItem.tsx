@@ -56,6 +56,7 @@ interface CaseFileProps {
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void
+  onRetry: (file: TUploadFile) => void
 }
 
 export interface ReorderableItem extends EditableCaseFile {
@@ -174,7 +175,7 @@ const renderChapter = (chapter: number, name?: string | null) => (
 )
 
 const CaseFile: FC<CaseFileProps> = (props) => {
-  const { caseFile, onReorder, onOpen, onRename, onDelete } = props
+  const { caseFile, onReorder, onOpen, onRename, onDelete, onRetry } = props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
@@ -241,6 +242,7 @@ const CaseFile: FC<CaseFileProps> = (props) => {
           onDelete={onDelete}
           onOpen={onOpen}
           onRename={onRename}
+          onRetry={onRetry}
         />
       )}
     </Reorder.Item>
@@ -259,8 +261,10 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [updateFilesMutation] = useUpdateFilesMutation()
 
-  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({ caseId })
-  const { handleRemove } = useS3Upload(caseId)
+  const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
+    caseId,
+  })
+  const { handleRemove, handleRetry } = useS3Upload(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
@@ -359,7 +363,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                 ? undefined
                 : orderWithinChapter + index
             return {
-              id: file.id,
+              id: file.id || '',
               chapter,
               orderWithinChapter:
                 orderWithinChapter === null ? null : orderWithinChapter + index,
@@ -480,6 +484,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                   onOpen={onOpen}
                   onRename={handleRename}
                   onDelete={handleDelete}
+                  onRetry={(file) => handleRetry(file, () => 'retrt')}
                 />
               </Box>
             )

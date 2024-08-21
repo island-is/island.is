@@ -15,6 +15,7 @@ import {
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
+import { TUploadFile } from '../../utils/hooks'
 import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
@@ -24,8 +25,8 @@ interface Props {
   caseFile: TEditableCaseFile
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
-  onDelete: (id: string) => void
-  onRetry: (file: UploadFile) => void
+  onDelete: (file: TUploadFile) => void
+  onRetry: (file: TUploadFile) => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
@@ -127,7 +128,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </button>
                   <Box marginLeft={1}>
                     <button
-                      onClick={() => caseFile.id && onDelete(caseFile.id)}
+                      onClick={() => onDelete(caseFile as TUploadFile)}
                       className={styles.editCaseFileButton}
                     >
                       <Icon icon="trash" color="blue400" type="outline" />

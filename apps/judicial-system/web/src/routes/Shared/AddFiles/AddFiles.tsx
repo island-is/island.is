@@ -16,6 +16,7 @@ import {
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  TUploadFile,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -27,10 +28,11 @@ const AddFiles: FC = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
 
-  const { uploadFiles, addUploadFiles, updateUploadFile } = useUploadFiles(
-    workingCase.caseFiles,
+  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
+    useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
+    workingCase.id,
   )
-  const { handleUpload } = useS3Upload(workingCase.id)
 
   const handleFileUpload = useCallback(
     (files: File[]) => {
@@ -40,6 +42,20 @@ const AddFiles: FC = () => {
       )
     },
     [addUploadFiles, handleUpload, updateUploadFile],
+  )
+
+  const handleRetryUpload = useCallback(
+    (file: TUploadFile) => {
+      handleRetry(file, updateUploadFile)
+    },
+    [handleRetry, updateUploadFile],
+  )
+
+  const handleRemoveFile = useCallback(
+    (file: TUploadFile) => {
+      handleRemove(file, removeUploadFile)
+    },
+    [handleRemove, removeUploadFile],
   )
 
   return (
@@ -66,7 +82,9 @@ const AddFiles: FC = () => {
           files={uploadFiles.filter(
             (file) => file.category === CaseFileCategory.PROSECUTOR_CASE_FILE,
           )}
-          onChange={(files) => handleFileUpload(files)}
+          onChange={handleFileUpload}
+          onRetry={handleRetryUpload}
+          onDelete={handleRemoveFile}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>
