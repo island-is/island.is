@@ -53,4 +53,9 @@ export const caseFiles = defineMessages({
     defaultMessage: 'Ákæra.pdf',
     description: 'Titill á ákæru pdf fyrir umferðalagabrot.',
   },
+  uploadedFiles: {
+    id: 'judicial.system.core:indictments.case_files.uploaded_files',
+    defaultMessage: 'Innsend gögn',
+    description: 'Titill á innsend gögn hluta á dómskjalaskjá í ákærum.',
+  },
 })
