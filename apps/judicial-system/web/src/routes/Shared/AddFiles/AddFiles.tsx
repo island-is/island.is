@@ -13,6 +13,7 @@ import {
   ProsecutorCaseInfo,
 } from '@island.is/judicial-system-web/src/components'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { strings } from './AddFiles.strings'
 
@@ -39,13 +40,11 @@ const AddFiles: FC = () => {
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
         <UploadFiles
-          files={[
-            {
-              id: 'asd',
-              displayText: 'sdasd',
-              displayDate: new Date().toISOString(),
-            },
-          ]}
+          files={
+            workingCase.caseFiles?.filter(
+              (file) => file.category === CaseFileCategory.PROSECUTOR_CASE_FILE,
+            ) || []
+          }
         />
       </FormContentContainer>
       <FormContentContainer isFooter>

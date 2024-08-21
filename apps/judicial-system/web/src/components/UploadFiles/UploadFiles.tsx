@@ -6,6 +6,7 @@ import parseISO from 'date-fns/parseISO'
 
 import { Box, Button, Text, toast } from '@island.is/island-ui/core'
 
+import { CaseFileCategory } from '../../graphql/schema'
 import { TUploadFile, useFileList, useS3Upload } from '../../utils/hooks'
 import { useUpdateFilesMutation } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
@@ -52,8 +53,10 @@ const UploadFiles: FC<Props> = (props) => {
       id: file.name,
       name: file.name,
       key: file.name,
+      size: file.size,
       type: 'application/pdf',
       originalFileObj: file,
+      category: CaseFileCategory.PROSECUTOR_CASE_FILE,
     }))
   }
 
