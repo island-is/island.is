@@ -17,11 +17,7 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
-import type {
-  ConnectedComponent,
-  ProfessionRight,
-  Query,
-} from '@island.is/web/graphql/schema'
+import type { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
 
 import {
@@ -33,7 +29,7 @@ import { GET_PROFESSION_RIGHTS_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof ProfessionRight)[] = ['name', 'nationalId']
+const SEARCH_KEYS = ['name', 'nationalId']
 
 interface ProfessionRightsProps {
   slice: ConnectedComponent
@@ -140,7 +136,8 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
         : item.profession === filterProfession?.value,
     ),
     searchTerms,
-    SEARCH_KEYS,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    SEARCH_KEYS as any,
   )
 
   const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
