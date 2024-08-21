@@ -15,6 +15,7 @@ import { CertificationsModule } from './modules/certifications/certifications.mo
 import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ListItemsModule } from './modules/listItems/listItems.module'
 import { ApplicationsModule } from './modules/applications/applications.module'
+import { ValuesModule } from './modules/values/values.module'
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ import { ApplicationsModule } from './modules/applications/applications.module'
     FieldSettingsModule,
     ListItemsModule,
     ApplicationsModule,
+    ValuesModule,
   ],
 })
 export class AppModule {}

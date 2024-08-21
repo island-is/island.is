@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   HasOne,
   Model,
   Table,
@@ -13,6 +14,7 @@ import { Screen } from '../../screens/models/screen.model'
 import { LanguageType } from '../../../dataTypes/languageType.model'
 import { FieldType } from './fieldType.model'
 import { FieldSettings } from '../../fieldSettings/models/fieldSettings.model'
+import { Value } from '../../values/models/value.model'
 
 @Table({ tableName: 'field' })
 export class Field extends Model<Field> {
@@ -75,6 +77,9 @@ export class Field extends Model<Field> {
 
   @HasOne(() => FieldSettings)
   fieldSettings?: FieldSettings
+
+  @HasMany(() => Value)
+  values?: Value[]
 
   @ForeignKey(() => FieldType)
   @Column({
