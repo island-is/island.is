@@ -1,4 +1,8 @@
-import { coreMessages, formatText } from '@island.is/application/core'
+import {
+  coreMessages,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   FieldBaseProps,
@@ -311,6 +315,7 @@ const Item: FC<ItemFieldProps> = ({
     condition,
     readonly = false,
     updateValueObj,
+    defaultValue,
     ...props
   } = item
   const isHalfColumn = component !== 'radio' && width === 'half'
@@ -354,6 +359,24 @@ const Item: FC<ItemFieldProps> = ({
     return errors?.[id]
   }
 
+  const getDefaultValue = (
+    item: TableRepeaterItem,
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => {
+    const { defaultValue, component } = item
+
+    if (component === 'input' && !defaultValue) {
+      return ''
+    }
+
+    if (defaultValue === undefined) {
+      return undefined
+    }
+
+    return defaultValue(application, activeField)
+  }
+
   let translatedOptions: any = []
   if (typeof options === 'function') {
     translatedOptions = options(application, activeValues)
@@ -372,6 +395,31 @@ const Item: FC<ItemFieldProps> = ({
     Readonly = readonly(application, activeValues)
   } else {
     Readonly = readonly
+  }
+
+  let DefaultValue: any
+  if (component === 'input') {
+    DefaultValue = getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'select') {
+    DefaultValue =
+      getValueViaPath(application.answers, id) ??
+      getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'radio') {
+    DefaultValue =
+      (getValueViaPath(application.answers, id) as string[]) ??
+      getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'checkbox') {
+    DefaultValue =
+      (getValueViaPath(application.answers, id) as string[]) ??
+      getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'date') {
+    DefaultValue =
+      (getValueViaPath(application.answers, id) as string) ??
+      getDefaultValue(item, application, activeValues)
   }
 
   if (condition && !condition(application, activeValues)) {
@@ -402,6 +450,7 @@ const Item: FC<ItemFieldProps> = ({
           }
         }}
         application={application}
+        defaultValue={DefaultValue}
         {...props}
       />
     </GridColumn>

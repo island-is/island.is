@@ -140,6 +140,14 @@ export const IncomePlanForm: Form = buildForm({
                   type: 'number',
                   displayInTable: false,
                   currency: true,
+                  defaultValue: (_, activeField) => {
+                    if (activeField?.incomePerYear) {
+                      return Math.round(
+                        Number(activeField?.incomePerYear) / 12,
+                      ).toString()
+                    }
+                    return undefined
+                  },
                   suffix: '',
                   condition: (_, activeField) => {
                     return (
@@ -155,6 +163,14 @@ export const IncomePlanForm: Form = buildForm({
                   type: 'number',
                   displayInTable: false,
                   currency: true,
+                  defaultValue: (_, activeField) => {
+                    if (activeField?.incomePerYear) {
+                      return Math.round(
+                        Number(activeField?.incomePerYear) / 12,
+                      ).toString()
+                    }
+                    return undefined
+                  },
                   suffix: '',
                   condition: (_, activeField) => {
                     return (
