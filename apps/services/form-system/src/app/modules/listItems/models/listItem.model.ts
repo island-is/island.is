@@ -1,4 +1,3 @@
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import {
   Column,
   CreatedAt,
@@ -20,15 +19,12 @@ export class ListItem extends Model<ListItem> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -36,7 +32,6 @@ export class ListItem extends Model<ListItem> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   label!: LanguageType
 
   @Column({
@@ -44,7 +39,6 @@ export class ListItem extends Model<ListItem> {
     allowNull: true,
     defaultValue: () => new LanguageType(),
   })
-  @ApiPropertyOptional({ type: LanguageType })
   description?: LanguageType
 
   @Column({
@@ -59,7 +53,6 @@ export class ListItem extends Model<ListItem> {
     allowNull: false,
     defaultValue: 0,
   })
-  @ApiProperty()
   displayOrder!: number
 
   @Column({
@@ -67,7 +60,6 @@ export class ListItem extends Model<ListItem> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isSelected!: boolean
 
   @ForeignKey(() => FieldSettings)

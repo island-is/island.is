@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
 import {
   BelongsToMany,
   Column,
@@ -21,7 +20,6 @@ export class ListType extends Model<ListType> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -29,7 +27,6 @@ export class ListType extends Model<ListType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @Column({
@@ -37,7 +34,6 @@ export class ListType extends Model<ListType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
   @Column({
@@ -45,15 +41,12 @@ export class ListType extends Model<ListType> {
     allowNull: false,
     defaultValue: false,
   })
-  @ApiProperty()
   isCommon!: boolean
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @Column({
@@ -61,7 +54,6 @@ export class ListType extends Model<ListType> {
     allowNull: false,
     values: Object.values(ListTypes),
   })
-  @ApiProperty({ enum: ListTypes })
   type!: string
 
   @BelongsToMany(() => Organization, {
