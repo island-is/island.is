@@ -65,7 +65,7 @@ export class SmartSolutionsService {
 
     const verificationData = res.data.updateStatusOnPassWithDynamicBarcode
 
-    this.logger.debug('PkPass verification successful', {
+    this.logger.info('PkPass verification successful', {
       requestId,
       passId: verificationData?.id,
       category: LOG_CATEGORY,
@@ -131,11 +131,13 @@ export class SmartSolutionsService {
     }
 
     const updatePass = res.data.updatePass
-    this.logger.debug('PkPass upates successfully', {
+    
+    this.logger.info('PkPass update successful', {
       requestId,
       passId: updatePass.id,
       category: LOG_CATEGORY,
     })
+    
     return {
       ok: true,
       data: updatePass,
@@ -183,14 +185,14 @@ export class SmartSolutionsService {
       upsertPass?.whenModified &&
       upsertPass?.whenCreated === upsertPass?.whenModified
     ) {
-      this.logger.debug('PkPass created successfully', {
+      this.logger.info('PkPass created successfully', {
         requestId,
         passId: upsertPass?.id,
         category: LOG_CATEGORY,
       })
       await onCreateCallback()
     } else {
-      this.logger.debug('PkPass upsert successful', {
+      this.logger.info('PkPass upsert successful', {
         requestId,
         passId: upsertPass?.id,
         category: LOG_CATEGORY,
@@ -230,6 +232,12 @@ export class SmartSolutionsService {
       return res
     }
 
+    this.logger.info('PkPass revocation successful', {
+        requestId,
+        passId: payload.id,
+        category: LOG_CATEGORY,
+      })
+
     return {
       ok: true,
       data: {
@@ -252,6 +260,11 @@ export class SmartSolutionsService {
       })
       return res
     }
+    
+    this.logger.info('Pass templates listing successful', {
+        requestId,
+        category: LOG_CATEGORY,
+    })
 
     return {
       ok: true,
