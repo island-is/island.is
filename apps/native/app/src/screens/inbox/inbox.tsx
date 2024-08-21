@@ -590,17 +590,17 @@ export const InboxScreen: NavigationFunctionComponent<{
                   />
                 )}
                 {!!senderNationalId.length &&
-                  senderNationalId.map((sender) => {
-                    const name = availableSenders.find((s) => s.id === sender)
+                  senderNationalId.map((senderId) => {
+                    const name = availableSenders.find((s) => s.id === senderId)
                     return (
                       <Tag
-                        key={sender}
-                        title={name?.name?.trim() ?? ''}
+                        key={senderId}
+                        title={name?.name?.trim() ?? senderId}
                         closable
                         onClose={() =>
                           Navigation.updateProps(componentId, {
                             senderNationalId: senderNationalId.filter(
-                              (id) => id !== sender,
+                              (id) => id !== senderId,
                             ),
                           })
                         }
@@ -615,7 +615,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                     return (
                       <Tag
                         key={categoryId}
-                        title={name?.name ?? ''}
+                        title={name?.name ?? categoryId}
                         closable
                         onClose={() =>
                           Navigation.updateProps(componentId, {
