@@ -78,14 +78,15 @@ export function InboxFilterScreen(props: {
     setDateTo(undefined)
   }
 
-  const isSelected =
+  const isSelected = !!(
     opened ||
     bookmarked ||
     archived ||
-    selectedSenders.length > 0 ||
-    selectedCategories.length > 0 ||
+    selectedSenders.length ||
+    selectedCategories.length ||
     dateFrom ||
     dateTo
+  )
 
   useNavigationOptions(props.componentId)
 
@@ -116,26 +117,20 @@ export function InboxFilterScreen(props: {
   ])
 
   useEffect(() => {
-    if (isSelected) {
-      Navigation.mergeOptions(props.componentId, {
-        topBar: {
-          rightButtons: [
-            {
-              id: ButtonRegistry.InboxFilterClearButton,
-              text: intl.formatMessage({
-                id: 'inbox.filterClearButton',
-              }),
-            },
-          ],
-        },
-      })
-    } else {
-      Navigation.mergeOptions(props.componentId, {
-        topBar: {
-          rightButtons: [],
-        },
-      })
-    }
+    Navigation.mergeOptions(props.componentId, {
+      topBar: {
+        rightButtons: isSelected
+          ? [
+              {
+                id: ButtonRegistry.InboxFilterClearButton,
+                text: intl.formatMessage({
+                  id: 'inbox.filterClearButton',
+                }),
+              },
+            ]
+          : [],
+      },
+    })
   }, [isSelected, props.componentId, intl])
 
   return (
