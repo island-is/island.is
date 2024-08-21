@@ -1,7 +1,9 @@
 import { FC, useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
+import isValid from 'date-fns/isValid'
+import parseISO from 'date-fns/parseISO'
 
-import { Box, Text } from '@island.is/island-ui/core'
+import { Box, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -13,8 +15,12 @@ import {
   ProsecutorCaseInfo,
   SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
+import { useUpdateFilesMutation } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFile,
+  CaseFileCategory,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useS3Upload,
@@ -33,6 +39,7 @@ const AddFiles: FC = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
+  const [updateFilesMutation] = useUpdateFilesMutation()
 
   const handleFileUpload = useCallback(
     (files: File[]) => {
@@ -56,6 +63,59 @@ const AddFiles: FC = () => {
       handleRemove(file, removeUploadFile)
     },
     [handleRemove, removeUploadFile],
+  )
+
+  const handleRename = useCallback(
+    async (fileId: string, newName?: string, newDisplayDate?: string) => {
+      let newDate: Date | null = null
+      const fileToUpdate = uploadFiles.findIndex((item) => item.id === fileId)
+
+      if (fileToUpdate === -1) {
+        return
+      }
+
+      if (newDisplayDate) {
+        const [day, month, year] = newDisplayDate.split('.')
+        newDate = parseISO(`${year}-${month}-${day}`)
+
+        if (!isValid(newDate)) {
+          toast.error('TODO: FIX')
+          return
+        }
+      }
+
+      if (newName) {
+        uploadFiles[fileToUpdate].userGeneratedFilename = newName
+      }
+
+      if (newDate) {
+        uploadFiles[fileToUpdate].displayDate = newDate.toISOString()
+      }
+
+      console.log('uploadFiles[fileToUpdate]', uploadFiles[fileToUpdate])
+
+      updateUploadFile(uploadFiles[fileToUpdate])
+
+      const { errors } = await updateFilesMutation({
+        variables: {
+          input: {
+            caseId: workingCase.id,
+            files: [
+              {
+                id: fileId,
+                userGeneratedFilename: newName,
+                ...(newDate && { displayDate: newDate.toISOString() }),
+              },
+            ],
+          },
+        },
+      })
+
+      if (errors) {
+        toast.error('TODO: FIX')
+      }
+    },
+    [updateFilesMutation, updateUploadFile, uploadFiles, workingCase.id],
   )
 
   return (
@@ -85,6 +145,7 @@ const AddFiles: FC = () => {
           onChange={handleFileUpload}
           onRetry={handleRetryUpload}
           onDelete={handleRemoveFile}
+          onRename={handleRename}
         />
       </FormContentContainer>
       <FormContentContainer isFooter>

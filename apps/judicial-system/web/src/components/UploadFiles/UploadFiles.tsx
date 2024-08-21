@@ -1,14 +1,11 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
-import isValid from 'date-fns/isValid'
-import parseISO from 'date-fns/parseISO'
 
-import { Box, Button, Text, toast, UploadFile } from '@island.is/island-ui/core'
+import { Box, Button, Text, UploadFile } from '@island.is/island-ui/core'
 
 import { TUploadFile, useFileList } from '../../utils/hooks'
 import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
-import { useUpdateFilesMutation } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
 import { FormContext } from '../FormProvider/FormProvider'
 import { strings } from './UploadFiles.strings'
@@ -19,16 +16,15 @@ interface Props {
   onChange: (files: File[]) => void
   onRetry: (file: TUploadFile) => void
   onDelete: (file: TUploadFile) => void
+  onRename: (fileId: string, newName?: string, newDisplayDate?: string) => void
 }
 
 const UploadFiles: FC<Props> = (props) => {
-  const { files, onChange, onRetry, onDelete } = props
-  const [fileList, setFileList] = useState<TEditableCaseFile[]>([])
+  const { files, onChange, onRetry, onDelete, onRename } = props
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-  const [updateFilesMutation] = useUpdateFilesMutation()
 
   const mapUpdateFileToEditableCaseFile = (
     file: UploadFile,
@@ -37,10 +33,6 @@ const UploadFiles: FC<Props> = (props) => {
     displayText: file.name,
     displayDate: new Date().toISOString(),
   })
-
-  useEffect(() => {
-    setFileList(files)
-  }, [files])
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -53,61 +45,6 @@ const UploadFiles: FC<Props> = (props) => {
     accept: 'application/pdf',
     onDrop,
   })
-
-  const handleRename = async (
-    fileId: string,
-    newName?: string,
-    newDisplayDate?: string,
-  ) => {
-    let newDate: Date | null = null
-    const fileInReorderableItems = fileList.findIndex(
-      (item) => item.id === fileId,
-    )
-
-    if (fileInReorderableItems === -1) {
-      return
-    }
-
-    if (newDisplayDate) {
-      const [day, month, year] = newDisplayDate.split('.')
-      newDate = parseISO(`${year}-${month}-${day}`)
-
-      if (!isValid(newDate)) {
-        toast.error(formatMessage(strings.invalidDateErrorMessage))
-        return
-      }
-    }
-
-    setFileList((prev) => {
-      const newReorderableItems = [...prev]
-      newReorderableItems[fileInReorderableItems].userGeneratedFilename =
-        newName
-      newReorderableItems[fileInReorderableItems].displayDate = newDate
-        ? newDate.toISOString()
-        : newReorderableItems[fileInReorderableItems].displayDate
-
-      return newReorderableItems
-    })
-
-    const { errors } = await updateFilesMutation({
-      variables: {
-        input: {
-          caseId: workingCase.id,
-          files: [
-            {
-              id: fileId,
-              userGeneratedFilename: newName,
-              ...(newDate && { displayDate: newDate.toISOString() }),
-            },
-          ],
-        },
-      },
-    })
-
-    if (errors) {
-      toast.error(formatMessage(strings.renameFailedErrorMessage))
-    }
-  }
 
   return (
     <div className={styles.container} {...getRootProps}>
@@ -135,7 +72,7 @@ const UploadFiles: FC<Props> = (props) => {
             enableDrag={false}
             caseFile={mapUpdateFileToEditableCaseFile(file)}
             onOpen={onOpen}
-            onRename={handleRename}
+            onRename={onRename}
             onDelete={onDelete}
             onRetry={onRetry}
           />

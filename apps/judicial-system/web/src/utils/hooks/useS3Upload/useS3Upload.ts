@@ -46,6 +46,7 @@ export interface TUploadFile extends UploadFile {
   orderWithinChapter?: number | null
   displayDate?: string | null
   policeFileId?: string | null
+  userGeneratedFilename?: string | null
 }
 
 export interface UploadFileState {
@@ -67,6 +68,7 @@ const mapCaseFileToUploadFile = (file: CaseFile): TUploadFile => ({
   orderWithinChapter: file.orderWithinChapter,
   displayDate: file.displayDate,
   policeFileId: file.policeFileId,
+  userGeneratedFilename: file.userGeneratedFilename,
 })
 
 export const useUploadFiles = (files?: CaseFile[] | null) => {
