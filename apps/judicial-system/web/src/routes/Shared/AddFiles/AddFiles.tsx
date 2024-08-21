@@ -11,6 +11,7 @@ import {
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
+  SectionHeading,
 } from '@island.is/judicial-system-web/src/components'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -39,6 +40,10 @@ const AddFiles: FC = () => {
           </Text>
         </Box>
         <ProsecutorCaseInfo workingCase={workingCase} />
+        <SectionHeading
+          title={formatMessage(strings.uploadFilesHeading)}
+          description={formatMessage(strings.uploadFilesDescription)}
+        />
         <UploadFiles
           files={
             workingCase.caseFiles?.filter(
