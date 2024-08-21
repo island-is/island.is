@@ -6,9 +6,9 @@ import {
   ProgressMeter,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useFeatureFlag } from '@island.is/react/feature-flags'
 import * as styles from '../ApplicationCard.css'
 import { ApplicationCardFields, DefaultCardData } from '../types'
+import { coreMessages } from '@island.is/application/core'
 
 interface Props {
   application: ApplicationCardFields
@@ -47,6 +47,7 @@ const DraftProgressMeter = ({
           variant={defaultData.progress.variant}
           draftTotalSteps={draftTotalSteps}
           draftFinishedSteps={draftFinishedSteps}
+          progressMessage={formatMessage(coreMessages.draftProgressMeter, {draftFinishedSteps, draftTotalSteps})}
         />
       </Box>
       {shouldShowCardButtons && (
