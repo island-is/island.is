@@ -4,68 +4,57 @@ import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, Text, toast, UploadFile } from '@island.is/island-ui/core'
 
 import { CaseFileCategory } from '../../graphql/schema'
-import { TUploadFile, useFileList, useS3Upload } from '../../utils/hooks'
+import {
+  TUploadFile,
+  useFileList,
+  useS3Upload,
+  useUploadFiles,
+} from '../../utils/hooks'
+import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 import { useUpdateFilesMutation } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
 import { FormContext } from '../FormProvider/FormProvider'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
-export interface UploadFile {
-  id: string
-  created?: string | null
-  displayText?: string | null
-  userGeneratedFilename?: string | null
-  displayDate?: string | null
-  canOpen?: boolean
-}
 interface Props {
   files: UploadFile[]
 }
 
 const UploadFiles: FC<Props> = (props) => {
   const { files } = props
-  const [fileList, setFileList] = useState<UploadFile[]>([])
+  const [fileList, setFileList] = useState<TEditableCaseFile[]>([])
   const { workingCase } = useContext(FormContext)
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-  const { handleRemove, upt } = useS3Upload(workingCase.id)
+  const { handleRemove, handleUpload } = useS3Upload(workingCase.id)
+  const { updateUploadFile, uploadFiles, addUploadFiles } = useUploadFiles(
+    workingCase.caseFiles,
+  )
   const [updateFilesMutation] = useUpdateFilesMutation()
+
+  const mapUpdateFileToEditableCaseFile = (file: UploadFile) => ({
+    ...file,
+    displayText: file.name,
+    displayDate: new Date().toISOString(),
+  })
 
   useEffect(() => {
     setFileList(files)
   }, [files])
 
-  const mapFileToUploadFile = (files: File[]): UploadFile[] => {
-    return files.map((file) => ({
-      id: file.name,
-      displayText: file.name,
-      created: new Date().toISOString(),
-    }))
-  }
-
-  const mapFileToTUploadFile = (files: File[]): TUploadFile[] => {
-    return files.map((file) => ({
-      id: file.name,
-      name: file.name,
-      key: file.name,
-      size: file.size,
-      type: 'application/pdf',
-      originalFileObj: file,
-      category: CaseFileCategory.PROSECUTOR_CASE_FILE,
-    }))
-  }
-
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
-      upt(mapFileToTUploadFile(acceptedFiles))
-      setFileList((prev) => [...prev, ...mapFileToUploadFile(acceptedFiles)])
+    async (acceptedFiles: File[]) => {
+      handleUpload(
+        addUploadFiles(acceptedFiles, CaseFileCategory.APPEAL_COURT_RECORD),
+        updateUploadFile,
+      )
     },
-    [upt],
+    [addUploadFiles, handleUpload, updateUploadFile],
   )
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -154,11 +143,11 @@ const UploadFiles: FC<Props> = (props) => {
           {formatMessage(strings.buttonText)}
         </Button>
       </Box>
-      {fileList.map((file) => (
+      {uploadFiles.map((file) => (
         <Box key={file.id} marginBottom={1} width="full">
           <EditableCaseFile
             enableDrag={false}
-            caseFile={file}
+            caseFile={mapUpdateFileToEditableCaseFile(file)}
             onOpen={onOpen}
             onRename={handleRename}
             onDelete={handleDelete}

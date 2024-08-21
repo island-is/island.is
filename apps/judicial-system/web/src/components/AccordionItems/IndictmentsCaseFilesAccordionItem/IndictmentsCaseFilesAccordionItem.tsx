@@ -19,6 +19,7 @@ import {
   Box,
   Text,
   toast,
+  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   CrimeSceneMap,
@@ -57,17 +58,21 @@ interface CaseFileProps {
   onDelete: (id: string) => void
 }
 
-export interface ReorderableItem {
-  id: string
-  displayText?: string | null
+export interface ReorderableItem extends EditableCaseFile {
   isDivider: boolean
   isHeading: boolean
-  created?: string | null
   chapter?: number | null
   orderWithinChapter?: number | null
+}
+
+export interface EditableCaseFile {
+  id?: string
+  displayText?: string | null
+  created?: string | null
   userGeneratedFilename?: string | null
   displayDate?: string | null
   canOpen?: boolean
+  status?: UploadFileStatus
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {

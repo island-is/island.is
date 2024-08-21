@@ -156,7 +156,6 @@ const uploadToS3 = (
   presignedPost: PresignedPost,
   onProgress: (percent: number) => void,
 ) => {
-  console.log(file, presignedPost)
   const promise = new Promise((resolve, reject) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
@@ -202,6 +201,41 @@ const useS3Upload = (caseId: string) => {
   const [limitedAccessDeleteFile] = useLimitedAccessDeleteFileMutation()
   const [uploadPoliceCaseFile] = useUploadPoliceCaseFileMutation()
 
+  const getPresignedPost = useCallback(
+    async (file: TUploadFile) => {
+      const mutation = limitedAccess
+        ? limitedAccessCreatePresignedPost
+        : createPresignedPost
+
+      const { data } = await mutation({
+        variables: {
+          input: {
+            caseId,
+            fileName: file.name.normalize(),
+            type: file.type ?? '',
+          },
+        },
+      })
+
+      const presignedPost = limitedAccess
+        ? (data as LimitedAccessCreatePresignedPostMutation)
+            ?.limitedAccessCreatePresignedPost
+        : (data as CreatePresignedPostMutation)?.createPresignedPost
+
+      if (!presignedPost?.fields?.key) {
+        throw Error('Failed to get presigned post')
+      }
+
+      return presignedPost
+    },
+    [
+      limitedAccess,
+      limitedAccessCreatePresignedPost,
+      createPresignedPost,
+      caseId,
+    ],
+  )
+
   const addFileToCaseState = useCallback(
     async (file: TUploadFile) => {
       const mutation = limitedAccess ? limitedAccessCreateFile : createFile
@@ -238,52 +272,30 @@ const useS3Upload = (caseId: string) => {
 
   const upt = useCallback(
     async (files: TUploadFile[]) => {
-      const mutation = limitedAccess
-        ? limitedAccessCreatePresignedPost
-        : createPresignedPost
+      const promises = files.map(async (file) => {
+        try {
+          const presignedPost = await getPresignedPost(file)
+          await uploadToS3(file, presignedPost, () => {
+            console.log('update')
+          })
 
-      const getPresignedPost = async (file: TUploadFile) => {
-        const { data } = await mutation({
-          variables: {
-            input: {
-              caseId,
-              fileName: file.name.normalize(),
-              type: file.type ?? '',
-            },
-          },
-        })
+          await addFileToCaseState({
+            ...file,
+            key: presignedPost.key,
+          })
 
-        const presignedPost = limitedAccess
-          ? (data as LimitedAccessCreatePresignedPostMutation)
-              ?.limitedAccessCreatePresignedPost
-          : (data as CreatePresignedPostMutation)?.createPresignedPost
-
-        if (!presignedPost?.fields?.key) {
-          throw Error('Failed to get presigned post')
+          return true
+        } catch (e) {
+          toast.error(formatMessage(strings.uploadFailed))
+          return false
         }
-
-        return presignedPost
-      }
-
-      files.map(async (file) => {
-        const presignedPost = await getPresignedPost(file)
-        await uploadToS3(file, presignedPost, () => {
-          console.log('update')
-        })
-
-        await addFileToCaseState({
-          ...file,
-          key: presignedPost.key,
-        })
       })
+
+      return Promise.all(promises).then((results) =>
+        results.every((result) => result),
+      )
     },
-    [
-      addFileToCaseState,
-      caseId,
-      createPresignedPost,
-      limitedAccess,
-      limitedAccessCreatePresignedPost,
-    ],
+    [addFileToCaseState, formatMessage, getPresignedPost],
   )
 
   const handleUpload = useCallback(
@@ -291,33 +303,6 @@ const useS3Upload = (caseId: string) => {
       files: TUploadFile[],
       updateFile: (file: TUploadFile, newId?: string) => void,
     ) => {
-      const mutation = limitedAccess
-        ? limitedAccessCreatePresignedPost
-        : createPresignedPost
-
-      const getPresignedPost = async (file: TUploadFile) => {
-        const { data } = await mutation({
-          variables: {
-            input: {
-              caseId,
-              fileName: file.name.normalize(),
-              type: file.type ?? '',
-            },
-          },
-        })
-
-        const presignedPost = limitedAccess
-          ? (data as LimitedAccessCreatePresignedPostMutation)
-              ?.limitedAccessCreatePresignedPost
-          : (data as CreatePresignedPostMutation)?.createPresignedPost
-
-        if (!presignedPost?.fields?.key) {
-          throw Error('Failed to get presigned post')
-        }
-
-        return presignedPost
-      }
-
       const promises = files.map(async (file) => {
         try {
           updateFile({ ...file, status: 'uploading' })
@@ -357,14 +342,7 @@ const useS3Upload = (caseId: string) => {
         results.every((result) => result),
       )
     },
-    [
-      limitedAccess,
-      limitedAccessCreatePresignedPost,
-      createPresignedPost,
-      caseId,
-      addFileToCaseState,
-      formatMessage,
-    ],
+    [getPresignedPost, addFileToCaseState, formatMessage],
   )
 
   const handleUploadFromPolice = useCallback(

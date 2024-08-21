@@ -2,18 +2,19 @@ import { FC, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
+import cn from 'classnames'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Icon, Input, Text } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
-import { UploadFile } from '../UploadFiles/UploadFiles'
+import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 
 interface Props {
   enableDrag: boolean
-  caseFile: UploadFile
+  caseFile: TEditableCaseFile
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (id: string) => void
@@ -24,6 +25,7 @@ const EditableCaseFile: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
   const [isEditing, setIsEditing] = useState<boolean>(false)
+  console.log(caseFile)
 
   const [editedFilename, setEditedFilename] = useState<
     string | undefined | null
@@ -39,7 +41,7 @@ const EditableCaseFile: FC<Props> = (props) => {
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
     if (trimmedFilename || trimmedDisplayDate) {
-      onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
+      onRename(caseFile.id || '', trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
       setEditedDisplayDate(formatDate(caseFile.displayDate) ?? '')
     }
@@ -52,7 +54,11 @@ const EditableCaseFile: FC<Props> = (props) => {
   }, [caseFile.displayDate, caseFile.created])
 
   return (
-    <div className={styles.caseFileWrapper}>
+    <div
+      className={cn(styles.caseFileWrapper, {
+        [styles.caseFileWrapperError]: caseFile.status === 'error',
+      })}
+    >
       {enableDrag && (
         <Box
           data-testid="caseFileDragHandle"
@@ -113,7 +119,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </button>
                   <Box marginLeft={1}>
                     <button
-                      onClick={() => onDelete(caseFile.id)}
+                      onClick={() => caseFile.id && onDelete(caseFile.id)}
                       className={styles.editCaseFileButton}
                     >
                       <Icon icon="trash" color="blue400" type="outline" />

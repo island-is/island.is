@@ -14,6 +14,10 @@ export const caseFileWrapper = style({
   borderRadius: theme.border.radius.large,
 })
 
+export const caseFileWrapperError = style({
+  background: theme.color.red100,
+})
+
 export const editCaseFileInputContainer = style({
   display: 'flex',
   flexDirection: 'row',
