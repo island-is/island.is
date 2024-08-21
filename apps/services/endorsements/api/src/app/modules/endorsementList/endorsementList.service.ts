@@ -29,7 +29,7 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 
-const EXPORTS_BUCKET_NAME = 'island-is-dev-exports-endorsement-system' //process.env.EXPORTS_BUCKET_NAME
+const ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME = 'island-is-dev-exports-endorsement-system' //process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -680,6 +680,21 @@ export class EndorsementListService {
     user: User,
     fileType: 'pdf' | 'csv',
   ): Promise<{ url: string }> {
+
+
+    // for (let i = 50; i < 500000; i++) {
+    //   await this.endorsementModel.create({
+    //     endorser: `${1234567890 + i}`, // Ensure endorser is a string if that's expected
+    //     endorsementListId: '53a0b35b-7c64-450d-9a37-8985a3eb304e', // Correct UUID format
+    //     meta: {
+    //       fullName: `Endorser ${i}`,
+    //       locality: 'RVK',
+    //       showName: true,
+    //     },
+    //   });
+    // }
+
+
     // get total endorements count from database
     const total = await this.endorsementModel.count({
       where: { },
@@ -738,7 +753,7 @@ export class EndorsementListService {
   
     await this.awsService.uploadFile(
       fileBuffer,
-      EXPORTS_BUCKET_NAME,
+      ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
       filename,
       {
         ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
@@ -746,7 +761,7 @@ export class EndorsementListService {
     );
   
     const url = await this.awsService.getPresignedUrl(
-      EXPORTS_BUCKET_NAME,
+      ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
       filename,
       60 * 60,
     );

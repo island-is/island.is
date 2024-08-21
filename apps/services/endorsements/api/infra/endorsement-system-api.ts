@@ -34,7 +34,7 @@ export const serviceSetup =
           prod: 'https://innskra.island.is',
         },
         IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/endorsement',
-        EXPORTS_BUCKET_NAME: {
+        ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME: {
           dev: 'island-is-dev-exports-endorsement-system',
           staging: 'island-is-staging-exports-endorsement-system',
           prod: 'island-is-prod-exports-endorsement-system',
