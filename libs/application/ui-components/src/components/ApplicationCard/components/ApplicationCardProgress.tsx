@@ -47,7 +47,10 @@ const DraftProgressMeter = ({
           variant={defaultData.progress.variant}
           draftTotalSteps={draftTotalSteps}
           draftFinishedSteps={draftFinishedSteps}
-          progressMessage={formatMessage(coreMessages.draftProgressMeter, {draftFinishedSteps, draftTotalSteps})}
+          progressMessage={formatMessage(coreMessages.draftProgressMeter, {
+            draftFinishedSteps,
+            draftTotalSteps,
+          })}
         />
       </Box>
       {shouldShowCardButtons && (
