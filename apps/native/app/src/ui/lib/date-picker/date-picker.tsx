@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import styled from 'styled-components/native'
 import DatePicker from 'react-native-date-picker'
 
@@ -70,6 +70,10 @@ export function DatePickerInput({
   const intl = useIntl()
   const [date, setDate] = useState(selectedDate ?? undefined)
   const [openDatePicker, setOpenDatePicker] = useState(false)
+
+  useEffect(() => {
+    setDate(selectedDate)
+  }, [selectedDate])
 
   return (
     <Host>
