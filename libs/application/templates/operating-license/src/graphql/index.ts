@@ -7,3 +7,12 @@ export const GET_REAL_ESTATE_ADDRESS = gql`
     }
   }
 `
+export const SEARCH_FOR_PROPERTY_QUERY = gql`
+  query SearchForProperty($input: SearchForPropertyInput!) {
+    searchForProperty(input: $input) {
+      defaultAddress {
+        display
+      }
+    }
+  }
+`

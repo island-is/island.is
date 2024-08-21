@@ -392,6 +392,12 @@ export const m = defineMessages({
     defaultMessage: 'Já, sótt er um útiveitingaleyfi',
     description: 'Some description',
   },
+  errorPropertyNumber: {
+    id: 'es.application:error.errorPropertyNumber',
+    defaultMessage: 'Verður að innihalda L og 6 tölustafi eða F og 7 tölustafi',
+    description: 'Property number is invalid',
+  },
+
   // Other info screen
   otherInfoTitle: {
     id: 'ol.application:otherInfo.title',
