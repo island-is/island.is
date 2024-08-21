@@ -42,6 +42,7 @@ import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { isAndroid } from '../../utils/devices'
 import { useApolloClient } from '@apollo/client'
@@ -62,7 +63,8 @@ const ListHeaderWrapper = styled.View`
   padding: ${({ theme }) => theme.spacing[2]}px;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing[1]}px;
-  min-height: 76px; // To prevent flickering on android
+  /* To prevent flickering on android */
+  min-height: 76px;
 `
 
 const TagsWrapper = styled.View`
@@ -80,6 +82,7 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'inbox.screenTitle' }),
         },
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -240,6 +243,7 @@ export const InboxScreen: NavigationFunctionComponent<{
 
   useConnectivityIndicator({
     componentId,
+    rightButtons: getRightButtons(),
     queryResult: res,
     refetching: refetching || markAllAsReadLoading,
   })

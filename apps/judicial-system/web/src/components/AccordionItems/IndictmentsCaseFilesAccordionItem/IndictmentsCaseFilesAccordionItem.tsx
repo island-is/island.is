@@ -44,8 +44,6 @@ import { useUpdateFilesMutation } from './updateFiles.generated'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
 
-const DDMMYYYY = 'dd.MM.yyyy'
-
 interface Props {
   policeCaseNumber: string
   caseFiles: TCaseFile[]
@@ -189,7 +187,7 @@ const CaseFile: FC<CaseFileProps> = (props) => {
 
   const [editedDisplayDate, setEditedDisplayDate] = useState<
     string | undefined
-  >(formatDate(caseFile.displayDate, DDMMYYYY) ?? undefined)
+  >(formatDate(caseFile.displayDate) ?? undefined)
   const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
@@ -199,14 +197,14 @@ const CaseFile: FC<CaseFileProps> = (props) => {
     if (trimmedFilename || trimmedDisplayDate) {
       onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
-      setEditedDisplayDate(formatDate(caseFile.displayDate, DDMMYYYY) ?? '')
+      setEditedDisplayDate(formatDate(caseFile.displayDate) ?? '')
     }
 
     setIsEditing(false)
   }
 
   const displayDate = useMemo(() => {
-    return formatDate(caseFile.displayDate ?? caseFile.created, DDMMYYYY)
+    return formatDate(caseFile.displayDate ?? caseFile.created)
   }, [caseFile.displayDate, caseFile.created])
 
   const getCursorStyle = () => {
@@ -274,7 +272,7 @@ const CaseFile: FC<CaseFileProps> = (props) => {
             <Icon icon="menu" color="blue400" />
           </Box>
           <Box width="full">
-            <AnimatePresence initial={false} exitBeforeEnter>
+            <AnimatePresence initial={false} mode="wait">
               {isEditing ? (
                 <motion.div
                   initial={{ y: 10, opacity: 0 }}
@@ -308,7 +306,7 @@ const CaseFile: FC<CaseFileProps> = (props) => {
                           <Input
                             name="fileDisplayDate"
                             size="xs"
-                            placeholder={formatDate(new Date(), DDMMYYYY)}
+                            placeholder={formatDate(new Date())}
                             autoComplete="off"
                           />
                         </InputMask>

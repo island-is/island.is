@@ -1,6 +1,7 @@
 import { Field, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { GenericLicenseDataFieldType } from '../licenceService.type'
 import { GenericUserLicenseMetaLinks } from './GenericUserLicenseMetaLinks.dto'
+import { GenericUserLicenseMetaTag } from './GenericUserLicenseMetaTag.dto'
 
 registerEnumType(GenericLicenseDataFieldType, {
   name: 'GenericLicenseDataFieldType',
@@ -20,14 +21,18 @@ export class GenericLicenseDataField {
   @Field({ nullable: true, description: 'Label of data field' })
   label?: string
 
+  @Field({
+    nullable: true,
+    description: 'Display value of data field category',
+    deprecationReason: 'Only used for cosmetic purposes, can be done better',
+  })
+  description?: string
+
   @Field({ nullable: true, description: 'Value of data field' })
   value?: string
 
-  @Field({
-    nullable: true,
-    description: 'Same as value, used in service portal',
-  })
-  description?: string
+  @Field(() => GenericUserLicenseMetaTag, { nullable: true })
+  tag?: GenericUserLicenseMetaTag
 
   @Field(() => GenericUserLicenseMetaLinks, {
     nullable: true,

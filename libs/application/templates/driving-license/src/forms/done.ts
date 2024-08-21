@@ -28,7 +28,7 @@ export const done: Form = buildForm({
           ? m.nextStepsDescriptionBEFull
           : needsHealthCertificateCondition(YES)(answers, externalData)
           ? m.nextStepsDescriptionBFull
-          : '',
+          : m.nextStepsInfoLink,
     }),
   ],
 })

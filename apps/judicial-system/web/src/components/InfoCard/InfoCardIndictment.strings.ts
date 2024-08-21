@@ -53,4 +53,14 @@ export const strings = defineMessages({
     defaultMessage: 'Dagsetning áritunar',
     description: 'Notaður sem titill á "Dagsetning" hluta af yfirliti ákæru.',
   },
+  indictmentMergedTitle: {
+    id: 'judicial.system.core:info_card_indictment.indictment_merged_title',
+    defaultMessage: 'Sameinað máli',
+    description: 'Notaður sem titill á "Sameinað" hluta af yfirliti ákæru.',
+  },
+  mergedFromTitle: {
+    id: 'judicial.system.core:info_card_indictment.merged_from_title',
+    defaultMessage: 'Sameinað úr',
+    description: 'Notaður sem titill á "Sameinað úr" hluta af yfirliti ákæru.',
+  },
 })

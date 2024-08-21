@@ -16,8 +16,9 @@ import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import { Application } from '../../graphql/types/schema'
 import { navigateTo } from '../../lib/deep-linking'
-import { useBrowser } from '../../lib/useBrowser'
+import { useBrowser } from '../../lib/use-browser'
 import { getApplicationUrl } from '../../utils/applications-utils'
+import { useTheme } from 'styled-components'
 
 interface ApplicationsModuleProps {
   applications: Application[]
@@ -36,6 +37,7 @@ export const ApplicationsModule = React.memo(
     hideSeeAllButton = false,
   }: ApplicationsModuleProps) => {
     const intl = useIntl()
+    const theme = useTheme()
     const count = applications.length
     const { openBrowser } = useBrowser()
 
@@ -75,7 +77,12 @@ export const ApplicationsModule = React.memo(
     ))
 
     return (
-      <SafeAreaView style={{ marginHorizontal: 16 }}>
+      <SafeAreaView
+        style={{
+          marginHorizontal: theme.spacing[2],
+          marginBottom: theme.spacing[2],
+        }}
+      >
         <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
           <Heading
             button={

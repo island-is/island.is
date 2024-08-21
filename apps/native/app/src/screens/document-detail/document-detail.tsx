@@ -11,7 +11,6 @@ import {
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
@@ -248,19 +247,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(true)
   })
 
-  useNavigationComponentDidDisappear(() => {
-    setVisible(false)
-    if (hasPdf) {
-      setLoaded(false)
-    }
-  })
-
   useEffect(() => {
     if (Document.opened) {
       return
     }
 
-    // Lets mark the document as read in the cache and decrease unreadCount if it is not 0
+    // Let's mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
         __typename: 'DocumentV2',

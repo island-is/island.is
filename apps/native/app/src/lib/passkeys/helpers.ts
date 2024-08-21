@@ -68,10 +68,6 @@ export const formatAuthenticationOptions = (
 ) => {
   return {
     ...options,
-    allowCredentials: options.allowCredentials.map((cred) => ({
-      ...cred,
-      id: padChallenge(convertBase64UrlToBase64String(cred.id)),
-    })),
     challenge: padChallenge(convertBase64UrlToBase64String(options.challenge)),
   }
 }

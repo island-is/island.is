@@ -6,10 +6,15 @@ import { AnimatePresence } from 'framer-motion'
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { capitalize } from '@island.is/judicial-system/formatters'
-import { isDistrictCourtUser } from '@island.is/judicial-system/types'
+import {
+  isDistrictCourtUser,
+  isIndictmentCase,
+} from '@island.is/judicial-system/types'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  CaseTag,
   ContextMenu,
+  getIndictmentCaseStateTag,
   TagAppealState,
   TagCaseState,
   UserContext,
@@ -25,7 +30,10 @@ import {
   TableContainer,
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
-import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  Case,
+  CaseListEntry,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCaseList,
   useSortCases,
@@ -132,6 +140,10 @@ const PastCasesTable: FC<Props> = ({ cases, loading = false, testid }) => {
         }
       >
         {sortedData.map((column) => {
+          const indictmentCaseTag = isIndictmentCase(column.type)
+            ? getIndictmentCaseStateTag(column as Case, user)
+            : null
+
           return (
             <tr
               className={styles.row}
@@ -145,7 +157,7 @@ const PastCasesTable: FC<Props> = ({ cases, loading = false, testid }) => {
                   appealCaseNumber={column.appealCaseNumber}
                 />
               </td>
-              <td className={cn(styles.td, styles.largeColumn)}>
+              <td className={styles.largeColumn}>
                 <DefendantInfo defendants={column.defendants} />
               </td>
               <td>
@@ -163,14 +175,21 @@ const PastCasesTable: FC<Props> = ({ cases, loading = false, testid }) => {
                   marginRight={column.appealState ? 1 : 0}
                   marginBottom={column.appealState ? 1 : 0}
                 >
-                  <TagCaseState
-                    caseState={column.state}
-                    caseType={column.type}
-                    isCourtRole={isDistrictCourtUser(user)}
-                    isValidToDateInThePast={column.isValidToDateInThePast}
-                    indictmentRulingDecision={column.indictmentRulingDecision}
-                    indictmentDecision={column.indictmentDecision}
-                  />
+                  {indictmentCaseTag ? (
+                    <CaseTag
+                      color={indictmentCaseTag.color}
+                      text={formatMessage(indictmentCaseTag.text)}
+                    />
+                  ) : (
+                    <TagCaseState
+                      caseState={column.state}
+                      caseType={column.type}
+                      isCourtRole={isDistrictCourtUser(user)}
+                      isValidToDateInThePast={column.isValidToDateInThePast}
+                      indictmentRulingDecision={column.indictmentRulingDecision}
+                      indictmentDecision={column.indictmentDecision}
+                    />
+                  )}
                 </Box>
                 {column.appealState && (
                   <TagAppealState

@@ -67,7 +67,7 @@ export class OccupationalLicensesService {
       case 'WAIVED':
         return OccupationalLicenseStatus.waived
       default:
-        this.logger.log('Unknown health directorate status', {
+        this.logger.warn('Unknown health directorate status', {
           category: LOG_CATEGORY,
           status: status,
         })

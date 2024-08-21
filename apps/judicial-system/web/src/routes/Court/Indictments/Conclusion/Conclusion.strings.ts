@@ -145,4 +145,9 @@ export const strings = defineMessages({
     description:
       'Notaður sem skýritexti í tegund þinghalds valkosti á Niðurstaða skrefi.',
   },
+  connectedCaseNumbersTitle: {
+    id: 'judicial.system.core:court.indictments.conclusion.connected_case_numbers_title',
+    defaultMessage: 'Málsnúmer',
+    description: 'Notaður sem titill á tengd mál textabox á Niðurstaða skrefi.',
+  },
 })

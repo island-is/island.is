@@ -44,9 +44,7 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
-        rightButtons: initialized
-          ? getRightButtons({ screen: 'More', theme: theme as any })
-          : [],
+        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -87,17 +85,11 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({ screen: 'More' }),
+    rightButtons: getRightButtons(),
   })
 
   useNavigationComponentDidAppear(() => {
     setHiddenContent(false)
-    // This is needed to make sure we show the settings icon on a cold boot
-    Navigation.mergeOptions(componentId, {
-      topBar: {
-        rightButtons: getRightButtons({ screen: 'More' }),
-      },
-    })
   }, componentId)
 
   // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717

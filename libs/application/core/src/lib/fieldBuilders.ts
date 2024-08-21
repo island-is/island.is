@@ -171,6 +171,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
   } = data
 
   return {
@@ -181,6 +183,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -602,8 +606,10 @@ export function buildImageField(
     marginTop,
     marginBottom,
     condition,
-    imageWidth = 'full',
     titleVariant = 'h4',
+    // imageWidth and imagePosition can be arrays [sm,  md, lg, xl] for different screen sizes
+    imageWidth = 'full',
+    imagePosition = 'left',
   } = data
   return {
     children: undefined,
@@ -616,6 +622,7 @@ export function buildImageField(
     marginBottom,
     condition,
     titleVariant,
+    imagePosition,
     type: FieldTypes.IMAGE,
     component: FieldComponents.IMAGE,
   }

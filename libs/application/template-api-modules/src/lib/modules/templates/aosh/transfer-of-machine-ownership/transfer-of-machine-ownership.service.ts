@@ -44,7 +44,9 @@ export class TransferOfMachineOwnershipTemplateService extends BaseTemplateApiSe
   async getMachines({
     auth,
   }: TemplateApiModuleActionProps): Promise<MachinesWithTotalCount> {
-    const result = await this.workMachineClientService.getMachines(auth)
+    const result = await this.workMachineClientService.getMachines(auth, {
+      showDeregisteredMachines: true,
+    })
     if (!result || !result.totalCount) {
       throw new TemplateApiError(
         {

@@ -1,4 +1,8 @@
-import { EmailModule, EmailService } from '@island.is/email-service'
+import {
+  EmailModule,
+  EmailService,
+  emailModuleConfig,
+} from '@island.is/email-service'
 import { LoggingModule } from '@island.is/logging'
 import { Test } from '@nestjs/testing'
 import { ZendeskModule, ZendeskService } from '@island.is/clients/zendesk'
@@ -51,7 +55,7 @@ describe('communicationsService', () => {
     const moduleRef = await Test.createTestingModule({
       imports: [
         LoggingModule,
-        EmailModule.register({ useTestAccount: true }),
+        EmailModule,
         ZendeskModule.register({
           email: 'email',
           token: 'token',
@@ -61,7 +65,7 @@ describe('communicationsService', () => {
         FileStorageModule,
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [FileStorageConfig, CommunicationsConfig],
+          load: [FileStorageConfig, CommunicationsConfig, emailModuleConfig],
         }),
       ],
       providers: [CommunicationsService],

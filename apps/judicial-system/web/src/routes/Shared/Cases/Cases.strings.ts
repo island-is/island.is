@@ -16,33 +16,6 @@ export const cases = {
     },
   }),
   activeRequests: {
-    table: {
-      headers: defineMessages({
-        type: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.type',
-          defaultMessage: 'Tegund',
-          description:
-            'Notaður sem titill fyrir tegund dálk í lista yfir mál í vinnslu.',
-        },
-        date: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.date',
-          defaultMessage: 'Stofnað/Fyrirtaka',
-          description:
-            'Notaður sem titill fyrir dagsetningardálk í lista yfir óafgreidd mál í vinnslu.',
-        },
-        created: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.created',
-          defaultMessage: 'Stofnað',
-          description:
-            'Notaður sem titill fyrir dagsetningu í lista yfir óafgreidd mál í vinnslu.',
-        },
-        prosecutor: {
-          id: 'judicial.system.core:cases.active_requests.table.headers.prosecutor',
-          defaultMessage: 'Sækjandi',
-          description: 'Notaður sem titill fyrir sækjanda í málalista.',
-        },
-      }),
-    },
     title: defineMessage({
       id: 'judicial.system.core:cases.active_requests.title',
       defaultMessage: 'Mál í vinnslu',
