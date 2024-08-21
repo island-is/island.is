@@ -32,7 +32,7 @@ const UploadFiles: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-  const { handleRemove, update } = useS3Upload(workingCase.id)
+  const { handleRemove, upt } = useS3Upload(workingCase.id)
   const [updateFilesMutation] = useUpdateFilesMutation()
 
   useEffect(() => {
@@ -47,12 +47,22 @@ const UploadFiles: FC<Props> = (props) => {
     }))
   }
 
+  const mapFileToTUploadFile = (files: File[]): TUploadFile[] => {
+    return files.map((file) => ({
+      id: file.name,
+      name: file.name,
+      key: file.name,
+      type: 'application/pdf',
+      originalFileObj: file,
+    }))
+  }
+
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      update(acceptedFiles)
+      upt(mapFileToTUploadFile(acceptedFiles))
       setFileList((prev) => [...prev, ...mapFileToUploadFile(acceptedFiles)])
     },
-    [update],
+    [upt],
   )
 
   const { getRootProps, getInputProps, open } = useDropzone({
@@ -121,7 +131,6 @@ const UploadFiles: FC<Props> = (props) => {
     }
   }
 
-  console.log(fileList)
   return (
     <div className={styles.container} {...getRootProps}>
       <Box marginBottom={1}>

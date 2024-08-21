@@ -156,6 +156,7 @@ const uploadToS3 = (
   presignedPost: PresignedPost,
   onProgress: (percent: number) => void,
 ) => {
+  console.log(file, presignedPost)
   const promise = new Promise((resolve, reject) => {
     const request = new XMLHttpRequest()
     request.withCredentials = true
@@ -235,8 +236,8 @@ const useS3Upload = (caseId: string) => {
     [limitedAccess, limitedAccessCreateFile, createFile, caseId],
   )
 
-  const update = useCallback(
-    async (files: any[]) => {
+  const upt = useCallback(
+    async (files: TUploadFile[]) => {
       const mutation = limitedAccess
         ? limitedAccessCreatePresignedPost
         : createPresignedPost
@@ -266,12 +267,18 @@ const useS3Upload = (caseId: string) => {
 
       files.map(async (file) => {
         const presignedPost = await getPresignedPost(file)
-        uploadToS3(file, presignedPost, () => {
+        await uploadToS3(file, presignedPost, () => {
           console.log('update')
+        })
+
+        await addFileToCaseState({
+          ...file,
+          key: presignedPost.key,
         })
       })
     },
     [
+      addFileToCaseState,
       caseId,
       createPresignedPost,
       limitedAccess,
@@ -476,7 +483,7 @@ const useS3Upload = (caseId: string) => {
     handleRetry,
     handleRemove,
     handleUploadFromPolice,
-    update,
+    upt,
   }
 }
 
