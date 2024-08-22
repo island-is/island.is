@@ -71,7 +71,7 @@ const MainScreen = () => {
     const fetchAllContentTypes = async () => {
       const response = await cma.contentType.getMany({
         query: {
-          limit: 200,
+          limit: 1000,
         },
       })
       response.items.sort(sortAlpha('name'))
@@ -148,6 +148,10 @@ const MainScreen = () => {
             setContentTypeId(ev.target.value)
             setPage(0)
             pageRef.current = 0
+
+            if (!ev.target.value) {
+              setOrganizationId('')
+            }
           }}
         >
           <Select.Option value="">Any</Select.Option>
