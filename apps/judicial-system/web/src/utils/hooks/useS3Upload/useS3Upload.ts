@@ -273,34 +273,6 @@ const useS3Upload = (caseId: string) => {
     [limitedAccess, limitedAccessCreateFile, createFile, caseId],
   )
 
-  const upt = useCallback(
-    async (files: TUploadFile[]) => {
-      const promises = files.map(async (file) => {
-        try {
-          const presignedPost = await getPresignedPost(file)
-          await uploadToS3(file, presignedPost, () => {
-            console.log('update')
-          })
-
-          await addFileToCaseState({
-            ...file,
-            key: presignedPost.key,
-          })
-
-          return true
-        } catch (e) {
-          toast.error(formatMessage(strings.uploadFailed))
-          return false
-        }
-      })
-
-      return Promise.all(promises).then((results) =>
-        results.every((result) => result),
-      )
-    },
-    [addFileToCaseState, formatMessage, getPresignedPost],
-  )
-
   const handleUpload = useCallback(
     async (
       files: TUploadFile[],
@@ -308,10 +280,9 @@ const useS3Upload = (caseId: string) => {
     ) => {
       const promises = files.map(async (file) => {
         try {
-          updateFile({ ...file, status: 'uploading' })
+          updateFile({ ...file, name: file.name, status: 'uploading' })
 
           const presignedPost = await getPresignedPost(file)
-          console.log('uploading', file)
 
           await uploadToS3(file, presignedPost, (percent) => {
             updateFile({ ...file, percent })
@@ -465,7 +436,6 @@ const useS3Upload = (caseId: string) => {
     handleRetry,
     handleRemove,
     handleUploadFromPolice,
-    upt,
   }
 }
 

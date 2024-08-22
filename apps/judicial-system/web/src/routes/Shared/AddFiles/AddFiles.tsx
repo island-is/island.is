@@ -3,8 +3,9 @@ import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { useRouter } from 'next/router'
+import { uuid } from 'uuidv4'
 
-import { Box, Text, toast } from '@island.is/island-ui/core'
+import { Box, Text, toast, UploadFile } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isDefenceUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -21,6 +22,7 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useUpdateFilesMutation } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
+import { TEditableCaseFile } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -35,48 +37,52 @@ const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
-  const [visibleModal, setVisibleModal] = useState<'filesSent'>()
+  const [visibleModal, setVisibleModal] = useState<'sendFiles'>()
+  const [filesToUpload, setFilesToUpload] = useState<TEditableCaseFile[]>([])
   const router = useRouter()
   const { user } = useContext(UserContext)
   const previousRoute = isDefenceUser(user)
     ? `${constants.DEFENDER_INDICTMENT_ROUTE}/${workingCase.id}`
     : `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`
 
-  const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
-    useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRetry, handleRemove } = useS3Upload(
-    workingCase.id,
-  )
-  const [updateFilesMutation] = useUpdateFilesMutation()
+  const { uploadFiles } = useUploadFiles(workingCase.caseFiles)
+  const { handleUpload, handleRetry } = useS3Upload(workingCase.id)
+
+  const updateFileToUpload = useCallback((file: UploadFile, newId?: string) => {
+    setFilesToUpload((previous) =>
+      previous.map((f) => {
+        return f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f
+      }),
+    )
+  }, [])
 
   const handleFileUpload = useCallback(
-    (files: File[]) => {
-      handleUpload(
-        addUploadFiles(files, CaseFileCategory.PROSECUTOR_CASE_FILE),
-        updateUploadFile,
-      )
+    async (files: UploadFile[]) => {
+      console.log(files)
+      const filesUploaded = await handleUpload(files, updateFileToUpload)
+
+      if (filesUploaded) {
+        setVisibleModal('sendFiles')
+      }
     },
-    [addUploadFiles, handleUpload, updateUploadFile],
+    [handleUpload, updateFileToUpload],
   )
 
   const handleRetryUpload = useCallback(
     (file: TUploadFile) => {
-      handleRetry(file, updateUploadFile)
+      handleRetry(file, updateFileToUpload)
     },
-    [handleRetry, updateUploadFile],
+    [handleRetry, updateFileToUpload],
   )
 
-  const handleRemoveFile = useCallback(
-    (file: TUploadFile) => {
-      handleRemove(file, removeUploadFile)
-    },
-    [handleRemove, removeUploadFile],
-  )
+  const handleRemoveFile = useCallback((file: TUploadFile) => {
+    setFilesToUpload((prev) => prev.filter((p) => p.id !== file.id))
+  }, [])
 
   const handleRename = useCallback(
     async (fileId: string, newName?: string, newDisplayDate?: string) => {
       let newDate: Date | null = null
-      const fileToUpdate = uploadFiles.findIndex((item) => item.id === fileId)
+      const fileToUpdate = filesToUpload.findIndex((item) => item.id === fileId)
 
       if (fileToUpdate === -1) {
         return
@@ -93,42 +99,27 @@ const AddFiles: FC = () => {
       }
 
       if (newName) {
-        uploadFiles[fileToUpdate].userGeneratedFilename = newName
+        filesToUpload[fileToUpdate].userGeneratedFilename = newName
       }
 
       if (newDate) {
-        uploadFiles[fileToUpdate].displayDate = newDate.toISOString()
+        filesToUpload[fileToUpdate].displayDate = newDate.toISOString()
       }
 
-      updateUploadFile(uploadFiles[fileToUpdate])
-
-      const { errors } = await updateFilesMutation({
-        variables: {
-          input: {
-            caseId: workingCase.id,
-            files: [
-              {
-                id: fileId,
-                userGeneratedFilename: newName,
-                ...(newDate && { displayDate: newDate.toISOString() }),
-              },
-            ],
-          },
-        },
-      })
-
-      if (errors) {
-        toast.error(formatMessage(errorMessages.renameFailedErrorMessage))
-      }
+      updateFileToUpload(uploadFiles[fileToUpdate])
     },
-    [
-      formatMessage,
-      updateFilesMutation,
-      updateUploadFile,
-      uploadFiles,
-      workingCase.id,
-    ],
+    [filesToUpload, formatMessage, updateFileToUpload, uploadFiles],
   )
+
+  const mp = (files: UploadFile[]): TEditableCaseFile[] => {
+    return files.map((file) => ({
+      name: file.name,
+      userGeneratedFilename: file.name,
+      displayDate: new Date().toISOString(),
+      type: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      id: uuid(),
+    }))
+  }
 
   return (
     <PageLayout
@@ -151,10 +142,8 @@ const AddFiles: FC = () => {
           description={formatMessage(strings.uploadFilesDescription)}
         />
         <UploadFiles
-          files={uploadFiles.filter(
-            (file) => file.category === CaseFileCategory.PROSECUTOR_CASE_FILE,
-          )}
-          onChange={handleFileUpload}
+          files={filesToUpload}
+          onChange={(files) => setFilesToUpload(mp(files))}
           onRetry={handleRetryUpload}
           onDelete={handleRemoveFile}
           onRename={handleRename}
@@ -164,10 +153,12 @@ const AddFiles: FC = () => {
         <FormFooter
           previousUrl={previousRoute}
           nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={() => setVisibleModal('filesSent')}
+          onNextButtonClick={() =>
+            handleFileUpload(filesToUpload as UploadFile[])
+          }
         />
       </FormContentContainer>
-      {visibleModal === 'filesSent' && (
+      {visibleModal === 'sendFiles' && (
         <Modal
           title={formatMessage(strings.filesSentModalTitle)}
           text={formatMessage(strings.filesSentModalText)}

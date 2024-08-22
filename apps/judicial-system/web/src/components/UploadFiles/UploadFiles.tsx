@@ -13,7 +13,7 @@ import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'
 
 interface Props {
-  files: UploadFile[]
+  files: TEditableCaseFile[]
   onChange: (files: File[]) => void
   onRetry: (file: TUploadFile) => void
   onDelete: (file: TUploadFile) => void
@@ -26,14 +26,6 @@ const UploadFiles: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const { onOpen } = useFileList({ caseId: workingCase.id })
-
-  const mapUpdateFileToEditableCaseFile = (
-    file: UploadFile,
-  ): TEditableCaseFile => ({
-    ...file,
-    displayText: file.name,
-    displayDate: new Date().toISOString(),
-  })
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
@@ -68,10 +60,10 @@ const UploadFiles: FC<Props> = (props) => {
         </Button>
       </Box>
       {files.map((file) => (
-        <Box key={file.id} marginBottom={1} width="full">
+        <Box key={file.name} marginBottom={1} width="full">
           <EditableCaseFile
             enableDrag={false}
-            caseFile={mapUpdateFileToEditableCaseFile(file)}
+            caseFile={file}
             onOpen={onOpen}
             onRename={onRename}
             onDelete={onDelete}
