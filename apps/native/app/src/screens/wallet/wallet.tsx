@@ -54,15 +54,9 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
-        leftButtons: [
-          {
-            id: ButtonRegistry.ScanLicenseButton,
-            testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
-            icon: require('../../assets/icons/navbar-scan.png'),
-            color: theme.color.blue400,
-          },
-        ],
+        rightButtons: initialized
+          ? getRightButtons({ screen: 'Wallet', theme: theme as any })
+          : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -134,7 +128,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ screen: 'Wallet' }),
     queryResult: [res, resPassport],
     refetching,
   })

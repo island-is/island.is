@@ -43,7 +43,6 @@ const { useNavigationOptions, getNavigationOptions } =
         searchBar: {
           visible: false,
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -100,7 +99,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
     refetching,
     queryResult: [applicationsRes, res],
   })

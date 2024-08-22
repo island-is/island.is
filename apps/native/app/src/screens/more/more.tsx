@@ -1,5 +1,5 @@
 import { FamilyMemberCard, ListButton } from '@ui'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Image,
@@ -44,7 +44,9 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        rightButtons: initialized
+          ? getRightButtons({ screen: 'More', theme: theme as any })
+          : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -85,7 +87,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ screen: 'More' }),
   })
 
   useNavigationComponentDidAppear(() => {
