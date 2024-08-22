@@ -370,7 +370,10 @@ export class EndorsementListController {
   @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
   @ApiParam({ name: 'fileType', type: String, enum: ['pdf', 'csv'] })
-  @ApiOkResponse({ description: 'Presigned URL for the exported file', type: String })
+  @ApiOkResponse({
+    description: 'Presigned URL for the exported file',
+    type: String,
+  })
   @Get(':listId/export/:fileType')
   @Audit()
   async exportEndorsementList(
@@ -384,16 +387,15 @@ export class EndorsementListController {
     @CurrentUser() user: User, // Get the current user
   ): Promise<{ url: string }> {
     if (!['pdf', 'csv'].includes(fileType)) {
-      throw new BadRequestException('Invalid file type. Allowed values are "pdf" or "csv".')
+      throw new BadRequestException(
+        'Invalid file type. Allowed values are "pdf" or "csv".',
+      )
     }
-  
+
     return await this.endorsementListService.exportList(
       endorsementList.id,
       user,
       fileType,
     )
   }
-  
-
-  
 }
