@@ -1,5 +1,5 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
-import { LanguageType } from './LanguageType.model'
+import { LanguageType } from './languageType.model'
 import { Field as FieldModel } from './field.model'
 
 @ObjectType('FormSystemScreen')

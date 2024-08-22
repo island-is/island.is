@@ -69,24 +69,6 @@ export class FormCertificationTypeInput {
   type?: CertificationTypeDtoTypeEnum
 }
 
-@InputType('FormSystemFormResponseInput')
-export class FormResponseInput {
-  @Field(() => FormInput, { nullable: true })
-  form?: FormInput
-
-  @Field(() => [FieldTypeInput], { nullable: 'itemsAndList' })
-  fieldTypes?: FieldTypeInput[]
-
-  @Field(() => [FormCertificationTypeInput], { nullable: 'itemsAndList' })
-  certificationTypes?: FormCertificationTypeInput[]
-
-  @Field(() => [ListTypeInput], { nullable: 'itemsAndList' })
-  listTypes?: ListTypeInput[]
-
-  @Field(() => [FormInput], { nullable: 'itemsAndList' })
-  forms?: FormInput[]
-}
-
 @InputType('FormSystemFormInput')
 export class FormInput {
   @Field(() => String, { nullable: true })
@@ -139,4 +121,22 @@ export class FormInput {
 
   @Field(() => [FieldInput], { nullable: 'itemsAndList' })
   fields?: FieldInput[]
+}
+
+@InputType('FormSystemFormResponseInput')
+export class FormResponseInput {
+  @Field(() => FormInput, { nullable: true })
+  form?: FormInput
+
+  @Field(() => [FieldTypeInput], { nullable: 'itemsAndList' })
+  fieldTypes?: FieldTypeInput[]
+
+  @Field(() => [FormCertificationTypeInput], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationTypeInput[]
+
+  @Field(() => [ListTypeInput], { nullable: 'itemsAndList' })
+  listTypes?: ListTypeInput[]
+
+  @Field(() => [FormInput], { nullable: 'itemsAndList' })
+  forms?: FormInput[]
 }

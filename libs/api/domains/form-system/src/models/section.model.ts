@@ -1,6 +1,6 @@
 import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { SectionDtoSectionTypeEnum } from '@island.is/clients/form-system'
-import { LanguageType } from './LanguageType.model'
+import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 
 @ObjectType('FormSystemSection')

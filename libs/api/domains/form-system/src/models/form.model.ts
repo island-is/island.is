@@ -6,24 +6,7 @@ import { Section } from './section.model'
 import { ListType } from './listItem.model'
 import { Field as FieldType } from './field.model'
 import { LanguageType } from './languageType.model'
-
-@ObjectType('FormSystemFormResponse')
-export class FormResponse {
-  @Field(() => Form, { nullable: true })
-  form?: Form
-
-  @Field(() => [FieldType], { nullable: 'itemsAndList' })
-  fieldTypes?: FieldType[]
-
-  @Field(() => [FormCertificationType], { nullable: 'itemsAndList' })
-  certificationTypes?: FormCertificationType[]
-
-  @Field(() => [ListType], { nullable: 'itemsAndList' })
-  listTypes?: ListType[]
-
-  @Field(() => [Form], { nullable: 'itemsAndList' })
-  forms?: Form[]
-}
+import { Screen as ScreenModel } from './screen.model'
 
 @ObjectType('FormSystemForm')
 export class Form {
@@ -72,9 +55,27 @@ export class Form {
   @Field(() => [Section], { nullable: 'itemsAndList' })
   sections?: Section[]
 
-  @Field(() => [Screen], { nullable: 'itemsAndList' })
-  screens?: Screen[]
+  @Field(() => [ScreenModel], { nullable: 'itemsAndList' })
+  screens?: ScreenModel[]
 
   @Field(() => [FieldModel], { nullable: 'itemsAndList' })
   fields?: FieldModel[]
+}
+
+@ObjectType('FormSystemFormResponse')
+export class FormResponse {
+  @Field(() => Form, { nullable: true })
+  form?: Form
+
+  @Field(() => [FieldType], { nullable: 'itemsAndList' })
+  fieldTypes?: FieldType[]
+
+  @Field(() => [FormCertificationType], { nullable: 'itemsAndList' })
+  certificationTypes?: FormCertificationType[]
+
+  @Field(() => [ListType], { nullable: 'itemsAndList' })
+  listTypes?: ListType[]
+
+  @Field(() => [Form], { nullable: 'itemsAndList' })
+  forms?: Form[]
 }

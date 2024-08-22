@@ -1,5 +1,5 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-import { LanguageType } from './LanguageType.model'
+import { LanguageType } from './languageType.model'
 import { Form } from './form.model'
 
 @ObjectType('FormSystemOrganization')
