@@ -23,6 +23,8 @@ import {
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
+import { ExportUrlResponse } from './dto/exportUrl.response'
+import { ExportEndorsementListInput } from './dto/exportEndorsementList.input'
 
 @Injectable()
 export class EndorsementSystemService {
@@ -219,4 +221,19 @@ export class EndorsementSystemService {
       .endorsementListControllerEmailEndorsementsPDF(endorsementList)
       .catch(this.handleError.bind(this))
   }
+
+  async endorsementListControllerExportList(
+    input: ExportEndorsementListInput,
+    auth: Auth,
+  ): Promise<ExportUrlResponse> {
+    return await this.endorsementListApiWithAuth(auth)
+      .endorsementListControllerExportEndorsementList({
+        listId: input.listId,
+        fileType: input.fileType,
+      })
+      .catch(this.handleError.bind(this));
+
+  }
+
+ 
 }

@@ -28,6 +28,7 @@ import { NationalRegistryV3ClientService } from '@island.is/clients/national-reg
 import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
+import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
 interface CreateInput extends EndorsementListDto {
   owner: string
@@ -678,8 +679,8 @@ export class EndorsementListService {
   async exportList(
     listId: string,
     user: User,
-    fileType: 'pdf' | 'csv',
-  ): Promise<{ url: string }> {
+    fileType: string,
+  ): Promise<EndorsementListExportUrlResponse> {
     try {
       this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId });
       
@@ -700,7 +701,7 @@ export class EndorsementListService {
 
       // Create file buffer
       const fileBuffer =
-        fileType === 'pdf'
+        fileType == 'pdf'
           ? await this.createPdfBuffer(endorsementList)
           : this.createCsvBuffer(endorsementList)
 
@@ -773,7 +774,7 @@ export class EndorsementListService {
   private async uploadFileToS3(
     fileBuffer: Buffer,
     filename: string,
-    fileType: 'pdf' | 'csv',
+    fileType: string,
   ): Promise<void> {
     try {
       await this.awsService.uploadFile(

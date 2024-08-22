@@ -50,6 +50,7 @@ import { EndorsementListsInterceptor } from './interceptors/endorsementLists.int
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
 import { Response } from 'express'
+import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -369,10 +370,10 @@ export class EndorsementListController {
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
-  @ApiParam({ name: 'fileType', type: String, enum: ['pdf', 'csv'] })
+  @ApiParam({ name: 'fileType', type: String })
   @ApiOkResponse({
     description: 'Presigned URL for the exported file',
-    type: String,
+    type: EndorsementListExportUrlResponse,
   })
   @Get(':listId/export/:fileType')
   @Audit()
@@ -383,9 +384,9 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-    @Param('fileType') fileType: 'pdf' | 'csv',
+    @Param('fileType') fileType: 'string',
     @CurrentUser() user: User, // Get the current user
-  ): Promise<{ url: string }> {
+  ): Promise<EndorsementListExportUrlResponse> {
     if (!['pdf', 'csv'].includes(fileType)) {
       throw new BadRequestException(
         'Invalid file type. Allowed values are "pdf" or "csv".',
