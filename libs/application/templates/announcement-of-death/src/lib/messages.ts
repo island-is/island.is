@@ -227,10 +227,15 @@ export const m = defineMessages({
     defaultMessage: 'Nei',
     description: 'Firearms step answer no',
   },
-  firearmsApplicantTitle: {
-    id: 'aod.application:firearmsApplicantTitle',
-    defaultMessage: 'Upplýsingar um umsækjanda',
-    description: 'Firearms step applicant title',
+  firearmsApplicantHeader: {
+    id: 'aod.application:firearmsApplicantHeader',
+    defaultMessage: 'Skráning vörsluaðila:',
+    description: '',
+  },
+  firearmsApplicantOverviewHeader: {
+    id: 'aod.application:firearmsApplicantOverviewHeader',
+    defaultMessage: 'Skotvopn - vörsluaðili',
+    description: '',
   },
   firearmsApplicantName: {
     id: 'aod.application:firearmsApplicantName',
