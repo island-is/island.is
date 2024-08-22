@@ -29,6 +29,11 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 
+<<<<<<< HEAD
+=======
+const ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME =
+  'island-is-dev-exports-endorsement-system' //process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME
+>>>>>>> 2db1c127c561ffd9f1150db0d179d9a4057007de
 
 interface CreateInput extends EndorsementListDto {
   owner: string
