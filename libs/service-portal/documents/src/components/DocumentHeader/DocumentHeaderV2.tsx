@@ -39,48 +39,48 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
 
   return (
     <>
-    <Box tabIndex={0} outline="none" ref={wrapper} display="flex">
-      <p className={helperStyles.srOnly} aria-live="assertive">
-        {subject}
-      </p>
-      {avatar && <AvatarImage large img={avatar} background="blue100" />}
-      <Box
-        display="flex"
-        flexDirection="column"
-        justifyContent="spaceBetween"
-        marginBottom={4}
-        marginLeft={2}
-      >
-        {sender && (
-          <Text variant="medium" fontWeight="semiBold">
-            {sender}
-          </Text>
-        )}
+      <Box tabIndex={0} outline="none" ref={wrapper} display="flex">
+        <p className={helperStyles.srOnly} aria-live="assertive">
+          {subject}
+        </p>
+        {avatar && <AvatarImage large img={avatar} background="blue100" />}
         <Box
-          className={styles.titleText}
           display="flex"
-          justifyContent="flexStart"
-          alignItems="center"
+          flexDirection="column"
+          justifyContent="spaceBetween"
+          marginBottom={4}
+          marginLeft={2}
         >
-          {date && <Text variant="medium">{date}</Text>}
-          {category && (
-            <Box className={styles.categoryDivider}>
-              <Text variant="medium">{category.name ?? ''}</Text>
-            </Box>
+          {sender && (
+            <Text variant="medium" fontWeight="semiBold">
+              {sender}
+            </Text>
           )}
+          <Box
+            className={styles.titleText}
+            display="flex"
+            justifyContent="flexStart"
+            alignItems="center"
+          >
+            {date && <Text variant="medium">{date}</Text>}
+            {category && (
+              <Box className={styles.categoryDivider}>
+                <Text variant="medium">{category.name ?? ''}</Text>
+              </Box>
+            )}
+          </Box>
         </Box>
+        {actionBar && (
+          <Box className={styles.actionBarWrapper}>
+            <DocumentActionBar spacing={1} {...actionBar} />
+          </Box>
+        )}
       </Box>
-      {actionBar && (
-        <Box className={styles.actionBarWrapper}>
-          <DocumentActionBar spacing={1} {...actionBar} />
-        </Box>
-      )}
-    </Box>
       {actions && (
         <Box>
           <DocumentActions />
         </Box>
       )}
-      </>
+    </>
   )
 }
