@@ -241,7 +241,7 @@ export class EstateTemplateService extends BaseTemplateApiService {
             attachmentAnswerData[index]?.key
           ]
           const content =
-            (await this.awsService.getFileBase64({ fileName })) ?? ''
+            (await this.awsService.getFileBase64({ s3Uri: fileName })) ?? ''
           attachments.push({ name, content })
         }
       }

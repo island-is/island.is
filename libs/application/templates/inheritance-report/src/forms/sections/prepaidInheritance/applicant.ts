@@ -61,6 +61,7 @@ export const prePaidApplicant = buildSection({
             { label: m.heir, value: RelationEnum.HEIR },
             { label: m.representative, value: RelationEnum.REPRESENTATIVE },
             { label: m.grantor, value: RelationEnum.GRANTOR },
+            { label: m.advocate, value: RelationEnum.ADVOCATE },
           ],
         }),
       ],
