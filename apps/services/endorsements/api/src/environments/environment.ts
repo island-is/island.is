@@ -3,7 +3,6 @@ declare const process: {
     [key: string]: string
   }
 }
-// const ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME = 'island-is-dev-exports-endorsement-system' //process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME
 
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
 

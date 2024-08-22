@@ -29,7 +29,7 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 
-g
+
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -702,7 +702,7 @@ export class EndorsementListService {
         : this.createCsvBuffer(endorsementList);
 
       // Upload to S3
-      const filename = `${listId}-${new Date().toISOString().replace(/[:.]/g, '-')}.${fileType}`;
+      const filename = `undirskriftalisti-${listId}-${new Date().toISOString().replace(/[:.]/g, '-')}.${fileType}`;
       await this.uploadFileToS3(fileBuffer, filename, fileType);
 
       // Generate presigned URL with 60 minutes expiration
@@ -716,6 +716,7 @@ export class EndorsementListService {
   }
 
   private async fetchEndorsementList(listId: string, user: User): Promise<EndorsementList | null> {
+    // Only admin or list owner can access the list
     const isAdmin = this.hasAdminScope(user);
     return this.endorsementListModel.findOne({
       where: {
