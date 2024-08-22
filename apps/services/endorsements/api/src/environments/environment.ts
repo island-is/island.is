@@ -3,6 +3,7 @@ declare const process: {
     [key: string]: string
   }
 }
+// const ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME = 'island-is-dev-exports-endorsement-system' //process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME
 
 const isProductionEnvironment = process.env.NODE_ENV === 'production'
 
@@ -20,6 +21,7 @@ const devConfig = {
     sender: 'devland.is',
     address: 'development@island.is',
   },
+  exportsBucketName: process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
 }
 
 const prodConfig = {
@@ -38,6 +40,7 @@ const prodConfig = {
     sender: process.env.EMAIL_FROM_NAME ?? '',
     address: process.env.EMAIL_FROM_ADDRESS ?? '',
   },
+  exportsBucketName: process.env.ENDORSEMENT_SYSTEM_EXPORTS_BUCKET_NAME,
 }
 
 export default isProductionEnvironment ? prodConfig : devConfig
