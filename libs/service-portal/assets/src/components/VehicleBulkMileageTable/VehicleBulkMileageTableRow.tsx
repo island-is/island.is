@@ -1,19 +1,10 @@
-import {
-  Table as T,
-  Box,
-  Pagination,
-  Button,
-  Input,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-import {
-  ExpandRow,
-  ExpandHeader,
-  NestedFullTable,
-} from '@island.is/service-portal/core'
-import { helperStyles } from '@island.is/island-ui/theme'
-import * as styles from './VehicleBulkMileageTable.css'
-import { useState } from 'react'
+import { Box, Button } from '@island.is/island-ui/core'
+import { ExpandRow, NestedFullTable } from '@island.is/service-portal/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { MessageDescriptor } from 'react-intl'
+import { m as coreMessages } from '@island.is/service-portal/core'
+import { SubmissionStatus } from '../../screens/VehicleBulkMileage/VehicleBulkMileageState'import { useFormContext } from 'react-hook-form'
+}
 
 interface Props {
   id: string
@@ -22,18 +13,30 @@ interface Props {
   onSaveClick: (mileage: number, permNo: string) => void
 }
 
-export const VehicleBulkMileageTableRow = (props: Props) => {
-  const [mileage, setMileage] = useState<number>()
+const getTag = (
+  submissionStatus: SubmissionStatus,
+): {
+  icon: 'checkmarkCircle' | 'closeCircle' | 'pencil'
+  text: MessageDescriptor
+} => {
+  switch (submissionStatus) {
+    case 'success':
+      return { icon: 'checkmarkCircle', text: coreMessages.saved }
+    case 'failure':
+      return { icon: 'closeCircle', text: coreMessages.companyTitle }
 
-  const onClick = (): void => {
-    if (mileage) {
-      props.onSaveClick(mileage, props.id)
-    }
+    default:
+      return { icon: 'pencil', text: coreMessages.save }
   }
+}
+
+export const VehicleBulkMileageTableRow = (props: Props) => {
+
+  const {control, handleSubmit} = useFormContext()
 
   return (
     <ExpandRow
-      key="Expand-row-id"
+      key={`Expand-row-id-${props.id}`}
       data={[
         ...props.line.map((l) => {
           return {
@@ -42,18 +45,72 @@ export const VehicleBulkMileageTableRow = (props: Props) => {
         }),
         {
           value: (
-            <Box className={styles.mwInput}>
-              <label className={helperStyles.srOnly} htmlFor={props.id}>
-                Kílómetrastaða
-              </label>
-              <Input
+            <Box>
+              <InputController
+                control={control}
                 type="number"
                 id={props.id}
                 name={props.id}
                 size="xs"
+                suffix=" km"
+                thousandSeparator
                 rightAlign
                 maxLength={12}
-                onChange={(e) => setMileage(parseInt(e.target.value))}
+                defaultValue={''}
+                required={false}
+                /*
+                  rules={{
+                    validate: {
+                      value: (value: number) => {
+                        // Input number must be higher than the highest known mileage registration value
+
+                        if (vehicle.latestRegistration) {
+                          // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
+                          const confirmedRegistrations =
+                            vehicle?.mileageRegistrationHistory?.filter(
+                              (item) => {
+                                if (item.date) {
+                                  const isIslandIsReadingToday =
+                                    item.origin ===
+                                      'ISLAND.IS' &&
+                                    isReadDateToday(
+                                      new Date(item.date),
+                                    )
+                                  return !isIslandIsReadingToday
+                                }
+                                return true
+                              },
+                            )
+
+                          const detailArray =
+                            vehicle.isCurrentlyEditing
+                              ? confirmedRegistrations
+                              : vehicle.mileageRegistrationHistory
+
+                          const latestRegistration =
+                            detailArray?.[0]?.mileage ?? 0
+
+                          if (latestRegistration > value) {
+                            return formatMessage(
+                              messages.mileageInputTooLow,
+                            )
+                          }
+                        }
+                      },
+                    },
+                    required: {
+                      value: true,
+                      message: formatMessage(
+                        messages.mileageInputMinLength,
+                      ),
+                    },
+                    minLength: {
+                      value: 1,
+                      message: formatMessage(
+                        messages.mileageInputMinLength,
+                      ),
+                    },
+                    }}*/
               />
             </Box>
           ),
@@ -61,14 +118,18 @@ export const VehicleBulkMileageTableRow = (props: Props) => {
         {
           value: (
             <Button
-              icon="pencil"
+              icon={getTag(vehicle.permNo).icon}
               size="small"
               type="button"
               variant="text"
-              disabled={!mileage}
-              onClick={onClick}
+              onClick={handleSubmit((data) =>
+                props.onSaveClick(
+                  permNo: props.id,
+                  odometerStatus: parseInt(data[vehicle.permNo]),
+                ),
+              )}
             >
-              Vista
+              {formatMessage(getTag(vehicle.permNo).text)}
             </Button>
           ),
         },
@@ -76,7 +137,14 @@ export const VehicleBulkMileageTableRow = (props: Props) => {
     >
       <NestedFullTable
         headerArray={['Dagsetning', 'Skráning', 'Ársnotkun', 'Kílómetrastaða']}
-        data={props.detail.map((det) => det)}
+        data={
+          vehicle.registrationHistory?.map((det) => [
+            formatDate(det.date),
+            det.origin,
+            '',
+            det.mileage.toString(),
+          ]) ?? []
+        }
       />
     </ExpandRow>
   )

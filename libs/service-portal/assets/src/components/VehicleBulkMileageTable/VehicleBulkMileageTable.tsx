@@ -1,80 +1,103 @@
+import { Box, Button, Table as T } from '@island.is/island-ui/core'
+import { FormatMessage, useLocale } from '@island.is/localization'
 import {
-  Table as T,
-  Box,
-  Pagination,
-  Button,
-  Input,
-} from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
-
-import {
-  ExpandRow,
   ExpandHeader,
+  ExpandRow,
   NestedFullTable,
 } from '@island.is/service-portal/core'
-import { messages } from '../../lib/messages'
-import { helperStyles } from '@island.is/island-ui/theme'
-import * as styles from './VehicleBulkMileageTable.css'
-import { VehicleBulkMileageTableRow } from './VehicleBulkMileageTableRow'
+import { formatDate } from '@island.is/service-portal/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { m as coreMessages } from '@island.is/service-portal/core'
+import { MessageDescriptor } from 'react-intl'
 
-interface Props {
-  row: Array<{
-    id: string
-    line: string[]
-    detail: Array<string[]>
-  }>
-  onRowSaveClick: (mileage: number, permNo: string) => void
+type FormProps = Record<string, string>
+
+interface SubmitProps {
+  permNo: string
+  odometerStatus: number
 }
 
-const VehicleBulkMileageTable = ({ row, onRowSaveClick }: Props) => {
-  const { formatMessage, lang } = useLocale()
+type Props = {
+  onRowSubmit: (data: SubmitProps) => Promise<boolean>
+  vehicles: Array<{
+    permNo: string
+    title: string
+    lastRegistrationDate?: Date
+    registrationHistory?: Array<{
+      date: string
+      origin: string
+      mileage: string
+    }>
+  }>
+}
 
-  // const totalPages =
-  //   payments.totalCount > itemsOnPage
-  //     ? Math.ceil(payments.totalCount / itemsOnPage)
-  //     : 0
+const VehicleBulkMileageTable = ({ vehicles, onRowSubmit }: Props) => {
+  const { handleSubmit, control } = useForm<FormProps>({})
+  const { formatMessage } = useLocale()
+
+  const onSubmit = (data: FormProps) => {
+    const readings: Array<SubmitProps> = (
+      Object.entries(data).map((reading) => ({
+        permNo: reading[0],
+        odometerStatus: parseInt(reading[1]),
+      })) ?? []
+    ).filter((reading) => !!reading.odometerStatus)
+
+    readings.forEach(async (reading) => {
+      onSubmitSingle(reading)
+    })
+  }
+  const onSubmitSingle = async (data: SubmitProps) => {
+    const success = await onRowSubmit(data)
+    let submissionStatus: 'success' | 'failure'
+    if (success) {
+      console.log('reading post success')
+      submissionStatus = 'success'
+    } else {
+      console.log('reading post failed')
+      submissionStatus = 'failure'
+    }
+
+    const indexOfSubmission = submissionState.findIndex(
+      (s) => s.permNo === data.permNo,
+    )
+
+    const updatedState = [...submissionState]
+    updatedState[indexOfSubmission] = {
+      ...updatedState[indexOfSubmission],
+      submissionStatus,
+    }
+    setSubmissionState(updatedState)
+  }
+
 
   return (
-    <Box>
-      <T.Table>
-        <ExpandHeader
-          data={[
-            { value: '', printHidden: true },
-            { value: 'Tegund' },
-            { value: 'Fastanúmer' },
-            { value: 'Síðast skráð' },
-            { value: 'Kílómetrastaða' },
-            { value: '', printHidden: true },
-          ]}
-        />
-        <T.Body>
-          {row.map((item) => (
-            <VehicleBulkMileageTableRow
-              {...item}
-              onSaveClick={onRowSaveClick}
-            />
-          ))}
-        </T.Body>
-      </T.Table>
-      {/* {totalPages > 0 ? (
-        <Box paddingTop={8}>
-          <Pagination
-            page={page}
-            totalPages={totalPages}
-            renderLink={(p, className, children) => (
-              <Box
-                cursor="pointer"
-                className={className}
-                onClick={() => setPage(p)}
-                component="button"
-              >
-                {children}
-              </Box>
-            )}
+    <form onSubmit={handleSubmit(onSubmit)}>
+      <Box>
+        <T.Table>
+          <ExpandHeader
+            data={[
+              { value: '', printHidden: true },
+              { value: 'Tegund' },
+              { value: 'Fastanúmer' },
+              { value: 'Síðast skráð' },
+              { value: 'Kílómetrastaða' },
+              { value: '', printHidden: true },
+            ]}
           />
-        </Box>
-      ) : null} */}
-    </Box>
+          <T.Body>
+            {vehicles.map((vehicle, index) => (
+
+            ))}
+          </T.Body>
+        </T.Table>
+      </Box>
+      <Button type="button" onClick={handleSubmit((data) => onSubmit(data))}>
+        Vista sýnilegar færslur
+      </Button>
+    </form>
   )
 }
 
