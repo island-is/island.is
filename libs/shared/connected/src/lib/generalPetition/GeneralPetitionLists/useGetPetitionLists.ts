@@ -20,7 +20,6 @@ const GetGeneralPetitionLists = gql`
         description
         closedDate
         openedDate
-        endorsementCounter
         adminLock
         meta
         owner

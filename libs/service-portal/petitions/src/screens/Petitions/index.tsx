@@ -125,6 +125,7 @@ const Petitions = () => {
                       </Stack>
                     </Box>
                   )}
+
                   {openSignedLists && openSignedLists.length > 0 && (
                     <Box marginTop={6}>
                       <Text variant="h4" marginBottom={2}>
