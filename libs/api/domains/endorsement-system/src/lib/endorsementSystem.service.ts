@@ -231,9 +231,6 @@ export class EndorsementSystemService {
         listId: input.listId,
         fileType: input.fileType,
       })
-      .catch(this.handleError.bind(this));
-
+      .catch(this.handleError.bind(this))
   }
-
- 
 }
