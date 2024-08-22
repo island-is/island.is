@@ -93,9 +93,17 @@ export const webRenderConnectedComponent = (
 
   switch (slice.componentType) {
     case 'Fiskistofa/ShipSearch':
-      return <ShipSearch namespace={data} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <ShipSearch />
+        </IntlProvider>
+      )
     case 'Fiskistofa/ShipSearchSidebarInput':
-      return <SidebarShipSearchInput namespace={data} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <SidebarShipSearchInput />
+        </IntlProvider>
+      )
     case 'Fiskistofa/StraddlingStockCalculator':
       return (
         <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
@@ -109,11 +117,19 @@ export const webRenderConnectedComponent = (
         </IntlProvider>
       )
     case 'Fiskistofa/SelectedShip':
-      return <SelectedShip />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <SelectedShip />
+        </IntlProvider>
+      )
     case 'ElectronicRegistrations/MonthlyStatistics':
       return <MonthlyStatistics slice={slice} />
     case 'Fiskistofa/ShipSearchBoxedInput':
-      return <ShipSearchBoxedInput namespace={data} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <ShipSearchBoxedInput />
+        </IntlProvider>
+      )
     case 'Áfengisleyfi/AlcoholLicences':
       return <AlcoholLicencesList slice={slice} />
     case 'Tækifærisleyfi/TemporaryEventLicences':
