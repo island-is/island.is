@@ -28,6 +28,7 @@ import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { handleCustomMappedValues } from './utils'
+import { useEffectOnce } from '@island.is/react-spa/shared'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -53,6 +54,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     table,
     formTitle,
     description,
+    startOpen = false,
     marginTop = 6,
     marginBottom,
     getStaticTableData,
@@ -134,6 +136,12 @@ export const TableRepeaterFormField: FC<Props> = ({
       ? formatted
       : formatText(formatted, application, formatMessage)
   }
+
+  useEffectOnce(() => {
+    if (startOpen && fields.length === 0) {
+      handleNewItem()
+    }
+  })
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>

@@ -531,6 +531,7 @@ export type ActionCardListField = BaseField & {
 export type TableRepeaterField = BaseField & {
   readonly type: FieldTypes.TABLE_REPEATER
   component: FieldComponents.TABLE_REPEATER
+  startOpen?: boolean
   formTitle?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText

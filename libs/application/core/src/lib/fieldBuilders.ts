@@ -776,6 +776,7 @@ export function buildTableRepeaterField(
     editField,
     getStaticTableData,
     maxRows,
+    startOpen,
   } = data
 
   return {
@@ -796,6 +797,7 @@ export function buildTableRepeaterField(
     editField,
     getStaticTableData,
     maxRows,
+    startOpen,
   }
 }
 

@@ -161,6 +161,7 @@ export const GrindavikHousingBuyoutForm: Form = buildForm({
               id: 'loanProviders.loans',
               marginTop: 2,
               title: '',
+              startOpen: true,
               addItemButtonText: m.application.loanStatus.addNewLoan,
               saveItemButtonText: m.application.loanStatus.saveNewLoan,
               fields: {
