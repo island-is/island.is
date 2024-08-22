@@ -1,10 +1,10 @@
 export const getIndictmentVerdictAppealDeadline = (
   verdictViewDates?: (string | undefined)[],
 ): Date | undefined => {
-  if (!verdictViewDates || verdictViewDates.length === 0) {
-    return undefined
-  }
-  if (verdictViewDates.some((date) => date === undefined)) {
+  if (
+    !verdictViewDates?.length ||
+    !verdictViewDates.every((date) => date != null)
+  ) {
     return undefined
   }
 
