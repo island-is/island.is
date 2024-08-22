@@ -29,7 +29,6 @@ import csvStringify from 'csv-stringify/lib/sync'
 
 import { AwsService } from '@island.is/nest/aws'
 
-
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -392,10 +391,9 @@ export class EndorsementListService {
         doc.text(
           val.created.toLocaleDateString(locale) +
             ' ' +
-            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint')  +
+            (val.meta.fullName ? val.meta.fullName : 'Nafn ótilgreint') +
             ' ' +
             (val.meta.locality ? val.meta.locality : 'Sveitafélag ótilgreint'),
-          
         )
       }
     }
@@ -405,9 +403,9 @@ export class EndorsementListService {
       .fontSize(regular)
       .text(
         'Þetta skjal var framkallað sjálfvirkt þann: ' +
-        new Date().toLocaleDateString(locale) +
-        ' klukkan ' +
-        new Date().toLocaleTimeString(locale)
+          new Date().toLocaleDateString(locale) +
+          ' klukkan ' +
+          new Date().toLocaleTimeString(locale),
       )
     doc.end()
     return await getStream.buffer(doc)
@@ -683,48 +681,61 @@ export class EndorsementListService {
     fileType: 'pdf' | 'csv',
   ): Promise<{ url: string }> {
     try {
-      this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId });
+      this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId })
 
       // Validate file type
       if (!['pdf', 'csv'].includes(fileType)) {
-        throw new BadRequestException('Invalid file type. Allowed values are "pdf" or "csv".');
+        throw new BadRequestException(
+          'Invalid file type. Allowed values are "pdf" or "csv".',
+        )
       }
 
       // Fetch endorsement list
-      const endorsementList = await this.fetchEndorsementList(listId, user);
+      const endorsementList = await this.fetchEndorsementList(listId, user)
       if (!endorsementList) {
-        throw new NotFoundException(`Endorsement list ${listId} not found or access denied.`);
+        throw new NotFoundException(
+          `Endorsement list ${listId} not found or access denied.`,
+        )
       }
 
       // Create file buffer
-      const fileBuffer = fileType === 'pdf'
-        ? await this.createPdfBuffer(endorsementList)
-        : this.createCsvBuffer(endorsementList);
+      const fileBuffer =
+        fileType === 'pdf'
+          ? await this.createPdfBuffer(endorsementList)
+          : this.createCsvBuffer(endorsementList)
 
       // Upload to S3
-      const filename = `undirskriftalisti-${listId}-${new Date().toISOString().replace(/[:.]/g, '-')}.${fileType}`;
-      await this.uploadFileToS3(fileBuffer, filename, fileType);
+      const filename = `undirskriftalisti-${listId}-${new Date()
+        .toISOString()
+        .replace(/[:.]/g, '-')}.${fileType}`
+      await this.uploadFileToS3(fileBuffer, filename, fileType)
 
       // Generate presigned URL with 60 minutes expiration
-      const url = await this.awsService.getPresignedUrl(environment.exportsBucketName, filename, 60 * 60);
-      return { url };
-
+      const url = await this.awsService.getPresignedUrl(
+        environment.exportsBucketName,
+        filename,
+        60 * 60,
+      )
+      return { url }
     } catch (error) {
-      this.logger.error(`Failed to export list ${listId}`, { error });
-      throw error;
+      this.logger.error(`Failed to export list ${listId}`, { error })
+      throw error
     }
   }
 
-  private async fetchEndorsementList(listId: string, user: User): Promise<EndorsementList | null> {
+  private async fetchEndorsementList(
+    listId: string,
+    user: User,
+  ): Promise<EndorsementList | null> {
     // Only admin or list owner can access the list
-    const isAdmin = this.hasAdminScope(user);
+    const isAdmin = this.hasAdminScope(user)
     return this.endorsementListModel.findOne({
       where: {
         id: listId,
         ...(isAdmin ? {} : { owner: user.nationalId }),
       },
       include: [{ model: Endorsement }],
-    });
+    })
   }
 
   private createCsvBuffer(endorsementList: EndorsementList): Buffer {
@@ -732,30 +743,50 @@ export class EndorsementListService {
       Dagsetning: endorsement.created.toLocaleDateString('is-IS'),
       Nafn: endorsement.meta?.fullName || 'Nafn ótilgreint',
       Sveitafélag: endorsement.meta?.locality || 'Unknown locality',
-    }));
-    const csvString = csvStringify(records, { header: true });
-    return Buffer.from(csvString, 'utf-8');
+    }))
+    const csvString = csvStringify(records, { header: true })
+    return Buffer.from(csvString, 'utf-8')
   }
 
-  private async createPdfBuffer(endorsementList: EndorsementList): Promise<Buffer> {
+  private async createPdfBuffer(
+    endorsementList: EndorsementList,
+  ): Promise<Buffer> {
     try {
-      const ownerName = await this.getOwnerInfo(endorsementList.id, endorsementList.owner);
-      const pdfBuffer = await this.createDocumentBuffer(endorsementList, ownerName);
-      return pdfBuffer;
+      const ownerName = await this.getOwnerInfo(
+        endorsementList.id,
+        endorsementList.owner,
+      )
+      const pdfBuffer = await this.createDocumentBuffer(
+        endorsementList,
+        ownerName,
+      )
+      return pdfBuffer
     } catch (error) {
-      this.logger.error(`Failed to create PDF buffer for endorsement list ${endorsementList.id}`, { error });
-      throw new Error('Error generating PDF');
+      this.logger.error(
+        `Failed to create PDF buffer for endorsement list ${endorsementList.id}`,
+        { error },
+      )
+      throw new Error('Error generating PDF')
     }
   }
 
-  private async uploadFileToS3(fileBuffer: Buffer, filename: string, fileType: 'pdf' | 'csv'): Promise<void> {
+  private async uploadFileToS3(
+    fileBuffer: Buffer,
+    filename: string,
+    fileType: 'pdf' | 'csv',
+  ): Promise<void> {
     try {
-      await this.awsService.uploadFile(fileBuffer, environment.exportsBucketName, filename, {
-        ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
-      });
+      await this.awsService.uploadFile(
+        fileBuffer,
+        environment.exportsBucketName,
+        filename,
+        {
+          ContentType: fileType === 'pdf' ? 'application/pdf' : 'text/csv',
+        },
+      )
     } catch (error) {
-      this.logger.error(`Failed to upload file to S3`, { error, filename });
-      throw new Error('Error uploading file to S3');
+      this.logger.error(`Failed to upload file to S3`, { error, filename })
+      throw new Error('Error uploading file to S3')
     }
   }
 }
