@@ -111,11 +111,13 @@ const CourtOfAppealResult = () => {
                     court,
                     prosecutor(workingCase.type),
                     judge,
-                    ...(registrar ? [registrar] : []),
-                    appealCaseNumber,
-                    appealAssistant,
-                    appealJudges,
+                    ...(workingCase.registrar ? [registrar] : []),
                   ],
+                  columns: 2,
+                },
+                {
+                  id: 'court-of-appeal-section',
+                  items: [appealCaseNumber, appealAssistant, appealJudges],
                   columns: 2,
                 },
               ]}

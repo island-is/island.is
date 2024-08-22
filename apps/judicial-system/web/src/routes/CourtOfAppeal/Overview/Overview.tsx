@@ -95,7 +95,7 @@ const CourtOfAppealOverview = () => {
                     court,
                     prosecutor(workingCase.type),
                     judge,
-                    registrar,
+                    ...(workingCase.registrar ? [registrar] : []),
                   ],
                   columns: 2,
                 },
