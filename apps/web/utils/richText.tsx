@@ -99,7 +99,11 @@ export const webRenderConnectedComponent = (
     case 'Fiskistofa/StraddlingStockCalculator':
       return <StraddlingStockCalculator namespace={data} />
     case 'Fiskistofa/CatchQuotaCalculator':
-      return <CatchQuotaCalculator namespace={data} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <CatchQuotaCalculator />
+        </IntlProvider>
+      )
     case 'Fiskistofa/SelectedShip':
       return <SelectedShip />
     case 'ElectronicRegistrations/MonthlyStatistics':
