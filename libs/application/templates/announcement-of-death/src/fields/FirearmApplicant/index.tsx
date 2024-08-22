@@ -88,16 +88,20 @@ export const FirearmApplicant: FC<
   }, [nationalId, name, getIdentity, setValue])
 
   return (
-    <Box marginTop={5}>
+    <Box marginTop={3}>
       <Text>
-        {formatText(m.delegateRoleDisclaimer, application, formatMessage)}
+        {formatText(m.firearmsApplicantHeader, application, formatMessage)}
       </Text>
       <GridRow marginBottom={2} marginTop={2}>
         <GridColumn span="6/12">
           <InputController
             id={fieldNames.firearmApplicantNationalId}
             name={fieldNames.firearmApplicantNationalId}
-            label={formatText(m.delegateRoleSSN, application, formatMessage)}
+            label={formatText(
+              m.firearmsApplicantNationalId,
+              application,
+              formatMessage,
+            )}
             format="######-####"
             defaultValue=""
             backgroundColor="blue"
@@ -117,7 +121,11 @@ export const FirearmApplicant: FC<
           <InputController
             id={fieldNames.firearmApplicantName}
             name={fieldNames.firearmApplicantName}
-            label={formatText(m.delegateRoleName, application, formatMessage)}
+            label={formatText(
+              m.firearmsApplicantName,
+              application,
+              formatMessage,
+            )}
           />
         </GridColumn>
       </GridRow>
