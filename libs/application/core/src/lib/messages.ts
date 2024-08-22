@@ -676,16 +676,30 @@ export const coreErrorMessages = defineMessages({
   invalidPhoneNumberDescription: {
     id: 'application.system:core.fetch.data.invalidPhoneNumberDescription#markdown',
     defaultMessage:
-      'Skráð símanúmer hjá Ísland.is er ekki gilt. Vinsamlegast skráðu það á [mínum síðum]({link}).',
+      'Þú ert ekki með skráð gilt símanúmer hjá Ísland.is. Vinsamlegast skráðu það á [hér]({link}).',
     description:
-      'You do not have a valid phone number registered at Ísland.is. Please register a phone number on mínar síður',
+      'You do not have a valid phone number registered at Ísland.is. Please register a phone number here.',
+  },
+  invalidPhoneNumberNoRegistration: {
+    id: 'application.system:core.fetch.data.invalidPhoneNumberDescription#markdown',
+    defaultMessage:
+      'Þú ert ekki með skráð gilt símanúmer hjá Ísland.is. Fyrir fyrirtæki geta prókúruhafar skráð símanúmer á mínum síðum Ísland.is.',
+    description:
+      'You do not have a valid phone number registered at Ísland.is. For companies, procuration holders can register a phone number on Ísland.is My Pages.',
   },
   noEmailFoundDescription: {
     id: 'application.system:core.fetch.data.noEmailError.description#markdown',
     defaultMessage:
       'Þú ert ekki með skráð netfang hjá Ísland.is. Vinsamlegast skráðu það [hér]({link}).',
     description:
-      'You do not have a registered email address at Ísland.is. Please register an email address here .',
+      'You do not have a registered email address at Ísland.is. Please register an email address here.',
+  },
+  noEmailNoRegistration: {
+    id: 'application.system:core.fetch.data.noEmailError.noRegistration',
+    defaultMessage:
+      'Ekkert netfang skráð hjá Ísland.is. Fyrir fyrirtæki geta prókúruhafar skráð netfang á mínum síðum Ísland.is.',
+    description:
+      'No email address registered at Ísland.is. For companies, procuration holders can register an email address on Ísland.is My Pages.',
   },
   machinesEmptyListDefault: {
     id: 'application.system:core.fetch.data.machinesEmptyListDefault',
