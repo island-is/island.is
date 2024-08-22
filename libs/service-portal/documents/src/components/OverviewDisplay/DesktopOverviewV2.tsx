@@ -27,6 +27,7 @@ export const DesktopOverview: FC<Props> = ({
   const { activeDocument } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
+  console.log(activeDocument)
   if (loading) {
     return (
       <Box
@@ -71,6 +72,7 @@ export const DesktopOverview: FC<Props> = ({
           archived: activeArchive,
           bookmarked: activeBookmark,
         }}
+        actions={activeDocument.actions}
       />
       <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
       {activeDocument?.id && (

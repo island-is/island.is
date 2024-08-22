@@ -29,6 +29,7 @@ import { MailActionInput } from './models/v2/bulkMailAction.input'
 import { DocumentMailAction } from './models/v2/mailAction.model.'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
+import type { Locale } from '@island.is/shared/types'
 
 const LOG_CATEGORY = 'documents-resolver'
 
@@ -46,6 +47,8 @@ export class DocumentResolverV2 {
   @Query(() => DocumentV2, { nullable: true, name: 'documentV2' })
   async documentV2(
     @Args('input') input: DocumentInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
     @CurrentUser() user: User,
   ): Promise<DocumentV2 | null> {
     try {

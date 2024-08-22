@@ -38,8 +38,8 @@ query DocumentsV2($input: DocumentsV2DocumentsInput!) {
   }
 }
 
-query GetDocumentInboxLineV2($input: DocumentInput!) {
-  documentV2(input: $input) {
+query GetDocumentInboxLineV2($input: DocumentInput!, $locale: String) {
+  documentV2(input: $input, locale: $locale) {
     content {
       type
       value

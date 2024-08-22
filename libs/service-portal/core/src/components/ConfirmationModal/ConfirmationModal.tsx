@@ -16,6 +16,7 @@ interface Props {
   onCancel: () => void
   onClose: () => void
   loading: boolean
+  modalTitle: string
   modalText: string
   redirectPath: string
 }
@@ -25,6 +26,7 @@ export const ConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
   onCancel,
   onClose,
   loading,
+  modalTitle,
   modalText,
   redirectPath,
 }) => {
@@ -42,7 +44,7 @@ export const ConfirmationModal: FC<React.PropsWithChildren<Props>> = ({
             marginTop={2}
           >
             <Box>
-              <Text variant="h3">{formatMessage(m.acknowledgeTitle)}</Text>
+              <Text variant="h3">{modalTitle}</Text>
               <Text marginTop={3}>{modalText}</Text>
             </Box>
             <Box

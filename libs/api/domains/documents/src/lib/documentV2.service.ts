@@ -36,6 +36,7 @@ export class DocumentServiceV2 {
   async findDocumentById(
     nationalId: string,
     documentId: string,
+    locale?: string,
   ): Promise<Document | null> {
     const document = await this.documentService.getCustomersDocument(
       nationalId,

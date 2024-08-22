@@ -2,18 +2,20 @@ import { DocumentV2Actions } from '@island.is/api/schema'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { IconMapIcon } from '@island.is/island-ui/core/types'
 import { FC } from 'react'
-import { sendForm } from '../../utils/downloadDocumentV2'
+import { downloadFile, sendForm } from '../../utils/downloadDocumentV2'
 import { useUserInfo } from '@island.is/auth/react'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 
 interface Props {
   alert?: string
-  actions?: Array<DocumentV2Actions>
 }
-const DocumentActions: FC<Props> = ({ alert, actions }) => {
+const DocumentActions: FC<Props> = ({ alert }) => {
   const { activeDocument } = useDocumentContext()
   const userInfo = useUserInfo()
   const DEFAULT_ICON: IconMapIcon = 'document'
+  const actions = activeDocument?.actions?.filter(
+    (action) => action.type !== 'confirmation',
+  )
   return (
     <Box>
       {/* {alert && (

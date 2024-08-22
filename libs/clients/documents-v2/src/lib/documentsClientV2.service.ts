@@ -78,11 +78,13 @@ export class DocumentsClientV2Service {
   async getCustomersDocument(
     customerId: string,
     documentId: string,
+    locale?: string,
   ): Promise<DocumentDto | null> {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
       authenticationType: 'HIGH',
+      locale: locale,
     })
 
     const mappedDocument = mapToDocument(document)

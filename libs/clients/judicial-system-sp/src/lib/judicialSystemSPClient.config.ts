@@ -17,7 +17,7 @@ export const JudicialSystemSPClientConfig = defineConfig<
         'XROAD_JUDICIAL_SYSTEM_SP_PATH',
         'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api',
       ),
-      scope: [], // TODO: Change to new scope when it has been created
+      scope: ['@rettarvorslugatt.island.is/law-and-order'],
     }
   },
 })

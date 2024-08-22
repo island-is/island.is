@@ -52,15 +52,20 @@ export const DocumentLine: FC<Props> = ({
 }) => {
   const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
+  const [modalData, setModalData] = useState<{
+    title: string
+    text: string
+  } | null>(null)
   const [isModalVisible, setModalVisible] = useState(false)
-  const { formatMessage } = useLocale()
+
+  const { formatMessage, lang } = useLocale()
   const navigate = useNavigate()
   const location = useLocation()
   const date = format(new Date(documentLine.publicationDate), dateFormat.is)
   const { id } = useParams<{
     id: string
   }>()
-  const isUrgent = true //documentLine.isUrgent
+  const isUrgent = documentLine.isUrgent
 
   const {
     submitMailAction,
@@ -128,6 +133,7 @@ export const DocumentLine: FC<Props> = ({
           id: documentLine.id,
           provider: documentLine.sender?.name ?? 'unknown',
         },
+        locale: lang,
       },
       fetchPolicy: 'no-cache',
       onCompleted: (data) => {
@@ -159,6 +165,39 @@ export const DocumentLine: FC<Props> = ({
       },
     })
 
+  const [getDocumentMetadata, { loading: metadataLoading }] =
+    useGetDocumentInboxLineV2LazyQuery({
+      variables: {
+        input: {
+          id: documentLine.id,
+          provider: documentLine.sender?.name ?? 'unknown',
+          includeDocument: false,
+        },
+      },
+      fetchPolicy: 'no-cache',
+      onCompleted: (data) => {
+        const actions = data?.documentV2?.actions ?? []
+
+        const dataIndex = actions?.findIndex((x) => x.type === 'confirmation')
+        if (dataIndex && dataIndex > 0) {
+          setModalData({
+            title: actions[dataIndex].title ?? '',
+            text: actions[dataIndex].data ?? '',
+          })
+          setModalVisible(true)
+        } else {
+          getDocument()
+        }
+      },
+      onError: () => {
+        setDocumentDisplayError(
+          formatMessage(messages.documentFetchError, {
+            senderName: documentLine.sender?.name ?? '',
+          }),
+        )
+      },
+    })
+
   useEffect(() => {
     if (id === documentLine.id) {
       getDocument()
@@ -169,6 +208,10 @@ export const DocumentLine: FC<Props> = ({
     setDocLoading(fileLoading)
   }, [fileLoading, setDocLoading])
 
+  // If document is marked as urgent, the user needs to acknowledge the document before opening it
+  // This is done by calling "getDocument" with "includeDocument=false" and receive the metadata about the document
+  // This metadata includes actions array that should include an action with type 'confirmation' (also title and data),
+  // which will be used to display a confirmation modal to the user
   const onLineClick = async () => {
     const pathName = location.pathname
     const match = matchPath(
@@ -181,7 +224,7 @@ export const DocumentLine: FC<Props> = ({
       navigate(DocumentsPaths.ElectronicDocumentsRoot, { replace: true })
     }
     if (isUrgent) {
-      toggleModal()
+      getDocumentMetadata()
     } else {
       getDocument()
     }
@@ -275,7 +318,7 @@ export const DocumentLine: FC<Props> = ({
             </button>
 
             <Box display="flex" alignItems="center">
-              {(postLoading || fileLoading) && (
+              {(postLoading || fileLoading || metadataLoading) && (
                 <Box display="flex" alignItems="center">
                   <LoadingDots single />
                 </Box>
@@ -314,9 +357,13 @@ export const DocumentLine: FC<Props> = ({
           onCancel={() => setModalVisible(false)}
           onClose={toggleModal}
           loading={false}
-          modalText={formatMessage(m.acknowledgeText, {
-            arg: documentLine.sender.name,
-          })}
+          modalTitle={modalData?.title || formatMessage(m.acknowledgeTitle)}
+          modalText={
+            modalData?.text ||
+            formatMessage(m.acknowledgeText, {
+              arg: documentLine.sender.name,
+            })
+          }
           redirectPath={''}
         />
       )}

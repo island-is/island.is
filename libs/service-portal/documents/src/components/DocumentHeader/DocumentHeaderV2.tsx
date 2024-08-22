@@ -1,13 +1,14 @@
 import { useEffect, useRef } from 'react'
 import { Box, Text } from '@island.is/island-ui/core'
 import AvatarImage from '../DocumentLine/AvatarImage'
-import { DocumentsV2Category } from '@island.is/api/schema'
+import { DocumentV2Actions, DocumentsV2Category } from '@island.is/api/schema'
 import * as styles from './DocumentHeader.css'
 import {
   DocumentActionBar,
   DocumentActionBarProps,
 } from '../DocumentActionBar/DocumentActionBarV2'
 import { helperStyles } from '@island.is/island-ui/theme'
+import DocumentActions from '../DocumentActions/DocumentActions'
 
 type DocumentHeaderProps = {
   avatar?: string
@@ -15,6 +16,7 @@ type DocumentHeaderProps = {
   date?: string
   category?: DocumentsV2Category
   actionBar?: DocumentActionBarProps
+  actions?: DocumentV2Actions[]
   subject?: string
 }
 
@@ -24,10 +26,11 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   date,
   category,
   actionBar,
+  actions,
   subject,
 }) => {
   const wrapper = useRef<HTMLDivElement>(null)
-
+  console.log(actions)
   useEffect(() => {
     if (wrapper.current) {
       wrapper.current.focus()
@@ -35,6 +38,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
   }, [wrapper])
 
   return (
+    <>
     <Box tabIndex={0} outline="none" ref={wrapper} display="flex">
       <p className={helperStyles.srOnly} aria-live="assertive">
         {subject}
@@ -72,5 +76,11 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
         </Box>
       )}
     </Box>
+      {actions && (
+        <Box>
+          <DocumentActions />
+        </Box>
+      )}
+      </>
   )
 }

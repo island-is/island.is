@@ -118,6 +118,7 @@ const Subpoena = () => {
         onClose={toggleModal}
         loading={postActionLoading}
         redirectPath={LawAndOrderPaths.SubpoenaDetail.replace(':id', id)}
+        modalTitle={formatMessage(m.acknowledgeTitle)}
         modalText={formatMessage(m.acknowledgeText, {
           arg: formatMessage(messages.modalFromPolice),
         })}

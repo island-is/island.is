@@ -170,7 +170,6 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
                     : formatMessage(sharedMessages.edit)
                 }
                 skipOutboundTrack={editLink.skipOutboundTrack}
-                icon={editLink.icon}
               />
             </Box>
           ) : button ? (
