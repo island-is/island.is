@@ -52,8 +52,8 @@ const DraftProgressMeter = ({
       {shouldShowCardButtons && (
         <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
           <Button variant="ghost" onClick={onOpenApplication} size="small">
-            {actionCard?.historyButton 
-              ? formatMessage(actionCard.historyButton) 
+            {actionCard?.historyButton
+              ? formatMessage(actionCard.historyButton)
               : formatMessage(defaultData.cta.label)}
           </Button>
         </Box>

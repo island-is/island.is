@@ -44,7 +44,8 @@ export const incomePlanFormMessage: MessageDir = {
       id: 'ip.application:prerequisites.socialInsuranceAdministration.data.description',
       defaultMessage:
         'Tryggingastofnun sækir nauðsynlegar upplýsingar til úrvinnslu tekjuáætlunar, varðandi tekjur og aðrar ástæður.',
-      description: 'The Social Insurance Administration collects necessary information, regarding income and other circumstances, to process the income plan.',
+      description:
+        'The Social Insurance Administration collects necessary information, regarding income and other circumstances, to process the income plan.',
     },
     checkboxProvider: {
       id: 'ip.application:prerequisites.checkbox.provider',
@@ -58,7 +59,6 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Hefja tekjuáætlun',
       description: 'Start income plan',
     },
-    
   }),
 
   info: defineMessages({
