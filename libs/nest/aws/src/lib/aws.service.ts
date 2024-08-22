@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common'
+import { logger } from '@island.is/logging'
 import {
   S3Client,
   GetObjectCommand,
@@ -77,6 +78,7 @@ export class AwsService {
       Body: content,
       ...uploadParameters,
     })
+    logger.debug('DEBUGS3BUG', { bucket, content, fileName })
 
     await this.s3Client.send(command)
     return `https://${bucket}.s3.amazonaws.com/${fileName}`
