@@ -92,7 +92,7 @@ const AppealCasesTable: FC<Props> = (props) => {
           },
         ]}
         data={cases}
-      generateContextMenuItems={(row) => {
+        generateContextMenuItems={(row) => {
           return [openCaseInNewTabMenuItem(row.id)]
         }}
         columns={[
