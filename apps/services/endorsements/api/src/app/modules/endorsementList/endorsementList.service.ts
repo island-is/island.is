@@ -684,7 +684,7 @@ export class EndorsementListService {
   ): Promise<{ url: string }> {
     try {
       this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId });
-
+      
       // Validate file type
       if (!['pdf', 'csv'].includes(fileType)) {
         throw new BadRequestException('Invalid file type. Allowed values are "pdf" or "csv".');
