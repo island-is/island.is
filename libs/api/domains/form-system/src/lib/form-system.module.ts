@@ -15,7 +15,6 @@ import { ScreensResolver } from './screens/screens.resolver'
 import { SectionsService } from './sections/sections.service'
 import { SectionsResolver } from './sections/sections.resolver'
 
-
 @Module({
   providers: [
     FormsService,
@@ -31,9 +30,9 @@ import { SectionsResolver } from './sections/sections.resolver'
     ScreensService,
     ScreensResolver,
     SectionsService,
-    SectionsResolver
+    SectionsResolver,
   ],
   exports: [],
   imports: [FormSystemClientModule],
 })
-export class FormSystemModule { }
+export class FormSystemModule {}

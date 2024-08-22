@@ -1,6 +1,6 @@
-import { ObjectType, Field } from "@nestjs/graphql"
-import { CertificationTypeDtoTypeEnum } from "@island.is/clients/form-system";
-import { LanguageType } from "./LanguageType.model"
+import { ObjectType, Field } from '@nestjs/graphql'
+import { CertificationTypeDtoTypeEnum } from '@island.is/clients/form-system'
+import { LanguageType } from './LanguageType.model'
 
 @ObjectType('FormSystemFormCertificationType')
 export class FormCertificationType {

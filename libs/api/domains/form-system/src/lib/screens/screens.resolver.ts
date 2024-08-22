@@ -7,13 +7,18 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { ScreensService } from './screens.service'
-import { CreateScreenInput, DeleteScreenInput, UpdateScreenInput, UpdateScreensDisplayOrderInput } from '../../dto/screen.input'
+import {
+  CreateScreenInput,
+  DeleteScreenInput,
+  UpdateScreenInput,
+  UpdateScreensDisplayOrderInput,
+} from '../../dto/screen.input'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) { }
+  constructor(private readonly screensService: ScreensService) {}
 
   @Mutation(() => Boolean, {
     name: 'formSystemCreateScreen',

@@ -14,13 +14,14 @@ import { GetOrganizationInput } from '../../dto/organization.input'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class OrganizationsResolver {
-  constructor(private readonly organizationsService: OrganizationsService) { }
+  constructor(private readonly organizationsService: OrganizationsService) {}
 
   @Query(() => Organization, {
     name: 'formSystemGetOrganization',
   })
   async getOrganization(
-    @Args('input', { type: () => GetOrganizationInput }) input: GetOrganizationInput,
+    @Args('input', { type: () => GetOrganizationInput })
+    input: GetOrganizationInput,
     @CurrentUser() user: User,
   ): Promise<Organization> {
     return this.organizationsService.getOrganization(user, input)
@@ -30,7 +31,8 @@ export class OrganizationsResolver {
     name: 'formSystemCreateOrganization',
   })
   async createOrganization(
-    @Args('input', { type: () => GetOrganizationInput }) input: GetOrganizationInput,
+    @Args('input', { type: () => GetOrganizationInput })
+    input: GetOrganizationInput,
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.organizationsService.createOrganization(user, input)

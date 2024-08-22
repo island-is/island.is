@@ -1,19 +1,30 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ApolloError } from "@apollo/client";
-import { handle4xx } from "../../utils/errorHandler";
-import { FormsApi, FormsControllerCreateRequest, FormsControllerDeleteRequest, FormsControllerFindAllRequest, FormsControllerFindOneRequest } from '@island.is/clients/form-system'
-import { CreateFormInput, DeleteFormInput, GetAllFormsInput, GetFormInput } from "../../dto/form.input";
-import { Form, FormResponse } from "../../models/form.model";
+import { ApolloError } from '@apollo/client'
+import { handle4xx } from '../../utils/errorHandler'
+import {
+  FormsApi,
+  FormsControllerCreateRequest,
+  FormsControllerDeleteRequest,
+  FormsControllerFindAllRequest,
+  FormsControllerFindOneRequest,
+} from '@island.is/clients/form-system'
+import {
+  CreateFormInput,
+  DeleteFormInput,
+  GetAllFormsInput,
+  GetFormInput,
+} from '../../dto/form.input'
+import { Form, FormResponse } from '../../models/form.model'
 
 @Injectable()
 export class FormsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private formsService: FormsApi
-  ) { }
+    private formsService: FormsApi,
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -32,9 +43,7 @@ export class FormsService {
 
   async createForm(auth: User, input: CreateFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerCreate(
-        input as FormsControllerCreateRequest
-      )
+      .formsControllerCreate(input as FormsControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create form'))
 
     if (!response || response instanceof ApolloError) {
@@ -46,9 +55,7 @@ export class FormsService {
 
   async deleteForm(auth: User, input: DeleteFormInput): Promise<void> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerDelete(
-        input as FormsControllerDeleteRequest
-      )
+      .formsControllerDelete(input as FormsControllerDeleteRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to delete form'))
 
     if (!response || response instanceof ApolloError) {
@@ -60,9 +67,7 @@ export class FormsService {
 
   async getForm(auth: User, input: GetFormInput): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindOne(
-        input as FormsControllerFindOneRequest
-      )
+      .formsControllerFindOne(input as FormsControllerFindOneRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to get form'))
 
     if (!response || response instanceof ApolloError) {
@@ -72,11 +77,12 @@ export class FormsService {
     return response as Form
   }
 
-  async getAllForms(auth: User, input: GetAllFormsInput): Promise<FormResponse> {
+  async getAllForms(
+    auth: User,
+    input: GetAllFormsInput,
+  ): Promise<FormResponse> {
     const response = await this.formsApiWithAuth(auth)
-      .formsControllerFindAll(
-        input as FormsControllerFindAllRequest
-      )
+      .formsControllerFindAll(input as FormsControllerFindAllRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to get all forms'))
 
     if (!response || response instanceof ApolloError) {
@@ -85,5 +91,4 @@ export class FormsService {
 
     return response as FormResponse
   }
-
 }

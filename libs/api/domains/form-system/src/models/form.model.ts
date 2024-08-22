@@ -1,12 +1,11 @@
-import { Field, ObjectType, Int } from "@nestjs/graphql";
+import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { Field as FieldModel } from './field.model'
-import { FormCertificationType } from "./formCertificationType.model";
-import { FormApplicant } from "./formApplicant.model";
-import { Section } from "./section.model";
-import { ListType } from "./listItem.model";
+import { FormCertificationType } from './formCertificationType.model'
+import { FormApplicant } from './formApplicant.model'
+import { Section } from './section.model'
+import { ListType } from './listItem.model'
 import { Field as FieldType } from './field.model'
-import { LanguageType } from "./LanguageType.model";
-
+import { LanguageType } from './languageType.model'
 
 @ObjectType('FormSystemFormResponse')
 export class FormResponse {

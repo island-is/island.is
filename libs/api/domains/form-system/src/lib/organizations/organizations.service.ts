@@ -1,19 +1,23 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ApolloError } from "@apollo/client";
-import { handle4xx } from "../../utils/errorHandler";
-import { OrganizationsApi, OrganizationsControllerCreateRequest, OrganizationsControllerFindOneRequest } from '@island.is/clients/form-system'
-import { GetOrganizationInput } from "../../dto/organization.input";
-import { Organization } from "../../models/organization.model";
+import { ApolloError } from '@apollo/client'
+import { handle4xx } from '../../utils/errorHandler'
+import {
+  OrganizationsApi,
+  OrganizationsControllerCreateRequest,
+  OrganizationsControllerFindOneRequest,
+} from '@island.is/clients/form-system'
+import { GetOrganizationInput } from '../../dto/organization.input'
+import { Organization } from '../../models/organization.model'
 
 @Injectable()
 export class OrganizationsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private organizationsApi: OrganizationsApi
-  ) { }
+    private organizationsApi: OrganizationsApi,
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -30,31 +34,41 @@ export class OrganizationsService {
     return this.organizationsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async getOrganization(auth: User, input: GetOrganizationInput): Promise<Organization> {
-    const response = await this.organizationsApiWithAuth(auth)
-      .organizationsControllerFindOne(
-        input as OrganizationsControllerFindOneRequest
-      )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get organizations'))
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-
-    return response as Organization
-  }
-
-  async createOrganization(auth: User, input: GetOrganizationInput): Promise<void> {
+  async createOrganization(
+    auth: User,
+    input: GetOrganizationInput,
+  ): Promise<void> {
     const response = await this.organizationsApiWithAuth(auth)
       .organizationsControllerCreate(
-        input as OrganizationsControllerCreateRequest
+        input as OrganizationsControllerCreateRequest,
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create organization'))
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to create organization'),
+      )
 
     if (!response || response instanceof ApolloError) {
       return
     }
 
     return
+  }
+
+  async getOrganization(
+    auth: User,
+    input: GetOrganizationInput,
+  ): Promise<Organization> {
+    const response = await this.organizationsApiWithAuth(auth)
+      .organizationsControllerFindOne(
+        input as OrganizationsControllerFindOneRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get organizations'),
+      )
+
+    if (!response || response instanceof ApolloError) {
+      return {}
+    }
+
+    return response as Organization
   }
 }

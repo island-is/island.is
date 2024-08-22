@@ -4,7 +4,7 @@ import { FieldSettingsInput } from './fieldSettings.input'
 import { LanguageTypeInput } from './languageType.input'
 
 registerEnumType(FieldDtoFieldTypeEnum, {
-  name: 'FormSystemFieldDtoFieldTypeEnum'
+  name: 'FormSystemFieldDtoFieldTypeEnum',
 })
 
 @InputType('FormSystemCreateFieldInput')
@@ -68,7 +68,6 @@ export class UpdateFieldInput {
 }
 
 @InputType()
-
 @InputType('FormSystemFieldInput')
 export class FieldInput {
   @Field(() => String, { nullable: true })

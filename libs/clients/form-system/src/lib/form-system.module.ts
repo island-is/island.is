@@ -1,42 +1,42 @@
 import { Module } from '@nestjs/common'
-// import {
-//   FilesApiProvider,
-//   FormsApiProvider,
-//   GroupsApiProvider,
-//   InputsApiProvider,
-//   OrganizationsApiProvider,
-//   ServicesApiProvider,
-//   StepsApiProvider,
-// } from './FormSystemApiProvider'
-// import {
-//   FilesApi,
-//   FormsApi,
-//   GroupsApi,
-//   InputsApi,
-//   OrganizationsApi,
-//   ServicesApi,
-//   StepsApi,
-// } from '../../gen/fetch'
+import {
+  ApplicationsApiProvider,
+  FieldsApiProvider,
+  FormsApiProvider,
+  ListItemsApiProvider,
+  OrganizationsApiProvider,
+  ScreensApiProvider,
+  SectionsApiProvider,
+} from './FormSystemApiProvider'
+import {
+  ApplicationsApi,
+  FieldsApi,
+  FormsApi,
+  ListItemsApi,
+  OrganizationsApi,
+  ScreensApi,
+  SectionsApi,
+} from '../../gen/fetch'
 
 @Module({
   controllers: [],
   providers: [
-    // FilesApiProvider,
-    // FormsApiProvider,
-    // GroupsApiProvider,
-    // InputsApiProvider,
-    // OrganizationsApiProvider,
-    // ServicesApiProvider,
-    // StepsApiProvider,
+    ApplicationsApiProvider,
+    FieldsApiProvider,
+    FormsApiProvider,
+    ListItemsApiProvider,
+    OrganizationsApiProvider,
+    ScreensApiProvider,
+    SectionsApiProvider,
   ],
   exports: [
-    // FilesApi,
-    // FormsApi,
-    // GroupsApi,
-    // InputsApi,
-    // OrganizationsApi,
-    // ServicesApi,
-    // StepsApi,
+    ApplicationsApi,
+    FieldsApi,
+    FormsApi,
+    ListItemsApi,
+    OrganizationsApi,
+    ScreensApi,
+    SectionsApi,
   ],
 })
-export class FormSystemClientModule { }
+export class FormSystemClientModule {}

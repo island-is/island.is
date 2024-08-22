@@ -1,6 +1,26 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { LanguageType } from "./LanguageType.model";
+import { Field, ObjectType, Int } from '@nestjs/graphql'
+import { LanguageType } from './languageType.model'
 
+@ObjectType('FormSystemListItem')
+export class ListItem {
+  @Field(() => String, { nullable: true })
+  id?: string
+
+  @Field(() => LanguageType, { nullable: true })
+  label?: LanguageType
+
+  @Field(() => LanguageType, { nullable: true })
+  description?: LanguageType
+
+  @Field(() => String, { nullable: true })
+  value?: string
+
+  @Field(() => Int, { nullable: true })
+  displayOrder?: number
+
+  @Field(() => Boolean, { nullable: true })
+  isSelected?: boolean
+}
 
 @ObjectType('FormSystemListType')
 export class ListType {

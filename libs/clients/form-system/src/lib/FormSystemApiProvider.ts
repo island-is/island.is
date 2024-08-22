@@ -2,7 +2,16 @@ import { Provider } from '@nestjs/common/interfaces/modules/provider.interface'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { ConfigType, LazyDuringDevScope } from '@island.is/nest/config'
 import { FormSystemClientConfig } from './FormSystemClient.config'
-import { ApplicationsApi, FieldsApi, FormsApi, ListItemsApi, OrganizationsApi, ScreensApi, SectionsApi } from '../../gen/fetch'
+import {
+  Configuration,
+  ApplicationsApi,
+  FieldsApi,
+  FormsApi,
+  ListItemsApi,
+  OrganizationsApi,
+  ScreensApi,
+  SectionsApi,
+} from '../../gen/fetch'
 
 const provideApi = <T>(
   Api: new (configuration: Configuration) => T,
@@ -26,11 +35,10 @@ const provideApi = <T>(
   inject: [FormSystemClientConfig.KEY],
 })
 
-// export const FilesApiProvider = provideApi(FilesApi)
-// export const FormsApiProvider = provideApi(FormsApi)
-// export const GroupsApiProvider = provideApi(GroupsApi)
-// export const InputsApiProvider = provideApi(InputsApi)
-// export const OrganizationsApiProvider = provideApi(OrganizationsApi)
-// export const ServicesApiProvider = provideApi(ServicesApi)
-// export const StepsApiProvider = provideApi(StepsApi)
-\
+export const ApplicationsApiProvider = provideApi(ApplicationsApi)
+export const FieldsApiProvider = provideApi(FieldsApi)
+export const FormsApiProvider = provideApi(FormsApi)
+export const ListItemsApiProvider = provideApi(ListItemsApi)
+export const OrganizationsApiProvider = provideApi(OrganizationsApi)
+export const ScreensApiProvider = provideApi(ScreensApi)
+export const SectionsApiProvider = provideApi(SectionsApi)

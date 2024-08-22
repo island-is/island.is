@@ -1,6 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql";
-import { LanguageType } from "./LanguageType.model";
-import { Form } from "./form.model";
+import { Field, ObjectType } from '@nestjs/graphql'
+import { LanguageType } from './LanguageType.model'
+import { Form } from './form.model'
 
 @ObjectType('FormSystemOrganization')
 export class Organization {

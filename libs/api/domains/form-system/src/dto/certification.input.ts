@@ -1,9 +1,9 @@
-import { Field, InputType, registerEnumType } from "@nestjs/graphql";
-import { CertificationTypeDtoTypeEnum } from "@island.is/clients/form-system"
-import { LanguageTypeInput } from "./languageType.input";
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { CertificationTypeDtoTypeEnum } from '@island.is/clients/form-system'
+import { LanguageTypeInput } from './languageType.input'
 
 registerEnumType(CertificationTypeDtoTypeEnum, {
-  name: 'FormSystemCertificationTypeDtoTypeEnum'
+  name: 'FormSystemCertificationTypeDtoTypeEnum',
 })
 
 @InputType('FormSystemCertificationInput')

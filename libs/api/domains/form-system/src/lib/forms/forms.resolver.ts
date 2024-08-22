@@ -7,14 +7,19 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { FormsService } from './forms.service'
-import { CreateFormInput, DeleteFormInput, GetAllFormsInput, GetFormInput } from '../../dto/form.input'
+import {
+  CreateFormInput,
+  DeleteFormInput,
+  GetAllFormsInput,
+  GetFormInput,
+} from '../../dto/form.input'
 import { FormResponse } from '../../models/form.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) { }
+  constructor(private readonly formsService: FormsService) {}
 
   @Mutation(() => Boolean, {
     name: 'formSystemCreateForm',
@@ -55,5 +60,4 @@ export class FormsResolver {
   ): Promise<FormResponse> {
     return this.formsService.getAllForms(user, input)
   }
-
 }

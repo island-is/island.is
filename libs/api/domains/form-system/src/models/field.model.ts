@@ -1,8 +1,7 @@
 import { Field as FieldType, Int, ObjectType } from '@nestjs/graphql'
-import { LanguageType } from './LanguageType.model'
 import { FieldDtoFieldTypeEnum } from '@island.is/clients/form-system'
 import { FieldSettings } from './fieldSettings.model'
-
+import { LanguageType } from './languageType.model'
 
 @ObjectType('FormSystemField')
 export class Field {
@@ -30,4 +29,3 @@ export class Field {
   @FieldType(() => FieldDtoFieldTypeEnum, { nullable: true })
   fieldType?: FieldDtoFieldTypeEnum
 }
-

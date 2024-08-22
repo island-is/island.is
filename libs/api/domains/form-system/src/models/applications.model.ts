@@ -1,7 +1,6 @@
-import { Field, ObjectType } from "@nestjs/graphql"
-import { Organization } from "./organization.model"
-import { Section } from "./section.model"
-
+import { Field, ObjectType } from '@nestjs/graphql'
+import { Organization } from './organization.model'
+import { Section } from './section.model'
 
 @ObjectType('FormSystemApplication')
 export class Application {

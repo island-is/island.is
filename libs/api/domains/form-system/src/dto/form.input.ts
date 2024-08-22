@@ -1,18 +1,21 @@
-import { Field, InputType, Int, registerEnumType } from "@nestjs/graphql";
-import { SectionInput } from "./section.input";
-import { ScreenInput } from "./screen.input";
-import { FieldInput } from "./field.input";
-import { LanguageTypeInput } from "./languageType.input";
-import { CertificationTypeDtoTypeEnum, FormApplicantDtoApplicantTypeEnum } from "@island.is/clients/form-system"
-import { FieldTypeInput } from "./fieldType.input";
-import { ListTypeInput } from "./listType.input";
+import { Field, InputType, Int, registerEnumType } from '@nestjs/graphql'
+import { SectionInput } from './section.input'
+import { ScreenInput } from './screen.input'
+import { FieldInput } from './field.input'
+import { LanguageTypeInput } from './languageType.input'
+import {
+  CertificationTypeDtoTypeEnum,
+  FormApplicantDtoApplicantTypeEnum,
+} from '@island.is/clients/form-system'
+import { FieldTypeInput } from './fieldType.input'
+import { ListTypeInput } from './listType.input'
 
 registerEnumType(FormApplicantDtoApplicantTypeEnum, {
-  name: 'FormSystemFormApplicantDtoApplicantTypeEnum'
+  name: 'FormSystemFormApplicantDtoApplicantTypeEnum',
 })
 
 registerEnumType(CertificationTypeDtoTypeEnum, {
-  name: 'FormSystemCertificationTypeDtoTypeEnum'
+  name: 'FormSystemCertificationTypeDtoTypeEnum',
 })
 
 @InputType('FormSystemCreateFormInput')

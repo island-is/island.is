@@ -1,6 +1,6 @@
-import { Field, InputType, Int } from "@nestjs/graphql";
-import { LanguageTypeInput } from "./languageType.input";
-import { FieldInput } from "./field.input";
+import { Field, InputType, Int } from '@nestjs/graphql'
+import { LanguageTypeInput } from './languageType.input'
+import { FieldInput } from './field.input'
 
 @InputType('FormSystemCreateScreenInput')
 export class CreateScreenInput {

@@ -1,18 +1,27 @@
-import { Injectable, Inject } from "@nestjs/common";
+import { Injectable, Inject } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { AuthMiddleware, User } from '@island.is/auth-nest-tools'
-import { ApolloError } from "@apollo/client";
-import { handle4xx } from "../../utils/errorHandler";
-import { ListItemsControllerCreateRequest, ListItemsApi, ListItemsControllerDeleteRequest, ListItemsControllerUpdateRequest } from '@island.is/clients/form-system'
-import { CreateListItemInput, DeleteListItemInput, UpdateListItemInput } from "../../dto/listItem.input";
+import { ApolloError } from '@apollo/client'
+import { handle4xx } from '../../utils/errorHandler'
+import {
+  ListItemsControllerCreateRequest,
+  ListItemsApi,
+  ListItemsControllerDeleteRequest,
+  ListItemsControllerUpdateRequest,
+} from '@island.is/clients/form-system'
+import {
+  CreateListItemInput,
+  DeleteListItemInput,
+  UpdateListItemInput,
+} from '../../dto/listItem.input'
 
 @Injectable()
 export class ListItemsService {
   constructor(
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
-    private listItemsApi: ListItemsApi
-  ) { }
+    private listItemsApi: ListItemsApi,
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -31,10 +40,10 @@ export class ListItemsService {
 
   async createListItem(auth: User, input: CreateListItemInput): Promise<void> {
     const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerCreate(
-        input as ListItemsControllerCreateRequest
+      .listItemsControllerCreate(input as ListItemsControllerCreateRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to create list item'),
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to create list item'))
 
     if (!response || response instanceof ApolloError) {
       return
@@ -44,10 +53,10 @@ export class ListItemsService {
 
   async deleteListItem(auth: User, input: DeleteListItemInput): Promise<void> {
     const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerDelete(
-        input as ListItemsControllerDeleteRequest
+      .listItemsControllerDelete(input as ListItemsControllerDeleteRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to delete list item'),
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to delete list item'))
 
     if (!response || response instanceof ApolloError) {
       return
@@ -57,10 +66,10 @@ export class ListItemsService {
 
   async updateListItem(auth: User, input: UpdateListItemInput): Promise<void> {
     const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerUpdate(
-        input as ListItemsControllerUpdateRequest
+      .listItemsControllerUpdate(input as ListItemsControllerUpdateRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to update list item'),
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update list item'))
 
     if (!response || response instanceof ApolloError) {
       return
@@ -68,12 +77,15 @@ export class ListItemsService {
     return response
   }
 
-  async updateListItemsDisplayOrder(auth: User, input: UpdateListItemInput): Promise<void> {
+  async updateListItemsDisplayOrder(
+    auth: User,
+    input: UpdateListItemInput,
+  ): Promise<void> {
     const response = await this.listItemsApiWithAuth(auth)
-      .listItemsControllerUpdate(
-        input as ListItemsControllerUpdateRequest
+      .listItemsControllerUpdate(input as ListItemsControllerUpdateRequest)
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to update list item'),
       )
-      .catch((e) => handle4xx(e, this.handleError, 'failed to update list item'))
 
     if (!response || response instanceof ApolloError) {
       return

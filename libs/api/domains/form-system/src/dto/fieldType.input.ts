@@ -1,10 +1,10 @@
-import { Field, InputType, registerEnumType } from "@nestjs/graphql"
-import { FieldTypeDtoTypeEnum } from "@island.is/clients/form-system"
-import { FieldSettingsInput } from "./fieldSettings.input"
-import { LanguageTypeInput } from "./languageType.input"
+import { Field, InputType, registerEnumType } from '@nestjs/graphql'
+import { FieldTypeDtoTypeEnum } from '@island.is/clients/form-system'
+import { FieldSettingsInput } from './fieldSettings.input'
+import { LanguageTypeInput } from './languageType.input'
 
 registerEnumType(FieldTypeDtoTypeEnum, {
-  name: 'FormSystemFieldTypeDtoTypeEnum'
+  name: 'FormSystemFieldTypeDtoTypeEnum',
 })
 
 @InputType('FormSystemFieldTypeInput')

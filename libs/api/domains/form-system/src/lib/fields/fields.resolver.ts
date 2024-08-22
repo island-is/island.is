@@ -6,7 +6,13 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
-import { GetFieldInput, CreateFieldInput, UpdateFieldInput, DeleteFieldInput, UpdateFieldsDisplayOrderInput } from '../../dto/field.input'
+import {
+  GetFieldInput,
+  CreateFieldInput,
+  UpdateFieldInput,
+  DeleteFieldInput,
+  UpdateFieldsDisplayOrderInput,
+} from '../../dto/field.input'
 import { FieldsService } from './fields.services'
 import { Field } from '../../models/field.model'
 
@@ -14,7 +20,7 @@ import { Field } from '../../models/field.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FieldsResolver {
-  constructor(private readonly fieldsService: FieldsService) { }
+  constructor(private readonly fieldsService: FieldsService) {}
 
   @Query(() => Field, {
     name: 'formSystemGetField',
@@ -26,13 +32,13 @@ export class FieldsResolver {
     return this.fieldsService.getField(user, input)
   }
 
-  @Mutation(() => Field, {
+  @Mutation(() => Boolean, {
     name: 'formSystemCreateField',
   })
   async createField(
     @Args('input', { type: () => CreateFieldInput }) input: CreateFieldInput,
     @CurrentUser() user: User,
-  ): Promise<Field> {
+  ): Promise<void> {
     return this.fieldsService.createField(user, input)
   }
 
@@ -60,7 +66,8 @@ export class FieldsResolver {
     name: 'formSystemUpdateFieldsDisplayOrder',
   })
   async updateFieldsDisplayOrder(
-    @Args('input', { type: () => UpdateFieldsDisplayOrderInput }) input: UpdateFieldsDisplayOrderInput,
+    @Args('input', { type: () => UpdateFieldsDisplayOrderInput })
+    input: UpdateFieldsDisplayOrderInput,
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.fieldsService.updateFieldsDisplayOrder(user, input)
