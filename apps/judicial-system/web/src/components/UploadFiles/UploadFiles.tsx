@@ -5,8 +5,9 @@ import { useIntl } from 'react-intl'
 import { Box, Button, Text, UploadFile } from '@island.is/island-ui/core'
 
 import { TUploadFile, useFileList } from '../../utils/hooks'
-import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
-import EditableCaseFile from '../EditableCaseFile/EditableCaseFile'
+import EditableCaseFile, {
+  TEditableCaseFile,
+} from '../EditableCaseFile/EditableCaseFile'
 import { FormContext } from '../FormProvider/FormProvider'
 import { strings } from './UploadFiles.strings'
 import * as styles from './UploadFiles.css'

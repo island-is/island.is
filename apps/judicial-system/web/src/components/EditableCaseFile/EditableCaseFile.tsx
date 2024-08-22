@@ -12,11 +12,11 @@ import {
   LoadingDots,
   Text,
   UploadFile,
+  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { TUploadFile } from '../../utils/hooks'
-import { EditableCaseFile as TEditableCaseFile } from '../AccordionItems/IndictmentsCaseFilesAccordionItem/IndictmentsCaseFilesAccordionItem'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 
@@ -27,6 +27,16 @@ interface Props {
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (file: TUploadFile) => void
   onRetry: (file: TUploadFile) => void
+}
+
+export interface TEditableCaseFile {
+  id?: string
+  displayText?: string | null
+  created?: string | null
+  userGeneratedFilename?: string | null
+  displayDate?: string | null
+  canOpen?: boolean
+  status?: UploadFileStatus
 }
 
 const EditableCaseFile: FC<Props> = (props) => {

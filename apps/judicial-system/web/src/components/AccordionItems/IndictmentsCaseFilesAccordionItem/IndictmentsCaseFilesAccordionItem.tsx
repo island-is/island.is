@@ -19,7 +19,6 @@ import {
   Box,
   Text,
   toast,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   CrimeSceneMap,
@@ -37,7 +36,9 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import EditableCaseFile from '../../EditableCaseFile/EditableCaseFile'
+import EditableCaseFile, {
+  TEditableCaseFile,
+} from '../../EditableCaseFile/EditableCaseFile'
 import { useUpdateFilesMutation } from './updateFiles.generated'
 import { indictmentsCaseFilesAccordionItem as m } from './IndictmentsCaseFilesAccordionItem.strings'
 import * as styles from './IndictmentsCaseFilesAccordionItem.css'
@@ -60,21 +61,11 @@ interface CaseFileProps {
   onRetry: (file: TUploadFile) => void
 }
 
-export interface ReorderableItem extends EditableCaseFile {
+export interface ReorderableItem extends TEditableCaseFile {
   isDivider: boolean
   isHeading: boolean
   chapter?: number | null
   orderWithinChapter?: number | null
-}
-
-export interface EditableCaseFile {
-  id?: string
-  displayText?: string | null
-  created?: string | null
-  userGeneratedFilename?: string | null
-  displayDate?: string | null
-  canOpen?: boolean
-  status?: UploadFileStatus
 }
 
 const useRaisedShadow = (value: MotionValue<number>) => {
