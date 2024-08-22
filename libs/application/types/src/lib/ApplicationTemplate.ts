@@ -30,7 +30,7 @@ export interface ApplicationTemplate<
         application: Application,
       ) => StaticText | { name: StaticText; value: string })
   readonly newApplicationButtonLabel?: StaticText
-  readonly applicationText?: StaticText   
+  readonly applicationText?: StaticText
   readonly institution?: StaticText
   readonly translationNamespaces?: string[]
   readonly allowMultipleApplicationsInDraft?: boolean

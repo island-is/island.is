@@ -44,7 +44,7 @@ export const buildHistoryItems = (
                 >
                   {application.actionCard.pendingAction.button
                     ? formatMessage(application.actionCard.pendingAction.button)
-                    : formatMessage(coreMessages.cardButtonDraft)} 
+                    : formatMessage(coreMessages.cardButtonDraft)}
                 </Button>
               </Box>
             ) : undefined
