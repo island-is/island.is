@@ -9,13 +9,15 @@ import {
   getInitials,
 } from '@island.is/judicial-system/formatters'
 import { tables } from '@island.is/judicial-system-web/messages'
+import {
+  CreatedDate,
+  SortButton,
+  TableContainer,
+  TableHeaderText,
+} from '@island.is/judicial-system-web/src/components/Table'
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import useSort from '@island.is/judicial-system-web/src/utils/hooks/useSort/useSort'
 
-import CreatedDate from '../CreatedDate/CreatedDate'
-import SortButton from '../SortButton/SortButton'
-import TableContainer from '../TableContainer/TableContainer'
-import TableHeaderText from '../TableHeaderText/TableHeaderText'
 import { strings } from './CaseFileTable.strings'
 import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
@@ -85,10 +87,10 @@ const CaseFileTable: FC<Props> = ({
             </td>
             <td>
               <Box>
-                <Text>
+                <Text textAlign="right">
                   {formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>
-                <Text variant="small">
+                <Text variant="small" textAlign="right">
                   {formatMessage(strings.submittedBy, {
                     category: file.category,
                     initials: getInitials(file.submittedBy),
