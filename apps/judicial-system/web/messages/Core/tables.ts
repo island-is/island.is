@@ -125,7 +125,7 @@ export const tables = defineMessages({
     description: 'Notaður sem titill fyrir nafn dálk í lista yfir mál.',
   },
   caseFileDate: {
-    id: 'judicial.system.core:tables.date',
+    id: 'judicial.system.core:tables.case_file_date',
     defaultMessage: 'Dagsetning skjals',
     description: 'Notaður sem titill fyrir dagsetningu í lista yfir mál.',
   },
