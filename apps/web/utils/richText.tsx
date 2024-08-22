@@ -97,7 +97,11 @@ export const webRenderConnectedComponent = (
     case 'Fiskistofa/ShipSearchSidebarInput':
       return <SidebarShipSearchInput namespace={data} />
     case 'Fiskistofa/StraddlingStockCalculator':
-      return <StraddlingStockCalculator namespace={data} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <StraddlingStockCalculator />
+        </IntlProvider>
+      )
     case 'Fiskistofa/CatchQuotaCalculator':
       return (
         <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
