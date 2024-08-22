@@ -25,6 +25,7 @@ import {
   CrimeSceneMap,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
+import { errors as errorMessages } from '@island.is/judicial-system-web/messages/Core/errors'
 import {
   FileNotFoundModal,
   IndictmentInfo,
@@ -397,7 +398,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
       newDate = parseISO(`${year}-${month}-${day}`)
 
       if (!isValid(newDate)) {
-        toast.error(formatMessage(m.invalidDateErrorMessage))
+        toast.error(formatMessage(errorMessages.invalidDateErrorMessage))
         return
       }
     }
@@ -429,7 +430,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
     })
 
     if (errors) {
-      toast.error(formatMessage(m.renameFailedErrorMessage))
+      toast.error(formatMessage(errorMessages.renameFailedErrorMessage))
     }
   }
 

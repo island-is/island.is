@@ -6,6 +6,7 @@ import parseISO from 'date-fns/parseISO'
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
+import { errors as errorMessages } from '@island.is/judicial-system-web/messages/Core/errors'
 import {
   FormContentContainer,
   FormContext,
@@ -17,10 +18,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { useUpdateFilesMutation } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
-  CaseFile,
-  CaseFileCategory,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   TUploadFile,
   useS3Upload,
@@ -79,7 +77,7 @@ const AddFiles: FC = () => {
         newDate = parseISO(`${year}-${month}-${day}`)
 
         if (!isValid(newDate)) {
-          toast.error('TODO: FIX')
+          toast.error(formatMessage(errorMessages.invalidDateErrorMessage))
           return
         }
       }
@@ -110,10 +108,16 @@ const AddFiles: FC = () => {
       })
 
       if (errors) {
-        toast.error('TODO: FIX')
+        toast.error(formatMessage(errorMessages.renameFailedErrorMessage))
       }
     },
-    [updateFilesMutation, updateUploadFile, uploadFiles, workingCase.id],
+    [
+      formatMessage,
+      updateFilesMutation,
+      updateUploadFile,
+      uploadFiles,
+      workingCase.id,
+    ],
   )
 
   return (
