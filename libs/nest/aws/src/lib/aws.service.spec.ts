@@ -158,7 +158,8 @@ describe('AwsService E2E', () => {
           fileContent.Body &&
           typeof fileContent.Body.transformToByteArray === 'function'
         ) {
-          const downloadedContent = await fileContent.Body.transformToByteArray()
+          const downloadedContent =
+            await fileContent.Body.transformToByteArray()
           const downloadedHash = createHash('md5')
             .update(Buffer.from(downloadedContent))
             .digest('hex')
