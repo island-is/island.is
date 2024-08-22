@@ -23,4 +23,28 @@ export const strings = {
     defaultMessage: 'Senda gögn',
     description: 'Notaður sem texti í Senda gögn takka á Gögn síðu í ákærum',
   },
+  filesSentModalTitle: {
+    id: 'judicial.system.core:add_files.files_sent_modal_title',
+    defaultMessage: 'Viltu senda gögn til héraðsdóms?',
+    description:
+      'Notaður sem titill í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
+  },
+  filesSentModalText: {
+    id: 'judicial.system.core:add_files.files_sent_modal_text',
+    defaultMessage: 'Gögnin verða sýnileg dómstólnum og aðilum máls.',
+    description:
+      'Notaður sem texti í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
+  },
+  filesSentModalPrimaryButtonText: {
+    id: 'judicial.system.core:add_files.files_sent_modal_primary_button_text',
+    defaultMessage: 'Já, senda gögn',
+    description:
+      'Notaður sem texti í takka í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
+  },
+  filesSentModalSecondaryButtonText: {
+    id: 'judicial.system.core:add_files.files_sent_modal_secondary_button_text',
+    defaultMessage: 'Hætta við',
+    description:
+      'Notaður sem texti í takka í modal glugga þegar gögn eru send á Gögn síðu í ákærum',
+  },
 }

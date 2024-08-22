@@ -1,20 +1,24 @@
-import { FC, useCallback, useContext } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
+import { useRouter } from 'next/router'
 
 import { Box, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { isDefenceUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { errors as errorMessages } from '@island.is/judicial-system-web/messages/Core/errors'
 import {
   FormContentContainer,
   FormContext,
   FormFooter,
+  Modal,
   PageHeader,
   PageLayout,
   ProsecutorCaseInfo,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { useUpdateFilesMutation } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
@@ -31,6 +35,12 @@ const AddFiles: FC = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
+  const [visibleModal, setVisibleModal] = useState<'filesSent'>()
+  const router = useRouter()
+  const { user } = useContext(UserContext)
+  const previousRoute = isDefenceUser(user)
+    ? `${constants.DEFENDER_INDICTMENT_ROUTE}/${workingCase.id}`
+    : `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`
 
   const { uploadFiles, addUploadFiles, updateUploadFile, removeUploadFile } =
     useUploadFiles(workingCase.caseFiles)
@@ -152,10 +162,25 @@ const AddFiles: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
+          previousUrl={previousRoute}
           nextButtonText={formatMessage(strings.nextButtonText)}
+          onNextButtonClick={() => setVisibleModal('filesSent')}
         />
       </FormContentContainer>
+      {visibleModal === 'filesSent' && (
+        <Modal
+          title={formatMessage(strings.filesSentModalTitle)}
+          text={formatMessage(strings.filesSentModalText)}
+          primaryButtonText={formatMessage(
+            strings.filesSentModalPrimaryButtonText,
+          )}
+          onPrimaryButtonClick={() => router.push(previousRoute)}
+          secondaryButtonText={formatMessage(
+            strings.filesSentModalSecondaryButtonText,
+          )}
+          onSecondaryButtonClick={() => setVisibleModal(undefined)}
+        />
+      )}
     </PageLayout>
   )
 }
