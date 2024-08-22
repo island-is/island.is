@@ -16,7 +16,7 @@ import {
   TableHeaderText,
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
-import useSort from '@island.is/judicial-system-web/src/utils/hooks/useSort/useSort'
+import { useSort } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { strings } from './CaseFileTable.strings'
 import * as tableStyles from '../Table.css'
@@ -55,13 +55,13 @@ const CaseFileTable: FC<Props> = ({
       loading={loading}
       tableHeader={
         <>
-          <th className={cn(tableStyles.th, tableStyles.largeColumn)}>
+          <th className={tableStyles.th}>
             <SortButton
               {...createSortProps(formatMessage(tables.caseFileName), 'name')}
             />
           </th>
           <TableHeaderText title={formatMessage(tables.caseFileDate)} />
-          <th className={cn(tableStyles.th, tableStyles.largeColumn)}>
+          <th className={tableStyles.th}>
             <SortButton
               {...createSortProps(formatMessage(tables.sent), 'created')}
             />
@@ -77,7 +77,7 @@ const CaseFileTable: FC<Props> = ({
                 onClick={() => onOpenFile?.(file.id)}
                 className={styles.linkButton}
               >
-                <Text color="blue400" variant="h4">
+                <Text color="blue400" variant="h5">
                   {file.name}
                 </Text>
               </Box>
@@ -86,7 +86,7 @@ const CaseFileTable: FC<Props> = ({
               <CreatedDate created={file.displayDate ?? file.created} />
             </td>
             <td>
-              <Box>
+              <Box className={styles.noWrapColumn}>
                 <Text textAlign="right">
                   {formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>

@@ -17,8 +17,8 @@ export {
   getAppealDecision,
   default as useAppealAlertBanner,
 } from './useAppealAlertBanner'
+export { default as useSort } from './useSort/useSort'
 export { default as useSortCases } from './useSort/useSortCases'
-export { default as useSortAppealCases } from './useSort/useSortAppealCases'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'
 export {
