@@ -90,6 +90,7 @@ export const TIME_FORMAT = 'HH:mm'
 export const DEFENDER_CASES_ROUTE = '/verjandi/krofur'
 export const DEFENDER_ROUTE = '/verjandi/krafa'
 export const DEFENDER_INDICTMENT_ROUTE = '/verjandi/akaera'
+export const DEFENDER_ADD_FILES_ROUTE = '/verjandi/akaera/gogn'
 
 export const DEFENDER_APPEAL_ROUTE = '/verjandi/kaera'
 export const DEFENDER_APPEAL_FILES_ROUTE = '/verjandi/kaera/gogn'

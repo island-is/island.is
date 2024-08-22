@@ -153,6 +153,7 @@ const AddFiles: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`}
+          nextButtonText={formatMessage(strings.nextButtonText)}
         />
       </FormContentContainer>
     </PageLayout>
