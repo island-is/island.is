@@ -91,7 +91,7 @@ const AppealCasesTable: FC<Props> = (props) => {
               : { isSortable: true, key: 'appealedDate' },
           },
         ]}
-        data={cases}
+        data={activeCasesData}
         generateContextMenuItems={(row) => {
           return [openCaseInNewTabMenuItem(row.id)]
         }}
