@@ -22,4 +22,10 @@ export const strings = defineMessages({
     defaultMessage: 'Dómar, úrskurðir og þingbók',
     description: 'Notaður sem titill á dómur hluta á dómskjalaskjá í ákærum.',
   },
+  uploadedCaseFiles: {
+    id: 'judicial.system.core:court.indictment_case_files_list.uploaded_case_files',
+    defaultMessage: 'Innsend gögn',
+    description:
+      'Notaður sem titill á innsend gögn hluta á dómskjalaskjá í ákærum.',
+  },
 })

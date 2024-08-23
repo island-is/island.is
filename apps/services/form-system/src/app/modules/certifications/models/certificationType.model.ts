@@ -1,4 +1,3 @@
-import { ApiProperty } from '@nestjs/swagger'
 import {
   BelongsToMany,
   Column,
@@ -22,7 +21,6 @@ export class CertificationType extends Model<CertificationType> {
     primaryKey: true,
     defaultValue: DataType.UUIDV4,
   })
-  @ApiProperty()
   id!: string
 
   @Column({
@@ -30,7 +28,6 @@ export class CertificationType extends Model<CertificationType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   name!: LanguageType
 
   @Column({
@@ -38,7 +35,6 @@ export class CertificationType extends Model<CertificationType> {
     allowNull: false,
     defaultValue: () => new LanguageType(),
   })
-  @ApiProperty({ type: LanguageType })
   description!: LanguageType
 
   @Column({
@@ -46,15 +42,12 @@ export class CertificationType extends Model<CertificationType> {
     allowNull: false,
     values: Object.values(CertificationTypes),
   })
-  @ApiProperty({ enum: CertificationTypes })
   type!: string
 
   @CreatedAt
-  @ApiProperty({ type: Date })
   created!: CreationOptional<Date>
 
   @UpdatedAt
-  @ApiProperty({ type: Date })
   modified!: CreationOptional<Date>
 
   @BelongsToMany(() => Organization, {
