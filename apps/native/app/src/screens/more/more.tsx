@@ -1,5 +1,5 @@
 import { FamilyMemberCard, ListButton } from '@ui'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Image,
@@ -7,10 +7,7 @@ import {
   ScrollView,
   TouchableHighlight,
 } from 'react-native'
-import {
-  Navigation,
-  NavigationFunctionComponent,
-} from 'react-native-navigation'
+import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 import assetsIcon from '../../assets/icons/assets.png'

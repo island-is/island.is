@@ -25,7 +25,6 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { useBrowser } from '../../lib/use-browser'
 import { getApplicationOverviewUrl } from '../../utils/applications-utils'
 import { testIDs } from '../../utils/test-ids'
-import { getRightButtons } from '../../utils/get-main-root'
 import { ApplicationsModule } from '../home/applications-module'
 import { isIos } from '../../utils/devices'
 

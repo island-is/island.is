@@ -33,7 +33,6 @@ import { getRightButtons } from '../../utils/get-main-root'
 import { isDefined } from '../../utils/is-defined'
 import { testIDs } from '../../utils/test-ids'
 import { WalletItem } from './components/wallet-item'
-import { ButtonRegistry } from '../../utils/component-registry'
 
 type FlatListItem =
   | GenericUserLicense
