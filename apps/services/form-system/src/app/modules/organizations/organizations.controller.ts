@@ -7,7 +7,13 @@ import {
   NotFoundException,
   VERSION_NEUTRAL,
 } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import { OrganizationsService } from './organizations.service'
 import { CreateOrganizationDto } from './models/dto/createOrganization.dto'
 import { Documentation } from '@island.is/nest/swagger'
@@ -19,6 +25,12 @@ import { OrganizationDto } from './models/dto/organization.dto'
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
 
+  @ApiOperation({ summary: 'Create an organization' })
+  @ApiCreatedResponse({
+    description: 'Create an organization',
+    type: OrganizationDto,
+  })
+  @ApiBody({ type: CreateOrganizationDto })
   @Post()
   create(
     @Body() createOrganizationDto: CreateOrganizationDto,
@@ -26,20 +38,23 @@ export class OrganizationsController {
     return this.organizationsService.create(createOrganizationDto)
   }
 
-  @Get()
-  @Documentation({
+  @ApiOperation({ summary: 'Get all Organizations' })
+  @ApiCreatedResponse({
     description: 'Get all Organizations',
-    response: { status: 200, type: [OrganizationsResponseDto] },
+    type: OrganizationsResponseDto,
   })
+  @Get()
   async findAll(): Promise<OrganizationsResponseDto> {
     return await this.organizationsService.findAll()
   }
 
-  @Get(':id')
-  @Documentation({
-    description: 'Get Organization by id',
-    response: { status: 200, type: OrganizationDto },
+  @ApiOperation({ summary: 'Get an organization by id' })
+  @ApiCreatedResponse({
+    description: 'Get an organization by id',
+    type: OrganizationDto,
   })
+  @ApiParam({ name: 'id', type: String })
+  @Get(':id')
   async findOne(@Param('id') id: string): Promise<OrganizationDto> {
     const organization = await this.organizationsService.findOne(id)
     if (!organization) {
