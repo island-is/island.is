@@ -164,6 +164,8 @@ const uploadToS3 = (
     request.withCredentials = true
     request.responseType = 'json'
 
+    console.log(file, presignedPost)
+
     request.upload.addEventListener('progress', (event) => {
       if (event.lengthComputable) {
         onProgress((event.loaded / event.total) * 100)

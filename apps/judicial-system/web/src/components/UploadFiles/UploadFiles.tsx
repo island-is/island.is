@@ -1,8 +1,9 @@
 import { FC, useCallback, useContext } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
+import { AnimatePresence, motion } from 'framer-motion'
 
-import { Box, Button, Text, UploadFile } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 
 import { TUploadFile, useFileList } from '../../utils/hooks'
 import EditableCaseFile, {
@@ -59,18 +60,31 @@ const UploadFiles: FC<Props> = (props) => {
           {formatMessage(strings.buttonText)}
         </Button>
       </Box>
-      {files.map((file) => (
-        <Box key={file.name} marginBottom={1} width="full">
-          <EditableCaseFile
-            enableDrag={false}
-            caseFile={file}
-            onOpen={onOpen}
-            onRename={onRename}
-            onDelete={onDelete}
-            onRetry={onRetry}
-          />
-        </Box>
-      ))}
+      <motion.ul layout initial={false} style={{ width: '100%' }}>
+        <AnimatePresence>
+          {files.map((file) => (
+            <motion.li
+              key={file.name}
+              initial={{ y: 10, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 10, opacity: 0 }}
+              style={{ width: '100%' }}
+              layout
+            >
+              <Box marginBottom={1} width="full">
+                <EditableCaseFile
+                  enableDrag={false}
+                  caseFile={file}
+                  onOpen={onOpen}
+                  onRename={onRename}
+                  onDelete={onDelete}
+                  onRetry={onRetry}
+                />
+              </Box>
+            </motion.li>
+          ))}
+        </AnimatePresence>
+      </motion.ul>
       <input {...getInputProps()} />
     </div>
   )

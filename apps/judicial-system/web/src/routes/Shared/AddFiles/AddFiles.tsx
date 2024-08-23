@@ -58,7 +58,6 @@ const AddFiles: FC = () => {
 
   const handleFileUpload = useCallback(
     async (files: UploadFile[]) => {
-      console.log(files)
       const filesUploaded = await handleUpload(files, updateFileToUpload)
 
       if (filesUploaded) {
@@ -115,6 +114,7 @@ const AddFiles: FC = () => {
     return files.map((file) => ({
       name: file.name,
       userGeneratedFilename: file.name,
+      originalFileObj: file as File,
       displayDate: new Date().toISOString(),
       type: CaseFileCategory.PROSECUTOR_CASE_FILE,
       id: uuid(),
@@ -143,7 +143,9 @@ const AddFiles: FC = () => {
         />
         <UploadFiles
           files={filesToUpload}
-          onChange={(files) => setFilesToUpload(mp(files))}
+          onChange={(files) =>
+            setFilesToUpload((prev) => [...mp(files), ...mp(prev)])
+          }
           onRetry={handleRetryUpload}
           onDelete={handleRemoveFile}
           onRename={handleRename}
@@ -166,10 +168,6 @@ const AddFiles: FC = () => {
             strings.filesSentModalPrimaryButtonText,
           )}
           onPrimaryButtonClick={() => router.push(previousRoute)}
-          secondaryButtonText={formatMessage(
-            strings.filesSentModalSecondaryButtonText,
-          )}
-          onSecondaryButtonClick={() => setVisibleModal(undefined)}
         />
       )}
     </PageLayout>
