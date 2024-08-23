@@ -188,6 +188,13 @@ export const coreMessages = defineMessages({
     description:
       'Your application is complete. The application has progressed in the process.',
   },
+  draftProgressMeter: {
+    id: 'application.system:application.progress',
+    defaultMessage:
+      'Þú hefur klárað {draftFinishedSteps} af {draftTotalSteps} skrefum',
+    description:
+      'You have completed {draftFinishedSteps} of {draftTotalSteps} steps',
+  },
   notLoggedIn: {
     id: 'application.system:not.logged.id',
     defaultMessage: 'Þú þarft að vera skrá þig inn.',

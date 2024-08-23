@@ -1,0 +1,23 @@
+query getVaccinations {
+  HealthDirectorateVaccinationsGetVaccinations {
+    diseaseId
+    diseaseName
+    diseaseDescription
+    vaccinationStatus
+    vaccinationsStatusName
+    lastVaccinationDate
+    vaccinations {
+      id
+      nationalId
+      code
+      vaccinationDate
+      vaccinationsAge {
+        years
+        months
+      }
+      generalComment
+      rejected
+    }
+    comments
+  }
+}

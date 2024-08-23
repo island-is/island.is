@@ -274,8 +274,11 @@ export const formatAmendingRegBody = (
     })
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
+
+      const grMatch = articleTitleNumber.match(/^\d+\. gr\./)
+      const articleTitleDisplay = grMatch ? grMatch[0] : articleTitleNumber
       additionArray.push([
-        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
+        `<p>${articleTitleDisplay} ${regNameDisplay} fellur brott.</p>` as HTMLText,
       ])
     } else if (testGroup.isAddition === true) {
       let prevArticleTitle = ''
