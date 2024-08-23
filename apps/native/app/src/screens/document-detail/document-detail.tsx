@@ -376,7 +376,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               <WebView
                 source={{
                   html:
-                    // Fix for a bug in react-native that renders <br /> with too much vertical space
+                    // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
                     // https://github.com/facebook/react-native/issues/32062
                     `${htmlStyles}${Document.content?.value.replaceAll(
                       regexForBr,
