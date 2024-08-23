@@ -9,16 +9,8 @@ import {
   GetContentInfoError,
 } from './utils'
 import { cache, s3 } from './external'
-import {
-  CompleteMultipartUploadCommand,
-  CreateMultipartUploadCommand,
-  GetObjectCommand,
-  HeadObjectCommand,
-} from '@aws-sdk/client-s3'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
 
 const { bucket } = environment
-const SIGNED_URL_TTL = 60
 
 export const reserveCache = async (
   req: express.Request,
@@ -45,9 +37,7 @@ export const reserveCache = async (
     // Invalidate reservation after 300 seconds
     await cache.expire(cacheId, 300)
     logger.debug(`Creating multipartupload for ${cacheId}`)
-    const { UploadId } = await s3.send(
-      new CreateMultipartUploadCommand(objectParams),
-    )
+    const { UploadId } = await s3.createMultipartUpload(objectParams).promise()
     if (!UploadId) {
       throw new Error('No upload id received from createMultipartUpload')
     }
@@ -108,7 +98,7 @@ export const uploadChunk = async (
 export const commitCache = async (
   req: express.Request,
   res: express.Response,
-  _next: express.NextFunction,
+  next: express.NextFunction,
 ) => {
   const { cacheId } = req.params
   logger.debug(`Finalizing cache upload for ${cacheId}`)
@@ -131,14 +121,14 @@ export const commitCache = async (
     Parts: uploadMap.map((item) => JSON.parse(item)),
   }
   logger.debug(`Completing multipartupload with map`, MultipartUpload)
-  await s3.send(
-    new CompleteMultipartUploadCommand({
+  await s3
+    .completeMultipartUpload({
       Bucket: bucket,
       Key: cacheId,
       MultipartUpload,
       UploadId: uploadId,
-    }),
-  )
+    })
+    .promise()
   cache.expire(cacheId, 1)
   res.sendStatus(200)
 }
@@ -160,20 +150,15 @@ export const retrieveCache = async (
     Key: cacheId,
   }
   try {
-    await s3.send(new HeadObjectCommand(objectParams))
+    const h = await s3.headObject(objectParams).promise()
   } catch (e) {
     return error(res, `Cache entry ${cacheId} not found!`, 404)
   }
   try {
-    // See migration docs
-    // https://github.com/aws/aws-sdk-js-v3/blob/794a37e9795f390d15c9530209e465d099716c86/UPGRADING.md#s3-presigned-url
-    const signedUrl = await getSignedUrl(
-      s3,
-      new GetObjectCommand(objectParams),
-      {
-        expiresIn: SIGNED_URL_TTL,
-      },
-    )
+    const signedUrl = await s3.getSignedUrlPromise('getObject', {
+      ...objectParams,
+      Expires: 60,
+    })
     logger.info(`Signed url: ${signedUrl}`)
     res.send({ archiveLocation: signedUrl, cacheKey: keys as string })
   } catch (e) {

@@ -15,7 +15,7 @@ services:
 
   redis-cluster:
     container_name: ads_redis_cluster
-    image: docker.io/grokzen/redis-cluster:7.0.0
+    image: docker.io/grokzen/redis-cluster:6.0.16
     privileged: true
     environment:
       - IP=0.0.0.0
