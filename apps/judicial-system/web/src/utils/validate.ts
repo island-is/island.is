@@ -2,7 +2,6 @@
 import {
   isIndictmentCase,
   isTrafficViolationCase,
-  prosecutorCanSelectDefenderForInvestigationCase,
 } from '@island.is/judicial-system/types'
 import {
   CaseAppealRulingDecision,
@@ -200,8 +199,7 @@ export const isDefendantStepValidIC = (
       policeCaseNumbers.length > 0 &&
       workingCase.type === caseType &&
       !someDefendantIsInvalid(workingCase) &&
-      (prosecutorCanSelectDefenderForInvestigationCase(workingCase.type) &&
-      workingCase.defenderName
+      (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
       validate([

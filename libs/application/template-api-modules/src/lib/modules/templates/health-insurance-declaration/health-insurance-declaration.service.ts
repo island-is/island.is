@@ -93,9 +93,10 @@ export class HealthInsuranceDeclarationService extends BaseTemplateApiService {
     // Different endpoints are used base on if applicant is a student or not
     const applicationType = getApplicantType(application)
     let response: MinarsidurAPIModelsInsuranceStatementsResponseInsuranceStatementApplicationResponseDTO
+
     if (applicationType === ApplicantType.STUDENT) {
       const attachments = await this.attachmentProvider.getFiles(
-        ['attachments.documents'],
+        ['educationConfirmationFileUploadField'],
         application,
       )
       const applicationStudentRequest = applicationToStudentApplication(

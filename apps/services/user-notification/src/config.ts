@@ -20,8 +20,9 @@ export const UserNotificationsConfig = defineConfig({
   name: 'UserNotificationsApi',
   schema,
   load(env) {
+    const isWorker = processJob() === 'worker'
     return {
-      isWorker: processJob() === 'worker',
+      isWorker,
       firebaseCredentials: env.required('FIREBASE_CREDENTIALS', ''),
       servicePortalClickActionUrl:
         env.optional('SERVICE_PORTAL_CLICK_ACTION_URL') ??

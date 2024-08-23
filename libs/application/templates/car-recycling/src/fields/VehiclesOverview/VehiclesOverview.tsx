@@ -7,24 +7,27 @@ import {
   Divider,
   FocusableBox,
   Pagination,
+  SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 
 import { formatText, getErrorViaPath } from '@island.is/application/core'
 import { Label } from '@island.is/application/ui-components'
 import { InputController } from '@island.is/shared/form-fields'
 import {
+  filterVehiclesList,
   getApplicationAnswers,
-  getApplicationExternalData,
 } from '../../lib/carRecyclingUtils'
 import { carRecyclingMessages, errorMessages } from '../../lib/messages'
 
 import { useFormContext } from 'react-hook-form'
 
-import { VehicleDto } from '../../shared/types'
+import { useDebounce } from 'react-use'
+import { useVehicles } from '../../hooks'
 import { FuelCodes } from '../../shared'
+import { VehicleDto } from '../../shared/types'
 
 const VehiclesOverview: FC<FieldBaseProps> = ({
   application,
@@ -32,91 +35,118 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
   error,
 }) => {
   const { formatMessage } = useLocale()
-
+  const { setValue } = useFormContext()
+  const [page, setPage] = useState(1)
+  const [permno, setPermno] = useState('')
+  const skipEffect = useRef(false)
   const [currentVehiclesList, setCurrentVehiclesList] = useState<VehicleDto[]>(
     [],
   )
   const [selectedVehiclesList, setSelectedVehiclesList] = useState<
     VehicleDto[]
   >([])
-  const [allVehiclesList, setAllVehiclesList] = useState<VehicleDto[]>([])
 
   const [canceledVehiclesList, setCanceledVehiclesList] = useState<
     VehicleDto[]
   >([])
 
-  const { setValue } = useFormContext()
+  const {
+    getVehicles,
+    data: qlVehiclesData,
+    loading: loadingCurrent,
+  } = useVehicles()
 
-  const [page, setPage] = useState(1)
+  const qlVehicleList = qlVehiclesData?.vehiclesListV2
+    .vehicleList as VehicleDto[]
+  const qlPaging = qlVehiclesData?.vehiclesListV2.paging
 
-  const ITEMS_ON_PAGE = 8
-  const totalPages =
-    allVehiclesList.length > ITEMS_ON_PAGE
-      ? Math.ceil(allVehiclesList.length / ITEMS_ON_PAGE)
-      : 0
+  useDebounce(
+    () => {
+      if (permno !== '') {
+        getVehicles(1, permno)
+      } else {
+        // if on 1 page when starting to search, the page is cached so we need to call backend directly
+        // else on other pages we can just set page to 1
+        if (page === 1) {
+          getVehicles(1, '')
+        } else {
+          setPage(1)
+        }
+      }
+      skipEffect.current = false
+    },
+    500,
+    [permno],
+  )
 
   useEffect(() => {
-    const { selectedVehicles, allVehicles, canceledVehicles } =
+    // Skip getting paged data if using search
+    if (!skipEffect.current) {
+      getVehicles(page, permno)
+    }
+  }, [page])
+
+  useEffect(() => {
+    if (qlVehicleList) {
+      // Mark selected vechicles in currentVehicles List as markedForRecycling
+      const updatedAllVehicles = qlVehicleList.map((vehicle) => {
+        const isSelected = selectedVehiclesList.find((selectedVehicle) => {
+          return selectedVehicle.permno === vehicle.permno
+        })
+        if (isSelected) {
+          return {
+            ...vehicle,
+            markedForRecycling: true,
+          }
+        }
+        return vehicle
+      })
+
+      setCurrentVehiclesList(updatedAllVehicles)
+    }
+  }, [qlVehiclesData, selectedVehiclesList])
+
+  useEffect(() => {
+    const { selectedVehicles, canceledVehicles, permnoSearch } =
       getApplicationAnswers(application.answers)
-    const { vehiclesList } = getApplicationExternalData(
-      application.externalData,
-    )
 
-    if (selectedVehicles.length > 0) {
-      setSelectedVehiclesList(selectedVehicles)
-    }
-
-    setAllVehiclesList(vehiclesList)
-
-    if (selectedVehicles.length > 0) {
-      setCurrentVehiclesList(allVehicles)
-    } else {
-      setCurrentVehiclesList(vehiclesList)
-    }
-
+    setSelectedVehiclesList(selectedVehicles)
     setCanceledVehiclesList(canceledVehicles)
+    setPermno(permnoSearch)
   }, [])
 
   useEffect(() => {
     setValue('vehicles.selectedVehicles', selectedVehiclesList)
-    setValue('vehicles.allVehicles', currentVehiclesList)
     setValue('vehicles.canceledVehicles', canceledVehiclesList)
   }, [selectedVehiclesList, setValue])
 
-  function filterSelectedVehiclesFromList(
-    selectedList: VehicleDto[],
-    allVehicles: VehicleDto[],
-  ): VehicleDto[] {
-    // Not show selected vehicles in filered list
-    return allVehicles.filter(
-      (vehicle1) =>
-        !selectedList.some((vehicle2) => vehicle1.permno === vehicle2.permno),
-    )
-  }
-
-  function filterVehiclesList(
-    vehicle: VehicleDto,
-    list: VehicleDto[],
-  ): VehicleDto[] {
-    return list.filter((item) => item.permno !== vehicle.permno)
-  }
-
-  function getRoleLabel(vechicle: VehicleDto): string {
-    if (vechicle.role === 'Eigandi') {
+  const getRoleLabel = (vehicle: VehicleDto): string => {
+    if (vehicle.role === 'Eigandi') {
       return formatMessage(carRecyclingMessages.cars.owner)
-    } else if (vechicle.role === 'Meðeigandi')
+    } else if (vehicle.role === 'Meðeigandi')
       return formatMessage(carRecyclingMessages.cars.coOwner)
     else {
       return formatMessage(carRecyclingMessages.cars.operator)
     }
   }
 
-  function onRecycle(vehicle: VehicleDto): void {
-    setSelectedVehiclesList([...selectedVehiclesList, { ...vehicle }])
+  const getUnavailableText = (vehicle: VehicleDto): string => {
+    if (vehicle.markedForRecycling) {
+      return formatMessage(carRecyclingMessages.cars.vehicleSelected)
+    }
 
-    // Remove selected vehicle from current list
-    const filterdVehiclesList = filterVehiclesList(vehicle, currentVehiclesList)
-    setCurrentVehiclesList(filterdVehiclesList)
+    return formatMessage(carRecyclingMessages.cars.onlyOwnerCanRecyle)
+  }
+
+  const onRecycle = (vehicle: VehicleDto): void => {
+    // Force changes on selectedForRecycling and mileage to all selected vehicle objects to prevent ghost effects
+    setSelectedVehiclesList((prevArray) =>
+      prevArray.concat({
+        ...vehicle,
+        selectedForRecycling: vehicle.selectedForRecycling || false,
+        mileage: vehicle.mileage || '',
+      }),
+    )
 
     // Remove selected vehicle from cancel list if user changes his mind about canceling recycling
     const filteredCanceledVehiclesList = filterVehiclesList(
@@ -132,14 +162,11 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     }
   }
 
-  function onCancel(vehicle: VehicleDto): void {
+  const onCancel = (vehicle: VehicleDto): void => {
     // Check if the vehicle has been selcted and submitted
     if (vehicle.selectedForRecycling) {
       // Keep bookeeping about canceled recycling
-      setCanceledVehiclesList((vehicles: VehicleDto[]) => [
-        vehicle,
-        ...vehicles,
-      ])
+      setCanceledVehiclesList((prevArray) => prevArray.concat(vehicle))
     }
 
     // Remove the vehicle from the selected list
@@ -149,40 +176,24 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
     )
 
     setSelectedVehiclesList(filteredSelectedVehiclesList)
-
-    // Add selected vehicle back to the non selected list
-    setCurrentVehiclesList((vehicles: VehicleDto[]) => [vehicle, ...vehicles])
   }
 
   return (
     <Box id="vehicles">
       <Box paddingTop={2}>
         <InputController
-          id="vehiclesList.input"
+          id="permnoSearch"
           defaultValue=""
           backgroundColor="blue"
           label={formatText(
-            carRecyclingMessages.cars.filter,
+            carRecyclingMessages.cars.search,
             application,
             formatMessage,
           )}
           onChange={(e) => {
-            if (page !== 1) {
-              setPage(1)
-            }
-            const filteredList = allVehiclesList.filter((vehicle) =>
-              vehicle.permno
-                ?.toLowerCase()
-                .includes(e.target.value.toLowerCase()),
-            )
-
-            // Not show selected vehicles in filered list
-            const result = filterSelectedVehiclesFromList(
-              selectedVehiclesList,
-              filteredList,
-            )
-
-            setCurrentVehiclesList(result)
+            skipEffect.current = true
+            setPage(1)
+            setPermno(e.target.value)
           }}
         />
       </Box>
@@ -196,8 +207,14 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         <Label>{formatMessage(carRecyclingMessages.cars.selectedTitle)}</Label>
       </Box>
       {selectedVehiclesList.map((vehicle: VehicleDto, index) => {
+        const color = vehicle.color || vehicle.colorName
+
         return (
-          <Box marginBottom={2} key={index} id="vehicles.selectedVehicles">
+          <Box
+            marginBottom={2}
+            key={vehicle.permno + '-selected'}
+            id="vehicles.selectedVehicles"
+          >
             <FocusableBox
               key={vehicle.permno}
               borderRadius="large"
@@ -205,7 +222,6 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
               borderWidth="standard"
               flexDirection="column"
               color="blue"
-              marginBottom={4}
               paddingX={4}
               paddingY={3}
             >
@@ -222,9 +238,12 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                 </Text>
 
                 <InputController
-                  required={Object.values(FuelCodes).includes(
-                    vehicle.fuelCode as FuelCodes,
-                  )}
+                  required={
+                    vehicle.requiresMileageRegistration ||
+                    Object.values(FuelCodes).includes(
+                      vehicle.fuelCode as FuelCodes,
+                    ) // Fuelcodes is not used any more. Kept to support old data
+                  }
                   id={vehicle.permno + 'input'}
                   label={formatText(
                     carRecyclingMessages.cars.mileage,
@@ -262,7 +281,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                 justifyContent="spaceBetween"
               >
                 <Box style={{ flex: '0 0 50%' }}>
-                  <Text>{`${vehicle.make}, ${vehicle.color}`}</Text>
+                  <Text>{`${vehicle.make}, ${color}`}</Text>
                 </Box>
                 <Box>
                   <Button
@@ -285,17 +304,26 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
         <Label>{formatMessage(carRecyclingMessages.cars.overview)}</Label>
       </Box>
 
-      {currentVehiclesList
-        .slice(ITEMS_ON_PAGE * (page - 1), ITEMS_ON_PAGE * page)
-        .map((vehicle: VehicleDto, index) => {
+      {loadingCurrent ? (
+        <SkeletonLoader
+          repeat={5}
+          space={2}
+          height={130}
+          borderRadius="large"
+        />
+      ) : currentVehiclesList.length > 0 ? (
+        currentVehiclesList.map((vehicle: VehicleDto) => {
+          const color = vehicle.color || vehicle.colorName
+
           return (
             <Box
               marginBottom={2}
-              key={index + '_currentbox'}
-              id="vehicles.allVehicles"
+              key={vehicle.permno + '_currentbox'}
+              id={vehicle.permno + '_currentbox'}
             >
               <ActionCard
                 key={vehicle.permno}
+                backgroundColor={vehicle.markedForRecycling ? 'blue' : 'white'}
                 tag={{
                   label: getRoleLabel(vehicle),
                   variant: vehicle.role === 'Eigandi' ? 'dark' : 'red',
@@ -303,6 +331,7 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                 }}
                 cta={{
                   icon: undefined,
+                  size: 'small',
                   buttonType: {
                     variant: 'primary',
                     colorScheme: 'default',
@@ -313,22 +342,31 @@ const VehiclesOverview: FC<FieldBaseProps> = ({
                   },
                 }}
                 heading={vehicle.permno || ''}
-                text={`${vehicle.make}, ${vehicle.color}`}
+                text={`${vehicle.make}, ${color}`}
                 unavailable={{
-                  active: vehicle.role !== 'Eigandi',
-                  label: formatMessage(
-                    carRecyclingMessages.cars.onlyOwnerCanRecyle,
-                  ),
+                  active:
+                    vehicle.role !== 'Eigandi' || vehicle.markedForRecycling,
+                  label: getUnavailableText(vehicle),
                 }}
               />
             </Box>
           )
-        })}
-      {totalPages > 0 ? (
+        })
+      ) : qlPaging?.totalPages === 0 ? (
+        <Box marginTop={3}>
+          <AlertMessage
+            type="warning"
+            title=""
+            message={formatMessage(carRecyclingMessages.cars.noVehicles)}
+          />
+        </Box>
+      ) : null}
+
+      {!loadingCurrent && qlPaging?.totalPages > 0 ? (
         <Box paddingTop={8}>
           <Pagination
             page={page}
-            totalPages={totalPages}
+            totalPages={qlPaging.totalPages}
             renderLink={(page, className, children) => (
               <Box
                 cursor="pointer"

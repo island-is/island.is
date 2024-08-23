@@ -8,7 +8,7 @@ import { useLocale } from '@island.is/localization'
 import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 
 import CopyToClipboardInput from '../../DocumentProvicerApplication/Components/CopyToClipboardInput/Index'
-import { m } from '../../../forms/messages'
+import { m } from '../../../lib/messages'
 
 export const createProviderMutation = gql`
   mutation CreateProvider($input: CreateProviderInput!) {

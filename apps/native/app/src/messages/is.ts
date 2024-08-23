@@ -76,12 +76,17 @@ export const is = {
   'settings.usersettings.email': 'Netfang',
   'settings.usersettings.bankinfo': 'Reikningsnúmer',
   'settings.communication.groupTitle': 'Tilkynningar og samskipti',
-  'settings.communication.newDocumentsNotifications':
-    'Fá tilkynningar um ný skjöl',
-  'settings.communication.appUpdatesNotifications':
-    'Fá tilkynningar um nýjungar í appinu',
-  'settings.communication.applicationsNotifications':
-    'Fá tilkynningar um stöðu umsókna',
+  'settings.communication.newNotificationsEmailLabel':
+    'Tilkynningar í tölvupósti',
+  'settings.communication.newNotificationsEmailDescription':
+    'Stofnanir geta sent þér tilkynningu með tölvupósti.',
+  'settings.communication.newNotificationsErrorTitle': 'Villa',
+  'settings.communication.newNotificationsErrorDescription':
+    'Ekki tókst að uppfæra stillingar',
+  'settings.communication.newNotificationsInAppLabel':
+    'Tilkynningar í Ísland.is appinu',
+  'settings.communication.newNotificationsInAppDescription':
+    'Stofnanir geta sent þér tilkynningu í Ísland.is appið.',
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
@@ -111,6 +116,16 @@ export const is = {
   'settings.about.codePushLabel': 'Uppfærsla',
   'settings.about.codePushLoading': 'Hleð...',
   'settings.about.codePushUpToDate': 'Appið er uppfært',
+  'settings.about.codePushUpToDateTitle': 'Uppfært',
+  'settings.about.codePushUpdateCancelledTitle': 'Hætt við uppfærslu',
+  'settings.about.codePushUpdateCancelledDescription':
+    'Það var hætt við uppfærslu',
+  'settings.about.codePushUpdateInstalledTitle': 'Uppfærsla tókst',
+  'settings.about.codePushUpdateInstalledDescription':
+    'Appið hefur verið uppfært',
+  'settings.about.codePushUpdateErrorTitle': 'Villa',
+  'settings.about.codePushUpdateErrorDescription':
+    'Villa kom upp við uppfærslu',
 
   // user: personal info
   'user.natreg.infoBox': 'Þín skráning í Þjóðskrá Íslands',
@@ -261,7 +276,7 @@ export const is = {
   'vehicle.mileage.inputLabel': 'Skrá kílómetrastöðu',
   'vehicle.mileage.inputSubmitButton': 'Skrá',
   'vehicle.mileage.registerIntervalCopy':
-    'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
+    'Aðeins má skrá kílómetrastöðu einu sinni á hverjum 30 dögum',
   'vehicle.mileage.youAreNotAllowedCopy':
     'Eingöngu aðaleigandi eða umráðamaður yfir bifreið lánastofnunnar geta skráð kílómetrastöðu',
   'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á Ísland.is',

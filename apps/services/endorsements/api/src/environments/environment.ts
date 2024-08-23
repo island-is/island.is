@@ -20,13 +20,6 @@ const devConfig = {
     sender: 'devland.is',
     address: 'development@island.is',
   },
-  emailOptions: {
-    useTestAccount: false,
-    useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-    options: {
-      region: 'eu-west-1',
-    },
-  },
 }
 
 const prodConfig = {
@@ -44,13 +37,6 @@ const prodConfig = {
   email: {
     sender: process.env.EMAIL_FROM_NAME ?? '',
     address: process.env.EMAIL_FROM_ADDRESS ?? '',
-  },
-  emailOptions: {
-    useTestAccount: false,
-    useNodemailerApp: false,
-    options: {
-      region: 'eu-west-1',
-    },
   },
 }
 

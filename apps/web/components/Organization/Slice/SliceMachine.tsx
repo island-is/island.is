@@ -10,13 +10,14 @@ import {
 } from '@island.is/island-ui/core'
 import {
   EmailSignup,
-  GenericList,
+  GenericListWrapper,
   RichText,
   SectionWithVideo,
 } from '@island.is/web/components'
 import {
   GenericList as GenericListSchema,
   Slice,
+  TeamList,
 } from '@island.is/web/graphql/schema'
 import { webRenderConnectedComponent } from '@island.is/web/utils/richText'
 
@@ -92,6 +93,14 @@ const AnchorPageListSlice = dynamic(() =>
 
 const PowerBiSlice = dynamic(() =>
   import('@island.is/web/components').then((mod) => mod.PowerBiSlice),
+)
+
+const TeamListSlice = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.TeamListSlice),
+)
+
+const ChartNumberBox = dynamic(() =>
+  import('@island.is/web/components').then((mod) => mod.ChartNumberBox),
 )
 
 interface SliceMachineProps {
@@ -183,7 +192,7 @@ const renderSlice = (
       )
     case 'GenericList':
       return (
-        <GenericList
+        <GenericListWrapper
           id={slice.id}
           searchInputPlaceholder={
             (slice as GenericListSchema).searchInputPlaceholder
@@ -192,6 +201,17 @@ const renderSlice = (
           filterTags={(slice as GenericListSchema).filterTags}
         />
       )
+    case 'TeamList':
+      return (
+        <TeamListSlice
+          id={(slice as TeamList).id}
+          teamMembers={slice.teamMembers}
+          filterTags={(slice as TeamList).filterTags}
+          variant={(slice as TeamList).variant as 'card' | 'accordion'}
+        />
+      )
+    case 'ChartNumberBox':
+      return <ChartNumberBox slice={slice} />
     default:
       return <RichText body={[slice]} />
   }

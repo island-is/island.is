@@ -71,7 +71,7 @@ export const FinanceLoansTable = ({ loanOverview }: Props) => {
       <T.Table>
         <ExpandHeader
           data={[
-            { value: '', printHidden: true },
+            { value: '', printHidden: true, element: false },
             { value: formatMessage(messages.loanNumber) },
             { value: formatMessage(messages.interests), align: 'right' },
             { value: formatMessage(messages.firstPaymentDate), align: 'right' },

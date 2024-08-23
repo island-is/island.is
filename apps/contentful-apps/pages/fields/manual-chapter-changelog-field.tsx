@@ -1,15 +1,10 @@
 import { useEffect, useState } from 'react'
-import {
-  Button,
-  Box,
-  Table,
-  Datepicker,
-  Textarea,
-} from '@contentful/f36-components'
-import { DeleteIcon, PlusIcon } from '@contentful/f36-icons'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
-import { useSDK } from '@contentful/react-apps-toolkit'
 import { useDebounce } from 'react-use'
+import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { Box, Button, Datepicker, Textarea } from '@contentful/f36-components'
+import { DeleteIcon, PlusIcon } from '@contentful/f36-icons'
+import { Table } from '@contentful/f36-table'
+import { useSDK } from '@contentful/react-apps-toolkit'
 
 const DEBOUNCE_TIME = 150
 const BOTTOM_PADDING = '330px'

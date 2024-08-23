@@ -14,7 +14,7 @@ import {
 } from '@island.is/judicial-system/auth'
 import type { User } from '@island.is/judicial-system/types'
 
-import { BackendApi } from '../../data-sources'
+import { BackendService } from '../backend'
 import { CaseListQueryInput } from './dto/caseList.input'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CaseListEntry } from './models/caseList.model'
@@ -35,14 +35,15 @@ export class CaseListResolver {
     input: CaseListQueryInput,
     @CurrentGraphQlUser()
     user: User,
-    @Context('dataSources') { backendApi }: { backendApi: BackendApi },
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
   ): Promise<CaseListEntry[]> {
     this.logger.debug('Getting all cases')
 
     let result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES,
-      backendApi.getCases(),
+      backendService.getCases(),
       (cases: CaseListEntry[]) => cases.map((aCase) => aCase.id),
     )
 

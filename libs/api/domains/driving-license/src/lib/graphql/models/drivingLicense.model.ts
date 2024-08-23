@@ -2,6 +2,7 @@ import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { Disqualification } from './disqualification.model'
 
 import { Eligibility } from './eligibility.model'
+import { Remark } from './remark.model'
 
 @ObjectType()
 export class DrivingLicense {
@@ -21,7 +22,7 @@ export class DrivingLicense {
   categories!: Eligibility[]
 
   @Field(() => [String])
-  remarks?: string[]
+  remarks?: Remark[]
 
   @Field(() => Disqualification, { nullable: true })
   disqualification?: Disqualification

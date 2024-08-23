@@ -3,27 +3,23 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/testing/fixtures/src",
   "projectType": "library",
-  "targets": {
-    "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/testing/fixtures/**/*.{ts,tsx,js,jsx}"]
-      }
-    },
-    "test": {
-      "executor": "@nx/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/testing/fixtures"],
-      "options": {
-        "jestConfig": "libs/testing/fixtures/jest.config.ts",
-        "passWithNoTests": true
-      }
-    }
-  },
   "tags": [
     "lib:nest",
     "scope:nest",
     "lib:application-system",
     "lib:js",
     "TODO:splitUp"
-  ]
+  ],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/testing/fixtures"],
+      "options": {
+        "jestConfig": "libs/testing/fixtures/jest.config.ts"
+      }
+    }
+  }
 }

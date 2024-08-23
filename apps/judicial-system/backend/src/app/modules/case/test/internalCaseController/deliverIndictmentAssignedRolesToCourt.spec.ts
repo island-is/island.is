@@ -30,7 +30,11 @@ describe('InternalCaseController - Deliver assigned roles for indictment case to
     type: CaseType.INDICTMENT,
     court: { name: courtName },
     courtCaseNumber,
-    judge: { name: 'Test Dómari', nationalId: '0101010101' },
+    judge: {
+      name: 'Test Dómari',
+      nationalId: '0101010101',
+      role: UserRole.DISTRICT_COURT_JUDGE,
+    },
     registrar: { name: 'Test Ritari', nationalId: '0202020202' },
   } as Case
 

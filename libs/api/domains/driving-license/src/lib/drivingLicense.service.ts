@@ -14,6 +14,7 @@ import {
   ApplicationEligibilityRequirement,
   QualitySignatureResult,
   NewBEDrivingLicenseInput,
+  DrivinglicenseDuplicateValidityStatus,
 } from './drivingLicense.type'
 import {
   CanApplyErrorCodeBFull,
@@ -44,6 +45,7 @@ import {
 import { info } from 'kennitala'
 import { computeCountryResidence } from '@island.is/residence-history'
 import { Jurisdiction } from './graphql/models'
+import addMonths from 'date-fns/addMonths'
 
 const LOGTAG = '[api-domains-driving-license]'
 
@@ -382,6 +384,51 @@ export class DrivingLicenseService {
       studentSSN,
       token,
     })
+  }
+
+  async canGetNewDuplicate(
+    token: string,
+  ): Promise<DrivinglicenseDuplicateValidityStatus> {
+    const license = await this.drivingLicenseApi.getCurrentLicense({
+      token,
+    })
+
+    if (license.comments?.some((comment) => comment?.nr == '400')) {
+      return {
+        canGetNewDuplicate: false,
+        meta: '',
+      }
+    }
+
+    const inSixMonths = addMonths(new Date(), 6)
+
+    for (const category of license.categories ?? []) {
+      if (category.expires === null) {
+        // Technically this will result in the wrong error message
+        // towards the user, however, contacting the registry
+        // with the category information should result in the error
+        // being discovered anyway. We log it here for good measure though.
+        this.logger.warn(`${LOGTAG} Category has no expiration date`, {
+          category: category.name,
+        })
+        return {
+          canGetNewDuplicate: false,
+          meta: category.name,
+        }
+      }
+
+      if (category.expires < inSixMonths) {
+        return {
+          canGetNewDuplicate: false,
+          meta: category.name,
+        }
+      }
+    }
+
+    return {
+      canGetNewDuplicate: true,
+      meta: '',
+    }
   }
 
   async drivingLicenseDuplicateSubmission(params: {

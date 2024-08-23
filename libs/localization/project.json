@@ -3,22 +3,18 @@
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/localization/src",
   "projectType": "library",
+  "tags": ["lib:react", "scope:react", "TODO:RemoveOverrides"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/localization/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/localization/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/localization/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/localization"]
     }
-  },
-  "tags": ["lib:react", "scope:react", "TODO:RemoveOverrides"]
+  }
 }

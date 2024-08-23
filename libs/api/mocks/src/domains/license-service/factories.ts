@@ -36,7 +36,6 @@ const genericLicenseFetch = factory<GenericLicenseFetch>({
 const pkPassStatus = ['Available', 'NotAvailable', 'Unknown']
 
 export const genericLicense = factory<GenericLicense>({
-  name: () => title(),
   pkpass: () => faker.datatype.boolean(),
   pkpassStatus: faker.random.arrayElement(
     pkPassStatus,
@@ -53,7 +52,6 @@ export const genericLicense = factory<GenericLicense>({
 export const metadata = factory<GenericUserLicenseMetadata>({
   expired: () => faker.datatype.boolean(),
   licenseNumber: () => faker.datatype.number().toString(),
-  logo: () => faker.image.cats(),
   title: () => title(),
 })
 

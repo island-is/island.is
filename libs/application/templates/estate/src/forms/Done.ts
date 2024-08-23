@@ -1,14 +1,15 @@
 import {
   buildForm,
-  buildCustomField,
   buildMultiField,
   getValueViaPath,
   buildMessageWithLinkButtonField,
   coreMessages,
+  buildImageField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
 import { EstateTypes } from '../lib/constants'
+import Grieving from '../components/assets/Grieving'
 
 export const done: Form = buildForm({
   id: 'divisionOfEstateDone',
@@ -33,10 +34,13 @@ export const done: Form = buildForm({
           : m.divisionOfEstateByHeirsSubtitle
       },
       children: [
-        buildCustomField({
+        buildImageField({
           id: 'doneImage',
-          component: 'DoneImage',
           title: '',
+          image: Grieving,
+          marginBottom: 3,
+          imageWidth: 'auto',
+          imagePosition: 'center',
         }),
         buildMessageWithLinkButtonField({
           id: 'goToServicePortal',

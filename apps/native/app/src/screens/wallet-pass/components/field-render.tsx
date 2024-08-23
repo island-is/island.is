@@ -57,13 +57,13 @@ export const FieldRender = ({
               }
               return (
                 <FieldGroup key={key}>
-                  <FieldRow>
+                  <View>
                     {FieldRender({
                       data: fields as GenericLicenseDataField[],
                       level: 2,
                       licenseType: licenseType,
                     })}
-                  </FieldRow>
+                  </View>
                 </FieldGroup>
               )
 

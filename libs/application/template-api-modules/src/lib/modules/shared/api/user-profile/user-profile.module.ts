@@ -1,7 +1,7 @@
 import { DynamicModule } from '@nestjs/common'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { UserProfileService } from './user-profile.service'
-import { Configuration, V2UsersApi } from '@island.is/clients/user-profile'
+import { Configuration, V2MeApi } from '@island.is/clients/user-profile'
 import { IslykillApiModule } from '@island.is/clients/islykill'
 export class UserProfileModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -17,9 +17,9 @@ export class UserProfileModule {
       providers: [
         UserProfileService,
         {
-          provide: V2UsersApi,
+          provide: V2MeApi,
           useFactory: () =>
-            new V2UsersApi(
+            new V2MeApi(
               new Configuration({
                 fetchApi: fetch,
                 basePath: config.userProfile.serviceBasePath,

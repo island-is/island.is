@@ -1,11 +1,7 @@
+import { AdvertSignatureTypeEnum } from '@island.is/clients/official-journal-of-iceland'
 import { InputType, Field, registerEnumType } from '@nestjs/graphql'
 
-export enum AdvertSignatureBodyTypeEnum {
-  Hefbundin = 'Hefðbundin',
-  Nefnd = 'Nefnd',
-}
-
-registerEnumType(AdvertSignatureBodyTypeEnum, {
+registerEnumType(AdvertSignatureTypeEnum, {
   name: 'OfficialJournalOfIcelandAdvertSignatureType',
 })
 
@@ -99,8 +95,8 @@ export class AdvertSignatureData {
 }
 @InputType('OfficialJournalOfIcelandAdvertSignature')
 export class AdvertSignature {
-  @Field(() => AdvertSignatureBodyTypeEnum)
-  type!: AdvertSignatureBodyTypeEnum
+  @Field(() => AdvertSignatureTypeEnum)
+  type!: AdvertSignatureTypeEnum
 
   @Field(() => String, { nullable: true })
   additional?: string

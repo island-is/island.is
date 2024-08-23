@@ -1,4 +1,4 @@
-import React, { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import NextLink from 'next/link'
 
@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { Footer as WebFooter } from '@island.is/web/components'
-import { Image, Organization } from '@island.is/web/graphql/schema'
+import { Organization } from '@island.is/web/graphql/schema'
 import { usePlausiblePageview } from '@island.is/web/hooks'
 import SidebarLayout from '@island.is/web/screens/Layouts/SidebarLayout'
 
@@ -135,12 +135,11 @@ export const OJOIWrapper = ({
 
       {!sidebarContent && children}
 
-      <Box className="rs_read">
+      <Box className="rs_read" background="blue100">
         <WebFooter
           imageUrl={organization.logo?.url}
           heading={organization.title}
           columns={organization.footerItems}
-          background={organization?.footerConfig?.background}
           titleVariant="h2"
         />
       </Box>

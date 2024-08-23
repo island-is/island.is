@@ -3,21 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/air-discount-scheme/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["air-discount-scheme-backend"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/clients/air-discount-scheme/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/air-discount-scheme"],
       "options": {
-        "jestConfig": "libs/clients/air-discount-scheme/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/air-discount-scheme/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -27,7 +23,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["air-discount-scheme-backend"],
-  "tags": ["lib:client", "scope:client"]
+  }
 }

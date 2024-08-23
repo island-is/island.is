@@ -1,8 +1,7 @@
 import yargs from 'yargs'
-import { hideBin } from 'yargs/helpers'
 
 export const processJob = () =>
-  yargs(hideBin(process.argv))
+  yargs(process.argv.slice(2))
     .option('job', {
       string: true,
       choices: ['worker', 'server', 'cleanup'] as const,

@@ -40,6 +40,7 @@ export type Icon =
   | 'eyeOff'
   | 'facebook'
   | 'fileTrayFull'
+  | 'fileTrayEmpty'
   | 'filter'
   | 'heart'
   | 'home'
@@ -132,6 +133,7 @@ export default {
     expand: 'Expand',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFull',
+    fileTrayEmpty: 'FileTrayEmpty',
     filter: 'Filter',
     heart: 'Heart',
     home: 'Home',
@@ -223,6 +225,7 @@ export default {
     expand: 'ExpandOutline',
     facebook: 'Facebook',
     fileTrayFull: 'FileTrayFullOutline',
+    fileTrayEmpty: 'FileTrayEmptyOutline',
     filter: 'FilterOutline',
     heart: 'HeartOutline',
     home: 'HomeOutline',
