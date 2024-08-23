@@ -59,18 +59,14 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
 
     const { bucket, key } = AmazonS3Uri(fileName)
 
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: bucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent.toString('base64') || ''
-    } catch (error) {
-      throw new Error('Villa kom upp við að senda umsókn')
-    }
+    const file = await this.s3
+      .getObject({
+        Bucket: bucket,
+        Key: key,
+      })
+      .promise()
+    const fileContent = file.Body as Buffer
+    return fileContent.toString('base64') || ''
   }
 
   async getUserType() {
@@ -122,7 +118,9 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
         })
 
     if (!result.success) {
-      throw new Error('Application submission failed')
+      throw new Error(
+        'Application submission failed reason : ' + result.message,
+      )
     }
     return { success: result.success }
   }
