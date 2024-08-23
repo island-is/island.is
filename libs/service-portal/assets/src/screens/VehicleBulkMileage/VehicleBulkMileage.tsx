@@ -31,7 +31,6 @@ const VehicleMileage = () => {
   }, [])
 
   const handleBulkSubmit = () => {
-    console.log('bulk submitting')
     setVehicles(
       vehicles.map((v, index) => {
         if (index === 0) {

@@ -3,7 +3,6 @@ import { useLocale } from '@island.is/localization'
 import { m as coreMessages } from '@island.is/service-portal/core'
 import { useMemo } from 'react'
 import { type SubmissionState } from './types'
-import { useVehicleBulkMileageContext } from './VehicleBulkMileageContext'
 
 interface Props {
   submissionState: SubmissionState

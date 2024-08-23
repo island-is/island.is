@@ -7,7 +7,7 @@ import { useLocale } from '@island.is/localization'
 import { vehicleMessage as messages } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
 import { useForm } from 'react-hook-form'
-import { SubmissionState, VehicleType } from './types'
+import { SubmissionState } from './types'
 import { isReadDateToday } from '../../utils/readDate'
 import { useVehicleBulkMileageContext } from './VehicleBulkMileageContext'
 
@@ -66,7 +66,6 @@ export const VehicleBulkMileageRow = ({ vehicleId, children }: Props) => {
 
   const updateNextVehicle = (currentSubmissionState: SubmissionState) => {
     if (vehicle.vehicleIndex + 1 < vehicles.length) {
-      console.log('udpate next vehicle state to submit-all')
       const nextVehicleId = vehicles[vehicle.vehicleIndex + 1].vehicleId
       const newVehicles = vehicles.map((v) => {
         if (v.vehicleId === nextVehicleId) {
@@ -90,7 +89,6 @@ export const VehicleBulkMileageRow = ({ vehicleId, children }: Props) => {
 
   const postMileageInBulk = async () => {
     if (vehicles.length === 1) {
-      console.log('one car only')
       await postMileage(
         undefined,
         () => updateVehicleSubmissionStatus('success'),
