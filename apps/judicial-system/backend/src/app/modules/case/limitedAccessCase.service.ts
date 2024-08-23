@@ -192,6 +192,8 @@ export const include: Includeable[] = [
         CaseFileCategory.COST_BREAKDOWN,
         CaseFileCategory.CASE_FILE,
         CaseFileCategory.CASE_FILE_RECORD,
+        CaseFileCategory.PROSECUTOR_CASE_FILE,
+        CaseFileCategory.DEFENDANT_CASE_FILE,
       ],
     },
   },
