@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { AlertBanner, AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   CaseFilesAccordionItem,
   Conclusion,
@@ -46,6 +47,7 @@ const CourtOfAppealResult = () => {
     court,
     judge,
     registrar,
+    caseType,
     appealCaseNumber,
     appealAssistant,
     appealJudges,
@@ -111,11 +113,16 @@ const CourtOfAppealResult = () => {
                     court,
                     prosecutor(workingCase.type),
                     judge,
-                    ...(registrar ? [registrar] : []),
-                    appealCaseNumber,
-                    appealAssistant,
-                    appealJudges,
+                    ...(isInvestigationCase(workingCase.type)
+                      ? [caseType]
+                      : []),
+                    ...(workingCase.registrar ? [registrar] : []),
                   ],
+                  columns: 2,
+                },
+                {
+                  id: 'court-of-appeal-section',
+                  items: [appealCaseNumber, appealAssistant, appealJudges],
                   columns: 2,
                 },
               ]}
