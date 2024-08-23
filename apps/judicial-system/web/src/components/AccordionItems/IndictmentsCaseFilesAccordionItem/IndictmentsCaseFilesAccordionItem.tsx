@@ -19,6 +19,7 @@ import {
   Box,
   Text,
   toast,
+  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   CrimeSceneMap,
@@ -58,7 +59,6 @@ interface CaseFileProps {
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (file: TUploadFile) => void
-  onRetry: (file: TUploadFile) => void
 }
 
 export interface ReorderableItem extends TEditableCaseFile {
@@ -131,18 +131,18 @@ export const sortedFilesInChapter = (
     .filter((file) => file.chapter === chapter)
     .map((file) => {
       return {
-        id: file.id,
-        name: file.name || '',
-        displayText: file.name,
-        category: file.category,
         isDivider: false,
         isHeading: false,
-        created: file.created,
         chapter: file.chapter,
         orderWithinChapter: file.orderWithinChapter,
+        id: file.id,
+        category: file.category,
+        created: file.created,
+        displayText: file.name,
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
+        status: 'done' as UploadFileStatus,
       }
     })
     .sort((a, b) => {
@@ -169,7 +169,7 @@ const renderChapter = (chapter: number, name?: string | null) => (
 )
 
 const CaseFile: FC<CaseFileProps> = (props) => {
-  const { caseFile, onReorder, onOpen, onRename, onDelete, onRetry } = props
+  const { caseFile, onReorder, onOpen, onRename, onDelete } = props
   const y = useMotionValue(0)
   const boxShadow = useRaisedShadow(y)
   const controls = useDragControls()
@@ -236,7 +236,6 @@ const CaseFile: FC<CaseFileProps> = (props) => {
           onDelete={onDelete}
           onOpen={onOpen}
           onRename={onRename}
-          onRetry={onRetry}
         />
       )}
     </Reorder.Item>
@@ -258,7 +257,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
   const { onOpen, fileNotFound, dismissFileNotFound } = useFileList({
     caseId,
   })
-  const { handleRemove, handleRetry } = useS3Upload(caseId)
+  const { handleRemove } = useS3Upload(caseId)
 
   const [reorderableItems, setReorderableItems] = useState<ReorderableItem[]>(
     [],
@@ -357,7 +356,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                 ? undefined
                 : orderWithinChapter + index
             return {
-              id: file.id || '',
+              id: file.id,
               chapter,
               orderWithinChapter:
                 orderWithinChapter === null ? null : orderWithinChapter + index,
@@ -478,7 +477,6 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                   onOpen={onOpen}
                   onRename={handleRename}
                   onDelete={handleDelete}
-                  onRetry={(file) => handleRetry(file, () => 'retrt')}
                 />
               </Box>
             )

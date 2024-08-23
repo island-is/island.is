@@ -31,7 +31,7 @@ interface Props {
 }
 
 export interface TEditableCaseFile {
-  id?: string
+  id: string
   category?: CaseFileCategory | null
   created?: string | null
   displayText?: string | null
