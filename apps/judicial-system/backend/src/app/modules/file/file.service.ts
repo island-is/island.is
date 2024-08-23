@@ -303,8 +303,6 @@ export class FileService {
 
     const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
 
-    console.log(createFile)
-
     const file = await this.fileModel.create({
       ...createFile,
       state: CaseFileState.STORED_IN_RVG,
