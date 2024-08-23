@@ -1,13 +1,13 @@
 import yargs from 'yargs'
 import { Charts, Deployments } from '../infra/src/uber-charts/all-charts'
 import { Client } from 'pg'
-import { SSM } from '@aws-sdk/client-ssm'
+import { SSM } from 'aws-sdk'
 import { branchNameToFeatureName } from './_common'
 import { prepareServicesForEnv } from '../infra/src/dsl/processing/rendering-pipeline'
 import { Envs } from '../infra/src/environments'
 import { renderers } from '../infra/src/dsl/upstream-dependencies'
 
-const argvUnawaited = yargs(process.argv.slice(2))
+const argv = yargs(process.argv.slice(2))
   .options({
     'feature-branch-name': {
       type: 'string',
@@ -29,10 +29,9 @@ const argvUnawaited = yargs(process.argv.slice(2))
   )
 
 void (async function () {
-  const argv = await argvUnawaited.argv
-  const featureName = branchNameToFeatureName(argv['feature-branch-name'])
-  const serviceName = argv['service-name']
-  const chart = argv.chart as keyof typeof Charts
+  const featureName = branchNameToFeatureName(argv.argv['feature-branch-name'])
+  const serviceName = argv.argv['service-name']
+  const chart = argv.argv.chart as keyof typeof Charts
   const env = 'dev' as const
   const habitat = Charts[chart][env]
   const target = habitat.filter(
@@ -50,6 +49,7 @@ void (async function () {
   const targetService = out[0]
 
   const ssmClient = new SSM({
+    apiVersion: '2014-11-06',
     region: 'eu-west-1',
   })
   if (targetService.postgres) {
@@ -59,6 +59,7 @@ void (async function () {
         Name: targetService.postgres.passwordSecret!,
         WithDecryption: true,
       })
+      .promise()
       .catch((r) => {
         console.error(`No DB password secret found. Wrong feature name?`)
         throw r

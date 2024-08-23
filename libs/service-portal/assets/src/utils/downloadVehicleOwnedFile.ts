@@ -8,7 +8,7 @@ export const downloadVehicleOwnedFile = async (
   header: Array<Array<string>>,
   data: Array<Array<any>>,
 ) => {
-  const getFile = (_name: string, output: string | undefined) => {
+  const getFile = (name: string, output: string | undefined) => {
     const uri =
       'data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,'
     const encodedUri = encodeURI(`${uri}${output}`)
