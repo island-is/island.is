@@ -156,6 +156,7 @@ const IncomePlanTemplate: ApplicationTemplate<
         },
         on: {
           SUBMIT: [{ target: States.TRYGGINGASTOFNUN_SUBMITTED }],
+          [DefaultEvents.ABORT]: { target: States.TRYGGINGASTOFNUN_SUBMITTED },
         },
       },
       [States.TRYGGINGASTOFNUN_SUBMITTED]: {

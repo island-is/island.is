@@ -32,7 +32,60 @@ const buildApplication = (data: {
   }
 }
 
-describe('Income Plan Application Template', () => {
+describe('Income Plan Template', () => {
+  describe('state transitions', () => {
+    it('should transition from draft to tryggingastofnunSubmitted on submit', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            confirmCorrectInfo: true,
+          },
+        }),
+        IncomePlanTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.SUBMIT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('tryggingastofnunSubmitted')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from draft to tryggingastofnunSubmitted on abort', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          answers: {
+            confirmCorrectInfo: true,
+          },
+        }),
+        IncomePlanTemplate,
+      )
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.ABORT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('tryggingastofnunSubmitted')
+    })
+  })
+
+  describe('state transitions', () => {
+    it('should transition from tryggingastofnunSubmitted to draft on edit', () => {
+      const helper = new ApplicationTemplateHelper(
+        buildApplication({
+          state: 'tryggingastofnunSubmitted',
+        }),
+        IncomePlanTemplate,
+      )
+
+      const [hasChanged, newState] = helper.changeState({
+        type: DefaultEvents.EDIT,
+      })
+      expect(hasChanged).toBe(true)
+      expect(newState).toBe('draft')
+    })
+  })
+
   describe('Income plan table', () => {
     describe('equalForeignIncomePerMonth', () => {
       it('should unset equalForeignIncomePerMonth if income is MONTHLY and unevenIncomePerYear is YES', () => {
@@ -122,6 +175,7 @@ describe('Income Plan Application Template', () => {
         expect(newApplication.answers).toEqual(answer)
       })
     })
+
     describe('equalIncomePerMonth', () => {
       it('should unset equalIncomePerMonth if income is MONTHLY and unevenIncomePerYear is YES', () => {
         const helper = new ApplicationTemplateHelper(
