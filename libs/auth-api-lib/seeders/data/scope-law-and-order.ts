@@ -7,5 +7,6 @@ export const up = compose(
     description: 'Bakendascope fyrir dómsmála virkni á mínum síðum',
     accessControlled: false,
     addToClients: ['@island.is/clients/api'],
+    addToResource: '@island.is',
   }),
 )
