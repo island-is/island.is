@@ -57,6 +57,7 @@ const AddFiles: FC = () => {
 
   const handleFileUpload = useCallback(
     async (files: UploadFile[]) => {
+      console.log(files)
       const filesUploaded = await handleUpload(files, updateFileToUpload)
 
       if (filesUploaded) {
@@ -109,7 +110,10 @@ const AddFiles: FC = () => {
       userGeneratedFilename: file.name,
       originalFileObj: file as File,
       displayDate: new Date().toISOString(),
-      type: CaseFileCategory.PROSECUTOR_CASE_FILE,
+      type: 'application/pdf',
+      category: isDefenceUser(user)
+        ? CaseFileCategory.DEFENDANT_CASE_FILE
+        : CaseFileCategory.PROSECUTOR_CASE_FILE,
       id: uuid(),
     }))
   }
@@ -168,7 +172,10 @@ const AddFiles: FC = () => {
               ? 'destructive'
               : 'default'
           }
-          nextIsDisabled={filesToUpload.some((f) => f.status === 'uploading')}
+          nextIsDisabled={
+            filesToUpload.length === 0 ||
+            filesToUpload.some((f) => f.status === 'uploading')
+          }
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>

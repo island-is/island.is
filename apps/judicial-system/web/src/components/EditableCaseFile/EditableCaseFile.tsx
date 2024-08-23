@@ -16,6 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
+import { CaseFileCategory } from '../../graphql/schema'
 import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
@@ -30,6 +31,7 @@ interface Props {
 }
 
 export interface TEditableCaseFile extends UploadFile {
+  category: CaseFileCategory
   displayText?: string | null
   created?: string | null
   userGeneratedFilename?: string | null
