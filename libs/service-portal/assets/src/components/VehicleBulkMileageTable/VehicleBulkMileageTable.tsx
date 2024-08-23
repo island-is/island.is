@@ -13,6 +13,7 @@ import {
   NestedFullTable,
 } from '@island.is/service-portal/core'
 import { messages } from '../../lib/messages'
+
 import { helperStyles } from '@island.is/island-ui/theme'
 import * as styles from './VehicleBulkMileageTable.css'
 
@@ -25,7 +26,7 @@ interface Props {
 }
 
 const VehicleBulkMileageTable = ({ row }: Props) => {
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
 
   // const totalPages =
   //   payments.totalCount > itemsOnPage
@@ -38,10 +39,10 @@ const VehicleBulkMileageTable = ({ row }: Props) => {
         <ExpandHeader
           data={[
             { value: '', printHidden: true },
-            { value: 'Tegund' },
-            { value: 'Fastanúmer' },
-            { value: 'Ársnotkun' },
-            { value: 'Kílómetrastaða' },
+            { value: formatMessage(messages.type) },
+            { value: formatMessage(messages.permno) },
+            { value: formatMessage(messages.lastRegistration) },
+            { value: formatMessage(messages.odometer) },
             { value: '', printHidden: true },
           ]}
         />

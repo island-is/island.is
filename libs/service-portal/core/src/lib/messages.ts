@@ -1056,6 +1056,10 @@ export const m = defineMessages({
     id: 'service.portal:save',
     defaultMessage: 'Vista',
   },
+  saved: {
+    id: 'service.portal:saved',
+    defaultMessage: 'Vistað',
+  },
   register: {
     id: 'service.portal:register',
     defaultMessage: 'Skrá',

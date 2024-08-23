@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import {
   Box,
   Button,
@@ -15,16 +14,35 @@ import {
   SAMGONGUSTOFA_SLUG,
   IntroHeader,
 } from '@island.is/service-portal/core'
-
+import { dummy } from './mocks/propsDummy'
 import { vehicleMessage as messages } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
-import VehicleBulkMileageTable from '../../components/VehicleBulkMileageTable/VehicleBulkMileageTable'
-
-const ORIGIN_CODE = 'ISLAND.IS'
+import { useEffect } from 'react'
+import VehicleBulkMileageTable from './VehicleBulkMileageTable'
+import { useVehicleBulkMileageContext } from './VehicleBulkMileageContext'
 
 const VehicleMileage = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
+  const { setVehicles, vehicles } = useVehicleBulkMileageContext()
+
+  useEffect(() => {
+    setVehicles(dummy)
+  }, [])
+
+  const handleBulkSubmit = () => {
+    console.log('bulk submitting')
+    setVehicles(
+      vehicles.map((v, index) => {
+        if (index === 0) {
+          return {
+            ...v,
+            submissionStatus: 'submit-all',
+          }
+        } else return v
+      }),
+    )
+  }
 
   return (
     <>
@@ -111,28 +129,12 @@ const VehicleMileage = () => {
             </Box>
           </GridColumn>
         </GridRow>
-        <VehicleBulkMileageTable
-          row={[
-            {
-              id: 'aaa',
-              line: ['Tesla Model S', 'XYZ789', '6.333 km'],
-              detail: [
-                ['01.04.2024', 'Aðalskoðum', '6.333 km', '24.639 km'],
-                ['01.02.2022', 'Nýskráning', '221 km', '333 km'],
-              ],
-            },
-            {
-              id: 'bbb',
-              line: ['Mitsubishi Outlander', 'ABC123', '2.221 km'],
-              detail: [
-                ['01.07.2024', 'Aðalskoðum', '2.221 km', '11.639 km'],
-                ['01.02.2024', 'Nýskráning', '221 km', '1.639 km'],
-              ],
-            },
-          ]}
-        />
-      </Box>
 
+        <VehicleBulkMileageTable />
+        <Button onClick={() => handleBulkSubmit()}>
+          Vista allar sýnilegar færslur
+        </Button>
+      </Box>
       <FootNote
         serviceProviderSlug={SAMGONGUSTOFA_SLUG}
         notes={[{ text: formatMessage(messages.infoNote) }]}

@@ -279,6 +279,10 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:permno',
     defaultMessage: 'Fastanúmer',
   },
+  lastRegistration: {
+    id: 'sp.vehicles:last-registration',
+    defaultMessage: 'Síðasta skráning',
+  },
   verno: {
     id: 'sp.vehicles:verno',
     defaultMessage: 'Verksmiðjunúmer',
@@ -386,6 +390,14 @@ export const vehicleMessage = defineMessages({
   inspectionType: {
     id: 'sp.vehicles:insp-type',
     defaultMessage: 'Tegund skoðunar',
+  },
+  registration: {
+    id: 'sp.vehicles:registration',
+    defaultMessage: 'Skráning',
+  },
+  annualUsage: {
+    id: 'sp.vehicles:annual-usage',
+    defaultMessage: 'Ársnotkun',
   },
   date: {
     id: 'sp.vehicles:date',

@@ -5,3 +5,7 @@ export const link = style({
   color: theme.color.blue400,
   textDecoration: 'underline',
 })
+
+export const mwInput = style({
+  maxWidth: 150,
+})
