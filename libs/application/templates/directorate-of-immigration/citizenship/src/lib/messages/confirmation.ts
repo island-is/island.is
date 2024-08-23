@@ -23,7 +23,7 @@ export const confirmation = {
       description: 'Confirmation accordion title',
     },
     accordionText: {
-      id: 'doi.cs.application:confirmation.general.accordionText',
+      id: 'doi.cs.application:confirmation.general.accordionText#markdown',
       defaultMessage: `* Lorem ipsum dolor sit amet, consectetur adipiscing elit. Duis eu nulla porta, luctus mi ac, pharetra mauris\n`,
       description: 'Confirmation accordion text',
     },
