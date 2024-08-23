@@ -33,6 +33,32 @@ export const incomePlanFormMessage: MessageDir = {
       description:
         '* It has been less than 10 days since your last income plan was processed by the Social Insurance Administration.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
     },
+    contactInfoDescription: {
+      id: 'ip.application:prerequisites.contact.info.description',
+      defaultMessage:
+        'Upplýsingar um símanúmer og netfang til að auðvelda ferlið.',
+      description:
+        'Information about your telephone number and email address to facilitate the process.',
+    },
+    incomePlanDataDescription: {
+      id: 'ip.application:prerequisites.socialInsuranceAdministration.data.description',
+      defaultMessage:
+        'Tryggingastofnun sækir nauðsynlegar upplýsingar til úrvinnslu tekjuáætlunar, varðandi tekjur og aðrar ástæður.',
+      description:
+        'The Social Insurance Administration collects necessary information, regarding income and other circumstances, to process the income plan.',
+    },
+    checkboxProvider: {
+      id: 'ip.application:prerequisites.checkbox.provider',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað í ferlinu',
+      description:
+        'I understand that the above information will be collected during the process',
+    },
+    startIncomePlan: {
+      id: 'ip.application:prerequisites.start.income.plan',
+      defaultMessage: 'Hefja tekjuáætlun',
+      description: 'Start income plan',
+    },
   }),
 
   info: defineMessages({
@@ -68,99 +94,99 @@ export const incomePlanFormMessage: MessageDir = {
       description: 'english translation',
     },
     registerIncome: {
-      id: 'pp.application:register.income',
+      id: 'ip.application:register.income',
       defaultMessage: 'Skráning tekna',
       description: 'Registration of income',
     },
     addIncome: {
-      id: 'pp.application:add.income',
+      id: 'ip.application:add.income',
       defaultMessage: 'Bæta við tekjum',
       description: 'Add income',
     },
     saveIncome: {
-      id: 'pp.application:save.income',
+      id: 'ip.application:save.income',
       defaultMessage: 'Vista nýjar tekjur',
       description: 'Save new income',
     },
     removeIncome: {
-      id: 'pp.application:remove.income',
+      id: 'ip.application:remove.income',
       defaultMessage: 'Eyða tekjum',
       description: 'Remove income',
     },
     editIncome: {
-      id: 'pp.application:edit.income',
+      id: 'ip.application:edit.income',
       defaultMessage: 'Breyta tekjum',
       description: 'Edit income',
     },
     incomeCategory: {
-      id: 'pp.application:income.category',
+      id: 'ip.application:income.category',
       defaultMessage: 'Tekjuflokkur',
       description: 'Income category',
     },
     selectIncomeCategory: {
-      id: 'pp.application:select.income.category',
+      id: 'ip.application:select.income.category',
       defaultMessage: 'Veldu tekjuflokk',
       description: 'Select income category',
     },
     incomeType: {
-      id: 'pp.application:income.type',
+      id: 'ip.application:income.type',
       defaultMessage: 'Tekjutegund',
       description: 'Income type',
     },
     selectIncomeType: {
-      id: 'pp.application:select.income.type',
+      id: 'ip.application:select.income.type',
       defaultMessage: 'Veldu tekjutegund',
       description: 'Select income type',
     },
     annualIncome: {
-      id: 'pp.application:annual.income',
+      id: 'ip.application:annual.income',
       defaultMessage: 'Árstekjur',
       description: 'Annual income',
     },
     monthlyIncome: {
-      id: 'pp.application:yearly.income',
+      id: 'ip.application:yearly.income',
       defaultMessage: 'Mánaðartekjur',
       description: 'Monthly income',
     },
     incomePerYear: {
-      id: 'pp.application:income.per.year',
+      id: 'ip.application:income.per.year',
       defaultMessage: 'Tekjur á ári',
       description: 'Income per year',
     },
     foreignIncomePerYear: {
-      id: 'pp.application:foreign.income.per.year',
+      id: 'ip.application:foreign.income.per.year',
       defaultMessage: 'Erlendar tekjur á ári',
       description: 'Foreign income per year',
     },
     equalIncomePerMonth: {
-      id: 'pp.application:equal.income.per.month',
+      id: 'ip.application:equal.income.per.month',
       defaultMessage: 'Jafnar tekjur á mánuði',
       description: 'Equal income per month',
     },
     equalForeignIncomePerMonth: {
-      id: 'pp.application:equal.foreign.income.per.month',
+      id: 'ip.application:equal.foreign.income.per.month',
       defaultMessage: 'Erlendar tekjur á mánuði',
       description: 'Foreign income per month',
     },
     monthlyDistributionOfIncome: {
-      id: 'pp.application:monthly.distribution.of.income',
+      id: 'ip.application:monthly.distribution.of.income',
       defaultMessage: 'Óska eftir mánaðarskiptingu atvinnutekna',
       description: 'Request a monthly distribution of employment income',
     },
     monthlyDistributionOfIncomeTooltip: {
-      id: 'pp.application:monthly.distribution.of.income.tooltip',
+      id: 'ip.application:monthly.distribution.of.income.tooltip',
       defaultMessage:
         'Atvinnutekjur hafa einungis áhrif á lífeyrisgreiðslur þess mánaðar sem atvinnutekna er aflað.',
       description:
         'Income only affects the pension payments for the month in which income is earned.',
     },
     currency: {
-      id: 'pp.application:currency',
+      id: 'ip.application:currency',
       defaultMessage: 'Gjaldmiðill',
       description: 'Currency',
     },
     selectCurrency: {
-      id: 'pp.application:select.currency',
+      id: 'ip.application:select.currency',
       defaultMessage: 'Veldu gjaldmiðil',
       description: 'Select a currency',
     },
@@ -254,6 +280,11 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Tekjuáætlun breytt',
     description: 'Income plan edited',
   },
+  pendingActionButton: {
+    id: 'ip.application:pending.action.button',
+    defaultMessage: 'Opna tekjuáætlun',
+    description: 'Open income plan',
+  },
 })
 
 export const historyMessages = defineMessages({
@@ -266,5 +297,15 @@ export const historyMessages = defineMessages({
     id: 'ip.application:history.incomePlanStarted',
     defaultMessage: 'Tekjuáætlun hafin',
     description: 'Income plan started',
+  },
+  newIncomePlanButtonLabel: {
+    id: 'ip.application:newIncomePlan',
+    defaultMessage: 'Ný tekjuáætlun',
+    description: 'New income plan',
+  },
+  incomePlanPageTitle: {
+    id: 'ip.application:yourIncomePlans',
+    defaultMessage: 'Þínar tekjuáætlanir',
+    description: 'Your income plans',
   },
 })
