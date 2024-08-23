@@ -230,7 +230,8 @@ export class EndorsementSystemService {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerExportEndorsementList({
         listId: input.listId,
-        fileType: input.fileType as EndorsementListControllerExportEndorsementListFileTypeEnum,
+        fileType:
+          input.fileType as EndorsementListControllerExportEndorsementListFileTypeEnum,
       })
       .catch(this.handleError.bind(this))
   }
