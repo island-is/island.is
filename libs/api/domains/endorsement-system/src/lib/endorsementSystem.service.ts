@@ -20,6 +20,8 @@ import {
   EndorsementListControllerLockRequest,
   EndorsementListControllerUnlockRequest,
   EndorsementListControllerEmailEndorsementsPDFRequest,
+  EndorsementListControllerExportEndorsementListRequest,
+  EndorsementListControllerExportEndorsementListFileTypeEnum,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import type { Logger } from '@island.is/logging'
@@ -229,7 +231,7 @@ export class EndorsementSystemService {
     return await this.endorsementListApiWithAuth(auth)
       .endorsementListControllerExportEndorsementList({
         listId: input.listId,
-        fileType: input.fileType,
+        fileType: input.fileType as EndorsementListControllerExportEndorsementListFileTypeEnum,
       })
       .catch(this.handleError.bind(this));
 

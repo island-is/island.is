@@ -49,7 +49,6 @@ import { EndorsementListInterceptor } from './interceptors/endorsementList.inter
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
-import { Response } from 'express'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
 export class FindTagPaginationComboDto extends IntersectionType(
@@ -57,7 +56,6 @@ export class FindTagPaginationComboDto extends IntersectionType(
   PaginationDto,
 ) {}
 
-const BIG_TEST_LIST = '0d22628d-e8d9-4ba9-aeac-683ba7817d49'
 @Audit({
   namespace: `${environment.audit.defaultNamespace}/endorsement-list`,
 })
@@ -370,7 +368,7 @@ export class EndorsementListController {
   @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
   @HasAccessGroup(AccessGroup.Owner)
   @ApiParam({ name: 'listId', type: String })
-  @ApiParam({ name: 'fileType', type: String })
+  @ApiParam({ name: 'fileType', type: String, enum: ['pdf', 'csv'] })
   @ApiOkResponse({
     description: 'Presigned URL for the exported file',
     type: EndorsementListExportUrlResponse,
@@ -384,7 +382,7 @@ export class EndorsementListController {
       EndorsementListByIdPipe,
     )
     endorsementList: EndorsementList,
-    @Param('fileType') fileType: 'string',
+    @Param('fileType') fileType: 'pdf' | 'csv',
     @CurrentUser() user: User, // Get the current user
   ): Promise<EndorsementListExportUrlResponse> {
     if (!['pdf', 'csv'].includes(fileType)) {

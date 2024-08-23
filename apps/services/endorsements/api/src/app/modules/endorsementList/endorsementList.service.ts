@@ -679,11 +679,11 @@ export class EndorsementListService {
   async exportList(
     listId: string,
     user: User,
-    fileType: string,
+    fileType: 'pdf' | 'csv',
   ): Promise<EndorsementListExportUrlResponse> {
     try {
-      this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId })
-
+      this.logger.info(`Exporting list ${listId} as ${fileType}`, { listId });
+      
       // Validate file type
       if (!['pdf', 'csv'].includes(fileType)) {
         throw new BadRequestException(
@@ -701,7 +701,7 @@ export class EndorsementListService {
 
       // Create file buffer
       const fileBuffer =
-        fileType == 'pdf'
+        fileType === 'pdf'
           ? await this.createPdfBuffer(endorsementList)
           : this.createCsvBuffer(endorsementList)
 
@@ -774,7 +774,7 @@ export class EndorsementListService {
   private async uploadFileToS3(
     fileBuffer: Buffer,
     filename: string,
-    fileType: string,
+    fileType: 'pdf' | 'csv',
   ): Promise<void> {
     try {
       await this.awsService.uploadFile(
