@@ -165,7 +165,11 @@ export const webRenderConnectedComponent = (
     case 'SpecificHousingBenefitSupportCalculator':
       return <SpecificHousingBenefitSupportCalculator slice={slice} />
     case 'GrindavikResidentialPropertyPurchaseCalculator':
-      return <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
+        </IntlProvider>
+      )
     case 'Sveinslisti/JourneymanList':
       return <JourneymanList slice={slice} />
     case 'Starfsrettindi/ProfessionRights':
