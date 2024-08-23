@@ -118,10 +118,22 @@ const AddFiles: FC = () => {
     }))
   }
 
+  const mapEditableCaseFileToUploadFile = (
+    file: TEditableCaseFile,
+  ): TUploadFile => {
+    return {
+      ...file,
+      name: file.displayText || '',
+    }
+  }
+
   const handleNextButtonClick = () => {
     if (failedUploads.length > 0) {
       failedUploads.map(async (failedUpload) => {
-        const filesUploaded = await handleRetry(failedUpload, () => 'retry')
+        const filesUploaded = await handleRetry(
+          mapEditableCaseFileToUploadFile(failedUpload),
+          () => 'retry',
+        )
 
         if (filesUploaded) {
           setVisibleModal('sendFiles')
@@ -157,7 +169,7 @@ const AddFiles: FC = () => {
         <UploadFiles
           files={filesToUpload}
           onChange={(files) =>
-            setFilesToUpload((prev) => [...mp(files), ...mp(prev)])
+            setFilesToUpload((prev) => [...mp(files), ...prev])
           }
           onDelete={handleRemoveFile}
           onRename={handleRename}

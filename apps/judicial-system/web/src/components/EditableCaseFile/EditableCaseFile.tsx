@@ -30,13 +30,15 @@ interface Props {
   onRetry?: (file: TUploadFile) => void
 }
 
-export interface TEditableCaseFile extends UploadFile {
-  category: CaseFileCategory
-  displayText?: string | null
+export interface TEditableCaseFile {
+  id?: string
+  category?: CaseFileCategory | null
   created?: string | null
+  displayText?: string | null
   userGeneratedFilename?: string | null
   displayDate?: string | null
   canOpen?: boolean
+  status?: UploadFileStatus
 }
 
 const EditableCaseFile: FC<Props> = (props) => {

@@ -1,4 +1,4 @@
-import React, { FC, PointerEvent, useEffect, useState } from 'react'
+import { FC, PointerEvent, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
@@ -132,7 +132,9 @@ export const sortedFilesInChapter = (
     .map((file) => {
       return {
         id: file.id,
+        name: file.name || '',
         displayText: file.name,
+        category: file.category,
         isDivider: false,
         isHeading: false,
         created: file.created,

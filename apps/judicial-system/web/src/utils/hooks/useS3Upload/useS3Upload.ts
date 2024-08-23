@@ -291,7 +291,6 @@ const useS3Upload = (caseId: string) => {
             updateFile({ ...file, percent })
           })
 
-          console.log(file)
           const newFileId = await addFileToCaseState({
             ...file,
             key: presignedPost.key,
