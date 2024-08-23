@@ -1,9 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-
+import { S3 } from 'aws-sdk'
+import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
-import { S3Service } from './s3.service'
 
 export interface AttachmentData {
   key: string
@@ -13,14 +13,18 @@ export interface AttachmentData {
 }
 
 @Injectable()
-export class ApplicationAttachmentService {
-  constructor(private readonly s3Service: S3Service) {}
+export class AttachmentS3Service {
+  private readonly s3: AWS.S3
+  constructor() {
+    this.s3 = new S3()
+  }
 
   public async getFiles(
     application: Application,
     attachmentAnswerKeys: string[],
   ): Promise<AttachmentData[]> {
     const attachments: AttachmentData[] = []
+
     for (let i = 0; i < attachmentAnswerKeys.length; i++) {
       const answers = getValueViaPath(
         application.answers,
@@ -30,7 +34,6 @@ export class ApplicationAttachmentService {
         name: string
       }>
       if (!answers) continue
-
       const list = await this.toDocumentDataList(
         answers,
         attachmentAnswerKeys[i],
@@ -62,10 +65,31 @@ export class ApplicationAttachmentService {
           return { key: '', fileContent: '', answerKey, fileName: '' }
         }
         const fileContent =
-          (await this.s3Service.getFilecontentAsBase64(url)) ?? ''
+          (await this.getApplicationFilecontentAsBase64(url)) ?? ''
 
         return { key, fileContent, answerKey, fileName: name }
       }),
     )
+  }
+
+  private async getApplicationFilecontentAsBase64(
+    fileName: string,
+  ): Promise<string | undefined> {
+    const { bucket, key } = AmazonS3URI(fileName)
+    const uploadBucket = bucket
+    try {
+      const file = await this.s3
+        .getObject({
+          Bucket: uploadBucket,
+          Key: key,
+        })
+        .promise()
+      const fileContent = file.Body as Buffer
+      return fileContent?.toString('base64')
+    } catch (error) {
+      logger.log('error ', error)
+      logger.error(error)
+      return undefined
+    }
   }
 }
