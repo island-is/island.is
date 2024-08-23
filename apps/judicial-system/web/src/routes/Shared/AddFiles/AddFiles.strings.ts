@@ -23,6 +23,11 @@ export const strings = {
     defaultMessage: 'Senda gögn',
     description: 'Notaður sem texti í Senda gögn takka á Gögn síðu í ákærum',
   },
+  tryUploadAgain: {
+    id: 'judicial.system.core:add_files.try_upload_again',
+    defaultMessage: 'Reyna aftur',
+    description: 'Notaður sem texti í Reyna aftur takka á Gögn síðu í ákærum',
+  },
   filesSentModalTitle: {
     id: 'judicial.system.core:add_files.files_sent_modal_title',
     defaultMessage: 'Gögn send til héraðsdóms',

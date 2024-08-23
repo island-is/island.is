@@ -55,11 +55,7 @@ export const editCaseFileButton = style({
   padding: '4px',
   borderRadius: theme.border.radius.large,
   transition: 'background-color 0.2s ease-in-out',
-  selectors: {
-    '&:hover': {
-      backgroundColor: theme.color.blue200,
-    },
-  },
+  cursor: 'default',
 })
 
 export const background = styleVariants({
@@ -67,6 +63,7 @@ export const background = styleVariants({
     selectors: {
       '&:hover': {
         backgroundColor: theme.color.blue200,
+        cursor: 'pointer',
       },
     },
   },
@@ -74,6 +71,7 @@ export const background = styleVariants({
     selectors: {
       '&:hover': {
         backgroundColor: theme.color.red200,
+        cursor: 'pointer',
       },
     },
   },

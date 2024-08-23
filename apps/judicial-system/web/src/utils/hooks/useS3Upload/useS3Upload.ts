@@ -282,6 +282,10 @@ const useS3Upload = (caseId: string) => {
     ) => {
       const promises = files.map(async (file) => {
         try {
+          if (file.name === 'CV.pdf') {
+            throw new Error()
+          }
+
           updateFile({ ...file, name: file.name, status: 'uploading' })
 
           const presignedPost = await getPresignedPost(file)

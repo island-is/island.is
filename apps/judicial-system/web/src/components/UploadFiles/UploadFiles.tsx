@@ -16,7 +16,7 @@ import * as styles from './UploadFiles.css'
 interface Props {
   files: TEditableCaseFile[]
   onChange: (files: File[]) => void
-  onRetry: (file: TUploadFile) => void
+  onRetry?: (file: TUploadFile) => void
   onDelete: (file: TUploadFile) => void
   onRename: (fileId: string, newName?: string, newDisplayDate?: string) => void
 }

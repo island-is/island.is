@@ -26,7 +26,7 @@ interface Props {
   onOpen: (id: string) => void
   onRename: (id: string, name?: string, displayDate?: string) => void
   onDelete: (file: TUploadFile) => void
-  onRetry: (file: TUploadFile) => void
+  onRetry?: (file: TUploadFile) => void
 }
 
 export interface TEditableCaseFile extends UploadFile {
@@ -130,16 +130,34 @@ const EditableCaseFile: FC<Props> = (props) => {
                 <Box display="flex" alignItems="center">
                   <button
                     onClick={handleEditFileButtonClick}
-                    className={styles.editCaseFileButton}
+                    className={cn(styles.editCaseFileButton, {
+                      [styles.background.primary]: caseFile.status !== 'error',
+                      [styles.background.secondary]:
+                        caseFile.status === 'error',
+                    })}
                   >
-                    <Icon icon="checkmark" color="blue400" />
+                    <Icon
+                      icon="checkmark"
+                      color={caseFile.status === 'error' ? 'red400' : 'blue400'}
+                    />
                   </button>
                   <Box marginLeft={1}>
                     <button
                       onClick={() => onDelete(caseFile as TUploadFile)}
-                      className={styles.editCaseFileButton}
+                      className={cn(styles.editCaseFileButton, {
+                        [styles.background.primary]:
+                          caseFile.status !== 'error',
+                        [styles.background.secondary]:
+                          caseFile.status === 'error',
+                      })}
                     >
-                      <Icon icon="trash" color="blue400" type="outline" />
+                      <Icon
+                        icon="trash"
+                        color={
+                          caseFile.status === 'error' ? 'red400' : 'blue400'
+                        }
+                        type="outline"
+                      />
                     </button>
                   </Box>
                 </Box>
@@ -196,7 +214,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <Box className={styles.editCaseFileButton}>
                     <LoadingDots single />
                   </Box>
-                ) : caseFile.status === 'error' ? (
+                ) : caseFile.status === 'error' && onRetry ? (
                   <button
                     onClick={() => onRetry(caseFile as UploadFile)}
                     className={cn(
@@ -209,12 +227,18 @@ const EditableCaseFile: FC<Props> = (props) => {
                 ) : (
                   <button
                     onClick={() => setIsEditing(true)}
-                    className={cn(
-                      styles.editCaseFileButton,
-                      styles.background.primary,
-                    )}
+                    className={cn(styles.editCaseFileButton, {
+                      [styles.background.primary]:
+                        caseFile.status === undefined,
+                      [styles.background.secondary]:
+                        caseFile.status === 'error',
+                    })}
+                    disabled={caseFile.status === 'done'}
                   >
-                    <Icon icon="pencil" color="blue400" />
+                    <Icon
+                      icon="pencil"
+                      color={caseFile.status === 'error' ? 'red400' : 'blue400'}
+                    />
                   </button>
                 )}
               </Box>

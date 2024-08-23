@@ -21,7 +21,6 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useUpdateFilesMutation } from '@island.is/judicial-system-web/src/components/AccordionItems/IndictmentsCaseFilesAccordionItem/updateFiles.generated'
 import { TEditableCaseFile } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -67,13 +66,6 @@ const AddFiles: FC = () => {
     [handleUpload, updateFileToUpload],
   )
 
-  const handleRetryUpload = useCallback(
-    (file: TUploadFile) => {
-      handleRetry(file, updateFileToUpload)
-    },
-    [handleRetry, updateFileToUpload],
-  )
-
   const handleRemoveFile = useCallback((file: TUploadFile) => {
     setFilesToUpload((prev) => prev.filter((p) => p.id !== file.id))
   }, [])
@@ -113,6 +105,7 @@ const AddFiles: FC = () => {
   const mp = (files: UploadFile[]): TEditableCaseFile[] => {
     return files.map((file) => ({
       name: file.name,
+      status: file.status,
       userGeneratedFilename: file.name,
       originalFileObj: file as File,
       displayDate: new Date().toISOString(),
@@ -120,6 +113,18 @@ const AddFiles: FC = () => {
       id: uuid(),
     }))
   }
+
+  const handleNextButtonClick = () => {
+    if (failedUploads.length > 0) {
+      failedUploads.forEach((failedUpload) => {
+        handleRetry(failedUpload, () => 'retry')
+      })
+    } else {
+      handleFileUpload(filesToUpload as UploadFile[])
+    }
+  }
+
+  const failedUploads = filesToUpload.filter((f) => f.status === 'error')
 
   return (
     <PageLayout
@@ -146,7 +151,6 @@ const AddFiles: FC = () => {
           onChange={(files) =>
             setFilesToUpload((prev) => [...mp(files), ...mp(prev)])
           }
-          onRetry={handleRetryUpload}
           onDelete={handleRemoveFile}
           onRename={handleRename}
         />
@@ -154,10 +158,18 @@ const AddFiles: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={previousRoute}
-          nextButtonText={formatMessage(strings.nextButtonText)}
-          onNextButtonClick={() =>
-            handleFileUpload(filesToUpload as UploadFile[])
+          nextButtonText={
+            filesToUpload.some((f) => f.status === 'error')
+              ? formatMessage(strings.tryUploadAgain)
+              : formatMessage(strings.nextButtonText)
           }
+          nextButtonColorScheme={
+            filesToUpload.some((f) => f.status === 'error')
+              ? 'destructive'
+              : 'default'
+          }
+          nextIsDisabled={filesToUpload.some((f) => f.status === 'uploading')}
+          onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>
       {visibleModal === 'sendFiles' && (
