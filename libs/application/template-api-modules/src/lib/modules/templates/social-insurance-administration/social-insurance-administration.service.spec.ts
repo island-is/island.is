@@ -8,7 +8,6 @@ import {
 import { createCurrentUser } from '@island.is/testing/fixtures'
 import { LOGGER_PROVIDER, logger } from '@island.is/logging'
 import { ApplicationTypes } from '@island.is/application/types'
-import { AwsService } from '@island.is/nest/aws'
 
 describe('SocialInsuranceAdministrationService', () => {
   let socialInsuranceAdministrationService: SocialInsuranceAdministrationService
@@ -34,7 +33,6 @@ describe('SocialInsuranceAdministrationService', () => {
           provide: APPLICATION_ATTACHMENT_BUCKET,
           useValue: 'attachmentBucket',
         },
-        AwsService,
       ],
     }).compile()
 

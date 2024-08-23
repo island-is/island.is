@@ -4,11 +4,9 @@ import { QueueService } from './queue.service'
 import { DAY, MINUTE } from './time'
 import { clientConfig, deleteQueues, makeQueueConfig } from './testHelpers'
 
-describe('QueueService', () => {
-  beforeEach(async () => {
-    await deleteQueues()
-  })
+beforeEach(deleteQueues)
 
+describe('QueueService', () => {
   it('creates queues on onApplicationBootstrap', async () => {
     const config = makeQueueConfig()
     const client = new ClientService(clientConfig, logger)
