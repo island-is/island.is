@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 import { AuthDelegationType } from '@island.is/clients/auth/delegation-api'
+import { Identity } from '@island.is/api/domains/identity'
 
 @ObjectType('DelegationAdminCustomModel')
 export class DelegationAdminCustomModel {
@@ -16,18 +17,6 @@ export class DelegationAdminModel {
   @Field(() => String)
   id!: string
 
-  @Field(() => String)
-  fromNationalId!: string
-
-  @Field(() => String)
-  fromName!: string
-
-  @Field(() => String)
-  toNationalId!: string
-
-  @Field(() => String, { nullable: true })
-  toName?: string
-
   @Field(() => String, { nullable: true })
   validTo?: Date
 
@@ -36,4 +25,10 @@ export class DelegationAdminModel {
 
   @Field(() => String, { nullable: true })
   domainName?: string
+
+  @Field(() => Identity)
+  to!: Identity
+
+  @Field(() => Identity)
+  from!: Identity
 }

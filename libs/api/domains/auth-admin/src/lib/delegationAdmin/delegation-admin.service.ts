@@ -18,14 +18,10 @@ export class DelegationAdminService {
     user: User,
     nationalId: string,
   ): Promise<DelegationAdminCustomDto> {
-    const test = await this.delegationsWithAuth(
+    return await this.delegationsWithAuth(
       user,
     ).delegationAdminControllerGetDelegationAdmin({
       xQueryNationalId: nationalId,
     })
-
-    console.log('controller resp', test)
-
-    return test
   }
 }
