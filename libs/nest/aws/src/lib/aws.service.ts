@@ -1,64 +1,24 @@
 import { Injectable } from '@nestjs/common'
-import {
-  S3Client,
-  GetObjectCommand,
-  PutObjectCommand,
-  HeadObjectCommand,
-  DeleteObjectCommand,
-  GetObjectCommandOutput,
-} from '@aws-sdk/client-s3'
-import AmazonS3Uri from 'amazon-s3-uri'
-import { getSignedUrl } from '@aws-sdk/s3-request-presigner'
-
-const MINUTE = 60
-const HOUR = 60 * MINUTE
-export type Encoding = 'binary' | 'base64' | 'utf-8'
-
-interface GetFileOptions {
-  bucket?: string
-  fileName?: string
-  s3Uri?: string
-}
-
-interface GetEncodedFileOptions extends GetFileOptions {
-  encoding?: Encoding
-}
+import { S3 } from 'aws-sdk'
 
 @Injectable()
 export class AwsService {
-  s3Client: S3Client
+  s3: S3
 
   constructor() {
-    this.s3Client = new S3Client({})
+    this.s3 = new S3()
   }
 
-  async getFile(options: GetFileOptions): Promise<GetObjectCommandOutput> {
-    let { bucket, fileName } = options
-
-    if (options.s3Uri) {
-      const uri = AmazonS3Uri(options.s3Uri)
-      bucket = uri.bucket
-      fileName = uri.key
-    }
-
-    const command = new GetObjectCommand({
+  async getFile(
+    bucket: string,
+    fileName: string,
+  ): Promise<AWS.S3.GetObjectOutput> {
+    const downloadParams = {
       Bucket: bucket,
       Key: fileName,
-    })
+    }
 
-    return await this.s3Client.send(command)
-  }
-
-  async getFileEncoded(
-    options: GetEncodedFileOptions,
-  ): Promise<string | undefined> {
-    const encoding = options.encoding || 'base64'
-    const out = await this.getFile(options)
-    return out.Body?.transformToString(encoding)
-  }
-
-  async getFileBase64(options: GetFileOptions): Promise<string | undefined> {
-    return await this.getFileEncoded({ ...options, encoding: 'base64' })
+    return await this.s3.getObject(downloadParams).promise()
   }
 
   async uploadFile(
@@ -71,54 +31,44 @@ export class AwsService {
       ContentEncoding?: string
     },
   ): Promise<string> {
-    const command = new PutObjectCommand({
+    const uploadParams = {
       Bucket: bucket,
       Key: fileName,
       Body: content,
       ...uploadParameters,
-    })
+    }
 
-    await this.s3Client.send(command)
-    return `https://${bucket}.s3.amazonaws.com/${fileName}`
+    const { Location: url } = await this.s3.upload(uploadParams).promise()
+    return url
   }
 
-  async getPresignedUrl(
-    bucket: string,
-    fileName: string,
-    TTL = 2 * HOUR, // TODO: Select length for presigned url's in island.is
-  ): Promise<string> {
-    const command = new GetObjectCommand({
+  async getPresignedUrl(bucket: string, fileName: string): Promise<string> {
+    const oneMinute = 60
+    const presignedUrlParams = {
       Bucket: bucket,
       Key: fileName,
-    })
+      Expires: oneMinute * 120, // TODO: Select length for presigned url's in island.is
+    }
 
-    return await getSignedUrl(this.s3Client, command, {
-      expiresIn: TTL,
-    })
+    return await this.s3.getSignedUrlPromise('getObject', presignedUrlParams)
   }
 
   public async fileExists(bucket: string, fileName: string): Promise<boolean> {
-    const command = new HeadObjectCommand({
-      Bucket: bucket,
-      Key: fileName,
-    })
-
-    return await this.s3Client
-      .send(command)
-      .then(() => true)
-      .catch((error) => {
-        if (error.name === 'NotFound') {
-          return false
-        }
-        throw error
-      })
+    return await this.s3
+      .headObject({ Bucket: bucket, Key: fileName })
+      .promise()
+      .then(
+        () => true,
+        () => false,
+      )
   }
 
   public async deleteObject(bucket: string, key: string) {
-    const command = new DeleteObjectCommand({
-      Bucket: bucket,
-      Key: key,
-    })
-    return await this.s3Client.send(command)
+    await this.s3
+      .deleteObject({
+        Bucket: bucket,
+        Key: key,
+      })
+      .promise()
   }
 }
