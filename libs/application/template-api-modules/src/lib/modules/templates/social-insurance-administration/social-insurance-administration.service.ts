@@ -25,7 +25,6 @@ import {
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
   getApplicationType,

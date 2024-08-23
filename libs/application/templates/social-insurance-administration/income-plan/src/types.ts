@@ -1,3 +1,5 @@
+import { RatioType } from './lib/constants'
+
 export interface categorizedIncomeTypes {
   categoryCode?: string | null
   categoryName?: string | null
@@ -36,10 +38,25 @@ interface withholdingTaxIncomeType {
 
 export interface incomePlanRow {
   incomeTypes: string
-  incomePerYear: string
   currency: string
-  income: string
   incomeCategories: string
+  income: RatioType
+  equalForeignIncomePerMonth?: string
+  equalIncomePerMonth?: string
+  incomePerYear: string
+  unevenIncomePerYear?: string
+  january?: string
+  february?: string
+  march?: string
+  april?: string
+  may?: string
+  june?: string
+  july?: string
+  august?: string
+  september?: string
+  october?: string
+  november?: string
+  december?: string
 }
 
 export interface latestIncomePlan {

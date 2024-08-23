@@ -1,4 +1,8 @@
-import { coreMessages, formatText } from '@island.is/application/core'
+import {
+  coreMessages,
+  formatText,
+  getValueViaPath,
+} from '@island.is/application/core'
 import {
   Application,
   FieldBaseProps,
@@ -311,6 +315,7 @@ const Item: FC<ItemFieldProps> = ({
     condition,
     readonly = false,
     updateValueObj,
+    defaultValue,
     ...props
   } = item
   const isHalfColumn = component !== 'radio' && width === 'half'
@@ -321,28 +326,40 @@ const Item: FC<ItemFieldProps> = ({
   const activeValues =
     activeIndex >= 0 && values ? values[activeIndex] : undefined
 
-  let watchedValue: string | undefined
+  let watchedValues: string | (string | undefined)[] | undefined
   if (updateValueObj) {
-    const watchedValueId =
-      typeof updateValueObj.watchValue === 'function'
-        ? updateValueObj.watchValue(application, activeValues)
-        : updateValueObj.watchValue
+    const watchedValuesId =
+      typeof updateValueObj.watchValues === 'function'
+        ? updateValueObj.watchValues(activeValues)
+        : updateValueObj.watchValues
 
-    if (watchedValueId) {
-      watchedValue = activeValues?.[`${watchedValueId}`]
+    if (watchedValuesId) {
+      if (Array.isArray(watchedValuesId)) {
+        watchedValues = watchedValuesId.map((value) => {
+          return activeValues?.[`${value}`]
+        })
+      } else {
+        watchedValues = activeValues?.[`${watchedValuesId}`]
+      }
     }
   }
 
   useEffect(() => {
-    if (updateValueObj && watchedValue) {
-      const finalValue = updateValueObj.valueModifier(application, activeValues)
+    if (
+      updateValueObj &&
+      watchedValues &&
+      (Array.isArray(watchedValues)
+        ? !watchedValues.every((value) => value === undefined)
+        : true)
+    ) {
+      const finalValue = updateValueObj.valueModifier(activeValues)
 
       if (finalValue) {
         setValue(id, finalValue)
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedValue])
+  }, [JSON.stringify(watchedValues)])
 
   const getFieldError = (id: string) => {
     /**
@@ -352,6 +369,24 @@ const Item: FC<ItemFieldProps> = ({
     const errorList = error as unknown as Record<string, string>[] | undefined
     const errors = errorList?.[activeIndex]
     return errors?.[id]
+  }
+
+  const getDefaultValue = (
+    item: TableRepeaterItem,
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => {
+    const { defaultValue, component } = item
+
+    if (component === 'input' && !defaultValue) {
+      return ''
+    }
+
+    if (defaultValue === undefined) {
+      return undefined
+    }
+
+    return defaultValue(application, activeField)
   }
 
   let translatedOptions: any = []
@@ -372,6 +407,31 @@ const Item: FC<ItemFieldProps> = ({
     Readonly = readonly(application, activeValues)
   } else {
     Readonly = readonly
+  }
+
+  let DefaultValue: any
+  if (component === 'input') {
+    DefaultValue = getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'select') {
+    DefaultValue =
+      getValueViaPath(application.answers, id) ??
+      getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'radio') {
+    DefaultValue =
+      (getValueViaPath(application.answers, id) as string[]) ??
+      getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'checkbox') {
+    DefaultValue =
+      (getValueViaPath(application.answers, id) as string[]) ??
+      getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'date') {
+    DefaultValue =
+      (getValueViaPath(application.answers, id) as string) ??
+      getDefaultValue(item, application, activeValues)
   }
 
   if (condition && !condition(application, activeValues)) {
@@ -402,6 +462,7 @@ const Item: FC<ItemFieldProps> = ({
           }
         }}
         application={application}
+        defaultValue={DefaultValue}
         {...props}
       />
     </GridColumn>
