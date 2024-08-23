@@ -2,7 +2,7 @@ import * as s from './EditorInput.css'
 import { classes } from './Editor.css'
 
 import { useRef, useState } from 'react'
-import { Box } from '@island.is/island-ui/core'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 import {
   Editor as RegulationsEditor,
   EditorProps,
@@ -10,8 +10,10 @@ import {
 import cn from 'classnames'
 import { HTMLText, useDomid } from '@island.is/regulations'
 import { RegulationDraftId } from '@island.is/regulations/admin'
+import { editorMsgs as msg } from '../lib/messages'
 import { useFileUploader } from '../utils/fileUploader'
 import { fileUrl } from '../utils/dataHooks'
+import { useLocale } from '@island.is/localization'
 
 const KB = 1024
 
@@ -44,6 +46,7 @@ export const EditorInput = (props: EditorInputProps) => {
     ...editorProps
   } = props
 
+  const t = useLocale().formatMessage
   const valueRef = useRef(() => value)
   const [hasFocus, setHasFocus] = useState(false)
   const domid = useDomid()
@@ -82,6 +85,19 @@ export const EditorInput = (props: EditorInputProps) => {
           fileUploader={fileUploader()}
           baseText={baseText}
           uploadUrl={`${fileUrl}/admin-drafts/files/${props.draftId}`}
+          documentLoaderElement={
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              padding={1}
+            >
+              <Box display="inlineBlock" marginRight={3}>
+                {t(msg.uploadingWordDocument)}
+              </Box>
+              <LoadingDots />
+            </Box>
+          }
           onFocus={() => {
             setHasFocus(true)
           }}
