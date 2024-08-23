@@ -291,6 +291,10 @@ export class SharedTemplateApiService {
       return Promise.reject('could not find s3 bucket')
     }
 
-    return this.awsService.getPresignedUrl(bucket, key, expiration)
+    return this.s3.getSignedUrlPromise('getObject', {
+      Bucket: bucket,
+      Key: key,
+      Expires: expiration,
+    })
   }
 }
