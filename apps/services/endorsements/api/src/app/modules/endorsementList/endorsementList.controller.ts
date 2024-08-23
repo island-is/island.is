@@ -383,7 +383,7 @@ export class EndorsementListController {
     )
     endorsementList: EndorsementList,
     @Param('fileType') fileType: 'pdf' | 'csv',
-    @CurrentUser() user: User, // Get the current user
+    @CurrentUser() user: User,
   ): Promise<EndorsementListExportUrlResponse> {
     if (!['pdf', 'csv'].includes(fileType)) {
       throw new BadRequestException(

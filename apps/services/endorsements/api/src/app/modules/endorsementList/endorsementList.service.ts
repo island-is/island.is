@@ -30,6 +30,8 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
+
+
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -743,7 +745,7 @@ export class EndorsementListService {
     const records = (endorsementList.endorsements || []).map((endorsement) => ({
       Dagsetning: endorsement.created.toLocaleDateString('is-IS'),
       Nafn: endorsement.meta?.fullName || 'Nafn ótilgreint',
-      Sveitafélag: endorsement.meta?.locality || 'Unknown locality',
+      Sveitafélag: endorsement.meta?.locality || 'Sveitafélag ótilgreint',
     }))
     const csvString = csvStringify(records, { header: true })
     return Buffer.from(csvString, 'utf-8')
