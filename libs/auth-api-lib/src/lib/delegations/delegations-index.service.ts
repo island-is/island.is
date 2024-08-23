@@ -1,8 +1,8 @@
 import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { Op } from 'sequelize'
-import * as kennitala from 'kennitala'
 import startOfDay from 'date-fns/startOfDay'
+import * as kennitala from 'kennitala'
+import { Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
 import {
@@ -11,20 +11,22 @@ import {
   getPersonalRepresentativeDelegationType,
 } from '@island.is/shared/types'
 
-import { ApiScope } from '../resources/models/api-scope.model'
 import { PersonalRepresentativeScopePermissionService } from '../personal-representative/services/personal-representative-scope-permission.service'
-import { DelegationIndex } from './models/delegation-index.model'
-import { DelegationIndexMeta } from './models/delegation-index-meta.model'
-import { DelegationDTO } from './dto/delegation.dto'
+import { ApiScope } from '../resources/models/api-scope.model'
+import { UserIdentitiesService } from '../user-identities/user-identities.service'
+import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
+import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
+import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
+import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
 import {
   DelegationRecordDTO,
   DelegationRecordInputDTO,
   PaginatedDelegationRecordDTO,
 } from './dto/delegation-index.dto'
-import { DelegationsIncomingCustomService } from './delegations-incoming-custom.service'
-import { DelegationsIncomingRepresentativeService } from './delegations-incoming-representative.service'
-import { IncomingDelegationsCompanyService } from './delegations-incoming-company.service'
-import { DelegationsIncomingWardService } from './delegations-incoming-ward.service'
+import { DelegationDTO } from './dto/delegation.dto'
+import { DelegationIndexMeta } from './models/delegation-index-meta.model'
+import { DelegationIndex } from './models/delegation-index.model'
+import { DelegationDirection } from './types/delegationDirection'
 import {
   DelegationRecordType,
   PersonalRepresentativeDelegationType,
@@ -34,8 +36,6 @@ import {
   validateDelegationTypeAndProvider,
   validateToAndFromNationalId,
 } from './utils/delegations'
-import { DelegationDirection } from './types/delegationDirection'
-import { UserIdentitiesService } from '../user-identities/user-identities.service'
 
 const TEN_MINUTES = 1000 * 60 * 10
 const ONE_WEEK = 1000 * 60 * 60 * 24 * 7
@@ -440,9 +440,34 @@ export class DelegationsIndexService {
   }
 
   private async getCustomDelegations(nationalId: string, useMaster = false) {
-    return this.delegationsIncomingCustomService
-      .findAllValidIncoming({ nationalId }, useMaster)
-      .then((d) => d.map(toDelegationIndexInfo))
+    const delegations =
+      await this.delegationsIncomingCustomService.findAllValidIncoming(
+        { nationalId },
+        useMaster,
+      )
+
+    // Merge delegations by `fromNationalId`, combining scopes if necessary
+    const delegationMap = new Map()
+
+    delegations.forEach((delegation) => {
+      const existing = delegationMap.get(delegation.fromNationalId)
+
+      if (existing) {
+        existing.scopes = [
+          ...new Set([
+            ...(existing.scopes || []),
+            ...(delegation.scopes || []),
+          ]),
+        ]
+      } else {
+        delegationMap.set(delegation.fromNationalId, delegation)
+      }
+    })
+
+    // Convert the map back to an array
+    const mergedDelegations = Array.from(delegationMap.values())
+
+    return mergedDelegations.map(toDelegationIndexInfo)
   }
 
   private async getRepresentativeDelegations(
