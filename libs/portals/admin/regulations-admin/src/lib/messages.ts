@@ -341,6 +341,10 @@ export const editorMsgs = defineMessages({
     id: 'ap.regulations-admin:draft-label-deleteConfirmation',
     defaultMessage: 'Ertu alveg viss um að þú viljir eyða ',
   },
+  uploadingWordDocument: {
+    id: 'ap.regulations-admin:uploading-word-document',
+    defaultMessage: 'Hleð inn Word skjali',
+  },
 })
 
 export const impactMsgs = defineMessages({
