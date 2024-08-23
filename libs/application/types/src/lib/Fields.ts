@@ -106,6 +106,10 @@ export type TableRepeaterItem = {
           activeField?: Record<string, string>,
         ) => string | undefined)
   }
+  defaultValue?: (
+    application: Application,
+    activeField?: Record<string, string>,
+  ) => unknown
 } & (
   | {
       component: 'input'
