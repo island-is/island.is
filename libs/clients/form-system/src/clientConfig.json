@@ -17,7 +17,9 @@
             }
           }
         },
-        "tags": ["internal"]
+        "tags": [
+          "internal"
+        ]
       }
     },
     "/version": {
@@ -36,7 +38,9 @@
             }
           }
         },
-        "tags": ["internal"]
+        "tags": [
+          "internal"
+        ]
       }
     },
     "/health/check": {
@@ -201,6 +205,7 @@
     "/organizations": {
       "post": {
         "operationId": "OrganizationsController_create",
+        "summary": "Create an organization",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -214,77 +219,45 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Create an organization",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrganizationDto"
+                }
+              }
+            }
           }
         },
-        "tags": ["organizations"]
+        "tags": [
+          "organizations"
+        ]
       },
       "get": {
         "operationId": "OrganizationsController_findAll",
-        "description": "Get all Organizations",
+        "summary": "Get all Organizations",
         "parameters": [],
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Get all Organizations",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/OrganizationsResponseDto"
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
+                  "$ref": "#/components/schemas/OrganizationsResponseDto"
                 }
               }
             }
           }
         },
-        "tags": ["organizations"]
+        "tags": [
+          "organizations"
+        ]
       }
     },
     "/organizations/{id}": {
       "get": {
         "operationId": "OrganizationsController_findOne",
-        "description": "Get Organization by id",
+        "summary": "Get an organization by id",
         "parameters": [
           {
             "name": "id",
@@ -296,8 +269,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Get an organization by id",
             "content": {
               "application/json": {
                 "schema": {
@@ -305,54 +278,17 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
           }
         },
-        "tags": ["organizations"]
+        "tags": [
+          "organizations"
+        ]
       }
     },
     "/forms": {
       "post": {
         "operationId": "FormsController_create",
+        "summary": "Create new form",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -376,13 +312,15 @@
             }
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
       }
     },
     "/forms/organization/{organizationId}": {
       "get": {
         "operationId": "FormsController_findAll",
-        "description": "Get all forms belonging to organization",
+        "summary": "Get all forms belonging to organization",
         "parameters": [
           {
             "name": "organizationId",
@@ -394,8 +332,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Get all forms belonging to organization",
             "content": {
               "application/json": {
                 "schema": {
@@ -403,55 +341,17 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
       }
     },
     "/forms/{id}": {
       "get": {
         "operationId": "FormsController_findOne",
-        "description": "Get FormResponse by formId",
+        "summary": "Get FormResponse by formId",
         "parameters": [
           {
             "name": "id",
@@ -463,8 +363,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Get FormResponse by formId",
             "content": {
               "application/json": {
                 "schema": {
@@ -472,52 +372,15 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
       },
       "delete": {
         "operationId": "FormsController_delete",
+        "summary": "Delete form",
         "parameters": [
           {
             "name": "id",
@@ -529,16 +392,19 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "Delete field"
           }
         },
-        "tags": ["forms"]
+        "tags": [
+          "forms"
+        ]
       }
     },
     "/sections": {
       "post": {
         "operationId": "SectionsController_create",
+        "summary": "Creates a new section",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -552,14 +418,23 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Creates a new section",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectionDto"
+                }
+              }
+            }
           }
         },
-        "tags": ["sections"]
+        "tags": [
+          "sections"
+        ]
       },
       "put": {
         "operationId": "SectionsController_updateDisplayOrder",
-        "description": "Update display order of sections",
+        "summary": "Update display order of sections",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -573,74 +448,18 @@
         },
         "responses": {
           "204": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
+            "description": "Update display order of sections"
           }
         },
-        "tags": ["sections"]
+        "tags": [
+          "sections"
+        ]
       }
     },
     "/sections/{id}": {
-      "delete": {
-        "operationId": "SectionsController_delete",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": ""
-          }
-        },
-        "tags": ["sections"]
-      },
       "put": {
         "operationId": "SectionsController_update",
+        "summary": "Updates a section",
         "parameters": [
           {
             "name": "id",
@@ -662,16 +481,48 @@
           }
         },
         "responses": {
-          "200": {
-            "description": ""
+          "201": {
+            "description": "Updates a section",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SectionDto"
+                }
+              }
+            }
           }
         },
-        "tags": ["sections"]
+        "tags": [
+          "sections"
+        ]
+      },
+      "delete": {
+        "operationId": "SectionsController_delete",
+        "summary": "Delete section by id",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Delete section by id"
+          }
+        },
+        "tags": [
+          "sections"
+        ]
       }
     },
     "/screens": {
       "post": {
         "operationId": "ScreensController_create",
+        "summary": "Creates a new screen",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -685,14 +536,23 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Creates a new screen",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenDto"
+                }
+              }
+            }
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       },
       "put": {
         "operationId": "ScreensController_updateDisplayOrder",
-        "description": "Update display order of screens",
+        "summary": "Update display order of screens",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -706,55 +566,18 @@
         },
         "responses": {
           "204": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
+            "description": "Update display order of screens"
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       }
     },
     "/screens/{id}": {
       "put": {
         "operationId": "ScreensController_update",
+        "summary": "Updates a new screen",
         "parameters": [
           {
             "name": "id",
@@ -776,14 +599,24 @@
           }
         },
         "responses": {
-          "200": {
-            "description": ""
+          "201": {
+            "description": "Updates a screen",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ScreenDto"
+                }
+              }
+            }
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       },
       "delete": {
         "operationId": "ScreensController_delete",
+        "summary": "Delete screen by id",
         "parameters": [
           {
             "name": "id",
@@ -795,16 +628,19 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "Delete screen by id"
           }
         },
-        "tags": ["screens"]
+        "tags": [
+          "screens"
+        ]
       }
     },
     "/fields": {
       "post": {
         "operationId": "FieldsController_create",
+        "summary": "Create a field",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -818,14 +654,23 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Create a field",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/FieldDto"
+                }
+              }
+            }
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       },
       "put": {
         "operationId": "FieldsController_updateDisplayOrder",
-        "description": "Update display order of fields",
+        "summary": "Update display order of fields",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -839,122 +684,18 @@
         },
         "responses": {
           "204": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
+            "description": "Update display order of fields"
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       }
     },
     "/fields/{id}": {
-      "get": {
-        "operationId": "FieldsController_findOne",
-        "description": "Get Field by id",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FieldDto"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          }
-        },
-        "tags": ["fields"]
-      },
       "put": {
         "operationId": "FieldsController_update",
+        "summary": "Update field",
         "parameters": [
           {
             "name": "id",
@@ -976,14 +717,17 @@
           }
         },
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "Update field"
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       },
       "delete": {
         "operationId": "FieldsController_delete",
+        "summary": "Delete field by id",
         "parameters": [
           {
             "name": "id",
@@ -995,16 +739,19 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "Delete field by id"
           }
         },
-        "tags": ["fields"]
+        "tags": [
+          "fields"
+        ]
       }
     },
     "/listItems": {
       "post": {
         "operationId": "ListItemsController_create",
+        "summary": "Create a list item",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1018,14 +765,23 @@
         },
         "responses": {
           "201": {
-            "description": ""
+            "description": "Create a list item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ListItemDto"
+                }
+              }
+            }
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       },
       "put": {
         "operationId": "ListItemsController_updateDisplayOrder",
-        "description": "Update display order of list items",
+        "summary": "Update display order of list items",
         "parameters": [],
         "requestBody": {
           "required": true,
@@ -1039,55 +795,18 @@
         },
         "responses": {
           "204": {
-            "description": ""
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
+            "description": "Update display order of list items"
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       }
     },
     "/listItems/{id}": {
       "put": {
         "operationId": "ListItemsController_update",
+        "summary": "Update list item",
         "parameters": [
           {
             "name": "id",
@@ -1109,14 +828,17 @@
           }
         },
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "Update list item"
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       },
       "delete": {
         "operationId": "ListItemsController_delete",
+        "summary": "Delete list item",
         "parameters": [
           {
             "name": "id",
@@ -1128,20 +850,22 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": ""
+          "204": {
+            "description": "Delete of list items"
           }
         },
-        "tags": ["list items"]
+        "tags": [
+          "list items"
+        ]
       }
     },
     "/applications": {
       "get": {
-        "operationId": "ApplicationsController_getPreview",
-        "description": "Get application preview",
+        "operationId": "ApplicationsController_getApplication",
+        "summary": "Get an application by id",
         "parameters": [
           {
-            "name": "formId",
+            "name": "id",
             "required": true,
             "in": "path",
             "schema": {
@@ -1150,8 +874,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Get an application by id",
             "content": {
               "application/json": {
                 "schema": {
@@ -1159,55 +883,17 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
           }
         },
-        "tags": ["applications"]
+        "tags": [
+          "applications"
+        ]
       }
     },
     "/applications/{slug}": {
       "post": {
         "operationId": "ApplicationsController_create",
-        "description": "Create new application",
+        "summary": "Create new application",
         "parameters": [
           {
             "name": "slug",
@@ -1219,8 +905,8 @@
           }
         ],
         "responses": {
-          "200": {
-            "description": "",
+          "201": {
+            "description": "Create new application",
             "content": {
               "application/json": {
                 "schema": {
@@ -1228,49 +914,11 @@
                 }
               }
             }
-          },
-          "400": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/HttpProblemResponse"
-                }
-              }
-            }
           }
         },
-        "tags": ["applications"]
+        "tags": [
+          "applications"
+        ]
       }
     }
   },
@@ -1295,7 +943,9 @@
             "type": "boolean"
           }
         },
-        "required": ["ok"]
+        "required": [
+          "ok"
+        ]
       },
       "Version": {
         "type": "object",
@@ -1304,7 +954,9 @@
             "type": "string"
           }
         },
-        "required": ["version"]
+        "required": [
+          "version"
+        ]
       },
       "LanguageType": {
         "type": "object",
@@ -1316,7 +968,10 @@
             "type": "string"
           }
         },
-        "required": ["is", "en"]
+        "required": [
+          "is",
+          "en"
+        ]
       },
       "CreateOrganizationDto": {
         "type": "object",
@@ -1328,7 +983,10 @@
             "type": "string"
           }
         },
-        "required": ["name", "nationalId"]
+        "required": [
+          "name",
+          "nationalId"
+        ]
       },
       "CertificationTypeDto": {
         "type": "object",
@@ -1354,7 +1012,12 @@
             ]
           }
         },
-        "required": ["id", "name", "description", "type"]
+        "required": [
+          "id",
+          "name",
+          "description",
+          "type"
+        ]
       },
       "FormApplicantDto": {
         "type": "object",
@@ -1377,7 +1040,11 @@
             "$ref": "#/components/schemas/LanguageType"
           }
         },
-        "required": ["id", "applicantType", "name"]
+        "required": [
+          "id",
+          "applicantType",
+          "name"
+        ]
       },
       "ListItemDto": {
         "type": "object",
@@ -1401,7 +1068,13 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "label", "value", "displayOrder", "isSelected"]
+        "required": [
+          "id",
+          "label",
+          "value",
+          "displayOrder",
+          "isSelected"
+        ]
       },
       "FieldSettingsDto": {
         "type": "object",
@@ -1473,6 +1146,21 @@
           }
         }
       },
+      "ValueDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string"
+          },
+          "json": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "json"
+        ]
+      },
       "FieldDto": {
         "type": "object",
         "properties": {
@@ -1524,6 +1212,9 @@
               "payment",
               "textbox"
             ]
+          },
+          "value": {
+            "$ref": "#/components/schemas/ValueDto"
           }
         },
         "required": [
@@ -1533,7 +1224,8 @@
           "displayOrder",
           "description",
           "isPartOfMultiset",
-          "fieldType"
+          "fieldType",
+          "value"
         ]
       },
       "ScreenDto": {
@@ -1588,7 +1280,12 @@
           },
           "sectionType": {
             "type": "string",
-            "enum": ["premises", "parties", "input", "payment"]
+            "enum": [
+              "premises",
+              "parties",
+              "input",
+              "payment"
+            ]
           },
           "displayOrder": {
             "type": "number"
@@ -1723,7 +1420,11 @@
             }
           }
         },
-        "required": ["id", "name", "nationalId"]
+        "required": [
+          "id",
+          "name",
+          "nationalId"
+        ]
       },
       "OrganizationsResponseDto": {
         "type": "object",
@@ -1735,33 +1436,9 @@
             }
           }
         },
-        "required": ["organizations"]
-      },
-      "HttpProblemResponse": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "type": "object",
-            "description": "A URI reference that identifies the problem type"
-          },
-          "title": {
-            "type": "string",
-            "description": "A short, human-readable summary of the problem type"
-          },
-          "status": {
-            "type": "number",
-            "description": "The HTTP status code"
-          },
-          "detail": {
-            "type": "string",
-            "description": "A human-readable explanation specific to this occurrence of the problem"
-          },
-          "instance": {
-            "type": "string",
-            "description": "A URI reference that identifies the specific occurrence of the problem."
-          }
-        },
-        "required": ["type", "title"]
+        "required": [
+          "organizations"
+        ]
       },
       "CreateFormDto": {
         "type": "object",
@@ -1770,7 +1447,9 @@
             "type": "string"
           }
         },
-        "required": ["organizationId"]
+        "required": [
+          "organizationId"
+        ]
       },
       "FieldTypeDto": {
         "type": "object",
@@ -1819,7 +1498,13 @@
             "$ref": "#/components/schemas/FieldSettingsDto"
           }
         },
-        "required": ["id", "type", "name", "description", "isCommon"]
+        "required": [
+          "id",
+          "type",
+          "name",
+          "description",
+          "isCommon"
+        ]
       },
       "ListTypeDto": {
         "type": "object",
@@ -1840,7 +1525,13 @@
             "type": "boolean"
           }
         },
-        "required": ["id", "name", "description", "type", "isCommon"]
+        "required": [
+          "id",
+          "name",
+          "description",
+          "type",
+          "isCommon"
+        ]
       },
       "FormResponseDto": {
         "type": "object",
@@ -1881,7 +1572,9 @@
             "type": "string"
           }
         },
-        "required": ["formId"]
+        "required": [
+          "formId"
+        ]
       },
       "UpdateSectionDto": {
         "type": "object",
@@ -1893,7 +1586,9 @@
             "$ref": "#/components/schemas/LanguageType"
           }
         },
-        "required": ["name"]
+        "required": [
+          "name"
+        ]
       },
       "SectionDisplayOrderDto": {
         "type": "object",
@@ -1902,7 +1597,9 @@
             "type": "string"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "UpdateSectionsDisplayOrderDto": {
         "type": "object",
@@ -1914,7 +1611,9 @@
             }
           }
         },
-        "required": ["sectionsDisplayOrderDto"]
+        "required": [
+          "sectionsDisplayOrderDto"
+        ]
       },
       "CreateScreenDto": {
         "type": "object",
@@ -1923,7 +1622,9 @@
             "type": "string"
           }
         },
-        "required": ["sectionId"]
+        "required": [
+          "sectionId"
+        ]
       },
       "UpdateScreenDto": {
         "type": "object",
@@ -1938,7 +1639,11 @@
             "type": "boolean"
           }
         },
-        "required": ["name", "multiset", "callRuleset"]
+        "required": [
+          "name",
+          "multiset",
+          "callRuleset"
+        ]
       },
       "ScreenDisplayOrderDto": {
         "type": "object",
@@ -1950,7 +1655,10 @@
             "type": "string"
           }
         },
-        "required": ["id", "sectionId"]
+        "required": [
+          "id",
+          "sectionId"
+        ]
       },
       "UpdateScreensDisplayOrderDto": {
         "type": "object",
@@ -1962,7 +1670,9 @@
             }
           }
         },
-        "required": ["screensDisplayOrderDto"]
+        "required": [
+          "screensDisplayOrderDto"
+        ]
       },
       "CreateFieldDto": {
         "type": "object",
@@ -1971,7 +1681,9 @@
             "type": "string"
           }
         },
-        "required": ["screenId"]
+        "required": [
+          "screenId"
+        ]
       },
       "UpdateFieldSettingsDto": {
         "type": "object",
@@ -2099,7 +1811,10 @@
             "type": "string"
           }
         },
-        "required": ["id", "screenId"]
+        "required": [
+          "id",
+          "screenId"
+        ]
       },
       "UpdateFieldsDisplayOrderDto": {
         "type": "object",
@@ -2111,7 +1826,9 @@
             }
           }
         },
-        "required": ["fieldsDisplayOrderDto"]
+        "required": [
+          "fieldsDisplayOrderDto"
+        ]
       },
       "CreateListItemDto": {
         "type": "object",
@@ -2123,7 +1840,10 @@
             "type": "number"
           }
         },
-        "required": ["fieldId", "displayOrder"]
+        "required": [
+          "fieldId",
+          "displayOrder"
+        ]
       },
       "UpdateListItemDto": {
         "type": "object",
@@ -2141,7 +1861,11 @@
             "type": "boolean"
           }
         },
-        "required": ["label", "value", "isSelected"]
+        "required": [
+          "label",
+          "value",
+          "isSelected"
+        ]
       },
       "ListItemDisplayOrderDto": {
         "type": "object",
@@ -2150,7 +1874,9 @@
             "type": "string"
           }
         },
-        "required": ["id"]
+        "required": [
+          "id"
+        ]
       },
       "UpdateListItemsDisplayOrderDto": {
         "type": "object",
@@ -2162,7 +1888,9 @@
             }
           }
         },
-        "required": ["listItemsDisplayOrderDto"]
+        "required": [
+          "listItemsDisplayOrderDto"
+        ]
       },
       "ApplicationDto": {
         "type": "object",

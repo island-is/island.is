@@ -7,14 +7,12 @@ import {
   FieldsApi,
   FieldsControllerCreateRequest,
   FieldsControllerDeleteRequest,
-  FieldsControllerFindOneRequest,
   FieldsControllerUpdateRequest,
   FieldDisplayOrderDto,
 } from '@island.is/clients/form-system'
 import {
   CreateFieldInput,
   DeleteFieldInput,
-  GetFieldInput,
   UpdateFieldInput,
   UpdateFieldsDisplayOrderInput,
 } from '../../dto/field.input'
@@ -26,7 +24,7 @@ export class FieldsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private fieldsApi: FieldsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -43,15 +41,15 @@ export class FieldsService {
     return this.fieldsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createField(auth: User, input: CreateFieldInput): Promise<void> {
+  async createField(auth: User, input: CreateFieldInput): Promise<Field> {
     const response = await this.fieldsApiWithAuth(auth)
       .fieldsControllerCreate(input as FieldsControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create field'))
 
     if (!response || response instanceof ApolloError) {
-      return
+      return {}
     }
-    return
+    return response
   }
 
   async deleteField(auth: User, input: DeleteFieldInput): Promise<void> {
@@ -65,16 +63,6 @@ export class FieldsService {
     return response
   }
 
-  async getField(auth: User, input: GetFieldInput): Promise<Field> {
-    const response = await this.fieldsApiWithAuth(auth)
-      .fieldsControllerFindOne(input as FieldsControllerFindOneRequest)
-      .catch((e) => handle4xx(e, this.handleError, 'failed to get field'))
-
-    if (!response || response instanceof ApolloError) {
-      return {}
-    }
-    return response
-  }
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
     const response = await this.fieldsApiWithAuth(auth)

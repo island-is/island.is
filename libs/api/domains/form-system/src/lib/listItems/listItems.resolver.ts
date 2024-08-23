@@ -12,21 +12,22 @@ import {
   UpdateListItemInput,
 } from '../../dto/listItem.input'
 import { ListItemsService } from './listItems.service'
+import { ListItem } from '../../models/listItem.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ListItemsResolver {
-  constructor(private readonly listItemsService: ListItemsService) {}
+  constructor(private readonly listItemsService: ListItemsService) { }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => ListItem, {
     name: 'formSystemCreateListItem',
   })
   async createListItem(
     @Args('input', { type: () => CreateListItemInput })
     input: CreateListItemInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<ListItem> {
     return this.listItemsService.createListItem(user, input)
   }
 

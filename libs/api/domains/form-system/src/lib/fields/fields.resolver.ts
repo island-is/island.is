@@ -7,7 +7,6 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import {
-  GetFieldInput,
   CreateFieldInput,
   UpdateFieldInput,
   DeleteFieldInput,
@@ -20,25 +19,15 @@ import { Field } from '../../models/field.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FieldsResolver {
-  constructor(private readonly fieldsService: FieldsService) {}
+  constructor(private readonly fieldsService: FieldsService) { }
 
-  @Query(() => Field, {
-    name: 'formSystemGetField',
-  })
-  async getField(
-    @Args('input', { type: () => GetFieldInput }) input: GetFieldInput,
-    @CurrentUser() user: User,
-  ): Promise<Field> {
-    return this.fieldsService.getField(user, input)
-  }
-
-  @Mutation(() => Boolean, {
+  @Mutation(() => Field, {
     name: 'formSystemCreateField',
   })
   async createField(
     @Args('input', { type: () => CreateFieldInput }) input: CreateFieldInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<Field> {
     return this.fieldsService.createField(user, input)
   }
 

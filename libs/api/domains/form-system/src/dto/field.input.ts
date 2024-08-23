@@ -19,12 +19,6 @@ export class DeleteFieldInput {
   id?: string
 }
 
-@InputType('FormSystemGetFieldInput')
-export class GetFieldInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-}
-
 @InputType('FormSystemFieldDisplayOrderInput')
 export class FieldDisplayOrderInput {
   @Field(() => String, { nullable: true })

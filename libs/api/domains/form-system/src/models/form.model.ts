@@ -4,9 +4,9 @@ import { FormCertificationType } from './formCertificationType.model'
 import { FormApplicant } from './formApplicant.model'
 import { Section } from './section.model'
 import { ListType } from './listItem.model'
-import { Field as FieldType } from './field.model'
 import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
+import { FieldType } from './fieldType.model'
 
 @ObjectType('FormSystemForm')
 export class Form {

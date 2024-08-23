@@ -13,20 +13,21 @@ import {
   UpdateScreenInput,
   UpdateScreensDisplayOrderInput,
 } from '../../dto/screen.input'
+import { Screen } from '../../models/screen.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) {}
+  constructor(private readonly screensService: ScreensService) { }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Screen, {
     name: 'formSystemCreateScreen',
   })
   async createScreen(
     @Args('input') input: CreateScreenInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<Screen> {
     return this.screensService.createScreen(user, input)
   }
 

@@ -16,6 +16,7 @@ import {
   UpdateSectionInput,
   UpdateSectionsDisplayOrderInput,
 } from '../../dto/section.input'
+import { Section } from '../../models/section.model'
 
 @Injectable()
 export class SectionsService {
@@ -23,7 +24,7 @@ export class SectionsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private sectionsService: SectionsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -40,16 +41,16 @@ export class SectionsService {
     return this.sectionsService.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createSection(auth: User, input: CreateSectionInput): Promise<void> {
+  async createSection(auth: User, input: CreateSectionInput): Promise<Section> {
     const response = await this.sectionsApiWithAuth(auth)
       .sectionsControllerCreate(input as SectionsControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create section'))
 
     if (!response || response instanceof ApolloError) {
-      return
+      return {}
     }
 
-    return
+    return response
   }
 
   async deleteSection(auth: User, input: DeleteSectionInput): Promise<void> {

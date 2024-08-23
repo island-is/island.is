@@ -16,6 +16,7 @@ import {
   UpdateScreenInput,
   UpdateScreensDisplayOrderInput,
 } from '../../dto/screen.input'
+import { Screen } from '../../models/screen.model'
 
 @Injectable()
 export class ScreensService {
@@ -23,7 +24,7 @@ export class ScreensService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private screensApi: ScreensApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -40,16 +41,16 @@ export class ScreensService {
     return this.screensApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createScreen(auth: User, input: CreateScreenInput): Promise<void> {
+  async createScreen(auth: User, input: CreateScreenInput): Promise<Screen> {
     const response = await this.screensApiWithAuth(auth)
       .screensControllerCreate(input as ScreensControllerCreateRequest)
       .catch((e) => handle4xx(e, this.handleError, 'failed to create screen'))
 
     if (!response || response instanceof ApolloError) {
-      return
+      return {}
     }
 
-    return
+    return response
   }
 
   async deleteScreen(auth: User, input: DeleteScreenInput): Promise<void> {

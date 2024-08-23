@@ -13,21 +13,22 @@ import {
   UpdateSectionInput,
   UpdateSectionsDisplayOrderInput,
 } from '../../dto/section.input'
+import { Section } from '../../models/section.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class SectionsResolver {
-  constructor(private readonly sectionsService: SectionsService) {}
+  constructor(private readonly sectionsService: SectionsService) { }
 
-  @Mutation(() => Boolean, {
+  @Mutation(() => Section, {
     name: 'formSystemCreateSection',
   })
   async createSection(
     @Args('input', { type: () => CreateSectionInput })
     input: CreateSectionInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
+  ): Promise<Section> {
     return this.sectionsService.createSection(user, input)
   }
 

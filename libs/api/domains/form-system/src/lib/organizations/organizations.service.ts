@@ -17,7 +17,7 @@ export class OrganizationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private organizationsApi: OrganizationsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -37,7 +37,7 @@ export class OrganizationsService {
   async createOrganization(
     auth: User,
     input: GetOrganizationInput,
-  ): Promise<void> {
+  ): Promise<Organization> {
     const response = await this.organizationsApiWithAuth(auth)
       .organizationsControllerCreate(
         input as OrganizationsControllerCreateRequest,
@@ -47,10 +47,10 @@ export class OrganizationsService {
       )
 
     if (!response || response instanceof ApolloError) {
-      return
+      return {}
     }
 
-    return
+    return response
   }
 
   async getOrganization(
