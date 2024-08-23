@@ -8,13 +8,15 @@ import {
   buildCustomField,
 } from '@island.is/application/core'
 import { format as formatNationalId } from 'kennitala'
-import {
-  DistrictCommissionerAgencies,
-  Routes,
-  Services,
-} from '../../../lib/constants'
+import { DistrictCommissionerAgencies, Routes } from '../../../lib/constants'
 import { review, idInformation, priceList } from '../../../lib/messages'
-import { isChild, formatPhoneNumber, hasSecondGuardian } from '../../../utils'
+import {
+  isChild,
+  formatPhoneNumber,
+  hasSecondGuardian,
+  checkForDiscount,
+} from '../../../utils'
+import { Services } from '../../../shared/types'
 
 export const OverviewSection = buildSection({
   id: 'reviewOverview',
@@ -225,21 +227,21 @@ export const OverviewSection = buildSection({
         buildKeyValueField({
           label: review.labels.deliveryOption,
           colSpan: '6/12',
-          value: ({ answers }) => {
+          value: (application) => {
+            const { answers } = application
             const priceChoice = getValueViaPath(
               answers,
               `${Routes.PRICELIST}.priceChoice`,
             ) as string
-            // TODO: Add priceAmount when we have all chargeItemCodes!
-            // And change the priceList messages
-            return priceChoice === Services.EXPRESS
-              ? [priceList.labels.fastPriceTitle, '**4.600 kr.**']
-              : priceChoice === Services.EXPRESS_DISCOUNT
-              ? [priceList.labels.discountFastPriceTitle, '**4.600 kr.**']
-              : priceChoice === Services.REGULAR
-              ? [priceList.labels.regularPriceTitle, '**4.600 kr.**']
-              : priceChoice === Services.REGULAR_DISCOUNT
-              ? [priceList.labels.discountRegularPriceTitle, '**4.600 kr.**']
+            const hasDiscount = checkForDiscount(application)
+            return priceChoice === Services.EXPRESS && !hasDiscount
+              ? priceList.labels.fastPriceTitle
+              : priceChoice === Services.EXPRESS && hasDiscount
+              ? [priceList.labels.discountFastPriceTitle]
+              : priceChoice === Services.REGULAR && !hasDiscount
+              ? [priceList.labels.regularPriceTitle]
+              : priceChoice === Services.REGULAR && hasDiscount
+              ? [priceList.labels.discountRegularPriceTitle]
               : ''
           },
         }),

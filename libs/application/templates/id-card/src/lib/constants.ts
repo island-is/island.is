@@ -1,4 +1,5 @@
 import { DefaultEvents } from '@island.is/application/types'
+import { Services } from '../shared/types'
 
 export type Events =
   | { type: DefaultEvents.ASSIGN }
@@ -29,13 +30,6 @@ export enum States {
 export enum Roles {
   APPLICANT = 'applicant',
   ASSIGNEE = 'assignee', //second guardian
-}
-
-export enum Services {
-  REGULAR = 'regular',
-  EXPRESS = 'express',
-  REGULAR_DISCOUNT = 'regularDiscount',
-  EXPRESS_DISCOUNT = 'expressDiscount',
 }
 
 export enum ApiActions {
@@ -123,6 +117,14 @@ export interface IdentityDocumentChild {
 export interface IdentityDocumentData {
   userPassport: IdentityDocument
   childPassports: IdentityDocumentChild[]
+}
+
+export interface CombinedApplicantInformation {
+  name?: string
+  age?: number
+  nationalId?: string
+  passport?: IdentityDocument
+  children?: Array<IdentityDocumentChild>
 }
 
 export const twoDays = 24 * 3600 * 1000 * 2

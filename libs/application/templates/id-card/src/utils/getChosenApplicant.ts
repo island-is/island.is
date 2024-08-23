@@ -1,54 +1,57 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { IdentityDocumentChild, Routes } from '../lib/constants'
+import { IdCardAnswers } from '..'
 
 export interface ChosenApplicant {
-  nationalId: string
   name: string
+  isApplicant: boolean
+  nationalId?: string
 }
 
 export const getChosenApplicant = (
-  application: Application,
-  nationalId?: string,
+  answers: FormValue,
+  externalData: any,
 ): ChosenApplicant => {
   const applicantIdentity = getValueViaPath(
-    application.externalData,
+    externalData,
     'nationalRegistry.data',
     {},
   ) as NationalRegistryIndividual
 
   const applicantChildren = getValueViaPath(
-    application.externalData,
+    externalData,
     'identityDocument.data.childPassports',
     [],
   ) as Array<IdentityDocumentChild>
 
-  const chosenApplicantNationalId =
-    nationalId ??
-    (getValueViaPath(
-      application.answers,
-      Routes.CHOSENAPPLICANTS,
-      '',
-    ) as string)
+  const chosenApplicantNationalId = getValueViaPath(
+    answers,
+    Routes.CHOSENAPPLICANTS,
+    '',
+  ) as string
 
   if (
     chosenApplicantNationalId === '' ||
     applicantIdentity?.nationalId === chosenApplicantNationalId
   ) {
     return {
-      nationalId: applicantIdentity?.nationalId,
       name: applicantIdentity?.fullName,
+      isApplicant: true,
+      nationalId: applicantIdentity.nationalId,
     }
   } else {
     const chosenChild = applicantChildren.filter(
       (x) => x.childNationalId === chosenApplicantNationalId,
     )?.[0]
     return {
-      nationalId: chosenChild.childNationalId,
       name: chosenChild.childName,
+      isApplicant: false,
+      nationalId: chosenChild.childNationalId,
     }
   }
 }

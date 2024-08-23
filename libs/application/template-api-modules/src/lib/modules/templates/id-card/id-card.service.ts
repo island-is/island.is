@@ -27,7 +27,7 @@ import {
 } from '@island.is/application/templates/id-card'
 import { generateApplicationRejectEmail } from './emailGenerators/rejectApplicationEmail'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
-
+// import { info } from 'kennitala'
 @Injectable()
 export class IdCardService extends BaseTemplateApiService {
   constructor(
@@ -57,29 +57,21 @@ export class IdCardService extends BaseTemplateApiService {
       )
     }
 
+    // console.log('identityDocuemtn', identityDocument)
+    // const infoFromKennitala = info(auth.nationalId)
+    // console.log('infoFromKennitala', infoFromKennitala)
+
     const expDate = identityDocument.userPassport?.expirationDate?.toString()
     // if applicant has valid id that is not withinExpirationDate, then not available for application,
     // otherwise available, either with no id or id within expiration limit
     // applicant can have a valid ID and apply for II
-    const applicantIdentityWithinLimits = expDate
-      ? isAvailableForApplication(
-          expDate,
-          'ID',
-          `${identityDocument.userPassport?.type}${identityDocument.userPassport?.subType}`,
-        )
-      : true
+    const applicantIdentityWithinLimits = isAvailableForApplication('ID', {})
 
     let childIdentityWithinLimits = false
     identityDocument.childPassports?.map((child) => {
       if (child.passports && child.passports.length > 0) {
         child.passports.map((id) => {
-          const withinLimits = id.expirationDate
-            ? isAvailableForApplication(
-                id.expirationDate.toString(),
-                'ID',
-                `${id.type}${id.subType}`,
-              )
-            : true
+          const withinLimits = isAvailableForApplication('ID', {})
 
           if (withinLimits) {
             // if there is any id for any child that is within limits then user should be let through dataProvider

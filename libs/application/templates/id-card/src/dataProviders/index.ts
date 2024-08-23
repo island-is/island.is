@@ -32,7 +32,7 @@ const defaultParams = {
     title: error.invalidAgeTitle,
     summary: error.invalidAgeDescription,
   },
-  icelandicCitizenship: true,
+  icelandicCitizenship: false, // TODO make this check in template-module-api eða annarstaðar
   allowPassOnChild: true,
 }
 

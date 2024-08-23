@@ -31,7 +31,7 @@ export enum ChargeItemCode {
   HEALTHCARE_LICENSE_CERTIFICATE = 'L6102',
   ID_CARD_REGULAR = 'AY155', //Nafnskírteini almennt gjald
   ID_CARD_EXPRESS = 'AY156', //Nafnskírteini skyndiútgáfa
-  ID_CARD_OTHERS_REGULAR = '', //Nafnskírteini aðrir gjald
-  ID_CARD_OTHERS_EXPRESS = '', //Nafnskírteini aðrir skyndiútgáfa
+  ID_CARD_OTHERS_REGULAR = 'AY157', //Nafnskírteini aðrir gjald
+  ID_CARD_OTHERS_EXPRESS = 'AY158', //Nafnskírteini aðrir skyndiútgáfa
   HEALTHCARE_WORK_PERMIT = 'L6101',
 }

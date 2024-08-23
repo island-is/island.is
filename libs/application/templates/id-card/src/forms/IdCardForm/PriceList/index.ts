@@ -5,14 +5,11 @@ import {
   buildRadioField,
   buildSelectField,
 } from '@island.is/application/core'
-import {
-  DistrictCommissionerAgencies,
-  Routes,
-  Services,
-} from '../../../lib/constants'
+import { DistrictCommissionerAgencies, Routes } from '../../../lib/constants'
 import { priceList } from '../../../lib/messages/priceList'
 import { checkForDiscount } from '../../../utils'
 import { Application } from '@island.is/application/types'
+import { Services } from '../../../shared/types'
 
 export const PriceListSubSection = buildSection({
   id: Routes.PRICELIST,

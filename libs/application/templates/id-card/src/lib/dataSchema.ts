@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { error } from './messages'
-import { Services } from './constants'
+import { Services } from '../shared/types'
 
 const nationalIdRegex = /([0-9]){6}-?([0-9]){4}/
 const emailRegex =

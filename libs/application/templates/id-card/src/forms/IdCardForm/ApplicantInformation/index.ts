@@ -51,7 +51,10 @@ export const ApplicanInformationSubSection = buildSection({
           readOnly: true,
           width: 'half',
           defaultValue: (application: Application) => {
-            const chosenApplicant = getChosenApplicant(application)
+            const chosenApplicant = getChosenApplicant(
+              application.answers,
+              application.externalData,
+            )
 
             return chosenApplicant.name
           },
@@ -63,7 +66,10 @@ export const ApplicanInformationSubSection = buildSection({
           width: 'half',
           format: '######-####',
           defaultValue: (application: Application) => {
-            const chosenApplicant = getChosenApplicant(application)
+            const chosenApplicant = getChosenApplicant(
+              application.answers,
+              application.externalData,
+            )
 
             return chosenApplicant.nationalId
           },

@@ -50,6 +50,12 @@ export const idInformation = {
       defaultMessage: 'Nafnskírteini sem ferðaskilríki',
       description: 'Type of id radio answer id card travel rights',
     },
+    warningText: {
+      id: 'id.application:idInformation.labels.warningText',
+      defaultMessage:
+        'Þú uppfyllir ekki skilyrði fyrir báðum útgáfum af nafnskírteini',
+      description: 'Warning alert for type of ID',
+    },
     infoAlert: {
       id: 'id.application:idInformation.labels.infoAlert',
       defaultMessage:
