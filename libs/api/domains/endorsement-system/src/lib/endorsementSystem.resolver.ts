@@ -31,9 +31,8 @@ import { sendPdfEmailInput } from './dto/sendPdfEmail.input'
 import { CacheControl, CacheControlOptions } from '@island.is/nest/graphql'
 import { CACHE_CONTROL_MAX_AGE } from '@island.is/shared/constants'
 
-import { ExportUrlResponse } from './dto/exportUrl.response';
-import { ExportEndorsementListInput } from './dto/exportEndorsementList.input';
-
+import { ExportUrlResponse } from './dto/exportUrl.response'
+import { ExportEndorsementListInput } from './dto/exportEndorsementList.input'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -267,8 +266,6 @@ export class EndorsementSystemResolver {
     return await this.endorsementSystemService.endorsementListControllerExportList(
       input,
       user,
-    );
+    )
   }
-
-  
 }

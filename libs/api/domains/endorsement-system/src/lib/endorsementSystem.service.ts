@@ -20,7 +20,6 @@ import {
   EndorsementListControllerLockRequest,
   EndorsementListControllerUnlockRequest,
   EndorsementListControllerEmailEndorsementsPDFRequest,
-  EndorsementListControllerExportEndorsementListRequest,
   EndorsementListControllerExportEndorsementListFileTypeEnum,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
@@ -233,9 +232,6 @@ export class EndorsementSystemService {
         listId: input.listId,
         fileType: input.fileType as EndorsementListControllerExportEndorsementListFileTypeEnum,
       })
-      .catch(this.handleError.bind(this));
-
+      .catch(this.handleError.bind(this))
   }
-
- 
 }
