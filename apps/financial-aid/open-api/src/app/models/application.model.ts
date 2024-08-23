@@ -12,7 +12,6 @@ import {
   DirectTaxPaymentModel,
   StaffModel,
 } from './index'
-import { ChildrenModel } from './children.model'
 
 @ObjectType()
 export class ApplicationModel {
