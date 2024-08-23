@@ -60,7 +60,20 @@ export const formatValueForPresentation = (
         v = round(value / divider, precision)
       }
 
-      return `${v.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')}${postfix}`
+      const thousandSeparator = messages[activeLocale].thousandSeparator ?? '.'
+      const fractionSeparator = messages[activeLocale].fractionSeparator ?? ','
+
+      const [integer, fraction] = v.toString().split('.')
+
+      // Add thousand separator
+      let result = integer.replace(/\B(?=(\d{3})+(?!\d))/g, thousandSeparator)
+
+      // Add fraction separator
+      if (fraction) {
+        result += `${fractionSeparator}${fraction}`
+      }
+
+      return `${result}${postfix}`
     }
   } catch {
     // pass

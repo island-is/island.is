@@ -105,8 +105,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     const syslumennOnEntryData: any = application.externalData.syslumennOnEntry
     const electPerson: any = (application.answers?.pickRole as PickRole)
       .electPerson
-    const electPersonNationalId: string =
-      electPerson.electedPersonNationalId ?? ''
+    const electPersonNationalId: string = electPerson.nationalId ?? ''
 
     if (!isPerson(electPersonNationalId)) {
       return {
@@ -174,8 +173,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         application.externalData.syslumennOnEntry
       const electPerson: any = (application.answers?.pickRole as PickRole)
         .electPerson
-      const electPersonNationalId: string =
-        electPerson.electedPersonNationalId ?? ''
+      const electPersonNationalId: string = electPerson.nationalId ?? ''
 
       if (!isPerson(electPersonNationalId)) {
         return {

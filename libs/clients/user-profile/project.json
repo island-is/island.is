@@ -3,19 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/user-profile/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["services-user-profile"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/user-profile/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/clients/user-profile"],
       "options": {
-        "jestConfig": "libs/clients/user-profile/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/user-profile/jest.config.ts"
       }
     },
     "codegen/backend-client": {
@@ -25,7 +23,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["services-user-profile"],
-  "tags": ["lib:client", "scope:client"]
+  }
 }

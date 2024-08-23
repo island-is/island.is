@@ -26,7 +26,7 @@ import * as styles from './AccordionItem.css'
 type IconVariantTypes = 'default' | 'small' | 'sidebar'
 type ColorVariants = 'blue' | 'red'
 
-export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5'
+export type AccordionItemLabelTags = 'p' | 'h2' | 'h3' | 'h4' | 'h5' | 'div'
 
 type BaseProps = {
   id: string

@@ -1,6 +1,6 @@
 import { FC } from 'react'
 import slugify from '@sindresorhus/slugify'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import {
   Stack,
   Text,

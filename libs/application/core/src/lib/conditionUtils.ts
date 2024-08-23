@@ -9,7 +9,7 @@ import {
   StaticCheck,
 } from '@island.is/application/types'
 import { getValueViaPath } from './formUtils'
-import { User } from 'user'
+import { User } from '@island.is/shared/types'
 
 function applyStaticConditionalCheck(
   formValue: FormValue,

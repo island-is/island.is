@@ -52,10 +52,33 @@ test.describe('MS - Licenses', () => {
         await expect(element).toBeVisible()
       }
     })
+    await test.step(
+      'should display the firearm license detail screen',
+      async () => {
+        //More complex so gets it's own test
+        // Arrange
+        const element = page.locator(`[href*="skotvopnaleyfi"]`)
+        await element.waitFor()
+        await element.click()
+
+        const title = page.getByRole('heading', {
+          name: 'Skotvopnaleyfið þitt',
+        })
+        await title.waitFor()
+        await expect(title).toBeVisible()
+
+        const rights = page.getByText('Réttindaflokkar')
+        await expect(rights).toBeVisible()
+
+        const properties = page.getByText('Skotvopn í eigu leyfishafa')
+        await expect(properties).toBeVisible()
+
+        await page.goBack()
+      },
+    )
     await test.step('should display each detail screen', async () => {
       // Arrange
       const licenses = [
-        { title: 'Skotvopnaleyfið þitt', ref: 'skotvopnaleyfi' },
         { title: 'Ökuréttindin þín', ref: 'okurettindi' },
         { title: 'ADR réttindin þín', ref: 'adrrettindi' },
         { title: 'Vinnuvélaréttindin þín', ref: 'vinnuvelarettindi' },

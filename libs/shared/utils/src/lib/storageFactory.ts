@@ -7,28 +7,32 @@
  */
 
 class InMemoryStorage implements Storage {
-  storage: { [key: string]: string } = {}
+  private storage: { [key: string]: string }
 
-  clear = (): void => {
+  constructor() {
     this.storage = {}
   }
 
-  getItem = (name: string): string | null => {
+  clear(): void {
+    this.storage = {}
+  }
+
+  getItem(name: string): string | null {
     if (Object.prototype.hasOwnProperty.call(this.storage, name)) {
       return this.storage[name]
     }
     return null
   }
 
-  key = (index: number): string | null => {
+  key(index: number): string | null {
     return Object.keys(this.storage)[index] || null
   }
 
-  removeItem = (name: string): void => {
+  removeItem(name: string): void {
     delete this.storage[name]
   }
 
-  setItem = (name: string, value: string): void => {
+  setItem(name: string, value: string): void {
     this.storage[name] = String(value) // not everyone uses TypeScript
   }
 

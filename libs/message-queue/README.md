@@ -9,10 +9,10 @@ compatible server that can run in docker, like [Localstack](https://github.com/l
 
 Simple docker-compose.yml might look something like
 
-```
+```yaml
 services:
   localstack:
-    image: localstack/localstack
+    image: public.ecr.aws/localstack/localstack:3
     networks:
       - local
     ports:

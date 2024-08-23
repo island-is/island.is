@@ -236,6 +236,7 @@ const DocumentScreen = ({
                 title={formatMessage(m.noData)}
                 message={formatMessage(m.noTransactionFound)}
                 imgSrc="./assets/images/sofa.svg"
+                imgAlt=""
               />
             )}
             {billsDataArray.length > 0 ? (

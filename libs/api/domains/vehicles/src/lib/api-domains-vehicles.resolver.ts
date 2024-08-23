@@ -72,7 +72,7 @@ export class VehiclesResolver {
     }
   }
 
-  @Scopes(ApiScope.vehicles)
+  @Scopes(ApiScope.vehicles, ApiScope.carRecycling)
   @Query(() => VehiclesListV2, { name: 'vehiclesListV2', nullable: true })
   @Audit()
   async getVehicleListV2(

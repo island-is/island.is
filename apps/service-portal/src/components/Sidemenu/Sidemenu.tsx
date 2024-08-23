@@ -124,11 +124,7 @@ const Sidemenu = ({
       isVisible={sideMenuOpen}
       hideOnClickOutside={true}
       hideOnEsc={true}
-      modalLabel={formatMessage({
-        id: 'service.portal:menu-button-aria',
-        description: 'Lýsing á notendavalmynd fyrir skjálesara',
-        defaultMessage: 'Valmynd fyrir yfirlit',
-      })}
+      modalLabel={formatMessage(m.menuButtonAria)}
       removeOnClose={true}
       preventBodyScroll={false}
       onVisibilityChange={(visibility: boolean) => {

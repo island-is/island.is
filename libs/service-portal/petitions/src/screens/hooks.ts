@@ -7,75 +7,42 @@ import {
   GetSingleEndorsement,
   GetSinglePetitionList,
 } from './queries'
-import {
-  EndorsementList,
-  ExistsEndorsementResponse,
-  PaginatedEndorsementListResponse,
-  PaginatedEndorsementResponse,
-} from '@island.is/api/schema'
-
-interface UserSignedLists {
-  endorsementSystemUserEndorsements: PaginatedEndorsementResponse
-}
-interface UserOwnsLists {
-  endorsementSystemUserEndorsementLists: PaginatedEndorsementListResponse
-}
-interface PetitionLists {
-  endorsementSystemFindEndorsementLists: PaginatedEndorsementListResponse
-}
-interface SinglePetition {
-  endorsementSystemGetSingleEndorsementList?: EndorsementList
-}
-interface SinglePetitionEndorsements {
-  endorsementSystemGetEndorsements?: PaginatedEndorsementResponse
-}
-interface SingleEndorsement {
-  endorsementSystemGetSingleEndorsement?: ExistsEndorsementResponse
-}
+import { pageSize } from '../lib/utils'
 
 export const useGetAllPetitionLists = () => {
-  const { data: endorsementListsResponse } = useQuery<PetitionLists>(
-    GetAllEndorsementsLists,
-    {
-      variables: {
-        input: {
-          tags: 'generalPetition',
-          limit: 1000,
-        },
+  const { data: endorsementListsResponse } = useQuery(GetAllEndorsementsLists, {
+    variables: {
+      input: {
+        tags: 'generalPetition',
+        limit: 1000,
       },
     },
-  )
+  })
 
   return endorsementListsResponse?.endorsementSystemFindEndorsementLists ?? []
 }
 
 export const useGetListsUserSigned = () => {
-  const { data: endorsementResponse } = useQuery<UserSignedLists>(
-    GetListsUserSigned,
-    {
-      variables: {
-        input: {
-          tags: 'generalPetition',
-          limit: 1000,
-        },
+  const { data: endorsementResponse } = useQuery(GetListsUserSigned, {
+    variables: {
+      input: {
+        tags: 'generalPetition',
+        limit: 1000,
       },
     },
-  )
+  })
   return endorsementResponse?.endorsementSystemUserEndorsements ?? []
 }
 
 export const useListsUserOwns = () => {
-  const { data: endorsementResponse } = useQuery<UserOwnsLists>(
-    EndorsementListsUserOwns,
-    {
-      variables: {
-        input: {
-          tags: 'generalPetition',
-          limit: 1000,
-        },
+  const { data: endorsementResponse } = useQuery(EndorsementListsUserOwns, {
+    variables: {
+      input: {
+        tags: 'generalPetition',
+        limit: 1000,
       },
     },
-  )
+  })
   return endorsementResponse?.endorsementSystemUserEndorsementLists ?? []
 }
 
@@ -84,7 +51,7 @@ export const useGetSinglePetition = (listId: string) => {
     data: petition,
     refetch: refetchSinglePetition,
     loading: loadingPetition,
-  } = useQuery<SinglePetition>(GetSinglePetitionList, {
+  } = useQuery(GetSinglePetitionList, {
     variables: {
       input: {
         listId: listId,
@@ -97,38 +64,64 @@ export const useGetSinglePetition = (listId: string) => {
 }
 
 export const useGetSingleEndorsement = (listId: string) => {
-  const { data: endorsement } = useQuery<SingleEndorsement>(
-    GetSingleEndorsement,
-    {
-      variables: {
-        input: {
-          listId: listId,
-        },
-      },
-    },
-  )
-  return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
-}
-
-export const useGetSinglePetitionEndorsements = (listId: string) => {
-  const {
-    data: endorsements,
-    refetch: refetchSinglePetitionEndorsements,
-    loading: loadingSigners,
-  } = useQuery<SinglePetitionEndorsements>(GetEndorsements, {
+  const { data: endorsement } = useQuery(GetSingleEndorsement, {
     variables: {
       input: {
         listId: listId,
-        limit: 1000,
+      },
+    },
+  })
+  return endorsement?.endorsementSystemGetSingleEndorsement?.hasEndorsed
+}
+
+export const useGetPetitionEndorsementsPaginated = (
+  listId: string,
+  cursor?: string,
+  pageDirection?: 'before' | 'after' | '',
+) => {
+  const {
+    data: endorsementsPage,
+    loading: loadingEndorsements,
+    refetch,
+  } = useQuery(GetEndorsements, {
+    variables: {
+      input: {
+        before: pageDirection === 'before' ? cursor : '',
+        after: pageDirection === 'after' ? cursor : '',
+        listId: listId,
+        limit: pageSize,
       },
     },
   })
 
-  const petitionEndorsements =
-    endorsements?.endorsementSystemGetEndorsements ?? []
+  const endorsements = endorsementsPage?.endorsementSystemGetEndorsements ?? []
   return {
-    petitionEndorsements,
-    refetchSinglePetitionEndorsements,
-    loadingSigners,
+    endorsements,
+    refetch,
+    loadingEndorsements,
+  }
+}
+
+export const useGetAllPetitionEndorsements = (
+  listId: string,
+  canRetrieve: boolean,
+) => {
+  const { data: endorsements, loading: loadingEndorsements } = useQuery(
+    GetEndorsements,
+    {
+      variables: {
+        input: {
+          listId: listId,
+          limit: 1000000,
+        },
+      },
+      skip: !canRetrieve,
+    },
+  )
+
+  const allEndorsements = endorsements?.endorsementSystemGetEndorsements ?? []
+  return {
+    allEndorsements,
+    loadingEndorsements,
   }
 }

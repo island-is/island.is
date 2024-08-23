@@ -15,7 +15,7 @@ test.describe('MS - Occupational licenses', () => {
       browser: browser,
       storageState: 'service-portal-faereyjar.json',
       homeUrl,
-      phoneNumber: '0102209',
+      phoneNumber: '0102399',
       idsLoginOn: true,
     })
     await setupXroadMocks()
@@ -27,7 +27,11 @@ test.describe('MS - Occupational licenses', () => {
 
     await test.step('should display each license type in list', async () => {
       // Arrange
-      const licenses = ['Kennari', 'Bebeb - Starfsleyfi']
+      const licenses = [
+        'Kennari test',
+        'Bebeb - Starfsleyfi',
+        'Verðbréfaréttindi',
+      ]
 
       await page.goto(icelandicAndNoPopupUrl('minarsidur/starfsleyfi'))
 
@@ -45,8 +49,9 @@ test.describe('MS - Occupational licenses', () => {
     await test.step('should display each detail screen', async () => {
       // Arrange
       const licenses = [
-        { title: 'Bebeb', ref: 'Bebeb/1337' },
-        { title: 'Kennari', ref: 'Kennari/123' },
+        { title: 'Bebeb', ref: 'minarsidur/starfsleyfi/H13' },
+        { title: 'Kennari test', ref: 'minarsidur/starfsleyfi/123' },
+        { title: 'Verðbréfaréttindi', ref: 'minarsidur/starfsleyfi/D123' },
       ]
 
       for await (const license of licenses) {

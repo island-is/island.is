@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { ImageSourcePropType } from 'react-native'
 import { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
@@ -29,6 +29,7 @@ export function InboxCard({
 }: InboxCardProps) {
   const theme = useTheme()
   const [starred, setStarred] = useState<boolean>(false)
+  useEffect(() => setStarred(!!bookmarked), [bookmarked])
   return (
     <PressableHighlight
       highlightColor={theme.shade.shade400}

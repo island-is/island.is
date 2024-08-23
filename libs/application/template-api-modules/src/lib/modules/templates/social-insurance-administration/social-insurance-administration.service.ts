@@ -27,7 +27,6 @@ import {
   SocialInsuranceAdministrationClientService,
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
 } from '@island.is/clients/social-insurance-administration'
-import { S3 } from 'aws-sdk'
 import {
   getApplicationType,
   transformApplicationToHouseholdSupplementDTO,
@@ -38,19 +37,18 @@ import {
 } from './social-insurance-administration-utils'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { yearsToMonths } from 'date-fns/esm'
+import { AwsService } from '@island.is/nest/aws'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
 @Injectable()
 export class SocialInsuranceAdministrationService extends BaseTemplateApiService {
-  s3 = new S3()
-
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private siaClientService: SocialInsuranceAdministrationClientService,
     @Inject(APPLICATION_ATTACHMENT_BUCKET)
     private readonly attachmentBucket: string,
+    private readonly awsService: AwsService,
   ) {
     super('SocialInsuranceAdministration')
   }
@@ -379,16 +377,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getPdf(key: string) {
-    const file = await this.s3
-      .getObject({ Bucket: this.attachmentBucket, Key: key })
-      .promise()
-    const fileContent = file.Body as Buffer
-
-    if (!fileContent) {
+    this.logger.debug('Getting pdf', { key })
+    const file = await this.awsService.getFileBase64({
+      bucket: this.attachmentBucket,
+      fileName: key,
+    })
+    if (!file) {
       throw new Error('File content was undefined')
     }
-
-    return fileContent.toString('base64')
+    return file
   }
 
   async sendApplication({ application, auth }: TemplateApiModuleActionProps) {

@@ -1522,6 +1522,114 @@
         }
       }
     },
+    "/api/protected/v1/IncomePlan/IncomePlanConditions": {
+      "get": {
+        "tags": ["IncomePlan"],
+        "summary": "Returns information about various income plan conditions, such as for which year income plans\r\nare currently being accepted, whether or not to show temporary calculations etc.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/PaymentPlan": {
       "get": {
         "tags": ["PaymentPlan"],
@@ -2571,6 +2679,21 @@
             "type": "string",
             "description": "Income type code",
             "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomePlanConditionsDto": {
+        "type": "object",
+        "properties": {
+          "incomePlanYear": {
+            "type": "integer",
+            "description": "The year for which income plans are currently being accepted",
+            "format": "int32"
+          },
+          "showTemporaryCalculations": {
+            "type": "boolean",
+            "description": "Whether or not to show temporary calculations"
           }
         },
         "additionalProperties": false

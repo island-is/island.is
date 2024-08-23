@@ -31,7 +31,11 @@ import { GET_JOURNEYMAN_LICENCES_QUERY } from './queries'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof JourneymanLicence)[] = ['name', 'dateOfPublication']
+const SEARCH_KEYS: (keyof JourneymanLicence)[] = [
+  'name',
+  'dateOfPublication',
+  'nationalId',
+]
 
 interface JourneymanListProps {
   slice: ConnectedComponent
@@ -113,6 +117,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
           n('csvHeaderName', 'Nafn') as string,
           n('csvHeaderProfession', 'Iðngrein') as string,
           n('csvHeaderDateOfPublication', 'Útgáfuár') as string,
+          n('csvHeaderNationalId', 'Kennitala') as string,
         ]
         const dataRows = []
         for (const licence of licences) {
@@ -122,6 +127,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
             licence.dateOfPublication // Útgáfuár
               ? format(new Date(licence.dateOfPublication), 'yyyy')
               : '',
+            licence.nationalId ?? '',
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -262,8 +268,9 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                 <T.Row>
                   <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
                   <T.HeadData>{n('profession', 'Iðngrein')}</T.HeadData>
+                  <T.HeadData>{n('dateOfPublication', 'Útgáfuár')}</T.HeadData>
                   <T.HeadData align="right">
-                    {n('dateOfPublication', 'Útgáfuár')}
+                    {n('nationalId', 'Kennitala')}
                   </T.HeadData>
                 </T.Row>
               </T.Head>
@@ -287,7 +294,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                         <T.Data>
                           {licences.dateOfPublication && (
                             <Box>
-                              <Text textAlign="right" variant="small">
+                              <Text variant="small">
                                 {format(
                                   new Date(licences.dateOfPublication),
                                   'yyyy',
@@ -295,6 +302,13 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                               </Text>
                             </Box>
                           )}
+                        </T.Data>
+                        <T.Data>
+                          <Box>
+                            <Text textAlign="right" variant="small">
+                              {licences.nationalId}
+                            </Text>
+                          </Box>
                         </T.Data>
                       </T.Row>
                     )

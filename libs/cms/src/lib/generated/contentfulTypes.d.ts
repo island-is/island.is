@@ -455,6 +455,9 @@ export interface IBigBulletListFields {
 
   /** Bullets */
   bullets: (IIconBullet | INumberBulletSection)[]
+
+  /** Divider On Top */
+  dividerOnTop?: boolean | undefined
 }
 
 export interface IBigBulletList extends Entry<IBigBulletListFields> {
@@ -583,6 +586,9 @@ export interface IChartFields {
 
   /** Reduce and round value */
   reduceAndRoundValue?: boolean | undefined
+
+  /** Y Axis Label */
+  yAxisLabel?: string | undefined
 }
 
 /** A wrapper to render any graphical representation of data using [Chart Component]s. */
@@ -750,14 +756,15 @@ export interface ICustomPageFields {
   /** Title */
   title?: string | undefined
 
+  /** Slug */
+  slug?: string | undefined
+
   /** Unique Identifier */
-  uniqueIdentifier:
+  uniqueIdentifier?:
     | 'PensionCalculator'
     | 'OfficialJournalOfIceland'
     | 'Vacancies'
-
-  /** Slug */
-  slug?: string | undefined
+    | undefined
 
   /** Alert Banner */
   alertBanner?: IAlertBanner | undefined
@@ -1158,6 +1165,9 @@ export interface IFeaturedArticlesFields {
   /** Title */
   title: string
 
+  /** Intro text */
+  introText?: Document | undefined
+
   /** Image */
   image?: Asset | undefined
 
@@ -1190,9 +1200,6 @@ export interface IFeaturedArticlesFields {
 
   /** Has Border Above */
   hasBorderAbove?: boolean | undefined
-
-  /** Intro text */
-  introText?: Document | undefined
 }
 
 export interface IFeaturedArticles extends Entry<IFeaturedArticlesFields> {
@@ -1831,16 +1838,16 @@ export interface IHnippTemplateFields {
   /** TemplateId */
   templateId: string
 
-  /** Notification Title */
+  /** Title */
   notificationTitle: string
 
-  /** Notification Body */
+  /** External Body */
   notificationBody: string
 
-  /** Notification Data Copy */
+  /** Internal Body */
   notificationDataCopy?: string | undefined
 
-  /** Category */
+  /** Category DEPRECATED */
   category?: 'NEW_DOCUMENT' | 'ISLANDIS_LINK' | undefined
 
   /** Args */
@@ -3755,6 +3762,7 @@ export interface ISliceConnectedComponentFields {
     | 'KilometerFee'
     | 'SpecificHousingBenefitSupportCalculator'
     | 'GrindavikResidentialPropertyPurchaseCalculator'
+    | 'Ums/CostOfLivingCalculator'
     | undefined
 
   /** Localized JSON */
@@ -4313,11 +4321,17 @@ export interface ITabSection extends Entry<ITabSectionFields> {
 }
 
 export interface ITeamListFields {
-  /** Title */
+  /** Internal Title */
   title?: string | undefined
 
   /** Team members */
   teamMembers?: ITeamMember[] | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Variant */
+  variant?: 'card' | 'accordion' | undefined
 }
 
 /** list of team members */
@@ -4346,11 +4360,17 @@ export interface ITeamMemberFields {
   /** Title */
   title: string
 
-  /** Mynd */
+  /** Image */
   mynd: Asset
 
   /** Image On Select */
   imageOnSelect?: Asset | undefined
+
+  /** Filter Tags */
+  filterTags?: IGenericTag[] | undefined
+
+  /** Intro */
+  intro?: Document | undefined
 }
 
 export interface ITeamMember extends Entry<ITeamMemberFields> {

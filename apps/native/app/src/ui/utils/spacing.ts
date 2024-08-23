@@ -1,4 +1,4 @@
-import { DefaultTheme } from 'styled-components'
+import { DefaultTheme } from 'styled-components/native'
 type Spacing = DefaultTheme['spacing']
 
 export function spacing(amount: keyof Spacing, unit: string | null = 'px') {

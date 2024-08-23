@@ -300,6 +300,8 @@ export interface RadioField extends BaseField {
   largeButtons?: boolean
   required?: boolean
   space?: BoxProps['paddingTop']
+  hasIllustration?: boolean
+  widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 
@@ -468,7 +470,7 @@ export interface LinkField extends BaseField {
   readonly type: FieldTypes.LINK
   component: FieldComponents.LINK
   s3key?: FormText
-  link?: string
+  link?: FormText
   iconProps?: Pick<IconProps, 'icon' | 'type'>
 }
 
@@ -482,15 +484,19 @@ export interface PaymentChargeOverviewField extends BaseField {
   ) => { chargeItemCode: string; extraLabel?: StaticText }[]
 }
 
+type ImageWidthProps = 'full' | 'auto' | '50%'
+type ImagePositionProps = 'left' | 'right' | 'center'
+
 export interface ImageField extends BaseField {
   readonly type: FieldTypes.IMAGE
   component: FieldComponents.IMAGE
   image: React.FunctionComponent<React.SVGProps<SVGSVGElement>> | string
   alt?: string
-  imageWidth?: 'full' | 'auto'
   marginTop?: ResponsiveProp<Space>
   marginBottom?: ResponsiveProp<Space>
   titleVariant?: TitleVariants
+  imageWidth?: ImageWidthProps | Array<ImageWidthProps>
+  imagePosition?: ImagePositionProps | Array<ImagePositionProps>
 }
 
 export interface PdfLinkButtonField extends BaseField {
@@ -506,6 +512,8 @@ export interface PdfLinkButtonField extends BaseField {
     filename: string
   }[]
   setViewPdfFile?: (file: { base64: string; filename: string }) => void
+  viewPdfFile?: boolean
+  downloadButtonTitle?: StaticText
 }
 
 export interface NationalIdWithNameField extends BaseField {

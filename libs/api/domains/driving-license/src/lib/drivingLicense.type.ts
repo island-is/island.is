@@ -47,6 +47,11 @@ export interface TeachingRightsStatus {
   hasTeachingRights: boolean
 }
 
+export interface DrivinglicenseDuplicateValidityStatus {
+  canGetNewDuplicate: boolean
+  meta: string
+}
+
 export interface StudentQueryInput {
   nationalId: string
 }

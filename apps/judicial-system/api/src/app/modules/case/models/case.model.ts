@@ -447,4 +447,10 @@ export class Case {
 
   @Field(() => String, { nullable: true })
   readonly indictmentCompletedDate?: string
+
+  @Field(() => Case, { nullable: true })
+  readonly mergeCase?: Case
+
+  @Field(() => [Case], { nullable: true })
+  readonly mergedCases?: Case[]
 }
