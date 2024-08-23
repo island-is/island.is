@@ -769,7 +769,7 @@ export class EndorsementListService {
         `Failed to create PDF buffer for endorsement list ${endorsementList.id}`,
         { error },
       )
-      throw new Error('Error generating PDF')
+      throw new Error(`Error generating PDF for endorsement list ${endorsementList.id}`)
     }
   }
 
