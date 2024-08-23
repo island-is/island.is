@@ -1,5 +1,6 @@
 import { z } from 'zod'
-import { ISK, RatioType } from './constants'
+import { ISK, RatioType, YES } from './constants'
+import { errorMessages } from './messages'
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -13,6 +14,19 @@ export const dataSchema = z.object({
         equalIncomePerMonth: z.string().optional(),
         equalForeignIncomePerMonth: z.string().optional(),
         currency: z.string(),
+        unevenIncomePerYear: z.array(z.enum([YES]).optional()).optional(),
+        january: z.string().optional(),
+        february: z.string().optional(),
+        march: z.string().optional(),
+        april: z.string().optional(),
+        may: z.string().optional(),
+        june: z.string().optional(),
+        july: z.string().optional(),
+        august: z.string().optional(),
+        september: z.string().optional(),
+        october: z.string().optional(),
+        november: z.string().optional(),
+        december: z.string().optional(),
       })
       .refine(
         ({ income, currency, incomePerYear }) =>
@@ -24,8 +38,10 @@ export const dataSchema = z.object({
         },
       )
       .refine(
-        ({ income, currency, equalIncomePerMonth }) =>
-          income === RatioType.MONTHLY && currency === ISK
+        ({ income, currency, equalIncomePerMonth, unevenIncomePerYear }) =>
+          income === RatioType.MONTHLY &&
+          currency === ISK &&
+          unevenIncomePerYear?.[0] !== YES
             ? !!equalIncomePerMonth
             : true,
         {
@@ -33,12 +49,43 @@ export const dataSchema = z.object({
         },
       )
       .refine(
-        ({ income, currency, equalForeignIncomePerMonth }) =>
-          income === RatioType.MONTHLY && currency !== ISK
+        ({
+          income,
+          currency,
+          equalForeignIncomePerMonth,
+          unevenIncomePerYear,
+        }) =>
+          income === RatioType.MONTHLY &&
+          currency !== ISK &&
+          unevenIncomePerYear?.[0] !== YES
             ? !!equalForeignIncomePerMonth
             : true,
         {
           path: ['equalForeignIncomePerMonth'],
+        },
+      )
+      .refine(
+        (incomePlanTable) =>
+          incomePlanTable.income === RatioType.MONTHLY &&
+          incomePlanTable.unevenIncomePerYear?.[0] === YES
+            ? ![
+                incomePlanTable.january,
+                incomePlanTable.february,
+                incomePlanTable.march,
+                incomePlanTable.april,
+                incomePlanTable.may,
+                incomePlanTable.june,
+                incomePlanTable.july,
+                incomePlanTable.august,
+                incomePlanTable.september,
+                incomePlanTable.october,
+                incomePlanTable.november,
+                incomePlanTable.december,
+              ].every((value) => value === undefined || value === '')
+            : true,
+        {
+          path: ['incomePerYear'],
+          params: errorMessages.monthsRequired,
         },
       ),
   ),

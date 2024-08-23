@@ -309,3 +309,11 @@ export const historyMessages = defineMessages({
     description: 'Your income plans',
   },
 })
+
+export const errorMessages = defineMessages({
+  monthsRequired: {
+    id: 'ip.application:error.months.required',
+    defaultMessage: 'Nauðsynlegt er að bæta við tekjum fyrir a.m.k einn mánuð',
+    description: 'You must add income for at least one month',
+  },
+})

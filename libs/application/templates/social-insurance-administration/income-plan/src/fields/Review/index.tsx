@@ -44,7 +44,7 @@ export const Review: FC<ReviewScreenProps> = ({
 }) => {
   const editable = field.props?.editable ?? false
   const { formatMessage } = useLocale()
-  const { income } = getApplicationAnswers(application.answers)
+  const { incomePlan } = getApplicationAnswers(application.answers)
   const { state } = application
   const [submitApplication, { loading: loadingSubmit }] = useMutation(
     SUBMIT_APPLICATION,
@@ -70,7 +70,7 @@ export const Review: FC<ReviewScreenProps> = ({
     }
   }
 
-  const rows = income.map((e) => {
+  const rows = incomePlan.map((e) => {
     return [
       e.incomeTypes,
       formatCurrencyWithoutSuffix(e.incomePerYear),
