@@ -258,6 +258,7 @@ const useS3Upload = (caseId: string) => {
             orderWithinChapter: file.orderWithinChapter,
             displayDate: file.displayDate,
             policeFileId: file.policeFileId,
+            userGeneratedFilename: file.userGeneratedFilename,
           },
         },
       })
@@ -290,6 +291,7 @@ const useS3Upload = (caseId: string) => {
             updateFile({ ...file, percent })
           })
 
+          console.log(file)
           const newFileId = await addFileToCaseState({
             ...file,
             key: presignedPost.key,
@@ -372,13 +374,13 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleRetry = useCallback(
-    (
+    async (
       file: TUploadFile,
       callback: (file: TUploadFile, newId?: string) => void,
     ) => {
       callback({ ...file, percent: 1, status: 'uploading' })
 
-      handleUpload([file], callback)
+      return await handleUpload([file], callback)
     },
     [handleUpload],
   )

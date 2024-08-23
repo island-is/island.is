@@ -303,12 +303,18 @@ export class FileService {
 
     const fileName = createFile.key.slice(NAME_BEGINS_INDEX)
 
+    console.log(createFile)
+
     const file = await this.fileModel.create({
       ...createFile,
       state: CaseFileState.STORED_IN_RVG,
       caseId: theCase.id,
       name: fileName,
-      userGeneratedFilename: fileName.replace(/\.pdf$/, ''),
+      userGeneratedFilename:
+        createFile.category === CaseFileCategory.DEFENDANT_CASE_FILE ||
+        createFile.category === CaseFileCategory.PROSECUTOR_CASE_FILE
+          ? createFile.userGeneratedFilename
+          : fileName.replace(/\.pdf$/, ''),
       submittedBy: user.name,
     })
 

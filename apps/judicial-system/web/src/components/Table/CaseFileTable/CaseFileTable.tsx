@@ -78,7 +78,7 @@ const CaseFileTable: FC<Props> = ({
                 className={styles.linkButton}
               >
                 <Text color="blue400" variant="h5">
-                  {file.name}
+                  {file.userGeneratedFilename}
                 </Text>
               </Box>
             </td>

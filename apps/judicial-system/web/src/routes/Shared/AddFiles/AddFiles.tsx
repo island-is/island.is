@@ -57,7 +57,6 @@ const AddFiles: FC = () => {
 
   const handleFileUpload = useCallback(
     async (files: UploadFile[]) => {
-      console.log(files)
       const filesUploaded = await handleUpload(files, updateFileToUpload)
 
       if (filesUploaded) {
@@ -108,6 +107,7 @@ const AddFiles: FC = () => {
       name: file.name,
       status: file.status,
       userGeneratedFilename: file.name,
+      size: file.size,
       originalFileObj: file as File,
       displayDate: new Date().toISOString(),
       type: 'application/pdf',
@@ -120,8 +120,12 @@ const AddFiles: FC = () => {
 
   const handleNextButtonClick = () => {
     if (failedUploads.length > 0) {
-      failedUploads.forEach((failedUpload) => {
-        handleRetry(failedUpload, () => 'retry')
+      failedUploads.map(async (failedUpload) => {
+        const filesUploaded = await handleRetry(failedUpload, () => 'retry')
+
+        if (filesUploaded) {
+          setVisibleModal('sendFiles')
+        }
       })
     } else {
       handleFileUpload(filesToUpload as UploadFile[])
