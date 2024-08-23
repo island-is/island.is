@@ -206,6 +206,6 @@ export class PSignSubmissionService extends BaseTemplateApiService {
       }
     )[attachmentKey]
 
-    return (await this.awsService.getFileBase64({ s3Uri: fileName })) ?? ''
+    return (await this.awsService.getFileBase64({ fileName })) ?? ''
   }
 }

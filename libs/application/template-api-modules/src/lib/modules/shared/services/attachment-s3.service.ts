@@ -79,7 +79,7 @@ export class AttachmentS3Service {
     fileName: string,
   ): Promise<string | undefined> {
     try {
-      return this.awsService.getFileBase64({ s3Uri: fileName })
+      return this.awsService.getFileBase64({ fileName })
     } catch (error) {
       logger.error(error)
       return undefined
