@@ -9,8 +9,14 @@ import {
 } from '@nestjs/common'
 import { FieldsService } from './fields.service'
 import { CreateFieldDto } from './models/dto/createField.dto'
-import { Documentation } from '@island.is/nest/swagger'
-import { ApiTags } from '@nestjs/swagger'
+import {
+  ApiBody,
+  ApiCreatedResponse,
+  ApiNoContentResponse,
+  ApiOperation,
+  ApiParam,
+  ApiTags,
+} from '@nestjs/swagger'
 import { UpdateFieldDto } from './models/dto/updateField.dto'
 import { FieldDto } from './models/dto/field.dto'
 import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrder.dto'
@@ -20,11 +26,23 @@ import { UpdateFieldsDisplayOrderDto } from './models/dto/updateFieldsDisplayOrd
 export class FieldsController {
   constructor(private readonly fieldsService: FieldsService) {}
 
+  @ApiOperation({ summary: 'Create a field' })
+  @ApiCreatedResponse({
+    description: 'Create a field',
+    type: FieldDto,
+  })
+  @ApiBody({ type: CreateFieldDto })
   @Post()
   create(@Body() createFieldDto: CreateFieldDto): Promise<FieldDto> {
     return this.fieldsService.create(createFieldDto)
   }
 
+  @ApiOperation({ summary: 'Update field' })
+  @ApiNoContentResponse({
+    description: 'Update field',
+  })
+  @ApiBody({ type: UpdateFieldDto })
+  @ApiParam({ name: 'id', type: String })
   @Put(':id')
   async update(
     @Param('id') id: string,
@@ -33,17 +51,23 @@ export class FieldsController {
     await this.fieldsService.update(id, updateFieldDto)
   }
 
-  @Put()
-  @Documentation({
+  @ApiOperation({ summary: 'Update display order of fields' })
+  @ApiNoContentResponse({
     description: 'Update display order of fields',
-    response: { status: 204 },
   })
+  @ApiBody({ type: UpdateFieldsDisplayOrderDto })
+  @Put()
   async updateDisplayOrder(
     @Body() updateFieldsDisplayOrderDto: UpdateFieldsDisplayOrderDto,
   ): Promise<void> {
     return this.fieldsService.updateDisplayOrder(updateFieldsDisplayOrderDto)
   }
 
+  @ApiOperation({ summary: 'Delete field by id' })
+  @ApiNoContentResponse({
+    description: 'Delete field by id',
+  })
+  @ApiParam({ name: 'id', type: String })
   @Delete(':id')
   async delete(@Param('id') id: string): Promise<void> {
     return this.fieldsService.delete(id)
