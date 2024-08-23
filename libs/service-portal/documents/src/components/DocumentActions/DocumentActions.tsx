@@ -1,33 +1,30 @@
-import { DocumentV2Actions } from '@island.is/api/schema'
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import { IconMapIcon } from '@island.is/island-ui/core/types'
-import { FC } from 'react'
-import { downloadFile, sendForm } from '../../utils/downloadDocumentV2'
+import { sendForm } from '../../utils/downloadDocumentV2'
 import { useUserInfo } from '@island.is/auth/react'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { useLocale } from '@island.is/localization'
+import { messages } from '../../utils/messages'
 
-interface Props {
-  alert?: string
-}
-const DocumentActions: FC<Props> = ({ alert }) => {
+const DocumentActions = () => {
   const { activeDocument } = useDocumentContext()
   const userInfo = useUserInfo()
   const DEFAULT_ICON: IconMapIcon = 'document'
   const actions = activeDocument?.actions?.filter(
     (action) => action.type !== 'confirmation',
   )
+  const { formatMessage } = useLocale()
+
   return (
     <Box>
-      {/* {alert && (
+      {
         <Box marginBottom={2}>
           <AlertMessage
             type="success"
-            message={
-              'Staðfesting á möttöku hefur verið send á dómstóla og ákæruvald.'
-            }
+            message={formatMessage(messages.confirmation)}
           />
         </Box>
-      )} */}
+      }
       {actions && (
         <Box
           marginBottom={2}
