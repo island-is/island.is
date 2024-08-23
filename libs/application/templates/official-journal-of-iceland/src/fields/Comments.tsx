@@ -3,8 +3,11 @@ import { OJOIFieldBaseProps } from '../lib/types'
 import { CommentsList } from '../components/comments/CommentList'
 import { FormGroup } from '../components/form/FormGroup'
 import { useComments } from '../hooks/useComments'
+import { useLocale } from '@island.is/localization'
+import { comments as messages } from '../lib/messages/comments'
 
 export const Comments = ({ application }: OJOIFieldBaseProps) => {
+  const { formatMessage: f } = useLocale()
   const { comments, error, loading } = useComments({
     applicationId: application.id,
   })
@@ -14,8 +17,8 @@ export const Comments = ({ application }: OJOIFieldBaseProps) => {
       <FormGroup>
         <AlertMessage
           type="error"
-          title="Villa kom upp við að sækja athugasemdir"
-          message="Ekki tókst að sækja athugasemdir, reynið aftur síðar"
+          title={f(messages.errors.fetchComments)}
+          message={f(messages.errors.fetchCommentsMessage)}
         />
       </FormGroup>
     )
