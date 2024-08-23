@@ -34,7 +34,6 @@ export function useFileUploader(draftId: RegulationDraftId) {
         })
 
         request.addEventListener('load', () => {
-          console.log('presignedPost', presignedPost)
           if (request.status >= 200 && request.status < 300 && presignedPost) {
             success(
               `https://files.reglugerd.is/${presignedPost?.fields?.['key']}`,
