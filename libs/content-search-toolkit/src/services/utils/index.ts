@@ -1,14 +1,12 @@
 /**
- * @param node The node to filter
- * @param visited A set of nodes already visited
- * @param letterLimit The max number of letters allowed
- * @return True iff. a document was removed
+ * @param {T} err Error object
+ * @return {boolean} True iff a document was removed
  *
  * Filter the HUMONGOUS documents in an error object
  */
-export const filterDoc = function filterDoc<T extends object>(
+export function filterDoc<T>(
   node: T,
-  visited: Set<T> = new Set(),
+  visited = new Set(),
   letterLimit = 10000,
 ): boolean {
   if (visited.has(node) || !node) return false
@@ -26,7 +24,7 @@ export const filterDoc = function filterDoc<T extends object>(
       continue
     } else if (
       typeof value === 'object' &&
-      filterDoc(value as T, visited, letterLimit)
+      filterDoc(value, visited, letterLimit)
     ) {
       deleted = true
     }
@@ -34,7 +32,7 @@ export const filterDoc = function filterDoc<T extends object>(
   return deleted
 }
 
-export const getValidBulkRequestChunk = function getValidBulkRequestChunk(
+export function getValidBulkRequestChunk(
   requests: Record<string, unknown>[],
   maxSize = 20,
 ) {
