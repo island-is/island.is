@@ -5,8 +5,8 @@ export const environmentSchema = z.strictObject({
   port: z.number(),
   audit: z.strictObject({
     defaultNamespace: z.string(),
-    groupName: z.string().optional(),
-    serviceName: z.string().optional(),
+    groupName: z.string(),
+    serviceName: z.string(),
   }),
   auth: z.strictObject({
     issuer: z.string(),
