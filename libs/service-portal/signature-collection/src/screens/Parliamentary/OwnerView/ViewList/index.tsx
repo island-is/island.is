@@ -6,7 +6,7 @@ import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from './Signees'
 import CancelCollection from '../../../Presidential/OwnerView/CancelCollection'
-import { SignatureCollectionPaths } from 'libs/service-portal/signature-collection/src/lib/paths'
+import { SignatureCollectionPaths } from '../../../../lib/paths'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
