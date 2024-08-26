@@ -102,7 +102,9 @@ const AddFiles: FC = () => {
     [filesToUpload, formatMessage, updateFileToUpload, uploadFiles],
   )
 
-  const mp = (files: UploadFile[]): TEditableCaseFile[] => {
+  const mapUploadFilesToEditableCaseFiles = (
+    files: UploadFile[],
+  ): TEditableCaseFile[] => {
     return files.map((file) => ({
       name: file.name,
       userGeneratedFilename: file.name,
@@ -168,7 +170,10 @@ const AddFiles: FC = () => {
         <UploadFiles
           files={filesToUpload}
           onChange={(files) =>
-            setFilesToUpload((prev) => [...mp(files), ...prev])
+            setFilesToUpload((prev) => [
+              ...mapUploadFilesToEditableCaseFiles(files),
+              ...prev,
+            ])
           }
           onDelete={handleRemoveFile}
           onRename={handleRename}
