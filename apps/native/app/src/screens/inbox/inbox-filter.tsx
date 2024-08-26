@@ -2,7 +2,7 @@ import {
   Accordion,
   AccordionItem,
   Button,
-  CheckboxItem,
+  Checkbox,
   DatePickerInput,
   theme,
 } from '@ui'
@@ -59,10 +59,10 @@ export function InboxFilterScreen(props: {
   const [opened, setOpened] = useState(props.opened)
   const [bookmarked, setBookmarked] = useState(props.bookmarked)
   const [archived, setArchived] = useState(props.archived)
-  const [selectedSenders, setSelectedSenders] = useState<string[]>(
+  const [selectedSenders, setSelectedSenders] = useState(
     props.selectedSenders ?? [],
   )
-  const [selectedCategories, setSelectedCategories] = useState<string[]>(
+  const [selectedCategories, setSelectedCategories] = useState(
     props.selectedCategories ?? [],
   )
   const [dateFrom, setDateFrom] = useState<Date | undefined>(props.dateFrom)
@@ -141,7 +141,7 @@ export function InboxFilterScreen(props: {
       }}
     >
       <ScrollView style={{ flex: 1, marginBottom: theme.spacing[3] }}>
-        <CheckboxItem
+        <Checkbox
           label={intl.formatMessage({
             id: 'inboxFilters.unreadOnly',
           })}
@@ -150,7 +150,7 @@ export function InboxFilterScreen(props: {
             setOpened(!opened)
           }}
         />
-        <CheckboxItem
+        <Checkbox
           label={intl.formatMessage({
             id: 'inboxFilters.starred',
           })}
@@ -159,7 +159,7 @@ export function InboxFilterScreen(props: {
             setBookmarked(!bookmarked)
           }}
         />
-        <CheckboxItem
+        <Checkbox
           label={intl.formatMessage({
             id: 'inboxFilters.archived',
           })}
@@ -177,19 +177,19 @@ export function InboxFilterScreen(props: {
               })}
               startOpen={selectedSenders.length > 0}
             >
-              {props.availableSenders.map((sender) => {
-                return sender.name && sender.id ? (
-                  <CheckboxItem
-                    key={sender.id}
-                    label={sender.name}
-                    checked={selectedSenders.includes(sender.id)}
+              {props.availableSenders.map(({ name, id }) => {
+                return name && id ? (
+                  <Checkbox
+                    key={id}
+                    label={name}
+                    checked={selectedSenders.includes(id)}
                     onPress={() => {
-                      if (selectedSenders.includes(sender.id!)) {
+                      if (selectedSenders.includes(id)) {
                         setSelectedSenders((prev) =>
-                          prev.filter((id) => id !== sender.id),
+                          prev.filter((senderId) => senderId !== id),
                         )
                       } else {
-                        setSelectedSenders((prev) => [...prev, sender.id!])
+                        setSelectedSenders((prev) => [...prev, id])
                       }
                     }}
                   />
@@ -203,19 +203,19 @@ export function InboxFilterScreen(props: {
               title={intl.formatMessage({ id: 'inbox.filterCategoryTitle' })}
               startOpen={selectedCategories.length > 0}
             >
-              {props.availableCategories.map((category) => {
-                return category.name && category.id ? (
-                  <CheckboxItem
-                    key={category.id}
-                    label={category.name}
-                    checked={selectedCategories.includes(category.id)}
+              {props.availableCategories.map(({ name, id }) => {
+                return name && id ? (
+                  <Checkbox
+                    key={id}
+                    label={name}
+                    checked={selectedCategories.includes(id)}
                     onPress={() => {
-                      if (selectedCategories.includes(category.id)) {
+                      if (selectedCategories.includes(id)) {
                         setSelectedCategories((prev) =>
-                          prev.filter((id) => id !== category.id),
+                          prev.filter((categoryId) => categoryId !== id),
                         )
                       } else {
-                        setSelectedCategories((prev) => [...prev, category.id])
+                        setSelectedCategories((prev) => [...prev, id])
                       }
                     }}
                   />
@@ -234,7 +234,7 @@ export function InboxFilterScreen(props: {
               placeholder={intl.formatMessage({
                 id: 'inbox.filterDatePlaceholder',
               })}
-              onSelectDate={(date) => setDateFrom(date)}
+              onSelectDate={setDateFrom}
               selectedDate={dateFrom}
             />
             <DatePickerInput
@@ -244,7 +244,7 @@ export function InboxFilterScreen(props: {
               })}
               maximumDate={new Date()}
               minimumDate={dateFrom}
-              onSelectDate={(date) => setDateTo(date)}
+              onSelectDate={setDateTo}
               selectedDate={dateTo}
             />
           </AccordionItem>
