@@ -42,7 +42,6 @@ import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
-import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { isAndroid } from '../../utils/devices'
 import { useApolloClient } from '@apollo/client'
@@ -82,7 +81,6 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'inbox.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -243,7 +241,6 @@ export const InboxScreen: NavigationFunctionComponent<{
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
     queryResult: res,
     refetching: refetching || markAllAsReadLoading,
   })
