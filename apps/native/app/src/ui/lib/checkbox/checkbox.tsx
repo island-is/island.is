@@ -29,7 +29,7 @@ interface CheckboxProps {
   onPress: () => void
 }
 
-export function Checkbox({ label, checked, onPress }: CheckboxProps) {
+export const Checkbox = ({ label, checked, onPress }: CheckboxProps) => {
   return (
     <Host onPress={onPress} accessibilityRole="checkbox" accessible>
       <Typography style={{ fontWeight: checked ? '600' : '400' }}>

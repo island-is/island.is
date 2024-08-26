@@ -47,7 +47,8 @@ const DateSelected = styled(Typography)<{ empty: boolean }>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
-  font-weight: ${({ empty }) => (empty ? '400' : '600')};
+  font-weight: ${({ empty, theme }) =>
+    empty ? theme.typography.regular : theme.typography.semibold};
 `
 
 interface DatePickerProps {
@@ -59,16 +60,16 @@ interface DatePickerProps {
   onSelectDate?: (date: Date) => void
 }
 
-export function DatePickerInput({
+export const DatePickerInput = ({
   label,
   placeholder,
   maximumDate,
   minimumDate,
   onSelectDate,
   selectedDate,
-}: DatePickerProps) {
+}: DatePickerProps) => {
   const intl = useIntl()
-  const [date, setDate] = useState(selectedDate ?? undefined)
+  const [date, setDate] = useState(selectedDate)
   const [openDatePicker, setOpenDatePicker] = useState(false)
 
   useEffect(() => {
@@ -84,7 +85,7 @@ export function DatePickerInput({
             {!date ? placeholder ?? '' : intl.formatDate(date)}
           </DateSelected>
         </View>
-        <Image source={calendarIcon} style={{}} />
+        <Image source={calendarIcon} />
       </DateInput>
       <DatePicker
         mode="date"

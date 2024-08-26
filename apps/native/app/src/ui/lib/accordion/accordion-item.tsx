@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react'
 import { Animated, Image, LayoutAnimation, Pressable, View } from 'react-native'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import plus from '../../assets/icons/plus.png'
 import minus from '../../assets/icons/minus.png'
 import { dynamicColor } from '../../utils'
@@ -61,6 +61,7 @@ export function AccordionItem({
   icon,
   startOpen = false,
 }: AccordionItemProps) {
+  const theme = useTheme()
   const [isOpen, setIsOpen] = useState(startOpen)
   const [shouldStartOpen, setStartOpen] = useState(startOpen)
   const animationController = useRef(new Animated.Value(0)).current
@@ -108,7 +109,7 @@ export function AccordionItem({
           >
             <Image
               source={isOpen ? minus : plus}
-              style={{ width: 16, height: 16 }}
+              style={{ width: theme.spacing[2], height: theme.spacing[2] }}
             />
           </PlusMinus>
         </Pressable>
