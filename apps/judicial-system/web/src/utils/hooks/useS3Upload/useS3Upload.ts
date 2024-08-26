@@ -164,8 +164,6 @@ const uploadToS3 = (
     request.withCredentials = true
     request.responseType = 'json'
 
-    console.log(file, presignedPost)
-
     request.upload.addEventListener('progress', (event) => {
       if (event.lengthComputable) {
         onProgress((event.loaded / event.total) * 100)
@@ -283,7 +281,6 @@ const useS3Upload = (caseId: string) => {
     ) => {
       const promises = files.map(async (file) => {
         try {
-          if (file.name === 'CV.pdf') throw new Error()
           updateFile({ ...file, name: file.name, status: 'uploading' })
 
           const presignedPost = await getPresignedPost(file)
