@@ -1,4 +1,4 @@
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { FeatureFlag, Features } from '@island.is/nest/feature-flags'
@@ -12,6 +12,8 @@ import { UseGuards } from '@nestjs/common'
 import { CaseGetPriceResponse } from '../models/getPrice.response'
 import { GetPdfUrlResponse } from '../models/getPdfUrlResponse'
 import { GetPdfResponse } from '../models/getPdfResponse'
+import { UploadAttachmentsInput } from '../models/uploadAttachments.input'
+import { UploadAttachmentsResponse } from '../models/uploadAttachments.response'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -29,12 +31,12 @@ export class OfficialJournalOfIcelandApplicationResolver {
     return await this.ojoiApplicationService.getComments(input)
   }
 
-  @Query(() => PostCommentResponse, {
-    name: 'officialJournalOfIcelandApplicationPostComment',
-  })
-  async postComment(@Args('input') input: PostCommentInput) {
-    return await this.ojoiApplicationService.postComment(input)
-  }
+  // @Query(() => PostCommentResponse, {
+  //   name: 'officialJournalOfIcelandApplicationPostComment',
+  // })
+  // async postComment(@Args('input') input: PostCommentInput) {
+  //   return await this.ojoiApplicationService.postComment(input)
+  // }
 
   @Query(() => Boolean, {
     name: 'officialJournalOfIcelandApplicationPostApplication',
@@ -62,5 +64,16 @@ export class OfficialJournalOfIcelandApplicationResolver {
   })
   async getPdf(@Args('id') id: string) {
     return (await this.ojoiApplicationService.getPdf(id)).toString('base64')
+  }
+
+  @Mutation(() => UploadAttachmentsResponse, {
+    name: 'officialJournalOfIcelandApplicationUploadAttachments',
+  })
+  async uploadAttachments(
+    @Args('input', { type: () => UploadAttachmentsInput })
+    input: UploadAttachmentsInput,
+  ) {
+    console.log(input)
+    return await this.ojoiApplicationService.uploadAttachments(input)
   }
 }

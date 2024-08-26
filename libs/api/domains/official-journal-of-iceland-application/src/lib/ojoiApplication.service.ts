@@ -3,6 +3,8 @@ import { Injectable } from '@nestjs/common'
 import { PostCommentInput } from '../models/postComment.input'
 import { PostApplicationInput } from '../models/postApplication.input'
 import { GetCommentsInput } from '../models/getComments.input'
+import { UploadAttachmentsInput } from '../models/uploadAttachments.input'
+import { UploadAttachmentsResponse } from '../models/uploadAttachments.response'
 
 @Injectable()
 export class OfficialJournalOfIcelandApplicationService {
@@ -14,12 +16,12 @@ export class OfficialJournalOfIcelandApplicationService {
     return this.ojoiApplicationService.getComments(input)
   }
 
-  async postComment(input: PostCommentInput) {
-    return this.ojoiApplicationService.postComment({
-      id: input.id,
-      // comment: input.comment,
-    })
-  }
+  // async postComment(input: PostCommentInput) {
+  //   return this.ojoiApplicationService.postComment({
+  //     id: input.id,
+  //     // comment: input.comment,
+  //   })
+  // }
 
   async getPdfUrl(id: string) {
     return this.ojoiApplicationService.getPdfUrl({
@@ -41,5 +43,16 @@ export class OfficialJournalOfIcelandApplicationService {
     return this.ojoiApplicationService.getPrice({
       id,
     })
+  }
+
+  async uploadAttachments(
+    input: UploadAttachmentsInput,
+  ): Promise<UploadAttachmentsResponse> {
+    const buffer = Buffer.from(input.base64, 'base64')
+
+    return await this.ojoiApplicationService.uploadAttachments(
+      input.applicationId,
+      buffer,
+    )
   }
 }

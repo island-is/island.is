@@ -226,3 +226,17 @@ export const PDF_QUERY = gql`
     }
   }
 `
+
+export const UPLOAD_ATTACHMENTS_MUTATION = gql`
+  mutation UploadAttachments(
+    $input: OfficialJournalOfIcelandApplicationUploadAttachmentsInput!
+  ) {
+    officialJournalOfIcelandApplicationUploadAttachments(input: $input) {
+      files {
+        filename
+        size
+        url
+      }
+    }
+  }
+`

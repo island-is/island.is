@@ -10,6 +10,7 @@ import {
   GetPdfUrlResponse,
   GetPdfUrlByApplicationIdRequest,
   GetPdfByApplicationIdRequest,
+  S3UploadFilesResponse,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -86,6 +87,40 @@ export class OfficialJournalOfIcelandApplicationClientService {
       return {
         price: 0,
       }
+    }
+  }
+
+  async uploadAttachments(
+    id: string,
+    buffer: Buffer,
+  ): Promise<S3UploadFilesResponse> {
+    try {
+      const blob = new Blob([buffer])
+
+      const uploadFilesResponse =
+        await this.ojoiApplicationApi.uploadApplicationAttachment({
+          id: id,
+          files: [blob],
+        })
+
+      console.log(uploadFilesResponse)
+
+      return uploadFilesResponse
+    } catch (error) {
+      if (error.response) {
+        const json = await error.response.json()
+
+        this.logger.warn('Failed to upload attachments', {
+          error: {
+            message: json.message,
+            status: json.statusCode,
+            name: json.error,
+          },
+          category: LOG_CATEGORY,
+        })
+      }
+
+      throw error
     }
   }
 }
