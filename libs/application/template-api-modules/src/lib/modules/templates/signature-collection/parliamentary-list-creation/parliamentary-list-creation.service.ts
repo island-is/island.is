@@ -13,7 +13,7 @@ import { errorMessages } from '@island.is/application/templates/signature-collec
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CollectionType } from 'libs/clients/signature-collection/src/lib/types/collection.dto'
+import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/parliamentary-list-creation'
 import { FetchError } from '@island.is/clients/middlewares'
 
@@ -56,7 +56,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
           mandateType: MandateType.Guarantor,
           email: '',
           areas: answers.constituency.map((constituency) => {
-            let [id, name] = constituency.split('|')
+            const [id, name] = constituency.split('|')
             return {
               areaId: id,
             }
@@ -69,7 +69,7 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
             mandateType: MandateType.Administrator,
             email: '',
             areas: supervisor.constituency.map((constituency) => {
-              let [id, name] = constituency.split('|')
+              const [id, name] = constituency.split('|')
               return {
                 areaId: id,
               }
