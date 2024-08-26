@@ -8,11 +8,11 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import {
+  Application,
   DefaultEvents,
   Form,
   FormModes,
   UserProfileApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { incomePlanFormMessage } from '../lib/messages'
@@ -24,7 +24,7 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { isEligible } from '../lib/incomePlanUtils'
+import { eligibleText, isEligible } from '../lib/incomePlanUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
@@ -111,7 +111,8 @@ export const PrerequisitesForm: Form = buildForm({
             buildDescriptionField({
               id: 'isNotEligible10Days',
               title: '',
-              description: incomePlanFormMessage.pre.isNotEligibleDescription,
+              description: (application: Application) =>
+                eligibleText(application.externalData),
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({

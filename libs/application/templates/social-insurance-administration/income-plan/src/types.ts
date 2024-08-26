@@ -81,3 +81,9 @@ interface IncomeType {
   incomeCategoryName: string
   incomeCategoryNumber: number
 }
+
+export interface Eligible {
+  isEligible: boolean
+  reason: string
+  reasonCode: string
+}

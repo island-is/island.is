@@ -28,6 +28,13 @@ export const incomePlanFormMessage: MessageDir = {
       description:
         '* It has been less than 10 days since your last income plan was processed by the Social Insurance Administration.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
     },
+    isNotEligibleClosedDescription: {
+      id: 'ip.application:is.not.eligible.closed.description#markdown',
+      defaultMessage:
+        '* Tryggingastofnun tekur ekki við nýjum tekjuáætlum eins og er.\n\nEf þú telur það ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        '* The Social Insurance Administration is currently not accepting any new income plans.\n\nIf you do not think that apply to you, please contact [tr@tr.is](mailto:tr @tr.is)',
+    },
     contactInfoDescription: {
       id: 'ip.application:prerequisites.contact.info.description',
       defaultMessage:

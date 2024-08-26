@@ -5,7 +5,10 @@ import {
   IncomePlanRow,
   WithholdingTax,
   LatestIncomePlan,
+  Eligible,
 } from '../types'
+import { INCOME_PLANS_CLOSED } from './constants'
+import { incomePlanFormMessage } from './messages'
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
@@ -33,8 +36,8 @@ export const getApplicationExternalData = (
 
   const isEligible = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-  ) as boolean
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  ) as Eligible
 
   const userProfileEmail = getValueViaPath(
     externalData,
@@ -109,5 +112,14 @@ export const getTypesOptions = (
 
 export const isEligible = (externalData: ExternalData): boolean => {
   const { isEligible } = getApplicationExternalData(externalData)
-  return isEligible
+
+  return isEligible?.isEligible
+}
+
+export const eligibleText = (externalData: ExternalData) => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible.reasonCode === INCOME_PLANS_CLOSED
+    ? incomePlanFormMessage.pre.isNotEligibleClosedDescription
+    : incomePlanFormMessage.pre.isNotEligibleDescription
 }

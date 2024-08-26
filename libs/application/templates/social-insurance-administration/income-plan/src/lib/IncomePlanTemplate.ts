@@ -7,7 +7,6 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   DefaultEvents,
-  NationalRegistryUserApi,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
