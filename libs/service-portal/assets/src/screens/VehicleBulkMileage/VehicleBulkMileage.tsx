@@ -22,7 +22,8 @@ import * as styles from './VehicleBulkMileage.css'
 import { useEffect, useRef, useState } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
 import { useVehicleBulkMileageContext } from './VehicleBulkMileageContext'
-import { read } from 'xlsx'
+import { isDefined } from '@island.is/shared/utils'
+import { isNullOrUndefined } from 'util'
 
 const VehicleMileage = () => {
   useNamespaces('sp.vehicles')
@@ -35,9 +36,13 @@ const VehicleMileage = () => {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    console.log(pageSize)
-    setVehicles(dummy)
-  }, [pageSize])
+    const newVehicles = dummy.filter(
+      (du) => !vehicles.find((v) => v.vehicleId === du.vehicleId),
+    )
+    if (newVehicles.length) {
+      setVehicles([...vehicles, ...newVehicles])
+    }
+  }, [pageSize, page])
 
   const handleBulkSubmit = () => {
     setVehicles(
@@ -53,30 +58,67 @@ const VehicleMileage = () => {
   }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    /*const file = e.target.files?.[0]
+    const file = e.target.files?.[0]
     if (!file) {
       return
     }
-    const data = await file.arrayBuffer()
 
-    const workbook = read(data)
-    const firstSheet = workbook.Sheets[workbook.SheetNames[0]]
+    const reader = file.stream().getReader()
 
-    const hasPermnoColumn =
-      firstSheet['A1'].v === 'Fastanúmer' || firstSheet['A1'].v === 'PermNo'
-    const hasMileageColumn =
-      firstSheet['A1'].v === 'Kílómetrastaða' ||
-      firstSheet['A1'].v === 'Mileage' ||
-      firstSheet['A1'].v === 'Odometer'
+    let parsedLines: Array<string> = []
+    const parseChunk = (res: ReadableStreamReadResult<Uint8Array>) => {
+      if (res.done) {
+        return
+      }
 
-    if (!hasPermnoColumn || !hasMileageColumn) {
-      return null
+      const chunk = Buffer.from(res.value).toString('utf8')
+      const lines = chunk
+        .split(new RegExp(',|\\r|\\n|\\r\\n|;'))
+        .filter((str) => str !== '')
+
+      parsedLines = parsedLines.concat(lines)
+    }
+    await reader.read().then(parseChunk)
+
+    const uploadedOdometerStatuses: Array<{
+      vehicleId: string
+      mileage: number
+    }> = []
+
+    const isMileageEvenOrOdd =
+      parsedLines[0] === 'ökutæki' || parsedLines[0] === 'Ökutæki'
+        ? 'odd'
+        : 'even'
+
+    for (let i = 2; i < parsedLines.length; i = i + 2) {
+      const vehicleId =
+        isMileageEvenOrOdd === 'even' ? parsedLines[i + 1] : parsedLines[i]
+
+      uploadedOdometerStatuses.push({
+        vehicleId,
+        mileage: parseInt(
+          isMileageEvenOrOdd === 'even' ? parsedLines[i] : parsedLines[i + 1],
+        ),
+      })
     }
 
-    for (const permNo in vehicles) {
-      const cell = firstSheet[]
-      }*/
+    const newVehicles = vehicles.map((v) => {
+      const matchedVehicle = uploadedOdometerStatuses.find(
+        (m) => m.vehicleId === v.vehicleId,
+      )
+      if (matchedVehicle) {
+        return {
+          ...v,
+          mileageUploadedFromFile: matchedVehicle.mileage,
+        }
+      }
+
+      return v
+    })
+    setVehicles(newVehicles)
   }
+
+  const updateMileageFromFile = (mileage: Array<string>) => {}
 
   const handleFileUploadButtonClick = () => {
     console.log('click file upload')
@@ -132,7 +174,7 @@ const VehicleMileage = () => {
             <input
               ref={inputRef}
               type="file"
-              accept=".csv, .xlsx, .xls"
+              accept=".csv"
               hidden
               onChange={handleFileUpload}
             />

@@ -38,8 +38,19 @@ export const VehicleBulkMileageRow = ({ vehicleId, children }: Props) => {
     handleSubmit,
     getValues,
     trigger,
+    setValue,
     formState: { errors },
   } = useForm<FormData>()
+
+  useEffect(() => {
+    const uploadedMileage = vehicle.vehicleData.mileageUploadedFromFile
+    if (uploadedMileage) {
+      setValue('mileageInput', uploadedMileage, {
+        shouldValidate: true,
+        shouldDirty: true,
+      })
+    }
+  }, [vehicle.vehicleData.mileageUploadedFromFile, setValue])
 
   useEffect(() => {
     switch (vehicle?.vehicleData.submissionStatus) {

@@ -22,6 +22,7 @@ export interface VehicleType {
   vehicleId: string
   vehicleType: string
   submissionStatus: SubmissionState
+  mileageUploadedFromFile?: number
   lastRegistrationDate?: Date
   isCurrentlyEditing?: boolean
   registrationHistory?: Array<{
