@@ -307,17 +307,13 @@ export const transformApplicationToPensionSupplementDTO = (
 export const transformApplicationToIncomePlanDTO = (
   application: Application,
 ): ApplicationDTO => {
-  const { income } = getIPApplicationAnswers(application.answers)
-  const { categorizedIncomeTypes } = getIPApplicationExternalData(
-    application.externalData,
-  )
-
-  console.log('--> income ', income)
+  const { userProfileEmail, userProfilePhoneNumber } =
+    getIPApplicationExternalData(application.externalData)
 
   const incomePlanDTO: ApplicationDTO = {
     applicantInfo: {
-      email: 'karenb@gmail.com',
-      phonenumber: '844-6186',
+      email: userProfileEmail,
+      phonenumber: userProfilePhoneNumber,
     },
     period: {
       year: new Date().getFullYear(),
@@ -326,97 +322,7 @@ export const transformApplicationToIncomePlanDTO = (
     applicationId: application.id,
     incomePlan: {
       incomeYear: new Date().getFullYear(), // fá á hreint hvað á senda hér inn
-      incomeTypes: getIncomeTypes(application)
-      //   {
-      //     incomeTypeNumer: 1,
-      //     incomeTypeCode: '12',
-      //     incomeTypeName: i.incomeTypes,
-      //     currencyCode: i.currency,
-      //     incomeCategoryNumber: 1,
-      //     incomeCategoryCode: '2',
-      //     incomeCategoryName: i.incomeCategories,
-      //     amountJan: 0,
-      //     amountFeb: 0,
-      //     amountMar: 0,
-      //     amountApr: 0,
-      //     amountMay: 0,
-      //     amountJun: 0,
-      //     amountJul: 0,
-      //     amountAug: 0,
-      //     amountSep: 0,
-      //     amountOct: 0,
-      //     amountNov: 0,
-      //     amountDec: 0,
-      //   },
-      //   {
-      //     incomeTypeNumer: 1,
-      //     incomeTypeCode: '12',
-      //     incomeTypeName: i.incomeTypes,
-      //     currencyCode: i.currency,
-      //     incomeCategoryNumber: 1,
-      //     incomeCategoryCode: '2',
-      //     incomeCategoryName: i.incomeCategories,
-      //     amountJan: 0,
-      //     amountFeb: 0,
-      //     amountMar: 0,
-      //     amountApr: 0,
-      //     amountMay: 0,
-      //     amountJun: 0,
-      //     amountJul: 0,
-      //     amountAug: 0,
-      //     amountSep: 0,
-      //     amountOct: 0,
-      //     amountNov: 0,
-      //     amountDec: 0,
-      //   },
-      // ],
-      //getIncomeTypes(application),
-      // incomeTypes: income.map((income) => {
-      //   console.log('--> income', income)
-      //   const incomeType = categorizedIncomeTypes.filter(
-      //     (item) => item.incomeTypeName === income.incomeTypes,
-      //   )
-
-      //   return {
-      //     incomeTypeNumber: incomeType[0].incomeTypeNumber,
-      //     incomeTypeCode: incomeType[0].incomeTypeCode,
-      //     incomeTypeName: income.incomeTypes,
-      //     currencyCode: income.currency,
-      //     incomeCategoryNumber: incomeType[0].categoryNumber,
-      //     incomeCategoryCode: incomeType[0].categoryCode,
-      //     incomeCategoryName: incomeType[0].categoryName, //income.incomeCategories,
-      //     // ...(income.income === RatioType.MONTHLY &&
-      //     // income?.unevenIncomePerYear?.[0] === YES
-      //     //   ? {
-      //     //       amountJan: Number(income.january),
-      //     //       amountFeb: Number(income.february),
-      //     //       amountMar: Number(income.march),
-      //     //       amountApr: Number(income.april),
-      //     //       amountMay: Number(income.may),
-      //     //       amountJun: Number(income.june),
-      //     //       amountJul: Number(income.july),
-      //     //       amountAug: Number(income.august),
-      //     //       amountSep: Number(income.september),
-      //     //       amountOct: Number(income.october),
-      //     //       amountNov: Number(income.november),
-      //     //       amountDec: Number(income.december),
-      //     //     }
-      //     //   : {
-      //     amountJan: Math.round(Number(income.incomePerYear) / 12),
-      //     amountFeb: Math.round(Number(income.incomePerYear) / 12),
-      //     amountMar: Math.round(Number(income.incomePerYear) / 12),
-      //     amountApr: Math.round(Number(income.incomePerYear) / 12),
-      //     amountMay: Math.round(Number(income.incomePerYear) / 12),
-      //     amountJun: Math.round(Number(income.incomePerYear) / 12),
-      //     amountJul: Math.round(Number(income.incomePerYear) / 12),
-      //     amountAug: Math.round(Number(income.incomePerYear) / 12),
-      //     amountSep: Math.round(Number(income.incomePerYear) / 12),
-      //     amountOct: Math.round(Number(income.incomePerYear) / 12),
-      //     amountNov: Math.round(Number(income.incomePerYear) / 12),
-      //     amountDec: Math.round(Number(income.incomePerYear) / 12),
-      //     // }),
-      //   }
-      // }),
+      incomeTypes: getIncomeTypes(application),
     },
   }
 
@@ -424,28 +330,56 @@ export const transformApplicationToIncomePlanDTO = (
 }
 
 export const getIncomeTypes = (application: Application): IncomeTypes[] => {
-  const { income } = getIPApplicationAnswers(application.answers)
+  const { incomePlan } = getIPApplicationAnswers(application.answers)
+  const { categorizedIncomeTypes } = getIPApplicationExternalData(
+    application.externalData,
+  )
 
-  return income.map((i) => ({
-    incomeTypeNumber: 1,
-    incomeTypeCode: '12',
-    incomeTypeName: i.incomeTypes,
+  return incomePlan.map((i) => ({
+    incomeTypeNumber:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.incomeTypeNumber ?? 0,
+    incomeTypeCode:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.incomeTypeCode ?? '',
+    incomeTypeName: i.incomeType,
     currencyCode: i.currency,
-    incomeCategoryNumber: 1,
-    incomeCategoryCode: '2',
-    incomeCategoryName: i.incomeCategories,
-    amountJan: 0,
-    amountFeb: 0,
-    amountMar: 0,
-    amountApr: 0,
-    amountMay: 0,
-    amountJun: 0,
-    amountJul: 0,
-    amountAug: 0,
-    amountSep: 0,
-    amountOct: 0,
-    amountNov: 0,
-    amountDec: 0,
+    incomeCategoryNumber:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.categoryNumber ?? 0,
+    incomeCategoryCode:
+      categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
+        ?.categoryCode ?? '',
+    incomeCategoryName: i.incomeCategory,
+    ...(i.income === RatioType.MONTHLY && i?.unevenIncomePerYear?.[0] === YES
+      ? {
+          amountJan: Number(i.january),
+          amountFeb: Number(i.february),
+          amountMar: Number(i.march),
+          amountApr: Number(i.april),
+          amountMay: Number(i.may),
+          amountJun: Number(i.june),
+          amountJul: Number(i.july),
+          amountAug: Number(i.august),
+          amountSep: Number(i.september),
+          amountOct: Number(i.october),
+          amountNov: Number(i.november),
+          amountDec: Number(i.december),
+        }
+      : {
+          amountJan: Number(i.incomePerYear) / 12,
+          amountFeb: Number(i.incomePerYear) / 12,
+          amountMar: Number(i.incomePerYear) / 12,
+          amountApr: Number(i.incomePerYear) / 12,
+          amountMay: Number(i.incomePerYear) / 12,
+          amountJun: Number(i.incomePerYear) / 12,
+          amountJul: Number(i.incomePerYear) / 12,
+          amountAug: Number(i.incomePerYear) / 12,
+          amountSep: Number(i.incomePerYear) / 12,
+          amountOct: Number(i.incomePerYear) / 12,
+          amountNov: Number(i.incomePerYear) / 12,
+          amountDec: Number(i.incomePerYear) / 12,
+        }),
   }))
 }
 

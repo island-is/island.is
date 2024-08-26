@@ -1,6 +1,6 @@
 import { RatioType } from './lib/constants'
 
-export interface categorizedIncomeTypes {
+export interface CategorizedIncomeTypes {
   categoryCode?: string | null
   categoryName?: string | null
   categoryNumber?: number
@@ -9,12 +9,12 @@ export interface categorizedIncomeTypes {
   incomeTypeNumber?: number
 }
 
-export interface withholdingTax {
+export interface WithholdingTax {
   year?: number
-  incomeTypes?: Array<withholdingTaxIncomeType> | null
+  incomeTypes?: Array<WithholdingTaxIncomeType> | null
 }
 
-interface withholdingTaxIncomeType {
+interface WithholdingTaxIncomeType {
   incomeTypeNumber?: number | null
   incomeTypeName?: string | null
   incomeTypeCode?: string | null
@@ -36,10 +36,14 @@ interface withholdingTaxIncomeType {
   total?: number | null
 }
 
-export interface incomePlanRow {
-  incomeTypes: string
+export interface IncomePlanRow {
+  incomeType: string
+  incomeTypeNumber: number
+  incomeTypeCode: string
   currency: string
-  incomeCategories: string
+  incomeCategory: string
+  incomeCategoryNumber: number
+  incomeCategoryCode: string
   income: RatioType
   equalForeignIncomePerMonth?: string
   equalIncomePerMonth?: string
@@ -59,15 +63,15 @@ export interface incomePlanRow {
   december?: string
 }
 
-export interface latestIncomePlan {
+export interface LatestIncomePlan {
   year: string
   origin: string
   status: string
-  incomeTypeLines: incomeType[]
+  incomeTypeLines: IncomeType[]
   registrationDate: string
 }
 
-interface incomeType {
+interface IncomeType {
   currency: string
   totalSum: number
   incomeTypeCode: string

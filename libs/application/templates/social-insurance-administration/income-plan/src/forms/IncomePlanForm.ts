@@ -73,7 +73,7 @@ export const IncomePlanForm: Form = buildForm({
               removeButtonTooltipText:
                 incomePlanFormMessage.incomePlan.removeIncome,
               fields: {
-                incomeCategories: {
+                incomeCategory: {
                   component: 'select',
                   label: incomePlanFormMessage.incomePlan.incomeCategory,
                   placeholder:
@@ -85,7 +85,7 @@ export const IncomePlanForm: Form = buildForm({
                     return getCategoriesOptions(application.externalData)
                   },
                 },
-                incomeTypes: {
+                incomeType: {
                   component: 'select',
                   label: incomePlanFormMessage.incomePlan.incomeType,
                   placeholder:
@@ -95,7 +95,7 @@ export const IncomePlanForm: Form = buildForm({
                   options: (application, activeField) => {
                     return getTypesOptions(
                       application.externalData,
-                      activeField?.incomeCategories,
+                      activeField?.incomeCategory,
                     )
                   },
                 },
@@ -110,7 +110,7 @@ export const IncomePlanForm: Form = buildForm({
                     )
 
                     const hideISKCurrency =
-                      activeField?.incomeTypes === FOREIGN_BASIC_PENSION
+                      activeField?.incomeType === FOREIGN_BASIC_PENSION
                         ? ISK
                         : ''
 
@@ -295,7 +295,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
-                      activeField?.incomeCategories === INCOME
+                      activeField?.incomeCategory === INCOME
                     )
                   },
                 },
@@ -502,7 +502,7 @@ export const IncomePlanForm: Form = buildForm({
                   incomePlanFormMessage.incomePlan.incomePerYear,
                   incomePlanFormMessage.incomePlan.currency,
                 ],
-                rows: ['incomeTypes', 'incomePerYear', 'currency'],
+                rows: ['incomeType', 'incomePerYear', 'currency'],
               },
             }),
           ],

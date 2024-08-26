@@ -58,12 +58,6 @@ export const PrerequisitesForm: Form = buildForm({
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title:
-                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-              subTitle: incomePlanFormMessage.pre.registryIcelandDescription,
-            }),
-            buildDataProviderItem({
               provider: UserProfileApi,
               title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
               subTitle: incomePlanFormMessage.pre.contactInfoDescription,

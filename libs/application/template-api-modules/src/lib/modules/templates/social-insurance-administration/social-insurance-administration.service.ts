@@ -455,11 +455,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       return response
     }
 
-    if (
-      application.typeId === ApplicationTypes.INCOME_PLAN
-    ) {
+    if (application.typeId === ApplicationTypes.INCOME_PLAN) {
       const incomePlanDTO = transformApplicationToIncomePlanDTO(application)
-      console.log('income plan DTO ', incomePlanDTO)
 
       const response = await this.siaClientService.sendApplication(
         auth,
@@ -467,7 +464,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         application.typeId.toLowerCase(),
       )
 
-      console.log('response ', response)
       return response
     }
   }
@@ -507,6 +503,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getIsEligible({ application, auth }: TemplateApiModuleActionProps) {
+    if (isRunningOnEnvironment('local')) {
+      return { isEligible: true }
+    }
+
     if (application.typeId === ApplicationTypes.OLD_AGE_PENSION) {
       const { applicationType } = getOAPApplicationAnswers(application.answers)
 

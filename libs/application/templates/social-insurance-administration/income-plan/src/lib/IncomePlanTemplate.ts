@@ -45,7 +45,7 @@ import {
   Roles,
   States,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { RatioType, YES } from './constants'
+import { ISK, RatioType, YES } from './constants'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -92,7 +92,6 @@ const IncomePlanTemplate: ApplicationTemplate<
               ],
               write: 'all',
               api: [
-                NationalRegistryUserApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,
@@ -237,7 +236,7 @@ const IncomePlanTemplate: ApplicationTemplate<
           latestIncomePlan.incomeTypeLines.forEach((income, i) => {
             set(
               answers,
-              `incomePlanTable[${i}].incomeTypes`,
+              `incomePlanTable[${i}].incomeType`,
               income.incomeTypeName,
             )
             set(
@@ -246,10 +245,10 @@ const IncomePlanTemplate: ApplicationTemplate<
               String(income.totalSum),
             )
             set(answers, `incomePlanTable[${i}].currency`, income.currency)
-            set(answers, `incomePlanTable[${i}].income`, 'yearly')
+            set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
             set(
               answers,
-              `incomePlanTable[${i}].incomeCategories`,
+              `incomePlanTable[${i}].incomeCategory`,
               income.incomeCategoryName,
             )
           })
@@ -258,7 +257,7 @@ const IncomePlanTemplate: ApplicationTemplate<
             withholdingTax.incomeTypes?.forEach((income, i) => {
               set(
                 answers,
-                `incomePlanTable[${i}].incomeTypes`,
+                `incomePlanTable[${i}].incomeType`,
                 income.incomeTypeName,
               )
               set(
@@ -266,11 +265,11 @@ const IncomePlanTemplate: ApplicationTemplate<
                 `incomePlanTable[${i}].incomePerYear`,
                 String(income.total),
               )
-              set(answers, `incomePlanTable[${i}].currency`, 'IKR')
-              set(answers, `incomePlanTable[${i}].income`, 'yearly')
+              set(answers, `incomePlanTable[${i}].currency`, ISK)
+              set(answers, `incomePlanTable[${i}].income`, RatioType.YEARLY)
               set(
                 answers,
-                `incomePlanTable[${i}].incomeCategories`,
+                `incomePlanTable[${i}].incomeCategory`,
                 income.categoryName,
               )
 
