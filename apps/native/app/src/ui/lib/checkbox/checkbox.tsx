@@ -23,15 +23,15 @@ const Host = styled.Pressable`
   )};
 `
 
-interface CheckboxItemProps {
+interface CheckboxProps {
   label: string
   checked: boolean
   onPress: () => void
 }
 
-export function CheckboxItem({ label, checked, onPress }: CheckboxItemProps) {
+export function Checkbox({ label, checked, onPress }: CheckboxProps) {
   return (
-    <Host onPress={onPress} accessibilityRole="checkbox" accessible={true}>
+    <Host onPress={onPress} accessibilityRole="checkbox" accessible>
       <Typography style={{ fontWeight: checked ? '600' : '400' }}>
         {label}
       </Typography>
