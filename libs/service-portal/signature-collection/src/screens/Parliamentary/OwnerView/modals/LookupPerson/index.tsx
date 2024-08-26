@@ -21,7 +21,11 @@ interface LookupPersonProps {
   withConstituencies?: boolean
 }
 
-const LookupPerson = ({ collectionId, title, withConstituencies }: LookupPersonProps) => {
+const LookupPerson = ({
+  collectionId,
+  title,
+  withConstituencies,
+}: LookupPersonProps) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
 
