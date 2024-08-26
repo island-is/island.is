@@ -67,7 +67,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   return { incomePlan }
 }
 
-
 const getOneInstanceOfCategory = (categories: CategorizedIncomeTypes[]) => {
   return [
     ...new Map(
