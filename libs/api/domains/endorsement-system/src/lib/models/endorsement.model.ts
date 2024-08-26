@@ -1,6 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { EndorsementListOpen } from './endorsementListOpen.model'
 import { EndorsementMetadata } from './endorsementMetadata.model'
+import { CacheField } from '@island.is/nest/graphql' // Importing CacheField
 
 @ObjectType()
 export class Endorsement {
@@ -13,10 +14,10 @@ export class Endorsement {
   @Field()
   endorsementListId!: string
 
-  @Field(() => EndorsementListOpen, { nullable: true })
+  @CacheField(() => EndorsementListOpen, { nullable: true }) // Using CacheField for non-scalar field
   endorsementList?: EndorsementListOpen
 
-  @Field(() => EndorsementMetadata)
+  @CacheField(() => EndorsementMetadata) // Using CacheField for non-scalar field
   meta!: EndorsementMetadata
 
   @Field()
