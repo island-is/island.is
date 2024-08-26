@@ -28,10 +28,10 @@ import { assign } from 'xstate'
 import set from 'lodash/set'
 import {
   IdentityApi,
-  UserProfileApi,
   SamgongustofaPaymentCatalogApi,
   CurrentVehiclesApi,
   InsuranceCompaniesApi,
+  UserInfoApi,
 } from '../dataProviders'
 import { getChargeItemCodes, getExtraData, hasReviewerApproved } from '../utils'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -140,7 +140,7 @@ const template: ApplicationTemplate<
               delete: true,
               api: [
                 IdentityApi,
-                UserProfileApi,
+                UserInfoApi,
                 SamgongustofaPaymentCatalogApi,
                 CurrentVehiclesApi,
                 InsuranceCompaniesApi,
