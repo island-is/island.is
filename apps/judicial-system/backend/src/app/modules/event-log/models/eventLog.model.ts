@@ -11,7 +11,8 @@ import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
 import { EventType, UserRole } from '@island.is/judicial-system/types'
 
-import { Case } from '../../case/models/case.model'
+import { Case } from '../../case'
+import { Defendant } from '../../defendant'
 
 @Table({
   tableName: 'event_log',
@@ -56,4 +57,9 @@ export class EventLog extends Model {
   })
   @ApiPropertyOptional({ enum: UserRole })
   userRole?: UserRole
+
+  @ForeignKey(() => Defendant)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  defendantId?: string
 }

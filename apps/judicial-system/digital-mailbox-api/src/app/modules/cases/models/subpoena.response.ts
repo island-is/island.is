@@ -1,4 +1,5 @@
 import { IsEnum } from 'class-validator'
+import { boolean } from 'yargs'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -38,6 +39,9 @@ export class SubpoenaResponse {
 
   @ApiProperty({ type: () => DefenderInfo })
   defenderInfo?: DefenderInfo
+
+  @ApiProperty({ type: Boolean })
+  acknowledged?: boolean
 
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,

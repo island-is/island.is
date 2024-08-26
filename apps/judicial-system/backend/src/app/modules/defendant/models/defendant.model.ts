@@ -4,6 +4,7 @@ import {
   CreatedAt,
   DataType,
   ForeignKey,
+  HasMany,
   Model,
   Table,
   UpdatedAt,
@@ -20,6 +21,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
+import { EventLog } from '../../event-log'
 
 @Table({
   tableName: 'defendant',
@@ -131,4 +133,8 @@ export class Defendant extends Model {
   })
   @ApiPropertyOptional({ enum: SubpoenaType })
   subpoenaType?: SubpoenaType
+
+  @HasMany(() => EventLog, 'defendantId')
+  @ApiPropertyOptional({ type: EventLog, isArray: true })
+  eventLogs?: EventLog[]
 }
