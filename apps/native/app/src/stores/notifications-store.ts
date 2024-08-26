@@ -117,7 +117,10 @@ export const notificationsStore = create<NotificationsStore>(
 
         Navigation.mergeOptions(ComponentRegistry.HomeScreen, {
           topBar: {
-            rightButtons: getRightButtons({ unseenCount, screen: 'Home' }),
+            rightButtons: getRightButtons({
+              unseenCount,
+              icons: ['notifications'],
+            }),
           },
         })
       },

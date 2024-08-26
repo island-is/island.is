@@ -42,7 +42,7 @@ const { useNavigationOptions, getNavigationOptions } =
           text: intl.formatMessage({ id: 'profile.screenTitle' }),
         },
         rightButtons: initialized
-          ? getRightButtons({ screen: 'More', theme: theme as any })
+          ? getRightButtons({ icons: ['settings'], theme: theme as any })
           : [],
       },
       bottomTab: {
@@ -84,7 +84,7 @@ export const MoreScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({ screen: 'More' }),
+    rightButtons: getRightButtons({ icons: ['settings'] }),
   })
 
   useNavigationComponentDidAppear(() => {

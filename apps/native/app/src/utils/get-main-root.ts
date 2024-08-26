@@ -10,61 +10,64 @@ import {
 import { getThemeWithPreferences } from './get-theme-with-preferences'
 import { testIDs } from './test-ids'
 
-type Screen = 'Inbox' | 'Wallet' | 'Home' | 'Applications' | 'More'
+type Icons = 'notifications' | 'settings' | 'licenseScan'
 
 type RightButtonProps = {
   unseenCount?: number
   theme?: ReturnType<typeof getThemeWithPreferences>
-  screen?: Screen
+  icons?: Icons[]
 }
 
 export const getRightButtons = ({
   unseenCount = notificationsStore.getState().unseenCount,
   theme = getThemeWithPreferences(preferencesStore.getState()),
-  screen,
+  icons,
 }: RightButtonProps = {}): OptionsTopBarButton[] => {
+  if (!icons) {
+    return []
+  }
+
   const iconBackground = {
     color: 'transparent',
     cornerRadius: 4,
     width: theme.spacing[4],
     height: theme.spacing[4],
   }
-  switch (screen) {
-    case 'Home':
-      return [
-        {
-          accessibilityLabel: 'Notifications',
-          id: ButtonRegistry.NotificationsButton,
-          testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
-          icon:
-            unseenCount > 0
-              ? require('../assets/icons/topbar-notifications-bell.png')
-              : require('../assets/icons/topbar-notifications.png'),
-          iconBackground,
-        },
-      ]
-    case 'Wallet':
-      return [
-        {
-          id: ButtonRegistry.ScanLicenseButton,
-          testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
-          icon: require('../assets/icons/navbar-scan.png'),
-          color: theme.color.blue400,
-        },
-      ]
-    case 'More':
-      return [
-        {
-          accessibilityLabel: 'Settings',
-          id: ButtonRegistry.SettingsButton,
-          testID: testIDs.TOPBAR_SETTINGS_BUTTON,
-          icon: require('../assets/icons/settings.png'),
-          iconBackground,
-        },
-      ]
-    default:
-      return []
-  }
+
+  const rightButtons: OptionsTopBarButton[] = []
+
+  // Note: the first icon in the array will be displayed in top right corner
+  icons.forEach((icon) => {
+    if (icon === 'notifications') {
+      rightButtons.push({
+        accessibilityLabel: 'Notifications',
+        id: ButtonRegistry.NotificationsButton,
+        testID: testIDs.TOPBAR_NOTIFICATIONS_BUTTON,
+        icon:
+          unseenCount > 0
+            ? require('../assets/icons/topbar-notifications-bell.png')
+            : require('../assets/icons/topbar-notifications.png'),
+        iconBackground,
+      })
+    } else if (icon === 'settings') {
+      rightButtons.push({
+        accessibilityLabel: 'Settings',
+        id: ButtonRegistry.SettingsButton,
+        testID: testIDs.TOPBAR_SETTINGS_BUTTON,
+        icon: require('../assets/icons/settings.png'),
+        iconBackground,
+      })
+    } else if (icon === 'licenseScan') {
+      rightButtons.push({
+        id: ButtonRegistry.ScanLicenseButton,
+        testID: testIDs.TOPBAR_SCAN_LICENSE_BUTTON,
+        icon: require('../assets/icons/navbar-scan.png'),
+        color: theme.color.blue400,
+        iconBackground,
+      })
+    }
+  })
+  return rightButtons
 }
 
 /**

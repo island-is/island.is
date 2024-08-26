@@ -54,7 +54,10 @@ const { useNavigationOptions, getNavigationOptions } =
           text: intl.formatMessage({ id: 'wallet.screenTitle' }),
         },
         rightButtons: initialized
-          ? getRightButtons({ screen: 'Wallet', theme: theme as any })
+          ? getRightButtons({
+              icons: ['licenseScan'],
+              theme: theme as any,
+            })
           : [],
       },
       bottomTab: {
@@ -127,7 +130,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({ screen: 'Wallet' }),
+    rightButtons: getRightButtons({ icons: ['licenseScan'] }),
     queryResult: [res, resPassport],
     refetching,
   })
