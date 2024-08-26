@@ -45,7 +45,6 @@ const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
-
 const regexForBr = /<br \/>*\\?>/g
 
 // Styles for html documents
@@ -84,7 +83,7 @@ const useHtmlStyles = () => {
     <meta name="viewport" content="width=device-width">`
 }
 
-function getRightButtons({
+function getRightButtonsForDocumentDetail({
   archived,
   bookmarked,
 }: {
@@ -143,7 +142,7 @@ const { useNavigationOptions, getNavigationOptions } =
       },
       topBar: {
         noBorder: true,
-        rightButtons: getRightButtons(),
+        rightButtons: getRightButtonsForDocumentDetail(),
       },
     },
   )
@@ -251,7 +250,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({
+    rightButtons: getRightButtonsForDocumentDetail({
       archived: doc.data?.archived ?? false,
       bookmarked: doc.data?.bookmarked ?? false,
     }),
