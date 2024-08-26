@@ -50,10 +50,11 @@ export const validateAndSetErrorMessage = (
 ) => {
   const validation = validations.validate([[value, validationsToRun]])
 
-  if (!validation.isValid && errorMessageSetter) {
+  if (errorMessageSetter) {
     errorMessageSetter(validation.errorMessage)
-    return
   }
+
+  return validation.isValid
 }
 
 export const validateAndSet = (
@@ -80,9 +81,13 @@ export const validateAndSendToServer = (
   updateCase: (id: string, updateCase: UpdateCase) => void,
   setErrorMessage?: (value: SetStateAction<string>) => void,
 ) => {
-  validateAndSetErrorMessage(validations, value, setErrorMessage)
+  const isValid = validateAndSetErrorMessage(
+    validations,
+    value,
+    setErrorMessage,
+  )
 
-  if (theCase.id !== '') {
+  if (theCase.id !== '' && isValid) {
     updateCase(theCase.id, { [field]: value })
   }
 }
