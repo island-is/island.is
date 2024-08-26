@@ -26,8 +26,10 @@ import { CaseState, CaseType } from '@island.is/judicial-system/types'
 
 import { nowFactory } from '../../factories'
 import { AwsS3Service } from '../aws-s3'
+import { Case } from '../case'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
 import { UploadPoliceCaseFileResponse } from './models/uploadPoliceCaseFile.response'
@@ -107,6 +109,13 @@ export class PoliceService {
     gotuNumer: z.string().nullish(),
     sveitafelag: z.string().nullish(),
     postnumer: z.string().nullish(),
+  })
+  private courtDocumentStructure = z.object({
+    documentBase64: z.string().min(1),
+    documentName: z.string().min(1),
+    ssn: z.string().min(10).max(10),
+    documentTypeID: z.optional(z.number().int()),
+    courtRegistrationDate: z.optional(z.string().datetime()),
   })
   private responseStructure = z.object({
     malsnumer: z.string(),
@@ -499,6 +508,73 @@ export class PoliceService {
         )
 
         return false
+      })
+  }
+
+  async createSubpoena(
+    workingCase: Case,
+    user: User,
+  ): Promise<CreateSubpoenaResponse> {
+    const documentName = 'Fyrirkall'
+    const defendantNationalId = workingCase.defendants
+      ? workingCase.defendants[0].nationalId
+      : '9999999999'
+
+    // const fakepdf = {
+    //   name: 'fyrikrall.pdf',
+    //   mimeType: 'application/pdf',
+    //   buffer: Buffer.from(
+    //     "%PDF-1.2 \n9 0 obj\n<<\n>>\nstream\nBT/ 32 Tf(  TESTING   )' ET\nendstream\nendobj\n4 0 obj\n<<\n/Type /Page\n/Parent 5 0 R\n/Contents 9 0 R\n>>\nendobj\n5 0 obj\n<<\n/Kids [4 0 R ]\n/Count 1\n/Type /Pages\n/MediaBox [ 0 0 175 50 ]\n>>\nendobj\n3 0 obj\n<<\n/Pages 5 0 R\n/Type /Catalog\n>>\nendobj\ntrailer\n<<\n/Root 3 0 R\n>>\n%%EOF",
+    //   ),
+    // }
+
+    return this.fetchPoliceCaseApi(`${this.xRoadPath}/CreateSubpoena`, {
+      method: 'POST',
+      headers: {
+        accept: '*/*',
+        'Content-Type': 'application/json',
+        'X-Road-Client': this.config.clientId,
+        'X-API-KEY': this.config.policeApiKey,
+      },
+      agent: this.agent,
+      body: JSON.stringify({
+        // documentTypeId: 1,
+        // documentName: documentName,
+        // documentBase64: Base64.btoa('Test content'),
+        // ssn: defendantNationalId,
+        courtRegistrationDate: new Date().toISOString(),
+      }),
+    } as RequestInit)
+      .then(async (res) => {
+        if (res.ok) {
+          console.log(res)
+          return { key: 'test' } as CreateSubpoenaResponse
+        }
+
+        const response = await res.text()
+        throw response
+      })
+      .catch((reason) => {
+        if (reason instanceof ServiceUnavailableException) {
+          throw reason
+        } else {
+          this.logger.error(
+            `Failed create subpoena for case ${workingCase.id}`,
+            {
+              reason,
+            },
+          )
+        }
+
+        this.eventService.postErrorEvent(
+          'Failed to create subpoena',
+          {
+            caseId: workingCase.id,
+          },
+          reason,
+        )
+
+        throw reason
       })
   }
 }
