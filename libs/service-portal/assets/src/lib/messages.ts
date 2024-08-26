@@ -892,6 +892,22 @@ export const vehicleMessage = defineMessages({
     id: 'sp.vehicles:bulk-mileage-btn',
     defaultMessage: 'Senda inn gögn',
   },
+  downloadExcel: {
+    id: 'sp.vehicles:download-excel',
+    defaultMessage: 'Hlaða niður Excel',
+  },
+  uploadExcel: {
+    id: 'sp.vehicles:upload-excel',
+    defaultMessage: 'Hlaða upp Excel',
+  },
+  saveAllVisible: {
+    id: 'sp.vehicles:save-all-visible',
+    defaultMessage: 'Vista allar sýnilegar færslur',
+  },
+  entriesPerPage: {
+    id: 'sp.vehicles:entries-per-page',
+    defaultMessage: 'Fj. á síðu:',
+  },
 })
 
 export const ipMessages = defineMessages({
