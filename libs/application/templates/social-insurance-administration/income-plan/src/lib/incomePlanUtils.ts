@@ -55,8 +55,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   return { incomePlan }
 }
 
-export const getOneInstanceOfCategory = (categories: CategorizedIncomeTypes[]) => {
-
+export const getOneInstanceOfCategory = (
+  categories: CategorizedIncomeTypes[],
+) => {
   return [
     ...new Map(
       categories.map((category) => [category.categoryName, category]),
