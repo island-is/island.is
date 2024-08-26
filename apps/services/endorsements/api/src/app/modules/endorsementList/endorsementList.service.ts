@@ -717,7 +717,6 @@ export class EndorsementListService {
       const url = await this.awsService.getPresignedUrl(
         environment.exportsBucketName,
         filename,
-        60 * 60,
       )
       return { url }
     } catch (error) {
