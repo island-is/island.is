@@ -30,8 +30,6 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
-
-
 interface CreateInput extends EndorsementListDto {
   owner: string
 }
@@ -768,7 +766,9 @@ export class EndorsementListService {
         `Failed to create PDF buffer for endorsement list ${endorsementList.id}`,
         { error },
       )
-      throw new Error(`Error generating PDF for endorsement list ${endorsementList.id}`)
+      throw new Error(
+        `Error generating PDF for endorsement list ${endorsementList.id}`,
+      )
     }
   }
 
