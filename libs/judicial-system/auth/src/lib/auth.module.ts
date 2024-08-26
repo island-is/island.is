@@ -10,11 +10,6 @@ import { sharedAuthModuleConfig } from './auth.config'
 import { SharedAuthService } from './auth.service'
 import { JwtStrategy } from './jwt.strategy'
 
-export interface SharedAuthModuleOptions {
-  jwtSecret: string
-  secretToken: string
-}
-
 @Global()
 @Module({
   imports: [

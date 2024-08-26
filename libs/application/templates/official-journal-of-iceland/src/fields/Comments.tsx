@@ -1,11 +1,41 @@
-import { Box } from '@island.is/island-ui/core'
+import { AlertMessage, Box, SkeletonLoader } from '@island.is/island-ui/core'
 import { OJOIFieldBaseProps } from '../lib/types'
 import { CommentsList } from '../components/comments/CommentList'
-import { useState } from 'react'
 import { FormGroup } from '../components/form/FormGroup'
+import { useComments } from '../hooks/useComments'
+import { useLocale } from '@island.is/localization'
+import { comments as messages } from '../lib/messages/comments'
 
-export const Comments = (props: OJOIFieldBaseProps) => {
-  const [comments, setComments] = useState([])
+export const Comments = ({ application }: OJOIFieldBaseProps) => {
+  const { formatMessage: f } = useLocale()
+  const { comments, error, loading } = useComments({
+    applicationId: application.id,
+  })
+
+  if (error) {
+    return (
+      <FormGroup>
+        <AlertMessage
+          type="error"
+          title={f(messages.errors.fetchComments)}
+          message={f(messages.errors.fetchCommentsMessage)}
+        />
+      </FormGroup>
+    )
+  }
+
+  if (loading) {
+    return (
+      <FormGroup>
+        <SkeletonLoader
+          height={32}
+          repeat={4}
+          borderRadius="standard"
+          space={2}
+        />
+      </FormGroup>
+    )
+  }
 
   return (
     <FormGroup title="Athugasemdir">

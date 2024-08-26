@@ -11,12 +11,11 @@ import {
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-  useNavigationComponentDidDisappear,
 } from 'react-native-navigation-hooks/dist'
 import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
 import WebView from 'react-native-webview'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import {
   DocumentV2,
   ListDocumentFragmentDoc,
@@ -46,6 +45,44 @@ const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
+
+const regexForBr = /<br \/>*\\?>/g
+
+// Styles for html documents
+const useHtmlStyles = () => {
+  const theme = useTheme()
+  return `<style>
+    body {
+      font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif;
+      margin: ${theme.spacing[3]}px;
+    }
+    h1 {
+      color: ${theme.color.text};
+      font-size: 32px;
+      line-height: 38px;
+    }
+    h2 {
+      color: ${theme.color.text};
+      font-size: 26px;
+      line-height: 32px;
+    }
+    h3 {
+      color: ${theme.color.text};
+      font-size: 20px;
+      line-height: 26px;
+    }
+    p {
+      color: ${theme.color.text};
+      font-size: 16px;
+      line-height: 24px;
+    }
+    a {
+      color: ${theme.color.blue400};
+      text-decoration: none;
+    }
+    </style>
+    <meta name="viewport" content="width=device-width">`
+}
 
 function getRightButtons({
   archived,
@@ -169,6 +206,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const client = useApolloClient()
   const intl = useIntl()
+  const htmlStyles = useHtmlStyles()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
@@ -248,19 +286,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     setVisible(true)
   })
 
-  useNavigationComponentDidDisappear(() => {
-    setVisible(false)
-    if (hasPdf) {
-      setLoaded(false)
-    }
-  })
-
   useEffect(() => {
     if (Document.opened) {
       return
     }
 
-    // Lets mark the document as read in the cache and decrease unreadCount if it is not 0
+    // Let's mark the document as read in the cache and decrease unreadCount if it is not 0
     client.cache.modify({
       id: client.cache.identify({
         __typename: 'DocumentV2',
@@ -343,7 +374,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             !error &&
             (isHtml ? (
               <WebView
-                source={{ html: Document.content?.value ?? '' }}
+                source={{
+                  html:
+                    // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
+                    // https://github.com/facebook/react-native/issues/32062
+                    `${htmlStyles}${Document.content?.value.replaceAll(
+                      regexForBr,
+                      '',
+                    )}` ?? '',
+                }}
                 scalesPageToFit
                 onLoadEnd={() => {
                   setLoaded(true)

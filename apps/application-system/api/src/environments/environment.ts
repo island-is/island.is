@@ -17,13 +17,6 @@ const devConfig = {
     clientLocationOrigin: `http://localhost:${
       process.env.WEB_FRONTEND_PORT ?? '4242'
     }/umsoknir`,
-    emailOptions: {
-      useTestAccount: !(process.env.USE_SES === 'true'),
-      useNodemailerApp: process.env.USE_NODEMAILER_APP === 'true' ?? false,
-      options: {
-        region: process.env.EMAIL_REGION ?? 'eu-west-1',
-      },
-    },
     email: {
       sender: 'Devland.is',
       address: 'development@island.is',
@@ -31,12 +24,6 @@ const devConfig = {
     jwtSecret: 'supersecret',
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: 'http://localhost:4444',
-    smsOptions: {
-      url: 'https://smsapi.devnova.is',
-      username: 'IslandIs_User_Development',
-      password: process.env.NOVA_PASSWORD,
-      acceptUnauthorized: true,
-    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {
@@ -74,13 +61,6 @@ const prodConfig = {
   },
   templateApi: {
     clientLocationOrigin: process.env.CLIENT_LOCATION_ORIGIN,
-    emailOptions: {
-      useTestAccount: false,
-      useNodemailerApp: false,
-      options: {
-        region: process.env.EMAIL_REGION,
-      },
-    },
     email: {
       sender: process.env.EMAIL_FROM_NAME,
       address: process.env.EMAIL_FROM,
@@ -88,12 +68,6 @@ const prodConfig = {
     jwtSecret: process.env.AUTH_JWT_SECRET,
     xRoadBasePathWithEnv: process.env.XROAD_BASE_PATH_WITH_ENV ?? '',
     baseApiUrl: process.env.GRAPHQL_API_URL,
-    smsOptions: {
-      url: process.env.NOVA_URL,
-      username: process.env.NOVA_USERNAME,
-      password: process.env.NOVA_PASSWORD,
-      acceptUnauthorized: process.env.NOVA_ACCEPT_UNAUTHORIZED === 'true',
-    },
     presignBucket: process.env.FILE_SERVICE_PRESIGN_BUCKET,
     attachmentBucket: process.env.APPLICATION_ATTACHMENT_BUCKET,
     generalPetition: {

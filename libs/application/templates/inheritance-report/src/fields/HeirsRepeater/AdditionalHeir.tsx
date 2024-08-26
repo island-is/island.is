@@ -350,7 +350,7 @@ export const AdditionalHeir = ({
                   id: `${fieldIndex}.advocate`,
                 }}
                 backgroundColor="blue"
-                error={error}
+                error={error?.advocate as unknown as ErrorValue}
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -400,6 +400,9 @@ export const AdditionalHeir = ({
                 nested
                 field={{
                   id: `${fieldIndex}.advocate2`,
+                  props: {
+                    requiredNationalId: false,
+                  },
                 }}
                 backgroundColor="blue"
                 error={error}
@@ -412,9 +415,7 @@ export const AdditionalHeir = ({
                 label={formatMessage(m.phone)}
                 backgroundColor="blue"
                 format="###-####"
-                error={(error?.advocate2 as unknown as ErrorValue)?.phone}
                 size="sm"
-                required
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
@@ -423,9 +424,7 @@ export const AdditionalHeir = ({
                 name={advocateEmailField2}
                 label={formatMessage(m.email)}
                 backgroundColor="blue"
-                error={(error?.advocate2 as unknown as ErrorValue)?.email}
                 size="sm"
-                required
               />
             </GridColumn>
           </GridRow>

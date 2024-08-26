@@ -1,5 +1,6 @@
 import React, { Suspense, useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
+import { useLocale } from '@island.is/localization'
 import { PortalRoute } from '../types/portalCore'
 import { usePortalMeta } from '../components/PortalProvider'
 import { plausiblePageviewDetail } from '../utils/plausible'
@@ -12,8 +13,9 @@ type ModuleRouteProps = {
 
 export const ModuleRoute = React.memo(({ route }: ModuleRouteProps) => {
   const location = useLocation()
-  const { basePath } = usePortalMeta()
+  const { basePath, portalTitle } = usePortalMeta()
   const { userInfo } = useAuth()
+  const { formatMessage } = useLocale()
 
   useEffect(() => {
     if (route.element !== undefined) {
@@ -25,6 +27,12 @@ export const ModuleRoute = React.memo(({ route }: ModuleRouteProps) => {
             ? 'company'
             : 'person',
       })
+
+      if (route.name && route.path !== '/') {
+        document.title = `${formatMessage(route.name)} - ${portalTitle}`
+      } else {
+        document.title = portalTitle
+      }
     }
   }, [basePath, location, route.path, route.element])
 
