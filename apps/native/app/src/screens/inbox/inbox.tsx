@@ -207,6 +207,14 @@ export const InboxScreen: NavigationFunctionComponent<{
   const [refetching, setRefetching] = useState(false)
   const pageRef = useRef(1)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const isFilterApplied =
+    opened ||
+    archived ||
+    bookmarked ||
+    senderNationalId.length ||
+    categoryIds.length ||
+    dateFrom ||
+    dateTo
 
   const incomingFilters = useMemo(() => {
     return {
@@ -547,13 +555,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 onPress={onPressMarkAllAsRead}
               />
             </ListHeaderWrapper>
-            {opened ||
-            archived ||
-            bookmarked ||
-            senderNationalId.length ||
-            categoryIds.length ||
-            dateFrom ||
-            dateTo ? (
+            {isFilterApplied ? (
               <TagsWrapper>
                 {opened && (
                   <Tag
