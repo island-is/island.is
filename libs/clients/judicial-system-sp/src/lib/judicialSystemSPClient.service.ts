@@ -2,9 +2,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Inject, Injectable } from '@nestjs/common'
 import {
-  CaseControllerGetAllCasesLocaleEnum,
-  CaseControllerGetCaseLocaleEnum,
-  CaseControllerGetSubpoenaLocaleEnum,
   CaseControllerUpdateSubpoenaRequest,
   CasesApi,
   DefendersApi,
@@ -26,7 +23,7 @@ export class JudicialSystemSPClientService {
   private defenderApiWithAuth = (user: User) =>
     this.defendersApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  async getCases(user: User, locale: CaseControllerGetAllCasesLocaleEnum) {
+  async getCases(user: User, locale: string) {
     return this.casesApiWithAuth(user)
       .caseControllerGetAllCases({
         locale: locale,
@@ -34,11 +31,7 @@ export class JudicialSystemSPClientService {
       .catch(handle404)
   }
 
-  async getCase(
-    id: string,
-    user: User,
-    locale: CaseControllerGetCaseLocaleEnum,
-  ) {
+  async getCase(id: string, user: User, locale: string) {
     return this.casesApiWithAuth(user)
       .caseControllerGetCase({
         caseId: id,
@@ -53,11 +46,7 @@ export class JudicialSystemSPClientService {
       .catch(handle404)
   }
 
-  async getSubpoena(
-    id: string,
-    user: User,
-    locale: CaseControllerGetSubpoenaLocaleEnum,
-  ) {
+  async getSubpoena(id: string, user: User, locale: string) {
     return this.casesApiWithAuth(user)
       .caseControllerGetSubpoena({
         caseId: id,

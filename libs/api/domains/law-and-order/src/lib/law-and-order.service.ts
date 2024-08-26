@@ -6,8 +6,6 @@ import {
   Defender,
   JudicialSystemSPClientService,
   SubpoenaResponse,
-  UpdateSubpoenaDtoDefenderChoiceEnum,
-  CaseControllerUpdateSubpoenaLocaleEnum,
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCases } from '../models/courtCases.model'
 import { getSubpoena } from './helpers/mockData'
@@ -17,24 +15,16 @@ import { Lawyers } from '../models/lawyers.model'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { PostSubpoenaAcknowledgedInput } from '../dto/postSubpeonaAcknowledgedInput.model'
 import { SubpoenaAcknowledged } from '../models/subpoenaAcknowledged.model'
-import { DefenseChoiceEnum } from '../models/defenseChoiceEnum.model'
-import {
-  mapCaseLocale,
-  mapCasesLocale,
-  mapDefenseChoice,
-  mapSubpoenaLocale,
-  mapUpdateSubpoenaLocale,
-} from './helpers/mappers'
+import { mapDefenseChoice } from './helpers/mappers'
 
 @Injectable()
 export class LawAndOrderService {
   constructor(private api: JudicialSystemSPClientService) {}
 
   async getCourtCases(user: User, locale: Locale) {
-    const caseLocale = mapCasesLocale(locale)
     const cases: Array<CasesResponse> | null = await this.api.getCases(
       user,
-      caseLocale,
+      locale,
     )
     if (cases === null) return null
 
@@ -56,8 +46,7 @@ export class LawAndOrderService {
   }
 
   async getCourtCase(user: User, id: string, locale: Locale) {
-    const caseLocale = mapCaseLocale(locale)
-    const singleCase = await this.api.getCase(id, user, caseLocale)
+    const singleCase = await this.api.getCase(id, user, locale)
     if (singleCase === null) return null
 
     const randomBoolean = Math.random() < 0.75
@@ -79,9 +68,8 @@ export class LawAndOrderService {
   }
 
   async getSubpoena(user: User, id: string, locale: Locale) {
-    const caseLocale = mapSubpoenaLocale(locale)
     const subpoena: SubpoenaResponse | undefined | null =
-      await this.api.getSubpoena(id, user, caseLocale)
+      await this.api.getSubpoena(id, user, locale)
 
     if (subpoena === null) return null
 
@@ -129,7 +117,7 @@ export class LawAndOrderService {
           defenderChoice: mapDefenseChoice(input.choice), // eslint-disable-next-line local-rules/disallow-kennitalas
           defenderNationalId: input.lawyersNationalId,
         },
-        locale: mapUpdateSubpoenaLocale(input.locale),
+        locale: input.locale,
       },
       user,
     )
