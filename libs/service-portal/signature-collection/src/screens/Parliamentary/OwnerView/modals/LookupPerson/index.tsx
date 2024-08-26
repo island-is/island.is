@@ -15,15 +15,13 @@ import { useForm } from 'react-hook-form'
 import { m } from '../../../../../lib/messages'
 import { constituencies } from '../../../../../lib/constants'
 
-const LookupPerson = ({
-  collectionId,
-  title,
-  withConstituencies,
-}: {
+interface LookupPersonProps {
   collectionId: string
   title: string
   withConstituencies?: boolean
-}) => {
+}
+
+const LookupPerson = ({ collectionId, title, withConstituencies }: LookupPersonProps) => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
 
