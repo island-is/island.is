@@ -295,8 +295,8 @@ export class ApplicationTemplateHelper<
         ? formatMessage(pendingAction.content)
         : undefined,
       button: pendingAction.button
-      ? formatMessage(pendingAction.button)
-      : undefined,  
+        ? formatMessage(pendingAction.button)
+        : undefined,
     }
   }
 
