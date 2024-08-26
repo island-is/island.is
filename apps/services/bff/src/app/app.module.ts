@@ -8,8 +8,9 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { Module } from '@nestjs/common'
 import { environment } from '../environment'
+import { BffConfig } from './bff.config'
+import { AuthModule as AppAuthModule } from './modules/auth/auth.module'
 import { UserModule } from './modules/user/user.module'
-import { AuthModule as ApplicationAuthModule } from './modules/auth/auth.module'
 
 @Module({
   imports: [
@@ -17,10 +18,10 @@ import { AuthModule as ApplicationAuthModule } from './modules/auth/auth.module'
     BaseAuthModule.register(environment.auth),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [XRoadConfig, FeatureFlagConfig, IdsClientConfig],
+      load: [XRoadConfig, FeatureFlagConfig, IdsClientConfig, BffConfig],
     }),
     UserModule,
-    ApplicationAuthModule,
+    AppAuthModule,
   ],
 })
 export class AppModule {}

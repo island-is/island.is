@@ -11,6 +11,8 @@ export const environmentSchema = z.strictObject({
   auth: z.strictObject({
     issuer: z.string(),
     audience: z.string().array(),
+    clientId: z.string(),
+    scopes: z.string().array(),
   }),
 })
 

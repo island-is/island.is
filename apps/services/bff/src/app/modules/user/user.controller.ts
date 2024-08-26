@@ -1,8 +1,8 @@
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { Controller, Get, UseGuards, VERSION_NEUTRAL } from '@nestjs/common'
 import { ApiOkResponse } from '@nestjs/swagger'
+import { environment } from '../../../environment'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
@@ -12,7 +12,7 @@ import { ApiOkResponse } from '@nestjs/swagger'
 export class UserController {
   constructor() {}
 
-  @Scopes('@admin.island.is/delegation-system')
+  @Scopes(...environment.auth.scopes)
   @Get()
   @Audit()
   @ApiOkResponse({ type: Boolean })
