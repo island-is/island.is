@@ -6,14 +6,13 @@ import {
   FilterInput,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { m } from '../../../../lib/messages'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
-import * as styles from '../../styles.css'
-import { useGetListSignees } from '../../../hooks'
+import { useGetListSignees } from '../../../../hooks'
 import { useLocation } from 'react-router-dom'
 import { format as formatNationalId } from 'kennitala'
-import { SkeletonTable } from '../../skeletons'
+import { SkeletonTable } from '../../../../skeletons'
 import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
 
 const Signees = () => {
@@ -30,7 +29,7 @@ const Signees = () => {
   const pageSize = 10
 
   useEffect(() => {
-    if (!loadingSignees) {
+    if (!loadingSignees && listSignees.length) {
       setSignees(listSignees)
     }
   }, [listSignees])
@@ -59,7 +58,7 @@ const Signees = () => {
         justifyContent="spaceBetween"
         marginTop={2}
       >
-        <Box className={styles.searchWidth} marginBottom={[2, 0]}>
+        <Box marginBottom={[2, 0]}>
           <FilterInput
             name="searchSignee"
             value={searchTerm}
