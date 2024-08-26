@@ -38,8 +38,7 @@ const Input = styled.TextInput<{ value: string }>`
   ${font({
     fontSize: 16,
     lineHeight: 20,
-    fontWeight: ({ value, theme }) =>
-      value === '' ? theme.typography.regular : theme.typography.semibold,
+    fontWeight: ({ value }) => (value === '' ? 400 : 600),
   })}
 `
 

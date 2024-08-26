@@ -47,8 +47,7 @@ const DateSelected = styled(Typography)<{ empty: boolean }>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
-  font-weight: ${({ empty, theme }) =>
-    empty ? theme.typography.regular : theme.typography.semibold};
+  font-weight: ${({ empty }) => (empty ? 400 : 600)};
 `
 
 interface DatePickerProps {
