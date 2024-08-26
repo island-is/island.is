@@ -54,7 +54,7 @@ export const capitalize = (text?: string | null): string => {
   return text.charAt(0).toUpperCase() + text.slice(1)
 }
 
-export const lowercase = (text?: string): string => {
+export const lowercase = (text?: string | null): string => {
   if (!text) {
     return ''
   }
@@ -74,6 +74,18 @@ export const formatNationalId = (nationalId?: string | null): string => {
   } else {
     return nationalId
   }
+}
+
+export const getInitials = (name?: string | null): string | undefined => {
+  if (!name?.trim()) return undefined
+
+  const names = name.trim().split(' ')
+  const initials =
+    names.length > 1
+      ? `${names[0][0]}${names[names.length - 1][0]}`
+      : names[0][0]
+
+  return initials.toUpperCase()
 }
 
 export const formatPhoneNumber = (phoneNumber?: string | null) => {

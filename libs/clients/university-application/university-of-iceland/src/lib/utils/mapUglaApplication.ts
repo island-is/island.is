@@ -1,10 +1,18 @@
-import { ApplicationTypes, IApplication } from '@island.is/university-gateway'
-import { ApplicationsPostRequest } from '../../../gen/fetch'
+import {
+  ApplicationTypes,
+  IApplication,
+  IApplicationAttachment,
+} from '@island.is/university-gateway'
+import {
+  ApplicationsAttachments,
+  ApplicationsPostRequest,
+  AttachmentKey,
+} from '../../../gen/fetch'
 
-export const mapUglaApplication = (
+export const mapUglaApplication = async (
   application: IApplication,
   logError: (courseExternalId: string, error: Error) => void,
-): ApplicationsPostRequest => {
+): Promise<ApplicationsPostRequest> => {
   const uglaApplication: ApplicationsPostRequest = {
     inlineObject: {
       guid: application.id,
@@ -29,8 +37,6 @@ export const mapUglaApplication = (
 
       inntokuskilyrdiLesin: 'false', // TODO done when extraApplicationFields are connected
 
-      // kjorsvid: und, // TODO connect to chosen kjorsvid
-
       personuverndSamthykki: 'false', // TODO done when extraApplicationFields are connected
       hugverkaretturSamthykki: 'false', // TODO done when extraApplicationFields are connected
       eldriUmsokn: 'false', // TODO should we return this?
@@ -52,9 +58,27 @@ export const mapUglaApplication = (
       medmaelendur: [], // TODO are we doing this?
       leidbeinandi: undefined, // TODO are we doing this?
       tenglar: [], // TODO are we doing this?
-      skrar: undefined, // TODO connect files later
+      attachments: application.attachments
+        ? await mapApplicationAttachments(application.attachments)
+        : undefined,
       namskeid: undefined, // TODO what is this?
     },
   }
+
   return uglaApplication
+}
+
+const mapApplicationAttachments = async (
+  attachments: Array<IApplicationAttachment | undefined>,
+): Promise<Array<ApplicationsAttachments>> => {
+  return await Promise.all(
+    attachments.filter(Boolean).map(async (attachment) => {
+      return {
+        url: attachment?.url,
+        attachmentKey:
+          AttachmentKey[attachment?.fileType as keyof typeof AttachmentKey],
+        fileName: attachment?.fileName,
+      } as ApplicationsAttachments
+    }),
+  )
 }

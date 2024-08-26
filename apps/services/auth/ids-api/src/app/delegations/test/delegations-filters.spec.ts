@@ -1,17 +1,19 @@
-import { TestApp, truncate } from '@island.is/testing/nest'
-import { testCases } from './delegations-filters-test-cases'
-import request from 'supertest'
-import faker from 'faker'
-import { setupWithAuth } from '../../../../test/setup'
-import { createNationalRegistryUser } from '@island.is/testing/fixtures'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import { DelegationDTO } from '@island.is/auth-api-lib'
-import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
-import { user } from './delegations-filters-types'
-import { Sequelize } from 'sequelize-typescript'
-import { getConnectionToken } from '@nestjs/sequelize'
 import { Type } from '@nestjs/common'
+import { getConnectionToken } from '@nestjs/sequelize'
+import faker from 'faker'
+import { Sequelize } from 'sequelize-typescript'
+import request from 'supertest'
+
+import { MergedDelegationDTO } from '@island.is/auth-api-lib'
+import { RskRelationshipsClient } from '@island.is/clients-rsk-relationships'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { FixtureFactory } from '@island.is/services/auth/testing'
+import { createNationalRegistryUser } from '@island.is/testing/fixtures'
+import { TestApp, truncate } from '@island.is/testing/nest'
+
+import { setupWithAuth } from '../../../../test/setup'
+import { testCases } from './delegations-filters-test-cases'
+import { user } from './delegations-filters-types'
 
 describe('DelegationsController', () => {
   let sequelize: Sequelize
@@ -56,7 +58,9 @@ describe('DelegationsController', () => {
       beforeAll(async () => {
         await truncate(sequelize)
 
-        await factory.createDomain(testCase.domain)
+        await Promise.all(
+          testCase.domains.map((domain) => factory.createDomain(domain)),
+        )
 
         await factory.createClient(testCase.client)
 
@@ -91,14 +95,21 @@ describe('DelegationsController', () => {
           .mockImplementation(async () => testCase.procuration)
       })
 
+      let res: request.Response
+
       it(`GET ${path} returns correct filtered delegations`, async () => {
-        const res = await server.get(path)
+        res = await server.get(path)
 
         expect(res.status).toEqual(200)
         expect(res.body).toHaveLength(testCase.expectedFrom.length)
         expect(
-          res.body.map((d: DelegationDTO) => d.fromNationalId).sort(),
+          res.body.map((d: MergedDelegationDTO) => d.fromNationalId).sort(),
         ).toEqual(testCase.expectedFrom.sort())
+        if (testCase.expectedTypes) {
+          expect(res.body[0].types.sort()).toEqual(
+            testCase.expectedTypes.sort(),
+          )
+        }
       })
     },
   )

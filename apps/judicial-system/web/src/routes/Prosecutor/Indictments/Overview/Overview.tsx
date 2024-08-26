@@ -18,9 +18,9 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   Modal,
   PageHeader,
   PageLayout,
@@ -183,7 +183,7 @@ const Overview: FC<unknown> = () => {
           workingCase.indictmentDecision !==
             IndictmentDecision.REDISTRIBUTING && (
             <Box component="section" marginBottom={5}>
-              <InfoCardCaseScheduledIndictment
+              <IndictmentCaseScheduledCard
                 court={workingCase.court}
                 indictmentDecision={workingCase.indictmentDecision}
                 courtDate={latestDate.date}
