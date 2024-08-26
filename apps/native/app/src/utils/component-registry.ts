@@ -64,6 +64,7 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
+  InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
 }
 
 export const StackRegistry = {

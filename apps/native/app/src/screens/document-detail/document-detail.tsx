@@ -312,7 +312,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         },
       },
     })
-  }, [Document.id, Document.opened])
+  }, [Document.id])
 
   useEffect(() => {
     const { authorizeResult, refresh } = authStore.getState()
