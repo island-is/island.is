@@ -22,15 +22,12 @@ query ListDocuments($input: DocumentsV2DocumentsInput!) {
   }
 }
 
-query GetDocumentsSenders {
-  getDocumentSenders {
+query GetDocumentsCategoriesAndSenders {
+  getDocumentCategories {
     id
     name
   }
-}
-
-query GetDocumentsCategories {
-  getDocumentCategories {
+  getDocumentSenders {
     id
     name
   }

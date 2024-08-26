@@ -35,8 +35,7 @@ import {
   useMarkAllDocumentsAsReadMutation,
   DocumentV2,
   useListDocumentsQuery,
-  useGetDocumentsSendersQuery,
-  useGetDocumentsCategoriesQuery,
+  useGetDocumentsCategoriesAndSendersQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -244,11 +243,11 @@ export const InboxScreen: NavigationFunctionComponent<{
     },
   })
 
-  const senders = useGetDocumentsSendersQuery()
-  const categories = useGetDocumentsCategoriesQuery()
+  const sendersAndCategories = useGetDocumentsCategoriesAndSendersQuery()
 
-  const availableSenders = senders.data?.getDocumentSenders ?? []
-  const availableCategories = categories.data?.getDocumentCategories ?? []
+  const availableSenders = sendersAndCategories.data?.getDocumentSenders ?? []
+  const availableCategories =
+    sendersAndCategories.data?.getDocumentCategories ?? []
 
   const [markAllAsRead, { loading: markAllAsReadLoading }] =
     useMarkAllDocumentsAsReadMutation({
@@ -472,7 +471,7 @@ export const InboxScreen: NavigationFunctionComponent<{
     )
   }
 
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with
+  // Fix for a bug in react-native-navigation/react-native where the large title is not visible on iOS with
   // bottom tabs https://github.com/wix/react-native-navigation/issues/6717
   if (hiddenContent) {
     return null
@@ -591,7 +590,9 @@ export const InboxScreen: NavigationFunctionComponent<{
                 )}
                 {!!senderNationalId.length &&
                   senderNationalId.map((senderId) => {
-                    const name = availableSenders.find((s) => s.id === senderId)
+                    const name = availableSenders.find(
+                      (sender) => sender.id === senderId,
+                    )
                     return (
                       <Tag
                         key={senderId}
