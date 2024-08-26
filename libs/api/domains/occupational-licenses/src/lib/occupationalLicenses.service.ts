@@ -146,7 +146,6 @@ export class OccupationalLicensesService {
           .map((license) => ({
             institution: OccupationalLicenseType.HEALTH,
             id: license.id.toString(),
-            licenseNumber: license.licenseNumber,
             legalEntityId: license.legalEntityId,
             holderName: license.licenseHolderName,
             profession: license.profession,

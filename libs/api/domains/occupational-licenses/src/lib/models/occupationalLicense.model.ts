@@ -50,9 +50,6 @@ export abstract class OccupationalLicense {
   @Field(() => String)
   type!: string
 
-  @Field({ nullable: true })
-  licenseNumber?: string
-
   @Field(() => String)
   profession!: string
 
