@@ -6,9 +6,12 @@ import type {
   PersonalRepresentativeScopePermission,
 } from '@island.is/auth-api-lib'
 import faker from 'faker'
-import { uuid } from 'uuidv4'
-import { getFakeNationalId } from './genericStubs'
 import { CreationAttributes } from 'sequelize'
+import { uuid } from 'uuidv4'
+
+import { AuthDelegationType } from '@island.is/shared/types'
+
+import { getFakeNationalId } from './genericStubs'
 
 export const personalRepresentativeType = {
   code: 'prTypeCode',
@@ -106,3 +109,10 @@ export default {
   getPRenabledApiScope,
   getScopePermission,
 }
+
+export const delegationTypes = [
+  AuthDelegationType.PersonalRepresentative + ':valid1',
+  AuthDelegationType.PersonalRepresentative + ':valid2',
+  AuthDelegationType.PersonalRepresentative + ':unactivated',
+  AuthDelegationType.PersonalRepresentative + ':outdated',
+]
