@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
@@ -105,7 +105,6 @@ const AddFiles: FC = () => {
   const mp = (files: UploadFile[]): TEditableCaseFile[] => {
     return files.map((file) => ({
       name: file.name,
-      status: file.status,
       userGeneratedFilename: file.name,
       size: file.size,
       originalFileObj: file as File,
@@ -115,7 +114,6 @@ const AddFiles: FC = () => {
         ? CaseFileCategory.DEFENDANT_CASE_FILE
         : CaseFileCategory.PROSECUTOR_CASE_FILE,
       id: uuid(),
-      canEdit: file.status !== 'done',
     }))
   }
 
