@@ -113,6 +113,9 @@
       "@island.is/api/domains/form-system": [
         "libs/api/domains/form-system/src/index.ts"
       ],
+      "@island.is/api/domains/health-directorate": [
+        "libs/api/domains/health-directorate/src/index.ts"
+      ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
       ],
@@ -1101,9 +1104,6 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
-      ],
-      "api/domains/health-directorate": [
-        "libs/api/domains/health-directorate/src/index.ts"
       ]
     }
   }

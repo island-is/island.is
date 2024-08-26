@@ -56,12 +56,19 @@ export class HealthDirectorateService {
   }
 
   async updateDonorStatus(auth: Auth, input: DonorStatusInput): Promise<void> {
-    return await this.organDonationApi.updateOrganDonation(auth, {
-      exceptionComment: input.exceptionComment ?? '',
-      isDonor: input.isDonor,
-      exceptions: input.exceptions ?? [],
-      registrationDate: new Date(),
-    })
+    await this.organDonationApi
+      .updateOrganDonation(auth, {
+        exceptionComment: input.exceptionComment ?? '',
+        isDonor: input.isDonor,
+        exceptions: input.exceptions ?? [],
+        registrationDate: new Date(),
+      })
+      .then(() => {
+        return true
+      })
+      .catch(() => {
+        return false
+      })
   }
 
   /* Vaccinations */
@@ -89,7 +96,7 @@ export class HealthDirectorateService {
                 code: vaccination.code,
                 vaccinationDate: vaccination.vaccinationDate,
                 vaccinationsAge: vaccination.vaccinationAge,
-                generalComment: vaccination.generalComment,
+                generalComment: vaccination.generalComment.toString(),
                 rejected: vaccination.rejected,
               }
             }) ?? [],

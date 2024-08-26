@@ -15,7 +15,7 @@ import {
 import Pdf, { Source } from 'react-native-pdf'
 import Share from 'react-native-share'
 import WebView from 'react-native-webview'
-import styled from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import {
   DocumentV2,
   ListDocumentFragmentDoc,
@@ -45,8 +45,45 @@ const PdfWrapper = styled.View`
   flex: 1;
   background-color: ${dynamicColor('background')};
 `
+const regexForBr = /<br \/>*\\?>/g
 
-function getRightButtons({
+// Styles for html documents
+const useHtmlStyles = () => {
+  const theme = useTheme()
+  return `<style>
+    body {
+      font-family: "IBM Plex Sans", San Francisco, Segoe UI, sans-serif;
+      margin: ${theme.spacing[3]}px;
+    }
+    h1 {
+      color: ${theme.color.text};
+      font-size: 32px;
+      line-height: 38px;
+    }
+    h2 {
+      color: ${theme.color.text};
+      font-size: 26px;
+      line-height: 32px;
+    }
+    h3 {
+      color: ${theme.color.text};
+      font-size: 20px;
+      line-height: 26px;
+    }
+    p {
+      color: ${theme.color.text};
+      font-size: 16px;
+      line-height: 24px;
+    }
+    a {
+      color: ${theme.color.blue400};
+      text-decoration: none;
+    }
+    </style>
+    <meta name="viewport" content="width=device-width">`
+}
+
+function getRightButtonsForDocumentDetail({
   archived,
   bookmarked,
 }: {
@@ -105,7 +142,7 @@ const { useNavigationOptions, getNavigationOptions } =
       },
       topBar: {
         noBorder: true,
-        rightButtons: getRightButtons(),
+        rightButtons: getRightButtonsForDocumentDetail(),
       },
     },
   )
@@ -168,6 +205,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const client = useApolloClient()
   const intl = useIntl()
+  const htmlStyles = useHtmlStyles()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
   const [accessToken, setAccessToken] = useState<string>()
   const [error, setError] = useState(false)
@@ -212,7 +250,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({
+    rightButtons: getRightButtonsForDocumentDetail({
       archived: doc.data?.archived ?? false,
       bookmarked: doc.data?.bookmarked ?? false,
     }),
@@ -335,7 +373,15 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
             !error &&
             (isHtml ? (
               <WebView
-                source={{ html: Document.content?.value ?? '' }}
+                source={{
+                  html:
+                    // Removing all <br /> tags to fix a bug in react-native that renders <br /> with too much vertical space
+                    // https://github.com/facebook/react-native/issues/32062
+                    `${htmlStyles}${Document.content?.value.replaceAll(
+                      regexForBr,
+                      '',
+                    )}` ?? '',
+                }}
                 scalesPageToFit
                 onLoadEnd={() => {
                   setLoaded(true)

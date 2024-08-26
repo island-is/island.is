@@ -513,6 +513,14 @@ export const m = defineMessages({
     id: 'service.portal:signatureCollectionLists',
     defaultMessage: 'Meðmælasöfnun',
   },
+  signatureCollectionParliamentaryLists: {
+    id: 'service.portal:signatureCollectionParliamentaryLists',
+    defaultMessage: 'Alþingiskosningar - Meðmælasöfnun',
+  },
+  signatureCollectionPresidentialLists: {
+    id: 'service.portal:signatureCollectionPresidentialLists',
+    defaultMessage: 'Forsetakosningar - Meðmælasöfnun',
+  },
   notifications: {
     id: 'service.portal:notifications',
     defaultMessage: 'Tilkynningar',
@@ -1563,5 +1571,9 @@ export const m = defineMessages({
   readMoreAbout: {
     id: 'service.portal:read-more-about',
     defaultMessage: 'Lesa meira um {arg}',
+  },
+  submit: {
+    id: 'service.portal:submit',
+    defaultMessage: 'Staðfesta',
   },
 })

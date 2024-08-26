@@ -1,6 +1,7 @@
 import { defineMessages } from 'react-intl'
 
 export const m = defineMessages({
+  /* Forsetakosningar */
   pageTitle: {
     id: 'sp.signatureCollection:title',
     defaultMessage: 'Meðmælasöfnun',
@@ -243,6 +244,112 @@ export const m = defineMessages({
   signeeAddress: {
     id: 'sp.signatureCollection:signeeAddress',
     defaultMessage: 'Heimilisfang',
+    description: '',
+  },
+
+  /* Parliamentary */
+  parliamentaryElectionsTitle: {
+    id: 'sp.signatureCollection:parliamentaryElectionsTitle',
+    defaultMessage: 'Alþingiskosningar',
+    description: '',
+  },
+  pageTitleParliamentary: {
+    id: 'sp.signatureCollection:pageTitleParliamentary',
+    defaultMessage: 'Meðmælasöfnun fyrir Alþingiskosningar',
+    description: '',
+  },
+  pageDescriptionParliamentary: {
+    id: 'sp.signatureCollection:pageDescriptionParliamentary',
+    defaultMessage:
+      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+    description: '',
+  },
+  managers: {
+    id: 'sp.signatureCollection:managers',
+    defaultMessage: 'Ábyrgðaraðilar',
+    description: '',
+  },
+  addManager: {
+    id: 'sp.signatureCollection:addManager',
+    defaultMessage: 'Bæta við ábyrgðaraðila',
+    description: '',
+  },
+  supervisors: {
+    id: 'sp.signatureCollection:supervisors',
+    defaultMessage: 'Umsjónaraðilar',
+    description: '',
+  },
+  add: {
+    id: 'sp.signatureCollection:add',
+    defaultMessage: 'Bæta við',
+    description: '',
+  },
+  addSupervisor: {
+    id: 'sp.signatureCollection:addSupervisor',
+    defaultMessage: 'Bæta við umsjónaraðila',
+    description: '',
+  },
+  personName: {
+    id: 'sp.signatureCollection:personName',
+    defaultMessage: 'Nafn',
+    description: '',
+  },
+  personNationalId: {
+    id: 'sp.signatureCollection:personNationalId',
+    defaultMessage: 'Kennitala',
+    description: '',
+  },
+  nationalIdInvalid: {
+    id: 'sp.signatureCollection:nationalIdInvalid',
+    defaultMessage: 'Ógild kennitala',
+    description: '',
+  },
+  constituency: {
+    id: 'sp.signatureCollection:constituency',
+    defaultMessage: 'Kjördæmi',
+    description: '',
+  },
+  allConstituencies: {
+    id: 'sp.signatureCollection:allConstituencies',
+    defaultMessage: 'Öll kjördæmi',
+    description: '',
+  },
+  addConstituency: {
+    id: 'sp.signatureCollection:addConstituency',
+    defaultMessage: 'Bæta við kjördæmi',
+    description: '',
+  },
+  addConstituencyDescription: {
+    id: 'sp.signatureCollection:addConstituencyDescription',
+    defaultMessage:
+      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at semet nunc efficitur.',
+    description: '',
+  },
+  addConstituencyAlertInfo: {
+    id: 'sp.signatureCollection:addConstituencyAlertInfo',
+    defaultMessage:
+      'Athugið að skrá þarf viðeigandi ábyrgðar-/umsjónaraðila á yfirlitssíðu fyrir ný kjördæmi.',
+    description: '',
+  },
+  deleteManager: {
+    id: 'sp.signatureCollection:deleteManager',
+    defaultMessage: 'Eyða ábyrgðaraðila',
+    description: '',
+  },
+  deleteManagerDescription: {
+    id: 'sp.signatureCollection:deleteManagerDescription',
+    defaultMessage:
+      'Þú ert að fara að taka Nafna Nafnason af lista yfir ábyrgðaraðilum. Ertu viss um að þú viljir halda áfram?',
+    description: '',
+  },
+  delete: {
+    id: 'sp.signatureCollection:delete',
+    defaultMessage: 'Eyða',
+    description: '',
+  },
+  save: {
+    id: 'sp.signatureCollection:save',
+    defaultMessage: 'Vista',
     description: '',
   },
 })
