@@ -143,6 +143,7 @@ export const sortedFilesInChapter = (
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
         status: 'done' as UploadFileStatus,
+        canEdit: true,
       }
     })
     .sort((a, b) => {

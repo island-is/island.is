@@ -115,6 +115,7 @@ const AddFiles: FC = () => {
         ? CaseFileCategory.DEFENDANT_CASE_FILE
         : CaseFileCategory.PROSECUTOR_CASE_FILE,
       id: uuid(),
+      canEdit: file.status !== 'done',
     }))
   }
 

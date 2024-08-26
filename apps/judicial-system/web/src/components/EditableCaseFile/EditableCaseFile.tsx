@@ -38,6 +38,7 @@ export interface TEditableCaseFile {
   userGeneratedFilename?: string | null
   displayDate?: string | null
   canOpen?: boolean
+  canEdit?: boolean
   status?: UploadFileStatus
 }
 
@@ -237,7 +238,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       [styles.background.secondary]:
                         caseFile.status === 'error',
                     })}
-                    disabled={caseFile.status === 'done'}
+                    disabled={!caseFile.canEdit}
                   >
                     <Icon
                       icon="pencil"
