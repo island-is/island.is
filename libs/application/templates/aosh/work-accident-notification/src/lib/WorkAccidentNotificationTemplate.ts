@@ -2,6 +2,7 @@ import { z } from 'zod'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  pruneAfterDays,
 } from '@island.is/application/core'
 import {
   ApplicationTemplate,
@@ -17,6 +18,8 @@ import {
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { Roles, States, Events } from './constants'
+import { WorkAccidentNotificationAnswersSchema } from './dataSchema'
+import { getAoshInputOptionsApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -29,7 +32,7 @@ const template: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.WorkAccidentNotification.translation,
   ],
-  dataSchema: z.object({}),
+  dataSchema: WorkAccidentNotificationAnswersSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
   stateMachineConfig: {
@@ -57,7 +60,11 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
-              api: [NationalRegistryUserApi, UserProfileApi],
+              api: [
+                NationalRegistryUserApi,
+                UserProfileApi,
+                getAoshInputOptionsApi,
+              ],
             },
           ],
         },
@@ -67,10 +74,9 @@ const template: ApplicationTemplate<
       },
       [States.DRAFT]: {
         meta: {
-          name: 'Umsókn um ....',
-          progress: 0.25,
+          name: 'Tilkynning vinnuslyss',
           status: 'draft',
-          lifecycle: DefaultStateLifeCycle,
+          lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
               id: Roles.APPLICANT,
@@ -79,8 +85,48 @@ const template: ApplicationTemplate<
                   (module) =>
                     Promise.resolve(module.WorkAccidentNotificationForm),
                 ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
               write: 'all',
               delete: true,
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
+        },
+      },
+      [States.COMPLETED]: {
+        meta: {
+          name: 'Completed',
+          status: 'completed',
+          lifecycle: pruneAfterDays(30),
+          // onEntry: defineTemplateApi({
+          //   action: ApiActions.submitApplication,
+          // }),
+          // actionCard: {
+          //   tag: {
+          //     label: applicationMessage.actionCardDone,
+          //     variant: 'blueberry',
+          //   },
+          //   pendingAction: {
+          //     title: corePendingActionMessages.applicationReceivedTitle,
+          //     displayStatus: 'success',
+          //   },
+          // },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/Conclusion').then((module) =>
+                  Promise.resolve(module.Conclusion),
+                ),
+              read: 'all',
             },
           ],
         },
@@ -92,8 +138,6 @@ const template: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    console.log('THE ID: ', application.applicant)
-
     if (id === application.applicant) {
       return Roles.APPLICANT
     }

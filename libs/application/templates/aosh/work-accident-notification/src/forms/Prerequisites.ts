@@ -2,7 +2,7 @@ import { buildForm, buildSection } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { prerequisitesSection } from './WorkAccidentNotificationForm/prerequisitesSection'
 import { Logo } from '../assets/Logo'
-import { sections } from '../lib/messages/sections'
+import { sections } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'PrerequisitesForm',
@@ -13,11 +13,6 @@ export const Prerequisites: Form = buildForm({
   renderLastScreenBackButton: true,
   children: [
     prerequisitesSection,
-    buildSection({
-      id: 'dataFetching',
-      title: sections.prerequisites.dataFetching,
-      children: [],
-    }),
     buildSection({
       id: 'information',
       title: sections.prerequisites.information,

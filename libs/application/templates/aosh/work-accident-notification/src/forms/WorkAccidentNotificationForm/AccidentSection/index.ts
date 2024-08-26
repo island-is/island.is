@@ -3,7 +3,7 @@ import { sections } from '../../../lib/messages/sections'
 import { aboutSection } from './about'
 
 export const accidentSection = buildSection({
-  id: 'informationSection',
+  id: 'accidentSection',
   title: sections.draft.accident,
-  children: [],
+  children: [aboutSection],
 })

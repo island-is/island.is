@@ -1,5 +1,5 @@
 import { buildSection } from '@island.is/application/core'
-import { sections } from '../../../lib/messages/sections'
+import { sections } from '../../../lib/messages'
 import { absenceSection } from './absence'
 import { circumstancesSection } from './circumstances'
 import { causeOfInjurySection } from './causeOfInjury'

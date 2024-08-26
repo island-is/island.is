@@ -5,8 +5,12 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { externalData } from '../../lib/messages/externalData'
-import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
+import { externalData } from '../../lib/messages'
+import {
+  UserProfileApi,
+  NationalRegistryUserApi,
+  getAoshInputOptionsApi,
+} from '../../dataProviders'
 import { DefaultEvents } from '@island.is/application/types'
 
 export const prerequisitesSection = buildSection({
@@ -41,6 +45,10 @@ export const prerequisitesSection = buildSection({
           provider: UserProfileApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
+        }),
+        buildDataProviderItem({
+          provider: getAoshInputOptionsApi,
+          title: '',
         }),
       ],
     }),

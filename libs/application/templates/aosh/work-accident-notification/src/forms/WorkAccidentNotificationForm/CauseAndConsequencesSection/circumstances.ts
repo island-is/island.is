@@ -1,8 +1,13 @@
-import { buildSubSection } from '@island.is/application/core'
-import { sections } from '../../../lib/messages/sections'
+import { buildMultiField, buildSubSection } from '@island.is/application/core'
+import { sections } from '../../../lib/messages'
 
 export const circumstancesSection = buildSubSection({
-  id: 'about',
+  id: 'circumstances',
   title: sections.draft.circumstances,
-  children: [],
+  children: [
+    buildMultiField({
+      title: '',
+      children: [],
+    }),
+  ],
 })

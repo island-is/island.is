@@ -9,8 +9,8 @@ export const sections = {
     },
     information: {
       id: 'aosh.wan.application:sections.prerequisites.pageTitle',
-      defaultMessage: 'Upplýsingar',
-      description: `Title of information section (right side panel)`,
+      defaultMessage: 'Fyrirtækið',
+      description: `Title of company section (right side panel)`,
     },
     accident: {
       id: 'aosh.wan.application:sections.prerequisites.accident',
@@ -95,6 +95,11 @@ export const sections = {
       defaultMessage: 'Frávik í vinnuferli',
       description:
         'Title of deviation in the causes sub section (right side panel)',
+    },
+    employee: {
+      id: 'aosh.wan.application:sections.draft.employee',
+      defaultMessage: 'Starfsmaður',
+      description: 'Title of employee section (right side panel)',
     },
   }),
 }

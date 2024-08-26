@@ -72,6 +72,11 @@ export const information = {
         defaultMessage: 'Starfsmannafjöldi',
         description: 'Company information industry classification label',
       },
+      ohasw: {
+        id: 'aosh.wan.application:information.company.ohasw',
+        defaultMessage: 'Vinnuverndarstarf',
+        description: 'Occupational health and safety work',
+      },
       // alertMessage: {
       //   id: 'aosh.wan.application:information.company.alertMessage#markdown',
       //   defaultMessage:

@@ -1,8 +1,13 @@
-import { buildSubSection } from '@island.is/application/core'
-import { sections } from '../../../lib/messages/sections'
+import { buildMultiField, buildSubSection } from '@island.is/application/core'
+import { sections } from '../../../lib/messages'
 
 export const deviationSection = buildSubSection({
-  id: 'about',
+  id: 'deviation',
   title: sections.draft.deviation,
-  children: [],
+  children: [
+    buildMultiField({
+      title: '',
+      children: [],
+    }),
+  ],
 })
