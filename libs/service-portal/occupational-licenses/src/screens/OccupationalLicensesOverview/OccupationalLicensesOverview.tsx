@@ -20,7 +20,7 @@ const OccupationalLicensesOverview = () => {
       )
 
       if (ffEnabled) {
-        setVersion('v1')
+        setVersion('v2')
       } else {
         setVersion('v1')
       }
