@@ -7,8 +7,8 @@ export const dataSchema = z.object({
   incomePlanTable: z.array(
     z
       .object({
-        incomeCategories: z.string(),
-        incomeTypes: z.string(),
+        incomeCategory: z.string(),
+        incomeType: z.string(),
         income: z.enum([RatioType.YEARLY, RatioType.MONTHLY]),
         incomePerYear: z.string().optional(),
         equalIncomePerMonth: z.string().optional(),
