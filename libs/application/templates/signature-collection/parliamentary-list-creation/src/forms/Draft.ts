@@ -1,7 +1,6 @@
 import {
   buildActionCardListField,
   buildCheckboxField,
-  buildCustomField,
   buildDescriptionField,
   buildDividerField,
   buildForm,
@@ -15,11 +14,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import {
-  Application,
-  SignatureCollectionArea,
-  UserProfile,
-} from '@island.is/api/schema'
+import { Application, UserProfile } from '@island.is/api/schema'
 import { format as formatNationalId } from 'kennitala'
 import Logo from '../../assets/Logo'
 
@@ -27,8 +22,7 @@ import { m } from '../lib/messages'
 import { formatPhone } from '../lib/utils'
 import { Manager, Supervisor } from '../lib/constants'
 import { Collection } from '@island.is/clients/signature-collection'
-import { Candidate } from 'libs/clients/signature-collection/src/lib/types/candidate.dto'
-import { Signee } from 'libs/clients/signature-collection/src/lib/types/user.dto'
+import { Signee } from '@island.is/clients/signature-collection'
 
 export const Draft: Form = buildForm({
   id: 'ParliamentaryListCreationDraft',
