@@ -136,8 +136,7 @@ export class UniversityService extends BaseTemplateApiService {
     const exemptionData =
       educationOptionChosen === UniversityApplicationTypes.EXEMPTION
         ? {
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
+            degreeAttachments: await this.getAttachmentUrls(
               answers.educationDetails.exemptionDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -167,8 +166,7 @@ export class UniversityService extends BaseTemplateApiService {
             degreeEndDate: answers.educationDetails.thirdLevelDetails?.endDate,
             moreDetails:
               answers.educationDetails.thirdLevelDetails?.moreDetails,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
+            degreeAttachments: await this.getAttachmentUrls(
               answers.educationDetails.thirdLevelDetails?.degreeAttachments?.map(
                 (x, i) => {
                   const type = this.mapFileTypes(i)
@@ -187,8 +185,7 @@ export class UniversityService extends BaseTemplateApiService {
         answers.educationDetails.finishedDetails.map(async (item) => {
           return {
             ...item,
-            degreeAttachments: await this.getFilesFromAttachment(
-              application,
+            degreeAttachments: await this.getAttachmentUrls(
               item.degreeAttachments?.map((x, i) => {
                 const type = this.mapFileTypes(i)
                 return {
@@ -258,21 +255,20 @@ export class UniversityService extends BaseTemplateApiService {
     ).universityApplicationControllerCreateApplication(createApplicationDto)
   }
 
-  private async getFilesFromAttachment(
-    application: ApplicationWithAttachments,
+  private async getAttachmentUrls(
     attachments?: { name: string; key: string; type: string }[],
-  ): Promise<{ fileName: string; fileType: string; blob: Blob }[]> {
+  ): Promise<{ fileName: string; fileType: string; url: string }[]> {
+    const expiry = 36000
+
     return await Promise.all(
       attachments?.map(async (file) => {
-        const blob =
-          await this.sharedTemplateAPIService.getAttachmentContentAsBlob(
-            application,
-            file.key,
-          )
         return {
           fileName: file.name,
           fileType: file.type,
-          blob,
+          url: await this.sharedTemplateAPIService.getAttachmentUrl(
+            file.key,
+            expiry,
+          ),
         }
       }) || [],
     )
