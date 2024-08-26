@@ -72,7 +72,7 @@ export const Review: FC<ReviewScreenProps> = ({
 
   const rows = incomePlan.map((e) => {
     return [
-      e.incomeTypes,
+      e.incomeType,
       formatCurrencyWithoutSuffix(e.incomePerYear),
       e.currency,
     ]

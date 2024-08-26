@@ -37,9 +37,13 @@ interface WithholdingTaxIncomeType {
 }
 
 export interface IncomePlanRow {
-  incomeCategories: string
-  incomeTypes: string
+  incomeType: string
+  incomeTypeNumber: number
+  incomeTypeCode: string
   currency: string
+  incomeCategory: string
+  incomeCategoryNumber: number
+  incomeCategoryCode: string
   income: RatioType
   equalForeignIncomePerMonth?: string
   equalIncomePerMonth?: string

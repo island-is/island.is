@@ -11,11 +11,6 @@ export const incomePlanFormMessage: MessageDir = {
   }),
 
   pre: defineMessages({
-    registryIcelandDescription: {
-      id: 'ip.application:registry.iceland.description',
-      defaultMessage: 'Upplýsingar um þig.',
-      description: 'Information about you.',
-    },
     formTitle: {
       id: 'ip.application:form.title',
       defaultMessage: 'Tekjuáætlun',

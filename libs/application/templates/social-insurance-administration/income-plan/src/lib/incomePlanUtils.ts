@@ -36,12 +36,24 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
   ) as boolean
 
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
+
+  const userProfilePhoneNumber = getValueViaPath(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
+  ) as string
+
   return {
     categorizedIncomeTypes,
     currencies,
     withholdingTax,
     latestIncomePlan,
     isEligible,
+    userProfileEmail,
+    userProfilePhoneNumber,
   }
 }
 
@@ -55,9 +67,8 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   return { incomePlan }
 }
 
-export const getOneInstanceOfCategory = (
-  categories: CategorizedIncomeTypes[],
-) => {
+
+const getOneInstanceOfCategory = (categories: CategorizedIncomeTypes[]) => {
   return [
     ...new Map(
       categories.map((category) => [category.categoryName, category]),

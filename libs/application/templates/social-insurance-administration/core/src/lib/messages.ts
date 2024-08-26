@@ -53,11 +53,6 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
       description: 'My information on My pages Ísland.is',
     },
-    skraInformationTitle: {
-      id: 'sia.application:prerequisites.national.registry.title',
-      defaultMessage: 'Upplýsingar frá Þjóðskrá',
-      description: 'Information from Registers Iceland',
-    },
     contactInfoDescription: {
       id: 'sia.application:prerequisites.contact.info.description',
       defaultMessage:
