@@ -1,3 +1,5 @@
+// DEPLOYFEATURE TRIGGER - REMOVE ME WHEN DONE
+
 import { InMemoryCache, NormalizedCacheObject } from '@apollo/client/cache'
 import { ApolloClient } from '@apollo/client/core'
 import { defaultLanguage } from '@island.is/shared/constants'
