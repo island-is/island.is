@@ -64,6 +64,7 @@ export const VehicleBulkMileageRow = ({ vehicleId, children }: Props) => {
         updateNextVehicle('waiting-success')
         return
       case 'waiting-failure':
+        console.log('in waiting failure')
         updateNextVehicle('waiting-failure')
         return
       default:
@@ -152,6 +153,7 @@ export const VehicleBulkMileageRow = ({ vehicleId, children }: Props) => {
 
     if (mileageToPost < 0) {
       console.log('validation failed')
+      failureCallback && failureCallback()
       return
     }
 
