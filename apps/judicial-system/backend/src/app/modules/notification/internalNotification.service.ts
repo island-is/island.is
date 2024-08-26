@@ -716,14 +716,6 @@ export class InternalNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<Recipient>[] {
-    if (
-      ExplanatoryComment.postponedIndefinitelyExplanation(
-        theCase.explanatoryComments,
-      )
-    ) {
-      return []
-    }
-
     const courtDate = DateLog.courtDate(theCase.dateLogs)
 
     if (!courtDate) {
