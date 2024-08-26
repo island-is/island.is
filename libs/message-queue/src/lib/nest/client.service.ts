@@ -12,9 +12,8 @@ import {
   SendMessageCommand,
   SetQueueAttributesCommand,
   Message,
-  QueueAttributeName,
 } from '@aws-sdk/client-sqs'
-import { AbortController } from '@smithy/abort-controller'
+import { AbortController } from '@aws-sdk/abort-controller'
 import { type Logger } from '@island.is/logging'
 
 @Injectable()
@@ -77,7 +76,7 @@ export class ClientService {
 
   async getQueueAttributes(
     url: string,
-    attributes: QueueAttributeName[],
+    attributes: string[],
   ): Promise<Record<string, string>> {
     const r = await this.client.send(
       new GetQueueAttributesCommand({
@@ -131,15 +130,12 @@ export class ClientService {
   async syncQueueAttributes(
     name: string,
     url: string,
-    attributes: Record<QueueAttributeName, string>,
+    attributes: Record<string, string>,
   ): Promise<void> {
-    const current = await this.getQueueAttributes(
-      url,
-      Object.keys(attributes) as QueueAttributeName[],
-    )
+    const current = await this.getQueueAttributes(url, Object.keys(attributes))
 
-    const areNotEqual = (k: QueueAttributeName) => attributes[k] !== current[k]
-    if ((Object.keys(attributes) as QueueAttributeName[]).some(areNotEqual)) {
+    const areNotEqual = (k: string) => attributes[k] !== current[k]
+    if (Object.keys(attributes).some(areNotEqual)) {
       this.logger.debug(`Updating "${name}" queue attributes`, attributes)
 
       await this.client.send(
@@ -154,8 +150,7 @@ export class ClientService {
   // Dispose of the client and abort any ongoing requests.
   dispose() {
     this.logger.debug('Aborting SQS requests')
-    // Causes error when running tests
-    // this.receiveMessagesAbortController.abort()
+    this.receiveMessagesAbortController.abort()
     this.logger.debug('Closing SQS client')
     this.client.destroy()
   }

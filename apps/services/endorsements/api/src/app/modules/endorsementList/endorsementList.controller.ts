@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -7,6 +8,7 @@ import {
   Post,
   Put,
   Query,
+  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
@@ -47,6 +49,7 @@ import { EndorsementListInterceptor } from './interceptors/endorsementList.inter
 import { EndorsementListsInterceptor } from './interceptors/endorsementLists.interceptor'
 import { EmailDto } from './dto/email.dto'
 import { SendPdfEmailResponse } from './dto/sendPdfEmail.response'
+import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
 export class FindTagPaginationComboDto extends IntersectionType(
   FindEndorsementListByTagsDto,
@@ -356,6 +359,42 @@ export class EndorsementListController {
     return this.endorsementListService.emailPDF(
       endorsementList.id,
       query.emailAddress,
+    )
+  }
+
+  @ApiOperation({
+    summary: 'Export an endorsement list as PDF or CSV',
+  })
+  @Scopes(EndorsementsScope.main, AdminPortalScope.petitionsAdmin)
+  @HasAccessGroup(AccessGroup.Owner)
+  @ApiParam({ name: 'listId', type: String })
+  @ApiParam({ name: 'fileType', type: String, enum: ['pdf', 'csv'] })
+  @ApiOkResponse({
+    description: 'Presigned URL for the exported file',
+    type: EndorsementListExportUrlResponse,
+  })
+  @Get(':listId/export/:fileType')
+  @Audit()
+  async exportEndorsementList(
+    @Param(
+      'listId',
+      new ParseUUIDPipe({ version: '4' }),
+      EndorsementListByIdPipe,
+    )
+    endorsementList: EndorsementList,
+    @Param('fileType') fileType: 'pdf' | 'csv',
+    @CurrentUser() user: User,
+  ): Promise<EndorsementListExportUrlResponse> {
+    if (!['pdf', 'csv'].includes(fileType)) {
+      throw new BadRequestException(
+        'Invalid file type. Allowed values are "pdf" or "csv".',
+      )
+    }
+
+    return await this.endorsementListService.exportList(
+      endorsementList.id,
+      user,
+      fileType,
     )
   }
 }
