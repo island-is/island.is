@@ -7,9 +7,14 @@ import { Payload } from './Payload.dto'
 export class GenericUserLicense {
   @Field({
     description: 'National ID of license owner',
-    deprecationReason: 'Moved one level up',
   })
   nationalId!: string
+
+  @Field({
+    nullable: true,
+    description: 'Is license owner child of user',
+  })
+  isOwnerChildOfUser?: boolean
 
   @Field(() => GenericLicense, { description: 'License info' })
   license!: GenericLicense

@@ -309,6 +309,7 @@ export const mapTemporaryEventLicence = (
   licenseResponsible: temporaryEventLicence.abyrgdarmadur?.trim() ?? '',
   maximumNumberOfGuests: temporaryEventLicence.hamarksfjoldi,
   estimatedNumberOfGuests: temporaryEventLicence.aaetladurFjoldi,
+  location: temporaryEventLicence.stadur?.trim() ?? '',
 })
 
 export function constructUploadDataObject(
@@ -556,6 +557,7 @@ export const mapJourneymanLicence = (
     name: licence.nafn,
     dateOfPublication: licence.gildirFra,
     profession: licence.idngrein,
+    nationalId: licence.kennitala,
   }
 }
 

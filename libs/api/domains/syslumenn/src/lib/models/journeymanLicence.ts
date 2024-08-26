@@ -11,6 +11,9 @@ class JourneymanLicence {
 
   @Field({ nullable: true })
   profession?: string
+
+  @Field({ nullable: true })
+  nationalId?: string
 }
 
 @ObjectType()

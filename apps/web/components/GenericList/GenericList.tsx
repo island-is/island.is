@@ -173,22 +173,34 @@ const ClickableItem = ({ item }: ItemProps) => {
 }
 
 interface GenericListProps {
-  id: string
   searchInputPlaceholder?: string | null
-  itemType?: string | null
   filterTags?: GenericTag[] | null
+  searchQueryId: string
+  pageQueryId: string
+  tagQueryId: string
+  fetchListItems: (props: {
+    page: number
+    searchValue: string
+    tags: string[]
+    tagGroups: Record<string, string[]>
+  }) => void
+  loading: boolean
+  totalItems: number
+  displayError: boolean
 }
 
 export const GenericList = ({
-  id,
   searchInputPlaceholder,
-  itemType,
   filterTags,
-}: GenericListProps) => {
-  const searchQueryId = `${id}q`
-  const pageQueryId = `${id}page`
-  const tagQueryId = `${id}tag`
-
+  searchQueryId,
+  pageQueryId,
+  tagQueryId,
+  fetchListItems,
+  totalItems,
+  loading,
+  displayError,
+  children,
+}: React.PropsWithChildren<GenericListProps>) => {
   const [searchValue, setSearchValue] = useQueryState(searchQueryId)
   const [page, setPage] = useQueryState(pageQueryId, parseAsInteger)
   const [parameters, setParameters] = useQueryState<Record<string, string[]>>(
@@ -211,42 +223,9 @@ export const GenericList = ({
     return categories
   }, [filterTags, parameters])
 
-  const [itemsResponse, setItemsResponse] =
-    useState<GenericListItemResponse | null>(null)
-  const [errorOccurred, setErrorOccurred] = useState(false)
   const ref = useRef<HTMLElement | null>(null)
 
   const { activeLocale } = useI18n()
-
-  const [fetchListItems, { loading }] = useLazyQuery<
-    Query,
-    GetGenericListItemsQueryVariables
-  >(GET_GENERIC_LIST_ITEMS_QUERY, {
-    onCompleted(data) {
-      const searchParams = new URLSearchParams(window.location.search)
-
-      const queryString = searchParams.get(searchQueryId) || ''
-      const pageQuery = searchParams.get(pageQueryId) || '1'
-      const tagQuery = searchParams.get(tagQueryId) || '{}'
-
-      const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
-
-      if (
-        // Make sure the response matches the request input
-        queryString === data?.getGenericListItems?.input?.queryString &&
-        pageQuery === data?.getGenericListItems?.input?.page?.toString() &&
-        tags.every((tag) =>
-          (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
-        )
-      ) {
-        setItemsResponse(data.getGenericListItems)
-        setErrorOccurred(false)
-      }
-    },
-    onError(_) {
-      setErrorOccurred(true)
-    },
-  })
 
   useDebounce(
     () => {
@@ -254,19 +233,11 @@ export const GenericList = ({
       filterCategories.forEach((c) =>
         c.selected.forEach((t) => selectedCategories.push(t)),
       )
-
       fetchListItems({
-        variables: {
-          input: {
-            genericListId: id,
-            size: ITEMS_PER_PAGE,
-            lang: activeLocale,
-            page: page ?? 1,
-            queryString: searchValue || '',
-            tags: selectedCategories,
-            tagGroups: getGenericTagGroupHierarchy(filterCategories),
-          },
-        },
+        page: page ?? 1,
+        searchValue: searchValue || '',
+        tags: selectedCategories,
+        tagGroups: getGenericTagGroupHierarchy(filterCategories),
       })
     },
     DEBOUNCE_TIME_IN_MS,
@@ -281,15 +252,10 @@ export const GenericList = ({
     setIsMobile(width < theme.breakpoints.md)
   }, [width])
 
-  const totalItems = itemsResponse?.total ?? 0
-  const items = itemsResponse?.items ?? []
-
   const noResultsFoundText =
     activeLocale === 'is' ? 'Engar niðurstöður fundust' : 'No results found'
 
   const resultsFoundText = getResultsFoundText(totalItems, activeLocale)
-
-  const itemsAreClickable = itemType === 'Clickable'
 
   const totalPages = Math.ceil(totalItems / ITEMS_PER_PAGE)
 
@@ -401,41 +367,48 @@ export const GenericList = ({
                   </Filter>
                 </Stack>
 
-                <Inline space={1}>
-                  {selectedFilters.map(({ value, label, category }) => (
-                    <FilterTag
-                      key={value}
-                      onClick={() => {
-                        setParameters((prevParameters) => {
-                          const updatedParameters = {
-                            ...prevParameters,
-                            [category]: (
-                              prevParameters?.[category] ?? []
-                            ).filter((prevValue) => prevValue !== value),
-                          }
+                <Inline space={1} alignY="top">
+                  {selectedFilters.length > 0 && (
+                    <Text>
+                      {activeLocale === 'is' ? 'Síað eftir:' : 'Filtered by:'}
+                    </Text>
+                  )}
+                  <Inline space={1}>
+                    {selectedFilters.map(({ value, label, category }) => (
+                      <FilterTag
+                        key={value}
+                        onClick={() => {
+                          setParameters((prevParameters) => {
+                            const updatedParameters = {
+                              ...prevParameters,
+                              [category]: (
+                                prevParameters?.[category] ?? []
+                              ).filter((prevValue) => prevValue !== value),
+                            }
 
-                          // Make sure we clear out the query params from the url when there is nothing selected
-                          if (
-                            Object.values(updatedParameters).every(
-                              (s) => !s || s.length === 0,
-                            )
-                          ) {
-                            return null
-                          }
+                            // Make sure we clear out the query params from the url when there is nothing selected
+                            if (
+                              Object.values(updatedParameters).every(
+                                (s) => !s || s.length === 0,
+                              )
+                            ) {
+                              return null
+                            }
 
-                          return updatedParameters
-                        })
-                      }}
-                    >
-                      {label}
-                    </FilterTag>
-                  ))}
+                            return updatedParameters
+                          })
+                        }}
+                      >
+                        {label}
+                      </FilterTag>
+                    ))}
+                  </Inline>
                 </Inline>
               </Stack>
             )}
             {filterCategories.length === 0 && filterInputComponent}
           </Box>
-          {errorOccurred && (
+          {displayError && (
             <AlertMessage
               type="warning"
               title={activeLocale === 'is' ? 'Villa kom upp' : 'Error occurred'}
@@ -446,10 +419,10 @@ export const GenericList = ({
               }
             />
           )}
-          {itemsResponse && items.length === 0 && (
+          {totalItems === 0 && !displayError && (
             <Text>{noResultsFoundText}</Text>
           )}
-          {items.length > 0 && (
+          {totalItems > 0 && (
             <Stack space={3}>
               <Inline space={2} justifyContent="spaceBetween" alignY="center">
                 <Text>
@@ -462,28 +435,7 @@ export const GenericList = ({
                   </Text>
                 )}
               </Inline>
-              <GridContainer>
-                <GridRow rowGap={3}>
-                  {!itemsAreClickable &&
-                    items.map((item) => (
-                      <GridColumn
-                        key={item.id}
-                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-                      >
-                        <NonClickableItem item={item} />
-                      </GridColumn>
-                    ))}
-                  {itemsAreClickable &&
-                    items.map((item) => (
-                      <GridColumn
-                        key={item.id}
-                        span={['1/1', '1/1', '1/1', '1/1', '1/2']}
-                      >
-                        <ClickableItem item={item} />
-                      </GridColumn>
-                    ))}
-                </GridRow>
-              </GridContainer>
+              {children}
             </Stack>
           )}
 
@@ -516,5 +468,115 @@ export const GenericList = ({
         </Stack>
       </GridContainer>
     </Box>
+  )
+}
+
+interface GenericListWrapperProps {
+  id: string
+  searchInputPlaceholder?: string | null
+  itemType?: string | null
+  filterTags?: GenericTag[] | null
+}
+
+export const GenericListWrapper = ({
+  id,
+  filterTags,
+  itemType,
+  searchInputPlaceholder,
+}: GenericListWrapperProps) => {
+  const searchQueryId = `${id}q`
+  const pageQueryId = `${id}page`
+  const tagQueryId = `${id}tag`
+
+  const { activeLocale } = useI18n()
+
+  const [itemsResponse, setItemsResponse] =
+    useState<GenericListItemResponse | null>(null)
+  const [errorOccurred, setErrorOccurred] = useState(false)
+
+  const [fetchListItems, { loading }] = useLazyQuery<
+    Query,
+    GetGenericListItemsQueryVariables
+  >(GET_GENERIC_LIST_ITEMS_QUERY, {
+    onCompleted(data) {
+      const searchParams = new URLSearchParams(window.location.search)
+
+      const queryString = searchParams.get(searchQueryId) || ''
+      const pageQuery = searchParams.get(pageQueryId) || '1'
+      const tagQuery = searchParams.get(tagQueryId) || '{}'
+
+      const tags: string[] = flatten(Object.values(JSON.parse(tagQuery)))
+
+      if (
+        // Make sure the response matches the request input
+        queryString === data?.getGenericListItems?.input?.queryString &&
+        pageQuery === data?.getGenericListItems?.input?.page?.toString() &&
+        tags.every((tag) =>
+          (data?.getGenericListItems?.input?.tags ?? []).includes(tag),
+        )
+      ) {
+        setItemsResponse(data.getGenericListItems)
+        setErrorOccurred(false)
+      }
+    },
+    onError(_) {
+      setErrorOccurred(true)
+    },
+  })
+
+  const totalItems = itemsResponse?.total ?? 0
+  const items = itemsResponse?.items ?? []
+
+  const itemsAreClickable = itemType === 'Clickable'
+
+  return (
+    <GenericList
+      filterTags={filterTags}
+      searchInputPlaceholder={searchInputPlaceholder}
+      displayError={errorOccurred}
+      fetchListItems={({ page, searchValue, tags, tagGroups }) => {
+        fetchListItems({
+          variables: {
+            input: {
+              genericListId: id,
+              size: ITEMS_PER_PAGE,
+              lang: activeLocale,
+              page: page,
+              queryString: searchValue,
+              tags,
+              tagGroups,
+            },
+          },
+        })
+      }}
+      totalItems={totalItems}
+      loading={loading}
+      pageQueryId={pageQueryId}
+      searchQueryId={searchQueryId}
+      tagQueryId={tagQueryId}
+    >
+      <GridContainer>
+        <GridRow rowGap={3}>
+          {!itemsAreClickable &&
+            items.map((item) => (
+              <GridColumn
+                key={item.id}
+                span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+              >
+                <NonClickableItem item={item} />
+              </GridColumn>
+            ))}
+          {itemsAreClickable &&
+            items.map((item) => (
+              <GridColumn
+                key={item.id}
+                span={['1/1', '1/1', '1/1', '1/1', '1/2']}
+              >
+                <ClickableItem item={item} />
+              </GridColumn>
+            ))}
+        </GridRow>
+      </GridContainer>
+    </GenericList>
   )
 }

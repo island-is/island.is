@@ -20,6 +20,7 @@ import { ConfigService, ConfigType } from '@nestjs/config'
 import { getConfigValue } from '../../shared.utils'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { FetchError } from '@island.is/clients/middlewares'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 @Injectable()
 export class UserProfileService extends BaseTemplateApiService {
@@ -83,11 +84,30 @@ export class UserProfileService extends BaseTemplateApiService {
       )
     }
 
+    if (params?.validatePhoneNumber) {
+      if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.invalidPhoneNumber,
+            summary: {
+              ...coreErrorMessages.invalidPhoneNumberDescription,
+              values: { link: '/minarsidur' },
+            },
+          },
+          500,
+        )
+    }
+
     return {
       mobilePhoneNumber: mobilePhoneNumber ?? undefined,
       email: email ?? undefined,
       bankInfo,
     }
+  }
+
+  private isValidPhoneNumber = (phoneNumber: string) => {
+    const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+    return phone && phone.isValid()
   }
 
   private async getBankInfoFromIslykill(
