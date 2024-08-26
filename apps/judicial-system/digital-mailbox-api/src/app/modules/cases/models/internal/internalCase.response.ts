@@ -1,6 +1,7 @@
 import {
   DateType,
   DefenderChoice,
+  EventType,
   Gender,
   Institution,
   User,
@@ -15,6 +16,7 @@ export class InternalCaseResponse {
   prosecutorsOffice!: Institution
   prosecutor!: User
   dateLogs?: DateLog[]
+  eventLogs?: EventLog[]
 }
 
 interface Defendant {
@@ -36,4 +38,12 @@ interface DateLog {
   dateType: DateType
   date: Date
   location?: string
+}
+
+interface EventLog {
+  id: string
+  created: Date
+  eventType: EventType
+  description: string
+  user?: User
 }

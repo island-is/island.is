@@ -1,5 +1,4 @@
 import { IsEnum } from 'class-validator'
-import { boolean } from 'yargs'
 
 import { ApiProperty } from '@nestjs/swagger'
 
@@ -7,7 +6,11 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { DateType, DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DateType,
+  DefenderChoice,
+  EventType,
+} from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
@@ -66,6 +69,10 @@ export class SubpoenaResponse {
     const arraignmentDate = subpoenaDateLog?.date ?? ''
     const subpoenaCreatedDate = subpoenaDateLog?.created ?? ''
 
+    const subpoenaAcknowledged = internalCase.eventLogs?.find(
+      (eventLog) => eventLog.eventType === EventType.SUBPOENA_ACKNOWLEDGED,
+    )
+
     return {
       caseId: internalCase.id,
       data: {
@@ -91,7 +98,6 @@ export class SubpoenaResponse {
           },
         ],
       },
-
       defenderInfo: defendantInfo?.defenderChoice
         ? {
             defenderChoice: defendantInfo?.defenderChoice,
@@ -101,6 +107,7 @@ export class SubpoenaResponse {
                 : undefined,
           }
         : undefined,
+      acknowledged: subpoenaAcknowledged !== undefined,
     }
   }
 }

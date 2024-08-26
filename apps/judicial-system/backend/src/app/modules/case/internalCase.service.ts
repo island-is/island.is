@@ -54,6 +54,7 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
@@ -1250,6 +1251,7 @@ export class InternalCaseService {
         { model: User, as: 'judge' },
         { model: User, as: 'prosecutor' },
         { model: DateLog, as: 'dateLogs' },
+        { model: EventLog, as: 'eventLogs' },
       ],
       attributes: ['courtCaseNumber', 'id'],
       where: {
