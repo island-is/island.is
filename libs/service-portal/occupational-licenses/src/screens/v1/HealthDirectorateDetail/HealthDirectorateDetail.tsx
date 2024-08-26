@@ -55,6 +55,7 @@ export const EducationDetail = () => {
       serviceProviderSlug={HEALTH_DIRECTORATE_SLUG}
       serviceProviderTooltip={formatMessage(om.healthDirectorateTooltip)}
       name={user.profile.name}
+      licenseNumber={license.licenseNumber}
       dateOfBirth={birthday ? formatDateFns(birthday, 'dd.MM.yyyy') : undefined}
       profession={license.profession}
       licenseType={license.type}

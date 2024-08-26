@@ -46,8 +46,12 @@ export abstract class OccupationalLicense {
 
   @Field(() => ID)
   id!: string | number
+
   @Field(() => String)
   type!: string
+
+  @Field({ nullable: true })
+  licenseNumber?: string
 
   @Field(() => String)
   profession!: string
