@@ -6,13 +6,14 @@ import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from './Signees'
 import CancelCollection from '../../../Presidential/OwnerView/CancelCollection'
+import { SignatureCollectionPaths } from 'libs/service-portal/signature-collection/src/lib/paths'
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { pathname } = useLocation()
   const listId = pathname.replace(
-    '/min-gogn/listar/althingis-medmaelasofnun/',
+    SignatureCollectionPaths.SignatureCollectionParliamentaryLists + '/',
     '',
   )
   const { listInfo, loadingList } = useGetSignatureList(listId)

@@ -35,7 +35,7 @@ const OwnerView = () => {
           <AddConstituency />
         </Box>
         {constituencies.map((c: string, index: number) => (
-          <Box marginTop={3}>
+          <Box key={index} marginTop={3}>
             <ActionCard
               key={index}
               backgroundColor="white"
