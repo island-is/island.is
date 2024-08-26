@@ -54,11 +54,7 @@ export const validateAndSetErrorMessage = (
     errorMessageSetter(validation.errorMessage)
   }
 
-  if (!validation.isValid) {
-    return false
-  }
-
-  return true
+  return validation.isValid
 }
 
 export const validateAndSet = (
