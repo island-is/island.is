@@ -60,6 +60,7 @@ export const JudgeOverview = () => {
   const { uploadState } = useCourtUpload(workingCase, setWorkingCase)
   const {
     defendants,
+    policeCaseNumbers,
     prosecutor,
     prosecutorsOffice,
     requestedCourtDate,
@@ -136,10 +137,11 @@ export const JudgeOverview = () => {
               {
                 id: 'case-info-section',
                 items: [
-                  prosecutorsOffice,
+                  policeCaseNumbers,
                   requestedCourtDate,
-                  prosecutor(workingCase.type),
+                  prosecutorsOffice,
                   parentCaseValidToDate,
+                  prosecutor(workingCase.type),
                 ],
                 columns: 2,
               },

@@ -72,7 +72,6 @@ export const Overview = () => {
     registrar,
     prosecutor,
     caseType,
-    confirmedCourtDate,
   } = useInfoCardItems()
 
   const [modal, setModal] = useState<
@@ -191,9 +190,6 @@ export const Overview = () => {
                   ...(workingCase.registrar ? [registrar] : []),
                   prosecutor(workingCase.type),
                   caseType,
-                  ...(workingCase.arraignmentDate?.date
-                    ? [confirmedCourtDate]
-                    : []),
                 ],
                 columns: 2,
               },
