@@ -228,6 +228,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       styles.editCaseFileButton,
                       styles.background.secondary,
                     )}
+                    aria-label="Reyna aftur að hlaða upp skrá"
                   >
                     <Icon icon="reload" color="red400" />
                   </button>
@@ -241,6 +242,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                         caseFile.status === 'error',
                     })}
                     disabled={!caseFile.canEdit}
+                    aria-label="Breyta skrá"
                   >
                     <Icon
                       icon="pencil"
