@@ -105,6 +105,10 @@ const AddFiles: FC = () => {
   const mapUploadFilesToEditableCaseFiles = (
     files: UploadFile[],
   ): TEditableCaseFile[] => {
+    const category = isDefenceUser(user)
+      ? CaseFileCategory.DEFENDANT_CASE_FILE
+      : CaseFileCategory.PROSECUTOR_CASE_FILE
+
     return files.map((file) => ({
       name: file.name,
       userGeneratedFilename: file.name,
@@ -112,9 +116,7 @@ const AddFiles: FC = () => {
       originalFileObj: file as File,
       displayDate: new Date().toISOString(),
       type: 'application/pdf',
-      category: isDefenceUser(user)
-        ? CaseFileCategory.DEFENDANT_CASE_FILE
-        : CaseFileCategory.PROSECUTOR_CASE_FILE,
+      category,
       id: uuid(),
     }))
   }
