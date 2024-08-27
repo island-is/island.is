@@ -637,7 +637,7 @@ jobs:
           script: |
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
-            echo $COMMENT
+            console.log(COMMENT)
             await updateComment({github, context, comment: COMMENT})
 
   retag-unaffected:
