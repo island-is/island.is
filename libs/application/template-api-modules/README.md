@@ -417,3 +417,29 @@ import { SharedApi } from '@island.is/application/types'
     },
 
 ```
+
+## Enabling payment mocking
+
+To enable payment mocking on dev and local you need to add `enableMockPayment: true` to the arguments object passed to the
+`buildExternalDataProvider` function when constructing your `approveExternalData` field.
+
+A simple example of this can be found in `libs/application/templates/example-payment/src/forms/draft.ts`
+
+```typescript
+buildExternalDataProvider({
+          title: m.draft.externalDataTitle,
+          id: 'approveExternalData',
+          subTitle: m.draft.externalDataTitle,
+          checkboxLabel: m.draft.externalDataTitle,
+          enableMockPayment: true,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: PaymentCatalogApi,
+              title: m.draft.feeInfo,
+            }),
+          ],
+        }),
+
+```
+
+This will cause a checkbox saying "Enable mock payment" to be shown that if checked will cause the payment step to be skipped.
