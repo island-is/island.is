@@ -6,7 +6,7 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common'
 
-import { ApiParam, ApiTags, ApiHeader, ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger'
+import { ApiParam, ApiTags, ApiHeader, ApiOkResponse } from '@nestjs/swagger'
 import type { User } from '@island.is/auth-nest-tools'
 import {
   IdsUserGuard,
@@ -20,7 +20,10 @@ import { PaymentStatusResponseDto } from './dto/paymentStatusResponse.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('payments')
-@ApiBearerAuth()
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 @ApiHeader({
   name: 'locale',
   description: 'Front-end language selected',

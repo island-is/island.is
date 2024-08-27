@@ -10,7 +10,6 @@ import {
   UseGuards,
 } from '@nestjs/common'
 import {
-  ApiBearerAuth,
   ApiCreatedResponse,
   ApiHeader,
   ApiOkResponse,
@@ -43,7 +42,10 @@ const namespace = `${environment.audit.defaultNamespace}/organisations`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiTags('organisations')
-@ApiBearerAuth()
+@ApiHeader({
+  name: 'authorization',
+  description: 'Bearer token authorization',
+})
 @Controller('organisations')
 @Audit({ namespace })
 export class OrganisationController {
