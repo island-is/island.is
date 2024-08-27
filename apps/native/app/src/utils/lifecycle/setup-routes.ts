@@ -92,6 +92,7 @@ export function setupRoutes() {
 
   addRoute('/air-discount', async (passProps) => {
     await Navigation.dismissAllModals()
+    selectTab(4)
     await Navigation.popToRoot(StackRegistry.MoreStack)
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
@@ -206,7 +207,10 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/vehicle/:id', (passProps: any) => {
+  addRoute('/vehicle/:id', async (passProps: any) => {
+    await Navigation.dismissAllModals()
+    selectTab(4)
+    await Navigation.popToRoot(StackRegistry.MoreStack)
     Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehicleDetailScreen,
