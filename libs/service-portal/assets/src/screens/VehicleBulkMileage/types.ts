@@ -13,6 +13,7 @@ export type SubmissionState =
   | 'submit-all'
   | 'waiting-success'
   | 'waiting-failure'
+  | 'waiting-idle'
 
 export interface Props {
   vehicles: Array<VehicleProps>

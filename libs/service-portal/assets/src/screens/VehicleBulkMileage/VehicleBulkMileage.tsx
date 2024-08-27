@@ -1,6 +1,5 @@
 import {
   Box,
-  FocusableBox,
   Button,
   Checkbox,
   Filter,
@@ -19,16 +18,14 @@ import {
 import { dummy } from './mocks/propsDummy'
 import { vehicleMessage as messages } from '../../lib/messages'
 import * as styles from './VehicleBulkMileage.css'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import VehicleBulkMileageTable from './VehicleBulkMileageTable'
-import { useVehicleBulkMileageContext } from './VehicleBulkMileageContext'
-import { isDefined } from '@island.is/shared/utils'
-import { isNullOrUndefined } from 'util'
+import { SubmissionState, VehicleType } from './types'
 
-const VehicleMileage = () => {
+const VehicleBulkMileage = () => {
   useNamespaces('sp.vehicles')
   const { formatMessage } = useLocale()
-  const { setVehicles, vehicles } = useVehicleBulkMileageContext()
+  const [vehicles, setVehicles] = useState<Array<VehicleType>>([])
   const [page, setPage] = useState<number>(1)
   const [totalPages, setTotalPages] = useState<number>(1)
   const [pageSize, setPageSize] = useState<number>(10)
@@ -43,19 +40,6 @@ const VehicleMileage = () => {
       setVehicles([...vehicles, ...newVehicles])
     }
   }, [pageSize, page])
-
-  const handleBulkSubmit = () => {
-    setVehicles(
-      vehicles.map((v, index) => {
-        if (index === 0) {
-          return {
-            ...v,
-            submissionStatus: 'submit-all',
-          }
-        } else return v
-      }),
-    )
-  }
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
@@ -118,13 +102,39 @@ const VehicleMileage = () => {
     setVehicles(newVehicles)
   }
 
-  const updateMileageFromFile = (mileage: Array<string>) => {}
+  const handleFileDownload = async () => {
+    /*  const vehiclePermNoArray = getValues
+    const today = new Date()
+    downloadFile(`magnskraning_kilometrastodu-${formatDate(today)}`, [
+      'bingbong'],
+    [[]]
+    ])*/
+  }
 
   const handleFileUploadButtonClick = () => {
     console.log('click file upload')
     if (inputRef.current) {
       inputRef.current.click()
     }
+  }
+
+  const updateVehicleStatus = async (
+    status: SubmissionState,
+    vehicleId: string,
+  ) => {
+    const newVehicles = vehicles.map((v) => {
+      if (v.vehicleId === vehicleId) {
+        return {
+          ...v,
+          submissionStatus: status,
+        }
+      } else return v
+    })
+    setVehicles(newVehicles)
+  }
+
+  const updateVehicles = async (newVehicles: Array<VehicleType>) => {
+    setVehicles(newVehicles)
   }
 
   return (
@@ -252,14 +262,13 @@ const VehicleMileage = () => {
           />
         </Box>
       </Box>
-      <VehicleBulkMileageTable />
-      <FocusableBox marginTop={2} display="flex">
-        <Box marginLeft="auto">
-          <Button onClick={() => handleBulkSubmit()}>
-            {formatMessage(messages.saveAllVisible)}
-          </Button>
-        </Box>
-      </FocusableBox>
+
+      <VehicleBulkMileageTable
+        updateVehicleStatus={updateVehicleStatus}
+        updateVehicles={updateVehicles}
+        vehicles={vehicles}
+      />
+
       {totalPages > 1 && (
         <Pagination
           page={page}
@@ -279,4 +288,4 @@ const VehicleMileage = () => {
   )
 }
 
-export default VehicleMileage
+export default VehicleBulkMileage

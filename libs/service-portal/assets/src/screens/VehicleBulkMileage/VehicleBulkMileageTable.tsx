@@ -1,4 +1,4 @@
-import { Table as T, Box } from '@island.is/island-ui/core'
+import { Table as T, Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   ExpandHeader,
@@ -6,19 +6,113 @@ import {
   formatDate,
 } from '@island.is/service-portal/core'
 import { vehicleMessage } from '../../lib/messages'
+import { useCallback, useMemo } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
+import { SubmissionState, VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
-import { useVehicleBulkMileageContext } from './VehicleBulkMileageContext'
-import { useMemo } from 'react'
 
-const VehicleBulkMileageTable = () => {
+interface FormData {
+  [key: string]: number
+}
+
+interface Props {
+  vehicles: Array<VehicleType>
+  updateVehicles: (newVehicles: Array<VehicleType>) => void
+  updateVehicleStatus: (status: SubmissionState, vehicleId: string) => void
+}
+
+const VehicleBulkMileageTable = ({
+  vehicles,
+  updateVehicles,
+  updateVehicleStatus,
+}: Props) => {
   const { formatMessage } = useLocale()
-  const { vehicles } = useVehicleBulkMileageContext()
+
+  const methods = useForm<FormData>()
+
+  const getValueFromForm = async (
+    formFieldId: string,
+    skipEmpty = false,
+  ): Promise<number | undefined> => {
+    const value = methods.getValues(formFieldId)
+    if (!value && skipEmpty) {
+      return
+    }
+    if (await methods.trigger(formFieldId)) {
+      console.log('validation success')
+      return value
+    }
+    // -1 if validation failure
+    return -1
+  }
+
+  const onRowPost = async (vehicleId: string) => {
+    const formValue = await getValueFromForm(vehicleId)
+    if (formValue && formValue > 0) {
+      //post stuff
+      updateVehicleStatus('success', vehicleId)
+    } else {
+      updateVehicleStatus('failure', vehicleId)
+    }
+  }
+
+  const onRowBulkPost = async (vehicleId: string) => {
+    const formValue = await getValueFromForm(vehicleId, true)
+    if (!formValue) {
+      //no value, nothing to do
+      updateVehicleStatus('waiting-idle', vehicleId)
+    } else if (formValue && formValue > 0) {
+      //post
+      updateVehicleStatus('waiting-success', vehicleId)
+    } else {
+      //post
+      updateVehicleStatus('waiting-failure', vehicleId)
+    }
+  }
+
+  const onRowBulkPostComplete = async (vehicleId: string) => {
+    const formKeys = Object.keys(methods.getValues())
+    const vehicleFormKeyIndex = formKeys.indexOf(vehicleId)
+
+    if (vehicleFormKeyIndex < 0) {
+      console.error('vehicle not found. Should not happen')
+      return
+    }
+    if (vehicleFormKeyIndex === formKeys.length - 1) {
+      const newVehicles = vehicles.map((v) => {
+        if (v.submissionStatus !== 'idle') {
+          return {
+            ...v,
+            submissionStatus: 'idle' as const,
+          }
+        }
+        return v
+      })
+      updateVehicles(newVehicles)
+    }
+
+    const nextVehicleFormKeyIndex = vehicleFormKeyIndex + 1
+    updateVehicleStatus('submit-all', formKeys[nextVehicleFormKeyIndex])
+  }
+
+  const onBulkPostClick = async () => {
+    const firstVehicleId = Object.keys(methods.getValues())[0]
+    updateVehicleStatus('submit-all', firstVehicleId)
+  }
+
+  const onRowSave = async (vehicleId: string) => {
+    onRowPost(vehicleId)
+  }
 
   const rows = useMemo(() => {
     return vehicles.map((item) => (
       <VehicleBulkMileageRow
         key={`vehicle-row-${item.vehicleId}`}
-        vehicleId={item.vehicleId}
+        vehicle={item}
+        onSave={onRowSave}
+        onPost={onRowPost}
+        onBulkPost={onRowBulkPost}
+        onBulkPostComplete={onRowBulkPostComplete}
       >
         <NestedFullTable
           headerArray={[
@@ -41,21 +135,34 @@ const VehicleBulkMileageTable = () => {
   }, [formatMessage, vehicles])
 
   return (
-    <Box>
-      <T.Table>
-        <ExpandHeader
-          data={[
-            { value: '', printHidden: true },
-            { value: formatMessage(vehicleMessage.type) },
-            { value: formatMessage(vehicleMessage.permno) },
-            { value: formatMessage(vehicleMessage.lastRegistration) },
-            { value: formatMessage(vehicleMessage.odometer) },
-            { value: '', printHidden: true },
-          ]}
-        />
-        <T.Body>{rows}</T.Body>
-      </T.Table>
-    </Box>
+    <>
+      <Box>
+        <FormProvider {...methods}>
+          <form>
+            <T.Table>
+              <ExpandHeader
+                data={[
+                  { value: '', printHidden: true },
+                  { value: formatMessage(vehicleMessage.type) },
+                  { value: formatMessage(vehicleMessage.permno) },
+                  { value: formatMessage(vehicleMessage.lastRegistration) },
+                  { value: formatMessage(vehicleMessage.odometer) },
+                  { value: '', printHidden: true },
+                ]}
+              />
+              <T.Body>{rows}</T.Body>
+            </T.Table>
+          </form>
+        </FormProvider>
+      </Box>
+      <Box marginTop={2} display="flex">
+        <Box marginLeft="auto">
+          <Button onClick={() => onBulkPostClick()}>
+            {formatMessage(vehicleMessage.saveAllVisible)}
+          </Button>
+        </Box>
+      </Box>
+    </>
   )
 }
 

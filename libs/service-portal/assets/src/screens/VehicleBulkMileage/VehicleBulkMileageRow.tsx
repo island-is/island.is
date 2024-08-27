@@ -1,258 +1,134 @@
 import { Box } from '@island.is/island-ui/core'
 import { ExpandRow, formatDate } from '@island.is/service-portal/core'
-import { ReactNode, useEffect, useMemo } from 'react'
+import { ReactNode, useEffect } from 'react'
 import * as styles from './VehicleBulkMileage.css'
 import { VehicleBulkMileageSaveButton } from './VehicleBulkMileageSaveButton'
 import { useLocale } from '@island.is/localization'
 import { vehicleMessage as messages } from '../../lib/messages'
 import { InputController } from '@island.is/shared/form-fields'
-import { useForm } from 'react-hook-form'
-import { SubmissionState } from './types'
+import { useFormContext } from 'react-hook-form'
+import { VehicleType } from './types'
 import { isReadDateToday } from '../../utils/readDate'
-import { useVehicleBulkMileageContext } from './VehicleBulkMileageContext'
 
 interface Props {
-  vehicleId: string
+  vehicle: VehicleType
+  onPost: (vehicleId: string) => void
+  onBulkPost: (vehicleId: string) => void
+  onSave: (vehicleId: string) => void
+  onBulkPostComplete: (vehicleId: string) => void
   children?: ReactNode
 }
 
-interface FormData {
-  mileageInput: number
-}
-
-export const VehicleBulkMileageRow = ({ vehicleId, children }: Props) => {
+export const VehicleBulkMileageRow = ({
+  vehicle,
+  children,
+  onSave,
+  onPost,
+  onBulkPost,
+  onBulkPostComplete,
+}: Props) => {
   const { formatMessage } = useLocale()
-
-  const { setVehicles, vehicles } = useVehicleBulkMileageContext()
-
-  const vehicle = useMemo(() => {
-    const vehicleIndex = vehicles.findIndex((v) => v.vehicleId === vehicleId)
-    return {
-      vehicleData: vehicles[vehicleIndex],
-      vehicleIndex,
-    }
-  }, [vehicleId, vehicles])
 
   const {
     control,
-    handleSubmit,
-    getValues,
-    trigger,
-    setValue,
     formState: { errors },
-  } = useForm<FormData>()
+  } = useFormContext()
+
+  const onSaveButtonClick = () => {
+    onSave(vehicle.vehicleId)
+  }
 
   useEffect(() => {
-    const uploadedMileage = vehicle.vehicleData.mileageUploadedFromFile
-    if (uploadedMileage) {
-      setValue('mileageInput', uploadedMileage, {
-        shouldValidate: true,
-        shouldDirty: true,
-      })
-    }
-  }, [vehicle.vehicleData.mileageUploadedFromFile, setValue])
-
-  useEffect(() => {
-    switch (vehicle?.vehicleData.submissionStatus) {
+    switch (vehicle?.submissionStatus) {
       case 'submit-all':
-        postMileageInBulk()
+        onBulkPost(vehicle.vehicleId)
         return
       case 'submit':
-        postMileage()
+        onPost(vehicle.vehicleId)
         return
       case 'waiting-success':
-        updateNextVehicle('waiting-success')
-        return
+      case 'waiting-idle':
       case 'waiting-failure':
-        console.log('in waiting failure')
-        updateNextVehicle('waiting-failure')
+        onBulkPostComplete(vehicle.vehicleId)
         return
       default:
         return
     }
-  }, [vehicle?.vehicleData?.submissionStatus])
-
-  if (!vehicle) {
-    return null
-  }
-
-  const updateNextVehicle = (currentSubmissionState: SubmissionState) => {
-    if (vehicle.vehicleIndex + 1 < vehicles.length) {
-      const nextVehicleId = vehicles[vehicle.vehicleIndex + 1].vehicleId
-      const newVehicles = vehicles.map((v) => {
-        if (v.vehicleId === nextVehicleId) {
-          return {
-            ...v,
-            submissionStatus: 'submit-all' as const,
-          }
-        } else if (v.vehicleId === vehicle.vehicleData.vehicleId) {
-          return {
-            ...v,
-            submissionStatus:
-              currentSubmissionState === 'waiting-success'
-                ? ('success' as const)
-                : ('failure' as const),
-          }
-        } else return v
-      })
-      setVehicles(newVehicles)
-    }
-  }
-
-  const postMileageInBulk = async () => {
-    if (vehicles.length === 1) {
-      await postMileage(
-        undefined,
-        () => updateVehicleSubmissionStatus('success'),
-        () => updateVehicleSubmissionStatus('failure'),
-      )
-      return
-    }
-
-    const lastVehicle = vehicle.vehicleIndex >= vehicles.length - 1
-
-    await postMileage(
-      undefined,
-      () =>
-        updateVehicleSubmissionStatus(
-          lastVehicle ? 'success' : 'waiting-success',
-        ),
-      () =>
-        updateVehicleSubmissionStatus(
-          lastVehicle ? 'failure' : 'waiting-failure',
-        ),
-    )
-  }
-
-  const updateVehicleSubmissionStatus = (
-    status: SubmissionState,
-    vehicleIndex: number = vehicle.vehicleIndex,
-  ) => {
-    const vehicleId = vehicles[vehicleIndex].vehicleId
-    const newVehicles = vehicles.map((v) => {
-      if (v.vehicleId === vehicleId) {
-        return {
-          ...v,
-          submissionStatus: status,
-        }
-      } else return v
-    })
-    setVehicles(newVehicles)
-  }
-
-  const postMileage = async (
-    mileage?: number,
-    successCallback?: () => void,
-    failureCallback?: () => void,
-  ) => {
-    const mileageToPost: number = mileage
-      ? mileage
-      : (await trigger('mileageInput'))
-      ? getValues('mileageInput')
-      : -1
-
-    if (mileageToPost < 0) {
-      console.log('validation failed')
-      failureCallback && failureCallback()
-      return
-    }
-
-    successCallback && successCallback()
-    return
-    /*
-      await post etc
-      if (success) {
-      return 'success'
-      } else {
-      return 'failure'
-      }
-      */
-  }
+  }, [vehicle?.submissionStatus, vehicle.vehicleId])
 
   return (
     <ExpandRow
-      key={`bulk-mileage-vehicle-row-${vehicleId}`}
+      key={`bulk-mileage-vehicle-row-${vehicle.vehicleId}`}
       data={[
         {
-          value: vehicle.vehicleData.vehicleType,
+          value: vehicle.vehicleType,
         },
         {
-          value: vehicle.vehicleData.vehicleId,
+          value: vehicle.vehicleId,
         },
         {
-          value: formatDate(vehicle.vehicleData.lastRegistrationDate),
+          value: formatDate(vehicle.lastRegistrationDate),
         },
         {
           value: (
-            <form>
-              <Box className={styles.mwInput}>
-                <InputController
-                  control={control}
-                  id={`mileageInput`}
-                  name={`mileageInput`}
-                  type="number"
-                  suffix=" km"
-                  thousandSeparator
-                  size="xs"
-                  maxLength={12}
-                  defaultValue={''}
-                  error={errors?.mileageInput?.message}
-                  rules={{
-                    validate: {
-                      value: (value: number) => {
-                        // Input number must be higher than the highest known mileage registration value
-                        if (vehicle.vehicleData.registrationHistory) {
-                          // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
-                          const confirmedRegistrations =
-                            vehicle.vehicleData.registrationHistory.filter(
-                              (item) => {
-                                if (item.date) {
-                                  const isIslandIsReadingToday =
-                                    item.origin === 'ISLAND-IS' &&
-                                    isReadDateToday(new Date(item.date))
-                                  return !isIslandIsReadingToday
-                                }
-                                return true
-                              },
-                            )
+            <Box className={styles.mwInput}>
+              <InputController
+                control={control}
+                id={vehicle.vehicleId}
+                name={vehicle.vehicleId}
+                type="number"
+                suffix=" km"
+                thousandSeparator
+                size="xs"
+                maxLength={12}
+                defaultValue={''}
+                error={errors?.[vehicle.vehicleId]?.message as string}
+                rules={{
+                  validate: {
+                    value: (value: number) => {
+                      // Input number must be higher than the highest known mileage registration value
+                      if (vehicle.registrationHistory) {
+                        // If we're in editing mode, we want to find the highest confirmed registered number, ignoring all Island.is registrations from today.
+                        const confirmedRegistrations =
+                          vehicle.registrationHistory.filter((item) => {
+                            if (item.date) {
+                              const isIslandIsReadingToday =
+                                item.origin === 'ISLAND-IS' &&
+                                isReadDateToday(new Date(item.date))
+                              return !isIslandIsReadingToday
+                            }
+                            return true
+                          })
 
-                          const detailArray = vehicle.vehicleData
-                            .isCurrentlyEditing
-                            ? confirmedRegistrations
-                            : [...vehicle.vehicleData.registrationHistory]
+                        const detailArray = vehicle.isCurrentlyEditing
+                          ? confirmedRegistrations
+                          : [...vehicle.registrationHistory]
 
-                          const latestRegistration = detailArray[0].mileage ?? 0
-                          if (latestRegistration > value) {
-                            return formatMessage(messages.mileageInputTooLow)
-                          }
+                        const latestRegistration = detailArray[0].mileage ?? 0
+                        if (latestRegistration > value) {
+                          return formatMessage(messages.mileageInputTooLow)
                         }
-                      },
+                      }
                     },
-                    minLength: {
-                      value: 1,
-                      message: formatMessage(messages.mileageInputMinLength),
-                    },
-                    required: {
-                      value: true,
-                      message: formatMessage(messages.mileageInputMinLength),
-                    },
-                  }}
-                />
-              </Box>
-            </form>
+                  },
+                  minLength: {
+                    value: 1,
+                    message: formatMessage(messages.mileageInputMinLength),
+                  },
+                  required: {
+                    value: true,
+                    message: formatMessage(messages.mileageInputMinLength),
+                  },
+                }}
+              />
+            </Box>
           ),
         },
         {
           value: (
             <VehicleBulkMileageSaveButton
-              submissionState={vehicle.vehicleData.submissionStatus}
-              onClick={handleSubmit((data) =>
-                postMileage(
-                  data.mileageInput,
-                  () => updateVehicleSubmissionStatus('success'),
-                  () => updateVehicleSubmissionStatus('failure'),
-                ),
-              )}
+              submissionState={vehicle.submissionStatus}
+              onClick={onSaveButtonClick}
             />
           ),
         },
