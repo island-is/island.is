@@ -1,8 +1,10 @@
 import { Body, Controller, Param, Post, ParseUUIDPipe } from '@nestjs/common'
 import type { Callback } from '@island.is/api/domains/payment'
 import { PaymentService } from './payment.service'
+import { ApiBearerAuth } from '@nestjs/swagger'
 
 @Controller()
+@ApiBearerAuth()
 export class PaymentCallbackController {
   constructor(private readonly paymentService: PaymentService) {}
 

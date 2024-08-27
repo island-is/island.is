@@ -1,17 +1,14 @@
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { Controller, Get, Param, UseGuards } from '@nestjs/common'
-import { ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import { ApiBearerAuth, ApiHeader, ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import { DocumentProviderService } from '../document-provider.service'
 import { Changelog } from '../models/changelog.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.documentProvider)
 @ApiTags('changelogs')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token authorization',
-})
+@ApiBearerAuth()
 @Controller('changelogs')
 export class ChangelogController {
   constructor(
