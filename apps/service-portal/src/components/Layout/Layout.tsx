@@ -33,7 +33,7 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
 
   useEffect(() => {
     console.log('scrolling: window.scrollY = ', window.scrollY)
-  },[window.scrollY])
+  }, [window.scrollY])
   return (
     <div>
       <AuthOverlay />

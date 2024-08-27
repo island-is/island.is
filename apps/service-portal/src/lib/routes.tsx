@@ -10,12 +10,14 @@ export const createRoutes = (moduleRoutes: RouteObject[]): RouteObject[] => [
     element: (
       <>
         <Root />
-        <ScrollRestoration getKey={(location, matches) => {
-          console.log(location.key)
-          console.log(location.pathname)
-    // default behavior
-    return location.key;
-  }}/>
+        <ScrollRestoration
+          getKey={(location, matches) => {
+            console.log(location.key)
+            console.log(location.pathname)
+            // default behavior
+            return location.key
+          }}
+        />
       </>
     ),
     children: moduleRoutes,
