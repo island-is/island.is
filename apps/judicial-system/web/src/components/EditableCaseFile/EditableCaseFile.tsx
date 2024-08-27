@@ -65,9 +65,11 @@ const EditableCaseFile: FC<Props> = (props) => {
       onRename(caseFile.id || '', trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
       setEditedDisplayDate(formatDate(caseFile.displayDate) ?? '')
-    }
 
-    setIsEditing(false)
+      return
+    } else {
+      setIsEditing(false)
+    }
   }
 
   const displayDate = useMemo(() => {
