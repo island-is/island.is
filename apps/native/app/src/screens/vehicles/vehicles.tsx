@@ -13,7 +13,6 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/moving.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   ListVehiclesQuery,
   useListVehiclesQuery,
@@ -114,12 +113,6 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
     refetching,
   })
 
-  // Get feature flag for mileage
-  const isMileageEnabled = useFeatureFlag(
-    'isServicePortalVehicleMileagePageEnabled',
-    false,
-  )
-
   // What to do when refreshing
   const onRefresh = useCallback(() => {
     try {
@@ -154,11 +147,9 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
         return <SkeletonItem />
       }
 
-      return (
-        <VehicleItem mileage={isMileageEnabled} item={item} index={index} />
-      )
+      return <VehicleItem item={item} index={index} />
     },
-    [isMileageEnabled],
+    [],
   )
 
   // Extract key of data

@@ -41,7 +41,7 @@ export const ApplicationsModule = React.memo(
     const count = applications.length
     const { openBrowser } = useBrowser()
 
-    const children = applications.slice(0, 5).map((application) => (
+    const children = applications.slice(0, 3).map((application) => (
       <StatusCard
         key={application.id}
         title={application.name ?? ''}

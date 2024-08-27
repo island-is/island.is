@@ -169,6 +169,7 @@ export const en: TranslatedMessages = {
   'home.applicationsStatus': 'Applications',
   'home.allApplications': 'Digital applications',
   'home.inbox': 'Latest in inbox',
+  'home.vehicles': 'Vehicles',
   'home.welcomeText': 'Hi',
   'home.goodDay': 'Good day,',
   'home.onboardingModule.card1':

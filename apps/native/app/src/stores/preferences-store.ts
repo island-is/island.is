@@ -25,6 +25,7 @@ export interface PreferencesStore extends State {
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
+  homeScreenEnableVehicleWidget: boolean
   lastUsedPasskey: number
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
@@ -56,6 +57,7 @@ const defaultPreferences = {
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
+  homeScreenEnableVehicleWidget: true,
   lastUsedPasskey: 0,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,

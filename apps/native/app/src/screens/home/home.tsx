@@ -34,6 +34,7 @@ import { ApplicationsModule } from './applications-module'
 import { HelloModule } from './hello-module'
 import { InboxModule } from './inbox-module'
 import { OnboardingModule } from './onboarding-module'
+import { VehicleModule } from './vehicle-module'
 import { usePreferencesStore } from '../../stores/preferences-store'
 
 interface ListItem {
@@ -106,6 +107,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
+  const { homeScreenEnableVehicleWidget } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery()
   const inboxRes = useListDocumentsQuery({
@@ -184,6 +186,14 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         />
       ),
     },
+    ...(homeScreenEnableVehicleWidget
+      ? [
+          {
+            id: 'vehicles',
+            component: <VehicleModule />,
+          },
+        ]
+      : []),
   ].filter(Boolean) as Array<{
     id: string
     component: React.JSX.Element
