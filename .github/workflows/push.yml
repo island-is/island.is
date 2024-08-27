@@ -618,9 +618,6 @@ jobs:
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
           docker run --rm "${DOCKER_REGISTRY}helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
           echo 'EOF' >> "$GITHUB_ENV"
-          echo "-------"
-          echo docker run --rm "${DOCKER_REGISTRY}helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME"
-          echo "-------"
         env:
           PUBLISH: 'true'
 
