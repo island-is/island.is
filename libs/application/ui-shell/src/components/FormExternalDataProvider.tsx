@@ -37,8 +37,6 @@ import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
-
-
 const ItemHeader: React.FC<
   React.PropsWithChildren<{
     title: FormText
@@ -212,182 +210,184 @@ const FormExternalDataProvider: FC<
   formValue,
   errors,
 }) => {
-    const { formatMessage, lang: locale } = useLocale()
-    const { setValue, clearErrors } = useFormContext()
-    const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
-      onCompleted(responseData: UpdateApplicationExternalDataResponse) {
-        addExternalData(getExternalDataFromResponse(responseData))
-      },
-      onError: (e) => {
-        return handleServerError(e, formatMessage)
-      },
-    })
+  const { formatMessage, lang: locale } = useLocale()
+  const { setValue, clearErrors } = useFormContext()
+  const [updateExternalData] = useMutation(UPDATE_APPLICATION_EXTERNAL_DATA, {
+    onCompleted(responseData: UpdateApplicationExternalDataResponse) {
+      addExternalData(getExternalDataFromResponse(responseData))
+    },
+    onError: (e) => {
+      return handleServerError(e, formatMessage)
+    },
+  })
 
-    const {
-      id,
-      dataProviders,
-      otherPermissions,
-      subTitle,
-      description,
-      checkboxLabel,
-    } = externalDataProvider
-    const relevantDataProviders = dataProviders.filter((p) => p.action)
+  const {
+    id,
+    dataProviders,
+    otherPermissions,
+    subTitle,
+    description,
+    checkboxLabel,
+  } = externalDataProvider
+  const relevantDataProviders = dataProviders.filter((p) => p.action)
 
-    const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
+  const [suppressProviderErrors, setSuppressProviderErrors] = useState(true)
 
-    // If id is undefined then the error won't be attached to the field with id
-    const error = getValueViaPath(errors, id ?? '', undefined) as
-      | string
-      | undefined
+  // If id is undefined then the error won't be attached to the field with id
+  const error = getValueViaPath(errors, id ?? '', undefined) as
+    | string
+    | undefined
 
-    const activateBeforeSubmitCallback = (checked: boolean) => {
-      if (checked) {
-        setBeforeSubmitCallback(async () => {
-          const response = await updateExternalData({
-            variables: {
-              input: {
-                id: applicationId,
-                dataProviders: relevantDataProviders.map(({ action, order }) => ({
-                  actionId: action,
-                  order,
-                })),
-              },
-              locale,
+  const activateBeforeSubmitCallback = (checked: boolean) => {
+    if (checked) {
+      setBeforeSubmitCallback(async () => {
+        const response = await updateExternalData({
+          variables: {
+            input: {
+              id: applicationId,
+              dataProviders: relevantDataProviders.map(({ action, order }) => ({
+                actionId: action,
+                order,
+              })),
             },
-          })
-
-          setSuppressProviderErrors(false)
-          if (
-            response &&
-            response.data &&
-            verifyExternalData(
-              getExternalDataFromResponse(response.data),
-              relevantDataProviders,
-            )
-          ) {
-            return [true, null]
-          }
-
-          return [false, '']
+            locale,
+          },
         })
-      } else {
-        setBeforeSubmitCallback(null)
-      }
+
+        setSuppressProviderErrors(false)
+        if (
+          response &&
+          response.data &&
+          verifyExternalData(
+            getExternalDataFromResponse(response.data),
+            relevantDataProviders,
+          )
+        ) {
+          return [true, null]
+        }
+
+        return [false, '']
+      })
+    } else {
+      setBeforeSubmitCallback(null)
     }
+  }
 
-    useEffect(() => {
-      if (!id) return
-      setValue(id, false)
-    }, [id, setValue])
+  useEffect(() => {
+    if (!id) return
+    setValue(id, false)
+  }, [id, setValue])
 
-    return (
-      <Box>
-        <Box marginTop={2} marginBottom={5}>
-          <Box display="flex" alignItems="center" justifyContent="flexStart">
-            <Box marginRight={1}>
-              <Icon
-                icon="fileTrayFull"
-                size="medium"
-                color="blue400"
-                type="outline"
-              />
-            </Box>
-            <Text variant="h4">
-              {subTitle
-                ? formatMessage(subTitle)
-                : formatMessage(coreMessages.externalDataTitle)}
-            </Text>
+  return (
+    <Box>
+      <Box marginTop={2} marginBottom={5}>
+        <Box display="flex" alignItems="center" justifyContent="flexStart">
+          <Box marginRight={1}>
+            <Icon
+              icon="fileTrayFull"
+              size="medium"
+              color="blue400"
+              type="outline"
+            />
           </Box>
-          {description && (
-            <Text marginTop={4}>
-              <Markdown>{formatMessage(description)}</Markdown>
-            </Text>
-          )}
+          <Text variant="h4">
+            {subTitle
+              ? formatMessage(subTitle)
+              : formatMessage(coreMessages.externalDataTitle)}
+          </Text>
         </Box>
-        <Box marginBottom={5}>
-          {dataProviders.map((provider) => (
-            <ProviderItem
+        {description && (
+          <Text marginTop={4}>
+            <Markdown>{formatMessage(description)}</Markdown>
+          </Text>
+        )}
+      </Box>
+      <Box marginBottom={5}>
+        {dataProviders.map((provider) => (
+          <ProviderItem
+            application={application}
+            provider={provider}
+            key={provider.id}
+            suppressProviderError={suppressProviderErrors}
+            dataProviderResult={externalData[provider.id]}
+          />
+        ))}
+        {otherPermissions &&
+          otherPermissions.map((permission) => (
+            <PermissionItem
               application={application}
-              provider={provider}
-              key={provider.id}
-              suppressProviderError={suppressProviderErrors}
-              dataProviderResult={externalData[provider.id]}
+              permission={permission}
+              key={permission.id}
             />
           ))}
-          {otherPermissions &&
-            otherPermissions.map((permission) => (
-              <PermissionItem
-                application={application}
-                permission={permission}
-                key={permission.id}
-              />
-            ))}
-        </Box>
-        <Controller
-          name={`${id}`}
-          defaultValue={getValueViaPath(formValue, id as string, false)}
-          rules={{ required: true }}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <Checkbox
-                large={true}
-                onChange={(e) => {
-                  const isChecked = e.target.checked
-                  clearErrors(id)
-                  setValue(id as string, isChecked)
-                  onChange(isChecked)
-                  activateBeforeSubmitCallback(isChecked)
-                }}
-                checked={value}
-                hasError={error !== undefined}
-                errorMessage={id ? (errors[id] as string) : undefined}
-                backgroundColor="blue"
-                dataTestId="agree-to-data-providers"
-                name={`${id}`}
-                label={
-                  <Markdown>
-                    {checkboxLabel
-                      ? formatMessage(checkboxLabel)
-                      : formatMessage(coreMessages.externalDataAgreement)}
-                  </Markdown>
-                }
-                value={id}
-              />
-            )
-          }}
-        />
-        {enableMockPayment && (isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')) && (<Controller
-          name={MOCKPAYMENT}
-          defaultValue={getValueViaPath(formValue, MOCKPAYMENT as string, false)}
-          render={({ field: { onChange, value } }) => {
-            return (
-              <Box marginTop={2}>
-                <Checkbox
-                large={true}
-                onChange={(e) => {
-
-                  const isChecked = e.target.checked
-                  clearErrors(MOCKPAYMENT)
-                  setValue(MOCKPAYMENT as string, isChecked)
-                  onChange(isChecked)
-                }}
-                checked={value}
-                backgroundColor="blue"
-                dataTestId="enable-mock-payment"
-                name={MOCKPAYMENT}
-                label={
-                  <Markdown>
-                    {'Enable mock payment'}
-                  </Markdown>
-                }
-                value={MOCKPAYMENT}
-              />
-              </Box>
-            )
-          }}
-        />)}
       </Box>
-    )
-  }
+      <Controller
+        name={`${id}`}
+        defaultValue={getValueViaPath(formValue, id as string, false)}
+        rules={{ required: true }}
+        render={({ field: { onChange, value } }) => {
+          return (
+            <Checkbox
+              large={true}
+              onChange={(e) => {
+                const isChecked = e.target.checked
+                clearErrors(id)
+                setValue(id as string, isChecked)
+                onChange(isChecked)
+                activateBeforeSubmitCallback(isChecked)
+              }}
+              checked={value}
+              hasError={error !== undefined}
+              errorMessage={id ? (errors[id] as string) : undefined}
+              backgroundColor="blue"
+              dataTestId="agree-to-data-providers"
+              name={`${id}`}
+              label={
+                <Markdown>
+                  {checkboxLabel
+                    ? formatMessage(checkboxLabel)
+                    : formatMessage(coreMessages.externalDataAgreement)}
+                </Markdown>
+              }
+              value={id}
+            />
+          )
+        }}
+      />
+      {enableMockPayment &&
+        (isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')) && (
+          <Controller
+            name={MOCKPAYMENT}
+            defaultValue={getValueViaPath(
+              formValue,
+              MOCKPAYMENT as string,
+              false,
+            )}
+            render={({ field: { onChange, value } }) => {
+              return (
+                <Box marginTop={2}>
+                  <Checkbox
+                    large={true}
+                    onChange={(e) => {
+                      const isChecked = e.target.checked
+                      clearErrors(MOCKPAYMENT)
+                      setValue(MOCKPAYMENT as string, isChecked)
+                      onChange(isChecked)
+                    }}
+                    checked={value}
+                    backgroundColor="blue"
+                    dataTestId="enable-mock-payment"
+                    name={MOCKPAYMENT}
+                    label={<Markdown>{'Enable mock payment'}</Markdown>}
+                    value={MOCKPAYMENT}
+                  />
+                </Box>
+              )
+            }}
+          />
+        )}
+    </Box>
+  )
+}
 
 export default FormExternalDataProvider
