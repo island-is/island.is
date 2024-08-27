@@ -42,7 +42,9 @@ export const buildHistoryItems = (
                   onClick={openApplication}
                   icon="pencil"
                 >
-                  {formatMessage(coreMessages.cardButtonDraft)}
+                  {application.actionCard.pendingAction.button
+                    ? formatMessage(application.actionCard.pendingAction.button)
+                    : formatMessage(coreMessages.cardButtonDraft)}
                 </Button>
               </Box>
             ) : undefined
