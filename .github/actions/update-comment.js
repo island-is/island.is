@@ -12,6 +12,7 @@ module.exports = async ({ github, context, comment }) => {
   )
   let commentId
   console.log(`Looking for a comment to update on this PR`)
+  console.log(comment)
   for await (const comments of runsIterator) {
     for (const comment of comments.data) {
       if (comment.body?.startsWith('Affected services are: ')) {
