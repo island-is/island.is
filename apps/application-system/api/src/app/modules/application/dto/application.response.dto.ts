@@ -41,6 +41,11 @@ class PendingAction {
   @Expose()
   @IsString()
   content?: string
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  button?: string
 }
 
 class History {
@@ -96,6 +101,11 @@ class ActionCardMetaData {
   @Expose()
   @IsNumber()
   draftTotalSteps?: number
+
+  @ApiPropertyOptional()
+  @Expose()
+  @IsString()
+  historyButton?: string
 }
 
 export class BaseApplicationResponseDto {
