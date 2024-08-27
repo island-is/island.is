@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { toast, UploadFile, UploadFileStatus } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile,
@@ -279,7 +279,7 @@ const useS3Upload = (caseId: string) => {
     ) => {
       const promises = files.map(async (file) => {
         try {
-          updateFile({ ...file, name: file.name, status: 'uploading' })
+          updateFile({ ...file, status: 'uploading' })
 
           const presignedPost = await getPresignedPost(file)
 
@@ -320,7 +320,7 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleUploadFromPolice = useCallback(
-    async (
+    (
       files: TUploadFile[],
       callback: (file: TUploadFile, newId?: string) => void,
     ) => {
@@ -369,13 +369,13 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleRetry = useCallback(
-    async (
+    (
       file: TUploadFile,
       callback: (file: TUploadFile, newId?: string) => void,
     ) => {
       callback({ ...file, percent: 1, status: 'uploading' })
 
-      return await handleUpload([file], callback)
+      return handleUpload([file], callback)
     },
     [handleUpload],
   )
