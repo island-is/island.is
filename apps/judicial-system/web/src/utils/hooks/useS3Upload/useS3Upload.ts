@@ -91,9 +91,8 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
 
   const addUploadFiles = (
     files: File[],
-    category?: CaseFileCategory,
-    status?: UploadFileStatus,
-    policeCaseNumber?: string,
+    overRides?: Partial<TUploadFile>,
+    setUserGeneratedFilename = false,
   ) => {
     // We generate an id for each file so that we find the file again when
     // updating the file's progress and onRetry.
@@ -104,10 +103,9 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       type: file.type,
       size: file.size,
       percent: 0,
-      status,
-      category,
-      policeCaseNumber,
       originalFileObj: file,
+      userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
+      ...overRides,
     }))
 
     setUploadFiles((previous) => [...uploadFiles, ...previous])

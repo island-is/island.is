@@ -322,14 +322,17 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
         )
         .map((caseFile) => {
           return {
+            isDivider: false,
+            isHeading: false,
             id: caseFile.id,
+            category: caseFile.category,
             created: caseFile.created,
             displayText: caseFile.name,
             userGeneratedFilename: caseFile.userGeneratedFilename,
-            isDivider: false,
-            isHeading: false,
-            canOpen: Boolean(caseFile.key),
             displayDate: caseFile.displayDate,
+            canOpen: Boolean(caseFile.key),
+            status: 'done' as UploadFileStatus,
+            canEdit: true,
           }
         }),
     ])

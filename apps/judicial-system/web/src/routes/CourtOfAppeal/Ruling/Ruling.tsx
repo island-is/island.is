@@ -229,7 +229,9 @@ const CourtOfAppealRuling = () => {
               buttonLabel={formatMessage(strings.uploadButtonText)}
               onChange={(files) => {
                 handleUpload(
-                  addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.APPEAL_COURT_RECORD,
+                  }),
                   updateUploadFile,
                 )
               }}
@@ -353,7 +355,9 @@ const CourtOfAppealRuling = () => {
                 buttonLabel={formatMessage(strings.uploadButtonText)}
                 onChange={(files) => {
                   handleUpload(
-                    addUploadFiles(files, CaseFileCategory.APPEAL_RULING),
+                    addUploadFiles(files, {
+                      category: CaseFileCategory.APPEAL_RULING,
+                    }),
                     updateUploadFile,
                   )
                 }}

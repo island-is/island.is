@@ -93,8 +93,8 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[], type: CaseFileCategory) => {
-      addUploadFiles(files, type, 'done')
+    (files: File[], category: CaseFileCategory) => {
+      addUploadFiles(files, { category, status: 'done' })
     },
     [addUploadFiles],
   )
