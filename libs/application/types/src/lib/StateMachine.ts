@@ -77,6 +77,7 @@ export type PendingAction = {
   displayStatus: PendingActionDisplayType
   title?: StaticText
   content?: StaticText
+  button?: StaticText
 }
 
 export type HistoryEventMessage<T extends EventObject = AnyEventObject> = {
@@ -119,6 +120,7 @@ export interface ApplicationStateMeta<
         ) => PendingAction)
     /** @deprecated is generated from status of current state */
     tag?: { label?: StaticText; variant?: ActionCardTag }
+    historyButton?: StaticText
   }
 
   progress?: number
