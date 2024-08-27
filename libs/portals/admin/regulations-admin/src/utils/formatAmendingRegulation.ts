@@ -16,6 +16,19 @@ const removeRegPrefix = (title: string) => {
   return title
 }
 
+const moveMatchingStringsToEnd = (arr: Array<string>) => {
+  const isGildisTaka = (str: string) => {
+    return /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
+      (str || '').toLowerCase(),
+    )
+  }
+
+  const matchingStrings = arr.filter((str) => isGildisTaka(str))
+  const nonMatchingStrings = arr.filter((str) => !isGildisTaka(str))
+
+  return [...nonMatchingStrings, ...matchingStrings]
+}
+
 const removeRegNamePrefix = (name: string) => {
   if (/^0+/.test(name)) {
     return name.replace(/^0+/, '')
@@ -274,8 +287,11 @@ export const formatAmendingRegBody = (
     })
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
+
+      const grMatch = articleTitleNumber.match(/^\d+\. gr\./)
+      const articleTitleDisplay = grMatch ? grMatch[0] : articleTitleNumber
       additionArray.push([
-        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
+        `<p>${articleTitleDisplay} ${regNameDisplay} fellur brott.</p>` as HTMLText,
       ])
     } else if (testGroup.isAddition === true) {
       let prevArticleTitle = ''
@@ -322,7 +338,9 @@ export const formatAmendingBodyWithArticlePrefix = (
 
   const additions = flatten(impactAdditionArray)
 
-  const prependString = additions.map(
+  const returnArray = moveMatchingStringsToEnd(additions)
+
+  const prependString = returnArray.map(
     (item, i) =>
       `<h3 class="article__title">${i + 1}. gr.</h3>${item}` as HTMLText,
   )

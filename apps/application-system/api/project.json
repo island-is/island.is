@@ -83,6 +83,11 @@
             "glob": "*",
             "input": "libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/emailGenerators/assets",
             "output": "./complaints-to-althingi-ombudsman-assets"
+          },
+          {
+            "glob": "*",
+            "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/transfer-of-machine-ownership/emailGenerators/assets",
+            "output": "./aosh-transfer-of-machine-ownership-assets"
           }
         ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",

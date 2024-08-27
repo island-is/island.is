@@ -32,13 +32,13 @@ export const Draft: Form = buildForm({
       children: [],
     }),
     buildSection({
-      id: 'listInformationSection',
+      id: 'signListInformationSection',
       title: m.information,
       children: [
         buildMultiField({
           id: 'listInformation',
-          title: m.listInformationSection,
-          description: m.listInformationDescription,
+          title: m.signListViewTitle,
+          description: m.signListViewDescription,
           children: [
             buildDescriptionField({
               id: 'listHeader',
@@ -48,7 +48,7 @@ export const Draft: Form = buildForm({
             buildTextField({
               id: 'list.name',
               title: m.listName,
-              width: 'full',
+              width: 'half',
               readOnly: true,
               defaultValue: 'Flokkur 1',
             }),
@@ -58,14 +58,6 @@ export const Draft: Form = buildForm({
               width: 'half',
               readOnly: true,
               defaultValue: 'F',
-            }),
-            buildTextField({
-              id: 'list.nationalId',
-              title: m.nationalId,
-              width: 'half',
-              readOnly: true,
-              defaultValue: (application: Application) =>
-                formatNationalId(application.applicant),
             }),
             buildDescriptionField({
               id: 'signeeHeader',

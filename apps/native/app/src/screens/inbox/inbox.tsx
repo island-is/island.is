@@ -35,6 +35,7 @@ import {
   useMarkAllDocumentsAsReadMutation,
   DocumentV2,
   useListDocumentsQuery,
+  useGetDocumentsCategoriesAndSendersQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -42,7 +43,6 @@ import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import { ComponentRegistry } from '../../utils/component-registry'
-import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
 import { isAndroid } from '../../utils/devices'
 import { useApolloClient } from '@apollo/client'
@@ -73,6 +73,7 @@ const TagsWrapper = styled.View`
   margin-top: -4px;
   flex-direction: row;
   gap: ${({ theme }) => theme.spacing[2]}px;
+  flex-wrap: wrap;
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -82,7 +83,6 @@ const { useNavigationOptions, getNavigationOptions } =
         title: {
           text: intl.formatMessage({ id: 'inbox.screenTitle' }),
         },
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
       },
       bottomTab: {
         iconColor: theme.color.blue400,
@@ -154,6 +154,10 @@ type Filters = {
   archived?: boolean
   bookmarked?: boolean
   subjectContains?: string
+  senderNationalId?: string[]
+  categoryIds?: string[]
+  dateFrom?: Date
+  dateTo?: Date
 }
 
 function applyFilters(filters?: Filters) {
@@ -162,6 +166,10 @@ function applyFilters(filters?: Filters) {
     bookmarked: filters?.bookmarked ? true : undefined,
     opened: filters?.opened ? false : undefined,
     subjectContains: filters?.subjectContains ?? '',
+    senderNationalId: filters?.senderNationalId ?? [],
+    categoryIds: filters?.categoryIds ?? [],
+    dateFrom: filters?.dateFrom,
+    dateTo: filters?.dateTo,
   }
 }
 
@@ -169,26 +177,42 @@ export const InboxScreen: NavigationFunctionComponent<{
   opened?: boolean
   archived?: boolean
   bookmarked?: boolean
+  senderNationalId?: string[]
+  categoryIds?: string[]
+  dateFrom?: Date
+  dateTo?: Date
 }> = ({
   componentId,
   opened = false,
   archived = false,
   bookmarked = false,
+  senderNationalId = [],
+  categoryIds = [],
+  dateFrom = undefined,
+  dateTo = undefined,
 }) => {
   useNavigationOptions(componentId)
   const ui = useUiStore()
   const intl = useIntl()
+  const theme = useTheme()
   const scrollY = useRef(new Animated.Value(0)).current
   const flatListRef = useRef<FlatList>(null)
   const client = useApolloClient()
   const [query, setQuery] = useState('')
   const [loadingMore, setLoadingMore] = useState(false)
   const queryString = useThrottleState(query)
-  const theme = useTheme()
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
   const pageRef = useRef(1)
   const loadingTimeout = useRef<ReturnType<typeof setTimeout>>()
+  const isFilterApplied =
+    opened ||
+    archived ||
+    bookmarked ||
+    senderNationalId.length ||
+    categoryIds.length ||
+    dateFrom ||
+    dateTo
 
   const incomingFilters = useMemo(() => {
     return {
@@ -196,8 +220,21 @@ export const InboxScreen: NavigationFunctionComponent<{
       archived,
       bookmarked,
       subjectContains: queryString,
+      senderNationalId,
+      categoryIds,
+      dateTo,
+      dateFrom,
     }
-  }, [opened, archived, bookmarked, queryString])
+  }, [
+    opened,
+    archived,
+    bookmarked,
+    queryString,
+    senderNationalId,
+    categoryIds,
+    dateFrom,
+    dateTo,
+  ])
 
   const [filters, setFilters] = useState(applyFilters(incomingFilters))
 
@@ -206,9 +243,17 @@ export const InboxScreen: NavigationFunctionComponent<{
       input: {
         pageSize: DEFAULT_PAGE_SIZE,
         ...filters,
+        dateFrom: dateFrom?.toISOString(),
+        dateTo: dateTo?.toISOString(),
       },
     },
   })
+
+  const sendersAndCategories = useGetDocumentsCategoriesAndSendersQuery()
+
+  const availableSenders = sendersAndCategories.data?.getDocumentSenders ?? []
+  const availableCategories =
+    sendersAndCategories.data?.getDocumentCategories ?? []
 
   const [markAllAsRead, { loading: markAllAsReadLoading }] =
     useMarkAllDocumentsAsReadMutation({
@@ -243,7 +288,6 @@ export const InboxScreen: NavigationFunctionComponent<{
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
     queryResult: res,
     refetching: refetching || markAllAsReadLoading,
   })
@@ -432,7 +476,8 @@ export const InboxScreen: NavigationFunctionComponent<{
     )
   }
 
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
+  // Fix for a bug in react-native-navigation/react-native where the large title is not visible on iOS with
+  // bottom tabs https://github.com/wix/react-native-navigation/issues/6717
   if (hiddenContent) {
     return null
   }
@@ -484,6 +529,12 @@ export const InboxScreen: NavigationFunctionComponent<{
                     opened,
                     archived,
                     bookmarked,
+                    availableSenders,
+                    availableCategories,
+                    selectedSenders: senderNationalId,
+                    selectedCategories: categoryIds,
+                    dateFrom,
+                    dateTo,
                   })
                 }}
               />
@@ -501,7 +552,7 @@ export const InboxScreen: NavigationFunctionComponent<{
                 onPress={onPressMarkAllAsRead}
               />
             </ListHeaderWrapper>
-            {opened || archived || bookmarked ? (
+            {isFilterApplied ? (
               <TagsWrapper>
                 {opened && (
                   <Tag
@@ -533,6 +584,72 @@ export const InboxScreen: NavigationFunctionComponent<{
                     closable
                     onClose={() =>
                       Navigation.updateProps(componentId, { bookmarked: false })
+                    }
+                  />
+                )}
+                {!!senderNationalId.length &&
+                  senderNationalId.map((senderId) => {
+                    const name = availableSenders.find(
+                      (sender) => sender.id === senderId,
+                    )
+                    return (
+                      <Tag
+                        key={senderId}
+                        title={name?.name?.trim() ?? senderId}
+                        closable
+                        onClose={() =>
+                          Navigation.updateProps(componentId, {
+                            senderNationalId: senderNationalId.filter(
+                              (id) => id !== senderId,
+                            ),
+                          })
+                        }
+                      />
+                    )
+                  })}
+                {!!categoryIds.length &&
+                  categoryIds.map((categoryId) => {
+                    const name = availableCategories.find(
+                      (category) => category.id === categoryId,
+                    )
+                    return (
+                      <Tag
+                        key={categoryId}
+                        title={name?.name ?? categoryId}
+                        closable
+                        onClose={() =>
+                          Navigation.updateProps(componentId, {
+                            categoryIds: categoryIds.filter(
+                              (id) => id !== categoryId,
+                            ),
+                          })
+                        }
+                      />
+                    )
+                  })}
+                {dateFrom && (
+                  <Tag
+                    title={`${intl.formatMessage({
+                      id: 'inbox.filterDateFromLabel',
+                    })} - ${intl.formatDate(dateFrom)}`}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {
+                        dateFrom: undefined,
+                      })
+                    }
+                  />
+                )}
+                {dateTo && (
+                  <Tag
+                    title={`${intl.formatMessage({
+                      id: 'inbox.filterDateToLabel',
+                    })} - ${intl.formatDate(dateTo)}`}
+                    closable
+                    onClose={() =>
+                      Navigation.updateProps(componentId, {
+                        dateTo: undefined,
+                      })
                     }
                   />
                 )}
