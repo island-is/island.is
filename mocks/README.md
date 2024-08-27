@@ -14,7 +14,7 @@ For more in-depth instructions, you can check out the [mockoon site](https://moc
 
 ## Current mocks
 
-Currently, only a capture file for the national registry V2 is included.
+Currently, only a capture file for the accident notification form for Gervimaður Færeyjar on national registry V2 is included.
 
 ## What if I need to call an endpoint that isn't mocked
 

@@ -1,7 +1,7 @@
 {
   "uuid": "0e9cf5cd-5e69-4dc2-bc91-e525de6d7503",
   "lastMigration": 32,
-  "name": "National Registry Service Mock",
+  "name": "Accident Notification Mock",
   "endpointPrefix": "",
   "latency": 0,
   "port": 8081,
