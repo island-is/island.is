@@ -1,6 +1,6 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { EndorsementListOpenTagsEnum } from '../enums/endorsementListOpenTagsEnum'
-import { CacheField } from '@island.is/nest/graphql' // Importing CacheField
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class EndorsementListOpen {

@@ -1,7 +1,7 @@
 import { Field, ObjectType, ID } from '@nestjs/graphql'
 import { EndorsementListOpen } from './endorsementListOpen.model'
 import { EndorsementMetadata } from './endorsementMetadata.model'
-import { CacheField } from '@island.is/nest/graphql' // Importing CacheField
+import { CacheField } from '@island.is/nest/graphql'
 
 @ObjectType()
 export class Endorsement {
