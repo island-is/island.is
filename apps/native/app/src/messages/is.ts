@@ -170,6 +170,7 @@ export const is = {
   'home.allApplications': 'Stafrænar umsóknir',
   'home.inbox': 'Nýjast í pósthólfinu',
   'home.vehicles': 'Ökutæki',
+  'home.airDiscount': 'Loftbrú',
   'home.welcomeText': 'Hæ',
   'home.goodDay': 'Góðan dag,',
   'home.onboardingModule.card1':

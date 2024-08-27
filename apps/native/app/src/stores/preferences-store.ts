@@ -26,6 +26,7 @@ export interface PreferencesStore extends State {
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
   homeScreenEnableVehicleWidget: boolean
+  homeScreenEnableAirDiscountWidget: boolean
   lastUsedPasskey: number
   notificationsNewDocuments: boolean
   notificationsAppUpdates: boolean
@@ -58,6 +59,7 @@ const defaultPreferences = {
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
   homeScreenEnableVehicleWidget: true,
+  homeScreenEnableAirDiscountWidget: true,
   lastUsedPasskey: 0,
   notificationsNewDocuments: true,
   notificationsAppUpdates: true,

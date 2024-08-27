@@ -36,6 +36,7 @@ import { InboxModule } from './inbox-module'
 import { OnboardingModule } from './onboarding-module'
 import { VehicleModule } from './vehicle-module'
 import { usePreferencesStore } from '../../stores/preferences-store'
+import { AirDiscountModule } from './air-discount-module'
 
 interface ListItem {
   id: string
@@ -194,6 +195,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           },
         ]
       : []),
+    { id: 'air-discount', component: <AirDiscountModule /> },
   ].filter(Boolean) as Array<{
     id: string
     component: React.JSX.Element
