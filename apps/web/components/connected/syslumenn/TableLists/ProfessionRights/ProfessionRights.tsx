@@ -113,7 +113,8 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
           dataRows.push([
             item.name ?? '', // Nafn
             item.profession ?? '', // Starf
-            item.nationalId ?? '',
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (item as any).nationalId ?? '', // Kennitala
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -283,7 +284,8 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
                         <T.Data>
                           <Box>
                             <Text variant="small" textAlign="right">
-                              {item.nationalId}
+                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                              {(item as any).nationalId}
                             </Text>
                           </Box>
                         </T.Data>
