@@ -22,6 +22,17 @@ query ListDocuments($input: DocumentsV2DocumentsInput!) {
   }
 }
 
+query GetDocumentsCategoriesAndSenders {
+  getDocumentCategories {
+    id
+    name
+  }
+  getDocumentSenders {
+    id
+    name
+  }
+}
+
 query GetDocument($input: DocumentInput!) {
   documentV2(input: $input) {
     ...ListDocument
