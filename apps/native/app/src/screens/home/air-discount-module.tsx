@@ -7,10 +7,6 @@ import styled, { useTheme } from 'styled-components/native'
 
 import { navigateTo } from '../../lib/deep-linking'
 import { useGetAirDiscountQuery } from '../../graphql/types/schema'
-import {
-  preferencesStore,
-  usePreferencesStore,
-} from '../../stores/preferences-store'
 import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
 
 const Host = styled.View`

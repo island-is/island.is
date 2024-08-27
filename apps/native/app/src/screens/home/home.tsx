@@ -37,6 +37,7 @@ import { OnboardingModule } from './onboarding-module'
 import { VehicleModule } from './vehicle-module'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { AirDiscountModule } from './air-discount-module'
+import { LicenseModule } from './license-module'
 
 interface ListItem {
   id: string
@@ -174,6 +175,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         />
       ),
     },
+    { id: 'licenses', component: <LicenseModule /> },
     {
       id: 'applications',
       component: (
@@ -187,14 +189,10 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
         />
       ),
     },
-    ...(homeScreenEnableVehicleWidget
-      ? [
-          {
-            id: 'vehicles',
-            component: <VehicleModule />,
-          },
-        ]
-      : []),
+    {
+      id: 'vehicles',
+      component: <VehicleModule />,
+    },
     { id: 'air-discount', component: <AirDiscountModule /> },
   ].filter(Boolean) as Array<{
     id: string

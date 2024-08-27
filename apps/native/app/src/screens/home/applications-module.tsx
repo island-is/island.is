@@ -80,7 +80,6 @@ export const ApplicationsModule = React.memo(
       <SafeAreaView
         style={{
           marginHorizontal: theme.spacing[2],
-          marginBottom: theme.spacing[2],
         }}
       >
         <TouchableOpacity onPress={() => navigateTo(`/applications`)}>

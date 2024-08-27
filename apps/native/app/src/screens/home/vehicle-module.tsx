@@ -58,6 +58,10 @@ export const VehicleModule = React.memo(() => {
 
   const count = vehiclesWithMileageRegistration.length ?? 0
 
+  if (count === 0) {
+    return null
+  }
+
   const children = vehiclesWithMileageRegistration
     .slice(0, 3)
     .map((vehicle, index) => (

@@ -171,6 +171,7 @@ export const is = {
   'home.inbox': 'Nýjast í pósthólfinu',
   'home.vehicles': 'Ökutæki',
   'home.airDiscount': 'Loftbrú',
+  'home.licenses': 'Skírteini',
   'home.welcomeText': 'Hæ',
   'home.goodDay': 'Góðan dag,',
   'home.onboardingModule.card1':
