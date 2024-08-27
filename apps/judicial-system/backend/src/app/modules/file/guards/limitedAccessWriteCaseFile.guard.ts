@@ -45,18 +45,16 @@ export class LimitedAccessWriteCaseFileGuard implements CanActivate {
         if (caseFileCategory === CaseFileCategory.DEFENDANT_CASE_FILE) {
           return true
         }
-      } else {
-        if (
-          [
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
-            CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
-            CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
-            CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
-          ].includes(caseFileCategory)
-        ) {
-          return true
-        }
+      } else if (
+        [
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF,
+          CaseFileCategory.DEFENDANT_APPEAL_BRIEF_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT,
+          CaseFileCategory.DEFENDANT_APPEAL_STATEMENT_CASE_FILE,
+          CaseFileCategory.DEFENDANT_APPEAL_CASE_FILE,
+        ].includes(caseFileCategory)
+      ) {
+        return true
       }
     }
 

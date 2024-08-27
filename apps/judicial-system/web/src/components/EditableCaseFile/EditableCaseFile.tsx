@@ -65,9 +65,11 @@ const EditableCaseFile: FC<Props> = (props) => {
       onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
       setEditedDisplayDate(formatDate(caseFile.displayDate) ?? '')
-    }
 
-    setIsEditing(false)
+      return
+    } else {
+      setIsEditing(false)
+    }
   }
 
   const displayDate = useMemo(() => {
@@ -100,6 +102,7 @@ const EditableCaseFile: FC<Props> = (props) => {
               exit={{ y: 10, opacity: 0 }}
               transition={{ duration: 0.2 }}
               key={`${caseFile.id}-edit`}
+              aria-live="polite"
             >
               <Box display="flex">
                 <Box className={styles.editCaseFileInputContainer}>
@@ -140,6 +143,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       [styles.background.secondary]:
                         caseFile.status === 'error',
                     })}
+                    aria-label="Vista breytingar"
                   >
                     <Icon
                       icon="checkmark"
@@ -155,6 +159,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                         [styles.background.secondary]:
                           caseFile.status === 'error',
                       })}
+                      aria-label="Eyða skrá"
                     >
                       <Icon
                         icon="trash"
@@ -180,6 +185,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 display: 'flex',
                 justifyContent: 'space-between',
               }}
+              aria-live="polite"
             >
               <Box
                 display="flex"
@@ -226,6 +232,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       styles.editCaseFileButton,
                       styles.background.secondary,
                     )}
+                    aria-label="Reyna aftur að hlaða upp skrá"
                   >
                     <Icon icon="reload" color="red400" />
                   </button>
@@ -239,6 +246,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                         caseFile.status === 'error',
                     })}
                     disabled={!caseFile.canEdit}
+                    aria-label="Breyta skrá"
                   >
                     <Icon
                       icon="pencil"

@@ -54,7 +54,9 @@ const IndictmentOverview: FC = () => {
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
   const canAddFiles =
-    isDefenceUser(user) && IndictmentDecision.POSTPONING_UNTIL_VERDICT
+    isDefenceUser(user) &&
+    workingCase.indictmentDecision !==
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
