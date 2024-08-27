@@ -5,6 +5,7 @@ import {
   Entry,
   Link,
   Tag,
+  Team,
 } from 'contentful-management'
 import { ClientAPI } from 'contentful-management/dist/typings/create-contentful-api'
 
@@ -36,11 +37,52 @@ export class AppRepository {
   async getUserSpaceRoles(userId: string) {
     const managementClient = this.getManagementClient()
     const space = await managementClient.getSpace(SPACE_ID)
-    const user = await space.getSpaceMember(userId)
-    const roles = await Promise.all(
-      user.roles.map((roleLink) => space.getRole(roleLink.sys.id)),
-    )
-    return roles
+    try {
+      const user = await space.getSpaceMember(userId)
+      const roles = await Promise.all(
+        user.roles.map((roleLink) => space.getRole(roleLink.sys.id)),
+      )
+      return roles
+    } catch (error) {
+      // In case the user isn't found due to not belonging to a space we assume he has no roles
+      if ((error as { name?: string })?.name === 'NotFound') {
+        return []
+      }
+      throw error
+    }
+  }
+
+  async getUserTeams(userId: string) {
+    const managementClient = this.getManagementClient()
+    const organizations = await managementClient.getOrganizations()
+    const organization = organizations.items[0]
+
+    const teams = await organization.getTeams({
+      limit: 1000,
+    })
+
+    const teamsThatUserBelongsTo: Team[] = []
+
+    for (const team of teams.items) {
+      const memberships = await organization.getTeamMemberships({
+        teamId: team.sys.id,
+        query: {
+          limit: 1000,
+        },
+      })
+      const userBelongsToTeam = memberships.items.some((item) => {
+        const itemUserId = (
+          item.sys as unknown as { user?: { sys?: { id?: string } } }
+        ).user?.sys?.id
+        return itemUserId === userId
+      })
+
+      if (userBelongsToTeam) {
+        teamsThatUserBelongsTo.push(team)
+      }
+    }
+
+    return teamsThatUserBelongsTo
   }
 
   async tagEntry(entry: Asset | Entry, tags: string[]) {
