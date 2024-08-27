@@ -388,6 +388,7 @@ export const SignedVerdictOverview: FC = () => {
           ),
         })
 
+        // TODO: Pass the real insitution into shareCaseWithAnotherInstitution, no nned for faking values here.
         setWorkingCase((prevWorkingCase) => ({
           ...prevWorkingCase,
           sharedWithProsecutorsOffice: {

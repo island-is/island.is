@@ -54,6 +54,8 @@ const ReturnIndictmentModal: FC<Props> = ({
       return
     }
 
+    // TODO: Generally, we cannot trust the client date so we should let the server handle this instead.
+    //       There is already precedent for adding eplanatory strings on the server side when transitioning cases.
     const now = new Date()
     const prependedReturnedExplanation = `${formatMessage(
       strings.prependedReturnedExplanation,
