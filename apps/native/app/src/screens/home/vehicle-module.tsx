@@ -12,6 +12,7 @@ import {
   preferencesStore,
   usePreferencesStore,
 } from '../../stores/preferences-store'
+import { screenWidth } from '../../utils/dimensions'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -72,7 +73,7 @@ export const VehicleModule = React.memo(() => {
         style={
           count > 1
             ? {
-                width: 300,
+                width: screenWidth - theme.spacing[2] * 3,
                 paddingHorizontal: 0,
                 paddingLeft: theme.spacing[2],
               }
@@ -89,7 +90,6 @@ export const VehicleModule = React.memo(() => {
     <SafeAreaView
       style={{
         marginHorizontal: theme.spacing[2],
-        marginBottom: theme.spacing[2],
       }}
     >
       <Host>

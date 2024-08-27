@@ -13,12 +13,14 @@ import {
 import React from 'react'
 import { useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
+import { useTheme } from 'styled-components'
+
 import leJobss3 from '../../assets/illustrations/le-jobs-s3.png'
 import { Application } from '../../graphql/types/schema'
 import { navigateTo } from '../../lib/deep-linking'
 import { useBrowser } from '../../lib/use-browser'
 import { getApplicationUrl } from '../../utils/applications-utils'
-import { useTheme } from 'styled-components'
+import { screenWidth } from '../../utils/dimensions'
 
 interface ApplicationsModuleProps {
   applications: Application[]
@@ -68,7 +70,7 @@ export const ApplicationsModule = React.memo(
         style={
           count > 1
             ? {
-                width: 283,
+                width: screenWidth - theme.spacing[2] * 4,
                 marginLeft: 16,
               }
             : {}

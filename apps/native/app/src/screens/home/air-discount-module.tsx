@@ -8,6 +8,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { navigateTo } from '../../lib/deep-linking'
 import { useGetAirDiscountQuery } from '../../graphql/types/schema'
 import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
+import { screenWidth } from '../../utils/dimensions'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -52,7 +53,7 @@ export const AirDiscountModule = React.memo(() => {
       style={
         count > 1
           ? {
-              width: 283,
+              width: screenWidth - theme.spacing[2] * 4,
               marginLeft: theme.spacing[2],
             }
           : {

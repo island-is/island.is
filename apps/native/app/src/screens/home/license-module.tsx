@@ -12,6 +12,7 @@ import {
   useListLicensesQuery,
 } from '../../graphql/types/schema'
 import { WalletItem } from '../wallet/components/wallet-item'
+import { screenWidth } from '../../utils/dimensions'
 
 const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
@@ -70,6 +71,7 @@ export const LicenseModule = React.memo(() => {
         style={
           count > 1
             ? {
+                width: screenWidth - theme.spacing[2] * 3,
                 paddingLeft: theme.spacing[2],
                 paddingRight: 0,
               }
