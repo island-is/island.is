@@ -6,14 +6,10 @@ import {
   formatDate,
 } from '@island.is/service-portal/core'
 import { vehicleMessage } from '../../lib/messages'
-import { useCallback, useMemo } from 'react'
-import { FormProvider, useForm } from 'react-hook-form'
+import { useMemo } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { SubmissionState, VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
-
-interface FormData {
-  [key: string]: number
-}
 
 interface Props {
   vehicles: Array<VehicleType>
@@ -28,17 +24,17 @@ const VehicleBulkMileageTable = ({
 }: Props) => {
   const { formatMessage } = useLocale()
 
-  const methods = useForm<FormData>()
+  const { getValues, trigger } = useFormContext()
 
   const getValueFromForm = async (
     formFieldId: string,
     skipEmpty = false,
   ): Promise<number | undefined> => {
-    const value = methods.getValues(formFieldId)
+    const value = getValues(formFieldId)
     if (!value && skipEmpty) {
       return
     }
-    if (await methods.trigger(formFieldId)) {
+    if (await trigger(formFieldId)) {
       console.log('validation success')
       return value
     }
@@ -71,7 +67,7 @@ const VehicleBulkMileageTable = ({
   }
 
   const onRowBulkPostComplete = async (vehicleId: string) => {
-    const formKeys = Object.keys(methods.getValues())
+    const formKeys = Object.keys(getValues())
     const vehicleFormKeyIndex = formKeys.indexOf(vehicleId)
 
     if (vehicleFormKeyIndex < 0) {
@@ -96,7 +92,7 @@ const VehicleBulkMileageTable = ({
   }
 
   const onBulkPostClick = async () => {
-    const firstVehicleId = Object.keys(methods.getValues())[0]
+    const firstVehicleId = Object.keys(getValues())[0]
     updateVehicleStatus('submit-all', firstVehicleId)
   }
 
@@ -137,23 +133,21 @@ const VehicleBulkMileageTable = ({
   return (
     <>
       <Box>
-        <FormProvider {...methods}>
-          <form>
-            <T.Table>
-              <ExpandHeader
-                data={[
-                  { value: '', printHidden: true },
-                  { value: formatMessage(vehicleMessage.type) },
-                  { value: formatMessage(vehicleMessage.permno) },
-                  { value: formatMessage(vehicleMessage.lastRegistration) },
-                  { value: formatMessage(vehicleMessage.odometer) },
-                  { value: '', printHidden: true },
-                ]}
-              />
-              <T.Body>{rows}</T.Body>
-            </T.Table>
-          </form>
-        </FormProvider>
+        <form>
+          <T.Table>
+            <ExpandHeader
+              data={[
+                { value: '', printHidden: true },
+                { value: formatMessage(vehicleMessage.type) },
+                { value: formatMessage(vehicleMessage.permno) },
+                { value: formatMessage(vehicleMessage.lastRegistration) },
+                { value: formatMessage(vehicleMessage.odometer) },
+                { value: '', printHidden: true },
+              ]}
+            />
+            <T.Body>{rows}</T.Body>
+          </T.Table>
+        </form>
       </Box>
       <Box marginTop={2} display="flex">
         <Box marginLeft="auto">

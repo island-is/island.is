@@ -31,8 +31,15 @@ export const VehicleBulkMileageRow = ({
 
   const {
     control,
+    setValue,
     formState: { errors },
   } = useFormContext()
+
+  useEffect(() => {
+    if (vehicle.mileageUploadedFromFile) {
+      setValue(vehicle.vehicleId, vehicle.mileageUploadedFromFile)
+    }
+  }, [vehicle.mileageUploadedFromFile])
 
   const onSaveButtonClick = () => {
     onSave(vehicle.vehicleId)
