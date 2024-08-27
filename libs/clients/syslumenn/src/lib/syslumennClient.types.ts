@@ -104,6 +104,7 @@ export interface TemporaryEventLicence {
   licenseResponsible?: string
   maximumNumberOfGuests?: number
   estimatedNumberOfGuests?: number
+  location?: string
 }
 
 /**

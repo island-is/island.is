@@ -40,6 +40,7 @@ export interface ActionCardMetaData {
     displayStatus: PendingActionDisplayType
     title?: string
     content?: string
+    button?: string
   }
   history?: ApplicationHistoryItem[]
   tag?: {
@@ -49,6 +50,7 @@ export interface ActionCardMetaData {
   deleteButton?: boolean
   draftTotalSteps?: number
   draftFinishedSteps?: number
+  historyButton?: string
 }
 
 export interface Application<TAnswers = FormValue> {

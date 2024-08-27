@@ -50,9 +50,17 @@ export const useDocumentList = (props?: UseDocumentListProps) => {
     },
   }
 
-  const { data, loading, error, refetch } = useDocumentsV2Query({
+  const { data, loading, error, client, refetch } = useDocumentsV2Query({
     variables: fetchObject,
   })
+
+  const invalidateCache = async () => {
+    client.cache.evict({
+      id: 'ROOT_QUERY',
+      fieldName: 'documentsV2',
+    })
+    client.cache.gc()
+  }
 
   useEffect(() => {
     if (
@@ -87,11 +95,12 @@ export const useDocumentList = (props?: UseDocumentListProps) => {
     filteredDocuments,
     totalCount,
     totalPages,
+    fetchObject,
 
     data,
     loading,
     error,
     refetch,
-    fetchObject,
+    invalidateCache,
   }
 }

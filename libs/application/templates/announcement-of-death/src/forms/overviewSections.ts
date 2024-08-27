@@ -377,8 +377,7 @@ export const firearmApplicant: Field[] = [
   }),
   buildDescriptionField({
     id: 'firearmApplicant',
-    title: m.firearmsTitle,
-    description: m.firearmsDescription,
+    title: m.firearmsApplicantOverviewHeader,
     titleVariant: 'h3',
     condition: (answers) => showInDone(answers.viewOverview),
   }),
