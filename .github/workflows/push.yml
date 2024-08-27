@@ -615,6 +615,7 @@ jobs:
           export EXTRA_DOCKER_BUILD_ARGS="--build-arg DOCKER_IMAGE_REGISTRY=${{env.DOCKER_BASE_IMAGE_REGISTRY}} --build-arg NODE_IMAGE_TAG=${{env.NODE_IMAGE_TAG}}"
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
           echo "COMMENT<<EOF" >> "$GITHUB_ENV"
+          echo $GITHUB_ENV
           echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
           docker run --rm "${DOCKER_REGISTRY}helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
           echo 'EOF' >> "$GITHUB_ENV"
@@ -637,7 +638,6 @@ jobs:
           script: |
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
-            console.log(COMMENT)
             await updateComment({github, context, comment: COMMENT})
 
   retag-unaffected:
