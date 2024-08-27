@@ -309,10 +309,7 @@ export class FileService {
       caseId: theCase.id,
       name: fileName,
       userGeneratedFilename:
-        createFile.category === CaseFileCategory.DEFENDANT_CASE_FILE ||
-        createFile.category === CaseFileCategory.PROSECUTOR_CASE_FILE
-          ? createFile.userGeneratedFilename
-          : fileName.replace(/\.pdf$/, ''),
+        createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
       submittedBy: user.name,
     })
 
