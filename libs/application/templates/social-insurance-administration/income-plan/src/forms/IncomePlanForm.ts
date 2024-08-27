@@ -51,6 +51,7 @@ export const IncomePlanForm: Form = buildForm({
                   title: '',
                   description:
                     incomePlanFormMessage.info.instructionsDescription,
+                  doesNotRequireAnswer: false,
                 }),
               ],
             }),
