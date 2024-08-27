@@ -42,18 +42,12 @@ export const IncomePlanForm: Form = buildForm({
           id: 'incomePlanInstructions',
           title: incomePlanFormMessage.info.instructionsShortTitle,
           children: [
-            buildMultiField({
-              id: 'instructionsSection',
+            buildDescriptionField({
+              id: 'instructions',
               title: incomePlanFormMessage.info.instructionsTitle,
-              children: [
-                buildDescriptionField({
-                  id: 'instructions',
-                  title: '',
-                  description:
-                    incomePlanFormMessage.info.instructionsDescription,
-                  doesNotRequireAnswer: false,
-                }),
-              ],
+              description: incomePlanFormMessage.info.instructionsDescription,
+              space: 'containerGutter',
+              doesNotRequireAnswer: false,
             }),
           ],
         }),
@@ -105,6 +99,18 @@ export const IncomePlanForm: Form = buildForm({
                   label: incomePlanFormMessage.incomePlan.currency,
                   placeholder: incomePlanFormMessage.incomePlan.selectCurrency,
                   isSearchable: true,
+                  updateValueObj: {
+                    valueModifier: (activeField) => {
+                      const defaultCurrency =
+                        activeField?.incomeType === FOREIGN_BASIC_PENSION
+                          ? ''
+                          : ISK
+
+                      console.log('defaultCurrency ', defaultCurrency)
+                      return defaultCurrency
+                    },
+                    watchValues: 'incomeType',
+                  },
                   options: (application, activeField) => {
                     const { currencies } = getApplicationExternalData(
                       application.externalData,
@@ -553,6 +559,7 @@ export const IncomePlanForm: Form = buildForm({
       expandableIntro: '',
       bottomButtonMessage:
         incomePlanFormMessage.conclusionScreen.bottomButtonMessage,
+      bottomButtonLink: '/minarsidur/framfaersla/tekjuaaetlun',
     }),
   ],
 })

@@ -48,6 +48,11 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       description:
         'I understand that the above information will be collected during the application process',
     },
+    skraInformationTitle: {
+      id: 'sia.application:prerequisites.national.registry.title',
+      defaultMessage: 'Upplýsingar frá Þjóðskrá',
+      description: 'Information from Registers Iceland',
+    },
     contactInfoTitle: {
       id: 'sia.application:prerequisites.contact.info.title',
       defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',

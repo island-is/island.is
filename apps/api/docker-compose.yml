@@ -3,7 +3,7 @@ version: '3.3'
 services:
   redis_cluster:
     container_name: api_redis_cluster
-    image: docker.io/grokzen/redis-cluster:7.0.0
+    image: docker.io/grokzen/redis-cluster:6.0.16
     networks:
       - local
     privileged: true

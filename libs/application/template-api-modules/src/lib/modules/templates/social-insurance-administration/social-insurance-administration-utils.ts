@@ -321,7 +321,7 @@ export const transformApplicationToIncomePlanDTO = (
     },
     applicationId: application.id,
     incomePlan: {
-      incomeYear: new Date().getFullYear(), // fá á hreint hvað á senda hér inn
+      incomeYear: new Date().getFullYear(),
       incomeTypes: getIncomeTypes(application),
     },
   }

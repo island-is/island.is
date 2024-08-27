@@ -140,6 +140,8 @@ import { NewPrimarySchoolService } from './new-primary-school/new-primary-school
 
 import { IdCardModule } from './id-card/id-card.module'
 import { IdCardService } from './id-card/id-card.service'
+import { ParliamentaryListCreationModule } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.module'
+import { ParliamentaryListCreationService } from './signature-collection/parliamentary-list-creation/parliamentary-list-creation.service'
 
 export const modules = [
   ReferenceTemplateModule,
@@ -210,6 +212,7 @@ export const modules = [
   IdCardModule,
   HealthInsuranceDeclarationModule,
   NewPrimarySchoolModule,
+  ParliamentaryListCreationModule,
 ]
 
 export const services = [
@@ -281,4 +284,5 @@ export const services = [
   IdCardService,
   HealthInsuranceDeclarationService,
   NewPrimarySchoolService,
+  ParliamentaryListCreationService,
 ]
