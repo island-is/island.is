@@ -35,17 +35,17 @@ export const TemporaryCalculationTable: FC<
   const input = {
     incomeYear: new Date().getFullYear(),
     incomeTypes: income.map((income) => {
-      const incomeType = categorizedIncomeTypes.filter(
+      const incomeType = categorizedIncomeTypes.find(
         (item) => item.incomeTypeName === income.incomeTypes,
       )
 
       return {
-        incomeTypeNumber: incomeType[0]?.incomeTypeNumber,
-        incomeTypeCode: incomeType[0]?.incomeTypeCode,
+        incomeTypeNumber: incomeType?.incomeTypeNumber,
+        incomeTypeCode: incomeType?.incomeTypeCode,
         incomeTypeName: income.incomeTypes,
         currencyCode: income.currency,
-        incomeCategoryNumber: incomeType[0]?.categoryNumber,
-        incomeCategoryCode: incomeType[0]?.categoryCode,
+        incomeCategoryNumber: incomeType?.categoryNumber,
+        incomeCategoryCode: incomeType?.categoryCode,
         incomeCategoryName: income.incomeCategories,
         ...(income.income === RatioType.MONTHLY &&
         income?.unevenIncomePerYear?.[0] === YES
