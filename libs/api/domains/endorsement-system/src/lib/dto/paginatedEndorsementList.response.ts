@@ -8,9 +8,9 @@ export class PaginatedEndorsementListResponse {
   @Field()
   totalCount!: number
 
-  @CacheField(() => [EndorsementList]) // Using CacheField for non-scalar field (array of objects)
+  @CacheField(() => [EndorsementList])
   data!: EndorsementList[]
 
-  @CacheField(() => PageInfoResponse) // Using CacheField for non-scalar field (object)
+  @CacheField(() => PageInfoResponse)
   pageInfo!: PageInfoResponse
 }

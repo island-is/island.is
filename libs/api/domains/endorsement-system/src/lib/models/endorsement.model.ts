@@ -14,10 +14,10 @@ export class Endorsement {
   @Field()
   endorsementListId!: string
 
-  @CacheField(() => EndorsementListOpen, { nullable: true }) // Using CacheField for non-scalar field
+  @CacheField(() => EndorsementListOpen, { nullable: true })
   endorsementList?: EndorsementListOpen
 
-  @CacheField(() => EndorsementMetadata) // Using CacheField for non-scalar field
+  @CacheField(() => EndorsementMetadata)
   meta!: EndorsementMetadata
 
   @Field()

@@ -23,10 +23,10 @@ export class EndorsementList {
   @Field()
   adminLock!: boolean
 
-  @CacheField(() => [EndorsementListTagsEnum]) // Using CacheField for non-scalar array
+  @CacheField(() => [EndorsementListTagsEnum])
   tags!: EndorsementListTagsEnum[]
 
-  @CacheField(() => graphqlTypeJson) // Using CacheField for non-scalar object
+  @CacheField(() => graphqlTypeJson)
   meta!: object
 
   @Field()
