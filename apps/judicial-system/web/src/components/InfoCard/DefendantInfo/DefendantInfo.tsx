@@ -37,20 +37,20 @@ interface DefendantInfoProps {
 }
 
 export const getAppealExpirationInfo = (
-  viewAppealDeadline?: string | null,
+  verdictAppealDeadline?: string | null,
   serviceRequirement?: ServiceRequirement | null,
 ) => {
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
     return { message: strings.serviceRequirementNotRequired, data: null }
   }
 
-  if (!viewAppealDeadline) {
+  if (!verdictAppealDeadline) {
     return { message: strings.appealDateNotBegun, date: null }
   }
 
   // TODO: Move to the server as today may not be accurate in the client
   const today = new Date()
-  const expiryDate = new Date(viewAppealDeadline)
+  const expiryDate = new Date(verdictAppealDeadline)
 
   const message =
     today < expiryDate
