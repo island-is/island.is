@@ -100,6 +100,7 @@ const EditableCaseFile: FC<Props> = (props) => {
               exit={{ y: 10, opacity: 0 }}
               transition={{ duration: 0.2 }}
               key={`${caseFile.id}-edit`}
+              aria-live="polite"
             >
               <Box display="flex">
                 <Box className={styles.editCaseFileInputContainer}>
@@ -182,6 +183,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                 display: 'flex',
                 justifyContent: 'space-between',
               }}
+              aria-live="polite"
             >
               <Box
                 display="flex"
