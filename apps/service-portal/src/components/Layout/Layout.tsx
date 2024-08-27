@@ -1,4 +1,4 @@
-import React, { FC, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import Header from '../Header/Header'
 import { ToastContainer } from '@island.is/island-ui/core'
 import AuthOverlay from '../Loaders/AuthOverlay/AuthOverlay'
@@ -31,6 +31,9 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   )
   const isFullwidth = activeModule?.layout === 'full'
 
+  useEffect(() => {
+    console.log('scrolling: window.scrollY = ', window.scrollY)
+  },[window.scrollY])
   return (
     <div>
       <AuthOverlay />
