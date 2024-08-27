@@ -140,6 +140,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                       [styles.background.secondary]:
                         caseFile.status === 'error',
                     })}
+                    aria-label="Vista breytingar"
                   >
                     <Icon
                       icon="checkmark"
@@ -155,6 +156,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                         [styles.background.secondary]:
                           caseFile.status === 'error',
                       })}
+                      aria-label="Eyða skrá"
                     >
                       <Icon
                         icon="trash"
