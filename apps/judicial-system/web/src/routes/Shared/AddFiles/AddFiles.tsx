@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
@@ -49,9 +49,9 @@ const AddFiles: FC = () => {
 
   const updateFileToUpload = useCallback((file: UploadFile, newId?: string) => {
     setFilesToUpload((previous) =>
-      previous.map((f) => {
-        return f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f
-      }),
+      previous.map((f) =>
+        f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
+      ),
     )
   }, [])
 
