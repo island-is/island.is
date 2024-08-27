@@ -21,6 +21,7 @@ export interface BaseTemplateAPIModuleConfig {
   }
   attachmentBucket: string
   presignBucket: string
+  bypassPayments: boolean
   generalPetition: {
     endorsementsApiBasePath: string
   }
