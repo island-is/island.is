@@ -175,7 +175,11 @@ export const webRenderConnectedComponent = (
     case 'Starfsrettindi/ProfessionRights':
       return <ProfessionRights slice={slice} />
     case 'Ums/CostOfLivingCalculator':
-      return <UmsCostOfLivingCalculator slice={slice} />
+      return (
+        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
+          <UmsCostOfLivingCalculator />
+        </IntlProvider>
+      )
     default:
       break
   }
