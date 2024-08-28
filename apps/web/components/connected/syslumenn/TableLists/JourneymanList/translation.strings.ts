@@ -2,22 +2,22 @@ import { defineMessages } from 'react-intl'
 
 export const translation = defineMessages({
   csvHeaderName: {
-    id: 'web.syslumenn.brokersList:csvHeaderName',
+    id: 'web.syslumenn.journeymanList:csvHeaderName',
     defaultMessage: 'Nafn',
     description: 'Nafn (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderProfession: {
-    id: 'web.syslumenn.brokersList:csvHeaderProfession',
+    id: 'web.syslumenn.journeymanList:csvHeaderProfession',
     defaultMessage: 'Iðngrein',
     description: 'Iðngrein (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderDateOfPublication: {
-    id: 'web.syslumenn.brokersList:csvHeaderDateOfPublication',
+    id: 'web.syslumenn.journeymanList:csvHeaderDateOfPublication',
     defaultMessage: 'Útgáfuár',
     description: 'Útgáfuár (texti fyrir dálk í CSV skrá)',
   },
   licencesFilterLicenceProfession: {
-    id: 'web.syslumenn.brokersList:licencesFilterLicenceProfession',
+    id: 'web.syslumenn.journeymanList:licencesFilterLicenceProfession',
     defaultMessage: 'Iðngrein',
     description: 'Label fyrir iðngrein filter',
   },
