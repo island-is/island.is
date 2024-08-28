@@ -12,6 +12,7 @@ import {
   PowerBiSliceResolver,
   LatestEventsSliceResolver,
   TeamListResolver,
+  LatestGenericListItemsResolver,
 } from './cms.resolver'
 import { CmsContentfulService } from './cms.contentful.service'
 import { ContentfulRepository } from './contentful.repository'
@@ -52,6 +53,7 @@ import { OrganizationTitleEnByReferenceIdLoader } from './loaders/organizationTi
     PowerBiSliceResolver,
     LatestEventsSliceResolver,
     TeamListResolver,
+    LatestGenericListItemsResolver,
   ],
   exports: [
     ContentfulRepository,
