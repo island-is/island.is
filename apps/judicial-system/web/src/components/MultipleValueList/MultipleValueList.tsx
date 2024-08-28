@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useRef, useState } from 'react'
+import { FC, PropsWithChildren, useRef, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 import { Button, Input } from '@island.is/island-ui/core'

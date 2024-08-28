@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'

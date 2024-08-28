@@ -1,6 +1,5 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {

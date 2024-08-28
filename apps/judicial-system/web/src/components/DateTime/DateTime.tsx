@@ -1,4 +1,4 @@
-import React, { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
