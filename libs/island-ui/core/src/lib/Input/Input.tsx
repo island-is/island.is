@@ -41,6 +41,8 @@ export const Input = forwardRef(
       label,
       errorMessage = '',
       maxLength,
+      max,
+      min,
       hasError = Boolean(errorMessage),
       value,
       defaultValue,
@@ -226,6 +228,8 @@ export const Input = forwardRef(
               }}
               readOnly={readOnly}
               type={type}
+              max={max}
+              min={min}
               {...(ariaError as AriaError)}
               {...inputProps}
               {...(required && { 'aria-required': true })}
