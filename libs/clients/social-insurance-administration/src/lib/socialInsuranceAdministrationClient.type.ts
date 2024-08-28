@@ -7,7 +7,6 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   TestApi,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
 } from '../../gen/fetch'
 
 export type Scope =
@@ -110,26 +109,6 @@ export interface IncomeTypes {
   amountDec: number
 }
 
-export interface ApplicationDTO {
-  period?: Period
-  comment?: string
-  reasons?: Array<string>
-  applicationId?: string
-  domesticBankInfo?: DomesticBankInfo
-  foreignBankInfo?: ForeignBankInfo
-  taxInfo?: TaxInfo
-  applicantInfo?: ApplicantInfo
-  hasAbroadResidence?: boolean
-  hasOneTimePayment?: boolean
-  isSailorPension?: boolean
-  isRental?: boolean
-  hasAStudyingAdolescenceResident?: boolean
-  uploads?: Array<TrWebCommonsExternalPortalsApiModelsDocumentsDocument>
-  employment?: string
-  employers?: Array<Employer>
-  incomePlan?: IncomePlanInfo
-}
-
 export enum DocumentTypeEnum {
   PENSION = 'pension',
   OTHER = 'other',
@@ -145,3 +124,5 @@ export enum DocumentTypeEnum {
   HOUSE_RENT_AGREEMENT = 'houseRentAgreement',
   HOUSE_RENT_ALLOWANCE = 'houseRentAllowance',
 }
+
+export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'

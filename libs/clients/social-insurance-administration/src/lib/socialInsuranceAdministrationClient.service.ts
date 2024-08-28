@@ -22,6 +22,7 @@ import {
 } from '../../gen/fetch'
 import { handle404 } from '@island.is/clients/middlewares'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
+import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -69,6 +70,18 @@ export class SocialInsuranceAdministrationClientService {
       .catch(handle404)
   }
 
+  async getLatestIncomePlan(user: User): Promise<IncomePlanDto | null> {
+    const incomePlan = await this.incomePlanApiWithAuth(user)
+      .apiProtectedV1IncomePlanLatestIncomePlanGet()
+      .catch(handle404)
+
+    if (!incomePlan) {
+      return null
+    }
+
+    return mapIncomePlanDto(incomePlan) ?? null
+  }
+
   sendApplication(
     user: User,
     applicationDTO: object,
@@ -107,7 +120,9 @@ export class SocialInsuranceAdministrationClientService {
   ): Promise<TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn> {
     return this.applicantApiWithAuth(
       user,
-    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({ applicationType })
+    ).apiProtectedV1ApplicantApplicationTypeEligibleGet({
+      applicationType,
+    })
   }
 
   async getCurrencies(user: User): Promise<Array<string>> {
@@ -142,13 +157,13 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanWithholdingTaxGet(year)
   }
 
-  async getLatestIncomePlan(
-    user: User,
-  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto> {
-    return this.incomePlanApiWithAuth(
-      user,
-    ).apiProtectedV1IncomePlanLatestIncomePlanGet()
-  }
+  // async getLatestIncomePlan(
+  //   user: User,
+  // ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto> {
+  //   return this.incomePlanApiWithAuth(
+  //     user,
+  //   ).apiProtectedV1IncomePlanLatestIncomePlanGet()
+  // }
 
   async getTemporaryCalculations(
     user: User,
