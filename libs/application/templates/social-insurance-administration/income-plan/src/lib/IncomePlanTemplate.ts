@@ -1,27 +1,34 @@
 import {
-  ApplicationTemplate,
-  ApplicationContext,
-  ApplicationStateSchema,
+  DefaultStateLifeCycle,
+  EphemeralStateLifeCycle,
+  pruneAfterDays,
+} from '@island.is/application/core'
+import {
+  Actions,
+  Events,
+  Roles,
+  States,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  statesMessages as coreSIAStatesMessages,
+  socialInsuranceAdministrationMessage,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
   Application,
-  ApplicationTypes,
   ApplicationConfigurations,
+  ApplicationContext,
   ApplicationRole,
+  ApplicationStateSchema,
+  ApplicationTemplate,
+  ApplicationTypes,
   DefaultEvents,
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
-import {
-  EphemeralStateLifeCycle,
-  DefaultStateLifeCycle,
-  pruneAfterDays,
-} from '@island.is/application/core'
-import { dataSchema } from './dataSchema'
-import { historyMessages, incomePlanFormMessage } from './messages'
-import {
-  socialInsuranceAdministrationMessage,
-  statesMessages as coreSIAStatesMessages,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { statesMessages } from '../lib/messages'
+import { Features } from '@island.is/feature-flags'
+import set from 'lodash/set'
+import unset from 'lodash/unset'
+import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -29,22 +36,15 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { assign } from 'xstate'
+import { statesMessages } from '../lib/messages'
+import { ISK, RatioType, YES } from './constants'
+import { dataSchema } from './dataSchema'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   isEligible,
-  getApplicationAnswers,
 } from './incomePlanUtils'
-import set from 'lodash/set'
-import unset from 'lodash/unset'
-import {
-  Actions,
-  Events,
-  Roles,
-  States,
-} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { ISK, RatioType, YES } from './constants'
-import { Features } from '@island.is/feature-flags'
+import { historyMessages, incomePlanFormMessage } from './messages'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -55,7 +55,7 @@ const IncomePlanTemplate: ApplicationTemplate<
   name: incomePlanFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
   featureFlag: Features.IncomePlanEnabled,
-  translationNamespaces: [ApplicationConfigurations.IncomePlan.translation],
+  translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
   newApplicationButtonLabel: historyMessages.newIncomePlanButtonLabel,
   applicationText: historyMessages.incomePlanPageTitle,

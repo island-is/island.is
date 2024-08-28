@@ -2,10 +2,10 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
 import {
   CategorizedIncomeTypes,
-  IncomePlanRow,
-  WithholdingTax,
-  LatestIncomePlan,
   Eligible,
+  IncomePlanRow,
+  LatestIncomePlan,
+  WithholdingTax,
 } from '../types'
 import { INCOME_PLANS_CLOSED } from './constants'
 import { incomePlanFormMessage } from './messages'
@@ -34,6 +34,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationLatestIncomePlan.data',
   ) as LatestIncomePlan
 
+  const temporaryCalculation = getValueViaPath(
+    externalData,
+    'SocialInsuranceAdministrationTemporaryCalculation.data',
+  )
+
   const isEligible = getValueViaPath(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
@@ -54,6 +59,7 @@ export const getApplicationExternalData = (
     currencies,
     withholdingTax,
     latestIncomePlan,
+    temporaryCalculation,
     isEligible,
     userProfileEmail,
     userProfilePhoneNumber,

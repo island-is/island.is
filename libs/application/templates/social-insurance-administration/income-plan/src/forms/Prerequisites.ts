@@ -7,6 +7,8 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   Application,
   DefaultEvents,
@@ -14,9 +16,6 @@ import {
   FormModes,
   UserProfileApi,
 } from '@island.is/application/types'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { incomePlanFormMessage } from '../lib/messages'
-import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
@@ -25,6 +24,7 @@ import {
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
 import { eligibleText, isEligible } from '../lib/incomePlanUtils'
+import { incomePlanFormMessage } from '../lib/messages'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',

@@ -64,7 +64,7 @@ export interface IncomePlanRow {
 }
 
 export interface LatestIncomePlan {
-  year: string
+  year: number
   origin: string
   status: string
   incomeTypeLines: IncomeType[]

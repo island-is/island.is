@@ -8,12 +8,13 @@ import {
   buildSubmitField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
-import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
-import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { incomePlanFormMessage } from '../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getCurrencies } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { DefaultEvents, Form, FormModes } from '@island.is/application/types'
+import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { buildFormConclusionSection } from '@island.is/application/ui-forms'
+import isEmpty from 'lodash/isEmpty'
 import {
   FOREIGN_BASIC_PENSION,
   INCOME,
@@ -26,7 +27,7 @@ import {
   getCategoriesOptions,
   getTypesOptions,
 } from '../lib/incomePlanUtils'
-import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { incomePlanFormMessage } from '../lib/messages'
 
 export const IncomePlanForm: Form = buildForm({
   id: 'IncomePlanDraft',
@@ -511,6 +512,33 @@ export const IncomePlanForm: Form = buildForm({
                 ],
                 rows: ['incomeType', 'incomePerYear', 'currency'],
               },
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'temporaryCalculationSection',
+      title: incomePlanFormMessage.info.temporaryCalculationTitle,
+      condition: (_, externalData) => {
+        const { latestIncomePlan } = getApplicationExternalData(externalData)
+        return !isEmpty(latestIncomePlan)
+      },
+      children: [
+        buildMultiField({
+          id: 'temporaryCalculation',
+          title: incomePlanFormMessage.info.temporaryCalculationTitle,
+          description: incomePlanFormMessage.info.tableDescription,
+          children: [
+            buildCustomField({
+              id: 'temporaryCalculationTable',
+              title: '',
+              component: 'TemporaryCalculationTable',
+            }),
+            buildDescriptionField({
+              id: 'assumptions',
+              title: '',
+              description: incomePlanFormMessage.info.assumptions,
             }),
           ],
         }),

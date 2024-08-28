@@ -1,6 +1,9 @@
 import { User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
-import { SocialInsuranceAdministrationClientService } from '@island.is/clients/social-insurance-administration'
+import {
+  SocialInsuranceAdministrationClientService,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+} from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
   CustomPageUniqueIdentifier,
@@ -20,6 +23,7 @@ import { PaymentGroup } from './models/paymentGroup.model'
 import { PaymentPlan } from './models/paymentPlan.model'
 import { Payments } from './models/payments.model'
 import { mapToPaymentGroupType } from './models/paymentGroupType.model'
+import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -144,5 +148,12 @@ export class SocialInsuranceService {
       highlightedItems,
       groups,
     }
+  }
+
+  async getTemporaryCalculations(
+    user: User,
+    input: TemporaryCalculationInput,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto> {
+    return await this.socialInsuranceApi.getTemporaryCalculations(user, input)
   }
 }
