@@ -1,32 +1,32 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Int } from '@nestjs/graphql'
 import { Institution } from './institution.model'
 
 @ObjectType('UniversityCareersStudentTrackTranscript')
 export class StudentTrackTranscript {
-  @Field(() => String)
+  @Field()
   name!: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   nationalId?: string
 
-  @Field(() => String)
+  @Field()
   graduationDate!: string
 
-  @Field(() => Number)
+  @Field(() => Int)
   trackNumber!: number
 
   @Field(() => Institution)
   institution!: Institution
 
-  @Field(() => String)
+  @Field()
   school!: string
 
-  @Field(() => String)
+  @Field()
   faculty!: string
 
-  @Field(() => String)
-  studyProgram!: string
+  @Field({ nullable: true })
+  studyProgram?: string
 
-  @Field(() => String)
-  degree!: string
+  @Field({ nullable: true })
+  degree?: string
 }
