@@ -150,7 +150,16 @@ export const Draft: Form = buildForm({
               id: 'constituency',
               title: '',
               large: true,
-              defaultValue: [],
+              defaultValue: (application: Application) => {
+                const collection = application.externalData
+                  .parliamentaryCollection.data as Collection
+
+                if (!collection?.areas) {
+                  return []
+                }
+
+                return collection.areas.map((area) => `${area.id}|${area.name}`)
+              },
               options: (application) => {
                 return (
                   application.externalData.parliamentaryCollection
@@ -165,6 +174,7 @@ export const Draft: Form = buildForm({
         }),
       ],
     }),
+    /* Hiding this screen as for now
     buildSection({
       id: 'managers',
       title: m.managersAndSupervisors,
@@ -246,7 +256,7 @@ export const Draft: Form = buildForm({
           ],
         }),
       ],
-    }),
+    }),*/
     buildSection({
       id: 'overview',
       title: m.overview,
@@ -266,15 +276,9 @@ export const Draft: Form = buildForm({
             }),
             buildKeyValueField({
               label: m.listName,
-              width: 'half',
+              width: 'full',
               value: ({ answers }) =>
                 getValueViaPath(answers, 'list.name') ?? '',
-            }),
-            buildKeyValueField({
-              label: m.nationalId,
-              width: 'half',
-              value: ({ answers }) =>
-                getValueViaPath(answers, 'list.nationalId') ?? '',
             }),
             buildDescriptionField({
               id: 'space',
@@ -286,6 +290,12 @@ export const Draft: Form = buildForm({
               width: 'half',
               value: ({ answers }) =>
                 getValueViaPath(answers, 'list.letter') ?? '',
+            }),
+            buildKeyValueField({
+              label: m.nationalId,
+              width: 'half',
+              value: ({ answers }) =>
+                getValueViaPath(answers, 'list.nationalId') ?? '',
             }),
             buildDescriptionField({
               id: 'space1',
@@ -345,7 +355,6 @@ export const Draft: Form = buildForm({
               title: m.listsOverviewHeader,
               titleVariant: 'h3',
               space: 'gutter',
-              marginBottom: 5,
             }),
             buildActionCardListField({
               id: 'listsInOverview',
@@ -362,7 +371,7 @@ export const Draft: Form = buildForm({
                 }))
               },
             }),
-            buildDescriptionField({
+            /*buildDescriptionField({
               id: 'space4',
               title: '',
               space: 'gutter',
@@ -423,7 +432,7 @@ export const Draft: Form = buildForm({
                   )
                   .join('\n')
               },
-            }),
+            }),*/
             buildSubmitField({
               id: 'submit',
               placement: 'footer',
