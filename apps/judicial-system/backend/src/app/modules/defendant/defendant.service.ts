@@ -27,14 +27,18 @@ import {
 import { Case } from '../case/models/case.model'
 import { CourtService } from '../court'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
+import { CreateSubpoenaDto } from './dto/createSubpoena.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
+import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
+import { Subpoena } from './models/subpoena.model'
 
 @Injectable()
 export class DefendantService {
   constructor(
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
+    @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
     private readonly courtService: CourtService,
     private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -346,5 +350,51 @@ export class DefendantService {
 
         return { delivered: false }
       })
+  }
+
+  async createSubpoena(
+    defendant: Defendant,
+    newSubpoena: CreateSubpoenaDto,
+    theCase?: Case,
+  ): Promise<Subpoena> {
+    const subpoena = await this.subpoenaModel.create({
+      ...newSubpoena,
+      defendantId: defendant.id,
+      caseId: theCase?.id || null,
+    })
+
+    return subpoena
+  }
+
+  async updateSubpoena(
+    defendant: Defendant,
+    subpoenaFileId: string,
+    update: UpdateSubpoenaDto,
+  ): Promise<Subpoena> {
+    const [numberOfAffectedRows, subpoenas] = await this.subpoenaModel.update(
+      update,
+      {
+        where: { defendantId: defendant.id, subpoenaFileId },
+        returning: true,
+      },
+    )
+
+    if (numberOfAffectedRows > 1) {
+      this.logger.error(
+        `Unexpected number of rows (${numberOfAffectedRows}) affected when updating subpoena for defendant ${defendant.id} `,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update subpoena for defendant ${defendant.id}`,
+      )
+    }
+
+    return subpoenas[0]
+  }
+
+  async getSubpoenas(defendant: Defendant, theCase: Case): Promise<Subpoena[]> {
+    return this.subpoenaModel.findAll({
+      where: { defendantId: defendant.id, caseId: theCase.id },
+    })
   }
 }

@@ -49,11 +49,13 @@ import {
   PdfService,
 } from '../case'
 import { CreateDefendantDto } from './dto/createDefendant.dto'
+import { CreateSubpoenaDto } from './dto/createSubpoena.dto'
 import { UpdateDefendantDto } from './dto/updateDefendant.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
 import { DeleteDefendantResponse } from './models/delete.response'
+import { Subpoena } from './models/subpoena.model'
 import { DefendantService } from './defendant.service'
 
 @UseGuards(JwtAuthGuard, RolesGuard)
@@ -177,5 +179,64 @@ export class DefendantController {
     )
 
     res.end(pdf)
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    DefendantExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Post(':defendantId/subpoena')
+  @ApiOkResponse({
+    type: Defendant,
+    description: 'Creates new subpoena',
+  })
+  async createSubpoena(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @Body() subpoena: CreateSubpoenaDto,
+  ): Promise<Subpoena> {
+    this.logger.debug(
+      `Creating new subpoena for ${defendantId} of case ${caseId} `,
+    )
+
+    return this.defendantService.createSubpoena(defendant, subpoena, theCase)
+  }
+
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseReadGuard,
+    DefendantExistsGuard,
+  )
+  @RolesRules(
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
+  @Get(':defendantId/subpoenas')
+  @ApiOkResponse({
+    type: Subpoena,
+    description: 'Gets the subpoena info for a given defendant',
+  })
+  async getSubpoenas(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+  ): Promise<Subpoena[]> {
+    this.logger.debug(
+      `Getting the subpoena info for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.defendantService.getSubpoenas(defendant, theCase)
   }
 }

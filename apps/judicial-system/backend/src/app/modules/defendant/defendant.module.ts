@@ -6,6 +6,7 @@ import { MessageModule } from '@island.is/judicial-system/message'
 import { CaseModule } from '../case/case.module'
 import { CourtModule } from '../court/court.module'
 import { Defendant } from './models/defendant.model'
+import { Subpoena } from './models/subpoena.model'
 import { DefendantController } from './defendant.controller'
 import { DefendantService } from './defendant.service'
 import { InternalDefendantController } from './internalDefendant.controller'
@@ -15,7 +16,7 @@ import { InternalDefendantController } from './internalDefendant.controller'
     MessageModule,
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
-    SequelizeModule.forFeature([Defendant]),
+    SequelizeModule.forFeature([Defendant, Subpoena]),
   ],
   controllers: [DefendantController, InternalDefendantController],
   providers: [DefendantService],

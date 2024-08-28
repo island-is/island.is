@@ -25,6 +25,7 @@ import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { Defendant } from './models/defendant.model'
 import { DeliverResponse } from './models/deliver.response'
+import { Subpoena } from './models/subpoena.model'
 import { DefendantService } from './defendant.service'
 
 @Controller('api/internal/case/:caseId')
@@ -82,5 +83,18 @@ export class InternalDefendantController {
     )
 
     return updatedDefendant
+  }
+
+  async getSubpoenas(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+  ): Promise<Subpoena[]> {
+    this.logger.debug(
+      `Getting the subpoena info for defendant ${defendantId} of case ${caseId}`,
+    )
+
+    return this.defendantService.getSubpoenas(defendant, theCase)
   }
 }
