@@ -308,7 +308,8 @@ export class FileService {
       state: CaseFileState.STORED_IN_RVG,
       caseId: theCase.id,
       name: fileName,
-      userGeneratedFilename: fileName.replace(/\.pdf$/, ''),
+      userGeneratedFilename:
+        createFile.userGeneratedFilename ?? fileName.replace(/\.pdf$/, ''),
       submittedBy: user.name,
     })
 
