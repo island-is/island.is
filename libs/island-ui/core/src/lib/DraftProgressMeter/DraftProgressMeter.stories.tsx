@@ -15,7 +15,13 @@ export default {
 }
 
 export const Default = () => {
-  return <DraftProgressMeter draftFinishedSteps={1} draftTotalSteps={2} />
+  return (
+    <DraftProgressMeter
+      draftFinishedSteps={1}
+      draftTotalSteps={2}
+      progressMessage="Þú hefur klárað 1 af 2 skrefum"
+    />
+  )
 }
 
 export const RedColorScheme = () => {
@@ -23,6 +29,7 @@ export const RedColorScheme = () => {
     <DraftProgressMeter
       draftFinishedSteps={1}
       draftTotalSteps={2}
+      progressMessage="Þú hefur klárað 1 af 2 skrefum"
       variant="red"
     />
   )
@@ -33,6 +40,7 @@ export const RoseColorScheme = () => {
     <DraftProgressMeter
       draftFinishedSteps={1}
       draftTotalSteps={2}
+      progressMessage="Þú hefur klárað 1 af 2 skrefum"
       variant="rose"
     />
   )

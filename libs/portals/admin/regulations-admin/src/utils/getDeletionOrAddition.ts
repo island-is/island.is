@@ -155,7 +155,7 @@ export const getDeletionOrAddition = (
 
       // Remove gr number if there is some more text within the title
       const modContent = modifiedTextContent ?? ''
-      const match = modContent.match(/^\d+\.\s*gr\.$/)
+      const match = modContent.match(/^\d+\.\s*gr\.\s*(<br\s*\/?>)?$/)
       if (match) {
         // If the string matches the pattern for "{num}. gr.", return it as is
         newText = modContent
