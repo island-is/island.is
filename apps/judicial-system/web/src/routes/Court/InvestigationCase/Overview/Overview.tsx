@@ -129,10 +129,10 @@ const Overview = () => {
                 id: 'case-info-section',
                 items: [
                   policeCaseNumbers,
-                  prosecutorsOffice,
                   requestedCourtDate,
-                  prosecutor(workingCase.type),
+                  prosecutorsOffice,
                   caseType,
+                  prosecutor(workingCase.type),
                 ],
                 columns: 2,
               },

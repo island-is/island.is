@@ -129,6 +129,17 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: messages.organDonation,
+      path: HealthPaths.HealthOrganDonation,
+      children: [
+        {
+          name: messages.changeRegistration,
+          path: HealthPaths.HealthOrganDonationRegistration,
+          navHide: true,
+        },
+      ],
+    },
   ],
   description: m.healthDescription,
 }

@@ -1,5 +1,5 @@
 query getVaccinations {
-  getVaccinations {
+  HealthDirectorateVaccinationsGetVaccinations {
     diseaseId
     diseaseName
     diseaseDescription

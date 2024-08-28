@@ -20,6 +20,7 @@ export const ApplicationFragment = gql`
         displayStatus
         content
         title
+        button
       }
       history {
         log
@@ -28,6 +29,7 @@ export const ApplicationFragment = gql`
       deleteButton
       draftTotalSteps
       draftFinishedSteps
+      historyButton
     }
     typeId
     answers

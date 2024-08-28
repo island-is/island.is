@@ -13,7 +13,7 @@ export const VaccinationsGeneral = () => {
 
   const { data, loading, error } = useGetVaccinationsQuery()
 
-  const vaccinations = data?.getVaccinations
+  const vaccinations = data?.HealthDirectorateVaccinationsGetVaccinations
   return (
     <VaccinationsWrapper pathname={HealthPaths.HealthVaccinationsGeneral}>
       <Box>

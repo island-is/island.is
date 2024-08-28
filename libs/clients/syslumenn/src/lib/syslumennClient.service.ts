@@ -568,11 +568,11 @@ export class SyslumennService {
     return mapDepartedToRegistryPerson(res)
   }
 
-  async getInheritanceTax(dateOfDeath: Date): Promise<InheritanceTax> {
+  async getInheritanceTax(caseNumber: string): Promise<InheritanceTax> {
     const { id, api } = await this.createApi()
     const res = await api.erfdafjarskatturGet({
       audkenni: id,
-      danardagur: dateOfDeath,
+      malsnumer: caseNumber,
     })
 
     return mapInheritanceTax(res)
