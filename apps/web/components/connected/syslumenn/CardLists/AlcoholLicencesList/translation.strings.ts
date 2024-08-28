@@ -9,47 +9,47 @@ export const translation = defineMessages({
   csvHeaderLicenceType: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderLicenceType',
     defaultMessage: 'Tegund',
-    description: 'Tegund',
+    description: 'Tegund (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderLicenceSubType: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderLicenceSubType',
     defaultMessage: 'Tegund leyfis',
-    description: 'Tegund leyfis',
+    description: 'Tegund leyfis (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderLicenseNumber: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderLicenseNumber',
     defaultMessage: 'Leyfisnúmer',
-    description: 'Leyfisnúmer',
+    description: 'Leyfisnúmer (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderLicenseHolder: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderLicenseHolder',
     defaultMessage: 'Leyfishafi',
-    description: 'Leyfishafi',
+    description: 'Leyfishafi (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderLicenseResponsible: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderLicenseResponsible',
     defaultMessage: 'Ábyrgðarmaður',
-    description: 'Ábyrgðarmaður',
+    description: 'Ábyrgðarmaður (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderValidFrom: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderValidFrom',
     defaultMessage: 'Gildir frá',
-    description: 'Gildir frá',
+    description: 'Gildir frá (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderValidTo: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderValidTo',
     defaultMessage: 'Gildir til',
-    description: 'Gildir til',
+    description: 'Gildir til (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderOffice: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderOffice',
     defaultMessage: 'Embætti',
-    description: 'Embætti',
+    description: 'Embætti (texti fyrir dálk í CSV skrá)',
   },
   csvHeaderLocation: {
     id: 'web.syslumenn.alcoholLicencesList:csvHeaderLocation',
     defaultMessage: 'Starfsstöð embættis',
-    description: 'Starfsstöð embættis',
+    description: 'Starfsstöð embættis (texti fyrir dálk í CSV skrá)',
   },
   filterOfficeAll: {
     id: 'web.syslumenn.alcoholLicencesList:filterOfficeAll',
@@ -109,7 +109,7 @@ export const translation = defineMessages({
   noResults: {
     id: 'web.syslumenn.alcoholLicencesList:noResults',
     defaultMessage: 'Engin leyfi fundust',
-    description: 'Texti sem birtist ef vefþjónusta skilar engum leyfum',
+    description: 'Texti sem birtist ef engin leyfi fundust',
   },
   licenseNumber: {
     id: 'web.syslumenn.alcoholLicencesList:licenseNumber',
