@@ -534,54 +534,6 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   ) {
     const res = await this.siaClientService.getWithholdingTax(auth, year)
 
-    // mock data since gervimenn don't have withholding tax
-    if (isRunningOnEnvironment('local')) {
-      res.incomeTypes = [
-        {
-          incomeTypeNumber: 2,
-          incomeTypeName: 'Lífeyrissjóður',
-          incomeTypeCode: '43',
-          categoryNumber: 2,
-          categoryName: 'Lífeyrissjóðstekjur',
-          categoryCode: '2',
-          january: 103062,
-          february: 103488,
-          march: 103318,
-          april: 104695,
-          may: 0,
-          june: 0,
-          july: 0,
-          august: 0,
-          september: 0,
-          october: 0,
-          november: 0,
-          december: 0,
-          total: 414563,
-        },
-        {
-          incomeTypeNumber: 1,
-          incomeTypeName: 'Laun',
-          incomeTypeCode: '21',
-          categoryNumber: 1,
-          categoryName: 'Atvinnutekjur',
-          categoryCode: '1',
-          january: 53133,
-          february: 53133,
-          march: 53133,
-          april: 0,
-          may: 0,
-          june: 0,
-          july: 0,
-          august: 0,
-          september: 0,
-          october: 0,
-          november: 0,
-          december: 0,
-          total: 159399,
-        },
-      ]
-    }
-
     return res
   }
 
