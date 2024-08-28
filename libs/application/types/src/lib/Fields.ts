@@ -348,6 +348,8 @@ export interface TextField extends BaseField {
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
+  max?: number
+  min?: number
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
