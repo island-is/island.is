@@ -9,7 +9,11 @@ import {
 } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { SocialInsuranceService } from '../socialInsurance.service'
-import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import {
+  FeatureFlag,
+  FeatureFlagGuard,
+  Features,
+} from '@island.is/nest/feature-flags'
 import { IncomePlan } from '../models/income/incomePlan.model'
 import { ApiScope } from '@island.is/auth/scopes'
 import { IncomePlanEligbility } from '../models/income/incomePlanEligibility.model'
@@ -28,6 +32,7 @@ export class IncomePlanResolver {
     name: 'socialInsuranceIncomePlan',
     nullable: true,
   })
+  @FeatureFlag(Features.servicePortalSocialInsuranceIncomePlanPageEnabled)
   @Scopes(ApiScope.internal)
   @Audit()
   async incomePlan(@CurrentUser() user: User) {

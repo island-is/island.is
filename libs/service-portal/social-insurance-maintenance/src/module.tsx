@@ -5,16 +5,16 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
 
-const SocialInsuranceMaintenancePaymentPlan = lazy(() =>
-  import('./screens/PaymentPlan/PaymentPlan'),
+const SocialInsuranceMaintenancePaymentPlan = lazy(
+  () => import('./screens/PaymentPlan/PaymentPlan'),
 )
 
-const SocialInsuranceMaintenanceIncomePlan = lazy(() =>
-  import('./screens/IncomePlan/IncomePlan'),
+const SocialInsuranceMaintenanceIncomePlan = lazy(
+  () => import('./screens/IncomePlan/IncomePlan'),
 )
 
-const SocialInsuranceMaintenanceIncomePlanDetail = lazy(() =>
-  import('./screens/IncomePlanDetail/IncomePlanDetail'),
+const SocialInsuranceMaintenanceIncomePlanDetail = lazy(
+  () => import('./screens/IncomePlanDetail/IncomePlanDetail'),
 )
 
 export const socialInsuranceMaintenanceModule: PortalModule = {
@@ -46,12 +46,14 @@ export const socialInsuranceMaintenanceModule: PortalModule = {
       name: m.incomePlan,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlan,
       enabled: userInfo.scopes.includes(ApiScope.internal),
+      key: 'SocialInsuranceIncomePlan',
       element: <SocialInsuranceMaintenanceIncomePlan />,
     },
     {
       name: m.incomePlanDetail,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlanDetail,
       enabled: userInfo.scopes.includes(ApiScope.internal),
+      key: 'SocialInsuranceIncomePlan',
       element: <SocialInsuranceMaintenanceIncomePlanDetail />,
     },
   ],
