@@ -53,6 +53,10 @@ export class Article {
 }
 ```
 
+### 🚀 How to Verify Caching Setup
+
+**Check Cache-Control Headers**: When making a GraphQL query, inspect the HTTP response headers to ensure that the `Cache-Control` header is present. This header dictates how and for how long the response should be cached.
+
 Please read Apollo's documentation on [server-side caching](https://www.apollographql.com/docs/apollo-server/performance/caching/) to understand how caching works.
 
 ## Running unit tests

@@ -123,6 +123,7 @@ export interface ExternalDataProvider extends FormItem {
   isPartOfRepeater?: boolean
   dataProviders: DataProviderItem[]
   otherPermissions?: DataProviderPermissionItem[]
+  enableMockPayment?: boolean
   checkboxLabel?: StaticText
   subTitle?: StaticText
   description?: StaticText
