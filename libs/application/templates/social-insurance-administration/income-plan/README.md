@@ -43,7 +43,7 @@ When creating new text strings in the messages.ts file for the application, be s
 
 See [application-system](../../../../../apps/application-system/README.md) setup on how to get started.
 
-Once you have everything running you can navigate to [http://localhost:4242/umsoknir/tekjuaaetlun](http://localhost:4242/umsoknir/tekjuaaetlun) and start developing.
+Once you have everything running, you can navigate to [http://localhost:4242/umsoknir/tekjuaaetlun](http://localhost:4242/umsoknir/tekjuaaetlun) and start developing.
 
 ## Running unit tests
 
