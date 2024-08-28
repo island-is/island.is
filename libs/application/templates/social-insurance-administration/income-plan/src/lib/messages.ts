@@ -287,6 +287,28 @@ export const statesMessages = defineMessages({
     defaultMessage: 'Opna tekjuáætlun',
     description: 'Open income plan',
   },
+  tryggingastofnunInReviewTitle: {
+    id: 'ip.application:tryggingastofnun.in.review.title',
+    defaultMessage: 'Verið er að fara yfir tekjuáætlunina',
+    description: 'The income plan is being reviewed',
+  },
+  tryggingastofnunInReviewContent: {
+    id: 'ip.application:tryggingastofnun.in.review.content',
+    defaultMessage:
+      'Tryggingastofnun fer nú yfir tekjuáætlunina og því getur þetta tekið nokkra daga',
+    description:
+      'The Social Insurance Administration is currently reviewing the income plan, this may take a few days',
+  },
+  incomePlanProcessed: {
+    id: 'ip.application:income.plan.processed',
+    defaultMessage: 'Tryggingastofnun hefur afgreitt tekjuáætlunina',
+    description: 'Tryggingastofnun has processed the income plan',
+  },
+  incomePlanProcessedDescription: {
+    id: 'ip.application:income.plan.processed.description',
+    defaultMessage: 'Tekjuáætlun hefur verið afgreidd',
+    description: 'The income plan has been processed',
+  },
 })
 
 export const historyMessages = defineMessages({
