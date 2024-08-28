@@ -104,6 +104,7 @@ export interface TemporaryEventLicence {
   licenseResponsible?: string
   maximumNumberOfGuests?: number
   estimatedNumberOfGuests?: number
+  location?: string
 }
 
 /**
@@ -397,11 +398,13 @@ export interface JourneymanLicence {
   name?: string
   dateOfPublication?: Date
   profession?: string
+  nationalId?: string
 }
 
 export interface ProfessionRight {
   name?: string
   profession?: string
+  nationalId?: string
 }
 
 export interface VehicleRegistration {

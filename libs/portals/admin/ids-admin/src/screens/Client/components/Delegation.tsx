@@ -1,5 +1,8 @@
+import React from 'react'
 import { useLocale } from '@island.is/localization'
 import { Checkbox, Hidden, Stack, Text } from '@island.is/island-ui/core'
+import { AuthAdminEnvironment } from '@island.is/api/schema'
+import { AuthDelegationProvider } from '@island.is/shared/types'
 
 import { m } from '../../../lib/messages'
 import { useEnvironmentState } from '../../../hooks/useEnvironmentState'
@@ -8,10 +11,7 @@ import { useSuperAdmin } from '../../../hooks/useSuperAdmin'
 import { checkEnvironmentsSync } from '../../../utils/checkEnvironmentsSync'
 import { useClient } from '../ClientContext'
 import { FormCard } from '../../../components/FormCard/FormCard'
-
-import React from 'react'
 import { useDelegationProviders } from '../../../context/DelegationProviders/DelegationProvidersContext'
-import { AuthAdminEnvironment } from '@island.is/api/schema'
 import { getDelegationProviderTranslations } from '../../../utils/getDelegationProviderTranslations'
 
 interface DelegationProps {
@@ -32,6 +32,7 @@ const Delegation = ({
   const { formatMessage } = useLocale()
   const { client } = useClient()
   const { getDelegationProviders } = useDelegationProviders()
+  const { isSuperAdmin } = useSuperAdmin()
 
   const delegationProviders = getDelegationProviders(selectedEnvironment)
 
@@ -128,7 +129,10 @@ const Delegation = ({
     >
       <Stack space={4}>
         {providers.map((provider) =>
-          !provider ? null : (
+          !provider ||
+          (!isSuperAdmin &&
+            provider.id ===
+              AuthDelegationProvider.PersonalRepresentativeRegistry) ? null : (
             <Stack space={2} key={provider.id}>
               <div>
                 <Text variant="h5" as="h4" paddingBottom={1}>

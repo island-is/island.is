@@ -331,6 +331,7 @@ export const WalletPassportScreen: NavigationFunctionComponent<{
                               })}
                             </Label>
                             <TouchableOpacity
+                              style={{ flexWrap: 'wrap' }}
                               onPress={() =>
                                 openBrowser(
                                   `https://island.is/vegabref`,

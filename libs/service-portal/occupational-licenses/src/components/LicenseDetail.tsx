@@ -17,6 +17,7 @@ type LicenseDetailProps = {
   serviceProviderTooltip?: string
   isOldEducationLicense?: boolean
   name?: string | null
+  licenseNumber?: string | null
   dateOfBirth?: string | null
   profession?: string | null
   licenseType?: string | null
@@ -34,6 +35,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   isOldEducationLicense,
   buttonGroup,
   name,
+  licenseNumber,
   dateOfBirth,
   profession,
   licenseType,
@@ -44,7 +46,7 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
   const { formatMessage } = useLocale()
 
   return (
-    <Box paddingTop="p1" borderBottomWidth="standard" borderColor="blue200">
+    <Box>
       <IntroHeader
         title={title ? title : om.occupationalLicense}
         intro={intro ? intro : undefined}
@@ -66,6 +68,14 @@ export const LicenseDetail: React.FC<LicenseDetailProps> = ({
           <InfoLine
             label={formatMessage(om.nameOfIndividual)}
             content={name}
+            labelColumnSpan={['6/12']}
+            valueColumnSpan={['6/12']}
+          />
+        )}
+        {licenseNumber && (
+          <InfoLine
+            label={formatMessage(om.licenseNumber)}
+            content={licenseNumber}
             labelColumnSpan={['6/12']}
             valueColumnSpan={['6/12']}
           />

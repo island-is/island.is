@@ -32,7 +32,11 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
+import {
+  capitalize,
+  formatDate,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
 import type { User } from '@island.is/judicial-system/types'
 import {
   CaseAppealDecision,
@@ -229,7 +233,9 @@ export class CaseController {
         ? `${theCase.rulingModifiedHistory}\n\n`
         : ''
       const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.rulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.rulingModifiedHistory}`
+      update.rulingModifiedHistory = `${history}${today} - ${
+        user.name
+      } ${lowercase(user.title)}\n\n${update.rulingModifiedHistory}`
     }
 
     if (update.caseResentExplanation) {
@@ -253,7 +259,9 @@ export class CaseController {
         ? `${theCase.appealRulingModifiedHistory}\n\n`
         : ''
       const today = capitalize(formatDate(nowFactory(), 'PPPPp'))
-      update.appealRulingModifiedHistory = `${history}${today} - ${user.name} ${user.title}\n\n${update.appealRulingModifiedHistory}`
+      update.appealRulingModifiedHistory = `${history}${today} - ${
+        user.name
+      } ${lowercase(user.title)}\n\n${update.appealRulingModifiedHistory}`
     }
 
     if (update.mergeCaseId && theCase.state !== CaseState.RECEIVED) {

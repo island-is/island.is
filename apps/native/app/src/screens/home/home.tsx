@@ -15,7 +15,6 @@ import {
 } from 'react-native'
 import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
   Application,
@@ -23,16 +22,18 @@ import {
   useListDocumentsQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useNotificationsStore } from '../../stores/notifications-store'
 import { useUiStore } from '../../stores/ui-store'
 import { isAndroid } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
+import { handleInitialNotification } from '../../utils/lifecycle/setup-notifications'
 import { testIDs } from '../../utils/test-ids'
 import { ApplicationsModule } from './applications-module'
-import { OnboardingModule } from './onboarding-module'
 import { HelloModule } from './hello-module'
 import { InboxModule } from './inbox-module'
+import { OnboardingModule } from './onboarding-module'
 
 interface ListItem {
   id: string
@@ -48,7 +49,9 @@ const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
     (theme, intl, initialized) => ({
       topBar: {
-        rightButtons: initialized ? getRightButtons({ theme } as any) : [],
+        rightButtons: initialized
+          ? getRightButtons({ icons: ['notifications'], theme: theme as any })
+          : [],
       },
       bottomTab: {
         ...({
@@ -93,6 +96,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 }) => {
   useNavigationOptions(componentId)
 
+  useAndroidNotificationPermission()
   const syncToken = useNotificationsStore(({ syncToken }) => syncToken)
   const checkUnseen = useNotificationsStore(({ checkUnseen }) => checkUnseen)
   const [refetching, setRefetching] = useState(false)
@@ -106,7 +110,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons(),
+    rightButtons: getRightButtons({ icons: ['notifications'] }),
     queryResult: applicationsRes,
     refetching,
   })
@@ -120,8 +124,8 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   useEffect(() => {
     // Sync push tokens and unseen notifications
-    void syncToken()
-    void checkUnseen()
+    syncToken()
+    checkUnseen()
 
     // Handle initial notification
     handleInitialNotification()
