@@ -157,10 +157,15 @@ export const IncomePlanForm: Form = buildForm({
                   },
                   suffix: '',
                   condition: (_, activeField) => {
+                    const unevenAndEmploymentIncome =
+                      activeField?.unevenIncomePerYear?.[0] !== YES ||
+                      (activeField?.incomeCategory !== INCOME &&
+                        activeField?.unevenIncomePerYear?.[0] === YES)
+
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.currency !== ISK &&
-                      activeField?.unevenIncomePerYear?.[0] !== YES
+                      unevenAndEmploymentIncome
                     )
                   },
                 },
@@ -181,10 +186,15 @@ export const IncomePlanForm: Form = buildForm({
                   },
                   suffix: '',
                   condition: (_, activeField) => {
+                    const unevenAndEmploymentIncome =
+                      activeField?.unevenIncomePerYear?.[0] !== YES ||
+                      (activeField?.incomeCategory !== INCOME &&
+                        activeField?.unevenIncomePerYear?.[0] === YES)
+
                     return (
                       activeField?.income === RatioType.MONTHLY &&
                       activeField?.currency === ISK &&
-                      activeField?.unevenIncomePerYear?.[0] !== YES
+                      unevenAndEmploymentIncome
                     )
                   },
                 },
@@ -318,6 +328,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -334,6 +345,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -350,6 +362,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -366,6 +379,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -382,6 +396,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -398,6 +413,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -414,6 +430,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -430,6 +447,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -446,6 +464,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -462,6 +481,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -478,6 +498,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
@@ -494,6 +515,7 @@ export const IncomePlanForm: Form = buildForm({
                   condition: (_, activeField) => {
                     return (
                       activeField?.income === RatioType.MONTHLY &&
+                      activeField?.incomeCategory === INCOME &&
                       activeField?.unevenIncomePerYear?.[0] === YES
                     )
                   },
