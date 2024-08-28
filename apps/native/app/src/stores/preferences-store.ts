@@ -25,6 +25,10 @@ export interface PreferencesStore extends State {
   hasAcceptedBiometrics: boolean
   hasOnboardedPasskeys: boolean
   hasCreatedPasskey: boolean
+  homeScreenEnableGraphicWidget: boolean
+  homeScreenEnableInboxWidget: boolean
+  homeScreenEnableApplicationsWidget: boolean
+  homeScreenEnableLicenseWidget: boolean
   homeScreenEnableVehicleWidget: boolean
   homeScreenEnableAirDiscountWidget: boolean
   lastUsedPasskey: number
@@ -58,6 +62,10 @@ const defaultPreferences = {
   hasAcceptedBiometrics: false,
   hasOnboardedPasskeys: false,
   hasCreatedPasskey: false,
+  homeScreenEnableGraphicWidget: true,
+  homeScreenEnableInboxWidget: true,
+  homeScreenEnableApplicationsWidget: true,
+  homeScreenEnableLicenseWidget: true,
   homeScreenEnableVehicleWidget: true,
   homeScreenEnableAirDiscountWidget: true,
   lastUsedPasskey: 0,

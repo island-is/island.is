@@ -35,6 +35,10 @@ export function setupRoutes() {
     Navigation.dismissAllModals()
     selectTab(2)
   })
+  addRoute('/home-options', () => {
+    Navigation.dismissAllModals()
+    selectTab(2)
+  })
 
   addRoute('/inbox', () => {
     Navigation.dismissAllModals()

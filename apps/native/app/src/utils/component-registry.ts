@@ -15,6 +15,7 @@ export const ComponentRegistry = {
   OnboardingBiometricsScreen: `${prefix}.screens.OnboardingBiometrics`,
   OnboardingNotificationsScreen: `${prefix}.screens.OnboardingNotifications`,
   HomeScreen: `${prefix}.screens.Home`,
+  HomeOptionsScren: `${prefix}.screens.HomeOptions`,
   InboxScreen: `${prefix}.screens.Inbox`,
   ApplicationsScreen: `${prefix}.screens.ApplicationsScreen`,
   WalletScreen: `${prefix}.screens.Wallet`,

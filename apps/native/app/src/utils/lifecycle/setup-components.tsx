@@ -13,6 +13,7 @@ import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
 import { HomeScreen } from '../../screens/home/home'
+import { HomeOptionsScreen } from '../../screens/home/home-options'
 import { InboxScreen } from '../../screens/inbox/inbox'
 import { InboxFilterScreen } from '../../screens/inbox/inbox-filter'
 import { LicenseScanDetailScreen } from '../../screens/license-scanner/license-scan-detail'
@@ -99,6 +100,7 @@ export function registerAllComponents() {
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
+  registerComponent(CR.HomeOptionsScren, HomeOptionsScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)

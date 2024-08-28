@@ -187,6 +187,18 @@ export const en: TranslatedMessages = {
   'home.vehicleModule.button': 'My vehicles',
   'button.seeAll': 'See all',
 
+  // home options
+  'homeOptions.screenTitle': 'Home screen',
+  'homeOptions.heading.title': 'Configure home screen',
+  'homeOptions.heading.subtitle':
+    'Here you can configure what is displayed on the home screen',
+  'homeOptions.graphic': 'Display graphic',
+  'homeOptions.inbox': 'Latest in inbox',
+  'homeOptions.licenses': 'Licenses',
+  'homeOptions.applications': 'Applications',
+  'homeOptions.vehicles': 'Vehicles',
+  'homeOptions.airDiscount': 'Air discount scheme',
+
   // inbox
   'inbox.screenTitle': 'Inbox',
   'inbox.bottomTabText': 'Inbox',

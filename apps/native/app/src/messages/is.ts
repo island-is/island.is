@@ -187,6 +187,18 @@ export const is = {
   'home.vehicleModule.button': 'Mín ökutæki',
   'button.seeAll': 'Sjá allt',
 
+  // home options
+  'homeOptions.screenTitle': 'Heimaskjár',
+  'homeOptions.heading.title': 'Stilla heimaskjá',
+  'homeOptions.heading.subtitle':
+    'Hér er hægt að stilla hvað birtist á heimaskjá',
+  'homeOptions.graphic': 'Birta myndskreytingu',
+  'homeOptions.inbox': 'Nýjast í pósthólfinu',
+  'homeOptions.licenses': 'Skírteini',
+  'homeOptions.applications': 'Umsóknir',
+  'homeOptions.vehicles': 'Ökutæki',
+  'homeOptions.airDiscount': 'Loftbrú',
+
   // inbox
   'inbox.screenTitle': 'Pósthólf',
   'inbox.bottomTabText': 'Pósthólf',
