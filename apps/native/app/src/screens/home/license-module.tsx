@@ -1,8 +1,8 @@
-import { Typography, Heading, ChevronRight, ViewPager } from '@ui'
+import { Typography, Heading, ChevronRight, ViewPager, EmptyCard } from '@ui'
 
 import React from 'react'
-import { FormattedMessage } from 'react-intl'
-import { SafeAreaView, TouchableOpacity } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
 import { navigateTo } from '../../lib/deep-linking'
@@ -11,6 +11,7 @@ import {
   useGetIdentityDocumentQuery,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
+import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import { WalletItem } from '../wallet/components/wallet-item'
 import { screenWidth } from '../../utils/dimensions'
 
@@ -20,6 +21,7 @@ const Host = styled.View`
 
 export const LicenseModule = React.memo(() => {
   const theme = useTheme()
+  const intl = useIntl()
 
   // Query list of licenses
   const res = useListLicensesQuery({
@@ -49,11 +51,7 @@ export const LicenseModule = React.memo(() => {
     return null
   }
 
-  const count = licenses?.length ?? 0 + (passport ? 1 : 0)
-
-  if (count === 0) {
-    return null
-  }
+  const count = 0 //licenses?.length ?? 0 + (passport ? 1 : 0)
 
   const allLicenses = [...licenses, ...(passport ?? [])]
 
@@ -112,7 +110,23 @@ export const LicenseModule = React.memo(() => {
             <FormattedMessage id="home.licenses" />
           </Heading>
         </TouchableOpacity>
-        {count === 1 && children.slice(0, 1)}
+        {count === 0 ? (
+          <EmptyCard
+            text={intl.formatMessage({
+              id: 'wallet.emptyListDescription',
+            })}
+            image={
+              <Image
+                source={illustrationSrc}
+                resizeMode="cover"
+                style={{ height: 72, width: 55 }}
+              />
+            }
+            link={null}
+          />
+        ) : (
+          children.slice(0, 1)
+        )}
         {count >= 2 && <ViewPager>{children}</ViewPager>}
       </Host>
     </SafeAreaView>

@@ -1,10 +1,11 @@
-import { Typography, Heading, ChevronRight, ViewPager } from '@ui'
+import { Typography, Heading, ChevronRight, ViewPager, EmptyCard } from '@ui'
 
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
-import { SafeAreaView, TouchableOpacity } from 'react-native'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import illustrationSrc from '../../assets/illustrations/le-jobs-s2.png'
 import { navigateTo } from '../../lib/deep-linking'
 import { useGetAirDiscountQuery } from '../../graphql/types/schema'
 import { AirDiscountCard } from '@ui/lib/card/air-discount-card'
@@ -31,13 +32,13 @@ export const AirDiscountModule = React.memo(() => {
     ({ user }) => !(user.fund?.used === 0 && user.fund.credit === 0),
   )
 
-  if (noRights || !discounts || error) {
+  if (error) {
     return null
   }
 
-  const count = discounts.length ?? 0
+  const count = discounts?.length ?? 0
 
-  const children = discounts.slice(0, 3).map(({ discountCode, user }) => (
+  const children = discounts?.slice(0, 3).map(({ discountCode, user }) => (
     <AirDiscountCard
       key={`loftbru-item-${discountCode}`}
       name={user.name}
@@ -93,7 +94,17 @@ export const AirDiscountModule = React.memo(() => {
             <FormattedMessage id="home.airDiscount" />
           </Heading>
         </TouchableOpacity>
-        {count === 1 && children.slice(0, 1)}
+        {count === 0 && noRights ? ( // Can either of these be not true at the same time?
+          <EmptyCard
+            text={intl.formatMessage({
+              id: 'airDiscount.emptyListDescription',
+            })}
+            image={<Image source={illustrationSrc} resizeMode="cover" />}
+            link={null}
+          />
+        ) : (
+          children?.slice(0, 1)
+        )}
         {count >= 2 && <ViewPager>{children}</ViewPager>}
       </Host>
     </SafeAreaView>

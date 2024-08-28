@@ -23,10 +23,6 @@ const Host = styled.View`
   align-items: center;
 `
 
-const Message = styled(Typography)`
-  margin-bottom: ${({ theme }) => theme.spacing[2]}px;
-`
-
 const TextWrapper = styled.View`
   flex: 1;
 `
@@ -41,7 +37,7 @@ export function EmptyCard({ text, image, link }: EmptyCardProps) {
   return (
     <Host>
       <TextWrapper>
-        <Message variant="body3">{text}</Message>
+        <Typography variant="body3">{text}</Typography>
         {link && <View style={{ flexWrap: 'wrap' }}>{link}</View>}
       </TextWrapper>
       <View>{image}</View>

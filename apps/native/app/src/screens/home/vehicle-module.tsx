@@ -1,10 +1,11 @@
-import { Typography, Heading, ChevronRight, ViewPager } from '@ui'
+import { Typography, Heading, ChevronRight, ViewPager, EmptyCard } from '@ui'
 
 import React, { useEffect } from 'react'
-import { FormattedMessage } from 'react-intl'
-import { SafeAreaView, TouchableOpacity } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
 
+import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { navigateTo } from '../../lib/deep-linking'
 import { VehicleItem } from '../vehicles/components/vehicle-item'
 import { useListVehiclesQuery } from '../../graphql/types/schema'
@@ -20,6 +21,7 @@ const Host = styled.View`
 
 export const VehicleModule = React.memo(() => {
   const theme = useTheme()
+  const intl = useIntl()
   const { homeScreenEnableVehicleWidget } = usePreferencesStore()
 
   const res = useListVehiclesQuery({
@@ -58,10 +60,6 @@ export const VehicleModule = React.memo(() => {
   )
 
   const count = vehiclesWithMileageRegistration.length ?? 0
-
-  if (count === 0) {
-    return null
-  }
 
   const children = vehiclesWithMileageRegistration
     .slice(0, 3)
@@ -115,6 +113,17 @@ export const VehicleModule = React.memo(() => {
             <FormattedMessage id="home.vehicles" />
           </Heading>
         </TouchableOpacity>
+        {count === 0 ? (
+          <EmptyCard
+            text={intl.formatMessage({
+              id: 'vehicles.emptyListDescription',
+            })}
+            image={<Image source={illustrationSrc} resizeMode="cover" />}
+            link={null}
+          />
+        ) : (
+          children?.slice(0, 1)
+        )}
         {count === 1 && children.slice(0, 1)}
         {count >= 2 && <ViewPager>{children}</ViewPager>}
       </Host>
