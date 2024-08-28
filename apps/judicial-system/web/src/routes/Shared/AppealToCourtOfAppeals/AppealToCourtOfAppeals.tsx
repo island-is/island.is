@@ -103,8 +103,8 @@ const AppealToCourtOfAppeals = () => {
     }
   }
 
-  const handleChange = (files: File[], type: CaseFileCategory) => {
-    addUploadFiles(files, type, 'done')
+  const handleChange = (files: File[], category: CaseFileCategory) => {
+    addUploadFiles(files, { category, status: 'done' })
   }
 
   return (
