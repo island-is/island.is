@@ -24,7 +24,7 @@ When an applicant has sent in the income plan to TR, the application is in this 
 
 #### Tryggingastofnun in review
 
-For the income plan to be in this state, TR need to make a state change when they start reviewing the income plan. Here the application can not be edited.
+For the income plan to be in this state, TR needs to make a state change when they start reviewing the income plan. Here, the application cannot be edited.
 
 #### Approved (Processed)
 
