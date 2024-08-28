@@ -8,6 +8,8 @@ import {
 } from '@island.is/api/schema'
 import {
   ActiveItem,
+  ButtonTypes,
+  InputButton,
   ItemType,
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
@@ -33,32 +35,44 @@ export interface IControlContext {
 
 export const ControlContext = createContext<IControlContext>({
   control: {} as ControlState,
-  controlDispatch: function (_value: unknown): void {
+  controlDispatch: (_value: unknown): void => {
     throw new Error('Function not implemented.')
   },
   certificationTypes: [] as Maybe<Maybe<FormSystemFormCertificationType>[]>,
   fieldTypes: [] as Maybe<Maybe<FormSystemFieldType>[]>,
   listTypes: [] as Maybe<Maybe<FormSystemListType>[]>,
-  setInSettings: function (_value: boolean): void {
+  setInSettings: (_value: boolean): void => {
     throw new Error('Function not implemented.')
   },
   inSettings: false,
-  updateActiveItem: function (_updatedActiveItem?: ActiveItem): void {
+  updateActiveItem: (_updatedActiveItem?: ActiveItem): void => {
     throw new Error('Function not implemented.')
   },
   focus: '',
-  setFocus: function (_value: string): void {
+  setFocus: (_value: string): void => {
     throw new Error('Function not implemented.')
   },
-  updateDnD: function (_type: ItemType): void {
+  updateDnD: (_type: ItemType): void => {
     throw new Error('Function not implemented.')
   },
   selectStatus: NavbarSelectStatus.OFF,
-  setSelectStatus: function (_value: NavbarSelectStatus): void {
+  setSelectStatus: (_value: NavbarSelectStatus): void => {
+    throw new Error('Function not implemented.')
+  },
+  formUpdate: function (_updatedForm?: FormSystemForm): void {
     throw new Error('Function not implemented.')
   },
   inListBuilder: false,
-  setInListBuilder: function (_value: boolean): void {
+  setInListBuilder: (_value: boolean): void => {
     throw new Error('Function not implemented.')
-  }
+  },
+  updateSettings: (_updatedForm?: FormSystemForm): void => {
+    throw new Error('Function not implemented.')
+  },
+  translate: (_text: string): Promise<string> => {
+    throw new Error('Function not implemented.')
+  },
+  updateSettings: function (_updatedForm?: FormSystemForm): void {
+    throw new Error('Function not implemented.')
+  },
 })

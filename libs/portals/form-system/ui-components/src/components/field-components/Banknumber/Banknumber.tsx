@@ -6,32 +6,34 @@ import {
 import { useRef, useState } from 'react'
 import { FormSystemInput } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../../lib/messages'
+import { m } from '../../../lib/messages'
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const Banknumber = ({ currentItem }: Props) => {
-  const [banki, setBanki] = useState<string>('')
-  const [hb, setHb] = useState<string>('')
-  const [reikningur, setReikningur] = useState<string>('')
+export const Banknumber = ({ item }: Props) => {
+  const [bank, setBank] = useState<string>('')
+  const [ledger, setLedger] = useState<string>('')
+  const [account, setAccount] = useState<string>('')
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
-    useRef<HTMLInputElement | HTMLTextAreaElement>(),
+    useRef<HTMLInputElement | HTMLTextAreaElement>()
   ]
+
+  const { formatMessage } = useIntl()
 
   const handleChange = (index: number, value: string) => {
     if (index === 0) {
-      setBanki(value)
+      setBank(value)
       if (value.length === 4) {
         if (inputRefs[1]?.current) {
           inputRefs[1]?.current.focus()
         }
       }
     } else if (index === 1) {
-      setHb(value)
+      setLedger(value)
       if (value.length === 2) {
         if (inputRefs[2]?.current) {
           inputRefs[2]?.current.focus()
@@ -39,7 +41,7 @@ export const Banknumber = ({ currentItem }: Props) => {
       }
     } else if (index === 2) {
       if (value.length <= 6) {
-        setReikningur(value)
+        setAccount(value)
       }
       if (value.length === 6) {
         if (inputRefs[2]?.current) {
@@ -61,8 +63,6 @@ export const Banknumber = ({ currentItem }: Props) => {
     return leadingZeros + originalNumber
   }
 
-  const { formatMessage } = useIntl()
-
   return (
     <Column>
       <Row marginTop={2}>
@@ -75,12 +75,12 @@ export const Banknumber = ({ currentItem }: Props) => {
             }
             label={formatMessage(m.bank)}
             type="number"
-            value={banki}
+            value={bank}
             maxLength={4}
             name=""
             onChange={(e) => handleChange(0, e.target.value)}
-            onBlur={(e) => setBanki(addLeadingZeros(e.target.value, 4))}
-            required={currentItem?.isRequired ?? false}
+            onBlur={(e) => setBank(addLeadingZeros(e.target.value, 4))}
+            required={item?.isRequired ?? false}
           />
         </Column>
         <Column span="2/12">
@@ -93,11 +93,11 @@ export const Banknumber = ({ currentItem }: Props) => {
             label={formatMessage(m.ledger)}
             maxLength={2}
             type="number"
-            value={hb}
+            value={ledger}
             name=""
             onChange={(e) => handleChange(1, e.target.value)}
-            onBlur={(e) => setHb(addLeadingZeros(e.target.value, 2))}
-            required={currentItem?.isRequired ?? false}
+            onBlur={(e) => setLedger(addLeadingZeros(e.target.value, 2))}
+            required={item?.isRequired ?? false}
           />
         </Column>
         <Column span="4/12">
@@ -109,11 +109,11 @@ export const Banknumber = ({ currentItem }: Props) => {
             }
             label={formatMessage(m.accountNumber)}
             type="number"
-            value={reikningur}
+            value={account}
             name=""
             onChange={(e) => handleChange(2, e.target.value)}
-            onBlur={(e) => setReikningur(addLeadingZeros(e.target.value, 6))}
-            required={currentItem?.isRequired ?? false}
+            onBlur={(e) => setAccount(addLeadingZeros(e.target.value, 6))}
+            required={item?.isRequired ?? false}
           />
         </Column>
       </Row>

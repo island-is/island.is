@@ -3,28 +3,27 @@ import {
   GridColumn as Column,
   Input,
 } from '@island.is/island-ui/core'
-import { ChangeEvent, useContext, useState } from 'react'
-import { ControlContext } from '../../../../../context/ControlContext'
+import { ChangeEvent, useState } from 'react'
 import { FormSystemInput } from '@island.is/api/schema'
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const Currency = ({ currentItem }: Props) => {
+export const CurrencyField = ({ item }: Props) => {
   const [currency, setCurrency] = useState('')
-  const { control } = useContext(ControlContext)
-  const label = control.activeItem?.data?.name?.is
+  const label = item?.name?.is
+
   const handleCurrencyChange = (
     e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     // Remove any non-digit characters from the input value
     const inputValue = e.target.value.replace(/\D/g, '')
-
     // Split the input value into groups of three characters
     const formattedValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
     setCurrency(formattedValue)
   }
+
   return (
     <Row marginTop={2}>
       <Column span="10/10">
@@ -33,7 +32,7 @@ export const Currency = ({ currentItem }: Props) => {
           name="Currency"
           value={currency}
           onChange={handleCurrencyChange}
-          required={currentItem?.isRequired ?? false}
+          required={item?.isRequired ?? false}
         />
       </Column>
     </Row>

@@ -14,6 +14,7 @@ import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '../../../../../../../lib/messages'
 import * as styles from './ListItem.css'
+import { translate } from '../../../../../../../lib/utils/translation'
 
 interface Props {
   listItem: FormSystemListItem
@@ -35,6 +36,7 @@ export const ListItem = ({
     focus,
     setSelectStatus,
     updateActiveItem,
+    translate,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemInput
@@ -182,6 +184,25 @@ export const ListItem = ({
                 },
               })
             }
+            buttons={[
+              {
+                label: 'Translate',
+                name: 'reader',
+                onClick: async () => {
+                  const translation = await translate(listItem?.label?.is ?? '')
+                  controlDispatch({
+                    type: 'CHANGE_LIST_ITEM',
+                    payload: {
+                      property: 'label',
+                      lang: 'en',
+                      value: translation,
+                      guid: listItem.guid ?? '',
+                      update: updateActiveItem,
+                    },
+                  })
+                },
+              },
+            ]}
           />
         </Column>
       </Row>
@@ -232,6 +253,27 @@ export const ListItem = ({
                   },
                 })
               }
+              buttons={[
+                {
+                  label: 'Translate',
+                  name: 'reader',
+                  onClick: async () => {
+                    const translation = await translate(
+                      listItem?.description?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_LIST_ITEM',
+                      payload: {
+                        property: 'description',
+                        lang: 'en',
+                        value: translation,
+                        guid: listItem.guid ?? '',
+                        update: updateActiveItem,
+                      },
+                    })
+                  },
+                },
+              ]}
             />
           </Column>
         </Row>

@@ -1,17 +1,14 @@
 import { useContext, useState } from 'react'
 import { Input, Stack, Text } from '@island.is/island-ui/core'
-import { ControlContext } from '../../../../../context/ControlContext'
 import { FormSystemInput } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
-import { m } from '../../../../../lib/messages'
+import { m } from '../../../lib/messages'
 
 interface Props {
-  currentItem: FormSystemInput
+  item: FormSystemInput
 }
 
-export const Email = ({ currentItem }: Props) => {
-  const { control } = useContext(ControlContext)
-  const { activeItem } = control
+export const Email = ({ item }: Props) => {
   const [email, setEmail] = useState('')
   const [hasError, setHasError] = useState(false)
   const isValidEmail = (): boolean => {
@@ -22,7 +19,7 @@ export const Email = ({ currentItem }: Props) => {
   const { formatMessage } = useIntl()
   return (
     <Stack space={2}>
-      <Text>{activeItem?.data?.name?.is}</Text>
+      <Text>{item?.name?.is}</Text>
       <Input
         type="email"
         name="email"
@@ -32,7 +29,7 @@ export const Email = ({ currentItem }: Props) => {
         onBlur={() => setHasError(isValidEmail())}
         errorMessage={formatMessage(m.invalidEmail)}
         hasError={hasError}
-        required={currentItem?.isRequired ?? false}
+        required={item?.isRequired ?? false}
       />
     </Stack>
   )

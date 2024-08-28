@@ -2,10 +2,10 @@ import { FormSystemInput } from '@island.is/api/schema'
 import { Box, Button, Text } from '@island.is/island-ui/core'
 
 interface Props {
-  data: FormSystemInput
+  item: FormSystemInput
 }
 
-export const MessageWithLink = ({ data }: Props) => {
+export const MessageWithLink = ({ item }: Props) => {
   const formatUrl = (url: string): string => {
     if (url.startsWith('http://')) {
       url = url.replace('http://', 'https://')
@@ -14,6 +14,7 @@ export const MessageWithLink = ({ data }: Props) => {
     }
     return url
   }
+
   return (
     <Box
       flexDirection="row"
@@ -24,13 +25,13 @@ export const MessageWithLink = ({ data }: Props) => {
     >
       <Box display="flex" flexDirection="column">
         <Box paddingBottom={1}>
-          <Text variant="h4">{data?.name?.is}</Text>
+          <Text variant="h4">{item?.name?.is}</Text>
         </Box>
         <Box overflow="initial">
-          <Text>{data?.description?.is}</Text>
+          <Text>{item?.description?.is}</Text>
         </Box>
       </Box>
-      {data.inputSettings?.hasLink && (
+      {item.inputSettings?.hasLink && (
         <Box
           alignItems="center"
           marginLeft="auto"
@@ -39,13 +40,13 @@ export const MessageWithLink = ({ data }: Props) => {
         >
           <Button
             onClick={() => {
-              window.open(formatUrl(data.inputSettings?.url ?? ''), '_blank')
+              window.open(formatUrl(item.inputSettings?.url ?? ''), '_blank')
             }}
             size="small"
             icon="open"
             variant="ghost"
           >
-            {data?.inputSettings.buttonText?.is}
+            {item?.inputSettings.buttonText?.is}
           </Button>
         </Box>
       )}

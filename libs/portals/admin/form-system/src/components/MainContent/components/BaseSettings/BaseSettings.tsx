@@ -19,6 +19,7 @@ export const BaseSettings = () => {
     focus,
     formUpdate,
     updateSettings,
+    translationButtons,
   } = useContext(ControlContext)
   const { form } = control
   const { formatMessage } = useIntl()
@@ -57,6 +58,10 @@ export const BaseSettings = () => {
                 payload: { lang: 'en', newValue: e.target.value },
               })
             }
+            buttons={translationButtons(
+              form?.name?.is ?? '',
+              'CHANGE_FORM_NAME',
+            )}
           />
         </Column>
       </Row>
@@ -111,11 +116,10 @@ export const BaseSettings = () => {
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_STEP',
-                payload: { value: e.target.checked },
-              })
-              updateSettings({
-                ...form,
-                stopProgressOnValidatingStep: e.target.checked,
+                payload: {
+                  value: e.target.checked,
+                  update: updateSettings,
+                },
               })
             }}
           />

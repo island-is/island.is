@@ -3,6 +3,7 @@ import { ControlContext } from '../../../../context/ControlContext'
 import { Stack, Checkbox, Box, Text } from '@island.is/island-ui/core'
 import {
   FormSystemApplicantType,
+  FormSystemForm,
   FormSystemFormApplicantType,
   FormSystemLanguageType,
 } from '@island.is/api/schema'
@@ -34,6 +35,7 @@ export const RelevantParties = () => {
     applicantTypes: applicantTypeTemplates,
     control,
     updateSettings,
+    controlDispatch,
   } = useContext(ControlContext)
   const { form } = control
   const { id: formId } = form
@@ -80,6 +82,16 @@ export const RelevantParties = () => {
     return true
   }
 
+  const saveAndUpdate = (newForm: FormSystemForm) => {
+    updateSettings({ ...newForm })
+    controlDispatch({
+      type: 'CHANGE_FORM_SETTINGS',
+      payload: {
+        newForm: { ...newForm },
+      },
+    })
+  }
+
   const handleSelect = (e: { label: string; value: string }, index: number) => {
     const newApplicantTypes = formApplicantTypes.map((f, i) => {
       if (i === index) {
@@ -94,7 +106,7 @@ export const RelevantParties = () => {
       }
       return f
     })
-    updateSettings({ ...form, formApplicantTypes: newApplicantTypes })
+    saveAndUpdate({ ...form, formApplicantTypes: newApplicantTypes })
     setFormApplicantTypes(newApplicantTypes)
   }
 
@@ -122,7 +134,7 @@ export const RelevantParties = () => {
           )
         : newFormApplicantTypes
       const newList = [...formApplicantTypes, ...newTypes]
-      updateSettings({ ...form, formApplicantTypes: newList })
+      saveAndUpdate({ ...form, formApplicantTypes: newList })
       setFormApplicantTypes([...formApplicantTypes, ...newTypes])
     }
 
@@ -130,7 +142,7 @@ export const RelevantParties = () => {
       const newList = formApplicantTypes.filter(
         (f) => !types.includes(f.type as EFormApplicantTypes),
       )
-      updateSettings({ ...form, formApplicantTypes: newList })
+      saveAndUpdate({ ...form, formApplicantTypes: newList })
       setFormApplicantTypes(newList)
     }
 
@@ -142,7 +154,7 @@ export const RelevantParties = () => {
         if (template !== undefined && template !== null) {
           const newFormApplicantType: FormSystemFormApplicantType =
             createFormApplicantType(EFormApplicantTypes.einstaklingur, template)
-          updateSettings({
+          saveAndUpdate({
             ...form,
             formApplicantTypes: [...formApplicantTypes, newFormApplicantType],
           })
@@ -173,6 +185,10 @@ export const RelevantParties = () => {
             delegateeTemplate,
           ),
         ]
+        saveAndUpdate({
+          ...form,
+          formApplicantTypes: [...formApplicantTypes, ...newFormApplicantTypes],
+        })
         setFormApplicantTypes([...formApplicantTypes, ...newFormApplicantTypes])
       } else if (index === 2) {
         const delegatorTemplate = applicantTypeTemplates?.find(

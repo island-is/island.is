@@ -1,4 +1,4 @@
-import { Box, Icon } from '@island.is/island-ui/core'
+import { Box, DialogPrompt, Icon, Tooltip } from '@island.is/island-ui/core'
 import { useContext } from 'react'
 import { FormSystemGroup, FormSystemInput } from '@island.is/api/schema'
 import {
@@ -12,17 +12,37 @@ import {
 import { useFormSystemDeleteStepMutation } from './Step.generated'
 import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
+import { useIntl } from 'react-intl'
+import { m } from '../../../lib/messages'
 
 export const NavButtons = () => {
   const { control, controlDispatch } = useContext(ControlContext)
   const { activeItem, form } = control
   const { groupsList: groups, inputsList: inputs } = form
+  const { formatMessage } = useIntl()
+  const hoverText =
+    activeItem.type === 'Step'
+      ? formatMessage(m.addGroupHover)
+      : formatMessage(m.addInputHover)
 
   const [addGroup] = useFormSystemCreateGroupMutation()
   const [addInput] = useFormSystemCreateInputMutation()
   const [removeStep, removeStepStatus] = useFormSystemDeleteStepMutation()
   const [removeGroup, removeGroupStatus] = useFormSystemDeleteGroupMutation()
   const [removeInput, removeInputStatus] = useFormSystemDeleteInputMutation()
+
+  const containsGroupOrInput = (): boolean | undefined => {
+    const { type } = activeItem
+    if (type === 'Step') {
+      return groups?.some((group) => group?.stepGuid === activeItem?.data?.guid)
+    }
+    if (type === 'Group') {
+      return inputs?.some(
+        (input) => input?.groupGuid === activeItem?.data?.guid,
+      )
+    }
+    return false
+  }
 
   const addItem = async () => {
     if (activeItem.type === 'Step') {
@@ -116,12 +136,41 @@ export const NavButtons = () => {
           marginRight={1}
           onClick={addItem}
         >
-          <Icon icon="add" color="blue400" size="medium" />
+          <Tooltip text={hoverText} color="yellow200">
+            <span>
+              <Icon icon="add" color="blue400" size="medium" />
+            </span>
+          </Tooltip>
         </Box>
       )}
-      <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove}>
-        <Icon icon="trash" size="medium" />
-      </Box>
+      {containsGroupOrInput() ? (
+        <DialogPrompt
+          baseId="remove"
+          title={formatMessage(m.areYouSure)}
+          description={formatMessage(m.completelySure)}
+          ariaLabel="Remove item"
+          buttonTextConfirm={formatMessage(m.confirm)}
+          buttonTextCancel={formatMessage(m.cancel)}
+          onConfirm={remove}
+          disclosureElement={
+            <Box style={{ paddingTop: '5px', cursor: 'pointer' }}>
+              <Tooltip text={formatMessage(m.delete)}>
+                <span>
+                  <Icon icon="trash" size="medium" />
+                </span>
+              </Tooltip>
+            </Box>
+          }
+        />
+      ) : (
+        <Box style={{ paddingTop: '5px', cursor: 'pointer' }} onClick={remove}>
+          <Tooltip text={formatMessage(m.delete)}>
+            <span>
+              <Icon icon="trash" size="medium" />
+            </span>
+          </Tooltip>
+        </Box>
+      )}
     </Box>
   )
 }
