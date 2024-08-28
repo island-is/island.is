@@ -42,14 +42,14 @@ export const getBasicMachineInformation = (
     `${formatMessage(machine.labels.basicMachineInformation.markedCE)}: ${
       basicMachineInformation.markedCE === YES
         ? formatMessage(information.labels.radioButtons.radioOptionYes)
-        : formatMessage(information.labels.radioButtons.radioOptionYes)
+        : formatMessage(information.labels.radioButtons.radioOptionNo)
     }`,
     `${formatMessage(
       machine.labels.basicMachineInformation.preRegistration,
     )}: ${
       basicMachineInformation.preRegistration === YES
         ? formatMessage(information.labels.radioButtons.radioOptionYes)
-        : formatMessage(information.labels.radioButtons.radioOptionYes)
+        : formatMessage(information.labels.radioButtons.radioOptionNo)
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.isUsed)}: ${
       basicMachineInformation.isUsed === NEW
