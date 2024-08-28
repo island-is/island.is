@@ -1,7 +1,6 @@
 import {
   FinancialStatementsInaoClientConfig,
   FinancialStatementsInaoClientModule,
-  FinancialStatementsInaoClientService,
 } from '@island.is/clients/financial-statements-inao'
 
 import { DynamicModule } from '@nestjs/common'

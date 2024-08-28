@@ -1045,4 +1045,26 @@ export class Case extends Model {
   })
   @ApiPropertyOptional({ enum: CourtSessionType })
   courtSessionType?: CourtSessionType
+
+  /**********
+   * The surrogate key of the case an indictment was merged in to - only used if the has been merged
+   **********/
+  @ForeignKey(() => Case)
+  @Column({ type: DataType.UUID, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  mergeCaseId?: string
+
+  /**********
+   * The case this was merged in to - only used if the case was merged
+   **********/
+  @BelongsTo(() => Case, 'mergeCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  mergeCase?: Case
+
+  // /**********
+  //  * The cases that have been merged in to the current case - only used if the case was merged
+  //  **********/
+  @HasMany(() => Case, 'mergeCaseId')
+  @ApiPropertyOptional({ type: () => Case })
+  mergedCases?: Case[]
 }

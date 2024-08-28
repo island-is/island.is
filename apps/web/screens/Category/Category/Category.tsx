@@ -20,14 +20,14 @@ import { Card, Sticky } from '@island.is/web/components'
 import {
   Article,
   ContentLanguage,
-  GetLifeEventsInCategoryQuery,
   GetArticleCategoriesQuery,
   GetCategoryPagesQuery,
   GetCategoryPagesQueryVariables,
+  GetLifeEventsInCategoryQuery,
   GetNamespaceQuery,
   Image,
-  QueryGetLifeEventsInCategoryArgs,
   QueryGetArticleCategoriesArgs,
+  QueryGetLifeEventsInCategoryArgs,
   QueryGetNamespaceArgs,
 } from '@island.is/web/graphql/schema'
 import { useNamespace } from '@island.is/web/hooks'
@@ -38,9 +38,9 @@ import { useI18n } from '@island.is/web/i18n'
 import { withMainLayout } from '@island.is/web/layouts/main'
 import { SidebarLayout } from '@island.is/web/screens/Layouts/SidebarLayout'
 import {
-  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
   GET_CATEGORIES_QUERY,
   GET_CATEGORY_PAGES_QUERY,
+  GET_LIFE_EVENTS_IN_CATEGORY_QUERY,
   GET_NAMESPACE_QUERY,
 } from '@island.is/web/screens/queries'
 import { Screen } from '@island.is/web/types'
@@ -133,7 +133,7 @@ const Category: Screen<CategoryProps> = ({
     const expanded = hashArray.includes(groupSlug)
 
     return (
-      <div id={groupSlug} ref={(el) => (itemsRef.current[index] = el)}>
+      <div id={groupSlug} ref={(el) => (itemsRef.current[index] = el) as any}>
         <AccordionCard
           id={`accordion-item-${groupSlug}`}
           label={group?.title}

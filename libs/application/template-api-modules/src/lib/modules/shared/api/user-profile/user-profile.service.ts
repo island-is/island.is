@@ -1,10 +1,7 @@
 import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { IslyklarApi } from '@island.is/clients/islykill'
-import {
-  UserProfileControllerFindUserProfileClientTypeEnum,
-  V2UsersApi,
-} from '@island.is/clients/user-profile'
+import { V2MeApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
   BaseTemplateAPIModuleConfig,
@@ -16,18 +13,19 @@ import {
   UserProfile,
   UserProfileParameters,
 } from '@island.is/application/types'
-import { getSlugFromType } from '@island.is/application/core'
+import { coreErrorMessages, getSlugFromType } from '@island.is/application/core'
 import { IdsClientConfig } from '@island.is/nest/config'
 import { Inject } from '@nestjs/common'
 import { ConfigService, ConfigType } from '@nestjs/config'
 import { getConfigValue } from '../../shared.utils'
-
-export const MAX_OUT_OF_DATE_MONTHS = 6
+import { TemplateApiError } from '@island.is/nest/problem'
+import { FetchError } from '@island.is/clients/middlewares'
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 @Injectable()
 export class UserProfileService extends BaseTemplateApiService {
   constructor(
-    private readonly userProfileApi: V2UsersApi,
+    private readonly userProfileApi: V2MeApi,
     private readonly islyklarApi: IslyklarApi,
     @Inject(IdsClientConfig.KEY)
     private idsClientConfig: ConfigType<typeof IdsClientConfig>,
@@ -37,19 +35,17 @@ export class UserProfileService extends BaseTemplateApiService {
     super('UserProfile')
   }
 
-  userProfileApiWithAuth(auth: Auth): V2UsersApi {
+  userProfileApiWithAuth(auth: Auth): V2MeApi {
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async userProfile({
+    application,
     auth,
+    params,
   }: TemplateApiModuleActionProps<UserProfileParameters>): Promise<UserProfile> {
     const { mobilePhoneNumber, email } = await this.userProfileApiWithAuth(auth)
-      .userProfileControllerFindUserProfile({
-        xParamNationalId: auth.nationalId,
-        clientType:
-          UserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
-      })
+      .meUserProfileControllerFindUserProfile()
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
           return {
@@ -59,15 +55,59 @@ export class UserProfileService extends BaseTemplateApiService {
         }
         throw error
       })
+
     /// Temporary dependency on íslykill for bank info retrieval via FJS API.
     /// A refactor is planned to integrate bank info directly from FJS API to eliminate íslykill dependency.
     const bankInfo = await this.getBankInfoFromIslykill(auth)
+
+    if (params?.validateBankInformation && !bankInfo) {
+      // If individual does not have a valid bank account, then we fail this check
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.noBankAccountError,
+          summary: coreErrorMessages.noBankAccountError,
+        },
+        400,
+      )
+    }
+
+    if (params?.validateEmail && !email) {
+      throw new TemplateApiError(
+        {
+          title: coreErrorMessages.noEmailFound,
+          summary: {
+            ...coreErrorMessages.noEmailFoundDescription,
+            values: { link: this.getIDSLink(application) },
+          },
+        },
+        500,
+      )
+    }
+
+    if (params?.validatePhoneNumber) {
+      if (!mobilePhoneNumber || !this.isValidPhoneNumber(mobilePhoneNumber))
+        throw new TemplateApiError(
+          {
+            title: coreErrorMessages.invalidPhoneNumber,
+            summary: {
+              ...coreErrorMessages.invalidPhoneNumberDescription,
+              values: { link: '/minarsidur' },
+            },
+          },
+          500,
+        )
+    }
 
     return {
       mobilePhoneNumber: mobilePhoneNumber ?? undefined,
       email: email ?? undefined,
       bankInfo,
     }
+  }
+
+  private isValidPhoneNumber = (phoneNumber: string) => {
+    const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+    return phone && phone.isValid()
   }
 
   private async getBankInfoFromIslykill(
@@ -81,6 +121,8 @@ export class UserProfileService extends BaseTemplateApiService {
       .catch((error) => {
         if (isRunningOnEnvironment('local')) {
           return '0000-11-222222'
+        } else if (error instanceof FetchError && error.status === 404) {
+          return undefined
         }
         throw error
       })

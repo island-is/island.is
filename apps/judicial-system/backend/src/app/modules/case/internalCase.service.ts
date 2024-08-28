@@ -30,6 +30,7 @@ import {
   EventType,
   isIndictmentCase,
   isProsecutionUser,
+  isRequestCase,
   isRestrictionCase,
   isTrafficViolationCase,
   NotificationType,
@@ -53,7 +54,6 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
 import { CaseEvent, EventService } from '../event'
-import { EventLogService } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Institution } from '../institution'
@@ -173,8 +173,6 @@ export class InternalCaseService {
     private readonly fileService: FileService,
     @Inject(forwardRef(() => DefendantService))
     private readonly defendantService: DefendantService,
-    @Inject(forwardRef(() => EventLogService))
-    private readonly eventLogService: EventLogService,
     @Inject(forwardRef(() => PdfService))
     private readonly pdfService: PdfService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -353,14 +351,16 @@ export class InternalCaseService {
         .create(
           {
             ...caseToCreate,
-            state: isIndictmentCase(caseToCreate.type)
-              ? CaseState.DRAFT
-              : CaseState.NEW,
+            state: isRequestCase(caseToCreate.type)
+              ? CaseState.NEW
+              : CaseState.DRAFT,
             origin: CaseOrigin.LOKE,
             creatingProsecutorId: creator.id,
             prosecutorId:
               creator.role === UserRole.PROSECUTOR ? creator.id : undefined,
-            courtId: creator.institution?.defaultCourtId,
+            courtId: isRequestCase(caseToCreate.type)
+              ? creator.institution?.defaultCourtId
+              : undefined,
             prosecutorsOfficeId: creator.institution?.id,
           },
           { transaction },
@@ -653,12 +653,12 @@ export class InternalCaseService {
       theCase.judge?.nationalId === nationalId
         ? {
             name: theCase.judge?.name,
-            role: UserRole.DISTRICT_COURT_JUDGE,
+            role: theCase.judge?.role,
           }
         : theCase.registrar?.nationalId === nationalId
         ? {
             name: theCase.registrar?.name,
-            role: UserRole.DISTRICT_COURT_REGISTRAR,
+            role: theCase.registrar?.role,
           }
         : {}
 
@@ -1267,5 +1267,16 @@ export class InternalCaseService {
     }
 
     return caseById
+  }
+
+  countIndictmentsWaitingForConfirmation(prosecutorsOfficeId: string) {
+    return this.caseModel.count({
+      include: [{ model: User, as: 'creatingProsecutor' }],
+      where: {
+        type: CaseType.INDICTMENT,
+        state: CaseState.WAITING_FOR_CONFIRMATION,
+        '$creatingProsecutor.institution_id$': prosecutorsOfficeId,
+      },
+    })
   }
 }

@@ -4,15 +4,11 @@
   "sourceRoot": "apps/external-contracts-tests/src",
   "projectType": "application",
   "prefix": "external-contracts-tests",
+  "tags": ["scope:e2e"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "apps/external-contracts-tests/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "build": {
       "executor": "./tools/executors/node:build",
@@ -33,12 +29,12 @@
     "external-test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/external-contracts-tests/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/external-contracts-tests/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/external-contracts-tests"]
     },
-    "docker-jest": {}
-  },
-  "tags": ["scope:e2e"]
+    "docker-jest": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-jest`"
+    }
+  }
 }

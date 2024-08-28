@@ -3,12 +3,10 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/mms/general/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/mms/general/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -36,6 +34,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -1,4 +1,4 @@
-import type { Locale } from 'locale'
+import type { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 
 import {

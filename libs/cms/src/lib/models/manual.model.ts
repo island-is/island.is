@@ -1,6 +1,6 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { CacheField } from '@island.is/nest/graphql'
-import { SystemMetadata } from 'api-cms-domain'
+import { SystemMetadata } from '@island.is/shared/types'
 import { IManual } from '../generated/contentfulTypes'
 import { Organization, mapOrganization } from './organization.model'
 import { SliceUnion, mapDocument } from '../unions/slice.union'

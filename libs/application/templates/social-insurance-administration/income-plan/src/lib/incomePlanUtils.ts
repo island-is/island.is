@@ -2,10 +2,13 @@ import { getValueViaPath } from '@island.is/application/core'
 import { Application, ExternalData } from '@island.is/application/types'
 import {
   CategorizedIncomeTypes,
+  Eligible,
   IncomePlanRow,
-  WithholdingTax,
   LatestIncomePlan,
+  WithholdingTax,
 } from '../types'
+import { INCOME_PLANS_CLOSED } from './constants'
+import { incomePlanFormMessage } from './messages'
 
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
@@ -38,8 +41,18 @@ export const getApplicationExternalData = (
 
   const isEligible = getValueViaPath(
     externalData,
-    'socialInsuranceAdministrationIsApplicantEligible.data.isEligible',
-  ) as boolean
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  ) as Eligible
+
+  const userProfileEmail = getValueViaPath(
+    externalData,
+    'userProfile.data.email',
+  ) as string
+
+  const userProfilePhoneNumber = getValueViaPath(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
+  ) as string
 
   return {
     categorizedIncomeTypes,
@@ -48,17 +61,19 @@ export const getApplicationExternalData = (
     latestIncomePlan,
     temporaryCalculation,
     isEligible,
+    userProfileEmail,
+    userProfilePhoneNumber,
   }
 }
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const income = getValueViaPath(
+  const incomePlan = getValueViaPath(
     answers,
     'incomePlanTable',
     [],
   ) as IncomePlanRow[]
 
-  return { income }
+  return { incomePlan }
 }
 
 const getOneInstanceOfCategory = (categories: CategorizedIncomeTypes[]) => {
@@ -103,5 +118,14 @@ export const getTypesOptions = (
 
 export const isEligible = (externalData: ExternalData): boolean => {
   const { isEligible } = getApplicationExternalData(externalData)
-  return isEligible
+
+  return isEligible?.isEligible
+}
+
+export const eligibleText = (externalData: ExternalData) => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return isEligible.reasonCode === INCOME_PLANS_CLOSED
+    ? incomePlanFormMessage.pre.isNotEligibleClosedDescription
+    : incomePlanFormMessage.pre.isNotEligibleDescription
 }

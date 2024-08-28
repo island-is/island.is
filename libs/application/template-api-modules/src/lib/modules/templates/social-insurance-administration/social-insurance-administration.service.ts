@@ -33,8 +33,9 @@ import {
   getApplicationType,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
   transformApplicationToHouseholdSupplementDTO,
+  transformApplicationToIncomePlanDTO,
   transformApplicationToOldAgePensionDTO,
-  transformApplicationToPensionSupplementDTO,
+  transformApplicationToPensionSupplementDTO
 } from './social-insurance-administration-utils'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
@@ -453,6 +454,18 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         additionalSupportForTheElderlyDTO,
         application.typeId.toLowerCase(),
       )
+      return response
+    }
+
+    if (application.typeId === ApplicationTypes.INCOME_PLAN) {
+      const incomePlanDTO = transformApplicationToIncomePlanDTO(application)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        incomePlanDTO,
+        application.typeId.toLowerCase(),
+      )
+
       return response
     }
   }

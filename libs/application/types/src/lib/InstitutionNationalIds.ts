@@ -4,6 +4,7 @@ export enum InstitutionNationalIds {
   TRYGGINGASTOFNUN = '5012130120',
   FISKISTOFA = '6608922069',
   FJARMALA_EFNAHAGSRADUNEYTID = '5501692829',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   FJARSYSLA_RIKISINS = '5501692829',
   INNHEIMTUMADUR = '5402696029',
   PERSONUVERND = '5608002820',
@@ -11,6 +12,7 @@ export enum InstitutionNationalIds {
   RIKISLOGREGLUSTJORI = '5306972079',
   SAMBAND_SVEITARFELAGA = '5502694739',
   SJUKRATRYGGINGAR_ISLANDS = '4804080550',
+  // eslint-disable-next-line @typescript-eslint/no-duplicate-enum-values
   STAFRAENT_ISLAND = '5501692829',
   UMBODSMADUR_ALTHINGIS = '5605882089',
   VINNUMALASTOFNUN = '7005942039',

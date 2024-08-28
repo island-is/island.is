@@ -5,5 +5,6 @@ export {
   ApplicationDTO,
   DocumentTypeEnum,
   Employer,
+  IncomeTypes,
 } from './lib/socialInsuranceAdministrationClient.type'
 export * from '../gen/fetch'

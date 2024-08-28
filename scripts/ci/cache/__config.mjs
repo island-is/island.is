@@ -33,7 +33,7 @@ export const ENABLED_MODULES = (process.env[ENV_ENABLED_CACHE] || '')
     return a
   }, {})
 
-export const cypressPath = '/github/home/.cache/Cypress'
+export const cypressPath = '/github/home/.cypress-cache'
 export const cacheSuccess = JSON.parse(process.env[ENV_CACHE_SUCCESS] ?? '{}')
 export const initCache = process.env[ENV_INIT_CACHE] === 'true'
 
@@ -147,7 +147,7 @@ export const caches = [
       }
       const pkg = await getPackageJSON()
       const cypressVersion = pkg?.devDependencies?.cypress
-      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}`
+      return `cypress-cache-${HASH_VERSION}-${getPlatformString()}-${cypressVersion}-2`
     },
     name: 'Cache Cypress',
     id: 'cypress',
@@ -167,6 +167,7 @@ export const caches = [
       const cypressVersion = pkg?.devDependencies?.cypress
       await runCommand('npx cypress install', ROOT, {
         CYPRESS_INSTALL_BINARY: cypressVersion,
+        CYPRESS_CACHE_FOLDER: cypressPath,
       })
     },
     path: cypressPath || '',

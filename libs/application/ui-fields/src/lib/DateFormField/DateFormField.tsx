@@ -29,7 +29,6 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
     disabled,
     title,
     description,
-    defaultValue,
     required,
     placeholder,
     backgroundColor,

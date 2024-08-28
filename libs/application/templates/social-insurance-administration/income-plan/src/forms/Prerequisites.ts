@@ -10,10 +10,10 @@ import {
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
+  Application,
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
@@ -23,8 +23,8 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
+import { eligibleText, isEligible } from '../lib/incomePlanUtils'
 import { incomePlanFormMessage } from '../lib/messages'
-import { isEligible } from '../lib/incomePlanUtils'
 
 export const PrerequisitesForm: Form = buildForm({
   id: 'IncomePlanPrerequisites',
@@ -42,8 +42,7 @@ export const PrerequisitesForm: Form = buildForm({
           title: socialInsuranceAdministrationMessage.pre.externalDataSection,
           subTitle:
             socialInsuranceAdministrationMessage.pre.externalDataDescription,
-          checkboxLabel:
-            socialInsuranceAdministrationMessage.pre.checkboxProvider,
+          checkboxLabel: incomePlanFormMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -52,32 +51,23 @@ export const PrerequisitesForm: Form = buildForm({
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: socialInsuranceAdministrationMessage.pre.startApplication,
+                name: incomePlanFormMessage.pre.startIncomePlan,
                 type: 'primary',
               },
             ],
           }),
           dataProviders: [
             buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title:
-                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-              subTitle: incomePlanFormMessage.pre.registryIcelandDescription,
-            }),
-            buildDataProviderItem({
               provider: UserProfileApi,
               title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
+              subTitle: incomePlanFormMessage.pre.contactInfoDescription,
             }),
             buildDataProviderItem({
               id: 'sia.data',
               title:
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationInformationTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationDataDescription,
+              subTitle: incomePlanFormMessage.pre.incomePlanDataDescription,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
@@ -121,7 +111,8 @@ export const PrerequisitesForm: Form = buildForm({
             buildDescriptionField({
               id: 'isNotEligible10Days',
               title: '',
-              description: incomePlanFormMessage.pre.isNotEligibleDescription,
+              description: (application: Application) =>
+                eligibleText(application.externalData),
             }),
             // Empty submit field to hide all buttons in the footer
             buildSubmitField({

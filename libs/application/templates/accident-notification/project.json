@@ -3,21 +3,16 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/accident-notification/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/accident-notification/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/application/templates/accident-notification/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/accident-notification/jest.config.ts"
       },
       "outputs": [
         "{workspaceRoot}/coverage/libs/application/templates/accident-notification"
@@ -29,6 +24,5 @@
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/application/templates/accident-notification/src/lib/messages/*.ts'"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }

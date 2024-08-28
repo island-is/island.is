@@ -5,6 +5,6 @@ export const cleanPhoneNumber = (phoneNumber: string) => {
 }
 
 export const statusMapping: Record<string, MachineStatusEnum> = {
-  Temporary: MachineStatusEnum.Temporary,
-  Permanent: MachineStatusEnum.Permanent,
+  Temporary: MachineStatusEnum.NUMBER_3,
+  Permanent: MachineStatusEnum.NUMBER_4,
 }
