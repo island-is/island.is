@@ -67,16 +67,10 @@ export const TaskList = () => {
     if (!date) {
       return t(msg.publishSoon)
     }
-    const target = workingDaysUntil(date)
 
     const fastTrackMsg = fastTrack ? ' ' + t(msg.publishFastTrack) : ''
     const formattedDate = formatDateFns(date, 'd. MMM')
 
-    if (target.today) {
-      const today = toISODate(new Date())
-      const overdueMsg = date < today ? `  (${formattedDate})` : ''
-      return t(msg.publishToday) + overdueMsg + fastTrackMsg
-    }
     return formattedDate + fastTrackMsg
   }
 

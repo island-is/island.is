@@ -1,5 +1,6 @@
 import yargs from 'yargs'
 import AWS from 'aws-sdk'
+import { Kubernetes } from './dsl/kubernetes-runtime'
 import { Envs } from './environments'
 import {
   ExcludedFeatureDeploymentServices,
@@ -39,8 +40,8 @@ interface Arguments {
 const writeToOutput = async (data: string, output?: string) => {
   if (output) {
     if (output.startsWith('s3://')) {
-      const Bucket = output.substring(5).split('/')[0]
-      const Key = output.substring(5).split(/\/(.+)/)[1]
+      const Bucket = output.substr(5).split('/')[0]
+      const Key = output.substr(5).split(/\/(.+)/)[1]
       const objectParams = {
         Bucket,
         Key,
@@ -52,16 +53,14 @@ const writeToOutput = async (data: string, output?: string) => {
       }
       const s3 = new AWS.S3(config)
       try {
-        // TODO: Migrate to AWS SDK v3.
-        // `ncc` is failing when changing to v3 😓
         await s3.putObject(objectParams).promise()
-        logger.debug(`Successfully uploaded data to ${output}`)
+        console.log(`Successfully uploaded data to ${output}`)
       } catch (err) {
-        logger.debug('Error', err)
+        console.log('Error', err)
       }
     }
   } else {
-    logger.debug(data)
+    console.log(data)
   }
 }
 

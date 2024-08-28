@@ -131,7 +131,7 @@ export class ClientSecretsService {
       '0123456789' +
       'abcdefghijklmnopqrstuvwxyz' +
       'ABCDEFGHIJKLMNOPQRSTUVWXYZ' +
-      '.-+!#$%'
+      '.-!#$%'
 
     for (let i = 0; i < length; i++) {
       generatedSecret += validChars[randomInt(0, validChars.length)]
