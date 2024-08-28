@@ -30,8 +30,8 @@ export const dataSchema = z.object({
           december: z.string().optional(),
         })
         .refine(
-          ({ income, currency, incomePerYear }) =>
-            income === RatioType.YEARLY && currency === ISK
+          ({ income, incomePerYear }) =>
+            income === RatioType.YEARLY
               ? !!incomePerYear
               : true,
           {
