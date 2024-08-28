@@ -46,7 +46,7 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
-import { sub } from 'date-fns'
+import sub from 'date-fns/sub'
 import { ApplicantType } from '../shared/constants'
 import build from 'next/dist/build'
 
