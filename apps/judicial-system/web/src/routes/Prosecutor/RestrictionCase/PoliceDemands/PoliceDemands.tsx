@@ -138,7 +138,7 @@ export const PoliceDemands = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const onDemandsChange = React.useCallback(
+  const onDemandsChange = useCallback(
     (
       entry: UpdateCase,
       caseType?: CaseType | null,

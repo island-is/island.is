@@ -1,4 +1,5 @@
 import {
+  Dispatch,
   FC,
   SetStateAction,
   useCallback,
@@ -43,7 +44,7 @@ interface PropertyValidation {
   validations: Validation[]
   errorMessageHandler: {
     errorMessage: string
-    setErrorMessage: React.Dispatch<React.SetStateAction<string>>
+    setErrorMessage: Dispatch<SetStateAction<string>>
   }
 }
 
@@ -167,7 +168,7 @@ const DefenderInput: FC<Props> = ({
       defendantId: string,
       property: InputType,
       value: string,
-      setWorkingCase: React.Dispatch<SetStateAction<Case>>,
+      setWorkingCase: Dispatch<SetStateAction<Case>>,
     ) => {
       let newValue = value
       const propertyValidation = propertyValidations(property)

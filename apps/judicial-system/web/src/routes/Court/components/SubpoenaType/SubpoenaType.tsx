@@ -22,7 +22,7 @@ interface SubpoenaTypeProps {
   setWorkingCase: Dispatch<SetStateAction<Case>>
   updateDefendantState: (
     update: UpdateDefendantInput,
-    setWorkingCase: React.Dispatch<React.SetStateAction<Case>>,
+    setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   required?: boolean
 }
