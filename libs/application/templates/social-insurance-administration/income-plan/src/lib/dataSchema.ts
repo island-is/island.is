@@ -14,7 +14,7 @@ export const dataSchema = z.object({
           incomePerYear: z.string().optional(),
           equalIncomePerMonth: z.string().optional(),
           equalForeignIncomePerMonth: z.string().optional(),
-          currency: z.string(),
+          currency: z.string().min(1),
           unevenIncomePerYear: z.array(z.enum([YES]).optional()).optional(),
           january: z.string().optional(),
           february: z.string().optional(),
