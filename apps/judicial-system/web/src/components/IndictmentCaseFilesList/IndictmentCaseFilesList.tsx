@@ -184,7 +184,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
           />
         </Box>
       )}
-
       <Box marginBottom={5}>
         <Text variant="h4" as="h4" marginBottom={1}>
           {formatMessage(strings.caseFileTitle)}
@@ -203,7 +202,6 @@ const IndictmentCaseFilesList: FC<Props> = ({
           </Box>
         ))}
       </Box>
-
       {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={3}>
@@ -212,8 +210,7 @@ const IndictmentCaseFilesList: FC<Props> = ({
           <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
         </Box>
       )}
-      {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
-      (courtRecords?.length || rulings?.length) ? (
+      {courtRecords?.length || rulings?.length ? (
         <Box marginBottom={5}>
           <Text variant="h4" as="h4" marginBottom={1}>
             {formatMessage(strings.rulingAndCourtRecordsTitle)}
@@ -225,16 +222,17 @@ const IndictmentCaseFilesList: FC<Props> = ({
               workingCase={workingCase}
             />
           )}
-          {rulings && rulings.length > 0 && (
-            <RenderFiles
-              caseFiles={rulings}
-              onOpenFile={onOpen}
-              workingCase={workingCase}
-            />
-          )}
+          {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
+            rulings &&
+            rulings.length > 0 && (
+              <RenderFiles
+                caseFiles={rulings}
+                onOpenFile={onOpen}
+                workingCase={workingCase}
+              />
+            )}
         </Box>
       ) : null}
-
       <AnimatePresence>
         {fileNotFound && <FileNotFoundModal dismiss={dismissFileNotFound} />}
       </AnimatePresence>
