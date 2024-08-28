@@ -4,6 +4,7 @@ import {
   buildSection,
   buildMessageWithLinkButtonField,
   buildDescriptionField,
+  buildCustomField,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 import { m } from '../lib/messages'
@@ -50,8 +51,13 @@ export const Done: Form = buildForm({
               id: 'nextStepsDescription',
               title: '',
               description: m.nextStepsDescription,
-              titleVariant: 'h3',
+              titleVariant: 'h4',
               marginBottom: 5,
+            }),
+            buildCustomField({
+              id: 'copyLink',
+              title: '',
+              component: 'CopyLink',
             }),
             buildMessageWithLinkButtonField({
               id: 'done.goToServicePortal',
@@ -59,16 +65,6 @@ export const Done: Form = buildForm({
               url: '/minarsidur/min-gogn/listar/medmaelasofnun',
               buttonTitle: m.linkFieldButtonTitle,
               message: m.linkFieldMessage,
-            }),
-            buildDescriptionField({
-              id: 'space',
-              title: '',
-              space: 'containerGutter',
-            }),
-            buildDescriptionField({
-              id: 'space1',
-              title: '',
-              space: 'containerGutter',
             }),
           ],
         }),
