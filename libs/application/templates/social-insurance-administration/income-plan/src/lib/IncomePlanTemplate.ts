@@ -25,6 +25,7 @@ import {
   UserProfileApi,
   defineTemplateApi,
 } from '@island.is/application/types'
+import { Features } from '@island.is/feature-flags'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
@@ -53,6 +54,7 @@ const IncomePlanTemplate: ApplicationTemplate<
   type: ApplicationTypes.INCOME_PLAN,
   name: incomePlanFormMessage.shared.applicationTitle,
   institution: socialInsuranceAdministrationMessage.shared.institution,
+  featureFlag: Features.IncomePlanEnabled,
   translationNamespaces: ApplicationConfigurations.IncomePlan.translation,
   dataSchema,
   newApplicationButtonLabel: historyMessages.newIncomePlanButtonLabel,
@@ -215,9 +217,68 @@ const IncomePlanTemplate: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.EDIT]: { target: States.DRAFT },
-          // INREVIEW: {
-          //   target: States.TRYGGINGASTOFNUN_IN_REVIEW,
-          // },
+          INREVIEW: {
+            target: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          },
+        },
+      },
+      [States.TRYGGINGASTOFNUN_IN_REVIEW]: {
+        meta: {
+          name: States.TRYGGINGASTOFNUN_IN_REVIEW,
+          status: 'inprogress',
+          lifecycle: pruneAfterDays(365),
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.tryggingastofnunInReviewTitle,
+              content: statesMessages.tryggingastofnunInReviewContent,
+              displayStatus: 'info',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.ORGANIZATION_REVIEWER,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              write: 'all',
+            },
+          ],
+        },
+        on: {
+          [DefaultEvents.APPROVE]: { target: States.COMPLETED },
+        },
+      },
+      [States.COMPLETED]: {
+        meta: {
+          name: States.COMPLETED,
+          status: 'completed',
+          lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            pendingAction: {
+              title: statesMessages.incomePlanProcessed,
+              content: statesMessages.incomePlanProcessedDescription,
+              displayStatus: 'success',
+            },
+          },
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/InReview').then((val) =>
+                  Promise.resolve(val.InReview),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
     },

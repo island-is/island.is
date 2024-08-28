@@ -46,8 +46,9 @@ export const IncomePlanForm: Form = buildForm({
             buildDescriptionField({
               id: 'instructions',
               title: incomePlanFormMessage.info.instructionsTitle,
-              space: 'containerGutter',
               description: incomePlanFormMessage.info.instructionsDescription,
+              space: 'containerGutter',
+              doesNotRequireAnswer: false,
             }),
           ],
         }),

@@ -145,10 +145,11 @@ export function buildDescriptionField(
     space,
     marginBottom,
     marginTop,
+    doesNotRequireAnswer = true,
   } = data
   return {
     ...extractCommonFields(data),
-    doesNotRequireAnswer: true,
+    doesNotRequireAnswer,
     children: undefined,
     description,
     titleVariant,
