@@ -2,7 +2,7 @@
 
 ## Description
 
-This application template allows submit a income plan following an application.
+This application template allows submitting an income plan following an application.
 
 ![](./assets/income-plan-flow-chart.png)
 
@@ -12,15 +12,15 @@ This application template allows submit a income plan following an application.
 
 This state is a temporary state that all new income plans will be created in. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual income plan. There is an external data step which fetches data from Þjóðskrá and TR. The applicant cannot advance if they have a previous income plan that has been less than 10 day in progress at TR.
+The purpose of this state is to be a guard into the actual income plan. There is an external data step which fetches data from Þjóðskrá and TR. The applicant cannot advance if they have a previous income plan that has been in progress at TR for less than 10 days.
 
 #### Draft
 
-Valid applicant will be able to advance to this state where they can start to look through their pre-filled income plan and make changes. If they already have an income plan at TR, make changes to that one they get to see a temporary calculation before sending in the updated income plan.
+Valid applicant will be able to advance to this state where they can start to look through their pre-filled income plan and make changes. If they already have an income plan at TR, they can make changes to it and see a temporary calculation before sending in the updated income plan.
 
 #### Tryggingastofnun submitted
 
-When applicant has sent in the income plan to TR the application is in this state. Here the income plan can be edited.
+When an applicant has sent in the income plan to TR, the application is in this state. Here the income plan can be edited.
 
 #### Tryggingastofnun in review
 
