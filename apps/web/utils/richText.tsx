@@ -1,4 +1,5 @@
-import { IntlProvider } from 'react-intl'
+import { PropsWithChildren } from 'react'
+import { IntlConfig, IntlProvider } from 'react-intl'
 
 import {
   FaqList,
@@ -84,107 +85,116 @@ import FeaturedEvents from '../components/FeaturedEvents/FeaturedEvents'
 import FeaturedSupportQNAs from '../components/FeaturedSupportQNAs/FeaturedSupportQNAs'
 import { EmbedSlice } from '../components/Organization/Slice/EmbedSlice/EmbedSlice'
 
+interface TranslationNamespaceProviderProps {
+  messages: IntlConfig['messages']
+}
+
+const TranslationNamespaceProvider = ({
+  messages,
+  children,
+}: PropsWithChildren<TranslationNamespaceProviderProps>) => {
+  const { activeLocale } = useI18n()
+
+  return (
+    <IntlProvider locale={activeLocale} messages={messages}>
+      {children}
+    </IntlProvider>
+  )
+}
+
 export const webRenderConnectedComponent = (
   slice: ConnectedComponent & { componentType?: string },
 ) => {
-  const data = slice.json ?? {}
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { activeLocale } = useI18n()
+  let connectedComponent = null
 
   switch (slice.componentType) {
     case 'Fiskistofa/ShipSearch':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <ShipSearch />
-        </IntlProvider>
-      )
-    case 'Fiskistofa/ShipSearchSidebarInput':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <SidebarShipSearchInput />
-        </IntlProvider>
-      )
-    case 'Fiskistofa/StraddlingStockCalculator':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <StraddlingStockCalculator />
-        </IntlProvider>
-      )
-    case 'Fiskistofa/CatchQuotaCalculator':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <CatchQuotaCalculator />
-        </IntlProvider>
-      )
-    case 'Fiskistofa/SelectedShip':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <SelectedShip />
-        </IntlProvider>
-      )
-    case 'ElectronicRegistrations/MonthlyStatistics':
-      return <MonthlyStatistics slice={slice} />
-    case 'Fiskistofa/ShipSearchBoxedInput':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <ShipSearchBoxedInput />
-        </IntlProvider>
-      )
-    case 'Áfengisleyfi/AlcoholLicences':
-      return <AlcoholLicencesList slice={slice} />
-    case 'Tækifærisleyfi/TemporaryEventLicences':
-      return <TemporaryEventLicencesList slice={slice} />
-    case 'Verðbréfamiðlarar/Brokers':
-      return <BrokersList slice={slice} />
-    case 'PublicVehicleSearch':
-      return <PublicVehicleSearch slice={slice} />
-    case 'AircraftSearch':
-      return <AircraftSearch slice={slice} />
-    case 'DrivingInstructorList':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <DrivingInstructorList slice={slice} />
-        </IntlProvider>
-      )
-    case 'PlateAvailableSearch':
-      return <PlateAvailableSearch slice={slice} />
-    case 'HousingBenefitCalculator':
-      return <HousingBenefitCalculator slice={slice} />
-    case 'PublicShipSearch':
-      return <PublicShipSearch slice={slice} />
-    case 'Meistaraleyfi/MasterLicences':
-      return <MasterList slice={slice} />
-    case 'Vinnueftirlitid/Namskeid':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
-        </IntlProvider>
-      )
-    case 'KilometerFee':
-      return <KilometerFee slice={slice} />
-    case 'SpecificHousingBenefitSupportCalculator':
-      return <SpecificHousingBenefitSupportCalculator slice={slice} />
-    case 'GrindavikResidentialPropertyPurchaseCalculator':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
-        </IntlProvider>
-      )
-    case 'Sveinslisti/JourneymanList':
-      return <JourneymanList slice={slice} />
-    case 'Starfsrettindi/ProfessionRights':
-      return <ProfessionRights slice={slice} />
-    case 'Ums/CostOfLivingCalculator':
-      return (
-        <IntlProvider locale={activeLocale} messages={slice.translationStrings}>
-          <UmsCostOfLivingCalculator />
-        </IntlProvider>
-      )
-    default:
+      connectedComponent = <ShipSearch />
       break
+    case 'Fiskistofa/ShipSearchSidebarInput':
+      connectedComponent = <SidebarShipSearchInput />
+      break
+    case 'Fiskistofa/StraddlingStockCalculator':
+      connectedComponent = <StraddlingStockCalculator />
+      break
+    case 'Fiskistofa/CatchQuotaCalculator':
+      connectedComponent = <CatchQuotaCalculator />
+      break
+    case 'Fiskistofa/SelectedShip':
+      connectedComponent = <SelectedShip />
+      break
+    case 'ElectronicRegistrations/MonthlyStatistics':
+      connectedComponent = <MonthlyStatistics slice={slice} />
+      break
+    case 'Fiskistofa/ShipSearchBoxedInput':
+      connectedComponent = <ShipSearchBoxedInput />
+      break
+    case 'Áfengisleyfi/AlcoholLicences':
+      connectedComponent = <AlcoholLicencesList slice={slice} />
+      break
+    case 'Tækifærisleyfi/TemporaryEventLicences':
+      connectedComponent = <TemporaryEventLicencesList slice={slice} />
+      break
+    case 'Verðbréfamiðlarar/Brokers':
+      connectedComponent = <BrokersList slice={slice} />
+      break
+    case 'PublicVehicleSearch':
+      connectedComponent = <PublicVehicleSearch slice={slice} />
+      break
+    case 'AircraftSearch':
+      connectedComponent = <AircraftSearch slice={slice} />
+      break
+    case 'DrivingInstructorList':
+      connectedComponent = <DrivingInstructorList slice={slice} />
+      break
+    case 'PlateAvailableSearch':
+      connectedComponent = <PlateAvailableSearch slice={slice} />
+      break
+    case 'HousingBenefitCalculator':
+      connectedComponent = <HousingBenefitCalculator slice={slice} />
+      break
+    case 'PublicShipSearch':
+      connectedComponent = <PublicShipSearch slice={slice} />
+      break
+    case 'Meistaraleyfi/MasterLicences':
+      connectedComponent = <MasterList slice={slice} />
+      break
+    case 'Vinnueftirlitid/Namskeid':
+      connectedComponent = (
+        <AdministrationOfOccupationalSafetyAndHealthCourses slice={slice} />
+      )
+      break
+    case 'KilometerFee':
+      connectedComponent = <KilometerFee slice={slice} />
+      break
+    case 'SpecificHousingBenefitSupportCalculator':
+      connectedComponent = (
+        <SpecificHousingBenefitSupportCalculator slice={slice} />
+      )
+      break
+    case 'GrindavikResidentialPropertyPurchaseCalculator':
+      connectedComponent = (
+        <GrindavikResidentialPropertyPurchaseCalculator slice={slice} />
+      )
+      break
+    case 'Sveinslisti/JourneymanList':
+      connectedComponent = <JourneymanList slice={slice} />
+      break
+    case 'Starfsrettindi/ProfessionRights':
+      connectedComponent = <ProfessionRights slice={slice} />
+      break
+    case 'Ums/CostOfLivingCalculator':
+      connectedComponent = <UmsCostOfLivingCalculator />
+      break
+    default:
+      connectedComponent = renderConnectedComponent(slice)
   }
 
-  return renderConnectedComponent(slice)
+  return (
+    <TranslationNamespaceProvider messages={slice.translationStrings}>
+      {connectedComponent}
+    </TranslationNamespaceProvider>
+  )
 }
 
 const defaultRenderComponent = {
