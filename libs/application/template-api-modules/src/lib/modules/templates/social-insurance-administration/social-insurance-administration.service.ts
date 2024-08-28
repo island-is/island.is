@@ -532,9 +532,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     { auth }: TemplateApiModuleActionProps,
     year: ApiProtectedV1IncomePlanWithholdingTaxGetRequest = {},
   ) {
-    const res = await this.siaClientService.getWithholdingTax(auth, year)
-
-    return res
+    return await this.siaClientService.getWithholdingTax(auth, year)
   }
 
   async getLatestIncomePlan({ auth }: TemplateApiModuleActionProps) {
