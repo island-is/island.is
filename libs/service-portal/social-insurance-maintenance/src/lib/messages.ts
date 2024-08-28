@@ -41,7 +41,7 @@ export const m = defineMessages({
       'Ekki er hægt að gera breytingar á tekjuáætlun sem stendur.',
   },
   incomePlanModifyUnavailableText: {
-    id: 'sp.social-insurance-maintenance:income-plan-modify-unavailable',
+    id: 'sp.social-insurance-maintenance:income-plan-modify-unavailable-text',
     defaultMessage:
       'Sorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc vulputate libero et velit interdum, ac aliquet odio mattis.',
   },
