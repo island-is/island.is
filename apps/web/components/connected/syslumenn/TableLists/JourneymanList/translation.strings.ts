@@ -1,0 +1,69 @@
+import { defineMessages } from 'react-intl'
+
+export const translation = defineMessages({
+  csvHeaderName: {
+    id: 'web.syslumenn.brokersList:csvHeaderName',
+    defaultMessage: 'Nafn',
+    description: 'Nafn (texti fyrir dálk í CSV skrá)',
+  },
+  csvHeaderProfession: {
+    id: 'web.syslumenn.brokersList:csvHeaderProfession',
+    defaultMessage: 'Iðngrein',
+    description: 'Iðngrein (texti fyrir dálk í CSV skrá)',
+  },
+  csvHeaderDateOfPublication: {
+    id: 'web.syslumenn.brokersList:csvHeaderDateOfPublication',
+    defaultMessage: 'Útgáfuár',
+    description: 'Útgáfuár (texti fyrir dálk í CSV skrá)',
+  },
+  licencesFilterLicenceProfession: {
+    id: 'web.syslumenn.brokersList:licencesFilterLicenceProfession',
+    defaultMessage: 'Iðngrein',
+    description: 'Label fyrir iðngrein filter',
+  },
+  searchPlaceholder: {
+    id: 'web.syslumenn.journeymanList:searchPlaceholder',
+    defaultMessage: 'Leita',
+    description: 'Placeholder texti fyrir leitarbox',
+  },
+  csvFileTitlePrefix: {
+    id: 'web.syslumenn.journeymanList:csvFileTitlePrefix',
+    defaultMessage: 'Sveinslisti',
+    description: 'Titill á CSV skrá',
+  },
+  noLicencesFound: {
+    id: 'web.syslumenn.journeymanList:noLicencesFound',
+    defaultMessage: 'Engar niðurstöður fundust',
+    description: 'Texti sem birtist ef engar niðurstöður fundust',
+  },
+  name: {
+    id: 'web.syslumenn.journeymanList:name',
+    defaultMessage: 'Nafn',
+    description: 'Nafn',
+  },
+  profession: {
+    id: 'web.syslumenn.journeymanList:profession',
+    defaultMessage: 'Iðngrein',
+    description: 'Iðngrein',
+  },
+  dateOfPublication: {
+    id: 'web.syslumenn.journeymanList:dateOfPublication',
+    defaultMessage: 'Útgáfuár',
+    description: 'Útgáfuár',
+  },
+  filterLicenceProfessionAll: {
+    id: 'web.syslumenn.journeymanList:filterLicenceProfessionAll',
+    defaultMessage: 'Allar tegundir',
+    description: 'Allar tegundir',
+  },
+  errorTitle: {
+    id: 'web.syslumenn.journeymanList:errorTitle',
+    defaultMessage: 'Villa',
+    description: 'Villa',
+  },
+  errorMessage: {
+    id: 'web.syslumenn.journeymanList:errorMessage',
+    defaultMessage: 'Ekki tókst að sækja lista yfir sveinsbréfin.',
+    description: 'Ekki tókst að sækja lista yfir sveinsbréfin.',
+  },
+})
