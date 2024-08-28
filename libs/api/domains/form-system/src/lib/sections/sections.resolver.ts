@@ -19,7 +19,7 @@ import { Section } from '../../models/section.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class SectionsResolver {
-  constructor(private readonly sectionsService: SectionsService) { }
+  constructor(private readonly sectionsService: SectionsService) {}
 
   @Mutation(() => Section, {
     name: 'formSystemCreateSection',

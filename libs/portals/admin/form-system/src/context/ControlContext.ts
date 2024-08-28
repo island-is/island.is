@@ -2,10 +2,8 @@ import { Dispatch, createContext } from 'react'
 import { ControlAction, ControlState } from '../hooks/controlReducer'
 import { Maybe } from 'graphql/jsutils/Maybe'
 import {
-  FormSystemApplicantType,
-  FormSystemDocumentType,
-  FormSystemForm,
-  FormSystemInput,
+  FormSystemFieldType,
+  FormSystemFormCertificationType,
   FormSystemListType,
 } from '@island.is/api/schema'
 import {
@@ -14,12 +12,12 @@ import {
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
 
+// Removed formUpdate and updateSettings from the context
 export interface IControlContext {
   control: ControlState
   controlDispatch: Dispatch<ControlAction>
-  applicantTypes: Maybe<Maybe<FormSystemApplicantType>[]> | undefined
-  documentTypes: Maybe<Maybe<FormSystemDocumentType>[]> | undefined
-  inputTypes: Maybe<Maybe<FormSystemInput>[]> | undefined
+  certificationTypes: Maybe<Maybe<FormSystemFormCertificationType>[]> | undefined
+  fieldTypes: Maybe<Maybe<FormSystemFieldType>[]> | undefined
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
   setInSettings: Dispatch<boolean>
   inSettings: boolean
@@ -29,10 +27,8 @@ export interface IControlContext {
   updateDnD: (type: ItemType) => void
   selectStatus: NavbarSelectStatus
   setSelectStatus: Dispatch<NavbarSelectStatus>
-  formUpdate: (updatedForm?: FormSystemForm) => void
   inListBuilder: boolean
   setInListBuilder: Dispatch<boolean>
-  updateSettings: (updatedForm?: FormSystemForm) => void
 }
 
 export const ControlContext = createContext<IControlContext>({
@@ -40,9 +36,8 @@ export const ControlContext = createContext<IControlContext>({
   controlDispatch: function (_value: unknown): void {
     throw new Error('Function not implemented.')
   },
-  applicantTypes: [] as Maybe<Maybe<FormSystemApplicantType>[]>,
-  documentTypes: [] as Maybe<Maybe<FormSystemDocumentType>[]>,
-  inputTypes: [] as Maybe<Maybe<FormSystemInput>[]>,
+  certificationTypes: [] as Maybe<Maybe<FormSystemFormCertificationType>[]>,
+  fieldTypes: [] as Maybe<Maybe<FormSystemFieldType>[]>,
   listTypes: [] as Maybe<Maybe<FormSystemListType>[]>,
   setInSettings: function (_value: boolean): void {
     throw new Error('Function not implemented.')
@@ -62,14 +57,8 @@ export const ControlContext = createContext<IControlContext>({
   setSelectStatus: function (_value: NavbarSelectStatus): void {
     throw new Error('Function not implemented.')
   },
-  formUpdate: function (_updatedForm?: FormSystemForm): void {
-    throw new Error('Function not implemented.')
-  },
   inListBuilder: false,
   setInListBuilder: function (_value: boolean): void {
     throw new Error('Function not implemented.')
-  },
-  updateSettings: function (_updatedForm?: FormSystemForm): void {
-    throw new Error('Function not implemented.')
-  },
+  }
 })

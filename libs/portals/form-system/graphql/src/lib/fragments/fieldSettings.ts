@@ -27,4 +27,4 @@ export const FieldSettingsFragment = gql`
     timeInterval
   }
   ${ListItemFragment}
-  `
+`

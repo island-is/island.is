@@ -1,89 +1,64 @@
-import { FormSystemGroupInput, FormSystemInput } from '@island.is/api/schema'
-import { ControlState } from '../../hooks/controlReducer'
-import { ItemType } from './interfaces'
-import { useFormSystemUpdateFormMutation } from '../../screens/Form/Form.generated'
+import { FormSystemField, FormSystemScreen } from '@island.is/api/schema'
+import { ControlState } from "../../hooks/controlReducer"
+import { useFormMutations } from "../../hooks/formProviderHooks"
 
-export const updateDnd = (
-  type: ItemType,
-  control: ControlState,
-  updateForm = useFormSystemUpdateFormMutation()[0],
-) => {
-  const formId = control.form.id
-  if (type === 'Step') {
-    const steps = control.form.stepsList
-    updateForm({
+export const updateDnd = (control: ControlState) => {
+  const { type } = control.activeItem
+  const { updateSectionDisplayOrder, updateScreen, updateScreenDisplayOrder, updateField, updateFieldDisplayOrder } = useFormMutations()
+
+  if (type === 'Section') {
+    updateSectionDisplayOrder({
       variables: {
         input: {
-          formId: formId,
-          form: {
-            stepsList: steps?.map((s) => ({
-              id: s?.id,
-              guid: s?.guid,
-              displayOrder: s?.displayOrder,
-              name: s?.name,
-              type: s?.type,
-              waitingText: s?.waitingText,
-              callRuleset: s?.callRuleset,
-              isHidden: s?.isHidden,
-              isCompleted: s?.isCompleted,
-            })),
-          },
-        },
-      },
+          updateSectionsDisplayOrderDto: control.form.sections?.map(section => section?.id)
+        }
+      }
     })
-  } else if (type === 'Group') {
-    const groups = control.form.groupsList
-    updateForm({
+  } else if (type === 'Screen') {
+    const activeItem = control.activeItem.data as FormSystemScreen
+    updateScreenDisplayOrder({
       variables: {
         input: {
-          formId: formId,
-          form: {
-            groupsList: groups?.map(
-              (g) =>
-                ({
-                  id: g?.id,
-                  name: g?.name,
-                  guid: g?.guid,
-                  displayOrder: g?.displayOrder,
-                  isHidden: (g?.isHidden ?? false) as boolean,
-                  stepId: g?.stepId,
-                  multiSet: g?.multiSet,
-                  stepGuid: g?.stepGuid,
-                  inputs: null,
-                } as FormSystemGroupInput),
-            ),
-          },
-        },
-      },
+          updateScreensDisplayOrderDto: control.form.screens?.map(screen => screen?.id)
+        }
+      }
     })
-  } else if (type === 'Input') {
-    const { inputsList } = control.form
-    updateForm({
+    updateScreen({
       variables: {
         input: {
-          formId: formId,
-          form: {
-            inputsList: inputsList
-              ?.filter(
-                (i): i is FormSystemInput => i !== null && i !== undefined,
-              )
-              .map((i) => ({
-                id: i.id,
-                name: i.name,
-                description: i.description,
-                isRequired: i.isRequired ?? false,
-                displayOrder: i.displayOrder,
-                isHidden: i.isHidden ?? false,
-                type: i.type,
-                inputSettings: i.inputSettings,
-                isPartOfMultiSet: i.isPartOfMultiSet ?? false,
-                groupId: i.groupId,
-                groupGuid: i.groupGuid,
-                guid: i.guid,
-              })),
-          },
-        },
-      },
+          id: activeItem.id,
+          updateScreenDto: {
+            name: activeItem.name,
+            sectionId: activeItem.sectionId,
+            multiSet: activeItem.multiSet,
+            callRuleset: activeItem.callRuleset,
+          }
+        }
+      }
+    })
+  } else if (type === 'Field') {
+    const activeItem = control.activeItem.data as FormSystemField
+    updateFieldDisplayOrder({
+      variables: {
+        input: {
+          updateFieldsDisplayOrderDto: control.form.fields?.map(field => field?.id)
+        }
+      }
+    })
+    updateField({
+      variables: {
+        input: {
+          id: activeItem.id,
+          updateFieldDto: {
+            name: activeItem.name,
+            description: activeItem.description,
+            isPartOfMultiSet: activeItem.isPartOfMultiset,
+            fieldSettings: activeItem.fieldSettings,
+            fieldType: activeItem.fieldType,
+            screenId: activeItem.screenId,
+          }
+        }
+      }
     })
   }
 }

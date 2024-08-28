@@ -18,7 +18,7 @@ import { ListItem } from '../../models/listItem.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ListItemsResolver {
-  constructor(private readonly listItemsService: ListItemsService) { }
+  constructor(private readonly listItemsService: ListItemsService) {}
 
   @Mutation(() => ListItem, {
     name: 'formSystemCreateListItem',

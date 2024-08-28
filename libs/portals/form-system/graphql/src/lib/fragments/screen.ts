@@ -18,4 +18,5 @@ export const ScreenFragment = gql`
     }
   }
   ${LanguageFields}
-  ${FieldFragment}`
+  ${FieldFragment}
+`

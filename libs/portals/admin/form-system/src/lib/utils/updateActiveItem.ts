@@ -1,28 +1,24 @@
-import { useFormSystemUpdateGroupMutation } from '../../screens/Form/UpdateGroup.generated'
-import { useFormSystemUpdateInputMutation } from '../../screens/Form/UpdateInput.generated'
-import { useFormSystemUpdateStepMutation } from '../../screens/Form/UpdateStep.generated'
+import { useFormMutations } from '../../hooks/formProviderHooks'
 import { ActiveItem } from './interfaces'
 import {
-  FormSystemStep,
-  FormSystemGroup,
-  FormSystemInput,
+  FormSystemSection,
+  FormSystemScreen,
+  FormSystemField,
 } from '@island.is/api/schema'
 
 export const updateActiveItemFn = (
   activeItem: ActiveItem,
-  updateStep = useFormSystemUpdateStepMutation()[0],
-  updateGroup = useFormSystemUpdateGroupMutation()[0],
-  updateInput = useFormSystemUpdateInputMutation()[0],
   currentActiveItem?: ActiveItem,
 ) => {
   const { type } = activeItem
+  const { updateSection, updateScreen, updateField } = useFormMutations()
   try {
-    if (type === 'Step') {
-      const { id, name, type, displayOrder, waitingText, callRuleset } =
+    if (type === 'Section') {
+      const { id, name, waitingText } =
         currentActiveItem
-          ? (currentActiveItem.data as FormSystemStep)
-          : (activeItem.data as FormSystemStep)
-      updateStep({
+          ? (currentActiveItem.data as FormSystemSection)
+          : (activeItem.data as FormSystemSection)
+      updateSection({
         variables: {
           input: {
             stepId: id,
@@ -30,63 +26,52 @@ export const updateActiveItemFn = (
               id: id,
               name: name,
               type: type,
-              displayOrder: displayOrder,
               waitingText: waitingText,
-              callRuleset: callRuleset,
             },
           },
         },
       })
-    } else if (type === 'Group') {
-      const { id, name, guid, displayOrder, multiSet, stepId } =
+    } else if (type === 'Screen') {
+      const { id, name, displayOrder, multiSet, sectionId } =
         currentActiveItem
-          ? (currentActiveItem.data as FormSystemGroup)
-          : (activeItem.data as FormSystemGroup)
-      updateGroup({
+          ? (currentActiveItem.data as FormSystemScreen)
+          : (activeItem.data as FormSystemScreen)
+      updateScreen({
         variables: {
           input: {
-            groupId: activeItem?.data?.id,
-            groupUpdateDto: {
+            id: activeItem?.data?.id,
+            screenUpdateDto: {
               id,
               name: name,
-              guid,
               displayOrder,
               multiSet,
-              stepId,
+              sectionId,
             },
           },
         },
       })
-    } else if (type === 'Input') {
+    } else if (type === 'Field') {
       const {
         id,
         name,
         description,
-        isRequired,
-        displayOrder,
-        isHidden,
-        type,
-        inputSettings,
-        isPartOfMultiSet,
-        groupId,
+        isPartOfMultiset,
+        fieldSettings,
+        fieldType
       } = currentActiveItem
-        ? (currentActiveItem.data as FormSystemInput)
-        : (activeItem.data as FormSystemInput)
-      updateInput({
+          ? (currentActiveItem.data as FormSystemField)
+          : (activeItem.data as FormSystemField)
+      updateField({
         variables: {
           input: {
-            inputId: id,
-            inputUpdateDto: {
+            id: id,
+            fieldUpdateDto: {
               id,
-              name: name,
-              description: description,
-              isRequired: isRequired ?? false,
-              displayOrder,
-              isHidden: isHidden ?? false,
-              type,
-              inputSettings: inputSettings,
-              isPartOfMultiSet: isPartOfMultiSet ?? false,
-              groupId: groupId ?? null,
+              name,
+              description,
+              isPartOfMultiset,
+              fieldSettings,
+              fieldType,
             },
           },
         },

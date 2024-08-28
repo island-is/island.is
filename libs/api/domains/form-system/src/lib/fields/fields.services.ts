@@ -24,7 +24,7 @@ export class FieldsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private fieldsApi: FieldsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -62,7 +62,6 @@ export class FieldsService {
     }
     return response
   }
-
 
   async updateField(auth: User, input: UpdateFieldInput): Promise<void> {
     const response = await this.fieldsApiWithAuth(auth)

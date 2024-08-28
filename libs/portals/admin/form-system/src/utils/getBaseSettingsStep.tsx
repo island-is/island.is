@@ -1,20 +1,16 @@
-import { uuid } from 'uuidv4'
+import { FormSystemSection } from '@island.is/api/schema'
 
-export const baseSettingsStep = {
-  id: 99999,
-  guid: uuid(),
+export const baseSettingsStep: FormSystemSection = {
+  id: 'BaseSettings',
   displayOrder: -1,
   name: {
     is: 'Grunnstillingar',
     en: 'Base settings',
   },
-  type: 'BaseSetting',
   waitingText: {
     is: '',
     en: '',
   },
-  callRuleset: false,
   isHidden: false,
   isCompleted: false,
-  groups: [],
 }

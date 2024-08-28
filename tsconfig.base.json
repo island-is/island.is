@@ -1105,11 +1105,11 @@
       "@island.is/user-monitoring": ["libs/user-monitoring/src/index.ts"],
       "@island.is/web/*": ["apps/web/*"],
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
-      "portals/form-system/ui-components": [
-        "libs/portals/form-system/ui-components/src/index.ts"
-      ],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "portals/form-system/ui-components": [
+        "libs/portals/form-system/ui-components/src/index.ts"
       ]
     }
   }

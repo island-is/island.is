@@ -19,7 +19,7 @@ import { Field } from '../../models/field.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FieldsResolver {
-  constructor(private readonly fieldsService: FieldsService) { }
+  constructor(private readonly fieldsService: FieldsService) {}
 
   @Mutation(() => Field, {
     name: 'formSystemCreateField',

@@ -19,7 +19,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) { }
+  constructor(private readonly screensService: ScreensService) {}
 
   @Mutation(() => Screen, {
     name: 'formSystemCreateScreen',

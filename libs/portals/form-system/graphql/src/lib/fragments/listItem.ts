@@ -15,4 +15,4 @@ export const ListItemFragment = gql`
     isSelected
   }
   ${LanguageFields}
-  `
+`

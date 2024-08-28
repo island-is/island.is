@@ -19,7 +19,7 @@ import { FormResponse } from '../../models/form.model'
 @UseGuards(IdsUserGuard)
 @Audit({ namespace: '@island.is/api/form-system' })
 export class FormsResolver {
-  constructor(private readonly formsService: FormsService) { }
+  constructor(private readonly formsService: FormsService) {}
 
   @Mutation(() => FormResponse, {
     name: 'formSystemCreateForm',

@@ -9,7 +9,7 @@ import {
 } from '@island.is/island-ui/core'
 import { useContext, useState } from 'react'
 import { ControlContext } from '../../context/ControlContext'
-import { FormSystemGroup, FormSystemStep } from '@island.is/api/schema'
+import { FormSystemSectionDtoSectionTypeEnum, FormSystemSection, FormSystemScreen } from '@island.is/api/schema'
 import { BaseSettings } from './components/BaseSettings/BaseSettings'
 import { Premises } from './components/Premises/Premises'
 import { InputContent } from './components/InputContent/InputContent'
@@ -27,16 +27,16 @@ export const MainContent = () => {
 
   return (
     <Box padding={2}>
-      {activeItem.type === 'Input' ? (
+      {activeItem.type === 'Field' ? (
         <InputContent />
-      ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'BaseSetting' ? (
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).id === "BaseSettings" ? (
         <BaseSettings />
-      ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'Premises' ? (
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).sectionType === FormSystemSectionDtoSectionTypeEnum.Premises ? (
         <Premises />
-      ) : activeItem.type === 'Step' &&
-        (activeItem.data as FormSystemStep).type === 'Parties' ? (
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).sectionType === FormSystemSectionDtoSectionTypeEnum.Parties ? (
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
@@ -84,13 +84,13 @@ export const MainContent = () => {
               />
             </Column>
           </Row>
-          {activeItem.type === 'Group' && (
+          {activeItem.type === 'Screen' && (
             <Row>
               <Column>
                 <Checkbox
                   name="multi"
                   label={formatMessage(m.allowMultiple)}
-                  checked={(activeItem.data as FormSystemGroup).multiSet !== 0}
+                  checked={(activeItem.data as FormSystemScreen).multiSet !== 0}
                   onChange={(e) =>
                     controlDispatch({
                       type: 'TOGGLE_MULTI_SET',

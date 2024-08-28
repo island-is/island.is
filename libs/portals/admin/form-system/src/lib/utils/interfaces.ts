@@ -1,8 +1,8 @@
 import { UniqueIdentifier } from '@dnd-kit/core'
 import {
-  FormSystemStep,
-  FormSystemGroup,
-  FormSystemInput,
+  FormSystemSection,
+  FormSystemScreen,
+  FormSystemField,
   FormSystemLanguageType,
   FormSystemLanguageTypeInput,
   FormSystemListItem,
@@ -15,11 +15,11 @@ export enum NavbarSelectStatus {
   ON_WITHOUT_SELECT = 'OnWithoutSelect',
 }
 
-export type ItemType = 'Step' | 'Group' | 'Input'
+export type ItemType = 'Section' | 'Screen' | 'Field'
 
 export interface ActiveItem {
   type: ItemType
-  data?: FormSystemStep | FormSystemGroup | FormSystemInput | null
+  data?: FormSystemSection | FormSystemScreen | FormSystemField | null
 }
 
 export interface IListItem {

@@ -5,7 +5,7 @@ export const GET_FORMS = gql`
   query FormSystemGetAllForms($input: FormSystemGetAllFormsInput!) {
     formSystemGetAllForms(input: $input) {
       ...FormResponse
+    }
   }
-}
-${FormResponseFragment}
+  ${FormResponseFragment}
 `

@@ -26,5 +26,4 @@ export const FormResponseFragment = gql`
   ${FieldTypeFragment}
   ${CertificateTypeFragment}
   ${ListTypeFragment}
-
 `

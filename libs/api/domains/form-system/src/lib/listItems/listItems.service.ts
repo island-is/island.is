@@ -22,7 +22,7 @@ export class ListItemsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private listItemsApi: ListItemsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -39,7 +39,10 @@ export class ListItemsService {
     return this.listItemsApi.withMiddleware(new AuthMiddleware(auth))
   }
 
-  async createListItem(auth: User, input: CreateListItemInput): Promise<ListItem> {
+  async createListItem(
+    auth: User,
+    input: CreateListItemInput,
+  ): Promise<ListItem> {
     const response = await this.listItemsApiWithAuth(auth)
       .listItemsControllerCreate(input as ListItemsControllerCreateRequest)
       .catch((e) =>

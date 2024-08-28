@@ -8,4 +8,4 @@ export const GET_APPLICATION = gql`
     }
   }
   ${ApplicationFragment}
-  `
+`
