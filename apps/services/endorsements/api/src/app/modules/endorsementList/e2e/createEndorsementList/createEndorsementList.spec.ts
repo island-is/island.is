@@ -5,7 +5,37 @@ import { errorExpectedStructure } from '../../../../../../test/testHelpers'
 import { EndorsementTag } from '../../constants'
 import { authNationalId } from '../closeEndorsementList/seed'
 
+// Define the mock for NationalRegistryV3ClientService directly in this file
+const NationalRegistryV3ClientServiceMock = {
+  getName: jest.fn().mockResolvedValue({ fulltNafn: 'Mocked Name' }),
+}
+
 describe('createEndorsementList', () => {
+
+  let app:any
+
+  beforeEach(async () => {
+    // Reset mock calls and instances before each test to avoid contamination between tests
+    jest.clearAllMocks()
+
+    app = await getAuthenticatedApp({
+      nationalId: authNationalId,
+      scope: [EndorsementsScope.main],
+      overrideProviders: [
+        {
+          provide: 'NationalRegistryV3ClientService',
+          useValue: NationalRegistryV3ClientServiceMock,
+        },
+      ],
+    })
+  })
+
+  afterEach(async () => {
+    if (app) {
+      await app.close()
+    }
+  })
+
   it(`POST /endorsement-list should return 200 OK if scope is ok`, async () => {
     const app = await getAuthenticatedApp({
       nationalId: authNationalId,

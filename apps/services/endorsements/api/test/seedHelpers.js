@@ -13,7 +13,7 @@ module.exports = {
     endorsement_metadata: '[]', // default empty array in postgres
     tags: tags ?? '{}', // default empty array in postgres
     meta: '{}',
-    owner: faker.phone.phoneNumber('##########'),
+    owner_national_id: faker.phone.phoneNumber('##########'),
     created: new Date(),
     modified: new Date(),
   }),

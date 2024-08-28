@@ -30,6 +30,8 @@ expect.extend({
   },
 })
 
+
+
 export const setup = async (options?: Partial<TestServerOptions>) => {
   app = await testServer({
     appModule: AppModule,
@@ -43,20 +45,33 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
 interface SetupAuthInput {
   scope: EndorsementsScope[]
   nationalId?: string
+  overrideProviders?: any[]  // Add this line to accept overrides
 }
-export const getAuthenticatedApp = ({
+
+export const getAuthenticatedApp = async ({
   scope,
   nationalId = '1234567890',
-}: SetupAuthInput): Promise<INestApplication> =>
-  setup({
-    override: (builder) =>
-      builder.overrideProvider(IdsUserGuard).useValue(
+  overrideProviders = [],  // Allow additional overrides
+}: SetupAuthInput): Promise<INestApplication> => {
+  return setup({
+    override: (builder) => {
+      const overrideBuilder = builder.overrideProvider(IdsUserGuard).useValue(
         new MockAuthGuard({
           nationalId,
           scope,
         }),
-      ),
+      )
+
+
+      // Apply any additional provider overrides passed in
+      overrideProviders.forEach(({ provide, useValue }) => {
+        overrideBuilder.overrideProvider(provide).useValue(useValue)
+      })
+
+      return overrideBuilder
+    },
   })
+}
 
 afterAll(async () => {
   if (app && sequelize) {

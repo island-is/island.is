@@ -29,7 +29,7 @@ module.exports = {
         endorsement_meta: ['fullName'],
         endorsement_metadata: JSON.stringify([{ field: 'fullName' }]),
         tags: ['generalPetition'],
-        owner: '0101302399',
+        ownder_national_id: '0101302399',
         meta: JSON.stringify({
           applicationId: 'someId',
         }),

@@ -6,7 +6,7 @@ import {
 } from '@island.is/auth-nest-tools'
 import { APP_GUARD } from '@nestjs/core'
 import { AuditModule, AuditOptions } from '@island.is/nest/audit'
-import { Module } from '@nestjs/common'
+import { Module, OnModuleInit } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'
 import { EndorsementModule } from './modules/endorsement/endorsement.module'
@@ -21,6 +21,7 @@ import {
   XRoadConfig,
 } from '@island.is/nest/config'
 import { emailModuleConfig } from '@island.is/email-service'
+import { EndorsementListService } from './modules/endorsementList/endorsementList.service'
 
 @Module({
   imports: [
@@ -58,4 +59,11 @@ import { emailModuleConfig } from '@island.is/email-service'
     },
   ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  constructor(private readonly endorsementListService: EndorsementListService) {}
+
+  async onModuleInit() {
+    // Populate owner names for existing lists if they are missing
+    await this.endorsementListService.populateOwnerNamesForExistingLists();
+  }
+}

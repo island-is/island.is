@@ -78,12 +78,25 @@ export class EndorsementList extends Model {
   })
   tags!: EndorsementTag[]
 
-  @ApiProperty()
+  @ApiProperty({
+    type: String,
+    nullable: false,
+  })
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  owner!: string
+  ownerNationalId!: string;
+
+  @ApiProperty({
+    type: String,
+    nullable: true,
+  })
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  ownerName!: string | null;
 
   @ApiProperty()
   @Column({
