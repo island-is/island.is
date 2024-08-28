@@ -32,12 +32,12 @@ The income plan has been processed by TR.
 
 ### Localisation
 
-All localisation can be found on Contentful.
+All localization can be found on Contentful.
 
 - [Income plan translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ip.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
-When creating new text strings in the messages.ts file for the application, be sure to update Contentful, see [message extraction](../../../../localization/README.md#message-extraction).
+When creating new text strings in the messages.ts file for the application, be sure to update Contentful. See [message extraction](../../../../localization/README.md#message-extraction).
 
 ## Setup
 
