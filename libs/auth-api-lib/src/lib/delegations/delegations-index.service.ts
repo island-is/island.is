@@ -2,6 +2,7 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import startOfDay from 'date-fns/startOfDay'
 import * as kennitala from 'kennitala'
+import union from 'lodash/union'
 import { Op } from 'sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
@@ -453,12 +454,7 @@ export class DelegationsIndexService {
       const existing = delegationMap.get(delegation.fromNationalId)
 
       if (existing) {
-        existing.scopes = [
-          ...new Set([
-            ...(existing.scopes || []),
-            ...(delegation.scopes || []),
-          ]),
-        ]
+        existing.scopes = union(existing.scopes, delegation.scopes)
       } else {
         delegationMap.set(delegation.fromNationalId, delegation)
       }
