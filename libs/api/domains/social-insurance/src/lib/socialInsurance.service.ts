@@ -24,7 +24,7 @@ import { PaymentPlan } from './models/payments/paymentPlan.model'
 import { Payments } from './models/payments/payments.model'
 import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
 import { IncomePlan } from './models/income/incomePlan.model'
-import { IncomePlanStatus } from './socialInsurance.type'
+import { IncomePlanStatus, LOG_CATEGORY } from './socialInsurance.type'
 import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
 
 @Injectable()
@@ -134,21 +134,34 @@ export class SocialInsuranceService {
       return
     }
 
+    let hasIncompleteLines = false
+    const incomeCategories = data.incomeTypeLines
+      .map((i) => {
+        if (!i.incomeCategoryName || !i.totalSum || !i.currency) {
+          hasIncompleteLines = true
+          return undefined
+        }
+        return {
+          name: i.incomeCategoryName,
+          annualSum: i.totalSum,
+          currency: i.currency,
+        }
+      })
+      .filter(isDefined)
+
+    if (hasIncompleteLines) {
+      this.logger.info(
+        'Income category data filtered out some incomplete lines',
+        {
+          category: LOG_CATEGORY,
+        },
+      )
+    }
+
     return {
       registrationDate: data.registrationDate,
       status: this.parseIncomePlanStatus(data.status),
-      incomeCategories: data.incomeTypeLines
-        .map((i) => {
-          if (!i.incomeCategoryName || !i.totalSum || !i.currency) {
-            return undefined
-          }
-          return {
-            name: i.incomeCategoryName,
-            annualSum: i.totalSum,
-            currency: i.currency,
-          }
-        })
-        .filter(isDefined),
+      incomeCategories,
     }
   }
 
