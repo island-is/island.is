@@ -160,7 +160,7 @@ const DrivingInstructorList = ({ slice }: DrivingInstructorListProps) => {
               </T.HeadData>
               <T.HeadData>
                 <Text fontWeight="semiBold">
-                  {formatMessage(translationStrings.nationalId)}
+                  {formatMessage(translationStrings.driverLicenseId)}
                 </Text>
               </T.HeadData>
             </T.Head>
