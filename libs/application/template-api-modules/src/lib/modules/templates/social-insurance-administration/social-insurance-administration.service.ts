@@ -35,7 +35,7 @@ import {
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToIncomePlanDTO,
   transformApplicationToOldAgePensionDTO,
-  transformApplicationToPensionSupplementDTO
+  transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
