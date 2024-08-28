@@ -20,7 +20,7 @@ Valid applicant will be able to advance to this state where they can start to lo
 
 #### Tryggingastofnun submitted
 
-When an applicant has sent in the income plan to TR, the application is in this state. Here the income plan can be edited.
+When an applicant has sent in the income plan to TR, the application is in this state. Here, the income plan can be edited.
 
 #### Tryggingastofnun in review
 
