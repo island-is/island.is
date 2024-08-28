@@ -2,7 +2,7 @@
 
 ## Description
 
-This application template allows submitting an income plan following an application.
+This application template allows for submitting an income plan following an application.
 
 ![](./assets/income-plan-flow-chart.png)
 
