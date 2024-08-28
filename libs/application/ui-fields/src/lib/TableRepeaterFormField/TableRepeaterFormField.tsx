@@ -31,9 +31,10 @@ import {
   RadioController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useState, useRef } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { handleCustomMappedValues } from './utils'
+import isEqual from 'lodash/isEqual'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
@@ -303,6 +304,7 @@ const Item: FC<ItemFieldProps> = ({
 }) => {
   const { formatMessage } = useLocale()
   const { setValue, control, clearErrors } = useFormContext()
+  const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
 
   const {
     component,
@@ -345,18 +347,26 @@ const Item: FC<ItemFieldProps> = ({
   }
 
   useEffect(() => {
+    // We need to deep compare the watched values to avoid unnecessary re-renders
     if (
-      updateValueObj &&
       watchedValues &&
-      (Array.isArray(watchedValues)
-        ? !watchedValues.every((value) => value === undefined)
-        : true)
+      !isEqual(prevWatchedValuesRef.current, watchedValues)
     ) {
-      const finalValue = updateValueObj.valueModifier(activeValues)
-      setValue(id, finalValue)
+      prevWatchedValuesRef.current = watchedValues
+
+      if (
+        updateValueObj &&
+        watchedValues &&
+        (Array.isArray(watchedValues)
+          ? !watchedValues.every((value) => value === undefined)
+          : true)
+      ) {
+        const finalValue = updateValueObj.valueModifier(activeValues)
+        setValue(id, finalValue)
+      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(watchedValues)])
+  }, [watchedValues])
 
   const getFieldError = (id: string) => {
     /**
