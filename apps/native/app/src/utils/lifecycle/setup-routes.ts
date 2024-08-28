@@ -35,10 +35,6 @@ export function setupRoutes() {
     Navigation.dismissAllModals()
     selectTab(2)
   })
-  addRoute('/home-options', () => {
-    Navigation.dismissAllModals()
-    selectTab(2)
-  })
 
   addRoute('/inbox', () => {
     Navigation.dismissAllModals()
@@ -67,6 +63,18 @@ export function setupRoutes() {
     await Navigation.push(ComponentRegistry.MoreScreen, {
       component: {
         name: ComponentRegistry.VehiclesScreen,
+        passProps,
+      },
+    })
+  })
+
+  addRoute('/home-options', async (passProps) => {
+    Navigation.dismissAllModals()
+    selectTab(2)
+    await Navigation.popToRoot(StackRegistry.HomeStack)
+    await Navigation.push(StackRegistry.HomeStack, {
+      component: {
+        name: ComponentRegistry.HomeOptionsScreen,
         passProps,
       },
     })

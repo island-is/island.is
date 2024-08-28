@@ -100,7 +100,7 @@ export function registerAllComponents() {
   registerComponent(CR.InboxFilterScreen, InboxFilterScreen)
   registerComponent(CR.AirDiscountScreen, AirDiscountScreen)
   registerComponent(CR.PasskeyScreen, PasskeyScreen)
-  registerComponent(CR.HomeOptionsScren, HomeOptionsScreen)
+  registerComponent(CR.HomeOptionsScreen, HomeOptionsScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)

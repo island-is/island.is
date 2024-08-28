@@ -191,7 +191,7 @@ export const en: TranslatedMessages = {
   'homeOptions.screenTitle': 'Home screen',
   'homeOptions.heading.title': 'Configure home screen',
   'homeOptions.heading.subtitle':
-    'Here you can configure what is displayed on the home screen',
+    'Here you can configure what is displayed on the home screen.',
   'homeOptions.graphic': 'Display graphic',
   'homeOptions.inbox': 'Latest in inbox',
   'homeOptions.licenses': 'Licenses',

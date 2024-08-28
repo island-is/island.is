@@ -54,7 +54,10 @@ const { useNavigationOptions, getNavigationOptions } =
     (theme, intl, initialized) => ({
       topBar: {
         rightButtons: initialized
-          ? getRightButtons({ icons: ['notifications'], theme: theme as any })
+          ? getRightButtons({
+              icons: ['notifications', 'options'],
+              theme: theme as any,
+            })
           : [],
       },
       bottomTab: {
@@ -118,7 +121,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
   useConnectivityIndicator({
     componentId,
-    rightButtons: getRightButtons({ icons: ['notifications'] }),
+    rightButtons: getRightButtons({ icons: ['notifications', 'options'] }),
     queryResult: applicationsRes,
     refetching,
   })

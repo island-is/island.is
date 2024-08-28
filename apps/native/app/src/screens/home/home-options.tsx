@@ -1,7 +1,7 @@
-import { TableViewCell } from '@ui'
+import { Heading, TableViewCell, Typography } from '@ui'
 import React from 'react'
-import { useIntl } from 'react-intl'
-import { Platform, ScrollView, Switch } from 'react-native'
+import { FormattedMessage, useIntl } from 'react-intl'
+import { Platform, SafeAreaView, ScrollView, Switch } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components'
 
@@ -11,17 +11,22 @@ import {
   usePreferencesStore,
 } from '../../stores/preferences-store'
 
-const { getNavigationOptions, useNavigationOptions } =
-  createNavigationOptionHooks(() => ({
+const { useNavigationOptions, getNavigationOptions } =
+  createNavigationOptionHooks((theme, intl) => ({
     topBar: {
-      visible: true,
+      title: {
+        text: intl.formatMessage({ id: 'homeOptions.screenTitle' }),
+      },
+    },
+    bottomTabs: {
+      visible: false,
+      drawBehind: true,
     },
   }))
 
-export const HomeOptionsScreen: NavigationFunctionComponent<{
-  title?: string
-  id: string
-}> = ({ componentId, title, id }) => {
+export const HomeOptionsScreen: NavigationFunctionComponent = ({
+  componentId,
+}) => {
   useNavigationOptions(componentId)
 
   const intl = useIntl()
@@ -37,6 +42,25 @@ export const HomeOptionsScreen: NavigationFunctionComponent<{
 
   return (
     <ScrollView>
+      <SafeAreaView
+        style={{
+          marginHorizontal: theme.spacing[2],
+          marginBottom: theme.spacing[3],
+        }}
+      >
+        <Heading>
+          <FormattedMessage
+            id="homeOptions.heading.title"
+            defaultMessage="Stilla heimaskjá."
+          />
+        </Heading>
+        <Typography>
+          <FormattedMessage
+            id="homeOptions.heading.subtitle"
+            defaultMessage="Hér er hægt að stilla hvað birtist á heimaskjá.s"
+          />
+        </Typography>
+      </SafeAreaView>
       <TableViewCell
         title={intl.formatMessage({
           id: 'homeOptions.graphic',
