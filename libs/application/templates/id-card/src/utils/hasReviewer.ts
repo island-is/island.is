@@ -1,7 +1,6 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { IdentityDocumentChild, Routes } from '../lib/constants'
-import { info } from 'kennitala'
 
 export const hasReviewer = (answers: FormValue, externalData: ExternalData) => {
   const applicantChildren = getValueViaPath(
@@ -17,8 +16,6 @@ export const hasReviewer = (answers: FormValue, externalData: ExternalData) => {
   ) as string
 
   const chosenTypeOfId = getValueViaPath(answers, Routes.TYPEOFID, '') as string
-
-  console.log('chosenTypeOfId', chosenTypeOfId)
 
   const applicantNationalId = getValueViaPath(
     externalData,
@@ -40,18 +37,6 @@ export const hasReviewer = (answers: FormValue, externalData: ExternalData) => {
     )
     return !!chosenChild?.secondParent
   }
-  //applicant is applying for themselves
-  else {
-    //check age of applicant
-    const ageOfApplicant = info(applicantNationalId).age
-    if (ageOfApplicant < 13 && chosenTypeOfId === 'II') {
-      //needs reviewer from 1 parent TODO how to apply this and not to both parents??
-      return true
-    } else if (ageOfApplicant < 18 && chosenTypeOfId === 'ID') {
-      //needs approval from both parents if there are 2 registered
-      return true
-    }
 
-    return false
-  }
+  return false
 }

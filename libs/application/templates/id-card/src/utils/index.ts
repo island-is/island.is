@@ -1,10 +1,8 @@
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { getValueViaPath } from '@island.is/application/core'
-import {
-  Application,
-  NationalRegistryIndividual,
-} from '@island.is/application/types'
+import { NationalRegistryIndividual } from '@island.is/application/types'
 import { IdentityDocument, IdentityDocumentChild } from '../lib/constants'
+import { FormValue } from '@island.is/application/types'
 
 export * from './getChosenApplicant'
 export * from './hasSecondGuardian'
@@ -14,10 +12,21 @@ export * from './getChargeItemCodes'
 export * from './updateAnswers'
 export * from './isChild'
 export * from './isAvailableForApplication'
+export * from './getPriceList'
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
+}
+
+export const hasReviewerApproved = (answers: FormValue) => {
+  const hasApproved = getValueViaPath(
+    answers,
+    'secondGuardianInformation.approved',
+    '',
+  ) as string
+
+  return hasApproved
 }
 
 export const getCombinedApplicantInformation = (externalData: any) => {
@@ -53,3 +62,6 @@ export const getCombinedApplicantInformation = (externalData: any) => {
     children: applicantChildren,
   }
 }
+
+export const formatIsk = (value: number): string =>
+  value.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'

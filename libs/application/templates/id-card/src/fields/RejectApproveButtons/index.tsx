@@ -51,7 +51,10 @@ export const RejectApproveButtons: FC<
         input: {
           id: application.id,
           event: DefaultEvents.SUBMIT,
-          answers: {},
+          answers: {
+            ...application.answers,
+            'secondGuardianInformation.approved': true,
+          },
         },
       },
     })

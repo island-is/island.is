@@ -35,9 +35,9 @@ export const state = {
       description: 'Action card title',
     },
     actionCardDescription: {
-      id: 'id.application:state.labels.actionCardDescription',
+      id: 'id.application:state.labels.actionCardDescription#markdown',
       defaultMessage:
-        'Beðið er eftir að samþykki fyrir umsókn um nafnskírteini fyrir: ',
+        'Beðið er eftir að samþykki fyrir umsókn um nafnskírteini fyrir: {name}',
       description: 'Action card description',
     },
     actionCardTag: {

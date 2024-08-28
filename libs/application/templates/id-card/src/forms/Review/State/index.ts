@@ -56,7 +56,10 @@ export const StateSection = buildSection({
                   outlined: false,
                   variant: 'purple',
                 },
-                text: `${state.labels.actionCardDescription} ${chosenApplicantName}`,
+                text: {
+                  id: state.labels.actionCardDescription.id,
+                  values: { name: chosenApplicantName },
+                },
               },
             ]
           },

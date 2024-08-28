@@ -31,7 +31,7 @@ const personInfo = z
 export const IdCardSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   typeOfId: z.enum(['II', 'ID']), //II = Nafnskírteini sem ferðaskilríki, ID = Nafnskírteini ekki sem ferðaskilríki
-  chosenApplicants: z.string(),
+  chosenApplicants: z.string().min(1),
   applicantInformation: personInfo,
   firstGuardianInformation: personInfo,
   secondGuardianInformation: z.object({
@@ -43,6 +43,7 @@ export const IdCardSchema = z.object({
     phoneNumber: z.string().refine((v) => isValidPhoneNumber(v) || v === '', {
       params: error.invalidValue,
     }),
+    approved: z.boolean().optional(),
   }),
   priceList: z.object({
     priceChoice: z.enum([Services.EXPRESS, Services.REGULAR]),

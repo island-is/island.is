@@ -1,5 +1,6 @@
 import {
   coreHistoryMessages,
+  corePendingActionMessages,
   EphemeralStateLifeCycle,
   getValueViaPath,
   pruneAfterDays,
@@ -17,6 +18,7 @@ import {
   DistrictsApi,
   InstitutionNationalIds,
   PassportsApi,
+  PendingAction,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
@@ -32,11 +34,40 @@ import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
 import { IdCardSchema } from './dataSchema'
 import { buildPaymentState } from '@island.is/application/utils'
-import { getChargeItemCodes, hasReviewer } from '../utils'
+import { getChargeItemCodes, hasReviewer, hasReviewerApproved } from '../utils'
 
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
   return hasReviewer(answers, externalData)
+}
+
+const reviewStatePendingAction = (
+  application: Application,
+  nationalId: string,
+): PendingAction => {
+  const firstGuardianNationalId = getValueViaPath(
+    application.answers,
+    'firstGuardianInformation.nationalId',
+    undefined,
+  ) as string | undefined
+
+  if (
+    nationalId &&
+    firstGuardianNationalId !== nationalId &&
+    !hasReviewerApproved(application.answers)
+  ) {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.youNeedToReviewDescription,
+      displayStatus: 'warning',
+    }
+  } else {
+    return {
+      title: corePendingActionMessages.waitingForReviewTitle,
+      content: corePendingActionMessages.waitingForReviewDescription,
+      displayStatus: 'info',
+    }
+  }
 }
 
 const IdCardTemplate: ApplicationTemplate<
@@ -149,7 +180,7 @@ const IdCardTemplate: ApplicationTemplate<
         entry: 'assignToParentB',
         meta: {
           name: 'ParentB',
-          status: 'draft',
+          status: 'inprogress',
           lifecycle: pruneAfterDays(7),
           onEntry: defineTemplateApi({
             action: ApiActions.assignParentB,
@@ -176,12 +207,17 @@ const IdCardTemplate: ApplicationTemplate<
             },
           ],
           actionCard: {
+            tag: {
+              label: applicationMessage.actionCardDraft,
+              variant: 'blue',
+            },
             historyLogs: [
               {
                 logMessage: applicationMessage.historyWaitingForParentB,
                 onEvent: DefaultEvents.SUBMIT,
               },
             ],
+            pendingAction: reviewStatePendingAction,
           },
         },
         on: {

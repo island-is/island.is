@@ -25,6 +25,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
           id: Routes.CHOSENAPPLICANTS,
           title: '',
           largeButtons: true,
+          required: true,
           options: (application) => {
             const applicantInformation = getCombinedApplicantInformation(
               application.externalData,
@@ -48,11 +49,13 @@ export const ChosenApplicantsSubSection = buildSubSection({
                       ...idInformation.labels.idNumber,
                       values: {
                         passportNumber: applicantInformation.passport?.number,
-                        expirationDate: formatDate(
-                          new Date(
-                            applicantInformation.passport.expirationDate,
+                        expirationDate:
+                          applicantInformation.passport.expirationDate &&
+                          formatDate(
+                            new Date(
+                              applicantInformation.passport.expirationDate,
+                            ),
                           ),
-                        ),
                       },
                     }
                   : {
@@ -64,6 +67,7 @@ export const ChosenApplicantsSubSection = buildSubSection({
             ]
 
             applicantInformation.children.map((item) => {
+              const isDisabledDueToCitizenship = item.citizenship?.kodi !== 'IS'
               const idDocument =
                 item.passports && item.passports.length > 0
                   ? (item.passports[0] as IdentityDocument)
@@ -83,9 +87,9 @@ export const ChosenApplicantsSubSection = buildSubSection({
                       ...idInformation.labels.idNumber,
                       values: {
                         passportNumber: idDocument.number,
-                        expirationDate: formatDate(
-                          new Date(idDocument.expirationDate),
-                        ),
+                        expirationDate:
+                          idDocument.expirationDate &&
+                          formatDate(new Date(idDocument.expirationDate)),
                       },
                     }
                   : {
@@ -93,7 +97,8 @@ export const ChosenApplicantsSubSection = buildSubSection({
                     },
 
                 value: item.childNationalId,
-                disabled: IIDisabled && IDDisabled,
+                disabled:
+                  (IIDisabled && IDDisabled) || isDisabledDueToCitizenship,
               })
             })
 

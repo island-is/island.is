@@ -27,7 +27,7 @@ import {
 } from '@island.is/application/templates/id-card'
 import { generateApplicationRejectEmail } from './emailGenerators/rejectApplicationEmail'
 import { generateApplicationSubmittedEmail } from './emailGenerators/applicationSubmittedEmail'
-// import { info } from 'kennitala'
+import { info } from 'kennitala'
 @Injectable()
 export class IdCardService extends BaseTemplateApiService {
   constructor(
@@ -47,6 +47,7 @@ export class IdCardService extends BaseTemplateApiService {
       auth,
       params?.type,
     )
+    console.log('identityDocument', identityDocument)
     if (!identityDocument) {
       throw new TemplateApiError(
         {
@@ -57,25 +58,45 @@ export class IdCardService extends BaseTemplateApiService {
       )
     }
 
-    // console.log('identityDocuemtn', identityDocument)
-    // const infoFromKennitala = info(auth.nationalId)
-    // console.log('infoFromKennitala', infoFromKennitala)
-
-    const expDate = identityDocument.userPassport?.expirationDate?.toString()
     // if applicant has valid id that is not withinExpirationDate, then not available for application,
     // otherwise available, either with no id or id within expiration limit
     // applicant can have a valid ID and apply for II
-    const applicantIdentityWithinLimits = isAvailableForApplication('ID', {})
+    const applicantAge = info(auth.nationalId).age
+    const applicantInformation = {
+      age: applicantAge,
+      nationalId: auth.nationalId,
+      passport: identityDocument.userPassport,
+      children: identityDocument.childPassports,
+    }
+    console.log('applicantInformation', applicantInformation)
+    const applicantIDWithinLimits = isAvailableForApplication(
+      'ID',
+      applicantInformation,
+    )
+    const applicantIIWithinLimits = isAvailableForApplication(
+      'II',
+      applicantInformation,
+    )
 
     let childIdentityWithinLimits = false
     identityDocument.childPassports?.map((child) => {
       if (child.passports && child.passports.length > 0) {
         child.passports.map((id) => {
-          const withinLimits = isAvailableForApplication('ID', {})
+          if (child.childNationalId) {
+            const childInformation = {
+              age: info(child.childNationalId).age,
+              nationalId: child.childNationalId,
+              passport: child.passports?.[0],
+            }
+            const withinLimits = isAvailableForApplication(
+              'ID',
+              childInformation,
+            )
 
-          if (withinLimits) {
-            // if there is any id for any child that is within limits then user should be let through dataProvider
-            childIdentityWithinLimits = true
+            if (withinLimits) {
+              // if there is any id for any child that is within limits then user should be let through dataProvider
+              childIdentityWithinLimits = true
+            }
           }
         })
       } else {
@@ -83,7 +104,11 @@ export class IdCardService extends BaseTemplateApiService {
       }
     })
 
-    if (!applicantIdentityWithinLimits && !childIdentityWithinLimits) {
+    if (
+      !applicantIDWithinLimits &&
+      !applicantIIWithinLimits &&
+      !childIdentityWithinLimits
+    ) {
       throw new TemplateApiError(
         {
           title: coreErrorMessages.idCardApplicationRequirementsNotMet,

@@ -8,9 +8,9 @@ import { IdentityDocumentChild, Routes } from '../lib/constants'
 import { IdCardAnswers } from '..'
 
 export interface ChosenApplicant {
-  name: string
+  name?: string | null
   isApplicant: boolean
-  nationalId?: string
+  nationalId?: string | null
 }
 
 export const getChosenApplicant = (

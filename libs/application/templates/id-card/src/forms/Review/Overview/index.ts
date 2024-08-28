@@ -15,6 +15,8 @@ import {
   formatPhoneNumber,
   hasSecondGuardian,
   checkForDiscount,
+  getPriceList,
+  formatIsk,
 } from '../../../utils'
 import { Services } from '../../../shared/types'
 
@@ -50,8 +52,7 @@ export const OverviewSection = buildSection({
           colSpan: '6/12',
           paddingBottom: 3,
           value: ({ answers }) =>
-            (getValueViaPath(answers, 'typeOfId', '') as string) ===
-            'WithTravel'
+            (getValueViaPath(answers, 'typeOfId', '') as string) === 'II'
               ? idInformation.labels.typeOfIdRadioAnswerOne
               : idInformation.labels.typeOfIdRadioAnswerTwo,
         }),
@@ -234,14 +235,53 @@ export const OverviewSection = buildSection({
               `${Routes.PRICELIST}.priceChoice`,
             ) as string
             const hasDiscount = checkForDiscount(application)
+            const applicationPrices = getPriceList(application)
             return priceChoice === Services.EXPRESS && !hasDiscount
-              ? priceList.labels.fastPriceTitle
+              ? {
+                  id: priceList.labels.fastPriceTitle.id,
+                  values: {
+                    price:
+                      applicationPrices.fastPrice?.priceAmount &&
+                      formatIsk(applicationPrices.fastPrice?.priceAmount),
+                  },
+                }
               : priceChoice === Services.EXPRESS && hasDiscount
-              ? [priceList.labels.discountFastPriceTitle]
+              ? [
+                  {
+                    id: priceList.labels.discountFastPriceTitle,
+                    values: {
+                      price:
+                        applicationPrices.fastDiscountPrice?.priceAmount &&
+                        formatIsk(
+                          applicationPrices.fastDiscountPrice?.priceAmount,
+                        ),
+                    },
+                  },
+                ]
               : priceChoice === Services.REGULAR && !hasDiscount
-              ? [priceList.labels.regularPriceTitle]
+              ? [
+                  {
+                    id: priceList.labels.regularPriceTitle.id,
+                    values: {
+                      price:
+                        applicationPrices.regularPrice?.priceAmount &&
+                        formatIsk(applicationPrices.regularPrice?.priceAmount),
+                    },
+                  },
+                ]
               : priceChoice === Services.REGULAR && hasDiscount
-              ? [priceList.labels.discountRegularPriceTitle]
+              ? [
+                  {
+                    id: priceList.labels.discountRegularPriceTitle.id,
+                    values: {
+                      price:
+                        applicationPrices.regularDiscountPrice?.priceAmount &&
+                        formatIsk(
+                          applicationPrices.regularDiscountPrice?.priceAmount,
+                        ),
+                    },
+                  },
+                ]
               : ''
           },
         }),

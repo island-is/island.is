@@ -7,7 +7,6 @@ export const isAvailableForApplication = (
   idTypeChosen: string,
   applicantInformation: CombinedApplicantInformation,
 ) => {
-  console.log('age', applicantInformation.age)
   if (
     applicantInformation.age &&
     applicantInformation.age < 18 &&

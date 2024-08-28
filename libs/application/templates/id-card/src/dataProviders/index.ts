@@ -32,8 +32,8 @@ const defaultParams = {
     title: error.invalidAgeTitle,
     summary: error.invalidAgeDescription,
   },
-  icelandicCitizenship: false, // TODO make this check in template-module-api eða annarstaðar
-  allowPassOnChild: true,
+  icelandicCitizenship: true,
+  allowIfChildHasCitizenship: true,
 }
 
 export const NationalRegistryUser = NationalRegistryUserApi.configure({
@@ -43,7 +43,7 @@ export const NationalRegistryUser = NationalRegistryUserApi.configure({
 export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
   params: {
     ...defaultParams,
-    icelandicCitizenship: false,
+    icelandicCitizenship: true,
   },
 })
 
