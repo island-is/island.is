@@ -26,7 +26,7 @@ export const getApplicationExternalData = (
 
   const withholdingTax = getValueViaPath(
     externalData,
-    'socaialInsuranceAdministrationWithholdingTax.data',
+    'socialInsuranceAdministrationWithholdingTax.data',
   ) as WithholdingTax
 
   const latestIncomePlan = getValueViaPath(

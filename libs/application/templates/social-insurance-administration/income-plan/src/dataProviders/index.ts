@@ -18,7 +18,7 @@ export const SocialInsuranceAdministrationCurrenciesApi = defineTemplateApi({
 export const SocialInsuranceAdministrationWithholdingTaxApi = defineTemplateApi(
   {
     action: 'getWithholdingTax',
-    externalDataId: 'socaialInsuranceAdministrationWithholdingTax',
+    externalDataId: 'socialInsuranceAdministrationWithholdingTax',
     namespace: 'SocialInsuranceAdministration',
   },
 )
