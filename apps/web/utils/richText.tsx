@@ -192,7 +192,7 @@ export const webRenderConnectedComponent = (
 
   return (
     <TranslationNamespaceProvider
-      messages={slice.translationStrings ?? slice.json}
+      messages={slice.translationStrings ?? slice.json ?? {}}
     >
       {connectedComponent}
     </TranslationNamespaceProvider>
