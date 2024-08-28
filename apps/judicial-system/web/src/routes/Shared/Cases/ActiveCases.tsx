@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+{ FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { capitalize } from '@island.is/judicial-system/formatters'

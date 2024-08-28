@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+{ useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 

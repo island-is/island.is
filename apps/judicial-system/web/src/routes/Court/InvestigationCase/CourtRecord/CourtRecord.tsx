@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+{ FC, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import router from 'next/router'
 

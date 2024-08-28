@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react'
+{ FC, PropsWithChildren } from 'react'
 
 export type Rect = { width: number; height: number }
 

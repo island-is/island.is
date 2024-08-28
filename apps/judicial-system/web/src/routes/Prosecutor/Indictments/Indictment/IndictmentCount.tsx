@@ -1,4 +1,4 @@
-import React, { FC, useMemo, useState } from 'react'
+{ FC, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { IntlShape, useIntl } from 'react-intl'
 

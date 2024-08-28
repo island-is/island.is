@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+{ FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 

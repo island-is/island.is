@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+{ useContext } from 'react'
 
 import { FormContext } from '../FormProvider/FormProvider'
 import InfoCard from './InfoCard'

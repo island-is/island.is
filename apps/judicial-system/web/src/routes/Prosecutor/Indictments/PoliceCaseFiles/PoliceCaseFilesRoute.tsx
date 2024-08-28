@@ -1,4 +1,4 @@
-import React, {
+{
   FC,
   memo,
   useCallback,

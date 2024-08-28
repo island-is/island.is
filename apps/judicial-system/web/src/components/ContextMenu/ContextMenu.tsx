@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactElement } from 'react'
+{ forwardRef, ReactElement } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { Menu, MenuButton, MenuItem, useMenuState } from 'reakit/Menu'

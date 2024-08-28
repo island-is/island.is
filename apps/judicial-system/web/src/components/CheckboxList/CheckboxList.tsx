@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+{ FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 
 import {

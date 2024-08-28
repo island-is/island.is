@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useContext } from 'react'
+{ FC, PropsWithChildren, useContext } from 'react'
 
 import { Box, Button, Text } from '@island.is/island-ui/core'
 import { api } from '@island.is/judicial-system-web/src/services'

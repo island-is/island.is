@@ -1,4 +1,4 @@
-import React, { FC, PointerEvent, useEffect, useMemo, useState } from 'react'
+{ FC, PointerEvent, useEffect, useMemo, useState } from 'react'
 import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'

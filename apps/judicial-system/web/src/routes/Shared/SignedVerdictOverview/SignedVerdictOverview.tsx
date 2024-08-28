@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useCallback, useContext, useState } from 'react'
+{ FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { AnimatePresence } from 'framer-motion'

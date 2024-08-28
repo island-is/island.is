@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+{ useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertBanner, AlertMessage, Box } from '@island.is/island-ui/core'

@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useEffect, useState } from 'react'
+{ FC, useCallback, useEffect, useState } from 'react'
 import InputMask from 'react-input-mask'
 
 import {
