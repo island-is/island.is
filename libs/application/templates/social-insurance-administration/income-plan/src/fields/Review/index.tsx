@@ -13,7 +13,7 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { FC } from 'react'
+import { FC, useMemo } from 'react'
 import { useMutation } from '@apollo/client'
 import {
   Label,
@@ -70,13 +70,15 @@ export const Review: FC<ReviewScreenProps> = ({
     }
   }
 
-  const rows = incomePlan.map((e) => {
-    return [
-      e.incomeType,
-      formatCurrencyWithoutSuffix(e.incomePerYear),
-      e.currency,
-    ]
-  })
+  const rows = useMemo(
+    () =>
+      incomePlan.map((e) => [
+        e.incomeType,
+        formatCurrencyWithoutSuffix(e.incomePerYear),
+        e.currency,
+      ]),
+    [incomePlan],
+  )
 
   return (
     <>
