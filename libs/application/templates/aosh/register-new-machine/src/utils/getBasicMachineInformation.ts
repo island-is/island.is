@@ -1,7 +1,8 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FormatMessage, FormValue } from '@island.is/application/types'
+import { FormatMessage, FormValue, YES } from '@island.is/application/types'
 import { AboutMachine, BasicInformation } from '../lib/dataSchema'
-import { machine } from '../lib/messages'
+import { information, machine } from '../lib/messages'
+import { NEW } from '../shared/types'
 
 export const getBasicMachineInformation = (
   answers: FormValue,
@@ -39,13 +40,21 @@ export const getBasicMachineInformation = (
       machine.labels.basicMachineInformation.productionNumber,
     )}: ${basicMachineInformation.productionNumber}`,
     `${formatMessage(machine.labels.basicMachineInformation.markedCE)}: ${
-      basicMachineInformation.markedCE
+      basicMachineInformation.markedCE === YES
+        ? formatMessage(information.labels.radioButtons.radioOptionYes)
+        : formatMessage(information.labels.radioButtons.radioOptionYes)
     }`,
     `${formatMessage(
       machine.labels.basicMachineInformation.preRegistration,
-    )}: ${basicMachineInformation.preRegistration}`,
+    )}: ${
+      basicMachineInformation.preRegistration === YES
+        ? formatMessage(information.labels.radioButtons.radioOptionYes)
+        : formatMessage(information.labels.radioButtons.radioOptionYes)
+    }`,
     `${formatMessage(machine.labels.basicMachineInformation.isUsed)}: ${
-      basicMachineInformation.isUsed
+      basicMachineInformation.isUsed === NEW
+        ? formatMessage(machine.labels.basicMachineInformation.new)
+        : formatMessage(machine.labels.basicMachineInformation.used)
     }`,
     `${formatMessage(machine.labels.basicMachineInformation.location)}: ${
       basicMachineInformation.location
