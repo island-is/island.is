@@ -2,7 +2,7 @@ import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { uuid } from 'uuidv4'
 
-import { toast, UploadFile, UploadFileStatus } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFile,
@@ -91,9 +91,8 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
 
   const addUploadFiles = (
     files: File[],
-    category?: CaseFileCategory,
-    status?: UploadFileStatus,
-    policeCaseNumber?: string,
+    overRides?: Partial<TUploadFile>,
+    setUserGeneratedFilename = false,
   ) => {
     // We generate an id for each file so that we find the file again when
     // updating the file's progress and onRetry.
@@ -104,10 +103,9 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       type: file.type,
       size: file.size,
       percent: 0,
-      status,
-      category,
-      policeCaseNumber,
       originalFileObj: file,
+      userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
+      ...overRides,
     }))
 
     setUploadFiles((previous) => [...uploadFiles, ...previous])
@@ -281,7 +279,7 @@ const useS3Upload = (caseId: string) => {
     ) => {
       const promises = files.map(async (file) => {
         try {
-          updateFile({ ...file, name: file.name, status: 'uploading' })
+          updateFile({ ...file, status: 'uploading' })
 
           const presignedPost = await getPresignedPost(file)
 
@@ -322,7 +320,7 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleUploadFromPolice = useCallback(
-    async (
+    (
       files: TUploadFile[],
       callback: (file: TUploadFile, newId?: string) => void,
     ) => {
@@ -371,13 +369,13 @@ const useS3Upload = (caseId: string) => {
   )
 
   const handleRetry = useCallback(
-    async (
+    (
       file: TUploadFile,
       callback: (file: TUploadFile, newId?: string) => void,
     ) => {
       callback({ ...file, percent: 1, status: 'uploading' })
 
-      return await handleUpload([file], callback)
+      return handleUpload([file], callback)
     },
     [handleUpload],
   )

@@ -3,9 +3,8 @@ import { useIntl } from 'react-intl'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { useRouter } from 'next/router'
-import { uuid } from 'uuidv4'
 
-import { Box, Text, toast, UploadFile } from '@island.is/island-ui/core'
+import { Box, Text, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { isDefenceUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
@@ -21,11 +20,9 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { TEditableCaseFile } from '@island.is/judicial-system-web/src/components/EditableCaseFile/EditableCaseFile'
 import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  TUploadFile,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -37,47 +34,47 @@ const AddFiles: FC = () => {
     useContext(FormContext)
   const { formatMessage } = useIntl()
   const [visibleModal, setVisibleModal] = useState<'sendFiles'>()
-  const [filesToUpload, setFilesToUpload] = useState<TEditableCaseFile[]>([])
   const router = useRouter()
   const { user } = useContext(UserContext)
   const previousRoute = isDefenceUser(user)
     ? `${constants.DEFENDER_INDICTMENT_ROUTE}/${workingCase.id}`
     : `${constants.INDICTMENTS_OVERVIEW_ROUTE}/${workingCase.id}`
 
-  const { uploadFiles } = useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRetry } = useS3Upload(workingCase.id)
+  const {
+    uploadFiles,
+    allFilesDoneOrError,
+    someFilesError,
+    addUploadFiles,
+    removeUploadFile,
+    updateUploadFile,
+  } = useUploadFiles()
+  const { handleUpload } = useS3Upload(workingCase.id)
 
-  const updateFileToUpload = useCallback((file: UploadFile, newId?: string) => {
-    setFilesToUpload((previous) =>
-      previous.map((f) =>
-        f.id === file.id ? { ...f, ...file, id: newId ?? file.id } : f,
-      ),
+  const caseFileCategory = isDefenceUser(user)
+    ? CaseFileCategory.DEFENDANT_CASE_FILE
+    : CaseFileCategory.PROSECUTOR_CASE_FILE
+
+  const handleChange = (files: File[]) => {
+    addUploadFiles(
+      files,
+      {
+        category: caseFileCategory,
+        status: 'done',
+        displayDate: new Date().toISOString(),
+      },
+      true,
     )
-  }, [])
-
-  const handleFileUpload = useCallback(
-    async (files: UploadFile[]) => {
-      const filesUploaded = await handleUpload(files, updateFileToUpload)
-
-      if (filesUploaded) {
-        setVisibleModal('sendFiles')
-      }
-    },
-    [handleUpload, updateFileToUpload],
-  )
-
-  const handleRemoveFile = useCallback((file: TUploadFile) => {
-    setFilesToUpload((prev) => prev.filter((p) => p.id !== file.id))
-  }, [])
+  }
 
   const handleRename = useCallback(
     async (fileId: string, newName?: string, newDisplayDate?: string) => {
-      let newDate: Date | null = null
-      const fileToUpdate = filesToUpload.findIndex((item) => item.id === fileId)
+      const fileToUpdate = uploadFiles.find((file) => file.id === fileId)
 
-      if (fileToUpdate === -1) {
+      if (!fileToUpdate) {
         return
       }
+
+      let newDate: Date | undefined
 
       if (newDisplayDate) {
         const [day, month, year] = newDisplayDate.split('.')
@@ -89,65 +86,25 @@ const AddFiles: FC = () => {
         }
       }
 
-      if (newName) {
-        filesToUpload[fileToUpdate].userGeneratedFilename = newName
-      }
-
-      if (newDate) {
-        filesToUpload[fileToUpdate].displayDate = newDate.toISOString()
-      }
-
-      updateFileToUpload(uploadFiles[fileToUpdate])
+      updateUploadFile({
+        ...fileToUpdate,
+        userGeneratedFilename: newName || fileToUpdate.userGeneratedFilename, // Do not allow the empty string
+        displayDate: newDate?.toISOString() ?? fileToUpdate.displayDate,
+      })
     },
-    [filesToUpload, formatMessage, updateFileToUpload, uploadFiles],
+    [formatMessage, updateUploadFile, uploadFiles],
   )
 
-  const mapUploadFilesToEditableCaseFiles = (
-    files: UploadFile[],
-  ): TEditableCaseFile[] => {
-    const category = isDefenceUser(user)
-      ? CaseFileCategory.DEFENDANT_CASE_FILE
-      : CaseFileCategory.PROSECUTOR_CASE_FILE
+  const handleNextButtonClick = useCallback(async () => {
+    const allSucceeded = await handleUpload(
+      uploadFiles.filter((file) => file.percent === 0),
+      updateUploadFile,
+    )
 
-    return files.map((file) => ({
-      name: file.name,
-      userGeneratedFilename: file.name,
-      size: file.size,
-      originalFileObj: file as File,
-      displayDate: new Date().toISOString(),
-      type: 'application/pdf',
-      category,
-      id: uuid(),
-    }))
-  }
-
-  const mapEditableCaseFileToUploadFile = (
-    file: TEditableCaseFile,
-  ): TUploadFile => {
-    return {
-      ...file,
-      name: file.displayText || '',
+    if (allSucceeded) {
+      setVisibleModal('sendFiles')
     }
-  }
-
-  const handleNextButtonClick = () => {
-    if (failedUploads.length > 0) {
-      failedUploads.map(async (failedUpload) => {
-        const filesUploaded = await handleRetry(
-          mapEditableCaseFileToUploadFile(failedUpload),
-          () => 'retry',
-        )
-
-        if (filesUploaded) {
-          setVisibleModal('sendFiles')
-        }
-      })
-    } else {
-      handleFileUpload(filesToUpload as UploadFile[])
-    }
-  }
-
-  const failedUploads = filesToUpload.filter((f) => f.status === 'error')
+  }, [handleUpload, updateUploadFile, uploadFiles])
 
   return (
     <PageLayout
@@ -170,14 +127,9 @@ const AddFiles: FC = () => {
           description={formatMessage(strings.uploadFilesDescription)}
         />
         <UploadFiles
-          files={filesToUpload}
-          onChange={(files) =>
-            setFilesToUpload((prev) => [
-              ...mapUploadFilesToEditableCaseFiles(files),
-              ...prev,
-            ])
-          }
-          onDelete={handleRemoveFile}
+          files={uploadFiles}
+          onChange={handleChange}
+          onDelete={removeUploadFile}
           onRename={handleRename}
         />
       </FormContentContainer>
@@ -185,19 +137,12 @@ const AddFiles: FC = () => {
         <FormFooter
           previousUrl={previousRoute}
           nextButtonText={
-            filesToUpload.some((f) => f.status === 'error')
+            someFilesError
               ? formatMessage(strings.tryUploadAgain)
               : formatMessage(strings.nextButtonText)
           }
-          nextButtonColorScheme={
-            filesToUpload.some((f) => f.status === 'error')
-              ? 'destructive'
-              : 'default'
-          }
-          nextIsDisabled={
-            filesToUpload.length === 0 ||
-            filesToUpload.some((f) => f.status === 'uploading')
-          }
+          nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
+          nextIsDisabled={uploadFiles.length === 0 || !allFilesDoneOrError}
           onNextButtonClick={handleNextButtonClick}
         />
       </FormContentContainer>

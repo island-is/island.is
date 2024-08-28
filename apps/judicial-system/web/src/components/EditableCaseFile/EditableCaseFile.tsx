@@ -21,15 +21,6 @@ import { TUploadFile } from '../../utils/hooks'
 import { strings } from './EditableCaseFile.strings'
 import * as styles from './EditableCaseFile.css'
 
-interface Props {
-  enableDrag: boolean
-  caseFile: TEditableCaseFile
-  onOpen: (id: string) => void
-  onRename: (id: string, name?: string, displayDate?: string) => void
-  onDelete: (file: TUploadFile) => void
-  onRetry?: (file: TUploadFile) => void
-}
-
 export interface TEditableCaseFile {
   id: string
   category?: CaseFileCategory | null
@@ -40,6 +31,15 @@ export interface TEditableCaseFile {
   canOpen?: boolean
   canEdit?: boolean
   status?: UploadFileStatus
+}
+
+interface Props {
+  enableDrag: boolean
+  caseFile: TEditableCaseFile
+  onOpen: (id: string) => void
+  onRename: (id: string, name?: string, displayDate?: string) => void
+  onDelete: (file: TUploadFile) => void
+  onRetry?: (file: TUploadFile) => void
 }
 
 const EditableCaseFile: FC<Props> = (props) => {
@@ -62,7 +62,7 @@ const EditableCaseFile: FC<Props> = (props) => {
     const trimmedDisplayDate = editedDisplayDate?.trim()
 
     if (trimmedFilename || trimmedDisplayDate) {
-      onRename(caseFile.id || '', trimmedFilename, trimmedDisplayDate)
+      onRename(caseFile.id, trimmedFilename, trimmedDisplayDate)
       setIsEditing(false)
       setEditedDisplayDate(formatDate(caseFile.displayDate) ?? '')
 
@@ -241,7 +241,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                     onClick={() => setIsEditing(true)}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:
-                        caseFile.status === undefined,
+                        caseFile.canEdit && caseFile.status !== 'error',
                       [styles.background.secondary]:
                         caseFile.status === 'error',
                     })}
