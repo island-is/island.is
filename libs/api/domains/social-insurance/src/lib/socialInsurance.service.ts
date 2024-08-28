@@ -131,6 +131,9 @@ export class SocialInsuranceService {
     const data = await this.socialInsuranceApi.getLatestIncomePlan(user)
 
     if (!data?.registrationDate || !data?.status || !data.incomeTypeLines) {
+      this.logger.info('Income plan incomplete, returning', {
+        category: LOG_CATEGORY,
+      })
       return
     }
 
