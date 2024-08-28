@@ -46,7 +46,9 @@ import {
   removeCountryCode,
 } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
+import { sub } from 'date-fns'
 import { ApplicantType } from '../shared/constants'
+import build from 'next/dist/build'
 
 export const HealthInsuranceDeclarationForm: Form = buildForm({
   id: 'HealthInsuranceDeclarationDraft',
@@ -378,6 +380,12 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildDateField({
               id: 'period.dateFieldFrom',
+              minDate: (application) => {
+                return application.answers.studentOrTouristRadioFieldTourist ===
+                  ApplicantType.STUDENT
+                  ? sub(new Date(), { years: 1 })
+                  : new Date(0)
+              },
               title: m.application.date.dateFromTitle,
               placeholder: m.application.date.datePlaceholderText,
               required: true,
@@ -391,6 +399,18 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               required: true,
               width: 'half',
               defaultValue: '',
+            }),
+            buildAlertMessageField({
+              id: 'dateAlertMessage',
+              alertType: 'warning',
+              title: m.application.date.studentMinDateWarningTitle,
+              message: m.application.date.studentMinDateWarning,
+              condition: (answers) => {
+                return (
+                  answers.studentOrTouristRadioFieldTourist ===
+                  ApplicantType.STUDENT
+                )
+              },
             }),
           ],
         }),
