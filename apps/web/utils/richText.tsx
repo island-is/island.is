@@ -77,7 +77,7 @@ import { useI18n } from '@island.is/web/i18n'
 import AdministrationOfOccupationalSafetyAndHealthCourses from '../components/connected/AdministrationOfOccupationalSafetyAndHealthCourses/AdministrationOfOccupationalSafetyAndHealthCourses'
 import { MonthlyStatistics } from '../components/connected/electronicRegistrationStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
-import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator'
+import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
 import JourneymanList from '../components/connected/syslumenn/TableLists/JourneymanList/JourneymanList'
 import ProfessionRights from '../components/connected/syslumenn/TableLists/ProfessionRights/ProfessionRights'
 import { UmsCostOfLivingCalculator } from '../components/connected/UmbodsmadurSkuldara'
@@ -168,9 +168,7 @@ export const webRenderConnectedComponent = (
       connectedComponent = <KilometerFee slice={slice} />
       break
     case 'SpecificHousingBenefitSupportCalculator':
-      connectedComponent = (
-        <SpecificHousingBenefitSupportCalculator slice={slice} />
-      )
+      connectedComponent = <SpecificHousingBenefitSupportCalculator />
       break
     case 'GrindavikResidentialPropertyPurchaseCalculator':
       connectedComponent = (
