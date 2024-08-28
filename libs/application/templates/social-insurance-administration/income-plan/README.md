@@ -12,7 +12,7 @@ This application template allows submitting an income plan following an applicat
 
 This state is a temporary state that all new income plans will be created in. It has a short lifespan and is unlisted.
 
-The purpose of this state is to be a guard into the actual income plan. There is an external data step which fetches data from Þjóðskrá and TR. The applicant cannot advance if they have a previous income plan that has been less than 10 day in progress at TR.
+The purpose of this state is to be a guard into the actual income plan. There is an external data step which fetches data from Þjóðskrá and TR. The applicant cannot advance if they have a previous income plan that has been in progress at TR for less than 10 days.
 
 #### Draft
 
