@@ -48,7 +48,6 @@ import {
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import { ApplicantType } from '../shared/constants'
-import build from 'next/dist/build'
 
 export const HealthInsuranceDeclarationForm: Form = buildForm({
   id: 'HealthInsuranceDeclarationDraft',
