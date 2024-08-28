@@ -62,8 +62,8 @@ const OwnerView = () => {
           </Box>
         ))}
       </Box>
-      {/* Ábyrgðaraðilar */}
-      <Box>
+      {/* Ábyrgðaraðilar - hlutverk tekið út eins og staðan er */}
+      {/*<Box>
         <Box
           display="flex"
           justifyContent="spaceBetween"
@@ -108,7 +108,7 @@ const OwnerView = () => {
             </T.Row>
           </T.Body>
         </T.Table>
-      </Box>
+      </Box>*/}
       {/* Umsjónaraðilar */}
       <Box>
         <Box
@@ -140,11 +140,7 @@ const OwnerView = () => {
             <T.Row>
               <T.Data>{'Nafni Nafnason'}</T.Data>
               <T.Data>{'010130-3019'}</T.Data>
-              <T.Data width={'40%'}>
-                {formatMessage(
-                  'Suðvesturkjördæmi, Suðurkjördæmi, Norðausturkjördæmi, Suðvesturkjördæmi, Suðurkjördæmi, Norðausturkjördæmi',
-                )}
-              </T.Data>
+              <T.Data>{formatMessage(m.allConstituencies)}</T.Data>
               <T.Data width={'12%'}>
                 <Box display="flex" justifyContent="spaceBetween">
                   <EditPerson />
