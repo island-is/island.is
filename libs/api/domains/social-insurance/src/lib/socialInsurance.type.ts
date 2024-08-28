@@ -5,4 +5,4 @@ export enum IncomePlanStatus {
   UNKNOWN,
 }
 
-export const LOG_CATEGORY = 'api-domains-social-insurance-servie'
+export const LOG_CATEGORY = 'api-domains-social-insurance-service'
