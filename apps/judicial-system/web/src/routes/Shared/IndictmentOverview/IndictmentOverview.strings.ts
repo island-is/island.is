@@ -17,4 +17,10 @@ export const strings = defineMessages({
     defaultMessage: 'Ljúka yfirlestri',
     description: 'Notaður sem texti á takka til að loka yfirliti ákæru.',
   },
+  addDocumentsButtonText: {
+    id: 'judicial.system.indictments:overview.add_documents_button_text',
+    defaultMessage: 'Bæta við gögnum',
+    description:
+      'Texti á takka til að bæta við skjölum á Yfirlit ákæru skefi í ákærum.',
+  },
 })

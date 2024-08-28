@@ -516,7 +516,9 @@ const Conclusion: FC = () => {
               buttonLabel={formatMessage(strings.uploadButtonText)}
               onChange={(files) => {
                 handleUpload(
-                  addUploadFiles(files, CaseFileCategory.COURT_RECORD),
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.COURT_RECORD,
+                  }),
                   updateUploadFile,
                 )
               }}
@@ -549,7 +551,9 @@ const Conclusion: FC = () => {
                 buttonLabel={formatMessage(strings.uploadButtonText)}
                 onChange={(files) => {
                   handleUpload(
-                    addUploadFiles(files, CaseFileCategory.RULING),
+                    addUploadFiles(files, {
+                      category: CaseFileCategory.RULING,
+                    }),
                     updateUploadFile,
                   )
                 }}

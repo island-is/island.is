@@ -73,7 +73,9 @@ const WithdrawnAppealCase = () => {
             buttonLabel={formatMessage(strings.uploadBoxButtonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.APPEAL_COURT_RECORD),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.APPEAL_COURT_RECORD,
+                }),
                 updateUploadFile,
               )
             }
