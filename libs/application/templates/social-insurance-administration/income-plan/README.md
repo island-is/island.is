@@ -16,7 +16,7 @@ The purpose of this state is to be a guard into the actual income plan. There is
 
 #### Draft
 
-Valid applicant will be able to advance to this state where they can start to look through their pre-filled income plan and make changes. If they already have an income plan at TR, make changes to that one they get to see a temporary calculation before sending in the updated income plan.
+Valid applicant will be able to advance to this state where they can start to look through their pre-filled income plan and make changes. If they already have an income plan at TR, they can make changes to it and see a temporary calculation before sending in the updated income plan.
 
 #### Tryggingastofnun submitted
 
