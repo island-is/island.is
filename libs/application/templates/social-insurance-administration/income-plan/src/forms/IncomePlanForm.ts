@@ -107,7 +107,6 @@ export const IncomePlanForm: Form = buildForm({
                           ? ''
                           : ISK
 
-                      console.log('defaultCurrency ', defaultCurrency)
                       return defaultCurrency
                     },
                     watchValues: 'incomeType',

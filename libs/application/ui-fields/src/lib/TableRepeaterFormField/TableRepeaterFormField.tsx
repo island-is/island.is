@@ -353,10 +353,7 @@ const Item: FC<ItemFieldProps> = ({
         : true)
     ) {
       const finalValue = updateValueObj.valueModifier(activeValues)
-
-      if (finalValue) {
-        setValue(id, finalValue)
-      }
+      setValue(id, finalValue)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [JSON.stringify(watchedValues)])
@@ -376,11 +373,7 @@ const Item: FC<ItemFieldProps> = ({
     application: Application,
     activeField?: Record<string, string>,
   ) => {
-    const { defaultValue, component } = item
-
-    if (component === 'input' && !defaultValue) {
-      return ''
-    }
+    const { defaultValue } = item
 
     if (defaultValue === undefined) {
       return undefined
