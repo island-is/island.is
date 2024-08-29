@@ -139,7 +139,7 @@ export const webRenderConnectedComponent = (
       connectedComponent = <BrokersList slice={slice} />
       break
     case 'PublicVehicleSearch':
-      connectedComponent = <PublicVehicleSearch slice={slice} />
+      connectedComponent = <PublicVehicleSearch />
       break
     case 'AircraftSearch':
       connectedComponent = <AircraftSearch slice={slice} />
@@ -148,13 +148,13 @@ export const webRenderConnectedComponent = (
       connectedComponent = <DrivingInstructorList slice={slice} />
       break
     case 'PlateAvailableSearch':
-      connectedComponent = <PlateAvailableSearch slice={slice} />
+      connectedComponent = <PlateAvailableSearch />
       break
     case 'HousingBenefitCalculator':
       connectedComponent = <HousingBenefitCalculator slice={slice} />
       break
     case 'PublicShipSearch':
-      connectedComponent = <PublicShipSearch slice={slice} />
+      connectedComponent = <PublicShipSearch />
       break
     case 'Meistaraleyfi/MasterLicences':
       connectedComponent = <MasterList slice={slice} />

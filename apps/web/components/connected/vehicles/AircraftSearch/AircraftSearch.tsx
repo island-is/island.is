@@ -1,13 +1,8 @@
-import { useState, useEffect, CSSProperties } from 'react'
+import { CSSProperties,useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
-import {
-  ConnectedComponent,
-  AircraftRegistryAircraft,
-  GetAllAircraftsQuery,
-  GetAllAircraftsQueryVariables,
-  AircraftRegistryPerson,
-} from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { useLazyQuery } from '@apollo/client'
+
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -17,8 +12,16 @@ import {
   Table as T,
   Text,
 } from '@island.is/island-ui/core'
-import { useLazyQuery } from '@apollo/client'
+import {
+  AircraftRegistryAircraft,
+  AircraftRegistryPerson,
+  ConnectedComponent,
+  GetAllAircraftsQuery,
+  GetAllAircraftsQueryVariables,
+} from '@island.is/web/graphql/schema'
 import { GET_ALL_AIRCRAFTS_QUERY } from '@island.is/web/screens/queries/AircraftSearch'
+
+import { translation as translationStrings } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -49,8 +52,8 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   const router = useRouter()
   const [searchInputHasFocus, setSearchInputHasFocus] = useState(false)
   const [searchTerm, setSearchTerm] = useState('')
-  const namespace = slice?.json ?? {}
-  const n = useNamespace(namespace)
+
+  const { formatMessage } = useIntl()
 
   const handleSearch = (page = 1, searchValue?: string) => {
     let searchString = searchTerm
@@ -148,7 +151,7 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
   const totalAircrafts = latestAircraftListResponse?.totalCount ?? 0
   const displayedAircraftList = latestAircraftListResponse?.aircrafts ?? []
 
-  const resetSearchText = n('resetSearch', 'Núllstilla leit')
+  const resetSearchText = formatMessage(translationStrings.resetSearch)
   const shouldDisplayResetButton = !!router?.query?.aq
 
   const minHeightFromConfig = slice?.configJson?.minHeight
@@ -178,7 +181,7 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
             onBlur: () => setSearchInputHasFocus(false),
             name: 'public-vehicle-search',
             inputSize: 'medium',
-            placeholder: n('inputPlaceholder', 'Númer eða eigandi'),
+            placeholder: formatMessage(translationStrings.inputPlaceholder),
             colored: true,
             onChange: (ev) => setSearchTerm(ev.target.value),
             value: searchTerm,
@@ -209,8 +212,8 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
       {!loading && errorOccurred && (
         <AlertMessage
           type="error"
-          title={n('errorOccurredTitle', 'Villa kom upp')}
-          message={n('errorOccurredMessage', 'Ekki tókst að sækja loftför')}
+          title={formatMessage(translationStrings.errorOccurredTitle)}
+          message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
 
@@ -218,17 +221,14 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
         !loading &&
         displayedAircraftList.length === 1 &&
         selectedPage === 1 && (
-          <AircraftDetails
-            namespace={namespace}
-            aircraft={displayedAircraftList[0]}
-          />
+          <AircraftDetails aircraft={displayedAircraftList[0]} />
         )}
 
       {called &&
         !loading &&
         !errorOccurred &&
         displayedAircraftList.length === 0 && (
-          <Text>{n('noResultFound', 'Ekkert loftfar fannst')}</Text>
+          <Text>{formatMessage(translationStrings.noResultFound)}</Text>
         )}
 
       {!errorOccurred &&
@@ -236,7 +236,6 @@ const AircraftSearch = ({ slice }: AircraftSearchProps) => {
           <Box>
             <Box style={tableContainerStyles}>
               <AircraftTable
-                namespace={namespace}
                 aircrafts={displayedAircraftList}
                 onAircraftClick={(identifier) => handleSearch(1, identifier)}
               />
@@ -280,17 +279,15 @@ const AircraftPerson = ({ person }: AircraftPersonProps) => {
 }
 
 interface AircraftDetailsProps {
-  namespace: Record<string, string>
   aircraft: AircraftRegistryAircraft
 }
 
-const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
-  const n = useNamespace(namespace)
-
+const AircraftDetails = ({ aircraft }: AircraftDetailsProps) => {
+  const { formatMessage } = useIntl()
   const displayedOwner = getDisplayedOwner(aircraft)
   const displayedOwnerName = getDisplayedOwnerName(
     aircraft,
-    n('andMore', 'ofl.'),
+    formatMessage(translationStrings.andMore),
   )
 
   return (
@@ -301,7 +298,7 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             <T.Row>
               <T.Data>
                 <Text fontWeight="semiBold">
-                  {n('identifier', 'Einkennisstafir')}:
+                  {formatMessage(translationStrings.identifier)}:
                 </Text>
               </T.Data>
               <T.Data>
@@ -311,7 +308,7 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             <T.Row>
               <T.Data>
                 <Text fontWeight="semiBold">
-                  {n('registrationNumber', 'Skráningarnúmer')}:
+                  {formatMessage(translationStrings.registrationNumber)}:
                 </Text>
               </T.Data>
               <T.Data>
@@ -320,7 +317,9 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             </T.Row>
             <T.Row>
               <T.Data>
-                <Text fontWeight="semiBold">{n('type', 'Tegund')}:</Text>
+                <Text fontWeight="semiBold">
+                  {formatMessage(translationStrings.type)}:
+                </Text>
               </T.Data>
               <T.Data>
                 <Text>{aircraft.type}</Text>
@@ -329,7 +328,7 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             <T.Row>
               <T.Data>
                 <Text fontWeight="semiBold">
-                  {n('productionYear', 'Framleiðsluár')}:
+                  {formatMessage(translationStrings.productionYear)}:
                 </Text>
               </T.Data>
               <T.Data>
@@ -339,7 +338,7 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             <T.Row>
               <T.Data>
                 <Text fontWeight="semiBold">
-                  {n('serialNumber', 'Raðnúmer')}:
+                  {formatMessage(translationStrings.serialNumber)}:
                 </Text>
               </T.Data>
               <T.Data>
@@ -349,7 +348,7 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             <T.Row>
               <T.Data>
                 <Text fontWeight="semiBold">
-                  {n('maxWeight', 'Hámarksþungi')}:
+                  {formatMessage(translationStrings.maxWeight)}:
                 </Text>
               </T.Data>
               <T.Data>
@@ -358,7 +357,9 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             </T.Row>
             <T.Row>
               <T.Data>
-                <Text fontWeight="semiBold">{n('owner', 'Eigandi')}:</Text>
+                <Text fontWeight="semiBold">
+                  {formatMessage(translationStrings.owner)}:
+                </Text>
               </T.Data>
               <T.Data>
                 <AircraftPerson
@@ -368,7 +369,9 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
             </T.Row>
             <T.Row>
               <T.Data>
-                <Text fontWeight="semiBold">{n('operator', 'Umráðandi')}:</Text>
+                <Text fontWeight="semiBold">
+                  {formatMessage(translationStrings.operator)}:
+                </Text>
               </T.Data>
               <T.Data>
                 <AircraftPerson
@@ -386,42 +389,44 @@ const AircraftDetails = ({ namespace, aircraft }: AircraftDetailsProps) => {
 }
 
 interface AircraftTableProps {
-  namespace: Record<string, string>
   aircrafts: AircraftRegistryAircraft[]
   onAircraftClick: (identifier: string) => void
 }
-const AircraftTable = ({
-  aircrafts,
-  namespace,
-  onAircraftClick,
-}: AircraftTableProps) => {
-  const n = useNamespace(namespace)
-
+const AircraftTable = ({ aircrafts, onAircraftClick }: AircraftTableProps) => {
+  const { formatMessage } = useIntl()
   return (
     <T.Table>
       <T.Head>
         <T.Row>
           <T.HeadData>
             <Text fontWeight="semiBold">
-              {n('identifier', 'Einkennisstafir')}
+              {formatMessage(translationStrings.identifier)}
             </Text>
           </T.HeadData>
           <T.HeadData>
             <Text fontWeight="semiBold">
-              {n('registrationNumber', 'Skráningarnúmer')}
+              {formatMessage(translationStrings.registrationNumber)}
             </Text>
           </T.HeadData>
           <T.HeadData>
-            <Text fontWeight="semiBold">{n('serialNumber', 'Raðnúmer')}</Text>
+            <Text fontWeight="semiBold">
+              {formatMessage(translationStrings.serialNumber)}
+            </Text>
           </T.HeadData>
           <T.HeadData>
-            <Text fontWeight="semiBold">{n('type', 'Tegund')}</Text>
+            <Text fontWeight="semiBold">
+              {formatMessage(translationStrings.type)}
+            </Text>
           </T.HeadData>
           <T.HeadData>
-            <Text fontWeight="semiBold">{n('owner', 'Eigandi')}</Text>
+            <Text fontWeight="semiBold">
+              {formatMessage(translationStrings.owner)}
+            </Text>
           </T.HeadData>
           <T.HeadData>
-            <Text fontWeight="semiBold">{n('operator', 'Umráðandi')}</Text>
+            <Text fontWeight="semiBold">
+              {formatMessage(translationStrings.operator)}
+            </Text>
           </T.HeadData>
         </T.Row>
       </T.Head>
@@ -429,7 +434,7 @@ const AircraftTable = ({
         {aircrafts.map((aircraft) => {
           const displayedOwnerName = getDisplayedOwnerName(
             aircraft,
-            n('andMore', 'ofl.'),
+            formatMessage(translationStrings.andMore),
           )
           return (
             <T.Row key={aircraft?.identifiers}>
