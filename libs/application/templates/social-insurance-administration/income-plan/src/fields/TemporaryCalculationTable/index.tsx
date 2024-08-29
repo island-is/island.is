@@ -14,7 +14,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { TemporaryCalculationQuery } from '../../graphql/queries'
-import { RatioType, YES } from '../../lib/constants'
+import { INCOME, RatioType, YES } from '../../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -47,6 +47,7 @@ export const TemporaryCalculationTable: FC<
         incomeCategoryCode: incomeType?.categoryCode,
         incomeCategoryName: income.incomeCategory,
         ...(income.income === RatioType.MONTHLY &&
+        income?.incomeCategory === INCOME &&
         income?.unevenIncomePerYear?.[0] === YES
           ? {
               amountJan: Number(income.january),

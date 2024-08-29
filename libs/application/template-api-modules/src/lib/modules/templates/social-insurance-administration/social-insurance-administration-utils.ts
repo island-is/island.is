@@ -36,6 +36,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 
 import {
+  INCOME,
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
@@ -351,7 +352,9 @@ export const getIncomeTypes = (application: Application): IncomeTypes[] => {
       categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
         ?.categoryCode ?? '',
     incomeCategoryName: i.incomeCategory,
-    ...(i.income === RatioType.MONTHLY && i?.unevenIncomePerYear?.[0] === YES
+    ...(i.income === RatioType.MONTHLY &&
+    i?.incomeCategory === INCOME &&
+    i?.unevenIncomePerYear?.[0] === YES
       ? {
           amountJan: Number(i.january),
           amountFeb: Number(i.february),
