@@ -48,7 +48,7 @@ export const MachineBasicInformation = buildSubSection({
           width: 'half',
           required: true,
           variant: 'number',
-          min: 1800,
+          min: 1900,
         }),
         buildTextField({
           id: 'machine.basicInformation.productionNumber',
