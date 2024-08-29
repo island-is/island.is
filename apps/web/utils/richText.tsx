@@ -1,3 +1,5 @@
+import { IntlProvider } from 'react-intl'
+
 import {
   FaqList,
   type FaqListProps,
@@ -32,6 +34,7 @@ import {
   MultipleStatistics,
   OneColumnTextSlice,
   OverviewLinksSlice,
+  ParentalLeaveCalculator,
   PlateAvailableSearch,
   PowerBiSlice,
   PublicShipSearch,
@@ -140,6 +143,12 @@ export const webRenderConnectedComponent = (
       return <ProfessionRights slice={slice} />
     case 'Ums/CostOfLivingCalculator':
       return <UmsCostOfLivingCalculator slice={slice} />
+    case 'VMST/ParentalLeaveCalculator':
+      return (
+        <IntlProvider locale="is" messages={{}}>
+          <ParentalLeaveCalculator slice={slice} />
+        </IntlProvider>
+      )
     default:
       break
   }
