@@ -5,9 +5,9 @@ const createRedisUrl = (clusterId: string) =>
   `clustercfg.general-redis-cluster-group.${clusterId}.euw1.cache.amazonaws.com:6379`
 
 const BFF_REDIS_NODES = {
-  dev: createRedisUrl('5fzau3'),
-  staging: createRedisUrl('ab9ckb'),
-  prod: createRedisUrl('dnugi2'),
+  dev: createRedisUrl('dummy'), // TODO - change to correct cluster id
+  staging: createRedisUrl('dummy'),  // TODO - change to correct cluster id
+  prod: createRedisUrl('dummy'),  // TODO - change to correct cluster id
 }
 
 export const serviceSetup = (): ServiceBuilder<'services-bff'> =>
@@ -15,7 +15,6 @@ export const serviceSetup = (): ServiceBuilder<'services-bff'> =>
     .namespace('services-bff')
     .image('services-bff')
     .env({
-      PORT: '4444',
       IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/web',
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
@@ -23,17 +22,39 @@ export const serviceSetup = (): ServiceBuilder<'services-bff'> =>
         prod: 'https://innskra.island.is',
       },
       BFF_REDIS_NODES,
+      BFF_CALLBACKS_LOGIN_REDIRECT_URI: {
+        dev: 'https://beta.dev01.devland.is/stjornbord/bff/callbacks/login',
+        staging: 'https://beta.staging01.devland.is/stjornbord/bff/callbacks/login',
+        prod: 'https://island.is/stjornbord/bff/callbacks/login',
+      },
       IDENTITY_SERVER_CLIENT_SCOPES: json([
         '@admin.island.is/delegation-system',
+        '@admin.island.is/ads',
+        '@admin.island.is/bff',
+        '@admin.island.is/ads:explicit',
+        '@admin.island.is/delegations',
+        '@admin.island.is/regulations',
+        '@admin.island.is/regulations:manage',
+        '@admin.island.is/icelandic-names-registry',
+        '@admin.island.is/document-provider',
+        '@admin.island.is/application-system:admin',
+        '@admin.island.is/application-system:institution',
+        '@admin.island.is/auth',
+        '@admin.island.is/auth:admin',
+        '@admin.island.is/petitions',
+        '@admin.island.is/service-desk',
+        '@admin.island.is/signature-collection:process',
+        '@admin.island.is/signature-collection:manage',
+        '@admin.island.is/form-system',
+        '@admin.island.is/form-system:admin',
       ]),
+      BFF_API_URL_PREFIX: 'stjornbord/bff',
     })
     .secrets({
-      IDENTITY_SERVER_CLIENT_SECRET:
-        '/k8s/services-auth/IDENTITY_SERVER_CLIENT_SECRET',
-      NATIONAL_REGISTRY_IDS_CLIENT_SECRET:
-        '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+      BFF_IDENTITY_SERVER_SECRET:
+        'TODO - add secret',
     })
-    .xroad(Base, Client, RskProcuring)
+    .xroad(Base, Client)
     .readiness('/health/check')
     .liveness('/liveness')
     .replicaCount({

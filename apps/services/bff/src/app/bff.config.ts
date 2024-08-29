@@ -1,13 +1,15 @@
 import { defineConfig } from '@island.is/nest/config'
+import { authSchema } from '../environment/environment.schema'
+
 import { z } from 'zod'
-import { isProduction } from '../environment/environment'
+import { isProduction, environment } from '../environment'
 
 const BffConfigSchema = z.object({
   redis: z.object({
     nodes: z.array(z.string()),
     ssl: z.boolean(),
   }),
-  identityServerClientId: z.string(),
+  auth: authSchema,
 })
 
 export const BffConfig = defineConfig({
@@ -26,7 +28,7 @@ export const BffConfig = defineConfig({
         ]),
         ssl: isProduction,
       },
-      identityServerClientId: env.required('IDENTITY_SERVER_CLIENT_ID'),
+      auth: environment.auth,
     }
   },
 })

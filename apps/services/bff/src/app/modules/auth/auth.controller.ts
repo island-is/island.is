@@ -1,26 +1,43 @@
-import { IdsUserGuard, ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   Controller,
-  Post,
   Get,
-  UseGuards,
-  VERSION_NEUTRAL,
+  Query,
+  Res,
+  ValidationPipe,
+  VERSION_NEUTRAL
 } from '@nestjs/common'
+import { Response } from 'express'
+import { AuthService } from './auth.service'
+import { CallbackLoginQueryDto } from './dto/callback-login-query.dto'
+import { LoginQueryDto } from './dto/login-query.dto'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
+const authValidationPipe = new ValidationPipe({
+  transform: true,
+  transformOptions: { enableImplicitConversion: true },
+  forbidNonWhitelisted: true,
+})
+
 @Controller({
   version: [VERSION_NEUTRAL, '1'],
 })
 export class AuthController {
-  constructor() {}
+  constructor(private authService: AuthService) { }
 
-  @Post('login')
-  async login(): Promise<boolean> {
-    return true
+  @Get('login')
+  async login(
+    @Res() res: Response,
+    @Query(authValidationPipe)
+    query: LoginQueryDto,
+  ): Promise<void> {
+    return this.authService.login(res, query)
   }
 
-  @Get('logout')
-  async logout(): Promise<boolean> {
-    return true
+  @Get('callbacks/login')
+  async callback(
+    @Res() res: Response,
+    @Query(authValidationPipe)
+    query: CallbackLoginQueryDto,
+  ): Promise<void> {
+    return this.authService.callback(res, query)
   }
 }

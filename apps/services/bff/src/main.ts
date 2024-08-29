@@ -7,7 +7,7 @@ bootstrap({
   appModule: AppModule,
   name: 'bff',
   port: environment.port,
-  globalPrefix: 'bff',
+  globalPrefix: environment.globalPrefix,
   healthCheck: {
     timeout: 1000,
   },

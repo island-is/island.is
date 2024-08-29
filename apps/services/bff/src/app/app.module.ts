@@ -10,6 +10,7 @@ import { Module } from '@nestjs/common'
 import { environment } from '../environment'
 import { BffConfig } from './bff.config'
 import { AuthModule as AppAuthModule } from './modules/auth/auth.module'
+import { CacheModule } from './modules/cache/cache.module'
 import { UserModule } from './modules/user/user.module'
 
 @Module({
@@ -24,4 +25,4 @@ import { UserModule } from './modules/user/user.module'
     AppAuthModule,
   ],
 })
-export class AppModule {}
+export class AppModule { }
