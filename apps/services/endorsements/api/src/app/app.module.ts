@@ -60,12 +60,14 @@ import { EndorsementListService } from './modules/endorsement-list/endorsement-l
   ],
 })
 export class AppModule implements OnModuleInit {
-  constructor(private readonly endorsementListService: EndorsementListService) {}
+  constructor(
+    private readonly endorsementListService: EndorsementListService,
+  ) {}
 
   async onModuleInit() {
     // spit out some counts of tables - basic data overview
-    
+
     // Populate owner names for existing lists if they are missing
-    await this.endorsementListService.populateOwnerNamesForExistingLists();
+    await this.endorsementListService.populateOwnerNamesForExistingLists()
   }
 }
