@@ -46,3 +46,25 @@ export class VehicleInformation {
   @Field()
   status: string
 }
+
+@ObjectType()
+export class VehicleInformationMini {
+  constructor(
+    permno: string,
+    ownerSocialSecurityNumber: string,
+    vehicleStatus: string,
+  ) {
+    this.permno = permno
+    this.ownerSocialSecurityNumber = ownerSocialSecurityNumber
+    this.vehicleStatus = vehicleStatus
+  }
+
+  @Field()
+  permno: string
+
+  @Field()
+  ownerSocialSecurityNumber: string
+
+  @Field()
+  vehicleStatus: string
+}

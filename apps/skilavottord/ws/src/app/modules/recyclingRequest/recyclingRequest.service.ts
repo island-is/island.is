@@ -39,7 +39,7 @@ export class RecyclingRequestService {
   async deRegisterVehicle(
     vehiclePermno: string,
     disposalStation: string,
-    mileage = 0,
+    vehicle: VehicleModel,
   ) {
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
@@ -68,19 +68,26 @@ export class RecyclingRequestService {
       const jsonDeRegBody = JSON.stringify({
         permno: vehiclePermno,
         deRegisterDate: format(new Date(), "yyyy-MM-dd'T'HH:mm:ss"),
-        disposalstation: disposalStation,
+        disposalStation: disposalStation,
         explanation: 'Rafrænt afskráning',
-        mileage: mileage,
+        mileage: vehicle.mileage ?? 0,
+        plateCount: vehicle.plateCount,
+        destroyed: vehicle.plateDestroyed ?? 0,
+        lost: vehicle.plateLost ?? 0,
       })
+
+      console.log('XXXXjsonDeRegBodyXXXXXX', jsonDeRegBody)
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
       }
+
       const deRegRes = await lastValueFrom(
         this.httpService.post(restDeRegUrl, jsonDeRegBody, {
           headers: headerDeRegRequest,
         }),
       )
+
       if (deRegRes.status < 300 && deRegRes.status >= 200) {
         return true
       } else {
@@ -89,7 +96,8 @@ export class RecyclingRequestService {
         )
       }
     } catch (err) {
-      delete err.data
+      delete err?.data
+      delete err?.response?.config?.data
       this.logger.error(`Failed to deregister vehicle`, { error: err })
       throw new Error(`Failed to deregister vehicle ${vehiclePermno.slice(-3)}`)
     }
@@ -340,7 +348,7 @@ export class RecyclingRequestService {
             },
           )
 
-          await this.deRegisterVehicle(permno, partnerId, vehicle.mileage ?? 0)
+          await this.deRegisterVehicle(permno, partnerId, vehicle)
         } catch (err) {
           // Saved requestType back to 'pendingRecycle'
           const req = new RecyclingRequestModel()

@@ -273,6 +273,7 @@ export interface Deregister {
   success: string
   error: CompletedError
   currentMileage: string
+  alreadyDeregistered: string
 }
 
 export interface DeregisterButtons {

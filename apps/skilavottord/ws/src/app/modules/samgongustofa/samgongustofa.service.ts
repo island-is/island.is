@@ -5,8 +5,12 @@ import * as xml2js from 'xml2js'
 
 import { environment } from '../../../environments'
 import { RecyclingRequestService } from '../recyclingRequest'
-import { VehicleInformation } from './samgongustofa.model'
+import {
+  VehicleInformation,
+  VehicleInformationMini,
+} from './samgongustofa.model'
 import { logger } from '@island.is/logging'
+import { IcelandicTransportAuthorityServices } from '../../services/icelandicTransportAuthority.services'
 
 @Injectable()
 export class SamgongustofaService {
@@ -14,6 +18,8 @@ export class SamgongustofaService {
     private httpService: HttpService,
     @Inject(forwardRef(() => RecyclingRequestService))
     private recyclingRequestService: RecyclingRequestService,
+    @Inject(forwardRef(() => IcelandicTransportAuthorityServices))
+    private icelandicTransportAuthorityServices: IcelandicTransportAuthorityServices,
   ) {}
 
   async getUserVehiclesInformation(
@@ -320,5 +326,11 @@ export class SamgongustofaService {
       return car.isRecyclable ? car : null
     }
     return car
+  }
+
+  async getVehicleInformation(permno: string): Promise<VehicleInformationMini> {
+    return await this.icelandicTransportAuthorityServices.checkIfCurrentUser(
+      permno,
+    )
   }
 }

@@ -1,6 +1,9 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Authorize, CurrentUser, User } from '../auth'
-import { VehicleInformation } from './samgongustofa.model'
+import {
+  VehicleInformation,
+  VehicleInformationMini,
+} from './samgongustofa.model'
 import { SamgongustofaService } from './samgongustofa.service'
 
 @Authorize()
@@ -13,5 +16,13 @@ export class SamgongustofaResolver {
     @CurrentUser() user: User,
   ): Promise<Array<VehicleInformation>> {
     return this.samgongustofaService.getUserVehiclesInformation(user.nationalId)
+  }
+
+  @Query(() => VehicleInformationMini)
+  async skilavottordVehicleInformation(
+    @CurrentUser() user: User,
+    @Args('permno') permno: string,
+  ): Promise<VehicleInformationMini> {
+    return this.samgongustofaService.getVehicleInformation(permno)
   }
 }

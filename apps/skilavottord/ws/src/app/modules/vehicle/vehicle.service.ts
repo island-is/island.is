@@ -60,10 +60,21 @@ export class VehicleService {
     }
   }
 
-  async updateMileage(permno: string, mileage: number): Promise<boolean> {
+  async updateVehicleInfo(
+    permno: string,
+    mileage: number,
+    plateCount: number,
+    plateDestroyed: number,
+    plateLost: number,
+    deregistered: boolean,
+  ): Promise<boolean> {
     const findVehicle = await this.findByVehicleId(permno)
     if (findVehicle) {
       findVehicle.mileage = mileage ?? 0
+      findVehicle.plateCount = plateCount ?? 0
+      findVehicle.plateDestroyed = plateDestroyed ?? 0
+      findVehicle.plateLost = plateLost ?? 0
+      findVehicle.deregistered = deregistered ?? false
       await findVehicle.save()
       return true
     } else {

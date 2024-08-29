@@ -329,7 +329,8 @@
         "primaryButton": "Reyna aftur",
         "secondaryButton": "Hætta við"
       },
-      "currentMileage": "Núverandi kílómetrastaða"
+      "currentMileage": "Núverandi kílómetrastaða",
+      "alreadyDeregistered": "Ökutækið er nú þegar skráð úr umferð hjá Samgöngustofu"
     }
   },
   "recyclingFundOverview": {

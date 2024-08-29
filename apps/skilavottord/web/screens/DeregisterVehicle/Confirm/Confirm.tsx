@@ -34,7 +34,8 @@ import {
 } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 import { getYear } from '@island.is/skilavottord-web/utils/dateUtils'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
+import { PlateInfo } from '@island.is/skilavottord-web/utils/consts'
 
 const SkilavottordVehicleReadyToDeregisteredQuery = gql`
   query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
@@ -46,6 +47,16 @@ const SkilavottordVehicleReadyToDeregisteredQuery = gql`
         nameOfRequestor
       }
       mileage
+    }
+  }
+`
+
+const SkilavottordVehicleInformationQuery = gql`
+  query skilavottordVehicleInformationQuery($permno: String!) {
+    skilavottordVehicleInformation(permno: $permno) {
+      permno
+      ownerSocialSecurityNumber
+      vehicleStatus
     }
   }
 `
@@ -70,19 +81,31 @@ const SkilavottordRecyclingRequestMutation = gql`
   }
 `
 
-const UpdateSkilavottordVehicleMileageMutation = gql`
-  mutation updateSkilavottordVehicleMileage(
+const UpdateSkilavottordVehicleInfoMutation = gql`
+  mutation updateSkilavottordVehicleInfo(
     $permno: String!
     $mileage: Float!
+    $plateCount: Float!
+    $plateDestroyed: Float!
+    $plateLost: Float!
+    $deregistered: Boolean!
   ) {
-    updateSkilavottordVehicleMileage(permno: $permno, mileage: $mileage)
+    updateSkilavottordVehicleInfo(
+      permno: $permno
+      mileage: $mileage
+      plateCount: $plateCount
+      plateDestroyed: $plateDestroyed
+      plateLost: $plateLost
+      deregistered: $deregistered
+    )
   }
 `
 
 const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
-  const { control, watch } = useForm({
+  const methods = useForm({
     mode: 'onChange',
   })
+  const { watch } = methods
 
   const { user } = useContext(UserContext)
   const {
@@ -95,6 +118,8 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   const { id } = router.query
 
   const mileageValue = watch('mileage')
+  const plateInfo = watch('plateInfo')
+  const plateCountValue = watch('plateCount')
 
   const { data, loading } = useQuery<Query>(
     SkilavottordVehicleReadyToDeregisteredQuery,
@@ -104,6 +129,18 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   )
 
   const vehicle = data?.skilavottordVehicleReadyToDeregistered
+
+  const { data: info, loading: loadingInfo } = useQuery<Query>(
+    SkilavottordVehicleInformationQuery,
+    {
+      variables: { permno: id },
+    },
+  )
+
+  const vehicleInfo = info?.skilavottordVehicleInformation
+  console.log('vehicleInfo', vehicleInfo)
+  const isDeregistered =
+    vehicleInfo?.vehicleStatus.toLocaleLowerCase() === 'afskráð'
 
   const [
     setRecyclingRequest,
@@ -129,7 +166,7 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       error: vehicleMutationError,
       loading: vehicleMutationLoading,
     },
-  ] = useMutation<Mutation>(UpdateSkilavottordVehicleMileageMutation, {
+  ] = useMutation<Mutation>(UpdateSkilavottordVehicleInfoMutation, {
     onError() {
       return vehicleMutationError
     },
@@ -144,20 +181,33 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
   }, [vehicleMutationResponse, router, routes, t.success])
 
   const handleConfirm = () => {
-    if (mileageValue !== undefined) {
-      const newMilage = +mileageValue.trim().replace(/\./g, '')
+    let newMileage = mileageValue
 
-      // If registered mileage is not the same as the one when vehicle is confirmed for de-registration we need to update it
-      if (vehicle?.mileage !== newMilage) {
-        setVehicleRequest({
-          variables: {
-            permno: vehicle?.vehicleId,
-            mileage: newMilage,
-          },
-        })
-      }
+    if (mileageValue !== undefined) {
+      newMileage = +mileageValue.trim().replace(/\./g, '')
     }
 
+    console.log('handleConfirm', {
+      plateCountValue,
+      plateLostValue: plateInfo === PlateInfo.PLATE_LOST ? 1 : 0,
+      plateDestroyedValue: plateInfo === PlateInfo.PLATE_DESTROYED ? 1 : 0,
+      isDeregistered,
+      mileageValue,
+    })
+
+    // Update vehicle table with latests information
+    setVehicleRequest({
+      variables: {
+        permno: vehicle?.vehicleId,
+        mileage: newMileage,
+        plateCount: plateCountValue,
+        plateLost: plateInfo === PlateInfo.PLATE_LOST ? 1 : 0,
+        plateDestroyed: plateInfo === PlateInfo.PLATE_DESTROYED ? 1 : 0,
+        deregistered: isDeregistered,
+      },
+    })
+
+    // Send recycling request
     setRecyclingRequest({
       variables: {
         permno: id,
@@ -165,7 +215,6 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
       },
     })
   }
-
   const handleBack = () => {
     router.replace(routes.select)
   }
@@ -221,22 +270,24 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
           <Stack space={4}>
             <Text variant="h1">{t.titles.success}</Text>
             <Text variant="intro">{t.info.success}</Text>
-            <CarDetailsBox
-              vehicleId={vehicle.vehicleId}
-              vehicleType={vehicle.vehicleType}
-              modelYear={getYear(vehicle.newregDate)}
-              vehicleOwner={
-                vehicle.recyclingRequests &&
-                vehicle.recyclingRequests[0].nameOfRequestor
-              }
-              mileage={vehicle.mileage || 0}
-              control={control}
-              showMileage
-            />
+            <FormProvider {...methods}>
+              <CarDetailsBox
+                vehicleId={vehicle.vehicleId}
+                vehicleType={vehicle.vehicleType}
+                modelYear={getYear(vehicle.newregDate)}
+                vehicleOwner={
+                  vehicle.recyclingRequests &&
+                  vehicle.recyclingRequests[0].nameOfRequestor
+                }
+                mileage={vehicle.mileage || 0}
+                showMileage
+                isDeregistered
+              />
+            </FormProvider>
           </Stack>
         ) : (
           <Box>
-            {loading ? (
+            {loading || loadingInfo ? (
               <Box textAlign="center">
                 <LoadingDots large />
               </Box>
@@ -280,5 +331,4 @@ const Confirm: FC<React.PropsWithChildren<unknown>> = () => {
     </ProcessPageLayout>
   )
 }
-
 export default Confirm

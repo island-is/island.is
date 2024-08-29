@@ -6,6 +6,7 @@ import { logger } from '@island.is/logging'
 import { VehicleModel, VehicleService } from '../modules/vehicle'
 import { VehicleOwnerModel } from '../modules/vehicleOwner'
 import { VehicleOwnerService } from '../modules/vehicleOwner/vehicleOwner.service'
+import { VehicleInformationMini } from '../modules/samgongustofa/samgongustofa.model'
 
 @Injectable()
 export class IcelandicTransportAuthorityServices {
@@ -55,7 +56,8 @@ export class IcelandicTransportAuthorityServices {
 
       return authRes.data['jwtToken']
     } catch (error) {
-      delete error.config
+      delete error?.config
+      delete error?.response?.config?.data
       logger.error('car-recycling: Authentication failed on information', error)
       throw error
     }
@@ -108,6 +110,8 @@ export class IcelandicTransportAuthorityServices {
     try {
       const { restDeRegUrl } = environment.samgongustofa
 
+      console.log('getVehicleInformation', permno)
+
       return this.doGet(
         this.getInformationURL(restDeRegUrl) +
           'vehicleinformationmini/' +
@@ -123,7 +127,7 @@ export class IcelandicTransportAuthorityServices {
     }
   }
 
-  async checkIfCurrentUser(permno: string): Promise<boolean> {
+  async checkIfCurrentUser(permno: string): Promise<VehicleInformationMini> {
     //Get the latest vehicle information from Samgongustofa
     const result = await this.getVehicleInformation(permno)
 
@@ -157,7 +161,7 @@ export class IcelandicTransportAuthorityServices {
 
         await this.vehicleService.create(vehicle)
       }
-      return true
+      return result.data
     }
 
     logger.error(

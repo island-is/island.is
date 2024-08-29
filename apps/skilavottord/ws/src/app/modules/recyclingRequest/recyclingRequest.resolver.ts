@@ -76,11 +76,10 @@ export class RecyclingRequestResolver {
     @Args('recyclingPartner') station: string,
     @Args('mileage', { type: () => Int, nullable: true }) mileage: number,
   ): Promise<boolean> {
-    return this.recyclingRequestService.deRegisterVehicle(
-      permno,
-      station,
-      mileage,
-    )
+    console.log('skilavottordDeRegisterVehicle -- HVER ER AÐ KALLA')
+    throw new Error('Not implemented')
+
+    return undefined //this.recyclingRequestService.deRegisterVehicle(permno, station, 0)
   }
 
   @Authorize({

@@ -1,10 +1,21 @@
-import { Box, Stack, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  ContentBlock,
+  Stack,
+  Text,
+} from '@island.is/island-ui/core'
 import { OutlinedBox } from '@island.is/skilavottord-web/components'
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  RadioController,
+  SelectController,
+} from '@island.is/shared/form-fields'
+import { PlateInfo } from '@island.is/skilavottord-web/utils/consts'
 import { Control, FieldValues } from 'react-hook-form'
 
 interface BoxProps {
@@ -15,6 +26,7 @@ interface BoxProps {
   mileage?: number
   control?: Control<FieldValues>
   showMileage?: boolean
+  isDeregistered?: boolean
 }
 
 export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
@@ -23,8 +35,8 @@ export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
   modelYear,
   vehicleOwner,
   mileage,
-  control,
   showMileage,
+  isDeregistered,
 }) => {
   const {
     t: {
@@ -32,8 +44,23 @@ export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
     },
   } = useI18n()
 
+  isDeregistered = true
+
+  const [missingPlates, setMissingPlates] = useState(false)
+
   return (
     <OutlinedBox>
+      {isDeregistered && (
+        <Box>
+          <ContentBlock>
+            <AlertMessage
+              type="error"
+              title={'Ökutækið er þegar skráð úr umferð hjá Samgöngustofu'}
+              message={'Engin skráningarmerki eiga að vera á þessu ökutæki'}
+            />
+          </ContentBlock>
+        </Box>
+      )}
       <Box
         display="flex"
         justifyContent="spaceBetween"
@@ -47,12 +74,10 @@ export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
           <Text>{`${vehicleType}, ${modelYear}`}</Text>
         </Stack>
         <Text variant="h5">{vehicleOwner}</Text>
-
         {showMileage && (
           <Box>
             <InputController
               id="mileage"
-              control={control}
               label={t.currentMileage}
               name="mileage"
               type="number"
@@ -61,6 +86,43 @@ export const CarDetailsBox: FC<React.PropsWithChildren<BoxProps>> = ({
           </Box>
         )}
       </Box>
+      {!isDeregistered && (
+        <Box>
+          <SelectController
+            label="Fjöldi skráningarmerkja skilað með ökutækinu"
+            id="plateCount"
+            name="plateCount"
+            options={[
+              { label: '0', value: 0 },
+              { label: '1', value: 1 },
+              { label: '2', value: 2 },
+            ]}
+            onSelect={(option) => {
+              setMissingPlates(option?.value !== 2 ? true : false)
+            }}
+          />
+
+          <RadioController
+            split="1/2"
+            id="plateInfo"
+            name="plateInfo"
+            backgroundColor="blue"
+            defaultValue={[]}
+            largeButtons
+            options={[
+              {
+                label: 'Skráningarmerkin eru týnd',
+                value: PlateInfo.PLATE_LOST,
+              },
+              {
+                label: 'Skráningarmerkjunum hefur verið eytt',
+                value: PlateInfo.PLATE_DESTROYED,
+              },
+            ]}
+            disabled={!missingPlates}
+          />
+        </Box>
+      )}
     </OutlinedBox>
   )
 }
