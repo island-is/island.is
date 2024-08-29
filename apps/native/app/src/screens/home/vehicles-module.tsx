@@ -22,7 +22,7 @@ const Host = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing[2]}px;
 `
 
-export const VehicleModule = React.memo(() => {
+export const VehiclesModule = React.memo(() => {
   const theme = useTheme()
   const intl = useIntl()
 

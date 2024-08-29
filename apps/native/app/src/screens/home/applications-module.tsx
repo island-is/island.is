@@ -84,7 +84,10 @@ export const ApplicationsModule = React.memo(
           marginHorizontal: theme.spacing[2],
         }}
       >
-        <TouchableOpacity onPress={() => navigateTo(`/applications`)}>
+        <TouchableOpacity
+          disabled={count === 0}
+          onPress={() => navigateTo(`/applications`)}
+        >
           <Heading
             button={
               count === 0 || hideSeeAllButton ? null : (

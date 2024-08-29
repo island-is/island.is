@@ -19,8 +19,8 @@ import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bott
 import {
   Application,
   useListApplicationsQuery,
-  useListDocumentsQuery,
 } from '../../graphql/types/schema'
+
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useAndroidNotificationPermission } from '../../hooks/use-android-notification-permission'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
@@ -34,10 +34,10 @@ import { ApplicationsModule } from './applications-module'
 import { HelloModule } from './hello-module'
 import { InboxModule } from './inbox-module'
 import { OnboardingModule } from './onboarding-module'
-import { VehicleModule } from './vehicle-module'
+import { VehiclesModule } from './vehicles-module'
 import { usePreferencesStore } from '../../stores/preferences-store'
 import { AirDiscountModule } from './air-discount-module'
-import { LicenseModule } from './license-module'
+import { LicensesModule } from './licenses-module'
 
 interface ListItem {
   id: string
@@ -121,9 +121,6 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery()
-  const inboxRes = useListDocumentsQuery({
-    variables: { input: { page: 1, pageSize: 3 } },
-  })
 
   useConnectivityIndicator({
     componentId,
@@ -178,16 +175,11 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
 
     {
       id: 'inbox',
-      component: homeScreenEnableInboxWidget ? (
-        <InboxModule
-          documents={inboxRes.data?.documentsV2?.data ?? []}
-          loading={inboxRes.loading}
-        />
-      ) : null,
+      component: homeScreenEnableInboxWidget ? <InboxModule /> : null,
     },
     {
       id: 'licenses',
-      component: homeScreenEnableLicenseWidget ? <LicenseModule /> : null,
+      component: homeScreenEnableLicenseWidget ? <LicensesModule /> : null,
     },
     {
       id: 'applications',
@@ -204,7 +196,7 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
     },
     {
       id: 'vehicles',
-      component: homeScreenEnableVehicleWidget ? <VehicleModule /> : null,
+      component: homeScreenEnableVehicleWidget ? <VehiclesModule /> : null,
     },
     {
       id: 'air-discount',
