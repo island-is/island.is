@@ -28,12 +28,11 @@ export const TemporaryCalculationTable: FC<
   const { formatMessage } = useLocale()
 
   const { incomePlan } = getApplicationAnswers(application.answers)
-  const { categorizedIncomeTypes } = getApplicationExternalData(
-    application.externalData,
-  )
+  const { categorizedIncomeTypes, incomePlanConditions } =
+    getApplicationExternalData(application.externalData)
 
   const input = {
-    incomeYear: new Date().getFullYear(),
+    incomeYear: incomePlanConditions.incomePlanYear,
     incomeTypes: incomePlan.map((income) => {
       const incomeType = categorizedIncomeTypes.find(
         (item) => item.incomeTypeName === income.incomeType,
@@ -85,7 +84,27 @@ export const TemporaryCalculationTable: FC<
     variables: {
       input,
     },
+    skip: !incomePlanConditions.showTemporaryCalculations,
   })
+
+  if (!incomePlanConditions.showTemporaryCalculations) {
+    return (
+      <Box marginY={3}>
+        <AlertMessage
+          type="warning"
+          title={formatMessage(
+            socialInsuranceAdministrationMessage.shared.alertTitle,
+          )}
+          message={formatMessage(
+            incomePlanFormMessage.info.noAvailablePrerequisites,
+            {
+              incomePlanYear: incomePlanConditions.incomePlanYear,
+            },
+          )}
+        />
+      </Box>
+    )
+  }
 
   if (loading) {
     return (

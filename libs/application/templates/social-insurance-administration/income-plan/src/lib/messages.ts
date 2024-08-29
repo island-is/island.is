@@ -130,6 +130,13 @@ export const incomePlanFormMessage: MessageDir = {
       defaultMessage: 'Engar greiðslur samkvæmt bráðabirgðaútreikningi.',
       description: 'No payments according to temporary calculation.',
     },
+    noAvailablePrerequisites: {
+      id: 'ip.application:no.available.prerequisites',
+      defaultMessage:
+        'Engar forsendur eru til staðar til að birta bráðabirgðaútreikning fyrir {incomePlanYear}.',
+      description:
+        'There are no available prerequisites for displaying a temporary calculation for {incomePlanYear}.',
+    },
   }),
 
   incomePlan: defineMessages({
