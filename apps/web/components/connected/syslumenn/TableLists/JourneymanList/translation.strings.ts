@@ -66,4 +66,29 @@ export const translation = defineMessages({
     defaultMessage: 'Ekki tókst að sækja lista yfir sveinsbréfin.',
     description: 'Ekki tókst að sækja lista yfir sveinsbréfin.',
   },
+  csvButtonLabelDefault: {
+    id: 'web.syslumenn.journeymanList:csvButtonLabelDefault',
+    defaultMessage: 'Sækja öll leyfi (CSV)',
+    description: 'Titill á CSV takka',
+  },
+  csvButtonLabelLoading: {
+    id: 'web.syslumenn.journeymanList:csvButtonLabelLoading',
+    defaultMessage: 'Sæki öll leyfi...',
+    description: 'Titill á CSV takka eftir smell',
+  },
+  csvButtonLabelError: {
+    id: 'web.syslumenn.journeymanList:csvButtonLabelError',
+    defaultMessage: 'Ekki tókst að sækja leyfi, reyndu aftur',
+    description: 'Texti þegar ekki tekst að sækja CSV skrá',
+  },
+  csvHeaderNationaId: {
+    id: 'web.syslumenn.journeymanList:csvHeaderNationaId',
+    defaultMessage: 'Kennitala',
+    description: 'Kennitala (texti fyrir dálk í CSV skrá)',
+  },
+  nationalId: {
+    id: 'web.syslumenn.journeymanList:nationalId',
+    defaultMessage: 'Kennitala',
+    description: 'Kennitala',
+  },
 })

@@ -71,4 +71,14 @@ export const translation = defineMessages({
     defaultMessage: 'Starf',
     description: 'Starf',
   },
+  csvHeaderNationalId: {
+    id: 'web.syslumenn.professionRights:csvHeaderNationalId',
+    defaultMessage: 'Kennitala',
+    description: 'Kennitala (texti fyrir dálk í CSV skrá)',
+  },
+  nationalId: {
+    id: 'web.syslumenn.professionRights:nationalId',
+    defaultMessage: 'Kennitala',
+    description: 'Kennitala',
+  },
 })

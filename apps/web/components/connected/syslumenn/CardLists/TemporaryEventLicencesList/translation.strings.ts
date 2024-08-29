@@ -132,4 +132,24 @@ export const translation = defineMessages({
     defaultMessage: 'Sjá fleiri',
     description: 'Sjá fleiri',
   },
+  csvButtonLabelDefault: {
+    id: 'web.syslumenn.temporaryEventLicencesList:csvButtonLabelDefault',
+    defaultMessage: 'Sækja öll leyfi (CSV).',
+    description: 'Texti fyrir CSV hnapp',
+  },
+  csvButtonLabelLoading: {
+    id: 'web.syslumenn.temporaryEventLicencesList:csvButtonLabelLoading',
+    defaultMessage: 'Sæki öll leyfi...',
+    description: 'Texti þegar smellt er á CSV hnapp',
+  },
+  csvButtonLabelError: {
+    id: 'web.syslumenn.temporaryEventLicencesList:csvButtonLabelError',
+    defaultMessage: 'Ekki tókst að sækja leyfi, reyndu aftur.',
+    description: 'Texti fyrir CSV hnapp ef ekki tókst að sækja skrá',
+  },
+  csvFileTitlePrefix: {
+    id: 'web.syslumenn.temporaryEventLicencesList:csvFileTitlePrefix',
+    defaultMessage: 'Tækifærisleyfi',
+    description: 'Titill á CSV skrá',
+  },
 })
