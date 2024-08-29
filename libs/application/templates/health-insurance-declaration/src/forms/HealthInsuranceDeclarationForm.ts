@@ -34,7 +34,8 @@ import {
   getCountryNameFromCode,
   getFullNameFromExternalData,
   getInsuranceStatus,
-  getSelectedFamily,
+  getSelectedApplicants,
+  getApplicantAsOption,
   getSpouseAsOptions,
   hasFamilySelected,
 } from '../utils'
@@ -48,6 +49,7 @@ import {
 import format from 'date-fns/format'
 import sub from 'date-fns/sub'
 import { ApplicantType } from '../shared/constants'
+import { get } from 'lodash'
 
 export const HealthInsuranceDeclarationForm: Form = buildForm({
   id: 'HealthInsuranceDeclarationDraft',
@@ -269,6 +271,14 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           title: m.application.registerPersons.sectionDescription,
           children: [
             buildCheckboxField({
+              id: 'selectedApplicants.registerPersonsApplicantCheckboxField',
+              title: m.application.registerPersons.applicantTitle,
+              defaultValue: (application: any) => [
+                getApplicantAsOption(application.externalData)[0]?.value,
+              ],
+              options: ({ externalData }) => getApplicantAsOption(externalData),
+            }),
+            buildCheckboxField({
               id: 'selectedApplicants.registerPersonsSpouseCheckboxField',
               title: m.application.registerPersons.spousetitle,
               options: ({ externalData }) => getSpouseAsOptions(externalData),
@@ -489,11 +499,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 ),
             }),
             buildDividerField({}),
-            // Family table
+            // Applicants table
             buildStaticTableField({
-              title: m.application.overview.familyTableTitle,
+              title: m.application.overview.applicantsTableTitle,
               rows: ({ answers, externalData }) =>
-                getSelectedFamily(
+                getSelectedApplicants(
                   answers as HealthInsuranceDeclaration,
                   externalData,
                 ),
@@ -502,8 +512,6 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
                 applicantInformationMessages.labels.nationalId,
                 'Tengsl',
               ],
-              condition: (answers) =>
-                hasFamilySelected(answers as HealthInsuranceDeclaration),
             }),
             buildDividerField({
               condition: (answers) =>

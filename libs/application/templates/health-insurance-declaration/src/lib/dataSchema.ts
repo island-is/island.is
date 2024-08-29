@@ -23,16 +23,22 @@ export const HealthInsuranceDeclarationSchema = z.object({
     .refine((v) => !!v),
   selectedApplicants: z
     .object({
+      registerPersonsApplicantCheckboxField: z.string().array().optional(),
       registerPersonsSpouseCheckboxField: z.string().array().optional(),
       registerPersonsChildrenCheckboxField: z.string().array().optional(),
-      isHealthInsured: z.boolean(),
     })
     .superRefine((v, ctx) => {
+      console.log('validation object', v)
       if (
-        !v.isHealthInsured &&
+        !v.registerPersonsApplicantCheckboxField?.length &&
         !v.registerPersonsSpouseCheckboxField?.length &&
         !v.registerPersonsChildrenCheckboxField?.length
       ) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          path: ['registerPersonsApplicantCheckboxField'],
+          params: errors.fields.noSelectedApplicant,
+        })
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           path: ['registerPersonsChildrenCheckboxField'],
