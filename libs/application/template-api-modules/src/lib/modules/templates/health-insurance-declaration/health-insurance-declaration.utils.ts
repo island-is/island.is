@@ -56,13 +56,21 @@ const getApplicants = (
   const applicants: InsuranceStatementsApplicantDTO[] = []
 
   // Applicant
-  if (answers.isHealthInsured) {
-    applicants.push({
-      nationalId: answers.applicant.nationalId,
-      name: answers.applicant.name,
-      type: 0,
-    })
-  }
+  answers.selectedApplicants?.registerPersonsApplicantCheckboxField?.map(
+    (a) => {
+      const externalApplicant =
+        application.externalData.nationalRegistry.data.nationalId === a
+          ? application.externalData.nationalRegistry.data
+          : undefined
+      if (externalApplicant) {
+        applicants.push({
+          nationalId: answers.applicant.nationalId,
+          name: answers.applicant.name,
+          type: 0,
+        })
+      }
+    },
+  )
 
   // Spouse
   answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map((s) => {
