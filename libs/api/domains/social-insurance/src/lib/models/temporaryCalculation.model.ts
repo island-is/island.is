@@ -5,7 +5,7 @@ class TemporaryCalculationRow {
   @Field()
   name?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   total?: number
 
   @Field(() => [TemporaryCalculationMonth], { nullable: true })
@@ -17,7 +17,7 @@ class TemporaryCalculationMonth {
   @Field(() => Int)
   month!: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   amount?: number
 }
 
@@ -26,10 +26,10 @@ class TemporaryCalculationGroup {
   @Field()
   group?: string
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   groupId?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   total?: number
 
   @Field(() => [TemporaryCalculationMonth], { nullable: true })
@@ -41,13 +41,13 @@ class TemporaryCalculationGroup {
 
 @ObjectType('SocialInsuranceTemporaryCalculation')
 export class TemporaryCalculation {
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   totalPayment?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   subtracted?: number
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   paidOut?: number
 
   @Field(() => [TemporaryCalculationGroup], { nullable: true })
