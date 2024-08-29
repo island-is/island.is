@@ -1,4 +1,4 @@
-import { Alert, EmptyList, Skeleton, TopLine } from '@ui'
+import { Alert, EmptyList, GeneralCardSkeleton, TopLine } from '@ui'
 
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
@@ -15,7 +15,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
-import illustrationSrc from '../../assets/illustrations/le-moving-s6.png'
+import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
@@ -205,24 +205,8 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
         return (
-          <View style={{ paddingHorizontal: 16 }}>
-            <Skeleton
-              active
-              backgroundColor={{
-                dark: theme.shades.dark.shade300,
-                light: theme.color.blue100,
-              }}
-              overlayColor={{
-                dark: theme.shades.dark.shade200,
-                light: theme.color.blue200,
-              }}
-              overlayOpacity={1}
-              height={111}
-              style={{
-                borderRadius: 16,
-                marginBottom: 16,
-              }}
-            />
+          <View style={{ paddingHorizontal: theme.spacing[2] }}>
+            <GeneralCardSkeleton height={104} />
           </View>
         )
       }
@@ -314,7 +298,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
               image={
                 <Image
                   source={illustrationSrc}
-                  style={{ width: 146, height: 198 }}
+                  style={{ width: 146, height: 198 }} // TODO fix size!
                   resizeMode="contain"
                 />
               }

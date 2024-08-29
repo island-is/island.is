@@ -11,7 +11,7 @@ import {
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
-import illustrationSrc from '../../assets/illustrations/moving.png'
+import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
   ListVehiclesQuery,
