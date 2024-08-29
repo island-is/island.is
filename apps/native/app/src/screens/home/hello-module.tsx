@@ -23,6 +23,7 @@ export const HelloModule = React.memo(() => {
   const { dismissed } = usePreferencesStore()
   const { userInfo } = useAuthStore()
   const [imageSrc, setImageSrc] = React.useState<string | undefined>(undefined)
+  const { homeScreenEnableGraphicWidget } = usePreferencesStore()
 
   const { data: image, loading } = useGetFrontPageImageQuery({
     variables: { input: { pageIdentifier: 'frontpage' } },
@@ -98,7 +99,7 @@ export const HelloModule = React.memo(() => {
           {userInfo?.name}
         </Typography>
 
-        {imageSrc && (
+        {homeScreenEnableGraphicWidget && imageSrc && (
           <ImageWrapper>
             {loading ? (
               <Skeleton

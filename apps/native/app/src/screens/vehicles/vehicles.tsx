@@ -1,4 +1,4 @@
-import { EmptyList, Skeleton, TopLine } from '@ui'
+import { EmptyList, GeneralCardSkeleton, TopLine } from '@ui'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { FormattedMessage } from 'react-intl'
 import {
@@ -58,31 +58,6 @@ const Empty = () => (
   </View>
 )
 
-const SkeletonItem = () => {
-  const theme = useTheme()
-  return (
-    <View style={{ paddingHorizontal: 16 }}>
-      <Skeleton
-        active
-        backgroundColor={{
-          dark: theme.shades.dark.shade300,
-          light: theme.color.blue100,
-        }}
-        overlayColor={{
-          dark: theme.shades.dark.shade200,
-          light: theme.color.blue200,
-        }}
-        overlayOpacity={1}
-        height={156}
-        style={{
-          borderRadius: 16,
-          marginBottom: 16,
-        }}
-      />
-    </View>
-  )
-}
-
 const input = {
   page: 1,
   pageSize: 10,
@@ -94,6 +69,7 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   componentId,
 }) => {
   useNavigationOptions(componentId)
+  const theme = useTheme()
 
   const flatListRef = useRef<FlatList>(null)
   const [refetching, setRefetching] = useState(false)
@@ -144,7 +120,11 @@ export const VehiclesScreen: NavigationFunctionComponent = ({
   const renderItem = useCallback(
     ({ item, index }: { item: ListItem; index: number }) => {
       if (item.__typename === 'Skeleton') {
-        return <SkeletonItem />
+        return (
+          <View style={{ paddingHorizontal: theme.spacing[2] }}>
+            <GeneralCardSkeleton height={156} />
+          </View>
+        )
       }
 
       return <VehicleItem item={item} index={index} />

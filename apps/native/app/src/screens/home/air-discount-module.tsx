@@ -1,4 +1,11 @@
-import { Typography, Heading, ChevronRight, ViewPager, EmptyCard } from '@ui'
+import {
+  Typography,
+  Heading,
+  ChevronRight,
+  ViewPager,
+  EmptyCard,
+  GeneralCardSkeleton,
+} from '@ui'
 
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -19,7 +26,7 @@ export const AirDiscountModule = React.memo(() => {
   const theme = useTheme()
   const intl = useIntl()
 
-  const { data, error } = useGetAirDiscountQuery({
+  const { data, loading, error } = useGetAirDiscountQuery({
     fetchPolicy: 'network-only',
   })
 
@@ -32,7 +39,7 @@ export const AirDiscountModule = React.memo(() => {
     ({ user }) => !(user.fund?.used === 0 && user.fund.credit === 0),
   )
 
-  if (error) {
+  if (error && !data) {
     return null
   }
 
@@ -75,7 +82,7 @@ export const AirDiscountModule = React.memo(() => {
         <TouchableOpacity onPress={() => navigateTo(`/air-discount`)}>
           <Heading
             button={
-              discounts?.length === 0 ? null : (
+              count === 0 ? null : (
                 <TouchableOpacity
                   onPress={() => navigateTo('/air-discount')}
                   style={{
@@ -94,18 +101,23 @@ export const AirDiscountModule = React.memo(() => {
             <FormattedMessage id="home.airDiscount" />
           </Heading>
         </TouchableOpacity>
-        {count === 0 && noRights ? ( // Can either of these be not true at the same time?
-          <EmptyCard
-            text={intl.formatMessage({
-              id: 'airDiscount.emptyListDescription',
-            })}
-            image={<Image source={illustrationSrc} resizeMode="cover" />}
-            link={null}
-          />
+        {loading && !data ? (
+          <GeneralCardSkeleton height={146} />
         ) : (
-          children?.slice(0, 1)
+          <>
+            {noRights && (
+              <EmptyCard
+                text={intl.formatMessage({
+                  id: 'airDiscount.emptyListDescription',
+                })}
+                image={<Image source={illustrationSrc} resizeMode="cover" />}
+                link={null}
+              />
+            )}
+            {count === 1 && children?.slice(0, 1)}
+            {count >= 2 && <ViewPager>{children}</ViewPager>}
+          </>
         )}
-        {count >= 2 && <ViewPager>{children}</ViewPager>}
       </Host>
     </SafeAreaView>
   )

@@ -1,6 +1,13 @@
-import { Typography, Heading, ChevronRight, ViewPager, EmptyCard } from '@ui'
+import {
+  Typography,
+  Heading,
+  ChevronRight,
+  ViewPager,
+  EmptyCard,
+  GeneralCardSkeleton,
+} from '@ui'
 
-import React, { useEffect } from 'react'
+import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { Image, SafeAreaView, TouchableOpacity } from 'react-native'
 import styled, { useTheme } from 'styled-components/native'
@@ -9,10 +16,6 @@ import illustrationSrc from '../../assets/illustrations/le-moving-s4.png'
 import { navigateTo } from '../../lib/deep-linking'
 import { VehicleItem } from '../vehicles/components/vehicle-item'
 import { useListVehiclesQuery } from '../../graphql/types/schema'
-import {
-  preferencesStore,
-  usePreferencesStore,
-} from '../../stores/preferences-store'
 import { screenWidth } from '../../utils/dimensions'
 
 const Host = styled.View`
@@ -22,9 +25,8 @@ const Host = styled.View`
 export const VehicleModule = React.memo(() => {
   const theme = useTheme()
   const intl = useIntl()
-  const { homeScreenEnableVehicleWidget } = usePreferencesStore()
 
-  const res = useListVehiclesQuery({
+  const { data, loading, error } = useListVehiclesQuery({
     variables: {
       input: {
         page: 1,
@@ -35,54 +37,39 @@ export const VehicleModule = React.memo(() => {
     },
   })
 
-  const vehicles = res.data?.vehiclesList?.vehicleList
-
-  useEffect(() => {
-    const vehiclesWithMileageRegistration = vehicles?.filter(
-      (vehicle) => vehicle.requiresMileageRegistration,
-    )
-
-    if (
-      !vehiclesWithMileageRegistration?.length &&
-      homeScreenEnableVehicleWidget
-    ) {
-      // disable mileage widget on home screen
-      preferencesStore.setState({ homeScreenEnableVehicleWidget: false })
-    }
-  }, [])
-
-  if (!vehicles) {
+  if (error && !data) {
     return null
   }
 
-  const vehiclesWithMileageRegistration = vehicles.filter(
+  const vehicles = data?.vehiclesList?.vehicleList
+
+  // TODO - order mileage vehicles first if there are any
+  const vehiclesWithMileageRegistration = vehicles?.filter(
     (vehicle) => vehicle.requiresMileageRegistration,
   )
 
-  const count = vehiclesWithMileageRegistration.length ?? 0
+  const count = vehicles?.length ?? 0
 
-  const children = vehiclesWithMileageRegistration
-    .slice(0, 3)
-    .map((vehicle, index) => (
-      <VehicleItem
-        key={vehicle.permno}
-        item={vehicle}
-        index={index}
-        style={
-          count > 1
-            ? {
-                width: screenWidth - theme.spacing[2] * 3,
-                paddingHorizontal: 0,
-                paddingLeft: theme.spacing[2],
-              }
-            : {
-                width: '100%',
-                paddingHorizontal: 0,
-                paddingRight: theme.spacing[2],
-              }
-        }
-      />
-    ))
+  const children = vehicles?.slice(0, 3).map((vehicle, index) => (
+    <VehicleItem
+      key={vehicle.permno}
+      item={vehicle}
+      index={index}
+      style={
+        count > 1
+          ? {
+              width: screenWidth - theme.spacing[2] * 3,
+              paddingHorizontal: 0,
+              paddingLeft: theme.spacing[2],
+            }
+          : {
+              width: '100%',
+              paddingHorizontal: 0,
+              paddingRight: theme.spacing[2],
+            }
+      }
+    />
+  ))
 
   return (
     <SafeAreaView
@@ -94,7 +81,7 @@ export const VehicleModule = React.memo(() => {
         <TouchableOpacity onPress={() => navigateTo(`/vehicles`)}>
           <Heading
             button={
-              vehicles?.length === 0 ? null : (
+              count === 0 ? null : (
                 <TouchableOpacity
                   onPress={() => navigateTo('/vehicles')}
                   style={{
@@ -113,19 +100,23 @@ export const VehicleModule = React.memo(() => {
             <FormattedMessage id="home.vehicles" />
           </Heading>
         </TouchableOpacity>
-        {count === 0 ? (
-          <EmptyCard
-            text={intl.formatMessage({
-              id: 'vehicles.emptyListDescription',
-            })}
-            image={<Image source={illustrationSrc} resizeMode="cover" />}
-            link={null}
-          />
+        {loading && !data ? (
+          <GeneralCardSkeleton height={156} />
         ) : (
-          children?.slice(0, 1)
+          <>
+            {count === 0 && (
+              <EmptyCard
+                text={intl.formatMessage({
+                  id: 'vehicles.emptyListDescription',
+                })}
+                image={<Image source={illustrationSrc} resizeMode="cover" />}
+                link={null}
+              />
+            )}
+            {count === 1 && children?.slice(0, 1)}
+            {count >= 2 && <ViewPager>{children}</ViewPager>}
+          </>
         )}
-        {count === 1 && children.slice(0, 1)}
-        {count >= 2 && <ViewPager>{children}</ViewPager>}
       </Host>
     </SafeAreaView>
   )

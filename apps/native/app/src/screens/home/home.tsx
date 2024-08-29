@@ -112,7 +112,13 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<FlatList>(null)
   const ui = useUiStore()
-  const { homeScreenEnableVehicleWidget } = usePreferencesStore()
+  const {
+    homeScreenEnableVehicleWidget,
+    homeScreenEnableAirDiscountWidget,
+    homeScreenEnableApplicationsWidget,
+    homeScreenEnableInboxWidget,
+    homeScreenEnableLicenseWidget,
+  } = usePreferencesStore()
 
   const applicationsRes = useListApplicationsQuery()
   const inboxRes = useListDocumentsQuery({
@@ -169,19 +175,23 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
       id: 'onboarding',
       component: <OnboardingModule />,
     },
+
     {
       id: 'inbox',
-      component: (
+      component: homeScreenEnableInboxWidget ? (
         <InboxModule
           documents={inboxRes.data?.documentsV2?.data ?? []}
           loading={inboxRes.loading}
         />
-      ),
+      ) : null,
     },
-    { id: 'licenses', component: <LicenseModule /> },
+    {
+      id: 'licenses',
+      component: homeScreenEnableLicenseWidget ? <LicenseModule /> : null,
+    },
     {
       id: 'applications',
-      component: (
+      component: homeScreenEnableApplicationsWidget ? (
         <ApplicationsModule
           applications={
             (applicationsRes.data?.applicationApplications ??
@@ -190,13 +200,18 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
           loading={applicationsRes.loading}
           componentId={componentId}
         />
-      ),
+      ) : null,
     },
     {
       id: 'vehicles',
-      component: <VehicleModule />,
+      component: homeScreenEnableVehicleWidget ? <VehicleModule /> : null,
     },
-    { id: 'air-discount', component: <AirDiscountModule /> },
+    {
+      id: 'air-discount',
+      component: homeScreenEnableAirDiscountWidget ? (
+        <AirDiscountModule />
+      ) : null,
+    },
   ].filter(Boolean) as Array<{
     id: string
     component: React.JSX.Element

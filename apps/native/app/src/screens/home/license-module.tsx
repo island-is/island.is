@@ -1,4 +1,11 @@
-import { Typography, Heading, ChevronRight, ViewPager, EmptyCard } from '@ui'
+import {
+  Typography,
+  Heading,
+  ChevronRight,
+  ViewPager,
+  EmptyCard,
+  GeneralCardSkeleton,
+} from '@ui'
 
 import React from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
@@ -24,7 +31,7 @@ export const LicenseModule = React.memo(() => {
   const intl = useIntl()
 
   // Query list of licenses
-  const res = useListLicensesQuery({
+  const { data, loading, error } = useListLicensesQuery({
     variables: {
       input: {
         includedTypes: [
@@ -42,18 +49,22 @@ export const LicenseModule = React.memo(() => {
   })
 
   // Additional licenses
-  const resPassport = useGetIdentityDocumentQuery()
+  const {
+    data: dataPassport,
+    loading: loadingPassport,
+    error: errorPassport,
+  } = useGetIdentityDocumentQuery()
 
-  const licenses = res.data?.genericLicenses
-  const passport = resPassport.data?.getIdentityDocument
+  const licenses = data?.genericLicenses
+  const passport = dataPassport?.getIdentityDocument
 
-  if (!licenses || res.error || resPassport.error) {
+  if (error || errorPassport) {
     return null
   }
 
-  const count = 0 //licenses?.length ?? 0 + (passport ? 1 : 0)
+  const count = licenses?.length ?? 0 + (passport ? 1 : 0)
 
-  const allLicenses = [...licenses, ...(passport ?? [])]
+  const allLicenses = [...(licenses ?? []), ...(passport ?? [])]
 
   const children = allLicenses
     .filter(
@@ -110,24 +121,29 @@ export const LicenseModule = React.memo(() => {
             <FormattedMessage id="home.licenses" />
           </Heading>
         </TouchableOpacity>
-        {count === 0 ? (
-          <EmptyCard
-            text={intl.formatMessage({
-              id: 'wallet.emptyListDescription',
-            })}
-            image={
-              <Image
-                source={illustrationSrc}
-                resizeMode="cover"
-                style={{ height: 72, width: 55 }}
-              />
-            }
-            link={null}
-          />
+        {loading && !data ? (
+          <GeneralCardSkeleton height={104} />
         ) : (
-          children.slice(0, 1)
+          <>
+            {count === 0 && (
+              <EmptyCard
+                text={intl.formatMessage({
+                  id: 'wallet.emptyListDescription',
+                })}
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    resizeMode="cover"
+                    style={{ height: 72, width: 55 }}
+                  />
+                }
+                link={null}
+              />
+            )}
+            {count === 1 && children?.slice(0, 1)}
+            {count >= 2 && <ViewPager>{children}</ViewPager>}
+          </>
         )}
-        {count >= 2 && <ViewPager>{children}</ViewPager>}
       </Host>
     </SafeAreaView>
   )
