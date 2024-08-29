@@ -43,14 +43,25 @@ export const VehicleModule = React.memo(() => {
 
   const vehicles = data?.vehiclesList?.vehicleList
 
-  // TODO - order mileage vehicles first if there are any
-  const vehiclesWithMileageRegistration = vehicles?.filter(
-    (vehicle) => vehicle.requiresMileageRegistration,
-  )
+  // Reorder vehicles so vehicles that require mileage registration are shown first
+  const reorderedVehicles = vehicles
+    ? [...vehicles]?.sort((a, b) => {
+        if (a.requiresMileageRegistration && !b.requiresMileageRegistration) {
+          return -1
+        } else if (
+          !a.requiresMileageRegistration &&
+          b.requiresMileageRegistration
+        ) {
+          return 1
+        } else {
+          return 0
+        }
+      })
+    : vehicles
 
-  const count = vehicles?.length ?? 0
+  const count = reorderedVehicles?.length ?? 0
 
-  const children = vehicles?.slice(0, 3).map((vehicle, index) => (
+  const children = reorderedVehicles?.slice(0, 3).map((vehicle, index) => (
     <VehicleItem
       key={vehicle.permno}
       item={vehicle}
