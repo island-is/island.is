@@ -84,7 +84,7 @@ const AppealFiles = () => {
 
   const handleNextButtonClick = useCallback(async () => {
     const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => !file.key),
+      uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
 
@@ -111,8 +111,8 @@ const AppealFiles = () => {
     }
   }
 
-  const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: 'done' })
+  const handleChange = (files: File[]) => {
+    addUploadFiles(files, { category: appealCaseFilesType, status: 'done' })
   }
 
   return (
@@ -181,10 +181,8 @@ const AppealFiles = () => {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
-            onChange={(files) => {
-              handleChange(files, appealCaseFilesType)
-            }}
-            onRemove={(file) => handleRemoveFile(file)}
+            onChange={handleChange}
+            onRemove={handleRemoveFile}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
