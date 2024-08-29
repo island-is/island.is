@@ -69,6 +69,7 @@ export const formFieldMapper = ({
           required: required,
           variant: 'number',
           max: maxLength ? parseInt(maxLength, 10) : undefined,
+          min: 0,
         }}
       />
     )
