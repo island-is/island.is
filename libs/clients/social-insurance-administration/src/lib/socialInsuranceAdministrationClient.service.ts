@@ -15,7 +15,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
   TrWebCommonsExternalPortalsApiModelsIncomePlanExternalIncomeTypeDto,
-  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto,
+  TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto,
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
@@ -80,6 +80,14 @@ export class SocialInsuranceAdministrationClientService {
     }
 
     return mapIncomePlanDto(incomePlan) ?? null
+  }
+
+  async getIncomePlanConditions(
+    user: User,
+  ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanConditionsDto> {
+    return this.incomePlanApiWithAuth(
+      user,
+    ).apiProtectedV1IncomePlanIncomePlanConditionsGet()
   }
 
   sendApplication(

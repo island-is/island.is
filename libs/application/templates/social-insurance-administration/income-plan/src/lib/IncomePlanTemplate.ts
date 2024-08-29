@@ -32,6 +32,7 @@ import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
@@ -102,6 +103,7 @@ const IncomePlanTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationWithholdingTaxApi,
                 SocialInsuranceAdministrationLatestIncomePlan,
                 SocialInsuranceAdministrationIsApplicantEligibleApi,
+                SocialInsuranceAdministrationIncomePlanConditionsApi,
               ],
               delete: true,
             },
