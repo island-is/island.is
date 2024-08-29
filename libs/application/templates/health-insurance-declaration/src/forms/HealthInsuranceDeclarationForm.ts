@@ -379,12 +379,11 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
           children: [
             buildDateField({
               id: 'period.dateFieldFrom',
-              minDate: (application) => {
-                return application.answers.studentOrTouristRadioFieldTourist ===
-                  ApplicantType.STUDENT
+              minDate: (application) =>
+                application.answers.studentOrTouristRadioFieldTourist ===
+                ApplicantType.STUDENT
                   ? sub(new Date(), { years: 1 })
-                  : new Date(0)
-              },
+                  : new Date(0),
               title: m.application.date.dateFromTitle,
               placeholder: m.application.date.datePlaceholderText,
               required: true,
@@ -404,12 +403,9 @@ export const HealthInsuranceDeclarationForm: Form = buildForm({
               alertType: 'warning',
               title: m.application.date.studentMinDateWarningTitle,
               message: m.application.date.studentMinDateWarning,
-              condition: (answers) => {
-                return (
-                  answers.studentOrTouristRadioFieldTourist ===
-                  ApplicantType.STUDENT
-                )
-              },
+              condition: (answers) =>
+                answers.studentOrTouristRadioFieldTourist ===
+                ApplicantType.STUDENT,
             }),
           ],
         }),
