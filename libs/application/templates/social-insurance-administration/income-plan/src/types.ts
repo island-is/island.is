@@ -87,3 +87,8 @@ export interface Eligible {
   reason: string
   reasonCode: string
 }
+
+export interface IncomePlanConditions {
+  incomePlanYear: number
+  showTemporaryCalculations: boolean
+}

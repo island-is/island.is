@@ -3,6 +3,7 @@ import { Application, ExternalData } from '@island.is/application/types'
 import {
   CategorizedIncomeTypes,
   Eligible,
+  IncomePlanConditions,
   IncomePlanRow,
   LatestIncomePlan,
   WithholdingTax,
@@ -54,6 +55,11 @@ export const getApplicationExternalData = (
     'userProfile.data.mobilePhoneNumber',
   ) as string
 
+  const incomePlanConditions = getValueViaPath(
+    externalData,
+    'socialInsuranceAdministrationIncomePlanConditions.data',
+  ) as IncomePlanConditions
+
   return {
     categorizedIncomeTypes,
     currencies,
@@ -63,6 +69,7 @@ export const getApplicationExternalData = (
     isEligible,
     userProfileEmail,
     userProfilePhoneNumber,
+    incomePlanConditions,
   }
 }
 
