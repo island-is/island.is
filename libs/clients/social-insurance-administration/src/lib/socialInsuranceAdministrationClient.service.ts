@@ -157,14 +157,6 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanWithholdingTaxGet(year)
   }
 
-  // async getLatestIncomePlan(
-  //   user: User,
-  // ): Promise<TrWebCommonsExternalPortalsApiModelsIncomePlanIncomePlanDto> {
-  //   return this.incomePlanApiWithAuth(
-  //     user,
-  //   ).apiProtectedV1IncomePlanLatestIncomePlanGet()
-  // }
-
   async getTemporaryCalculations(
     user: User,
     parameters: ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest['trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto'],

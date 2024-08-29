@@ -2,7 +2,7 @@ import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceTemporaryCalculationRow')
 class TemporaryCalculationRow {
-  @Field()
+  @Field(() => String, { nullable: true })
   name?: string
 
   @Field(() => Int, { nullable: true })
@@ -23,7 +23,7 @@ class TemporaryCalculationMonth {
 
 @ObjectType('SocialInsuranceTemporaryCalculationGroup')
 class TemporaryCalculationGroup {
-  @Field()
+  @Field(() => String, { nullable: true })
   group?: string
 
   @Field(() => Int, { nullable: true })
