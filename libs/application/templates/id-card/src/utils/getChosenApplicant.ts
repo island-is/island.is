@@ -1,11 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  Application,
   FormValue,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
-import { IdentityDocumentChild, Routes } from '../lib/constants'
-import { IdCardAnswers } from '..'
+import { IdentityDocumentChild } from '../lib/constants'
 
 export interface ChosenApplicant {
   name?: string | null
@@ -16,6 +14,7 @@ export interface ChosenApplicant {
 export const getChosenApplicant = (
   answers: FormValue,
   externalData: any,
+  nationalId?: string | null,
 ): ChosenApplicant => {
   const applicantIdentity = getValueViaPath(
     externalData,
@@ -29,16 +28,7 @@ export const getChosenApplicant = (
     [],
   ) as Array<IdentityDocumentChild>
 
-  const chosenApplicantNationalId = getValueViaPath(
-    answers,
-    Routes.CHOSENAPPLICANTS,
-    '',
-  ) as string
-
-  if (
-    chosenApplicantNationalId === '' ||
-    applicantIdentity?.nationalId === chosenApplicantNationalId
-  ) {
+  if (!nationalId || applicantIdentity?.nationalId === nationalId) {
     return {
       name: applicantIdentity?.fullName,
       isApplicant: true,
@@ -46,8 +36,9 @@ export const getChosenApplicant = (
     }
   } else {
     const chosenChild = applicantChildren.filter(
-      (x) => x.childNationalId === chosenApplicantNationalId,
+      (x) => x.childNationalId === nationalId,
     )?.[0]
+    console.log('shoudl be in here')
     return {
       name: chosenChild.childName,
       isApplicant: false,

@@ -11,7 +11,9 @@ export const updateAnswers = (
   const chosenApplicants = getChosenApplicant(
     application.answers,
     application.externalData,
+    nationalId,
   )
+  console.log('chosenApplicants', chosenApplicants)
   const applicantUserProfile = getValueViaPath(
     application.externalData,
     'userProfile.data',

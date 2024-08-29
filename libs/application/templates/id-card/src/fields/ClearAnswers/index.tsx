@@ -19,7 +19,11 @@ export const ClearAnswers: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     setBeforeSubmitCallback(async () => {
       const chosenApplicants = getValues(Routes.CHOSENAPPLICANTS)
       console.log('now this: ', chosenApplicants)
-      const newAnswers = updateAnswers(application, chosenApplicants, setValue)
+      const newAnswers = await updateAnswers(
+        application,
+        chosenApplicants,
+        setValue,
+      )
       console.log('new answers', newAnswers)
       try {
         await updateApplication({
