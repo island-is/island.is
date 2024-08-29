@@ -110,7 +110,7 @@ export const AirDiscountModule = React.memo(() => {
                 text={intl.formatMessage({
                   id: 'airDiscount.emptyListDescription',
                 })}
-                image={<Image source={illustrationSrc} resizeMode="cover" />}
+                image={<Image source={illustrationSrc} resizeMode="contain" />}
                 link={null}
               />
             )}

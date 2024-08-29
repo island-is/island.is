@@ -79,7 +79,7 @@ export const InboxModule = React.memo(
                 image={
                   <Image
                     source={leCompanys3}
-                    resizeMode="cover"
+                    resizeMode="contain"
                     style={{ height: 72, width: 55 }}
                   />
                 }

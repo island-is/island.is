@@ -109,7 +109,7 @@ export const VehicleModule = React.memo(() => {
                 text={intl.formatMessage({
                   id: 'vehicles.emptyListDescription',
                 })}
-                image={<Image source={illustrationSrc} resizeMode="cover" />}
+                image={<Image source={illustrationSrc} resizeMode="contain" />}
                 link={null}
               />
             )}

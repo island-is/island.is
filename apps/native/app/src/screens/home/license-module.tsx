@@ -133,8 +133,8 @@ export const LicenseModule = React.memo(() => {
                 image={
                   <Image
                     source={illustrationSrc}
-                    resizeMode="cover"
-                    style={{ height: 72, width: 55 }}
+                    resizeMode="contain"
+                    style={{ height: 80, width: 55 }}
                   />
                 }
                 link={null}

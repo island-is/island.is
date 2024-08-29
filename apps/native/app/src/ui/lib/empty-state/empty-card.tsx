@@ -9,7 +9,7 @@ const Host = styled.View`
   flex-direction: row;
   padding-horizontal: ${({ theme }) => theme.spacing[3]}px;
   padding-vertical: ${({ theme }) => theme.spacing[3]}px;
-
+  min-height: 130px;
   border-radius: ${({ theme }) => theme.border.radius.large};
   border-width: 1px;
   border-color: ${dynamicColor(
