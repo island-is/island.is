@@ -5,22 +5,22 @@ class IncomeType {
   @Field(() => Int, { nullable: true })
   incomeTypeNumber?: number
 
-  @Field()
+  @Field(() => String, { nullable: true })
   incomeTypeCode?: string
 
-  @Field()
+  @Field(() => String, { nullable: true })
   incomeTypeName?: string
 
-  @Field()
+  @Field(() => String, { nullable: true })
   currencyCode?: string
 
   @Field(() => Int, { nullable: true })
   incomeCategoryNumber?: number
 
-  @Field()
+  @Field(() => String, { nullable: true })
   incomeCategoryCode?: string
 
-  @Field()
+  @Field(() => String, { nullable: true })
   incomeCategoryName?: string
 
   @Field(() => Int, { nullable: true })
