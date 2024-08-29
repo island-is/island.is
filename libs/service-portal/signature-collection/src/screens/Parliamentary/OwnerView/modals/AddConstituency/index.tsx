@@ -4,7 +4,6 @@ import {
   Button,
   Text,
   Checkbox,
-  AlertMessage,
 } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
@@ -44,13 +43,7 @@ const AddConstituencyModal = () => {
             <Checkbox label={constituency} value={constituency} />
           </Box>
         ))}
-        <Box marginTop={5}>
-          <AlertMessage
-            type="info"
-            message={formatMessage(m.addConstituencyAlertInfo)}
-          />
-        </Box>
-        <Box display="flex" justifyContent="center" marginY={5}>
+        <Box display="flex" justifyContent="center" marginTop={7}>
           <Button>{formatMessage(m.add)}</Button>
         </Box>
       </Modal>

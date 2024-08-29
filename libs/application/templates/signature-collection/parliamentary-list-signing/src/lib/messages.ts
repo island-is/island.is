@@ -186,8 +186,7 @@ export const m = defineMessages({
   },
   linkFieldMessage: {
     id: 'pls.application:linkFieldMessage',
-    defaultMessage:
-      'Á mínum síðum sést hve mörgum meðmælum hefur verið safnað í hverjum landsfjórðungi.',
+    defaultMessage: 'Á Mínum síðum geturðu séð hvaða framboði þú mældir með',
     description: '',
   },
 

@@ -322,7 +322,7 @@ export const m = defineMessages({
   addConstituencyDescription: {
     id: 'sp.signatureCollection:addConstituencyDescription',
     defaultMessage:
-      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at semet nunc efficitur.',
+      'Veldu viðeigandi kjördæmi sem þú vilt stofna meðmælendasöfnun í.',
     description: '',
   },
   addConstituencyAlertInfo: {
@@ -333,13 +333,13 @@ export const m = defineMessages({
   },
   deleteManager: {
     id: 'sp.signatureCollection:deleteManager',
-    defaultMessage: 'Eyða ábyrgðaraðila',
+    defaultMessage: 'Eyða umsjónaraðila',
     description: '',
   },
   deleteManagerDescription: {
     id: 'sp.signatureCollection:deleteManagerDescription',
     defaultMessage:
-      'Þú ert að fara að taka Nafna Nafnason af lista yfir ábyrgðaraðilum. Ertu viss um að þú viljir halda áfram?',
+      'Þú ert að fara að taka Nafna Nafnason af lista yfir umsjónaraðila. Ertu viss um að þú viljir halda áfram?',
     description: '',
   },
   delete: {

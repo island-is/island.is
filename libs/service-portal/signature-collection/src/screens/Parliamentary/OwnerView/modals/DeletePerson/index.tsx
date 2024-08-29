@@ -15,7 +15,9 @@ const DeletePersonModal = () => {
         icon="trash"
         size="small"
         onClick={() => setModalIsOpen(true)}
-      />
+      >
+        {formatMessage(m.delete)}
+      </Button>
       <Modal
         id="deletePerson"
         isVisible={modalIsOpen}
