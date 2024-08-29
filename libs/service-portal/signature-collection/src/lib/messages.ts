@@ -31,7 +31,12 @@ export const m = defineMessages({
   },
   myListsDescription: {
     id: 'sp.signatureCollection:myListsDescription',
-    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað:',
+    defaultMessage: 'Yfirlit safnana sem þú hefur stofnað',
+    description: '',
+  },
+  myListsInfo: {
+    id: 'sp.signatureCollection:myListsInfo#markdown',
+    defaultMessage: 'Norðvesturkjördæmi - 7 þingsæti. 210 - 280 meðmæli.',
     description: '',
   },
   copyLinkButton: {
@@ -261,8 +266,13 @@ export const m = defineMessages({
   pageDescriptionParliamentary: {
     id: 'sp.signatureCollection:pageDescriptionParliamentary',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+      'Hægt er að gera einstaklinga að umsjónaraðilum hér að neðan. Fjöldi meðmælenda er margfeldi af þingsætatölu hvers kjördæmis og 30 að lágmarki og 40 að hámarki. Söfnun lýkur 16.10.2024.',
     description: '',
+  },
+  infoProviderTooltip: {
+    id: 'sp.signatureCollection:infoProviderTooltip',
+    defaultMessage:
+      'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
   },
   managers: {
     id: 'sp.signatureCollection:managers',
@@ -322,7 +332,7 @@ export const m = defineMessages({
   addConstituencyDescription: {
     id: 'sp.signatureCollection:addConstituencyDescription',
     defaultMessage:
-      ' Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam at semet nunc efficitur.',
+      'Veldu viðeigandi kjördæmi sem þú vilt stofna meðmælendasöfnun í.',
     description: '',
   },
   addConstituencyAlertInfo: {
@@ -333,13 +343,13 @@ export const m = defineMessages({
   },
   deleteManager: {
     id: 'sp.signatureCollection:deleteManager',
-    defaultMessage: 'Eyða ábyrgðaraðila',
+    defaultMessage: 'Eyða umsjónaraðila',
     description: '',
   },
   deleteManagerDescription: {
     id: 'sp.signatureCollection:deleteManagerDescription',
     defaultMessage:
-      'Þú ert að fara að taka Nafna Nafnason af lista yfir ábyrgðaraðilum. Ertu viss um að þú viljir halda áfram?',
+      'Þú ert að fara að taka Nafna Nafnason af lista yfir umsjónaraðila. Ertu viss um að þú viljir halda áfram?',
     description: '',
   },
   delete: {
