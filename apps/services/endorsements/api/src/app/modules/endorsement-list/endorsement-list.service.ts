@@ -9,7 +9,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { col, Op, Sequelize } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { EndorsementList } from './endorsementList.model'
+import { EndorsementList } from './endorsement-list.model'
 import { EndorsementListDto } from './dto/endorsementList.dto'
 import { Endorsement } from '../endorsement/models/endorsement.model'
 import { ChangeEndorsmentListClosedDateDto } from './dto/changeEndorsmentListClosedDate.dto'
@@ -79,7 +79,7 @@ export class EndorsementListService {
     console.log("Populating owner names for existing lists......................................................................");
     const lists = await this.endorsementListModel.findAll({
       where: {
-        ownerName: null,
+        ownerName: '',
       },
     });
 
@@ -295,12 +295,11 @@ export class EndorsementListService {
   async getOwnerName(ownerNationalId: string): Promise<string> {
     try {
       const person = await this.nationalRegistryApiV3.getName(ownerNationalId);
-      return person?.fulltNafn || '';  // Return owner name or empty string
+      return person?.fulltNafn || '';
     } catch (error) {
-      this.logger.warn(
-        `Error fetching owner name from NationalRegistryApi: ${error.message}`,
-      );
-      return '';  // Fallback to empty string in case of an error
+      const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`;
+      this.logger.error(message);
+      throw new BadRequestException(message);
     }
   }
 

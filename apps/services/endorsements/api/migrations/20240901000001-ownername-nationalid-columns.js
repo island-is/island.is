@@ -8,14 +8,12 @@ module.exports = {
     // Add new 'ownerName' column
     await queryInterface.addColumn('endorsement_list', 'owner_name', {
       type: Sequelize.STRING,
-      allowNull: true,
+      allowNull: false,
+      defaultValue: '',
     });
-
-    // Populate ownerName for existing records using the service function
-    // This requires calling the service manually or writing a custom function for migration.
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     // Revert column rename
     await queryInterface.renameColumn('endorsement_list', 'owner_national_id', 'owner_name');
 

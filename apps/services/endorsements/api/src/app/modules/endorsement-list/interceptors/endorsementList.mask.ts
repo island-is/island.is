@@ -1,4 +1,4 @@
-import { EndorsementList } from '../endorsementList.model'
+import { EndorsementList } from '../endorsement-list.model'
 
 export function maskEndorsementList(
   endorsementList: EndorsementList,

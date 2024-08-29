@@ -11,7 +11,7 @@ import {
 import { maskEndorsementList } from './endorsementList.mask'
 import { PaginatedEndorsementListDto } from '../dto/paginatedEndorsementList.dto'
 import { GqlExecutionContext } from '@nestjs/graphql'
-import { EndorsementListService } from '../endorsementList.service'
+import { EndorsementListService } from '../endorsement-list.service'
 import { User } from '@island.is/auth-nest-tools'
 
 @Injectable()

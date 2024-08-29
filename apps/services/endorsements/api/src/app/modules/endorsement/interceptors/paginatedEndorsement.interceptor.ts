@@ -13,7 +13,7 @@ import { PaginatedEndorsementDto } from '../dto/paginatedEndorsement.dto'
 import { GqlExecutionContext } from '@nestjs/graphql'
 import { EndorsementService } from '../endorsement.service'
 import { User } from '@island.is/auth-nest-tools'
-import { EndorsementListService } from '../../endorsementList/endorsementList.service'
+import { EndorsementListService } from '../../endorsement-list/endorsement-list.service'
 @Injectable()
 export class PaginatedEndorsementInterceptor implements NestInterceptor {
   constructor(

@@ -7,11 +7,11 @@ import {
   ExecutionContext,
   CallHandler,
 } from '@nestjs/common'
-import { EndorsementList } from '../endorsementList.model'
+import { EndorsementList } from '../endorsement-list.model'
 import { maskEndorsementList } from './endorsementList.mask'
 import { User } from '@island.is/auth-nest-tools'
 import { GqlExecutionContext } from '@nestjs/graphql'
-import { EndorsementListService } from '../endorsementList.service'
+import { EndorsementListService } from '../endorsement-list.service'
 
 @Injectable()
 export class EndorsementListInterceptor implements NestInterceptor {

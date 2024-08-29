@@ -35,11 +35,11 @@ export class EndorsementList {
   @Field()
   modified!: string
 
-  @Field({ nullable: true })
-  ownerName?: string
+  @Field()
+  ownerName!: string
 
-  @Field({ nullable: true })
-  owner?: string
+  @Field()
+  ownerNationalId!: string
 
   @Field({ nullable: true })
   endorsementCounter?: number

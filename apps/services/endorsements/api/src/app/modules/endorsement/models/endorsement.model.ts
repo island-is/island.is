@@ -9,7 +9,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { EndorsementList } from '../../endorsementList/endorsementList.model'
+import { EndorsementList } from '../../endorsement-list/endorsement-list.model'
 import { EndorsementMetadata } from './endorsementMetadata.model'
 import { EndorsementListOpen } from './endorsementListOpen.model'
 

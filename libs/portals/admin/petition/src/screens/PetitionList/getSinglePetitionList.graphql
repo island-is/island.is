@@ -5,11 +5,10 @@ query endorsementSystemGetSingleEndorsementList(
     meta
     title
     description
-    owner
+    ownerNationalId
     ownerName
     closedDate
     openedDate
     adminLock
-    owner
   }
 }
