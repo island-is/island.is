@@ -32,6 +32,7 @@ export enum ApplicationTypes {
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENT_CEMETERY = 'FinancialStatementCemetery',
   FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
+  FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
   OPERATING_LICENSE = 'OperatingLicense',
   ESTATE = 'Estate',
   DRIVING_LICENSE_DUPLICATE = 'DrivingLicenseDuplicate',
@@ -73,6 +74,7 @@ export enum ApplicationTypes {
   HEALTH_INSURANCE_DECLARATION = 'HealthInsuranceDeclaration',
   STREET_REGISTRATION = 'StreetRegistration',
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
+  MACHINE_REGISTRATION = 'MachineRegistration',
 }
 
 export const ApplicationConfigurations = {
@@ -211,6 +213,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
     slug: 'skilarsreikninga',
     translation: 'fsn.application',
+  },
+  [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
+    slug: 'skil-arsreikninga-einstaklingsframbod',
+    translation: 'fsie.application',
   },
   [ApplicationTypes.OPERATING_LICENSE]: {
     slug: 'rekstrarleyfi',
@@ -375,5 +381,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.NEW_PRIMARY_SCHOOL]: {
     slug: 'nyr-grunnskoli',
     translation: ['dess.nps.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.MACHINE_REGISTRATION]: {
+    slug: 'nyskraning-taekis',
+    translation: ['aosh.rnm.application'],
   },
 }

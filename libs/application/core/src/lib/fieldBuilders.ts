@@ -171,6 +171,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
   } = data
 
   return {
@@ -181,6 +183,8 @@ export function buildRadioField(
     backgroundColor,
     space,
     required,
+    widthWithIllustration,
+    hasIllustration,
     type: FieldTypes.RADIO,
     component: FieldComponents.RADIO,
   }
@@ -273,6 +277,8 @@ export function buildTextField(
     rows,
     required,
     maxLength,
+    max,
+    min,
     readOnly,
     rightAlign,
     onChange,
@@ -290,6 +296,8 @@ export function buildTextField(
     maxLength,
     readOnly,
     rightAlign,
+    max,
+    min,
     onChange,
     type: FieldTypes.TEXT,
     component: FieldComponents.TEXT,

@@ -1,10 +1,10 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { ApplicationSectionDto } from '../../../sections/models/dto/applicationSection.dto'
 import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
+import { SectionDto } from '../../../sections/models/dto/section.dto'
 
 export class ApplicationDto {
   @ApiPropertyOptional()
-  applicationId?: string
+  id?: string
 
   @ApiPropertyOptional({ type: OrganizationDto })
   organization?: OrganizationDto
@@ -21,6 +21,6 @@ export class ApplicationDto {
   @ApiPropertyOptional({ type: Date })
   modified?: Date
 
-  @ApiPropertyOptional({ type: [ApplicationSectionDto] })
-  sections?: ApplicationSectionDto[]
+  @ApiPropertyOptional({ type: [SectionDto] })
+  sections?: SectionDto[]
 }

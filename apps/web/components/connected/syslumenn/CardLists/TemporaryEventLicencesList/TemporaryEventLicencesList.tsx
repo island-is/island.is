@@ -277,22 +277,10 @@ const TemporaryEventLicencesList: FC<
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={n(
-                      'csvButtonLabelDefault',
-                      'Sækja öll leyfi (CSV)',
-                    )}
-                    loadingLabel={n(
-                      'csvButtonLabelLoading',
-                      'Sæki öll leyfi...',
-                    )}
-                    errorLabel={n(
-                      'csvButtonLabelError',
-                      'Ekki tókst að sækja leyfi, reyndu aftur',
-                    )}
-                    csvFilenamePrefix={n(
-                      'csvFileTitlePrefix',
-                      'Tækifærisleyfi',
-                    )}
+                    defaultLabel={formatMessage(t.csvButtonLabelDefault)}
+                    loadingLabel={formatMessage(t.csvButtonLabelLoading)}
+                    errorLabel={formatMessage(t.csvButtonLabelError)}
+                    csvFilenamePrefix={formatMessage(t.csvFileTitlePrefix)}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -379,8 +367,8 @@ const TemporaryEventLicencesList: FC<
 
                       {temporaryEventLicence.maximumNumberOfGuests && (
                         <Text>
-                          {formatMessage(t.licenseMaximumNumberOfGuests)}:{' '}
-                          {temporaryEventLicence.maximumNumberOfGuests}
+                          {formatMessage(t.licenseMaximumNumberOfGuests)}
+                          : {temporaryEventLicence.maximumNumberOfGuests}
                         </Text>
                       )}
                     </Box>

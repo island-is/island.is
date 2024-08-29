@@ -14,10 +14,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
-import {  Query } from '@island.is/web/graphql/schema'
+import { Query } from '@island.is/web/graphql/schema'
 import { GET_UMS_COST_OF_LIVING_CALCULATOR } from '@island.is/web/screens/queries/UmsCostOfLivingCalculator'
 
 import { translation as translationStrings } from './translation.strings'
+import * as styles from './UmsCostOfLivingCalculator.css'
+
 interface CalculatedFieldWrapperProps {
   title: string
   value: number | undefined
@@ -58,11 +60,15 @@ const CalculatedFieldWrapper = ({
 }: CalculatedFieldWrapperProps) => {
   return (
     <Stack space={1}>
-      <Text variant="eyebrow" fontWeight="semiBold">
-        {title}
-      </Text>
-      <Box paddingLeft={2}>
-        <Text fontWeight="semiBold">{numberFormatter.format(value ?? 0)}</Text>
+      <Box className={styles.readOnlyValues}>
+        <Text variant="eyebrow" fontWeight="semiBold">
+          {title}
+        </Text>
+        <Box paddingLeft={2}>
+          <Text fontWeight="semiBold">
+            {numberFormatter.format(value ?? 0)}
+          </Text>
+        </Box>
       </Box>
     </Stack>
   )
@@ -372,12 +378,16 @@ const UmsCostOfLivingCalculator = () => {
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'propertyInsurances' as keyof CostOfLivingInput}
-                    label={formatMessage(translationStrings.propertyInsurancesLabel)}
+                    label={formatMessage(
+                      translationStrings.propertyInsurancesLabel,
+                    )}
                   />
                   <InputControllerFieldWrapper
                     control={control}
                     nameAndId={'schoolAndDayCare' as keyof CostOfLivingInput}
-                    label={formatMessage(translationStrings.schoolAndDayCareLabel)}
+                    label={formatMessage(
+                      translationStrings.schoolAndDayCareLabel,
+                    )}
                   />
                   <InputControllerFieldWrapper
                     control={control}
@@ -387,13 +397,22 @@ const UmsCostOfLivingCalculator = () => {
                 </Stack>
               </Box>
             </Stack>
-
-            <Text variant="default" fontWeight="semiBold">
-              {formatMessage(translationStrings.totalText)}
-              {': '}
-              {numberFormatter.format(getTotal())}{' '}
-              {formatMessage(translationStrings.currencyText)}
-            </Text>
+            <Stack space={2}>
+              <Text variant="h3" fontWeight="semiBold">
+                {formatMessage(translationStrings.totalText)}
+              </Text>
+              <Box className={styles.total}>
+                <Text variant="eyebrow" fontWeight="semiBold" color="blue400">
+                  {formatMessage(translationStrings.totalText)}
+                </Text>
+                <Box paddingLeft={2} textAlign="right">
+                  <Text fontWeight="semiBold">
+                    {numberFormatter.format(getTotal())}{' '}
+                    {formatMessage(translationStrings.currencyText)}
+                  </Text>
+                </Box>
+              </Box>
+            </Stack>
           </Stack>
         )}
       </Box>

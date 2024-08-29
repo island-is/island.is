@@ -1,7 +1,5 @@
 import { uuid } from 'uuidv4'
 
-import { User } from '@island.is/judicial-system/types'
-
 import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { Case } from '../../models/case.model'
@@ -14,7 +12,6 @@ interface Then {
 type GivenWhenThen = (caseId: string, theCase: Case) => Promise<Then>
 
 describe('CaseController - Get connected cases', () => {
-  const user = { id: uuid() } as User
   let mockCaseModel: typeof Case
   let givenWhenThen: GivenWhenThen
 

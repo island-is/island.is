@@ -98,6 +98,9 @@
       "@island.is/api/domains/finance": [
         "libs/api/domains/finance/src/index.ts"
       ],
+      "@island.is/api/domains/financial-statement-individual-election": [
+        "libs/api/domains/financial-statement-individual-election/src/index.ts"
+      ],
       "@island.is/api/domains/financial-statements-inao": [
         "libs/api/domains/financial-statements-inao/src/index.ts"
       ],
@@ -109,6 +112,9 @@
       ],
       "@island.is/api/domains/form-system": [
         "libs/api/domains/form-system/src/index.ts"
+      ],
+      "@island.is/api/domains/health-directorate": [
+        "libs/api/domains/health-directorate/src/index.ts"
       ],
       "@island.is/api/domains/health-insurance": [
         "libs/api/domains/health-insurance/src/index.ts"
@@ -285,6 +291,9 @@
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
       ],
+      "@island.is/application/templates/aosh/register-new-machine": [
+        "libs/application/templates/aosh/register-new-machine/src/index.ts"
+      ],
       "@island.is/application/templates/aosh/request-for-inspection": [
         "libs/application/templates/aosh/request-for-inspection/src/index.ts"
       ],
@@ -368,6 +377,12 @@
       ],
       "@island.is/application/templates/financial-statement-cemetery": [
         "libs/application/templates/financial-statement-cemetery/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election": [
+        "libs/application/templates/financial-statement-individual-election/src/index.ts"
+      ],
+      "@island.is/application/templates/financial-statement-individual-election/types": [
+        "libs/application/templates/financial-statement-individual-election/src/types/types.ts"
       ],
       "@island.is/application/templates/financial-statements-inao": [
         "libs/application/templates/financial-statements-inao/src/index.ts"
@@ -1089,9 +1104,6 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
-      ],
-      "financial-statement-cemetery": [
-        "libs/application/templates/financial-statement-cemetery/src/index.ts"
       ]
     }
   }

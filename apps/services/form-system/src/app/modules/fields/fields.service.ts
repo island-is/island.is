@@ -17,10 +17,6 @@ export class FieldsService {
     private readonly fieldMapper: FieldMapper,
   ) {}
 
-  async findAll(): Promise<Field[]> {
-    return await this.fieldModel.findAll()
-  }
-
   async findOne(id: string): Promise<FieldDto> {
     const field = await this.findById(id)
     const fieldSettingsDto = await this.fieldSettingsService.findOne(

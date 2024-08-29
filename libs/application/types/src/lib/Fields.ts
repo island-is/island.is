@@ -288,6 +288,8 @@ export interface RadioField extends BaseField {
   largeButtons?: boolean
   required?: boolean
   space?: BoxProps['paddingTop']
+  hasIllustration?: boolean
+  widthWithIllustration?: '1/1' | '1/2' | '1/3'
   onSelect?(s: string): void
 }
 
@@ -333,6 +335,8 @@ export interface TextField extends BaseField {
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
+  max?: number
+  min?: number
   placeholder?: FormText
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor

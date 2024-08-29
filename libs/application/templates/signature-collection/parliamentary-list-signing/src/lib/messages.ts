@@ -26,7 +26,7 @@ export const m = defineMessages({
   introDescription: {
     id: 'pls.application:introDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec pharetra euismod nibh, non ornare urna auctor vitae. Sed eget viverra erat. Praesent venenatis orci nec faucibus tincidunt. Nam ultrices metus nec tortor euismod fermentum. Vivamus efficitur leo eget ultricies pellentesque.',
+      'Á næstu síðu getur þú mælt með þeim framboðum sem ætla að bjóða fram til Alþingis í því kjördæmi sem þú átt lögheimili. Meðmæli eru yfirlýsing um stuðning við tiltekið framboð og aðeins er hægt að mæla með einu framboði. Hægt er að afturkalla meðmæli þangað til söfnun lokar og mæla með öðru framboði. Einungis þau sem hafa kosningarétt geta verið meðmælendur.',
     description: '',
   },
 
@@ -74,16 +74,16 @@ export const m = defineMessages({
     description: '',
   },
 
-  /* Upplýsingar um meðmælalista */
-  listInformationSection: {
-    id: 'pls.application:listInformationSection',
-    defaultMessage: 'Upplýsingar um meðmælalista',
+  /* Mæla með framboði */
+  signListViewTitle: {
+    id: 'pls.application:signListViewTitle',
+    defaultMessage: 'Mæla með framboði',
     description: '',
   },
-  listInformationDescription: {
-    id: 'pls.application:listInformationDescription#markdown',
+  signListViewDescription: {
+    id: 'pls.application:signListViewDescription#markdown',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce aliquet imperdiet odio.',
+      'Vinsamlegast farðu yfir upplýsingarnar og gakktu úr skugga um að þær séu réttar.',
     description: '',
   },
   information: {
@@ -145,13 +145,12 @@ export const m = defineMessages({
   /* Búið að mæla með */
   listSigned: {
     id: 'pls.application:listSigned',
-    defaultMessage: 'Mælt með framboði',
+    defaultMessage: 'Þú hefur mælt með framboði',
     description: '',
   },
   listSignedDescription: {
     id: 'pls.application:listSignedDescription',
-    defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus feugiat lacus at nisl dignissim, ut scelerisque eros rhoncus. Donec maximus gravida sapien, sit amet hendrerit diam dignissim ut.',
+    defaultMessage: 'Stjórnmálasamtök sem þú mæltir með: TBD',
     description: '',
   },
   nextSteps: {

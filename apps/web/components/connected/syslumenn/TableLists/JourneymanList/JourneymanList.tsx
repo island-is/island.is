@@ -32,7 +32,11 @@ import { translation as t } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof JourneymanLicence)[] = ['name', 'dateOfPublication']
+const SEARCH_KEYS: (keyof JourneymanLicence)[] = [
+  'name',
+  'dateOfPublication',
+  'nationalId',
+]
 
 interface JourneymanListProps {
   slice: ConnectedComponent
@@ -114,6 +118,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
           formatMessage(t.csvHeaderName),
           formatMessage(t.csvHeaderProfession),
           formatMessage(t.csvHeaderDateOfPublication),
+          formatMessage(t.csvHeaderNationaId),
         ]
         const dataRows = []
         for (const licence of licences) {
@@ -123,6 +128,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
             licence.dateOfPublication // Útgáfuár
               ? format(new Date(licence.dateOfPublication), 'yyyy')
               : '',
+            licence.nationalId ?? '',
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -221,18 +227,9 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={n(
-                      'csvButtonLabelDefault',
-                      'Sækja öll leyfi (CSV)',
-                    )}
-                    loadingLabel={n(
-                      'csvButtonLabelLoading',
-                      'Sæki öll leyfi...',
-                    )}
-                    errorLabel={n(
-                      'csvButtonLabelError',
-                      'Ekki tókst að sækja leyfi, reyndu aftur',
-                    )}
+                    defaultLabel={formatMessage(t.csvButtonLabelDefault)}
+                    loadingLabel={formatMessage(t.csvButtonLabelLoading)}
+                    errorLabel={formatMessage(t.csvButtonLabelError)}
                     csvFilenamePrefix={formatMessage(t.csvFileTitlePrefix)}
                     csvStringProvider={csvStringProvider}
                   />
@@ -255,8 +252,10 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                 <T.Row>
                   <T.HeadData>{formatMessage(t.name)}</T.HeadData>
                   <T.HeadData>{formatMessage(t.profession)}</T.HeadData>
+
+                  <T.HeadData>{formatMessage(t.dateOfPublication)}</T.HeadData>
                   <T.HeadData align="right">
-                    {formatMessage(t.dateOfPublication)}
+                    {formatMessage(t.nationalId)}
                   </T.HeadData>
                 </T.Row>
               </T.Head>
@@ -280,7 +279,7 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                         <T.Data>
                           {licences.dateOfPublication && (
                             <Box>
-                              <Text textAlign="right" variant="small">
+                              <Text variant="small">
                                 {format(
                                   new Date(licences.dateOfPublication),
                                   'yyyy',
@@ -288,6 +287,13 @@ const JourneymanList = ({ slice }: JourneymanListProps) => {
                               </Text>
                             </Box>
                           )}
+                        </T.Data>
+                        <T.Data>
+                          <Box>
+                            <Text textAlign="right" variant="small">
+                              {licences.nationalId}
+                            </Text>
+                          </Box>
                         </T.Data>
                       </T.Row>
                     )

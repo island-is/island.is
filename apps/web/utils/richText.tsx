@@ -3,11 +3,12 @@ import { IntlConfig, IntlProvider } from 'react-intl'
 
 import {
   FaqList,
-  FaqListProps,
+  type FaqListProps,
   renderConnectedComponent,
   richText,
   SectionWithImage,
-  SliceType,
+  type SliceType,
+  type TeamListProps,
 } from '@island.is/island-ui/contentful'
 import {
   defaultRenderComponentObject,
@@ -28,7 +29,7 @@ import {
   DrivingInstructorList,
   EmailSignup,
   Form,
-  GenericList,
+  GenericListWrapper,
   KilometerFee,
   MasterList,
   MultipleStatistics,
@@ -47,6 +48,7 @@ import {
   SpecificHousingBenefitSupportCalculator,
   StraddlingStockCalculator,
   TableSlice,
+  TeamListSlice,
   TemporaryEventLicencesList,
   TwoColumnTextSlice,
 } from '@island.is/web/components'
@@ -70,6 +72,7 @@ import {
   Slice,
   SliceDropdown as SliceDropdownSchema,
   TableSlice as TableSliceSchema,
+  TeamList,
   TwoColumnText,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
@@ -251,11 +254,19 @@ const defaultRenderComponent = {
   ),
   Form: (slice: FormSchema) => <Form form={slice} />,
   GenericList: (slice: GenericListSchema) => (
-    <GenericList
+    <GenericListWrapper
       id={slice.id}
       searchInputPlaceholder={slice.searchInputPlaceholder}
       itemType={slice.itemType}
       filterTags={slice.filterTags}
+    />
+  ),
+  TeamList: (slice: TeamList) => (
+    <TeamListSlice
+      id={slice.id}
+      teamMembers={slice.teamMembers as TeamListProps['teamMembers']}
+      filterTags={slice.filterTags}
+      variant={slice.variant as 'accordion' | 'card'}
     />
   ),
 }

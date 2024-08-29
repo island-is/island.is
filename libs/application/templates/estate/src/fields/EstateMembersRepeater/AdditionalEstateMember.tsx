@@ -4,6 +4,7 @@ import {
   CheckboxController,
   DatePickerController,
   InputController,
+  PhoneInputController,
   SelectController,
 } from '@island.is/shared/form-fields'
 import * as kennitala from 'kennitala'
@@ -214,13 +215,11 @@ export const AdditionalEstateMember = ({
               />
             </GridColumn>
             <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-              <InputController
+              <PhoneInputController
                 id={phoneField}
                 name={phoneField}
                 label={formatMessage(m.phone)}
-                defaultValue={field.phone || ''}
                 backgroundColor="blue"
-                format={'###-####'}
                 error={error?.phone}
                 required={!noContactInfo}
               />
@@ -269,12 +268,11 @@ export const AdditionalEstateMember = ({
                 />
               </GridColumn>
               <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
-                <InputController
+                <PhoneInputController
                   id={advocatePhone}
                   name={advocatePhone}
                   label={formatMessage(m.phone)}
                   backgroundColor="blue"
-                  format="###-####"
                   error={(error?.advocate as unknown as ErrorValue)?.phone}
                   size="sm"
                   required
