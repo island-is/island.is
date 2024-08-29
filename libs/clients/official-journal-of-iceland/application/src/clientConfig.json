@@ -53,6 +53,7 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of the application to get comments.",
             "schema": { "type": "string" }
           }
         ],
@@ -77,19 +78,10 @@
             "name": "id",
             "required": true,
             "in": "path",
+            "description": "Id of the application to post comment.",
             "schema": { "type": "string" }
           }
         ],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/PostApplicationComment"
-              }
-            }
-          }
-        },
         "responses": {
           "201": {
             "description": "",
@@ -106,9 +98,101 @@
     },
     "/api/v1/health": {
       "get": {
-        "operationId": "HealthController_health",
+        "operationId": "HealthController_",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
+      }
+    },
+    "/api/v1/pdf/case/{id}": {
+      "get": {
+        "operationId": "getPdfByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}": {
+      "get": {
+        "operationId": "getPdfByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/StreamableFile" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/case/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByCaseId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/pdf/application/{id}/url": {
+      "get": {
+        "operationId": "getPdfUrlByApplicationId",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/GetPdfUrlResponse" }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -247,16 +331,6 @@
         },
         "required": ["comments"]
       },
-      "PostApplicationComment": {
-        "type": "object",
-        "properties": {
-          "comment": {
-            "type": "string",
-            "description": "The case comment itself"
-          }
-        },
-        "required": ["comment"]
-      },
       "PostCaseCommentResponse": {
         "type": "object",
         "properties": {
@@ -266,6 +340,12 @@
           }
         },
         "required": ["comment"]
+      },
+      "StreamableFile": { "type": "object", "properties": {} },
+      "GetPdfUrlResponse": {
+        "type": "object",
+        "properties": { "url": { "type": "string" } },
+        "required": ["url"]
       }
     }
   }

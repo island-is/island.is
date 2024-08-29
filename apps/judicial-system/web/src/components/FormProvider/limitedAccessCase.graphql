@@ -14,6 +14,7 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       category
       key
       policeCaseNumber
+      submittedBy
     }
     defendants {
       id
@@ -146,6 +147,17 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision
+    indictmentCompletedDate
+    indictmentReviewDecision
+    indictmentReviewer {
+      id
+      name
+    }
     courtSessionType
+    eventLogs {
+      id
+      created
+      eventType
+    }
   }
 }

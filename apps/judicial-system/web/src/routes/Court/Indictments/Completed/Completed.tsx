@@ -13,6 +13,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -92,8 +93,8 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[], type: CaseFileCategory) => {
-      addUploadFiles(files, type, 'done')
+    (files: File[], category: CaseFileCategory) => {
+      addUploadFiles(files, { category, status: 'done' })
     },
     [addUploadFiles],
   )
@@ -136,6 +137,13 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
+        {workingCase.mergedCases &&
+          workingCase.mergedCases.length > 0 &&
+          workingCase.mergedCases.map((mergedCase) => (
+            <Box marginBottom={5} key={mergedCase.id}>
+              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+            </Box>
+          ))}
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>

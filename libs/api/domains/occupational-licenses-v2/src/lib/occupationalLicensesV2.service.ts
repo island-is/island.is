@@ -72,7 +72,6 @@ export class OccupationalLicensesV2Service {
               type: LicenseType.DISTRICT_COMMISSIONERS,
               issuer: l.issuerId,
               issuerTitle: l.issuerTitle,
-              profession: l.title,
               permit: l.title,
               dateOfBirth: info(user.nationalId).birthday,
               validFrom: l.validFrom,
@@ -110,7 +109,6 @@ export class OccupationalLicensesV2Service {
         type: LicenseType.DISTRICT_COMMISSIONERS,
         licenseHolderName: license.holderName,
         issuer: license.licenseInfo.issuerId,
-        profession: license.licenseInfo.title,
         dateOfBirth: info(user.nationalId).birthday,
         validFrom: license.licenseInfo.validFrom,
         status: mapDistrictCommissionersLicenseStatusToStatus(

@@ -52,6 +52,7 @@ export const Draft: Form = buildForm({
           title: m.dataCollectionTitle,
           subTitle: m.dataCollectionSubtitle,
           checkboxLabel: m.dataCollectionCheckboxLabel,
+          enableMockPayment: true,
           dataProviders: [
             buildDataProviderItem({
               provider: NationalRegistryUser,

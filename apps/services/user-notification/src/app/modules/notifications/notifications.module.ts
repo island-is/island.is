@@ -39,7 +39,7 @@ import { CmsModule } from '@island.is/clients/cms'
       },
     }),
     UserProfileClientModule,
-    EmailModule.register(environment.emailOptions),
+    EmailModule,
     FeatureFlagModule,
     NationalRegistryV3ClientModule,
     AuthDelegationApiClientModule,

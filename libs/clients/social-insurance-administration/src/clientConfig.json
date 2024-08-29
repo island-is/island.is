@@ -2326,48 +2326,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
-        "type": "object",
-        "properties": {
-          "incomeYear": { "type": "integer", "format": "int32" },
-          "splitIncomeByMonth": { "type": "boolean" },
-          "incomeTypes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto": {
-        "type": "object",
-        "properties": {
-          "incomeTypeNumber": { "type": "integer", "format": "int32" },
-          "incomeTypeCode": { "type": "string", "nullable": true },
-          "incomeTypeName": { "type": "string", "nullable": true },
-          "changesAllowed": { "type": "boolean" },
-          "currencyNumber": { "type": "integer", "format": "int32" },
-          "currencyCode": { "type": "string", "nullable": true },
-          "incomeCategoryNumber": { "type": "integer", "format": "int32" },
-          "incomeCategoryCode": { "type": "string", "nullable": true },
-          "incomeCategoryName": { "type": "string", "nullable": true },
-          "amountJan": { "type": "number", "format": "double" },
-          "amountFeb": { "type": "number", "format": "double" },
-          "amountMar": { "type": "number", "format": "double" },
-          "amountApr": { "type": "number", "format": "double" },
-          "amountMay": { "type": "number", "format": "double" },
-          "amountJun": { "type": "number", "format": "double" },
-          "amountJul": { "type": "number", "format": "double" },
-          "amountAug": { "type": "number", "format": "double" },
-          "amountSep": { "type": "number", "format": "double" },
-          "amountOct": { "type": "number", "format": "double" },
-          "amountNov": { "type": "number", "format": "double" },
-          "amountDec": { "type": "number", "format": "double" }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
@@ -2493,6 +2451,11 @@
             "type": "string",
             "description": "If the applicant is not eligible, a reason why he is not eligible is included",
             "nullable": true
+          },
+          "reasonCode": {
+            "type": "string",
+            "description": "If the applicant is not eligible, a code representing the reason why",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2612,9 +2575,34 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.IncomeTypeLine": {
         "type": "object",
         "properties": {
-          "name": {
+          "incomeCategoryNumber": {
+            "type": "integer",
+            "description": "The number of the income category",
+            "format": "int32"
+          },
+          "incomeCategoryName": {
+            "type": "string",
+            "description": "The name of the income category",
+            "nullable": true
+          },
+          "incomeCategoryCode": {
+            "type": "string",
+            "description": "The code of the income type",
+            "nullable": true
+          },
+          "incomeTypeNumber": {
+            "type": "integer",
+            "description": "The number of the income type",
+            "format": "int32"
+          },
+          "incomeTypeName": {
             "type": "string",
             "description": "The name of the income type in Icelandic (lífeyrissjóður, laun etc.)",
+            "nullable": true
+          },
+          "incomeTypeCode": {
+            "type": "string",
+            "description": "The code of the income type",
             "nullable": true
           },
           "totalSum": {
@@ -2652,9 +2640,34 @@
       "TrWeb.Commons.ExternalPortals.Api.Models.IncomePlan.WithholdingTaxIncomeTypeDto": {
         "type": "object",
         "properties": {
-          "incomeType": {
+          "incomeTypeNumber": {
+            "type": "integer",
+            "description": "The income type number, e.g. 5808",
+            "format": "int64"
+          },
+          "incomeTypeName": {
             "type": "string",
-            "description": "The income type key and description, e.g. \"21 Laun\"",
+            "description": "The income type name, e.g. \"Laun\"",
+            "nullable": true
+          },
+          "incomeTypeCode": {
+            "type": "string",
+            "description": "The income type code, e.g. \"21F�O\"",
+            "nullable": true
+          },
+          "categoryNumber": {
+            "type": "integer",
+            "description": "Income type category number",
+            "format": "int64"
+          },
+          "categoryName": {
+            "type": "string",
+            "description": "Income type category name, e.g. \"Atvinnutekjur\", \"Fj�rmagnstekjur\" etc.",
+            "nullable": true
+          },
+          "categoryCode": {
+            "type": "string",
+            "description": "Income type category code",
             "nullable": true
           },
           "january": { "type": "number", "format": "double", "nullable": true },

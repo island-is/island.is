@@ -8,9 +8,9 @@ export const employer = {
       description: 'Employer page title',
     },
     pageDescription: {
-      id: `pdpp.application:application.employer.general.pageDescription`,
+      id: 'pdpp.application:application.employer.general.pageDescription#markdown',
       defaultMessage:
-        'Samkvæmt 11. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019 ber launagreiðanda að draga af launum opinber gjöld utan staðgreiðslu, þ.e. þing- og sveitarsjóðsgjöld. Nánar má lesa um launaafdrátt á ',
+        'Samkvæmt 11. gr. laga um innheimtu opinberra skatta og gjalda, nr. 150/2019 ber launagreiðanda að draga af launum opinber gjöld utan staðgreiðslu, þ.e. þing- og sveitarsjóðsgjöld. Nánar má lesa um launaafdrátt á [heimasíðu skattsins](https://www.skatturinn.is)',
       description: 'Employer page description',
     },
     taxHomePageUrl: {

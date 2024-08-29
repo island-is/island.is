@@ -97,6 +97,9 @@ export class EndorsementList extends Model {
   endorsements?: Endorsement[]
 
   @ApiProperty()
+  endorsementCounter?: number
+
+  @ApiProperty()
   @Column({
     type: DataType.JSONB,
     allowNull: false,

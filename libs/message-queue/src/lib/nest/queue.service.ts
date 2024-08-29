@@ -31,7 +31,7 @@ export class QueueService implements OnApplicationBootstrap {
 
   // Add new message to queue.
   async add(message: unknown): Promise<string> {
-    return this.client.add(this.url, message)
+    return await this.client.add(this.url, message)
   }
 
   // Purge all messages from queue. This is probably mainly useful in test
@@ -43,7 +43,7 @@ export class QueueService implements OnApplicationBootstrap {
   private async createMainQueue(): Promise<string> {
     const deadLetterTargetArn = await this.createDeadLetterQueue()
 
-    return this.client.createOrUpdateQueue(this.config.queueName, {
+    return await this.client.createOrUpdateQueue(this.config.queueName, {
       MessageRetentionPeriod: (
         this.config.messageRetentionPeriod ?? DAY * 7
       ).toString(),

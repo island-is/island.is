@@ -76,12 +76,17 @@ export const is = {
   'settings.usersettings.email': 'Netfang',
   'settings.usersettings.bankinfo': 'Reikningsnúmer',
   'settings.communication.groupTitle': 'Tilkynningar og samskipti',
-  'settings.communication.newDocumentsNotifications':
-    'Fá tilkynningar um ný skjöl',
-  'settings.communication.appUpdatesNotifications':
-    'Fá tilkynningar um nýjungar í appinu',
-  'settings.communication.applicationsNotifications':
-    'Fá tilkynningar um stöðu umsókna',
+  'settings.communication.newNotificationsEmailLabel':
+    'Tilkynningar í tölvupósti',
+  'settings.communication.newNotificationsEmailDescription':
+    'Stofnanir geta sent þér tilkynningu með tölvupósti.',
+  'settings.communication.newNotificationsErrorTitle': 'Villa',
+  'settings.communication.newNotificationsErrorDescription':
+    'Ekki tókst að uppfæra stillingar',
+  'settings.communication.newNotificationsInAppLabel':
+    'Tilkynningar í Ísland.is appinu',
+  'settings.communication.newNotificationsInAppDescription':
+    'Stofnanir geta sent þér tilkynningu í Ísland.is appið.',
   'settings.security.privacyTitle': 'Persónuverndarstefna',
   'settings.security.privacySubTitle': 'Stafrænt Íslands',
   'settings.security.groupTitle': 'Öryggi og persónuvernd',
@@ -111,6 +116,16 @@ export const is = {
   'settings.about.codePushLabel': 'Uppfærsla',
   'settings.about.codePushLoading': 'Hleð...',
   'settings.about.codePushUpToDate': 'Appið er uppfært',
+  'settings.about.codePushUpToDateTitle': 'Uppfært',
+  'settings.about.codePushUpdateCancelledTitle': 'Hætt við uppfærslu',
+  'settings.about.codePushUpdateCancelledDescription':
+    'Það var hætt við uppfærslu',
+  'settings.about.codePushUpdateInstalledTitle': 'Uppfærsla tókst',
+  'settings.about.codePushUpdateInstalledDescription':
+    'Appið hefur verið uppfært',
+  'settings.about.codePushUpdateErrorTitle': 'Villa',
+  'settings.about.codePushUpdateErrorDescription':
+    'Villa kom upp við uppfærslu',
 
   // user: personal info
   'user.natreg.infoBox': 'Þín skráning í Þjóðskrá Íslands',
@@ -165,7 +180,7 @@ export const is = {
   'home.onboardingModule.card4':
     'Notendum er bent á að kynna sér stefnu Stafræns Íslands um meðferð persónuupplýsinga á',
   'home.vehicleModule.summary':
-    'Skrá kílómetrastöðu  rafmagns- og tengiltvinnbíla',
+    'Skrá kílómetrastöðu rafmagns- og tengiltvinnbíla',
   'home.vehicleModule.button': 'Mín ökutæki',
   'button.seeAll': 'Sjá allt',
 
@@ -180,10 +195,6 @@ export const is = {
   'inbox.emptyListTitle': 'Hér eru engin skjöl sem stendur',
   'inbox.emptyListDescription':
     'Þegar þú færð send rafræn skjöl frá hinu opinbera birtast þau hér.',
-  'inbox.filterButtonTitle': 'Sía',
-  'inbox.filterOpenedTagTitle': 'Ólesið',
-  'inbox.filterArchivedTagTitle': 'Geymsla',
-  'inbox.filterStarredTagTitle': 'Stjörnumerkt',
   'inbox.markAllAsReadPromptTitle': 'Viltu merkja öll skjöl sem lesin?',
   'inbox.markAllAsReadPromptDescription': 'Þessi aðgerð er ekki afturkræf',
   'inbox.markAllAsReadPromptCancel': 'Hætta við',
@@ -196,6 +207,20 @@ export const is = {
   'inboxFilters.unreadOnly': 'Sýna einungis ólesið',
   'inboxFilters.starred': 'Stjörnumerkt',
   'inboxFilters.archived': 'Geymsla',
+  'inbox.filterButtonTitle': 'Sía',
+  'inbox.filterOpenedTagTitle': 'Ólesið',
+  'inbox.filterArchivedTagTitle': 'Geymsla',
+  'inbox.filterStarredTagTitle': 'Stjörnumerkt',
+  'inbox.filterOrganizationTitle': 'Stofnun',
+  'inbox.filterCategoryTitle': 'Flokkur',
+  'inbox.filterDatesTitle': 'Dagsetningar',
+  'inbox.filterClearButton': 'Hreinsa',
+  'inbox.filterApplyButton': 'Sjá valið',
+  'inbox.filterDateFromLabel': 'Dagsetning frá',
+  'inbox.filterDateToLabel': 'Dagsetning til',
+  'inbox.filterDatePlaceholder': 'Veldu dagsetningu',
+  'inbox.filterDateConfirm': 'Staðfesta',
+  'inbox.filterDateCancel': 'Hætta við',
 
   // document detail
   'documentDetail.screenTitle': 'Skjal',
@@ -261,7 +286,7 @@ export const is = {
   'vehicle.mileage.inputLabel': 'Skrá kílómetrastöðu',
   'vehicle.mileage.inputSubmitButton': 'Skrá',
   'vehicle.mileage.registerIntervalCopy':
-    'Aðeins má skrá kílómetrastöðu einu sinn á hverjum 30 dögum',
+    'Aðeins má skrá kílómetrastöðu einu sinni á hverjum 30 dögum',
   'vehicle.mileage.youAreNotAllowedCopy':
     'Eingöngu aðaleigandi eða umráðamaður yfir bifreið lánastofnunnar geta skráð kílómetrastöðu',
   'vehicle.mileage.moreInformationCopy': 'Sjá nánari upplýsingar á Ísland.is',

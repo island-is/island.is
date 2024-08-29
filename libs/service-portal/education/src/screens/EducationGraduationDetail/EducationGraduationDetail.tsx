@@ -5,18 +5,17 @@ import {
   AlertMessage,
   Box,
   Button,
-  Divider,
   GridColumn,
   GridRow,
-  Stack,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { formatNationalId } from '@island.is/portals/core'
 import { Problem } from '@island.is/react-spa/shared'
 import {
+  InfoLineStack,
   IntroHeader,
-  UserInfoLine,
+  InfoLine,
   formSubmit,
   formatDate,
   m,
@@ -135,40 +134,39 @@ export const EducationGraduationDetail = () => {
       )}
       {!error && (loading || studentInfo) && (
         <>
-          <Stack space={1}>
-            <UserInfoLine
-              title={formatMessage(m.overview)}
+          <InfoLineStack label={formatMessage(m.overview)}>
+            <InfoLine
               label={m.fullName}
               loading={loading}
               content={studentInfo?.name}
               translate="no"
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={m.date}
               loading={loading}
               content={graduationDate}
             />
-            <Divider />
-            <UserInfoLine
-              label={defineMessage({
-                id: 'sp.education-graduation:education-grad-detail-degree',
-                defaultMessage: 'Gráða',
-              })}
-              loading={loading}
-              content={formatNationalId(studentInfo?.degree ?? '')}
-            />
-            <Divider />
-            <UserInfoLine
-              label={defineMessage({
-                id: 'sp.education-graduation:education-grad-detail-program',
-                defaultMessage: 'Námsleið',
-              })}
-              loading={loading}
-              content={formatNationalId(studentInfo?.studyProgram ?? '')}
-            />
-            <Divider />
-            <UserInfoLine
+            {studentInfo?.degree && (
+              <InfoLine
+                label={defineMessage({
+                  id: 'sp.education-graduation:education-grad-detail-degree',
+                  defaultMessage: 'Gráða',
+                })}
+                loading={loading}
+                content={formatNationalId(studentInfo.degree)}
+              />
+            )}
+            {studentInfo?.studyProgram && (
+              <InfoLine
+                label={defineMessage({
+                  id: 'sp.education-graduation:education-grad-detail-program',
+                  defaultMessage: 'Námsleið',
+                })}
+                loading={loading}
+                content={formatNationalId(studentInfo?.studyProgram ?? '')}
+              />
+            )}
+            <InfoLine
               label={defineMessage({
                 id: 'sp.education-graduation:education-grad-detail-faculty',
                 defaultMessage: 'Deild',
@@ -176,8 +174,7 @@ export const EducationGraduationDetail = () => {
               loading={loading}
               content={formatNationalId(studentInfo?.faculty ?? '')}
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={defineMessage({
                 id: 'sp.education-graduation:education-grad-detail-school',
                 defaultMessage: 'Svið',
@@ -185,8 +182,7 @@ export const EducationGraduationDetail = () => {
               loading={loading}
               content={formatNationalId(studentInfo?.school ?? '')}
             />
-            <Divider />
-            <UserInfoLine
+            <InfoLine
               label={defineMessage({
                 id: 'sp.education-graduation:education-grad-detail-instutution',
                 defaultMessage: 'Stofnun',
@@ -196,8 +192,7 @@ export const EducationGraduationDetail = () => {
                 studentInfo?.institution?.displayName ?? '',
               )}
             />
-            <Divider />
-          </Stack>
+          </InfoLineStack>
           <Box marginTop={5}>
             <Text variant="small">{text?.footer}</Text>
           </Box>

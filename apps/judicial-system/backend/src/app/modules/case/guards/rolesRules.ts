@@ -99,6 +99,7 @@ const districtCourtFields: (keyof UpdateCaseDto)[] = [
   'indictmentRulingDecision',
   'indictmentDecision',
   'courtSessionType',
+  'mergeCaseId',
 ]
 
 const courtOfAppealsFields: (keyof UpdateCaseDto)[] = [

@@ -1,29 +1,49 @@
-export const SEARCH_PROPERTIES_QUERY = `
+export const SEARCH_ALL_PROPERTIES_QUERY = `
     query SearchPropertiesQuery($input: SearchForPropertyInput!) {
-      searchForProperty(input: $input) {
+      searchForAllProperties(input: $input) {
         propertyNumber
-        defaultAddress {
-          display
+        propertyType
+        realEstate {
+          propertyNumber
+          usage
+          defaultAddress
         }
-        unitsOfUse {
-          unitsOfUse {
-            marking
-            displaySize
-            buildYearDisplay
-            explanation
+        vehicle {
+          licencePlate
+          propertyNumber
+          manufacturer
+          manufacturerType
+          color
+          dateOfRegistration
+        }
+        ship {
+          shipRegistrationNumber
+          usageType
+          name
+          initialRegistrationDate
+          mainMeasurements {
+            length
+            bruttoWeightTons
           }
         }
       }
     }
-  `
+`
 
 export const VALIDATE_MORTGAGE_CERTIFICATE_QUERY = `
     query ValidateMortgageCertificateQuery($input: ValidateMortgageCertificateInput!) {
       validateMortgageCertificate(input: $input) {
         propertyNumber
-        isFromSearch
         exists
         hasKMarking
+      }
+    }
+  `
+
+export const REQUEST_CORRECTION_ON_MORTGAGE_CERTIFICATE_QUERY = `
+    query RequestCorrectionOnMortgageCertificateQuery($input: RequestCorrectionOnMortgageCertificateInput!) {
+      requestCorrectionOnMortgageCertificate(input: $input) {
+        hasSentRequest
       }
     }
   `

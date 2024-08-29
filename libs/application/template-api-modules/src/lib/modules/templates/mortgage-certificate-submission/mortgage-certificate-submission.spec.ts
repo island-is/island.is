@@ -10,7 +10,7 @@ import { MortgageCertificateSubmissionService } from './mortgage-certificate-sub
 import {
   AdapterService,
   EmailService,
-  EMAIL_OPTIONS,
+  emailModuleConfig,
 } from '@island.is/email-service'
 import {
   SyslumennService,
@@ -40,7 +40,10 @@ describe('MortgageCertificateSubmissionService', () => {
     const module = await Test.createTestingModule({
       imports: [
         SyslumennClientModule,
-        ConfigModule.forRoot({ isGlobal: true, load: [config] }),
+        ConfigModule.forRoot({
+          isGlobal: true,
+          load: [config, emailModuleConfig],
+        }),
       ],
       providers: [
         MortgageCertificateSubmissionService,
@@ -58,15 +61,6 @@ describe('MortgageCertificateSubmissionService', () => {
         {
           provide: LOGGER_PROVIDER,
           useValue: logger,
-        },
-        {
-          provide: EMAIL_OPTIONS,
-          useValue: {
-            useTestAccount: true,
-            options: {
-              region: 'region',
-            },
-          },
         },
         {
           provide: ConfigService,

@@ -6,7 +6,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { ApplicationTypes, Form, FormModes } from '@island.is/application/types'
-import { m } from './messages'
+import { m } from '../lib/messages'
 
 export const TestPhase: Form = buildForm({
   id: ApplicationTypes.DOCUMENT_PROVIDER_ONBOARDING,
