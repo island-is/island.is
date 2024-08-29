@@ -220,12 +220,32 @@ export const EditChange = (props: EditChangeProp) => {
     validateImpact(activeChange)
   }, [activeChange])
 
-  const getDiffHtml = () => {
-    const emptyHTML = '' as HTMLText
-    const prev = previousRegulation?.text || emptyHTML
-    const current = activeChange.text.value || emptyHTML
+  const emptyHTML = '' as HTMLText
+  const getDiffHtml = (previous?: HTMLText, current?: HTMLText) => {
+    const prev = previous || previousRegulation?.text || emptyHTML
+    const curr = current || activeChange.text.value || emptyHTML
 
-    return getDiff(dirtyClean(prev), dirtyClean(current)).diff || emptyHTML
+    return getDiff(dirtyClean(prev), dirtyClean(curr)).diff || emptyHTML
+  }
+
+  const getAppendixDiffHtml = (activeText: HTMLText, i: number) => {
+    const previous = previousRegulation?.appendixes[i]?.text || emptyHTML
+    const current = activeText || emptyHTML
+
+    const diff = getDiff(dirtyClean(previous), dirtyClean(current)).diff
+
+    if (!previousRegulation?.appendixes[i]) {
+      // If the appendix is new
+      return `<div data-diff="new">${diff}</div>` as HTMLText
+    }
+
+    if (diff) {
+      // If the appendix has changes
+      return diff
+    } else {
+      // If the appendix has no changes
+      return undefined
+    }
   }
 
   const saveChange = async () => {
@@ -263,9 +283,18 @@ export const EditChange = (props: EditChangeProp) => {
             title: activeChange.title.value,
             text: activeChange.text.value,
             diff: getDiffHtml(),
-            appendixes: activeChange.appendixes.map((apx) => ({
+            appendixes: activeChange.appendixes.map((apx, i) => ({
               title: apx.title.value,
               text: apx.text.value,
+              /**
+               * These changes are needed to both display the diff in the regulation editory and
+               * to display the appendix in the change regulation:
+               *
+               * IF DIFF => Show diff with something similar to getDiffHtml()
+               * IF NO DIFF => then 'diff' is undefined
+               * IF NEW APPENDIX => 'diff' is <div data-diff="new"></div>
+               */
+              diff: getAppendixDiffHtml(apx.text.value, i),
             })),
             date: toISODate(activeChange.date.value),
           },

@@ -1,5 +1,9 @@
 import { asDiv, HTMLText } from '@island.is/regulations'
-import { GroupedDraftImpactForms, RegDraftForm } from '../state/types'
+import {
+  AppendixDraftForm,
+  GroupedDraftImpactForms,
+  RegDraftForm,
+} from '../state/types'
 import flatten from 'lodash/flatten'
 import { groupElementsByArticleTitleFromDiv } from './groupByArticleTitle'
 import { getDeletionOrAddition } from './getDeletionOrAddition'
@@ -62,6 +66,7 @@ export const formatAmendingRegBody = (
   repeal?: boolean,
   diff?: HTMLText | string | undefined,
   regTitle?: string,
+  appendixes?: AppendixDraftForm[],
 ) => {
   const regName = removeRegNamePrefix(name)
   if (repeal) {
@@ -300,6 +305,24 @@ export const formatAmendingRegBody = (
     }
   })
 
+  // IF appendixDiff exists,
+  // Add to addition array
+  appendixes?.map((apx, idx) => {
+    if (apx.diff?.value) {
+      const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
+      const defaultText = apx.text.value
+      if (apx.diff?.value.includes('<div data-diff="new">')) {
+        additionArray.push([
+          `<p>Viðauki að nafni ${defaultTitle} bætist við og orðast svo:</p>${defaultText}` as HTMLText,
+        ])
+      } else {
+        additionArray.push([
+          `<p>Viðauki að nafni ${defaultTitle} breytist og orðast nú svo:</p>${defaultText}` as HTMLText,
+        ])
+      }
+    }
+  })
+
   return additionArray.flat()
 }
 
@@ -316,6 +339,7 @@ export const formatAmendingBodyWithArticlePrefix = (
           item.type === 'repeal',
           item.type === 'amend' ? item.diff?.value : undefined,
           item.regTitle,
+          item.type === 'amend' ? item.appendixes : undefined,
         ),
       )
       const flatArray = flatten(impactArray)

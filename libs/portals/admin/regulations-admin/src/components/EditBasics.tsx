@@ -43,8 +43,7 @@ export const EditBasics = () => {
   const { text, appendixes } = draft
   const { updateState } = actions
 
-  const startTextExpanded =
-    !text.value || appendixes.length === 0 || !!text.error
+  const startTextExpanded = true
 
   const regType =
     draft.type.value &&
@@ -123,6 +122,26 @@ export const EditBasics = () => {
     updateState('title', formatAmendingRegTitle(draft))
     const additionString = additions.join('') as HTMLText
     updateState('text', additionString)
+
+    // FORMAT AMENDING REGULATION APPENDIXES
+    const impactArray = Object.values(draft.impacts).flat()
+    const amendingArray = impactArray.filter(
+      (item) => item.type === 'amend',
+    ) as DraftChangeForm[]
+
+    amendingArray.map((item) => {
+      item.appendixes.map((apx, idx) => {
+        if (apx.diff?.value) {
+          const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
+          const defaultText = apx.text.value
+          if (idx + 1 > appendixes.length) {
+            actions.addAppendix()
+          }
+          actions.setAppendixProp(idx, 'title', defaultTitle)
+          actions.setAppendixProp(idx, 'text', defaultText)
+        }
+      })
+    })
     setHasUpdated(true)
   }
 
@@ -203,7 +222,11 @@ export const EditBasics = () => {
                     name: (references[0].name as RegName) ?? '',
                     appendixes: references[0].appendixes.map((apx) => ({
                       title: apx.title.value,
-                      text: apx.text.value,
+                      text: apx.diff?.value,
+                      // Perhaps diff value should be in text.value?
+                      // apx.diff?.value === '<div data-diff="new"></div>'
+                      //   ? `<ins class="diffins">${apx.text.value}</ins>`
+                      //   : apx.diff?.value,
                     })),
                   } as Regulation
                 }

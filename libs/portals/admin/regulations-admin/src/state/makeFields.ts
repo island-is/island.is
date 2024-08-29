@@ -158,6 +158,7 @@ export const makeDraftAppendixForm = (
 ): AppendixDraftForm => ({
   title: fText(appendix.title, true),
   text: fHtml(appendix.text, true),
+  diff: appendix.diff ? fHtml(appendix.diff) : undefined,
   key,
 })
 
