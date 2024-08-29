@@ -31,7 +31,7 @@ export const m = defineMessages({
   },
   myListsDescription: {
     id: 'sp.signatureCollection:myListsDescription',
-    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað',
+    defaultMessage: 'Yfirlit safnana sem þú hefur stofnað',
     description: '',
   },
   myListsInfo: {
