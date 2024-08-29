@@ -41,7 +41,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
-    const today = new Date()
+    const today = new Date() // TODO: Let the server determine if the deadline has passed
     const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
     const variant = !row.indictmentVerdictViewedByAll
       ? 'red'

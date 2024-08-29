@@ -11,6 +11,7 @@ import {
   SliceUnion,
 } from '../unions/slice.union'
 import { EmbeddedVideo, mapEmbeddedVideo } from './embeddedVideo.model'
+import { SystemMetadata } from '@island.is/shared/types'
 
 @ObjectType()
 export class OrganizationSubpage {
@@ -63,7 +64,8 @@ export class OrganizationSubpage {
 export const mapOrganizationSubpage = ({
   fields,
   sys,
-}: IOrganizationSubpage): OrganizationSubpage => ({
+}: IOrganizationSubpage): SystemMetadata<OrganizationSubpage> => ({
+  typename: 'OrganizationSubpage',
   id: sys.id,
   title: fields.title ?? '',
   shortTitle: fields.shortTitle || fields.title,

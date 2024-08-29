@@ -86,7 +86,7 @@ const Statement = () => {
     const updated = await updateCase(
       workingCase.id,
       isDefenceUser(user)
-        ? { defendantStatementDate: new Date().toISOString() }
+        ? { defendantStatementDate: new Date().toISOString() } // TODO: Let the server override this date. It is already overriding prosecutorStatementDate.
         : { prosecutorStatementDate: new Date().toISOString() },
     )
 
