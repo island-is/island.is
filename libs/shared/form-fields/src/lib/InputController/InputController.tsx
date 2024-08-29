@@ -40,6 +40,8 @@ interface Props {
   size?: 'xs' | 'sm' | 'md'
   autoComplete?: 'off' | 'on'
   inputMode?: InputProps['inputMode']
+  max?: number
+  min?: number
 }
 
 interface ChildParams {
@@ -84,6 +86,8 @@ export const InputController = forwardRef(
       autoComplete,
       thousandSeparator,
       inputMode,
+      max,
+      min,
     } = props
     const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
@@ -149,6 +153,8 @@ export const InputController = forwardRef(
             autoComplete={autoComplete}
             loading={loading}
             inputMode={inputMode}
+            max={max}
+            min={min}
             onChange={(
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
@@ -238,6 +244,8 @@ export const InputController = forwardRef(
             rows={rows}
             size={size}
             ref={ref}
+            min={min}
+            max={max}
             {...props}
           />
         )
