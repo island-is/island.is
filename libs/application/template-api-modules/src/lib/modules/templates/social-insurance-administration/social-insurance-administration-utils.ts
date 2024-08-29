@@ -308,7 +308,7 @@ export const transformApplicationToPensionSupplementDTO = (
 export const transformApplicationToIncomePlanDTO = (
   application: Application,
 ): ApplicationDTO => {
-  const { userProfileEmail, userProfilePhoneNumber } =
+  const { userProfileEmail, userProfilePhoneNumber, incomePlanConditions } =
     getIPApplicationExternalData(application.externalData)
 
   const incomePlanDTO: ApplicationDTO = {
@@ -322,7 +322,7 @@ export const transformApplicationToIncomePlanDTO = (
     },
     applicationId: application.id,
     incomePlan: {
-      incomeYear: new Date().getFullYear(),
+      incomeYear: incomePlanConditions.incomePlanYear,
       incomeTypes: getIncomeTypes(application),
     },
   }
