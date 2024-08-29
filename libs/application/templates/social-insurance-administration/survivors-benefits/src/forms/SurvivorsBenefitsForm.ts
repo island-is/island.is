@@ -310,8 +310,8 @@ export const SurvivorsBenefitsForm: Form = buildForm({
                 buildTextField({
                   id: 'paymentInfo.spouseAllowanceUsage',
                   title:
-                    survivorsBenefitsFormMessage.payment
-                      .spouseAllowancePercentage,
+                    socialInsuranceAdministrationMessage.payment
+                      .personalAllowancePercentage,
                   suffix: '%',
                   condition: (answers) => {
                     const { spouseAllowance } = getApplicationAnswers(answers)
