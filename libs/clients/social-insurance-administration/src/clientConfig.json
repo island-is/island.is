@@ -2326,6 +2326,45 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomePlanDto": {
+        "type": "object",
+        "properties": {
+          "incomeYear": { "type": "integer", "format": "int32" },
+          "incomeTypes": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Finance.Models.IslandIsIncomeTypeDto": {
+        "type": "object",
+        "properties": {
+          "incomeTypeNumber": { "type": "integer", "format": "int32" },
+          "incomeTypeCode": { "type": "string", "nullable": true },
+          "incomeTypeName": { "type": "string", "nullable": true },
+          "currencyCode": { "type": "string", "nullable": true },
+          "incomeCategoryNumber": { "type": "integer", "format": "int32" },
+          "incomeCategoryCode": { "type": "string", "nullable": true },
+          "incomeCategoryName": { "type": "string", "nullable": true },
+          "amountJan": { "type": "number", "format": "double" },
+          "amountFeb": { "type": "number", "format": "double" },
+          "amountMar": { "type": "number", "format": "double" },
+          "amountApr": { "type": "number", "format": "double" },
+          "amountMay": { "type": "number", "format": "double" },
+          "amountJun": { "type": "number", "format": "double" },
+          "amountJul": { "type": "number", "format": "double" },
+          "amountAug": { "type": "number", "format": "double" },
+          "amountSep": { "type": "number", "format": "double" },
+          "amountOct": { "type": "number", "format": "double" },
+          "amountNov": { "type": "number", "format": "double" },
+          "amountDec": { "type": "number", "format": "double" }
+        },
+        "additionalProperties": false
+      },      
       "TrWeb.Api.Services.Domain.Finance.Models.RknMonthDto": {
         "type": "object",
         "properties": {
