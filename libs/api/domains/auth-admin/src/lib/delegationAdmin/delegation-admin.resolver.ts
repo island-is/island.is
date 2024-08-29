@@ -1,11 +1,8 @@
 import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql'
-import { UseGuards } from '@nestjs/common'
+import { NotFoundException, UseGuards } from '@nestjs/common'
 
 import { DelegationAdminService } from './delegation-admin.service'
-import {
-  DelegationAdminCustomModel,
-  DelegationAdminModel,
-} from './models/delegation.model'
+import { DelegationAdminCustomModel } from './models/delegation.model'
 
 import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 import {
@@ -15,9 +12,16 @@ import {
 } from '@island.is/api/domains/identity'
 import { Loader } from '@island.is/nest/dataloader'
 import { DelegationDTO } from '@island.is/auth-api-lib'
+import {
+  CustomDelegation,
+  Domain,
+  DomainDataLoader,
+  DomainLoader,
+  ISLAND_DOMAIN,
+} from '@island.is/api/domains/auth'
 
 @UseGuards(IdsUserGuard)
-@Resolver(DelegationAdminModel)
+@Resolver(CustomDelegation)
 export class DelegationAdminResolver {
   constructor(
     private readonly delegationAdminService: DelegationAdminService,
@@ -27,8 +31,20 @@ export class DelegationAdminResolver {
   async getDelegationSystem(
     @Args('nationalId') nationalId: string,
     @CurrentUser() user: User,
+    @Loader(IdentityLoader) identityLoader: IdentityDataLoader,
   ) {
-    return this.delegationAdminService.getDelegationAdmin(user, nationalId)
+    const delegations = await this.delegationAdminService.getDelegationAdmin(
+      user,
+      nationalId,
+    )
+    const identityCard = await identityLoader.load(nationalId)
+
+    return {
+      nationalId: nationalId,
+      name: identityCard.name,
+      incoming: delegations.incoming,
+      outgoing: delegations.outgoing,
+    }
   }
 
   @ResolveField('from', () => Identity)
@@ -45,5 +61,36 @@ export class DelegationAdminResolver {
     @Parent() customDelegation: DelegationDTO,
   ) {
     return identityLoader.load(customDelegation.toNationalId)
+  }
+
+  @ResolveField('validTo', () => Date, { nullable: true })
+  resolveValidTo(@Parent() delegation: DelegationDTO): Date | undefined {
+    if (!delegation.validTo) {
+      return undefined
+    }
+
+    return delegation.scopes?.every(
+      (scope) => scope.validTo?.toString() === delegation.validTo?.toString(),
+    )
+      ? delegation.validTo
+      : undefined
+  }
+
+  @ResolveField('domain', () => Domain)
+  async resolveDomain(
+    @Loader(DomainLoader) domainLoader: DomainDataLoader,
+    @Parent() delegation: DelegationDTO,
+  ): Promise<Domain> {
+    const domainName = delegation.domainName ?? ISLAND_DOMAIN
+    const domain = await domainLoader.load({
+      lang: 'is',
+      domain: domainName,
+    })
+
+    if (!domain) {
+      throw new NotFoundException(`Could not find domain: ${domainName}`)
+    }
+
+    return domain
   }
 }

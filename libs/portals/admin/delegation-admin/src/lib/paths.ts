@@ -1,3 +1,5 @@
 export enum DelegationAdminPaths {
-  delegationAdmin = '/delegation-admin',
+  Root = '/delegation-admin',
+  DelegationAdmin = '/delegation-admin/:nationalId',
+  //DelegationAdminCreate = '/delegation-admin/create',
 }

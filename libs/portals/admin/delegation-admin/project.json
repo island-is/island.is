@@ -19,6 +19,13 @@
       "options": {
         "jestConfig": "libs/portals/admin/delegation-admin/jest.config.ts"
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/portals/admin/delegation-admin/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/portals/admin/delegation-admin/codegen.yml"
+      }
     }
   }
 }

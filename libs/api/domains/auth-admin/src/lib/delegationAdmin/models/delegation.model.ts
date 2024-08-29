@@ -1,34 +1,17 @@
 import { Field, ObjectType } from '@nestjs/graphql'
-
-import { AuthDelegationType } from '@island.is/clients/auth/delegation-api'
-import { Identity } from '@island.is/api/domains/identity'
+import { CustomDelegation } from '@island.is/api/domains/auth'
 
 @ObjectType('DelegationAdminCustomModel')
 export class DelegationAdminCustomModel {
-  @Field(() => [DelegationAdminModel])
-  incoming!: DelegationAdminModel[]
+  @Field(() => String, { nullable: false })
+  nationalId!: string
 
-  @Field(() => [DelegationAdminModel])
-  outgoing!: DelegationAdminModel[]
-}
+  @Field(() => String, { nullable: false })
+  name!: string
 
-@ObjectType('DelegationAdmin')
-export class DelegationAdminModel {
-  @Field(() => String)
-  id!: string
+  @Field(() => [CustomDelegation])
+  incoming!: CustomDelegation[]
 
-  @Field(() => String, { nullable: true })
-  validTo?: Date
-
-  @Field(() => AuthDelegationType)
-  type!: AuthDelegationType
-
-  @Field(() => String, { nullable: true })
-  domainName?: string
-
-  @Field(() => Identity)
-  to!: Identity
-
-  @Field(() => Identity)
-  from!: Identity
+  @Field(() => [CustomDelegation])
+  outgoing!: CustomDelegation[]
 }

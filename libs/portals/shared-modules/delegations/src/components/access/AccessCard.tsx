@@ -48,9 +48,15 @@ const getTags = (delegation: AuthCustomDelegation) =>
 
 interface AccessCardProps {
   delegation: AuthCustomDelegation
+
   onDelete(delegation: AuthCustomDelegation): void
+
   onView?(delegation: AuthCustomDelegation): void
+
   variant?: 'outgoing' | 'incoming'
+  direction?: 'incoming' | 'outgoing'
+
+  canModify?: boolean
 }
 
 export const AccessCard = ({
@@ -58,6 +64,8 @@ export const AccessCard = ({
   onDelete,
   onView,
   variant = 'outgoing',
+  direction = 'outgoing',
+  canModify = true,
 }: AccessCardProps) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
@@ -149,7 +157,7 @@ export const AccessCard = ({
   }
 
   const showActions =
-    isOutgoing || delegation.type === AuthDelegationType.Custom
+    canModify && (isOutgoing || delegation.type === AuthDelegationType.Custom)
 
   const canDelete =
     isOutgoing || (!isOutgoing && delegation.type === AuthDelegationType.Custom)
@@ -196,7 +204,8 @@ export const AccessCard = ({
           </Box>
           <VisuallyHidden>{formatMessage(m.accessHolder)}</VisuallyHidden>
           <Text variant="h3" as="h2" color={isExpired ? 'dark300' : 'dark400'}>
-            {isOutgoing
+            {/** fix this, was  "isOutgoing' instead of 'direaction === 'outgoing'' **/}
+            {direction === 'outgoing'
               ? (delegation as AuthCustomDelegationOutgoing)?.to?.name
               : (delegation as AuthCustomDelegationIncoming)?.from?.name}
           </Text>
