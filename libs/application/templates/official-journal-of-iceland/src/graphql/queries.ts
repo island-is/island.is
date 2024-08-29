@@ -240,3 +240,23 @@ export const UPLOAD_ATTACHMENTS_MUTATION = gql`
     }
   }
 `
+
+export const GET_PRESIGNED_URL_MUTATION = gql`
+  mutation GetPresignedUrl(
+    $input: OfficialJournalOfIcelandApplicationGetPresignedUrlInput!
+  ) {
+    officialJournalOfIcelandApplicationGetPresignedUrl(input: $input) {
+      url
+    }
+  }
+`
+
+export const ADD_APPLICATION_ATTACHMENT_MUTATION = gql`
+  mutation AddApplicationAttachment(
+    $input: OfficialJournalOfIcelandApplicationAddAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationAddAttachment(input: $input) {
+      success
+    }
+  }
+`

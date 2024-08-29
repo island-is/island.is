@@ -1,6 +1,6 @@
 export const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i
 
-export const UPLOAD_ACCEPT = '.pdf'
+export const ALLOWED_FILE_TYPES = ['.pdf', '.doc', '.docx']
 
 export const FILE_SIZE_LIMIT = 10000000
 
@@ -10,6 +10,11 @@ export const VERDSKRA_LINK =
 export enum AnswerOption {
   YES = 'yes',
   NO = 'no',
+}
+
+export enum ApplicationAttachmentType {
+  ORIGINAL = 'frumrit',
+  ADDITIONS = 'fylgiskjol',
 }
 
 export const MINIMUM_WEEKDAYS = 10

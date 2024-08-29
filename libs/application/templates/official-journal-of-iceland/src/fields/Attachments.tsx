@@ -1,28 +1,23 @@
 import { OJOIFieldBaseProps } from '../lib/types'
-import {
-  Box,
-  InputFileUpload,
-  UploadFile,
-  fileToObject,
-} from '@island.is/island-ui/core'
-import { useState } from 'react'
+import { Box, InputFileUpload } from '@island.is/island-ui/core'
 import { useFileUpload } from '../hooks/useFileUpload'
+import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
 
 export const Attachments = ({ application }: OJOIFieldBaseProps) => {
-  const { uploadFiles, files } = useFileUpload({
+  const { files, onChange } = useFileUpload({
     applicationId: application.id,
+    attachmentType: ApplicationAttachmentType.ADDITIONS,
   })
 
   return (
     <Box padding={[2, 2, 3]} background="blue100">
       <InputFileUpload
         fileList={files}
+        accept={ALLOWED_FILE_TYPES}
         header="Drag documents here to upload"
         description="Documents accepted with extension: .pdf, .docx, .rtf"
         buttonLabel="Select documents to upload"
-        onChange={(files) =>
-          uploadFiles(files.map((file) => fileToObject(file)))
-        }
+        onChange={onChange}
         onRemove={(file) => {
           console.log(file)
         }}

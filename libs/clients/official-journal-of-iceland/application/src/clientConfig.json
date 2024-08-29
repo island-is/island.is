@@ -154,6 +154,39 @@
         }
       }
     },
+    "/api/v1/applications/{id}/presigned-url": {
+      "post": {
+        "operationId": "getPresignedUrl",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/GetPresignedUrlBody" }
+            }
+          }
+        },
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignedUrlResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/health": {
       "get": {
         "operationId": "HealthController_",
@@ -867,6 +900,20 @@
           }
         },
         "required": ["files"]
+      },
+      "GetPresignedUrlBody": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string" },
+          "fileType": { "type": "string" },
+          "isOriginal": { "type": "boolean" }
+        },
+        "required": ["fileName", "fileType", "isOriginal"]
+      },
+      "PresignedUrlResponse": {
+        "type": "object",
+        "properties": { "url": { "type": "string" } },
+        "required": ["url"]
       },
       "StreamableFile": { "type": "object", "properties": {} },
       "GetPdfUrlResponse": {

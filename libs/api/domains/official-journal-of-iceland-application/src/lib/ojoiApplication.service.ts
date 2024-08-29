@@ -5,6 +5,8 @@ import { PostApplicationInput } from '../models/postApplication.input'
 import { GetCommentsInput } from '../models/getComments.input'
 import { UploadAttachmentsInput } from '../models/uploadAttachments.input'
 import { UploadAttachmentsResponse } from '../models/uploadAttachments.response'
+import { GetPresignedUrlInput } from '../models/getPresignedUrl.input'
+import { GetPresignedUrlResponse } from '../models/getPresignedUrl.response'
 
 @Injectable()
 export class OfficialJournalOfIcelandApplicationService {
@@ -50,9 +52,22 @@ export class OfficialJournalOfIcelandApplicationService {
   ): Promise<UploadAttachmentsResponse> {
     const buffer = Buffer.from(input.base64, 'base64')
 
-    return await this.ojoiApplicationService.uploadAttachments(
+    return this.ojoiApplicationService.uploadAttachments(
       input.applicationId,
       buffer,
     )
+  }
+
+  async getPresignedUrl(
+    input: GetPresignedUrlInput,
+  ): Promise<GetPresignedUrlResponse> {
+    return this.ojoiApplicationService.getPresignedUrl({
+      id: input.applicationId,
+      getPresignedUrlBody: {
+        fileName: input.fileName,
+        fileType: input.fileType,
+        isOriginal: input.isOriginal,
+      },
+    })
   }
 }

@@ -14,6 +14,10 @@ import { GetPdfUrlResponse } from '../models/getPdfUrlResponse'
 import { GetPdfResponse } from '../models/getPdfResponse'
 import { UploadAttachmentsInput } from '../models/uploadAttachments.input'
 import { UploadAttachmentsResponse } from '../models/uploadAttachments.response'
+import { GetPresignedUrlInput } from '../models/getPresignedUrl.input'
+import { GetPresignedUrlResponse } from '../models/getPresignedUrl.response'
+import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
+import { AddApplicationAttachmentInput } from '../models/addApplicationAttachment.input'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -27,53 +31,72 @@ export class OfficialJournalOfIcelandApplicationResolver {
   @Query(() => GetCommentsResponse, {
     name: 'officialJournalOfIcelandApplicationGetComments',
   })
-  async getComments(@Args('input') input: GetCommentsInput) {
-    return await this.ojoiApplicationService.getComments(input)
+  getComments(@Args('input') input: GetCommentsInput) {
+    return this.ojoiApplicationService.getComments(input)
   }
 
   // @Query(() => PostCommentResponse, {
   //   name: 'officialJournalOfIcelandApplicationPostComment',
   // })
-  // async postComment(@Args('input') input: PostCommentInput) {
-  //   return await this.ojoiApplicationService.postComment(input)
+  // postComment(@Args('input') input: PostCommentInput) {
+  //   return this.ojoiApplicationService.postComment(input)
   // }
 
   @Query(() => Boolean, {
     name: 'officialJournalOfIcelandApplicationPostApplication',
   })
-  async postApplication(@Args('input') input: PostApplicationInput) {
-    return await this.ojoiApplicationService.postApplication(input)
+  postApplication(@Args('input') input: PostApplicationInput) {
+    return this.ojoiApplicationService.postApplication(input)
   }
 
   @Query(() => CaseGetPriceResponse, {
     name: 'officialJournalOfIcelandApplicationGetPrice',
   })
-  async getPrice(@Args('id') id: string) {
-    return await this.ojoiApplicationService.getPrice(id)
+  getPrice(@Args('id') id: string) {
+    return this.ojoiApplicationService.getPrice(id)
   }
 
   @Query(() => GetPdfUrlResponse, {
     name: 'officialJournalOfIcelandApplicationGetPdfUrl',
   })
-  async getPdfUrl(@Args('id') id: string) {
-    return await this.ojoiApplicationService.getPdfUrl(id)
+  getPdfUrl(@Args('id') id: string) {
+    return this.ojoiApplicationService.getPdfUrl(id)
   }
 
   @Query(() => GetPdfResponse, {
     name: 'officialJournalOfIcelandApplicationGetPdf',
   })
-  async getPdf(@Args('id') id: string) {
-    return (await this.ojoiApplicationService.getPdf(id)).toString('base64')
+  getPdf(@Args('id') id: string) {
+    return this.ojoiApplicationService.getPdf(id)
   }
 
   @Mutation(() => UploadAttachmentsResponse, {
     name: 'officialJournalOfIcelandApplicationUploadAttachments',
   })
-  async uploadAttachments(
+  uploadAttachments(
     @Args('input', { type: () => UploadAttachmentsInput })
     input: UploadAttachmentsInput,
   ) {
-    console.log(input)
-    return await this.ojoiApplicationService.uploadAttachments(input)
+    return this.ojoiApplicationService.uploadAttachments(input)
+  }
+
+  @Mutation(() => GetPresignedUrlResponse, {
+    name: 'officialJournalOfIcelandApplicationGetPresignedUrl',
+  })
+  getPresignedUrl(
+    @Args('input', { type: () => GetPresignedUrlInput })
+    input: GetPresignedUrlInput,
+  ) {
+    return this.ojoiApplicationService.getPresignedUrl(input)
+  }
+
+  @Mutation(() => AddApplicationAttachmentResponse, {
+    name: 'officialJournalOfIcelandApplicationAddAttachment',
+  })
+  addAttachment(
+    @Args('input', { type: () => AddApplicationAttachmentInput })
+    input: AddApplicationAttachmentInput,
+  ) {
+    // return this.ojoiApplicationService.addAttachment(input)
   }
 }

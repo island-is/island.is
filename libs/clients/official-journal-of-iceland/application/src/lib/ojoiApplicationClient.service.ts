@@ -11,6 +11,8 @@ import {
   GetPdfUrlByApplicationIdRequest,
   GetPdfByApplicationIdRequest,
   S3UploadFilesResponse,
+  GetPresignedUrlRequest,
+  PresignedUrlResponse,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -111,6 +113,29 @@ export class OfficialJournalOfIcelandApplicationClientService {
         const json = await error.response.json()
 
         this.logger.warn('Failed to upload attachments', {
+          error: {
+            message: json.message,
+            status: json.statusCode,
+            name: json.error,
+          },
+          category: LOG_CATEGORY,
+        })
+      }
+
+      throw error
+    }
+  }
+
+  async getPresignedUrl(
+    params: GetPresignedUrlRequest,
+  ): Promise<PresignedUrlResponse> {
+    try {
+      return await this.ojoiApplicationApi.getPresignedUrl(params)
+    } catch (error) {
+      if (error.response) {
+        const json = await error.response.json()
+
+        this.logger.warn('Failed to get presigned url', {
           error: {
             message: json.message,
             status: json.statusCode,
