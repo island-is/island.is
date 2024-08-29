@@ -134,7 +134,7 @@ export const EditBasics = () => {
         if (apx.diff?.value) {
           const defaultTitle = apx.title.value ?? `Viðauki ${idx + 1}`
           const defaultText = apx.text.value
-          if (idx + 1 > appendixes.length) {
+          if (idx + 1 > appendixes?.length || appendixes?.length === 0) {
             actions.addAppendix()
           }
           actions.setAppendixProp(idx, 'title', defaultTitle)
