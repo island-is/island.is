@@ -1,10 +1,5 @@
 import { useState } from 'react'
-import {
-  Box,
-  Button,
-  Text,
-  Checkbox,
-} from '@island.is/island-ui/core'
+import { Box, Button, Text, Checkbox } from '@island.is/island-ui/core'
 import { Modal } from '@island.is/service-portal/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../../../lib/messages'

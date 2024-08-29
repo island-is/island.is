@@ -31,7 +31,12 @@ export const m = defineMessages({
   },
   myListsDescription: {
     id: 'sp.signatureCollection:myListsDescription',
-    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað:',
+    defaultMessage: 'Yfirlit safnanna sem þú hefur stofnað',
+    description: '',
+  },
+  myListsInfo: {
+    id: 'sp.signatureCollection:myListsInfo#markdown',
+    defaultMessage: 'Norðvesturkjördæmi - 7 þingsæti. 210 - 280 meðmæli.',
     description: '',
   },
   copyLinkButton: {
@@ -261,8 +266,13 @@ export const m = defineMessages({
   pageDescriptionParliamentary: {
     id: 'sp.signatureCollection:pageDescriptionParliamentary',
     defaultMessage:
-      'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Curabitur imperdiet, dui eget iaculis vehicula, purus nibh lobortis urna, sit amet dignissim lacus metus non arcu.',
+      'Hægt er að gera einstaklinga að umsjónaraðilum hér að neðan. Fjöldi meðmælenda er margfeldi af þingsætatölu hvers kjördæmis og 30 að lágmarki og 40 að hámarki. Söfnun lýkur 16.10.2024.',
     description: '',
+  },
+  infoProviderTooltip: {
+    id: 'sp.signatureCollection:infoProviderTooltip',
+    defaultMessage:
+      'Þjóðskrá Íslands hefur umsjón með gögnum um meðmælasöfnun.',
   },
   managers: {
     id: 'sp.signatureCollection:managers',

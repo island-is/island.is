@@ -1,6 +1,5 @@
 import {
   ActionCard,
-  AlertMessage,
   Box,
   Stack,
   Text,
@@ -21,16 +20,22 @@ const OwnerView = () => {
   const { formatMessage } = useLocale()
 
   return (
-    <Stack space={7}>
-      <AlertMessage type="info" message="Söfnun lýkur 16.10.2024" />
-      <Box>
+    <Stack space={8}>
+      <Box marginTop={5}>
         <Box
           display="flex"
           justifyContent="spaceBetween"
           alignItems="baseline"
           marginBottom={3}
         >
-          <Text variant="h4">{formatMessage(m.myListsDescription)}</Text>
+          <Text variant="h4">
+            {formatMessage(m.myListsDescription) + ' '}
+            <Tooltip
+              placement="right"
+              text={formatMessage(m.myListsInfo)}
+              color="blue400"
+            />
+          </Text>
           <AddConstituency />
         </Box>
         {constituencies.map((c: string, index: number) => (
