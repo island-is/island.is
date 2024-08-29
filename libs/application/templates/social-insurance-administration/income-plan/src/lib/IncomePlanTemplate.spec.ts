@@ -317,6 +317,58 @@ describe('Income Plan Template', () => {
         expect(hasChanged).toBe(true)
         expect(newApplication.answers).toEqual(answer)
       })
+      it('should unset months and unevenIncomePerYear if incomeCategory is not INCOME', () => {
+        const helper = new ApplicationTemplateHelper(
+          buildApplication({
+            answers: {
+              incomePlanTable: [
+                {
+                  income: RatioType.MONTHLY,
+                  january: '999',
+                  february: '999',
+                  march: '999',
+                  april: '999',
+                  may: '999',
+                  june: '999',
+                  july: '999',
+                  august: '999',
+                  september: '999',
+                  october: '999',
+                  november: '999',
+                  december: '999',
+                  currency: 'IKR',
+                  incomeType: 'Skattskyldar tekjur (óskilgreint)',
+                  incomePerYear: '1000000',
+                  incomeCategory: 'Aðrar tekjur',
+                  equalIncomePerMonth: '999',
+                  unevenIncomePerYear: [YES],
+                },
+              ],
+            },
+          }),
+          IncomePlanTemplate,
+        )
+
+        const answer = {
+          incomePlanTable: [
+            {
+              income: RatioType.MONTHLY,
+              currency: 'IKR',
+              incomeType: 'Skattskyldar tekjur (óskilgreint)',
+              incomePerYear: '1000000',
+              incomeCategory: 'Aðrar tekjur',
+              equalIncomePerMonth: '999',
+            },
+          ],
+        }
+
+        const [hasChanged, _, newApplication] = helper.changeState({
+          type: DefaultEvents.SUBMIT,
+        })
+
+        expect(hasChanged).toBe(true)
+        expect(newApplication.answers).toEqual(answer)
+      })
     })
   })
 })

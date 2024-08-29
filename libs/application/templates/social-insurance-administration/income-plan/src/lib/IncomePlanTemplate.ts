@@ -37,15 +37,18 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
 } from '../dataProviders'
-import { statesMessages } from '../lib/messages'
-import { ISK, RatioType, YES } from './constants'
+import { INCOME, ISK, RatioType, YES } from './constants'
 import { dataSchema } from './dataSchema'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   isEligible,
 } from './incomePlanUtils'
-import { historyMessages, incomePlanFormMessage } from './messages'
+import {
+  historyMessages,
+  incomePlanFormMessage,
+  statesMessages,
+} from './messages'
 
 const IncomePlanTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -388,6 +391,7 @@ const IncomePlanTemplate: ApplicationTemplate<
         incomePlan.forEach((income, index) => {
           if (
             (income.income === RatioType.MONTHLY &&
+              income.incomeCategory === INCOME &&
               income.unevenIncomePerYear?.[0] === YES) ||
             income.income === RatioType.YEARLY
           ) {
@@ -403,7 +407,8 @@ const IncomePlanTemplate: ApplicationTemplate<
           if (
             (income.income === RatioType.MONTHLY &&
               income.unevenIncomePerYear?.[0] !== YES) ||
-            income.income === RatioType.YEARLY
+            income.income === RatioType.YEARLY ||
+            income.incomeCategory !== INCOME
           ) {
             unset(application.answers, `incomePlanTable[${index}].january`)
             unset(application.answers, `incomePlanTable[${index}].february`)
@@ -418,7 +423,10 @@ const IncomePlanTemplate: ApplicationTemplate<
             unset(application.answers, `incomePlanTable[${index}].november`)
             unset(application.answers, `incomePlanTable[${index}].december`)
           }
-          if (income.income === RatioType.YEARLY) {
+          if (
+            income.income === RatioType.YEARLY ||
+            income.incomeCategory !== INCOME
+          ) {
             unset(
               application.answers,
               `incomePlanTable[${index}].unevenIncomePerYear`,
