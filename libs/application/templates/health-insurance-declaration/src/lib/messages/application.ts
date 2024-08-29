@@ -121,7 +121,7 @@ export const application = {
     },
     studentSectionPlaceholderText: {
       id: 'hid.application:residency.section.student.placeholderSelectText',
-      defaultMessage: 'Veldur land sem ferðast á til',
+      defaultMessage: 'Veldu land sem ferðast á til',
       description: 'Student residency selection placeholder text',
     },
   }),
