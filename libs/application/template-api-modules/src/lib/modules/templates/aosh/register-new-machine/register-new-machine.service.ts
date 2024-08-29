@@ -64,7 +64,7 @@ export class RegisterNewMachineTemplateService extends BaseTemplateApiService {
     const techInfo = {} as { [key: string]: string | undefined }
 
     answers.techInfo.forEach(({ variableName, value }) => {
-      if (variableName) {
+      if (variableName && value) {
         techInfo[variableName] = value
       }
     })

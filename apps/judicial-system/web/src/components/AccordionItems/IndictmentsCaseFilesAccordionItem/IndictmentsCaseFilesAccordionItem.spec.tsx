@@ -151,6 +151,11 @@ describe('sortedFilesInChapter', () => {
   it('should return an array of files in chapter sorted by orderWithinChapter', () => {
     expect(sortedFilesInChapter(0, caseFiles)).toEqual([
       {
+        canEdit: true,
+        category: undefined,
+        displayDate: undefined,
+        status: 'done',
+        userGeneratedFilename: undefined,
         displayText: caseFiles[1].name,
         isDivider: false,
         isHeading: false,
@@ -161,6 +166,11 @@ describe('sortedFilesInChapter', () => {
         canOpen: false,
       },
       {
+        canEdit: true,
+        category: undefined,
+        displayDate: undefined,
+        status: 'done',
+        userGeneratedFilename: undefined,
         displayText: caseFiles[0].name,
         isDivider: false,
         isHeading: false,
@@ -171,6 +181,11 @@ describe('sortedFilesInChapter', () => {
         canOpen: false,
       },
       {
+        canEdit: true,
+        category: undefined,
+        displayDate: undefined,
+        status: 'done',
+        userGeneratedFilename: undefined,
         displayText: caseFiles[2].name,
         isDivider: false,
         isHeading: false,

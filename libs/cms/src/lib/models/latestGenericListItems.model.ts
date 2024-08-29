@@ -1,0 +1,53 @@
+import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { SystemMetadata } from '@island.is/shared/types'
+import { CacheField } from '@island.is/nest/graphql'
+import { ILatestGenericListItems } from '../generated/contentfulTypes'
+import { GenericList, mapGenericList } from './genericList.model'
+import { mapPageUnion, PageUnion } from '../unions/page.union'
+import { GetGenericListItemsInput } from '../dto/getGenericListItems.input'
+import { GenericListItemResponse } from './genericListItemResponse.model'
+import { ElasticsearchIndexLocale } from '@island.is/content-search-index-manager'
+
+@ObjectType()
+export class LatestGenericListItems {
+  @Field(() => ID)
+  id!: string
+
+  @Field()
+  title?: string
+
+  @CacheField(() => GenericList, { nullable: true })
+  genericList?: GenericList | null
+
+  @CacheField(() => PageUnion)
+  seeMorePage?: typeof PageUnion | null
+
+  @Field()
+  seeMoreLinkText?: string
+
+  @CacheField(() => GenericListItemResponse, { nullable: true })
+  itemResponse?: GetGenericListItemsInput | null // This field is populated by resolver
+}
+
+export const mapLatestGenericListItems = ({
+  fields,
+  sys,
+}: ILatestGenericListItems): SystemMetadata<LatestGenericListItems> => ({
+  typename: 'LatestGenericListItems',
+  id: sys.id,
+  title: fields.title ?? '',
+  genericList: fields.genericList ? mapGenericList(fields.genericList) : null,
+  seeMorePage: fields.seeMorePage ? mapPageUnion(fields.seeMorePage) : null,
+  seeMoreLinkText: fields.seeMoreLinkText ?? '',
+  itemResponse: fields.genericList?.sys.id
+    ? {
+        genericListId: fields.genericList?.sys.id,
+        lang:
+          sys.locale === 'is-IS'
+            ? 'is'
+            : (sys.locale as ElasticsearchIndexLocale),
+        page: 1,
+        size: 2,
+      }
+    : null,
+})

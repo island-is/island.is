@@ -112,7 +112,7 @@ const AppealFiles = () => {
   }
 
   const handleChange = (files: File[]) => {
-    addUploadFiles(files, appealCaseFilesType, 'done')
+    addUploadFiles(files, { category: appealCaseFilesType, status: 'done' })
   }
 
   return (
@@ -202,9 +202,8 @@ const AppealFiles = () => {
               ? strings.uploadFailedNextButtonText
               : strings.nextButtonText,
           )}
-          nextButtonIcon={undefined}
           nextIsLoading={!allFilesDoneOrError}
-          nextIsDisabled={uploadFiles.length === 0}
+          nextIsDisabled={uploadFiles.length === 0 || !allFilesDoneOrError}
           nextButtonColorScheme={someFilesError ? 'destructive' : 'default'}
         />
       </FormContentContainer>
