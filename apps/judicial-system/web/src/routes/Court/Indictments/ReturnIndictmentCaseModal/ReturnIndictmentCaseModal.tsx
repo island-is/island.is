@@ -1,4 +1,4 @@
-import React, { FC, useContext, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Input } from '@island.is/island-ui/core'
@@ -18,7 +18,7 @@ import { strings } from './ReturnIndictmentCaseModal.strings'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   onClose: () => void
   onComplete: () => void
 }
