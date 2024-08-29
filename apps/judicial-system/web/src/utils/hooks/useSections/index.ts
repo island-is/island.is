@@ -400,7 +400,8 @@ const useSections = (
     const { id, type, state } = workingCase
     const substepsShouldBeHidden =
       state === CaseState.RECEIVED ||
-      state === CaseState.WAITING_FOR_CANCELLATION
+      state === CaseState.WAITING_FOR_CANCELLATION ||
+      router.pathname === `${constants.INDICTMENTS_ADD_FILES_ROUTE}/[id]`
     const isTrafficViolation = isTrafficViolationCase(workingCase)
 
     return {

@@ -17,6 +17,7 @@ import { UPDATE_APPLICATION } from '@island.is/application/graphql'
 import { TechInfoItem } from '../../shared/types'
 import { formFieldMapper } from './formFieldMapper'
 import { application as applicationMessage } from '../../lib/messages'
+import { formatDate } from '../../utils'
 
 export const technicalInfoInputs = gql`
   ${TECHNICAL_INFO_INPUTS}
@@ -62,7 +63,6 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
   })
 
   useEffect(() => {
-    // Call subcategory
     runQuery({
       variables: {
         parentCategory: machineCategory,
@@ -71,25 +71,37 @@ export const TechnicalInfo: FC<React.PropsWithChildren<FieldBaseProps>> = (
   }, [machineCategory])
 
   setBeforeSubmitCallback?.(async () => {
-    // Renna yfir listan í techInfoItems og finna í listanum watchTechInfoFields
-    // Ef það er required þá tékka hvort það sé útfyllt
-    // Síðan setja í answers með nafninu og value
     setDisplayError(false)
     const techInfoAnswer = techInfoItems?.map(
-      ({ variableName, required, label }, index) => {
+      ({ variableName, required, label, maxLength, type }, index) => {
         const answer = variableName ? watchTechInfoFields[variableName] : ''
-        if (required && answer.length === 0) {
+        if (
+          (required && answer.length === 0) ||
+          (required &&
+            (type === 'int' || type === 'float'
+              ? maxLength
+                ? answer.length > maxLength
+                : false
+              : false))
+        ) {
           setDisplayError(true)
           return 'error'
         }
         setValue(`techInfo[${index}].variableName`, variableName)
-        setValue(`techInfo[${index}].value`, answer)
+        setValue(
+          `techInfo[${index}].value`,
+          type === 'dateTime' ? formatDate(answer) : answer,
+        )
         setValue(`techInfo[${index}].label`, label)
         return { variableName, value: answer, label }
       },
     )
 
-    if (techInfoAnswer?.some((val) => val === 'error')) {
+    if (
+      loading ||
+      connectionError ||
+      techInfoAnswer?.some((val) => val === 'error')
+    ) {
       return [false, '']
     }
 
