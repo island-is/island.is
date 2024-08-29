@@ -79,7 +79,10 @@ export const AirDiscountModule = React.memo(() => {
       }}
     >
       <Host>
-        <TouchableOpacity onPress={() => navigateTo(`/air-discount`)}>
+        <TouchableOpacity
+          disabled={count === 0}
+          onPress={() => navigateTo(`/air-discount`)}
+        >
           <Heading
             button={
               count === 0 ? null : (

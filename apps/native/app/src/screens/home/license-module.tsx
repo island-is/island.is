@@ -99,7 +99,10 @@ export const LicenseModule = React.memo(() => {
       }}
     >
       <Host>
-        <TouchableOpacity onPress={() => navigateTo(`/wallet`)}>
+        <TouchableOpacity
+          disabled={count === 0}
+          onPress={() => navigateTo(`/wallet`)}
+        >
           <Heading
             button={
               count === 0 ? null : (

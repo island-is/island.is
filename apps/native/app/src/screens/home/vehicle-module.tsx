@@ -89,7 +89,10 @@ export const VehicleModule = React.memo(() => {
       }}
     >
       <Host>
-        <TouchableOpacity onPress={() => navigateTo(`/vehicles`)}>
+        <TouchableOpacity
+          disabled={count === 0}
+          onPress={() => navigateTo(`/vehicles`)}
+        >
           <Heading
             button={
               count === 0 ? null : (
