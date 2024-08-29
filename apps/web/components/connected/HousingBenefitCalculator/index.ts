@@ -8,7 +8,10 @@ export const HousingBenefitCalculator = dynamic(
 )
 
 export const SpecificHousingBenefitSupportCalculator = dynamic(
-  () => import('./SpecificHousingBenefitSupportCalculator/SpecificHousingBenefitSupportCalculator'),
+  () =>
+    import(
+      './SpecificHousingBenefitSupportCalculator/SpecificHousingBenefitSupportCalculator'
+    ),
   {
     ssr: true,
   },

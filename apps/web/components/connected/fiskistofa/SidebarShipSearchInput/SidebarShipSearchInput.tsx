@@ -6,8 +6,6 @@ import { AsyncSearchInput, Box, Text } from '@island.is/island-ui/core'
 import { shouldLinkOpenInNewWindow } from '@island.is/shared/utils'
 import { translation as translationStrings } from './translation.strings'
 
-
-
 const SidebarShipSearchInput = () => {
   const { formatMessage } = useIntl()
   const [searchValue, setSearchValue] = useState('')
@@ -21,7 +19,8 @@ const SidebarShipSearchInput = () => {
       const pathname = formatMessage(translationStrings.shipDetailsHref)
       const query = {
         ...router.query,
-        [formatMessage(translationStrings.shipDetailsNumberQueryParam)]: searchValue,
+        [formatMessage(translationStrings.shipDetailsNumberQueryParam)]:
+          searchValue,
         selectedTab: router.query?.selectedTab ?? 'skip',
       }
 

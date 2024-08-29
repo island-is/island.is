@@ -34,7 +34,8 @@ export const translation = defineMessages({
   deilistofnaError: {
     id: 'web.fiskistofaCalculatorsStraddlingStockCalculator:deilistofnaError',
     defaultMessage: 'Villa kom upp við að sækja gögn',
-    description: 'Texti fyrir villu skilaboð sem birtast þegar ekki tekst að sækja gögn',
+    description:
+      'Texti fyrir villu skilaboð sem birtast þegar ekki tekst að sækja gögn',
   },
   kvotategund: {
     id: 'web.fiskistofaCalculatorsStraddlingStockCalculator:kvotategund',

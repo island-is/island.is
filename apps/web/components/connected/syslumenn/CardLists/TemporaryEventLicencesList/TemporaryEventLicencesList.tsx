@@ -367,8 +367,8 @@ const TemporaryEventLicencesList: FC<
 
                       {temporaryEventLicence.maximumNumberOfGuests && (
                         <Text>
-                          {formatMessage(t.licenseMaximumNumberOfGuests)}
-                          : {temporaryEventLicence.maximumNumberOfGuests}
+                          {formatMessage(t.licenseMaximumNumberOfGuests)}:{' '}
+                          {temporaryEventLicence.maximumNumberOfGuests}
                         </Text>
                       )}
                     </Box>

@@ -1,4 +1,4 @@
-import { CSSProperties,useEffect, useState } from 'react'
+import { CSSProperties, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 import { useLazyQuery } from '@apollo/client'

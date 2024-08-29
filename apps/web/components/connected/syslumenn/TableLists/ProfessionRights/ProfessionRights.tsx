@@ -18,10 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
-import type {
-  ConnectedComponent,
-  Query,
-} from '@island.is/web/graphql/schema'
+import type { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
 
 import {
   getNormalizedSearchTerms,
