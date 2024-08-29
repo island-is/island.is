@@ -37,11 +37,7 @@ export function useFileUploader(draftId: RegulationDraftId) {
 
         request.addEventListener('load', () => {
           if (request.status >= 200 && request.status < 300 && presignedPost) {
-            success(
-              `${isDevelopment ? 'https://files.reglugerd.is' : fileUrl}/${
-                presignedPost?.fields?.['key']
-              }`,
-            )
+            success(`${fileUrl}/${presignedPost?.fields?.['key']}`)
           } else {
             failure(`Upload failed. ${request.statusText}`)
           }
