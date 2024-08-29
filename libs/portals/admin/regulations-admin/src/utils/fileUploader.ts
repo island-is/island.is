@@ -5,6 +5,8 @@ import { fileUrl, useS3Upload } from './dataHooks'
 export function useFileUploader(draftId: RegulationDraftId) {
   const { createPresignedPost, createFormData } = useS3Upload()
 
+  const isDevelopment = process.env.NODE_ENV === 'development'
+
   const fileUploader =
     (): EditorFileUploader => async (blobInfo, success, failure, progress) => {
       try {
@@ -35,7 +37,11 @@ export function useFileUploader(draftId: RegulationDraftId) {
 
         request.addEventListener('load', () => {
           if (request.status >= 200 && request.status < 300 && presignedPost) {
-            success(`${fileUrl}/${presignedPost?.fields?.['key']}`)
+            success(
+              `${isDevelopment ? 'https://files.reglugerd.is' : fileUrl}/${
+                presignedPost?.fields?.['key']
+              }`,
+            )
           } else {
             failure(`Upload failed. ${request.statusText}`)
           }
@@ -43,7 +49,11 @@ export function useFileUploader(draftId: RegulationDraftId) {
 
         // Create FormData and send the request
         const formData = createFormData(presignedPost, blob as File)
-        request.open('POST', `${fileUrl}/`, true)
+        request.open(
+          'POST',
+          `${isDevelopment ? presignedPost?.url : fileUrl + '/'}`,
+          true,
+        )
         request.send(formData)
       } catch (error) {
         console.error('Error during upload:', error)
