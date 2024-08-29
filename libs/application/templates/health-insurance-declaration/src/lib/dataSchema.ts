@@ -28,7 +28,6 @@ export const HealthInsuranceDeclarationSchema = z.object({
       registerPersonsChildrenCheckboxField: z.string().array().optional(),
     })
     .superRefine((v, ctx) => {
-      console.log('validation object', v)
       if (
         !v.registerPersonsApplicantCheckboxField?.length &&
         !v.registerPersonsSpouseCheckboxField?.length &&
