@@ -14,12 +14,12 @@ import { EndorsementsScope, AdminPortalScope } from '@island.is/auth/scopes'
 
 describe('EndorsementListController - No Auth', () => {
   it.each`
-    method     | endpoint
-    ${'GET'}   | ${'/endorsement-list'}
-    ${'GET'}   | ${'/endorsement-list/general-petition-lists'}
-    ${'GET'}   | ${'/endorsement-list/general-petition-list/some-id'}
-    ${'GET'}   | ${'/endorsement-list/some-id/ownerInfo'}
-    ${'POST'}  | ${'/endorsement-list'}
+    method    | endpoint
+    ${'GET'}  | ${'/endorsement-list'}
+    ${'GET'}  | ${'/endorsement-list/general-petition-lists'}
+    ${'GET'}  | ${'/endorsement-list/general-petition-list/some-id'}
+    ${'GET'}  | ${'/endorsement-list/some-id/ownerInfo'}
+    ${'POST'} | ${'/endorsement-list'}
   `(
     '$method $endpoint should return 401 when user is unauthenticated',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -43,12 +43,12 @@ describe('EndorsementListController - No Auth', () => {
 
 describe('EndorsementListController - With Auth No Scope', () => {
   it.each`
-    method     | endpoint
-    ${'GET'}   | ${'/endorsement-list'}
-    ${'GET'}   | ${'/endorsement-list/general-petition-lists'}
-    ${'GET'}   | ${'/endorsement-list/general-petition-list/some-id'}
-    ${'GET'}   | ${'/endorsement-list/some-id'}
-    ${'POST'}  | ${'/endorsement-list'}
+    method    | endpoint
+    ${'GET'}  | ${'/endorsement-list'}
+    ${'GET'}  | ${'/endorsement-list/general-petition-lists'}
+    ${'GET'}  | ${'/endorsement-list/general-petition-list/some-id'}
+    ${'GET'}  | ${'/endorsement-list/some-id'}
+    ${'POST'} | ${'/endorsement-list'}
   `(
     '$method $endpoint should return 403 when user is unauthorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -73,12 +73,12 @@ describe('EndorsementListController - With Auth No Scope', () => {
 
 describe('EndorsementListController - With Auth And Scope', () => {
   it.each`
-    method     | endpoint
-    ${'GET'}   | ${'/endorsement-list'}
-    ${'GET'}   | ${'/endorsement-list/general-petition-lists'}
-    ${'GET'}   | ${'/endorsement-list/general-petition-list/some-id'}
-    ${'GET'}   | ${'/endorsement-list/some-id'}
-    ${'POST'}  | ${'/endorsement-list'}
+    method    | endpoint
+    ${'GET'}  | ${'/endorsement-list'}
+    ${'GET'}  | ${'/endorsement-list/general-petition-lists'}
+    ${'GET'}  | ${'/endorsement-list/general-petition-list/some-id'}
+    ${'GET'}  | ${'/endorsement-list/some-id'}
+    ${'POST'} | ${'/endorsement-list'}
   `(
     '$method $endpoint should return 200 or 204 when user is authorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
@@ -103,13 +103,13 @@ describe('EndorsementListController - With Auth And Scope', () => {
   )
 
   it.each`
-    method     | endpoint
-    ${'PUT'}   | ${'/endorsement-list/some-id/close'}
-    ${'PUT'}   | ${'/endorsement-list/some-id/open'}
-    ${'PUT'}   | ${'/endorsement-list/some-id/lock'}
-    ${'PUT'}   | ${'/endorsement-list/some-id/unlock'}
-    ${'PUT'}   | ${'/endorsement-list/some-id/update'}
-    ${'POST'}  | ${'/endorsement-list/some-id/email-pdf'}
+    method    | endpoint
+    ${'PUT'}  | ${'/endorsement-list/some-id/close'}
+    ${'PUT'}  | ${'/endorsement-list/some-id/open'}
+    ${'PUT'}  | ${'/endorsement-list/some-id/lock'}
+    ${'PUT'}  | ${'/endorsement-list/some-id/unlock'}
+    ${'PUT'}  | ${'/endorsement-list/some-id/update'}
+    ${'POST'} | ${'/endorsement-list/some-id/email-pdf'}
   `(
     '$method $endpoint should return 204 when user is authorized',
     async ({ method, endpoint }: TestEndpointOptions) => {
