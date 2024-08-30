@@ -79,6 +79,9 @@ export class WorkMachinesService {
       (v) =>
         ({
           ...v,
+          dateLastInspection: v.dateLastInspection
+            ? new Date(v.dateLastInspection)
+            : undefined,
           ownerName: v.owner,
           supervisorName: v.supervisor,
         } as WorkMachine),
@@ -132,6 +135,9 @@ export class WorkMachinesService {
 
     return {
       ...data,
+      dateLastInspection: data.dateLastInspection
+        ? new Date(data.dateLastInspection)
+        : undefined,
       links,
     }
   }

@@ -33,14 +33,14 @@ export const VaccinationsWrapper = ({
         <LinkButton
           to={formatMessage(m.readAboutVaccinationsLink)}
           icon="open"
-          variant="button"
+          variant="utility"
           text={formatMessage(m.readAboutVaccinations)}
         />
         <Box marginLeft={1}>
           <LinkButton
             to={formatMessage(m.makeVaccinationAppointmentLink)}
             icon="open"
-            variant="button"
+            variant="utility"
             text={formatMessage(m.makeVaccinationAppointment)}
           />
         </Box>

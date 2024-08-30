@@ -15,7 +15,6 @@ import {
   PrePaidInheritanceOptions,
   RelationSpouse,
 } from './constants'
-import { DebtTypes } from '../types'
 
 const deceasedShare = {
   deceasedShare: z.string().nonempty().optional(),

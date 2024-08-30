@@ -1,6 +1,5 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
-import cn from 'classnames'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import {
@@ -78,7 +77,7 @@ const CaseFileTable: FC<Props> = ({
                 className={styles.linkButton}
               >
                 <Text color="blue400" variant="h5">
-                  {file.name}
+                  {file.userGeneratedFilename}
                 </Text>
               </Box>
             </td>

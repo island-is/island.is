@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import { useLazyQuery } from '@apollo/client'
 
 import {
@@ -17,9 +18,10 @@ import {
   GetHousingBenefitCalculationQuery,
   GetHousingBenefitCalculationQueryVariables,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { GET_HOUSING_BENEFIT_CALCULATION } from '@island.is/web/screens/queries/HousingBenefitCalculator'
 import { formatCurrency } from '@island.is/web/utils/currency'
+
+import { translation as translationStrings } from './translation.strings'
 
 const MAX_LENGTH = 15
 
@@ -35,7 +37,7 @@ interface HousingBenefitCalculatorProps {
 }
 
 const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
-  const n = useNamespace(slice.json ?? {})
+  const { formatMessage } = useIntl()
   const [inputState, setInputState] = useState<InputState>({
     income: '',
     housingCost: '',
@@ -116,9 +118,15 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
     if (slice?.configJson?.showSixOptions) {
       options.push({ label: '4', value: 4 })
       options.push({ label: '5', value: 5 })
-      options.push({ label: n('sixOrMore', '6 eða fleiri'), value: 6 })
+      options.push({
+        label: formatMessage(translationStrings.sixOrMore),
+        value: 6,
+      })
     } else {
-      options.push({ label: n('fourOrMore', '4 eða fleiri'), value: 4 })
+      options.push({
+        label: formatMessage(translationStrings.fourOrMore),
+        value: 4,
+      })
     }
 
     return options
@@ -135,7 +143,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
         <Stack space={5}>
           <Box>
             <Text variant="medium" fontWeight="light" paddingBottom={2}>
-              {n('numberOfHouseholdMembers', 'Fjöldi heimilismanna í húsnæði?')}
+              {formatMessage(translationStrings.numberOfHouseholdMembers)}
             </Text>
 
             <Controller
@@ -162,9 +170,8 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           </Box>
           <Box>
             <Text variant="medium" fontWeight="light" paddingBottom={2}>
-              {n(
-                'monthlyIncomeOfHouseholdMembers18YearsAndOlder',
-                'Samanlagðar mánaðarlegartekjur heimilismanna 18 ára og eldri (tekjur f. skatt)?',
+              {formatMessage(
+                translationStrings.monthlyIncomeOfHouseholdMembers18YearsAndOlder,
               )}
             </Text>
 
@@ -172,8 +179,8 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
               id="income"
               control={control}
               name="income"
-              label={n('incomeLabel', 'Tekjur')}
-              placeholder={n('incomePlaceholder', 'kr.')}
+              label={formatMessage(translationStrings.incomeLabel)}
+              placeholder={formatMessage(translationStrings.incomePlaceholder)}
               currency={true}
               type="number"
               onChange={(event) => {
@@ -186,9 +193,8 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           </Box>
           <Box>
             <Text variant="medium" fontWeight="light" paddingBottom={2}>
-              {n(
-                'assetsOfHouseholdMembers18YearsAndOlder',
-                'Eignir heimilismanna 18 ára og eldri?',
+              {formatMessage(
+                translationStrings.assetsOfHouseholdMembers18YearsAndOlder,
               )}
             </Text>
 
@@ -196,8 +202,8 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
               id="assets"
               control={control}
               name="assets"
-              label={n('assetsLabel', 'Eignir')}
-              placeholder={n('assetsPlaceholder', 'kr.')}
+              label={formatMessage(translationStrings.assetsLabel)}
+              placeholder={formatMessage(translationStrings.assetsPlaceholder)}
               currency={true}
               type="number"
               onChange={(event) => {
@@ -210,14 +216,16 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           </Box>
           <Box>
             <Text variant="medium" fontWeight="light" paddingBottom={2}>
-              {n('housingCostsPerMonth', 'Húsnæðiskostnaður á mánuði?')}
+              {formatMessage(translationStrings.housingCostsPerMonth)}
             </Text>
             <InputController
               id="housingCost"
               control={control}
               name="housingCost"
-              label={n('housingCostLabel', 'Húsnæðiskostnaður')}
-              placeholder={n('housingCostPlaceholder', 'kr.')}
+              label={formatMessage(translationStrings.housingCostLabel)}
+              placeholder={formatMessage(
+                translationStrings.housingCostPlaceholder,
+              )}
               currency={true}
               type="number"
               onChange={(event) => {
@@ -229,13 +237,10 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
             />
           </Box>
           <Text variant="small" lineHeight="lg">
-            {n(
-              'calculatorDisclaimer',
-              'Útreikningur húsnæðisbóta samkvæmt reiknivélinni byggir á þeim forsendum sem þú gafst upp og telst ekki bindandi ákvörðun um húsnæðisbætur. Útreikningur miðast við greiðslur húsnæðisbóta fyrir heilt almanaksár.',
-            )}
+            {formatMessage(translationStrings.calculatorDisclaimer)}
           </Text>
           <Button loading={loading} onClick={calculate} disabled={!canSubmit}>
-            {n('calculate', 'Reikna')}
+            {formatMessage(translationStrings.calculate)}
           </Button>
         </Stack>
       </Box>
@@ -246,7 +251,7 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
           paddingX={[3, 3, 3, 3, 12]}
         >
           <Text variant="h3">
-            <strong>{n('results', 'Niðurstöður')}</strong>
+            <strong>{formatMessage(translationStrings.results)}</strong>
           </Text>
           <Stack space={5}>
             <Box>
@@ -257,12 +262,9 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
                   paddingBottom={2}
                   paddingTop={5}
                 >
-                  {n(
-                    'maximumHousingBenefits',
-                    'Hámarksbætur miðað við fjölda heimilismanna eru',
-                  )}{' '}
+                  {formatMessage(translationStrings.maximumHousingBenefits)}{' '}
                   {formatCurrency(maximumHousingBenefits)}{' '}
-                  {n('perMonth', 'á mánuði.')}
+                  {formatMessage(translationStrings.perMonth)}
                 </Text>
               )}
 
@@ -270,30 +272,29 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
                 {typeof reductionsDueToIncome === 'number' &&
                   reductionsDueToIncome > 0 && (
                     <Text variant="medium" fontWeight="light">
-                      {n('reductionDueToIncome', 'Skerðing vegna tekna eru')}{' '}
+                      {formatMessage(translationStrings.reductionDueToIncome)}{' '}
                       {formatCurrency(reductionsDueToIncome)}{' '}
-                      {n('perMonth', 'á mánuði.')}
+                      {formatMessage(translationStrings.perMonth)}
                     </Text>
                   )}
 
                 {typeof reductionsDueToAssets === 'number' &&
                   reductionsDueToAssets > 0 && (
                     <Text variant="medium" fontWeight="light">
-                      {n('reductionDueToAssets', 'Skerðing vegna eigna eru')}{' '}
+                      {formatMessage(translationStrings.reductionDueToAssets)}{' '}
                       {formatCurrency(reductionsDueToAssets)}{' '}
-                      {n('perMonth', 'á mánuði.')}
+                      {formatMessage(translationStrings.perMonth)}
                     </Text>
                   )}
 
                 {typeof reductionsDueToHousingCosts === 'number' &&
                   reductionsDueToHousingCosts > 0 && (
                     <Text variant="medium" fontWeight="light">
-                      {n(
-                        'reductionsDueToHousingCosts',
-                        'Skerðing vegna húsnæðiskostnaðar eru',
+                      {formatMessage(
+                        translationStrings.reductionsDueToHousingCosts,
                       )}{' '}
                       {formatCurrency(reductionsDueToHousingCosts)}{' '}
-                      {n('perMonth', 'á mánuði.')}
+                      {formatMessage(translationStrings.perMonth)}
                     </Text>
                   )}
               </Stack>
@@ -301,9 +302,9 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
 
             {typeof estimatedHousingBenefits === 'number' && (
               <Text variant="medium" fontWeight="light">
-                {n('estimatedHousingBenefits', 'Áætlaðar húsnæðisbætur eru')}{' '}
+                {formatMessage(translationStrings.estimatedHousingBenefits)}{' '}
                 <strong>{formatCurrency(estimatedHousingBenefits)}</strong>{' '}
-                {n('perMonth', 'á mánuði.')}
+                {formatMessage(translationStrings.perMonth)}
               </Text>
             )}
           </Stack>
@@ -312,8 +313,8 @@ const HousingBenefitCalculator = ({ slice }: HousingBenefitCalculatorProps) => {
       {!loading && called && error && (
         <AlertMessage
           type="error"
-          title={n('errorOccurredTitle', 'Villa kom upp')}
-          message={n('errorOccurredMessage', 'Ekki tókst að sækja niðurstöður')}
+          title={formatMessage(translationStrings.errorOccurredTitle)}
+          message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
     </Box>

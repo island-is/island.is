@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -93,7 +93,9 @@ const CaseFiles = () => {
               buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
               onChange={(files) =>
                 handleUpload(
-                  addUploadFiles(files, CaseFileCategory.INDICTMENT),
+                  addUploadFiles(files, {
+                    category: CaseFileCategory.INDICTMENT,
+                  }),
                   updateUploadFile,
                 )
               }
@@ -116,7 +118,9 @@ const CaseFiles = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.CRIMINAL_RECORD),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.CRIMINAL_RECORD,
+                }),
                 updateUploadFile,
               )
             }
@@ -137,7 +141,9 @@ const CaseFiles = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.COST_BREAKDOWN),
+                addUploadFiles(files, {
+                  category: CaseFileCategory.COST_BREAKDOWN,
+                }),
                 updateUploadFile,
               )
             }
@@ -158,7 +164,7 @@ const CaseFiles = () => {
             buttonLabel={formatMessage(strings.caseFiles.buttonLabel)}
             onChange={(files) =>
               handleUpload(
-                addUploadFiles(files, CaseFileCategory.CASE_FILE),
+                addUploadFiles(files, { category: CaseFileCategory.CASE_FILE }),
                 updateUploadFile,
               )
             }
