@@ -84,7 +84,7 @@ export const formatAmendingRegBody = (
       '',
     )}fellur brott.</p>` as HTMLText
     const gildistaka =
-      `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi</p>` as HTMLText
+      `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi.</p>` as HTMLText
     return [text, gildistaka]
   }
 
@@ -119,7 +119,7 @@ export const formatAmendingRegBody = (
 
     const regNameDisplay =
       regName && regName !== 'self'
-        ? `reglugerðar nr. ${regName}`
+        ? `reglugerðar nr. ${regName}`.replace(/\.$/, '')
         : 'reglugerðarinnar'
 
     group.forEach((element) => {
@@ -224,7 +224,7 @@ export const formatAmendingRegBody = (
                 ? (`<p>Á eftir ${
                     paragraph - 1
                   }. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
-                : (`<p>1. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText)
+                : (`<p>Á undan 1. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein svohljóðandi: </p><p>${newText}</p>` as HTMLText)
           } else if (isArticleTitle) {
             // Title was added
             testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
@@ -269,7 +269,7 @@ export const formatAmendingRegBody = (
           } else if (isLetterList || isNumberList) {
             // List was changed
             pushHtml =
-              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} breytist:</p> ${liHtml}` as HTMLText
+              `<p>Eftirfarandi breytingar verða á ${paragraph}. mgr. ${articleTitle} ${regNameDisplay}:</p> ${liHtml}` as HTMLText
           } else {
             // We don't know what you changed, but there was a change, and here's the changelog:
             pushHtml =
@@ -303,10 +303,22 @@ export const formatAmendingRegBody = (
       const originalTextArray = testGroup.original?.length
         ? flatten(testGroup.original)
         : []
+
+      const prevArticleTitleNumber = prevArticleTitle.match(/^\d+\. gr\./)
+
+      let articleDisplayText = ''
+
+      if (originalTextArray.length > 1) {
+        const [, ...rest] = originalTextArray
+        articleDisplayText = rest.join('')
+      } else {
+        articleDisplayText = testGroup.original
+          ? testGroup.original?.join('')
+          : ''
+      }
+
       additionArray.push([
-        `<p>Á eftir ${prevArticleTitle} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi: ${
-          originalTextArray ? testGroup.original?.join('') : ''
-        }` as HTMLText,
+        `<p>Á eftir ${prevArticleTitleNumber} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi: ${articleDisplayText}` as HTMLText,
       ])
     } else {
       additionArray.push(testGroup.arr)
