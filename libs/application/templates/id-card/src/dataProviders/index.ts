@@ -43,7 +43,7 @@ export const NationalRegistryUser = NationalRegistryUserApi.configure({
 export const NationalRegistryUserParentB = NationalRegistryUserApi.configure({
   params: {
     ...defaultParams,
-    icelandicCitizenship: true,
+    icelandicCitizenship: false,
   },
 })
 

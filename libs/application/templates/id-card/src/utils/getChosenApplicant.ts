@@ -38,7 +38,6 @@ export const getChosenApplicant = (
     const chosenChild = applicantChildren.filter(
       (x) => x.childNationalId === nationalId,
     )?.[0]
-    console.log('shoudl be in here')
     return {
       name: chosenChild.childName,
       isApplicant: false,

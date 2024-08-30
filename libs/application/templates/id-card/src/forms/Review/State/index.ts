@@ -5,8 +5,9 @@ import {
   getValueViaPath,
   buildAlertMessageField,
 } from '@island.is/application/core'
-import { Routes } from '../../../lib/constants'
+import { IdentityDocumentChild, Routes } from '../../../lib/constants'
 import { state } from '../../../lib/messages'
+import { getChosenApplicant } from '../../../utils'
 
 export const StateSection = buildSection({
   id: 'reviewState',
@@ -36,6 +37,31 @@ export const StateSection = buildSection({
           title: '',
           message: state.labels.alertMessage,
           alertType: 'info',
+          condition: (formValue, externalData) => {
+            const chosenApplicantNationalId = getValueViaPath(
+              formValue,
+              'chosenApplicants',
+              '',
+            ) as string
+
+            const applicantNationalId = getValueViaPath(
+              externalData,
+              'nationalRegistry.data.nationalId',
+              '',
+            ) as string
+
+            const applicantChildren = getValueViaPath(
+              externalData,
+              'identityDocument.data.childPassports',
+              [],
+            ) as Array<IdentityDocumentChild>
+
+            const chosenChild = applicantChildren.filter(
+              (x) => x.childNationalId === chosenApplicantNationalId,
+            )?.[0]
+
+            return !(chosenChild.secondParent !== applicantNationalId)
+          },
         }),
         buildActionCardListField({
           id: 'approvalActionCard',

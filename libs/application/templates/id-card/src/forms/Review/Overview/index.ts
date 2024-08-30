@@ -285,28 +285,6 @@ export const OverviewSection = buildSection({
               : ''
           },
         }),
-        buildKeyValueField({
-          label: review.labels.deliveryLocation,
-          colSpan: '6/12',
-          value: ({
-            answers,
-            externalData: {
-              deliveryAddress: { data },
-            },
-          }) => {
-            const deliveryAddress = (
-              data as DistrictCommissionerAgencies[]
-            )?.find(
-              ({ key }) =>
-                key ===
-                (getValueViaPath(
-                  answers,
-                  `${Routes.PRICELIST}.location`,
-                ) as string),
-            )
-            return `${deliveryAddress?.name} - ${deliveryAddress?.street}, ${deliveryAddress?.zip} ${deliveryAddress?.city}`
-          },
-        }),
 
         /* SUBMIT OR DECLINE */
         buildCustomField({

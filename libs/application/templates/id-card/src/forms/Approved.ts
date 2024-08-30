@@ -6,11 +6,14 @@ import {
   buildMessageWithLinkButtonField,
   buildExpandableDescriptionField,
   coreMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
 // import { Logo } from '../../assets/Logo'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import { reviewConfirmation } from '../lib/messages'
+import { getChosenApplicant } from '../utils'
+import { IdentityDocumentChild } from '@island.is/clients/passports'
 
 export const Approved: Form = buildForm({
   id: 'Approved',
@@ -37,6 +40,39 @@ export const Approved: Form = buildForm({
               introText: '',
               description: reviewConfirmation.general.accordionText,
               startExpanded: true,
+              condition: (formValue, externalData) => {
+                const applicantNationalId = getValueViaPath(
+                  formValue,
+                  'chosenApplicants',
+                  '',
+                ) as string
+                const chosenApplicant = getChosenApplicant(
+                  formValue,
+                  externalData,
+                  applicantNationalId,
+                )
+                return chosenApplicant.isApplicant
+              },
+            }),
+            buildExpandableDescriptionField({
+              id: 'uiForms.conclusionExpandableDescription',
+              title: reviewConfirmation.general.accordionTitle,
+              introText: '',
+              description: reviewConfirmation.general.accordionTextForChild,
+              startExpanded: true,
+              condition: (formValue, externalData) => {
+                const applicantNationalId = getValueViaPath(
+                  formValue,
+                  'chosenApplicants',
+                  '',
+                ) as string
+                const chosenApplicant = getChosenApplicant(
+                  formValue,
+                  externalData,
+                  applicantNationalId,
+                )
+                return !chosenApplicant.isApplicant
+              },
             }),
             buildAlertMessageField({
               id: 'uiForms.conclusionAlertInfo1',
@@ -44,12 +80,66 @@ export const Approved: Form = buildForm({
               alertType: 'info',
               message: reviewConfirmation.general.infoMessageText2,
               marginBottom: 0,
+              condition: (formValue, externalData) => {
+                const applicantNationalId = getValueViaPath(
+                  formValue,
+                  'chosenApplicants',
+                  '',
+                ) as string
+                const chosenApplicant = getChosenApplicant(
+                  formValue,
+                  externalData,
+                  applicantNationalId,
+                )
+                const applicantChildren = getValueViaPath(
+                  externalData,
+                  'identityDocument.data.childPassports',
+                  [],
+                ) as Array<IdentityDocumentChild>
+
+                const chosenChild = applicantChildren.filter(
+                  (x) => x.childNationalId === applicantNationalId,
+                )?.[0]
+
+                return (
+                  !chosenApplicant.isApplicant &&
+                  chosenChild &&
+                  !!chosenChild.secondParent
+                )
+              },
             }),
             buildAlertMessageField({
               id: 'uiForms.conclusionAlertInfo2',
               title: '',
               alertType: 'info',
               message: reviewConfirmation.general.infoMessageText2,
+              condition: (formValue, externalData) => {
+                const applicantNationalId = getValueViaPath(
+                  formValue,
+                  'chosenApplicants',
+                  '',
+                ) as string
+                const chosenApplicant = getChosenApplicant(
+                  formValue,
+                  externalData,
+                  applicantNationalId,
+                )
+                const applicantChildren = getValueViaPath(
+                  externalData,
+                  'identityDocument.data.childPassports',
+                  [],
+                ) as Array<IdentityDocumentChild>
+
+                const chosenChild = applicantChildren.filter(
+                  (x) => x.childNationalId === applicantNationalId,
+                )?.[0]
+
+                return (
+                  !chosenApplicant.isApplicant &&
+                  chosenChild &&
+                  !!chosenChild.secondParent
+                )
+              },
             }),
             buildMessageWithLinkButtonField({
               id: 'uiForms.conclusionBottomLink',

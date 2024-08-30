@@ -21,7 +21,6 @@ export const PaymentChargeOverviewFormField: FC<
 
   // get list of selected charge items with info
   const selectedChargeList = field.getSelectedChargeItems(application)
-  console.log('selectedChargeList', selectedChargeList)
   const allChargeWithInfoList = application?.externalData?.payment?.data as [
     {
       priceAmount: number
@@ -29,7 +28,6 @@ export const PaymentChargeOverviewFormField: FC<
       chargeItemCode: string
     },
   ]
-  console.log('allChargeWithInfoList', allChargeWithInfoList)
   const selectedChargeWithInfoList = selectedChargeList.map((charge) => {
     const chargeWithInfo = allChargeWithInfoList.find(
       (chargeWithInfo) =>
@@ -37,9 +35,6 @@ export const PaymentChargeOverviewFormField: FC<
     )
     return { ...chargeWithInfo, extraLabel: charge.extraLabel }
   })
-
-  console.log('selectedChargeWithInfoList', selectedChargeWithInfoList)
-
   // calculate total price for all selected charge items
   const totalPrice = selectedChargeWithInfoList.reduce(
     (sum, charge) => sum + (charge?.priceAmount || 0),

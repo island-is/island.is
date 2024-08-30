@@ -295,7 +295,6 @@ export class IdCardService extends BaseTemplateApiService {
         guid: application.id,
         appliedForPersonId: auth.nationalId,
         priority: answers.priceList.priceChoice === Services.EXPRESS ? 1 : 0,
-        deliveryName: answers.priceList.location,
         contactInfo: {
           phoneAtHome: applicantInformation.phoneNumber,
           phoneAtWork: applicantInformation.phoneNumber,
@@ -315,7 +314,6 @@ export class IdCardService extends BaseTemplateApiService {
         guid: application.id,
         appliedForPersonId: applicantInformation.nationalId,
         priority: answers.priceList.priceChoice === Services.EXPRESS ? 1 : 0,
-        deliveryName: answers.priceList.location,
         approvalA: {
           personId:
             firstGuardianInformation?.nationalId?.replace('-', '') || '',

@@ -62,14 +62,14 @@ export const TypeOfIdSubSection = buildSubSection({
             return [
               //II = Nafnskírteini ekki sem ferðaskilríki, ID = Nafnskírteini sem ferðaskilríki
               {
-                label: idInformation.labels.typeOfIdRadioAnswerOne,
-                value: 'II',
-                disabled: IIDisabled,
-              },
-              {
                 label: idInformation.labels.typeOfIdRadioAnswerTwo,
                 value: 'ID',
                 disabled: IDDisabled,
+              },
+              {
+                label: idInformation.labels.typeOfIdRadioAnswerOne,
+                value: 'II',
+                disabled: IIDisabled,
               },
             ]
           },

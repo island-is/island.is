@@ -81,31 +81,6 @@ export const PriceListSubSection = buildSection({
             ]
           },
         }),
-        buildDescriptionField({
-          id: `${Routes.PRICELIST}.locationTitle`,
-          title: priceList.labels.locationTitle,
-          description: priceList.labels.locationDescription,
-          titleVariant: 'h3',
-          marginBottom: 'gutter',
-          marginTop: 'gutter',
-        }),
-        buildSelectField({
-          id: `${Routes.PRICELIST}.location`,
-          title: priceList.labels.locationTitle,
-          placeholder: priceList.labels.locationPlaceholder,
-          options: ({
-            externalData: {
-              deliveryAddress: { data },
-            },
-          }) => {
-            return (data as DistrictCommissionerAgencies[])?.map(
-              ({ key, name }) => ({
-                value: key,
-                label: name,
-              }),
-            )
-          },
-        }),
       ],
     }),
   ],

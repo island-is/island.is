@@ -13,7 +13,6 @@ export const updateAnswers = (
     application.externalData,
     nationalId,
   )
-  console.log('chosenApplicants', chosenApplicants)
   const applicantUserProfile = getValueViaPath(
     application.externalData,
     'userProfile.data',

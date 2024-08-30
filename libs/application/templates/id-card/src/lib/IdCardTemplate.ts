@@ -19,16 +19,17 @@ import {
   InstitutionNationalIds,
   PassportsApi,
   PendingAction,
+  StaticText,
 } from '@island.is/application/types'
 import { Features } from '@island.is/feature-flags'
 import { assign } from 'xstate'
 import {
-  // SyslumadurPaymentCatalogApi,
   DeliveryAddressApi,
   UserInfoApi,
   NationalRegistryUser,
   SyslumadurPaymentCatalogApi,
   IdentityDocumentApi,
+  NationalRegistryUserParentB,
 } from '../dataProviders'
 import { application as applicationMessage } from './messages'
 import { Events, Roles, States, ApiActions, Routes } from './constants'
@@ -39,6 +40,20 @@ import { getChargeItemCodes, hasReviewer, hasReviewerApproved } from '../utils'
 export const needsReview = (context: ApplicationContext) => {
   const { answers, externalData } = context.application
   return hasReviewer(answers, externalData)
+}
+
+export const determineMessageFromApplicationAnswers = (
+  application: Application,
+): StaticText => {
+  const name = getValueViaPath(
+    application.answers,
+    'applicantInformation.name',
+    ' ',
+  ) as string
+
+  const nameObject = { id: applicationMessage.name.id, values: { name: name } }
+
+  return nameObject
 }
 
 const reviewStatePendingAction = (
@@ -76,7 +91,7 @@ const IdCardTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.ID_CARD,
-  name: applicationMessage.name,
+  name: determineMessageFromApplicationAnswers,
   featureFlag: Features.idCardApplication,
   dataSchema: IdCardSchema,
   translationNamespaces: [ApplicationConfigurations.IdCard.translation],
@@ -204,6 +219,7 @@ const IdCardTemplate: ApplicationTemplate<
                 { event: DefaultEvents.SUBMIT, name: '', type: 'primary' },
               ],
               write: 'all',
+              api: [NationalRegistryUserParentB],
             },
           ],
           actionCard: {

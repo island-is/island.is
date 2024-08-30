@@ -52,6 +52,17 @@ export const reviewConfirmation = {
       [umboð til þess](https://island.is/nafnskirteini).\n`,
       description: 'Review confirmation accordion text',
     },
+    accordionTextForChild: {
+      id: 'id.application:reviewConfirmation.general.accordionTextForChild',
+      defaultMessage: `* Forsjáraðili þarf að mæta með barni í myndatöku á [umsóknarstað](https://island.is/nafnskirteini).
+      \n* Hafi báðir forsjá raðiliar samþykkt útgáfu nafnskírteinis barns er hún opin í 60 daga.  
+      Ef að einhverjum ástæðum er ekki mætt í myndatöku að þeim tíma liðnum þarf að sækja um 
+      endurgreiðslu með því að senda póst á [endurgreidsla@island.is](endurgreidsla@island.is).
+      \n* Geti FORSJÁRAÐILI ekki mætt með barni í myndatöku þarf að veita þriðja aðila 
+      [umboð til þess](https://island.is/nafnskirteini).\n`,
+      description:
+        'Review confirmation accordion text when applying for a child',
+    },
     infoMessageText1: {
       id: 'id.application:reviewConfirmation.general.infoMessageText1',
       defaultMessage:

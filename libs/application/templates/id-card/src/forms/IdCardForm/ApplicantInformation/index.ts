@@ -50,14 +50,6 @@ export const ApplicanInformationSubSection = buildSection({
           title: applicantInformation.labels.applicantName,
           readOnly: true,
           width: 'half',
-          defaultValue: (application: Application) => {
-            const chosenApplicant = getChosenApplicant(
-              application.answers,
-              application.externalData,
-            )
-
-            return chosenApplicant.name
-          },
         }),
         buildTextField({
           id: `${Routes.APPLICANTSINFORMATION}.nationalId`,
@@ -65,14 +57,6 @@ export const ApplicanInformationSubSection = buildSection({
           readOnly: true,
           width: 'half',
           format: '######-####',
-          defaultValue: (application: Application) => {
-            const chosenApplicant = getChosenApplicant(
-              application.answers,
-              application.externalData,
-            )
-
-            return chosenApplicant.nationalId
-          },
         }),
         buildTextField({
           id: `${Routes.APPLICANTSINFORMATION}.email`,
@@ -81,15 +65,6 @@ export const ApplicanInformationSubSection = buildSection({
           condition: (answers, externalData) => {
             return !isChild(answers, externalData)
           },
-          defaultValue: (application: Application) => {
-            const applicantUserProfile = getValueViaPath(
-              application.externalData,
-              'userProfile.data',
-              undefined,
-            ) as UserProfile | undefined
-
-            return applicantUserProfile?.email
-          },
         }),
         buildPhoneField({
           id: `${Routes.APPLICANTSINFORMATION}.phoneNumber`,
@@ -97,15 +72,6 @@ export const ApplicanInformationSubSection = buildSection({
           width: 'half',
           condition: (answers, externalData) => {
             return !isChild(answers, externalData)
-          },
-          defaultValue: (application: Application) => {
-            const applicantUserProfile = getValueViaPath(
-              application.externalData,
-              'userProfile.data',
-              undefined,
-            ) as UserProfile | undefined
-
-            return applicantUserProfile?.mobilePhoneNumber
           },
         }),
 

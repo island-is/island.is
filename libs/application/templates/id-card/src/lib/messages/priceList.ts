@@ -32,7 +32,7 @@ export const priceList = {
     },
     regularPriceTitle: {
       id: 'id.application:priceList.labels.regularPriceTitle#markdown',
-      defaultMessage: 'Almenn afgreiðsla: 18-66 ára - {price} kr.',
+      defaultMessage: 'Almenn afgreiðsla: 18-66 ára - {price}',
       description: 'Regular price radio button title',
     },
     regularPriceDescription: {
@@ -42,7 +42,7 @@ export const priceList = {
     },
     fastPriceTitle: {
       id: 'id.application:priceList.labels.fastPriceTitle#markdown',
-      defaultMessage: 'Hraðafgreiðsla: 18-66 ára - {price} kr.',
+      defaultMessage: 'Hraðafgreiðsla: 18-66 ára - {price}',
       description: 'Fast price radio button title',
     },
     fastPriceDescription: {
@@ -52,13 +52,12 @@ export const priceList = {
     },
     discountRegularPriceTitle: {
       id: 'id.application:priceList.labels.discountRegularPriceTitle#markdown',
-      defaultMessage:
-        'Almenn afgreiðsla: börn, aldraðir, öryrkjar - {price} kr.',
+      defaultMessage: 'Almenn afgreiðsla: börn, aldraðir, öryrkjar - {price}',
       description: 'Discount Regular price radio button title',
     },
     discountFastPriceTitle: {
       id: 'id.application:priceList.labels.discountFastPriceTitle#markdown',
-      defaultMessage: 'Hraðafgreiðsla:  börn, aldraðir, öryrkjar - {price} kr.',
+      defaultMessage: 'Hraðafgreiðsla:  börn, aldraðir, öryrkjar - {price}',
       description: 'Discount Fast price radio button title',
     },
   }),

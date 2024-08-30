@@ -47,7 +47,7 @@ export const IdCardSchema = z.object({
   }),
   priceList: z.object({
     priceChoice: z.enum([Services.EXPRESS, Services.REGULAR]),
-    location: z.string(),
+    // location: z.string(),
   }),
 })
 
