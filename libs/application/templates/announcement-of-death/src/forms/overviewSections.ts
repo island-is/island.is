@@ -11,7 +11,7 @@ import { format as formatNationalId } from 'kennitala'
 import { m } from '../lib/messages'
 import { formatPhoneNumber } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
-import { Asset, Answers as AODAnswers, OtherPropertiesEnum } from '../types'
+import { Asset, Answers as AODAnswers, PropertiesEnum } from '../types'
 import { FormatMessage } from '@island.is/localization'
 import { getFileRecipientName } from '../lib/utils'
 import { EstateRegistrant } from '@island.is/clients/syslumenn'
@@ -181,78 +181,44 @@ export const properties: Field[] = [
     condition: (answers) => showInDone(answers.viewOverview),
   }),
   buildDescriptionField({
-    id: 'otherProperties',
-    title: m.otherPropertiesTitle,
-    marginBottom: 2,
+    id: 'propertiesTitle',
+    title: m.propertiesTitle,
     titleVariant: 'h3',
     condition: (answers) => showInDone(answers.viewOverview),
   }),
-  buildDescriptionField({
-    id: 'realEstatesTitle',
-    title: m.realEstatesTitle,
-    titleVariant: 'h4',
-    description: m.realEstatesDescription,
+  buildKeyValueField({
+    label: m.propertiesRealEstate,
+    width: 'full',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            PropertiesEnum.REAL_ESTATE,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
     condition: (answers) => showInDone(answers.viewOverview),
   }),
-  buildCustomField(
-    {
-      title: '',
-      id: 'assets',
-      component: 'InfoCard',
-      width: 'full',
-      condition: (answers) =>
-        (answers?.assets as { assets: Asset[] })?.assets?.length > 0 &&
-        showInDone(answers.viewOverview),
-    },
-    {
-      cards: ({ answers }: Application) =>
-        (answers?.assets as { assets: Asset[] }).assets
-          .filter((asset) => !asset?.dummy)
-          .map((property) => ({
-            title: property.description,
-            description: (formatMessage: FormatMessage) => [
-              `${formatMessage(m.propertyNumber)}: ${property.assetNumber}`,
-              property.share
-                ? `${formatMessage(m.propertyShare)}: ${property.share}%`
-                : '',
-            ],
-          })),
-    },
-  ),
-  buildDescriptionField({
-    id: 'vehiclesTitle',
-    title: m.vehiclesTitle,
-    description: m.vehiclesDescription,
-    titleVariant: 'h4',
+  buildKeyValueField({
+    label: m.propertiesVehicles,
+    width: 'full',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            PropertiesEnum.VEHICLES,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
     condition: (answers) => showInDone(answers.viewOverview),
   }),
-  buildCustomField(
-    {
-      title: '',
-      id: 'vehicles',
-      component: 'InfoCard',
-      width: 'full',
-      condition: (answers) =>
-        (answers?.vehicles as { vehicles: Asset[] })?.vehicles?.length > 0 &&
-        showInDone(answers.viewOverview),
-    },
-    {
-      cards: ({ answers }: Application) =>
-        (answers?.vehicles as { vehicles: Asset[] })?.vehicles
-          .filter((vehicle) => !vehicle?.dummy)
-          .map((vehicle) => ({
-            title: vehicle.assetNumber,
-            description: [vehicle.description],
-          })),
-    },
-  ),
   buildKeyValueField({
     label: m.otherPropertiesAccounts,
     width: 'full',
     value: ({ answers }) =>
       answers?.otherProperties
         ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.ACCOUNTS,
+            PropertiesEnum.ACCOUNTS,
           )
           ? m.testamentKnowledgeOfOtherTestamentYes
           : m.testamentKnowledgeOfOtherTestamentNo
@@ -265,7 +231,7 @@ export const properties: Field[] = [
     value: ({ answers }) =>
       answers?.otherProperties
         ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.OWN_BUSINESS,
+            PropertiesEnum.OWN_BUSINESS,
           )
           ? m.testamentKnowledgeOfOtherTestamentYes
           : m.testamentKnowledgeOfOtherTestamentNo
@@ -278,7 +244,7 @@ export const properties: Field[] = [
     value: ({ answers }) =>
       answers?.otherProperties
         ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.RESIDENCE,
+            PropertiesEnum.RESIDENCE,
           )
           ? m.testamentKnowledgeOfOtherTestamentYes
           : m.testamentKnowledgeOfOtherTestamentNo
@@ -291,7 +257,7 @@ export const properties: Field[] = [
     value: ({ answers }) =>
       answers?.otherProperties
         ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.ASSETS_ABROAD,
+            PropertiesEnum.ASSETS_ABROAD,
           )
           ? m.testamentKnowledgeOfOtherTestamentYes
           : m.testamentKnowledgeOfOtherTestamentNo
