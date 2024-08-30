@@ -1,20 +1,12 @@
+import { coreMessages, formatText } from '@island.is/application/core'
 import {
-  coreMessages,
-  formatText,
-  getValueViaPath,
-} from '@island.is/application/core'
-import {
-  Application,
   FieldBaseProps,
   TableRepeaterField,
-  TableRepeaterItem,
 } from '@island.is/application/types'
-import { NationalIdWithName } from '@island.is/application/ui-components'
 import {
   AlertMessage,
   Box,
   Button,
-  GridColumn,
   GridRow,
   Icon,
   Stack,
@@ -23,30 +15,14 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  CheckboxController,
-  DatePickerController,
-  FieldDescription,
-  InputController,
-  RadioController,
-  SelectController,
-} from '@island.is/shared/form-fields'
-import { FC, useEffect, useState, useRef } from 'react'
+import { FieldDescription } from '@island.is/shared/form-fields'
+import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { handleCustomMappedValues } from './utils'
-import isEqual from 'lodash/isEqual'
+import { Item } from './TableRepeaterItem'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
-}
-
-const componentMapper = {
-  input: InputController,
-  select: SelectController,
-  checkbox: CheckboxController,
-  date: DatePickerController,
-  radio: RadioController,
-  nationalIdWithName: NationalIdWithName,
 }
 
 export const TableRepeaterFormField: FC<Props> = ({
@@ -282,192 +258,5 @@ export const TableRepeaterFormField: FC<Props> = ({
         )}
       </Box>
     </Box>
-  )
-}
-
-interface ItemFieldProps {
-  application: Application
-  error?: string
-  item: TableRepeaterItem & { id: string }
-  dataId: string
-  activeIndex: number
-  values: Array<Record<string, string>>
-}
-
-const Item: FC<ItemFieldProps> = ({
-  application,
-  error,
-  item,
-  dataId,
-  activeIndex,
-  values,
-}) => {
-  const { formatMessage } = useLocale()
-  const { setValue, control, clearErrors } = useFormContext()
-  const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
-
-  const {
-    component,
-    id: itemId,
-    backgroundColor = 'blue',
-    label = '',
-    placeholder = '',
-    options,
-    width = 'full',
-    condition,
-    readonly = false,
-    updateValueObj,
-    defaultValue,
-    ...props
-  } = item
-  const isHalfColumn = component !== 'radio' && width === 'half'
-  const isThirdColumn = component !== 'radio' && width === 'third'
-  const span = isHalfColumn ? '1/2' : isThirdColumn ? '1/3' : '1/1'
-  const Component = componentMapper[component]
-  const id = `${dataId}[${activeIndex}].${itemId}`
-  const activeValues =
-    activeIndex >= 0 && values ? values[activeIndex] : undefined
-
-  let watchedValues: string | (string | undefined)[] | undefined
-  if (updateValueObj) {
-    const watchedValuesId =
-      typeof updateValueObj.watchValues === 'function'
-        ? updateValueObj.watchValues(activeValues)
-        : updateValueObj.watchValues
-
-    if (watchedValuesId) {
-      if (Array.isArray(watchedValuesId)) {
-        watchedValues = watchedValuesId.map((value) => {
-          return activeValues?.[`${value}`]
-        })
-      } else {
-        watchedValues = activeValues?.[`${watchedValuesId}`]
-      }
-    }
-  }
-
-  useEffect(() => {
-    // We need to deep compare the watched values to avoid unnecessary re-renders
-    if (
-      watchedValues &&
-      !isEqual(prevWatchedValuesRef.current, watchedValues)
-    ) {
-      prevWatchedValuesRef.current = watchedValues
-
-      if (
-        updateValueObj &&
-        watchedValues &&
-        (Array.isArray(watchedValues)
-          ? !watchedValues.every((value) => value === undefined)
-          : true)
-      ) {
-        const finalValue = updateValueObj.valueModifier(activeValues)
-        setValue(id, finalValue)
-      }
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedValues])
-
-  const getFieldError = (id: string) => {
-    /**
-     * Errors that occur in a field-array have incorrect typing
-     * This hack is needed to get the correct type
-     */
-    const errorList = error as unknown as Record<string, string>[] | undefined
-    const errors = errorList?.[activeIndex]
-    return errors?.[id]
-  }
-
-  const getDefaultValue = (
-    item: TableRepeaterItem,
-    application: Application,
-    activeField?: Record<string, string>,
-  ) => {
-    const { defaultValue } = item
-
-    if (defaultValue === undefined) {
-      return undefined
-    }
-
-    return defaultValue(application, activeField)
-  }
-
-  let translatedOptions: any = []
-  if (typeof options === 'function') {
-    translatedOptions = options(application, activeValues)
-  } else {
-    translatedOptions = options?.map((option) => ({
-      ...option,
-      label: formatText(option.label, application, formatMessage),
-      ...(option.tooltip && {
-        tooltip: formatText(option.tooltip, application, formatMessage),
-      }),
-    }))
-  }
-
-  let Readonly: boolean | undefined
-  if (typeof readonly === 'function') {
-    Readonly = readonly(application, activeValues)
-  } else {
-    Readonly = readonly
-  }
-
-  let DefaultValue: any
-  if (component === 'input') {
-    DefaultValue = getDefaultValue(item, application, activeValues)
-  }
-  if (component === 'select') {
-    DefaultValue =
-      getValueViaPath(application.answers, id) ??
-      getDefaultValue(item, application, activeValues)
-  }
-  if (component === 'radio') {
-    DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
-      getDefaultValue(item, application, activeValues)
-  }
-  if (component === 'checkbox') {
-    DefaultValue =
-      (getValueViaPath(application.answers, id) as string[]) ??
-      getDefaultValue(item, application, activeValues)
-  }
-  if (component === 'date') {
-    DefaultValue =
-      (getValueViaPath(application.answers, id) as string) ??
-      getDefaultValue(item, application, activeValues)
-  }
-
-  if (condition && !condition(application, activeValues)) {
-    return null
-  }
-
-  return (
-    <GridColumn span={['1/1', '1/1', '1/1', span]}>
-      {component === 'radio' && label && (
-        <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
-          {formatText(label, application, formatMessage)}
-        </Text>
-      )}
-      <Component
-        id={id}
-        name={id}
-        label={formatText(label, application, formatMessage)}
-        options={translatedOptions}
-        placeholder={formatText(placeholder, application, formatMessage)}
-        split={width === 'half' ? '1/2' : '1/1'}
-        error={getFieldError(itemId)}
-        control={control}
-        readOnly={Readonly}
-        backgroundColor={backgroundColor}
-        onChange={() => {
-          if (error) {
-            clearErrors(id)
-          }
-        }}
-        application={application}
-        defaultValue={DefaultValue}
-        {...props}
-      />
-    </GridColumn>
   )
 }
