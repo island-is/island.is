@@ -42,7 +42,8 @@ export const serviceSetup = (): ServiceBuilder<'services-bff-admin-portal'> =>
       BFF_API_URL_PREFIX: 'stjornbord/bff',
     })
     .secrets({
-      BFF_IDENTITY_SERVER_SECRET: 'TODO - add secret',
+      BFF_IDENTITY_SERVER_SECRET:
+        '/k8s/services-bff/BFF_IDENTITY_SERVER_SECRET',
     })
     .readiness('/health/check')
     .liveness('/liveness')
