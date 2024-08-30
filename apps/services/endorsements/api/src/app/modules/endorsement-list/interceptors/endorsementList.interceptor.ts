@@ -24,7 +24,8 @@ export class EndorsementListInterceptor implements NestInterceptor {
     const isAdmin = this.endorsementListService.hasAdminScope(user as User)
     return next.handle().pipe(
       map((retEndorsementList: EndorsementList) => {
-        const isListOwner = user?.nationalId === retEndorsementList.ownerNationalId
+        const isListOwner =
+          user?.nationalId === retEndorsementList.ownerNationalId
         return maskEndorsementList(retEndorsementList, isListOwner, isAdmin)
       }),
     )

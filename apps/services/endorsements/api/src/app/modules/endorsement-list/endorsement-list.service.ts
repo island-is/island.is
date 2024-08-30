@@ -80,14 +80,16 @@ export class EndorsementListService {
       where: {
         ownerName: '',
       },
-    });
+    })
 
-    this.logger.info(`Populating owner names for ${lists.length} existing lists`);
+    this.logger.info(
+      `Populating owner names for ${lists.length} existing lists`,
+    )
     for (const list of lists) {
-      const ownerName = await this.getOwnerName(list.ownerNationalId);
+      const ownerName = await this.getOwnerName(list.ownerNationalId)
       if (ownerName) {
-        list.ownerName = ownerName;
-        await list.save();
+        list.ownerName = ownerName
+        await list.save()
       }
     }
   }
@@ -276,13 +278,13 @@ export class EndorsementListService {
     }
     this.logger.info(`Creating endorsement list: ${list.title}`)
     // Fetch owner name using the National Registry API
-    const ownerName = await this.getOwnerName(list.ownerNationalId);
+    const ownerName = await this.getOwnerName(list.ownerNationalId)
 
-    this.logger.info(`Creating endorsement list: ${list.title}`);
-    const endorsementList = await this.endorsementListModel.create({ 
-      ...list, 
-      ownerName,  // Set ownerName when creating a new list
-    });
+    this.logger.info(`Creating endorsement list: ${list.title}`)
+    const endorsementList = await this.endorsementListModel.create({
+      ...list,
+      ownerName, // Set ownerName when creating a new list
+    })
 
     if (process.env.NODE_ENV === 'production') {
       await this.emailCreated(endorsementList)
@@ -293,12 +295,12 @@ export class EndorsementListService {
 
   async getOwnerName(ownerNationalId: string): Promise<string> {
     try {
-      const person = await this.nationalRegistryApiV3.getName(ownerNationalId);
-      return person?.fulltNafn || '';
+      const person = await this.nationalRegistryApiV3.getName(ownerNationalId)
+      return person?.fulltNafn || ''
     } catch (error) {
-      const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`;
-      this.logger.error(message);
-      throw new BadRequestException(message);
+      const message = `Error fetching owner name from NationalRegistryApi: ${error.message}`
+      this.logger.error(message)
+      throw new BadRequestException(message)
     }
   }
 

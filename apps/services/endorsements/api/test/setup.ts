@@ -30,8 +30,6 @@ expect.extend({
   },
 })
 
-
-
 export const setup = async (options?: Partial<TestServerOptions>) => {
   app = await testServer({
     appModule: AppModule,
@@ -45,13 +43,13 @@ export const setup = async (options?: Partial<TestServerOptions>) => {
 interface SetupAuthInput {
   scope: EndorsementsScope[]
   nationalId?: string
-  overrideProviders?: any[]  // Add this line to accept overrides
+  overrideProviders?: any[] // Add this line to accept overrides
 }
 
 export const getAuthenticatedApp = async ({
   scope,
   nationalId = '1234567890',
-  overrideProviders = [],  // Allow additional overrides
+  overrideProviders = [], // Allow additional overrides
 }: SetupAuthInput): Promise<INestApplication> => {
   return setup({
     override: (builder) => {
@@ -61,7 +59,6 @@ export const getAuthenticatedApp = async ({
           scope,
         }),
       )
-
 
       // Apply any additional provider overrides passed in
       overrideProviders.forEach(({ provide, useValue }) => {

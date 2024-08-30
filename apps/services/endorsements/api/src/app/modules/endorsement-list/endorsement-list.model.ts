@@ -86,7 +86,7 @@ export class EndorsementList extends Model {
     type: DataType.STRING,
     allowNull: false,
   })
-  ownerNationalId!: string;
+  ownerNationalId!: string
 
   @ApiProperty({
     type: String,
@@ -97,7 +97,7 @@ export class EndorsementList extends Model {
     allowNull: false,
     defaultValue: '',
   })
-  ownerName!: string;
+  ownerName!: string
 
   @ApiProperty()
   @Column({

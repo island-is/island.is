@@ -28,7 +28,8 @@ export class EndorsementListsInterceptor implements NestInterceptor {
       map((retEndorsementLists: PaginatedEndorsementListDto) => {
         retEndorsementLists.data = retEndorsementLists.data.map(
           (retEndorsementList) => {
-            const isListOwner = user?.nationalId === retEndorsementList.ownerNationalId
+            const isListOwner =
+              user?.nationalId === retEndorsementList.ownerNationalId
             return maskEndorsementList(retEndorsementList, isListOwner, isAdmin)
           },
         )
