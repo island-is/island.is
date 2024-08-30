@@ -79,7 +79,7 @@ export class HealthDirectorateService {
             (vaccination: VaccinationDto) => {
               return {
                 id: vaccination.id,
-                name: vaccination.vaccineName,
+                name: vaccination.vaccineCodeDescriptionShort,
                 date: vaccination.vaccinationDate,
                 age: vaccination.vaccinationAge,
                 url: vaccination.vaccineUrl,
