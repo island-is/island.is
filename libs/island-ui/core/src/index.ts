@@ -60,6 +60,7 @@ export * from './lib/VisuallyHidden/VisuallyHidden'
 export * from './lib/Drawer/Drawer'
 export * from './lib/ProblemTemplate/ProblemTemplate'
 export * from './lib/ProblemTemplate/ProblemTemplate.css'
+export * from './lib/TableRepeaterItem/Item'
 
 // Cards
 export * from './lib/LinkCard/LinkCard'
