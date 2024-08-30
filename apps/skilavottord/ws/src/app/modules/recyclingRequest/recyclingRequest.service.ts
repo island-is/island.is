@@ -95,9 +95,11 @@ export class RecyclingRequestService {
           `Failed on deregisterd on deRegisterVehicle with status: ${deRegRes.statusText}`,
         )
       }
-    } catch (err) {
-      delete err?.config?.data
-      this.logger.error(`Failed to deregister vehicle`, { error: err })
+    } catch (error) {
+      if (error?.config) {
+        error.config.data = undefined
+      }
+      this.logger.error(`Failed to deregister vehicle`, { error })
       throw new Error(`Failed to deregister vehicle ${vehiclePermno.slice(-3)}`)
     }
   }
