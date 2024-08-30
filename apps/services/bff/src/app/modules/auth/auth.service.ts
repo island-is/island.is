@@ -1,15 +1,16 @@
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
-import { Cache as CacheManager } from 'cache-manager'
-import { Response } from 'express'
+import { Request, Response } from 'express'
 
-import { CACHE_MANAGER } from '@nestjs/cache-manager'
 import { uuid } from 'uuidv4'
+import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
+import { CacheService } from '../cache/cache.service'
 import { CallbackLoginQueryDto } from './dto/callback-login-query.dto'
 import { LoginQueryDto } from './dto/login-query.dto'
 import { PKCEService } from './pkce.service'
+import { TokenResponse } from './auth.types'
 
 export type ParResponse = {
   request_uri: string
@@ -27,45 +28,10 @@ export class AuthService {
     @Inject(BffConfig.KEY)
     private readonly config: ConfigType<typeof BffConfig>,
 
-    @Inject(CACHE_MANAGER)
-    private readonly cacheManager: CacheManager,
-
     private readonly pkceService: PKCEService,
+    private readonly cacheService: CacheService,
   ) {
     this.baseUrl = this.config.auth.issuer
-  }
-
-  private async saveToCache({
-    key,
-    value,
-    ttl
-  }: {
-    key: string
-    value: unknown
-    // Time to live in milliseconds
-    ttl?: number
-  }): Promise<void> {
-    await this.cacheManager.set(key, value, ttl)
-  }
-
-  private async getFromCache<Value>(key: string) {
-    const value = await this.cacheManager.get(key)
-
-    if (!value) {
-      throw new BadRequestException('Not found')
-    }
-
-    return value as Value
-  }
-
-  /**
-   * Creates s unique key with session id.
-   * type is either 'attempt' or 'current'
-   * attempt represents the login attempt
-   * current represents the current login session
-   */
-  private createSessionKeyType(type: 'attempt' | 'current', sid: string) {
-    return `${type}_${sid}`
   }
 
   /**
@@ -76,8 +42,10 @@ export class AuthService {
     const regexPatterns = allowedUris.map((pattern) => {
       // Escape special regex characters and replace '*' with a regex pattern to match any characters
       const regexPattern = pattern
-        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&') // Escape special characters for regex
-        .replace(/\\\*/g, '.*') // Convert '*' to '.*' to match any characters
+        // Escape special characters for regex
+        .replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+        // Convert '*' to '.*' to match any characters
+        .replace(/\\\*/g, '.*')
 
       // Create a regex from the pattern and ensure it matches the entire URL
       return new RegExp(`^${regexPattern}$`)
@@ -87,6 +55,9 @@ export class AuthService {
     return regexPatterns.some((regex) => regex.test(uri))
   }
 
+  /**
+   * Reusable fetch fn to make POST requests
+   */
   private async postRequest<T>(
     endpoint: string,
     body: Record<string, string>,
@@ -107,6 +78,7 @@ export class AuthService {
       return await response.json()
     } catch (error) {
       this.logger.error(`Error making request to ${endpoint}:`, error)
+
       throw new BadRequestException(`Failed to fetch from ${endpoint}`)
     }
   }
@@ -117,9 +89,11 @@ export class AuthService {
   private async fetchPAR({
     sid,
     codeChallenge,
+    loginHint,
   }: {
     sid: string
     codeChallenge: string
+    loginHint?: string
   }) {
     return this.postRequest<ParResponse>('/connect/par', {
       client_id: this.config.auth.clientId,
@@ -131,6 +105,7 @@ export class AuthService {
       state: sid,
       code_challenge: codeChallenge,
       code_challenge_method: 'S256',
+      ...(loginHint && { login_hint: loginHint }),
     })
   }
 
@@ -142,7 +117,7 @@ export class AuthService {
     code: string
     codeVerifier: string
   }) {
-    return this.postRequest('/connect/token', {
+    return this.postRequest<TokenResponse>('/connect/token', {
       grant_type: 'authorization_code',
       code,
       client_secret: this.config.auth.secret,
@@ -152,11 +127,16 @@ export class AuthService {
     })
   }
 
-  async login(
-    res: Response,
-    { target_link_uri: targetLinkUri, login_hint: loginHint }: LoginQueryDto,
-  ) {
-    // Validate return_url if it is provided
+  async login({
+    req,
+    res,
+    query: { target_link_uri: targetLinkUri, login_hint: loginHint },
+  }: {
+    req: Request
+    res: Response
+    query: LoginQueryDto
+  }) {
+    // Validate targetLinkUri if it is provided
     if (
       targetLinkUri &&
       !this.validateRedirectUri(
@@ -164,27 +144,39 @@ export class AuthService {
         this.config.auth.allowedRedirectUris,
       )
     ) {
-      throw new BadRequestException('Invalid return_url')
+      throw new BadRequestException('Invalid target_link_uri')
     }
 
+    // Generate a unique session id to be used in the login flow
     const sid = uuid()
+
+    // Generate a code verifier and code challenge to enhance security
     const codeVerifier = await this.pkceService.generateCodeVerifier()
     const codeChallenge = await this.pkceService.generateCodeChallenge(
       codeVerifier,
     )
 
-    await this.saveToCache({
-      key: this.createSessionKeyType('attempt', sid),
+    // Get the calling URL
+    const originUrl = `${(
+      req.headers['origin'] ||
+      req.headers['referer'] ||
+      ''
+    ).replace(/\/$/, '')}${environment.globalPrefix}`
+
+    await this.cacheService.save({
+      key: this.cacheService.createSessionKeyType('attempt', sid),
       value: {
-        targetLinkUri,
+        // Fallback if targetLinkUri is not provided
+        originUrl,
+        targetLinkUri: targetLinkUri,
         ...(loginHint && { loginHint }),
         // Code verifier to be used in the callback
         codeVerifier,
       },
-      ttl: 60 * 60 * 24 * 7, // 1 week
+      ttl: 60 * 60 * 24 * 7 * 1000, // 1 week
     })
 
-    const parResponse = await this.fetchPAR({ sid, codeChallenge })
+    const parResponse = await this.fetchPAR({ sid, codeChallenge, loginHint })
 
     return res.redirect(
       `${this.baseUrl}/connect/authorize?request_uri=${parResponse.request_uri}&client_id=${this.config.auth.clientId}`,
@@ -193,13 +185,14 @@ export class AuthService {
 
   async callback(res: Response, query: CallbackLoginQueryDto) {
     // Get login attempt from cache
-    const loginAttemptData = await this.getFromCache<{
+    const loginAttemptData = await this.cacheService.get<{
       targetLinkUri?: string
       loginHint?: string
       codeVerifier: string
-    }>(this.createSessionKeyType('attempt', query.state))
+      originUrl: string
+    }>(this.cacheService.createSessionKeyType('attempt', query.state))
 
-    // Get tokens from the authorization code
+    // Get tokens and user information from the authorization code
     const tokenResponse = await this.fetchTokens({
       code: query.code,
       codeVerifier: loginAttemptData.codeVerifier,
@@ -208,15 +201,15 @@ export class AuthService {
     const sid = uuid()
 
     // Save the tokenResponse to the cache
-    await this.saveToCache({
-      key: this.createSessionKeyType('current', sid),
+    await this.cacheService.save({
+      key: this.cacheService.createSessionKeyType('current', sid),
       value: tokenResponse,
-      ttl: 60 * 60, // 1 hour
+      ttl: 60 * 60 * 1000, // 1 hour
     })
 
     // Clean up the login attempt from the cache since we have a successful login.
-    await this.cacheManager.del(
-      this.createSessionKeyType('attempt', query.state),
+    await this.cacheService.delete(
+      this.cacheService.createSessionKeyType('attempt', query.state),
     )
 
     // Create session cookie with successful login session id
@@ -226,6 +219,8 @@ export class AuthService {
       sameSite: 'strict',
     })
 
-    return res.redirect(loginAttemptData.targetLinkUri || '/')
+    return res.redirect(
+      loginAttemptData.targetLinkUri || loginAttemptData.originUrl,
+    )
   }
 }

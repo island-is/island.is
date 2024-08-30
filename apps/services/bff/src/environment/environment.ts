@@ -20,6 +20,8 @@ export const environment: BffEnvironmentSchema = {
     scopes: requiredStringArray('BFF_IDENTITY_SERVER_CLIENT_SCOPES'),
     allowedRedirectUris: requiredStringArray('BFF_ALLOWED_REDIRECT_URIS'),
     secret: requiredString('BFF_IDENTITY_SERVER_SECRET'),
-    callbacksLoginRedirectUri: requiredString('BFF_CALLBACKS_LOGIN_REDIRECT_URI'),
+    callbacksLoginRedirectUri: requiredString(
+      'BFF_CALLBACKS_LOGIN_REDIRECT_URI',
+    ),
   },
 }

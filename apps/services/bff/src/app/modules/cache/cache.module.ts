@@ -13,17 +13,15 @@ if (process.env.NODE_ENV === 'test' || process.env.INIT_SCHEMA === 'true') {
   CacheModule = NestCacheModule.register()
 } else {
   CacheModule = NestCacheModule.registerAsync({
-    useFactory: ({ redis: { ssl, nodes } }: ConfigType<typeof BffConfig>) => (
-      {
-        store: redisInsStore(
-          createRedisCluster({
-            name: 'bff',
-            ssl,
-            nodes,
-          }),
-        ),
-      }
-    ),
+    useFactory: ({ redis: { ssl, nodes } }: ConfigType<typeof BffConfig>) => ({
+      store: redisInsStore(
+        createRedisCluster({
+          name: 'bff',
+          ssl,
+          nodes,
+        }),
+      ),
+    }),
     inject: [BffConfig.KEY],
   })
 }

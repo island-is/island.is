@@ -18,7 +18,7 @@ export const BffConfig = defineConfig({
   load(env) {
     return {
       redis: {
-        nodes: env.requiredJSON('BFF_REDIS_NODES', [
+        nodes: env.requiredJSON('REDIS_URL_NODE_01', [
           'localhost:7000',
           'localhost:7001',
           'localhost:7002',

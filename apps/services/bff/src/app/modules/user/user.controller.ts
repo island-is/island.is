@@ -1,22 +1,16 @@
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
-import { Controller, Get, UseGuards, VERSION_NEUTRAL } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
-import { environment } from '../../../environment'
+import { Controller, Get, Req, VERSION_NEUTRAL } from '@nestjs/common'
+import type { Request } from 'express'
+import { UserService } from './user.service'
 
-@UseGuards(IdsUserGuard, ScopesGuard)
 @Controller({
   path: 'user',
   version: [VERSION_NEUTRAL, '1'],
 })
 export class UserController {
-  constructor() {}
+  constructor(private readonly userService: UserService) {}
 
-  @Scopes(...environment.auth.scopes)
   @Get()
-  @Audit()
-  @ApiOkResponse({ type: Boolean })
-  async getUser(): Promise<boolean> {
-    return true
+  async getUser(@Req() req: Request): Promise<string> {
+    return this.userService.getUser(req)
   }
 }
