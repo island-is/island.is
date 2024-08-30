@@ -416,7 +416,7 @@ export class InternalNotificationService extends BaseNotificationService {
     } else if (theCase.state === CaseState.RECEIVED) {
       promises.push(this.sendResubmittedToCourtSmsNotificationToCourt(theCase))
 
-      this.eventService.postEvent(CaseEvent.RESUBMIT, theCase)
+      this.eventService.postEvent('RESUBMIT', theCase)
     }
 
     if (
@@ -768,7 +768,7 @@ export class InternalNotificationService extends BaseNotificationService {
     theCase: Case,
     user: User,
   ): Promise<DeliverResponse> {
-    this.eventService.postEvent(CaseEvent.SCHEDULE_COURT_DATE, theCase)
+    this.eventService.postEvent('SCHEDULE_COURT_DATE', theCase)
 
     const promises: Promise<Recipient>[] = []
 
