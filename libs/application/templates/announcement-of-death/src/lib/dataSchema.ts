@@ -5,6 +5,7 @@ import { m } from './messages'
 import { RoleConfirmationEnum } from '../types'
 
 import { customZodError } from './utils/customZodError'
+import { YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -119,6 +120,7 @@ export const dataSchema = z.object({
       .array()
       .optional(),
     encountered: z.boolean().optional(),
+    confirmation: z.array(z.enum([YES])).length(1),
   }),
   flyers: asset,
   ships: asset,
