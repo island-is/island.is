@@ -22,6 +22,7 @@ export {
   isCourtOfAppealsUser,
   prisonSystemRoles,
   isPrisonSystemUser,
+  isPrisonStaffUser,
   defenceRoles,
   isDefenceUser,
   isAdminUser,

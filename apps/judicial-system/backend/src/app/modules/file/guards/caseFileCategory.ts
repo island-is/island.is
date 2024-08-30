@@ -22,3 +22,5 @@ export const defenderCaseFileCategoriesForIndictmentCases = [
   CaseFileCategory.PROSECUTOR_CASE_FILE,
   CaseFileCategory.DEFENDANT_CASE_FILE,
 ]
+
+export const prisonSystemCaseFileCategories = [CaseFileCategory.APPEAL_RULING]

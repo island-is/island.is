@@ -21,6 +21,7 @@ import { CaseFile } from '../models/file.model'
 import {
   defenderCaseFileCategoriesForIndictmentCases,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
+  prisonSystemCaseFileCategories,
 } from './caseFileCategory'
 
 @Injectable()
@@ -65,11 +66,10 @@ export class LimitedAccessViewCaseFileGuard implements CanActivate {
       }
     }
 
-    if (isPrisonSystemUser(user)) {
+    if (isPrisonSystemUser(user) && caseFile.category) {
       if (
         isCompletedCase(theCase.state) &&
-        caseFile.category &&
-        caseFile.category === CaseFileCategory.APPEAL_RULING
+        prisonSystemCaseFileCategories.includes(caseFile.category)
       ) {
         return true
       }

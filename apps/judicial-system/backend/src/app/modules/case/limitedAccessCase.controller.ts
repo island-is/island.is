@@ -53,7 +53,7 @@ import { CaseWriteGuard } from './guards/caseWrite.guard'
 import { LimitedAccessCaseExistsGuard } from './guards/limitedAccessCaseExists.guard'
 import { RequestSharedWithDefenderGuard } from './guards/requestSharedWithDefender.guard'
 import { defenderTransitionRule, defenderUpdateRule } from './guards/rolesRules'
-import { CaseInterceptor } from './interceptors/case.interceptor'
+import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
 import { transitionCase } from './state/case.state'
 import {
@@ -85,7 +85,7 @@ export class LimitedAccessCaseController {
     type: Case,
     description: 'Gets a limited set of properties of an existing case',
   })
-  @UseInterceptors(CaseInterceptor)
+  @UseInterceptors(CompletedAppealAccessedInterceptor)
   async getById(
     @Param('caseId') caseId: string,
     @CurrentCase() theCase: Case,

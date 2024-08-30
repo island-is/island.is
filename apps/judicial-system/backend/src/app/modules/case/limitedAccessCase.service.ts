@@ -17,6 +17,10 @@ import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
 import type { User as TUser } from '@island.is/judicial-system/types'
 import {
+  isPrisonStaffUser,
+  isPrisonSystemUser,
+} from '@island.is/judicial-system/types'
+import {
   CaseAppealState,
   CaseFileCategory,
   CaseFileState,
@@ -36,6 +40,7 @@ import {
   CaseFile,
   defenderCaseFileCategoriesForRestrictionAndInvestigationCases,
 } from '../file'
+import { prisonSystemCaseFileCategories } from '../file/guards/caseFileCategory'
 import { Institution } from '../institution'
 import { User } from '../user'
 import { Case } from './models/case.model'

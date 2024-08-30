@@ -114,6 +114,13 @@ export const isPrisonSystemUser = (user?: InstitutionUser): boolean => {
   )
 }
 
+export const isPrisonStaffUser = (user: InstitutionUser): boolean =>
+  Boolean(
+    user.role &&
+      prisonSystemRoles.includes(user.role) &&
+      user.institution?.type === InstitutionType.PRISON,
+  )
+
 export const defenceRoles: string[] = [UserRole.DEFENDER]
 
 export const isDefenceUser = (user?: InstitutionUser): boolean => {
