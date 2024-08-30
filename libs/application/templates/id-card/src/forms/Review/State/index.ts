@@ -60,7 +60,7 @@ export const StateSection = buildSection({
               (x) => x.childNationalId === chosenApplicantNationalId,
             )?.[0]
 
-            return !(chosenChild.secondParent !== applicantNationalId)
+            return chosenChild.secondParent !== applicantNationalId
           },
         }),
         buildActionCardListField({
