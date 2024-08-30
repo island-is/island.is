@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, ReactNode } from 'react'
+import { FC, isValidElement, PropsWithChildren, ReactNode } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import { motion } from 'framer-motion'
@@ -87,7 +87,7 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
             <Box marginBottom={6} className={styles.breakSpaces}>
               {
                 // Check if text is a string or Element
-                React.isValidElement(text) ? text : <Text>{text}</Text>
+                isValidElement(text) ? text : <Text>{text}</Text>
               }
             </Box>
           )}
