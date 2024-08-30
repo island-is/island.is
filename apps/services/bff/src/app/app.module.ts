@@ -1,6 +1,6 @@
 import { AuthModule as BaseAuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule } from '@island.is/nest/audit'
-import { ConfigModule } from '@island.is/nest/config'
+import { ConfigModule, IdsClientConfig } from '@island.is/nest/config'
 import { Module } from '@nestjs/common'
 import { environment } from '../environment'
 import { BffConfig } from './bff.config'
@@ -13,7 +13,7 @@ import { UserModule } from './modules/user/user.module'
     BaseAuthModule.register(environment.auth),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [BffConfig],
+      load: [IdsClientConfig, BffConfig],
     }),
     UserModule,
     AppAuthModule,

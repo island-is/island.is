@@ -14,12 +14,12 @@ export const environment: BffEnvironmentSchema = {
   },
   port,
   auth: {
-    issuer: requiredString('BFF_IDENTITY_SERVER_ISSUER_URL'),
-    audience: requiredStringArray('BFF_IDENTITY_SERVER_AUDIENCE'),
-    clientId: requiredString('BFF_IDENTITY_SERVER_CLIENT_ID'),
-    scopes: requiredStringArray('BFF_IDENTITY_SERVER_CLIENT_SCOPES'),
+    issuer: requiredString('IDENTITY_SERVER_ISSUER_URL'),
+    clientId: requiredString('IDENTITY_SERVER_CLIENT_ID'),
+    secret: requiredString('IDENTITY_SERVER_CLIENT_SECRET'),
+    scopes: requiredStringArray('IDENTITY_SERVER_CLIENT_SCOPES'),
+    audience: requiredStringArray('IDENTITY_SERVER_AUDIENCE'),
     allowedRedirectUris: requiredStringArray('BFF_ALLOWED_REDIRECT_URIS'),
-    secret: requiredString('BFF_IDENTITY_SERVER_SECRET'),
     callbacksLoginRedirectUri: requiredString(
       'BFF_CALLBACKS_LOGIN_REDIRECT_URI',
     ),
