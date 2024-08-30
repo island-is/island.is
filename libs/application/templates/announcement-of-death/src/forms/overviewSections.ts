@@ -4,6 +4,7 @@ import {
   buildKeyValueField,
   buildCustomField,
   buildTextField,
+  YES,
 } from '@island.is/application/core'
 import { Answer, Application, Field } from '@island.is/application/types'
 import { format as formatNationalId } from 'kennitala'
@@ -123,75 +124,10 @@ export const testament: Field[] = [
   }),
   buildKeyValueField({
     label: m.testamentKnowledgeOfOtherTestament,
-    width: 'half',
+    width: 'full',
     value: ({ answers }) =>
       answers.knowledgeOfOtherWills === 'yes'
         ? m.testamentKnowledgeOfOtherTestamentYes
-        : m.testamentKnowledgeOfOtherTestamentNo,
-    condition: (answers) => showInDone(answers.viewOverview),
-  }),
-]
-
-export const extraInfo: Field[] = [
-  buildDividerField({
-    condition: (answers) => showInDone(answers.viewOverview),
-  }),
-  buildDescriptionField({
-    id: 'otherProperties',
-    title: m.otherPropertiesTitle,
-    marginBottom: 2,
-    titleVariant: 'h3',
-    condition: (answers) => showInDone(answers.viewOverview),
-  }),
-  buildKeyValueField({
-    label: m.otherPropertiesAccounts,
-    width: 'half',
-    value: ({ answers }) =>
-      answers?.otherProperties
-        ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.ACCOUNTS,
-          )
-          ? m.testamentKnowledgeOfOtherTestamentYes
-          : m.testamentKnowledgeOfOtherTestamentNo
-        : m.testamentKnowledgeOfOtherTestamentNo,
-    condition: (answers) => showInDone(answers.viewOverview),
-  }),
-  buildKeyValueField({
-    label: m.otherPropertiesOwnBusiness,
-    width: 'half',
-    value: ({ answers }) =>
-      answers?.otherProperties
-        ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.OWN_BUSINESS,
-          )
-          ? m.testamentKnowledgeOfOtherTestamentYes
-          : m.testamentKnowledgeOfOtherTestamentNo
-        : m.testamentKnowledgeOfOtherTestamentNo,
-    condition: (answers) => showInDone(answers.viewOverview),
-  }),
-  buildKeyValueField({
-    label: m.otherPropertiesResidence,
-    width: 'half',
-    value: ({ answers }) =>
-      answers?.otherProperties
-        ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.RESIDENCE,
-          )
-          ? m.testamentKnowledgeOfOtherTestamentYes
-          : m.testamentKnowledgeOfOtherTestamentNo
-        : m.testamentKnowledgeOfOtherTestamentNo,
-    condition: (answers) => showInDone(answers.viewOverview),
-  }),
-  buildKeyValueField({
-    label: m.otherPropertiesAssetsAbroad,
-    width: 'half',
-    value: ({ answers }) =>
-      answers?.otherProperties
-        ? (answers.otherProperties as string[]).includes(
-            OtherPropertiesEnum.ASSETS_ABROAD,
-          )
-          ? m.testamentKnowledgeOfOtherTestamentYes
-          : m.testamentKnowledgeOfOtherTestamentNo
         : m.testamentKnowledgeOfOtherTestamentNo,
     condition: (answers) => showInDone(answers.viewOverview),
   }),
@@ -244,11 +180,17 @@ export const properties: Field[] = [
   buildDividerField({
     condition: (answers) => showInDone(answers.viewOverview),
   }),
-
+  buildDescriptionField({
+    id: 'otherProperties',
+    title: m.otherPropertiesTitle,
+    marginBottom: 2,
+    titleVariant: 'h3',
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
   buildDescriptionField({
     id: 'realEstatesTitle',
     title: m.realEstatesTitle,
-    titleVariant: 'h3',
+    titleVariant: 'h4',
     description: m.realEstatesDescription,
     condition: (answers) => showInDone(answers.viewOverview),
   }),
@@ -281,8 +223,7 @@ export const properties: Field[] = [
     id: 'vehiclesTitle',
     title: m.vehiclesTitle,
     description: m.vehiclesDescription,
-    space: 5,
-    titleVariant: 'h3',
+    titleVariant: 'h4',
     condition: (answers) => showInDone(answers.viewOverview),
   }),
   buildCustomField(
@@ -305,6 +246,58 @@ export const properties: Field[] = [
           })),
     },
   ),
+  buildKeyValueField({
+    label: m.otherPropertiesAccounts,
+    width: 'full',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.ACCOUNTS,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.otherPropertiesOwnBusiness,
+    width: 'full',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.OWN_BUSINESS,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.otherPropertiesResidence,
+    width: 'full',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.RESIDENCE,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
+  buildKeyValueField({
+    label: m.otherPropertiesAssetsAbroad,
+    width: 'full',
+    value: ({ answers }) =>
+      answers?.otherProperties
+        ? (answers.otherProperties as string[]).includes(
+            OtherPropertiesEnum.ASSETS_ABROAD,
+          )
+          ? m.testamentKnowledgeOfOtherTestamentYes
+          : m.testamentKnowledgeOfOtherTestamentNo
+        : m.testamentKnowledgeOfOtherTestamentNo,
+    condition: (answers) => showInDone(answers.viewOverview),
+  }),
 ]
 
 export const files: Field[] = [
@@ -321,7 +314,6 @@ export const files: Field[] = [
   buildCustomField(
     {
       title: m.certificateOfDeathAnnouncementTitle,
-      description: m.certificateOfDeathAnnouncementDescription,
       id: 'certificateOfDeathAnnouncement',
       component: 'FilesRecipientCard',
       condition: (answers) => showInDone(answers.viewOverview),
@@ -338,7 +330,6 @@ export const files: Field[] = [
   buildCustomField(
     {
       title: m.financesDataCollectionPermissionTitle,
-      description: m.financesDataCollectionPermissionDescription,
       id: 'financesDataCollectionPermission',
       component: 'FilesRecipientCard',
       condition: (answers) => showInDone(answers.viewOverview),
@@ -355,7 +346,6 @@ export const files: Field[] = [
   buildCustomField(
     {
       title: m.authorizationForFuneralExpensesTitle,
-      description: m.authorizationForFuneralExpensesDescription,
       id: 'authorizationForFuneralExpenses',
       component: 'FilesRecipientCard',
       condition: (answers) => showInDone(answers.viewOverview),
@@ -373,39 +363,45 @@ export const files: Field[] = [
 
 export const firearmApplicant: Field[] = [
   buildDividerField({
-    condition: (answers) => showInDone(answers.viewOverview),
+    condition: (answers) =>
+      showInDone(answers.viewOverview) && answers.hadFirearms === YES,
   }),
   buildDescriptionField({
     id: 'firearmApplicant',
     title: m.firearmsApplicantOverviewHeader,
     titleVariant: 'h3',
-    condition: (answers) => showInDone(answers.viewOverview),
+    condition: (answers) =>
+      showInDone(answers.viewOverview) && answers.hadFirearms === YES,
   }),
   buildKeyValueField({
     label: m.firearmsApplicantName,
     width: 'half',
     value: ({ answers }) => (answers.firearmApplicant as any)?.name || '',
-    condition: (answers) => showInDone(answers.viewOverview),
+    condition: (answers) =>
+      showInDone(answers.viewOverview) && answers.hadFirearms === YES,
   }),
   buildKeyValueField({
     label: m.firearmsApplicantNationalId,
     width: 'half',
     value: ({ answers }) =>
       formatNationalId((answers.firearmApplicant as any)?.nationalId || ''),
-    condition: (answers) => showInDone(answers.viewOverview),
+    condition: (answers) =>
+      showInDone(answers.viewOverview) && answers.hadFirearms === YES,
   }),
   buildKeyValueField({
     label: m.firearmsApplicantPhone,
     width: 'half',
     value: ({ answers }) =>
       formatPhoneNumber((answers.firearmApplicant as any)?.phone || ''),
-    condition: (answers) => showInDone(answers.viewOverview),
+    condition: (answers) =>
+      showInDone(answers.viewOverview) && answers.hadFirearms === YES,
   }),
   buildKeyValueField({
     label: m.firearmsApplicantEmail,
     width: 'half',
     value: ({ answers }) => (answers.firearmApplicant as any)?.email || '',
-    condition: (answers) => showInDone(answers.viewOverview),
+    condition: (answers) =>
+      showInDone(answers.viewOverview) && answers.hadFirearms === YES,
   }),
 ]
 
@@ -414,7 +410,6 @@ export const additionalInfo: Field[] = [
   buildDescriptionField({
     id: 'additionalInfoTitle',
     title: m.additionalInfoTitle,
-    description: m.additionalInfoDescription,
     titleVariant: 'h3',
   }),
   buildTextField({

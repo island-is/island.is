@@ -30,7 +30,7 @@ export const subSectionInheritance = buildSubSection({
           component: 'EstateMemberRepeater',
           childInputIds: ['estateMembers.encountered', 'estateMembers.members'],
         }),
-        buildDescriptionField({ 
+        buildDescriptionField({
           id: 'inheritanceConfirmationDescription',
           title: '',
           description: m.inheritanceConfirmationDescription,
@@ -41,9 +41,7 @@ export const subSectionInheritance = buildSubSection({
           title: '',
           large: false,
           backgroundColor: 'white',
-          options: [
-            { value: YES, label: m.inheritanceConfirmation },
-          ],
+          options: [{ value: YES, label: m.inheritanceConfirmation }],
         }),
       ],
     }),

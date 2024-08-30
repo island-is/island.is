@@ -325,12 +325,14 @@ Ef ekkert á við sem hér að ofan er talið rennur arfur í ríkissjóð. Nán
   },
   inheritanceConfirmationDescription: {
     id: 'aod.application:inheritanceConfirmationDescription#markdown',
-    defaultMessage: 'Ath. Það þarf alltaf að fylla út upplýsingar um alla erfingja, til dæmis þótt maki ætli að sitja í óskiptu búi. Ef barn látna var fallið frá á undan þarf að gefa upplýsingar um barnabörn. Ef látni sat í óskiptu búi þarf að veita upplýsingar um stjúpbörn.',
+    defaultMessage:
+      'Ath. Það þarf alltaf að fylla út upplýsingar um alla erfingja, til dæmis þótt maki ætli að sitja í óskiptu búi. Ef barn látna var fallið frá á undan þarf að gefa upplýsingar um barnabörn. Ef látni sat í óskiptu búi þarf að veita upplýsingar um stjúpbörn.',
     description: 'Inheritance confirmation',
   },
   inheritanceConfirmation: {
     id: 'aod.application:inheritanceConfirmation',
-    defaultMessage: 'Ég staðfesti að hafa fært inn upplýsingar um alla erfingja',
+    defaultMessage:
+      'Ég staðfesti að hafa fært inn upplýsingar um alla erfingja',
     description: 'Inheritance confirmation',
   },
 
