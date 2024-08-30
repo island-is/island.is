@@ -14,7 +14,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { TemporaryCalculationQuery } from '../../graphql/queries'
-import { RatioType, YES } from '../../lib/constants'
+import { INCOME, RatioType, YES } from '../../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -28,12 +28,11 @@ export const TemporaryCalculationTable: FC<
   const { formatMessage } = useLocale()
 
   const { incomePlan } = getApplicationAnswers(application.answers)
-  const { categorizedIncomeTypes } = getApplicationExternalData(
-    application.externalData,
-  )
+  const { categorizedIncomeTypes, incomePlanConditions } =
+    getApplicationExternalData(application.externalData)
 
   const input = {
-    incomeYear: new Date().getFullYear(),
+    incomeYear: incomePlanConditions.incomePlanYear,
     incomeTypes: incomePlan.map((income) => {
       const incomeType = categorizedIncomeTypes.find(
         (item) => item.incomeTypeName === income.incomeType,
@@ -48,6 +47,7 @@ export const TemporaryCalculationTable: FC<
         incomeCategoryCode: incomeType?.categoryCode,
         incomeCategoryName: income.incomeCategory,
         ...(income.income === RatioType.MONTHLY &&
+        income?.incomeCategory === INCOME &&
         income?.unevenIncomePerYear?.[0] === YES
           ? {
               amountJan: Number(income.january),
@@ -85,7 +85,27 @@ export const TemporaryCalculationTable: FC<
     variables: {
       input,
     },
+    skip: !incomePlanConditions.showTemporaryCalculations,
   })
+
+  if (!incomePlanConditions.showTemporaryCalculations) {
+    return (
+      <Box marginY={3}>
+        <AlertMessage
+          type="warning"
+          title={formatMessage(
+            socialInsuranceAdministrationMessage.shared.alertTitle,
+          )}
+          message={formatMessage(
+            incomePlanFormMessage.info.noAvailablePrerequisites,
+            {
+              incomePlanYear: incomePlanConditions.incomePlanYear,
+            },
+          )}
+        />
+      </Box>
+    )
+  }
 
   if (loading) {
     return (

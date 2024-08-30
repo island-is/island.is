@@ -88,6 +88,10 @@ export const IncomePlanForm: Form = buildForm({
                     incomePlanFormMessage.incomePlan.selectIncomeType,
                   width: 'half',
                   isSearchable: true,
+                  updateValueObj: {
+                    valueModifier: (_) => '',
+                    watchValues: 'incomeCategory',
+                  },
                   options: (application, activeField) => {
                     return getTypesOptions(
                       application.externalData,
@@ -153,7 +157,7 @@ export const IncomePlanForm: Form = buildForm({
                         Number(activeField?.incomePerYear) / 12,
                       ).toString()
                     }
-                    return undefined
+                    return ''
                   },
                   suffix: '',
                   condition: (_, activeField) => {
@@ -182,7 +186,7 @@ export const IncomePlanForm: Form = buildForm({
                         Number(activeField?.incomePerYear) / 12,
                       ).toString()
                     }
-                    return undefined
+                    return ''
                   },
                   suffix: '',
                   condition: (_, activeField) => {
@@ -211,6 +215,7 @@ export const IncomePlanForm: Form = buildForm({
                     valueModifier: (activeField) => {
                       if (
                         activeField?.income === RatioType.MONTHLY &&
+                        activeField?.incomeCategory === INCOME &&
                         activeField?.unevenIncomePerYear?.[0] === YES
                       ) {
                         return (
@@ -252,6 +257,7 @@ export const IncomePlanForm: Form = buildForm({
                     watchValues: (activeField) => {
                       if (
                         activeField?.income === RatioType.MONTHLY &&
+                        activeField?.incomeCategory === INCOME &&
                         activeField?.unevenIncomePerYear?.[0] === YES
                       ) {
                         return [

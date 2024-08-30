@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ISK, RatioType, YES } from './constants'
+import { INCOME, ISK, RatioType, YES } from './constants'
 import { errorMessages } from './messages'
 
 export const dataSchema = z.object({
@@ -9,7 +9,7 @@ export const dataSchema = z.object({
       z
         .object({
           incomeCategory: z.string(),
-          incomeType: z.string(),
+          incomeType: z.string().min(1),
           income: z.enum([RatioType.YEARLY, RatioType.MONTHLY]),
           incomePerYear: z.string().optional(),
           equalIncomePerMonth: z.string().optional(),
@@ -37,32 +37,25 @@ export const dataSchema = z.object({
           },
         )
         .refine(
-          ({ income, currency, equalIncomePerMonth }) =>
-            income === RatioType.MONTHLY && currency === ISK
+          ({
+            income,
+            currency,
+            equalIncomePerMonth,
+            unevenIncomePerYear,
+            incomeCategory,
+          }) => {
+            const unevenAndEmploymentIncome =
+              unevenIncomePerYear?.[0] !== YES ||
+              (incomeCategory !== INCOME && unevenIncomePerYear?.[0] === YES)
+
+            return income === RatioType.MONTHLY &&
+              currency === ISK &&
+              unevenAndEmploymentIncome
               ? !!equalIncomePerMonth
-              : true,
+              : true
+          },
           {
             path: ['equalIncomePerMonth'],
-          },
-        )
-        .refine(
-          ({ income, currency, equalIncomePerMonth, unevenIncomePerYear }) =>
-            income === RatioType.MONTHLY &&
-            currency === ISK &&
-            unevenIncomePerYear?.[0] !== YES
-              ? !!equalIncomePerMonth
-              : true,
-          {
-            path: ['equalIncomePerMonth'],
-          },
-        )
-        .refine(
-          ({ income, currency, equalForeignIncomePerMonth }) =>
-            income === RatioType.MONTHLY && currency !== ISK
-              ? !!equalForeignIncomePerMonth
-              : true,
-          {
-            path: ['equalForeignIncomePerMonth'],
           },
         )
         .refine(
@@ -71,12 +64,18 @@ export const dataSchema = z.object({
             currency,
             equalForeignIncomePerMonth,
             unevenIncomePerYear,
-          }) =>
-            income === RatioType.MONTHLY &&
-            currency !== ISK &&
-            unevenIncomePerYear?.[0] !== YES
+            incomeCategory,
+          }) => {
+            const unevenAndEmploymentIncome =
+              unevenIncomePerYear?.[0] !== YES ||
+              (incomeCategory !== INCOME && unevenIncomePerYear?.[0] === YES)
+
+            return income === RatioType.MONTHLY &&
+              currency !== ISK &&
+              unevenAndEmploymentIncome
               ? !!equalForeignIncomePerMonth
-              : true,
+              : true
+          },
           {
             path: ['equalForeignIncomePerMonth'],
           },
@@ -84,6 +83,7 @@ export const dataSchema = z.object({
         .refine(
           (incomePlanTable) =>
             incomePlanTable.income === RatioType.MONTHLY &&
+            incomePlanTable?.incomeCategory === INCOME &&
             incomePlanTable.unevenIncomePerYear?.[0] === YES
               ? ![
                   incomePlanTable.january,
