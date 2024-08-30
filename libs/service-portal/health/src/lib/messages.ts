@@ -1107,4 +1107,16 @@ export const messages = defineMessages({
     defaultMessage:
       'Ekki tókst að sækja gögn frá Embætti Landlæknis. Vinsamlegast reynið aftur síðar',
   },
+  medicinePrescriptions: {
+    id: 'sp.health:medicine-prescriptions',
+    defaultMessage: 'Lyfjaávísanir',
+  },
+  medicineDelegation: {
+    id: 'sp.health:medicine-delegation',
+    defaultMessage: 'Lyfjaumboð',
+  },
+  medicinePaymentParticipation: {
+    id: 'sp.health:medicine-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
+  },
 })

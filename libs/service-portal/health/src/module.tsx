@@ -31,7 +31,7 @@ const MedicinePurchase = lazy(() =>
   import('./screens/Medicine/MedicinePurchase'),
 )
 
-const MedicineLicence = lazy(() => import('./screens/Medicine/MedicineLicense'))
+const MedicineLicence = lazy(() => import('./screens/MedicineLicense/MedicineLicense'))
 
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),

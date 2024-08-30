@@ -98,19 +98,10 @@ export const healthNavigation: PortalNavigationItem = {
           navHide: true,
         },
         {
-          name: messages.medicineLicenseIntroTitle,
+          name: messages.medicineLicenseTitle,
           path: HealthPaths.HealthMedicineCertificates,
-          activeIfExact: true,
-          navHide: true,
-          children: [
-            {
-              name: messages.medicineLicenseTitle,
-              path: HealthPaths.HealthMedicineCertificate,
-              activeIfExact: true,
-              navHide: true,
-            },
-          ],
         },
+       
       ],
     },
     {

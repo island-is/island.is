@@ -7,11 +7,11 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
-import { useGetDrugCertificatesQuery } from './Medicine.generated'
-import { SECTION_GAP } from './constants'
+import { useGetDrugCertificatesQuery } from '../Medicine/Medicine.generated'
+import { SECTION_GAP } from '../Medicine/constants'
 import { ActionCard, m } from '@island.is/service-portal/core'
 import { HealthPaths } from '../../lib/paths'
-import { MedicineWrapper } from './wrapper/MedicineWrapper'
+import { MedicineWrapper } from '../Medicine/wrapper/MedicineWrapper'
 import { Problem } from '@island.is/react-spa/shared'
 
 export const MedicineLicense = () => {
@@ -20,7 +20,7 @@ export const MedicineLicense = () => {
   const { data, error, loading } = useGetDrugCertificatesQuery()
 
   return (
-    <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates}>
+    <MedicineWrapper pathname={HealthPaths.HealthMedicineCertificates} >
       <Box marginBottom={SECTION_GAP}>
         <Text variant="h5" marginBottom={1}>
           {formatMessage(messages.medicineLicenseTitle)}
