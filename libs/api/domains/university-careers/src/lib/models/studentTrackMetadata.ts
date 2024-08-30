@@ -2,12 +2,12 @@ import { ObjectType, Field } from '@nestjs/graphql'
 
 @ObjectType('UniversityCareersStudentTrackMetadata')
 export class StudentTrackMetadata {
-  @Field(() => String)
+  @Field()
   description!: string
 
-  @Field(() => String)
+  @Field()
   footer!: string
 
-  @Field(() => String, { nullable: true })
+  @Field({ nullable: true })
   unconfirmedData?: string
 }

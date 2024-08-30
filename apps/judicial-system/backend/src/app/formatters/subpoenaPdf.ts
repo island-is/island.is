@@ -2,13 +2,12 @@ import PDFDocument from 'pdfkit'
 
 import { FormatMessage } from '@island.is/cms-translations'
 
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
 import {
-  DateType,
-  DistrictCourtLocation,
-  DistrictCourts,
-  SubpoenaType,
-} from '@island.is/judicial-system/types'
+  formatDate,
+  formatDOB,
+  lowercase,
+} from '@island.is/judicial-system/formatters'
+import { DateType, SubpoenaType } from '@island.is/judicial-system/types'
 
 import { subpoena as strings } from '../messages'
 import { Case } from '../modules/case'
@@ -22,6 +21,28 @@ import {
   addNormalText,
   setTitle,
 } from './pdfHelpers'
+
+type DistrictCourts =
+  | 'Héraðsdómur Reykjavíkur'
+  | 'Héraðsdómur Reykjaness'
+  | 'Héraðsdómur Vesturlands'
+  | 'Héraðsdómur Vestfjarða'
+  | 'Héraðsdómur Norðurlands vestra'
+  | 'Héraðsdómur Norðurlands eystra'
+  | 'Héraðsdómur Austurlands'
+  | 'Héraðsdómur Suðurlands'
+
+// TODO: Move to databas
+const DistrictCourtLocation: Record<DistrictCourts, string> = {
+  'Héraðsdómur Reykjavíkur': 'Dómhúsið við Lækjartorg, Reykjavík',
+  'Héraðsdómur Reykjaness': 'Fjarðargata 9, Hafnarfirði',
+  'Héraðsdómur Vesturlands': 'Bjarnarbraut 8, Borgarnesi',
+  'Héraðsdómur Vestfjarða': 'Hafnarstræti 9, Ísafirði',
+  'Héraðsdómur Norðurlands vestra': 'Skagfirðingabraut 21, Sauðárkróki',
+  'Héraðsdómur Norðurlands eystra': 'Hafnarstræti 107, 4. hæð, Akureyri',
+  'Héraðsdómur Austurlands': 'Lyngás 15, Egilsstöðum',
+  'Héraðsdómur Suðurlands': 'Austurvegur 4, Selfossi',
+}
 
 export const createSubpoena = (
   theCase: Case,
@@ -54,7 +75,7 @@ export const createSubpoena = (
 
   addNormalRightAlignedText(
     doc,
-    `${formatDate(new Date(dateLog?.created ?? new Date()), 'PPP')}`,
+    `${formatDate(new Date(dateLog?.modified ?? new Date()), 'PPP')}`,
     'Times-Roman',
   )
 
@@ -97,7 +118,9 @@ export const createSubpoena = (
   addNormalText(
     doc,
     theCase.prosecutor
-      ? `                     (${theCase.prosecutor.name} ${theCase.prosecutor.title})`
+      ? `                     (${theCase.prosecutor.name} ${lowercase(
+          theCase.prosecutor.title,
+        )})`
       : 'Ekki skráður',
     'Times-Roman',
   )
@@ -110,7 +133,7 @@ export const createSubpoena = (
     addNormalText(
       doc,
       formatMessage(strings.arraignmentDate, {
-        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPP'),
+        arraignmentDate: formatDate(new Date(arraignmentDate), 'PPPp'),
       }),
       'Times-Bold',
     )

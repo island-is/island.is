@@ -157,6 +157,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
             >
               <LinkButton
                 to={editLink.url}
+                icon={editLink.icon}
                 text={
                   editLink.title
                     ? formatMessage(editLink.title)

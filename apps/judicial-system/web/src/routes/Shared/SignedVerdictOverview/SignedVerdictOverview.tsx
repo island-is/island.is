@@ -1,4 +1,4 @@
-import React, { FC, ReactNode, useCallback, useContext, useState } from 'react'
+import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
 import { AnimatePresence } from 'framer-motion'
@@ -13,10 +13,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  formatCaseType,
-} from '@island.is/judicial-system/formatters'
+import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -55,7 +52,7 @@ import {
   UserContext,
   useRequestRulingSignature,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import {
   CaseAppealState,
   CaseDecision,
@@ -75,7 +72,6 @@ import {
   useAppealAlertBanner,
   useCase,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
@@ -182,6 +178,20 @@ export const SignedVerdictOverview: FC = () => {
     caseNotFound,
     refreshCase,
   } = useContext(FormContext)
+  const {
+    defendants,
+    policeCaseNumbers,
+    courtCaseNumber,
+    prosecutor,
+    prosecutorsOffice,
+    court,
+    judge,
+    caseType,
+    registrar,
+    appealCaseNumber,
+    appealAssistant,
+    appealJudges,
+  } = useInfoCardItems()
 
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
   const [shareCaseModal, setSharedCaseModal] = useState<ModalControls>()
@@ -378,6 +388,7 @@ export const SignedVerdictOverview: FC = () => {
           ),
         })
 
+        // TODO: Pass the real insitution into shareCaseWithAnotherInstitution, no nned for faking values here.
         setWorkingCase((prevWorkingCase) => ({
           ...prevWorkingCase,
           sharedWithProsecutorsOffice: {
@@ -520,122 +531,45 @@ export const SignedVerdictOverview: FC = () => {
           )}
           <Box marginBottom={6}>
             <InfoCard
-              data={[
+              sections={[
                 {
-                  title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers?.map((n) => (
-                    <Text key={n}>{n}</Text>
-                  )),
+                  id: 'defendants-section',
+                  items: [defendants(workingCase.type)],
                 },
                 {
-                  title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  id: 'case-info-section',
+                  items: [
+                    policeCaseNumbers,
+                    courtCaseNumber,
+                    prosecutorsOffice,
+                    court,
+                    prosecutor(workingCase.type),
+                    judge,
+                    ...(isInvestigationCase(workingCase.type)
+                      ? [caseType]
+                      : []),
+                    ...(workingCase.registrar ? [registrar] : []),
+                  ],
+                  columns: 2,
                 },
-                {
-                  title: formatMessage(core.prosecutor),
-                  value: `${workingCase.prosecutorsOffice?.name}`,
-                },
-                {
-                  title: formatMessage(core.court),
-                  value: workingCase.court?.name,
-                },
-                {
-                  title: formatMessage(core.prosecutorPerson),
-                  value: NameAndEmail(
-                    workingCase.prosecutor?.name,
-                    workingCase.prosecutor?.email,
-                  ),
-                },
-                {
-                  title: formatMessage(core.judge),
-                  value: NameAndEmail(
-                    workingCase.judge?.name,
-                    workingCase.judge?.email,
-                  ),
-                },
-                // Conditionally add this field based on case type
-                ...(isInvestigationCase(workingCase.type)
+                ...(workingCase.appealCaseNumber
                   ? [
                       {
-                        title: formatMessage(core.caseType),
-                        value: capitalize(formatCaseType(workingCase.type)),
-                      },
-                    ]
-                  : []),
-                ...(workingCase.registrar
-                  ? [
-                      {
-                        title: formatMessage(core.registrar),
-                        value: NameAndEmail(
-                          workingCase.registrar?.name,
-                          workingCase.registrar?.email,
-                        ),
+                        id: 'court-of-appeal-section',
+                        items: [
+                          appealCaseNumber,
+                          ...(appealAssistant ? [appealAssistant] : []),
+                          ...(workingCase.appealJudge1 &&
+                          workingCase.appealJudge2 &&
+                          workingCase.appealJudge3
+                            ? [appealJudges]
+                            : []),
+                        ],
+                        columns: 2,
                       },
                     ]
                   : []),
               ]}
-              defendants={
-                workingCase.defendants
-                  ? {
-                      title: capitalize(
-                        formatMessage(core.defendant, {
-                          suffix:
-                            workingCase.defendants.length > 1 ? 'ar' : 'i',
-                        }),
-                      ),
-                      items: workingCase.defendants,
-                    }
-                  : undefined
-              }
-              defenders={[
-                {
-                  name: workingCase.defenderName ?? '',
-                  defenderNationalId: workingCase.defenderNationalId,
-                  sessionArrangement: workingCase.sessionArrangements,
-                  email: workingCase.defenderEmail,
-                  phoneNumber: workingCase.defenderPhoneNumber,
-                },
-              ]}
-              courtOfAppealData={
-                workingCase.appealCaseNumber
-                  ? [
-                      {
-                        title: formatMessage(core.appealCaseNumberHeading),
-                        value: workingCase.appealCaseNumber,
-                      },
-                      ...(workingCase.appealAssistant
-                        ? [
-                            {
-                              title: formatMessage(core.appealAssistantHeading),
-                              value: workingCase.appealAssistant.name,
-                            },
-                          ]
-                        : []),
-                      ...(workingCase.appealJudge1 &&
-                      workingCase.appealJudge2 &&
-                      workingCase.appealJudge3
-                        ? [
-                            {
-                              title: formatMessage(core.appealJudgesHeading),
-                              value: (
-                                <>
-                                  {sortByIcelandicAlphabet([
-                                    workingCase.appealJudge1.name || '',
-                                    workingCase.appealJudge2.name || '',
-                                    workingCase.appealJudge3.name || '',
-                                  ]).map((judge, index) => (
-                                    <Text key={`${judge}_${index}`}>
-                                      {judge}
-                                    </Text>
-                                  ))}
-                                </>
-                              ),
-                            },
-                          ]
-                        : []),
-                    ]
-                  : undefined
-              }
             />
           </Box>
           {!isPrisonSystemUser(user) && (

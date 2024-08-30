@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { LayoutGroup } from 'framer-motion'
 import router from 'next/router'
@@ -65,7 +65,7 @@ const CaseFile = () => {
                     workingCase.caseFiles?.filter(
                       (caseFile) =>
                         caseFile.policeCaseNumber === policeCaseNumber &&
-                        caseFile.category === CaseFileCategory.CASE_FILE,
+                        caseFile.category === CaseFileCategory.CASE_FILE_RECORD,
                     ) ?? []
                   }
                   subtypes={workingCase.indictmentSubtypes}
