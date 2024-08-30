@@ -1,6 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { S3 } from 'aws-sdk'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import {
@@ -8,11 +7,11 @@ import {
   ApplicationWithAttachments as Application,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
-import AmazonS3Uri from 'amazon-s3-uri'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
 import { DataResponse } from '../financial-statements-inao/financial-statements-inao.service'
 import { getInput, getShouldGetFileName } from './mappers/helpers'
+import { AttachmentS3Service } from '../../shared/services'
 
 export interface AttachmentData {
   key: string
@@ -31,46 +30,12 @@ export const getCurrentUserType = (answers: any, externalData: any) => {
 
 @Injectable()
 export class FinancialStatementIndividualElectionService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementIndividualClientService: FinancialStatementsInaoClientService,
+    private attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION)
-    this.s3 = new S3()
-  }
-
-  private async getAttachment(application: Application): Promise<string> {
-    const attachments: AttachmentData[] | undefined = getValueViaPath(
-      application.answers,
-      'attachments.file',
-    ) as Array<{ key: string; name: string }>
-
-    const attachmentKey = attachments[0].key
-    const fileName = (
-      application.attachments as {
-        [key: string]: string
-      }
-    )[attachmentKey]
-
-    if (!fileName) {
-      return Promise.reject({})
-    }
-
-    const { bucket, key } = AmazonS3Uri(fileName)
-
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: bucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent.toString('base64') || ''
-    } catch (error) {
-      throw new Error('Villa kom upp við að senda umsókn')
-    }
   }
 
   async getUserType() {
@@ -84,7 +49,7 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
     const { answers } = application
     const shouldGetFileName = getShouldGetFileName(answers)
     const fileName = shouldGetFileName
-      ? await this.getAttachment(application)
+      ? (await this.attachmentService.getFiles(application, ['attachments.file']))[0].fileContent
       : undefined
 
     const { input, loggerInfo } = getInput(answers, actor, nationalId, fileName)

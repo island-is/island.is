@@ -1,6 +1,9 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ApplicationWithAttachments as Application } from '@island.is/application/types'
-import { S3 } from 'aws-sdk'
+import {
+  GetObjectCommand,
+  S3Client,
+} from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
@@ -14,9 +17,9 @@ export interface AttachmentData {
 
 @Injectable()
 export class AttachmentS3Service {
-  private readonly s3: AWS.S3
+  private readonly s3Client: S3Client
   constructor() {
-    this.s3 = new S3()
+    this.s3Client = new S3Client()
   }
 
   public async getFiles(
@@ -71,15 +74,17 @@ export class AttachmentS3Service {
     const { bucket, key } = AmazonS3URI(fileName)
     const uploadBucket = bucket
     try {
-      const file = await this.s3
-        .getObject({
+      const { Body } = await this.s3Client.send(
+        new GetObjectCommand({
           Bucket: uploadBucket,
           Key: key,
         })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent?.toString('base64')
+      );
+    
+      return await Body?.transformToString('base64');
+
     } catch (error) {
+      logger.error('Error occurred while fetching file from S3')
       logger.error(error)
       return undefined
     }

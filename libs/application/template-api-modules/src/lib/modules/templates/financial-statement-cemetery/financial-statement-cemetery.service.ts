@@ -1,4 +1,3 @@
-import { S3 } from 'aws-sdk'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { Inject } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
@@ -7,14 +6,10 @@ import {
   CemeteryFinancialStatementValues,
   FinancialStatementsInaoClientService,
   ClientRoles,
-  Contact,
-  ContactType,
-  DigitalSignee,
 } from '@island.is/clients/financial-statements-inao'
 import {
   ApplicationTypes,
   ApplicationWithAttachments as Application,
-  PerformActionResult,
 } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import AmazonS3URI from 'amazon-s3-uri'
@@ -25,17 +20,12 @@ import {
   getCurrentUserType,
 } from '../financial-statements-inao/financial-statements-inao.service'
 import {
-  BoardMember,
-  FSIUSERTYPE,
-} from '@island.is/application/templates/financial-statements-inao/types'
-import {
   mapValuesToCemeterytype,
   getNeededCemeteryValues,
   mapContactsAnswersToContacts,
   mapDigitalSignee,
 } from '../financial-statement-cemetery/mappers/mapValuesToUserType'
-import { TemplateApiError } from '@island.is/nest/problem'
-import { ApplicationApiAction } from '../../template-api.service'
+import { AttachmentS3Service } from '../../shared/services'
 
 export type AttachmentData = {
   key: string
@@ -43,48 +33,12 @@ export type AttachmentData = {
 }
 
 export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiService {
-  s3: S3
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private financialStatementClientService: FinancialStatementsInaoClientService,
+    private attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY)
-    this.s3 = new S3()
-  }
-
-  private async getAttachments(application: Application): Promise<string> {
-    const attachments: Array<AttachmentData> | undefined = getValueViaPath(
-      application.answers,
-      'attachments.files',
-    ) as Array<{ key: string; name: string }>
-
-    const attachmentKey = attachments[0].key
-
-    const fileName = (
-      application.attachments as {
-        [key: string]: string
-      }
-    )[attachmentKey]
-
-    if (!fileName) {
-      return Promise.reject({})
-    }
-
-    const { bucket, key } = AmazonS3URI(fileName)
-
-    const uploadBucket = bucket
-    try {
-      const file = await this.s3
-        .getObject({
-          Bucket: uploadBucket,
-          Key: key,
-        })
-        .promise()
-      const fileContent = file.Body as Buffer
-      return fileContent.toString('base64') || ''
-    } catch (error) {
-      throw new Error('Error occurred while fetching attachment')
-    }
   }
 
   async getUserType({ auth }: TemplateApiModuleActionProps) {
@@ -119,7 +73,9 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
     const { year, actorsName, contactsAnswer, clientPhone, clientEmail, file } =
       getNeededCemeteryValues(answers)
 
-    const fileName = file ? await this.getAttachments(application) : undefined
+    const fileName = file
+    ? (await this.attachmentService.getFiles(application, ['attachments.files']))[0].fileContent
+    : undefined
 
     const client = { nationalId }
 

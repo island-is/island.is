@@ -7,6 +7,7 @@ import {
 } from '@island.is/clients/financial-statements-inao'
 import { ConfigModule } from '@nestjs/config'
 import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election.service'
+import { AttachmentS3Service } from '../../shared/services'
 
 export class FinancialStatementIndividualElectionModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
@@ -18,6 +19,7 @@ export class FinancialStatementIndividualElectionModule {
           load: [FinancialStatementsInaoClientConfig],
         }),
         FinancialStatementsInaoClientModule,
+        AttachmentS3Service,
       ],
       providers: [FinancialStatementIndividualElectionService],
       exports: [FinancialStatementIndividualElectionService],
