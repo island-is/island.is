@@ -17,10 +17,12 @@ type VehicleListItem = NonNullable<
 export const VehicleItem = React.memo(
   ({
     item,
+    minHeight,
     style,
   }: {
     item: VehicleListItem
     index: number
+    minHeight?: number
     style?: ViewStyle
   }) => {
     const theme = useTheme()
@@ -57,6 +59,7 @@ export const VehicleItem = React.memo(
               title={item.type}
               color={item.color}
               number={item.regno}
+              minHeight={minHeight}
               label={
                 isInspectionDeadline && nextInspection ? (
                   <Label color="danger" icon>

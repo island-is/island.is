@@ -66,12 +66,14 @@ export const VehiclesModule = React.memo(() => {
       key={vehicle.permno}
       item={vehicle}
       index={index}
+      minHeight={176}
       style={
         count > 1
           ? {
               width: screenWidth - theme.spacing[2] * 3,
               paddingHorizontal: 0,
               paddingLeft: theme.spacing[2],
+              minHeight: 176,
             }
           : {
               width: '100%',
