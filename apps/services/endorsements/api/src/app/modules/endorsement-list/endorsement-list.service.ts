@@ -3,10 +3,9 @@ import {
   Injectable,
   NotFoundException,
   BadRequestException,
-  ForbiddenException,
 } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
-import { col, Op, Sequelize } from 'sequelize'
+import { Op, Sequelize } from 'sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { EndorsementList } from './endorsement-list.model'
@@ -30,6 +29,7 @@ import csvStringify from 'csv-stringify/lib/sync'
 import { AwsService } from '@island.is/nest/aws'
 import { EndorsementListExportUrlResponse } from './dto/endorsementListExportUrl.response.dto'
 
+// MOVE TO FILE ?...................................................
 interface CreateInput extends EndorsementListDto {
   ownerNationalId: string
 }
@@ -57,10 +57,10 @@ export class EndorsementListService {
         }
       }
     }
-
     return false
   }
-
+  
+  // used by interceptor 
   async getListOwnerNationalId(listId: string): Promise<string | null> {
     const endorsementList = await this.endorsementListModel.findOne({
       where: {
@@ -76,7 +76,6 @@ export class EndorsementListService {
 
   // Method to handle older lists without an ownerName
   async populateOwnerNamesForExistingLists() {
-    console.log("Populating owner names for existing lists......................................................................");
     const lists = await this.endorsementListModel.findAll({
       where: {
         ownerName: '',
