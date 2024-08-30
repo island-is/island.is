@@ -1,18 +1,21 @@
 import { CSSProperties, FC, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQuery } from '@apollo/client/react'
-import { GET_BROKERS_QUERY } from './queries'
+
 import { ConnectedComponent, Query } from '@island.is/api/schema'
-import { sortAlpha } from '@island.is/shared/utils'
 import {
+  AlertMessage,
   Box,
+  Input,
   LoadingDots,
   Pagination,
   Table as T,
   Text,
-  Input,
-  AlertMessage,
 } from '@island.is/island-ui/core'
-import { useNamespace } from '@island.is/web/hooks'
+import { sortAlpha } from '@island.is/shared/utils'
+
+import { GET_BROKERS_QUERY } from './queries'
+import { translation as t } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 5
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
@@ -66,7 +69,7 @@ const getSortedAndFilteredBrokers = (
 const BrokersList: FC<React.PropsWithChildren<BrokersListProps>> = ({
   slice,
 }) => {
-  const n = useNamespace(slice.json ?? {})
+  const { formatMessage } = useIntl()
 
   const [listState, setListState] = useState<ListState>('loading')
   const [brokers, setBrokers] = useState<Query['getBrokers']>([])
@@ -138,11 +141,8 @@ const BrokersList: FC<React.PropsWithChildren<BrokersListProps>> = ({
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={n('errorTitle', 'Villa')}
-          message={n(
-            'errorMessage',
-            'Ekki tókst að sækja lista yfir verðbréfamiðlara.',
-          )}
+          title={formatMessage(t.errorTitle)}
+          message={formatMessage(t.errorMessage)}
           type="error"
         />
       )}
@@ -150,7 +150,7 @@ const BrokersList: FC<React.PropsWithChildren<BrokersListProps>> = ({
         <Box marginBottom={4}>
           <Input
             name="brokersSearchInput"
-            placeholder={n('searchPlaceholder', 'Leita')}
+            placeholder={formatMessage(t.searchPlaceholder)}
             backgroundColor={['blue', 'blue', 'white']}
             size="sm"
             icon={{
@@ -163,9 +163,7 @@ const BrokersList: FC<React.PropsWithChildren<BrokersListProps>> = ({
       )}
       {listState === 'loaded' && filteredBrokers.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">
-            {n('noBrokersFound', 'Engir verðbréfamiðlarar fundust.')}
-          </Text>
+          <Text variant="h3">{formatMessage(t.noBrokersFound)}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredBrokers.length > 0 && (
@@ -174,8 +172,8 @@ const BrokersList: FC<React.PropsWithChildren<BrokersListProps>> = ({
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-                  <T.HeadData>{n('nationalId', 'Kennitala')}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.name)}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.nationalId)}</T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
