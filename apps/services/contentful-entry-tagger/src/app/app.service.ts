@@ -3,9 +3,12 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { AppRepository } from './app.repository'
 import slugify from '@sindresorhus/slugify'
-import type { Entry } from 'contentful-management'
+import type { Entry, Role, Team } from 'contentful-management'
 
 const TAGGABLE_ENTRY_PREFIX = 'owner-'
+
+const extractTagNamesFromGroup = (group: Role | Team) =>
+  group.name.toLowerCase().startsWith(TAGGABLE_ENTRY_PREFIX)
 
 @Injectable()
 export class AppService {
@@ -15,16 +18,22 @@ export class AppService {
   ) {}
 
   async tagEntry(entry: Entry) {
-    const roles = await this.appRepository.getUserSpaceRoles(
-      entry.sys.createdBy?.sys.id as string,
-    )
+    const userId = entry.sys.createdBy?.sys.id as string
+    const [roles, teams] = await Promise.all([
+      this.appRepository.getUserSpaceRoles(userId),
+      this.appRepository.getUserTeams(userId),
+    ])
 
-    const tags = roles
-      // All roles with the prefix need to have their entries tagged in order to manage user permissions
-      .filter((role) =>
-        role.name.toLowerCase().startsWith(TAGGABLE_ENTRY_PREFIX),
-      )
-      .map((role) => slugify(role.name))
+    const rolesThatMatch = roles.filter(extractTagNamesFromGroup)
+    const teamsThatMatch = teams.filter(extractTagNamesFromGroup)
+
+    let tags: string[] = []
+
+    if (rolesThatMatch.length > 0) {
+      tags = rolesThatMatch.map((role) => slugify(role.name))
+    } else if (teamsThatMatch.length > 0) {
+      tags = teamsThatMatch.map((team) => slugify(team.name))
+    }
 
     if (tags.length === 0) {
       return

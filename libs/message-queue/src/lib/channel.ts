@@ -1,64 +1,49 @@
-import {
-  SQSClient,
-  CreateQueueCommand,
-  GetQueueUrlCommand,
-  SetQueueAttributesCommand,
-  GetQueueAttributesCommand,
-  QueueAttributeName,
-} from '@aws-sdk/client-sqs'
-import {
-  CreateTopicCommand,
-  PublishCommand,
-  PublishCommandInput,
-  SetSubscriptionAttributesCommand,
-  SNSClient,
-  SubscribeCommand,
-} from '@aws-sdk/client-sns'
+import * as AWS from 'aws-sdk'
 import { Consumer } from 'sqs-consumer'
-import { Message } from '@aws-sdk/client-sqs'
+
 import { logger } from '@island.is/logging'
 
-const SNS_LOCALSTACK_ENDPOINT =
-  process.env.SNS_ENDPOINT ?? 'http://localhost:4566'
-const SQS_LOCALSTACK_ENDPOINT =
-  process.env.SQS_ENDPOINT ?? 'http://localhost:4566'
+AWS.config.update({ region: 'eu-west-1' })
+
+const SNS_LOCALSTACK_ENDPOINT = 'http://localhost:4575'
+const SQS_LOCALSTACK_ENDPOINT = 'http://localhost:4576'
 
 class Channel {
-  sns: SNSClient
-  sqs: SQSClient
+  sns: AWS.SNS
+  sqs: AWS.SQS
 
-  constructor(isProduction: boolean) {
-    this.sns = new SNSClient({
-      endpoint: isProduction ? undefined : SNS_LOCALSTACK_ENDPOINT,
+  constructor(production: boolean) {
+    this.sns = new AWS.SNS({
+      apiVersion: '2010-03-31',
+      endpoint: production ? undefined : SNS_LOCALSTACK_ENDPOINT,
     })
 
-    this.sqs = new SQSClient({
-      endpoint: isProduction ? undefined : SQS_LOCALSTACK_ENDPOINT,
+    this.sqs = new AWS.SQS({
+      apiVersion: '2012-11-05',
+      endpoint: production ? undefined : SQS_LOCALSTACK_ENDPOINT,
     })
   }
 
   async declareExchange({ name }: { name: string }) {
-    const cmd = new CreateTopicCommand({ Name: name })
-    const { TopicArn } = await this.sns.send(cmd)
-    logger.info(`Declared exchange`, { TopicArn })
+    const { TopicArn } = await this.sns.createTopic({ Name: name }).promise()
+    logger.info(`Declared exchange ${TopicArn}`)
     return TopicArn
   }
 
   async declareQueue({ name }: { name: string }) {
     const queueUrl = await this.getQueueUrl({ name })
     if (queueUrl) {
-      logger.info(`Declared queue`, { queueUrl })
+      logger.info(`Declared queue ${queueUrl}`)
       return queueUrl
     }
 
-    const command = new CreateQueueCommand({ QueueName: name })
-    const { QueueUrl } = await this.sqs.send(command)
+    const { QueueUrl } = await this.sqs
+      .createQueue({
+        QueueName: name,
+      })
+      .promise()
 
-    if (!QueueUrl) {
-      throw new Error(`Failed to create queue ${name}`)
-    }
-
-    logger.info(`Declared queue`, { QueueUrl })
+    logger.info(`Declared queue ${QueueUrl}`)
     return QueueUrl
   }
 
@@ -76,105 +61,100 @@ class Channel {
       attributes: ['QueueArn'],
     })
 
-    const command = new SetQueueAttributesCommand({
-      QueueUrl: queueId,
-      Attributes: {
-        RedrivePolicy: JSON.stringify({
-          deadLetterTargetArn: QueueArn,
-          maxReceiveCount: maxReceiveCount,
-        }),
-      },
-    })
-    await this.sqs.send(command)
-    logger.info(`Set dead letter queue`, {
-      deadLetterQueueId: dlQueueId,
-      queueId,
-    })
+    await this.sqs
+      .setQueueAttributes({
+        QueueUrl: queueId,
+        Attributes: {
+          RedrivePolicy: `{"deadLetterTargetArn": "${QueueArn}", "maxReceiveCount": ${maxReceiveCount}}`,
+        },
+      })
+      .promise()
+    logger.info(`Set queue ${dlQueueId} as dead letter queue for ${queueId}`)
   }
 
-  async bindQueue<K>({
+  async bindQueue<RoutingKey>({
     queueId,
     exchangeId,
     routingKeys = [],
   }: {
     queueId: string
     exchangeId: string
-    routingKeys?: K[]
+    routingKeys?: RoutingKey[]
   }) {
     const { QueueArn } = await this.getQueueAttributes({
       queueId,
       attributes: ['QueueArn'],
     })
 
-    const { SubscriptionArn } = await this.sns.send(
-      new SubscribeCommand({
+    const { SubscriptionArn } = await this.sns
+      .subscribe({
         Protocol: 'sqs',
         TopicArn: exchangeId,
         Endpoint: QueueArn,
-      }),
-    )
+      })
+      .promise()
     if (!SubscriptionArn) {
       throw new Error(`Unable to subscribe to SNS exchange ${exchangeId}`)
     }
 
     if (routingKeys.length > 0) {
-      await this.sns.send(
-        new SetSubscriptionAttributesCommand({
+      await this.sns
+        .setSubscriptionAttributes({
           SubscriptionArn,
           AttributeName: 'FilterPolicy',
           AttributeValue: `{"event_type": ["${routingKeys.join('", "')}"]}`,
-        }),
-      )
+        })
+        .promise()
     }
 
-    const setQueueAttributesCommand = new SetQueueAttributesCommand({
-      QueueUrl: queueId,
-      Attributes: {
-        Policy: JSON.stringify({
-          Statement: [
-            {
-              Effect: 'Allow',
-              Principal: '*',
-              Action: 'sqs:SendMessage',
-              Resource: QueueArn,
-              Condition: {
-                ArnEquals: {
-                  'aws:SourceArn': exchangeId,
-                },
-              },
-            },
-          ],
-        }),
-      },
-    })
-    await this.sqs.send(setQueueAttributesCommand)
+    await this.sqs
+      .setQueueAttributes({
+        QueueUrl: queueId,
+        Attributes: {
+          Policy: `{
+            "Statement": [{
+              "Effect": "Allow",
+              "Principal": "*",
+              "Action":"sqs:SendMessage",
+              "Resource": "${QueueArn}",
+              "Condition": {
+                "ArnEquals": {
+                  "aws:SourceArn": "${exchangeId}"
+                }
+              }
+            }]
+          }`,
+        },
+      })
+      .promise()
 
-    logger.info(`Bound queue to topic ${exchangeId}`, {
-      queueId,
-      exchangeId,
-      routingKeys,
-    })
+    logger.info(
+      `Bound queue ${queueId} to exchange ${exchangeId} with routingKeys: ${routingKeys.join(
+        ', ',
+      )}.`,
+    )
     return SubscriptionArn
   }
 
-  consume<M, K>({
+  consume<Message, RoutingKey>({
     queueId,
     messageHandler,
     errorHandler,
   }: {
     queueId: string
-    messageHandler: (message: M, routingKey: K) => Promise<void>
-    errorHandler?: (error: unknown) => void
+    messageHandler: (message: Message, routingKey: RoutingKey) => Promise<void>
+    errorHandler?: (error: any) => void // eslint-disable-line  @typescript-eslint/no-explicit-any
   }) {
     const parseMessage = (
-      sqsMessage: Message,
+      sqsMessage: AWS.SQS.Types.Message,
     ): {
-      message: M
-      routingKey: K
+      message: Message
+      routingKey: RoutingKey
     } => {
       if (!sqsMessage.Body) {
-        logger.error(`No Body found on sqs message!`, sqsMessage)
-        throw new Error(`No Body found on sqs message!`)
+        throw new Error(
+          `No Body found on sqs message ${JSON.stringify(sqsMessage)}`,
+        )
       }
       const parsedBody = JSON.parse(sqsMessage.Body)
       const { Message, MessageAttributes } = parsedBody
@@ -222,40 +202,40 @@ class Channel {
     return consumer
   }
 
-  async publish<M, K extends string>({
+  async publish<Message, RoutingKey extends string>({
     exchangeId,
     message,
     routingKey = undefined,
   }: {
     exchangeId: string
-    message: M
-    routingKey?: K
+    message: Message
+    routingKey?: RoutingKey
   }) {
-    const params: PublishCommandInput = {
+    const params: AWS.SNS.Types.PublishInput = {
       Message: JSON.stringify(message),
       TopicArn: exchangeId,
     }
     if (routingKey) {
       params['MessageAttributes'] = {
+        // eslint-disable-next-line
         event_type: {
           DataType: 'String',
           StringValue: routingKey,
         },
       }
     }
-    const { MessageId } = await this.sns.send(new PublishCommand(params))
-    logger.info(`Published message to topic ${exchangeId}`, {
-      messageId: MessageId,
-      topicArn: exchangeId,
-      routingKey,
-    })
+    const { MessageId } = await this.sns.publish(params).promise()
+    logger.info(
+      `Published message ${MessageId} to ${exchangeId} with routingKey ${routingKey}`,
+    )
     return MessageId
   }
 
   private async getQueueUrl({ name }: { name: string }) {
     try {
-      const command = new GetQueueUrlCommand({ QueueName: name })
-      const { QueueUrl } = await this.sqs.send(command)
+      const { QueueUrl } = await this.sqs
+        .getQueueUrl({ QueueName: name })
+        .promise()
       return QueueUrl
     } catch (err) {
       return undefined
@@ -267,13 +247,14 @@ class Channel {
     attributes,
   }: {
     queueId: string
-    attributes: QueueAttributeName[]
+    attributes: string[]
   }) {
-    const command = new GetQueueAttributesCommand({
-      QueueUrl: queueId,
-      AttributeNames: attributes,
-    })
-    const { Attributes } = await this.sqs.send(command)
+    const { Attributes } = await this.sqs
+      .getQueueAttributes({
+        QueueUrl: queueId,
+        AttributeNames: attributes,
+      })
+      .promise()
     if (!Attributes) {
       throw new Error(`Unable to get queue attributes for queue ${queueId}`)
     }

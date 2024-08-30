@@ -12,8 +12,6 @@ export const RegisterNewMachineForm: Form = buildForm({
   title: '',
   logo: Logo,
   mode: FormModes.DRAFT,
-  renderLastScreenButton: true,
-  renderLastScreenBackButton: true,
   children: [
     buildSection({
       id: 'externalData',

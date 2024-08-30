@@ -51,7 +51,7 @@ export interface IApplicationWorkExperience {
 export interface IApplicationAttachment {
   fileName: string
   fileType: string
-  blob: Blob
+  url: string
 }
 
 export interface IApplicationExtraFields {

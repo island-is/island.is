@@ -71,6 +71,7 @@ export class ApplicationTemplateHelper<
     title?: StaticText
     description?: StaticText
     tag: { variant?: string; label?: StaticText }
+    historyButton?: StaticText
   } {
     const actionCard =
       this.template.stateMachineConfig.states[stateKey]?.meta?.actionCard
@@ -79,6 +80,7 @@ export class ApplicationTemplateHelper<
       title: actionCard?.title,
       description: actionCard?.description,
       tag: { variant: actionCard?.tag?.variant, label: actionCard?.tag?.label },
+      historyButton: actionCard?.historyButton,
     }
   }
 
@@ -281,6 +283,7 @@ export class ApplicationTemplateHelper<
         displayStatus: action.displayStatus,
         content: action.content ? formatMessage(action.content) : undefined,
         title: action.title ? formatMessage(action.title) : undefined,
+        button: action.button ? formatMessage(action.button) : undefined,
       }
     }
     return {
@@ -290,6 +293,9 @@ export class ApplicationTemplateHelper<
         : undefined,
       content: pendingAction.content
         ? formatMessage(pendingAction.content)
+        : undefined,
+      button: pendingAction.button
+        ? formatMessage(pendingAction.button)
         : undefined,
     }
   }

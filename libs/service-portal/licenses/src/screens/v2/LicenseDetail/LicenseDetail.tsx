@@ -121,7 +121,7 @@ const LicenseDetail = () => {
                   if (link.label && link.value && link.type) {
                     return (
                       <LinkButton
-                        variant="button"
+                        variant="utility"
                         key={`${type}-license-button-${index}`}
                         to={link.value}
                         text={link.label}

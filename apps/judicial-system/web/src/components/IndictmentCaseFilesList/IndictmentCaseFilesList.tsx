@@ -1,4 +1,4 @@
-import React, { FC, useContext } from 'react'
+import { FC, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -23,6 +23,7 @@ import {
 import { TempCase as Case } from '@island.is/judicial-system-web/src/types'
 import { useFileList } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { CaseFileTable } from '../Table'
 import { caseFiles } from '../../routes/Prosecutor/Indictments/CaseFiles/CaseFiles.strings'
 import { strings } from './IndictmentCaseFilesList.strings'
 
@@ -92,6 +93,11 @@ const IndictmentCaseFilesList: FC<Props> = ({
   )
   const criminalRecordUpdate = cf?.filter(
     (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+  )
+  const uploadedCaseFiles = cf?.filter(
+    (file) =>
+      file.category === CaseFileCategory.PROSECUTOR_CASE_FILE ||
+      file.category === CaseFileCategory.DEFENDANT_CASE_FILE,
   )
 
   return (
@@ -197,6 +203,15 @@ const IndictmentCaseFilesList: FC<Props> = ({
           </Box>
         ))}
       </Box>
+
+      {uploadedCaseFiles && uploadedCaseFiles.length > 0 && (
+        <Box marginBottom={5}>
+          <Text variant="h4" as="h4" marginBottom={3}>
+            {formatMessage(strings.uploadedCaseFiles)}
+          </Text>
+          <CaseFileTable caseFiles={uploadedCaseFiles} onOpenFile={onOpen} />
+        </Box>
+      )}
       {(isDistrictCourtUser(user) || isCompletedCase(workingCase.state)) &&
       (courtRecords?.length || rulings?.length) ? (
         <Box marginBottom={5}>
