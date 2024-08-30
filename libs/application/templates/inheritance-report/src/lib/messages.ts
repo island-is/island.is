@@ -669,7 +669,7 @@ export const m = defineMessages({
     description: '',
   },
   stocksDescriptionPrePaid: {
-    id: 'ir.application:stocksDescriptionPrePaid',
+    id: 'ir.application:stocksDescriptionPrePaid#markdown',
     defaultMessage:
       'Upplýsingar um nafnverð hlutabréfa má finna í síðasta skattframtali. Upplýsingar um gengi hlutabréfa er hægt að fá hjá bönkum, félaginu sjálfu eða miða við síðasta ársreikning félagsins sem sækja má á heimasíðu Skattsins, www.skatturinn.is/fyrirtaekjaskra',
     description: '',
