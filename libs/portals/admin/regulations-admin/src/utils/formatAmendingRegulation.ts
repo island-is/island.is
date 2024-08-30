@@ -318,7 +318,7 @@ export const formatAmendingRegBody = (
       }
 
       additionArray.push([
-        `<p>Á eftir ${prevArticleTitleNumber} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi: ${articleDisplayText}` as HTMLText,
+        `<p>Á eftir ${prevArticleTitleNumber} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi:</p> ${articleDisplayText}` as HTMLText,
       ])
     } else {
       additionArray.push(testGroup.arr)
