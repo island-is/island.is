@@ -9,7 +9,6 @@ import {
   Button,
   GridRow,
   Icon,
-  Item,
   Stack,
   Table as T,
   Text,
@@ -20,6 +19,7 @@ import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import { handleCustomMappedValues } from './utils'
+import { Item } from './TableRepeaterItem'
 
 interface Props extends FieldBaseProps {
   field: TableRepeaterField
