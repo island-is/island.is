@@ -133,9 +133,7 @@ export const setupWithAuth = async ({
         .useValue({
           getValue: (feature: Features) =>
             !features || features.includes(feature),
-        })
-        .overrideProvider(DelegationsIndexService)
-        .useClass(MockDelegationsIndexService),
+        }),
     hooks: [
       useAuth({ auth: user }),
       useDatabase({ type: 'postgres', provider: SequelizeConfigService }),

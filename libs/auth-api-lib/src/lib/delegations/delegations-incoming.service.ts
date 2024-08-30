@@ -2,10 +2,13 @@ import { BadRequestException, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import { User } from '@island.is/auth-nest-tools'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import {
   AuthDelegationProvider,
   AuthDelegationType,
 } from '@island.is/shared/types'
+import { isDefined } from '@island.is/shared/utils'
 
 import { ClientAllowedScope } from '../clients/models/client-allowed-scope.model'
 import { ClientDelegationType } from '../clients/models/client-delegation-type.model'
@@ -21,6 +24,8 @@ import { DelegationsIncomingWardService } from './delegations-incoming-ward.serv
 import { DelegationsIndexService } from './delegations-index.service'
 import { DelegationDTO } from './dto/delegation.dto'
 import { MergedDelegationDTO } from './dto/merged-delegation.dto'
+
+const UNKNOWN_NAME = 'Óþekkt nafn'
 
 type ClientDelegationInfo = Pick<
   Client,
@@ -58,6 +63,8 @@ export class DelegationsIncomingService {
     private delegationsIncomingWardService: DelegationsIncomingWardService,
     private delegationsIndexService: DelegationsIndexService,
     private delegationProviderService: DelegationProviderService,
+    private nationalRegistryClient: NationalRegistryClientService,
+    private readonly featureFlagService: FeatureFlagService,
   ) {}
 
   async findAllValid(
@@ -116,20 +123,20 @@ export class DelegationsIncomingService {
     const client = await this.getClientDelegationInfo(user)
     if (!client?.supportedDelegationTypes) return []
 
-    const types: ClientDelegationType[] =
-      client.supportedDelegationTypes.filter(
+    const types: AuthDelegationType[] = client.supportedDelegationTypes
+      .filter(
         (dt) =>
           !delegationTypes ||
           delegationTypes.includes(dt.delegationType as AuthDelegationType),
       )
+      .map((t) => t.delegationType as AuthDelegationType)
 
     if (types.length == 0) return []
 
-    const providers = await this.delegationProviderService.findProviders(
-      types.map((t) => t.delegationType),
-    )
+    const providers = await this.delegationProviderService.findProviders(types)
 
-    const clientAllowedApiScopes = await this.getClientAllowedApiScopes(user)
+    const clientAllowedApiScopes: ApiScopeInfo[] =
+      await this.getClientAllowedApiScopes(user)
 
     const delegationPromises = []
 
@@ -187,6 +194,27 @@ export class DelegationsIncomingService {
       )
     }
 
+    if (
+      providers.includes(AuthDelegationProvider.DistrictCommissionersRegistry)
+    ) {
+      const isLegalRepresentativeDelegationEnabled =
+        await this.featureFlagService.getValue(
+          Features.isLegalRepresentativeDelegationEnabled,
+          true,
+          user,
+        )
+      if (isLegalRepresentativeDelegationEnabled) {
+        delegationPromises.push(
+          this.getAvailableDistrictCommissionersRegistryDelegations(
+            user,
+            types,
+            clientAllowedApiScopes,
+            client.requireApiScopes,
+          ),
+        )
+      }
+    }
+
     const delegationSets = await Promise.all(delegationPromises)
 
     let delegations = ([] as MergedDelegationDTO[])
@@ -222,6 +250,56 @@ export class DelegationsIncomingService {
     )
 
     return [...mergedDelegationMap.values()]
+  }
+
+  private async getAvailableDistrictCommissionersRegistryDelegations(
+    user: User,
+    types: AuthDelegationType[],
+    clientAllowedApiScopes: ApiScopeInfo[],
+    requireApiScopes?: boolean,
+  ): Promise<MergedDelegationDTO[]> {
+    const records =
+      await this.delegationsIndexService.getAvailableDistrictCommissionersRegistryRecords(
+        user,
+        types,
+        clientAllowedApiScopes,
+        requireApiScopes,
+      )
+    const merged = records.map((d) =>
+      DelegationDTOMapper.recordToMergedDelegationDTO(d),
+    )
+
+    const persons = (
+      await Promise.all(
+        merged.map((d) =>
+          this.nationalRegistryClient
+            .getIndividual(d.fromNationalId)
+            .catch((error) => error),
+        ),
+      )
+    )
+      .filter(this.isNotError)
+      .filter(isDefined)
+      .map((individual) => ({
+        nationalId: individual.nationalId,
+        name: individual.name ?? UNKNOWN_NAME,
+      }))
+
+    merged.forEach((d) => {
+      const person = persons.find((p) => p.nationalId === d.fromNationalId)
+      if (person) {
+        d.fromName = person.name
+      }
+    })
+
+    return merged
+  }
+
+  /**
+   * Checks if item is not an instance of Error
+   */
+  private isNotError<T>(item: T | Error): item is T {
+    return item instanceof Error === false
   }
 
   private getClientDelegationInfo(

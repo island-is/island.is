@@ -1,4 +1,9 @@
 import {
+  CreationOptional,
+  InferAttributes,
+  InferCreationAttributes,
+} from 'sequelize'
+import {
   Column,
   CreatedAt,
   DataType,
@@ -6,11 +11,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import {
-  type CreationOptional,
-  InferAttributes,
-  InferCreationAttributes,
-} from 'sequelize'
+
 import { DelegationRecordDTO } from '../dto/delegation-index.dto'
 
 @Table({
@@ -78,6 +79,7 @@ export class DelegationIndex extends Model<
       fromNationalId: this.fromNationalId,
       toNationalId: this.toNationalId,
       subjectId: this.subjectId,
+      type: this.type,
     }
   }
 }
