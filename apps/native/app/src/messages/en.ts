@@ -110,6 +110,7 @@ export const en: TranslatedMessages = {
   'settings.security.appLockTimeoutLabel': 'App lock timeout',
   'settings.security.appLockTimeoutDescription':
     'Time until app lock will appear',
+  'settings.security.appLockTimeoutSeconds': 'sec.',
   'settings.about.groupTitle': 'About',
   'settings.about.versionLabel': 'Version',
   'settings.about.logoutLabel': 'Logout',

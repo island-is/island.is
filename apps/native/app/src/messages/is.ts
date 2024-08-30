@@ -109,6 +109,7 @@ export const is = {
   'settings.security.appLockTimeoutLabel': 'Biðtími skjálæsingar',
   'settings.security.appLockTimeoutDescription':
     'Tíminn þar til skjálæsing fer í gang',
+  'settings.security.appLockTimeoutSeconds': 'sek.',
   'settings.about.groupTitle': 'Um appið',
   'settings.about.versionLabel': 'Útgáfa',
   'settings.about.logoutLabel': 'Útskrá',
