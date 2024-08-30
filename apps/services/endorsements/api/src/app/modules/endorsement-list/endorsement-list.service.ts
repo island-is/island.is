@@ -59,8 +59,8 @@ export class EndorsementListService {
     }
     return false
   }
-  
-  // used by interceptor 
+
+  // used by interceptor
   async getListOwnerNationalId(listId: string): Promise<string | null> {
     const endorsementList = await this.endorsementListModel.findOne({
       where: {
