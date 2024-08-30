@@ -193,7 +193,11 @@ export class WorkMachinesService {
   async getTechnicalInfoInputs(
     auth: User,
     parentCategory: string,
+    subCategory: string,
   ): Promise<TechInfoItemDto[]> {
-    return this.machineService.getTechnicalInfoInputs(auth, { parentCategory })
+    return this.machineService.getTechnicalInfoInputs(auth, {
+      parentCategory,
+      subCategory,
+    })
   }
 }
