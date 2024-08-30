@@ -1713,15 +1713,30 @@ export const m = defineMessages({
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed sit amet urna nec nunc ultricies ultricies.',
     description: '',
   },
-  nextSteps: {
-    id: 'ir.application:nextSteps',
-    defaultMessage: 'Næstu skref',
-    description: '',
-  },
   errorRelation: {
     id: 'ir.application:error.errorRelation',
     defaultMessage: 'Tengsl virðast ekki vera rétt',
     description: 'Relation is invalid',
+  },
+  expandableHeaderEFS: {
+    id: 'ir.application:expandableHeaderEFS',
+    defaultMessage: 'Næstu skref',
+    description: '',
+  },
+  expandableHeaderPrepaid: {
+    id: 'ir.application:expandableHeaderPrepaid',
+    defaultMessage: 'Næstu skref',
+    description: '',
+  },
+  expandableIntroEFS: {
+    id: 'ir.application:expandableIntroEFS',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
+  },
+  expandableIntroPrepaid: {
+    id: 'ir.application:expandableIntroPrepaid',
+    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
+    description: '',
   },
 
   // Tax Free Limit
