@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 import router from 'next/router'
