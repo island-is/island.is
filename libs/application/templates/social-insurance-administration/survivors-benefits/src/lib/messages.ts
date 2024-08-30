@@ -65,14 +65,18 @@ export const survivorsBenefitsFormMessage: MessageDir = {
     },
     childrenDescription: {
       id: 'sb.application:children.description',
-      defaultMessage:
-        'Samkvæmt uppflettingu í Þjóðskrá ert þú með eftirfarandi barn/börn skráð á lögheimili hjá þér.',
-      description: 'english translation',
+      defaultMessage: 'Samkvæmt uppflettingu í Þjóðskrá ert þú með eftirfarandi barn/börn á framfæri. Dánarbætur eru því framlengdar sjálfkrafa um 12 mánuði til viðbótar án þess að sækja þurfi sérstaklega um það. Greiðslur falla niður þegar barn nær 18 ára aldri.',
+      description: 'According to Registers Iceland you have the below dependent child/children. Therefore, survivors benefits are automatically extended by 12 months, without the need for any further action. Payments cease when a child has reached the age of 18.',
     },
     expectingChildTitle: {
       id: 'sb.application:expectingChild.title',
       defaultMessage: 'Áttu von á barni',
       description: 'Are you expecting a child?',
+    },
+    expectingChildDescription: {
+      id: 'sb.application:expectingChild.description',
+      defaultMessage: 'Fólk í skráðri sambúð, sem ekki hefur varið í 1 ár, getur átt rétt á dánarbótum hafi það átt barn saman eða ef umsækjandi er barnshafandi.',
+      description: 'Individuals in registered cohabition, which has lasted for less than 1 year, may be entitled to survivors benefits if they share a child or if the applicant is pregnant.',
     },
     expectingChildFileUpload: {
       id: 'sb.application:expectingChild.fileUpload',

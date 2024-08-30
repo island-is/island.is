@@ -396,6 +396,7 @@ export const SurvivorsBenefitsForm: Form = buildForm({
             buildMultiField({
               id: 'expectingChild',
               title: survivorsBenefitsFormMessage.info.expectingChildTitle,
+              description: survivorsBenefitsFormMessage.info.expectingChildDescription,
               children: [
                 buildRadioField({
                   id: 'expectingChild.question',
@@ -410,7 +411,6 @@ export const SurvivorsBenefitsForm: Form = buildForm({
         buildSubSection({
           condition: (answers) => {
             const { isExpectingChild } = getApplicationAnswers(answers)
-            console.log('isExpectingChild: ', isExpectingChild)
             return isExpectingChild === YES
           },
           id: 'expectingChild.fileUpload.section',
