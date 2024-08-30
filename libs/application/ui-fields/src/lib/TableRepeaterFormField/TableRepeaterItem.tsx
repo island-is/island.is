@@ -91,7 +91,6 @@ export const Item = ({
       !isEqual(prevWatchedValuesRef.current, watchedValues)
     ) {
       prevWatchedValuesRef.current = watchedValues
-
       if (
         updateValueObj &&
         watchedValues &&
@@ -103,8 +102,7 @@ export const Item = ({
         setValue(id, finalValue)
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [watchedValues])
+  }, [watchedValues, updateValueObj, activeValues, setValue, id])
 
   const getFieldError = (id: string) => {
     /**
