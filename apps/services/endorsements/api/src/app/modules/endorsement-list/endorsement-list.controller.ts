@@ -8,7 +8,6 @@ import {
   Post,
   Put,
   Query,
-  Res,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
