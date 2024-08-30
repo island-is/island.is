@@ -50,9 +50,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn start services-bff"
-        ],
+        "commands": ["yarn start services-bff"],
         "parallel": true
       }
     }
