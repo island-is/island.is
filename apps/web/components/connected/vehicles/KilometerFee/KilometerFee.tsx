@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useIntl } from 'react-intl'
 
 import {
   Box,
@@ -11,9 +12,10 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { ConnectedComponent } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 import { formatCurrency } from '@island.is/web/utils/currency'
+
+import { translation as translationStrings } from './translation.strings'
 
 const MAX_KILOMETER_INPUT_LENGTH = 10
 
@@ -56,7 +58,7 @@ const initialInputState: InputState = {
 }
 
 const KilometerFee = ({ slice }: KilometerFeeProps) => {
-  const n = useNamespace(slice?.json ?? {})
+  const { formatMessage } = useIntl()
   const { activeLocale } = useI18n()
   const [result, setResult] = useState(0)
   const [inputState, setInputState] = useState(initialInputState)
@@ -64,24 +66,15 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
   const timelineOptions = useMemo(() => {
     return [
       {
-        label: n(
-          'perYear',
-          activeLocale === 'is' ? 'á ári' : 'per year',
-        ) as string,
+        label: formatMessage(translationStrings.perYear),
         value: 'perYear',
       },
       {
-        label: n(
-          'perMonth',
-          activeLocale === 'is' ? 'á mánuði' : 'per month',
-        ) as string,
+        label: formatMessage(translationStrings.perMonth),
         value: 'perMonth',
       },
       {
-        label: n(
-          'perDay',
-          activeLocale === 'is' ? 'á dag' : 'per day',
-        ) as string,
+        label: formatMessage(translationStrings.perDay),
         value: 'perDay',
       },
     ]
@@ -113,20 +106,12 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
       <Stack space={5}>
         <Stack space={2}>
           <Text variant="medium" fontWeight="light">
-            {n(
-              'energySource',
-              activeLocale === 'is'
-                ? 'Orkugjafi ökutækis'
-                : 'Energy source of vehicle',
-            )}
+            {formatMessage(translationStrings.energySource)}
           </Text>
 
           <Inline space={[3, 3, 5]} collapseBelow="sm">
             <RadioButton
-              label={n(
-                'electric',
-                activeLocale === 'is' ? 'Rafmagn' : 'Electric',
-              )}
+              label={formatMessage(translationStrings.electric)}
               name="electric"
               onChange={() => {
                 updateInputState('energySource', 'electric')
@@ -134,10 +119,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
               checked={inputState.energySource === 'electric'}
             />
             <RadioButton
-              label={n(
-                'hydrogen',
-                activeLocale === 'is' ? 'Vetni' : 'Hydrogen',
-              )}
+              label={formatMessage(translationStrings.hydrogen)}
               name="hydrogen"
               onChange={() => {
                 updateInputState('energySource', 'hydrogen')
@@ -145,10 +127,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
               checked={inputState.energySource === 'hydrogen'}
             />
             <RadioButton
-              label={n(
-                'hybrid',
-                activeLocale === 'is' ? 'Tengiltvinn' : 'Hybrid',
-              )}
+              label={formatMessage(translationStrings.hybrid)}
               name="hybrid"
               onChange={() => {
                 updateInputState('energySource', 'hybrid')
@@ -160,12 +139,7 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
 
         <Stack space={2}>
           <Text variant="medium" fontWeight="light">
-            {n(
-              'kilometerInputLabel',
-              activeLocale === 'is'
-                ? 'Áætlaður akstur í kílómetrum'
-                : 'Estimated driving in kilometers',
-            )}
+            {formatMessage(translationStrings.kilometerInputLabel)}
           </Text>
 
           <Inline space={1} alignY="bottom">
@@ -176,7 +150,9 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
               inputMode="numeric"
               size="xs"
               value={inputState.kilometers}
-              placeholder={n('kilometerInputPlaceholder', 'km')}
+              placeholder={formatMessage(
+                translationStrings.kilometerInputPlaceholder,
+              )}
               onChange={(ev) => {
                 if (
                   ev.target.value.length > maxKilometerInputLength ||
@@ -212,25 +188,17 @@ const KilometerFee = ({ slice }: KilometerFeeProps) => {
         </Stack>
 
         <Button onClick={updateResult} disabled={!canCalculate}>
-          {n('calculate', activeLocale === 'is' ? 'Reikna' : 'Calculate')}
+          {formatMessage(translationStrings.calculate)}
         </Button>
 
         {result > 0 && (
           <Stack space={1}>
             <Text variant="medium" fontWeight="light">
-              {n(
-                'resultPrefix',
-                activeLocale === 'is'
-                  ? 'Áætlað kílómetragjald'
-                  : 'Estimated kilometer fee',
-              )}
+              {formatMessage(translationStrings.resultPrefix)}
             </Text>
             <Text variant="h4" color="blue400" fontWeight="semiBold">
               {formatCurrency(result, '')}{' '}
-              {n(
-                'resultPostfix',
-                activeLocale === 'is' ? 'krónur á mánuði' : 'isk per month',
-              )}
+              {formatMessage(translationStrings.resultPostfix)}
             </Text>
           </Stack>
         )}
