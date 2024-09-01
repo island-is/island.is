@@ -9,8 +9,8 @@ import {
 } from '@nestjs/common'
 import { Response, Request } from 'express'
 import { AuthService } from './auth.service'
-import { CallbackLoginQueryDto } from './dto/callback-login-query.dto'
-import { LoginQueryDto } from './dto/login-query.dto'
+import { CallbackLoginQuery } from './queries/callback-login.query'
+import { LoginQuery } from './queries/login.query'
 
 const authValidationPipe = new ValidationPipe({
   transform: true,
@@ -29,7 +29,7 @@ export class AuthController {
     @Req() req: Request,
     @Res() res: Response,
     @Query(authValidationPipe)
-    query: LoginQueryDto,
+    query: LoginQuery,
   ): Promise<void> {
     return this.authService.login({ req, res, query })
   }
@@ -38,7 +38,7 @@ export class AuthController {
   async callback(
     @Res() res: Response,
     @Query(authValidationPipe)
-    query: CallbackLoginQueryDto,
+    query: CallbackLoginQuery,
   ): Promise<void> {
     return this.authService.callback(res, query)
   }

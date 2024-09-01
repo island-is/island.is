@@ -7,8 +7,8 @@ import { uuid } from 'uuidv4'
 import { environment } from '../../../environment'
 import { BffConfig } from '../../bff.config'
 import { CacheService } from '../cache/cache.service'
-import { CallbackLoginQueryDto } from './dto/callback-login-query.dto'
-import { LoginQueryDto } from './dto/login-query.dto'
+import { CallbackLoginQuery } from './queries/callback-login.query'
+import { LoginQuery } from './queries/login.query'
 import { PKCEService } from './pkce.service'
 import { TokenResponse } from './auth.types'
 
@@ -134,7 +134,7 @@ export class AuthService {
   }: {
     req: Request
     res: Response
-    query: LoginQueryDto
+    query: LoginQuery
   }) {
     // Validate targetLinkUri if it is provided
     if (
@@ -183,7 +183,7 @@ export class AuthService {
     )
   }
 
-  async callback(res: Response, query: CallbackLoginQueryDto) {
+  async callback(res: Response, query: CallbackLoginQuery) {
     // Get login attempt from cache
     const loginAttemptData = await this.cacheService.get<{
       targetLinkUri?: string

@@ -1,6 +1,6 @@
 import { IsString } from 'class-validator'
 
-export class CallbackLoginQueryDto {
+export class CallbackLoginQuery {
   @IsString()
   code!: string
 
