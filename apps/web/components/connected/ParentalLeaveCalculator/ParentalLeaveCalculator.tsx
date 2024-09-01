@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import NumberFormat from 'react-number-format'
 import {
   parseAsInteger,
+  parseAsString,
   parseAsStringEnum,
   useQueryState,
 } from 'next-usequerystate'
@@ -112,6 +113,22 @@ export const ParentalLeaveCalculator = ({
     ]
   }, [formatMessage, slice.configJson?.additionalPensionFundingOptions])
 
+  const unionOptions = useMemo<Option<string | null>[]>(() => {
+    const options: { label: string; multiplier: number }[] =
+      slice.configJson?.unionOptions ?? []
+
+    return [
+      {
+        value: null,
+        label: formatMessage(t.union.none),
+      },
+      ...options.map((option) => ({
+        label: option.label,
+        value: option.label,
+      })),
+    ]
+  }, [formatMessage, slice.configJson?.unionOptions])
+
   const [status, setStatus] = useQueryState<Status>(
     'status',
     parseAsStringEnum(Object.values(Status)).withDefault(Status.PARENTAL_LEAVE),
@@ -126,6 +143,11 @@ export const ParentalLeaveCalculator = ({
     additionalPensionFundingPercentage,
     setAdditionalPensionFundingPercentage,
   ] = useQueryState('additionalPensionFunding', parseAsInteger)
+  const [union, setUnion] = useQueryState('union', parseAsString)
+  const [personalDiscount, setPersonalDiscount] = useQueryState(
+    'personalDiscount',
+    parseAsInteger,
+  )
 
   return (
     <Box background="blue100" paddingY={[3, 3, 5]} paddingX={[3, 3, 3, 3, 12]}>
@@ -229,7 +251,46 @@ export const ParentalLeaveCalculator = ({
             )}
             label={formatMessage(t.additionalPensionFunding.label)}
             options={additionalPensionFundingOptions}
-            placeholder={formatMessage(t.additionalPensionFunding.placeholder)}
+          />
+        </Field>
+        <Field
+          heading={formatMessage(t.union.heading)}
+          description={formatMessage(t.union.description)}
+        >
+          <Select
+            onChange={(option) => {
+              setUnion(option?.value ?? null)
+            }}
+            value={unionOptions.find((option) => option.value === union)}
+            label={formatMessage(t.union.label)}
+            options={unionOptions}
+          />
+        </Field>
+        <Field
+          heading={formatMessage(t.personalDiscount.heading)}
+          description={formatMessage(t.personalDiscount.description)}
+        >
+          <NumberFormat
+            onValueChange={({ value }) => {
+              setPersonalDiscount(Number(value))
+            }}
+            label={formatMessage(t.personalDiscount.label)}
+            value={String(personalDiscount || '')}
+            customInput={Input}
+            name="personalDiscount"
+            id="personalDiscount"
+            type="text"
+            inputMode="numeric"
+            suffix={formatMessage(t.personalDiscount.suffix)}
+            placeholder={formatMessage(t.personalDiscount.placeholder)}
+            format={(value) => {
+              const maxPersonalDiscount =
+                slice.configJson?.maxPersonalDiscount ?? 100
+              if (Number(value) > maxPersonalDiscount) {
+                value = String(maxPersonalDiscount)
+              }
+              return `${value}${formatMessage(t.personalDiscount.suffix)}`
+            }}
           />
         </Field>
       </Stack>

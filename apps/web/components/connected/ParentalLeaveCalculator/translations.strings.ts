@@ -134,16 +134,64 @@ export const translations = {
       description:
         'Viðskeyti eftir valmöguleika í Viðbótalífeyrissparnaðs dropdown, dæmi "1< prósent>"',
     },
-    placeholder: {
-      id: 'web.parentalLeaveCalculator:additionalPensionFunding.placeholder',
-      defaultMessage: 'Enginn',
-      description: 'Placeholder texti fyrir Viðbótalífeyrissparnaðs dropdown',
-    },
     none: {
       id: 'web.parentalLeaveCalculator:additionalPensionFunding.none',
       defaultMessage: 'Enginn',
       description:
         'Valmöguleiki ef það er enginn viðbótalífeyrissparnaður til staðar hjá viðkomandi',
+    },
+  }),
+  union: defineMessages({
+    heading: {
+      id: 'web.parentalLeaveCalculator:union.heading',
+      defaultMessage: 'Stéttarfélagsgjöld',
+      description: 'Heading fyrir ofan "Stéttarfélagsgjöld" dropdown',
+    },
+    description: {
+      id: 'web.parentalLeaveCalculator:union.description',
+      defaultMessage:
+        'Það er valkvætt að greiða í stéttarfélag. Athugið að réttindi geta tapast hjá stéttarfélagi ef greiðslum þar er ekki viðhaldið meðan á fæðingarorlofi stendur.',
+      description: 'Lýsing fyrir ofan "Stéttarfélagsgjöld" dropdown',
+    },
+    label: {
+      id: 'web.parentalLeaveCalculator:union.label',
+      defaultMessage: 'Stéttarfélagsgjöld',
+      description: 'Label á "Stéttarfélagsgjöld" dropdown',
+    },
+    none: {
+      id: 'web.parentalLeaveCalculator:additionalPensionFunding.none',
+      defaultMessage: 'Engin',
+      description:
+        'Valmöguleiki ef það er engin stéttarfélagsgjöld til staðar hjá viðkomandi',
+    },
+  }),
+  personalDiscount: defineMessages({
+    heading: {
+      id: 'web.parentalLeaveCalculator:personalDiscount.heading',
+      defaultMessage: 'Hlutfall persónuafsláttar',
+      description: 'Heading fyrir ofan "Hlutfall persónuafsláttar" reit',
+    },
+    description: {
+      id: 'web.parentalLeaveCalculator:personalDiscount.description',
+      defaultMessage:
+        'Hægt er að velja hversu hátt hlutfall persónuafsláttar á að nýta hjá Fæðingarorlofssjóði.',
+      description: 'Lýsing fyrir ofan "Hlutfall persónuafsláttar" reit',
+    },
+    label: {
+      id: 'web.parentalLeaveCalculator:personalDiscount.label',
+      defaultMessage: 'Hlutfall persónuafsláttar',
+      description: 'Label á "Hlutfall persónuafsláttar" reit',
+    },
+    placeholder: {
+      id: 'web.parentalLeaveCalculator:personalDiscount.placeholder',
+      defaultMessage: '%',
+      description: 'Placeholder á "Hlutfall persónuafsláttar" reit',
+    },
+    suffix: {
+      id: 'web.parentalLeaveCalculator:personalDiscount.suffix',
+      defaultMessage: '%',
+      description:
+        'Viðskeyti á eftir því sem notandi slær inn í "Hlutfall persónuafsláttar" reit',
     },
   }),
 }
