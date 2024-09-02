@@ -45,6 +45,10 @@ export class ViewCaseFileGuard implements CanActivate {
       return true
     }
 
+    if (isPublicProsecutorUser(user) && isCompletedCase(theCase.state)) {
+      return true
+    }
+
     if (
       isDistrictCourtUser(user) &&
       ([CaseState.SUBMITTED, CaseState.RECEIVED].includes(theCase.state) ||
@@ -71,10 +75,6 @@ export class ViewCaseFileGuard implements CanActivate {
       theCase.appealState &&
       [CaseAppealState.COMPLETED].includes(theCase.appealState)
     ) {
-      return true
-    }
-
-    if (isPublicProsecutorUser(user)) {
       return true
     }
 
