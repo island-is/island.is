@@ -16,6 +16,19 @@ const removeRegPrefix = (title: string) => {
   return title
 }
 
+const moveMatchingStringsToEnd = (arr: Array<string>) => {
+  const isGildisTaka = (str: string) => {
+    return /(öðlast|tekur).*gildi|sett.*með.*(?:heimild|stoð)/.test(
+      (str || '').toLowerCase(),
+    )
+  }
+
+  const matchingStrings = arr.filter((str) => isGildisTaka(str))
+  const nonMatchingStrings = arr.filter((str) => !isGildisTaka(str))
+
+  return [...nonMatchingStrings, ...matchingStrings]
+}
+
 const removeRegNamePrefix = (name: string) => {
   if (/^0+/.test(name)) {
     return name.replace(/^0+/, '')
@@ -46,7 +59,10 @@ export const formatAmendingRegTitle = (draft: RegDraftForm) => {
         )} ${removeRegPrefix(item.regTitle)}`,
     )
 
-    return PREFIX + [...amendingTitles, ...repealTitles].join(' og ')
+    return (
+      PREFIX +
+      [...amendingTitles, ...repealTitles].join(' og ').replace(/ +(?= )/g, '')
+    )
   }
 
   return PREFIX
@@ -62,11 +78,13 @@ export const formatAmendingRegBody = (
 ) => {
   const regName = removeRegNamePrefix(name)
   if (repeal) {
-    const text = `<p>Reglugerð nr. ${regName} ${
-      regTitle ? regTitle.replace(/\.$/, '') + ' ' : ''
-    }fellur brott.</p>` as HTMLText
+    const title = regTitle ? regTitle.replace(/^reglugerð\s*/i, '') + ' ' : ''
+    const text = `<p>Reglugerð nr. ${regName} ${title.replace(
+      /\.$/,
+      '',
+    )}fellur brott.</p>` as HTMLText
     const gildistaka =
-      `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi</p>` as HTMLText
+      `<p>Reglugerð þessi er sett með heimild í [].</p><p>Reglugerðin öðlast þegar gildi.</p>` as HTMLText
     return [text, gildistaka]
   }
 
@@ -101,7 +119,7 @@ export const formatAmendingRegBody = (
 
     const regNameDisplay =
       regName && regName !== 'self'
-        ? `reglugerðar nr. ${regName}`
+        ? `reglugerðar nr. ${regName}`.replace(/\.$/, '')
         : 'reglugerðarinnar'
 
     group.forEach((element) => {
@@ -123,7 +141,6 @@ export const formatAmendingRegBody = (
           const textContent = clone.textContent?.trim() ?? ''
 
           articleTitle = textContent
-          console.log(textContent)
         } else {
           articleTitle = element.innerText
         }
@@ -207,7 +224,7 @@ export const formatAmendingRegBody = (
                 ? (`<p>Á eftir ${
                     paragraph - 1
                   }. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein sem orðast svo:</p><p>${newText}</p>` as HTMLText)
-                : (`<p>1. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText)
+                : (`<p>Á undan 1. mgr. ${articleTitle} ${regNameDisplay} kemur ný málsgrein svohljóðandi: </p><p>${newText}</p>` as HTMLText)
           } else if (isArticleTitle) {
             // Title was added
             testGroup.original?.push(`<p>${newText}</p>` as HTMLText)
@@ -244,15 +261,15 @@ export const formatAmendingRegBody = (
           if (isArticleTitle) {
             // Title was changed
             pushHtml =
-              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+              `<p>Fyrirsögn ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isParagraph) {
             // Paragraph was changed
             pushHtml =
-              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} orðast svo:</p><p>${newText}</p>` as HTMLText
+              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} breytist og orðast svo:</p><p>${newText}</p>` as HTMLText
           } else if (isLetterList || isNumberList) {
             // List was changed
             pushHtml =
-              `<p>${paragraph}. mgr. ${articleTitle} ${regNameDisplay} breytist:</p> ${liHtml}` as HTMLText
+              `<p>Eftirfarandi breytingar verða á ${paragraph}. mgr. ${articleTitle} ${regNameDisplay}:</p> ${liHtml}` as HTMLText
           } else {
             // We don't know what you changed, but there was a change, and here's the changelog:
             pushHtml =
@@ -270,8 +287,11 @@ export const formatAmendingRegBody = (
     })
     if (testGroup.isDeletion === true) {
       const articleTitleNumber = testGroup.title
+
+      const grMatch = articleTitleNumber.match(/^\d+\. gr\./)
+      const articleTitleDisplay = grMatch ? grMatch[0] : articleTitleNumber
       additionArray.push([
-        `<p>${articleTitleNumber} ${regNameDisplay} fellur brott.</p>` as HTMLText,
+        `<p>${articleTitleDisplay} ${regNameDisplay} fellur brott.</p>` as HTMLText,
       ])
     } else if (testGroup.isAddition === true) {
       let prevArticleTitle = ''
@@ -283,10 +303,22 @@ export const formatAmendingRegBody = (
       const originalTextArray = testGroup.original?.length
         ? flatten(testGroup.original)
         : []
+
+      const prevArticleTitleNumber = prevArticleTitle.match(/^\d+\. gr\./)
+
+      let articleDisplayText = ''
+
+      if (originalTextArray.length > 1) {
+        const [, ...rest] = originalTextArray
+        articleDisplayText = rest.join('')
+      } else {
+        articleDisplayText = testGroup.original
+          ? testGroup.original?.join('')
+          : ''
+      }
+
       additionArray.push([
-        `<p>Á eftir ${prevArticleTitle} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi: ${
-          originalTextArray ? testGroup.original?.join('') : ''
-        }` as HTMLText,
+        `<p>Á eftir ${prevArticleTitleNumber} ${regNameDisplay} kemur ný grein, ${articleTitleNumber}, ásamt fyrirsögn, svohljóðandi:</p> ${articleDisplayText}` as HTMLText,
       ])
     } else {
       additionArray.push(testGroup.arr)
@@ -318,7 +350,9 @@ export const formatAmendingBodyWithArticlePrefix = (
 
   const additions = flatten(impactAdditionArray)
 
-  const prependString = additions.map(
+  const returnArray = moveMatchingStringsToEnd(additions)
+
+  const prependString = returnArray.map(
     (item, i) =>
       `<h3 class="article__title">${i + 1}. gr.</h3>${item}` as HTMLText,
   )

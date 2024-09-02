@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "apps/skilavottord/web",
   "projectType": "application",
+  "tags": ["scope:react-next"],
   "generators": {},
   "targets": {
     "build": {
@@ -30,7 +31,8 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node"
+        "target": "node",
+        "webpackConfig": "apps/skilavottord/web/webpack.config.js"
       },
       "configurations": {
         "development": {},
@@ -94,16 +96,12 @@
       ]
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["apps/skilavottord/web/**/*.{ts,tsx,js,jsx}"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "apps/skilavottord/web/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "apps/skilavottord/web/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/apps/skilavottord/web"]
     },
@@ -134,7 +132,8 @@
         "parallel": true
       }
     },
-    "docker-next": {}
-  },
-  "tags": ["scope:react-next"]
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
 }

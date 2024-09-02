@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect } from 'react'
+import { useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useRouter } from 'next/router'
@@ -18,7 +18,6 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
-import { prosecutorCanSelectDefenderForInvestigationCase } from '@island.is/judicial-system/types'
 import {
   core,
   defendant as m,
@@ -65,7 +64,7 @@ const Defendant = () => {
   // This state is needed because type is initially set to OHTER on the
   // workingCase and we need to validate that the user selects an option
   // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = React.useState<CaseType | null>()
+  const [caseType, setCaseType] = useState<CaseType | null>()
 
   useEffect(() => {
     if (workingCase.id) {
@@ -406,20 +405,16 @@ const Defendant = () => {
             </Box>
           </Box>
           <AnimatePresence>
-            {prosecutorCanSelectDefenderForInvestigationCase(
-              workingCase.type,
-            ) && (
-              <motion.section
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: 10 }}
-              >
-                <DefenderInfo
-                  workingCase={workingCase}
-                  setWorkingCase={setWorkingCase}
-                />
-              </motion.section>
-            )}
+            <motion.section
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 10 }}
+            >
+              <DefenderInfo
+                workingCase={workingCase}
+                setWorkingCase={setWorkingCase}
+              />
+            </motion.section>
           </AnimatePresence>
         </Box>
       </FormContentContainer>

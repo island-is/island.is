@@ -3,21 +3,17 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/document-provider/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
+  "implicitDependencies": ["services-documents"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/api/domains/document-provider/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/api/domains/document-provider/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/api/domains/document-provider/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/api/domains/document-provider"]
     },
@@ -28,7 +24,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["services-documents"],
-  "tags": ["lib:api", "scope:api"]
+  }
 }

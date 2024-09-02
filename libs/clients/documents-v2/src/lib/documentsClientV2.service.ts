@@ -46,6 +46,7 @@ export class DocumentsClientV2Service {
     const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
+      page: input.page ?? 1,
       senderKennitala:
         input.senderNationalId && input.senderNationalId.length > 0
           ? input.senderNationalId.join()

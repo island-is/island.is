@@ -1,10 +1,9 @@
-import React, { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { AlertBanner, AlertMessage, Box, Text } from '@island.is/island-ui/core'
+import { AlertBanner, AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
-import { core } from '@island.is/judicial-system-web/messages'
+import { isInvestigationCase } from '@island.is/judicial-system/types'
 import {
   CaseFilesAccordionItem,
   Conclusion,
@@ -19,9 +18,8 @@ import {
   ReopenModal,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { NameAndEmail } from '@island.is/judicial-system-web/src/components/InfoCard/InfoCard'
+import useInfoCardItems from '@island.is/judicial-system-web/src/components/InfoCard/useInfoCardItems'
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
-import { sortByIcelandicAlphabet } from '@island.is/judicial-system-web/src/utils/sortHelper'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
 import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
@@ -30,16 +28,30 @@ import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
 
-const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
+const CourtOfAppealResult = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const [modalVisible, setModalVisible] = React.useState<modalTypes>('none')
+  const [modalVisible, setModalVisible] = useState<modalTypes>('none')
 
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 
   const { title, description, isLoadingAppealBanner } =
     useAppealAlertBanner(workingCase)
+  const {
+    defendants,
+    policeCaseNumbers,
+    courtCaseNumber,
+    prosecutor,
+    prosecutorsOffice,
+    court,
+    judge,
+    registrar,
+    caseType,
+    appealCaseNumber,
+    appealAssistant,
+    appealJudges,
+  } = useInfoCardItems()
 
   return (
     <>
@@ -87,95 +99,31 @@ const CourtOfAppealResult: React.FC<React.PropsWithChildren<unknown>> = () => {
           )}
           <Box marginBottom={5}>
             <InfoCard
-              defendants={
-                workingCase.defendants
-                  ? {
-                      title: capitalize(
-                        formatMessage(core.defendant, {
-                          suffix:
-                            workingCase.defendants.length > 1 ? 'ar' : 'i',
-                        }),
-                      ),
-                      items: workingCase.defendants,
-                    }
-                  : undefined
-              }
-              defenders={[
+              sections={[
                 {
-                  name: workingCase.defenderName ?? '',
-                  defenderNationalId: workingCase.defenderNationalId,
-                  sessionArrangement: workingCase.sessionArrangements,
-                  email: workingCase.defenderEmail,
-                  phoneNumber: workingCase.defenderPhoneNumber,
-                },
-              ]}
-              data={[
-                {
-                  title: formatMessage(core.policeCaseNumber),
-                  value: workingCase.policeCaseNumbers?.map((n) => (
-                    <Text key={n}>{n}</Text>
-                  )),
+                  id: 'defendants-section',
+                  items: [defendants(workingCase.type)],
                 },
                 {
-                  title: formatMessage(core.courtCaseNumber),
-                  value: workingCase.courtCaseNumber,
+                  id: 'case-info-section',
+                  items: [
+                    policeCaseNumbers,
+                    courtCaseNumber,
+                    prosecutorsOffice,
+                    court,
+                    prosecutor(workingCase.type),
+                    judge,
+                    ...(isInvestigationCase(workingCase.type)
+                      ? [caseType]
+                      : []),
+                    ...(workingCase.registrar ? [registrar] : []),
+                  ],
+                  columns: 2,
                 },
                 {
-                  title: formatMessage(core.prosecutor),
-                  value: `${workingCase.prosecutorsOffice?.name}`,
-                },
-                {
-                  title: formatMessage(core.court),
-                  value: workingCase.court?.name,
-                },
-                {
-                  title: formatMessage(core.prosecutorPerson),
-                  value: NameAndEmail(
-                    workingCase.prosecutor?.name,
-                    workingCase.prosecutor?.email,
-                  ),
-                },
-                {
-                  title: formatMessage(core.judge),
-                  value: NameAndEmail(
-                    workingCase.judge?.name,
-                    workingCase.judge?.email,
-                  ),
-                },
-                ...(workingCase.registrar
-                  ? [
-                      {
-                        title: formatMessage(core.registrar),
-                        value: NameAndEmail(
-                          workingCase.registrar?.name,
-                          workingCase.registrar?.email,
-                        ),
-                      },
-                    ]
-                  : []),
-              ]}
-              courtOfAppealData={[
-                {
-                  title: formatMessage(core.appealCaseNumberHeading),
-                  value: workingCase.appealCaseNumber,
-                },
-                {
-                  title: formatMessage(core.appealAssistantHeading),
-                  value: workingCase.appealAssistant?.name,
-                },
-                {
-                  title: formatMessage(core.appealJudgesHeading),
-                  value: (
-                    <>
-                      {sortByIcelandicAlphabet([
-                        workingCase.appealJudge1?.name || '',
-                        workingCase.appealJudge2?.name || '',
-                        workingCase.appealJudge3?.name || '',
-                      ]).map((judge, index) => (
-                        <Text key={index}>{judge}</Text>
-                      ))}
-                    </>
-                  ),
+                  id: 'court-of-appeal-section',
+                  items: [appealCaseNumber, appealAssistant, appealJudges],
+                  columns: 2,
                 },
               ]}
             />

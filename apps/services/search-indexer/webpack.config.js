@@ -1,9 +1,10 @@
+const { composePlugins, withNx } = require('@nx/webpack')
 const path = require('path')
 
 const createEntry = (pathSuffix) =>
   path.resolve(__dirname, `src/migrate/${pathSuffix}`)
 
-module.exports = (config) => {
+module.exports = composePlugins(withNx(), (config) => {
   config.entry = {
     ...config.entry,
     migrateAws: createEntry('migrateAws.ts'),
@@ -15,4 +16,4 @@ module.exports = (config) => {
   return {
     ...config,
   }
-}
+})

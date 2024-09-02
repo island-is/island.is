@@ -105,21 +105,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Veldu skóla',
       description: 'Select school',
     },
-    male: {
-      id: 'dess.nps.application:gender.male',
-      defaultMessage: 'Karlkyns',
-      description: 'Male',
-    },
-    female: {
-      id: 'dess.nps.application:gender.female',
-      defaultMessage: 'Kvenkyns',
-      description: 'Female',
-    },
-    otherGender: {
-      id: 'dess.nps.application:gender.other',
-      defaultMessage: 'Kynsegin/Annað',
-      description: 'non-binary/Other',
-    },
   }),
 
   pre: defineMessages({
@@ -215,10 +200,20 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Athugaðu hvort upplýsingarnar séu réttar áður en þú heldur áfram.',
       description: 'Check that the information is correct before proceeding.',
     },
-    childInfoChosenName: {
-      id: 'dess.nps.application:childrenNParents.child.info.chosen.name',
+    childInfoPreferredName: {
+      id: 'dess.nps.application:childrenNParents.child.info.preferred.name',
       defaultMessage: 'Valið nafn',
       description: 'Preferred name',
+    },
+    childInfoPronouns: {
+      id: 'dess.nps.application:childrenNParents.child.info.pronouns',
+      defaultMessage: 'Fornafn',
+      description: 'Pronoun',
+    },
+    childInfoPronounsPlaceholder: {
+      id: 'dess.nps.application:childrenNParents.child.info.pronouns.placeholder',
+      defaultMessage: 'Veldu fornafn',
+      description: 'Select pronoun',
     },
     childInfoGender: {
       id: 'dess.nps.application:childrenNParents.child.info.gender',
@@ -303,31 +298,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'dess.nps.application:childrenNParents.relatives.delete.relative',
       defaultMessage: 'Eyða aðstandanda',
       description: 'Remove relative',
-    },
-    relativesRelationGrandparent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.grandparent',
-      defaultMessage: 'Afi/amma',
-      description: 'Grandparent',
-    },
-    relativesRelationSibling: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.sibling',
-      defaultMessage: 'Systkini',
-      description: 'Sibling',
-    },
-    relativesRelationStepparent: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.stepparent',
-      defaultMessage: 'Stjúpforeldri',
-      description: 'Stepparent',
-    },
-    relativesRelationRelative: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.relative',
-      defaultMessage: 'Frændfólk',
-      description: 'Relative',
-    },
-    relativesRelationFriendOrOther: {
-      id: 'dess.nps.application:childrenNParents.relatives.relation.friend.or.other',
-      defaultMessage: 'Vinafólk/annað',
-      description: 'Friend/other',
     },
     relativesCanPickUpChild: {
       id: 'dess.nps.application:childrenNParents.relatives.can.pick.up.child',

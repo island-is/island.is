@@ -14,6 +14,7 @@ import {
   NationalRegistryUserApi,
   UserProfileApi,
   ExistingApplicationApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import {
   Events,
@@ -28,6 +29,8 @@ import { ApiActions } from './constants'
 import { DeathNoticeApi } from '../dataProviders'
 import { determineMessageFromApplicationAnswers } from './utils'
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.ANNOUNCEMENT_OF_DEATH]
 const AnnouncementOfDeathTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -37,6 +40,7 @@ const AnnouncementOfDeathTemplate: ApplicationTemplate<
   name: determineMessageFromApplicationAnswers,
   institution: m.applicationInstitution,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

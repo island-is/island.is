@@ -1,9 +1,4 @@
-import {
-  DocumentProviderCategory,
-  DocumentProviderType,
-  DocumentsV2Category,
-  DocumentsV2Sender,
-} from '@island.is/api/schema'
+import { DocumentsV2Category, DocumentsV2Sender } from '@island.is/api/schema'
 import {
   createContext,
   Dispatch,
@@ -29,6 +24,7 @@ export type DocumentsStateProps = {
   categoriesAvailable: DocumentsV2Category[]
   docLoading: boolean
   documentDisplayError?: string
+  localRead: string[]
 
   setSelectedLines: Dispatch<SetStateAction<SelectedLineType>>
   setActiveDocument: Dispatch<SetStateAction<ActiveDocumentStateType>>
@@ -39,6 +35,7 @@ export type DocumentsStateProps = {
   setCategoriesAvailable: Dispatch<SetStateAction<DocumentsV2Category[]>>
   setDocLoading: Dispatch<SetStateAction<boolean>>
   setDocumentDisplayError: Dispatch<SetStateAction<string | undefined>>
+  setLocalRead: Dispatch<SetStateAction<string[]>>
 }
 
 export const DocumentsContext = createContext<DocumentsStateProps>({
@@ -51,6 +48,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   sendersAvailable: [],
   docLoading: false,
   documentDisplayError: undefined,
+  localRead: [],
 
   setSelectedLines: () => undefined,
   setActiveDocument: () => undefined,
@@ -61,6 +59,7 @@ export const DocumentsContext = createContext<DocumentsStateProps>({
   setCategoriesAvailable: () => undefined,
   setDocLoading: () => undefined,
   setDocumentDisplayError: () => undefined,
+  setLocalRead: () => undefined,
 })
 
 export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
@@ -82,6 +81,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
   const [totalPages, setTotalPages] = useState(0)
   const [docLoading, setDocLoading] = useState(false)
   const [documentDisplayError, setDocumentDisplayError] = useState<string>()
+  const [localRead, setLocalRead] = useState<string[]>([])
 
   return (
     <DocumentsContext.Provider
@@ -95,6 +95,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         sendersAvailable,
         docLoading,
         documentDisplayError,
+        localRead,
 
         setSelectedLines,
         setActiveDocument,
@@ -105,6 +106,7 @@ export const DocumentsProvider: FC<React.PropsWithChildren<unknown>> = ({
         setSendersAvailable,
         setDocLoading,
         setDocumentDisplayError,
+        setLocalRead,
       }}
     >
       {children}

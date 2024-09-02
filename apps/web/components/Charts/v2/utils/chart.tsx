@@ -1,4 +1,4 @@
-import { CartesianGrid, XAxis, YAxis } from 'recharts'
+import { CartesianGrid, Label, XAxis, YAxis } from 'recharts'
 
 import { theme } from '@island.is/island-ui/theme'
 import type { Locale } from '@island.is/shared/types'
@@ -126,7 +126,18 @@ export const getCartesianGridComponents = ({
       domain={customStyleConfig.yAxis?.domain ?? [0, 'auto']}
       tick={customStyleConfig.yAxis?.tick ?? undefined}
       ticks={customStyleConfig.yAxis?.ticks ?? undefined}
-    />,
+    >
+      {slice.yAxisLabel && (
+        <Label
+          style={{
+            textAnchor: 'middle',
+          }}
+          angle={270}
+          value={slice.yAxisLabel}
+          dx={-20}
+        />
+      )}
+    </YAxis>,
   ]
 }
 

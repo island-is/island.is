@@ -1,4 +1,4 @@
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import { useRouter } from 'next/router'
 import { ParsedUrlQuery } from 'querystring'
 
@@ -82,7 +82,7 @@ const SubPage: Screen<SubPageProps> = ({
 
   useContentfulId(...contentfulIds)
 
-  const pathWithoutHash = router.asPath.split('#')[0]
+  const pathname = new URL(router.asPath, 'https://island.is').pathname
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore make web strict
   const navList: NavigationItem[] = organizationPage?.menuLinks.map(
@@ -90,12 +90,12 @@ const SubPage: Screen<SubPageProps> = ({
       title: primaryLink?.text,
       href: primaryLink?.url,
       active:
-        primaryLink?.url === pathWithoutHash ||
-        childrenLinks.some((link) => link.url === pathWithoutHash),
+        primaryLink?.url === pathname ||
+        childrenLinks.some((link) => link.url === pathname),
       items: childrenLinks.map(({ text, url }) => ({
         title: text,
         href: url,
-        active: url === pathWithoutHash,
+        active: url === pathname,
       })),
     }),
   )

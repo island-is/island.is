@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { displayFirstPlusRemaining } from '@island.is/judicial-system/formatters'
@@ -11,7 +11,7 @@ interface Props {
   appealCaseNumber?: string | null
 }
 
-const CourtCaseNumber: React.FC<React.PropsWithChildren<Props>> = ({
+const CourtCaseNumber: FC<Props> = ({
   courtCaseNumber,
   policeCaseNumbers,
   appealCaseNumber,

@@ -101,14 +101,20 @@ export const expandAnswers = (
   return {
     applicationFor: answers.applicationFor ?? '',
     applicant: answers.applicant,
+    prePaidApplicant: answers.prePaidApplicant,
+    prepaidInheritance: answers.prepaidInheritance,
     executors: {
       executor: {
-        email: '',
-        phone: '',
+        email: answers.executors?.executor.email ?? '',
+        phone: answers.executors?.executor.phone ?? '',
+        name: answers.executors?.executor.name ?? '',
+        nationalId: answers.executors?.executor.nationalId ?? '',
       },
       spouse: {
-        email: '',
-        phone: '',
+        email: answers.executors?.spouse?.email ?? '',
+        phone: answers.executors?.spouse?.phone ?? '',
+        name: answers.executors?.spouse?.name ?? '',
+        nationalId: answers.executors?.spouse?.nationalId ?? '',
       },
       includeSpouse: undefined,
     },

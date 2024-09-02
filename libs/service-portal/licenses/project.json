@@ -3,21 +3,16 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/service-portal/licenses/src",
   "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": [
-          "libs/service-portal/licenses/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/service-portal/licenses"],
       "options": {
-        "jestConfig": "libs/service-portal/licenses/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/service-portal/licenses/jest.config.ts"
       }
     },
     "extract-strings": {
@@ -25,7 +20,13 @@
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'libs/service-portal/licenses/src/{lib,components,screens}/**/*.{js,ts,tsx}'"
       }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "output": "libs/service-portal/licenses/src/**/*.generated.ts",
+        "command": "graphql-codegen --config libs/service-portal/licenses/codegen.yml"
+      }
     }
-  },
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+  }
 }

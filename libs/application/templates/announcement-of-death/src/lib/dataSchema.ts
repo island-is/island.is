@@ -5,6 +5,7 @@ import { m } from './messages'
 import { RoleConfirmationEnum } from '../types'
 
 import { customZodError } from './utils/customZodError'
+import { YES } from '@island.is/application/core'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -31,8 +32,8 @@ export const dataSchema = z.object({
         RoleConfirmationEnum.DELEGATE,
       ]),
       electPerson: z.object({
-        electedPersonNationalId: z.string(),
-        electedPersonName: z.string(),
+        nationalId: z.string(),
+        name: z.string(),
       }),
     })
     .partial()
@@ -43,8 +44,7 @@ export const dataSchema = z.object({
     .refine(
       ({ roleConfirmation, electPerson }) =>
         roleConfirmation === RoleConfirmationEnum.DELEGATE && !!electPerson
-          ? electPerson.electedPersonName !== '' &&
-            electPerson.electedPersonNationalId !== ''
+          ? electPerson.name !== '' && electPerson.nationalId !== ''
           : !electPerson
           ? true
           : roleConfirmation === RoleConfirmationEnum.CONTINUE
@@ -52,15 +52,15 @@ export const dataSchema = z.object({
           : false,
       {
         message: m.errorNationalIdNoName.defaultMessage,
-        path: ['electPerson', 'electedPersonNationalId'],
+        path: ['electPerson', 'nationalId'],
       },
     )
     .refine(
       ({ roleConfirmation, electPerson }) =>
         roleConfirmation === RoleConfirmationEnum.DELEGATE && !!electPerson
-          ? electPerson.electedPersonNationalId &&
-            nationalId.isPerson(electPerson.electedPersonNationalId) &&
-            nationalId.info(electPerson.electedPersonNationalId).age >= 18
+          ? electPerson.nationalId &&
+            nationalId.isPerson(electPerson.nationalId) &&
+            nationalId.info(electPerson.nationalId).age >= 18
           : !electPerson
           ? true
           : roleConfirmation === RoleConfirmationEnum.CONTINUE
@@ -68,7 +68,7 @@ export const dataSchema = z.object({
           : false,
       {
         message: m.errorNationalIdIncorrect.defaultMessage,
-        path: ['electPerson', 'electedPersonNationalId'],
+        path: ['electPerson', 'nationalId'],
       },
     ),
 
@@ -120,6 +120,7 @@ export const dataSchema = z.object({
       .array()
       .optional(),
     encountered: z.boolean().optional(),
+    confirmation: z.array(z.enum([YES])).length(1),
   }),
   flyers: asset,
   ships: asset,

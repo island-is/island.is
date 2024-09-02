@@ -61,17 +61,4 @@ describe('RadioController', () => {
     )
     expect(screen.getByText('nice sublabel')).toBeInTheDocument()
   })
-
-  it('should not render a sublabel below an option if wished and largeButtons is set to false', () => {
-    const options = [
-      { label: 'some checkbox', value: 'off', subLabel: 'nice sublabel' },
-      { label: 'another checkbox', value: 'on' },
-    ]
-    render(
-      <Wrapper>
-        <RadioController id="values" largeButtons={false} options={options} />
-      </Wrapper>,
-    )
-    expect(screen.queryByText('nice sublabel')).not.toBeInTheDocument()
-  })
 })

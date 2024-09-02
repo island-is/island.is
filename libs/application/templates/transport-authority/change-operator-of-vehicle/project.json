@@ -6,13 +6,7 @@
   "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "outputs": ["{options.outputFile}"],
-      "options": {
-        "lintFilePatterns": [
-          "libs/application/templates/transport-authority/change-operator-of-vehicle/**/*.{ts,tsx,js,jsx}"
-        ]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
@@ -20,8 +14,7 @@
         "{workspaceRoot}/coverage/libs/application/templates/transport-authority/change-operator-of-vehicle"
       ],
       "options": {
-        "jestConfig": "libs/application/templates/transport-authority/change-operator-of-vehicle/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/application/templates/transport-authority/change-operator-of-vehicle/jest.config.ts"
       }
     },
     "extract-strings": {

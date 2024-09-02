@@ -8,7 +8,7 @@ import {
 
 import { CmsConfig } from './cms.config'
 
-function overrideCacheControl(request: Request) {
+const overrideCacheControl = (_request: Request) => {
   return buildCacheControl({
     maxAge: 10 * 60, // 10 minutes
     public: true, // required to enable caching for contentful gql

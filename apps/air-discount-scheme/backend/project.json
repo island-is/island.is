@@ -4,6 +4,7 @@
   "sourceRoot": "apps/air-discount-scheme/backend/src",
   "projectType": "application",
   "prefix": "air-discount-scheme-backend",
+  "tags": ["scope:nest"],
   "generators": {},
   "targets": {
     "build": {
@@ -47,26 +48,23 @@
       }
     },
     "lint": {
-      "executor": "@nx/linter:eslint",
+      "executor": "@nx/eslint:lint",
       "options": {
-        "lintFilePatterns": [
-          "apps/air-discount-scheme/backend/**/*.{ts,tsx,js,jsx}"
-        ]
+        "lintFilePatterns": ["apps/air-discount-scheme/backend/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
         "jestConfig": "apps/air-discount-scheme/backend/jest.config.ts",
-        "runInBand": true,
-        "passWithNoTests": true
+        "runInBand": true
       },
       "outputs": ["{workspaceRoot}/coverage/apps/air-discount-scheme/backend"]
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker-compose up -d",
+        "command": "docker compose up -d",
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
@@ -111,7 +109,8 @@
         "cwd": "apps/air-discount-scheme/backend"
       }
     },
-    "docker-express": {}
-  },
-  "tags": ["scope:nest"]
+    "docker-express": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    }
+  }
 }

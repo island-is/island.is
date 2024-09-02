@@ -6,9 +6,11 @@ This library implements a GraphQL client code to use Contentful GraphQL APIs.
 
 ## GraphQL API endpoint
 
-The `GRAPHQL_API_ENDPOINT` and `CONTENTFUL_ACCESS_TOKEN` env variables need to be configured.
+The `CONTENTFUL_ACCESS_TOKEN` env variable need to be configured.
 
 ## Fetch GraphQL Schema
+
+Schema is not automatically updated - use this command to update
 
 ```sh
 yarn nx run clients-cms:fetch-schema

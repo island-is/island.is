@@ -290,7 +290,7 @@ describe('InternalCaseController - Archive', () => {
             'ASC',
           ],
         ],
-        where: { isArchived: false, archiveFilter },
+        where: archiveFilter,
       })
       expect(mockDefendantService.updateForArcive).toHaveBeenCalledWith(
         caseId,

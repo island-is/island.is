@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, PropsWithChildren, useState } from 'react'
 
 import {
   alertBannerStyles,
@@ -72,7 +72,7 @@ export interface AlertBannerProps {
   description?: string
 }
 
-export const AlertBanner: FC<React.PropsWithChildren<AlertBannerProps>> = ({
+export const AlertBanner: FC<PropsWithChildren<AlertBannerProps>> = ({
   variant: variantKey = 'default',
   dismissable,
   title,

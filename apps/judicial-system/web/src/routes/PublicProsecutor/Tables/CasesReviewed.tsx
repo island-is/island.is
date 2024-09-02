@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence } from 'framer-motion'
 
@@ -41,7 +41,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   }
 
   const getVerdictViewTag = (row: CaseListEntry) => {
-    const today = new Date()
+    const today = new Date() // TODO: Let the server determine if the deadline has passed
     const deadline = new Date(row.indictmentVerdictAppealDeadline ?? '')
     const variant = !row.indictmentVerdictViewedByAll
       ? 'red'
@@ -75,7 +75,7 @@ const CasesReviewed: FC<Props> = ({ loading, cases }) => {
                   title: capitalize(
                     formatMessage(core.defendant, { suffix: 'i' }),
                   ),
-                  sortable: { isSortable: true, key: 'defendant' },
+                  sortable: { isSortable: true, key: 'defendants' },
                 },
                 { title: formatMessage(tables.reviewDecision) },
                 { title: formatMessage(tables.verdictViewState) },

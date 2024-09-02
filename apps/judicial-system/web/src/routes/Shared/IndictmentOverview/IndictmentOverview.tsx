@@ -1,10 +1,13 @@
-import React, { useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { isCompletedCase } from '@island.is/judicial-system/types'
+import {
+  isCompletedCase,
+  isDefenceUser,
+} from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
   CourtCaseInfo,
@@ -12,9 +15,9 @@ import {
   FormContext,
   FormFooter,
   IndictmentCaseFilesList,
+  IndictmentCaseScheduledCard,
   IndictmentsLawsBrokenAccordionItem,
   InfoCardActiveIndictment,
-  InfoCardCaseScheduledIndictment,
   InfoCardClosedIndictment,
   PageHeader,
   PageLayout,
@@ -24,13 +27,14 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseState,
+  IndictmentDecision,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { ReviewDecision } from '../../PublicProsecutor/components/ReviewDecision/ReviewDecision'
 import { strings } from './IndictmentOverview.strings'
 
-const IndictmentOverview = () => {
+const IndictmentOverview: FC = () => {
   const router = useRouter()
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -49,6 +53,10 @@ const IndictmentOverview = () => {
     isCompletedCase(workingCase.state) &&
     workingCase.indictmentReviewer?.id === user?.id &&
     Boolean(!workingCase.indictmentReviewDecision)
+  const canAddFiles =
+    isDefenceUser(user) &&
+    workingCase.indictmentDecision !==
+      IndictmentDecision.POSTPONING_UNTIL_VERDICT
 
   const handleNavigationTo = useCallback(
     (destination: string) => router.push(`${destination}/${workingCase.id}`),
@@ -79,18 +87,25 @@ const IndictmentOverview = () => {
             : formatMessage(strings.inProgressTitle)}
         </PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {caseHasBeenReceivedByCourt && workingCase.court && latestDate?.date && (
-          <Box component="section" marginBottom={5}>
-            <InfoCardCaseScheduledIndictment
-              court={workingCase.court}
-              courtDate={latestDate.date}
-              courtRoom={latestDate.location}
-              postponedIndefinitelyExplanation={
-                workingCase.postponedIndefinitelyExplanation
-              }
-            />
-          </Box>
-        )}
+        {caseHasBeenReceivedByCourt &&
+          workingCase.court &&
+          latestDate?.date &&
+          workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
+          workingCase.indictmentDecision !==
+            IndictmentDecision.REDISTRIBUTING && (
+            <Box component="section" marginBottom={5}>
+              <IndictmentCaseScheduledCard
+                court={workingCase.court}
+                indictmentDecision={workingCase.indictmentDecision}
+                courtDate={latestDate.date}
+                courtRoom={latestDate.location}
+                postponedIndefinitelyExplanation={
+                  workingCase.postponedIndefinitelyExplanation
+                }
+                courtSessionType={workingCase.courtSessionType}
+              />
+            </Box>
+          )}
         <Box component="section" marginBottom={5}>
           {caseIsClosed ? (
             <InfoCardClosedIndictment
@@ -111,9 +126,24 @@ const IndictmentOverview = () => {
         {workingCase.caseFiles && (
           <Box
             component="section"
-            marginBottom={shouldDisplayReviewDecision ? 5 : 10}
+            marginBottom={shouldDisplayReviewDecision || canAddFiles ? 5 : 10}
           >
             <IndictmentCaseFilesList workingCase={workingCase} />
+          </Box>
+        )}
+        {canAddFiles && (
+          <Box display="flex" justifyContent="flexEnd" marginBottom={10}>
+            <Button
+              size="small"
+              icon="add"
+              onClick={() =>
+                router.push(
+                  `${constants.DEFENDER_ADD_FILES_ROUTE}/${workingCase.id}`,
+                )
+              }
+            >
+              {formatMessage(strings.addDocumentsButtonText)}
+            </Button>
           </Box>
         )}
         {shouldDisplayReviewDecision && (

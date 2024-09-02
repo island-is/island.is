@@ -41,6 +41,9 @@ export class RecyclingRequestService {
     disposalStation: string,
     mileage = 0,
   ) {
+    const apiVersion = '3.0'
+    const apiVersionParam = '?api-version=' + apiVersion
+
     try {
       const { restAuthUrl, restDeRegUrl, restUsername, restPassword } =
         environment.samgongustofa
@@ -51,10 +54,12 @@ export class RecyclingRequestService {
       const jsonAuthBody = JSON.stringify(jsonObj)
       const headerAuthRequest = {
         'Content-Type': 'application/json',
+        'Api-version': apiVersion,
       }
+
       // TODO: saved jToken and use it in next 7 days ( until it expires )
       const authRes = await lastValueFrom(
-        this.httpService.post(restAuthUrl, jsonAuthBody, {
+        this.httpService.post(restAuthUrl + apiVersionParam, jsonAuthBody, {
           headers: headerAuthRequest,
         }),
       )
@@ -75,9 +80,11 @@ export class RecyclingRequestService {
       const headerDeRegRequest = {
         'Content-Type': 'application/json',
         Authorization: 'Bearer ' + jToken,
+        'Api-version': apiVersion,
       }
+
       const deRegRes = await lastValueFrom(
-        this.httpService.post(restDeRegUrl, jsonDeRegBody, {
+        this.httpService.post(restDeRegUrl + apiVersionParam, jsonDeRegBody, {
           headers: headerDeRegRequest,
         }),
       )
@@ -88,9 +95,11 @@ export class RecyclingRequestService {
           `Failed on deregisterd on deRegisterVehicle with status: ${deRegRes.statusText}`,
         )
       }
-    } catch (err) {
-      delete err.data
-      this.logger.error(`Failed to deregister vehicle`, { error: err })
+    } catch (error) {
+      if (error?.config) {
+        error.config.data = undefined
+      }
+      this.logger.error(`Failed to deregister vehicle`, { error })
       throw new Error(`Failed to deregister vehicle ${vehiclePermno.slice(-3)}`)
     }
   }
@@ -276,12 +285,9 @@ export class RecyclingRequestService {
       // If we encounter error with 'partnerId' then there is no request saved
       if (requestType == 'deregistered') {
         // 0. We need to be sure that the current owner is registered in our database
-
-        /*
         await this.icelandicTransportAuthorityServices.checkIfCurrentUser(
           permno,
         )
-        */
 
         // 1. Check 'pendingRecycle'/'handOver' requestType
         const resRequestType = await this.findAllWithPermno(permno)

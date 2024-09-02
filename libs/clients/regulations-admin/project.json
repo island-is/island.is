@@ -3,19 +3,17 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/regulations-admin/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "implicitDependencies": ["regulations-admin-backend"],
   "generators": {},
   "targets": {
     "lint": {
-      "executor": "@nx/linter:eslint",
-      "options": {
-        "lintFilePatterns": ["libs/clients/regulations-admin/**/*.ts"]
-      }
+      "executor": "@nx/eslint:lint"
     },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {
-        "jestConfig": "libs/clients/regulations-admin/jest.config.ts",
-        "passWithNoTests": true
+        "jestConfig": "libs/clients/regulations-admin/jest.config.ts"
       },
       "outputs": ["{workspaceRoot}/coverage/libs/clients/regulations-admin"]
     },
@@ -26,7 +24,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "implicitDependencies": ["regulations-admin-backend"],
-  "tags": ["lib:client", "scope:client"]
+  }
 }

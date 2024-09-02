@@ -1,4 +1,4 @@
-import React, { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -13,6 +13,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
+  ConnectedCaseFilesAccordionItem,
   FormContentContainer,
   FormContext,
   FormFooter,
@@ -56,7 +57,7 @@ const Completed: FC = () => {
 
   const handleNextButtonClick = useCallback(async () => {
     const allSucceeded = await handleUpload(
-      uploadFiles.filter((file) => !file.key),
+      uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
     if (!allSucceeded) {
@@ -92,8 +93,11 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[], type: CaseFileCategory) => {
-      addUploadFiles(files, type, 'done')
+    (files: File[]) => {
+      addUploadFiles(files, {
+        category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+        status: 'done',
+      })
     },
     [addUploadFiles],
   )
@@ -136,6 +140,13 @@ const Completed: FC = () => {
         <Box marginBottom={5} component="section">
           <InfoCardClosedIndictment />
         </Box>
+        {workingCase.mergedCases &&
+          workingCase.mergedCases.length > 0 &&
+          workingCase.mergedCases.map((mergedCase) => (
+            <Box marginBottom={5} key={mergedCase.id}>
+              <ConnectedCaseFilesAccordionItem connectedCase={mergedCase} />
+            </Box>
+          ))}
         <Box marginBottom={5} component="section">
           <IndictmentCaseFilesList workingCase={workingCase} />
         </Box>
@@ -157,13 +168,8 @@ const Completed: FC = () => {
                   description={formatMessage(core.uploadBoxDescription, {
                     fileEndings: '.pdf',
                   })}
-                  onChange={(files) =>
-                    handleCriminalRecordUpdateUpload(
-                      files,
-                      CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-                    )
-                  }
-                  onRemove={(file) => handleRemoveFile(file)}
+                  onChange={handleCriminalRecordUpdateUpload}
+                  onRemove={handleRemoveFile}
                 />
               </Box>
             )}

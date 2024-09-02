@@ -94,11 +94,13 @@ const DocumentsFilter = ({
         labelOpen={formatMessage(m.openFilter)}
         labelClose={formatMessage(m.closeFilter)}
         fullWidthInput
+        largeButton
         filterInput={
           <Input
             placeholder={formatMessage(m.searchPlaceholder)}
             name="rafraen-skjol-input"
-            size="xs"
+            size="sm"
+            label={formatMessage(messages.documentSearchLabel)}
             onChange={debounceChange}
             backgroundColor="blue"
             icon={{ name: 'search' }}
@@ -197,7 +199,7 @@ const DocumentsFilter = ({
                 key="date-accordion-item"
                 id="date-accordion-item"
                 label={formatMessage(m.datesLabel)}
-                labelUse="h5"
+                labelUse="h2"
                 labelVariant="h5"
                 iconVariant="small"
               >

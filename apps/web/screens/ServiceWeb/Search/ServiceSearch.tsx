@@ -1,5 +1,5 @@
 import { useMemo } from 'react'
-import { Locale } from 'locale'
+import { Locale } from '@island.is/shared/types'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 

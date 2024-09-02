@@ -8,11 +8,13 @@ import {
   CaseIndictmentRulingDecision,
   CaseState,
   CaseType,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
 } from '@island.is/judicial-system/types'
 
 import { Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { Institution } from '../../institution'
 import { User } from '../../user'
 
@@ -128,4 +130,13 @@ export class CaseListEntry {
 
   @Field(() => CaseIndictmentRulingDecision, { nullable: true })
   readonly indictmentRulingDecision?: CaseIndictmentRulingDecision
+
+  @Field(() => CourtSessionType, { nullable: true })
+  readonly courtSessionType?: CourtSessionType
+
+  @Field(() => [EventLog], { nullable: true })
+  readonly eventLogs?: EventLog[]
+
+  @Field(() => String, { nullable: true })
+  readonly indictmentCompletedDate?: string
 }

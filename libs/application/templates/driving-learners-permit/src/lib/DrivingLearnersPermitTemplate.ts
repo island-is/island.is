@@ -12,6 +12,7 @@ import {
   CurrentLicenseApi,
   defineTemplateApi,
   DefaultEvents,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { FeatureFlagClient } from '@island.is/feature-flags'
 import {
@@ -25,6 +26,8 @@ import { m } from './messages'
 import { dataSchema } from './dataSchema'
 import { truthyFeatureFromClient } from './utils'
 
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_LEARNERS_PERMIT]
 const DrivingLearnersPermitTemplate: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<DrivingLearnersPermitTemplateEvent>,
@@ -34,6 +37,7 @@ const DrivingLearnersPermitTemplate: ApplicationTemplate<
   name: m.name,
   institution: m.institutionName,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

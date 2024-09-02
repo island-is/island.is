@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
@@ -20,8 +20,11 @@ interface Props {
   crimeScenes?: CrimeSceneMap
 }
 
-const IndictmentInfo: React.FC<React.PropsWithChildren<Props>> = (props) => {
-  const { policeCaseNumber, subtypes, crimeScenes } = props
+const IndictmentInfo: FC<Props> = ({
+  policeCaseNumber,
+  subtypes,
+  crimeScenes,
+}) => {
   const { formatMessage } = useIntl()
 
   if (!subtypes || !crimeScenes) {

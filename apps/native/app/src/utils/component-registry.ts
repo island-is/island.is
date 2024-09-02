@@ -49,6 +49,7 @@ export const ComponentRegistry = {
 
   // overlays
   OfflineBanner: `${prefix}.overlay.OfflineBanner`,
+  PasskeyScreen: `${prefix}.screens.PasskeyScreen`,
 }
 
 export const ButtonRegistry = {
@@ -63,6 +64,7 @@ export const ButtonRegistry = {
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
   DocumentStarButton: `${prefix}.button.DocumentStarButton`,
   DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
+  InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
 }
 
 export const StackRegistry = {

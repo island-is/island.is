@@ -1,6 +1,9 @@
 import { IsDateString, IsNumber, IsOptional, IsString } from 'class-validator'
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
-import { AuthDelegationProvider, AuthDelegationType } from 'delegation'
+import {
+  AuthDelegationProvider,
+  AuthDelegationType,
+} from '@island.is/shared/types'
 import { PageInfoDto } from '@island.is/nest/pagination'
 
 export class DelegationRecordDTO {

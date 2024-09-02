@@ -73,7 +73,11 @@ describe('useSingleNavigationItem hook', () => {
           <MockedAuthProvider user={user}>
             <BrowserRouter>
               <MockedPortalProvider
-                meta={{ portalType: 'admin', basePath: '/' }}
+                meta={{
+                  portalType: 'admin',
+                  basePath: '/',
+                  portalTitle: 'Mínar síður - Ísland.is',
+                }}
                 modules={filteredModules}
                 routes={filteredRoutes}
               >

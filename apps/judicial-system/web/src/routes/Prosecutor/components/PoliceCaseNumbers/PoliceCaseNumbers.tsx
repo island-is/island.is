@@ -1,4 +1,12 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react'
+import {
+  Dispatch,
+  FC,
+  SetStateAction,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, Icon, Tag, Text } from '@island.is/island-ui/core'
@@ -16,11 +24,9 @@ import { policeCaseNumber as m } from './PoliceCaseNumbers.strings'
 
 interface Props {
   workingCase: Case
-  setWorkingCase: React.Dispatch<React.SetStateAction<Case>>
+  setWorkingCase: Dispatch<SetStateAction<Case>>
   clientPoliceNumbers?: string[] | null
-  setClientPoliceNumbers: React.Dispatch<
-    React.SetStateAction<string[] | undefined | null>
-  >
+  setClientPoliceNumbers: Dispatch<SetStateAction<string[] | undefined | null>>
 }
 
 // Needed so that users can remove all loke numbers in client without syncing to server
@@ -37,15 +43,12 @@ export const usePoliceCaseNumbers = (workingCase: Case) => {
   return { clientPoliceNumbers, setClientPoliceNumbers }
 }
 
-export const PoliceCaseNumbers: React.FC<React.PropsWithChildren<Props>> = (
-  props,
-) => {
-  const {
-    workingCase,
-    setWorkingCase,
-    clientPoliceNumbers,
-    setClientPoliceNumbers,
-  } = props
+export const PoliceCaseNumbers: FC<Props> = ({
+  workingCase,
+  setWorkingCase,
+  clientPoliceNumbers,
+  setClientPoliceNumbers,
+}) => {
   const { user } = useContext(UserContext)
   const { setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()

@@ -58,14 +58,18 @@ export const DocumentLine: FC<Props> = ({
   const {
     submitMailAction,
     loading: postLoading,
-    archiveSuccess,
     bookmarkSuccess,
   } = useMailAction()
 
-  const { activeArchive, fetchObject, refetch } = useDocumentList()
+  const { fetchObject, refetch } = useDocumentList()
 
-  const { setActiveDocument, setDocumentDisplayError, setDocLoading } =
-    useDocumentContext()
+  const {
+    setActiveDocument,
+    setDocumentDisplayError,
+    setDocLoading,
+    setLocalRead,
+    localRead,
+  } = useDocumentContext()
 
   const wrapperRef = useRef(null)
   const avatarRef = useRef(null)
@@ -124,6 +128,7 @@ export const DocumentLine: FC<Props> = ({
           if (docContent) {
             displayPdf(docContent)
             setDocumentDisplayError(undefined)
+            setLocalRead([...localRead, documentLine.id])
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }
@@ -162,9 +167,8 @@ export const DocumentLine: FC<Props> = ({
     getDocument()
   }
 
-  const unread = !documentLine.opened
+  const unread = !documentLine.opened && !localRead.includes(documentLine.id)
   const isBookmarked = bookmarked || bookmarkSuccess
-  const isArchived = activeArchive || archiveSuccess
 
   return (
     <Box className={styles.wrapper} ref={wrapperRef}>
@@ -190,6 +194,7 @@ export const DocumentLine: FC<Props> = ({
                 setSelectLine(documentLine.id)
               }
             }}
+            as={asFrame ? 'div' : 'button'}
             avatar={
               (hasAvatarFocus || selected) && !asFrame ? (
                 <Box
@@ -247,31 +252,18 @@ export const DocumentLine: FC<Props> = ({
                 {documentLine.subject}
               </Text>
             </button>
-            {(hasFocusOrHover || isBookmarked || isArchived) &&
+            {(hasFocusOrHover || isBookmarked) &&
               !postLoading &&
               !fileLoading &&
               !asFrame && (
                 <FavAndStash
                   bookmarked={isBookmarked}
-                  archived={isArchived}
                   onFav={
                     isBookmarked || hasFocusOrHover
                       ? async (e) => {
                           e.stopPropagation()
                           await submitMailAction(
                             isBookmarked ? 'unbookmark' : 'bookmark',
-                            documentLine.id,
-                          )
-                          refetch(fetchObject)
-                        }
-                      : undefined
-                  }
-                  onStash={
-                    isArchived || hasFocusOrHover
-                      ? async (e) => {
-                          e.stopPropagation()
-                          await submitMailAction(
-                            isArchived ? 'unarchive' : 'archive',
                             documentLine.id,
                           )
                           refetch(fetchObject)

@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren } from 'react'
+import { FC } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
 import flatMap from 'lodash/flatMap'
 
@@ -33,10 +33,7 @@ const PoliceCaseNumbersTags: FC<{
   </Box>
 )
 
-const Entry: FC<PropsWithChildren<{ label: string; value: string }>> = ({
-  label,
-  value,
-}) => {
+const Entry: FC<{ label: string; value: string }> = ({ label, value }) => {
   return (
     <Text color="dark400" fontWeight="semiBold" paddingTop={'smallGutter'}>
       {`${label}: ${value}`}
@@ -68,7 +65,7 @@ interface Props {
   workingCase: Case
 }
 
-export const Defendants: FC<PropsWithChildren<Props>> = ({ workingCase }) => {
+export const Defendants: FC<Props> = ({ workingCase }) => {
   const { defendants, type } = workingCase
   const { formatMessage } = useIntl()
 
@@ -95,9 +92,10 @@ export const Prosecutor: FC<Props> = ({ workingCase }) => {
   )
 }
 
-export const ProsecutorCaseInfo: FC<
-  PropsWithChildren<Props & { hideCourt?: boolean }>
-> = ({ workingCase, hideCourt = false }) => {
+export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
+  workingCase,
+  hideCourt = false,
+}) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
 
@@ -114,9 +112,7 @@ export const ProsecutorCaseInfo: FC<
   )
 }
 
-export const CourtCaseInfo: FC<PropsWithChildren<Props>> = ({
-  workingCase,
-}) => {
+export const CourtCaseInfo: FC<Props> = ({ workingCase }) => {
   const { formatMessage } = useIntl()
 
   return (

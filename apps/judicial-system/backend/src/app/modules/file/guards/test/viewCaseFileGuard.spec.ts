@@ -75,7 +75,6 @@ describe('View Case File Guard', () => {
     describe.each([
       CaseState.SUBMITTED,
       CaseState.RECEIVED,
-      CaseState.MAIN_HEARING,
       ...completedCaseStates,
     ])('can view case files for %s cases', (state) => {
       let then: Then
@@ -100,7 +99,6 @@ describe('View Case File Guard', () => {
           ![
             CaseState.SUBMITTED,
             CaseState.RECEIVED,
-            CaseState.MAIN_HEARING,
             ...completedCaseStates,
           ].includes(state as CaseState),
       ),

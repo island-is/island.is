@@ -9,11 +9,15 @@ import {
   defineTemplateApi,
   EmployeeApi,
   NationalRegistryUserApi,
+  ApplicationConfigurations,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import { ApiActions } from './constants'
+
+const configuration =
+  ApplicationConfigurations[ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION]
 
 const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -23,6 +27,7 @@ const DrivingSchoolConfirmationTemplate: ApplicationTemplate<
   type: ApplicationTypes.DRIVING_SCHOOL_CONFIRMATION,
   name: m.applicationTitle,
   dataSchema: dataSchema,
+  translationNamespaces: [configuration.translation],
   stateMachineConfig: {
     initial: States.CONFIRM,
     states: {

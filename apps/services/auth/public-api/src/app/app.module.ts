@@ -16,6 +16,7 @@ import {
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { ProblemModule } from '@island.is/nest/problem'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
 
 import { environment } from '../environments'
@@ -40,6 +41,7 @@ import { PasskeysModule } from './modules/passkeys/passkeys.module'
         IdsClientConfig,
         NationalRegistryClientConfig,
         RskRelationshipsClientConfig,
+        CompanyRegistryConfig,
         XRoadConfig,
         PasskeysCoreConfig,
       ],

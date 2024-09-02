@@ -1,27 +1,27 @@
 query studentInfo($input: UniversityCareersStudentInfoInput!) {
   universityCareersStudentTrackHistory(input: $input) {
     __typename
-    trackResults {
-      ... on UniversityCareersStudentTrackTranscript {
-        name
-        nationalId
-        graduationDate
-        trackNumber
-        institution {
-          id
-          displayName
-          logoUrl
-        }
-        school
-        faculty
-        studyProgram
-        degree
+    transcripts {
+      name
+      nationalId
+      graduationDate
+      trackNumber
+      institution {
+        id
+        displayName
+        logoUrl
       }
-      ... on UniversityCareersStudentTrackTranscriptError {
-        __typename
-        university
-        error
+      school
+      faculty
+      studyProgram
+      degree
+    }
+    errors {
+      institution {
+        id
+        displayName
       }
+      error
     }
   }
 }

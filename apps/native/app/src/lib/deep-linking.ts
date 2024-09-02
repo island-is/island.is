@@ -8,7 +8,7 @@ import {
   NotificationMessage,
 } from '../graphql/types/schema'
 import { ComponentRegistry, MainBottomTabs } from '../utils/component-registry'
-import { openBrowser } from './rn-island'
+import { openNativeBrowser } from './rn-island'
 
 export type RouteCallbackArgs =
   | boolean
@@ -216,8 +216,8 @@ export function navigateToNotification({
       },
     })
   }
-
-  void openBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
+  // TODO: When navigating to a link from notification works, implement a way to use useBrowser.openBrowser here
+  openNativeBrowser(link, componentId ?? ComponentRegistry.HomeScreen)
 }
 
 // Map between notification link and app screen

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertBanner } from '@island.is/island-ui/core'
@@ -10,9 +10,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 
 import { UserContext } from '../UserProvider/UserProvider'
 
-const ServiceInterruptionBanner: React.FC<
-  React.PropsWithChildren<unknown>
-> = () => {
+const ServiceInterruptionBanner = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
 

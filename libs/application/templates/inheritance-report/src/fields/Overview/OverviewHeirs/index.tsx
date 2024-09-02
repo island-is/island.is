@@ -30,7 +30,7 @@ export const OverviewHeirs: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         if (!heir.enabled) return null
 
         return (
-          <Box key={index} marginTop={index === 0 ? 3 : 6}>
+          <Box key={index} marginTop={index === 0 ? 1 : 5}>
             <Text marginBottom={2} variant="h4">
               {formatMessage(m.heir) + ' ' + (index + 1)}
             </Text>

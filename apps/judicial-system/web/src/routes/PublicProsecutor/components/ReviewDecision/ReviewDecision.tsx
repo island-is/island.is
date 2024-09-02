@@ -80,10 +80,7 @@ export const ReviewDecision: FC<Props> = (props) => {
         description={
           <Text variant="eyebrow" as="span">
             {fm(strings.subtitle, {
-              indictmentAppealDeadline: formatDate(
-                indictmentAppealDeadline,
-                'P',
-              ),
+              indictmentAppealDeadline: formatDate(indictmentAppealDeadline),
             })}
           </Text>
         }

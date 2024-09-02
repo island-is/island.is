@@ -1,4 +1,4 @@
-import React from 'react'
+import { FC } from 'react'
 import { MessageDescriptor, useIntl } from 'react-intl'
 
 import {
@@ -24,7 +24,7 @@ interface Props {
   fullWidth?: boolean
 }
 
-const CheckboxList: React.FC<React.PropsWithChildren<Props>> = ({
+const CheckboxList: FC<Props> = ({
   checkboxes,
   selected,
   onChange,

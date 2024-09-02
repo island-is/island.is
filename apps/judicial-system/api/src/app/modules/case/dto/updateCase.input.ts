@@ -24,6 +24,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseLegalProvisions,
   CaseType,
+  CourtSessionType,
   IndictmentCaseReviewDecision,
   IndictmentDecision,
   RequestSharedWithDefender,
@@ -495,4 +496,14 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => IndictmentDecision, { nullable: true })
   readonly indictmentDecision?: IndictmentDecision
+
+  @Allow()
+  @IsOptional()
+  @Field(() => CourtSessionType, { nullable: true })
+  readonly courtSessionType?: CourtSessionType
+
+  @Allow()
+  @IsOptional()
+  @Field(() => ID, { nullable: true })
+  readonly mergeCaseId?: string
 }

@@ -13,7 +13,7 @@ import { onError } from '@apollo/client/link/error'
 import { RetryLink } from '@apollo/client/link/retry'
 import { MMKVStorageWrapper, persistCache } from 'apollo3-cache-persist'
 import { config, getConfig } from '../config'
-import { openBrowser } from '../lib/rn-island'
+import { openNativeBrowser } from '../lib/rn-island'
 import { cognitoAuthUrl } from '../screens/cognito-auth/config-switcher'
 import { authStore } from '../stores/auth-store'
 import { environmentStore } from '../stores/environment-store'
@@ -105,7 +105,7 @@ const errorLink = onError(
         ) {
           authStore.setState({ cognitoAuthUrl: redirectUrl })
           if (config.isTestingApp && authStore.getState().authorizeResult) {
-            void openBrowser(cognitoAuthUrl(), MainBottomTabs)
+            openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
           }
         }
       }

@@ -12,14 +12,4 @@ export const strings = defineMessages({
     defaultMessage: 'Endursenda',
     description: 'Notaður sem texti á takka til að endursenda ákæru.',
   },
-  scheduledInfoCardTitle: {
-    id: 'judicial.system.core:indictment_overview.scheduled_info_card_title',
-    defaultMessage: 'Á dagskrá',
-    description: 'Notaður sem titill á Á dagskrá upplýsingakorti.',
-  },
-  scheduledInfoCardValue: {
-    id: 'judicial.system.core:indictment_overview.scheduled_info_card_value',
-    defaultMessage: 'Málið er dómtekið',
-    description: 'Notaður sem gildi á Á dagskrá upplýsingakorti.',
-  },
 })

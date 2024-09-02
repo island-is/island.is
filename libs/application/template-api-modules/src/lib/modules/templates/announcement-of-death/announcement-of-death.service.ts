@@ -12,7 +12,7 @@ import {
 } from '@island.is/clients/syslumenn'
 import {
   Answers as aodAnswers,
-  OtherPropertiesEnum,
+  PropertiesEnum,
 } from '@island.is/application/templates/announcement-of-death/types'
 import { NationalRegistry, RoleConfirmationEnum, PickRole } from './types'
 import {
@@ -75,18 +75,10 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     }
 
     for (const estate in estates) {
-      estates[estate].assets = estates[estate].assets.map(baseMapper)
-      estates[estate].vehicles = [
-        ...estates[estate].vehicles,
-        ...estates[estate].ships,
-        ...estates[estate].flyers,
-      ].map(baseMapper)
       estates[estate].estateMembers =
         estates[estate].estateMembers.map(baseMapper)
       // TODO: remove once empty array diff problem is resolved
       //       in the application system (property dropped before deepmerge)
-      estates[estate].assets.unshift(dummyAsset as EstateAsset)
-      estates[estate].vehicles.unshift(dummyAsset as EstateAsset)
       estates[estate].estateMembers.unshift(dummyMember as EstateMember)
       estates[estate].guns.unshift(dummyAsset as EstateAsset)
     }
@@ -105,8 +97,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
     const syslumennOnEntryData: any = application.externalData.syslumennOnEntry
     const electPerson: any = (application.answers?.pickRole as PickRole)
       .electPerson
-    const electPersonNationalId: string =
-      electPerson.electedPersonNationalId ?? ''
+    const electPersonNationalId: string = electPerson.nationalId ?? ''
 
     if (!isPerson(electPersonNationalId)) {
       return {
@@ -174,8 +165,7 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         application.externalData.syslumennOnEntry
       const electPerson: any = (application.answers?.pickRole as PickRole)
         .electPerson
-      const electPersonNationalId: string =
-        electPerson.electedPersonNationalId ?? ''
+      const electPersonNationalId: string = electPerson.nationalId ?? ''
 
       if (!isPerson(electPersonNationalId)) {
         return {
@@ -232,32 +222,30 @@ export class AnnouncementOfDeathService extends BaseTemplateApiService {
         estateMembers: JSON.stringify(
           answers.estateMembers.members.filter((member) => !member?.dummy),
         ),
-        assets: JSON.stringify(
-          answers.assets.assets.filter((asset) => !asset?.dummy),
-        ),
-        vehicles: JSON.stringify(
-          answers.vehicles.vehicles.filter((vehicle) => !vehicle?.dummy),
-        ),
         hadFirearms: answers.hadFirearms,
         firearm: JSON.stringify(answers.firearmApplicant),
         bankcodeSecuritiesOrShares: otherProperties.includes(
-          OtherPropertiesEnum.ACCOUNTS,
+          PropertiesEnum.ACCOUNTS,
         )
           ? 'true'
           : 'false',
         selfOperatedCompany: otherProperties.includes(
-          OtherPropertiesEnum.OWN_BUSINESS,
+          PropertiesEnum.OWN_BUSINESS,
         )
           ? 'true'
           : 'false',
         occupationRightViaCondominium: otherProperties.includes(
-          OtherPropertiesEnum.RESIDENCE,
+          PropertiesEnum.RESIDENCE,
         )
           ? 'true'
           : 'false',
-        assetsAbroad: otherProperties.includes(
-          OtherPropertiesEnum.ASSETS_ABROAD,
-        )
+        assetsAbroad: otherProperties.includes(PropertiesEnum.ASSETS_ABROAD)
+          ? 'true'
+          : 'false',
+        realEstate: otherProperties.includes(PropertiesEnum.REAL_ESTATE)
+          ? 'true'
+          : 'false',
+        vehicles: otherProperties.includes(PropertiesEnum.VEHICLES)
           ? 'true'
           : 'false',
         districtCommissionerHasWill:
