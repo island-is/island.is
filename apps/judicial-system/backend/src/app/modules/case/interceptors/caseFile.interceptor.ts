@@ -8,8 +8,14 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 
-import { isPrisonStaffUser, User } from '@island.is/judicial-system/types'
+import {
+  CaseFileCategory,
+  isPrisonStaffUser,
+  isPrisonSystemUser,
+  User,
+} from '@island.is/judicial-system/types'
 
+import { CaseFile } from '../../file'
 import { Case } from '../models/case.model'
 
 @Injectable()
@@ -21,14 +27,23 @@ export class CaseFileInterceptor implements NestInterceptor {
     return next.handle().pipe(
       map((data: Case) => {
         const returnData = data
-
         if (isPrisonStaffUser(user)) {
-          returnData.caseFiles = []
+          data.caseFiles?.splice(0, data.caseFiles.length)
+
+          return data
+        } else if (isPrisonSystemUser(user)) {
+          data.caseFiles?.splice(
+            0,
+            data.caseFiles.length,
+            ...data.caseFiles.filter(
+              (cf) => cf.category === CaseFileCategory.APPEAL_RULING,
+            ),
+          )
 
           return returnData
+        } else {
+          return returnData
         }
-
-        return returnData
       }),
     )
   }
