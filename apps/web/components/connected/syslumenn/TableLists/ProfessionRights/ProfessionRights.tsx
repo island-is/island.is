@@ -1,4 +1,5 @@
 import { CSSProperties, useState } from 'react'
+import { useIntl } from 'react-intl'
 import { useQueryState } from 'next-usequerystate'
 import { useQuery } from '@apollo/client/react'
 
@@ -17,12 +18,7 @@ import {
 } from '@island.is/island-ui/core'
 import { sortAlpha } from '@island.is/shared/utils'
 import { SyslumennListCsvExport } from '@island.is/web/components'
-import type {
-  ConnectedComponent,
-  ProfessionRight,
-  Query,
-} from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import type { ConnectedComponent, Query } from '@island.is/web/graphql/schema'
 
 import {
   getNormalizedSearchTerms,
@@ -30,10 +26,11 @@ import {
   prepareCsvString,
 } from '../../utils'
 import { GET_PROFESSION_RIGHTS_QUERY } from './queries'
+import { translation as t } from './translation.strings'
 
 const DEFAULT_PAGE_SIZE = 20
 const DEFAULT_TABLE_MIN_HEIGHT = '800px'
-const SEARCH_KEYS: (keyof ProfessionRight)[] = ['name']
+const SEARCH_KEYS = ['name', 'nationalId']
 
 interface ProfessionRightsProps {
   slice: ConnectedComponent
@@ -42,7 +39,7 @@ interface ProfessionRightsProps {
 type ListState = 'loading' | 'loaded' | 'error'
 
 const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
-  const n = useNamespace(slice.json ?? {})
+  const { formatMessage } = useIntl()
   const [listState, setListState] = useState<ListState>('loading')
   const [list, setList] = useState<Query['getProfessionRights']['list']>([])
   const [currentPageNumber, setCurrentPageNumber] = useState(1)
@@ -108,14 +105,17 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
     return new Promise<string>((resolve, reject) => {
       if (list) {
         const headerRow = [
-          n('csvHeaderName', 'Nafn') as string,
-          n('csvHeaderProfession', 'Starf') as string,
+          formatMessage(t.csvHeaderName),
+          formatMessage(t.csvHeaderProfession),
+          formatMessage(t.csvHeaderNationalId),
         ]
         const dataRows = []
         for (const item of list) {
           dataRows.push([
             item.name ?? '', // Nafn
             item.profession ?? '', // Starf
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            (item as any).nationalId ?? '', // Kennitala
           ])
         }
         return resolve(prepareCsvString(headerRow, dataRows))
@@ -125,10 +125,7 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
   }
 
   // Filter - Profession
-  const allProfessionOption = n(
-    'filterProfessionAll',
-    'Allar tegundir',
-  ) as string
+  const allProfessionOption = formatMessage(t.filterProfessionAll)
 
   // Filter
   const filteredList = getSortedAndFilteredList(
@@ -138,7 +135,8 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
         : item.profession === filterProfession?.value,
     ),
     searchTerms,
-    SEARCH_KEYS,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    SEARCH_KEYS as any,
   )
 
   const pageSize = slice?.configJson?.pageSize ?? DEFAULT_PAGE_SIZE
@@ -171,11 +169,8 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
       )}
       {listState === 'error' && (
         <AlertMessage
-          title={n('errorTitle', 'Villa')}
-          message={n(
-            'errorMessage',
-            'Ekki tókst að sækja lista yfir starfsréttindi.',
-          )}
+          title={formatMessage(t.errorTitle)}
+          message={formatMessage(t.errorMessage)}
           type="error"
         />
       )}
@@ -193,7 +188,7 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
                   icon="chevronDown"
                   size="sm"
                   isSearchable
-                  label={n('filterProfession', 'Starf')}
+                  label={formatMessage(t.filterProfession)}
                   name="professionSelect"
                   options={availableProfessionOptions}
                   value={filterProfession}
@@ -209,7 +204,7 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
               <GridColumn paddingBottom={[1, 1, 1]} span={'12/12'}>
                 <Input
                   name="searchInput"
-                  placeholder={n('searchPlaceholder', 'Leita')}
+                  placeholder={formatMessage(t.searchPlaceholder)}
                   backgroundColor={['blue', 'blue', 'white']}
                   size="sm"
                   icon={{
@@ -220,22 +215,10 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
                 />
                 <Box textAlign="right" marginRight={1} marginTop={1}>
                   <SyslumennListCsvExport
-                    defaultLabel={n(
-                      'csvButtonLabelDefault',
-                      'Sækja öll starfsréttindi (CSV)',
-                    )}
-                    loadingLabel={n(
-                      'csvButtonLabelLoading',
-                      'Sæki öll starfsréttindi...',
-                    )}
-                    errorLabel={n(
-                      'csvButtonLabelError',
-                      'Ekki tókst að sækja starfsréttindi, reyndu aftur',
-                    )}
-                    csvFilenamePrefix={n(
-                      'csvFileTitlePrefix',
-                      'Starfsréttindi',
-                    )}
+                    defaultLabel={formatMessage(t.csvButtonLabelDefault)}
+                    loadingLabel={formatMessage(t.csvButtonLabelLoading)}
+                    errorLabel={formatMessage(t.csvButtonLabelError)}
+                    csvFilenamePrefix={formatMessage(t.csvFileTitlePrefix)}
                     csvStringProvider={csvStringProvider}
                   />
                 </Box>
@@ -246,9 +229,7 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
       )}
       {listState === 'loaded' && filteredList.length === 0 && (
         <Box display="flex" marginTop={4} justifyContent="center">
-          <Text variant="h3">
-            {n('noResultsFound', 'Engar niðurstöður fundust.')}
-          </Text>
+          <Text variant="h3">{formatMessage(t.noResultsFound)}</Text>
         </Box>
       )}
       {listState === 'loaded' && filteredList.length > 0 && (
@@ -257,8 +238,11 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
             <T.Table>
               <T.Head>
                 <T.Row>
-                  <T.HeadData>{n('name', 'Nafn')}</T.HeadData>
-                  <T.HeadData>{n('profession', 'Starf')}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.name)}</T.HeadData>
+                  <T.HeadData>{formatMessage(t.profession)}</T.HeadData>
+                  <T.HeadData align="right">
+                    {formatMessage(t.nationalId)}
+                  </T.HeadData>
                 </T.Row>
               </T.Head>
               <T.Body>
@@ -276,6 +260,14 @@ const ProfessionRights = ({ slice }: ProfessionRightsProps) => {
                         <T.Data>
                           <Box>
                             <Text variant="small">{item.profession}</Text>
+                          </Box>
+                        </T.Data>
+                        <T.Data>
+                          <Box>
+                            <Text variant="small" textAlign="right">
+                              {/* eslint-disable-next-line @typescript-eslint/no-explicit-any */}
+                              {(item as any).nationalId}
+                            </Text>
                           </Box>
                         </T.Data>
                       </T.Row>

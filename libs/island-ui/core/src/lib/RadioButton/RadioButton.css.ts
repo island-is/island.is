@@ -35,6 +35,7 @@ export const label = style({
   display: 'flex',
   fontSize: theme.typography.baseFontSize,
   lineHeight: theme.typography.baseLineHeight,
+  width: '100%',
 })
 export const labelText = style({
   display: 'flex',

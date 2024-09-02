@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, ReactNode } from 'react'
+import { FC, PropsWithChildren, ReactNode } from 'react'
 import { createIntl, IntlProvider } from 'react-intl'
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
 

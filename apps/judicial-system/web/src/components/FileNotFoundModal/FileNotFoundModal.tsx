@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Modal } from '@island.is/judicial-system-web/src/components'
