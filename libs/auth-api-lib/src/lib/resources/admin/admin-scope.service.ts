@@ -221,6 +221,7 @@ export class AdminScopeService {
       include: [
         { model: ApiScopeDelegationType, as: 'supportedDelegationTypes' },
       ],
+      useMaster: true,
     })
 
     if (!apiScope) {
