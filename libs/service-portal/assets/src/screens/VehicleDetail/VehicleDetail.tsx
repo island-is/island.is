@@ -224,7 +224,7 @@ const VehicleDetail = () => {
                           : ''
                       }
                       icon="pencil"
-                      variant="button"
+                      variant="utility"
                       text={formatMessage(messages.vehicleMileageInputTitle)}
                     />
                   </Box>

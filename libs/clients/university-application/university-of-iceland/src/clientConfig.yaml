@@ -1,9 +1,9 @@
 ---
 openapi: '3.0.0'
 paths:
-  /livness:
+  /liveness:
     get:
-      summary: 'Check livness status'
+      summary: 'Check liveness status'
       responses:
         '200':
           description: 'Successful response'
@@ -169,6 +169,8 @@ paths:
                                 type: 'string'
                               fieldType:
                                 type: 'string'
+                              fieldKey:
+                                $ref: '#/components/schemas/AttachmentKey'
                               uploadAcceptedFileType:
                                 type: 'string'
                               required:
@@ -424,41 +426,17 @@ paths:
                   type: 'array'
                   items:
                     type: 'string'
-                skrar:
-                  type: 'object'
-                  properties:
-                    cv:
-                      type: 'string'
-                    markmid:
-                      type: 'string'
-                    rannsoknaraaetlun:
-                      type: 'string'
-                    namsaaetlun:
-                      type: 'string'
-                    rannsoknarverkefni:
-                      type: 'string'
-                    vidhengi_medmaelendur:
-                      type: 'string'
-                    leidbeinandi:
-                      type: 'string'
-                    profskirteini:
-                      type: 'string'
-                    profskirteini2:
-                      type: 'string'
-                    onnur_skjol:
-                      type: 'string'
-                    kynningarbref:
-                      type: 'string'
-                    ferilsskra:
-                      type: 'string'
-                    leyfisbref:
-                      type: 'string'
-                    portofolio:
-                      type: 'string'
-                    sakavottord:
-                      type: 'string'
-                    profskirteini3:
-                      type: 'string'
+                attachments:
+                  type: 'array'
+                  items:
+                    type: 'object'
+                    properties:
+                      attachmentKey:
+                        $ref: '#/components/schemas/AttachmentKey'
+                      fileName:
+                        type: 'string'
+                      url:
+                        type: 'string'
                 namskeid:
                   type: 'object'
                   properties:
@@ -479,45 +457,6 @@ paths:
                     description: 'Application ID'
       tags:
         - 'Application'
-  /applications/attachments/{guid}:
-    post:
-      parameters:
-        - name: guid
-          required: true
-          in: path
-          allowEmptyValue: false
-          description: Application ID
-          schema:
-            type: string
-            format: uuid
-      summary: Submit an applications accompanying documents
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                attachment:
-                  type: string
-                  format: binary
-                attachmentKey:
-                  $ref: '#/components/schemas/AttachmentKey'
-      responses:
-        '200':
-          description: Successful submission
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: string
-                    description: Attachment ID
-        '400':
-          description: Bad Request - No application with given ID
-      tags:
-        - Application
   /openapi.yaml:
     get:
       operationId: 'InfraController_openapi'
@@ -587,6 +526,32 @@ components:
             - $ref: '#/components/schemas/Application'
       required:
         - 'data'
+    AttachmentKey:
+      type: 'string'
+      enum:
+        - 'cv'
+        - 'markmid'
+        - 'rannsoknaraaetlun'
+        - 'namsaaetlun'
+        - 'rannsoknarverkefni'
+        - 'profskirteini'
+        - 'profskirteini2'
+        - 'profskirteini3'
+        - 'onnur_skjol'
+        - 'kynningarbref'
+        - 'ferilsskra'
+        - 'leyfisbref'
+        - 'portofolio'
+        - 'sakavottord'
+    ExtraApplicationField:
+      type: 'object'
+      required:
+        - 'fieldType'
+      properties:
+        fieldType:
+          type: 'string'
+      discriminator:
+        propertyName: 'fieldType'
     CreateApplicationDto:
       type: 'object'
       properties:
@@ -614,23 +579,6 @@ components:
         - 'universityId'
         - 'programId'
         - 'modeOfDelivery'
-    AttachmentKey:
-      type: string
-      enum:
-        - cv
-        - markmid
-        - rannsoknaraaetlun
-        - namsaaetlun
-        - rannsoknarverkefni
-        - profskirteini
-        - profskirteini2
-        - profskirteini3
-        - onnur_skjol
-        - kynningarbref
-        - ferilsskra
-        - leyfisbref
-        - portofolio
-        - sakavottord
     UpdateApplicationDto:
       type: 'object'
       properties:

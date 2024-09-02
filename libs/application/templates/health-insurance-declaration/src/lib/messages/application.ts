@@ -174,6 +174,17 @@ export const application = {
       defaultMessage: 'Veldu dagsetningu',
       description: 'Date field placeholder text',
     },
+    studentMinDateWarningTitle: {
+      id: 'hid.application:date.section.student.minDateWarningTitle',
+      defaultMessage: 'Athugið',
+      description: 'Student minimum date warning title',
+    },
+    studentMinDateWarning: {
+      id: 'hid.application:date.section.student.minDateWarning',
+      defaultMessage: `Athugið að hámarkstímabil fyrir tryggingaryfirlýsingar námsmanna er eitt ár í senn. Sækja þarf um nýja
+        tryggingaryfirlýsingu á hverju ári með nýrri/uppfærðri námsstaðfestingu á meðan nemandi er erlendis í námi.`,
+      description: 'Student minimum date warning',
+    },
   }),
   overview: defineMessages({
     sectionTitle: {

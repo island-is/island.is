@@ -14,6 +14,9 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       category
       key
       policeCaseNumber
+      userGeneratedFilename
+      displayDate
+      submittedBy
     }
     defendants {
       id

@@ -122,4 +122,21 @@ export const errors = defineMessages({
     defaultMessage: 'Upp kom villa við að skrá aðgerð',
     description: 'Notaður sem villuskilaboð þegar ekki gengur að skrá atburð',
   },
+  openDocument: {
+    id: 'judicial.system.core:errors.open_document',
+    defaultMessage: 'Upp kom villa við að opna skjal',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að opna skjal',
+  },
+  invalidDateErrorMessage: {
+    id: 'judicial.system.core:errors.invalid_date_error_message',
+    defaultMessage:
+      'Ekki tókst að uppfæra skjal, dagsetning er ekki á réttu formi',
+    description:
+      'Notaður sem villuboð þegar tekst ekki að uppfæra dagsetningu á skjali.',
+  },
+  renameFailedErrorMessage: {
+    id: 'judicial.system.core:errors.rename_failed_error_message',
+    defaultMessage: 'Ekki tókst að endurnefna skjal',
+    description: 'Notaður sem villuboð þegar endurnefning á skjali mistókst.',
+  },
 })

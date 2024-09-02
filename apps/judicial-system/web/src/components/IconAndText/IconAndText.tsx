@@ -1,4 +1,4 @@
-import React, { FC } from 'react'
+import { FC } from 'react'
 
 import { Box, Icon, IconMapIcon, Text } from '@island.is/island-ui/core'
 import { Colors } from '@island.is/island-ui/theme'

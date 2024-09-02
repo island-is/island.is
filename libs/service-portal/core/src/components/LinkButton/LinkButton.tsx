@@ -6,12 +6,14 @@ import * as styles from './LinkButton.css'
 interface SharedProps {
   to: string
   text: string
+  size?: ButtonProps['size']
+  disabled?: ButtonProps['disabled']
   skipOutboundTrack?: boolean
 }
 
 type Props =
   | {
-      variant?: 'button'
+      variant?: 'primary' | 'ghost' | 'utility'
       icon?: ButtonProps['icon']
     }
   | {
@@ -26,14 +28,26 @@ type LinkButtonProps = SharedProps & Props
 
 export const LinkButton = ({
   variant = 'text',
+  size,
   to,
   text,
   icon,
+  disabled,
   skipOutboundTrack,
 }: LinkButtonProps) => {
   const isExternal = isExternalLink(to)
   if (variant === 'text') {
-    return (
+    return disabled ? (
+      <Button
+        size={size ?? 'small'}
+        unfocusable
+        disabled
+        icon={isExternal ? 'open' : undefined}
+        iconType={isExternal ? 'outline' : undefined}
+      >
+        {text}
+      </Button>
+    ) : (
       <LinkResolver
         className={styles.link}
         skipOutboundTrack={skipOutboundTrack}
@@ -41,7 +55,7 @@ export const LinkButton = ({
       >
         <Button
           as="span"
-          size="small"
+          size={size ?? 'small'}
           variant="text"
           unfocusable
           icon={isExternal ? 'open' : icon}
@@ -52,7 +66,19 @@ export const LinkButton = ({
       </LinkResolver>
     )
   }
-  return (
+  return disabled ? (
+    <Button
+      colorScheme="default"
+      icon={icon}
+      iconType="outline"
+      size={size ?? 'default'}
+      disabled
+      variant={variant ?? 'utility'}
+      unfocusable
+    >
+      {text}
+    </Button>
+  ) : (
     <LinkResolver
       skipOutboundTrack={skipOutboundTrack}
       className={styles.link}
@@ -62,10 +88,10 @@ export const LinkButton = ({
         colorScheme="default"
         icon={icon}
         iconType="outline"
-        size="default"
+        size={size ?? 'default'}
         type="text"
         as="span"
-        variant="utility"
+        variant={variant ?? 'utility'}
         unfocusable
       >
         {text}
