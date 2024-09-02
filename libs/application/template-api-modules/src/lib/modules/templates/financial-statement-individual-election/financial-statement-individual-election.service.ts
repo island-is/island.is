@@ -49,7 +49,11 @@ export class FinancialStatementIndividualElectionService extends BaseTemplateApi
     const { answers } = application
     const shouldGetFileName = getShouldGetFileName(answers)
     const fileName = shouldGetFileName
-      ? (await this.attachmentService.getFiles(application, ['attachments.file']))[0].fileContent
+      ? (
+          await this.attachmentService.getFiles(application, [
+            'attachments.file',
+          ])
+        )[0].fileContent
       : undefined
 
     const { input, loggerInfo } = getInput(answers, actor, nationalId, fileName)

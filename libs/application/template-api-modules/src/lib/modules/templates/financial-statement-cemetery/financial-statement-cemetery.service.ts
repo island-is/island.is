@@ -74,8 +74,12 @@ export class FinancialStatementCemeteryTemplateService extends BaseTemplateApiSe
       getNeededCemeteryValues(answers)
 
     const fileName = file
-    ? (await this.attachmentService.getFiles(application, ['attachments.files']))[0].fileContent
-    : undefined
+      ? (
+          await this.attachmentService.getFiles(application, [
+            'attachments.files',
+          ])
+        )[0].fileContent
+      : undefined
 
     const client = { nationalId }
 

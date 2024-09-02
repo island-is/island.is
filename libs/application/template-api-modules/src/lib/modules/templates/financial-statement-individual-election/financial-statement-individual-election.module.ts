@@ -20,7 +20,10 @@ export class FinancialStatementIndividualElectionModule {
         }),
         FinancialStatementsInaoClientModule,
       ],
-      providers: [FinancialStatementIndividualElectionService, AttachmentS3Service],
+      providers: [
+        FinancialStatementIndividualElectionService,
+        AttachmentS3Service,
+      ],
       exports: [FinancialStatementIndividualElectionService],
     }
   }

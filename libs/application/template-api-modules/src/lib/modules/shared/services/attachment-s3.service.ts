@@ -56,7 +56,7 @@ export class AttachmentS3Service {
         const fileContent =
           (await this.s3Service.getFileContentAsBase64(url)) ?? ''
 
-          console.log("fetched from s3 bucket: " + fileContent)
+        console.log('fetched from s3 bucket: ' + fileContent)
 
         return { key, fileContent, answerKey, fileName: name }
       }),

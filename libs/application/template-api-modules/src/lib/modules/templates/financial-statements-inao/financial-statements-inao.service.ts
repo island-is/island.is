@@ -18,9 +18,7 @@ import {
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import {
-  ApplicationTypes,
-} from '@island.is/application/types'
+import { ApplicationTypes } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 
 import {
@@ -101,7 +99,11 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
       const fileName = noValueStatement
         ? undefined
-        : (await this.attachmentService.getFiles(application, ['attachments.file']))[0].fileContent
+        : (
+            await this.attachmentService.getFiles(application, [
+              'attachments.file',
+            ])
+          )[0].fileContent
 
       this.logger.info(
         `PostFinancialStatementForPersonalElection => clientNationalId: '${nationalId}', actorNationalId: '${
@@ -193,7 +195,9 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
       ) as string
       const clientEmail = getValueViaPath(answers, 'about.email') as string
 
-      const fileName = (await this.attachmentService.getFiles(application, ['attachments.file']))[0].fileContent
+      const fileName = (
+        await this.attachmentService.getFiles(application, ['attachments.file'])
+      )[0].fileContent
 
       const client = {
         nationalId: nationalId,
@@ -268,9 +272,13 @@ export class FinancialStatementsInaoTemplateService extends BaseTemplateApiServi
 
       const file = getValueViaPath(answers, 'attachments.file')
 
-      const fileName = file 
-      ? (await this.attachmentService.getFiles(application, ['attachments.file']))[0].fileContent 
-      : undefined
+      const fileName = file
+        ? (
+            await this.attachmentService.getFiles(application, [
+              'attachments.file',
+            ])
+          )[0].fileContent
+        : undefined
 
       const client = {
         nationalId: nationalId,

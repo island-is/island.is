@@ -1,7 +1,4 @@
-import {
-  GetObjectCommand,
-  S3Client,
-} from '@aws-sdk/client-s3'
+import { GetObjectCommand, S3Client } from '@aws-sdk/client-s3'
 import AmazonS3URI from 'amazon-s3-uri'
 import { logger } from '@island.is/logging'
 import { Inject, Injectable, Optional } from '@nestjs/common'
@@ -22,11 +19,10 @@ export class S3Service {
         new GetObjectCommand({
           Bucket: uploadBucket,
           Key: key,
-        })
-      );
-    
-      return await Body?.transformToString('base64');
+        }),
+      )
 
+      return await Body?.transformToString('base64')
     } catch (error) {
       logger.error('Error occurred while fetching file from S3')
       logger.error(error)

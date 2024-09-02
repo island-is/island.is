@@ -20,7 +20,10 @@ export class FinancialStatementCemeteryTemplateModule {
         }),
         FinancialStatementsInaoClientModule,
       ],
-      providers: [FinancialStatementCemeteryTemplateService, AttachmentS3Service],
+      providers: [
+        FinancialStatementCemeteryTemplateService,
+        AttachmentS3Service,
+      ],
       exports: [FinancialStatementCemeteryTemplateService],
     }
   }
