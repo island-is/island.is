@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { Controller, useForm } from 'react-hook-form'
+import { useIntl } from 'react-intl'
 import { useLazyQuery } from '@apollo/client'
 
 import {
@@ -21,6 +22,8 @@ import { useNamespace } from '@island.is/web/hooks'
 import { GET_SPECIFIC_HOUSING_BENEFIT_SUPPORT_CALCULATION } from '@island.is/web/screens/queries/HousingBenefitCalculator'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
+import { translation as translationStrings } from './translation.strings'
+
 const MAX_LENGTH = 15
 
 interface InputState {
@@ -28,14 +31,8 @@ interface InputState {
   householdMemberCount: number
 }
 
-interface SpecificHousingBenefitSupportCalculatorProps {
-  slice: ConnectedComponent
-}
-
-const SpecificHousingBenefitSupportCalculator = ({
-  slice,
-}: SpecificHousingBenefitSupportCalculatorProps) => {
-  const n = useNamespace(slice.json ?? {})
+const SpecificHousingBenefitSupportCalculator = () => {
+  const { formatMessage } = useIntl()
   const [inputState, setInputState] = useState<InputState>({
     housingCost: '',
     householdMemberCount: 1,
@@ -103,7 +100,7 @@ const SpecificHousingBenefitSupportCalculator = ({
       { label: '3', value: 3 },
       { label: '4', value: 4 },
       { label: '5', value: 5 },
-      { label: n('sixOrMore', '6 eða fleiri'), value: 6 },
+      { label: formatMessage(translationStrings.sixOrMore), value: 6 },
     ]
   }, [])
 
@@ -118,7 +115,7 @@ const SpecificHousingBenefitSupportCalculator = ({
         <Stack space={5}>
           <Box>
             <Text variant="medium" fontWeight="light" paddingBottom={2}>
-              {n('numberOfHouseholdMembers', 'Fjöldi heimilismanna í húsnæði?')}
+              {formatMessage(translationStrings.numberOfHouseholdMembers)}
             </Text>
 
             <Controller
@@ -145,15 +142,17 @@ const SpecificHousingBenefitSupportCalculator = ({
           </Box>
           <Box>
             <Text variant="medium" fontWeight="light" paddingBottom={2}>
-              {n('housingCostsPerMonth', 'Húsnæðiskostnaður á mánuði?')}
+              {formatMessage(translationStrings.housingCostsPerMonth)}
             </Text>
 
             <InputController
               id="housingCost"
               control={control}
               name="housingCost"
-              label={n('housingCostLabel', 'Húsnæðiskostnaður')}
-              placeholder={n('housingCostPlaceholder', 'kr.')}
+              label={formatMessage(translationStrings.housingCostLabel)}
+              placeholder={formatMessage(
+                translationStrings.housingCostPlaceholder,
+              )}
               currency={true}
               type="number"
               onChange={(event) => {
@@ -165,13 +164,10 @@ const SpecificHousingBenefitSupportCalculator = ({
             />
           </Box>
           <Text variant="small" lineHeight="lg">
-            {n(
-              'calculatorDisclaimer',
-              'Útreikningur húsnæðisbóta samkvæmt reiknivélinni byggir á þeim forsendum sem þú gafst upp og telst ekki bindandi ákvörðun um húsnæðisbætur. Útreikningur miðast við greiðslur húsnæðisbóta fyrir heilt almanaksár.',
-            )}
+            {formatMessage(translationStrings.calculatorDisclaimer)}
           </Text>
           <Button loading={loading} onClick={calculate} disabled={!canSubmit}>
-            {n('calculate', 'Reikna')}
+            {formatMessage(translationStrings.calculate)}
           </Button>
         </Stack>
       </Box>
@@ -182,7 +178,7 @@ const SpecificHousingBenefitSupportCalculator = ({
           paddingX={[3, 3, 3, 3, 12]}
         >
           <Text variant="h3">
-            <strong>{n('results', 'Niðurstöður')}</strong>
+            <strong>{formatMessage(translationStrings.results)}</strong>
           </Text>
           <Stack space={5}>
             <Box>
@@ -193,12 +189,9 @@ const SpecificHousingBenefitSupportCalculator = ({
                   paddingBottom={2}
                   paddingTop={5}
                 >
-                  {n(
-                    'maximumHousingBenefits',
-                    'Hámarksbætur miðað við fjölda heimilismanna eru',
-                  )}{' '}
+                  {formatMessage(translationStrings.maximumHousingBenefits)}{' '}
                   {formatCurrency(maximumHousingBenefits)}{' '}
-                  {n('perMonth', 'á mánuði.')}
+                  {formatMessage(translationStrings.perMonth)}
                 </Text>
               )}
 
@@ -206,12 +199,11 @@ const SpecificHousingBenefitSupportCalculator = ({
                 {typeof reductionsDueToHousingCosts === 'number' &&
                   reductionsDueToHousingCosts > 0 && (
                     <Text variant="medium" fontWeight="light">
-                      {n(
-                        'reductionsDueToHousingCosts',
-                        'Skerðing vegna húsnæðiskostnaðar eru',
+                      {formatMessage(
+                        translationStrings.reductionsDueToHousingCosts,
                       )}{' '}
                       {formatCurrency(reductionsDueToHousingCosts)}{' '}
-                      {n('perMonth', 'á mánuði.')}
+                      {formatMessage(translationStrings.perMonth)}
                     </Text>
                   )}
               </Stack>
@@ -219,9 +211,9 @@ const SpecificHousingBenefitSupportCalculator = ({
 
             {typeof estimatedHousingBenefits === 'number' && (
               <Text variant="medium" fontWeight="light">
-                {n('estimatedHousingBenefits', 'Áætlaðar húsnæðisbætur eru')}{' '}
+                {formatMessage(translationStrings.estimatedHousingBenefits)}{' '}
                 <strong>{formatCurrency(estimatedHousingBenefits)}</strong>{' '}
-                {n('perMonth', 'á mánuði.')}
+                {formatMessage(translationStrings.perMonth)}
               </Text>
             )}
           </Stack>
@@ -230,8 +222,8 @@ const SpecificHousingBenefitSupportCalculator = ({
       {!loading && called && error && (
         <AlertMessage
           type="error"
-          title={n('errorOccurredTitle', 'Villa kom upp')}
-          message={n('errorOccurredMessage', 'Ekki tókst að sækja niðurstöður')}
+          title={formatMessage(translationStrings.errorOccurredTitle)}
+          message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
     </Box>

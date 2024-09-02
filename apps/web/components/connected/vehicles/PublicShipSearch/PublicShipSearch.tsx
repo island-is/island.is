@@ -1,7 +1,9 @@
-import { useLazyQuery } from '@apollo/client'
 import { useEffect, useRef, useState } from 'react'
-import { useRouter } from 'next/router'
+import { useIntl } from 'react-intl'
 import isEqual from 'lodash/isEqual'
+import { useRouter } from 'next/router'
+import { useLazyQuery } from '@apollo/client'
+
 import {
   AlertMessage,
   AsyncSearchInput,
@@ -10,21 +12,17 @@ import {
   Table,
   Text,
 } from '@island.is/island-ui/core'
-import { PUBLIC_SHIP_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicShipSearch'
 import {
-  ConnectedComponent,
   GetPublicShipSearchQuery,
   GetPublicShipSearchQueryVariables,
 } from '@island.is/web/graphql/schema'
-import { useNamespace } from '@island.is/web/hooks'
+import { PUBLIC_SHIP_SEARCH_QUERY } from '@island.is/web/screens/queries/PublicShipSearch'
+
+import { translation as translationStrings } from './translation.strings'
 
 const numberFormatter = new Intl.NumberFormat('de-DE')
 
-interface PublicShipSearchProps {
-  slice: ConnectedComponent
-}
-
-const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
+const PublicShipSearch = () => {
   const [hasFocus, setHasFocus] = useState(false)
   const [searchValue, setSearchValue] = useState('')
   const router = useRouter()
@@ -34,7 +32,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
     GetPublicShipSearchQuery['shipRegistryShipSearch']['ships']
   >([])
 
-  const n = useNamespace(slice?.json ?? {})
+  const { formatMessage } = useIntl()
 
   const [search, { loading, error, called }] = useLazyQuery<
     GetPublicShipSearchQuery,
@@ -99,7 +97,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
           inputProps={{
             name: 'public-ship-search',
             inputSize: 'large',
-            placeholder: n('inputPlaceholder', 'Númer eða nafn skips'),
+            placeholder: formatMessage(translationStrings.inputPlaceholder),
             colored: true,
             onChange: (ev) => setSearchValue(ev.target.value),
             value: searchValue,
@@ -116,15 +114,15 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
       {called && !loading && !error && noShipWasFound && (
         <Box>
           <Text fontWeight="semiBold">
-            {n('noShipFound', 'Ekkert skip fannst')}
+            {formatMessage(translationStrings.noShipFound)}
           </Text>
         </Box>
       )}
       {called && !loading && error && (
         <AlertMessage
           type="error"
-          title={n('errorOccurredTitle', 'Villa kom upp')}
-          message={n('errorOccurredMessage', 'Ekki tókst að sækja skip')}
+          title={formatMessage(translationStrings.errorOccurredTitle)}
+          message={formatMessage(translationStrings.errorOccurredMessage)}
         />
       )}
       <Box marginBottom={3} marginTop={4}>
@@ -135,9 +133,8 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                 <Table.Head>
                   <Table.HeadData>
                     <Text fontWeight="semiBold">
-                      {n(
-                        'shipInformationTableHeaderText',
-                        'Niðurstaða leitar:',
+                      {formatMessage(
+                        translationStrings.shipInformationTableHeaderText,
                       )}
                     </Text>
                   </Table.HeadData>
@@ -149,7 +146,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('shipName', 'Nafn:')}
+                        {formatMessage(translationStrings.shipName)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
@@ -161,7 +158,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('shipType', 'Gerð:')}
+                        {formatMessage(translationStrings.shipType)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
@@ -173,7 +170,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('regno', 'Skráningarnúmer:')}
+                        {formatMessage(translationStrings.regno)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
@@ -185,7 +182,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('region', 'Umdæmi:')}
+                        {formatMessage(translationStrings.region)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
@@ -197,7 +194,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('portOfRegistry', 'Heimahöfn:')}
+                        {formatMessage(translationStrings.portOfRegistry)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
@@ -209,7 +206,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('regStatus', 'Skráningar staða:')}
+                        {formatMessage(translationStrings.regStatus)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
@@ -221,13 +218,15 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('grossTonnage', 'Brúttótonn:')}{' '}
+                        {formatMessage(translationStrings.grossTonnage)}{' '}
                       </Text>
                     </Table.Data>
                     <Table.Data>
                       <Text>
                         {numberFormatter.format(shipInformation.grossTonnage)}{' '}
-                        {n('grossTonnageMeasurement', 't')}
+                        {formatMessage(
+                          translationStrings.grossTonnageMeasurement,
+                        )}
                       </Text>
                     </Table.Data>
                   </Table.Row>
@@ -236,13 +235,13 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('length', 'Skráð lengd:')}
+                        {formatMessage(translationStrings.length)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
                       <Text>
                         {numberFormatter.format(shipInformation.length)}{' '}
-                        {n('lengthMeasurement', 'm')}
+                        {formatMessage(translationStrings.lengthMeasurement)}
                       </Text>
                     </Table.Data>
                   </Table.Row>
@@ -252,14 +251,14 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                   <Table.Row>
                     <Table.Data>
                       <Text fontWeight="semiBold">
-                        {n('constructed', 'Smíðað:')}
+                        {formatMessage(translationStrings.constructed)}
                       </Text>
                     </Table.Data>
                     <Table.Data>
                       <Text>
                         {shipInformation.manufactionYear}{' '}
                         {shipInformation.manufacturer &&
-                          n('manufacturedBy', 'af')}{' '}
+                          formatMessage(translationStrings.manufacturedBy)}{' '}
                         {shipInformation.manufacturer}
                       </Text>
                     </Table.Data>
@@ -270,7 +269,7 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                     <Table.Row>
                       <Table.Data>
                         <Text fontWeight="semiBold">
-                          {n('owners', 'Eigendur:')}
+                          {formatMessage(translationStrings.owners)}
                         </Text>
                       </Table.Data>
                       <Table.Data>
@@ -280,16 +279,15 @@ const PublicShipSearch = ({ slice }: PublicShipSearchProps) => {
                               <Text>
                                 {owner?.name}{' '}
                                 {owner?.nationalId
-                                  ? `${n('nationalIdPrefix', 'kt.')} ${
-                                      owner.nationalId
-                                    }`
+                                  ? `${formatMessage(
+                                      translationStrings.nationalIdPrefix,
+                                    )} ${owner.nationalId}`
                                   : ''}
                               </Text>
                               <Text>
                                 {typeof owner?.sharePercentage === 'number'
-                                  ? `${owner.sharePercentage}% ${n(
-                                      'sharePercentageProperty',
-                                      'eign',
+                                  ? `${owner.sharePercentage}% ${formatMessage(
+                                      translationStrings.sharePercentageProperty,
                                     )}`
                                   : ''}
                               </Text>

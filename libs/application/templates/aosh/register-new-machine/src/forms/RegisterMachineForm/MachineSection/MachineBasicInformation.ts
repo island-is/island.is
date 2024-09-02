@@ -49,6 +49,7 @@ export const MachineBasicInformation = buildSubSection({
           required: true,
           variant: 'number',
           min: 1900,
+          max: new Date().getFullYear(),
         }),
         buildTextField({
           id: 'machine.basicInformation.productionNumber',

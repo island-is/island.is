@@ -1,6 +1,12 @@
 export { Feature } from './lib/feature'
 
-export { Gender, DefenderChoice, SubpoenaType } from './lib/defendant'
+export {
+  Gender,
+  DefenderChoice,
+  SubpoenaType,
+  DefendantPlea,
+  ServiceRequirement,
+} from './lib/defendant'
 export { InstitutionType } from './lib/institution'
 export { NotificationType } from './lib/notification'
 export type { Institution } from './lib/institution'
@@ -49,8 +55,6 @@ export {
   CaseAppealRulingDecision,
   CaseIndictmentRulingDecision,
   RequestSharedWithDefender,
-  DefendantPlea,
-  ServiceRequirement,
   SessionArrangements,
   indictmentCases,
   restrictionCases,
@@ -73,7 +77,6 @@ export {
   isRequestCaseState,
   isIndictmentCaseTransition,
   isRequestCaseTransition,
-  DistrictCourtLocation,
   CourtSessionType,
   courtSessionTypeNames,
 } from './lib/case'
@@ -83,7 +86,6 @@ export { getIndictmentVerdictAppealDeadline } from './lib/indictmentCase'
 export type {
   CrimeScene,
   CrimeSceneMap,
-  DistrictCourts,
   IndictmentSubtypeMap,
 } from './lib/case'
 
