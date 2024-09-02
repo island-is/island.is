@@ -136,33 +136,6 @@ describe('Application system API delegation guard', () => {
     },
     {
       method: 'PUT',
-      endpoint: `/applications/${uuid.uuid()}/generatePdf`,
-      send: {
-        type: '',
-      },
-    },
-    {
-      method: 'PUT',
-      endpoint: `/applications/${uuid.uuid()}/requestFileSignature`,
-      send: {
-        type: '',
-      },
-    },
-    {
-      method: 'GET',
-      endpoint: `/applications/${uuid.uuid()}/test/presignedUrl`,
-      send: {},
-    },
-    {
-      method: 'PUT',
-      endpoint: `/applications/${uuid.uuid()}/uploadSignedFile`,
-      send: {
-        type: '',
-        documentToken: '0000',
-      },
-    },
-    {
-      method: 'PUT',
       endpoint: `/applications/assign`,
       send: {
         token: '0000',

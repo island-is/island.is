@@ -11,7 +11,6 @@ import {
 import { ContentfulRepository } from '@island.is/cms'
 import { setup } from '../../../../../test/setup'
 import { environment } from '../../../../environments'
-import { FileService } from '@island.is/application/api/files'
 import { AppModule } from '../../../app.module'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { MockFeatureFlagService } from './mockFeatureFlagService'
