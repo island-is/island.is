@@ -253,10 +253,28 @@ export const GET_PRESIGNED_URL_MUTATION = gql`
 
 export const ADD_APPLICATION_ATTACHMENT_MUTATION = gql`
   mutation AddApplicationAttachment(
-    $input: OfficialJournalOfIcelandApplicationAddAttachmentInput!
+    $input: OfficialJournalOfIcelandApplicationAddApplicationAttachmentInput!
   ) {
     officialJournalOfIcelandApplicationAddAttachment(input: $input) {
       success
+    }
+  }
+`
+
+export const GET_APPLICATION_ATTACHMENTS_QUERY = gql`
+  query OfficialJournalOfIcelandApplicationGetAttachments(
+    $input: OfficialJournalOfIcelandApplicationGetApplicationAttachmentInput!
+  ) {
+    officialJournalOfIcelandApplicationGetAttachments(input: $input) {
+      attachments {
+        id
+        originalFileName
+        fileName
+        fileFormat
+        fileExtension
+        fileLocation
+        fileSize
+      }
     }
   }
 `

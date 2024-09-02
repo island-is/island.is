@@ -154,7 +154,7 @@
         }
       }
     },
-    "/api/v1/applications/{id}/presigned-url": {
+    "/api/v1/applications/{id}/presigned-url/{type}": {
       "post": {
         "operationId": "getPresignedUrl",
         "parameters": [
@@ -163,6 +163,12 @@
             "required": true,
             "in": "path",
             "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
           }
         ],
         "requestBody": {
@@ -185,6 +191,85 @@
             }
           }
         }
+      }
+    },
+    "/api/v1/applications/{id}/attachments/{type}": {
+      "post": {
+        "operationId": "addApplicationAttachment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PostApplicationAttachmentBody"
+              }
+            }
+          }
+        },
+        "responses": { "201": { "description": "" } }
+      },
+      "get": {
+        "operationId": "getApplicationAttachments",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "type",
+            "required": true,
+            "in": "path",
+            "schema": { "enum": ["frumrit", "fylgiskjol"], "type": "string" }
+          }
+        ],
+        "responses": {
+          "default": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/GetApplicationAttachmentsResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/applications/{id}/attachments/{attachmentId}": {
+      "delete": {
+        "operationId": "deleteApplicationAttachment",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          },
+          {
+            "name": "attachmentId",
+            "required": true,
+            "in": "path",
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": { "204": { "description": "" } }
       }
     },
     "/api/v1/health": {
@@ -905,15 +990,103 @@
         "type": "object",
         "properties": {
           "fileName": { "type": "string" },
-          "fileType": { "type": "string" },
-          "isOriginal": { "type": "boolean" }
+          "fileType": { "type": "string" }
         },
-        "required": ["fileName", "fileType", "isOriginal"]
+        "required": ["fileName", "fileType"]
       },
       "PresignedUrlResponse": {
         "type": "object",
         "properties": { "url": { "type": "string" } },
         "required": ["url"]
+      },
+      "PostApplicationAttachmentBody": {
+        "type": "object",
+        "properties": {
+          "fileName": { "type": "string" },
+          "originalFileName": { "type": "string" },
+          "fileFormat": { "type": "string" },
+          "fileExtension": { "type": "string" },
+          "fileLocation": { "type": "string" },
+          "fileSize": { "type": "number" }
+        },
+        "required": [
+          "fileName",
+          "originalFileName",
+          "fileFormat",
+          "fileExtension",
+          "fileLocation",
+          "fileSize"
+        ]
+      },
+      "ApplicationAttachmentType": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Id of the attachment type"
+          },
+          "title": {
+            "type": "string",
+            "description": "Title of the attachment type"
+          },
+          "slug": {
+            "type": "string",
+            "description": "Slug of the attachment type"
+          }
+        },
+        "required": ["id", "title", "slug"]
+      },
+      "ApplicationAttachment": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string", "description": "Id of the attachment" },
+          "applicationId": {
+            "type": "string",
+            "description": "Id of the application"
+          },
+          "originalFileName": {
+            "type": "string",
+            "description": "Original file name"
+          },
+          "fileName": { "type": "string", "description": "File name" },
+          "fileFormat": { "type": "string", "description": "File format" },
+          "fileExtension": {
+            "type": "string",
+            "description": "File extension"
+          },
+          "fileSize": { "type": "number", "description": "File size" },
+          "fileLocation": { "type": "string", "description": "File location" },
+          "type": {
+            "description": "Attachment type",
+            "allOf": [
+              { "$ref": "#/components/schemas/ApplicationAttachmentType" }
+            ]
+          },
+          "deleted": { "type": "boolean", "description": "Deleted" }
+        },
+        "required": [
+          "id",
+          "applicationId",
+          "originalFileName",
+          "fileName",
+          "fileFormat",
+          "fileExtension",
+          "fileSize",
+          "fileLocation",
+          "type",
+          "deleted"
+        ]
+      },
+      "GetApplicationAttachmentsResponse": {
+        "type": "object",
+        "properties": {
+          "attachments": {
+            "description": "Array of attachments tied to the application",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/ApplicationAttachment" }
+          }
+        },
+        "required": ["attachments"]
       },
       "StreamableFile": { "type": "object", "properties": {} },
       "GetPdfUrlResponse": {

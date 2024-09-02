@@ -18,6 +18,11 @@ import { GetPresignedUrlInput } from '../models/getPresignedUrl.input'
 import { GetPresignedUrlResponse } from '../models/getPresignedUrl.response'
 import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
 import { AddApplicationAttachmentInput } from '../models/addApplicationAttachment.input'
+import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
+import {
+  GetApplicationAttachmentResponse,
+  GetApplicationAttachmentsResponse,
+} from '../models/getApplicationAttachments.response'
 
 @Scopes(ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -97,6 +102,16 @@ export class OfficialJournalOfIcelandApplicationResolver {
     @Args('input', { type: () => AddApplicationAttachmentInput })
     input: AddApplicationAttachmentInput,
   ) {
-    // return this.ojoiApplicationService.addAttachment(input)
+    return this.ojoiApplicationService.addApplicationAttachment(input)
+  }
+
+  @Query(() => GetApplicationAttachmentsResponse, {
+    name: 'officialJournalOfIcelandApplicationGetAttachments',
+  })
+  getAttachments(
+    @Args('input', { type: () => GetApplicationAttachmentInput })
+    input: AddApplicationAttachmentInput,
+  ) {
+    return this.ojoiApplicationService.getApplicationAttachments(input)
   }
 }

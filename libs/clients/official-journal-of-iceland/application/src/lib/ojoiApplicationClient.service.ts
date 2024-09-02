@@ -13,6 +13,8 @@ import {
   S3UploadFilesResponse,
   GetPresignedUrlRequest,
   PresignedUrlResponse,
+  AddApplicationAttachmentRequest,
+  GetApplicationAttachmentsRequest,
 } from '../../gen/fetch'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
@@ -129,23 +131,16 @@ export class OfficialJournalOfIcelandApplicationClientService {
   async getPresignedUrl(
     params: GetPresignedUrlRequest,
   ): Promise<PresignedUrlResponse> {
-    try {
-      return await this.ojoiApplicationApi.getPresignedUrl(params)
-    } catch (error) {
-      if (error.response) {
-        const json = await error.response.json()
+    return await this.ojoiApplicationApi.getPresignedUrl(params)
+  }
 
-        this.logger.warn('Failed to get presigned url', {
-          error: {
-            message: json.message,
-            status: json.statusCode,
-            name: json.error,
-          },
-          category: LOG_CATEGORY,
-        })
-      }
+  async addApplicationAttachment(
+    params: AddApplicationAttachmentRequest,
+  ): Promise<void> {
+    await this.ojoiApplicationApi.addApplicationAttachment(params)
+  }
 
-      throw error
-    }
+  async getApplicationAttachments(params: GetApplicationAttachmentsRequest) {
+    return this.ojoiApplicationApi.getApplicationAttachments(params)
   }
 }

@@ -7,6 +7,14 @@ import { UploadAttachmentsInput } from '../models/uploadAttachments.input'
 import { UploadAttachmentsResponse } from '../models/uploadAttachments.response'
 import { GetPresignedUrlInput } from '../models/getPresignedUrl.input'
 import { GetPresignedUrlResponse } from '../models/getPresignedUrl.response'
+import { AddApplicationAttachmentInput } from '../models/addApplicationAttachment.input'
+import {
+  mapAttachmentType,
+  mapGetAttachmentType,
+  mapPresignedUrlType,
+} from './mappers'
+import { AddApplicationAttachmentResponse } from '../models/addApplicationAttachment.response'
+import { GetApplicationAttachmentInput } from '../models/getApplicationAttachment.input'
 
 @Injectable()
 export class OfficialJournalOfIcelandApplicationService {
@@ -61,13 +69,51 @@ export class OfficialJournalOfIcelandApplicationService {
   async getPresignedUrl(
     input: GetPresignedUrlInput,
   ): Promise<GetPresignedUrlResponse> {
+    const attachmentType = mapPresignedUrlType(input.attachmentType)
+
     return this.ojoiApplicationService.getPresignedUrl({
       id: input.applicationId,
+      type: attachmentType,
       getPresignedUrlBody: {
         fileName: input.fileName,
         fileType: input.fileType,
-        isOriginal: input.isOriginal,
       },
+    })
+  }
+
+  async addApplicationAttachment(
+    input: AddApplicationAttachmentInput,
+  ): Promise<AddApplicationAttachmentResponse> {
+    try {
+      const attachmentType = mapAttachmentType(input.attachmentType)
+
+      this.ojoiApplicationService.addApplicationAttachment({
+        id: input.applicationId,
+        type: attachmentType,
+        postApplicationAttachmentBody: {
+          fileName: input.fileName,
+          originalFileName: input.originalFileName,
+          fileFormat: input.fileFormat,
+          fileExtension: input.fileExtension,
+          fileLocation: input.fileLocation,
+          fileSize: input.fileSize,
+        },
+      })
+
+      return {
+        success: true,
+      }
+    } catch (error) {
+      return {
+        success: false,
+      }
+    }
+  }
+
+  async getApplicationAttachments(input: GetApplicationAttachmentInput) {
+    return this.ojoiApplicationService.getApplicationAttachments({
+      id: input.applicationId,
+      type: mapGetAttachmentType(input.attachmentType),
     })
   }
 }

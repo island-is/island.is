@@ -4,7 +4,7 @@ import { useFileUpload } from '../hooks/useFileUpload'
 import { ALLOWED_FILE_TYPES, ApplicationAttachmentType } from '../lib/constants'
 
 export const Attachments = ({ application }: OJOIFieldBaseProps) => {
-  const { files, onChange } = useFileUpload({
+  const { files, onChange, onRemove } = useFileUpload({
     applicationId: application.id,
     attachmentType: ApplicationAttachmentType.ADDITIONS,
   })
@@ -18,9 +18,7 @@ export const Attachments = ({ application }: OJOIFieldBaseProps) => {
         description="Documents accepted with extension: .pdf, .docx, .rtf"
         buttonLabel="Select documents to upload"
         onChange={onChange}
-        onRemove={(file) => {
-          console.log(file)
-        }}
+        onRemove={onRemove}
       />
     </Box>
   )

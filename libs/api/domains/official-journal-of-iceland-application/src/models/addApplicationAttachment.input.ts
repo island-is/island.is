@@ -1,9 +1,12 @@
-import { InputType, Field } from '@nestjs/graphql'
+import { InputType, Field, Int } from '@nestjs/graphql'
 
 @InputType('OfficialJournalOfIcelandApplicationAddApplicationAttachmentInput')
 export class AddApplicationAttachmentInput {
   @Field(() => String)
   applicationId!: string
+
+  @Field(() => String)
+  attachmentType!: string
 
   @Field(() => String)
   fileName!: string
@@ -20,6 +23,6 @@ export class AddApplicationAttachmentInput {
   @Field(() => String)
   fileLocation!: string
 
-  @Field(() => String)
+  @Field(() => Int)
   fileSize!: number
 }

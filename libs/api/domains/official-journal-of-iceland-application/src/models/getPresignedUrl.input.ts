@@ -11,6 +11,6 @@ export class GetPresignedUrlInput {
   @Field(() => String)
   fileType!: string
 
-  @Field(() => Boolean)
-  isOriginal!: boolean
+  @Field(() => String)
+  attachmentType!: string
 }

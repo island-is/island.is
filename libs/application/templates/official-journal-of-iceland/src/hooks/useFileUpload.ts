@@ -1,9 +1,10 @@
 import { UploadFile } from '@island.is/island-ui/core'
 import {
   ADD_APPLICATION_ATTACHMENT_MUTATION,
+  GET_APPLICATION_ATTACHMENTS_QUERY,
   GET_PRESIGNED_URL_MUTATION,
 } from '../graphql/queries'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 import { useState } from 'react'
 import { ApplicationAttachmentType } from '../lib/constants'
 
@@ -25,6 +26,20 @@ type AddAttachmentResponse = {
   success: boolean
 }
 
+type ApplicationAttachment = {
+  id: string
+  fileName: string
+  originalFileName: string
+  fileFormat: string
+  fileExtension: string
+  fileLocation: string
+  fileSize: number
+}
+
+type GetAttachmentsResponse = {
+  attachments: ApplicationAttachment[]
+}
+
 /**
  * Hook for uploading files to S3
  * @param props UseFileUploadProps
@@ -43,7 +58,39 @@ export const useFileUpload = ({
 
   const [addApplicationMutation] = useMutation<{
     officialJournalOfIcelandApplicationAddAttachment: AddAttachmentResponse
-  }>(ADD_APPLICATION_ATTACHMENT_MUTATION)
+  }>(ADD_APPLICATION_ATTACHMENT_MUTATION, {
+    onCompleted() {
+      refetch()
+    },
+  })
+
+  const { refetch } = useQuery<{
+    officialJournalOfIcelandApplicationGetAttachments: GetAttachmentsResponse
+  }>(GET_APPLICATION_ATTACHMENTS_QUERY, {
+    variables: {
+      input: {
+        applicationId: applicationId,
+        attachmentType: attachmentType,
+      },
+    },
+    onCompleted(data) {
+      const currentFiles =
+        data.officialJournalOfIcelandApplicationGetAttachments.attachments.map(
+          (attachment) =>
+            ({
+              name: attachment.originalFileName,
+              size: attachment.fileSize,
+              type: attachment.fileFormat,
+              key: attachment.id,
+              url: attachment.fileLocation,
+            } as UploadFile),
+        )
+      setFiles(currentFiles)
+    },
+    onError() {
+      setFiles([])
+    },
+  })
 
   /**
    *
@@ -65,17 +112,41 @@ export const useFileUpload = ({
       }
 
       try {
-        const { success } = await uploadToS3(url, file as File)
-
-        if (!success) {
-          throw new Error('Failed to upload to S3')
-        }
-
-        await addApplicationAttachments(url, file as File)
+        uploadToS3(url, file as File)
+        addApplicationAttachments(url, file as File)
+        setFiles([...files, file])
       } catch (e) {
         console.error(e)
       }
     })
+  }
+
+  /**
+   * On remove handler
+   * Deletes the file from the database and S3
+   * @param key key of the file
+   */
+  const onRemove = async (file: UploadFile) => {
+    console.log('onRemove', file.key)
+
+    setFiles(files.filter((f) => f.key !== file.key))
+
+    // if (!file) {
+    //   return
+    // }
+
+    // const { data } = await addApplicationMutation({
+    //   variables: {
+    //     input: {
+    //       applicationId: applicationId,
+    //       attachmentId: key,
+    //     },
+    //   },
+    // })
+
+    // if (data?.officialJournalOfIcelandApplicationAddAttachment.success) {
+    //   setFiles(files.filter((f) => f.key !== key))
+    // }
   }
 
   /**
@@ -88,7 +159,7 @@ export const useFileUpload = ({
     const { data } = await getPresignedUrlMutation({
       variables: {
         input: {
-          type: attachmentType,
+          attachmentType: attachmentType,
           applicationId: applicationId,
           fileName: name,
           fileType: type,
@@ -102,25 +173,19 @@ export const useFileUpload = ({
   /**
    * Uploads a file to S3 using a presigned URL
    * Used when a presigned URL has been successfully retrieved
-   * @param url presigned URL
+   * @param preSignedUrl presigned URL
    * @param file file to upload
    * @param onSuccess callback function to run on success
    */
-  const uploadToS3 = async (url: string, file: File) => {
-    const response = await fetch(url, {
-      method: 'PUT',
+  const uploadToS3 = async (preSignedUrl: string, file: File) => {
+    await fetch(preSignedUrl, {
       headers: {
         'Content-Type': file.type,
         'Content-Length': file.size.toString(),
       },
+      method: 'PUT',
       body: file,
     })
-
-    if (response.ok) {
-      return { success: true }
-    }
-
-    return { success: false }
   }
 
   /**
@@ -129,26 +194,30 @@ export const useFileUpload = ({
    * @param url presigned URL
    * @param file file to upload
    */
-  const addApplicationAttachments = async (url: string, file: File) => {
+  const addApplicationAttachments = (url: string, file: File) => {
     const type = file?.type?.split('/')[1]
     const name = file?.name?.split('.').slice(0, -1).join('.')
     if (!type || !name) {
       return
     }
 
+    const loc = new URL(url).pathname
+
     addApplicationMutation({
       variables: {
         input: {
           applicationId: applicationId,
-          type: attachmentType,
-          name: name,
-          url: url,
-          size: file.size,
-          fileType: type,
+          attachmentType: attachmentType,
+          fileName: name,
+          originalFileName: file.name,
+          fileFormat: type,
+          fileExtension: type,
+          fileLocation: loc,
+          fileSize: file.size,
         },
       },
     })
   }
 
-  return { files, onChange }
+  return { files, onChange, onRemove }
 }
