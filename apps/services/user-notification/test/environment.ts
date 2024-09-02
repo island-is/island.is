@@ -5,6 +5,8 @@ export const environment = {
   SQS_ACCESS_KEY: 'testing',
   SQS_SECRET_ACCESS_KEY: 'testing',
   SERVICE_PORTAL_CLICK_ACTION_URL: 'https://island.is/minarsidur',
+  // Disable redis registration during testing
+  REDIS_URL_NODE_01: '[]',
 } as const
 
 process.env = {
