@@ -1,11 +1,13 @@
 import { EditorFileUploader } from '@island.is/regulations-tools/Editor'
 import { RegulationDraftId } from '@island.is/regulations/admin'
 import { fileUrl, useS3Upload } from './dataHooks'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 export function useFileUploader(draftId: RegulationDraftId) {
   const { createPresignedPost, createFormData } = useS3Upload()
 
-  const isDevelopment = process.env.NODE_ENV === 'development'
+  const isDevelopment =
+    isRunningOnEnvironment('dev') || isRunningOnEnvironment('local')
 
   const fileUploader =
     (): EditorFileUploader => async (blobInfo, success, failure, progress) => {
